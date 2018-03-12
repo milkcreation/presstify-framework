@@ -75,7 +75,14 @@
     "league/uri": "^5.2"
   },
   "autoload": {
-    "psr-4": { "tiFy\\": "" }
+    "psr-4": {
+      "tiFy\\": ""
+    }
+  },
+  "config" : {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
   },
   "minimum-stability": "dev",
   "prefer-stable": true
