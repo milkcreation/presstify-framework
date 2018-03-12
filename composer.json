@@ -74,6 +74,9 @@
     "illuminate/support": "^5.6",
     "league/uri": "^5.2"
   },
+  "autoload": {
+    "psr-4": { "tiFy\\": "" }
+  },
   "minimum-stability": "dev",
   "prefer-stable": true
 }
