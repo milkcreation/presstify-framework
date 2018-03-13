@@ -1,11 +1,12 @@
 <?php
 
 /**
- * @name PresstiFy
+ * @name tiFy
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.2.617.180309
+ * @version 1.3.0
+ * @since 180313
  */
 
 namespace tiFy;
@@ -24,13 +25,13 @@ final class tiFy
      * @var resource
      */
     public static $AbsPath;
-    
+
     /**
      * Chemin absolu vers la racine de presstiFy
      * @var resource
      */
     public static $AbsDir;
-    
+
     /**
      * Url absolue vers la racine la racine de presstiFy
      * @var string
@@ -53,16 +54,16 @@ final class tiFy
      * Attributs de configuration
      * @var mixed
      */
-    protected static $Config            = [];
+    protected static $Config = [];
 
     /**
      * Classe de chargement automatique
-     */ 
-    private static $ClassLoader         = null;
-    
+     */
+    private static $ClassLoader = null;
+
     /**
      * CONSTRUCTEUR
-     * 
+     *
      * @return void
      */
     public function __construct($AbsPath = null)
@@ -76,29 +77,29 @@ final class tiFy
         self::$AbsDir = dirname(__FILE__);
 
         // Définition des constantes d'environnement
-        if (! defined('TIFY_CONFIG_DIR')) :
-            define( 'TIFY_CONFIG_DIR', get_template_directory() . '/config');
+        if (!defined('TIFY_CONFIG_DIR')) :
+            define('TIFY_CONFIG_DIR', get_template_directory() . '/config');
         endif;
-        if (! defined('TIFY_CONFIG_EXT')) :
+        if (!defined('TIFY_CONFIG_EXT')) :
             define('TIFY_CONFIG_EXT', 'yml');
         endif;
         /// Répertoire des plugins
-        if (! defined('TIFY_PLUGINS_DIR')) :
+        if (!defined('TIFY_PLUGINS_DIR')) :
             define('TIFY_PLUGINS_DIR', self::$AbsDir . '/plugins');
         endif;
 
         // Instanciation du moteur
-        self::classLoad('tiFy', self::$AbsDir .'/bin');
+        self::classLoad('tiFy', self::$AbsDir . '/bin');
 
         // Instanciation des controleurs en maintenance
         self::classLoad('tiFy\Maintenance', self::$AbsDir . '/bin/maintenance', 'Maintenance');
 
         // Instanciation des controleurs dépréciés
         self::classLoad('tiFy\Deprecated', self::$AbsDir . '/bin/deprecated', 'Deprecated');
-        
+
         // Instanciation des l'environnement des applicatifs
-        self::classLoad('tiFy\App', self::$AbsDir .'/bin/app');
-        
+        self::classLoad('tiFy\App', self::$AbsDir . '/bin/app');
+
         // Instanciation des librairies proriétaires
         new Libraries;
 
@@ -106,8 +107,8 @@ final class tiFy
         new Languages;
 
         // Chargement des librairies tierces
-        if (file_exists(tiFy::$AbsDir .'/vendor/autoload.php')) :
-            require_once tiFy::$AbsDir .'/vendor/autoload.php';
+        if (file_exists(tiFy::$AbsDir . '/vendor/autoload.php')) :
+            require_once tiFy::$AbsDir . '/vendor/autoload.php';
         endif;
 
         // Affichage des erreurs
@@ -119,26 +120,26 @@ final class tiFy
         $error_handler->register();*/
 
         // Instanciation des fonctions d'aides au développement
-        self::classLoad('tiFy\Helpers', __DIR__ .'/helpers');
-        
+        self::classLoad('tiFy\Helpers', __DIR__ . '/helpers');
+
         // Définition de l'url absolue
         self::$AbsUrl = File::getFilenameUrl(self::$AbsDir, self::$AbsPath);
 
         // Instanciation des composants natifs
         self::classLoad('tiFy\Core', __DIR__ . '/core');
-        
+
         // Instanciation des composants dynamiques
         self::classLoad('tiFy\Components', __DIR__ . '/components');
-        
+
         // Instanciation des extensions
         self::classLoad('tiFy\Plugins', TIFY_PLUGINS_DIR);
-        
+
         // Instanciation des jeux de fonctionnalités complémentaires
         self::classLoad('tiFy\Set', tiFy::$AbsDir . '/set');
 
         // Instanciation des fonctions d'aide au développement
         new Helpers;
-        
+
         // Instanciation des applicatifs
         new Apps;
     }
@@ -171,7 +172,7 @@ final class tiFy
 
         if ($parts) :
             $name = '';
-            foreach($parts as $k => $part) :
+            foreach ($parts as $k => $part) :
                 if (empty($part)) :
                     continue;
                 elseif (!$k && preg_match('#^_?tiFy#', $part)) :
@@ -207,11 +208,11 @@ final class tiFy
 
     /**
      * Chargement automatique des classes
-     * 
+     *
      * @param string $namespace Espace de nom
      * @param string|NULL $base_dir Chemin vers le repertoire
      * @param string|NULL $bootstrap Nom de la classe à instancier
-     * 
+     *
      * @return void
      */
     public static function classLoad($namespace, $base_dir = null, $bootstrap = null)
@@ -220,18 +221,18 @@ final class tiFy
             require_once __DIR__ . '/bin/lib/ClassLoader/Psr4ClassLoader.php';
             self::$ClassLoader = new \Psr4ClassLoader;
         endif;
-        
+
         if (!$base_dir) :
             $base_dir = dirname(__FILE__);
         endif;
 
         self::$ClassLoader->addNamespace($namespace, $base_dir, false);
         self::$ClassLoader->register();
-            
-        if ($bootstrap) :
-            $classname = "\\". ltrim( $namespace, '\\' ) ."\\". $bootstrap;
 
-            if(class_exists($classname)) :
+        if ($bootstrap) :
+            $classname = "\\" . ltrim($namespace, '\\') . "\\" . $bootstrap;
+
+            if (class_exists($classname)) :
                 new $classname;
             endif;
         endif;
@@ -265,10 +266,10 @@ final class tiFy
     public static function callGlobalRequestVar($method, $args = [], $type = '')
     {
         if (!$request = self::getGlobalRequest()) :
-            return;
+            return null;
         endif;
 
-        switch(strtolower($type)) :
+        switch (strtolower($type)) :
             default :
                 $object = $request;
                 break;
@@ -301,6 +302,8 @@ final class tiFy
         if (method_exists($object, $method)) :
             return call_user_func_array([$object, $method], $args);
         endif;
+
+        return null;
     }
 
     /**
@@ -320,28 +323,29 @@ final class tiFy
 
     /**
      * Récupération d'attributs de configuration globale
-     * 
+     *
      * @param NULL|string $attr Attribut de configuration
      * @param string $default Valeur de retour par défaut
-     * 
+     *
      * @return mixed|$default
      */
     public static function getConfig($attr = null, $default = '')
     {
-        if (is_null($attr))
+        if (is_null($attr)) :
             return self::$Config;
-        
+        endif;
+
         if (isset(self::$Config[$attr])) :
             return self::$Config[$attr];
         endif;
-        
+
         return $default;
     }
-    
+
     /**
      * Définition d'un attribut de configuration globale
-     * 
-     * 
+     *
+     *
      */
     public static function setConfig($key, $value = '')
     {
