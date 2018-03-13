@@ -105,6 +105,23 @@ class Handle extends AbstractDependency
     {
         return $this->FieldsVars;
     }
+    
+    /**
+     * Récupération de la valeur d'une saisie de champ
+     *
+     * @param string $key Identifiant de qualification du champ
+     * @param mixed $default Valeur de retour par défaut
+     *
+     * @return mixed
+     */
+    public function getFieldVar($key, $default = '')
+    {
+        if (isset($this->FieldsVars[$key])) :
+            return $this->FieldsVars[$key];
+        endif;
+        
+        return $default;
+    }
         
     /** == Vérifie si un formulaire a été soumis avec succès == **/
     public function isSuccessful()
