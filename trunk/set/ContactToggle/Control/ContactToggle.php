@@ -46,6 +46,12 @@ class ContactToggle extends \tiFy\Core\Control\Factory
         $this->tFyAppAddAction('wp_ajax_tiFySetCoreControl_ContactToggle', 'wp_ajax');
         $this->tFyAppAddAction('wp_ajax_nopriv_tiFySetCoreControl_ContactToggle', 'wp_ajax');
 
+        /**
+         * Déclaration des fonctions d'aide à la saisie
+         */
+        $id = join('_', array_map('lcfirst', preg_split('#(?=[A-Z])#', $this->appShortname())));
+        $this->addIncreaseHelper('tify_control' . $id . '_trigger', 'trigger');
+
         \wp_register_script(
             'tify_control-contact_toggle',
             self::tFyAppAssetsUrl('ContactToggle.js', get_class()),
