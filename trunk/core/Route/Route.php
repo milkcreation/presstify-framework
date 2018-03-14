@@ -44,6 +44,12 @@ class Route extends \tiFy\App\Core
     private $Response;
 
     /**
+     * Suppression du slash à la fin de l'url
+     * @var bool
+     */
+    private $removeTrailingSlash = false;
+
+    /**
      * CONSTRUCTEUR
      *
      * @return void
@@ -102,24 +108,26 @@ class Route extends \tiFy\App\Core
             $this->_set($name);
         endforeach;
 
-        /**
-         * Suppression du slash de fin dans l'url
-         * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html
-         * @see https://stackoverflow.com/questions/30830462/how-to-deal-with-extra-in-phpleague-route
-         *
-         * @var \Symfony\Component\HttpFoundation\Request $request
-         */
-        $request = tiFy::getGlobalRequest();
+        if ($this->removeTrailingSlash) :
+            /**
+             * Suppression du slash de fin dans l'url
+             * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html
+             * @see https://stackoverflow.com/questions/30830462/how-to-deal-with-extra-in-phpleague-route
+             *
+             * @var \Symfony\Component\HttpFoundation\Request $request
+             */
+            $request = tiFy::getGlobalRequest();
 
-        $pathInfo = $request->getPathInfo();
-        $requestUri = $request->getRequestUri();
-        $method = $request->getMethod();
+            $pathInfo = $request->getPathInfo();
+            $requestUri = $request->getRequestUri();
+            $method = $request->getMethod();
 
-        if (($pathInfo != '/') && (substr($pathInfo, -1) == '/') && ($method === 'GET')) :
+            if (($pathInfo != '/') && (substr($pathInfo, -1) == '/') && ($method === 'GET')) :
 
-            $url = str_replace($pathInfo, rtrim($pathInfo, '/'), $requestUri);
-            wp_safe_redirect($url, 301);
-            exit;
+                $url = str_replace($pathInfo, rtrim($pathInfo, '/'), $requestUri);
+                wp_safe_redirect($url, 301);
+                exit;
+            endif;
         endif;
 
         // Traitement des routes
