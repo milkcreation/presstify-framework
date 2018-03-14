@@ -106,6 +106,9 @@ class Search extends \tiFy\App\Component
         if (!isset(self::$Factory['_global'])) :
             return;
         endif;
+        if (is_admin() && !defined('DOING_AJAX')) :
+            return;
+        endif;
         if (!$WP_Query->is_main_query()) :
             return;
         endif;
