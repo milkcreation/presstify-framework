@@ -78,6 +78,11 @@
     "vimeo/vimeo-api": "^1.2",
     "zendframework/zend-diactoros": "^1.7"
   },
+  "autoload": {
+    "psr-4": {
+      "tiFy\\": ""
+    }
+  },
   "minimum-stability": "dev",
   "prefer-stable": true
 }
