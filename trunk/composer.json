@@ -83,6 +83,14 @@
       "tiFy\\": ""
     }
   },
+  "scripts": {
+    "post-install-cmd": [
+      "bower install --allow-root --save"
+    ],
+    "post-update-cmd": [
+      "bower install --allow-root --save"
+    ]
+  },
   "minimum-stability": "dev",
   "prefer-stable": true
 }
