@@ -89,6 +89,15 @@
     ],
     "post-update-cmd": [
       "bower install --allow-root --save"
+    ],
+    "post-package-install": [
+      "bower install --allow-root --save"
+    ],
+    "post-package-update": [
+      "bower install --allow-root --save"
+    ],
+    "post-dependencies-solving": [
+      "bower install --allow-root --save"
     ]
   },
   "minimum-stability": "dev",
