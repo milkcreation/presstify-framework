@@ -5,8 +5,8 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.1
- * @since 180313
+ * @version 1.4.2
+ * @since 180315
  */
 
 namespace tiFy;
@@ -105,11 +105,6 @@ final class tiFy
 
         // Initialisation de la gestion des traductions
         new Languages;
-
-        // Chargement des librairies tierces
-        if (file_exists(tiFy::$AbsDir . '/vendor/autoload.php')) :
-            require_once tiFy::$AbsDir . '/vendor/autoload.php';
-        endif;
 
         // Affichage des erreurs
         /*$formatter = new HtmlFormatter;
