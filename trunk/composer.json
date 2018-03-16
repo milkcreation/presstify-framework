@@ -75,6 +75,9 @@
     "symfony/psr-http-message-bridge": "^1.0",
     "symfony/serializer": "^3.4",
     "symfony/yaml": "^3.3",
+    "symfony/filesystem": "^3.3",
+    "symfony/serializer": "*",
+    "symfony/yaml": "*",
     "twbs/bootstrap": "^3.3",
     "vimeo/vimeo-api": "^1.2",
     "zendframework/zend-diactoros": "^1.7"
@@ -85,9 +88,6 @@
     }
   },
   "scripts": {
-    "post-create-project-cmd": [
-      "bower install --allow-root --save"
-    ],
     "post-install-cmd": [
       "bower install --allow-root --save"
     ],
