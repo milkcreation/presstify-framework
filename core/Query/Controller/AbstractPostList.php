@@ -5,7 +5,7 @@ namespace tiFy\Core\Query\Controller;
 use Illuminate\Support\Collection;
 use tiFy\App\Traits\App as TraitsApp;
 
-abstract class AbstractPostList extends Collection
+abstract class AbstractPostList extends Collection implements PostListInterface
 {
     use TraitsApp;
 

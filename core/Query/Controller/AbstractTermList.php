@@ -5,7 +5,7 @@ namespace tiFy\Core\Query\Controller;
 use Illuminate\Support\Collection;
 use tiFy\App\Traits\App as TraitsApp;
 
-abstract class AbstractTermList extends Collection
+abstract class AbstractTermList extends Collection implements TermListInterface
 {
     use TraitsApp;
 
