@@ -1,13 +1,13 @@
 {
   "name": "presstify/framework",
-  "description": "PresstiFy Wordpress Framework.",
-  "keywords": ["framework", "presstify", "wordpress"],
-  "homepage": "http://svn.milkcreation.fr/presstify-framework",
-  "config": {
-    "preferred-install": "dist",
-    "sort-packages": true,
-    "optimize-autoloader": true
-  },
+  "description": "Framework PresstiFy",
+  "keywords": [
+    "framework",
+    "presstify",
+    "wordpress"
+  ],
+  "homepage": "https://svn.tigreblanc.fr/presstify-framework",
+  "time": "2018-03-19",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -32,14 +32,8 @@
   ],
   "require": {
     "composer/composer": "^1.6",
-    "beelab/bowerphp": "^0.5",
-    "FortAwesome/Font-Awesome": "^4.7",
-    "bshaffer/oauth2-server-php": "^1.9",
-    "codeitnowin/barcode": "^2.1",
     "defuse/php-encryption": "^2.0",
-    "dompdf/dompdf": "^0.8.0",
     "egeloen/google-map": "^1.0",
-    "endroid/qr-code": "^2.5",
     "facebook/graph-sdk": "^5.5",
     "google/apiclient": "^2.2",
     "google/recaptcha": "^1.1",
@@ -62,7 +56,6 @@
     "mexitek/phpcolors": "^0.4.0",
     "mobiledetect/mobiledetectlib": "^2.8",
     "monolog/monolog": "^1.22",
-    "mpratt/embera": "^1.9",
     "mrclay/minify": "^3.0",
     "neitanod/forceutf8": "^2.0",
     "pelago/emogrifier": "^2.0",
@@ -76,16 +69,32 @@
     "symfony/serializer": "^3.4",
     "symfony/yaml": "^3.3",
     "symfony/filesystem": "^3.3",
-    "symfony/serializer": "*",
-    "symfony/yaml": "*",
+    "symfony/serializer": "^3.3",
+    "symfony/yaml": "^3.3",
     "twbs/bootstrap": "^3.3",
     "vimeo/vimeo-api": "^1.2",
     "zendframework/zend-diactoros": "^1.7"
+  },
+  "suggest": {
+    "beelab/bowerphp": "Utilisation de bower via PHP",
+    "bshaffer/oauth2-server-php": "Serveur OAuth 2.0",
+    "codeitnowin/barcode": "Bibliothèque de création de code barre dynamique",
+    "dompdf/dompdf": "Convertion de HTML en PDf",
+    "endroid/qr-code": "Bibliothèque de création de QR Code",
+    "FortAwesome/Font-Awesome": "Ancienne gestion intégré de FontAwesome, presstiFy utilise maintenant Bower",
+    "mpratt/embera": "Bibliothèque client d'encapsulation de vidéo"
   },
   "autoload": {
     "psr-4": {
       "tiFy\\": ""
     }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
   },
   "scripts": {
     "post-install-cmd": [
@@ -94,7 +103,5 @@
     "post-update-cmd": [
       "bower install --allow-root --save"
     ]
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+  }
 }
