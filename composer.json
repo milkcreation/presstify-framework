@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-03-19",
+  "time": "2018-03-20",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -57,7 +57,6 @@
     "mobiledetect/mobiledetectlib": "^2.8",
     "monolog/monolog": "^1.22",
     "mrclay/minify": "^3.0",
-    "neitanod/forceutf8": "^2.0",
     "pelago/emogrifier": "^2.0",
     "phpdocumentor/reflection-docblock": "^3.2.2",
     "phpmailer/phpmailer": "^5.2",
@@ -82,7 +81,8 @@
     "dompdf/dompdf": "Convertion de HTML en PDf",
     "endroid/qr-code": "Bibliothèque de création de QR Code",
     "FortAwesome/Font-Awesome": "Ancienne gestion intégré de FontAwesome, presstiFy utilise maintenant Bower",
-    "mpratt/embera": "Bibliothèque client d'encapsulation de vidéo"
+    "mpratt/embera": "Bibliothèque client d'encapsulation de vidéo",
+    "neitanod/forceutf8": "Forçage d'encodage en utf-8 d'une chaine de caractères"
   },
   "autoload": {
     "psr-4": {

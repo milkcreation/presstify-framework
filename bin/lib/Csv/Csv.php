@@ -1,620 +1,639 @@
 <?php
 /**
- *  USAGE : 
- *            
-    $Csv = \tiFy\Lib\Csv\Csv::getResults(
-        array(
-            'filename'      => ABSPATH .'/example.csv'
-            'delimiter'     => ';',
-            'query_args'    => array(
-                'paged'         => 1,
-                'per_page'      => -1   
-            ),            
-            'columns'       => array( 'lastname', 'firstname', 'email' ),
-            'orderby'       => array(
-                'lastname'      => 'ASC'
-            ),
-            'search'        => array(
-                array(
-                    'term'      => '@domain.ltd',
-                    'cols'      => array( 'email' )    
-                ),
-                array(
-                    'term'      => 'john',
-                    'cols'      => array()
-                ),
-            )               
-        ); 
-    );
-    
-    // Récupération la liste des éléments 
-    $items = $Csv->getItems();
-    
-    // Nombre total de resultats
-    $total_items = $Csv->getTotalItems();
-    
-    // Nombre de résultats
-    $total_pages = $Csv->getTotalPages(); 
-    
-    // Nombre d'éléments trouvés
-    $found_items = $Csv->getFoundItems(); 
+ *  USAGE :
+ *
+ * $Csv = \tiFy\Lib\Csv\Csv::getList(
+ *   [
+ *      'filename'      => ABSPATH .'/example.csv'
+ *      'delimiter'     => ';',
+ *      'query_args'    => [
+ *          'paged'         => 1,
+ *          'per_page'      => -1
+ *      ],
+ *      'columns'       => ['lastname', 'firstname', 'email'],
+ *      @todo
+ *      'orderby'       => [
+ *          'lastname'      => 'ASC'
+ *      ],
+ *      @todo
+ *      'search'        => [
+ *          [
+ *              'term'      => '@domain.ltd',
+ *              'cols'      => ['email']
+ *          ],
+ *          [
+ *              'term'      => 'john',
+ *              'cols'      => []
+ *          ],
+ *      ]
+ *   ]
+ * );
+ *
+ * // Récupération la liste des éléments sous forme d'iterateur
+ * // @var ResultSet
+ * $items = $Csv->getItems();
+ *
+ * // Récupération la liste des éléments sous forme de tableau
+ * // @var ResultSet
+ * $items = $Csv->toArray();
+ *
+ * // Nombre total de resultats
+ * // @var int
+ * $total_items = $Csv->getTotalItems();
+ *
+ * // Nombre de résultats
+ * // @var int
+ * $total_pages = $Csv->getTotalPages();
+ *
+ * // Nombre d'éléments trouvés
+ * // @var int
+ * $found_items = $Csv->getFoundItems();
  */
+
 namespace tiFy\Lib\Csv;
 
+use League\Csv\CharsetConverter;
+use League\Csv\Exception;
 use League\Csv\Reader;
-use ForceUTF8\Encoding;
-//use \League\Csv\Writer;
+use League\Csv\ResultSet;
+use League\Csv\Statement;
 
 class Csv
-{    
+{
     /**
      * Chemin vers le fichier de données à traiter
+     * @var string
      */
-    public $Filename;
-    
+    public $filename = '';
+
     /**
-     * Propriétés Csv
+     * Propriétés de traitement fichier CSV
      * @var array
      */
-    public $Properties              = array(
+    public $properties = [
         /// Délimiteur de champs
-        'delimiter'                     => ',',
+        'delimiter' => ',',
         /// Caractère d'encadrement 
-        'enclosure'                     => '"',
+        'enclosure' => '"',
         /// Caractère de protection
-        'escape'                        => '\\'
-    );
-    
+        'escape'    => '\\'
+    ];
+
     /**
-     * Arguments de requête
+     * Arguments de requête de récupération des éléments
      * @var array
      */
-    public $QueryArgs               = array(
+    public $queryArgs = [
         // Page courante
-        'paged'                         => 1,    
+        'paged'    => 1,
         // Nombre d'éléments par page
-        'per_page'                      => -1
-    );
-    
-    /**
-     * Arguments de trie
-     */
-    public $OrderBy                 = array();
-    
-    /**
-     * Arguments de recherche
-     * @var array
-     */
-    public $SearchArgs              = array();
-    
+        'per_page' => -1
+    ];
+
     /**
      * Cartographie des colonnes
-     * ex array( 'ID', 'title', 'description' );
+     * ex ['firstname', 'lastname', 'email'];
+     * @var string[]
      */
-    public $Columns                 = array();
-    
-    /**
-     * Types de fichier autorisés
-     */
-    protected $AllowedMimeType      = array( 'csv', 'txt' );
-    
-    /**
-     * Doublons
-     */
-    protected $Duplicates           = array(); 
-    
-    /**
-     * Trie des données
-     */
-    protected $Sorts                = array(); 
-    
-    /**
-     * Filtres de données
-     */
-    protected $Filters              = array();
-    
-    /**
-     * Relation de filtrage des données
-     */
-    protected $FiltersRelation      = 'OR'; 
-    
+    public $columns = [];
+
     /**
      * Nombre d'éléments trouvés
+     * @var int
      */
-    protected $FoundItems           = 0;
-    
+    protected $foundItems = 0;
+
     /**
      * Nombre d'éléments total
+     * @var int
      */
-    protected $TotalItems           = 0;
-    
+    protected $totalItems = 0;
+
     /**
      * Nombre de page total
+     * @var int
      */
-    protected $TotalPages           = 0;   
-    
+    protected $totalPages = 0;
+
     /**
      * Liste des éléments
+     * @var null|ResultSet
      */
-    protected $Items                = [];
-    
+    protected $items;
+
+    /**
+     * Arguments de trie
+     * @todo
+     * @var array
+     */
+    public $orderBy = [];
+
+    /**
+     * Arguments de recherche
+     * @todo
+     * @var array
+     */
+    public $searchArgs = [];
+
+    /**
+     * Types de fichier autorisés
+     * @todo
+     * @var string[]
+     */
+    protected $allowedMimeType = ['csv', 'txt'];
+
+    /**
+     * Trie des données
+     * @todo
+     * @var array
+     */
+    protected $sorts = [];
+
+    /**
+     * Filtres de données
+     * @todo
+     * @var array
+     */
+    protected $filters = [];
+
+    /**
+     * Relation de filtrage des données
+     * @todo
+     * @var string
+     */
+    protected $filtersRelation = 'OR';
+
     /**
      * CONSTRUCTEUR
-     * @param array $options
+     *
+     * @param array $options Liste des attributs de configuration.
+     *
+     * @return void
      */
     public function __construct($options = [])
     {
-        foreach( $options as $option_name => $option_value ) :
-            switch( $option_name ) :
+        foreach ($options as $option_name => $option_value) :
+            switch ($option_name) :
                 case 'filename' :
-                    $this->setFilename( $option_value );
+                    $this->setFilename($option_value);
                     break;
                 case 'delimiter' :
                 case 'enclosure' :
                 case 'escape' :
-                    $this->setProperty( $option_name, $option_value );   
+                    $this->setProperty($option_name, $option_value);
                     break;
                 case 'query_args' :
-                    foreach( $option_value as $query_arg => $value ) :
-                        $this->setQueryArg( $query_arg, $value ); 
+                    foreach ($option_value as $query_arg => $value) :
+                        $this->setQueryArg($query_arg, $value);
                     endforeach;
                     break;
                 case 'columns' :
-                    $this->Columns = $option_value;
+                    $this->columns = $option_value;
                     break;
                 case 'orderby' :
-                    $this->OrderBy = $option_value;
-                    break;    
+                    $this->orderBy = $option_value;
+                    break;
                 case 'search' :
-                    $this->SearchArgs = $option_value;
-                    break;               
+                    $this->searchArgs = $option_value;
+                    break;
             endswitch;
         endforeach;
     }
-    
+
     /**
-     * CONTROLEURS
+     * Récupération d'éléments
+     *
+     * @param array $options Liste des attributs de configuration.
+     *
+     * @return self
      */
-    /**
-     * Définition du fichier de données
-     */
-    final public function setFilename( $filename )
+    final public static function getList($options = [])
     {
-        if( file_exists( $filename ) ) :
-            $this->Filename = $filename;
-        endif;
+        $csv = new static($options);
+        $csv->getRows();
+
+        return $csv;
     }
-    
+
     /**
-     * Récupération du fichier de données
+     * Récupération d'une ligne de donnée du fichier
+     *
+     * @param int $offset Ligne de l'élément à récuperer
+     * @param array $options Liste des attributs de configuration.
+     *
+     * @return self
+     */
+    final public static function get($offset = 0, $options = [])
+    {
+        $options['query_args']['per_page'] = 1;
+
+        $csv = new static($options);
+        $csv->getRows();
+
+        return $csv;
+    }
+
+    /**
+     * Définition du fichier de données.
+     *
+     * @param string $filename Chemin absolu vers le fichier de données à traiter.
+     *
+     * @return self
+     */
+    final public function setFilename($filename)
+    {
+        if (file_exists($filename)) :
+            $this->filename = $filename;
+        endif;
+
+        return $this;
+    }
+
+    /**
+     * Définition de propriété Csv.
+     *
+     * @param string $key Identifiant de qualification de la propriété. delimiter|enclosure|escape.
+     * @param mixed $value Valeur de définition de la propriété.
+     *
+     * @return self
+     */
+    final public function setProperty($key, $value = '')
+    {
+        if (!in_array($key, ['delimiter', 'enclosure', 'escape'])) :
+            return $this;
+        endif;
+
+        $this->properties[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Définition d'un argument de requête de récupération des élément du fichier.
+     *
+     * @param string $key Identifiant de qualification de l'argument de requête.
+     * @param mixed $value Valeur de l'argument de requête
+     *
+     * @return self
+     */
+    final public function setQueryArg($key, $value = '')
+    {
+        $this->queryArgs[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Définition du nombre d'éléments trouvés.
+     *
+     * @param int $found_items Nombre d'éléments trouvés à définir.
+     *
+     * @return self
+     */
+    final public function setFoundItems($found_items)
+    {
+        $this->foundItems = (int)$found_items;
+
+        return $this;
+    }
+
+    /**
+     * Définition du nombre total d'éléments.
+     *
+     * @param int $found_items Nombre d'éléments total à définir.
+     *
+     * @return self
+     */
+    final public function setTotalItems($total_items)
+    {
+        $this->totalItems = (int)$total_items;
+
+        return $this;
+    }
+
+    /**
+     * Définition du nombre total de page d'éléments.
+     *
+     * @param int $found_items de pages totales à définir.
+     *
+     * @return self
+     */
+    final public function setTotalPages($total_pages)
+    {
+        $this->totalPages = (int)$total_pages;
+
+        return $this;
+    }
+
+    /**
+     * Récupération du fichier de données.
      */
     public function getFilename()
     {
-        return $this->Filename;
+        return $this->filename;
     }
-    
-    /**
-     * Définition de propriété Csv
-     */
-    final public function setProperty( $prop, $value = '' )
-    {
-        if( ! in_array( $prop, array( 'delimiter', 'enclosure', 'escape' ) ) )
-            return;
 
-        $this->Properties[$prop] = $value;            
-    }
-    
     /**
-     * Récupération de propriété Csv
+     * Récupération de propriété Csv.
+     *
+     * @param string $key Identifiant de qualification de la propriété. delimiter|enclosure|escape.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
      */
-    public function getProperty( $prop, $default = '' )
+    public function getProperty($key, $default = '')
     {
         // Bypass
-        if( ! in_array( $prop, array( 'delimiter', 'enclosure', 'escape' ) ) )
+        if (!in_array($key, ['delimiter', 'enclosure', 'escape'])) :
             return $default;
-        
-        if( isset( $this->Properties[$prop] ) )
-            return $this->Properties[$prop];
-        
-        return $defaut;    
+        endif;
+
+        if (isset($this->properties[$key])) :
+            return $this->properties[$key];
+        endif;
+
+        return $default;
     }
-    
+
     /**
-     * Définition d'un argument de requête
+     * Récupération d'un argument de requête.
+     *
+     * @param string $key Identifiant de qualification de l'argument de requête.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
      */
-    final public function setQueryArg( $arg, $value = '' )
+    public function getQueryArg($key, $default = '')
     {
-        $this->QueryArgs[$arg] = $value;            
+        if (isset($this->queryArgs[$key])) :
+            return $this->queryArgs[$key];
+        endif;
+
+        return $default;
     }
-    
+
     /**
-     * Récupération d'un argument de requête
-     */
-    public function getQueryArg( $arg, $default = '' )
-    {
-        if( isset( $this->QueryArgs[$arg] ) )
-            return $this->QueryArgs[$arg];
-        
-        return $defaut;
-    }
-    
-    /**
-     * Définition du nombre total d'éléments
-     */
-    final public function setFoundItems( $found_items )
-    {
-        $this->FoundItems = (int) $found_items;
-    }
-    
-    /**
-     * Récupération du nombre d'éléments trouvés
+     * Récupération du nombre d'éléments trouvés.
+     *
+     * @return int
      */
     public function getFoundItems()
     {
-        return $this->FoundItems;
-    }    
-    
-    /**
-     * Définition du nombre total d'éléments
-     */
-    final public function setTotalItems( $total_items )
-    {
-        $this->TotalItems = (int) $total_items;
+        return (int)$this->foundItems;
     }
-    
+
     /**
      * Récupération du nombre total d'éléments
+     *
+     * @return int
      */
     public function getTotalItems()
     {
-        return $this->TotalItems;
+        return (int)$this->totalItems;
     }
-    
-    /**
-     * Définition du nombre total de page
-     */
-    final public function setTotalPages( $total_pages )
-    {
-        $this->TotalPages = (int) $total_pages;
-    }
-    
+
     /**
      * Récupération du nombre total de page
+     *
+     * @return int
      */
     public function getTotalPages()
     {
-        return $this->TotalPages;           
+        return (int)$this->totalPages;
     }
-    
+
     /**
-     * Récupération des éléments
-     */
-    public function getItems()
-    {
-        return $this->Items;
-    }
-    
-    /**
-     * Récupération des colonnes
+     * Récupération de la cartographie des colonnes
+     *
+     * @return string[]
      */
     public function getColumns()
     {
-       return ! empty( $this->Columns ) ? $this->Columns : 0;
+        return ! empty($this->columns) ? $this->columns : [];
     }
-    
+
     /**
      * Récupération de l'index d'une colonne
+     *
+     * @return null|int
      */
-    final public function getColumnIndex( $column )
+    final public function getColumnIndex($column)
     {
-        if( ( $index = array_search( $column, $this->Columns ) ) && is_numeric( $index ) ) :
-            return $index;
+        $index = array_search($column, $this->columns);
+
+        if ($index!== false) :
+            return (int)$index;
         endif;
-        
+
         return null;
     }
-    
+
+    /**
+     * Récupération des éléments
+     *
+     * @return null|ResultSet
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Récupération de la liste des éléments sous forme de tableau
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return ($this->items instanceof ResultSet) ? \iterator_to_array($this->items) : [];
+    }
+
+    /**
+     * Récupération de la liste des ligne du fichier
+     *
+     * @return array
+     */
+    public function getRows()
+    {
+        /**
+         * Traitement global du fichier csv
+         * @var Reader $reader
+         */
+        $reader = Reader::createFromStream(fopen($this->getFilename(), 'r'));
+
+        // Définition des propriétés du fichier CSV
+        // Définition du délimiteur
+        try {
+            $reader->setDelimiter($this->getProperty('delimiter', ','));
+        } catch(Exception $e) {
+            exit;
+        }
+        // Définition de l'encapsulation
+        try {
+            $reader->setEnclosure($this->getProperty('enclosure', '"'));
+        } catch(Exception $e) {
+            exit;
+        }
+        // Définition de l'encapsulation du caractère d'échapement
+        try {
+            $reader->setEscape($this->getProperty('escape', '\\'));
+        } catch(Exception $e) {
+            exit;
+        }
+
+        // Conversion de l'encodage des résultats
+        CharsetConverter::addTo($reader, 'Windows-1252', 'utf-8');
+
+        //
+        $stmt = new Statement();
+
+        // Définition du nombre total de résultats
+        $total_records = $stmt->process($reader);
+        $total_items = count($total_records);
+        $this->setTotalItems($total_items);
+
+        // Définition des attributs de pagination
+        $per_page = $this->getQueryArg('per_page', -1);
+        $paged = $this->getQueryArg('paged', 1);
+        $offset = ($per_page > -1) ? (($paged - 1) * $per_page) : 0;
+        $total_pages = ($per_page > -1) ? ceil($total_items / $per_page) : 1;
+        $this->setTotalPages($total_pages);
+
+        // Définition de la ligne de démarrage du traitement
+        try {
+            $stmt->offset($offset);
+        } catch(Exception $e) {
+            exit;
+        }
+        // Définition du nombre d'éléments à traiter
+        try {
+            $stmt->limit($per_page);
+        } catch(Exception $e) {
+            exit;
+        }
+        $records = $stmt->process($reader, $this->getColumns());
+
+        // Définition du nombre d'élément trouvés pour la requête
+        $this->setFoundItems(count($records));
+
+        $this->items = $records;
+
+        return $this->toArray();
+    }
+
     /**
      * Définition de l'ordre de trie
+     * @todo
      */
     final public function setSorts()
     {
-        if( ! $this->OrderBy )
-            return;         
+        if (!$this->orderBy)
+            return;
 
-        foreach( (array) $this->OrderBy as $key => $value ) :
-            $key = ( is_numeric( $key ) ) ? $key : $this->getColumnIndex( $key );
-            if( ! is_numeric( $key ) )
+        foreach ((array)$this->orderBy as $key => $value) :
+            $key = (is_numeric($key)) ? $key : $this->getColumnIndex($key);
+            if (!is_numeric($key))
                 continue;
-            $this->Sorts[$key] = in_array( strtoupper( $value ), array( 'ASC', 'DESC' ) ) ? strtoupper( $value ) : 'ASC';             
+            $this->Sorts[$key] = in_array(strtoupper($value), ['ASC', 'DESC']) ? strtoupper($value) : 'ASC';
         endforeach;
-        
+
         return $this->Sorts;
     }
-    
+
     /**
      * Méthode de rappel de trie des données
+     * @todo
      */
-    final public function searchSortCallback( $rowA, $rowB )
+    final public function searchSortCallback($rowA, $rowB)
     {
-        foreach( $this->Sorts as $col => $order  ) : 
-            switch( $order ) :
+        foreach ($this->Sorts as $col => $order) :
+            switch ($order) :
                 case 'ASC' :
-                    return strcasecmp( $rowA[$col], $rowB[$col] );
+                    return strcasecmp($rowA[$col], $rowB[$col]);
                     break;
                 case 'DESC' :
-                    return strcasecmp( $rowB[$col], $rowA[$col] );
+                    return strcasecmp($rowB[$col], $rowA[$col]);
                     break;
             endswitch;
         endforeach;
     }
-    
+
     /**
      * Définition du filtrage
+     * @todo
      */
-    final public function setFilters( $csvObj )
+    final public function setFilters($csvObj)
     {
-        if( ! $this->SearchArgs )
+        if (!$this->searchArgs)
             return;
-                     
-        $clone = clone $csvObj;        
-        $count = count( $clone->fetchOne() );            
-            
-        foreach( $this->SearchArgs as $key => $f ) :
-            if( ! is_numeric( $key ) && ( $key === 'relation' ) && ( in_array( strtoupper( $f ), array( 'OR', 'AND' ) ) ) ) :
-                $this->FiltersRelation = strtoupper( $f );
-            endif;    
-            if( empty( $f['term'] ) )
+
+        $clone = clone $csvObj;
+        $count = count($clone->fetchOne());
+
+        foreach ($this->searchArgs as $key => $f) :
+            if (!is_numeric($key) && ($key === 'relation') && (in_array(strtoupper($f), ['OR', 'AND']))) :
+                $this->FiltersRelation = strtoupper($f);
+            endif;
+            if (empty($f['term']))
                 continue;
             $term = $f['term'];
-            
-            $exact = ! empty( $f['exact'] ) ? true : false;
-            
-            if( empty( $f['columns'] ) ) :
-                $columns = range( 0, ( $count-1 ), 1 );
-            elseif( is_string( $f['columns'] ) ) :
-                $columns = array_map( 'trim', explode( ',', $f['columns'] ) ) ;
-            elseif( is_array( $f['columns'] ) ) :
+
+            $exact = !empty($f['exact']) ? true : false;
+
+            if (empty($f['columns'])) :
+                $columns = range(0, ($count - 1), 1);
+            elseif (is_string($f['columns'])) :
+                $columns = array_map('trim', explode(',', $f['columns']));
+            elseif (is_array($f['columns'])) :
                 $columns = $f['columns'];
             endif;
-            $filters = array();
-            foreach( $columns as $c ) :
-                if( ! is_numeric( $c ) ) :
-                    $c = $this->getColumnIndex( $c );
+            $filters = [];
+            foreach ($columns as $c) :
+                if (!is_numeric($c)) :
+                    $c = $this->getColumnIndex($c);
                 endif;
-                
-                              
-                $this->Filters[] = array(
-                    'col'   => (int) $c,
+
+
+                $this->Filters[] = [
+                    'col'   => (int)$c,
                     'exact' => $exact,
                     'term'  => $term
-                );
-            endforeach;            
+                ];
+            endforeach;
         endforeach;
 
         return $this->Filters;
     }
-    
+
     /**
      * Méthode de rappel du filtrage
+     * @todo
      */
-    final public function searchFilterCallback( $row )
+    final public function searchFilterCallback($row)
     {
-        $has = array();
-        foreach( $this->Filters as $f ) :
-            $regex = $f['exact'] ? '^'. $f['term'] .'$' : $f['term'];
+        $has = [];
+        foreach ($this->Filters as $f) :
+            $regex = $f['exact'] ? '^' . $f['term'] . '$' : $f['term'];
 
-            if( preg_match( '/'. $regex .'/i', $row[$f['col']] ) ) :                
+            if (preg_match('/' . $regex . '/i', $row[$f['col']])) :
                 $has[$f['col']] = 1;
             else :
                 $has[$f['col']] = 0;
             endif;
         endforeach;
-        
-        switch( $this->FiltersRelation ) :
+
+        switch ($this->FiltersRelation) :
             default :
             case 'OR' :
-                if( in_array( 1, $has ) )
+                if (in_array(1, $has))
                     return true;
                 break;
             case 'AND' :
-                if( ! in_array( 0, $has ) )
+                if (!in_array(0, $has))
                     return true;
                 break;
-        endswitch;        
-        
+        endswitch;
+
         return false;
     }
-    
-    /**
-     * Méthode de rappel de filtrage des doublons
-     * @todo
-     */
-    final public function duplicateFilterCallback( $row )
-    {        
-        if( ! in_array( $row[0], $this->Duplicates ) ) :
-            array_push( $this->Duplicates, $row[0] );           
-            return true;                    
-        endif;
-    } 
-                
-    /**
-     * Récupération d'éléments
-     */
-    final public static function getResults( $args = array() )
-    {
-        $csv = new Static( $args );
-
-        // Traitement global du fichier csv
-        $reader = Reader::createFromFileObject( new \SplFileObject( $csv->getFilename() ) );
-        
-        // Définition des propriétés csv
-        $reader
-            ->setDelimiter( $csv->getProperty( 'delimiter', ',' ) )
-            ->setEnclosure( $csv->getProperty( 'enclosure', '"' ) )
-            ->setEscape( $csv->getProperty( 'escape', '\\' ) )
-            ->setOffset( 0 )
-            ->setLimit( -1 );
-            
-        // Traitement des arguments de requête
-        /// Flag de filtrage des données
-        $filtered = false;        
-        
-        /// Recherche
-        if( $csv->setFilters( $reader ) ) :
-            $filtered = true;        
-            $reader->addFilter( array( $csv, 'searchFilterCallback' ) );          
-        endif;
-            
-        /// Trie des éléments
-        if( $csv->setSorts( $reader ) ) :
-           $reader->addSortBy( array( $csv, 'searchSortCallback' ) ); 
-        endif;
-                       
-        // Traitement des données filtrées
-        if( $filtered ) :
-            $counter = clone $reader;
-            $rows = $counter->fetchAll();
-            // Définition du nombre total d'éléments
-            $total_items = count( $rows );
-            $csv->setTotalItems( $total_items );
-            
-        // Traitement des données non filtrées    
-        else :
-            // Définition du nombre total d'éléments
-            $total_items = $reader->each( function($row){ return true;});
-            $csv->setTotalItems( $total_items );
-        endif;
-        
-        // Définition des attributs de pagination
-        $per_page = $csv->getQueryArg( 'per_page', -1 );
-        $paged = $csv->getQueryArg( 'paged', 1 );
-        $offset = ( $per_page > -1 ) ? ( ( $paged - 1 ) * $per_page ) : 0; 
-        $total_pages = ( $per_page > -1 ) ? ceil( $total_items / $per_page ) : 1;  
-        $csv->setTotalPages( $total_pages );  
-        
-        // Pagination
-        $reader->setOffset( $offset );
-        $reader->setLimit( $per_page );
-               
-        // Récupération des résultats
-        $results = $reader->fetchAssoc( 
-            $csv->getColumns(), 
-            function($row, $rowOffset) {
-                return array_map( function( $str ){ return Encoding::toUTF8( $str ); }, $row );
-            } 
-        );    
-        $csv->Items = iterator_to_array( $results );
-        
-        // Définition du nombre d'élément trouvés pour la requête
-        $found_items = count( $csv->Items );
-        $csv->setFoundItems( $found_items );
-        
-        return $csv;
-    }
-    
-    /**
-     * Récupération d'une ligne de donnée du fichier
-     */
-    final public static function getRow( $offset = 0, $args = array() )
-    {
-        $csv = new Static( $args );
-        
-        // Traitement global du fichier csv
-        $reader = Reader::createFromFileObject( new \SplFileObject( $csv->getFilename() ) );
-        
-        // Définition des propriétés csv
-        $reader
-            ->setDelimiter( $csv->getProperty( 'delimiter', ',' ) )
-            ->setEnclosure( $csv->getProperty( 'enclosure', '"' ) )
-            ->setEscape( $csv->getProperty( 'escape', '\\' ) )
-            ->setOffset( $offset )
-            ->setLimit( 1 );            
-
-        // Récupération des résultats
-        $results = $reader->fetchAssoc( 
-            $csv->getColumns(), 
-            function($row, $rowOffset) {
-                return array_map( function( $str ){ return Encoding::toUTF8( $str ); }, $row );
-            } 
-        );
-        $csv->Items = iterator_to_array( $results );
-        
-        // Définition du nombre d'élément trouvés pour la requête
-        $found_items = count( $csv->Items );
-        $csv->setFoundItems( $found_items );
-        $csv->setTotalItems( $found_items );
-        $csv->setTotalPages( 1 );
-        
-        return $csv;
-    } 
-    
-    /**
-     * Récupération des éléments de donnée du fichier
-     * @todo
-     
-    public function getCol( $col = 0, $distinct = true )
-    {      
-        // Traitement global du fichier csv
-        $csv = Reader::createFromFileObject( new \SplFileObject( $this->getFilename() ) );
-        // Définition des propriétés du csv
-        $csv
-            ->setDelimiter( $this->getProperty( 'delimiter', ',' ) )
-            ->setEnclosure( $this->getProperty( 'enclosure', '"' ) )
-            ->setEscape( $this->getProperty( 'escape', '\\' ) );
-               
-        // Traitement des arguments de requête           
-        $per_page = $this->getQueryArg( 'per_page', -1 );
-        $paged = $this->getQueryArg( 'paged', 1 );
-        $offset = ( $per_page > -1 ) ? ( ( $paged - 1 ) * $per_page ) : 0;    
-        $filtered = false;
-        
-        // Doublons
-        if( ! $distinct ) :
-            $filtered = true; $this->setTotalItems( 0 );
-            $csv->addFilter( array( $this, 'duplicateFilterCallback' ) );
-            $total_items = $this->getTotalItems(); 
-        endif;        
-        
-        // Recherche
-        if( $this->setFilters( $csv ) ) :
-            $filtered = true; $this->setTotalItems( 0 );
-            $csv->addFilter( array( $this, 'searchFilterCallback' ) );
-            $total_items = $this->getTotalItems();                 
-        endif;  
-        
-        if( ! $filtered ) :
-            // Compte le nombre total d'éléments trouvés
-            $total_items = $csv->each( function($row){ return true;});
-            $this->setTotalItems( $total_items );
-        endif;
-                
-        // Pagination
-        $csv
-            ->setOffset( $offset )
-            ->setLimit( $per_page );
-        
-        // Trie des éléments
-        if( $this->setSorts( $csv ) ) :
-           $csv->addSortBy( array( $this, 'searchSortCallback' ) ); 
-        endif;
-        
-        // Définition du nombre total de page
-        $total_pages = ( $per_page > -1 ) ? ceil( $total_items / $per_page ) : 1;  
-        $this->setTotalPages( $total_pages );  
-  
-        // Récupération des résultats
-        $colname = ( isset( $this->Columns[$col] ) ) ? $this->Columns[$col] : $col;
-        $results = $csv->fetchAssoc( 
-            array( $colname ), 
-            function($row){ 
-                return (object) array_map( 'utf8_encode', $row );
-            } 
-        );
-
-        // Formatage et retour des résultats
-        $this->Items = iterator_to_array( $results, true );
-        
-        return $this->Items;
-    }*/
 }
