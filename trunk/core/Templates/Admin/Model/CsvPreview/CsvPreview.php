@@ -124,7 +124,7 @@ class CsvPreview extends \tiFy\Core\Templates\Admin\Model\AjaxListTable\AjaxList
         endif;
 
         // Traitement du fichier d'import
-        $Csv = Csv::getResults( $attrs );        
+        $Csv = Csv::getList( $attrs );
         $items = array();
         
         foreach( $Csv->getItems() as $import_index => $item ) :
