@@ -2,8 +2,9 @@
 namespace tiFy\Core\Templates\Admin\Model\CsvImport;
 
 use tiFy\Lib\Csv\Csv;
+use tiFy\Core\Templates\Admin\Model\FileImport\FileImport;
 
-class CsvImport extends \tiFy\Core\Templates\Admin\Model\FileImport\FileImport
+class CsvImport extends FileImport
 {
     /**
      * Délimiteur de colonnes du fichier CSV
@@ -87,7 +88,7 @@ class CsvImport extends \tiFy\Core\Templates\Admin\Model\FileImport\FileImport
                 'columns'       => $this->FileColumns,
                 'delimiter'     => $this->Delimiter
             );
-            $Csv = Csv::getRow(current($this->current_item()), $attrs);
+            $Csv = Csv::get(current($this->current_item()), $attrs);
         else :
             $attrs = array(
                 'filename'      => $params['filename'],
@@ -113,11 +114,11 @@ class CsvImport extends \tiFy\Core\Templates\Admin\Model\FileImport\FileImport
                 );
             endif;
             // Traitement du fichier d'import
-            $Csv = Csv::getResults( $attrs );
+            $Csv = Csv::getList( $attrs );
         endif;
                 
         $items = array();
-        
+
         foreach($Csv->getItems() as $import_index => $item) :
             $item['_import_row_index'] = $import_index;
             $items[] = (object) $item;
