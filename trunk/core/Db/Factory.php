@@ -1,6 +1,7 @@
 <?php
 namespace tiFy\Core\Db;
 
+use Illuminate\Support\Arr;
 use tiFy\Core\Db\Make;
 use tiFy\Core\Db\Handle;
 use tiFy\Core\Db\Meta;
@@ -77,10 +78,16 @@ class Factory extends \tiFy\App\FactoryConstructor
     public $SQLEngine = null;
 
     /**
-     * Nom de la table de metadonnées
-     * @var null
+     * Identifiant de qualification la table d'enregistrement des metadonnées.
+     * @var string
      */
-    public $MetaType = null;
+    public $MetaType = '';
+
+    /**
+     * Nom de la colonne de jointure de la table d'enregistrement des metadonnées.
+     * @var string
+     */
+    public $MetaJoinCol = '';
 
     /**
      * Variables de requête privées
@@ -133,7 +140,7 @@ class Factory extends \tiFy\App\FactoryConstructor
      *          Liste des colonnes ouvertes à la recherche
      *
      *      }
-     *      @param bool|string $meta Activation ou nom de la table de stockage des metadonnées
+     *      @param bool|string|array $meta Activation ou nom de la table de stockage des metadonnées
      *      @param \wpdb|object $sql_engine Moteur (ORM) de requête en base de données
      * }
      *
@@ -154,7 +161,7 @@ class Factory extends \tiFy\App\FactoryConstructor
             'columns'    => [],
             'keys'       => [],
             'search'     => [],
-            'meta'       => null,
+            'meta'       => false,
             // moteur de requete SQL global $wpdb par défaut | new \wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
             'sql_engine' => null,
         ];
@@ -218,7 +225,7 @@ class Factory extends \tiFy\App\FactoryConstructor
      *
      * @param string $col_prefix Intitulé du préfixe des colonnes
      *
-     * @return array
+     * @return string
      */
     private function setColPrefix($col_prefix = '')
     {
@@ -264,7 +271,7 @@ class Factory extends \tiFy\App\FactoryConstructor
     private function setPrimary($primary_col = '')
     {
         if (empty($this->ColNames)) :
-            return;
+            return '';
         endif;
 
         if ($primary_col && in_array($primary_col, $this->ColNames)) :
@@ -307,20 +314,28 @@ class Factory extends \tiFy\App\FactoryConstructor
         return $this->Name = $this->sql()->{$name};
     }
 
-    /** == Définition du nom de la table en base de données == **/
+    /**
+     * Définition des attributs de la table de gestion des métadonnées
+     *
+     * @return string
+     */
     private function setMeta($meta_type = null)
     {
-        if ( ! $meta_type) {
-            return;
-        }
+        if (! $meta_type) :
+            return '';
+        endif;
 
-        if (is_bool($meta_type)) {
+        if (is_string($meta_type)) :
+        elseif (is_bool($meta_type)) :
             $meta_type = $this->ShortName;
-        }
+        elseif(is_array($meta_type)) :
+            $this->MetaJoinCol = Arr::get($meta_type, 'join_col', '');
+            $meta_type = Arr::get($meta_type, 'meta_type', $this->ShortName);
+        endif;
 
         $table = $meta_type . 'meta';
 
-        if ( ! in_array($table, $this->sql()->tables)) :
+        if (! in_array($table, $this->sql()->tables)) :
             array_push($this->sql()->tables, $table);
             $this->sql()->set_prefix($this->sql()->base_prefix);
         endif;

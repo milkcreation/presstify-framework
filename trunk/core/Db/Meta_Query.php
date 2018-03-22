@@ -38,7 +38,7 @@ class Meta_Query extends \WP_Meta_Query
 		$this->table_aliases = array();
 
 		$this->meta_table     = $meta_table;
-		$this->meta_id_column = sanitize_key( $type . '_id' );
+		$this->meta_id_column = $this->Db->meta()->getJoinCol();
 
 		$this->primary_table     = $primary_table;
 		$this->primary_id_column = $primary_id_column;
