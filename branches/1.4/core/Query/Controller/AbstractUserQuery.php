@@ -4,7 +4,7 @@ namespace tiFy\Core\Query\Controller;
 
 use tiFy\App\Traits\App as TraitsApp;
 
-abstract class AbstractUserQuery
+abstract class AbstractUserQuery implements QueryInterface
 {
     use TraitsApp;
 
@@ -70,7 +70,7 @@ abstract class AbstractUserQuery
         elseif (is_int($id)) :
             $user = get_userdata($id);
         elseif (is_string($id)) :
-            return $this->getBy('login', $id);
+            return $this->getBy(null, $id);
         else :
             $user = $id;
         endif;
