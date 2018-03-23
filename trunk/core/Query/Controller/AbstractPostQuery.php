@@ -4,7 +4,7 @@ namespace tiFy\Core\Query\Controller;
 
 use tiFy\App\Traits\App as TraitsApp;
 
-abstract class AbstractPostQuery
+abstract class AbstractPostQuery implements QueryInterface
 {
     use TraitsApp;
 
@@ -66,7 +66,7 @@ abstract class AbstractPostQuery
     public function get($id = null)
     {
         if (is_string($id)) :
-            return self::getBy('name', $id);
+            return $this->getBy(null, $id);
         elseif (!$id) :
             $post = get_the_ID();
         else :
