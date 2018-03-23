@@ -1,7 +1,10 @@
 <?php
+
 namespace tiFy\Core\Templates\Admin\Model\JsonImport;
 
-class JsonImport extends \tiFy\Core\Templates\Admin\Model\FileImport\FileImport
+use tiFy\Core\Templates\Admin\Model\FileImport\FileImport;
+
+class JsonImport extends FileImport
 {
     /**
      * Récupération de la réponse

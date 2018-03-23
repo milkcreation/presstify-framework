@@ -4,7 +4,7 @@ namespace tiFy\Core\Query\Controller;
 
 use tiFy\App\Traits\App as TraitsApp;
 
-abstract class AbstractTermQuery
+abstract class AbstractTermQuery implements QueryInterface
 {
     use TraitsApp;
 
@@ -72,7 +72,7 @@ abstract class AbstractTermQuery
                 return null;
             endif;
         elseif (is_string($id)) :
-            return $this->getBy('slug', $id);
+            return $this->getBy(null, $id);
         else :
             $term = $id;
         endif;
