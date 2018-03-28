@@ -11,11 +11,9 @@
  *          'per_page'      => -1
  *      ],
  *      'columns'       => ['lastname', 'firstname', 'email'],
- *      @todo
  *      'orderby'       => [
  *          'lastname'      => 'ASC'
  *      ],
- *      @todo
  *      'search'        => [
  *          [
  *              'term'      => '@domain.ltd',
@@ -123,14 +121,14 @@ class Csv
 
     /**
      * Arguments de trie
-     * @todo
+     *
      * @var array
      */
     public $orderBy = [];
 
     /**
      * Arguments de recherche
-     * @todo
+     *
      * @var array
      */
     public $searchArgs = [];
@@ -144,24 +142,34 @@ class Csv
 
     /**
      * Trie des données
-     * @todo
+     *
      * @var array
      */
     protected $sorts = [];
 
     /**
      * Filtres de données
-     * @todo
+     *
      * @var array
      */
     protected $filters = [];
 
     /**
      * Relation de filtrage des données
-     * @todo
+     *
      * @var string
      */
     protected $filtersRelation = 'OR';
+
+    /**
+     * Encodage des résultats
+     *
+     * @var array {
+     *      @var string $from - Encodage d'entrée
+     *      @var string $to - Encodage de sortie
+     * }
+     */
+    protected $charset_conv = [];
 
     /**
      * CONSTRUCTEUR
@@ -195,6 +203,9 @@ class Csv
                     break;
                 case 'search' :
                     $this->searchArgs = $option_value;
+                    break;
+                case 'charset_conv' :
+                    $this->setCharsetConv($option_value);
                     break;
             endswitch;
         endforeach;
@@ -326,6 +337,24 @@ class Csv
     }
 
     /**
+     * Définition de l'encodage des résultats
+     *
+     * @param array $charset_conv {
+     *      @var string $from - Encode d'entrée
+     *      @var string $to - Encodage de sortie
+     * }
+     * @return $this
+     */
+    final public function setCharsetConv($charset_conv = [])
+    {
+        if (is_array($charset_conv) && !empty($charset_conv['from']) && !empty($charset_conv['to'])) :
+            $this->charset_conv = $charset_conv;
+        endif;
+
+        return $this;
+    }
+
+    /**
      * Récupération du fichier de données.
      */
     public function getFilename()
@@ -429,6 +458,37 @@ class Csv
     }
 
     /**
+     * Récupération de l'intitulé d'une colonne en fonction de son index
+     *
+     * @param int $index Index de la colonne
+     *
+     * @return null|string
+     */
+    final public function getColumnFromIndex($index = 0)
+    {
+        $_index = array_search($index, array_keys($this->columns));
+
+        if ($_index!== false) :
+            return $this->columns[$_index];
+        endif;
+
+        return null;
+    }
+
+    /**
+     * Récupération de la valeur d'une colonne en fonction de son index
+     *
+     * @param array $row Ligne du CSV
+     * @param int $index Index de colonne souhaité
+     *
+     * @return mixed
+     */
+    final public function getColumnValue($row = [], $index = 0)
+    {
+        return isset($row[$index]) ? $row[$index] : (isset($row[$this->getColumnFromIndex($index)]) ? $row[$this->getColumnFromIndex($index)] : null);
+    }
+
+    /**
      * Récupération des éléments
      *
      * @return null|ResultSet
@@ -459,7 +519,7 @@ class Csv
          * Traitement global du fichier csv
          * @var Reader $reader
          */
-        $reader = Reader::createFromStream(fopen($this->getFilename(), 'r'));
+        $reader = Reader::createFromPath($this->getFilename(), 'r');
 
         // Définition des propriétés du fichier CSV
         // Définition du délimiteur
@@ -482,13 +542,25 @@ class Csv
         }
 
         // Conversion de l'encodage des résultats
-        CharsetConverter::addTo($reader, 'Windows-1252', 'utf-8');
+        if ($this->charset_conv) :
+            CharsetConverter::addTo($reader, $this->charset_conv['from'], $this->charset_conv['to']);
+        endif;
 
-        //
         $stmt = new Statement();
+
+        // Filtrage
+        if ($this->setFilters($stmt->process($reader))) :
+            $stmt = $stmt->where([$this, 'searchFilterCallback']);
+        endif;
+
+        // Trie des éléments
+        if ($this->setSorts()) :
+            $stmt = $stmt->orderBy([$this, 'searchSortCallback']);
+        endif;
 
         // Définition du nombre total de résultats
         $total_records = $stmt->process($reader);
+
         $total_items = count($total_records);
         $this->setTotalItems($total_items);
 
@@ -523,36 +595,38 @@ class Csv
 
     /**
      * Définition de l'ordre de trie
-     * @todo
+     *
+     * @return mixed
      */
     final public function setSorts()
     {
         if (!$this->orderBy)
-            return;
+            return null;
 
         foreach ((array)$this->orderBy as $key => $value) :
             $key = (is_numeric($key)) ? $key : $this->getColumnIndex($key);
             if (!is_numeric($key))
                 continue;
-            $this->Sorts[$key] = in_array(strtoupper($value), ['ASC', 'DESC']) ? strtoupper($value) : 'ASC';
+            $this->sorts[$key] = in_array(strtoupper($value), ['ASC', 'DESC']) ? strtoupper($value) : 'ASC';
         endforeach;
 
-        return $this->Sorts;
+        return $this->sorts;
     }
 
     /**
      * Méthode de rappel de trie des données
-     * @todo
+     *
+     * @return int
      */
     final public function searchSortCallback($rowA, $rowB)
     {
-        foreach ($this->Sorts as $col => $order) :
+        foreach ($this->sorts as $col => $order) :
             switch ($order) :
                 case 'ASC' :
-                    return strcasecmp($rowA[$col], $rowB[$col]);
+                    return strcasecmp($this->getColumnValue($rowA, $col), $this->getColumnValue($rowB, $col));
                     break;
                 case 'DESC' :
-                    return strcasecmp($rowB[$col], $rowA[$col]);
+                    return strcasecmp($this->getColumnValue($rowB, $col), $this->getColumnValue($rowA, $col));
                     break;
             endswitch;
         endforeach;
@@ -560,19 +634,20 @@ class Csv
 
     /**
      * Définition du filtrage
-     * @todo
+     *
+     * @return mixed
      */
     final public function setFilters($csvObj)
     {
         if (!$this->searchArgs)
-            return;
+            return null;
 
         $clone = clone $csvObj;
         $count = count($clone->fetchOne());
 
         foreach ($this->searchArgs as $key => $f) :
             if (!is_numeric($key) && ($key === 'relation') && (in_array(strtoupper($f), ['OR', 'AND']))) :
-                $this->FiltersRelation = strtoupper($f);
+                $this->filtersRelation = strtoupper($f);
             endif;
             if (empty($f['term']))
                 continue;
@@ -593,8 +668,7 @@ class Csv
                     $c = $this->getColumnIndex($c);
                 endif;
 
-
-                $this->Filters[] = [
+                $this->filters[] = [
                     'col'   => (int)$c,
                     'exact' => $exact,
                     'term'  => $term
@@ -602,27 +676,28 @@ class Csv
             endforeach;
         endforeach;
 
-        return $this->Filters;
+        return $this->filters;
     }
 
     /**
      * Méthode de rappel du filtrage
-     * @todo
+     *
+     * @return bool
      */
-    final public function searchFilterCallback($row)
+    final public function searchFilterCallback(array $record)
     {
         $has = [];
-        foreach ($this->Filters as $f) :
-            $regex = $f['exact'] ? '^' . $f['term'] . '$' : $f['term'];
 
-            if (preg_match('/' . $regex . '/i', $row[$f['col']])) :
+        foreach ($this->filters as $f) :
+            $regex = $f['exact'] ? '^' . $f['term'] . '$' : $f['term'];
+            if (preg_match('/' . $regex . '/i', $this->getColumnValue($record, $f['col']))) :
                 $has[$f['col']] = 1;
             else :
                 $has[$f['col']] = 0;
             endif;
         endforeach;
 
-        switch ($this->FiltersRelation) :
+        switch ($this->filtersRelation) :
             default :
             case 'OR' :
                 if (in_array(1, $has))
