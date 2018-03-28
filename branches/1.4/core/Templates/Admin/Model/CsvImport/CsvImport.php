@@ -119,7 +119,7 @@ class CsvImport extends FileImport
                 
         $items = array();
 
-        foreach($Csv->getItems() as $import_index => $item) :
+        foreach($Csv->toArray() as $import_index => $item) :
             $item['_import_row_index'] = $import_index;
             $items[] = (object) $item;
         endforeach;
