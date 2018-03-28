@@ -1,9 +1,17 @@
 <?php
+
 namespace tiFy\App\Traits;
 
+use Illuminate\Support\Arr;
+use League\Event\EmitterInterface;
+use League\Event\Event;
+use League\Event\EventInterface;
+use League\Event\ListenerInterface;
+use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
 use tiFy\tiFy;
 use tiFy\Apps;
-use Illuminate\Support\Arr;
 
 trait App
 {
@@ -12,7 +20,7 @@ trait App
      */
     /**
      * Formatage lower_name d'une chaine de caractère
-     * Converti une chaine de caractère CamelCase en snake_case
+     * @internal Converti une chaine de caractère CamelCase en snake_case
      *
      * @param null|string $name
      * @param string $separator
@@ -26,7 +34,7 @@ trait App
 
     /**
      * Formatage UpperName d'une chaine de caratère
-     * Converti une chaine de caractère snake_case en CamelCase
+     * @internal Converti une chaine de caractère snake_case en CamelCase
      *
      * @param null|string $name Chaine de caractère à traité. Nom de la classe par défaut.
      * @param bool $underscore Conservation des underscores
@@ -100,6 +108,20 @@ trait App
     final public function appAttr($attr, $classname = null)
     {
         return self::tFyAppAttr($attr, $classname);
+    }
+
+    /**
+     * Définition d'un attribut d'application déclarée.
+     *
+     * @param string $key Clé de qualification de l'attribut à définir. Syntaxe à point permise pour permettre l'enregistrement de sous niveau.
+     * @param mixed $value Valeur de définition de l'attribut.
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'applicatif.
+     *
+     * @return bool
+     */
+    final public static function appSetAttr($key, $value, $classname)
+    {
+        return self::tFyAppSetAttr($key, $value, $classname);
     }
 
     /**
@@ -244,6 +266,35 @@ trait App
     }
 
     /**
+     * Déclaration d'un événement.
+     * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
+     *
+     * @param string $name Identifiant de qualification de l'événement.
+     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
+     * @param int $priority Priorité de traitement.
+     *
+     * @return EmitterInterface
+     */
+    final public function appListen($name, $listener, $priority = 0)
+    {
+        return self::tFyAppListen($name, $listener, $priority);
+    }
+
+    /**
+     * Déclenchement d'un événement.
+     * @see http://event.thephpleague.com/2.0/events/classes/
+     *
+     * @param string|object $event Identifiant de qualification de l'événement.
+     * @param mixed $args Variable(s) passée(s) en argument.
+     *
+     * @return null|EventInterface
+     */
+    final public function appEmit($event, $args = null)
+    {
+        return self::tFyAppEmit($event, $args);
+    }
+
+    /**
      * AIDE A LA SAISIE
      */
     /**
@@ -261,7 +312,7 @@ trait App
     }
 
     /**
-     * CONTENEUR
+     * CONTENEUR D'INJECTION
      */
     /**
      * Conteneur d’injection de dépendances
@@ -320,6 +371,21 @@ trait App
     public function appGetContainer($alias, $args = [])
     {
         return self::tFyAppGetContainer($alias, $args);
+    }
+
+    /**
+     * JOURNALISATION
+     */
+    /**
+     * Récupération de la classe de rappel de journalisation.
+     *
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
+     *
+     * @return Logger
+     */
+    public function appLog($classname = null)
+    {
+        return self::tFyAppLog($classname);
     }
 
     /**
@@ -483,6 +549,40 @@ trait App
     }
 
     /**
+     * Déclaration d'un événement.
+     * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
+     *
+     * @param string $name Identifiant de qualification de l'événement.
+     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
+     * @param int $priority Priorité de traitement.
+     *
+     * @return EmitterInterface
+     */
+    final public static function tFyAppListen($name, $listener, $priority = 0)
+    {
+        return tiFy::getEmitter()->addListener($name, $listener, $priority);
+    }
+
+    /**
+     * Déclenchement d'un événement.
+     * @see http://event.thephpleague.com/2.0/events/classes/
+     * @see http://event.thephpleague.com/2.0/events/arguments/
+     *
+     * @param string|object $event Identifiant de qualification de l'événement.
+     * @param mixed $args Variable(s) passée(s) en argument.
+     *
+     * @return null|EventInterface
+     */
+    final public static function tFyAppEmit($event, $args = null)
+    {
+        if (! is_object($event) && ! is_string($event)) :
+            return null;
+        endif;
+
+        return tiFy::getEmitter()->emit(is_object($event) ? $event : Event::named($event), $args);
+    }
+
+    /**
      * ATTRIBUTS
      */
     /**
@@ -567,6 +667,22 @@ trait App
         if (isset($attrs[$attr])) :
             return $attrs[$attr];
         endif;
+
+        return null;
+    }
+
+    /**
+     * Définition d'un attribut d'application déclarée.
+     *
+     * @param string $key Clé de qualification de l'attribut à définir. Syntaxe à point permise pour permettre l'enregistrement de sous niveau.
+     * @param mixed $value Valeur de définition de l'attribut.
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'applicatif.
+     *
+     * @return bool
+     */
+    final public static function tFyAppSetAttr($key, $value, $classname)
+    {
+        return Apps::setAttr($key, $value, $classname);
     }
 
     /**
@@ -1405,6 +1521,40 @@ trait App
     public static function tFyAppGetContainer($alias, $args = [])
     {
         return self::tFyAppContainer()->get($alias, $args);
+    }
+
+    /**
+     * JOURNALISATION
+     */
+    /**
+     * Récupération de la classe de rappel de journalisation.
+     *
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
+     *
+     * @return Logger
+     */
+    public function tFyAppLog($classname = null)
+    {
+        if ($logger = self::tFyAppAttr('logger', $classname)) :
+            return $logger;
+        endif;
+
+        //WP_CONTENT_DIR . '/uploads/log/' . \wp_normalize_path(self::tFyAppNamespace($classname)) . '/log.php';
+        $filename = WP_CONTENT_DIR . '/uploads/log.log';
+
+        $formatter = new LineFormatter();
+        $stream = new RotatingFileHandler($filename, 7);
+        $stream->setFormatter($formatter);
+
+        $logger = new Logger(self::tFyAppClassname($classname));
+        self::tFyAppSetAttr('logger', $logger, $classname);
+
+        if ($timezone = get_option('timezone_string')) :
+            $logger->setTimezone(new \DateTimeZone($timezone));
+        endif;
+        $logger->pushHandler($stream);
+
+        return $logger;
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 namespace tiFy;
 
+use Illuminate\Support\Arr;
 use tiFy\tiFy;
 use tiFy\Lib\File;
 use Symfony\Component\Yaml\Yaml;
@@ -523,6 +524,26 @@ final class Apps
         else :
             return $default;
         endif;
+    }
+
+    /**
+     * Définition d'un attribut d'application déclarée
+     *
+     * @param string $key Clé de qualification de l'attribut à définir. Syntaxe à point permise pour permettre l'enregistrement de sous niveau.
+     * @param mixed $value Valeur de définition de l'attribut.
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'applicatif
+     *
+     * @return bool
+     */
+    public static function setAttr($key, $value, $classname)
+    {
+        if (!$attrs = self::getAttrList($classname)) :
+            return false;
+        endif;
+
+        Arr::set($attrs, $key, $value);
+
+        return true;
     }
     
     /**
