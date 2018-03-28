@@ -5,18 +5,18 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.8
- * @since 180323
+ * @version 1.4.9
  */
 
 namespace tiFy;
 
 use \tiFy\Lib\File;
-use Symfony\Component\HttpFoundation\Request;
 use League\BooBoo\BooBoo;
 use League\BooBoo\Formatter\HtmlFormatter;
 use League\BooBoo\Handler\CallableHandler;
 use League\Container\Container;
+use League\Event\Emitter;
+use Symfony\Component\HttpFoundation\Request;
 
 final class tiFy
 {
@@ -40,15 +40,21 @@ final class tiFy
 
     /**
      * Classe de rappel de la requête globale
-     * @var \Symfony\Component\HttpFoundation\Request
+     * @var Request
      */
     private static $GlobalRequest;
 
     /**
-     * Classe de rappel ddu conteneur d'injection de dépendance
-     * @var \League\Container\Container
+     * Classe de rappel du conteneur d'injection de dépendance
+     * @var Container
      */
     private static $Container;
+
+    /**
+     * Classe de rappel de gestion des événements
+     * @var Emitter
+     */
+    private static $Emitter;
 
     /**
      * Attributs de configuration
@@ -236,7 +242,7 @@ final class tiFy
     /**
      * Récupération de la classe de rappel de la requête global
      *
-     * @return \Symfony\Component\HttpFoundation\Request
+     * @return Request
      */
     public static function getGlobalRequest()
     {
@@ -302,18 +308,33 @@ final class tiFy
     }
 
     /**
-     * Conteneur d'injection de dépendances
+     * Récupération de la classe de rappel du conteneur d'injection de dépendances
      * @see http://container.thephpleague.com/
      *
-     * @return \League\Container\Container
+     * @return Container
      */
     public static function getContainer()
     {
-        if (!self::$Container) :
+        if (! self::$Container) :
             self::$Container = new Container();
         endif;
 
         return self::$Container;
+    }
+
+    /**
+     * Récupération de la classe de rappel de gestion des événements
+     * @see http://event.thephpleague.com/2.0/
+     *
+     * @return Emitter
+     */
+    public static function getEmitter()
+    {
+        if (! self::$Emitter) :
+            self::$Emitter = new Emitter();
+        endif;
+
+        return self::$Emitter;
     }
 
     /**
