@@ -90,10 +90,18 @@ interface UserItemInterface
 
     /**
      * Vérification de l'appartenance à un role
-     *
      * @param string $role Identifiant de qualification du rôle
-     *
      * @return bool
      */
     public function hasRole($role);
+
+    /**
+     * Vérification des habilitations.
+     * @see WP_User::has_cap()
+     * @see map_meta_cap()
+     * @param string $capability Nom de qalification de l'habiltation.
+     * @param int $object_id  Optionel. Identifiant de qualification de l'object à vérifier lorsque $capability est de type "meta".
+     * @return bool
+     */
+    public function can($capability);
 }

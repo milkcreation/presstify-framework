@@ -190,4 +190,22 @@ abstract class AbstractUserItem extends Fluent implements UserItemInterface
     {
         return in_array($role, $this->getRoles());
     }
+
+    /**
+     * Vérification des habilitations.
+     * @see WP_User::has_cap()
+     * @see map_meta_cap()
+     *
+     * @param string $capability Nom de qalification de l'habiltation.
+     * @param int $object_id  Optionel. Identifiant de qualification de l'object à vérifier lorsque $capability est de type "meta".
+     *
+     * @return bool
+     */
+    public function can($capability)
+    {
+        $args = array_slice(func_get_args(), 1);
+        $args = array_merge([$capability], $args);
+
+        return call_user_func_array([$this->getUser(), 'has_cap'], $args);
+    }
 }
