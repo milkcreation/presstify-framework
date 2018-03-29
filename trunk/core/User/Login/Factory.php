@@ -255,15 +255,15 @@ class Factory extends \tiFy\App\FactoryConstructor
     final public function getFieldAttrs($field_name)
     {
         if (!in_array($field_name, ['username', 'password', 'remember', 'submit'])) :
-            return;
+            return [];
         endif;
 
         if (!$login_form = $this->getAttr('login_form')) :
-            return;
+            return [];
         endif;
 
         if (!isset($login_form['fields'])) :
-            return;
+            return [];
         endif;
 
         $form_fields = $login_form['fields'];
@@ -355,7 +355,7 @@ class Factory extends \tiFy\App\FactoryConstructor
     final public function display($template = 'login_form', $attrs = [], $echo = true)
     {
         if (!$this->isTemplate($template)) :
-            return;
+            return '';
         endif;
 
         $output = call_user_func([$this, $template], $attrs);
@@ -600,13 +600,13 @@ class Factory extends \tiFy\App\FactoryConstructor
         $output .= "<form name=\"{$form_name}\" id=\"{$form_id}\" class=\"{$form_class}\" action=\"\" method=\"post\">";
 
         // Champs cachés requis
-        $output .= Field::Hidden(
+        $output .= (string)Field::Hidden(
             [
                 'name' => 'tiFyLogin',
                 'value' => $this->getId()
             ]
         );
-        $output .= Field::Hidden(
+        $output .= (string)Field::Hidden(
             [
                 'name' => '_wpnonce',
                 'value' => \wp_create_nonce('tiFyLogin-in-' . $this->getId())]
