@@ -140,12 +140,12 @@ trait Notices
      * @param string $type Type de notification
      * @param string $code Code d'identification de qualification de la notification
      *
-     * @return string
+     * @return array
      */
     final public function getNoticeMessages($type, $code = null)
     {
         if (!$this->isNoticeType($type)) :
-            return false;
+            return [];
         endif;
 
         $messages = [];
@@ -166,12 +166,12 @@ trait Notices
      * @param string $type Type de notification
      * @param string $code Code d'identification de qualification de la notification
      *
-     * @return string
+     * @return array
      */
     final public function getNoticeDatas($type, $code = null)
     {
         if (!$this->isNoticeType($type)) :
-            return false;
+            return [];
         endif;
 
         $datas = [];

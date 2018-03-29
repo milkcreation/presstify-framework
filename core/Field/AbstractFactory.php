@@ -24,7 +24,7 @@ class AbstractFactory
      * Compteur d'instance d'affichage
      * @var int
      */
-    private $Index = 0;
+    protected $Index = 0;
 
     /**
      * Liste des attributs de configuration
@@ -107,7 +107,7 @@ class AbstractFactory
             $id = uniqid();
         endif;
 
-        if (!isset(self::$Instance["{$instance_prefix}.{$id}"])) :
+        if (! isset(self::$Instance["{$instance_prefix}.{$id}"])) :
             $instance = $this;
             $this->set('index', ++$this->Index);
             $this->set('id', $id);
