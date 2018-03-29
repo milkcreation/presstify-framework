@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name Login
  * @desc Interface d'authentification utilisateur
@@ -104,6 +105,8 @@ final class Login extends \tiFy\App
         if (isset( self::$Factory[$id])) :
             return self::$Factory[$id];
         endif;
+
+        return null;
     }
 
     /**
