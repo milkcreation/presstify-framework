@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-03-29",
+  "time": "2018-03-30",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -62,14 +62,14 @@
     "phpmailer/phpmailer": "^5.2",
     "redeyeventures/geopattern": "^1.1",
     "symfony/filesystem": "^3.3",
-    "symfony/finder": "^3.3",
-    "symfony/http-foundation": "^3.3",
+    "symfony/finder": "^4.0",
+    "symfony/http-foundation": "^4.0",
     "symfony/psr-http-message-bridge": "^1.0",
-    "symfony/serializer": "^3.4",
-    "symfony/yaml": "^3.3",
-    "symfony/filesystem": "^3.3",
-    "symfony/serializer": "^3.3",
-    "symfony/yaml": "^3.3",
+    "symfony/serializer": "^4.0",
+    "symfony/yaml": "^4.0",
+    "symfony/filesystem": "^4.0",
+    "symfony/serializer": "^4.0",
+    "symfony/yaml": "^4.0",
     "twbs/bootstrap": "^3.3",
     "vimeo/vimeo-api": "^1.2",
     "zendframework/zend-diactoros": "^1.7"
