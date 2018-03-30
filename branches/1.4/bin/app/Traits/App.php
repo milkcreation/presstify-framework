@@ -3,6 +3,7 @@
 namespace tiFy\App\Traits;
 
 use Illuminate\Support\Arr;
+use League\Event\Emitter;
 use League\Event\EmitterInterface;
 use League\Event\Event;
 use League\Event\EventInterface;
@@ -263,6 +264,16 @@ trait App
     final public function appAddAction($tag, $method = '', $priority = 10, $accepted_args = 1, $classname = null)
     {
         return self::tFyAppAddAction($tag, $method, $priority, $accepted_args, $classname);
+    }
+
+    /**
+     * Récupération du déclencheur d'événement
+     *
+     * @return Emitter
+     */
+    final public function appEmitter()
+    {
+        return self::tFyAppEmitter();
     }
 
     /**
@@ -549,6 +560,16 @@ trait App
     }
 
     /**
+     * Récupération du déclencheur d'événement
+     *
+     * @return Emitter
+     */
+    final public static function tFyAppEmitter()
+    {
+        return tiFy::getEmitter();
+    }
+
+    /**
      * Déclaration d'un événement.
      * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
      *
@@ -560,7 +581,7 @@ trait App
      */
     final public static function tFyAppListen($name, $listener, $priority = 0)
     {
-        return tiFy::getEmitter()->addListener($name, $listener, $priority);
+        return self::tFyAppEmitter()->addListener($name, $listener, $priority);
     }
 
     /**
@@ -579,7 +600,7 @@ trait App
             return null;
         endif;
 
-        return tiFy::getEmitter()->emit(is_object($event) ? $event : Event::named($event), $args);
+        return self::tFyAppEmitter()->emit(is_object($event) ? $event : Event::named($event), $args);
     }
 
     /**
