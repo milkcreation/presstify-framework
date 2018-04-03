@@ -5,18 +5,20 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.12
+ * @version 1.4.13
  */
 
 namespace tiFy;
 
-use \tiFy\Lib\File;
-use League\BooBoo\BooBoo;
-use League\BooBoo\Formatter\HtmlFormatter;
-use League\BooBoo\Handler\CallableHandler;
+use Illuminate\Http\Request;
 use League\Container\Container;
+use League\Container\ReflectionContainer;
 use League\Event\Emitter;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\FileBag;
+use Symfony\Component\HttpFoundation\HeaderBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\ServerBag;
+use tiFy\Lib\File;
 
 final class tiFy
 {
@@ -145,13 +147,6 @@ final class tiFy
         new Apps;
     }
 
-    public function displayError($e)
-    {
-        echo $e->getMessage();
-
-        exit;
-    }
-
     /**
      * Formatage lower_name d'une chaine de caratère
      * Converti une chaine de caractère CamelCase en snake_case
@@ -254,51 +249,73 @@ final class tiFy
     }
 
     /**
-     * Appel d'une méthode de requête global
+     * Récupération de la classe de rappel de propriété de la requête globale.
+     *
+     * @see https://laravel.com/api/5.6/Illuminate/Http/Request.html
      * @see https://symfony.com/doc/current/components/http_foundation.html
      * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
      *
-     * @param string $method Nom de la méthode à appeler (all|keys|replace|add|get|set|has|remove|getAlpha|getAlnum|getBoolean|getDigits|getInt|filter)
-     * @param array $args Tableau associatif des arguments passés dans la méthode.
-     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
+     * @param string $property Propriété de la requête à traiter $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes|$_FILES (alias files)|SERVER (alias server)|headers.
      *
-     * @return mixed
+     * @return Request|FileBag|HeaderBag|ParameterBag|ServerBag
      */
-    public static function callGlobalRequestVar($method, $args = [], $type = '')
+    public static function request($property = '')
     {
         if (!$request = self::getGlobalRequest()) :
             return null;
         endif;
 
-        switch (strtolower($type)) :
+        switch (strtolower($property)) :
             default :
-                $object = $request;
+                return $request;
                 break;
             case 'post' :
             case 'request' :
-                $object = $request->request;
+                return $request->request;
                 break;
             case 'get' :
             case 'query' :
-                $object = $request->query;
+                return $request->query;
                 break;
             case 'cookie' :
             case 'cookies' :
-                $object = $request->cookies;
-                break;
-            case 'files' :
-                $object = $request->files;
-                break;
-            case 'server' :
-                $object = $request->server;
-                break;
-            case 'headers' :
-                $object = $request->headers;
+                return $request->cookies;
                 break;
             case 'attributes' :
-                $object = $request->attributes;
+                return $request->attributes;
+                break;
+            case 'files' :
+                return $request->files;
+                break;
+            case 'server' :
+                return $request->server;
+                break;
+            case 'headers' :
+                return $request->headers;
                 break;
         endswitch;
+    }
+
+    /**
+     * Appel d'une méthode de la classe de rappel de la requête global.
+     *
+     * @see https://laravel.com/api/5.6/Illuminate/Http/Request.html
+     * @see https://symfony.com/doc/current/components/http_foundation.html
+     * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
+     *
+     * @param string $method Nom de la méthode à appeler (all|keys|replace|add|get|set|has|remove|getAlpha|getAlnum|getBoolean|getDigits|getInt|filter)
+     * @param array $args Tableau associatif des arguments passés dans la méthode.
+     * @param string $property Propriété de la requête à traiter $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes|$_FILES (alias files)|SERVER (alias server)|headers.
+     *
+     * @return mixed
+     */
+    public static function requestCall($method, $args = [], $property = '')
+    {
+        if (!$request = self::getGlobalRequest()) :
+            return null;
+        endif;
+
+        $object = self::request($property);
 
         if (method_exists($object, $method)) :
             return call_user_func_array([$object, $method], $args);
@@ -318,6 +335,10 @@ final class tiFy
         if (! self::$Container) :
             self::$Container = new Container();
         endif;
+
+        self::$Container->delegate(
+            new ReflectionContainer()
+        );
 
         return self::$Container;
     }

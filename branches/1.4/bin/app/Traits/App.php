@@ -2,6 +2,7 @@
 
 namespace tiFy\App\Traits;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use League\Event\Emitter;
 use League\Event\EmitterInterface;
@@ -11,6 +12,10 @@ use League\Event\ListenerInterface;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
+use Symfony\Component\HttpFoundation\FileBag;
+use Symfony\Component\HttpFoundation\HeaderBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\ServerBag;
 use tiFy\tiFy;
 use tiFy\Apps;
 
@@ -432,6 +437,22 @@ trait App
     /**
      * REQUETE
      */
+    /**
+     * Récupération de la classe de rappel de propriété de la requête globale.
+     *
+     * @see https://laravel.com/api/5.6/Illuminate/Http/Request.html
+     * @see https://symfony.com/doc/current/components/http_foundation.html
+     * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
+     *
+     * @param string $property Propriété de la requête à traiter $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes|$_FILES (alias files)|SERVER (alias server)|headers.
+     *
+     * @return Request|FileBag|HeaderBag|ParameterBag|ServerBag
+     */
+    public function appRequest($property = '')
+    {
+        return self::tFyAppRequest($property);
+    }
+
     /**
      * Appel d'une méthode de requête global
      * @see https://symfony.com/doc/current/components/http_foundation.html
@@ -1429,6 +1450,22 @@ trait App
     }
 
     /**
+     * Récupération de la classe de rappel de propriété de la requête globale.
+     *
+     * @see https://laravel.com/api/5.6/Illuminate/Http/Request.html
+     * @see https://symfony.com/doc/current/components/http_foundation.html
+     * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
+     *
+     * @param string $property Propriété de la requête à traiter $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes|$_FILES (alias files)|SERVER (alias server)|headers.
+     *
+     * @return Request|FileBag|HeaderBag|ParameterBag|ServerBag
+     */
+    public function tFyAppRequest($property = '')
+    {
+        return tiFy::request($property);
+    }
+
+    /**
      * Appel d'une méthode de requête global
      * @see https://symfony.com/doc/current/components/http_foundation.html
      * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
@@ -1441,7 +1478,7 @@ trait App
      */
     public static function tFyAppCallRequestVar($method, $args = [], $type = '')
     {
-        return tiFy::callGlobalRequestVar($method, $args, $type);
+        return tiFy::requestCall($method, $args, $type);
     }
 
     /**
