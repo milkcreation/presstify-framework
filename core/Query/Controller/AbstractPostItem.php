@@ -89,7 +89,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
      */
     public function getDate($gmt = false)
     {
-        if ($gmt) :
+        if ($gmt == false) :
             return (string)$this->get('post_date', '');
         else :
             return (string)$this->get('post_date_gmt', '');
