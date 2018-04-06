@@ -10,15 +10,15 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     use TraitsApp;
 
     /**
-     * Objet Post Wordpress
+     * Objet Post Wordpress.
      * @var \WP_Post
      */
     protected $object;
 
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
      *
-     * @param \WP_Post $wp_post
+     * @param \WP_Post $wp_post Objet Post Wordpress.
      *
      * @return void
      */
@@ -30,7 +30,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de l'object Post Wordpress associé
+     * Récupération de l'object Post Wordpress associé.
      *
      * @return \WP_Post
      */
@@ -40,7 +40,8 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de l'identifiant de qualification Wordpress du post
+     * Récupération de l'identifiant de qualification Wordpress du post.
+     *
      * @return int
      */
     public function getId()
@@ -49,7 +50,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de l'identifiant de qualification Wordpress (post_name)
+     * Récupération de l'identifiant de qualification Wordpress (post_name).
      *
      * @return string
      */
@@ -59,7 +60,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Alias de récupération de l'identifiant de qualification Wordpress (post_name)
+     * Alias de récupération de l'identifiant de qualification Wordpress (post_name).
      *
      * @return string
      */
@@ -69,8 +70,8 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de l'identifiant unique de qualification global
-     * @internal Ne devrait pas être utilisé en tant que lien
+     * Récupération de l'identifiant unique de qualification global.
+     * @internal Ne devrait pas être utilisé en tant que lien.
      * @see https://developer.wordpress.org/reference/functions/the_guid/
      *
      * @return string
@@ -81,9 +82,9 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de la date de création au format datetime
+     * Récupération de la date de création au format datetime.
      *
-     * @return bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich
+     * @return bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
      *
      * @return string
      */
@@ -97,9 +98,9 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de la date de la dernière modification au format datetime
+     * Récupération de la date de la dernière modification au format datetime.
      *
-     * @return bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich
+     * @return bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
      *
      * @return string
      */
@@ -113,7 +114,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de l'identifiant de qualification de l'auteur original
+     * Récupération de l'identifiant de qualification de l'auteur original.
      *
      * @return int
      */
@@ -123,7 +124,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de l'identifiant de qualification du post parent relatif
+     * Récupération de l'identifiant de qualification du post parent relatif.
      *
      * @return int
      */
@@ -133,7 +134,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération du type de post
+     * Récupération du type de post.
      *
      * @return string
      */
@@ -143,7 +144,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération du statut de publication
+     * Récupération du statut de publication.
      *
      * @return string
      */
@@ -153,9 +154,9 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de la valeur brute ou formatée de l'intitulé de qualification
+     * Récupération de la valeur brute ou formatée de l'intitulé de qualification.
      *
-     * @param bool $raw Formatage de la valeur
+     * @param bool $raw Formatage de la valeur.
      *
      * @return string
      */
@@ -171,9 +172,9 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération de la valeur brute ou formatée de l'extrait
+     * Récupération de la valeur brute ou formatée de l'extrait.
      *
-     * @param bool $raw Formatage de la valeur
+     * @param bool $raw Formatage de la valeur.
      *
      * @return string
      */
@@ -189,9 +190,9 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération du contenu de description
+     * Récupération du contenu de description.
      *
-     * @param bool $raw Formatage de la valeur
+     * @param bool $raw Formatage de la valeur.
      *
      * @return string
      */
@@ -208,7 +209,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération du lien d'édition du post dans l'interface administrateur
+     * Récupération du lien d'édition du post dans l'interface administrateur.
      *
      * @return string
      */
@@ -218,7 +219,7 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
-     * Récupération du permalien d'affichage du post dans l'interface utilisateur
+     * Récupération du permalien d'affichage du post dans l'interface utilisateur.
      *
      * @return string
      */

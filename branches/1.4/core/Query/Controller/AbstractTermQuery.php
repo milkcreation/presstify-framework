@@ -67,7 +67,7 @@ abstract class AbstractTermQuery implements QueryInterface
     {
         if (!$id) :
             $term = get_queried_object();
-        elseif (is_int($id)) :
+        elseif (is_numeric($id) && $id > 0) :
             if ((!$term = \get_term($id)) || is_wp_error($term)) :
                 return null;
             endif;

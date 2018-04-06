@@ -67,7 +67,7 @@ abstract class AbstractUserQuery implements QueryInterface
     {
         if (!$id) :
             $user = \wp_get_current_user();
-        elseif (is_int($id)) :
+        elseif (is_numeric($id) && $id > 0) :
             $user = get_userdata($id);
         elseif (is_string($id)) :
             return $this->getBy(null, $id);

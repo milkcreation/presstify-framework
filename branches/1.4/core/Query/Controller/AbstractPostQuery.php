@@ -65,10 +65,12 @@ abstract class AbstractPostQuery implements QueryInterface
      */
     public function get($id = null)
     {
-        if (is_string($id)) :
-            return $this->getBy(null, $id);
-        elseif (!$id) :
+        if (!$id) :
             $post = get_the_ID();
+        elseif (is_numeric($id) && $id > 0) :
+            $post = $id;
+        elseif (is_string($id)) :
+            return $this->getBy(null, $id);
         else :
             $post = $id;
         endif;
