@@ -5,7 +5,7 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.14
+ * @version 1.4.15
  */
 
 namespace tiFy;
@@ -81,7 +81,7 @@ final class tiFy
         endif;
 
         // Définition des chemins absolus
-        self::$AbsPath = $AbsPath ? $AbsPath : ABSPATH;
+        self::$AbsPath = $AbsPath ? : (defined('PUBLIC_PATH') ? PUBLIC_PATH : ABSPATH);
         self::$AbsDir = dirname(__FILE__);
 
         // Définition des constantes d'environnement
