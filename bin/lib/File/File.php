@@ -14,7 +14,7 @@ class File
      */
     final public static function getFilenameUrl( $filename, $original_path = ABSPATH )
     {
-        return site_url() . '/'.  self::getRelativeFilename( $filename, $original_path );
+        return home_url() . '/'.  self::getRelativeFilename( $filename, $original_path );
     }
     
     /**
