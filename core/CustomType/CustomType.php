@@ -77,6 +77,8 @@ class CustomType extends \tiFy\App\Core
      */
     final public function register_taxonomy_for_object_type()
     {
+        do_action('tify_custom_post_register_taxonomy_for_object_type');
+
         if (!empty(self::$Taxonomies)) :
             foreach (self::$Taxonomies as $taxonomy => $args) :
                 if (!isset($args['object_type'])) :

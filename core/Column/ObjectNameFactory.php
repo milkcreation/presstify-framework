@@ -2,27 +2,29 @@
 
 namespace tiFy\Core\Column;
 
-use tiFy\App;
+use tiFy\App\Traits\App as TraitsApp;
 
-final class ObjectNameFactory extends App
+final class objectNameFactory
 {
+    use TraitsApp;
+
     /**
      * Type d'objet
      * @var string
      */
-    protected $ObjectType = '';
+    protected $objectType = '';
 
     /**
      * Identifiant de qualification du type d'objet
      * @var string
      */
-    protected $ObjectName = '';
+    protected $objectName = '';
 
     /**
      * Liste des colonnes à ajouter
      * @var array
      */
-    protected $AddList = [];
+    protected $addColumn = [];
 
     /**
      * CONSTRUCTEUR
@@ -31,11 +33,9 @@ final class ObjectNameFactory extends App
      */
     public function __construct($object_type, $object_name)
     {
-        parent::__construct();
-
         // Définition des variables d'environnement
-        $this->ObjectType = $object_type;
-        $this->ObjectName = $object_name;
+        $this->objectType = $object_type;
+        $this->objectName = $object_name;
 
         // Déclaration des événements de déclenchement
         $this->appAddAction('admin_init', null, 99);
@@ -49,8 +49,8 @@ final class ObjectNameFactory extends App
     public function admin_init()
     {
         // Ajout des colonnes personnalisé
-        if ($this->AddList) :
-            foreach ($this->AddList as $name => $controller) :
+        if ($this->addColumn) :
+            foreach ($this->addColumn as $name => $controller) :
                 $this->_init($name, $controller);
             endforeach;
         endif;
@@ -92,14 +92,14 @@ final class ObjectNameFactory extends App
             $call = $controller;
         endif;
 
-        $call($name, $this->ObjectType, $this->ObjectName);
+        $call($name, $this->objectType, $this->objectName);
     }
 
     /**
      * Ajout d'un colonne
      *
      * @param string $name Identifiant de qualification du controleur d'affichage
-     * @param array|ColumnFactory $controller {
+     * @param string|array|ColumnFactory $controller {
      *      Liste des attributs de configuration|Classe de rappel
      *
      *      @var string $column_name Identifiant de qualification de la colonne
@@ -121,7 +121,7 @@ final class ObjectNameFactory extends App
             exit;
         endif;
 
-        $this->AddList[$name] = $controller;
+        $this->addColumn[$name] = $controller;
 
         return $this;
     }

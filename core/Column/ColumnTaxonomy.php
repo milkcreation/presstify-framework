@@ -11,13 +11,13 @@ class ColumnTaxonomy extends ColumnFactory
     protected $ObjectType = 'taxonomy';
 
     /**
-     * Affichage du contenu de la colonne
+     * Affichage du contenu de la colonne.
      *
-     * @param string $content Contenu de la colonne
-     * @param string $column_name Identification de la colonne
-     * @param int $term_id Identifiant du terme
+     * @param string $content Contenu de la colonne.
+     * @param string $column_name Identification de la colonne.
+     * @param int $term_id Identifiant de qualification du terme.
      *
-     * @return string
+     * @return void
      */
     public function content($content, $column_name, $term_id)
     {

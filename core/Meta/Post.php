@@ -1,44 +1,48 @@
 <?php
+
 namespace tiFy\Core\Meta;
 
-final class Post extends \tiFy\App
+use tiFy\App\Traits\App as TraitsApp;
+
+final class Post
 {
+    use TraitsApp;
+
     /**
-     * Liste des meta_keys declarées par type de post
+     * Liste des clés d'identifications de metadonnées.
+     * @internal Tableau multidimensionné où la clé de l'index de premier niveau qualifie le type de post associé.
+     *
      * @var array
      */
     private static $MetaKeys = [];
 
     /**
-     * Status unique/multiples des meta_keys declarées par type de post
+     * Liste des types d'enregistrement unique (true)|multiple (false) d'une metadonnée.
+     * @internal Tableau multidimensionné où la clé de l'index de premier niveau qualifie le type de post associé.
+     *
      * @var array
      */
     private static $Single = [];
 
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
      *
      * @return void
      */
     public function __construct()
     {
-        parent::__construct();
-
-        $this->tFyAppAddAction('save_post', 'save_post', 10, 2);
+        $this->appAddAction('save_post', 'save', 10, 2);
     }
 
     /**
-     * DECLENCHEURS
-     */
-    /**
-     * Enregistrement d'un post
+     * Enregistrement de metadonnées de post.
      *
      * @param int $post_id Identifiant de qualification du post
      * @param \WP_Post $post Objet Post Wordpress
      *
-     * @return array|null|\WP_Post
+     * @return void
      */
-    final public function save_post($post_id, $post)
+    final public function save($post_id, $post)
     {
         // Bypass - S'il s'agit d'une routine de sauvegarde automatique.
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) :
@@ -73,7 +77,7 @@ final class Post extends \tiFy\App
             return;
         endif;
 
-        // Bypass - Si aucune métadonnée n'est déclarée le type de post
+        // Bypass - Si aucune métadonnée n'est déclarée pour le type de post.
         if (empty(self::$MetaKeys[$post_type])) :
             return;
         endif;
@@ -86,8 +90,6 @@ final class Post extends \tiFy\App
             endif;
             $request[$key] = self::tFyAppGetRequestVar($key, '', 'POST');
         endforeach;
-
-
 
         // Variables
         $postmeta = [];
@@ -152,7 +154,7 @@ final class Post extends \tiFy\App
             }
         endforeach;
 
-        return $post;
+        return;
     }
 
     /**
@@ -186,22 +188,23 @@ final class Post extends \tiFy\App
     /**
      * Récupération d'une métadonnée
      *
-     * @param $post_id
-     * @param $meta_key
+     * @param int $post_id Identifiant de qualification du post.
+     * @param string $meta_key Clé d'identification de la métadonnée enregistrées en base de données.
      *
-     * @return array|void
+     * @return mixed[]
      */
     final public static function get($post_id, $meta_key)
     {
         global $wpdb;
-        $query = "SELECT meta_id, meta_value" . " FROM {$wpdb->postmeta}" . " WHERE 1" . " AND {$wpdb->postmeta}.post_id = %d" . " AND {$wpdb->postmeta}.meta_key = %s";
+        $query = "SELECT meta_id, meta_value" . " FROM {$wpdb->postmeta}" .
+            " WHERE 1" . " AND {$wpdb->postmeta}.post_id = %d" . " AND {$wpdb->postmeta}.meta_key = %s";
 
         if ($order = get_post_meta($post_id, '_order_' . $meta_key, true)) :
             $query .= " ORDER BY FIELD( {$wpdb->postmeta}.meta_id," . implode(',', $order) . ")";
         endif;
 
         if (!$metas = $wpdb->get_results($wpdb->prepare($query, $post_id, $meta_key))) :
-            return;
+            return [];
         endif;
 
         $_metas = [];
@@ -263,6 +266,6 @@ final class Post extends \tiFy\App
     /* = VERIFICATION = */
     final public static function isSingle($post_type, $meta_key)
     {
-        return isset(self::$Single[$post_type][$meta_key]) ? self::$Single[$post_type][$meta_key] : null;
+        return isset(self::$Single[$post_type][$meta_key]) ? self::$Single[$post_type][$meta_key] : false;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name Metabox
  * @desc Personnalisation des boîtes de saisie
@@ -18,13 +19,13 @@ use tiFy\App\Component;
 class Metabox extends Component
 {
     /**
-     * Liste des métaboxes à supprimer
+     * Liste des métaboxes à supprimer.
      * @var array
      */
-    private static $Removes = [];
+    private static $removed = [];
 
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
      *
      * @return void
      */
@@ -37,7 +38,7 @@ class Metabox extends Component
     }
 
     /**
-     * Appel à l'issue des déclarations complète des métaboxes natives Wordpress
+     * Appel à l'issue des déclarations complète des métaboxes natives Wordpress.
      *
      * @return void
      */
@@ -56,11 +57,11 @@ class Metabox extends Component
      */
     private function removeHandle()
     {
-        if (!self::$Removes) :
+        if (!self::$removed) :
             return;
         endif;
 
-        foreach (self::$Removes as $post_type => $ids) :
+        foreach (self::$removed as $post_type => $ids) :
             foreach ($ids as $id => $context) :
                 remove_meta_box($id, $post_type, $context);
 
@@ -106,10 +107,10 @@ class Metabox extends Component
         if (did_action('add_meta_boxes_' . $post_type)) :
             trigger_error(__('Pour être fonctionnelle, la déclaration de suppression de boîte de saisie devrait être faite avant l\'execution de l\'action "add_meta_boxes". Vous pourriez utiliser l\'action "tify_metabox_register" pour y appeler vos déclarations.', 'tify'));
         endif;
-        if (!isset(self::$Removes[$post_type])) :
-            self::$Removes[$post_type] = [];
+        if (!isset(self::$removed[$post_type])) :
+            self::$removed[$post_type] = [];
         endif;
 
-        self::$Removes[$post_type][$id] = $context;
+        self::$removed[$post_type][$id] = $context;
     }
 }
