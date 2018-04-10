@@ -16,28 +16,45 @@
 namespace tiFy\Core\Field;
 
 use tiFy\App\Core;
+use tiFy\Components\Fields\Button\Button;
+use tiFy\Components\Fields\Checkbox\Checkbox;
+use tiFy\Components\Fields\DatetimeJs\DatetimeJs;
+use tiFy\Components\Fields\File\File;
+use tiFy\Components\Fields\Hidden\Hidden;
+use tiFy\Components\Fields\Label\Label;
+use tiFy\Components\Fields\Number\Number;
+use tiFy\Components\Fields\NumberJs\NumberJs;
+use tiFy\Components\Fields\Password\Password;
+use tiFy\Components\Fields\Radio\Radio;
+use tiFy\Components\Fields\Repeater\Repeater;
+use tiFy\Components\Fields\Select\Select;
+use tiFy\Components\Fields\SelectJs\SelectJs;
+use tiFy\Components\Fields\Submit\Submit;
+use tiFy\Components\Fields\Text\Text;
+use tiFy\Components\Fields\Textarea\Textarea;
+use tiFy\Components\Fields\ToggleSwitch\ToggleSwitch;
 
 /**
  * Class Field
  * @package tiFy\Core\Field
  *
- * @method static \tiFy\Components\Fields\Button\Button Button(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Checkbox\Checkbox Checkbox(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\DatetimeJs\DatetimeJs DatetimeJs(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\File\File File(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Hidden\Hidden Hidden(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Label\Label Label(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Number\Number Number(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\NumberJs\NumberJs NumberJs(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Password\Password Password(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Radio\Radio Radio(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Repeater\Repeater Repeater(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Select\Select Select(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\SelectJs\SelectJs SelectJs(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Submit\Submit Submit(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Text\Text Text(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\Textarea\Textarea Textarea(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Fields\ToggleSwitch\ToggleSwitch ToggleSwitch(string $id = null, array $attrs = [])
+ * @method static Button(string $id = null, array $attrs = [])
+ * @method static Checkbox(string $id = null, array $attrs = [])
+ * @method static DatetimeJs(string $id = null, array $attrs = [])
+ * @method static File(string $id = null, array $attrs = [])
+ * @method static Hidden(string $id = null, array $attrs = [])
+ * @method static Label(string $id = null, array $attrs = [])
+ * @method static Number(string $id = null, array $attrs = [])
+ * @method static NumberJs(string $id = null, array $attrs = [])
+ * @method static Password(string $id = null, array $attrs = [])
+ * @method static Radio(string $id = null, array $attrs = [])
+ * @method static Repeater(string $id = null, array $attrs = [])
+ * @method static Select(string $id = null, array $attrs = [])
+ * @method static SelectJs(string $id = null, array $attrs = [])
+ * @method static Submit(string $id = null, array $attrs = [])
+ * @method static Text(string $id = null, array $attrs = [])
+ * @method static Textarea(string $id = null, array $attrs = [])
+ * @method static ToggleSwitch(string $id = null, array $attrs = [])
  */
 class Field extends Core
 {
@@ -137,7 +154,7 @@ class Field extends Core
      *      @var array $attrs Attributs de configuration du champ
      *      @var bool $echo Activation de l'affichage du champ
      *
-     * @return null|callable
+     * @return null|Button|Checkbox|DatetimeJs|File|Hidden|Label|Number|NumberJs|Password|Radio|Repeater|Select|SelectJs|Submit|Text|Textarea|ToggleSwitch
      */
     public static function __callStatic($name, $arguments)
     {

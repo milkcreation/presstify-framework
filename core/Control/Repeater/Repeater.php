@@ -106,45 +106,60 @@ class Repeater extends \tiFy\Core\Control\Factory
     }
 
     /**
-     * CONTROLEURS
-     */
-    /**
      * Affichage
      *
-     * @param array $attrs Liste des attributs de configuration
+     * @param array $attrs {
+     *      Liste des attributs de configuration
      *
-     * @return string
+     *      @var string $id Id HTML du conteneur.
+     *      @var string $class Classe(s) HTML du conteneur.
+     *      @var string $name Clé d'indice de la valeur à enregistrer.
+     *      @var mixed|mixed[] $value Valeur ou liste de valeurs existantes.
+     *      @var mixed $default Valeur par défaut.
+     *      @var string $ajax_action Action Ajax lancée pour récupérer le formulaire d'un élément.
+     *      @var string $ajax_nonce Agent de sécurisation de la requête de récupération Ajax.
+     *      @var callable $item_cb Fonction ou méthode de rappel d'affichage d'un élément (doit être une méthode statique ou une fonction).
+     *      @var string $add_button_txt Intitulé du bouton d'ajout d'un élément.
+     *      @var string $add_button_class Classe(s) HTML du bouton d'ajout.
+     *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
+     *      @var bool $order Activation de l'ordonnacemment des éléments.
+     * }
+     *
+     * @return void|string
      */
     protected function display($attrs = [])
     {
         // Traitement des attributs de configuration
         $defaults = [
-            // Id Html du conteneur
             'id'               => 'tiFyControlRepeater--' . $this->getId(),
-            // Classe Html du conteneur
             'class'            => '',
-            // Nom de la valeur a enregistrer
             'name'             => 'tiFyControlRepeater-' . $this->getId(),
-            // Valeur string | array indexé de liste des valeurs
             'value'            => '',
-            // Valeur par défaut string | array à une dimension
             'default'          => '',
-            // Action de récupération via ajax
             'ajax_action'      => 'tify_control_repeater_item',
-            // Agent de sécurisation de la requête ajax
             'ajax_nonce'       => wp_create_nonce('tiFyControlRepeater'),
-            // Fonction de rappel d'affichage d'un élément (méthode statique ou fonction)
             'item_cb'          => '',
-            // Intitulé du bouton d'ajout d'une interface d'édition
             'add_button_txt'   => __('Ajouter', 'tify'),
-            // Classe du bouton d'ajout d'une interface d'édition
             'add_button_class' => 'button-secondary',
-            // Nombre maximum de valeur pouvant être ajoutées
             'max'              => -1,
-            // Ordonnacemment des éléments
             'order'            => true
         ];
         $attrs = wp_parse_args($attrs, $defaults);
+
+        /**
+         * @var string $id Id HTML du conteneur.
+         * @var string $class Classe(s) HTML du conteneur.
+         * @var string $name Clé d'indice de la valeur à enregistrer.
+         * @var mixed|mixed[] $value Valeur ou liste de valeurs existantes.
+         * @var mixed $default Valeur par défaut.
+         * @var string $ajax_action Action Ajax lancée pour récupérer le formulaire d'un élément.
+         * @var string $ajax_nonce Agent de sécurisation de la requête de récupération Ajax.
+         * @var callable $item_cb Fonction ou méthode de rappel d'affichage d'un élément (doit être une méthode statique ou une fonction).
+         * @var string $add_button_txt Intitulé du bouton d'ajout d'un élément.
+         * @var string $add_button_class Classe(s) HTML du bouton d'ajout.
+         * @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
+         * @var bool $order Activation de l'ordonnacemment des éléments.
+         */
         extract($attrs);
 
         // Traitement des attributs
@@ -193,7 +208,7 @@ class Repeater extends \tiFy\Core\Control\Factory
      */
     public static function parseIndex($index)
     {
-        if (!is_numeric($index)) :
+        if (! is_numeric($index)) :
             return $index;
         endif;
 
@@ -203,7 +218,7 @@ class Repeater extends \tiFy\Core\Control\Factory
     /**
      * Champs d'édition d'un élément
      *
-     * @return string
+     * @return void
      */
     public static function item($index, $value, $attrs = [])
     {
