@@ -2,11 +2,74 @@
 
 namespace tiFy\Core\Control;
 
-class Control extends \tiFy\App\Core
+use tiFy\App\Core;
+use tiFy\Core\Control\AccordionMenu\AccordionMenu;
+use tiFy\Core\Control\AdminPanel\AdminPanel;
+use tiFy\Core\Control\Calendar\Calendar;
+use tiFy\Core\Control\Checkbox\Checkbox;
+use tiFy\Core\Control\Colorpicker\Colorpicker;
+use tiFy\Core\Control\CookieNotice\CookieNotice;
+use tiFy\Core\Control\CryptedData\CryptedData;
+use tiFy\Core\Control\CurtainMenu\CurtainMenu;
+use tiFy\Core\Control\DropdownColors\DropdownColors;
+use tiFy\Core\Control\DropdownGlyphs\DropdownGlyphs;
+use tiFy\Core\Control\DropdownImages\DropdownImages;
+use tiFy\Core\Control\DropdownMenu\DropdownMenu;
+use tiFy\Core\Control\Findposts\Findposts;
+use tiFy\Core\Control\HolderImage\HolderImage;
+use tiFy\Core\Control\ImageLightbox\ImageLightbox;
+use tiFy\Core\Control\MediaFile\MediaFile;
+use tiFy\Core\Control\MediaImage\MediaImage;
+use tiFy\Core\Control\Modal\Modal;
+use tiFy\Core\Control\Notices\Notices;
+use tiFy\Core\Control\Progress\Progress;
+use tiFy\Core\Control\Repeater\Repeater;
+use tiFy\Core\Control\ScrollPaginate\ScrollPaginate;
+use tiFy\Core\Control\SlickCarousel\SlickCarousel;
+use tiFy\Core\Control\Slider\Slider;
+use tiFy\Core\Control\Spinkit\Spinkit;
+use tiFy\Core\Control\Suggest\Suggest;
+use tiFy\Core\Control\Tabs\Tabs;
+use tiFy\Core\Control\TextRemaining\TextRemaining;
+
+/**
+ * Class Control
+ *
+ * @method static AccordionMenu(array $attrs = [])
+ * @method static AdminPanel(array $attrs = [])
+ * @method static Calendar(array $attrs = [])
+ * @method static Checkbox(array $attrs = [])
+ * @method static Colorpicker(array $attrs = [])
+ * @method static CookieNotice(array $attrs = [])
+ * @method static CryptedData(array $attrs = [])
+ * @method static CurtainMenu(array $attrs = [])
+ * @method static DropdownColors(array $attrs = [])
+ * @method static DropdownGlyphs(array $attrs = [])
+ * @method static DropdownImages(array $attrs = [])
+ * @method static DropdownMenu(array $attrs = [])
+ * @method static Findposts(array $attrs = [])
+ * @method static HolderImage(array $attrs = [])
+ * @method static ImageLightbox(array $attrs = [])
+ * @method static MediaFile(array $attrs = [])
+ * @method static MediaImage(array $attrs = [])
+ * @method static Modal(array $attrs = [])
+ * @method static Notices(array $attrs = [])
+ * @method static Progress(array $attrs = [])
+ * @method static Repeater(array $attrs = [])
+ * @method static ScrollPaginate(array $attrs = [])
+ * @method static SlickCarousel(array $attrs = [])
+ * @method static Slider(array $attrs = [])
+ * @method static Spinkit(array $attrs = [])
+ * @method static Suggest(array $attrs = [])
+ * @method static Table(array $attrs = [])
+ * @method static Tabs(array $attrs = [])
+ * @method static TextRemaining(array $attrs = [])
+ */
+class Control extends Core
 {
     /**
      * Liste des classes de rappel des controleurs
-     * @var \tiFy\Core\Control\Factory[]
+     * @var Factory[]
      */ 
     public static $Factory = [];
 
@@ -74,7 +137,7 @@ class Control extends \tiFy\App\Core
      * @param string $id Identifiant de qualification du controleur
      * @param string $callback classes ou méthodes ou fonctions de rappel
      *
-     * @return null|\tiFy\Core\Control\Factory
+     * @return null|object|callable|Factory
      */
     final public static function register($id, $callback)
     {
@@ -97,6 +160,10 @@ class Control extends \tiFy\App\Core
      *      @var bool $echo Activation de l'affichage du champ
      *
      * @return null|callable
+     * @return AccordionMenu|AdminPanel|Calendar|Checkbox|Colorpicker|CookieNotice|CryptedData
+     * @return CurtainMenu|DropdownColors|DropdownGlyphs|DropdownImages|DropdownMenu
+     * @return Findposts|HolderImage|ImageLightbox|MediaFile|MediaImage|Modal|Notices|Progress
+     * @return Repeater|ScrollPaginate|SlickCarousel|Slider|Spinkit|Suggest|Tabs|TextRemaining
      */
     final public static function __callStatic($id, $args)
     {
@@ -126,14 +193,14 @@ class Control extends \tiFy\App\Core
      * @param string $id Identifiant de qualification du controleur
      * @param string $method Nom de qualification de la méthode à appeler
      *
-     * @return static
+     * @return null|static
      */
     final public static function call($id, $method)
     {
         $id = join('', array_map('ucfirst', preg_split('#_#', $id)));
 
         if (!isset(static::$Factory[$id])) :
-            return;
+            return null;
         endif;
 
         $classname = get_class(static::$Factory[$id]);

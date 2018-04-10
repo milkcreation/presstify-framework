@@ -1,7 +1,8 @@
 <?php
+
 namespace tiFy\Lib\Importer;
 
-class Post extends \tiFy\Lib\Importer\Importer
+class Post extends Importer
 {
     /**
      * Types de données pris en charge

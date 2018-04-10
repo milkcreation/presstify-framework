@@ -129,6 +129,7 @@ class DatetimeJs extends AbstractFactory
     {
         // Traitement de la valeur
         $date = new \DateTime($this->getValue());
+
         $Y = $date->format('Y');
         $m = $date->format('m');
         $d = $date->format('d');
@@ -199,7 +200,7 @@ class DatetimeJs extends AbstractFactory
                         ],
                         'selected'        => $m,
                         'options'         => $field_options,
-                        'value'           => zeroise($Y, 4)
+                        'value'           => zeroise($m, 4)
                     ];
                     $field_attrs = \wp_parse_args($field_attrs, $defaults);
 
