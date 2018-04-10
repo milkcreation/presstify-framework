@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-04-09",
+  "time": "2018-04-10",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -73,9 +73,6 @@
     "symfony/finder": "^4.0",
     "symfony/http-foundation": "^4.0",
     "symfony/psr-http-message-bridge": "^1.0",
-    "symfony/serializer": "^4.0",
-    "symfony/yaml": "^4.0",
-    "symfony/filesystem": "^4.0",
     "symfony/serializer": "^4.0",
     "symfony/yaml": "^4.0",
     "twbs/bootstrap": "^3.3",

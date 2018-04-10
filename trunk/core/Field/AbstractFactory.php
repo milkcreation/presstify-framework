@@ -4,7 +4,7 @@ namespace tiFy\Core\Field;
 
 use tiFy\App\Traits\App as TraitsApp;
 
-class AbstractFactory
+abstract class AbstractFactory
 {
     use TraitsApp;
 
@@ -12,7 +12,7 @@ class AbstractFactory
      * Liste des instances
      * @var
      */
-    private static $Instance = [];
+    protected static $Instance = [];
 
     /**
      * Indicateur d'instanciation
