@@ -2,6 +2,7 @@
 
 namespace tiFy\Components\TinyMCE\ExternalPlugins\OwnGlyphs;
 
+use Illuminate\Support\Str;
 use tiFy\Lib\File;
 use tiFy\Components\TinyMCE\TinyMCE;
 
@@ -76,8 +77,10 @@ class OwnGlyphs extends \tiFy\App\Factory
 
         // Récupération des glyphs
         $css = File::getContents($this->options['css']);
+
         preg_match_all('/.' . $this->options['prefix'] . '-(.*):before\s*\{\s*content\:\s*"(.*)";\s*\}\s*/', $css,
             $matches);
+
         foreach ($matches[1] as $i => $class) {
             $this->glyphs[$class] = $matches[2][$i];
         }
@@ -166,6 +169,7 @@ class OwnGlyphs extends \tiFy\App\Factory
         $return = "[";
         $col = 0;
         foreach ((array)$this->glyphs as $class => $content) :
+
             if (!$col) {
                 $return .= "{";
             }
