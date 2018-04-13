@@ -40,7 +40,7 @@ class Admin extends \tiFy\App\Factory
     }
 
     /**
-     * Chargement de la page courante
+     * Chargement de la page courante.
      *
      * @param \WP_Screen $current_screen
      *
@@ -52,7 +52,7 @@ class Admin extends \tiFy\App\Factory
     }
 
     /**
-     * Mise en file des scripts de l'interface d'administration
+     * Mise en file des scripts de l'interface d'administration.
      *
      * @return void
      */
@@ -62,7 +62,9 @@ class Admin extends \tiFy\App\Factory
     }
 
     /**
-     * Initialisation de la classe
+     * Initialisation de la classe.
+     *
+     * @return static
      */
     final public static function _init($attrs = [])
     {
@@ -73,7 +75,7 @@ class Admin extends \tiFy\App\Factory
     }
 
     /**
-     * Récupération de la liste de attributs de configuration
+     * Récupération de la liste de attributs de configuration.
      *
      * @return array
      */
@@ -83,10 +85,10 @@ class Admin extends \tiFy\App\Factory
     }
 
     /**
-     * Récupération d'un attribut de configuration
+     * Récupération d'un attribut de configuration.
      *
-     * @param string $name Nom de l'attribut de configuration
-     * @param mixed $default Valeur de retour par défaut
+     * @param string $name Nom de l'attribut de configuration.
+     * @param mixed $default Valeur de retour par défaut.
      *
      * @return mixed
      */
