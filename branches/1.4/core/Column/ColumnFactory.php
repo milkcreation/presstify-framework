@@ -73,6 +73,7 @@ abstract class ColumnFactory extends App
                 $this->{$Attr} = $attrs[$attr];
             endif;
         endforeach;
+
         $this->Content = !isset($attrs['content']) ? [$this, 'content'] : $attrs['content'];
     }
 
