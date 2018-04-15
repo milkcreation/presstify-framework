@@ -1,7 +1,10 @@
 <?php
+
 namespace tiFy\Core\Templates\Admin\Model\FileImport;
 
-class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
+use tiFy\Core\Templates\Admin\Model\Import\Import;
+
+class FileImport extends Import
 {
     /**
      * Fichier d'import interne
