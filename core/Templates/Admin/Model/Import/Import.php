@@ -2,9 +2,10 @@
 namespace tiFy\Core\Templates\Admin\Model\Import;
 
 use tiFy\Core\Field\Field;
+use tiFy\Core\Templates\Admin\Model\AjaxListTable\AjaxListTable;
 
-class   Import extends \tiFy\Core\Templates\Admin\Model\AjaxListTable\AjaxListTable
-{                        
+class   Import extends AjaxListTable
+{
     /**
      * Classe de l'importateur de données
      * @var  string
