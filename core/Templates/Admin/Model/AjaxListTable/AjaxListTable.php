@@ -1,7 +1,10 @@
-<?php 
+<?php
+
 namespace tiFy\Core\Templates\Admin\Model\AjaxListTable;
 
-class AjaxListTable extends \tiFy\Core\Templates\Admin\Model\Table
+use tiFy\Core\Templates\Admin\Model\Table;
+
+class AjaxListTable extends Table
 {
     /**
      * Nombre d'éléments trouvés

@@ -59,16 +59,21 @@ use League\Csv\Statement;
 class Csv
 {
     /**
-     * Chemin vers le fichier de données à traiter
+     * Chemin vers le fichier de données à traiter.
      * @var string
      */
-    public $filename = '';
+    protected $filename = '';
 
     /**
-     * Propriétés de traitement fichier CSV
+     * Le fichier à traité contient une entête.
+     */
+    protected $hasHeader = false;
+
+    /**
+     * Propriétés de traitement fichier CSV.
      * @var array
      */
-    public $properties = [
+    protected $properties = [
         /// Délimiteur de champs
         'delimiter' => ',',
         /// Caractère d'encadrement 
@@ -78,10 +83,10 @@ class Csv
     ];
 
     /**
-     * Arguments de requête de récupération des éléments
+     * Arguments de requête de récupération des éléments.
      * @var array
      */
-    public $queryArgs = [
+    protected $queryArgs = [
         // Page courante
         'paged'    => 1,
         // Nombre d'éléments par page
@@ -89,81 +94,81 @@ class Csv
     ];
 
     /**
-     * Cartographie des colonnes
+     * La ligne de démarrage du traitement.
+     * @var int
+     */
+    protected $offset = 0;
+
+    /**
+     * Cartographie des colonnes.
      * ex ['firstname', 'lastname', 'email'];
      * @var string[]
      */
-    public $columns = [];
+    protected $columns = [];
 
     /**
-     * Nombre d'éléments trouvés
+     * Nombre d'éléments trouvés.
      * @var int
      */
     protected $foundItems = 0;
 
     /**
-     * Nombre d'éléments total
+     * Nombre d'éléments total.
      * @var int
      */
     protected $totalItems = 0;
 
     /**
-     * Nombre de page total
+     * Nombre de page total.
      * @var int
      */
     protected $totalPages = 0;
 
     /**
-     * Liste des éléments
+     * Liste des éléments.
      * @var null|ResultSet
      */
     protected $items;
 
     /**
-     * Arguments de trie
-     *
+     * Arguments de trie.
      * @var array
      */
     public $orderBy = [];
 
     /**
-     * Arguments de recherche
-     *
+     * Arguments de recherche.
      * @var array
      */
     public $searchArgs = [];
 
     /**
-     * Types de fichier autorisés
+     * Types de fichier autorisés.
      * @todo
      * @var string[]
      */
     protected $allowedMimeType = ['csv', 'txt'];
 
     /**
-     * Trie des données
-     *
+     * Trie des données.
      * @var array
      */
     protected $sorts = [];
 
     /**
-     * Filtres de données
-     *
+     * Filtres de données.
      * @var array
      */
     protected $filters = [];
 
     /**
-     * Relation de filtrage des données
-     *
+     * Relation de filtrage des données.
      * @var string
      */
     protected $filtersRelation = 'OR';
 
     /**
-     * Encodage des résultats
-     *
+     * Encodage des résultats.
      * @var array {
      *      @var string $from - Encodage d'entrée
      *      @var string $to - Encodage de sortie
@@ -172,7 +177,7 @@ class Csv
     protected $charset_conv = [];
 
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
      *
      * @param array $options Liste des attributs de configuration.
      *
@@ -184,6 +189,12 @@ class Csv
             switch ($option_name) :
                 case 'filename' :
                     $this->setFilename($option_value);
+                    break;
+                case 'has_header' :
+                    $this->hasHeader = (bool)$option_value;
+                    break;
+                case 'offset' :
+                    $this->offset = (int)$option_value;
                     break;
                 case 'delimiter' :
                 case 'enclosure' :
@@ -212,7 +223,7 @@ class Csv
     }
 
     /**
-     * Récupération d'éléments
+     * Récupération d'éléments.
      *
      * @param array $options Liste des attributs de configuration.
      *
@@ -227,15 +238,16 @@ class Csv
     }
 
     /**
-     * Récupération d'une ligne de donnée du fichier
+     * Récupération d'une ligne de donnée du fichier.
      *
-     * @param int $offset Ligne de l'élément à récuperer
+     * @param int $offset Ligne de l'élément à récuperer.
      * @param array $options Liste des attributs de configuration.
      *
      * @return self
      */
     final public static function get($offset = 0, $options = [])
     {
+        $options['offset'] = $offset;
         $options['query_args']['per_page'] = 1;
 
         $csv = new static($options);
@@ -283,7 +295,7 @@ class Csv
      * Définition d'un argument de requête de récupération des élément du fichier.
      *
      * @param string $key Identifiant de qualification de l'argument de requête.
-     * @param mixed $value Valeur de l'argument de requête
+     * @param mixed $value Valeur de l'argument de requête.
      *
      * @return self
      */
@@ -337,11 +349,11 @@ class Csv
     }
 
     /**
-     * Définition de l'encodage des résultats
+     * Définition de l'encodage des résultats.
      *
      * @param array $charset_conv {
-     *      @var string $from - Encode d'entrée
-     *      @var string $to - Encodage de sortie
+     *      @var string $from - Encode d'entrée.
+     *      @var string $to - Encodage de sortie.
      * }
      * @return $this
      */
@@ -356,6 +368,8 @@ class Csv
 
     /**
      * Récupération du fichier de données.
+     *
+     * @return string
      */
     public function getFilename()
     {
@@ -412,7 +426,7 @@ class Csv
     }
 
     /**
-     * Récupération du nombre total d'éléments
+     * Récupération du nombre total d'éléments.
      *
      * @return int
      */
@@ -422,7 +436,7 @@ class Csv
     }
 
     /**
-     * Récupération du nombre total de page
+     * Récupération du nombre total de page.
      *
      * @return int
      */
@@ -432,7 +446,7 @@ class Csv
     }
 
     /**
-     * Récupération de la cartographie des colonnes
+     * Récupération de la cartographie des colonnes.
      *
      * @return string[]
      */
@@ -442,7 +456,7 @@ class Csv
     }
 
     /**
-     * Récupération de l'index d'une colonne
+     * Récupération de l'index d'une colonne.
      *
      * @return null|int
      */
@@ -458,9 +472,9 @@ class Csv
     }
 
     /**
-     * Récupération de l'intitulé d'une colonne en fonction de son index
+     * Récupération de l'intitulé d'une colonne en fonction de son index.
      *
-     * @param int $index Index de la colonne
+     * @param int $index Index de la colonne.
      *
      * @return null|string
      */
@@ -476,10 +490,10 @@ class Csv
     }
 
     /**
-     * Récupération de la valeur d'une colonne en fonction de son index
+     * Récupération de la valeur d'une colonne en fonction de son index.
      *
-     * @param array $row Ligne du CSV
-     * @param int $index Index de colonne souhaité
+     * @param array $row Ligne du CSV.
+     * @param int $index Index de colonne souhaité.
      *
      * @return mixed
      */
@@ -489,7 +503,7 @@ class Csv
     }
 
     /**
-     * Récupération des éléments
+     * Récupération des éléments.
      *
      * @return null|ResultSet
      */
@@ -499,7 +513,7 @@ class Csv
     }
 
     /**
-     * Récupération de la liste des éléments sous forme de tableau
+     * Récupération de la liste des éléments sous forme de tableau.
      *
      * @return array
      */
@@ -509,7 +523,7 @@ class Csv
     }
 
     /**
-     * Récupération de la liste des ligne du fichier
+     * Récupération de la liste des ligne du fichier.
      *
      * @return array
      */
@@ -520,6 +534,11 @@ class Csv
          * @var Reader $reader
          */
         $reader = Reader::createFromPath($this->getFilename(), 'r');
+
+        // Définition d'entête dans le fichier CSV
+        if ($this->hasHeader) :
+            $reader->setHeaderOffset(0);
+        endif;
 
         // Définition des propriétés du fichier CSV
         // Définition du délimiteur
@@ -567,19 +586,19 @@ class Csv
         // Définition des attributs de pagination
         $per_page = $this->getQueryArg('per_page', -1);
         $paged = $this->getQueryArg('paged', 1);
-        $offset = ($per_page > -1) ? (($paged - 1) * $per_page) : 0;
+        $offset = $this->offset ? : (($per_page > -1) ? (($paged - 1) * $per_page) : 0);
         $total_pages = ($per_page > -1) ? ceil($total_items / $per_page) : 1;
         $this->setTotalPages($total_pages);
 
         // Définition de la ligne de démarrage du traitement
         try {
-            $stmt->offset($offset);
+            $stmt = $stmt->offset((int)$offset);
         } catch(Exception $e) {
             exit;
         }
         // Définition du nombre d'éléments à traiter
         try {
-            $stmt->limit($per_page);
+            $stmt = $stmt->limit((int)$per_page);
         } catch(Exception $e) {
             exit;
         }
@@ -594,7 +613,7 @@ class Csv
     }
 
     /**
-     * Définition de l'ordre de trie
+     * Définition de l'ordre de trie.
      *
      * @return mixed
      */
@@ -614,7 +633,7 @@ class Csv
     }
 
     /**
-     * Méthode de rappel de trie des données
+     * Méthode de rappel de trie des données.
      *
      * @return int
      */
@@ -633,7 +652,7 @@ class Csv
     }
 
     /**
-     * Définition du filtrage
+     * Définition du filtrage.
      *
      * @return mixed
      */
@@ -680,7 +699,7 @@ class Csv
     }
 
     /**
-     * Méthode de rappel du filtrage
+     * Méthode de rappel du filtrage.
      *
      * @return bool
      */
