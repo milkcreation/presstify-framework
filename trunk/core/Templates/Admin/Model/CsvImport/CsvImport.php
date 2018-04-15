@@ -7,10 +7,16 @@ use tiFy\Core\Templates\Admin\Model\FileImport\FileImport;
 class CsvImport extends FileImport
 {
     /**
-     * Délimiteur de colonnes du fichier CSV
+     * Délimiteur de colonnes du fichier CSV.
      * @var string
      */
     protected $Delimiter        = ',';
+
+    /**
+     * Définie si le fichier contient une entête.
+     * @var bool
+     */
+    protected $HasHeader        = false;
 
     /**
      * PARAMETRAGE
@@ -23,19 +29,29 @@ class CsvImport extends FileImport
     public function set_params_map()
     {
         $params = parent::set_params_map();
-        array_push($params, 'Delimiter');
-        
+        array_push($params, 'Delimiter', 'HasHeader');
+
         return $params;
     }
 
     /**
-     * Définition du délimiteur de colonnes du fichier d'import
+     * Définition du délimiteur de colonnes du fichier d'import.
      *
      * @return string
      */
     public function set_delimiter()
     {
         return ',';
+    }
+
+    /**
+     * Définition si le fichier contient une entête.
+     *
+     * @return bool
+     */
+    public function set_has_header()
+    {
+        return false;
     }
 
     /**
@@ -56,13 +72,23 @@ class CsvImport extends FileImport
     }
 
     /**
-     * Initialisation du délimiteur du fichier d'import
+     * Initialisation du délimiteur du fichier d'import.
      *
      * @return string
      */
     public function initParamDelimiter()
     {               
         return $this->Delimiter = $this->set_delimiter();
+    }
+
+    /**
+     * Initialisation de l'entête du fichier d'import.
+     *
+     * @return string
+     */
+    public function initParamHasHeader()
+    {
+        return $this->HasHeader = $this->set_has_header();
     }
 
     /**
@@ -76,7 +102,7 @@ class CsvImport extends FileImport
     protected function getResponse()
     {
         $params = $this->parse_query_args();
-        
+
         if (empty( $params['filename'])) :
             return;
         endif;
@@ -86,7 +112,8 @@ class CsvImport extends FileImport
             $attrs = array(
                 'filename'      => $params['filename'],
                 'columns'       => $this->FileColumns,
-                'delimiter'     => $this->Delimiter
+                'delimiter'     => $this->Delimiter,
+                'has_header'    => $this->HasHeader
             );
             $Csv = Csv::get(current($this->current_item()), $attrs);
         else :
@@ -97,7 +124,8 @@ class CsvImport extends FileImport
                 'query_args'    => array(
                     'paged'         => isset( $params['paged'] ) ? (int) $params['paged'] : 1,
                     'per_page'      => $this->PerPage
-                ),            
+                ),
+                'has_header'    => $this->HasHeader
             );
             
             /// Trie
@@ -113,6 +141,7 @@ class CsvImport extends FileImport
                     )
                 );
             endif;
+
             // Traitement du fichier d'import
             $Csv = Csv::getList( $attrs );
         endif;
