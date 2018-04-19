@@ -78,7 +78,7 @@ class ContactForm extends \tiFy\App\Set
             return $content;
         if (! is_singular())
             return $content;
-        if (ContentHook::get('tiFySetContactForm') !== get_the_ID())
+        if (Router::get()->getContentHook('tiFySetContactForm') !== get_the_ID())
             return $content;
 
         // Masque le contenu et le formulaire sur la page d'accroche

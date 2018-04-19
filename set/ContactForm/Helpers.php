@@ -3,7 +3,8 @@ namespace
 {
     use tiFy\Set\ContactForm\ContactForm;
     use tiFy\Core\Forms\Forms;
-    use tiFy\Core\Router\Taboox\Helpers\ContentHook;
+    use tiFy\Core\Router\Router;
+    //use tiFy\Core\Router\Taboox\Helpers\ContentHook;
 
     /**
      * Vérification d'affichage du formulaire de contact sur une page
@@ -14,7 +15,7 @@ namespace
      */
     function tify_set_contactform_is($post = 0)
     {
-        return ContentHook::is('tiFySetContactForm', $post);
+        return Router::get()->isContentHook('tiFySetContactForm', $post);
     }
 
     /**
