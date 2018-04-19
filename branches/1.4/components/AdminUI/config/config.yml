@@ -76,6 +76,11 @@ disable_post:                 false
 disable_emoji:                 false
 
 #-------------------------------------------------------------------------------------------------------
+# Désactivation de l'embed (Pise en charge de l'intégration de contenus de service tiers)
+# @see https://codex.wordpress.org/Embeds
+disable_embed:                 false
+
+#-------------------------------------------------------------------------------------------------------
 # Mise à jour automatique du coeur de Wordpress
 # true (defaut tous ) | 'all' | [ 'dev', 'minor', 'major' ]
 # dev   : autorise la montée en version de développement (ex : 3.7-alpha-25000 -> 3.7-alpha-25678 -> 3.7-beta1 -> 3.7-beta2)  
