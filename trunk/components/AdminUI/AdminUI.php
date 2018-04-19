@@ -13,7 +13,9 @@
 
 namespace tiFy\Components\AdminUI; 
 
-class AdminUI extends \tiFy\App\Component
+use tiFy\App\Component;
+
+class AdminUI extends Component
 {
     /**
      * CONSTRUCTEUR
@@ -26,12 +28,17 @@ class AdminUI extends \tiFy\App\Component
 
         // Traitement des attributs de configuration
         foreach ((array)array_keys(self::tFyAppConfigDefault()) as $prop) :
-            if (self::tFyAppConfig($prop)) :
-                $value = is_array(self::tFyAppConfigDefault($prop)) ? wp_parse_args(self::tFyAppConfig($prop),
-                    self::tFyAppConfigDefault($prop)) : self::tFyAppConfig($prop);
+            if ($this->appConfig($prop)) :
+                $value = is_array(self::tFyAppConfigDefault($prop))
+                    ? wp_parse_args(
+                        $this->appConfig($prop),
+                        self::tFyAppConfigDefault($prop)
+                    )
+                    : $this->appConfig($prop);
             else :
                 $value = self::tFyAppConfigDefault($prop);
             endif;
+
             self::tFyAppConfigSetAttr($prop, $value);
         endforeach;
 
@@ -44,26 +51,30 @@ class AdminUI extends \tiFy\App\Component
         $this->appAddAction('admin_footer_text');
         $this->appAddAction('wp_before_admin_bar_render');
 
-        if (self::tFyAppConfig('disable_post')) :
+        if ($this->appConfig('disable_post')) :
             $this->appAddAction('admin_init', 'disable_post_dashboard_meta_box');
             $this->appAddAction('admin_menu', 'disable_post_remove_menu');
             $this->appAddFilter('nav_menu_meta_box_object', 'disable_post_nav_menu_meta_box_object');
             $this->appAddAction('wp_before_admin_bar_render', 'disable_post_wp_before_admin_bar_render');
         endif;
 
-        if (self::tFyAppConfig('disable_comment')) :
+        if ($this->appConfig('disable_comment')) :
             $this->appAddAction('init', 'disable_comment_init');
             $this->appAddAction('wp_widgets_init', 'disable_comment_wp_widgets_init');
             $this->appAddAction('admin_menu', 'disable_comment_remove_menu');
             $this->appAddAction('wp_before_admin_bar_render', 'disable_comment_wp_before_admin_bar_render');
         endif;
 
-        if (self::tFyAppConfig('disable_post_category')) :
+        if ($this->appConfig('disable_post_category')) :
             $this->appAddAction('init', 'disable_post_category');
         endif;
 
-        if (self::tFyAppConfig('disable_post_tag')) :
+        if ($this->appConfig('disable_post_tag')) :
             $this->appAddAction('init', 'disable_post_tag');
+        endif;
+
+        if ($this->appConfig('disable_emoji')) :
+            new Emoji();
         endif;
     }
 

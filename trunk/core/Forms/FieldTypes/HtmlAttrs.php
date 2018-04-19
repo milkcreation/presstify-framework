@@ -15,7 +15,7 @@ class HtmlAttrs
     {
         switch ($attr) :
             case 'autocomplete' :
-                return ($value && ($value !== 'off')) ? "autocomplete=\"on\"" : "autocomplete=\"off\"";
+                return ($value && ($value !== 'off')) ? "autocomplete=\"{$value}\"" : "autocomplete=\"off\"";
                 break;
             case 'readonly' :
                 return ($value && ($value !== 'off')) ? 'readonly' : '';
