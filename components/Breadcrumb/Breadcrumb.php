@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name Breadcrumb
  * @package PresstiFy
@@ -12,7 +13,9 @@
 
 namespace tiFy\Components\Breadcrumb;
 
-class Breadcrumb extends \tiFy\App\Component
+use tiFy\App\Component;
+
+class Breadcrumb extends Component
 {
     /**
      * Instance

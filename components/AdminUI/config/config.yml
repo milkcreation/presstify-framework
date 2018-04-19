@@ -72,6 +72,10 @@ disable_post_tag:             false
 disable_post:                 false
 
 #-------------------------------------------------------------------------------------------------------
+# Désactivation des emojis
+disable_emoji:                 false
+
+#-------------------------------------------------------------------------------------------------------
 # Mise à jour automatique du coeur de Wordpress
 # true (defaut tous ) | 'all' | [ 'dev', 'minor', 'major' ]
 # dev   : autorise la montée en version de développement (ex : 3.7-alpha-25000 -> 3.7-alpha-25678 -> 3.7-beta1 -> 3.7-beta2)  

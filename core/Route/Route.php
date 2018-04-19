@@ -18,36 +18,75 @@ namespace tiFy\Core\Route;
 use tiFy\tiFy;
 use League\Container\Container;
 use League\Route\RouteCollection;
+use League\Route\Http\Exception\NotFoundException;
+use League\Route\Http\Exception\MethodNotAllowedException;
+use LogicException;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Zend\Diactoros\Response\SapiEmitter;
 use InvalidArgumentException;
 
 class Route extends \tiFy\App\Core
 {
     /**
-     * Conteneur d'injection de dépendances
+     * Classe de rappel du conteneur d'injection de dépendances.
      * @var Container
      */
-    private $Container;
+    private $container;
 
     /**
-     * Cartographie des routes déclarées
+     * Classe de rappel de la reponse de la requête globale.
+     * @var ResponseInterface
+     */
+    private $response;
+
+    /**
+     * Cartographie des routes déclarées.
      * @var array
      */
-    public $Map = [];
+    protected $map = [];
 
     /**
-     * Valeur de retour
-     * @var \Psr\Http\Message\ResponseInterface
-     */
-    private $Response;
-
-    /**
-     * Suppression du slash à la fin de l'url
+     * Options d'activation de suppression du slash à la fin de l'url.
      * @var bool
      */
     private $removeTrailingSlash = false;
+
+    /**
+     * Indicateur de contexte d'affichage de page de Wordpress.
+     * @var string[]
+     */
+    protected $conditionnalTags = [
+        'is_single',
+        'is_preview',
+        'is_page',
+        'is_archive',
+        'is_date',
+        'is_year',
+        'is_month',
+        'is_day',
+        'is_time',
+        'is_author',
+        'is_category',
+        'is_tag',
+        'is_tax',
+        'is_search',
+        'is_feed',
+        'is_comment_feed',
+        'is_trackback',
+        'is_home',
+        'is_404',
+        'is_embed',
+        'is_paged',
+        'is_admin',
+        'is_attachment',
+        'is_singular',
+        'is_robots',
+        'is_posts_page',
+        'is_post_type_archive'
+    ];
 
     /**
      * CONSTRUCTEUR
@@ -59,28 +98,29 @@ class Route extends \tiFy\App\Core
         parent::__construct();
 
         // Déclaration des dépendances
-        $this->Container = new Container;
+        $this->container = new Container();
 
         // Définition du traitement de la réponse
-        $this->Container->share('tiFy.core.route.response', function () {
+        $this->container->share('tiFy.core.route.response', function () {
             $response = new Response;
 
             return (new DiactorosFactory())->createResponse($response);
         });
 
         // Définition du traitement de la requête
-        $this->Container->share('tiFy.core.route.request', function () {
+        $this->container->share('tiFy.core.route.request', function () {
             return (new DiactorosFactory())->createRequest(tiFy::getGlobalRequest());
         });
 
         // Définition du traitement de l'affichage
-        $this->Container->share('tiFy.core.route.emitter', new SapiEmitter);
+        $this->container->share('tiFy.core.route.emitter', new SapiEmitter());
 
         // Définition du traitement des routes
-        $this->Container->share('tiFy.core.route.collection', new RouteCollection($this->Container));
+        $this->container->share('tiFy.core.route.collection', new RouteCollection($this->container));
 
         // Déclaration des événements
         $this->appAddAction('init', null, 0);
+        $this->appAddAction('pre_get_posts', null, 0);
 
         // Instanciation des fonctions d'aide à la saisie
         require_once $this->appDirname() . '/Helpers.php';
@@ -99,12 +139,12 @@ class Route extends \tiFy\App\Core
         do_action('tify_route_register');
 
         // Bypass
-        if (!$this->Map) :
+        if (!$this->map) :
             return;
         endif;
 
         // Définition de la cartographie des routes
-        foreach ($this->Map as $name => $attrs) :
+        foreach ($this->map as $name => $attrs) :
             $this->_set($name);
         endforeach;
 
@@ -114,7 +154,7 @@ class Route extends \tiFy\App\Core
              * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html
              * @see https://stackoverflow.com/questions/30830462/how-to-deal-with-extra-in-phpleague-route
              *
-             * @var \Symfony\Component\HttpFoundation\Request $request
+             * @var Request $request
              */
             $request = tiFy::getGlobalRequest();
 
@@ -132,13 +172,13 @@ class Route extends \tiFy\App\Core
 
         // Traitement des routes
         try {
-            $this->Response = $this->getContainer('collection')->dispatch(
-                $this->Container->get('tiFy.core.route.request'),
-                $this->Container->get('tiFy.core.route.response')
+            $this->response = $this->getContainer('collection')->dispatch(
+                $this->container->get('tiFy.core.route.request'),
+                $this->container->get('tiFy.core.route.response')
             );
-        } catch (\League\Route\Http\Exception\NotFoundException $e) {
+        } catch (NotFoundException $e) {
 
-        } catch (\League\Route\Http\Exception\MethodNotAllowedException $e) {
+        } catch (MethodNotAllowedException $e) {
 
         }
 
@@ -146,8 +186,23 @@ class Route extends \tiFy\App\Core
     }
 
     /**
-     * CONTROLEURS
+     * Pré-traitement de la requête de récupération de post WP.
+     *
+     * @param \WP_Query $wp_query Classe de rappel de traitement de requête Wordpress.
+     *
+     * @return void
      */
+    public function pre_get_posts(&$wp_query)
+    {
+        if (self::hasCurrent() && $wp_query->is_main_query()) :
+            foreach($this->conditionnalTags as $ct) :
+                $wp_query->{$ct} = false;
+            endforeach;
+            $wp_query->query_vars = $wp_query->fill_query_vars([]);
+            $wp_query->is_route = true;
+        endif;
+    }
+
     /**
      * Définition d'une route
      *
@@ -158,7 +213,7 @@ class Route extends \tiFy\App\Core
     private function _set($name)
     {
         // Bypass
-        if (!isset($this->Map[$name])) :
+        if (!isset($this->map[$name])) :
             return null;
         endif;
 
@@ -168,7 +223,7 @@ class Route extends \tiFy\App\Core
          * @var string $path
          * @var string $cb
          */
-        extract($this->Map[$name]);
+        extract($this->map[$name]);
 
         // Traitement du sous repertoire
         $path = ($sub = trim(basename(dirname($_SERVER['PHP_SELF'])), '/')) ? "/{$sub}/" . ltrim($path, '/') : $path;
@@ -182,7 +237,7 @@ class Route extends \tiFy\App\Core
         return $this->getContainer('collection')->map(
             $method,
             $path,
-            new Handler($name, $this->Map[$name])
+            new Handler($name, $this->map[$name])
         )
             ->setName($name)
             ->setScheme($scheme)
@@ -198,7 +253,7 @@ class Route extends \tiFy\App\Core
      */
     final public function getContainer($alias)
     {
-        return $this->Container->get('tiFy.core.route.' . $alias);
+        return $this->container->get('tiFy.core.route.' . $alias);
     }
 
     /**
@@ -206,7 +261,7 @@ class Route extends \tiFy\App\Core
      */
     final public function getResponse()
     {
-        return $this->Response;
+        return $this->response;
     }
 
     /**
@@ -236,7 +291,7 @@ class Route extends \tiFy\App\Core
             'strategy' => ''
         ];
 
-        return $instance->Map[$name] = array_merge($defaults, $attrs);
+        return $instance->map[$name] = array_merge($defaults, $attrs);
     }
 
     /**
@@ -255,7 +310,7 @@ class Route extends \tiFy\App\Core
             return false;
         endif;
 
-        return isset($instance->Map[$name]);
+        return isset($instance->map[$name]);
     }
 
     /**
@@ -351,7 +406,28 @@ class Route extends \tiFy\App\Core
     }
 
     /**
-     * Vérifie si la page d'affichage courante correspond à une route déclarée
+     * Vérifie si la page d'affichage courante correspond à une route déclarée.
+     *
+     * @return bool
+     *
+     * @throws LogicException
+     */
+    final public static function is()
+    {
+        global $wp_query;
+
+        if (!did_action('pre_get_posts')) :
+            throw new LogicException(
+                __('Cette méthode est appelée de la mauvaise manière, elle devrait être déclenchée après l\'action "pre_get_posts', 'tify'),
+                500
+            );
+        endif;
+
+        return isset($wp_query->is_route) && ($wp_query->is_route === true);
+    }
+
+    /**
+     * Vérifie si la page d'affichage courante correspond à une route déclarée.
      *
      * @return bool
      */
