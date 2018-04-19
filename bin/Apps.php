@@ -1207,7 +1207,7 @@ final class Apps
             $OverridePath['theme_app']       = [
                 'path'    => get_template_directory() . '/app' . $_subdir,
                 'url'     => get_template_directory_uri() . '/app' . $_subdir,
-                'subdir'  => $subdir,
+                'subdir'  => $_subdir,
                 'basedir' => get_template_directory() . '/app',
                 'baseurl' => get_template_directory_uri() . '/app',
                 'error'   => false
@@ -1228,7 +1228,7 @@ final class Apps
         $OverridePath['theme_templates'] = [
             'path'    => get_template_directory() . '/templates' . $_subdir,
             'url'     => get_template_directory_uri() . '/templates' . $_subdir,
-            'subdir'  => $subdir,
+            'subdir'  => $_subdir,
             'basedir' => get_template_directory() . '/templates',
             'baseurl' => get_template_directory_uri() . '/templates',
             'error'   => false

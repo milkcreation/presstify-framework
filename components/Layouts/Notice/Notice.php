@@ -41,13 +41,13 @@ class Notice extends AbstractFactory
     {
         // Déclaration des scripts
         \wp_register_style(
-            'tiFyLayoutNotice',
+            'tiFyLayout-notice',
             self::tFyAppAssetsUrl('Notice.css', get_class()),
             [],
             180214
         );
         \wp_register_script(
-            'tiFyLayoutNotice',
+            'tiFyLayout-notice',
             self::tFyAppAssetsUrl('Notice.js', get_class()),
             ['jquery'],
             180214,
@@ -62,8 +62,8 @@ class Notice extends AbstractFactory
      */
     final public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyLayoutNotice');
-        \wp_enqueue_script('tiFyLayoutNotice');
+        \wp_enqueue_style('tiFyLayout-notice');
+        \wp_enqueue_script('tiFyLayout-notice');
     }
 
     /**

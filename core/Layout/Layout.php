@@ -16,6 +16,7 @@
 namespace tiFy\Core\Layout;
 
 use tiFy\App\Core;
+use tiFy\Components;
 
 /**
  * @method static \tiFy\Components\Layouts\Breadcrumb\Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
@@ -41,7 +42,7 @@ final class Layout extends Core
             self::register($name, "tiFy\\Components\\Layouts\\{$name}\\{$name}::make");
         endforeach;
 
-        require_once $this->appAbsDir() . '/components/Layouts/Helpers.php';
+        Components::register('Layouts');
 
         // Déclaration des événements
         $this->appAddAction('init');
