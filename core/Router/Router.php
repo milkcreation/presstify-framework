@@ -6,7 +6,7 @@ use League\Container\Exception\NotFoundException;
 use tiFy\App\Core;
 use tiFy\Core\Options\Options;
 use tiFy\Core\Router\Factory;
-use tiFy\Core\Router\Taboox\Admin\ContentHook as TabooxContentHook;
+use tiFy\Core\Router\Admin\ContentHook as AdminContentHook;
 
 class Router extends Core
 {
@@ -80,7 +80,7 @@ class Router extends Core
                 'id'     => 'tifyCoreRouter-optionsNode--contentHook',
                 'parent' => 'tifyCoreRouter-optionsNode',
                 'title'  => __('Pages de contenu spéciales', 'tify'),
-                'cb'     => TabooxContentHook::class,
+                'cb'     => AdminContentHook::class,
             ]
         );
     }
@@ -161,12 +161,28 @@ class Router extends Core
      *
      * @return int
      */
-    final public function getContentHook($hook_id, $default = 0)
+    final public function getContentHook($name, $default = 0)
     {
-        if (!$router = $this->getRoute($hook_id)) :
+        if (!$router = $this->getRoute($name)) :
             return $default;
         endif;
 
         return $router->getSelected();
+    }
+
+    /**
+     * Récupération du permalien de la page associée à l'identifiant de qualification de la route.
+     *
+     * @param string $name Identifiant de qualification de la route.
+     *
+     * @return int
+     */
+    final public function getContentHookPermalink($name)
+    {
+        if (!$router = $this->getRoute($name)) :
+            return '';
+        endif;
+
+        return get_the_permalink($router->getSelected());
     }
 }
