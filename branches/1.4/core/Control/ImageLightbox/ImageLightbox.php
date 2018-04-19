@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name ImageLightbox
  * @desc Controleur d'affichage de modale image

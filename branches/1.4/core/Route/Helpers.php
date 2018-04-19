@@ -15,6 +15,16 @@
 use tiFy\Core\Route\Route;
 
 /**
+ * Indicateur de contexte de la requête principale.
+ *
+ * @return bool
+ */
+function is_route()
+{
+    return Route::is();
+}
+
+/**
  * Vérifie la correspondance du nom de qualification d'une route existante avec la valeur soumise.
  *
  * @param string $name Identifiant de qualification de la route à vérifier
