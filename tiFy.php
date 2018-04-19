@@ -5,7 +5,7 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.22
+ * @version 1.4.23
  */
 
 namespace tiFy;
@@ -81,7 +81,8 @@ final class tiFy
         endif;
 
         // Définition des chemins absolus
-        self::$AbsPath = $AbsPath ? : (defined('PUBLIC_PATH') ? PUBLIC_PATH : ABSPATH);
+        $AbsPath = $AbsPath ? : (defined('PUBLIC_PATH') ? PUBLIC_PATH : ABSPATH);
+        self::$AbsPath = rtrim(wp_normalize_path($AbsPath), '/') . '/';
         self::$AbsDir = dirname(__FILE__);
 
         // Définition des constantes d'environnement
