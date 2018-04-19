@@ -76,6 +76,10 @@ class AdminUI extends Component
         if ($this->appConfig('disable_emoji')) :
             new Emoji();
         endif;
+
+        if ($embed_opts = $this->appConfig('disable_embed')) :
+            new Embed($embed_opts);
+        endif;
     }
 
     /**

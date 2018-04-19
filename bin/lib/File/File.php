@@ -59,11 +59,12 @@ class File
     public static function getContents( $filename )
     {
         $contents = ''; 
-        
+
         // Vérifie si le chemin du fichier est une url
         if( Checker::isUrl( $filename ) ) :
             if( preg_match( '/^'. preg_quote( site_url( '/' ), '/' ) .'/', $filename ) ) :
-                $filename = preg_replace( '/^'. preg_quote( site_url( '/' ), '/' ) .'/', tiFy::$AbsPath, $filename );
+                $filename = preg_replace( '/^'. preg_quote(site_url('/'), '/') .'/', tiFy::$AbsPath, $filename );
+
                 if( file_exists( $filename ) ) :
                     $contents = file_get_contents( $filename );
                 endif;

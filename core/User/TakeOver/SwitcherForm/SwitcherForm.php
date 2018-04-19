@@ -21,10 +21,7 @@ use tiFy\Lib\User\User;
 class SwitcherForm extends \tiFy\Core\Control\Factory
 {
     /**
-     * DECLENCHEURS
-     */
-    /**
-     * Initialisation globale
+     * Initialisation globale.
      *
      * @return void
      */
@@ -50,7 +47,7 @@ class SwitcherForm extends \tiFy\Core\Control\Factory
     }
 
     /**
-     * Mise en file des scripts
+     * Mise en file des scripts.
      *
      * @return void
      */
