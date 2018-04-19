@@ -1,7 +1,9 @@
 <?php
 namespace tiFy\Core\Taboox\Options;
 
-abstract class Admin extends \tiFy\Core\Taboox\Admin
+use tiFy\Core\Taboox\Admin as TabooxAdmin;
+
+abstract class Admin extends TabooxAdmin
 {
     /**
      * Formulaire de saisie
