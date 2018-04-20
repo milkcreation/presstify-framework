@@ -209,6 +209,19 @@ abstract class AbstractPostItem extends Fluent implements PostItemInterface
     }
 
     /**
+     * Récupération de metadonnées.
+     *
+     * @param string $meta_key Clé d'index de la metadonnée à récupérer
+     * @param bool $single Type de metadonnés. single (true)|multiple (false). false par défaut.
+     *
+     * @return mixed
+     */
+    public function getMeta($meta_key, $single = false)
+    {
+        return get_post_meta($this->getId(), $meta_key, $single);
+    }
+
+    /**
      * Récupération du lien d'édition du post dans l'interface administrateur.
      *
      * @return string

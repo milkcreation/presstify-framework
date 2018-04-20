@@ -48,13 +48,13 @@ class DatetimeJs extends AbstractFactory
     {
         \wp_register_style(
             'tiFyFieldDatetimeJs',
-            self::tFyAppAssetsUrl('DatetimeJs.css', get_class()),
+            $this->appAbsUrl() . '/assets/DatetimeJs/css/styles.css',
             [],
             171112
         );
         \wp_register_script(
             'tiFyFieldDatetimeJs',
-            self::tFyAppAssetsUrl('DatetimeJs.js', get_class()),
+            $this->appAbsUrl() . '/assets/DatetimeJs/js/scripts.css',
             ['jquery', 'moment'],
             171112,
             true

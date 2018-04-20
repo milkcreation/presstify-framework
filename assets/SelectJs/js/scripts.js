@@ -3,11 +3,9 @@
  * @see https://api.jqueryui.com/jquery.widget
  * @see https://blog.rodneyrehm.de/archives/11-jQuery-Hooks.html
  *
- * @
  *
  */
 !(function ($, doc, win) {
-
     // Attribution de la valeur à l'élément
     var _hook = $.valHooks.div;
     $.valHooks.div = {
@@ -31,6 +29,7 @@
             // Définition des options par défaut
             options: {
                 disabled: false,
+                removable: true,
                 multiple: false,
                 duplicate: false,
                 max: -1,
@@ -115,7 +114,7 @@
                 this.flags.Disabled = this.options.disabled;
                 this.flags.isMultiple = this.options.multiple;
                 this.flags.isDuplicable = (this.options.duplicate && this.flags.isMultiple);
-                this.flags.isRemovable = !this.flags.Disabled;
+                this.flags.isRemovable = !this.flags.Disabled && (this.options.removable !== false);
                 this.flags.isSortable = ((this.options.sortable !== false) && this.flags.isMultiple && !this.flags.Disabled);
                 this.flags.isOpen = false;
                 this.flags.isComplete = false;
@@ -1154,6 +1153,14 @@
                 if (!this.flags.Disabled) {
                     this._open();
                 }
+            },
+
+            // Ajout d'une valeur à la liste de selection
+            // @uses $(selector).tifyselect('add', {value});
+            add: function (value) {
+                var self = this;
+                $('> [data-value="' + value + '"]', self.pickerList).trigger('click');
+
             },
 
             // Fermeture de la liste de selection

@@ -42,13 +42,13 @@ class Notice extends AbstractFactory
         // Déclaration des scripts
         \wp_register_style(
             'tiFyLayout-notice',
-            self::tFyAppAssetsUrl('Notice.css', get_class()),
+            $this->appAbsUrl() . '/assets/Notice/css/styles.css',
             [],
             180214
         );
         \wp_register_script(
             'tiFyLayout-notice',
-            self::tFyAppAssetsUrl('Notice.js', get_class()),
+            $this->appAbsUrl() . '/assets/Notice/js/scripts.js',
             ['jquery'],
             180214,
             true

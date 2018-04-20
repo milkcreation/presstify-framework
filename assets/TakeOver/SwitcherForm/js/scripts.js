@@ -1,5 +1,4 @@
 jQuery(document).ready(function($){
-
     // Récupération de la liste des utilisateurs liés
     $(document).on('tifyselectadd', '.tiFyTakeOverSwitcherForm-selectField--role', function(e){
         // Bypass
