@@ -456,7 +456,7 @@ class ScriptLoader extends \tiFy\App
             /// TiFy - Smooth Anchor
             'tify-smooth-anchor'   => [
                 'src'       => [
-                    'local' => tiFy::$AbsUrl . '/bin/assets/lib/tify-smooth-anchor' . $min . '.js',
+                    'local' => $this->appAbsUrl() . '/assets/SmoothAnchor/js/scripts.js',
                 ],
                 'deps'      => ['jquery', 'easing'],
                 'version'   => '150329',

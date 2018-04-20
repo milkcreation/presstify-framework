@@ -45,13 +45,13 @@ class NumberJs extends AbstractFactory
     {
         \wp_register_style(
             'tiFyFieldNumberJs',
-            self::tFyAppAssetsUrl('NumberJs.css', get_class()),
+            $this->appAbsUrl() . '/assets/NumberJs/css/styles.css',
             ['dashicons'],
             171019
         );
         \wp_register_script(
             'tiFyFieldNumberJs',
-            self::tFyAppAssetsUrl('NumberJs.js', get_class()),
+            $this->appAbsUrl() . '/assets/NumberJs/js/scripts.css',
             ['jquery-ui-spinner'],
             171019,
             true

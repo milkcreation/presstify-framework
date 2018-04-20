@@ -39,7 +39,7 @@ class SwitcherForm extends \tiFy\Core\Control\Factory
 
         \wp_register_script(
             'tify_control-take_over_switcher_form',
-            self::tFyAppAssetsUrl('SwitcherForm.js', get_class()),
+            $this->appAbsUrl() .'/SwitcherForm/js/scripts.js',
             [],
             171218,
             true
@@ -68,7 +68,7 @@ class SwitcherForm extends \tiFy\Core\Control\Factory
         check_ajax_referer('tiFyTakeOverSwitcherForm-getUsers');
 
         // Récupération des attributs de champ
-        $fields = self::tFyAppGetRequestVar('fields', ['role' => [], 'user' => []], 'POST');
+        $fields = $this->appRequest('POST')->get('fields', ['role' => [], 'user' => []]);
         $fields = wp_unslash($fields);
 
         // Récupération de la liste de choix des utilisateurs
@@ -76,7 +76,7 @@ class SwitcherForm extends \tiFy\Core\Control\Factory
             'ID',
             'display_name',
             [
-                'role'      => self::tFyAppGetRequestVar('role', '', 'POST'),
+                'role'      => $this->appRequest('POST')->get('role', ''),
                 'number'    => -1
             ]
         );
@@ -91,9 +91,6 @@ class SwitcherForm extends \tiFy\Core\Control\Factory
         exit;
     }
 
-    /**
-     * CONTROLEURS
-     */
     /**
      * Affichage
      *
@@ -176,10 +173,16 @@ class SwitcherForm extends \tiFy\Core\Control\Factory
             [
                 'name'            => 'role',
                 'value'           => -1,
-                'filter'          => false
+                'filter'          => false,
+                'removable'       => false
             ],
             (array)$fields['role']
         );
+        if (isset($fields['role']['attrs']['class'])) :
+            $fields['role']['attrs']['class'] = 'tiFyTakeOverSwitcherForm-selectField--role ' . $fields['role']['attrs']['class'];
+        else :
+            $fields['role']['attrs']['class'] = 'tiFyTakeOverSwitcherForm-selectField--role';
+        endif;
 
         $fields['user'] = array_merge(
             [
@@ -188,10 +191,16 @@ class SwitcherForm extends \tiFy\Core\Control\Factory
                 'disabled'        => true,
                 'picker'          => [
                     'filter'    => true
-                ]
+                ],
+                'removable'       => false
             ],
             (array)$fields['user']
         );
+        if (isset($fields['user']['attrs']['class'])) :
+            $fields['user']['attrs']['class'] = 'tiFyTakeOverSwitcherForm-selectField--user ' . $fields['user']['attrs']['class'];
+        else :
+            $fields['user']['attrs']['class'] = 'tiFyTakeOverSwitcherForm-selectField--user';
+        endif;
 
         // Définition de la liste des choix des selecteurs
         // Selecteur des Rôles

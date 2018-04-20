@@ -14,7 +14,7 @@ class Layouts extends Component
     public function __construct()
     {
         parent::__construct();
-        exit;
+
         require $this->appDirname() . '/Helpers.php';
     }
 }

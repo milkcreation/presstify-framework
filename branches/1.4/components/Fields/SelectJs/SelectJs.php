@@ -34,10 +34,12 @@ use tiFy\Core\Field\Field;
  * @var null|string|array $picker_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de selection
  * @var null|string|array $item_cb Classe ou méthode ou fonction de rappel de traitement d'un élément
  * @var bool $disabled Activation/Désactivation du controleur de champ
+ * @var bool $removable Activation/Désactivation de la suppression d'un élément dans la liste des éléments séléctionné
  * @var bool $multiple Autorise la selection multiple d'éléments
  * @var bool $duplicate Autorise les doublons dans la liste de selection (multiple actif doit être actif)
  * @var bool $autocomplete Active le champs de selection par autocomplétion
  * @var int $max Nombre d'élément maximum @todo
+ *
  * @var array $sortable {
  *      Liste des options du contrôleur ajax d'ordonnancement
  *      @see http://jqueryui.com/sortable/
@@ -60,10 +62,10 @@ use tiFy\Core\Field\Field;
  *          @var int $left
  *          @var int $width
  *      }
- *      @var bool $adminbar Gestion de la barre d'administration Wordpress. défaut true
- *      @var bool $filter Champ de filtrage des éléments de la liste de selection
- *      @var string $loader Rendu de l'indicateur de préchargement.
- *      @var string $more Rendu de '+'
+ * @var bool $adminbar Gestion de la barre d'administration Wordpress. défaut true
+ * @var bool $filter Champ de filtrage des éléments de la liste de selection
+ * @var string $loader Rendu de l'indicateur de préchargement.
+ * @var string $more Rendu de '+'
  * }
  */
 class SelectJs extends AbstractFactory
@@ -88,7 +90,7 @@ class SelectJs extends AbstractFactory
         // Déclaration des scripts
         \wp_register_script(
             'tiFyFieldSelectJs',
-            self::tFyAppAssetsUrl('SelectJs.js', get_class()),
+            $this->appAbsUrl() . '/assets/SelectJs/js/scripts.js',
             ['tifyselect'],
             171218,
             true
@@ -146,8 +148,7 @@ class SelectJs extends AbstractFactory
         $defaults = [
             'before'          => '',
             'after'           => '',
-            'container_id'    => 'tiFyField-selectJs--' . $this->getId(),
-            'container_class' => '',
+            'attrs'           => [],
             'name'            => '',
             'value'           => null,
             'options'         => [],
@@ -156,34 +157,38 @@ class SelectJs extends AbstractFactory
             'picker_cb'       => 'pickerCallback',
             'item_cb'         => 'itemCallback',
             'disabled'        => false,
+            'removable'       => true,
             'multiple'        => false,
             'duplicate'       => false,
             'sortable'        => true,
             'autocomplete'    => false,
             'max'             => -1,
             'trigger'         => [],
-            'picker'          => []
+            'picker'          => [],
         ];
         $args = array_merge($defaults, $args);
 
         // Attributs de configuration du controleur
-        if (!empty($args['container_class'])) :
-            $args['container_class'] = 'tiFy-select tiFyField-selectJs ' . $args['container_class'];
+        if (!isset($args['attrs']['id'])) :
+            $args['attrs']['id'] = 'tiFyField-selectJs--' . $this->getIndex();
+        endif;
+        if (!isset($args['attrs']['class'])) :
+            $args['attrs']['class'] = 'tiFy-select tiFyField-selectJs';
         else :
-            $args['container_class'] = 'tiFy-select tiFyField-selectJs';
+            $args['attrs']['class'] = 'tiFy-select tiFyField-selectJs '. $args['attrs']['class'];
         endif;
 
         // Attributs du selecteur de gestion de traitement
         $args['handler_args'] = [
-            'name'     => $args['name'],
-            'value'    => $args['value'],
-            'disabled' => $args['disabled'],
-            'multiple' => $args['multiple'],
-            'attrs'    => []
+            'name'      => $args['name'],
+            'value'     => $args['value'],
+            'disabled'  => $args['disabled'],
+            'removable' => $args['removable'],
+            'multiple'  => $args['multiple'],
+            'attrs'     => [],
         ];
         $args['handler_args']['attrs']['id'] = 'tiFyField-selectJsHandler--' . $this->getId();
         $args['handler_args']['attrs']['class'] = 'tiFy-selectHandler tiFyField-selectJsHandler';
-
         // Attributs de configuration du controleur Ajax
         // Sortable
         if ($args['sortable']) :
@@ -204,7 +209,7 @@ class SelectJs extends AbstractFactory
         $args['picker'] = array_merge(
             [
                 'loader' => $picker_loader,
-                'more'   => '+'
+                'more'   => '+',
             ],
             (array)$args['picker']
         );
@@ -217,24 +222,25 @@ class SelectJs extends AbstractFactory
 
             $args['source'] = array_merge(
                 [
-                    'action'         => 'tify_field_select_js',
-                    '_ajax_nonce'    => \wp_create_nonce('tiFyField-selectJs'),
-                    'query_args'     => [],
-                    'args'           => [
-                        'select_cb'    => $args['select_cb'],
-                        'picker_cb'    => $args['picker_cb'],
-                        'item_cb'      => $args['item_cb']
-                    ]
+                    'action'      => 'tify_field_select_js',
+                    '_ajax_nonce' => \wp_create_nonce('tiFyField-selectJs'),
+                    'query_args'  => [],
+                    'args'        => [
+                        'select_cb' => $args['select_cb'],
+                        'picker_cb' => $args['picker_cb'],
+                        'item_cb'   => $args['item_cb'],
+                    ],
                 ],
                 $args['source']
             );
         endif;
 
         // Attributs de configuration des options du controleur Js
-        $args['data-options'] = rawurlencode(
+        $args['attrs']['data-options'] = rawurlencode(
             json_encode(
                 [
                     'disabled'     => (bool)$args['disabled'],
+                    'removable'    => (bool)$args['removable'],
                     'multiple'     => (bool)$args['multiple'],
                     'duplicate'    => (bool)$args['duplicate'],
                     'autocomplete' => (bool)$args['autocomplete'],
@@ -243,11 +249,11 @@ class SelectJs extends AbstractFactory
                     'trigger'      => $args['trigger'],
                     'picker'       => array_merge(
                         [
-                            'adminbar' => (is_admin() && (!defined('DOING_AJAX') || (DOING_AJAX !== true))) ? false : true
+                            'adminbar' => (is_admin() && (!defined('DOING_AJAX') || (DOING_AJAX !== true))) ? false : true,
                         ],
                         $args['picker']
                     ),
-                    'source'       => $args['source']
+                    'source'       => $args['source'],
                 ],
                 JSON_FORCE_OBJECT
             )
@@ -293,14 +299,14 @@ class SelectJs extends AbstractFactory
      * @param array $item {
      *      Attributs de configuration de l'élément
      *
-     *      @var string $id Identifiant de qualification de l'élément
-     *      @var mixed $value Valeur de retour
-     *      @var string $label Intitulé de qualification
-     *      @var bool $group
-     *      @var string $parent Identifiant de qualification de l'élément parent
-     *      @var bool $disabled
-     *      @var string $select Rendu HTML dans la liste des éléments selectionnés
-     *      @var string $picker Rendu HTML dans la liste de selection des éléments
+     * @var string $id Identifiant de qualification de l'élément
+     * @var mixed $value Valeur de retour
+     * @var string $label Intitulé de qualification
+     * @var bool $group
+     * @var string $parent Identifiant de qualification de l'élément parent
+     * @var bool $disabled
+     * @var string $select Rendu HTML dans la liste des éléments selectionnés
+     * @var string $picker Rendu HTML dans la liste de selection des éléments
      * }
      *
      * @return string
@@ -316,14 +322,14 @@ class SelectJs extends AbstractFactory
      * @param array $item {
      *      Attributs de configuration de l'élément
      *
-     *      @var string $id Identifiant de qualification de l'élément
-     *      @var mixed $value Valeur de retour
-     *      @var string $label Intitulé de qualification
-     *      @var bool $group
-     *      @var string $parent Identifiant de qualification de l'élément parent
-     *      @var bool $disabled
-     *      @var string $select Rendu HTML dans la liste des éléments selectionnés
-     *      @var string $picker Rendu HTML dans la liste de selection des éléments
+     * @var string $id Identifiant de qualification de l'élément
+     * @var mixed $value Valeur de retour
+     * @var string $label Intitulé de qualification
+     * @var bool $group
+     * @var string $parent Identifiant de qualification de l'élément parent
+     * @var bool $disabled
+     * @var string $select Rendu HTML dans la liste des éléments selectionnés
+     * @var string $picker Rendu HTML dans la liste de selection des éléments
      * }
      *
      * @return string
@@ -388,7 +394,12 @@ class SelectJs extends AbstractFactory
 
         if (!empty($args['source'])) :
             // Récupération des élements depuis la liste de seelection
-            $query_items = new \WP_Query(['post_type' => 'any', 'post__in' => $values, 'orderby' => 'post__in', 'order' => 'ASC']);
+            $query_items = new \WP_Query([
+                'post_type' => 'any',
+                'post__in'  => $values,
+                'orderby'   => 'post__in',
+                'order'     => 'ASC',
+            ]);
 
             while ($query_items->have_posts()) : $query_items->the_post();
                 $item = [];
@@ -459,45 +470,42 @@ class SelectJs extends AbstractFactory
             : $this->getItems($this->getOptionValues(), compact('select_cb', 'picker_cb', 'item_cb', 'source'));
 
         ob_start();
-?><?php $this->before(); ?>
-<div
-    id="<?php echo $this->get('container_id'); ?>"
-    class="<?php echo $this->get('container_class'); ?>"
-    data-options="<?php echo $this->get('data-options'); ?>"
->
-    <?php echo Field::Select($this->get('handler_args')); ?>
+        ?><?php $this->before(); ?>
+        <div <?php $this->attrs(); ?>>
+            <?php echo Field::Select($this->get('handler_args')); ?>
 
-    <div id="tiFyField-selectJsTrigger--<?php echo $this->getId();?>" class="tiFy-selectTrigger">
-        <ul id="tiFyField-selectJsSelectedItems--<?php echo $this->getId(); ?>" class="tiFy-selectSelectedItems">
-        <?php foreach ($selected_items as $item) : ?>
-            <li
-                data-label="<?php echo $item['label']; ?>"
-                data-value="<?php echo $item['value']; ?>"
-                data-index="<?php echo $item['index']; ?>"
-                aria-disabled="<?php echo $item['disabled']; ?>"
-            >
-                <?php echo $item['select'];?>
-            </li>
-        <?php endforeach;?>
-        </ul>
-    </div>
+            <div id="tiFyField-selectJsTrigger--<?php echo $this->getId(); ?>" class="tiFy-selectTrigger">
+                <ul id="tiFyField-selectJsSelectedItems--<?php echo $this->getId(); ?>"
+                    class="tiFy-selectSelectedItems">
+                    <?php foreach ($selected_items as $item) : ?>
+                        <li
+                                data-label="<?php echo $item['label']; ?>"
+                                data-value="<?php echo $item['value']; ?>"
+                                data-index="<?php echo $item['index']; ?>"
+                                aria-disabled="<?php echo $item['disabled']; ?>"
+                        >
+                            <?php echo $item['select']; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
 
-    <div id="tiFyField-selectJsPicker--<?php echo $this->getId();?>" class="tiFy-selectPicker">
-        <ul id="tiFyField-selectJsPickerItems--<?php echo $this->getId();?>" class="tiFy-selectPickerItems">
-        <?php foreach ($picker_items as $item) :?>
-            <li
-                data-label="<?php echo $item['label']; ?>"
-                data-value="<?php echo $item['value']; ?>"
-                data-index="<?php echo $item['index']; ?>"
-                aria-disabled="<?php echo $item['disabled']; ?>"
-            >
-                <?php echo $item['picker'];?>
-            </li>
-        <?php endforeach;?>
-        </ul>
-    </div>
-</div>
-<?php $this->after(); ?><?php
+            <div id="tiFyField-selectJsPicker--<?php echo $this->getId(); ?>" class="tiFy-selectPicker">
+                <ul id="tiFyField-selectJsPickerItems--<?php echo $this->getId(); ?>" class="tiFy-selectPickerItems">
+                    <?php foreach ($picker_items as $item) : ?>
+                        <li
+                                data-label="<?php echo $item['label']; ?>"
+                                data-value="<?php echo $item['value']; ?>"
+                                data-index="<?php echo $item['index']; ?>"
+                                aria-disabled="<?php echo $item['disabled']; ?>"
+                        >
+                            <?php echo $item['picker']; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <?php $this->after(); ?><?php
 
         return ob_get_clean();
     }
