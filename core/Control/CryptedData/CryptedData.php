@@ -43,40 +43,40 @@ class CryptedData extends \tiFy\Core\Control\Factory
     protected function init()
     {
         // Actions ajax
-        $this->tFyAppAddAction(
+        $this->appAddAction(
             'wp_ajax_tiFyControlCryptedData_encrypt',
             'wp_ajax_encrypt'
         );
-        $this->tFyAppAddAction(
+        $this->appAddAction(
             'wp_ajax_nopriv_tiFyControlCryptedData_encrypt',
             'wp_ajax_encrypt'
         );
-        $this->tFyAppAddAction(
+        $this->appAddAction(
             'wp_ajax_tiFyControlCryptedData_decrypt',
             'wp_ajax_decrypt'
         );
-        $this->tFyAppAddAction(
+        $this->appAddAction(
             'wp_ajax_nopriv_tiFyControlCryptedData_decrypt',
             'wp_ajax_decrypt'
         );
-        $this->tFyAppAddAction(
+        $this->appAddAction(
             'wp_ajax_tiFyControlCryptedData_generate',
             'wp_ajax_generate'
         );
-        $this->tFyAppAddAction(
+        $this->appAddAction(
             'wp_ajax_nopriv_tiFyControlCryptedData_generate',
             'wp_ajax_generate'
         );
 
         \wp_register_style(
             'tify_control-crypted_data',
-            self::tFyAppAssetsUrl('CryptedData.css', get_class()),
+            $this->appAbsUrl() . '/assets/CryptedData/css/styles.css',
             ['dashicons'],
             170501
         );
         \wp_register_script(
             'tify_control-crypted_data',
-            self::tFyAppAssetsUrl('CryptedData.js', get_class()),
+            $this->appAbsUrl() . '/assets/CryptedData/js/scripts.js',
             ['jquery'],
             170501,
             true

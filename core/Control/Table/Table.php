@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name Table
  * @desc Controleur d'affichage de Tableau HTML Responsive
@@ -29,10 +30,7 @@ namespace tiFy\Core\Control\Table;
 class Table extends \tiFy\Core\Control\Factory
 {
     /**
-     * DECLENCHEURS
-     */
-    /**
-     * Initialisation globale
+     * Initialisation globale.
      *
      * @return void
      */
@@ -40,14 +38,14 @@ class Table extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-table',
-            self::tFyAppAssetsUrl('Table.css', get_class()),
+            $this->appAbsUrl() . '/assets/Table/css/styles.css',
             [],
             160714
         );
     }
 
     /**
-     * Mise en file des scripts
+     * Mise en file des scripts.
      *
      * @return void
      */
@@ -56,9 +54,6 @@ class Table extends \tiFy\Core\Control\Factory
         \wp_enqueue_style('tify_control-table');
     }
 
-    /**
-     * CONTROLEURS
-     */
     /**
      * Affichage
      *

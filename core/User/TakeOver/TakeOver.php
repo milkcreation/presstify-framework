@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name TakeOver
  * @desc Prise de controle de compte utilisateur
@@ -15,6 +16,9 @@
 namespace tiFy\Core\User\TakeOver;
 
 use tiFy\Core\Control\Control;
+use tiFy\Core\User\TakeOver\ActionLink\ActionLink;
+use tiFy\Core\User\TakeOver\AdminBar\AdminBar;
+use tiFy\Core\User\TakeOver\SwitcherForm\SwitcherForm;
 
 class TakeOver extends \tiFy\App
 {
@@ -57,15 +61,15 @@ class TakeOver extends \tiFy\App
     {
         Control::register(
             'TakeOverActionLink',
-            'tiFy\Core\User\TakeOver\ActionLink\ActionLink'
+            ActionLink::class
         );
         Control::register(
             'TakeOverAdminBar',
-            'tiFy\Core\User\TakeOver\AdminBar\AdminBar'
+            AdminBar::class
         );
         Control::register(
             'TakeOverSwitcherForm',
-            'tiFy\Core\User\TakeOver\SwitcherForm\SwitcherForm'
+            SwitcherForm::class
         );
     }
 
