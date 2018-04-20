@@ -901,11 +901,11 @@ trait App
             if (file_exists($path['path'] . "/{$min_asset}")) :
                 $url = $path['url'] . "/{$min_asset}";
             endif;
+        endif;
+
         // Version brute de la ressource
-        else :
-            if (file_exists($path['path'] . "/{$_asset}")) :
+        if (!$url && file_exists($path['path'] . "/{$_asset}")) :
                 $url = $path['url'] . "/{$_asset}";
-            endif;
         endif;
 
         if(! $url) :

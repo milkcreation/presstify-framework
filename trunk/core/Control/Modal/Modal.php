@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name Modal
  * @desc Controleur d'affichage de fenêtre de dialogue
@@ -45,13 +46,13 @@ class Modal extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-modal',
-            self::tFyAppAssetsUrl('Modal.css', get_class()),
+            $this->appAbsUrl() . '/assets/Modal/css/styles.css',
             [],
             171206
         );
         \wp_register_script(
             'tify_control-modal',
-            self::tFyAppAssetsUrl('Modal.js', get_class()),
+            $this->appAbsUrl() . '/assets/Modal/js/scripts.js',
             ['jquery'],
             171206,
             true

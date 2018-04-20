@@ -75,7 +75,7 @@ class Breadcrumb extends AbstractFactory
         // Déclaration des scripts
         \wp_register_style(
             'tiFyLayoutBreadcrumb',
-            self::tFyAppAssetsUrl('Breadcrumb.css', get_class()),
+            $this->appAbsUrl() . '/assets/Breadcrumb/css/styles.css',
             [],
             180122
         );

@@ -49,13 +49,13 @@ class ToggleSwitch extends AbstractFactory
     {
         \wp_register_style(
             'tiFyFieldToggleSwitch',
-            self::tFyAppAssetsUrl('ToggleSwitch.css', get_class()),
+            $this->appAbsUrl() . '/assets/ToggleSwitch/css/styles.css',
             [],
             170724
         );
         \wp_register_script(
             'tiFyFieldToggleSwitch',
-            self::tFyAppAssetsUrl('ToggleSwitch.js', get_class()),
+            $this->appAbsUrl() . '/assets/ToggleSwitch/js/scripts.js',
             ['jquery'],
             170724
         );
