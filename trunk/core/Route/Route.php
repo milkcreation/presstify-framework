@@ -194,7 +194,7 @@ class Route extends \tiFy\App\Core
      */
     public function pre_get_posts(&$wp_query)
     {
-        if (self::hasCurrent() && $wp_query->is_main_query()) :
+        if ($wp_query->is_main_query() && ! $wp_query->is_admin() && self::hasCurrent()) :
             foreach($this->conditionnalTags as $ct) :
                 $wp_query->{$ct} = false;
             endforeach;
