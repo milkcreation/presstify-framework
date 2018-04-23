@@ -49,6 +49,10 @@ class Router extends Core
      */
     public static function get()
     {
+        if (! self::tFyAppHasContainer(__CLASS__)) :
+            wp_die('L\'appel de l\'instance doit se faire après l\'événement "after_setup_tify".', 'tify');
+        endif;
+
         try {
             return self::tFyAppGetContainer(__CLASS__);
         } catch(NotFoundException $e) {
