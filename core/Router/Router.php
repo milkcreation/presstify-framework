@@ -39,7 +39,7 @@ class Router extends Core
         $this->appAddAction('tify_options_register_node');
 
         // Fonction d'aide à la saisie
-        $this->appDirname() . '/Helpers.php';
+        require_once ($this->appDirname() . '/Helpers.php');
     }
 
     /**
