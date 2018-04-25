@@ -100,9 +100,10 @@ interface PostItemInterface
      * Récupération de metadonnées.
      * @param string $meta_key Clé d'index de la metadonnée à récupérer
      * @param bool $single Type de metadonnés. single (true)|multiple (false). false par défaut.
+     * @param mixed $default Valeur de retour par défaut.
      * @return mixed
      */
-    public function getMeta($meta_key, $single = false);
+    public function getMeta($meta_key, $single = false, $default = null);
 
     /**
      * Récupération du lien d'édition du post dans l'interface administrateur.
