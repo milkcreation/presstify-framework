@@ -41,13 +41,13 @@ class SlickCarousel extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-slick_carousel',
-            self::tFyAppAssetsUrl('SlickCarousel.css', get_class()),
+            $this->appAbsUrl() . '/assets/SlickCarousel/css/styles.css',
             ['slick', 'slick-theme'],
             170722
         );
         \wp_register_script(
             'tify_control-slick_carousel',
-            self::tFyAppAssetsUrl('SlickCarousel.js', get_class()),
+            $this->appAbsUrl() . '/assets/SlickCarousel/js/scripts.js',
             ['slick'],
             170722,
             true
