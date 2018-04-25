@@ -23,7 +23,7 @@ abstract class AbstractGlyphs
      *
      * @var string $hookname Nom d'accroche pour la mise en file de la police de caractères.
      * @var string $css Url vers la police CSS. La police doit être non minifiée.
-     * @var string $wp_enqueue_style Activation de la mise en file automatique de la feuille de style de la police de caractères.
+     * @var bool $wp_enqueue_style Activation de la mise en file automatique de la feuille de style de la police de caractères.
      * @var string $version Numéro de version utilisé lors de la mise en file de la feuille de style de la police de caractères. La mise en file auto doit être activée.
      * @var array $dependencies Liste des dépendances lors de la mise en file de la feuille de style de la police de caractères. La mise en file auto doit être activée.
      * @var string $prefix Préfixe des classes de la police de caractères.
