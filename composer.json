@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-04-25",
+  "time": "2018-04-26",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -90,6 +90,9 @@
     "neitanod/forceutf8": "Forçage d'encodage en utf-8 d'une chaine de caractères"
   },
   "autoload": {
+    "files": [
+      "core/Helpers.php"
+    ],
     "psr-4": {
       "tiFy\\": ""
     }
