@@ -17,7 +17,7 @@ use tiFy\tiFy;
  */
 function tify_partial_breadcrumb($attrs = [], $echo = true)
 {
-    $layout = (string)Layout::Breadcrumb($attrs);
+    $layout = (string)Partial::Breadcrumb($attrs);
 
     if ($echo) :
         echo $layout;
@@ -45,7 +45,7 @@ function tify_partial_breadcrumb($attrs = [], $echo = true)
  */
 function tify_partial_notice($attrs = [], $echo = true)
 {
-    $layout = (string)Layout::Notice($attrs);
+    $layout = (string)Partial::Notice($attrs);
 
     if ($echo) :
         echo $layout;
@@ -71,7 +71,7 @@ function tify_partial_notice($attrs = [], $echo = true)
  */
 function tify_partial_tag($attrs = [], $echo = true)
 {
-    $layout = (string)Layout::Tag($attrs);
+    $layout = (string)Partial::Tag($attrs);
 
     if ($echo) :
         echo $layout;

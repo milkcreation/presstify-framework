@@ -2,13 +2,74 @@
 
 namespace tiFy\Core\MetaTag;
 
-class MetaTitle extends AbstractController
+use Illuminate\Support\Arr;
+use tiFy\App\Traits\App as TraitsApp;
+
+class MetaTitle
 {
+    use TraitsApp;
+
+    /**
+     * Classe de rappel de la classe courante
+     * @var static
+     */
+    protected static $instance;
+
     /**
      * Liste des éléments contenus dans le fil d'ariane.
      * @var array
      */
-    private static $parts = [];
+    protected $parts = [];
+
+    /**
+     * Liste des attributs de configuration
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
+     * Court-circuitage de l'implémentation
+     *
+     * @return void
+     */
+    protected function __construct()
+    {
+        $this->attributes = $this->parse();
+    }
+
+    /**
+     * Court-circuitage de l'implémentation
+     *
+     * @return void
+     */
+    private function __clone()
+    {
+
+    }
+
+    /**
+     * Court-circuitage de l'implémentation
+     *
+     * @return void
+     */
+    private function __wakeup()
+    {
+
+    }
+
+    /**
+     * Initialisation
+     *
+     * @return self
+     */
+    final public static function make()
+    {
+        if (! self::$instance) :
+            self::$instance = new static();
+        endif;
+
+        return self::$instance;
+    }
 
     /**
      * Traitement des attributs de configuration.
@@ -17,7 +78,7 @@ class MetaTitle extends AbstractController
      *
      * @return array
      */
-    final protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $defaults = [
             'separator'       => ' | ',
@@ -26,10 +87,23 @@ class MetaTitle extends AbstractController
         $attrs = array_merge($defaults, $attrs);
 
         if ($parts = $this->get('parts', [])) :
-            self::$parts = $parts;
+            $this->parts = $parts;
         endif;
 
         return $attrs;
+    }
+
+    /**
+     * Récupération d'un attribut de configuration.
+     *
+     * @param string $key Clé d'index de l'attribut. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function get($key, $default = '')
+    {
+        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
@@ -39,11 +113,11 @@ class MetaTitle extends AbstractController
      */
     private function getPartList()
     {
-        if (!self::$parts) :
-            self::$parts = (new WpQueryMetaTitle())->getList();
+        if (! $this->parts) :
+            $this->parts = (new WpQueryMetaTitle())->getList();
         endif;
 
-        return self::$parts;
+        return $this->parts;
     }
 
     /**
@@ -53,7 +127,7 @@ class MetaTitle extends AbstractController
      */
     final public function addPart($string)
     {
-        self::$parts[] = $string;
+        $this->parts[] = $string;
 
         return $this;
     }
@@ -65,7 +139,7 @@ class MetaTitle extends AbstractController
      */
     public function reset()
     {
-        self::$parts = [];
+        $this->parts = [];
 
         return $this;
     }
@@ -83,5 +157,15 @@ class MetaTitle extends AbstractController
 
         // Récupération du template d'affichage
         return implode($separator, $parts);
+    }
+
+    /**
+     * Récupération de l'affichage du controleur
+     *
+     * @return string
+     */
+    final public function __toString()
+    {
+        return $this->display();
     }
 }

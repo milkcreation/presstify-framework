@@ -79,10 +79,7 @@ class ScriptLoader extends \tiFy\App
      */
     public function admin_head()
     {
-        ?>
-        <script type="text/javascript">/* <![CDATA[ */
-            var tify_ajaxurl = '<?php echo admin_url('admin-ajax.php', 'relative');?>';
-            /* ]]> */</script><?php
+?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';/* ]]> */</script><?php
     }
 
     /**
@@ -98,10 +95,7 @@ class ScriptLoader extends \tiFy\App
      */
     public function wp_head()
     {
-        ?>
-        <script type="text/javascript">/* <![CDATA[ */
-            var tify_ajaxurl = '<?php echo admin_url('admin-ajax.php', 'relative');?>';
-            /* ]]> */</script><?php
+?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';/* ]]> */</script><?php
     }
 
     /**
