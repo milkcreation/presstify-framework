@@ -1,30 +1,30 @@
-.tiFyLayout-notice {
+.tiFyPartial-notice {
     position: relative;
     background-color: #FFF;
 }
 
-.tiFyLayout-notice--success {
+.tiFyPartial-notice--success {
     border-left: solid 3px #46B450;
 }
 
-.tiFyLayout-notice--info {
+.tiFyPartial-notice--info {
     border-left: solid 3px #00A0D2;
 }
 
-.tiFyLayout-notice--warning {
+.tiFyPartial-notice--warning {
     border-left: solid 3px #FFB900;
 }
 
-.tiFyLayout-notice--error {
+.tiFyPartial-notice--error {
     border-left: solid 3px #DC3232;
 }
 
-.tiFyLayout-notice > div {
+.tiFyPartial-notice > div {
     padding: 10px;
     margin-bottom: 20px;
 }
 
-.tiFyLayout-notice > [aria-dismiss="tiFyLayout-notice"] {
+.tiFyPartial-notice > [aria-dismiss="tiFyPartial-notice"] {
     position: absolute;
     top: 0px;
     right: 0px;
