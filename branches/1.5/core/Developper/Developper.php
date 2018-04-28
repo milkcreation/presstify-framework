@@ -2,19 +2,9 @@
 
 namespace tiFy\Core\Developper;
 
-use tiFy\App\Core;
+use tiFy\App\Traits\App as TraitsApp;
 
-class Developper extends Core
+final class Developper
 {
-    /**
-     * CONSTRUCTEUR
-     *
-     * @void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
+    use TraitsApp;
 }

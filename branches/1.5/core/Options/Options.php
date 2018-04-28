@@ -1,10 +1,14 @@
 <?php
+
 namespace tiFy\Core\Options;
 
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Core\Taboox\Taboox;
 
-class Options extends \tiFy\App\Core
+class Options
 {
+    use TraitsApp;
+
     /**
      * Liste des attributs de configuration
      * @var array
@@ -18,8 +22,6 @@ class Options extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Traitement des attributs de configuration
         $this->parseAttrs(self::tFyAppConfig());
 

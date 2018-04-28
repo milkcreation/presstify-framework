@@ -1,8 +1,13 @@
 <?php
+
 namespace tiFy\Core\Db;
 
-class Db extends \tiFy\App\Core
+use tiFy\App\Traits\App as TraitsApp;
+
+final class Db
 {
+    use TraitsApp;
+
     /**
      * Liste des tables de bases de données déclarées
      * @var \tiFy\Core\Db\Factory[]
@@ -16,12 +21,12 @@ class Db extends \tiFy\App\Core
     public static $Query = null;
 
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
+     *
+     * @return void
      */
     public function __construct()
     {
-        parent::__construct();
-                
         foreach( (array) self::tFyAppConfig() as $id => $args ) :
             self::register($id, $args);
         endforeach;

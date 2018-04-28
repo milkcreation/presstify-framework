@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name Cron
  * @package PresstiFy
@@ -10,12 +11,16 @@
  * @version 1.2.369
  * @see https://developer.wordpress.org/plugins/cron/hooking-into-the-system-task-scheduler/
  */
+
 namespace tiFy\Core\Cron;
 
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Core\Templates\Templates;
 
-class Cron extends \tiFy\App\Core
+final class Cron
 {
+    use TraitsApp;
+
     // Configurer la tâche cron
     // Dans le fichier wp-config.php
     // define('DISABLE_WP_CRON', true);
@@ -40,8 +45,6 @@ class Cron extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des tâches planifiées configurées
         foreach ((array)self::tFyAppConfig() as $schedule_id => $schedules_attrs) :
             self::register($schedule_id, $schedules_attrs);

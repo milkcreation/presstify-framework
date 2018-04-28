@@ -1,13 +1,20 @@
 <?php
+
 namespace tiFy\Core\Security;
 
-class Security extends \tiFy\App\Core
+use tiFy\App\Traits\App as TraitsApp;
+
+class Security
 {
-    /* = CONSTRUCTEUR = */
+    use TraitsApp;
+
+    /**
+     * CONSTRUCTEUR
+     *
+     * @return void
+     */
     public function __construct()
     {
-        parent::__construct();
-        
         new LoginRedirect;
     }
 }

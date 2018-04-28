@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name User
  * @desc Gestion des utilisateurs
@@ -14,14 +15,17 @@
 
 namespace tiFy\Core\User;
 
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Core\User\Login\Login;
 use tiFy\Core\User\Role\Role;
 use tiFy\Core\User\Session\Session;
 use tiFy\Core\User\SignUp\SignUp;
 use tiFy\Core\User\TakeOver\TakeOver;
 
-class User extends \tiFy\App\Core
+class User
 {
+    use TraitsApp;
+
     /**
      * CONSTRUCTEUR
      *
@@ -29,9 +33,6 @@ class User extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
-        // Chargement des controleurs
         new Login;
         new Role;
         new Session;

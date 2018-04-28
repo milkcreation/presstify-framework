@@ -1,8 +1,13 @@
 <?php
+
 namespace tiFy\Core\Meta;
+
+use tiFy\App\Traits\App as TraitsApp;
 
 class Meta
 {
+    use TraitsApp;
+
     /**
      * Liste des classe de rappel
      */

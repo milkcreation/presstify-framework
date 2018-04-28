@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name Update
  * @package PresstiFy
@@ -12,8 +13,12 @@
 
 namespace tiFy\Core\Update;
 
-class Update extends \tiFy\App\Core
+use tiFy\App\Traits\App as TraitsApp;
+
+class Update
 {
+    use TraitsApp;
+
     /**
      * Classes de rappel
      * @var \tiFy\Core\Update\Factory[]
@@ -27,9 +32,6 @@ class Update extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
-        // Déclaration des événements
         $this->appAddAction('init');
     }
 

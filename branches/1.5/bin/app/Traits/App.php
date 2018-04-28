@@ -31,7 +31,7 @@ trait App
      */
     public function tFyAbsDir()
     {
-        return tiFy::$AbsDir;
+        return tiFy::instance()->absDir();
     }
 
     /**
@@ -41,7 +41,21 @@ trait App
      */
     public function tFyAbsUrl()
     {
-        return tiFy::$AbsUrl;
+        return tiFy::instance()->absUrl();
+    }
+
+    /**
+     * Chargement automatique des classes.
+     *
+     * @param string $namespace Espace de nom.
+     * @param null|string $base_dir Chemin vers le repertoire.
+     * @param null|string $bootstrap Nom de la classe à instancier.
+     *
+     * @return void
+     */
+    public function tFyClassLoad($namespace, $base_dir = null, $bootstrap = null)
+    {
+        return tiFy::instance()->classLoad($namespace, $base_dir, $bootstrap);
     }
 
     /**
@@ -1705,49 +1719,5 @@ trait App
         foreach($objVars AS $key => $value) :
             $this->{$key} = $value;
         endforeach;
-    }
-
-
-    /**
-     * DEPRECATED
-     */
-    /**
-     * Lancement à l'initialisation de la classe
-     * @deprecated
-     *
-     * @return void
-     */
-    public function tFyAppOnInit() { }
-
-    /**
-     * Ajout d'un filtre
-     * @deprecated
-     *
-     * @param string $tag Identification de l'accroche
-     * @param string $class_method Méthode de la classe à executer.
-     * @param int $priority Priorité d'execution
-     * @param int $accepted_args Nombre d'argument permis
-     *
-     * @return null|callable \add_filter()
-     */
-    final public function tFyAppFilterAdd($tag, $class_method = '', $priority = 10, $accepted_args = 1)
-    {
-        return self::tFyAppAddFilter($tag, $class_method, $priority, $accepted_args);
-    }
-
-    /**
-     * Ajout d'une action
-     * @deprecated
-     *
-     * @param string $tag Identification de l'accroche
-     * @param string $class_method Méthode de la classe à executer
-     * @param int $priority Priorité d'execution
-     * @param int $accepted_args Nombre d'argument permis
-     *
-     * @return null|callable \add_action()
-     */
-    final public function tFyAppActionAdd($tag, $class_method = '', $priority = 10, $accepted_args = 1)
-    {
-        return self::tFyAppAddAction($tag, $class_method, $priority, $accepted_args);
     }
 }

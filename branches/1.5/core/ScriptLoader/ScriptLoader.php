@@ -3,9 +3,12 @@
 namespace tiFy\Core\ScriptLoader;
 
 use tiFy\tiFy;
+use tiFy\App\Traits\App as TraitsApp;
 
-class ScriptLoader extends \tiFy\App
+class ScriptLoader
 {
+    use TraitsApp;
+
     /**
      * Liste des librairies CSS référencées
      */
@@ -28,8 +31,6 @@ class ScriptLoader extends \tiFy\App
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des événements
         $this->appAddAction('after_setup_theme');
         $this->appAddAction('init');

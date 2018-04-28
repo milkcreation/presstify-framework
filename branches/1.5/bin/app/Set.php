@@ -2,16 +2,9 @@
 
 namespace tiFy\App;
 
-abstract class Set extends \tiFy\App\Factory
+use tiFy\App;
+
+abstract class Set extends App
 {
-    /**
-     * CONSTRUCTEUR
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        self::initOverrideAutoloader();
-    }
+
 }

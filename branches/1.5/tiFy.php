@@ -5,7 +5,7 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.5.1
+ * @version 1.5.x
  */
 
 namespace tiFy;
@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use League\Container\Container;
 use League\Container\ReflectionContainer;
 use League\Event\Emitter;
+use Psr4ClassLoader;
 use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -23,67 +24,83 @@ use tiFy\Lib\File;
 final class tiFy
 {
     /**
-     * Chemin absolu vers la racine de l'environnement
-     * @var resource
+     * Instance de la classe
+     * @var self
      */
-    public static $AbsPath;
+    protected static $instance;
 
     /**
-     * Chemin absolu vers la racine de presstiFy
+     * Chemin absolu vers la racine de l'environnement.
      * @var resource
      */
-    public static $AbsDir;
+    protected $absPath;
 
     /**
-     * Url absolue vers la racine la racine de presstiFy
+     * Chemin absolu vers la racine de presstiFy.
+     * @var resource
+     */
+    protected $absDir;
+
+    /**
+     * Url absolue vers la racine la racine de presstiFy.
      * @var string
      */
-    public static $AbsUrl;
+    protected $absUrl;
 
     /**
-     * Classe de rappel de la requête globale
+     * Classe de rappel de la requête globale.
      * @var Request
      */
-    private static $GlobalRequest;
+    protected $request;
 
     /**
-     * Classe de rappel du conteneur d'injection de dépendance
+     * Classe de rappel du conteneur d'injection de dépendance.
      * @var Container
      */
-    private static $Container;
+    protected $container;
 
     /**
-     * Classe de rappel de gestion des événements
+     * Classe de rappel de gestion des événements.
      * @var Emitter
      */
-    private static $Emitter;
+    protected $emitter;
 
     /**
-     * Attributs de configuration
+     * Attributs de configuration.
      * @var mixed
      */
-    protected static $Config = [];
+    protected $config = [];
 
     /**
-     * Classe de chargement automatique
+     * Classe de chargement automatique.
+     * @var Psr4ClassLoader
      */
-    private static $ClassLoader = null;
+    protected $classLoader = null;
 
     /**
      * CONSTRUCTEUR
      *
+     * @param string $absPath Chemin absolu vers la racine du projet
+     *
      * @return void
      */
-    public function __construct($AbsPath = null)
+    public function __construct($absPath = null)
     {
+        // Bypass
         if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) :
             return;
         endif;
 
+        if (self::$instance) :
+            return;
+        else :
+            self::$instance = $this;
+        endif;
+
         // Définition des chemins absolus
-        $AbsPath = $AbsPath ? : (defined('PUBLIC_PATH') ? PUBLIC_PATH : ABSPATH);
-        self::$AbsPath = rtrim(wp_normalize_path($AbsPath), '/') . '/';
-        self::$AbsDir = dirname(__FILE__);
+        $absPath = $absPath ? : (defined('PUBLIC_PATH') ? PUBLIC_PATH : ABSPATH);
+        $this->absPath = rtrim(wp_normalize_path($absPath), '/') . '/';
+        $this->absDir = dirname(__FILE__);
 
         // Définition des constantes d'environnement
         if (!defined('TIFY_CONFIG_DIR')) :
@@ -92,60 +109,90 @@ final class tiFy
         if (!defined('TIFY_CONFIG_EXT')) :
             define('TIFY_CONFIG_EXT', 'yml');
         endif;
-        /// Répertoire des plugins
+
+        /// Répertoire des stockage des plugins PresstiFy
         if (!defined('TIFY_PLUGINS_DIR')) :
-            define('TIFY_PLUGINS_DIR', dirname(dirname(self::$AbsDir)) .'/presstify-plugins');
+            define('TIFY_PLUGINS_DIR', dirname(dirname($this->absDir())) . '/presstify-plugins');
         endif;
 
         // Instanciation du moteur
-        self::classLoad('tiFy', self::$AbsDir . '/bin');
-
-        // Instanciation des controleurs en maintenance
-        self::classLoad('tiFy\Maintenance', self::$AbsDir . '/bin/maintenance', 'Maintenance');
-
-        // Instanciation des controleurs dépréciés
-        self::classLoad('tiFy\Deprecated', self::$AbsDir . '/bin/deprecated', 'Deprecated');
+        $this->classLoad('tiFy', $this->absDir(). '/bin');
 
         // Instanciation des l'environnement des applicatifs
-        self::classLoad('tiFy\App', self::$AbsDir . '/bin/app');
+        $this->classLoad('tiFy\App', $this->absDir() . '/bin/app');
 
         // Instanciation des librairies proriétaires
-        new Libraries;
+        $this->getContainer()->share(Libraries::class, new Libraries());
 
         // Initialisation de la gestion des traductions
-        new Languages;
-
-        // Affichage des erreurs
-        /*$formatter = new HtmlFormatter;
-        $handler = new CallableHandler([$this, 'displayError']);
-        $formatter->setErrorLimit(E_ALL);
-
-        $error_handler = new BooBoo([$formatter], [$handler]);
-        $error_handler->register();*/
-
-        // Instanciation des fonctions d'aides au développement
-        self::classLoad('tiFy\Helpers', __DIR__ . '/helpers');
+        $this->getContainer()->share(Languages::class, new Languages());
 
         // Définition de l'url absolue
-        self::$AbsUrl = File::getFilenameUrl(self::$AbsDir, self::$AbsPath);
+        $this->absUrl = File::getFilenameUrl($this->absDir(), $this->absPath());
 
         // Instanciation des composants natifs
-        self::classLoad('tiFy\Core', __DIR__ . '/core');
-
-        // Instanciation des composants dynamiques
-        self::classLoad('tiFy\Components', __DIR__ . '/components');
+        $this->classLoad('tiFy\Core', __DIR__ . '/core');
 
         // Instanciation des extensions
-        self::classLoad('tiFy\Plugins', TIFY_PLUGINS_DIR);
+        $this->classLoad('tiFy\Plugins', TIFY_PLUGINS_DIR);
 
         // Instanciation des jeux de fonctionnalités complémentaires
-        self::classLoad('tiFy\Set', tiFy::$AbsDir . '/set');
-
-        // Instanciation des fonctions d'aide au développement
-        new Helpers;
+        $this->classLoad('tiFy\Set', $this->absDir() . '/set');
 
         // Instanciation des applicatifs
-        new Apps;
+        $this->getContainer()->share(Apps::class, new Apps($this));
+    }
+
+    /**
+     * Récupération de l'instance.
+     *
+     * @return \tiFy\tiFy
+     *
+     * @throws \LogicException
+     */
+    final public static function instance()
+    {
+        if (self::$instance instanceof static) :
+            return self::$instance;
+        endif;
+    }
+
+    /**
+     *
+     */
+    final public function provide($alias, $args = [])
+    {
+        return $this->getContainer()->get($alias, $args);
+    }
+
+    /**
+     * Récupération du chemin absolu vers la racine du projet Web.
+     *
+     * @return void
+     */
+    public function absPath()
+    {
+        return $this->absPath;
+    }
+
+    /**
+     * Récupération du chemin absolu vers la racine de PresstiFy.
+     *
+     * @return void
+     */
+    public function absDir()
+    {
+        return $this->absDir;
+    }
+
+    /**
+     * Récupération de l'url absolue vers la racine de PresstiFy.
+     *
+     * @return void
+     */
+    public function absUrl()
+    {
+        return $this->absUrl;
     }
 
     /**
@@ -158,7 +205,7 @@ final class tiFy
      *
      * @return string
      */
-    public static function formatLowerName($name, $separator = '-')
+    public function formatLowerName($name, $separator = '-')
     {
         $parts = [];
         if (preg_match('#^_?tiFy#', $name, $match)) :
@@ -194,7 +241,7 @@ final class tiFy
      *
      * @return string
      */
-    public static function formatUpperName($name, $underscore = true)
+    public function formatUpperName($name, $underscore = true)
     {
         $name = join(($underscore ? '_' : ''), array_map('ucfirst', preg_split('#_#', $name)));
         $name = join('', array_map('ucfirst', preg_split('#-#', $name)));
@@ -204,7 +251,7 @@ final class tiFy
     }
 
     /**
-     * Chargement automatique des classes
+     * Chargement automatique des classes.
      *
      * @param string $namespace Espace de nom
      * @param string|NULL $base_dir Chemin vers le repertoire
@@ -212,19 +259,19 @@ final class tiFy
      *
      * @return void
      */
-    public static function classLoad($namespace, $base_dir = null, $bootstrap = null)
+    public function classLoad($namespace, $base_dir = null, $bootstrap = null)
     {
-        if (is_null(self::$ClassLoader)) :
+        if (is_null($this->classLoader)) :
             require_once __DIR__ . '/bin/lib/ClassLoader/Psr4ClassLoader.php';
-            self::$ClassLoader = new \Psr4ClassLoader;
+            $this->classLoader = new \Psr4ClassLoader;
         endif;
 
         if (!$base_dir) :
             $base_dir = dirname(__FILE__);
         endif;
 
-        self::$ClassLoader->addNamespace($namespace, $base_dir, false);
-        self::$ClassLoader->register();
+        $this->classLoader->addNamespace($namespace, $base_dir, false);
+        $this->classLoader->register();
 
         if ($bootstrap) :
             $classname = "\\" . ltrim($namespace, '\\') . "\\" . $bootstrap;
@@ -240,13 +287,13 @@ final class tiFy
      *
      * @return Request
      */
-    public static function getGlobalRequest()
+    public function getRequest()
     {
-        if (!self::$GlobalRequest) :
-            self::$GlobalRequest = Request::createFromGlobals();
+        if (! $this->request) :
+            $this->request = Request::createFromGlobals();
         endif;
 
-        return self::$GlobalRequest;
+        return $this->request;
     }
 
     /**
@@ -260,9 +307,9 @@ final class tiFy
      *
      * @return Request|FileBag|HeaderBag|ParameterBag|ServerBag
      */
-    public static function request($property = '')
+    public function request($property = '')
     {
-        if (!$request = self::getGlobalRequest()) :
+        if (! $request = $this->getRequest()) :
             return null;
         endif;
 
@@ -310,13 +357,13 @@ final class tiFy
      *
      * @return mixed
      */
-    public static function requestCall($method, $args = [], $property = '')
+    public function requestCall($method, $args = [], $property = '')
     {
-        if (!$request = self::getGlobalRequest()) :
+        if (!$request = $this->getRequest()) :
             return null;
         endif;
 
-        $object = self::request($property);
+        $object = $this->request($property);
 
         if (method_exists($object, $method)) :
             return call_user_func_array([$object, $method], $args);
@@ -331,17 +378,16 @@ final class tiFy
      *
      * @return Container
      */
-    public static function getContainer()
+    public function getContainer()
     {
-        if (! self::$Container) :
-            self::$Container = new Container();
+        if (! $this->container) :
+            $this->container = new Container();
+            /*$this->container->delegate(
+                new ReflectionContainer()
+            );*/
         endif;
 
-        self::$Container->delegate(
-            new ReflectionContainer()
-        );
-
-        return self::$Container;
+        return $this->container;
     }
 
     /**
@@ -350,13 +396,13 @@ final class tiFy
      *
      * @return Emitter
      */
-    public static function getEmitter()
+    public function getEmitter()
     {
-        if (! self::$Emitter) :
-            self::$Emitter = new Emitter();
+        if (! $this->emitter) :
+            $this->emitter = new Emitter();
         endif;
 
-        return self::$Emitter;
+        return $this->emitter;
     }
 
     /**
@@ -367,14 +413,14 @@ final class tiFy
      *
      * @return mixed|$default
      */
-    public static function getConfig($attr = null, $default = '')
+    public function getConfig($attr = null, $default = '')
     {
         if (is_null($attr)) :
-            return self::$Config;
+            return $this->config;
         endif;
 
-        if (isset(self::$Config[$attr])) :
-            return self::$Config[$attr];
+        if (isset($this->config[$attr])) :
+            return $this->config[$attr];
         endif;
 
         return $default;
@@ -385,8 +431,8 @@ final class tiFy
      *
      *
      */
-    public static function setConfig($key, $value = '')
+    public function setConfig($key, $value = '')
     {
-        self::$Config[$key] = $value;
+        $this->config[$key] = $value;
     }
 }

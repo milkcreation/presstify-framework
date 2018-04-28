@@ -13,11 +13,13 @@
 
 namespace tiFy\Core\Metabox;
 
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Core\Field\Field;
-use tiFy\App\Component;
 
-class Metabox extends Component
+class Metabox
 {
+    use TraitsApp;
+
     /**
      * Liste des métaboxes à supprimer.
      * @var array
@@ -31,8 +33,6 @@ class Metabox extends Component
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des événements
         $this->appAddAction('add_meta_boxes', null, 99);
     }

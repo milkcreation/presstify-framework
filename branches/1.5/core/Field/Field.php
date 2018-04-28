@@ -15,7 +15,7 @@
 
 namespace tiFy\Core\Field;
 
-use tiFy\App\Core;
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Components\Fields\Button\Button;
 use tiFy\Components\Fields\Checkbox\Checkbox;
 use tiFy\Components\Fields\DatetimeJs\DatetimeJs;
@@ -56,17 +56,17 @@ use tiFy\Components\Fields\ToggleSwitch\ToggleSwitch;
  * @method static Textarea(string $id = null, array $attrs = [])
  * @method static ToggleSwitch(string $id = null, array $attrs = [])
  */
-class Field extends Core
+final class Field
 {
+    use TraitsApp;
+
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
      *
      * @return void
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des controleurs d'affichage natifs
         foreach(glob($this->appAbsDir() . '/components/Fields/*/', GLOB_ONLYDIR) as $filename) :
             $name = basename($filename);

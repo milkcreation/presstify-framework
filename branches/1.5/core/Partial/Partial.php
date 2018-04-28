@@ -15,7 +15,7 @@
 
 namespace tiFy\Core\Partial;
 
-use tiFy\App\Core;
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Components;
 
 /**
@@ -23,8 +23,10 @@ use tiFy\Components;
  * @method static \tiFy\Components\Partials\Notice\Notice Notice(string $id = null,array $attrs = [])
  * @method static \tiFy\Components\Partials\Tag\Tag Tag(string $id = null,array $attrs = [])
  */
-final class Partial extends Core
+final class Partial
 {
+    use TraitsApp;
+
     /**
      * CONSTRUCTEUR
      *
@@ -32,8 +34,6 @@ final class Partial extends Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des controleurs d'affichage natifs
         foreach(glob($this->appAbsDir() . '/components/Partials/*/', GLOB_ONLYDIR) as $filename) :
             $name = basename($filename);

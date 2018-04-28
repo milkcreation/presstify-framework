@@ -1,7 +1,10 @@
 <?php
+
 namespace tiFy\App;
 
-abstract class Config extends \tiFy\App
+use tiFy\App;
+
+abstract class Config extends App
 {
     /**
      * Liste des instances déclarées

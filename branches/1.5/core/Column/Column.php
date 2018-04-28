@@ -2,11 +2,13 @@
 
 namespace tiFy\Core\Column;
 
-use tiFy\App\Core;
+use tiFy\App\Traits\App as TraitsApp;
 use League\Container\Exception\NotFoundException;
 
-final class Column extends Core
+final class Column
 {
+    use TraitsApp;
+
     /**
      * CONSTRUCTEUR
      *
@@ -14,8 +16,6 @@ final class Column extends Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des événements
         $this->appAddAction('init');
         $this->appAddAction('admin_init', null, 99);

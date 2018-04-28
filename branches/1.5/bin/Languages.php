@@ -1,7 +1,9 @@
 <?php
 namespace tiFy;
 
-class Languages extends \tiFy\App
+use tiFy\App;
+
+class Languages extends App
 {
     /**
      * CONSTRUCTEUR
@@ -10,8 +12,6 @@ class Languages extends \tiFy\App
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Définition des événements
         $this->appAddAction('plugins_loaded');
     }

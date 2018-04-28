@@ -1,10 +1,14 @@
 <?php
+
 namespace tiFy\Core\CustomType;
 
+use tiFy\App\Traits\App as TraitsApp;
 use \tiFy\Core\Labels\Labels;
 
-class CustomType extends \tiFy\App\Core
+final class CustomType
 {
+    use TraitsApp;
+
     /**
      * Liste des arguments de déclaration des taxonomies personnalisées
      */
@@ -22,8 +26,6 @@ class CustomType extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-        
         // Traitement des types personnalisés passés en arguments
         // Taxonomie
         if (!empty(self::tFyAppConfig('taxonomy'))) :

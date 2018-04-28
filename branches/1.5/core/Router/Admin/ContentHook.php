@@ -1,4 +1,5 @@
 <?php
+
 namespace tiFy\Core\Router\Admin;
 
 use tiFy\Core\Router\Router;

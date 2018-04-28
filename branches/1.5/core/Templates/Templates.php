@@ -1,8 +1,13 @@
 <?php
+
 namespace tiFy\Core\Templates;
 
-final class Templates extends \tiFy\App\Core
+use tiFy\App\Traits\App as TraitsApp;
+
+final class Templates
 {
+    use TraitsApp;
+
     /**
      * Classe de rappel des templates déclarés
      */
@@ -20,8 +25,6 @@ final class Templates extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-        
         // Instanciation des contrôleurs
         new Admin\Admin;
         new Front\Front;

@@ -2,8 +2,12 @@
 
 namespace tiFy\Core\Forms;
 
-class Forms extends \tiFy\App\Core
+use tiFy\App\Traits\App as TraitsApp;
+
+class Forms
 {
+    use TraitsApp;
+
     // Liste des Formulaires déclarés
     private static $Factories = [];
 
@@ -13,8 +17,6 @@ class Forms extends \tiFy\App\Core
     /* = CONSTRUCTEUR = */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des dépendances
         new Addons;
         new Buttons;

@@ -15,9 +15,9 @@
 
 namespace tiFy\Core\ServiceProvider;
 
-use tiFy\App\Core;
+use tiFy\App\Traits\App as TraitsApp;
 
-class ServiceProvider extends Core
+class ServiceProvider
 {
-
+    use TraitsApp;
 }

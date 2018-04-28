@@ -15,7 +15,7 @@
 
 namespace tiFy\Core\Route;
 
-use tiFy\tiFy;
+use InvalidArgumentException;
 use League\Container\Container;
 use League\Route\RouteCollection;
 use League\Route\Http\Exception\NotFoundException;
@@ -25,11 +25,14 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use tiFy\App\Traits\App as TraitsApp;
+use tiFy\tiFy;
 use Zend\Diactoros\Response\SapiEmitter;
-use InvalidArgumentException;
 
-class Route extends \tiFy\App\Core
+class Route
 {
+    use TraitsApp;
+
     /**
      * Classe de rappel du conteneur d'injection de dépendances.
      * @var Container
@@ -95,8 +98,6 @@ class Route extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des dépendances
         $this->container = new Container();
 

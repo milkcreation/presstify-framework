@@ -16,11 +16,13 @@
 namespace tiFy\Core\MetaTag;
 
 use League\Container\Exception\NotFoundException;
-use tiFy\App\Core;
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Core\MetaTag\MetaTitle;
 
-final class MetaTag extends Core
+final class MetaTag
 {
+    use TraitsApp;
+
     /**
      * Récupération de l'instance de la classe.
      *

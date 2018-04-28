@@ -1,11 +1,15 @@
 <?php
+
 namespace tiFy\Core\Ui;
 
+use tiFy\App\Traits\App as TraitsApp;
 use \tiFy\Core\Ui\Admin\Factory as AdminFactory;
 use \tiFy\Core\Ui\User\Factory as UserFactory;
 
-final class Ui extends \tiFy\App\Core
+final class Ui
 {
+    use TraitsApp;
+
     /**
      * Classe de rappel des interfaces déclarées
      * @return
@@ -22,11 +26,9 @@ final class Ui extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Définition des actions de déclenchement
-        $this->tFyAppAddAction('init');
-        $this->tFyAppAddAction('admin_menu');
+        $this->appAddAction('init');
+        $this->appAddAction('admin_menu');
     }    
     
     /**

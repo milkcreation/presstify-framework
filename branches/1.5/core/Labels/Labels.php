@@ -1,8 +1,13 @@
 <?php
+
 namespace tiFy\Core\Labels;
 
-class Labels extends \tiFy\App\Core
+use tiFy\App\Traits\App as TraitsApp;
+
+class Labels
 {
+    use TraitsApp;
+
     /**
      * Liste des classes de rappel
      * @var \tiFy\Core\Labels\Factory[]
@@ -16,8 +21,6 @@ class Labels extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         if ($labels = self::tFyAppConfig()) :
             foreach ($labels as $id => $attrs) :
                 self::register($id, $attrs);

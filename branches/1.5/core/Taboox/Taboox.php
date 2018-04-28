@@ -1,10 +1,14 @@
 <?php
+
 namespace tiFy\Core\Taboox;
 
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Core\Taboox\Display\Display;
 
-class Taboox extends \tiFy\App\Core
+class Taboox
 {
+    use TraitsApp;
+
     /**
      * Liste des boites à onglets déclarées
      * @var \tiFy\Core\Taboox\Box[]
@@ -48,8 +52,6 @@ class Taboox extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Déclaration des événements de déclenchement
         $this->tFyAppAddAction('after_setup_tify', null, 11);
         $this->tFyAppAddAction('init', null, 25);

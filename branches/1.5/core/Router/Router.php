@@ -3,13 +3,15 @@
 namespace tiFy\Core\Router;
 
 use League\Container\Exception\NotFoundException;
-use tiFy\App\Core;
+use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Core\Options\Options;
 use tiFy\Core\Router\Factory;
 use tiFy\Core\Router\Admin\ContentHook as AdminContentHook;
 
-class Router extends Core
+class Router
 {
+    use TraitsApp;
+
     /**
      * Liste des classe de rappel des routes déclarées.
      * @var Factory[]
@@ -23,8 +25,6 @@ class Router extends Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Traitement des paramètres de configuration
         if ($config = self::tFyAppConfig()) :
             foreach ($config as $id => $attrs) :

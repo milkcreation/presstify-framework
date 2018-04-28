@@ -1,10 +1,14 @@
-<?php 
+<?php
+
 namespace tiFy\Core\Mail;
 
+use tiFy\App\Traits\App as TraitsApp;
 use \tiFy\Lib\Mailer\MailerNew;
 
-class Mail extends \tiFy\App\Core
+class Mail
 {
+    use TraitsApp;
+
     /**
      * Paramètre globaux des emails
      * @var array
@@ -36,8 +40,6 @@ class Mail extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
-
         // Chargement des controleurs
         new Queue;
 
