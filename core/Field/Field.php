@@ -97,7 +97,7 @@ class Field extends Core
      * @param string $name Nom de qualification du controleur d'affichage
      * @param mixed $callable classe ou méthode ou fonction de rappel
      *
-     * @return null|callable|\tiFy\Core\Partial\AbstractFactory
+     * @return null|callable|\tiFy\Core\Layout\AbstractFactory
      */
     public static function register($name, $callable)
     {
@@ -133,7 +133,7 @@ class Field extends Core
      *
      * @param string $name Nom de qualification du controleur d'affichage
      *
-     * @return mixed|\tiFy\Core\Partial\AbstractFactory
+     * @return mixed|\tiFy\Core\Layout\AbstractFactory
      */
     public static function get($name)
     {

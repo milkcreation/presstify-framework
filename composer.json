@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-04-27",
+  "time": "2018-05-02",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -80,6 +80,7 @@
     "zendframework/zend-diactoros": "^1.7"
   },
   "suggest": {
+    "beelab/bowerphp": "Utilisation de bower via PHP",
     "bshaffer/oauth2-server-php": "Serveur OAuth 2.0",
     "codeitnowin/barcode": "Bibliothèque de création de code barre dynamique",
     "dompdf/dompdf": "Convertion de HTML en PDf",
@@ -89,9 +90,6 @@
     "neitanod/forceutf8": "Forçage d'encodage en utf-8 d'une chaine de caractères"
   },
   "autoload": {
-    "files": [
-      "core/Helpers.php"
-    ],
     "psr-4": {
       "tiFy\\": ""
     }

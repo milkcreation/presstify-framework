@@ -15,7 +15,7 @@
 
 namespace tiFy\Components\Api\Facebook\Mod\Login;
 
-use tiFy\Core\Partial\Partial;
+use tiFy\Core\Layout\Layout;
 
 class Login extends \tiFy\Components\Api\Facebook\Mod\Factory
 {
@@ -78,7 +78,7 @@ class Login extends \tiFy\Components\Api\Facebook\Mod\Factory
         $args['attrs']['title'] = empty($args['attrs']['title']) ? $args['text'] : $args['attrs']['title'];
         $args['attrs']['class'] = empty($args['attrs']['class']) ? 'FacebookTrigger' : 'FacebookTrigger ' . $args['attrs']['class'];
 
-        echo Partial::Tag(
+        echo Layout::Tag(
             [
                 'tag'     => 'a',
                 'attrs'   => $args['attrs'],

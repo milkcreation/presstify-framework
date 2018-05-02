@@ -1,9 +1,5 @@
 <?php
-
 namespace tiFy\Core\Forms\Form;
-
-use tiFy\Core\Forms\Form\Form;
-use tiFy\Core\Partial\Partial;
 
 class Notices
 {
@@ -28,15 +24,10 @@ class Notices
     private $Notices                = array();
     
     ///
-    private $Datas                  = null;
-
-    /**
-     * CONSTRUCTEUR.
-     * @param Form $Form
-     *
-     * @return
-     */
-    public function __construct(Form $Form )
+    private $Datas                  = null;    
+    
+    /* = CONSTRUCTEUR = */
+    public function __construct( \tiFy\Core\Forms\Form\Form $Form )
     {            
         // Définition du formulaire de référence
         $this->Form = $Form;
@@ -178,7 +169,7 @@ class Notices
         $args['text'] = $text;
         $args['type'] = $code;
         
-        $output = (string)Partial::Notice($args, false);
+        $output = tify_control_notices( $args, false );
         
         return $output;        
     }    

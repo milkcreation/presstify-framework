@@ -51,7 +51,7 @@ class NumberJs extends AbstractFactory
         );
         \wp_register_script(
             'tiFyFieldNumberJs',
-            $this->appAbsUrl() . '/assets/NumberJs/js/scripts.css',
+            $this->appAbsUrl() . '/assets/NumberJs/js/scripts.js',
             ['jquery-ui-spinner'],
             171019,
             true

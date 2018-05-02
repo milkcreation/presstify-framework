@@ -22,29 +22,6 @@ use tiFy\Apps;
 trait App
 {
     /**
-     * GLOBALES D'ENVIRONNEMENT
-     */
-    /**
-     * Récupération du chemin absolue vers la racine de stockage de presstiFy.
-     *
-     * @return string
-     */
-    public function tFyAbsDir()
-    {
-        return tiFy::$AbsDir;
-    }
-
-    /**
-     * Récupération de l'url absolue vers la racine de stockage de presstiFy.
-     *
-     * @return string
-     */
-    public function tFyAbsUrl()
-    {
-        return tiFy::$AbsUrl;
-    }
-
-    /**
      * FORMATAGE
      */
     /**

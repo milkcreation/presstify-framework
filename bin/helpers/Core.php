@@ -165,67 +165,6 @@ namespace
     {
         return tiFy\Core\Forms\Forms::get( $id );
     }
-
-    // --------------------------------------------------------------------------------------------------------------------------
-    /**
-     * LOGIN
-     */
-    /**
-     * Déclaration
-     * @deprecated \tiFy\Components\Login\README.md
-     *
-     * @param string $id Identifiant de qualification de l'interface d'authentification
-     * @param string $callback Classe de rappel de l'interface d'authentification
-     * @param array $attrs Attributs de configuration de l'interface d'authentification
-     *
-     * @return \tiFy\Core\User\Login\Factory
-     */
-    function tify_login_register($id, $callback, $attrs = [])
-    {
-        return tiFy\Core\User\Login\Login::register($id, $callback, $attrs);
-    }
-
-    /**
-     * Affichage du formulaire d'authentification
-     *
-     * @param string $id Identifiant de qualification de l'interface d'authentification
-     * @param array $attrs Attributs de configuration personnalisés
-     * @param bool $echo Activation de l'affichage de la valeur de retour
-     *
-     * @return string
-     */
-    function tify_login_form($id, $attrs = [], $echo = true)
-    {
-        return tiFy\Core\User\Login\Login::display($id, 'login_form', $attrs, $echo);
-    }
-
-    /**
-     * Affichage des erreurs de traitement du formulaire d'authentification
-     *
-     * @param string $id Identifiant de qualification de l'interface d'authentification
-     * @param array $attrs Attributs de configuration personnalisés
-     * @param bool $echo Activation de l'affichage de la valeur de retour
-     *
-     * @return string
-     */
-    function tify_login_form_errors($id, $attrs = [], $echo = true)
-    {
-        return tiFy\Core\User\Login\Login::display($id, 'login_form_errors', $attrs, $echo);
-    }
-
-    /**
-     * Affichage du lien de déconnection
-     *
-     * @param string $id Identifiant de qualification de l'interface d'authentification
-     * @param array $attrs Attributs de configuration personnalisés
-     * @param bool $echo Activation de l'affichage de la valeur de retour
-     *
-     * @return string
-     */
-    function tify_login_logout_link($id, $attrs = [], $echo = true)
-    {
-        return tiFy\Core\User\Login\Login::display($id, 'logout_link', $attrs, $echo);
-    }
     
     // --------------------------------------------------------------------------------------------------------------------------
     /* = MAIL = */

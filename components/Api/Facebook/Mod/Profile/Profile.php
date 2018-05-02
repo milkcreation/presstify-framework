@@ -15,7 +15,7 @@
 
 namespace tiFy\Components\Api\Facebook\Mod\Profile;
 
-use tiFy\Core\Partial\Partial;
+use tiFy\Core\Layout\Layout;
 
 class Profile extends \tiFy\Components\Api\Facebook\Mod\Factory
 {
@@ -142,7 +142,7 @@ class Profile extends \tiFy\Components\Api\Facebook\Mod\Factory
 
         $args['attrs']['href'] = self::url($args['action'], $args['permissions']);
 
-        echo Partial::Tag(
+        echo Layout::Tag(
             [
                 'tag'    => 'a',
                 'content' => $args['text'],
