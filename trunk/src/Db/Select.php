@@ -1,0 +1,502 @@
+<?php
+
+namespace tiFy\Db;
+
+use tiFy\Db\DbController;
+use tiFy\Apps\AppController;
+
+class Select extends AppController
+{
+    /**
+     * Classe de rappel du controleur de base de données associé.
+     * @var DbController
+     */
+    protected $db;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param DbController $db Classe de rappel du controleur de base de données associé.
+     *
+     * @return void
+     */
+    public function __construct(DbController $db)
+    {
+        $this->db = $db;
+    }
+
+    /**
+     * Compte le nombre d'éléments correspondants aux critère de requête.
+     *
+     * @param array $query_args Critère de requêtede récupération de données en base.
+     *
+     * @return int
+     */
+    public function count($query_args = [])
+    {
+        $name = $this->db->getTableName();
+        $primary = $this->db->getPrimary();
+
+        // Traitement des arguments de requête
+        $defaults = [
+            'item__not_in' => '',
+            's'            => '',
+            'limit'        => -1,
+        ];
+
+        // Traitement des arguments
+        $parse = $this->db->parse();
+        $query_args = $parse->query_vars($query_args, $defaults);
+
+        // Traitement de la requête
+        /// Selection de la table de base de données
+        $query = "SELECT COUNT( {$name}.{$primary} ) FROM {$name}";
+
+        // Conditions de jointure
+        $query .= $parse->clause_join($query_args);
+
+        /// Conditions définies par les arguments de requête
+        if ($clause_where = $parse->clause_where($query_args)) :
+            $query .= " " . $clause_where;
+        endif;
+
+        /// Recherche de terme
+        if ($clause_search = $parse->clause_search($query_args['s'])) :
+            $query .= " " . $clause_search;
+        endif;
+
+        /// Exclusions
+        if ($clause__not_in = $parse->clause__not_in($query_args['item__not_in'])) :
+            $query .= " " . $clause__not_in;
+        endif;
+
+        /// Groupe
+        /*if( $clause_group_by = $parse->clause_group_by() )
+            $query .= " ". $clause_group_by;*/
+
+        //// Limite
+        if ($query_args['limit'] > -1) :
+            $query .= " LIMIT {$query_args['limit']}";
+        endif;
+
+        // Résultat
+        return (int)$this->db->sql()->get_var($query);
+    }
+
+    /**
+     * Vérification de l'existance de la valeur d'une données correspondants aux critère de requête.
+     *
+     * @param array $query_args Critère de requêtede récupération de données en base.
+     *
+     * @return int
+     */
+    public function has($col_name = null, $value = '', $query_args = [])
+    {
+        $name = $this->db->getTableName();
+        $primary = $this->db->getPrimary();
+
+        // Traitement de l'intitulé de la colonne
+        if (is_null($col_name)) :
+            $col_name = $primary;
+        elseif (!$col_name = $this->db->existsCol($col_name)) :
+            return null;
+        endif;
+
+        $query_args[$col_name] = $value;
+
+        return $this->count($query_args);
+    }
+
+    /* = CELLULE = */
+    /** == Récupération de l'id d'un élément selon des critères == **/
+    public function id($query_args = [])
+    {
+        return $this->cell(null, $query_args);
+    }
+
+    /** == Récupération de la valeur d'un cellule selon des critères == **/
+    public function cell($col_name = null, $query_args = [])
+    {
+        $name = $this->db->getTableName();
+        $primary = $this->db->getPrimary();
+
+        // Traitement de l'intitulé de la colonne
+        if (is_null($col_name)) :
+            $col_name = $primary;
+        elseif (!$col_name = $this->db->existsCol($col_name)) :
+            return null;
+        endif;
+
+        // Traitement des arguments
+        $defaults = [
+            'item__in'     => '',
+            'item__not_in' => '',
+            's'            => '',
+            'order'        => 'DESC',
+            'orderby'      => $primary,
+        ];
+
+        // Traitement des arguments
+        $parse = $this->db->parse();
+        $query_args = $parse->query_vars($query_args, $defaults);
+
+        // Traitement de la requête
+        /// Selection de la table de base de données
+        $query = "SELECT {$name}.{$col_name} FROM {$name}";
+
+        /// Conditions de jointure
+        $query .= $parse->clause_join($query_args);
+
+        /// Conditions des arguments de requête
+        if ($clause_where = $parse->clause_where($query_args)) :
+            $query .= " " . $clause_where;
+        endif;
+
+        /// Recherche de terme
+        if ($clause_search = $parse->clause_search($query_args['s'])) :
+            $query .= " " . $clause_search;
+        endif;
+
+        /// Inclusions
+        if ($clause__in = $parse->clause__in($query_args['item__in'])) :
+            $query .= " " . $clause__in;
+        endif;
+
+        /// Exclusions
+        if ($clause__not_in = $parse->clause__not_in($query_args['item__not_in'])) :
+            $query .= " " . $clause__not_in;
+        endif;
+
+        /// Groupe
+        if ($clause_group_by = $parse->clause_group_by()) :
+            $query .= " " . $clause_group_by;
+        endif;
+
+        /*
+        if( $item__in && ( $orderby === 'item__in' ) )
+            $query .= " ORDER BY FIELD( {$this->wpdb_table}.{$this->primary_key}, $item__in )";
+        else */
+        if ($clause_order = $parse->clause_order($query_args['orderby'], $query_args['order'])) :
+            $query .= $clause_order;
+        endif;
+
+        if ($var = $this->db->sql()->get_var($query)) :
+            return maybe_unserialize($var);
+        endif;
+    }
+
+    /** == Récupération de la valeur d'un cellule selon son l'id de l'élément == **/
+    public function cell_by_id($id, $col_name)
+    {
+        if (!$col_name = $this->db->existsCol($col_name)) :
+            return null;
+        endif;
+
+        if (($item = wp_cache_get($id, $this->db->Name)) && isset($item->{$col_name})) :
+            return $item->{$col_name};
+        else :
+            return $this->cell($col_name, [$this->db->Primary => $id]);
+        endif;
+    }
+
+    /* = COLONNE = */
+    /** == Récupération des valeurs d'une colonne de plusieurs éléments selon des critères == **/
+    public function col($col_name = null, $query_args = [])
+    {
+        $name = $this->db->getTableName();
+        $primary = $this->db->getPrimary();
+
+        // Traitement de l'intitulé de la colonne
+        if (is_null($col_name)) :
+            $col_name = $primary;
+        elseif (!$col_name = $this->db->existsCol($col_name)) :
+            return null;
+        endif;
+
+        // Traitement des arguments
+        $parse = $this->db->parse();
+        $query_args = $parse->query_vars($query_args);
+
+        // Traitement de la requête
+        /// Selection de la table de base de données
+        $query = "SELECT {$name}.{$col_name} FROM {$name}";
+
+        // Condition de jointure
+        $query .= $parse->clause_join($query_args);
+
+        /// Conditions des arguments de requête
+        if ($clause_where = $parse->clause_where($query_args)) :
+            $query .= " " . $clause_where;
+        endif;
+
+        /// Recherche de termes
+        if ($clause_search = $parse->clause_search($query_args['s'])) :
+            $query .= " " . $clause_search;
+        endif;
+
+        /// Inclusions
+        if ($clause__in = $parse->clause__in($query_args['item__in'])) :
+            $query .= " " . $clause__in;
+        endif;
+
+        /// Exclusions
+        if ($clause__not_in = $parse->clause__not_in($query_args['item__not_in'])) :
+            $query .= " " . $clause__not_in;
+        endif;
+
+        /// Groupe
+        if ($clause_group_by = $parse->clause_group_by()) :
+            $query .= " " . $clause_group_by;
+        endif;
+
+        /*
+        /// Ordre
+        if( $item__in && ( $orderby === 'item__in' ) )
+            $query .= " ORDER BY FIELD( {$this->wpdb_table}.{$this->primary_key}, $item__in )";
+        else */
+        if ($clause_order = $parse->clause_order($query_args['orderby'], $query_args['order'])) :
+            $query .= $clause_order;
+        endif;
+
+        /// Limite
+        if ($query_args['per_page'] > 0) :
+            if (!$query_args['paged']) :
+                $query_args['paged'] = 1;
+            endif;
+            $offset = ($query_args['paged'] - 1) * $query_args['per_page'];
+            $query .= " LIMIT {$offset}, {$query_args['per_page']}";
+        endif;
+
+        // Resultats
+        if ($res = $this->db->sql()->get_col($query)) :
+            return array_map('maybe_unserialize', $res);
+        endif;
+    }
+
+    /** == Récupération des valeurs de la colonne id de plusieurs éléments selon des critères == **/
+    public function col_ids($query_args = [])
+    {
+        return $this->col(null, $query_args);
+    }
+
+    /**
+     * Retourne un tableau indexé sous la forme couple clé <> valeur
+     *
+     * @param string $value_col Colonne utilisée en tant que valeur du couple
+     * @param string $key_col Colonne utilisée en tant que clé du couple
+     * @param array $query_args Liste des arguments de requête
+     * @param string $output Format de sortie
+     *
+     * @return null|array
+     */
+    public function pairs($value_col, $key_col = '', $query_args = [])
+    {
+        // Récupération de la colonne utilisée en tant que clé du couple
+        if (!$key_col) :
+            $key_col = $this->db->getPrimary();
+        endif;
+
+        $query_args['fields'] = [$key_col, $value_col];
+
+        // Traitement de la requête
+        if (!$query = $this->db->parse()->query($query_args)) :
+            return;
+        endif;
+
+        // Récupération des resultats de requête
+        if (!$items = $this->db->sql()->get_results($query)) :
+            return;
+        endif;
+
+        // Tratiement du resultat
+        if (!$results = $this->db->parse()->parse_output($items, OBJECT)) :
+            return;
+        endif;
+
+        $pairs = [];
+        foreach ($results as $row) :
+            $pairs[$row->$key_col] = $row->$value_col;
+        endforeach;
+
+        return $pairs;
+    }
+
+    /* = LIGNE = */
+    /** == Récupération des arguments d'un élément selon des critères == **/
+    public function row($query_args = [], $output = OBJECT)
+    {
+        // Traitement des arguments
+        $query_args['per_page'] = 1;
+
+        // Bypass
+        if (!$ids = $this->col_ids($query_args)) {
+            return null;
+        }
+        $id = current($ids);
+
+        return $this->row_by_id($id, $output);
+    }
+
+    /** == Récupération d'un élément selon un champ et sa valeur == **/
+    public function row_by($col_name = null, $value, $output = OBJECT)
+    {
+        $name = $this->db->getTableName();
+        $primary = $this->db->getPrimary();
+
+        // Traitement de l'intitulé de la colonne
+        if (is_null($col_name)) :
+            $col_name = $primary;
+        elseif (!$col_name = $this->db->existsCol($col_name)) :
+            return null;
+        endif;
+
+        $type = $this->db->getColAttr($col_name, 'type');
+
+        if (in_array($type, ['INT', 'BIGINT'])) :
+            $query = "SELECT * FROM {$name} WHERE {$name}.{$col_name} = %d";
+        else :
+            $query = "SELECT * FROM {$name} WHERE {$name}.{$col_name} = %s";
+        endif;
+
+        if (!$item = $this->db->sql()->get_row($this->db->sql()->prepare($query, $value))) :
+            return;
+        endif;
+
+        // Délinéarisation des tableaux
+        $item = (object)array_map('maybe_unserialize', get_object_vars($item));
+
+        // Mise en cache
+        wp_cache_add($item->{$primary}, $item, $name);
+
+        if ($output == OBJECT) :
+            return !empty($item) ? $item : null;
+        elseif ($output == ARRAY_A) :
+            return !empty($item) ? get_object_vars($item) : null;
+        elseif ($output == ARRAY_N) :
+            return !empty($item) ? array_values(get_object_vars($item)) : null;
+        elseif (strtoupper($output) === OBJECT) :
+            return !empty($item) ? $item : null;
+        endif;
+    }
+
+    /** == Récupération des arguments d'un élément selon son id == **/
+    public function row_by_id($id, $output = OBJECT)
+    {
+        return $this->row_by(null, $id, $output);
+    }
+
+    /* = LIGNES = */
+    /** == Récupération des arguments de plusieurs éléments selon des critères == **/
+    public function rows($query_args = [], $output = OBJECT)
+    {
+        // Bypass
+        if (!$ids = $this->col_ids($query_args)) :
+            return;
+        endif;
+
+        $r = [];
+        foreach ((array)$ids as $id) :
+            $r[] = $this->row_by_id($id, $output);
+        endforeach;
+
+        return $r;
+    }
+
+    /**
+     *
+     */
+    /** == Récupération de l'élément voisin selon un critère == **/
+    public function adjacent($id, $previous = true, $query_args = [], $output = OBJECT)
+    {
+        $name = $this->db->getTableName();
+        $primary = $this->db->getPrimary();
+
+        // Traitement des arguments
+        $defaults = [
+            'item__in'     => '',
+            'item__not_in' => '',
+            's'            => '',
+        ];
+
+        // Traitement des arguments
+        $parse = $this->db->parse();
+        $query_args = $parse->query_vars($query_args, $defaults);
+        unset($query_args[$primary]);
+
+        $op = $previous ? '<' : '>';
+        $query_args['order'] = $previous ? 'DESC' : 'ASC';
+        $query_args['$orderby'] = $primary;
+
+        // Traitement de la requête
+        /// Selection de la table de base de données
+        $query = "SELECT * FROM {$name}";
+
+        // Condition de jointure
+        $query .= $parse->clause_join($query_args);
+
+        /// Conditions definies par les arguments de requête
+        if ($clause_where = $parse->clause_where($query_args)) :
+            $query .= " " . $clause_where;
+        endif;
+
+        /// Conditions spécifiques
+        $query .= " AND {$name}.{$primary} $op %d";
+
+        /// Recherche de terme
+        if ($clause_search = $parse->clause_search($query_args['s'])) :
+            $query .= " " . $clause_search;
+        endif;
+
+        /// Inclusions
+        if ($clause__in = $parse->clause__in($query_args['item__in'])) :
+            $query .= " " . $clause__in;
+        endif;
+
+        /// Exclusions
+        if ($clause__not_in = $parse->clause__not_in($query_args['item__not_in'])) :
+            $query .= " " . $clause__not_in;
+        endif;
+
+        /// Groupe
+        if ($clause_group_by = $parse->clause_group_by()) :
+            $query .= " " . $clause_group_by;
+        endif;
+
+        /// Ordre
+        if ($clause_order = $parse->clause_order($query_args['orderby'], $query_args['order'])) :
+            $query .= $clause_order;
+        endif;
+
+        if (!$item = $this->db->sql()->get_row($this->db->sql()->prepare($query, $id))) :
+            return;
+        endif;
+
+        // Délinéarisation des tableaux
+        $item = (object)array_map('maybe_unserialize', get_object_vars($item));
+
+        // Mise en cache
+        wp_cache_add($item->{$primary}, $item, $name);
+
+        if ($output == OBJECT) :
+            return !empty($item) ? $item : null;
+        elseif ($output == ARRAY_A) :
+            return !empty($item) ? get_object_vars($item) : null;
+        elseif ($output == ARRAY_N) :
+            return !empty($item) ? array_values(get_object_vars($item)) : null;
+        elseif (strtoupper($output) === OBJECT) :
+            return !empty($item) ? $item : null;
+        endif;
+    }
+
+    /* == Récupération de l'élément précédent == */
+    public function previous($id, $query_args = [], $output = OBJECT)
+    {
+        return $this->adjacent($id, true, $query_args, $output);
+    }
+
+    /* == Récupération de l'élément suivant == */
+    public function next($id, $query_args = [], $output = OBJECT)
+    {
+        return $this->adjacent($id, false, $query_args, $output);
+    }
+}
