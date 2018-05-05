@@ -1,0 +1,30 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "node_modules/webpack/bin/webpack.js --progress --hide-modules --config webpack.config.js",
+        "watch": "node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config webpack.config.js",
+        "watch-poll": "npm run watch -- --watch-poll",
+        "prod": "npm run production",
+        "production": "node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config webpack.config.js"
+    },
+    "devDependencies": {
+        "gulp":         "latest",
+        "gulp-csso":    "latest",
+        "gulp-plumber": "latest",
+        "gulp-rename":  "latest",
+        "gulp-uglify":  "latest",
+        "bootstrap": "*",
+        "dentistjs": "*",
+        "flag-icon-css" : "*",
+        "font-awesome": "*",
+        "jquery-easing-original": "*",
+        "mobile-detect": "*",
+        "moment": "*",
+        "nanoscroller": "*",
+        "pace": "*",
+        "spectrum": "*",
+        "spinkit": "*",
+        "threesixty-slider": "*"
+    }
+}
