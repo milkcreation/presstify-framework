@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
     $( document ).on('click.tify.control.repeater.add', '[data-tify_control="repeater"] .tiFyControlRepeater-Add', function(e) {        
         e.stopPropagation();
         e.preventDefault();
-        
+
         if( jqxhr !== undefined )
             return;
         
@@ -48,8 +48,8 @@ jQuery(document).ready(function($) {
     $(document).on('click.tify.control.repeater.remove', '[data-tify_control="repeater"] .tiFyControlRepeater-Item > .tify_button_remove', function(e) {
         e.preventDefault();
         $(this).closest('.tiFyControlRepeater-Item').fadeOut( function(){
-            $(this).remove();            
-            $(document).trigger('tify_control_repeater_item_removed');
+            $(document).trigger('tify_control_repeater_item_removed', [$(this)]);
+            $(this).remove();
         });
     });
 });

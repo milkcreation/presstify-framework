@@ -64,7 +64,7 @@ class Label extends AbstractFactory
     protected function display()
     {
         ob_start();
-?><?php $this->before(); ?><label <?php $this->attrs(); ?>/><?php $this->content(); ?></label><?php $this->after(); ?><?php
+?><?php $this->before(); ?><label <?php $this->attrs(); ?>><?php $this->content(); ?></label><?php $this->after(); ?><?php
 
         return ob_get_clean();
     }
