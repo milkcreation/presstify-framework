@@ -112,7 +112,7 @@ final class Column extends AppController
         } catch (NotFoundException $e) {
             wp_die(
                 $e->getMessage(),
-                __('tiFy\Column\Column : Controleur principal introuvable', 'tify'),
+                __(__CLASS__ .' - Contrôleur principal introuvable', 'tify'),
                 $e->getCode()
             );
         }

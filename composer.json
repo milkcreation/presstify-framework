@@ -91,10 +91,10 @@
   },
   "autoload": {
     "files": [
-      "core/Helpers.php"
+      "src/Helpers.php"
     ],
     "psr-4": {
-      "tiFy\\": ""
+      "tiFy\\": "src"
     }
   },
   "minimum-stability": "dev",
