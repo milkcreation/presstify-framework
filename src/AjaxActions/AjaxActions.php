@@ -12,7 +12,7 @@ final class AjaxActions extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('wp_ajax_tify_get_post_permalink', [$this, 'getPostPermalink']);
         $this->appAddAction('wp_ajax_tiFyVideoGetEmbed', [$this, 'videoGetEmbed']);

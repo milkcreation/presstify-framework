@@ -15,51 +15,49 @@
 
 namespace tiFy\Components\Fields\Submit;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
- *      @var string $before Contenu placé avant le champ
- *      @var string $after Contenu placé après le champ
- *      @var array $attrs Liste des propriétés de la balise HTML
- *      @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value"
- * }
- */
-class Submit extends AbstractFactory
+class Submit extends AbstractFieldController
 {
+    /**
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var array $attrs Liste des propriétés de la balise HTML.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     * }
+     */
+    protected $attributes = [
+        'before' => '',
+        'after'  => '',
+        'attrs'  => [],
+        'name'    => '',
+        'value'   => ''
+    ];
+
     /**
      * Traitement des attributs de configuration
      *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
+     *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
+        $this->attributes['value'] = __('Envoyer', 'tify');
 
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before' => '',
-            'after'  => '',
-            'attrs'  => [],
-            'name'    => '',
-            'value'   => __('Envoyer', 'tify')
-        ];
-        $args = array_merge($defaults, $args);
+        parent::parse($attrs);
 
-        if (!isset($args['attrs']['id'])) :
-            $args['attrs']['id'] = 'tiFyField-submit--' . $this->getIndex();
+        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attributes['attrs']['id'] = 'tiFyField-submit--' . $this->getIndex();
         endif;
-        $args['attrs']['type'] = 'submit';
-
-        return $args;
+        $this->attributes['attrs']['type'] = 'submit';
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */

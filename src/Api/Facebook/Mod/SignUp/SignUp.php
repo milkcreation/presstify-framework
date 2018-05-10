@@ -72,7 +72,7 @@ class SignUp extends AbstractMod
         ];
         $args     = array_merge($defaults, $args);
 
-        $url = self::url($args['action'], $args['permissions'], $args['base_url']);
+        $url = $this->url($args['action'], $args['permissions'], $args['base_url']);
 
         $args['attrs']['href'] = esc_url($url);
         $args['attrs']['title'] = empty($args['attrs']['title']) ? $args['text'] : $args['attrs']['title'];

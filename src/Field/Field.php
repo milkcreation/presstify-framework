@@ -15,6 +15,7 @@
 
 namespace tiFy\Field;
 
+use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
 use tiFy\Components\Fields\Button\Button;
 use tiFy\Components\Fields\Checkbox\Checkbox;
@@ -38,7 +39,7 @@ use tiFy\Components\Fields\ToggleSwitch\ToggleSwitch;
  * Class Field
  * @package tiFy\Field
  *
- * @method static Button(string $id = null, array $attrs = [])
+ * @method static Button Button(string $id = null, array $attrs = [])
  * @method static Checkbox(string $id = null, array $attrs = [])
  * @method static DatetimeJs(string $id = null, array $attrs = [])
  * @method static File(string $id = null, array $attrs = [])
@@ -59,11 +60,17 @@ use tiFy\Components\Fields\ToggleSwitch\ToggleSwitch;
 final class Field extends AppController
 {
     /**
+     * Liste des instances de champ.
+     * @var array
+     */
+    protected static $instance = [];
+
+    /**
      * Initialisation du controleur.
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         // Déclaration des controleurs d'affichage natifs
         foreach(glob($this->appAbsDir() . '/Components/Fields/*/', GLOB_ONLYDIR) as $filename) :
@@ -72,17 +79,6 @@ final class Field extends AppController
             $this->register($name, "tiFy\\Components\\Fields\\{$name}\\{$name}::make");
         endforeach;
 
-        // Déclaration des événements
-        $this->appAddAction('init');
-    }
-
-    /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    public function init()
-    {
         do_action('tify_field_register');
     }
 
@@ -98,40 +94,32 @@ final class Field extends AppController
     {
         if ($this->appServiceHas($name)) :
             return null;
-        elseif (is_callable($callable)) :
-            $this->appServiceShare("tify.field.{$name}", $callable);
+        endif;
+
+        $alias = "tfy.field.{$name}";
+        if (is_callable($callable)) :
+            $this->appServiceAdd($alias, $callable);
         elseif (class_exists($callable)) :
-            $this->appServiceShare("tify.field.{$name}", $callable);
+            $this->appServiceAdd($alias, $callable);
         else :
             return null;
         endif;
 
-        return $this->appServiceGet("tify.field.{$name}");
+        return $this->appServiceGet("tfy.field.{$name}");
     }
 
     /**
-     * Vérification d'existance d'un controleur d'affichage
+     * Récupération d'un controleur d'affichage.
      *
-     * @param string $name Nom de qualification du controleur d'affichage
+     * @param string $name Nom de qualification du controleur d'affichage.
      *
-     * @return bool
-     */
-    public function has($name)
-    {
-        return $this->appServiceHas("tify.field.{$name}");
-    }
-
-    /**
-     * Récupération d'un controleur d'affichage
-     *
-     * @param string $name Nom de qualification du controleur d'affichage
-     *
-     * @return mixed|\tiFy\Partial\AbstractFactory
+     * @return mixed|AbstractFieldController
      */
     public function get($name)
     {
-        if ($this->appServiceHas($name)) :
-            return $this->appServiceGet("tify.field.{$name}");
+        $alias = "tfy.field.{$name}";
+        if ($this->appServiceHas($alias)) :
+            return $this->appServiceGet($alias);
         endif;
 
         return null;
@@ -141,34 +129,80 @@ final class Field extends AppController
      * Affichage ou récupération du contenu d'un controleur natif
      *
      * @param string $name Nom de qualification du controleur d'affichage
-     * @param array $args {
-     *      Liste des attributs de configuration
+     * @param array args Liste des variables passé en arguments
      *
-     *      @var array $attrs Attributs de configuration du champ
-     *      @var bool $echo Activation de l'affichage du champ
-     *
-     * @return null|Button|Checkbox|DatetimeJs|File|Hidden|Label|Number|NumberJs|Password|Radio|Repeater|Select|SelectJs|Submit|Text|Textarea|ToggleSwitch
+     * @return null|object
      */
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($name, $args)
     {
         if(! $callable = self::appInstance()->get($name)) :
             return null;
         endif;
 
-        return call_user_func_array($callable, $arguments);
+        return call_user_func_array($callable, $args);
     }
 
     /**
-     * Mise en file des scripts d'un controleur
+     * Vérification d'existance d'une instance d'un contrôleur de champ.
      *
-     * @param string $name Identifiant de qualification du controleur d'affichage
-     * @param array $args Liste des attributs de configuration
+     * @param string $classname Nom de la classe de rappel du controleur.
      *
-     * @return null|callable
+     * @return bool
      */
-    public static function enqueue($name, $args = [])
+    public function existsInstance($classname)
     {
-        if(!$callable = self::appInstance()->get($name)) :
+        return Arr::has(self::$instance, $classname);
+    }
+
+    /**
+     * Compte le nombre d'instance d'un contrôleur de champ.
+     *
+     * @param string $classname Nom de la classe de rappel du controleur.
+     *
+     * @return int
+     */
+    public function countInstance($classname)
+    {
+        return count(Arr::get(self::$instance, $classname, []));
+    }
+
+    /**
+     * Définition d'une instance de contrôleur de champ.
+     *
+     * @param string $classname Nom de la classe de rappel du controleur.
+     * @param string $hash Hashage des attributs de configuration.
+     *
+     * @return bool
+     */
+    public function setInstance($classname, $hash, $obj)
+    {
+        return Arr::set(self::$instance, "{$classname}.{$hash}", $obj);
+    }
+
+    /**
+     * Définition d'une instance de contrôleur de champ.
+     *
+     * @param string $classname Nom de la classe de rappel du controleur.
+     * @param string $hash Hashage des attributs de configuration.
+     *
+     * @return bool
+     */
+    public function getInstance($classname, $hash)
+    {
+        return Arr::get(self::$instance, "{$classname}.{$hash}");
+    }
+
+    /**
+     * Mise en file des scripts d'un controleur d'affichage.
+     *
+     * @param string $name Nom de qualification du controleur.
+     * @param array $args Liste des variables passées en argument.
+     *
+     * @return $this
+     */
+    public function enqueue($name, $args = [])
+    {
+        if(!$callable = $this->get($name)) :
             return null;
         endif;
 
@@ -176,6 +210,8 @@ final class Field extends AppController
             return null;
         endif;
 
-        return $callable->enqueue_scripts($args);
+        call_user_func_array([$callable, 'enqueue_scripts'], $args);
+
+        return $this;
     }
 }

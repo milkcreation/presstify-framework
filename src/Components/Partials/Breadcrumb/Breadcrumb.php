@@ -15,7 +15,7 @@
 
 namespace tiFy\Components\Partials\Breadcrumb;
 
-use tiFy\Partial\AbstractFactory;
+use tiFy\Partial\AbstractPartialController;
 
 /**
  * @param array $attrs {
@@ -27,7 +27,7 @@ use tiFy\Partial\AbstractFactory;
  *      @var string[]|array[]|object[]|callable[] $parts Liste des élements du fil d'ariane.
  * }
  */
-class Breadcrumb extends AbstractFactory
+class Breadcrumb extends AbstractPartialController
 {
     /**
      * Liste des éléments contenus dans le fil d'ariane

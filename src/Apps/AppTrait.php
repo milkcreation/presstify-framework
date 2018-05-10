@@ -307,21 +307,28 @@ trait AppTrait
      *
      * @return bool
      */
-    final public function appAddAction($tag, $method = '', $priority = 10, $accepted_args = 1, $classname = null)
+    public function appAddAction($tag, $method = '', $priority = 10, $accepted_args = 1, $classname = null)
     {
         return $this->appAddFilter($tag, $method, $priority, $accepted_args, $classname);
     }
 
     /**
+     * Récupération de la classe de rappel du controleur de templates.
+     *
+     * @param string|object $classname Nom de la classe ou instance de l'application.
+     *
      * @return \League\Plates\Engine
      */
-    final public function appTemplate($classname = null)
+    public function appTemplates($classname = null)
     {
         if (! $templates = $this->appGet('templates', null, $classname)) :
             $templates = new \League\Plates\Engine(get_template_directory() . '/templates');
-            if (file_exists($this->appDirname($classname) . '/templates')) :
-                $templates->addFolder('app', $this->appDirname($classname) . '/templates', true);
+
+            $appTemplatePath = $this->appDirname($classname) . '/templates';
+            if (is_dir($appTemplatePath)) :
+                $templates->addFolder($classname ? : get_called_class(), $appTemplatePath, true);
             endif;
+
             $this->appSet('templates', $templates, $classname);
         endif;
 
@@ -331,10 +338,13 @@ trait AppTrait
     /**
      * @return string
      */
-    final public function appTemplateRender($name, $args = [], $classname = null)
+    public function appTemplateRender($name, $args = [], $classname = null)
     {
-        $name = $this->appTemplate($classname)->getFolders()->exists('app') ? "app::{$name}" : $name;
-        $template = $this->appTemplate($classname)->make($name);
+        $classname = $classname ? : get_called_class();
+
+        $templates = $this->appTemplates($classname);
+        $name = $templates->getFolders()->exists($classname) ? "{$classname}::{$name}" : $name;
+        $template = $templates->make($name);
 
         return $template->render($args);
     }
@@ -401,7 +411,7 @@ trait AppTrait
         $stream = new RotatingFileHandler($filename, 7);
         $stream->setFormatter($formatter);
 
-        $logger = new Logger(self::tFyAppClassname($classname));
+        $logger = new Logger($this->appClassname($classname));
         $this->appSet('logger', $logger, $classname);
 
         if ($timezone = get_option('timezone_string')) :

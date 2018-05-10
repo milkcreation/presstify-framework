@@ -19,17 +19,20 @@ abstract class AppController
         endif;
 
         if (did_action('tify_app_boot')) :
-            $this->boot();
+            $this->appBoot();
         else :
-            add_action('tify_app_boot', [$this, 'boot']);
+            add_action('tify_app_boot', [$this, 'appBoot']);
         endif;
     }
 
     /**
+     * Initialisation du controleur d'application.
+     * @internal Lancé à l'issue de l'initialisation complète.
      *
+     * @return void
      */
-    public function boot()
+    public function appBoot()
     {
-        
+
     }
 }

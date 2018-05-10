@@ -15,33 +15,43 @@
 
 namespace tiFy\Components\Fields\NumberJs;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
- *      @var string $before Contenu placé avant le champ
- *      @var string $after Contenu placé après le champ
- *      @var string $container_id Id HTML du conteneur du champ
- *      @var string $container_class Classe HTML du conteneur du champ
- *      @var array $attrs Liste des propriétés de la balise HTML
- *      @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- *      @var int $value Attribut de configuration de la valeur initiale de soumission du champ "value"
- *      @var array $data-options {
- *          Liste des options du contrôleur ajax
- *          @see http://api.jqueryui.com/spinner/
- *      }
- * }
- */
-class NumberJs extends AbstractFactory
+class NumberJs extends AbstractFieldController
 {
     /**
-     * Initialisation globale
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $container_id Id HTML du conteneur du champ.
+     *      @var string $container_class Classe HTML du conteneur du champ.
+     *      @var array $attrs Liste des propriétés de la balise HTML.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var int $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var array $data-options {
+     *          Liste des options du contrôleur ajax.
+     *          @see http://api.jqueryui.com/spinner/
+     *      }
+     * }
+     */
+    protected $attributes = [
+        'before'          => '',
+        'after'           => '',
+        'container_id'    => '',
+        'container_class' => '',
+        'attrs'           => [],
+        'name'            => '',
+        'value'           => 0,
+        'data-options'    => []
+    ];
+
+    /**
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
-    final public function init()
+    public function init()
     {
         \wp_register_style(
             'tiFyFieldNumberJs',
@@ -59,64 +69,52 @@ class NumberJs extends AbstractFactory
     }
 
     /**
-     * Mise en file des scripts
+     * Mise en file des scripts.
      *
      * @return void
      */
-    final public function enqueue_scripts()
+    public function enqueue_scripts()
     {
         \wp_enqueue_style('tiFyFieldNumberJs');
         \wp_enqueue_script('tiFyFieldNumberJs');
     }
 
     /**
-     * Traitement des attributs de configuration
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
+        $this->attributes['container_id'] = 'tiFyField-numberJsContainer--' . $this->getIndex();
 
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before'          => '',
-            'after'           => '',
-            'container_id'    => 'tiFyField-numberJsContainer--' . $this->getIndex(),
-            'container_class' => '',
-            'attrs'           => [],
-            'name'            => '',
-            'value'           => 0,
-            'data-options'    => []
-        ];
-        $args = array_merge($defaults, $args);
+        parent::parse($attrs);
 
-        if (!isset($args['container_class'])) :
-            $args['container_class'] = 'tiFyField-numberJsContainer ' . $args['container_class'];
+        if (!isset($this->attributes['container_class'])) :
+            $this->attributes['container_class'] = 'tiFyField-numberJsContainer ' . $this->attributes['container_class'];
         else :
-            $args['container_class'] = 'tiFyField-numberJsContainer';
+            $this->attributes['container_class'] = 'tiFyField-numberJsContainer';
         endif;
 
-        if (!isset($args['attrs']['id'])) :
-            $args['attrs']['id'] = 'tiFyField-numberJs--' . $this->getIndex();
+        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attributes['attrs']['id'] = 'tiFyField-numberJs--' . $this->getIndex();
         endif;
-        $args['attrs']['type'] = 'text';
-        $args['attrs']['data-options'] = array_merge(
+        $this->attributes['attrs']['type'] = 'text';
+        $this->attributes['attrs']['data-options'] = array_merge(
             [
                 'icons' => [
                     'down' => 'dashicons dashicons-arrow-down-alt2',
                     'up'   => 'dashicons dashicons-arrow-up-alt2',
                 ]
             ],
-            $args['data-options']
+            $this->attributes['data-options']
         );
-
-        return $args;
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */

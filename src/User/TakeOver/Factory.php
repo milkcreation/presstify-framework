@@ -102,12 +102,12 @@ class TakeOverController extends AppController
      */
     final public function wp_loaded()
     {
-        if (self::tFyAppGetRequestVar('tfy_take_over_id', '') !== $this->getId()) :
+        if ($this->appRequest('GET')->get('tfy_take_over_id', '') !== $this->getId()) :
             return;
         endif;
 
         // Traitement de l'action
-        switch(self::tFyAppGetRequestVar('action', '')) :
+        switch($this->appRequest('GET')->get('action', '')) :
             // Prise de contrôle du compte d'un utilisateur
             case 'switch' :
                 check_admin_referer('tiFyTakeOver-switch');
@@ -366,8 +366,8 @@ class TakeOverController extends AppController
     private function checkCookies()
     {
         if (
-            (!$auth_cookie = self::tFyAppGetRequestVar($this->AuthCookieName, '', 'COOKIE')) ||
-            (!$logged_in_cookie = self::tFyAppGetRequestVar($this->LoggedInCookieName, '', 'COOKIE'))
+            (!$auth_cookie = $this->appRequest('COOKIE')->get($this->AuthCookieName, '')) ||
+            (!$logged_in_cookie = $this->appRequest('COOKIE')->get($this->LoggedInCookieName, ''))
         ) :
             return 0;
         endif;

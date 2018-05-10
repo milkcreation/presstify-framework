@@ -2,26 +2,28 @@
 
 namespace tiFy\User\Role;
 
+use Illuminate\Support\Arr;
 use tiFy\Ui\Ui;
 use tiFy\Apps\AppController;
 
 class RoleController extends AppController
 {
     /**
-     * Identifiant de qualification unique
+     * Nom de qualification du rôle.
+     * @var string
      */
-    private $Id     = null;
+    protected $name = '';
 
     /**
      * Liste des attributs de configuration
      * @var array
      */
-    private $Attrs  = [];
+    protected $attributes  = [];
 
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
      *
-     * @param string $id Identifiant unique de qualification du role
+     * @param string $name Nom de qualification du role.
      * @param array $attrs {
      *      Liste des attributs de configuration.
      *
@@ -36,40 +38,37 @@ class RoleController extends AppController
      *
      * @return void
      */
-    public function __construct($id, $attrs = [])
+    public function __construct($name, $attrs = [])
     {
         parent::__construct();
 
         // Définition de l'identifiant
-        $this->Id = $id;
+        $this->name = $name;
 
         // Definition des attributs de configuration
-        $this->Attrs = $this->parseAttrs($attrs);
+        $this->attributes = $this->parse($attrs);
 
         // Définition des événements de déclenchement
-        $this->tFyAppAddAction('init', 'init', 1);
-        $this->tFyAppAddAction('tify_ui_register');
+        $this->appAddAction('init', 'init', 1);
+        $this->appAddAction('tify_ui_register');
     }
 
     /**
-     * DECLENCHEURS
-     */
-    /**
-     * Initialisation globale
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
     public function init()
     {
-        $role_name = $this->getId();
+        $role_name = $this->getName();
 
         // Création du rôle
         if (!$role = \get_role($role_name)) :
-            $role = \add_role($role_name, $this->getAttr('display_name'));
+            $role = \add_role($role_name, $this->get('display_name'));
         endif;
 
         // Mise à jour des habilitations
-        if ($capabilities = $this->getAttr('capabilities')) :
+        if ($capabilities = $this->get('capabilities')) :
             foreach ($capabilities as $cap => $grant) :
                 if (!isset($role->capabilities[$cap]) || ($role->capabilities[$cap] !== $grant)) :
                     $role->add_cap($cap, $grant);
@@ -79,39 +78,46 @@ class RoleController extends AppController
     }
 
     /**
-     * Déclaration d'interfaces utilisateur d'administration
+     * Déclaration d'interfaces utilisateur d'administration.
      *
      * @return void
      */
     public function tify_ui_register()
     {
-        if (!$admin_ui = $this->getAttr('admin_ui', false)) :
+        if (!$admin_ui = $this->get('admin_ui', false)) :
             return;
         endif;
 
         $admin_ui = $this->parseAdminUi($admin_ui);
 
         Ui::registerAdmin(
-            'tiFyCoreRole-AdminUiUsers--' . $this->getId(),
+            'tiFyCoreRole-AdminUiUsers--' . $this->getName(),
             $admin_ui['global']
         );
 
         Ui::registerAdmin(
-            'tiFyCoreRole-AdminUiUserList--' . $this->getId(),
+            'tiFyCoreRole-AdminUiUserList--' . $this->getName(),
             $admin_ui['list'],
             'admin'
         );
         Ui::registerAdmin(
-            'tiFyCoreRole-AdminUiUserEdit--' . $this->getId(),
+            'tiFyCoreRole-AdminUiUserEdit--' . $this->getName(),
             $admin_ui['edit']
         );
     }
 
     /**
-     * CONTROLEURS
+     * Récupération du nom de qualification du rôle.
+     *
+     * @return string
      */
+    public function getName()
+    {
+        return $this->name;
+    }
+
     /**
-     * Traitement des arguments de configuration
+     * Traitement des attributs de configuration.
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -127,10 +133,10 @@ class RoleController extends AppController
      *
      * @return array
      */
-    protected function parseAttrs($attrs = [])
+    protected function parse($attrs = [])
     {
         $defaults = [
-            'display_name'  => $this->getId(),
+            'display_name'  => $this->getName(),
             'desc'          => '',
             'capabilities'  => []
         ];
@@ -153,51 +159,39 @@ class RoleController extends AppController
     }
 
     /**
-     * Récupération de l'identifiant de qualification
-     *
-     * @return string
-     */
-    final public function getId()
-    {
-        return $this->Id;
-    }
-
-    /**
-     * Récupération de la liste de attributs de configuration
+     * Récupération de la liste de attributs de configuration.
      *
      * @return array
      */
-    final public function getAttrList()
+    public function all()
     {
-        return $this->Attrs;
+        return $this->attributes;
     }
 
     /**
-     * Récupération d'un attribut de configuration
+     * Récupération d'un attribut de configuration.
      *
-     * @param string $name Nom de l'attribut de configuration
-     * @param mixed $default Valeur de retour par défaut
+     * @param string $key Clé d'indexe de qualification de l'attributs
+     * @param mixed $default Valeur de retour par défaut.
      *
      * @return mixed
      */
-    final public function getAttr($name, $default = '')
+    public function get($key, $default = '')
     {
-        if (!isset($this->Attrs[$name])) :
-            return $default;
-        endif;
-
-        return $this->Attrs[$name];
+        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
-     * Traitement des attributs de configuration des interface utilisateurs d'administration
+     * Traitement des attributs de configuration des interface utilisateurs d'administration.
+     *
+     *
      */
     final public function parseAdminUi($attrs = [])
     {
         $defaults = [
             'global'    => [
                 'admin_menu'    => [
-                    'menu_slug'     => 'tiFyCoreRole-AdminUiUsers--' . $this->getId(),
+                    'menu_slug'     => 'tiFyCoreRole-AdminUiUsers--' . $this->getName(),
                     'menu_title'    => $this->getAttr('display_name'),
                     'position'      => 70
                 ]
@@ -205,31 +199,32 @@ class RoleController extends AppController
             'list'      =>  [
                 'cb'            => 'UserListTable',
                 'admin_menu'    => [
-                    'menu_slug'     => 'tiFyCoreRole-AdminUiUsers--' . $this->getId(),
-                    'parent_slug'   => 'tiFyCoreRole-AdminUiUsers--' . $this->getId(),
+                    'menu_slug'     => 'tiFyCoreRole-AdminUiUsers--' . $this->getName(),
+                    'parent_slug'   => 'tiFyCoreRole-AdminUiUsers--' . $this->getName(),
                     'menu_title'    => __('Tous les utilisateurs', 'tify'),
                     'position'      => 1
                 ],
                 'params'          => [
-                    'roles'         => [$this->getId()]
+                    'roles'         => [$this->getName()]
                 ],
-                'handle'          => ['edit' => 'tiFyCoreRole-AdminUiUserEdit--' . $this->getId()]
+                'handle'          => ['edit' => 'tiFyCoreRole-AdminUiUserEdit--' . $this->getName()]
             ],
             'edit'      =>  [
                 'cb'            => 'UserEditForm',
                 'admin_menu'    => [
-                    'menu_slug'     => 'tiFyCoreRole-AdminUiUserEdit--' . $this->getId(),
-                    'parent_slug'   => 'tiFyCoreRole-AdminUiUsers--' . $this->getId(),
+                    'menu_slug'     => 'tiFyCoreRole-AdminUiUserEdit--' . $this->getName(),
+                    'parent_slug'   => 'tiFyCoreRole-AdminUiUsers--' . $this->getName(),
                     'menu_title'    => __('Ajouter', 'tify'),
                     'position'      => 2
                 ],
                 'params'          => [
-                    'roles'         => [$this->getId()]
+                    'roles'         => [$this->getName()]
 
                 ],
-                'handle'          => ['list' => 'tiFyCoreRole-AdminUiUserList--' . $this->getId()]
+                'handle'          => ['list' => 'tiFyCoreRole-AdminUiUserList--' . $this->getName()]
             ]
         ];
+
         if (is_bool($attrs)) :
             return $defaults;
         endif;
@@ -239,9 +234,15 @@ class RoleController extends AppController
                 $attrs[$ui] = $defaults[$ui];
             else :
                 if (isset($attrs[$ui]['admin_menu'])) :
-                    $attrs[$ui]['admin_menu'] = \wp_parse_args($attrs[$ui]['admin_menu'], $defaults[$ui]['admin_menu']);
+                    $attrs[$ui]['admin_menu'] = array_merge(
+                        $defaults[$ui]['admin_menu'],
+                        $attrs[$ui]['admin_menu']
+                    );
                 endif;
-                $attrs[$ui] = \wp_parse_args($attrs[$ui], $defaults[$ui]);
+                $attrs[$ui] = array_merge(
+                    $attrs[$ui],
+                    $defaults[$ui]
+                );
             endif;
         endforeach;
 

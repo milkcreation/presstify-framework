@@ -16,7 +16,7 @@ class Role extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('init', null, 0);
     }
@@ -62,7 +62,7 @@ class Role extends AppController
             return;
         endif;
 
-        $this->appServiceShare($alias, new RoleController($id, $attrs));
+        $this->appServiceShare($alias, new RoleController($name, $attrs));
 
         return $this->appServiceGet($alias);
     }

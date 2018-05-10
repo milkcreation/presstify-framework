@@ -19,7 +19,7 @@ class Download extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('admin_init');
         $this->appAddAction('tify_media_download_register');
