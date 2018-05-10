@@ -15,67 +15,93 @@
 
 namespace tiFy\Components\Fields\SelectJs;
 
-use tiFy\Control\Control;
-use tiFy\Field\AbstractFactory;
+use tiFy\Partial\Partial;
+use tiFy\Field\AbstractFieldController;
 use tiFy\Field\Field;
 
-/**
- * Liste des attributs de configuration du champ
- *
- * @var string $before Contenu placé avant le champ
- * @var string $after Contenu placé après le champ
- * @var string $container_id Id HTML du conteneur du champ
- * @var string $container_class Classe HTML du conteneur du champ
- * @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- * @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value"
- * @var array $options Liste des choix de selection disponibles
- * @var array $source Liste des attributs de requête de récupération des élèments
- * @var null|string|array $select_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de des éléments selectionnés
- * @var null|string|array $picker_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de selection
- * @var null|string|array $item_cb Classe ou méthode ou fonction de rappel de traitement d'un élément
- * @var bool $disabled Activation/Désactivation du controleur de champ
- * @var bool $removable Activation/Désactivation de la suppression d'un élément dans la liste des éléments séléctionné
- * @var bool $multiple Autorise la selection multiple d'éléments
- * @var bool $duplicate Autorise les doublons dans la liste de selection (multiple actif doit être actif)
- * @var bool $autocomplete Active le champs de selection par autocomplétion
- * @var int $max Nombre d'élément maximum @todo
- *
- * @var array $sortable {
- *      Liste des options du contrôleur ajax d'ordonnancement
- *      @see http://jqueryui.com/sortable/
- * }
- * @var array trigger {
- *      Liste des attributs de configuration de l'interface d'action
- *
- *      @var string $class Classes HTML de l'élément
- *      @var bool $arrow Affichage de la fléche de selection
- * }
- * @var array picker {
- *      Liste des attributs de configuration de l'interface de selection des éléments
- *
- *      @var string $class Classes HTML de l'élément
- *      @var string $appendTo Selecteur jQuery de positionnement dans le DOM. défaut body.
- *      @var string $placement Comportement de la liste déroulante. top|bottom|clever. défaut clever adaptatif
- *      @var array $delta {
- *
- *          @var int $top
- *          @var int $left
- *          @var int $width
- *      }
- * @var bool $adminbar Gestion de la barre d'administration Wordpress. défaut true
- * @var bool $filter Champ de filtrage des éléments de la liste de selection
- * @var string $loader Rendu de l'indicateur de préchargement.
- * @var string $more Rendu de '+'
- * }
- */
-class SelectJs extends AbstractFactory
+class SelectJs extends AbstractFieldController
 {
     /**
-     * Initialisation globale
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $container_id Id HTML du conteneur du champ.
+     *      @var string $container_class Classe HTML du conteneur du champ.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var array $options Liste des choix de selection disponibles.
+     *      @var array $source Liste des attributs de requête de récupération des élèments.
+     *      @var null|string|array $select_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de des éléments selectionnés.
+     *      @var null|string|array $picker_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de selection.
+     *      @var null|string|array $item_cb Classe ou méthode ou fonction de rappel de traitement d'un élément.
+     *      @var bool $disabled Activation/Désactivation du controleur de champ.
+     *      @var bool $removable Activation/Désactivation de la suppression d'un élément dans la liste des éléments séléctionné.
+     *      @var bool $multiple Autorise la selection multiple d'éléments.
+     *      @var bool $duplicate Autorise les doublons dans la liste de selection (multiple actif doit être actif).
+     *      @var bool $autocomplete Active le champs de selection par autocomplétion.
+     *      @var int $max Nombre d'élément maximum @todo.
+     *
+     *      @var array $sortable {
+     *          Liste des options du contrôleur ajax d'ordonnancement.
+     *          @see http://jqueryui.com/sortable/
+     *      }
+     *
+     *      @var array trigger {
+     *          Liste des attributs de configuration de l'interface d'action.
+     *
+     *          @var string $class Classes HTML de l'élément.
+     *       @var bool $arrow Affichage de la fléche de selection.
+     *      }
+     *
+     *      @var array picker {
+     *          Liste des attributs de configuration de l'interface de selection des éléments.
+     *
+     *          @var string $class Classes HTML de l'élément.
+     *          @var string $appendTo Selecteur jQuery de positionnement dans le DOM. défaut body.
+     *          @var string $placement Comportement de la liste déroulante. top|bottom|clever. défaut clever adaptatif.
+     *          @var array $delta {
+     *
+     *              @var int $top
+     *              @var int $left
+     *              @var int $width
+     *          }
+     *      }
+     *
+     *      @var bool $adminbar Gestion de la barre d'administration Wordpress. défaut true.
+     *      @var bool $filter Champ de filtrage des éléments de la liste de selection.
+     *      @var string $loader Rendu de l'indicateur de préchargement.
+     *      @var string $more Rendu de '+'.
+     * }
+     */
+    protected $attributes = [
+        'before'          => '',
+        'after'           => '',
+        'attrs'           => [],
+        'name'            => '',
+        'value'           => null,
+        'options'         => [],
+        'source'          => false,
+        'select_cb'       => 'selectCallback',
+        'picker_cb'       => 'pickerCallback',
+        'item_cb'         => 'itemCallback',
+        'disabled'        => false,
+        'removable'       => true,
+        'multiple'        => false,
+        'duplicate'       => false,
+        'sortable'        => true,
+        'autocomplete'    => false,
+        'max'             => -1,
+        'trigger'         => [],
+        'picker'          => []
+    ];
+
+    /**
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
-    final public function init()
+    public function init()
     {
         // Déclaration des actions Ajax
         $this->appAddAction(
@@ -98,13 +124,13 @@ class SelectJs extends AbstractFactory
     }
 
     /**
-     * Mise en file des scripts
+     * Mise en file des scripts.
      *
      * @return void
      */
-    final public function enqueue_scripts()
+    public function enqueue_scripts()
     {
-        Control::enqueue_scripts('spinkit', 'three-bounce');
+        Partial::enqueue('spinkit', 'three-bounce');
         \wp_enqueue_style('tifyselect');
         \wp_enqueue_script('tiFyFieldSelectJs');
     }
@@ -119,155 +145,129 @@ class SelectJs extends AbstractFactory
         check_ajax_referer('tiFyField-selectJs');
 
         // Définition des arguments de requête
-        $query_args = $this->appRequestGet('query_args', [], 'POST');
-        $query_args['paged'] = $this->appRequestGet('page', 1, 'POST');
-        $query_args['s'] = $this->appRequestGet('term', '', 'POST');
+        $query_args = $this->appRequest('POST')->get('query_args', []);
+        $query_args['paged'] = $this->appRequest('POST')->get('page', 1);
+        $query_args['s'] = $this->appRequest('POST')->get('term', '');
 
         // Définition des arguments de récupération complémentaires
-        $args = $this->appRequestGet('args', [], 'POST');
+        $args = $this->appRequest('POST')->get('args', []);
         $args = \wp_unslash($args);
 
         $items = $this->queryItems($query_args, $args);
 
-        wp_send_json($items);
+        \wp_send_json($items);
     }
 
     /**
-     * Traitement des attributs de configuration
+     * Traitement des attributs de configuration.
      *
-     * {@inheritdoc}
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
-
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before'          => '',
-            'after'           => '',
-            'attrs'           => [],
-            'name'            => '',
-            'value'           => null,
-            'options'         => [],
-            'source'          => false,
-            'select_cb'       => 'selectCallback',
-            'picker_cb'       => 'pickerCallback',
-            'item_cb'         => 'itemCallback',
-            'disabled'        => false,
-            'removable'       => true,
-            'multiple'        => false,
-            'duplicate'       => false,
-            'sortable'        => true,
-            'autocomplete'    => false,
-            'max'             => -1,
-            'trigger'         => [],
-            'picker'          => [],
-        ];
-        $args = array_merge($defaults, $args);
+        parent::parse($attrs);
 
         // Attributs de configuration du controleur
-        if (!isset($args['attrs']['id'])) :
-            $args['attrs']['id'] = 'tiFyField-selectJs--' . $this->getIndex();
+        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attributes['attrs']['id'] = 'tiFyField-selectJs--' . $this->getIndex();
         endif;
-        if (!isset($args['attrs']['class'])) :
-            $args['attrs']['class'] = 'tiFy-select tiFyField-selectJs';
+        if (!isset($this->attributes['attrs']['class'])) :
+            $this->attributes['attrs']['class'] = 'tiFy-select tiFyField-selectJs';
         else :
-            $args['attrs']['class'] = 'tiFy-select tiFyField-selectJs '. $args['attrs']['class'];
+            $this->attributes['attrs']['class'] = 'tiFy-select tiFyField-selectJs '. $this->attributes['attrs']['class'];
         endif;
 
         // Attributs du selecteur de gestion de traitement
-        $args['handler_args'] = [
-            'name'      => $args['name'],
-            'value'     => $args['value'],
-            'disabled'  => $args['disabled'],
-            'removable' => $args['removable'],
-            'multiple'  => $args['multiple'],
+        $this->attributes['handler_args'] = [
+            'name'      => $this->attributes['name'],
+            'value'     => $this->attributes['value'],
+            'disabled'  => $this->attributes['disabled'],
+            'removable' => $this->attributes['removable'],
+            'multiple'  => $this->attributes['multiple'],
             'attrs'     => [],
         ];
-        $args['handler_args']['attrs']['id'] = 'tiFyField-selectJsHandler--' . $this->getId();
-        $args['handler_args']['attrs']['class'] = 'tiFy-selectHandler tiFyField-selectJsHandler';
+        $this->attributes['handler_args']['attrs']['id'] = 'tiFyField-selectJsHandler--' . $this->getId();
+        $this->attributes['handler_args']['attrs']['class'] = 'tiFy-selectHandler tiFyField-selectJsHandler';
+
         // Attributs de configuration du controleur Ajax
         // Sortable
-        if ($args['sortable']) :
-            if ($args['sortable'] === true) :
-                $args['sortable'] = [];
+        if ($this->attributes['sortable']) :
+            if ($this->attributes['sortable'] === true) :
+                $this->attributes['sortable'] = [];
             endif;
         endif;
 
         // Liste de selection
         ob_start();
-        echo Control::Spinkit([
+        echo Partial::Spinkit([
             'container_id'    => 'tiFyField-selectJsPickerSpinkit--' . $this->getIndex(),
             'container_class' => 'tiFy-selectPickerSpinkit tiFyField-selectJsPickerSpinkit',
             'type'            => 'three-bounce',
         ]);
         $picker_loader = ob_get_clean();
 
-        $args['picker'] = array_merge(
+        $this->attributes['picker'] = array_merge(
             [
                 'loader' => $picker_loader,
                 'more'   => '+',
             ],
-            (array)$args['picker']
+            (array)$this->attributes['picker']
         );
 
         // Définition des attributs de la liste de selection
-        if ($args['source']) :
-            if (!is_array($args['source'])) :
-                $args['source'] = [];
+        if ($this->attributes['source']) :
+            if (!is_array($this->attributes['source'])) :
+                $this->attributes['source'] = [];
             endif;
 
-            $args['source'] = array_merge(
+            $this->attributes['source'] = array_merge(
                 [
                     'action'      => 'tify_field_select_js',
                     '_ajax_nonce' => \wp_create_nonce('tiFyField-selectJs'),
                     'query_args'  => [],
                     'args'        => [
-                        'select_cb' => $args['select_cb'],
-                        'picker_cb' => $args['picker_cb'],
-                        'item_cb'   => $args['item_cb'],
+                        'select_cb' => $this->attributes['select_cb'],
+                        'picker_cb' => $this->attributes['picker_cb'],
+                        'item_cb'   => $this->attributes['item_cb'],
                     ],
                 ],
-                $args['source']
+                $this->attributes['source']
             );
         endif;
 
         // Attributs de configuration des options du controleur Js
-        $args['attrs']['data-options'] = rawurlencode(
+        $this->attributes['attrs']['data-options'] = rawurlencode(
             json_encode(
                 [
-                    'disabled'     => (bool)$args['disabled'],
-                    'removable'    => (bool)$args['removable'],
-                    'multiple'     => (bool)$args['multiple'],
-                    'duplicate'    => (bool)$args['duplicate'],
-                    'autocomplete' => (bool)$args['autocomplete'],
-                    'max'          => (bool)$args['max'],
-                    'sortable'     => $args['sortable'],
-                    'trigger'      => $args['trigger'],
+                    'disabled'     => (bool)$this->attributes['disabled'],
+                    'removable'    => (bool)$this->attributes['removable'],
+                    'multiple'     => (bool)$this->attributes['multiple'],
+                    'duplicate'    => (bool)$this->attributes['duplicate'],
+                    'autocomplete' => (bool)$this->attributes['autocomplete'],
+                    'max'          => (bool)$this->attributes['max'],
+                    'sortable'     => $this->attributes['sortable'],
+                    'trigger'      => $this->attributes['trigger'],
                     'picker'       => array_merge(
                         [
                             'adminbar' => (is_admin() && (!defined('DOING_AJAX') || (DOING_AJAX !== true))) ? false : true,
                         ],
-                        $args['picker']
+                        $this->attributes['picker']
                     ),
-                    'source'       => $args['source'],
+                    'source'       => $this->attributes['source'],
                 ],
                 JSON_FORCE_OBJECT
             )
         );
-
-        return $args;
     }
 
     /**
-     * Récupération de la liste des valeurs initiales de soumission du champ "value"
+     * Récupération de la liste des valeurs initiales de soumission du champ "value".
      *
      * @return mixed
      */
-    final protected function getValue()
+    protected function getValue()
     {
         $value = $this->get('value', null);
 
@@ -294,19 +294,19 @@ class SelectJs extends AbstractFactory
     }
 
     /**
-     * Formatage de l'affichage de l'élément dans la liste des éléments selectionnés
+     * Formatage de l'affichage de l'élément dans la liste des éléments selectionnés.
      *
      * @param array $item {
-     *      Attributs de configuration de l'élément
+     *      Liste des attributs de configuration de l'élément.
      *
-     * @var string $id Identifiant de qualification de l'élément
-     * @var mixed $value Valeur de retour
-     * @var string $label Intitulé de qualification
-     * @var bool $group
-     * @var string $parent Identifiant de qualification de l'élément parent
-     * @var bool $disabled
-     * @var string $select Rendu HTML dans la liste des éléments selectionnés
-     * @var string $picker Rendu HTML dans la liste de selection des éléments
+     *      @var string $id Identifiant de qualification de l'élément.
+     *      @var mixed $value Valeur de retour.
+     *      @var string $label Intitulé de qualification.
+     *      @var bool $group
+     *      @var string $parent Identifiant de qualification de l'élément parent.
+     *      @var bool $disabled
+     *      @var string $select Rendu HTML dans la liste des éléments selectionnés.
+     *      @var string $picker Rendu HTML dans la liste de selection des éléments.
      * }
      *
      * @return string
@@ -317,19 +317,19 @@ class SelectJs extends AbstractFactory
     }
 
     /**
-     * Formatage de l'affichage de l'élément dans la liste de selection des éléments
+     * Formatage de l'affichage de l'élément dans la liste de selection des éléments.
      *
      * @param array $item {
-     *      Attributs de configuration de l'élément
+     *      Liste des attributs de configuration de l'élément.
      *
-     * @var string $id Identifiant de qualification de l'élément
-     * @var mixed $value Valeur de retour
-     * @var string $label Intitulé de qualification
-     * @var bool $group
-     * @var string $parent Identifiant de qualification de l'élément parent
-     * @var bool $disabled
-     * @var string $select Rendu HTML dans la liste des éléments selectionnés
-     * @var string $picker Rendu HTML dans la liste de selection des éléments
+     *      @var string $id Identifiant de qualification de l'élément.
+     *      @var mixed $value Valeur de retour.
+     *      @var string $label Intitulé de qualification.
+     *      @var bool $group
+     *      @var string $parent Identifiant de qualification de l'élément parent.
+     *      @var bool $disabled
+     *      @var string $select Rendu HTML dans la liste des éléments selectionnés.
+     *      @var string $picker Rendu HTML dans la liste de selection des éléments.
      * }
      *
      * @return string
@@ -349,10 +349,10 @@ class SelectJs extends AbstractFactory
     }
 
     /**
-     * Requête de récupération des éléments
+     * Requête de récupération des éléments.
      *
-     * @param array $query_args Arguments de requête de récupération des éléments
-     * @param array $args Attributs personnalisés
+     * @param array $query_args Arguments de requête de récupération des éléments.
+     * @param array $args Attributs personnalisés.
      *
      * @return array
      */
@@ -377,9 +377,9 @@ class SelectJs extends AbstractFactory
     }
 
     /**
-     * Récupération de la liste des éléments
+     * Récupération de la liste des éléments.
      *
-     * @param string[] $selected Liste des valeurs des éléments
+     * @param string[] $selected Liste des valeurs des éléments.
      *
      * @return array
      */
@@ -449,9 +449,7 @@ class SelectJs extends AbstractFactory
     }
 
     /**
-     * Affichage
-     *
-     * {@inheritdoc}
+     * Affichage.
      *
      * @return string
      */

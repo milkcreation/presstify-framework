@@ -26,7 +26,7 @@ final class Login extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('init');
     }
@@ -40,8 +40,8 @@ final class Login extends AppController
     {
         // Déclaration des interfaces d'authentification configurées
         if ($logins = $this->appConfig('login', [], User::class)) :
-            foreach ($logins as $id => $attrs) :
-                $this->register($id, $attrs);
+            foreach ($logins as $name => $attrs) :
+                $this->register($name, $attrs);
             endforeach;
         endif;
 
@@ -60,7 +60,6 @@ final class Login extends AppController
     public function register($name, $attrs = [])
     {
         $alias = "tfy.user.login.{$name}";
-
         if ($this->appServiceHas($alias)) :
             return;
         endif;
@@ -71,7 +70,7 @@ final class Login extends AppController
         $attrs = array_merge($defaults, $attrs);
         $classname  = $attrs['controller'];
 
-        $this->appServiceShare($alias, new $classname($id, $attrs));
+        $this->appServiceShare($alias, new $classname($name, $attrs));
 
         return $this->appServiceGet($alias);
     }

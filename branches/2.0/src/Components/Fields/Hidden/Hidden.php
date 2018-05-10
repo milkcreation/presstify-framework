@@ -15,58 +15,54 @@
 
 namespace tiFy\Components\Fields\Hidden;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
- *      @var string $before Contenu placé avant le champ
- *      @var string $after Contenu placé après le champ
- *      @var array $attrs Liste des propriétés de la balise HTML
- *      @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value"
- * }
- */
-class Hidden extends AbstractFactory
+class Hidden extends AbstractFieldController
 {
     /**
-     * Traitement des attributs de configuration
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var array $attrs Liste des propriétés de la balise HTML.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     * }
+     */
+    protected $attributes = [
+        'before' => '',
+        'after'  => '',
+        'attrs'  => [],
+        'name'   => '',
+        'value'  => ''
+    ];
+
+    /**
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
+        parent::parse($attrs);
 
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before' => '',
-            'after'  => '',
-            'attrs'  => [],
-            'name'    => '',
-            'value'   => ''
-        ];
-        $args = array_merge($defaults, $args);
-
-        if (!isset($args['attrs']['id'])) :
-            $args['attrs']['id'] = 'tiFyField-hidden--' . $this->getIndex();
+        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attributes['attrs']['id'] = 'tiFyField-hidden--' . $this->getIndex();
         endif;
-        $args['attrs']['type'] = 'hidden';
-
-        return $args;
+        $this->attributes['attrs']['type'] = 'hidden';
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */
     protected function display()
     {
         ob_start();
-?><?php $this->before(); ?><input <?php $this->attrs(); ?>/><?php $this->after(); ?><?php
+        ?><?php $this->before(); ?><input <?php $this->attrs(); ?>/><?php $this->after(); ?><?php
 
         return ob_get_clean();
     }

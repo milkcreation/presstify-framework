@@ -2,66 +2,101 @@
 
 namespace tiFy\User\Login;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
 use tiFy\Field\Field;
+use tiFy\Librairies\Notices\NoticesAwareTrait;
 use tiFy\Partial\Partial;
 
 class LoginController extends AppController
 {
+    use NoticesAwareTrait;
+
+    /**
+     * Nom de qualification du controleur.
+     * @var string
+     */
+    protected $name = '';
+
+    /**
+     * Liste des attributs de configuration.
+     * @var array
+     */
+    protected $attributes = [];
+
     /**
      * CONSTRUCTEUR.
      *
+     * @param string $name Nom de qualification du controleur.
+     * @param array $attrs Lise des attributs de configuration.
+     *
      * @return void
      */
-    public function __construct($id, $attrs = [])
+    public function __construct($name, $attrs = [])
     {
-        // Déclaration des événement
+        $this->name = $name;
+
+        $this->parse($attrs);
+    }
+
+    /**
+     * Initialisation du controleur.
+     *
+     * @return void
+     */
+    public function appBoot()
+    {
         $this->appAddAction('wp_loaded');
     }
 
     /**
+     * A l'issue du chargement complet de Wordpress.
      *
+     * @return void
      */
     public function wp_loaded()
     {
         // Bypass
-        if (!$tify_login = self::tFyAppGetRequestVar('tiFyLogin', false)) :
+        if (!$tify_login = $this->appRequest('GET')->get('tiFyLogin', false)) :
             return;
         endif;
 
-        if ($tify_login !== $this->getId()) :
+        if ($tify_login !== $this->getName()) :
             return;
         endif;
 
-        $action = self::tFyAppGetRequestVar('action', 'login');
+        $action = $this->appRequest('GET')->get('action', 'login');
         switch ($action) :
             default :
                 break;
+
             case 'login' :
                 $this->appAddFilter('authenticate', 'authenticate', 50, 3);
-                $this->appAddAction('wp_login', 'on_login_success', 10, 2);
+                $this->appAddAction('wp_login', 'onLoginSuccess', 10, 2);
                 $this->_login();
                 break;
+
             case 'logout' :
-                $this->appAddAction('wp_logout', 'on_logout_success');
+                $this->appAddAction('wp_logout', 'onLogoutSuccess');
                 $this->_logout();
                 break;
         endswitch;
     }
     
     /**
-     * Procédure de connection
+     * Procédure de connection.
      *
      * @return void
      */
     private function _login()
     {
-        check_admin_referer('tiFyLogin-in-' . $this->getId());
+        check_admin_referer('tiFyLogin-in-' . $this->getName());
 
         $secure_cookie = '';
 
-        if (!empty($_POST['log']) && !force_ssl_admin()) :
-            $user_name = \sanitize_user($_POST['log']);
+        if (($log = $this->appRequest('POST')->get('log', false)) && !force_ssl_admin()) :
+            $user_name = \sanitize_user($log);
             if ($user = get_user_by('login', $user_name)) :
                 if (get_user_option('use_ssl', $user->ID)) :
                     $secure_cookie = true;
@@ -70,10 +105,10 @@ class LoginController extends AppController
             endif;
         endif;
 
-        $reauth = empty($_REQUEST['reauth']) ? false : true;
+        $reauth = !$this->appRequest()->get('reauth') ? false : true;
         $user = \wp_signon([], $secure_cookie);
 
-        if (empty($_COOKIE[LOGGED_IN_COOKIE])) :
+        if (!$this->appRequest('COOKIE')->get(LOGGED_IN_COOKIE)) :
             if (headers_sent()) :
                 $user = new \WP_Error(
                     'test_cookie',
@@ -83,7 +118,7 @@ class LoginController extends AppController
                         __('https://wordpress.org/support/')
                     )
                 );
-            elseif (isset($_POST['testcookie']) && empty($_COOKIE[TEST_COOKIE])) :
+            elseif ($this->appRequest('POST')->get('testcookie') && !$this->appRequest('COOKIE')->get(TEST_COOKIE)) :
                 $user = new \WP_Error(
                     'test_cookie',
                     sprintf(
@@ -95,12 +130,9 @@ class LoginController extends AppController
         endif;
 
         if (!is_wp_error($user) && !$reauth) :
-            $redirect_url = '';
-            if (!empty($_REQUEST['redirect_to'])) :
-                $redirect_url = $_REQUEST['redirect_to'];
-            endif;
+            $redirect_url = $this->appRequest()->get('redirect_to');
 
-            if ($redirect_url = $this->get_login_form_redirect($redirect_url, $user)) :
+            if ($redirect_url = $this->getLoginFormRedirect($redirect_url, $user)) :
                 if ($secure_cookie && false !== strpos($redirect_url, 'wp-admin')) :
                     $redirect_url = preg_replace('|^http://|', 'https://', $redirect_url);
                 endif;
@@ -116,24 +148,21 @@ class LoginController extends AppController
     }
 
     /**
-     * Procédure de déconnection
+     * Procédure de déconnection.
      *
      * @return void
      */
     private function _logout()
     {
-        check_admin_referer('tiFyLogin-out-' . $this->getId());
+        check_admin_referer('tiFyLogin-out-' . $this->getName());
 
         $user = wp_get_current_user();
 
         wp_logout();
 
-        $redirect_url = '';
-        if (!empty($_REQUEST['redirect_to'])) :
-            $redirect_url = $_REQUEST['redirect_to'];
-        endif;
+        $redirect_url = $this->appRequest()->get('redirect_to');
 
-        if ($redirect_url = $this->get_logout_redirect($redirect_url, $user)) :
+        if ($redirect_url = $this->getLogoutRedirect($redirect_url, $user)) :
         else :
             $redirect_url = remove_query_arg(['action', '_wpnonce', 'tiFyLogin'], set_url_scheme('//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']));
         endif;
@@ -145,60 +174,71 @@ class LoginController extends AppController
     }
 
     /**
-     * Définition des erreurs de soumission aux formulaires
+     * Définition des erreurs de soumission aux formulaires.
      *
-     * @param string|array|\WP_Error $errors Liste des erreurs
+     * @param string|array|\WP_Error $errors Liste des erreurs.
      *
      * @return void
      */
     private function _setErrors($errors)
     {
-        $errors_map = $this->getAttr('errors_map', []);
+        $errors_map = $this->get('errors_map', []);
 
         if (is_wp_error($errors)) :
             if ($errors->get_error_codes()) :
                 foreach ($errors->get_error_codes() as $code) :
                     if (isset($errors_map[$code])) :
-                        $this->addNotice('error', $code, $errors_map[$code]);
+                        $this->noticesAdd('error', $errors_map[$code], ['alias' => $code]);
                         continue;
                     endif;
 
                     if(!$messages = $errors->get_error_messages()) :
-                        $this->addNotice('error', $code);
+                        $this->noticesAdd('error', $code, ['alias' => $code]);
                     endif;
+
                     foreach($messages as $message) :
-                        $this->addNotice('error', $code, $message);
+                        $this->noticesAdd('error', $message, ['alias' => $code]);
                     endforeach;
                 endforeach;
             else :
-                $this->addNotice('error');
+                $this->noticesAdd('error');
             endif;
         elseif(is_array($errors)) :
             foreach($errors as $code => $message) :
                 if (isset($errors_map[$code])) :
-                    $this->addNotice('error', $code, $errors_map[$code]);
+                    $this->noticesAdd('error', $errors_map[$code], ['alias' => $code]);
                 else :
-                    $this->addNotice('error', $code, $message);
+                    $this->noticesAdd('error', $message, ['alias' => $code]);
                 endif;
             endforeach;
         else :
-            $this->addNotice('error', '', (string)$errors);
+            $this->noticesAdd('error', (string)$errors);
         endif;
     }
 
     /**
-     * Traitement des attributs de configuration
+     * Récupération du nom de qualification du controleur.
      *
-     * @param array $attrs Liste des attributs de configuration
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration.
      *
      * @return array
      */
-    final public function parseAttrs($attrs = [])
+    public function parse($attrs = [])
     {
         // Définition des attributs de configuration par défaut
         $defaults = [
             'login_form'    => [
-                'id'       => 'tiFyLogin-Form--' . $this->getId(),
+                'id'       => 'tiFyLogin-Form--' . $this->getName(),
                 'fields'   => ['username', 'password', 'remember', 'submit']
             ],
             'logout_link'   => [],
@@ -222,22 +262,35 @@ class LoginController extends AppController
                     if (!in_array($field_name, ['username', 'password', 'remember', 'submit'])) :
                         continue;
                     endif;
-                    $fields[$field_name] = call_user_func([$this, "parse_login_form_field_{$field_name}_attrs"], $field_attrs);
+                    $fields[$field_name] = call_user_func([$this, 'parseLoginFormField' . Str::studly($field_name) . 'Attrs'], $field_attrs);
                 endforeach;
                 $attrs['login_form']['fields'] = $fields;
             endif;
         endif;
 
         // Traitement des attributs de configuration du lien de deconnexion
-        $attrs['logout_link'] = $this->parse_logout_link_attrs($attrs['logout_link']);
+        $attrs['logout_link'] = $this->parseLogoutLinkAttrs($attrs['logout_link']);
 
         // Traitement des attributs de configuration de l'interface de mot de passe oublié
-        $attrs['lost_password_link'] = $this->parse_lostpassword_link_attrs($attrs['lost_password_link']);
+        $attrs['lost_password_link'] = $this->parseLostpasswordLinkAttrs($attrs['lost_password_link']);
 
         // Traitement des attributs de la cartographie des messages d'erreurs
-        $attrs['errors_map'] = $this->parse_errors_map($attrs['errors_map']);
+        $attrs['errors_map'] = $this->parseErrorsMap($attrs['errors_map']);
 
-        return $attrs;
+        $this->attributes = $attrs;
+    }
+
+    /**
+     * Récupération d'un attribut de configuration.
+     *
+     * @param string $key Clé d'index de l'attributs à récupérer.
+     * @param mixed $defautl Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function get($key, $default = null)
+    {
+        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
@@ -253,7 +306,7 @@ class LoginController extends AppController
             return [];
         endif;
 
-        if (!$login_form = $this->getAttr('login_form')) :
+        if (!$login_form = $this->get('login_form')) :
             return [];
         endif;
 
@@ -277,7 +330,7 @@ class LoginController extends AppController
     {
         $errors = [];
 
-        if (!$messages = $this->getNoticeMessages('error')) :
+        if (!$messages = $this->noticesGetMessages('error')) :
             return $errors;
         endif;
 
@@ -301,7 +354,7 @@ class LoginController extends AppController
      */
     final public function getRoles()
     {
-        return $this->getAttr('roles');
+        return $this->get('roles', []);
     }
 
     /**
@@ -323,17 +376,17 @@ class LoginController extends AppController
      *
      * @return string
      */
-    final public function get_logout_url($redirect_url = '')
+    final public function getLogoutUrl($redirect_url = '')
     {
         $args = [];
         if($redirect_url) :
             $args['redirect_to'] = $redirect_url;
         endif;
         $args['action'] = 'logout';
-        $args['tiFyLogin'] = $this->getId();
+        $args['tiFyLogin'] = $this->getName();
 
-        $logout_url = add_query_arg($args, $this->getAttr('redirect_url', site_url('wp-login.php', 'login')));
-        $logout_url = wp_nonce_url($logout_url, 'tiFyLogin-out-' . $this->getId());
+        $logout_url = add_query_arg($args, $this->get('redirect_url', site_url('wp-login.php', 'login')));
+        $logout_url = wp_nonce_url($logout_url, 'tiFyLogin-out-' . $this->getName());
 
         return $logout_url;
     }
@@ -353,7 +406,7 @@ class LoginController extends AppController
             return '';
         endif;
 
-        $output = call_user_func([$this, $template], $attrs);
+        $output = call_user_func([$this, Str::studly($template)], $attrs);
 
         if ($echo) :
             echo $output;
@@ -391,7 +444,7 @@ class LoginController extends AppController
      *
      * @return void
      */
-    public function on_login_success($user_login, $user)
+    public function onLoginSuccess($user_login, $user)
     {
         return;
     }
@@ -401,7 +454,7 @@ class LoginController extends AppController
      *
      * @return void
      */
-    public function on_logout_success()
+    public function onLogoutSuccess()
     {
         return;
     }
@@ -416,12 +469,12 @@ class LoginController extends AppController
      *
      * @return array
      */
-    public function parse_login_form_field_username_attrs($attrs = [])
+    public function parseLoginFormFieldUsernameAttrs($attrs = [])
     {
         $defaults = [
             'label'         => __('Identifiant', 'tify'),
             'attrs'    => [
-                'id'            => 'tiFyLogin-FormFieldUsername--' . $this->getId(),
+                'id'            => 'tiFyLogin-FormFieldUsername--' . $this->getName(),
                 'placeholder'   => __('Renseignez votre identifiant', 'tify'),
                 'size'          => 20
             ]
@@ -443,12 +496,12 @@ class LoginController extends AppController
      *
      * @return array
      */
-    public function parse_login_form_field_password_attrs($attrs = [])
+    public function parseLoginFormFieldPasswordAttrs($attrs = [])
     {
         $defaults = [
             'label'             => __('Mot de passe', 'tify'),
             'attrs'    => [
-                'id'            => 'tiFyLogin-FormFieldPassword--' . $this->getId(),
+                'id'            => 'tiFyLogin-FormFieldPassword--' . $this->getName(),
                 'placeholder'   => __('Renseignez votre mot de passe', 'tify')
             ]
         ];
@@ -469,12 +522,12 @@ class LoginController extends AppController
      *
      * @return array
      */
-    public function parse_login_form_field_remember_attrs($attrs = [])
+    public function parseLoginFormFieldRememberAttrs($attrs = [])
     {
         $defaults = [
             'label'         => __('Se souvenir de moi', 'tify'),
             'attrs'         => [
-                'id' => 'tiFyLogin-FormFieldRemember--' . $this->getId(),
+                'id' => 'tiFyLogin-FormFieldRemember--' . $this->getName(),
                 'value'         => 0
             ]
         ];
@@ -495,11 +548,11 @@ class LoginController extends AppController
      *
      * @return array
      */
-    public function parse_login_form_field_submit_attrs($attrs = [])
+    public function parseLoginFormFieldSubmitAttrs($attrs = [])
     {
         $defaults = [
             'attrs' => [
-                'id'    => 'tiFyLogin-FormFieldSubmit--' . $this->getId(),
+                'id'    => 'tiFyLogin-FormFieldSubmit--' . $this->getName(),
                 'value' => __('Se connecter', 'tify')
             ]
         ];
@@ -519,7 +572,7 @@ class LoginController extends AppController
      *
      * @return array
      */
-    public function parse_logout_link_attrs($attrs = [])
+    public function parseLogoutLinkAttrs($attrs = [])
     {
         $defaults = [
             'redirect'   => '',
@@ -540,7 +593,7 @@ class LoginController extends AppController
      *
      * @return array
      */
-    public function parse_lostpassword_link_attrs($attrs = [])
+    public function parseLostpasswordLinkAttrs($attrs = [])
     {
         $defaults = [
             'redirect' => '',
@@ -559,17 +612,19 @@ class LoginController extends AppController
      *
      * @return array
      */
-    public function parse_errors_map($attrs = [])
+    public function parseErrorsMap($attrs = [])
     {
-        $defaults = [
-            'empty_username'        => __('le champ de l’identifiant est vide.', 'tify'),
-            'empty_password'        => __('Veuillez renseigner le mot de passe.', 'tify'),
-            'invalid_username'      => __('Nom d’utilisateur non valide.', 'tify'),
-            'incorrect_password'    => __('Ce mot de passe ne correspond pas à l’identifiant fourni.', 'tify'),
-            'authentication_failed' => __('Les idenfiants de connexion fournis sont invalides.', 'tify'),
-            'role_not_allowed'      => __('Votre utilisateur n\'est pas autorisé à se connecter depuis cette interface.', 'tify')
-        ];
-        return \wp_parse_args($attrs, $defaults);
+        return array_merge(
+            [
+                'empty_username'        => __('le champ de l’identifiant est vide.', 'tify'),
+                'empty_password'        => __('Veuillez renseigner le mot de passe.', 'tify'),
+                'invalid_username'      => __('Nom d’utilisateur non valide.', 'tify'),
+                'incorrect_password'    => __('Ce mot de passe ne correspond pas à l’identifiant fourni.', 'tify'),
+                'authentication_failed' => __('Les idenfiants de connexion fournis sont invalides.', 'tify'),
+                'role_not_allowed'      => __('Votre utilisateur n\'est pas autorisé à se connecter depuis cette interface.', 'tify')
+            ],
+            $attrs
+        );
     }
 
     /**
@@ -579,17 +634,17 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function login_form()
+    public function loginForm()
     {
-        $attrs = $this->getAttr('login_form');
-        $form_name = isset($attrs['name']) ? $attrs['name'] : "tiFyLogin-Form--" . $this->getId();
-        $form_id = isset($attrs['id']) ? $attrs['id'] : "tiFyLogin-Form--" . $this->getId();
+        $attrs = $this->get('login_form');
+        $form_name = isset($attrs['name']) ? $attrs['name'] : "tiFyLogin-Form--" . $this->getName();
+        $form_id = isset($attrs['id']) ? $attrs['id'] : "tiFyLogin-Form--" . $this->getName();
         $form_class = isset($attrs['class']) ? $attrs['class'] : "tiFyLogin-Form";
 
         $output  = "";
 
         // Pré-affichage du formulaire
-        $output .= $this->login_form_before();
+        $output .= $this->loginFormBefore();
 
         // Ouverture du formulaire
         $output .= "<form name=\"{$form_name}\" id=\"{$form_id}\" class=\"{$form_class}\" action=\"\" method=\"post\">";
@@ -598,41 +653,42 @@ class LoginController extends AppController
         $output .= (string)Field::Hidden(
             [
                 'name' => 'tiFyLogin',
-                'value' => $this->getId()
+                'value' => $this->getName()
             ]
         );
         $output .= (string)Field::Hidden(
             [
                 'name' => '_wpnonce',
-                'value' => \wp_create_nonce('tiFyLogin-in-' . $this->getId())]
+                'value' => \wp_create_nonce('tiFyLogin-in-' . $this->getName())
+            ]
         );
 
         // Champs cachés
-        $output .= $this->hidden_fields();
+        $output .= $this->hiddenFields();
         
         // Entête du formulaire
-        $output .= $this->login_form_header();
+        $output .= $this->loginFormHeader();
         
         // Corps du formulaire (champs de saisie)
-        $output .= $this->login_form_fields();
+        $output .= $this->loginFormFields();
         
         // Champs de formulaire additionnels
-        $output .= $this->login_form_additionnal_fields();
+        $output .= $this->loginFormAdditionnalFields();
         
         // Mémorisation des informations de connection
-        $output .= $this->login_form_field_remember();
+        $output .= $this->loginFormFieldRemember();
         
         // Bouton de soumission filtré
         $output .= $this->login_form_field_submit();
         
         // Pied du formulaire
-        $output .= $this->login_form_footer();
+        $output .= $this->loginFormFooter();
         
         // Fermeture du formulaire
         $output .= "</form>";
 
         // post-affichage du formulaire
-        $output .= $this->login_form_after();
+        $output .= $this->loginFormAfter();
 
         return $output;
     }
@@ -642,7 +698,7 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function login_form_before()
+    public function loginFormBefore()
     {
         return  '';
     }
@@ -652,7 +708,7 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function login_form_after()
+    public function loginFormAfter()
     {
         return  '';
     }
@@ -662,29 +718,29 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function hidden_fields()
+    public function hiddenFields()
     {
         return '';
     }
 
     /**
-     * Affichage de l'entête du formulaire
+     * Affichage de l'entête du formulaire.
      *
      * @return string
      */
-    public function login_form_header()
+    public function loginFormHeader()
     {
-        return $this->login_form_errors();
+        return $this->loginFormErrors();
     }
 
     /**
-     * Affichage des informations
+     * Affichage des message de notification d'informations.
      *
      * @return string
      */
-    public function login_form_infos()
+    public function loginFormInfos()
     {
-        if(!$infos = $this->getNoticeMessages('info')) :
+        if(!$infos = $this->noticesGetMessages('info')) :
             return '';
         endif;
 
@@ -698,7 +754,7 @@ class LoginController extends AppController
             $text = reset($infos);
         endif;
 
-        return Notices::display(
+        return Partial::Notice(
             [
                 'class' => "tiFyLogin-FormPart tiFyLogin-FormInfos",
                 'text'  => $text,
@@ -709,11 +765,11 @@ class LoginController extends AppController
     }
 
     /**
-     * Affichage des notification d'erreurs de soumission au formulaire d'authentification
+     * Affichage des notification d'erreurs de soumission au formulaire d'authentification.
      *
      * @return string
      */
-    public function login_form_errors()
+    public function loginFormErrors()
     {
         if(!$errors = $this->getErrors()) :
             return '';
@@ -729,7 +785,7 @@ class LoginController extends AppController
             $text = reset($errors);
         endif;
 
-        return Notices::display(
+        return Partial::Notice(
             [
                 'class' => "tiFyLogin-FormPart tiFyLogin-FormErrors",
                 'text'  => $text,
@@ -740,16 +796,16 @@ class LoginController extends AppController
     }
 
     /**
-     * Affichage du corps du formulaire
+     * Affichage du corps du formulaire.
      *
      * @return string
      */
-    public function login_form_fields()
+    public function loginFormFields()
     {
         $output = "";
 
         foreach (['username', 'password'] as $field_name) :
-            $output .= call_user_func([$this, "login_form_field_{$field_name}"]);
+            $output .= call_user_func([$this, 'loginFormField' . Str::studly($field_name)]);
         endforeach;
 
         return $output;
@@ -760,7 +816,7 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function login_form_field_username()
+    public function loginFormFieldUsername()
     {
         if(!$attrs = $this->getFieldAttrs('username', false)) :
             return '';
@@ -791,7 +847,7 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function login_form_field_password()
+    public function loginFormFieldPassword()
     {
         if(!$attrs = $this->getFieldAttrs('password', false)) :
             return '';
@@ -822,7 +878,7 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function login_form_field_remember()
+    public function loginFormFieldRemember()
     {
         if(!$attrs = $this->getFieldAttrs('remember', false)) :
             return '';
@@ -841,7 +897,7 @@ class LoginController extends AppController
                 $label['attrs']['for'] = $attrs['attrs']['id'];
             endif;
             $label['attrs']['class'] = 'tiFyLogin-FormFieldLabel tiFyLogin-FormFieldLabel--remember';
-            $output .= Field::Label($label, false);
+            $output .= Field::Label($label);
         endif;
 
         $output .= "</p>";
@@ -873,7 +929,7 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function login_form_additionnal_fields()
+    public function loginFormAdditionnalFields()
     {
         return '';
     }
@@ -883,19 +939,19 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function login_form_footer()
+    public function loginFormFooter()
     {
-        return $this->lostpassword_link();
+        return $this->lostpasswordLink();
     }
 
     /**
-     * Affichage du lien vers l'interface de récupération de mot de passe oublié
+     * Affichage du lien vers l'interface de récupération de mot de passe oublié.
      *
      * @return string
      */
-    public function lostpassword_link()
+    public function lostpasswordLink()
     {
-        $attrs = $this->getAttr('lost_password_link');
+        $attrs = $this->get('lost_password_link');
 
         $output =   "<a href=\"" . \wp_lostpassword_url($attrs['redirect']) ."\"" .
                     " title=\"" . __( 'Récupération de mot de passe perdu', 'tify' ) . "\"" .
@@ -907,16 +963,19 @@ class LoginController extends AppController
     }
 
     /**
-     * Affichage du lien de déconnection
+     * Affichage du lien de déconnection.
      *
-     * @param array $custom_attrs Liste des attributs de personnalisation
+     * @param array $attrs Liste des attributs de personnalisation.
      *
      * @return string
      */
-    public function logout_link($custom_attrs = [])
+    public function logoutLink($attrs = [])
     {
-        $attrs = \wp_parse_args($custom_attrs, $this->getAttr('logout_link', []));
-        $url = $this->get_logout_url($attrs['redirect']);
+        $attrs = array_merge(
+            $this->get('logout_link', []),
+            $custom_attrs
+        );
+        $url = $this->getLogoutUrl($attrs['redirect']);
 
         return "<a href=\"{$url}\" title=\"{$attrs['title']}\" class=\"{$attrs['class']}\">{$attrs['text']}</a>";
     }
@@ -929,10 +988,10 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function get_login_form_redirect($redirect_url = '', $user)
+    public function getLoginFormRedirect($redirect_url = '', $user)
     {
         if (!$redirect_url) :
-            $redirect_url = $this->getAttr('redirect_url', admin_url());
+            $redirect_url = $this->get('redirect_url', admin_url());
         endif;
 
         return $redirect_url;
@@ -946,7 +1005,7 @@ class LoginController extends AppController
      *
      * @return string
      */
-    public function get_logout_redirect($redirect_url = '', $user)
+    public function getLogoutRedirect($redirect_url = '', $user)
     {
         return $redirect_url;
     }

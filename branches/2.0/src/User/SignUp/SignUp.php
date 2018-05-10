@@ -25,7 +25,7 @@ final class SignUp extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('init', null, 0);
     }

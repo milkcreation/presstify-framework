@@ -22,7 +22,7 @@ final class Api extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         if ($apis = $this->appConfig()) :
             foreach ($apis as $api => $attrs) :

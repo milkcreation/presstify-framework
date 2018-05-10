@@ -4,6 +4,7 @@ namespace tiFy\Column;
 
 use League\Container\Exception\NotFoundException;
 use tiFy\Apps\AppController;
+use tiFy\Column\ObjectNameFactory;
 use tiFy\tiFy;
 
 final class Column extends AppController
@@ -13,7 +14,7 @@ final class Column extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('init');
         $this->appAddAction('admin_init', null, 99);
@@ -69,7 +70,7 @@ final class Column extends AppController
             case 'post_type' :
             case 'taxonomy' :
             case 'custom' :
-                $controller = 'tiFy\Column\ObjectNameFactory';
+                $controller = ObjectNameFactory::class;
                 break;
             default :
                 wp_die(
@@ -87,10 +88,9 @@ final class Column extends AppController
 
         // Récupération du conteneur de type d'objet
         $id = "tify.column.{$object_type}.{$object_name}";
+
         if (!$this->appServiceHas($id)) :
-            $this->appServiceShare($id, $controller)
-                ->withArgument($object_type)
-                ->withArgument($object_name);
+            $this->appServiceShare($id, new $controller($object_type, $object_name));
         endif;
 
         return $this->appServiceGet($id);

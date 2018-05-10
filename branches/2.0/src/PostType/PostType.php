@@ -11,21 +11,21 @@ final class PostType extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('init', null, 0);
     }
 
     /**
-     * Déclaration des types de posts personnalisés.
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
     public function init()
     {
-        if (!$post_types = $this->appConfig(null, [])) :
-            foreach ($post_types as $name => $args) :
-                $this->register($name, $args);
+        if ($post_types = $this->appConfig(null, [])) :
+            foreach ($post_types as $name => $attrs) :
+                $this->register($name, $attrs);
             endforeach;
         endif;
 
@@ -33,66 +33,37 @@ final class PostType extends AppController
     }
 
     /**
-     * Création du type de post personnalisé
+     * Création d'un type de post personnalisé.
      *
      * @param string $name Nom de qualification du type de post.
-     * @param array $attrs Liste des attributs de configuration
+     * @param array $attrs Liste des attributs de configuration.
      *
-     * @return void
+     * @return null|PostTypeController
      */
     public function register($name, $attrs = [])
     {
-        $attrs = $this->parseAttrs($name, $attrs);
+        $alias = "tfy.post_type.{$name}";
+        if($this->appServiceHas($alias)) :
+            return;
+        endif;
 
-        $allowed = [
-            'label',
-            'labels',
-            'description',
-            'public',
-            'exclude_from_search',
-            'publicly_queryable',
-            'show_ui',
-            'show_in_nav_menus',
-            'show_in_menu',
-            'show_in_admin_bar',
-            'menu_position',
-            'menu_icon',
-            'capability_type',
-            'map_meta_cap',
-            'hierarchical',
-            'supports',
-            'register_meta_box_cb',
-            'has_archive',
-            'permalink_epmask',
-            'rewrite',
-            'query_var',
-            'can_export',
-            'show_in_rest',
-            'rest_base',
-            'rest_controller_class',
-        ];
+        $this->appServiceShare($alias, new PostTypeController($name, $attrs));
 
-        $_attrs = [];
-        foreach ($allowed as $key) :
-            if (isset($attrs[$key])) :
-                $_attrs[$key] = $attrs[$key];
-            endif;
-        endforeach;
-
-
+        return $this->appServiceGet($alias);
     }
 
     /**
-     * Traitement des arguments par défaut de type de post personnalisé
-     * @see https://codex.wordpress.org/Function_Reference/register_post_type
+     * Récupération d'un controleur de type de post.
      *
-     * @param string $taxonomy Identifiant de qualification de la taxonomie
-     * @param array $attrs Liste des attributs de configuration personnalisés
+     * @param $name Nom de qualification du controleur.
      *
-     * @return array
+     * @return null|PostTypeController
      */
-    private function parseAttrs($post_type, $args = [])
+    public function get($name)
     {
-
+        $alias = "tfy.post_type.{$name}";
+        if($this->appServiceHas($alias)) :
+            return $this->appServiceGet($alias);
+        endif;
     }
 }

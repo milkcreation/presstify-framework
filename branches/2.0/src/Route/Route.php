@@ -99,7 +99,7 @@ final class Route extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         // Déclaration des dépendances
         $this->container = new Container();
@@ -134,7 +134,7 @@ final class Route extends AppController
      */
     public function init()
     {
-        do_action('tify_route_register');
+        do_action('tify_route_register', $this);
 
         // Bypass
         if (!$this->map) :

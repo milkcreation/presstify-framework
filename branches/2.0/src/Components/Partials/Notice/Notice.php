@@ -15,7 +15,7 @@
 
 namespace tiFy\Components\Partials\Notice;
 
-use tiFy\Partial\AbstractFactory;
+use tiFy\Partial\AbstractPartialController;
 
 /**
  * @param array $attrs {
@@ -29,7 +29,7 @@ use tiFy\Partial\AbstractFactory;
  *      @var string $type Type de notification info|warning|success|error. défaut info.
  * }
  */
-class Notice extends AbstractFactory
+class Notice extends AbstractPartialController
 {
     /**
 
@@ -105,9 +105,7 @@ class Notice extends AbstractFactory
      */
     final protected function display()
     {
-        ob_start();
-        self::tFyAppGetTemplatePart('notice', $this->getId(), $this->compact());
-
-        return ob_get_clean();
+        return '';
+        return $this->appTemplateRender('notice', $this->compact());
     }
 }

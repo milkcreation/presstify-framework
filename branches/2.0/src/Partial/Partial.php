@@ -15,22 +15,31 @@
 
 namespace tiFy\Partial;
 
+use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
-use tiFy\Components;
+use tiFy\Components\Partials\Breadcrumb\Breadcrumb;
+use tiFy\Components\Partials\Notice\Notice;
+use tiFy\Components\Partials\Tag\Tag;
 
 /**
- * @method static \tiFy\Components\Partials\Breadcrumb\Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
- * @method static \tiFy\Components\Partials\Notice\Notice Notice(string $id = null,array $attrs = [])
- * @method static \tiFy\Components\Partials\Tag\Tag Tag(string $id = null,array $attrs = [])
+ * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
+ * @method static Notice Notice(string $id = null,array $attrs = [])
+ * @method static Tag Tag(string $id = null,array $attrs = [])
  */
 final class Partial extends AppController
 {
+    /**
+     * Liste des instances de champ.
+     * @var array
+     */
+    protected static $instance = [];
+
     /**
      * Initialisation du controleur.
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         // Déclaration des controleurs d'affichage natifs
         foreach(glob($this->appAbsDir() . '/Components/Partials/*/', GLOB_ONLYDIR) as $filename) :
@@ -48,15 +57,16 @@ final class Partial extends AppController
      * @param string $name Nom de qualification du controleur d'affichage.
      * @param mixed $callable classe ou méthode ou fonction de rappel.
      *
-     * @return null|callable|\tiFy\Partial\AbstractFactory
+     * @return null|callable|AbstractPartialController
      */
     public function register($name, $callable)
     {
-        if ($this->has($name)) :
+        if ($this->appServiceHas($name)) :
             return null;
         endif;
 
-        $alias = "tify.partial.{$name}";
+        $alias = "tfy.partial.{$name}";
+
         if (is_callable($callable)) :
             $this->appServiceAdd($alias, $callable);
         elseif (class_exists($callable)) :
@@ -69,28 +79,17 @@ final class Partial extends AppController
     }
 
     /**
-     * Vérification d'existance d'un controleur d'affichage.
-     *
-     * @param string $name Nom de qualification du controleur d'affichage.
-     *
-     * @return bool
-     */
-    public function has($name)
-    {
-        return $this->appServiceHas("tify.partial.{$name}");
-    }
-
-    /**
      * Récupération d'un controleur d'affichage.
      *
      * @param string $name Nom de qualification du controleur d'affichage.
      *
-     * @return mixed|\tiFy\Partial\AbstractFactory
+     * @return mixed|AbstractPartialController
      */
     public function get($name)
     {
-        if ($this->has($name)) :
-            return $this->appServiceGet("tify.partial.{$name}");
+        $alias = "tfy.partial.{$name}";
+        if ($this->appServiceHas($alias)) :
+            return $this->appServiceGet($alias);
         endif;
 
         return null;
@@ -108,24 +107,72 @@ final class Partial extends AppController
      *
      * @return null|callable
      */
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($name, $args)
     {
-        $instance = self::appInstance();
-
-        if(! $callable = $instance->get($name)) :
+        if(! $callable = self::appInstance()->get($name)) :
             return null;
         endif;
 
-        return call_user_func_array($callable, $arguments);
+        return call_user_func_array($callable, $args);
+    }
+
+    /**
+     * Vérification d'existance d'une instance d'un contrôleur de champ.
+     *
+     * @param string $classname Nom de la classe de rappel du controleur.
+     *
+     * @return bool
+     */
+    public function existsInstance($classname)
+    {
+        return Arr::has(self::$instance, $classname);
+    }
+
+    /**
+     * Compte le nombre d'instance d'un contrôleur de champ.
+     *
+     * @param string $classname Nom de la classe de rappel du controleur.
+     *
+     * @return int
+     */
+    public function countInstance($classname)
+    {
+        return count(Arr::get(self::$instance, $classname, []));
+    }
+
+    /**
+     * Définition d'une instance de contrôleur de champ.
+     *
+     * @param string $classname Nom de la classe de rappel du controleur.
+     * @param string $hash Hashage des attributs de configuration.
+     *
+     * @return bool
+     */
+    public function setInstance($classname, $hash, $obj)
+    {
+        return Arr::set(self::$instance, "{$classname}.{$hash}", $obj);
+    }
+
+    /**
+     * Définition d'une instance de contrôleur de champ.
+     *
+     * @param string $classname Nom de la classe de rappel du controleur.
+     * @param string $hash Hashage des attributs de configuration.
+     *
+     * @return bool
+     */
+    public function getInstance($classname, $hash)
+    {
+        return Arr::get(self::$instance, "{$classname}.{$hash}");
     }
 
     /**
      * Mise en file des scripts d'un controleur.
      *
-     * @param string $name Identifiant de qualification du controleur d'affichage.
-     * @param array $args Liste des attributs de configuration.
+     * @param string $name Nom de qualification du controleur.
+     * @param array $args Liste des variables passées en argument.
      *
-     * @return null|callable
+     * @return $this
      */
     public function enqueue($name, $args = [])
     {
@@ -137,6 +184,8 @@ final class Partial extends AppController
             return null;
         endif;
 
-        return $callable->enqueue_scripts($args);
+        call_user_func_array([$callable, 'enqueue_scripts'], $args);
+
+        return $this;
     }
 }

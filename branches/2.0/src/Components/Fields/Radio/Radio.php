@@ -15,53 +15,49 @@
 
 namespace tiFy\Components\Fields\Radio;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
- *      @var string $before Contenu placé avant le champ
- *      @var string $after Contenu placé après le champ
- *      @var array $attrs Liste des propriétés de la balise HTML
- *      @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- *      @var string $value Attribut de configuration de la valeur de soumission du champ "value" si l'élément est selectionné
- *      @var null|string $checked Valeur de la selection
- * }
- */
-class Radio extends AbstractFactory
+class Radio extends AbstractFieldController
 {
     /**
-     * Traitement des attributs de configuration
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var array $attrs Liste des propriétés de la balise HTML.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string $value Attribut de configuration de la valeur de soumission du champ "value" si l'élément est selectionné.
+     *      @var null|string $checked Valeur de la selection.
+     * }
+     */
+    protected $attributes = [
+        'before'  => '',
+        'after'   => '',
+        'attrs'   => [],
+        'name'    => '',
+        'value'   => '',
+        'checked' => null
+    ];
+
+    /**
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
+        parent::parse($attrs);
 
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before'  => '',
-            'after'   => '',
-            'attrs'   => [],
-            'name'    => '',
-            'value'   => '',
-            'checked' => null,
-        ];
-        $args = array_merge($defaults, $args);
-
-        if (!isset($args['attrs']['id'])) :
-            $args['attrs']['id'] = 'tiFyField-radio--' . $this->getIndex();
+        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attributes['attrs']['id'] = 'tiFyField-radio--' . $this->getIndex();
         endif;
-        $args['attrs']['type'] = 'radio';
-
-        return $args;
+        $this->attributes['attrs']['type'] = 'radio';
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */

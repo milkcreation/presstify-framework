@@ -15,49 +15,44 @@
 
 namespace tiFy\Components\Fields\Label;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
- *      @var string $before Contenu placé avant le champ
- *      @var string $after Contenu placé après le champ
- *      @var string $content Contenu de la balise champ
- *      @var array $attrs Liste des propriétés de la balise HTML
- * }
- */
-class Label extends AbstractFactory
+class Label extends AbstractFieldController
 {
     /**
-     * Traitement des attributs de configuration
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $content Contenu de la balise champ.
+     *      @var array $attrs Liste des propriétés de la balise HTML.
+     * }
+     */
+    protected $attributes = [
+        'before'       => '',
+        'after'        => '',
+        'content'      => '',
+        'attrs'        => []
+    ];
+
+    /**
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
+        parent::parse($attrs);
 
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before'       => '',
-            'after'        => '',
-            'content'      => '',
-            'attrs'        => []
-        ];
-        $args = array_merge($defaults, $args);
-
-        if (!isset($args['attrs']['id'])) :
-            $args['attrs']['id'] = 'tiFyField-label--' . $this->getIndex();
+        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attribute['attrs']['id'] = 'tiFyField-label--' . $this->getIndex();
         endif;
-
-        return $args;
     }
 
     /**
-     * Affichage
-     *
+     * Affichage.
      *
      * @return string
      */
