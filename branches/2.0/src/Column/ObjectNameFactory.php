@@ -4,7 +4,7 @@ namespace tiFy\Column;
 
 use tiFy\Apps\AppController;
 
-final class objectNameFactory extends AppController
+final class ObjectNameFactory extends AppController
 {
     /**
      * Type d'objet
