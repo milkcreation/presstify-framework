@@ -5,7 +5,7 @@ namespace tiFy\Form\Fields;
 use tiFy\Form\AbstractCommonDependency;
 use tiFy\Form\Fields\FieldItemController;
 use tiFy\Form\Forms\FormItemController;
-use tiFy\Librairies\Checker\Checker;
+use tiFy\Components\Tools\Checker\Checker;
 
 class FieldIntegrityCheckController extends AbstractCommonDependency
 {
@@ -75,24 +75,24 @@ class FieldIntegrityCheckController extends AbstractCommonDependency
      */
     public function check($value, $cb, $args = [])
     {
-        $result = false;
+        $valid = false;
         array_unshift($args, $value);
 
         if (is_string($cb)) :
             $cb = !isset($this->alias[$cb]) ? $cb : $this->alias[$cb];
-            
+
             if (method_exists(__CLASS__, $cb)) :
-                $result = call_user_func_array([__CLASS__, $cb], $args);
-            elseif (is_callable("Checker::{$cb}")) :
-                $result = call_user_func_array("Checker::{$cb}", $args);
+                $valid = call_user_func_array([__CLASS__, $cb], $args);
+            elseif (is_callable(Checker::class ."::{$cb}")) :
+                $valid = call_user_func_array(Checker::class ."::{$cb}", $args);
             elseif (function_exists($cb)) :
-                $result = call_user_func_array($cb, $args);
+                $valid = call_user_func_array($cb, $args);
             endif;
         elseif (is_callable($cb)) :
-            $result = call_user_func_array($cb, $args);
+            $valid = call_user_func_array($cb, $args);
         endif;
 
-        return $result;
+        return $valid;
     }
 
     /**
@@ -122,7 +122,7 @@ class FieldIntegrityCheckController extends AbstractCommonDependency
             return false;
         endif;
 
-        if ($value !== $compare) :
+        if ($value !== $value2) :
             return false;
         endif;
 

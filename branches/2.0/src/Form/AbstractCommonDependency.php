@@ -20,7 +20,5 @@ abstract class AbstractCommonDependency extends AppController
     public function __construct(FormItemController $form)
     {
         $this->setForm($form);
-
-        //parent::__construct();
     }
 }

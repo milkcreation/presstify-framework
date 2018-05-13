@@ -14,10 +14,6 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Filesystem\Filesystem;
 use tiFy\tiFy;
-use tiFy\Lib\File;
-use tiFy\Db\Db;
-use tiFy\Labels\Labels;
-use tiFy\Templates\Templates;
 
 final class AppsServiceProvider extends LeagueAbstractServiceProvider implements BootableServiceProviderInterface
 {
@@ -74,7 +70,9 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
         foreach (glob($this->tfy->absDir() . '/*', GLOB_ONLYDIR) as $dirname) :
             $name = basename($dirname);
             $classname = "tiFy\\{$name}\\{$name}";
-            $this->setApp($classname);
+            $config = $tfy->getConfig(strtolower($name)) ? : [];
+
+            $this->setApp($classname, $config);
             array_push($this->bootable, $classname);
         endforeach;
     }
@@ -87,7 +85,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     public function boot()
     {
         // Démarrage des applications déclarées dans la configuration
-        foreach($this->bootable as $key => $app) :
+        foreach ($this->bootable as $key => $app) :
             if (in_array($app, array_keys($this->apps))) :
                 $this->getContainer()->share($app, new $app());
                 unset($this->bootable[$key]);
@@ -97,7 +95,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
         do_action('tify_app_register', $this);
 
         // Démarrage des applications déclarées dans les controleurs
-        foreach($this->bootable as $key => $app) :
+        foreach ($this->bootable as $key => $app) :
             if (in_array($app, array_keys($this->apps))) :
                 $this->getContainer()->share($app, new $app());
                 unset($this->bootable[$key]);
@@ -148,7 +146,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
             exit;
         }
     }
-    
+
     /**
      * Déclaration d'un application.
      *
@@ -164,18 +162,18 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
         endif;
 
         // Bypass
-        if (! class_exists($classname)) :
+        if (!class_exists($classname)) :
             return false;
         endif;
 
-        if (! $exists = Arr::get($this->apps, $classname, [])) :
+        if (!$exists = Arr::get($this->apps, $classname, [])) :
             Arr::set($this->apps, $classname, []);
             array_push($this->provides, $classname);
             if (preg_match("#^tiFy\\\Plugins\\\#", $classname)) :
                 array_push($this->bootable, $classname);
             endif;
         endif;
-        
+
         // Traitement des attributs la configuration
         $this->apps[$classname]['config'] = array_merge(
             Arr::get($this->apps, "{$classname}.config", []),
@@ -226,24 +224,17 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     }
 
     /**
-     * Récupération de la classe de reflection d'une application déclarée.
+     * Récupération de l'url vers un asset.
+     * @todo
      *
+     * @param string $filename Chemin relatif vers le fichier du dossier des assets.
      * @param object|string $classname Nom ou instance de l'application.
      *
-     * @return ReflectionClass
+     * @return string
      */
-    public function getReflectionClass($classname)
+    public function getAsset($filename, $classname)
     {
-        if (! $reflectionClass = Arr::get($this->apps, "{$classname}.reflectionClass", null)) :
-            try {
-                $reflectionClass = new ReflectionClass($classname);
-            } catch(ReflectionException $e) {
-                wp_die($e->getMessage(), __('Classe indisponible', 'tify'),$e->getCode());
-            }
-            $this->setAttr($classname, 'reflectionClass', $reflectionClass);
-        endif;
-
-        return $reflectionClass;
+        return $this->tfy->absUrl() . '/Components/Assets/src/'. ltrim($filename, '/');
     }
 
     /**
@@ -255,114 +246,12 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
      */
     public function getClassname($classname)
     {
-        if (! $_classname = Arr::get($this->apps, "{$classname}.classname", '')) :
+        if (!$_classname = Arr::get($this->apps, "{$classname}.classname", '')) :
             $_classname = $this->getReflectionClass($classname)->getName();
             $this->setAttr($classname, 'classname', $_classname);
         endif;
 
         return $_classname;
-    }
-
-    /**
-     * Récupération du nom court d'une application déclarée.
-     *
-     * @param object|string $classname Nom ou instance de l'application.
-     *
-     * @return string
-     */
-    public function getShortname($classname)
-    {
-        if (! $shortname = Arr::get($this->apps, "{$classname}.shortname", '')) :
-            $shortname = $this->getReflectionClass($classname)->getShortName();
-            $this->setAttr($classname, 'shortname', $shortname);
-        endif;
-
-        return $shortname;
-    }
-
-    /**
-     * Récupération de l'espace de nom d'une application déclarée.
-     *
-     * @param object|string $classname Nom ou instance de l'application.
-     *
-     * @return string
-     */
-    public function getNamespace($classname)
-    {
-        if (! $namespace = Arr::get($this->apps, "{$classname}.namespace", '')) :
-            $namespace = $this->getReflectionClass($classname)->getNamespaceName();
-            $this->setAttr($classname, 'namespace', $namespace);
-        endif;
-
-        return $namespace;
-    }
-
-    /**
-     * Récupération du chemin absolu vers le fichier d'une application déclarée.
-     *
-     * @param object|string $classname Nom ou instance de l'application.
-     *
-     * @return string
-     */
-    public function getFilename($classname)
-    {
-        if (! $filename = Arr::get($this->apps, "{$classname}.filename", '')) :
-            $filename = $this->getReflectionClass($classname)->getFileName();
-            $this->setAttr($classname, 'filename', $filename);
-        endif;
-
-        return $filename;
-    }
-
-    /**
-     * Récupération du chemin absolu vers le repertoire de stockage d'une application déclarée.
-     *
-     * @param object|string $classname Nom ou instance de l'application.
-     *
-     * @return string
-     */
-    public function getDirname($classname)
-    {
-        if (! $dirname = Arr::get($this->apps, "{$classname}.dirname", '')) :
-            $dirname = dirname($this->getFilename($classname));
-            $this->setAttr($classname, 'filename', $dirname);
-        endif;
-
-        return $dirname;
-    }
-
-    /**
-     * Récupération du chemin relatif vers le repertoire de stockage d'une application déclarée.
-     *
-     * @param object|string $classname Nom ou instance de l'application.
-     *
-     * @return string
-     */
-    public function getRelPath($classname)
-    {
-        if (! $relPath = Arr::get($this->apps, "{$classname}.relPath", '')) :
-            $relPath = (new fileSystem())->makePathRelative($this->tfy->absDir(), $this->getDirname($classname));
-            $this->setAttr($classname, 'relPath', $relPath);
-        endif;
-
-        return $relPath;
-    }
-
-    /**
-     * Récupération de l'url vers le repertoire de stockage d'une application déclarée.
-     *
-     * @param object|string $classname Nom ou instance de l'application.
-     *
-     * @return string
-     */
-    public function getUrl($classname)
-    {
-        if (! $url = Arr::get($this->apps, "{$classname}.url", '')) :
-            $url = home_url($this->getRelPath($classname));
-            $this->setAttr($classname, 'url', $url);
-        endif;
-
-        return $url;
     }
 
     /**
@@ -378,6 +267,129 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     {
         $config = Arr::get($this->apps, "{$classname}.config", []);
 
-        return ! $key ? $config : Arr::get($config, $key, $default);
+        return !$key ? $config : Arr::get($config, $key, $default);
+    }
+
+    /**
+     * Récupération du chemin absolu vers le repertoire de stockage d'une application déclarée.
+     *
+     * @param object|string $classname Nom ou instance de l'application.
+     *
+     * @return string
+     */
+    public function getDirname($classname)
+    {
+        if (!$dirname = Arr::get($this->apps, "{$classname}.dirname", '')) :
+            $dirname = dirname($this->getFilename($classname));
+            $this->setAttr($classname, 'filename', $dirname);
+        endif;
+
+        return $dirname;
+    }
+
+    /**
+     * Récupération du chemin absolu vers le fichier d'une application déclarée.
+     *
+     * @param object|string $classname Nom ou instance de l'application.
+     *
+     * @return string
+     */
+    public function getFilename($classname)
+    {
+        if (!$filename = Arr::get($this->apps, "{$classname}.filename", '')) :
+            $filename = $this->getReflectionClass($classname)->getFileName();
+            $this->setAttr($classname, 'filename', $filename);
+        endif;
+
+        return $filename;
+    }
+
+    /**
+     * Récupération de l'espace de nom d'une application déclarée.
+     *
+     * @param object|string $classname Nom ou instance de l'application.
+     *
+     * @return string
+     */
+    public function getNamespace($classname)
+    {
+        if (!$namespace = Arr::get($this->apps, "{$classname}.namespace", '')) :
+            $namespace = $this->getReflectionClass($classname)->getNamespaceName();
+            $this->setAttr($classname, 'namespace', $namespace);
+        endif;
+
+        return $namespace;
+    }
+
+    /**
+     * Récupération de la classe de reflection d'une application déclarée.
+     *
+     * @param object|string $classname Nom ou instance de l'application.
+     *
+     * @return ReflectionClass
+     */
+    public function getReflectionClass($classname)
+    {
+        if (!$reflectionClass = Arr::get($this->apps, "{$classname}.reflectionClass", null)) :
+            try {
+                $reflectionClass = new ReflectionClass($classname);
+            } catch (ReflectionException $e) {
+                wp_die($e->getMessage(), __('Classe indisponible', 'tify'), $e->getCode());
+            }
+            $this->setAttr($classname, 'reflectionClass', $reflectionClass);
+        endif;
+
+        return $reflectionClass;
+    }
+
+    /**
+     * Récupération du chemin relatif vers le repertoire de stockage d'une application déclarée.
+     *
+     * @param object|string $classname Nom ou instance de l'application.
+     *
+     * @return string
+     */
+    public function getRelPath($classname)
+    {
+        if (!$relPath = Arr::get($this->apps, "{$classname}.relPath", '')) :
+            $relPath = (new fileSystem())->makePathRelative($this->tfy->absDir(), $this->getDirname($classname));
+            $this->setAttr($classname, 'relPath', $relPath);
+        endif;
+
+        return $relPath;
+    }
+
+    /**
+     * Récupération du nom court d'une application déclarée.
+     *
+     * @param object|string $classname Nom ou instance de l'application.
+     *
+     * @return string
+     */
+    public function getShortname($classname)
+    {
+        if (!$shortname = Arr::get($this->apps, "{$classname}.shortname", '')) :
+            $shortname = $this->getReflectionClass($classname)->getShortName();
+            $this->setAttr($classname, 'shortname', $shortname);
+        endif;
+
+        return $shortname;
+    }
+
+    /**
+     * Récupération de l'url vers le repertoire de stockage d'une application déclarée.
+     *
+     * @param object|string $classname Nom ou instance de l'application.
+     *
+     * @return string
+     */
+    public function getUrl($classname)
+    {
+        if (!$url = Arr::get($this->apps, "{$classname}.url", '')) :
+            $url = home_url($this->getRelPath($classname));
+            $this->setAttr($classname, 'url', $url);
+        endif;
+
+        return $url;
     }
 }

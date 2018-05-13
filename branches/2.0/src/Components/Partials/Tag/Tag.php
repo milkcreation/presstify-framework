@@ -1,16 +1,4 @@
 <?php
-/**
- * @name Tag
- * @desc Affichage de balise Html
- * @package presstiFy
- * @namespace tiFy\Components\Partials\Tag\Tag
- * @version 1.1
- * @subpackage Components
- * @since 1.2.535
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
 
 namespace tiFy\Components\Partials\Tag;
 
@@ -20,7 +8,7 @@ class Tag extends AbstractPartialController
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attrs {
+     * @var array $attributes {
      *      @var string $tag Balise HTML div|span|a|... défaut div.
      *      @var array $attrs Liste des attributs de balise HTML.
      *      @var string|callable $content Contenu de la balise HTML.

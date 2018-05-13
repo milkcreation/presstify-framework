@@ -46,6 +46,7 @@ final class Form extends AppController
     {
         $this->appAddAction('init', null, 1);
         $this->appAddAction('wp', null, 0);
+        \add_shortcode('formulaire', [$this, 'shortcode']);
     }
 
     /**
@@ -74,6 +75,25 @@ final class Form extends AppController
     }
 
     /**
+     * Shortcode d'affichage de formulaire.
+     *
+     * @param array $atts Attributs de configuration.
+     *
+     * @return string
+     */
+    public function shortcode($atts = [])
+    {
+        extract(
+            shortcode_atts(
+                ['name' => null],
+                $atts
+            )
+        );
+
+        return $this->display($name);
+    }
+
+    /**
      * Déclaration des formulaires.
      *
      * @return void
@@ -81,7 +101,7 @@ final class Form extends AppController
     private function registration()
     {
         foreach ($this->appConfig() as $name => $attrs) :
-            $this->register($id, $attrs);
+            $this->register($name, $attrs);
         endforeach;
 
         do_action('tify_form_register', $this);
@@ -101,7 +121,9 @@ final class Form extends AppController
             return;
         endif;
 
-        $this->appServiceShare($alias, new FormBaseController($name, $attrs));
+        $controller = (isset($attrs['controller'])) ? $attrs['controller'] : FormBaseController::class;
+
+        $this->appServiceShare($alias, new $controller($name, $attrs));
 
         return $this->registered[$name] = $this->appServiceGet($alias);
     }

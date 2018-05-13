@@ -4,7 +4,7 @@ namespace tiFy\Media;
 
 use Symfony\Component\HttpFoundation\Request;
 use tiFy\Apps\AppController;
-use tiFy\Librairies\Cryptor\Cryptor;
+use tiFy\Components\Tools\Cryptor\Cryptor;
 
 class Download extends AppController
 {

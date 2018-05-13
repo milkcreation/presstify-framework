@@ -6,6 +6,7 @@ use ReCaptcha\ReCaptcha as ReCaptchaLib;
 use ReCaptcha\RequestMethod\SocketPost;
 use tiFy\Api\Api;
 use tiFy\Form\Fields\AbstractFieldTypeController;
+use tiFy\Form\Fields\FieldItemController;
 
 class Recaptcha extends AbstractFieldTypeController
 {
@@ -40,33 +41,21 @@ class Recaptcha extends AbstractFieldTypeController
         ];
 
         $this->callbacks = [
-            'field_init_params'   => [$this, 'cb_field_init_params'],
             'handle_check_field' => [$this, 'cb_handle_check_field'],
         ];
     }
 
     /**
-     * Court-circuitage de la définition de paramètres du champ.
-     *
-     * @return void
-     */
-    public function cb_field_init_params($field)
-    {
-        if ($field->getType() !== 'recaptcha') :
-            return;
-        endif;
-
-        $field->set('required', true);
-    }
-
-    /**
      * Court-circuitage de contrôle d'intégrité des champs.
+     *
+     * @param array $errors Liste des erreurs de soumission de formulaire.
+     * @param FieldItemController $field Classe de rappel du controleur de champ.
      *
      * @return void
      */
     public function cb_handle_check_field(&$errors, $field)
     {
-        if ($field->getType() !== 'recaptcha') :
+        if ($field->get('type') !== 'recaptcha') :
             return;
         endif;
 

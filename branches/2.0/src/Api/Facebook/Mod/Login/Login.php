@@ -16,6 +16,8 @@
 
 namespace tiFy\Api\Facebook\Mod\Login;
 
+use Facebook\Authentication\AccessToken;
+use Facebook\Authentication\AccessTokenMetadata;
 use tiFy\Api\Facebook\Facebook;
 use tiFy\Api\Facebook\Mod\AbstractMod;
 use tiFy\Partial\Partial;
@@ -23,7 +25,7 @@ use tiFy\Partial\Partial;
 class Login extends AbstractMod
 {
     /**
-     * Url de l'action
+     * Url de l'action.
      *
      * @param string $action
      *
@@ -49,28 +51,30 @@ class Login extends AbstractMod
     }
 
     /**
-     * Bouton d'action
+     * Bouton d'action.
      *
      * @param array $args {
      *      Liste des attributs de configuration
      *
-     * @var string $action
-     * @var array $permissions
-     * @var string $text
-     * @var array $attr Attributs de la balise HTML
+     *      @var string $action
+     *      @var array $permissions
+     *      @var string $text
+     *      @var array $attr Attributs de la balise HTML
      * }
      *
      * @return string
      */
     public function trigger($args = [])
     {
-        $defaults = [
-            'action'      => 'login',
-            'permissions' => ['email'],
-            'text'        => __('Connexion avec Facebook', 'tify'),
-            'attrs'       => []
-        ];
-        $args = array_merge($defaults, $args);
+        $args = array_merge(
+            [
+                'action'      => 'login',
+                'permissions' => ['email'],
+                'text'        => __('Connexion avec Facebook', 'tify'),
+                'attrs'       => []
+            ],
+            $args
+        );
 
         $url = $this->url($args['action'], $args['permissions']);
 
@@ -88,7 +92,7 @@ class Login extends AbstractMod
     }
 
     /**
-     * Traitement de l'authentification via Facebook
+     * Traitement de l'authentification via Facebook.
      *
      * @param string $action
      * @param \tiFy\Api\Facebook\Facebook $fb Classe de rappel du SDK Facebook
@@ -113,8 +117,8 @@ class Login extends AbstractMod
         );
 
         /**
-         * @var null|\Facebook\Authentication\AccessToken $accessToken
-         * @var null|\Facebook\Authentication\AccessTokenMetadata $tokenMetadata
+         * @var null|AccessToken $accessToken
+         * @var null|AccessTokenMetadata $tokenMetadata
          * @var null|\WP_Error $error
          * @var string $action
          * @var string $redirect

@@ -140,7 +140,7 @@ abstract class AbstractPartialController extends AppController
      */
     public function set($key, $value)
     {
-        Arr::set($this->attributes, $key, $defaults);
+        Arr::set($this->attributes, $key, $value);
 
         return $this;
     }
@@ -203,11 +203,12 @@ abstract class AbstractPartialController extends AppController
     /**
      * Récupération une liste d'attributs de configuration.
      *
-     * @param string[] $keys Clé d'index des attributs à retourner.
+     * @param string[] $keys Clé d'index des attributs de configuration à retourner.
+     * @param array $customs Liste des attributs personnalisés.
      *
      * @return array
      */
-    public function compact($keys = [])
+    public function compact($keys = [], $customs = [])
     {
         if (empty($keys)) :
             return $this->all();
@@ -218,7 +219,10 @@ abstract class AbstractPartialController extends AppController
             $attrs[$key] = $this->get($key);
         endforeach;
 
-        return $attrs;
+        return array_merge(
+            $attrs,
+            $customs
+        );
     }
 
     /**

@@ -79,7 +79,6 @@ abstract class AbstractAddonController extends AbstractCommonDependency implemen
                     ->callbacks()
                     ->set(
                         $hookname,
-                        $this->getName(),
                         $args
                     );
             elseif (isset($args['function']) && is_callable($args['function'])) :
@@ -89,9 +88,8 @@ abstract class AbstractAddonController extends AbstractCommonDependency implemen
                 );
                 $this->getForm()
                     ->callbacks()
-                    ->setAddons(
+                    ->set(
                         $hookname,
-                        $this->getName(),
                         $args['function'],
                         $args['order']
                     );

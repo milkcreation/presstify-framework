@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name TakeOver - SwitcherForm
  * @desc Controleur d'affichage de fomulaire de bascule de prise de contrôle d'un utilisateur
@@ -15,13 +16,41 @@
 namespace tiFy\User\TakeOver\SwitcherForm;
 
 use tiFy\Field\Field;
+use tiFy\Kernel\Tools;
 use tiFy\User\TakeOver\TakeOver;
 use tiFy\Lib\User\User;
+use tiFy\Partial\AbstractPartialController;
 
 class SwitcherForm extends \tiFy\Control\Factory
 {
     /**
-     * Initialisation globale.
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $take_over_id Identifiant de qualification du contrôleur d'affichage.
+     *      @var array $fields {
+     *          Liste des champs de selection role et utilisateur.
+     *
+     *          @var array $role {
+     *              Attributs de configuration du champ de selection des roles.
+     *              @see \tiFy\Field\SelectJs\SelectJs
+     *          }
+     *          @var array $user {
+     *              Attributs de configuration du champ de selection des utilisateurs.
+     *              @see \tiFy\Field\SelectJs\SelectJs
+     *          }
+     *      }
+     * }
+     */
+    protected $attributes = [
+        'take_over_id' => '',
+        'fields'       => [
+            'role'  => [],
+            'user'  => []
+        ]
+    ];
+
+    /**
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
@@ -38,8 +67,8 @@ class SwitcherForm extends \tiFy\Control\Factory
         );
 
         \wp_register_script(
-            'tify_control-take_over_switcher_form',
-            $this->appAbsUrl() .'/SwitcherForm/js/scripts.js',
+            'tiFyTakeOver-SwitcherForm',
+            $this->appAsset('/TakeOver/SwitcherForm/js/scripts.js', get_class()),
             [],
             171218,
             true
@@ -53,12 +82,12 @@ class SwitcherForm extends \tiFy\Control\Factory
      */
     protected function enqueue_scripts()
     {
-        Field::enqueue('SelectJs');
+        Field::enqueue('tiFyTakeOver-SwitcherForm');
         \wp_enqueue_script('tify_control-take_over_switcher_form');
     }
 
     /**
-     * Récupération de la liste de selection des utilisateurs via Ajax
+     * Récupération de la liste de selection des utilisateurs via Ajax.
      *
      * @return string
      */
@@ -72,7 +101,7 @@ class SwitcherForm extends \tiFy\Control\Factory
         $fields = wp_unslash($fields);
 
         // Récupération de la liste de choix des utilisateurs
-        $user_options = User::userQueryKeyValue(
+        $user_options = Tools::User()->userQueryKeyValue(
             'ID',
             'display_name',
             [
@@ -88,137 +117,97 @@ class SwitcherForm extends \tiFy\Control\Factory
         $fields['user']['disabled'] = $disabled;
 
         echo Field::SelectJs($fields['user']);
+
         exit;
     }
 
     /**
-     * Affichage
+     * Traitement des attributs de configuration.
      *
-     * @param array $attrs {
-     *      Liste des attributs de configuration
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
-     *      @var string $take_over_id Identifiant de qualification du contrôleur d'affichage
-     *      @var array $fields {
-     *          Liste des champs de selection role et utilisateur
-     *
-     *          @var array $role {
-     *              Attributs de configuration du champ de selection des role
-     *              @see \tiFy\Field\SelectJs\SelectJs
-     *
-     *          }
-     *          @var array $user {
-     *              Attributs de configuration du champ de selection des role
-     *              @see \tiFy\Field\SelectJs\SelectJs
-     *
-     *          }
-     *
-     *      }
-     * }
-     * @param bool $echo Activation de l'affichage
+     * @return array
+     */
+    protected function parse($attrs = [])
+    {
+        $this->attributes['redirect_url'] = home_url('/');
+
+        parent::parse($attrs);
+
+        $this->set('ajax_action', 'tiFyTakeOverSwitcherForm_get_users');
+
+        $this->set('ajax_nonce', \wp_create_nonce('tiFyTakeOverSwitcherForm-getUsers'));
+
+        $this->set(
+            'fields.role',
+            array_merge(
+                [
+                    'name'            => 'role',
+                    'value'           => -1,
+                    'filter'          => false,
+                    'removable'       => false
+                ],
+                $this->get('fields.role', [])
+            )
+        );
+        $this->set(
+            'fields.role.class',
+            $this->get(
+                'fields.role.class',
+                'tiFyTakeOverSwitcherForm-selectField--role'
+            )
+        );
+
+        $this->set(
+            'fields.user',
+            array_merge(
+                [
+                    'name'            => 'user_id',
+                    'value'           => -1,
+                    'disabled'        => true,
+                    'picker'          => [
+                        'filter'    => true
+                    ],
+                    'removable'       => false
+                ],
+                $this->get('fields.role', [])
+            )
+        );
+        $this->set(
+            'fields.user.class',
+            $this->get(
+                'fields.user.class',
+                'tiFyTakeOverSwitcherForm-selectField--user'
+            )
+        );
+    }
+
+    /**
+     * Affichage.
      *
      * @return string
      */
     protected function display($attrs = [], $echo = true)
     {
-        // Traitement des attributs de configuration
-        $defaults = [
-            'take_over_id' => '',
-            'fields'       => [
-                'role'  => [],
-                'user'  => []
-            ]
-        ];
-        $attrs = array_merge($defaults, $attrs);
-
-        /**
-         * @var string $take_over_id Identifiant de qualification du contrôleur d'affichage
-         * @var array $fields {
-         *      Liste des champs de selection role et utilisateur
-         *
-         *      @var array $role {
-         *          Attributs de configuration du champ de selection des role
-         *          @see \tiFy\Field\SelectJs\SelectJs
-         *
-         *      }
-         *      @var array $user {
-         *          Attributs de configuration du champ de selection des role
-         *          @see \tiFy\Field\SelectJs\SelectJs
-         *
-         *      }
-         * }
-         */
-        extract($attrs);
-
-        // Bypass - L'identification de qualification ne fait référence à aucune classe de rappel déclarée
-        if (!$takeOver = TakeOver::get($take_over_id)) :
+        if (!$takeOverController = $this->appServiceGet(TakeOver::class)->get($this->get('take_over_id'))) :
             return;
-
-        // Bypass - L'utilisateur n'est pas habilité à utiliser l'interface
-        elseif (!$takeOver->isAuth('switch')) :
+        elseif (!$takeOverController ->isAuth('switch')) :
             return;
-
-        // Bypass - Aucun rôle permis n'est défini
-        elseif (!$allowed_roles = $takeOver->getAllowedRoleList()) :
+        elseif (!$allowed_roles = $takeOverController->getAllowedRoleList()) :
             return;
         endif;
 
-        // Action de récupération de la liste de choix des utilisateurs via ajax
-        $ajax_action = 'tiFyTakeOverSwitcherForm_get_users';
-
-        /// Agent de sécurisation de la requête ajax
-        $ajax_nonce = wp_create_nonce('tiFyTakeOverSwitcherForm-getUsers');
-
-        // Attributs de configuration des champs
-        $fields['role'] = array_merge(
-            [
-                'name'            => 'role',
-                'value'           => -1,
-                'filter'          => false,
-                'removable'       => false
-            ],
-            (array)$fields['role']
-        );
-        if (isset($fields['role']['attrs']['class'])) :
-            $fields['role']['attrs']['class'] = 'tiFyTakeOverSwitcherForm-selectField--role ' . $fields['role']['attrs']['class'];
-        else :
-            $fields['role']['attrs']['class'] = 'tiFyTakeOverSwitcherForm-selectField--role';
-        endif;
-
-        $fields['user'] = array_merge(
-            [
-                'name'            => 'user_id',
-                'value'           => -1,
-                'disabled'        => true,
-                'picker'          => [
-                    'filter'    => true
-                ],
-                'removable'       => false
-            ],
-            (array)$fields['user']
-        );
-        if (isset($fields['user']['attrs']['class'])) :
-            $fields['user']['attrs']['class'] = 'tiFyTakeOverSwitcherForm-selectField--user ' . $fields['user']['attrs']['class'];
-        else :
-            $fields['user']['attrs']['class'] = 'tiFyTakeOverSwitcherForm-selectField--user';
-        endif;
-
-        // Définition de la liste des choix des selecteurs
-        // Selecteur des Rôles
         $role_options = [];
         foreach($allowed_roles as $allowed_role) :
             if (!$role = \get_role($allowed_role)) :
                 continue;
             endif;
-            $role_options[$allowed_role] = User::roleDisplayName($allowed_role);
+            $role_options[$allowed_role] = Tools::User()->roleDisplayName($allowed_role);
         endforeach;
         $role_options = [-1 => __('Choix du role', 'tify')] + $role_options;
 
-        // Selecteur des Utilisateurs
-        $user_options = [];
-        $user_options = [-1 => __('Choix de l\'utilisateur', 'tify')] + $user_options;
+        $user_options = [-1 => __('Choix de l\'utilisateur', 'tify')];
 
-
-        // Affichage du formulaire
         $output = "";
         $output .= "<form class=\"tiFyTakeOver-Control--switch_form\" method=\"post\" action=\"\" data-options=\"" . rawurlencode(json_encode(compact('ajax_action', 'ajax_nonce', 'fields'))) . "\" >";
         $output .= \wp_nonce_field('tiFyTakeOver-switch', '_wpnonce', false, false);
@@ -231,7 +220,7 @@ class SwitcherForm extends \tiFy\Control\Factory
         $output .= Field::Hidden(
             [
                 'name'  => 'tfy_take_over_id',
-                'value' => $take_over_id,
+                'value' => $this->get('take_over_id'),
             ]
         );
         $output .= Field::SelectJs(
@@ -252,10 +241,6 @@ class SwitcherForm extends \tiFy\Control\Factory
         );
         $output .= "</form>";
 
-        if ($echo) :
-            echo $output;
-        else :
-            return $output;
-        endif;
+        return $output;
     }
 }

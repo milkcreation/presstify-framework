@@ -2,6 +2,7 @@
 
 namespace tiFy\Taxonomy;
 
+use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
 use tiFy\Label\Label;
 
@@ -60,6 +61,7 @@ class TaxonomyController extends AppController
 
         \register_taxonomy(
             $name,
+            $this->get('object_type', []),
             $this->attributes
         );
 
@@ -121,9 +123,9 @@ class TaxonomyController extends AppController
      */
     public function parse($attrs = [])
     {
-        $label = _x($taxonomy, 'taxonomy general name', 'tify');
-        $plural = _x($taxonomy, 'taxonomy plural name', 'tify');
-        $singular = _x($taxonomy, 'taxonomy singular name', 'tify');
+        $label = _x($this->getName(), 'taxonomy general name', 'tify');
+        $plural = _x($this->getName(), 'taxonomy plural name', 'tify');
+        $singular = _x($this->getName(), 'taxonomy singular name', 'tify');
         $gender = false;
 
         if (!isset($attrs['labels'])) :

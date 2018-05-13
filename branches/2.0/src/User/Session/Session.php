@@ -4,7 +4,7 @@
  * @name Session
  * @desc Gestion d'enregistrement de données de session
  * @package presstiFy
- * @namespace tiFy\User\Login
+ * @namespace tiFy\User\Session
  * @version 1.1
  * @subpackage Core
  * @since 1.2.535

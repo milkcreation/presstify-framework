@@ -16,16 +16,6 @@ use tiFy\tiFy;
 trait AppTrait
 {
     /**
-     * Récupération statique d'une instance de classe d'une application.
-     *
-     * @return static
-     */
-    public static function appInstance($classname = null)
-    {
-        return tiFy::instance()->serviceGet($classname ? : get_called_class());
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function appAbsPath()
@@ -50,214 +40,19 @@ trait AppTrait
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function appRequest($property = '')
-    {
-        return tiFy::instance()->request($property);
-    }
-
-    /**
-     * Vérification d'existance d'une variable de requête globale
+     * Ajout d'une action Wordpress.
      *
-     * @param string $key Identifiant de qualification de l'argument de requête
-     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
+     * @param string $tag Identification de l'accroche.
+     * @param string $method Méthode de la classe à executer.
+     * @param int $priority Priorité d'execution.
+     * @param int $accepted_args Nombre d'argument permis.
+     * @param string|object $classname Nom de la classe ou instance de l'application.
      *
-     *
-     * @throws LogicException
-     * @throws ReflectionException
-     * @return mixed
+     * @return bool
      */
-    public function appRequestHas($key, $type = '')
+    public function appAddAction($tag, $method = '', $priority = 10, $accepted_args = 1, $classname = null)
     {
-        return tiFy::instance()->requestCall('has', compact('key'), $type);
-    }
-
-    /**
-     * Récupération d'une variable de requête globale
-     *
-     * @param string $key Identifiant de qualification de l'argument de requête
-     * @param mixed $default Valeur de retour par défaut
-     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
-     *
-     * @return mixed
-     */
-    public function appRequestGet($key, $default = '', $type = '')
-    {
-        return tiFy::instance()->requestCall('get', compact('key', 'default'), $type);
-    }
-
-    /**
-     * Définition d'une variable de requête globale
-     *
-     * @param array $parameters Liste des paramètres. Tableau associatif
-     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
-     *
-     * @return mixed
-     */
-    public function appRequestAdd($parameters = [], $type = '')
-    {
-        return tiFy::instance()->requestCall('add', compact('parameters'), $type);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appClassLoad($namespace, $base_dir = null)
-    {
-        return tiFy::instance()->classLoad($namespace, $base_dir);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appServiceAdd($alias, $concrete = null, $share = false)
-    {
-        return tiFy::instance()->serviceAdd($alias, $concrete, $share);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appServiceShare($alias, $concrete = null)
-    {
-        return tiFy::instance()->serviceShare($alias, $concrete);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appServiceHas($alias)
-    {
-        return tiFy::instance()->serviceHas($alias);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appServiceGet($alias, $args = [])
-    {
-        return tiFy::instance()->serviceGet($alias, $args);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appServiceProvider($provider)
-    {
-        return tiFy::instance()->serviceProvider($provider);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appLowerName($name = null, $separator = '-')
-    {
-        return tiFy::instance()->formatLowerName($name ? : get_called_class(), $separator);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appUpperName($name = null, $underscore = true)
-    {
-        return tiFy::instance()->formatUpperName($name ? : get_called_class(), $underscore);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appRegister($classname = null, $attrs = [])
-    {
-        return tiFy::instance()->apps()->setApp($classname ? : get_called_class(), $attrs);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appExists($classname = null)
-    {
-        return tiFy::instance()->apps()->exists($classname ? : get_called_class());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appGet($key = null, $default = null, $classname = null)
-    {
-        return tiFy::instance()->apps()->getAttr($classname ? : get_called_class(), $key, $default);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appSet($key, $value, $classname = null)
-    {
-        return tiFy::instance()->apps()->setAttr($classname ? : get_called_class(), $key, $value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appReflectionClass($classname = null)
-    {
-        return tiFy::instance()->apps()->getReflectionClass($classname ? : get_called_class());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appClassname($classname = null)
-    {
-        return tiFy::instance()->apps()->getClassname($classname ? : get_called_class());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appShortname($classname = null)
-    {
-        return tiFy::instance()->apps()->getShortname($classname ? : get_called_class());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appNamespace($classname = null)
-    {
-        return tiFy::instance()->apps()->getNamespace($classname ? : get_called_class());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appDirname($classname = null)
-    {
-        return tiFy::instance()->apps()->getDirname($classname ? : get_called_class());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appRelPath($classname = null)
-    {
-        return tiFy::instance()->apps()->getRelPath($classname ? : get_called_class());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appUrl($classname = null)
-    {
-        return tiFy::instance()->apps()->getUrl($classname ? : get_called_class());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appConfig($key = null, $default = null, $classname = null)
-    {
-        return tiFy::instance()->apps()->getConfig($classname ? : get_called_class(), $key, $default);
+        return $this->appAddFilter($tag, $method, $priority, $accepted_args, $classname);
     }
 
     /**
@@ -297,81 +92,43 @@ trait AppTrait
     }
 
     /**
-     * Ajout d'une action Wordpress.
-     *
-     * @param string $tag Identification de l'accroche.
-     * @param string $method Méthode de la classe à executer.
-     * @param int $priority Priorité d'execution.
-     * @param int $accepted_args Nombre d'argument permis.
-     * @param string|object $classname Nom de la classe ou instance de l'application.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function appAddAction($tag, $method = '', $priority = 10, $accepted_args = 1, $classname = null)
+    public function appAsset($filename, $classname = null)
     {
-        return $this->appAddFilter($tag, $method, $priority, $accepted_args, $classname);
+        return tiFy::instance()->apps()->getAsset($filename, $classname ? : get_called_class());
     }
 
     /**
-     * Récupération de la classe de rappel du controleur de templates.
-     *
-     * @param string|object $classname Nom de la classe ou instance de l'application.
-     *
-     * @return \League\Plates\Engine
+     * {@inheritdoc}
      */
-    public function appTemplates($classname = null)
+    public function appClassLoad($namespace, $base_dir = null)
     {
-        if (! $templates = $this->appGet('templates', null, $classname)) :
-            $templates = new \League\Plates\Engine(get_template_directory() . '/templates');
-
-            $appTemplatePath = $this->appDirname($classname) . '/templates';
-            if (is_dir($appTemplatePath)) :
-                $templates->addFolder($classname ? : get_called_class(), $appTemplatePath, true);
-            endif;
-
-            $this->appSet('templates', $templates, $classname);
-        endif;
-
-        return $templates;
+        return tiFy::instance()->classLoad($namespace, $base_dir);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function appTemplateRender($name, $args = [], $classname = null)
+    public function appClassname($classname = null)
     {
-        $classname = $classname ? : get_called_class();
-
-        $templates = $this->appTemplates($classname);
-        $name = $templates->getFolders()->exists($classname) ? "{$classname}::{$name}" : $name;
-        $template = $templates->make($name);
-
-        return $template->render($args);
+        return tiFy::instance()->apps()->getClassname($classname ? : get_called_class());
     }
 
     /**
-     * Récupération du déclencheur d'événement
-     *
-     * @return Emitter
+     * {@inheritdoc}
      */
-    final public function appEmitter()
+    public function appConfig($key = null, $default = null, $classname = null)
     {
-        return tiFy::instance()->getEmitter();
+        return tiFy::instance()->apps()->getConfig($classname ? : get_called_class(), $key, $default);
     }
 
     /**
-     * Déclaration d'un événement.
-     * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
-     *
-     * @param string $name Identifiant de qualification de l'événement.
-     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
-     * @param int $priority Priorité de traitement.
-     *
-     * @return EmitterInterface
+     * {@inheritdoc}
      */
-    final public function appListen($name, $listener, $priority = 0)
+    public function appDirname($classname = null)
     {
-        return $this->appEmitter()->addListener($name, $listener, $priority);
+        return tiFy::instance()->apps()->getDirname($classname ? : get_called_class());
     }
 
     /**
@@ -390,6 +147,53 @@ trait AppTrait
         endif;
 
         return $this->appEmitter()->emit(is_object($event) ? $event : Event::named($event), $args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appEmitter()
+    {
+        return tiFy::instance()->emitter();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appExists($classname = null)
+    {
+        return tiFy::instance()->apps()->exists($classname ? : get_called_class());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appGet($key = null, $default = null, $classname = null)
+    {
+        return tiFy::instance()->apps()->getAttr($classname ? : get_called_class(), $key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function appInstance($classname = null, $args = [])
+    {
+        return tiFy::instance()->serviceGet($classname ? : get_called_class(), $args);
+    }
+
+    /**
+     * Déclaration d'un événement.
+     * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
+     *
+     * @param string $name Identifiant de qualification de l'événement.
+     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
+     * @param int $priority Priorité de traitement.
+     *
+     * @return EmitterInterface
+     */
+    public function appListen($name, $listener, $priority = 0)
+    {
+        return $this->appEmitter()->addListener($name, $listener, $priority);
     }
 
     /**
@@ -420,5 +224,222 @@ trait AppTrait
         $logger->pushHandler($stream);
 
         return $logger;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appLowerName($name = null, $separator = '-')
+    {
+        return tiFy::instance()->formatLowerName($name ? : get_called_class(), $separator);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appNamespace($classname = null)
+    {
+        return tiFy::instance()->apps()->getNamespace($classname ? : get_called_class());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appReflectionClass($classname = null)
+    {
+        return tiFy::instance()->apps()->getReflectionClass($classname ? : get_called_class());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appRegister($classname = null, $attrs = [])
+    {
+        return tiFy::instance()->apps()->setApp($classname ? : get_called_class(), $attrs);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appRelPath($classname = null)
+    {
+        return tiFy::instance()->apps()->getRelPath($classname ? : get_called_class());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appRequest($property = '')
+    {
+        return tiFy::instance()->request($property);
+    }
+
+    /**
+     * Vérification d'existance d'une variable de requête globale
+     * @deprecated
+     *
+     * @param string $key Identifiant de qualification de l'argument de requête
+     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
+     *
+     *
+     * @throws LogicException
+     * @throws ReflectionException
+     * @return mixed
+     */
+    public function appRequestHas($key, $type = '')
+    {
+        return tiFy::instance()->requestCall('has', compact('key'), $type);
+    }
+
+    /**
+     * Récupération d'une variable de requête globale
+     * @deprecated
+     *
+     * @param string $key Identifiant de qualification de l'argument de requête
+     * @param mixed $default Valeur de retour par défaut
+     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
+     *
+     * @return mixed
+     */
+    public function appRequestGet($key, $default = '', $type = '')
+    {
+        return tiFy::instance()->requestCall('get', compact('key', 'default'), $type);
+    }
+
+    /**
+     * Définition d'une variable de requête globale
+     * @deprecated
+     *
+     * @param array $parameters Liste des paramètres. Tableau associatif
+     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
+     *
+     * @return mixed
+     */
+    public function appRequestAdd($parameters = [], $type = '')
+    {
+        return tiFy::instance()->requestCall('add', compact('parameters'), $type);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceAdd($alias, $concrete = null, $share = false)
+    {
+        return tiFy::instance()->serviceAdd($alias, $concrete, $share);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceGet($alias, $args = [])
+    {
+        return tiFy::instance()->serviceGet($alias, $args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceHas($alias)
+    {
+        return tiFy::instance()->serviceHas($alias);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceProvider($provider)
+    {
+        return tiFy::instance()->serviceProvider($provider);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceShare($alias, $concrete = null)
+    {
+        return tiFy::instance()->serviceShare($alias, $concrete);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appSet($key, $value, $classname = null)
+    {
+        return tiFy::instance()->apps()->setAttr($classname ? : get_called_class(), $key, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appShortname($classname = null)
+    {
+        return tiFy::instance()->apps()->getShortname($classname ? : get_called_class());
+    }
+
+    /**
+     * Récupération de la classe de rappel du controleur de templates.
+     *
+     * @param string|object $classname Nom de la classe ou instance de l'application.
+     *
+     * @return \League\Plates\Engine
+     */
+    public function appTemplates($classname = null)
+    {
+        if (! $templates = $this->appGet('templates', null, $classname)) :
+            $templates = new \League\Plates\Engine(get_template_directory() . '/templates');
+
+            $appTemplatePath = $this->appDirname($classname) . '/templates';
+            if (is_dir($appTemplatePath)) :
+                $templates->addFolder($classname ? : get_called_class(), $appTemplatePath, true);
+            endif;
+
+            $this->appSet('templates', $templates, $classname);
+        endif;
+
+        return $templates;
+    }
+
+    /**
+     * @todo
+     * @return string
+     */
+    public function appTemplateMake($name, $args = [], $classname = null)
+    {
+        $classname = $classname ? : get_called_class();
+
+        $templates = $this->appTemplates($classname);
+        $name = $templates->getFolders()->exists($classname) ? "{$classname}::{$name}" : $name;
+        return $templates->make($name, $args);
+    }
+
+    /**
+     * @todo
+     * @return string
+     */
+    public function appTemplateRender($name, $args = [], $classname = null)
+    {
+        $classname = $classname ? : get_called_class();
+
+        $templates = $this->appTemplates($classname);
+        $name = $templates->getFolders()->exists($classname) ? "{$classname}::{$name}" : $name;
+        $template = $templates->make($name);
+
+        return $template->render($args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appUpperName($name = null, $underscore = true)
+    {
+        return tiFy::instance()->formatUpperName($name ? : get_called_class(), $underscore);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appUrl($classname = null)
+    {
+        return tiFy::instance()->apps()->getUrl($classname ? : get_called_class());
     }
 }

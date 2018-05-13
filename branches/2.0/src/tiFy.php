@@ -293,7 +293,7 @@ final class tiFy
      *
      * @return Container
      */
-    public function getContainer()
+    public function container()
     {
         if (! $this->container) :
             $this->container = new Container();
@@ -319,7 +319,7 @@ final class tiFy
      */
     public function serviceAdd($alias, $concrete = null, $share = false)
     {
-        return $this->getContainer()->add($alias, $concrete, $share);
+        return $this->container()->add($alias, $concrete, $share);
     }
 
     /**
@@ -346,7 +346,7 @@ final class tiFy
      */
     public function serviceHas($alias)
     {
-        return $this->getContainer()->has($alias);
+        return $this->container()->has($alias);
     }
 
     /**
@@ -359,7 +359,7 @@ final class tiFy
      */
     public function serviceGet($alias, $args = [])
     {
-        return $this->getContainer()->get($alias, $args);
+        return $this->container()->get($alias, $args);
     }
 
     /**
@@ -371,7 +371,7 @@ final class tiFy
      */
     public function serviceProvider(ServiceProviderInterface $provider)
     {
-        return $this->getContainer()->addServiceProvider($provider);
+        return $this->container()->addServiceProvider($provider);
     }
 
     /**
@@ -452,7 +452,7 @@ final class tiFy
      *
      * @return Emitter
      */
-    public function getEmitter()
+    public function emitter()
     {
         if (! $this->emitter) :
             $this->emitter = new Emitter();

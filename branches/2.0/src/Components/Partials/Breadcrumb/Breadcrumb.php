@@ -1,34 +1,24 @@
 <?php
 
-/**
- * @name Breadcrumb
- * @desc Controleur d'affichage de fil d'ariane
- * @package presstiFy
- * @namespace \tiFy\Components\Partials\Breadcrumb
- * @version 1.1
- * @subpackage Components
- * @since 1.2.571
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Components\Partials\Breadcrumb;
 
 use tiFy\Partial\AbstractPartialController;
+use tiFy\Kernel\Tools;
 
-/**
- * @param array $attrs {
- *      Liste des attributs de configuration
- *
- *      @var string $id Identifiant de qualification du controleur d'affichage.
- *      @var string $container_id ID HTML du conteneur de l'élément.
- *      @var string $container_class Classes HTML du conteneur de l'élément.
- *      @var string[]|array[]|object[]|callable[] $parts Liste des élements du fil d'ariane.
- * }
- */
 class Breadcrumb extends AbstractPartialController
 {
+    /**
+     * Liste des attributs de configuration.
+     * @var array $attributes {
+     *      @var string $attrs Liste des attributs HTML de la balise HTML du conteneur de l'élément.
+     *      @var string[]|array[]|object[]|callable[] $parts Liste des élements du fil d'ariane.
+     * }
+     */
+    protected $attributes = [
+        'attrs'           => [],
+        'parts'           => []
+    ];
+
     /**
      * Liste des éléments contenus dans le fil d'ariane
      * @var array
@@ -42,39 +32,30 @@ class Breadcrumb extends AbstractPartialController
     private $disabled = false;
 
     /**
-     * Traitement des attributs de configuration
+     * Traitement des attributs de configuration.
      *
-     * @param array $attrs Liste des attributs de configuration
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($attrs = [])
+    protected function parse($attrs = [])
     {
-        $defaults = [
-            'container_id'    => 'tiFyPartial-breadcrumb--' . $this->getIndex(),
-            'container_class' => '',
-            'parts'           => []
-        ];
-        $attrs = array_merge($defaults, $attrs);
+        $this->attributes['attrs']['id'] = 'tiFyPartial-Breadcrumb--' . $this->getIndex();
+        $this->attributes['attrs']['class'] = "tiFyPartial-Breadcrumb tiFyPartial-Breadcrumb--" . $this->getId();
 
-        $class = "tiFyPartial-breadcrumb tiFyPartial-breadcrumb--" . $this->getId();
-        $attrs['container_class'] = $attrs['container_class']
-            ? $class . " " . $attrs['container_class']
-            : $class;
-
-        return $attrs;
+        parent::parse($attrs);
     }
 
     /**
-     * Initialisation globale.
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
-    final public function init()
+    public function init()
     {
         \wp_register_style(
             'tiFyPartialBreadcrumb',
-            $this->appAbsUrl() . '/assets/Breadcrumb/css/styles.css',
+            $this->appAbsUrl('/Breadcrumb/css/styles.css'),
             [],
             180122
         );
@@ -85,13 +66,13 @@ class Breadcrumb extends AbstractPartialController
      *
      * @return void
      */
-    final public function enqueue_scripts()
+    public function enqueue_scripts()
     {
         \wp_enqueue_style('tiFyPartialBreadcrumb');
     }
 
     /**
-     * Récupération de la liste des éléments contenus dans le fil d'ariane
+     * Récupération de la liste des éléments contenus dans le fil d'ariane.
      *
      * @return string[]
      */
@@ -110,7 +91,7 @@ class Breadcrumb extends AbstractPartialController
     }
 
     /**
-     * Traitement d'un élément de contenu du fil d'arianne
+     * Traitement d'un élément de contenu du fil d'arianne.
      *
      * @param string|array|object|callable $part Element du fil d'ariane.
      *
@@ -138,7 +119,7 @@ class Breadcrumb extends AbstractPartialController
     }
 
     /**
-     * Ajout d'un élément de contenu au fil d'arianne
+     * Ajout d'un élément de contenu au fil d'arianne.
      *
      * @param string|array|object|callable $part Element du fil d'ariane.
      *
@@ -152,7 +133,7 @@ class Breadcrumb extends AbstractPartialController
     }
 
     /**
-     * Ajout d'un élément de contenu en début de chaîne du fil d'arianne
+     * Ajout d'un élément de contenu en début de chaîne du fil d'arianne.
      *
      * @param string|array|object|callable $part Element du fil d'ariane.
      *
@@ -166,7 +147,7 @@ class Breadcrumb extends AbstractPartialController
     }
 
     /**
-     * Supprime l'ensemble des éléments de contenu prédéfinis
+     * Supprime l'ensemble des éléments de contenu prédéfinis.
      *
      * @return $this
      */
@@ -178,7 +159,7 @@ class Breadcrumb extends AbstractPartialController
     }
 
     /**
-     * Désactivation de l'affichage
+     * Désactivation de l'affichage.
      *
      * @return $this
      */
@@ -190,7 +171,7 @@ class Breadcrumb extends AbstractPartialController
     }
 
     /**
-     * Activation de l'affichage
+     * Activation de l'affichage.
      *
      * @return $this
      */
@@ -202,27 +183,19 @@ class Breadcrumb extends AbstractPartialController
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */
-    final protected function display()
+    protected function display()
     {
         if ($this->disabled) :
             return '';
         endif;
 
-        // Définition des arguments de template
-        $id = $this->getId();
-        $index = $this->getIndex();
-        $container_id = $this->get('container_id');
-        $container_class = $this->get('container_class', '');
+        $html_attrs = Tools::Html()->parseAttrs($this->get('attrs', []));
         $parts = $this->parsePartList();
 
-        // Récupération du template d'affichage
-        ob_start();
-        //self::tFyAppGetTemplatePart('breadcrumb', $this->getId(), compact('id', 'index', 'container_id', 'container_class', 'parts'));
-
-        return ob_get_clean();
+        return $this->appTemplateRender('breadcrumb', compact('html_attrs', 'parts'));
     }
 }

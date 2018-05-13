@@ -53,12 +53,12 @@ class FormDisplayController extends AbstractCommonDependency
         $output = "";
 
         // Court-circuitage post-affichage
-        $this->call('form_before_display', [&$output, $this]);
+        $this->call('form_before_display', [&$output, $this->getForm()]);
 
         $output .= $this->get('wrapper');
 
         // Court-circuitage post-affichage
-        $this->call('form_after_display', [&$output, $this]);
+        $this->call('form_after_display', [&$output, $this->getForm()]);
 
         return $output;
     }
@@ -133,30 +133,27 @@ class FormDisplayController extends AbstractCommonDependency
      */
     public function body()
     {
+        $has_group = $this->getFields()->hasGroup();
+
         $output = "";
 
         // Affichage des champs de formulaire
         $output .= "\t\t<div class=\"tiFyForm-Fields\">\n";
 
-        foreach ($this->getFields() as $n => $field) :
-            /**
-            if (is_null($this->fieldsGroup)) :
-            $this->fieldsGroup = $field->get('group');
-            $output .= "\t\t\t<div class=\"tiFyForm-FieldsGroup tiFyForm-FieldsGroup--{$this->FieldsGroup}\">";
-            elseif ($this->fieldsGroup < $field->getAttr('group')) :
-            $this->fieldsGroup = $field->getAttr('group');
-            $output .= "\t\t\t</div>";
-            $output .= "\t\t\t<div class=\"tiFyForm-FieldsGroup tiFyForm-FieldsGroup--{$this->FieldsGroup}\">";
-            endif;
-             */
-            $output .= $field->display();
+        if($has_group) :
+            foreach ($this->getFields()->byGroup() as $num => $fields) :
+                $output .= "\t\t\t<div class=\"tiFyForm-FieldsGroup tiFyForm-FieldsGroup--{$num}\">";
+                foreach($fields->byOrder() as $field) :
+                    $output .= $field->display();
+                endforeach;
+                $output .= "\t\t\t</div>";
+            endforeach;
+        else :
+            foreach($this->getFields()->byOrder() as $field) :
+                $output .= $field->display();
+            endforeach;
+        endif;
 
-            /**
-            if (count($this->fields()) - 1 === $n) :
-            $output .= "\t\t\t</div>";
-            endif;
-             */
-        endforeach;
         $output .= "\t\t</div>";
 
         return $output;
@@ -189,8 +186,8 @@ class FormDisplayController extends AbstractCommonDependency
             if(! is_array($wrapper_attrs)) :
                 $wrapper_attrs = [
                     'attrs' => [
-                        'id'    => 'tiFyForm-wrapper--' . $this->getForm()->getUid(),
-                        'class' => 'tiFyForm-wrapper'
+                        'id'    => 'tiFyForm-Wrapper--' . $this->getForm()->getUid(),
+                        'class' => 'tiFyForm-Wrapper'
                     ]
                 ];
             endif;
@@ -204,23 +201,22 @@ class FormDisplayController extends AbstractCommonDependency
         endif;
 
         // Messages de notification
-        $notices_args = ['tag' => 'div'];
         if ($this->getHandle()->isSuccessful()) :
             $notices = Partial::Tag(
                 [
                     'tag' => 'div',
                     'attrs' => [
-                        'class' => 'tiFyForm-notices tiFyForm-notices--success'
+                        'class' => 'tiFyForm-Notices tiFyForm-Notices--success'
                     ],
                     'content' => $this->getNotices()->display('success')
                 ]
             );
-        elseif($this->getNotices()->has('error')) :
+        elseif($this->hasError()) :
             $notices = Partial::Tag(
                 [
                     'tag' => 'div',
                     'attrs' => [
-                        'class' => 'tiFyForm-notices tiFyForm-notices--error'
+                        'class' => 'tiFyForm-Notices tiFyForm-Notices--error'
                     ],
                     'content' => $this->getNotices()->display('error')
                 ]
@@ -239,8 +235,8 @@ class FormDisplayController extends AbstractCommonDependency
         if ($form_attrs = $this->getForm()->get('attrs', [])) :
             if(! is_array($form_attrs)) :
                 $form_attrs = [
-                    'id'    => 'tiFyForm-content--' . $this->getForm()->getUid(),
-                    'class' => 'tiFyForm-content'
+                    'id'    => 'tiFyForm-Content--' . $this->getForm()->getUid(),
+                    'class' => 'tiFyForm-Content'
                 ];
             endif;
         endif;
@@ -292,7 +288,7 @@ class FormDisplayController extends AbstractCommonDependency
         $buttons = Partial::Tag(
             [
                 'tag' => 'div',
-                'attrs' => ['class' => 'tiFyForm-buttons'],
+                'attrs' => ['class' => 'tiFyForm-Buttons'],
                 'content' => $buttons_content
             ]
         );

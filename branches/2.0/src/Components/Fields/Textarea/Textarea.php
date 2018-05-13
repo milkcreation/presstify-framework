@@ -44,7 +44,7 @@ class Textarea extends AbstractFieldController
      *
      * @return array
      */
-    final protected function parse($attrs = [])
+    protected function parse($attrs = [])
     {
         parent::parse($attrs);
 

@@ -65,7 +65,7 @@ class FieldItemController extends AbstractCommonDependency
         'title'           => '',
         'before'          => '',
         'after'           => '',
-        'container'       => true,
+        'wrapper'         => true,
         'label'           => true,
         'support'         => [],
         'group'           => 0,
@@ -141,17 +141,19 @@ class FieldItemController extends AbstractCommonDependency
         $this->_initValue();
 
         $this->_initCheckIntegrity();
+
+        // Court-circuitage des paramètre du champ
+        $this->call('field_init_params', [&$this]);
     }
 
     /**
-     * Initialisation du controleur
+     * Initialisation du controleur.
      *
      * @return void
      */
     public function appBoot()
     {
-        // Court-circuitage des paramètre du champ
-        $this->call('field_init_params', [&$this]);
+
     }
 
     /**
@@ -181,10 +183,6 @@ class FieldItemController extends AbstractCommonDependency
             $this->attributes['slug'] = 'field-slug_' . $this->getForm()->getUid() . '-' . $this->getIndex();
         endif;
 
-        if (empty($this->attributes['label'])) :
-            $this->attributes['label'] = $this->attributes['slug'];
-        endif;
-
         if (empty($this->attributes['name'])) :
             $this->attributes['name'] = $this->attributes['slug'];
         endif;
@@ -200,7 +198,7 @@ class FieldItemController extends AbstractCommonDependency
         if ($required = $this->get('required', false)) :
             $defaults = [
                 'tag'        => false,
-                'active'     => false,
+                'check'      => false,
                 'value_none' => '',
                 'cb'         => 'is_empty',
                 'args'       => [],
@@ -229,10 +227,7 @@ class FieldItemController extends AbstractCommonDependency
                 $required = array_merge($defaults, $required);
             endif;
         endif;
-
-        if (is_callable($required['cb'])) :
-            $this->required = $required;
-        endif;
+        $this->required = $required;
 
         if ($integrity_cb = $this->get('integrity_cb', false)) :
             $this->_recursiveParseIntegrityCallbacks($integrity_cb);
@@ -256,10 +251,6 @@ class FieldItemController extends AbstractCommonDependency
             $integrity_cb = array_map('trim', explode(',', $integrity_cb));
 
             foreach ($integrity_cb as $cb) :
-                if (is_callable($cb)) :
-                    continue;
-                endif;
-
                 $this->integrityCallbacks[] = array_merge(
                     $defaults,
                     ['cb' => $cb]
@@ -380,24 +371,24 @@ class FieldItemController extends AbstractCommonDependency
             $this->recursiveParseArgs($this->getHtmlAttrs(), $defaults)
         );
 
-        if (!$this->getHtmlAttr('id')) :
-            $this->setHtmlAttr(
-                'id',
+        $this->setHtmlAttr(
+            'id',
+            sprintf(
+                $this->getHtmlAttr('id', '%s'),
                 'tiFyForm-FieldInput--' . $this->getForm()->getName() .
                 '_' . $this->getSlug()
-            );
-        endif;
+            )
+        );
 
-        $classes = [];
-        $classes[] = 'tiFyForm-FieldInput';
-        $classes[] = 'tiFyForm-FieldInput--' . $this->getName();
-        $classes[] = "tiFyForm-FieldInput--" . $this->getSlug();
-        if ($class = $this->getHtmlAttr('class')) :
-            $classes[] = $this->getHtmlAttr('class');
-        endif;
         $this->setHtmlAttr(
             'class',
-            join(' ', $classes)
+            sprintf(
+                $this->getHtmlAttr('class', '%s'),
+                'tiFyForm-FieldInput' .
+                ' tiFyForm-FieldInput--' . $this->get('type') .
+                ' tiFyForm-FieldInput--' . $this->getName() .
+                ' tiFyForm-FieldInput--' . $this->getSlug()
+            )
         );
 
         $this->setHtmlAttr(
@@ -520,7 +511,7 @@ class FieldItemController extends AbstractCommonDependency
      */
     public function getHtmlAttr($key, $default = '')
     {
-        return $this->get("attrs.{$key}", []);
+        return $this->get("attrs.{$key}", $default);
     }
 
     /**
@@ -554,16 +545,6 @@ class FieldItemController extends AbstractCommonDependency
     public function getIntegrityCallbacks()
     {
         return $this->integrityCallbacks;
-    }
-
-    /**
-     * Récupération de l'intitulé de champ.
-     *
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->get('label');
     }
 
     /**
@@ -670,13 +651,13 @@ class FieldItemController extends AbstractCommonDependency
     /**
      * Vérification d'une propriété de support.
      *
-     * @param string $key Clé d'indexe du support à vérifier.
+     * @param string $prop Propriété du support à vérifier.
      *
      * @return array
      */
-    public function support($value)
+    public function support($prop)
     {
-        return in_array($value, $this->get('support', []));
+        return in_array($prop, $this->get('support', []));
     }
 
     /**

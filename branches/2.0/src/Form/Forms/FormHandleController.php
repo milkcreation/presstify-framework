@@ -3,6 +3,7 @@
 namespace tiFy\Form\Forms;
 
 use Illuminate\Support\Arr;
+use tiFy\Form\Fields\FieldItemController;
 use tiFy\Form\Fields\FieldIntegrityCheckController;
 use tiFy\Form\AbstractCommonDependency;
 use tiFy\Form\Forms\FormItemController;
@@ -141,10 +142,11 @@ class FormHandleController extends AbstractCommonDependency
      */
     private function _parseQueryVars()
     {
-        $values = $this->getGlobalVar($this->getForm()->getUid());
+        $values = $this->allGlobalVars();
         $fields = $this->getFields();
         $vars = [];
 
+        /** @var FieldItemController $field */
         foreach ($fields as $field) :
             if (!$field->support('request')) :
                 continue;
@@ -188,49 +190,48 @@ class FormHandleController extends AbstractCommonDependency
         $fields = $this->getFields();
 
         // Vérification des variables de saisie du formulaire.
+        /** @var FieldItemController $field */
         foreach ($fields as $field) :
             $field_errors = [];
 
             // Test d'intégrité de champs requis
-            if ($required = $field->isRequired()) :
-                if ($required['active']) :
+            if ($required = $field->getRequiredAll()) :
+                if ($required['check']) :
                     $CheckController = new FieldIntegrityCheckController($field);
 
-                    if (!$CheckController->check($field->getValue(true), $required['cb'], $callback['args'])) :
+                    if (!$CheckController->check($field->getValue(true), $required['cb'], $required['args'])) :
                         $field_errors[] = [
-                            'message' => sprintf($required['message'], $field->getLabel()),
+                            'message' => sprintf($required['message'], $field->getTitle()),
                             'type'    => 'field',
                             'slug'    => $field->getSlug(),
                             'check'   => 'required',
-                            'order'   => $field->getOrder()
+                            'order'   => $field->getOrder(),
                         ];
                     endif;
                 endif;
             endif;
 
-            if ($field_errors) :
-                continue;
-            endif;
+            if (!$field_errors) :
+                // Tests d'integrité complémentaires
+                if ($callbacks = $field->getIntegrityCallbacks()) :
+                    $CheckController= new FieldIntegrityCheckController($field);
 
-            // Tests d'integrité
-            if ($callbacks = $field->getIntegrityCallbacks()) :
-                $CheckController= new FieldIntegrityCheckController($field);
-
-                foreach ($callbacks as $callback) :
-                    if (!$CheckController->check($field->getValue(true), $callback['cb'], $callback['args'])) :
-                        $field_errors[] = [
-                            'message' => sprintf($callback['message'], $field->getLabel(), $field->getValue()),
-                            'type'    => 'field',
-                            'slug'    => $field->getSlug(),
-                            'check'   => $callback,
-                            'order'   => $field->getOrder()
-                        ];
-                    endif;
-                endforeach;
+                    foreach ($callbacks as $callback) :
+                        if (!$CheckController->check($field->getValue(true), $callback['cb'], $callback['args'])) :
+                            $field_errors[] = [
+                                'message' => sprintf($callback['message'], $field->getTitle(), $field->getValue()),
+                                'type'    => 'field',
+                                'slug'    => $field->getSlug(),
+                                'check'   => $callback,
+                                'order'   => $field->getOrder(),
+                            ];
+                        endif;
+                    endforeach;
+                endif;
             endif;
 
             // Court-circuitage de la vérification d'intégrité d'un champ
-            $field_errors = $this->getController()->checkQueryVar($field, $field_errors);
+            $this->getController()->checkQueryVar($field, $field_errors);
             $this->call('handle_check_field', [&$field_errors, $field]);
 
             if (!empty($field_errors)) :

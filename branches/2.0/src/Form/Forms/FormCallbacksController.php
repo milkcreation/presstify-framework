@@ -74,9 +74,7 @@ class FormCallbacksController extends AbstractCommonDependency
      */
     public function call($hookname, $args = [])
     {
-        if ($controller = $this->getController()) :
-            $this->getController()->call($hookname, $args);
-        endif;
+        $this->getController()->call($hookname, $args);
 
         if (!isset($this->registered[$hookname])) :
             return null;

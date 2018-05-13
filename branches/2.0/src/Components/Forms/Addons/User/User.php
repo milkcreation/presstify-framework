@@ -2,6 +2,9 @@
 
 namespace tiFy\Components\Forms\Addons\User;
 
+use tiFy\Form\Fields\FieldItemController;
+use tiFy\Form\Forms\FormHandleController;
+use tiFy\Form\Forms\FormItemController;
 use tiFy\Form\Addons\AbstractAddonController;
 
 class User extends AbstractAddonController
@@ -59,21 +62,21 @@ class User extends AbstractAddonController
     /**
      * Court-circuitage de la définition du formulaire courant.
      *
-     * @param Form $form Classe de rappel du formulaire.
+     * @param FormItemController $formController Classe de rappel du controleur de formulaire.
      *
      * @return void
      */
-    public function cb_form_set_current($form)
+    public function cb_form_set_current($formController)
     {
-        foreach ($form->fields() as $field) :
+        foreach ($formController->getFields() as $field) :
             // Bypass
-            if (!$userdata = $this->getFieldAttr($field, 'userdata', false)) :
+            if (!$userdata = $this->getFieldOption($field, 'userdata', false)) :
                 continue;
             endif;
 
             if ($userdata === 'user_pass') :
                 $field->set('attrs.onpaste', 'off');
-                $field->setAttr('attrs.autocomplete', 'off');
+                $field->set('attrs.autocomplete', 'off');
             endif;
         endforeach;
     }
@@ -82,14 +85,14 @@ class User extends AbstractAddonController
      * Vérification d'intégrité d'un champ.
      *
      * @param array $errors Liste des erreurs de traitement du formulaire.
-     * @param Field $field Class de rappel du champ à tester.
+     * @param FieldItemController $field Classe de rappel du champ à tester.
      *
      * @return void
      */
     public function cb_handle_check_field(&$errors, $field)
     {
         // Bypass
-        if (!$userdata = $this->getFieldAttr($field, 'userdata', false)) :
+        if (!$userdata = $this->getFieldOption($field, 'userdata', false)) :
             return;
         endif;
 
@@ -102,7 +105,7 @@ class User extends AbstractAddonController
         endif;
 
         switch ($userdata) :
-            /// Identifiant de connexion
+            // Identifiant de connexion
             case 'user_login' :
                 if (!$this->isProfile() && get_user_by('login', $field->getValue())) :
                     $errors[] = __('Cet identifiant est déjà utilisé par un autre utilisateur', 'tify');
@@ -137,33 +140,33 @@ class User extends AbstractAddonController
                     endif;
 
                     // Longueur minimale
-                    if (strlen($user_name) < 4) {
+                    if (strlen($user_name) < 4) :
                         $_errors[] = __('L\'identifiant de connexion doit contenir au moins 4 caractères', 'tify');
-                    }
+                    endif;
 
                     // Longueur maximale
-                    if (strlen($user_name) > 60) {
+                    if (strlen($user_name) > 60) :
                         $_errors[] = __(
                             'L\'identifiant de connexion ne doit pas contenir plus de 60 caractères',
                             'tify'
                         );
-                    }
+                    endif;
 
                     // Lettres obligatoire
-                    if (preg_match('/^[0-9]*$/', $user_name)) {
+                    if (preg_match('/^[0-9]*$/', $user_name)) :
                         $_errors[] = __('L\'identifiant de connexion doit aussi contenir des lettres', 'tify');
-                    }
+                    endif;
                 endif;
                 break;
 
-            /// Email
+            // Email
             case 'user_email' :
                 if (!$this->isProfile() && get_user_by('email', $field->getValue())) :
                     $errors[] = __('Cet email est déjà utilisé par un autre utilisateur', 'tify');
                 endif;
                 break;
 
-            /// Role    
+            // Role
             case 'role' :
                 if (!$this->hasRole($field->getValue())) :
                     $_errors[] = __('L\'attribution de ce rôle n\'est pas autorisée.', 'tify');
@@ -175,11 +178,11 @@ class User extends AbstractAddonController
     /**
      * Court-circuitage du traitement de la requête du formulaire.
      *
-     * @param Handle $handle Classe de rappel de traitement du formulaire.
+     * @param FormHandleController $handleController Classe de rappel de traitement du formulaire.
      *
      * @return void
      */
-    public function cb_handle_submit_request($handle)
+    public function cb_handle_submit_request($handleController)
     {
         $request_data = [
             'user_login'           => '',
@@ -196,19 +199,20 @@ class User extends AbstractAddonController
         ];
 
         // Récupération des données utilisateurs dans les variables de requête
-        foreach ($this->getForm()->getFieldsValues(true) as $slug => $value) :
-            if (! $userdata = $this->getFieldAttr($slug, 'userdata')) :
-                continue;
-            endif;
-            if (! isset($request_data[$userdata])) :
+        foreach ($this->getFields() as $field) :
+            if (!$userdata = $this->getFieldOption($field, 'userdata')) :
                 continue;
             endif;
 
-            $request_data[$userdata] = $value;
+            if (!isset($request_data[$userdata])) :
+                continue;
+            endif;
+
+            $request_data[$userdata] = $field->getValue(true);
         endforeach;
 
         // Traitement de l'identifiant et récupération des données utilisateur existante
-        if (!$request_data['user_login'] && ($user = get_userdata($this->UserID))) :
+        if (!$request_data['user_login'] && ($user = get_userdata($this->userId))) :
             foreach ($request_data as $data => $value) :
                 if (in_array($data, ['user_pass'])) :
                     continue;
@@ -233,7 +237,7 @@ class User extends AbstractAddonController
         // Traitement de l'affichage de la barre d'administration
         if ($this->hasRole($request_data['role'])) :
             $show_admin_bar_front =
-                ! $this->getRoleAttr(
+                !$this->getRoleAttr(
                     $request_data['role'],
                     'show_admin_bar_front',
                     false
@@ -262,7 +266,7 @@ class User extends AbstractAddonController
             if (is_multisite()) :
                 $user_details = wpmu_validate_user_signup($request_data['user_login'], $request_data['user_email']);
                 if (is_wp_error($user_details['errors']) && !empty($user_details['errors']->errors)) :
-                    return $handle->addError($user_details['errors']->get_error_message());
+                    return $handleController->addError($user_details['errors']->get_error_message());
                 endif;
             endif;
 
@@ -270,22 +274,24 @@ class User extends AbstractAddonController
         endif;
 
         // Traitement des metadonnées et options utilisateur
-        if (! is_wp_error($user_id)) :
+        if (!is_wp_error($user_id)) :
             $this->setUserID($user_id);
 
             // Création ou modification des informations personnelles
-            foreach ($this->getForm()->getFieldsValues(true) as $slug => $value) :
-                if (!$userdata = $this->getFieldAttr($slug, 'userdata')) :
+            /** @var FieldItemController $field */
+            foreach ($this->getFields() as $field) :
+                if (!$userdata = $this->getFieldOption($field, 'userdata', false)) :
                     continue;
                 endif;
+
                 if ($userdata === 'meta') :
-                    \update_user_meta($this->getUserID(), $slug, $value);
+                    \update_user_meta($this->getUserID(), $field->getSlug(), $field->getValue(true));
                 elseif ($userdata === 'option') :
-                    \update_user_option($this->getUserID(), $slug, $value);
+                    \update_user_option($this->getUserID(), $field->getSlug(), $field->getValue(true));
                 endif;
             endforeach;
         else :
-            return $handle->addError($user_id->get_error_message());
+            return $handleController->addError($user_id->get_error_message());
         endif;
     }
 
@@ -333,7 +339,7 @@ class User extends AbstractAddonController
         endif;
 
         $_roles = [];
-        if ($roles = (array)$this->getFormAttr('roles', [])) :
+        if ($roles = (array)$this->getFormOption('roles', [])) :
             foreach ($roles as $name => $attrs) :
                 if (is_int($name) && is_string($attrs)) :
                     $name = $attrs;
