@@ -99,20 +99,5 @@ class Utils
 		
 		return false;
 	}	
-	
-	/** == Récupération d'un SVG depuis son chemin == **/
-	final public static function get_svg( $filename, $echo = true ){
-		$output = "";
-		
-		$dom = new \DOMDocument;
-		@$dom->loadXML( file_get_contents( $filename ) );
-		if( $svgs = $dom->getElementsByTagName('svg') )
-			foreach( $svgs as $n => $svg )
-				$output .= $svgs->item($n)->C14N();		
-		
-		if( $echo )
-			echo $output;
-		else
-			return $output;
-	}
+
 }

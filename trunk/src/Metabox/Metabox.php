@@ -29,7 +29,7 @@ class Metabox extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('add_meta_boxes', null, 99);
     }

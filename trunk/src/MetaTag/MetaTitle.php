@@ -24,7 +24,7 @@ class MetaTitle extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->attributes = $this->parse();
     }

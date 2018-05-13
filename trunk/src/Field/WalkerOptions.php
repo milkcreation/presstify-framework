@@ -2,34 +2,28 @@
 
 namespace tiFy\Field;
 
-use tiFy\Lib\Walkers\Base;
+use tiFy\Components\Tools\Walkers\AbstractWalkBase;
 
-class WalkerOptions extends Base
+class WalkerOptions extends AbstractWalkBase
 {
     /**
-     * Récupération de la classe HTML d'un élément
-     *
-     * @param array $item Attribut de configuration de l'élément
-     * @param int $depth Niveau de profondeur courant
-     * @param string $parent Identifiant de qualification de l'élément parent courant
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getItemClass($item = null, $depth = 0, $parent = '')
+    public function parseHtmlAttrs($attrs, $name)
     {
-        // Bypass
-        if (!$item) :
-            return '';
+        if(!isset($attrs['id'])) :
+            $attrs['id'] = "tiFyFieldOption-Item--{$name}";
         endif;
 
-        $classes = [];
-        $classes[] = 'tiFyField-itemOption';
-        $classes[] = "tiFyField-itemOption--depth{$depth}";
-        if (!empty($item['class'])) :
-            $classes[] = $item['class'];
+        if (!isset($attrs['class'])) :
+            $attrs['class'] = "tiFyFieldOption-Item tiFyFieldOption--{$name}";
         endif;
 
-        return implode(' ', $classes);
+        if(!isset($attrs['aria-current'])) :
+            $attrs['aria-current'] = $this->isCurrent($name);
+        endif;
+
+        return $attrs;
     }
 
     /**
@@ -78,43 +72,25 @@ class WalkerOptions extends Base
     }
 
     /**
-     * Ouverture par défaut d'une liste de contenus d'éléments
-     *
-     * @param array $item Attribut de configuration de l'élément
-     * @param int $depth Niveau de profondeur courant
-     * @param string $parent Identifiant de qualification de l'élément parent courant
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function default_start_content_items($item = null, $depth = 0, $parent = '')
+    public function openItems($item = null, $depth = 0, $parent = '')
     {
         return '';
     }
 
     /**
-     * Fermeture par défaut d'une liste de contenus d'éléments
-     *
-     * @param array $item Attribut de configuration de l'élément
-     * @param int $depth Niveau de profondeur courant
-     * @param string $parent Identifiant de qualification de l'élément parent courant
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function default_end_content_items($item = null, $depth = 0, $parent = '')
+    public function closeItems($item = null, $depth = 0, $parent = '')
     {
         return '';
     }
 
     /**
-     * Ouverture par défaut d'un contenu d'élement
-     *
-     * @param array $item Attribut de configuration de l'élément
-     * @param int $depth Niveau de profondeur courant
-     * @param string $parent Identifiant de qualification de l'élément parent courant
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function default_start_content_item($item = null, $depth = 0, $parent = '')
+    public function openItem($item = null, $depth = 0, $parent = '')
     {
         if ($item['group']) :
             return $this->getIndent($depth) . "<optgroup ". $this->getItemHtmlAttrs($item, $depth, $parent) . ">\n";
@@ -125,15 +101,9 @@ class WalkerOptions extends Base
     }
 
     /**
-     * Fermeture par défaut d'un contenu d'élement
-     *
-     * @param array $item Attribut de configuration de l'élément
-     * @param int $depth Niveau de profondeur courant
-     * @param string $parent Identifiant de qualification de l'élément parent courant
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function default_end_content_item($item = null, $depth = 0, $parent = '')
+    public function closeItem($item = null, $depth = 0, $parent = '')
     {
         if ($item['group']) :
             return $this->getIndent($depth) . "</optgroup>\n";
@@ -143,15 +113,9 @@ class WalkerOptions extends Base
     }
 
     /**
-     * Rendu par défaut d'un contenu d'élément
-     *
-     * @param array $item Attribut de configuration de l'élément
-     * @param int $depth Niveau de profondeur courant
-     * @param string $parent Identifiant de qualification de l'élément parent courant
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function default_content_item($item = null, $depth = 0, $parent = '')
+    public function contentItem($item = null, $depth = 0, $parent = '')
     {
         if (!$item['group']) :
             return ! empty($item['label']) ? esc_attr($item['label']) : '';

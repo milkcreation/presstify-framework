@@ -1,0 +1,157 @@
+body.tiFySidebar-Body {
+    overflow-x: hidden;
+}
+
+body.tiFySidebar-Body.admin-bar .tiFySidebar {
+    top: 32px;
+    height: calc(100% - 32px);
+}
+
+.tiFySidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    content: "";
+}
+
+.tiFySidebar--left {
+    left: 0;
+}
+
+.tiFySidebar--right {
+    right: 0;
+}
+
+.tiFySidebar-ToggleButton {
+    position: absolute;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    display: block;
+    padding: 7px 4px;
+}
+
+.tiFySidebar-ToggleButton--left {
+    right: 0;
+    transform: translateX(100%);
+}
+
+.tiFySidebar-ToggleButton--right {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.tiFySidebar-ToggleButton > div {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-top: 100%;
+}
+
+.tiFySidebar-ToggleButton > div > svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.tiFySidebar-Panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+.tiFySidebar-NodesWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+
+    overflow: hidden;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none;
+}
+
+.tiFySidebar-NodesWrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.tiFySidebar-NodesContainer {
+    height: 100%;
+}
+
+.tiFySidebar-items {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+/** Sidebar positionnée à gauche */
+body.tiFySidebar-Body--leftClosed .tiFySidebar--left {
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    -o-transform: translateX(-100%);
+    transform: translateX(-100%);
+}
+
+body.tiFySidebar-Body--leftOpened .tiFySidebar--left {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -o-transform: translateX(0);
+    transform: translateX(0);
+}
+
+/** Sidebar positionnée à droite */
+body.tiFySidebar-Body--rightClosed .tiFySidebar--right {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    -ms-transform: translateX(100%);
+    -o-transform: translateX(100%);
+    transform: translateX(100%);
+}
+
+body.tiFySidebar-Body--rightOpened .tiFySidebar--right {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -o-transform: translateX(0);
+    transform: translateX(0);
+}
+
+/**
+ * RESPONSIVE
+ */
+@media (max-width: 782px) {
+    body.tiFySidebar-Body.admin-bar .tiFySidebar {
+        top: 46px;
+        height: calc(100% - 46px);
+    }
+}
+
+@media (max-width: 600px) {
+    body.tiFySidebar-Body.admin-bar .tiFySidebar {
+        top: 0;
+        height: 100%;
+    }
+
+    body.tiFySidebar-Body.admin-bar .tiFySidebar-Panel {
+        top: 46px;
+    }
+
+    body.tiFySidebar-Body.admin-bar .tiFySidebar-ToggleButton {
+        top: 46px;
+    }
+}

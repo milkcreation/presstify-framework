@@ -15,78 +15,74 @@
 
 namespace tiFy\Components\Fields\Select;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 
-/**
- * @param array $attrs {
- *      Liste des attributs de configuration du champ
- *
- *      @param string $before Contenu placé avant le champ
- *      @param string $after Contenu placé après le champ
- *      @var array $attrs Liste des propriétés de la balise HTML
- *      @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value"
- *      @var bool $multiple Activation de la liste de selection multiple
- *      @var array $options Liste de selection d'éléments
- * }
- */
-class Select extends AbstractFactory
+class Select extends AbstractFieldController
 {
     /**
-     * Traitement des attributs de configuration
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var array $attrs Liste des propriétés de la balise HTML.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var bool $multiple Activation de la liste de selection multiple.
+     *      @var array $options Liste de selection d'éléments.
+     * }
+     */
+    protected $attributes = [
+        'before'   => '',
+        'after'    => '',
+        'attrs'    => [],
+        'name'     => '',
+        'value'    => null,
+        'multiple' => false,
+        'options'  => []
+    ];
+
+    /**
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
+        parent::parse($attrs);
 
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before'   => '',
-            'after'    => '',
-            'attrs'    => [],
-            'name'     => '',
-            'value'    => null,
-            'multiple' => false,
-            'options'  => []
-        ];
-        $args = array_merge($defaults, $args);
-
-        if (!isset($args['attrs']['id'])) :
-            $args['attrs']['id'] = 'tiFyField-select--' . $this->getIndex();
-        endif;
-        $args['attrs']['type'] = 'text';
-        if ($args['multiple']) :
-            array_push($args['attrs'], 'multiple');
+        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attributes['attrs']['id'] = 'tiFyField-select--' . $this->getIndex();
         endif;
 
-        return $args;
+        $this->attributes['attrs']['type'] = 'text';
+
+        if ($this->attributes['multiple']) :
+            array_push($this->attributes['attrs'], 'multiple');
+        endif;
     }
 
     /**
-     * Traitement de l'attribut de configuration de la qualification de soumission du champ "name"
+     * Traitement de l'attribut de configuration de la qualification de soumission du champ "name".
      *
-     * @param array $args Liste des attributs de configuration
+     * @param array $attrs Liste des attributs de configuration.
      *
      * @return array
      */
-    final protected function parseName($args = [])
+    protected function parseName($args = [])
     {
-        if (isset($args['name'])) :
-            $args['attrs']['name'] = !empty($args['multiple']) ? "{$args['name']}[]" : $args['name'];
+        if (isset($this->attributes['name'])) :
+            $this->attributes['attrs']['name'] = !empty($this->attributes['multiple']) ? "{$this->attributes['name']}[]" : $this->attributes['name'];
         endif;
-
-        return $args;
     }
 
     /**
-     * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value"
+     * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
      *
      * @return mixed
      */
-    final protected function getValue()
+    public function getValue()
     {
         $value = $this->get('value', null);
         if (is_null($value)) :
@@ -108,7 +104,7 @@ class Select extends AbstractFactory
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */

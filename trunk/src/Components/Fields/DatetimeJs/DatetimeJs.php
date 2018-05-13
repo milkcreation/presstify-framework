@@ -15,36 +15,47 @@
 
 namespace tiFy\Components\Fields\DatetimeJs;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 use tiFy\Field\Field;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
- *      @var string $before Contenu placé avant le champ
- *      @var string $after Contenu placé après le champ
- *      @var string $container_id Id HTML du conteneur du champ
- *      @var string $container_class Classe HTML du conteneur du champ
- *      @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value"
- *      @var string $format Format d'enregistrement de la valeur 'datetime': Y-m-d H:i:s|'date': Y-m-d|'time': H:i:s
- *      @var bool $none_allowed Activation de permission d'utilisation de valeur de nulle liée au format de la valeur (ex: datetime 0000-00-00 00:00:00)
- *      @var array $fields {
- *          Liste des champs de saisie
- *          Tableau indexés des champs de saisie (day|month|year|hour|minute|second) ou tableau associatif des attributs de champs
- *          @see \tiFy\Components\Fields\Number\Number|\tiFy\Components\Fields\Select\Select
- *      }
- * }
- */
-class DatetimeJs extends AbstractFactory
+class DatetimeJs extends AbstractFieldController
 {
     /**
-     * Initialisation globale
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $container_id Id HTML du conteneur du champ.
+     *      @var string $container_class Classe HTML du conteneur du champ.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var string $format Format d'enregistrement de la valeur 'datetime': Y-m-d H:i:s|'date': Y-m-d|'time': H:i:s.
+     *      @var bool $none_allowed Activation de permission d'utilisation de valeur de nulle liée au format de la valeur (ex: datetime 0000-00-00 00:00:00).
+     *      @var array $fields {
+     *          Liste des champs de saisie.
+     *          Tableau indexés des champs de saisie (day|month|year|hour|minute|second) ou tableau associatif des attributs de champs.
+     *          @see \tiFy\Components\Fields\Number\Number|\tiFy\Components\Fields\Select\Select
+     *      }
+     * }
+     */
+    protected $attributes = [
+        'before'          => '',
+        'after'           => '',
+        'container_id'    => '',
+        'container_class' => '',
+        'name'            => '',
+        'value'           => '',
+        'format'          => 'datetime',
+        'none_allowed'    => false,
+        'fields'          => [],
+    ];
+
+    /**
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
-    final public function init()
+    public function init()
     {
         \wp_register_style(
             'tiFyFieldDatetimeJs',
@@ -62,11 +73,11 @@ class DatetimeJs extends AbstractFactory
     }
 
     /**
-     * Mise en file des scripts
+     * Mise en file des scripts.
      *
      * @return void
      */
-    final public function enqueue_scripts()
+    public function enqueue_scripts()
     {
         \wp_enqueue_style('tiFyFieldDatetimeJs');
         \wp_enqueue_script('tiFyFieldDatetimeJs');
@@ -75,57 +86,44 @@ class DatetimeJs extends AbstractFactory
     /**
      * Traitement des attributs de configuration
      *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
+     *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($args = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
+        $this->attributes['container_id'] = 'tiFyField-datetimeJs--' . $this->getIndex();
 
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before'          => '',
-            'after'           => '',
-            'container_id'    => 'tiFyField-datetimeJs--' . $this->getIndex(),
-            'container_class' => '',
-            'name'            => '',
-            'value'           => '',
-            'format'          => 'datetime',
-            'none_allowed'    => false,
-            'fields'          => [],
-        ];
-        $args = array_merge($defaults, $args);
+        parent::parse($args);
 
-        if (!isset($args['container_class'])) :
-            $args['container_class'] = 'tiFyField-datetimeJs ' . $args['container_class'];
+        if (!isset($this->attributes['container_class'])) :
+            $this->attributes['container_class'] = 'tiFyField-datetimeJs ' . $this->attributes['container_class'];
         else :
-            $args['container_class'] = 'tiFyField-datetimeJs';
+            $this->attributes['container_class'] = 'tiFyField-datetimeJs';
         endif;
 
-        if (!$args['fields']) :
-            switch ($args['format']) :
+        if (!$this->attributes['fields']) :
+            switch ($this->attributes['format']) :
                 default :
                 case 'datetime' :
-                    $args['fields'] = ['year', 'month', 'day', 'hour', 'minute', 'second'];
+                    $this->attributes['fields'] = ['year', 'month', 'day', 'hour', 'minute', 'second'];
                     break;
                 case 'date' :
-                    $args['fields'] = ['year', 'month', 'day'];
+                    $this->attributes['fields'] = ['year', 'month', 'day'];
                     break;
                 case 'time' :
-                    $args['fields'] = ['year', 'month', 'day'];
+                    $this->attributes['fields'] = ['year', 'month', 'day'];
                     break;
             endswitch;
         endif;
-
-        return $args;
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */
-    final protected function display()
+    protected function display()
     {
         // Traitement de la valeur
         $date = new \DateTime($this->getValue());

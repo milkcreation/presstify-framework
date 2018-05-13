@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\Core\Label;
+namespace tiFy\Label;
 
 use tiFy\Apps\AppController;
 use tiFy\Label\LabelController;
@@ -12,7 +12,7 @@ final class Label extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('init', null, 9);
     }

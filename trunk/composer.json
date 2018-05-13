@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-04-28",
+  "time": "2018-05-13",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -62,6 +62,7 @@
     "league/uri": "^5.2",
     "madcoda/php-youtube-api": "^1.2",
     "mexitek/phpcolors": "^0.4.0",
+    "mustache/mustache": "^2.12",
     "mobiledetect/mobiledetectlib": "^2.8",
     "monolog/monolog": "^1.22",
     "mrclay/minify": "^3.0",
@@ -90,10 +91,10 @@
   },
   "autoload": {
     "files": [
-      "core/Helpers.php"
+      "src/Helpers.php"
     ],
     "psr-4": {
-      "tiFy\\": ""
+      "tiFy\\": "src"
     }
   },
   "minimum-stability": "dev",

@@ -1,43 +1,36 @@
 <?php
 
-/**
- * @name Notice
- * @desc Controleur d'affichage de message de notification
- * @package presstiFy
- * @namespace tiFy\Components\Partials\Notice
- * @version 1.1
- * @subpackage Components
- * @since 1.2.593
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Components\Partials\Notice;
 
-use tiFy\Partial\AbstractFactory;
+use tiFy\Partial\AbstractPartialController;
 
-/**
- * @param array $attrs {
- *      Liste des attributs de configuration
- *
- *      @var string $id Identifiant de qualification du controleur d'affichage.
- *      @var string $container_id ID HTML du conteneur de l'élément.
- *      @var string $container_class Classes HTML du conteneur de l'élément.
- *      @var string $text Texte de notification. défaut 'Lorem ipsum dolor site amet'.
- *      @var string $dismissible Bouton de masquage de la notification.
- *      @var string $type Type de notification info|warning|success|error. défaut info.
- * }
- */
-class Notice extends AbstractFactory
+class Notice extends AbstractPartialController
 {
     /**
+     * Liste des attributs de configuration.
+     * @var array $attributes {
+     *      @var string $id Identifiant de qualification du controleur d'affichage.
+     *      @var string $container_id ID HTML du conteneur de l'élément.
+     *      @var string $container_class Classes HTML du conteneur de l'élément.
+     *      @var string $text Texte de notification. défaut 'Lorem ipsum dolor site amet'.
+     *      @var string $dismissible Bouton de masquage de la notification.
+     *      @var string $type Type de notification info|warning|success|error. défaut info.
+     * }
+     */
+    protected $attributes = [
+        'container_id'    => '',
+        'container_class' => '',
+        'text'            => 'Lorem ipsum dolor site amet',
+        'dismissible'     => false,
+        'type'            => 'info'
+    ];
 
-     * Initialisation globale
+    /**
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
-    final public function init()
+    public function init()
     {
         // Déclaration des scripts
         \wp_register_style(
@@ -56,58 +49,48 @@ class Notice extends AbstractFactory
     }
 
     /**
-     * Mise en file des scripts
+     * Mise en file des scripts.
      *
      * @return void
      */
-    final public function enqueue_scripts()
+    public function enqueue_scripts()
     {
         \wp_enqueue_style('tiFyPartial-notice');
         \wp_enqueue_script('tiFyPartial-notice');
     }
 
     /**
-     * Traitement des attributs de configuration
+     * Traitement des attributs de configuration.
      *
-     * @param array $attrs Liste des attributs de configuration
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($attrs = [])
+    protected function parse($attrs = [])
     {
-        $defaults = [
-            'container_id'    => 'tiFyPartial-notice--' . $this->getIndex(),
-            'container_class' => '',
-            'text'            => 'Lorem ipsum dolor site amet',
-            'dismissible'     => false,
-            'type'            => 'info'
-        ];
-        $attrs = array_merge($defaults, $attrs);
+        $this->attributes['container_id'] = 'tiFyPartial-notice--' . $this->getIndex();
 
-        $class = "tiFyPartial-notice tiFyPartial-notice--" . $this->getId() . " tiFyPartial-notice--" . strtolower($attrs['type']);
-        $attrs['container_class'] = $attrs['container_class']
-            ? $class . " " . $attrs['container_class']
+        parent::parse($attrs);
+
+        $class = "tiFyPartial-notice tiFyPartial-notice--" . $this->getId() . " tiFyPartial-notice--" . strtolower($this->attributes['type']);
+        $this->attributes['container_class'] = $this->attributes['container_class']
+            ? $class . " " . $this->attributes['container_class']
             : $class;
 
-        if ($attrs['dismissible'] !== false) :
-            $attrs['dismissible'] = is_bool($attrs['dismissible'])
+        if ($this->attributes['dismissible'] !== false) :
+            $this->attributes['dismissible'] = is_bool($attrs['dismissible'])
                 ? '&times;'
-                : (string)$attrs['dismissible'];
+                : (string)$this->attributes['dismissible'];
         endif;
-
-        return $attrs;
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */
-    final protected function display()
+    protected function display()
     {
-        ob_start();
-        self::tFyAppGetTemplatePart('notice', $this->getId(), $this->compact());
-
-        return ob_get_clean();
+        return $this->appTemplateRender('notice', $this->compact());
     }
 }

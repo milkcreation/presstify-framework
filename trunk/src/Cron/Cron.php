@@ -47,7 +47,7 @@ final class Cron extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('init');
         $this->appAddAction('tify_templates_register');

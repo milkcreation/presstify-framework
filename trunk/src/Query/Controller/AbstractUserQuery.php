@@ -84,12 +84,12 @@ abstract class AbstractUserQuery implements QueryInterface
         endif;
 
         $name = 'tify.query.user.' . $user->ID;
-        if (! $this->appHasContainer($name)) :
+        if (! $this->appServiceHas($name)) :
             $controller = $this->getItemController();
-            $this->appAddContainer($name, new $controller($user));
+            $this->appServiceShare($name, new $controller($user));
         endif;
 
-        return $this->appGetContainer($name);
+        return $this->appServiceGet($name);
     }
 
     /**

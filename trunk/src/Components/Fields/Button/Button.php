@@ -15,60 +15,60 @@
 
 namespace tiFy\Components\Fields\Button;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
- *      @var string $before Contenu placé avant le champ
- *      @var string $after Contenu placé après le champ
- *      @var array $attrs Liste des propriétés de la balise HTML
- *      @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value"
- *      @var string $content Contenu de la balise HTML
- * }
- */
-class Button extends AbstractFactory
+class Button extends AbstractFieldController
 {
     /**
-     * Traitement des attributs de configuration
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var array $attrs Liste des propriétés de la balise HTML.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var string $type Type de bouton. button par défaut.
+     *      @var string $content Contenu de la balise HTML.
+     * }
+     */
+    protected $attributes = [
+        'before'  => '',
+        'after'   => '',
+        'attrs'   => [],
+        'name'    => '',
+        'value'   => '',
+        'type'    => 'button',
+        'content' => ''
+    ];
+
+    /**
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
+        $this->attributes['content'] = __('Envoyer', 'tify');
 
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before'  => '',
-            'after'   => '',
-            'attrs'   => [],
-            'name'    => '',
-            'value'   => '',
-            'content' => __('Envoyer', 'tify')
-        ];
-        $args = array_merge($defaults, $args);
+        parent::parse($attrs);
 
-        if (!isset($args['attrs']['id'])) :
-            $args['attrs']['id'] = 'tiFyField-button--' . $this->getIndex();
+        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attributes['attrs']['id'] = 'tiFyField-button--' . $this->getIndex();
         endif;
 
-        if (!isset($args['attrs']['type'])) :
-            $args['attrs']['type'] = 'button';
+        if (!isset($this->attributes['attrs']['type'])) :
+            $this->attributes['attrs']['type'] = $this->attributes['type'];
         endif;
-
-        return $args;
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */
-    final protected function display()
+    protected function display()
     {
         ob_start();
 ?><?php $this->before(); ?><button <?php $this->attrs(); ?>><?php $this->content(); ?></button><?php $this->after(); ?><?php

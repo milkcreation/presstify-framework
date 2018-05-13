@@ -86,12 +86,12 @@ abstract class AbstractTermQuery implements QueryInterface
         endif;
 
         $name = 'tify.query.term.' . $term->term_id;
-        if (! $this->appHasContainer($name)) :
+        if (! $this->appServiceHas($name)) :
             $controller = $this->getItemController();
-            $this->appAddContainer($name, new $controller($term));
+            $this->appServiceShare($name, new $controller($term));
         endif;
 
-        return $this->appGetContainer($name);
+        return $this->appServiceGet($name);
     }
 
     /**

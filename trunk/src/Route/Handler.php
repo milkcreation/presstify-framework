@@ -76,7 +76,7 @@ class Handler extends AppController
         $response->getBody()->write($body);
 
         // Affichage de la sortie
-        $route->getContainer('emitter')->emit($response);
+        $this->appServiceGet('tfy.route.emitter')->emit($response);
         exit;
     }
 
