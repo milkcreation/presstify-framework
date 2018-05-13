@@ -124,7 +124,7 @@ class FormNoticesController extends AbstractCommonDependency
     public function add($code, $message, $data = [])
     {
         $id = Str::random();
-        Arr::add($this->notices, "{$code}.{$id}", $message);
+        Arr::set($this->notices, "{$code}.{$id}", $message);
 
         $data = array_merge(
             [
@@ -132,7 +132,7 @@ class FormNoticesController extends AbstractCommonDependency
             ],
             (array)$data
         );
-        Arr::add($this->datas, "{$code}.{$id}", $message);
+        Arr::set($this->datas, "{$code}.{$id}", $message);
     }
 
     /**
@@ -221,7 +221,7 @@ class FormNoticesController extends AbstractCommonDependency
      *
      * @return string
      */
-    public function display( $code = 'error' )
+    public function display($code = 'error')
     {
         if($notices = $this->get($code)) :
             $count = count($notices);
@@ -239,7 +239,7 @@ class FormNoticesController extends AbstractCommonDependency
         $args['text'] = $notices ? $text : '';
         $args['type'] = $code;
 
-        $output = (string)Partial::Notice($args, false);
+        $output = Partial::Notice($args);
 
         return $output;
     }

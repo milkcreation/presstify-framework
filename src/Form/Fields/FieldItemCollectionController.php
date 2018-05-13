@@ -42,11 +42,35 @@ class FieldItemCollectionController extends Collection
      */
     public function getField($slug)
     {
-        if ($key = $this->search(function ($item) use ($slug) {
+        $key = $this->search(function ($item) use ($slug) {
             return $item->getSlug() === $slug;
-        })) :
+        });
+
+        if ($key !== false) :
             return $this->get($key);
         endif;
+    }
+
+    /**
+     * Vérification d'existance de groupe.
+     *
+     * @return bool
+     */
+    public function hasGroup()
+    {
+        return !empty($this->max(function($item){return $item->get('group', 0);}));
+    }
+
+    /**
+     * Récupération de la liste des champs par ordre d'affichage.
+     *
+     * @return FieldItemController[]
+     */
+    public function byGroup()
+    {
+        return $this->groupBy(function (FieldItemController $item) {
+            return $item->getGroup();
+        });
     }
 
     /**

@@ -145,7 +145,7 @@ class Handle extends AppController
      */
     public function replace($data = [], $format = null)
     {
-        return $this->db->sql()->replace($this->Db->getTableName(), $data, $format);
+        return $this->db->sql()->replace($this->db->getTableName(), $data, $format);
     }
 
     /**
@@ -153,7 +153,7 @@ class Handle extends AppController
      */
     public function delete($where, $where_format = null)
     {
-        return $this->db->sql()->delete($this->Db->getTableName(), $where, $where_format);
+        return $this->db->sql()->delete($this->db->getTableName(), $where, $where_format);
     }
 
     /**

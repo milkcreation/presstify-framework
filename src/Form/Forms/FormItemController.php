@@ -195,7 +195,7 @@ class FormItemController extends AbstractCommonDependency
      */
     private function _initAttributes($attrs = [])
     {
-        $this->attributes = $this->recursiveParseArgs($this->attributes, $attrs);
+        $this->attributes = $this->recursiveParseArgs($attrs, $this->attributes);
     }
 
     /**
@@ -251,15 +251,12 @@ class FormItemController extends AbstractCommonDependency
 
         // Ordonnancement
         $this->fields = new FieldItemCollectionController($fields);
-        $groups = $this->fields->groupBy(function($item) {
-            return $item->getGroup();
-        });
-        foreach($groups as $group) :
-            $max = $group->max(function($item){$item->getOrder();}) ? : count($group);
+        foreach($this->fields->byGroup() as $group) :
+            $max = $group->max(function($item){return $item->get('order', 0);}) ? : count($group);
             $pad = 0;
             $group->each(function($item, $key) use(&$pad, $max) {
                 $number = 1000*($item->getGroup()+1);
-                $order = $item->getOrder() ? : ++$pad+$max;
+                $order = $item->get('order', 0) ? : ++$pad+$max;
                 return $item->setOrder(absint($number + $order));
             });
         endforeach;
@@ -362,15 +359,17 @@ class FormItemController extends AbstractCommonDependency
     }
 
     /**
-     * Vérification d'existance d'un addon actif.
+     * Récupération d'une option d'un addon.
      *
      * @param string $name Nom de qualification de l'addon.
+     * @param string $key Clé d'index de l'option à récupérer.
+     * @param mixed $default Valeur de retour par défaut.
      *
-     * @return bool
+     * @return mixed
      */
-    public function hasAddon($name)
+    public function getAddonOption($name, $key, $default = '')
     {
-        return array_keys($this->addons, $name);
+        return $this->get("addons.{$name}.$key", $default);
     }
 
     /**
@@ -385,19 +384,6 @@ class FormItemController extends AbstractCommonDependency
         return $this->get("addons.{$name}", []);
     }
 
-    /**
-     * Récupération d'une option d'un addon.
-     *
-     * @param string $name Nom de qualification de l'addon.
-     * @param string $key Clé d'index de l'option à récupérer.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function getAddonOption($name, $key, $default = '')
-    {
-        return $this->get("addons.{$name}.$key", $default);
-    }
 
     /**
      * Récupération de la méthode de soumission du formulaire.
@@ -480,6 +466,18 @@ class FormItemController extends AbstractCommonDependency
     public function getUid()
     {
         return $this->getPrefix() . $this->getName();
+    }
+
+    /**
+     * Vérification d'existance d'un addon actif.
+     *
+     * @param string $name Nom de qualification de l'addon.
+     *
+     * @return bool
+     */
+    public function hasAddon($name)
+    {
+        return in_array($name, array_keys($this->addons));
     }
 
     /**

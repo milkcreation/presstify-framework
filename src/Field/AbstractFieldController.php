@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
 use tiFy\Field\Field;
+use tiFy\Kernel\Tools;
 
 abstract class AbstractFieldController extends AppController
 {
@@ -108,11 +109,269 @@ abstract class AbstractFieldController extends AppController
      *
      * @return void
      */
-    protected function boot()
+    final protected function boot()
     {
         if (method_exists($this, 'init')) :
             $this->appAddAction('init');
         endif;
+    }
+
+    /**
+     * Affichage du contenu placé après le champ
+     *
+     * @return void
+     */
+    public function after()
+    {
+        echo $this->get('after', '');
+    }
+
+    /**
+     * Récupération de la liste des attributs de configuration.
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Affichage de la liste des attributs de balise
+     *
+     * @return string
+     */
+    public function attrs()
+    {
+        echo Tools::Html()->parseAttrs($this->get('attrs', []));
+    }
+
+    /**
+     * Affichage du contenu placé avant le champ
+     *
+     * @return void
+     */
+    public function before()
+    {
+        echo $this->get('before', '');
+    }
+
+    /**
+     * Récupération une liste d'attributs de configuration.
+     *
+     * @param string[] $keys Clé d'index des attributs à retourner.
+     *
+     * @return array
+     */
+    public function compact($keys = [])
+    {
+        if (empty($keys)) :
+            return $this->all();
+        endif;
+
+        $attrs = [];
+        foreach ($keys as $key) :
+            $attrs[$key] = $this->get($key);
+        endforeach;
+
+        return $attrs;
+    }
+
+    /**
+     * Affichage du contenu de la balise champ
+     *
+     * @return void
+     */
+    public function content()
+    {
+        echo $this->get('content', '');
+    }
+
+    /**
+     * Affichage.
+     *
+     * @return string
+     */
+    abstract protected function display();
+
+    /**
+     * Récupération d'un attribut de configuration.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function get($key, $default = null)
+    {
+        return Arr::get($this->attributes, $key, $default);
+    }
+
+    /**
+     * Récupération d'un attribut de balise HTML.
+     *
+     * @param string $key Clé d'indexe de l'attribut.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return string
+     */
+    public function getAttr($key, $default = '')
+    {
+        return Arr::get($this->attributes, "attrs.{$key}", $default);
+    }
+
+    /**
+     * Récupération de la liste des attributs HTML.
+     *
+     * @return array
+     */
+    public function getAttrs()
+    {
+        return Tools::Html()->parseAttrs($this->get('attrs', []), false);
+    }
+
+    /**
+     * Récupération de l'identifiant de qualification du controleur.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Récupération de l'indice de la classe courante.
+     *
+     * @return int
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
+     * Récupération de l'attribut de configuration de la qualification de soumission du champ "name"
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->get('name', '');
+    }
+
+    /**
+     * Récupération des attributs d'une option de liste de sélection selon sa valeur
+     *
+     * @param mixed $value Valeur de l'option à récupérer
+     *
+     * @return null|array
+     */
+    public function getOption($value)
+    {
+        if (!$options = $this->getOptions()) :
+            return null;
+        endif;
+
+        foreach($options as $option) :
+            if ($option['value'] == $value) :
+                return $option;
+            endif;
+        endforeach;
+
+        return null;
+    }
+
+    /**
+     * Récupération des attributs des options de liste de sélection
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->get('options', []);
+    }
+
+    /**
+     * Récupération des attributs des options de liste de sélection
+     *
+     * @return string[]
+     */
+    public function getOptionValues()
+    {
+        if (!$options = $this->getOptions()) :
+            return [];
+        endif;
+
+        return array_column($options, 'value');
+    }
+
+    /**
+     * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->get('value', null);
+    }
+
+    /**
+     * Vérification d'existance d'un attribut de configuration.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     *
+     * @return bool
+     */
+    public function has($key)
+    {
+        return Arr::has($this->attributes, $key);
+    }
+
+    /**
+     * Vérification d'existance d'un attribut de balise HTML.
+     *
+     * @param string $key Clé d'indexe de l'attribut.
+     *
+     * @return string
+     */
+    public function hasAttr($key)
+    {
+        return Arr::has($this->attributes, "attrs.{$key}");
+    }
+
+    /**
+     * Vérification de correspondance entre la valeur de coche et celle du champ.
+     *
+     * @return bool
+     */
+    public function isChecked()
+    {
+        if (!$this->issetAttr('value')) :
+            return false;
+        endif;
+
+        return $this->get('checked') === $this->getValue();
+    }
+
+    /**
+     * Récupération de la liste des clés d'indexes des attributs de configuration.
+     *
+     * @return string[]
+     */
+    public function keys()
+    {
+        return array_keys($this->attributes);
+    }
+
+    /**
+     * Affichage du contenu de la liste de selection
+     *
+     * @return void
+     */
+    public function options()
+    {
+        echo WalkerOptions::display($this->get('options', []), ['selected' => $this->getValue()]);
     }
 
     /**
@@ -170,10 +429,10 @@ abstract class AbstractFieldController extends AppController
      *
      * @return array
      */
-    protected function parseValue($args = [])
+    protected function parseValue($attrs = [])
     {
         if (isset($attrs['value'])) :
-            $this->attributes['attrs']['value'] = $args['value'];
+            $this->attributes['attrs']['value'] = $attrs['value'];
             unset($attrs['name']);
         endif;
     }
@@ -198,9 +457,9 @@ abstract class AbstractFieldController extends AppController
         endif;
 
         $_options = [];
-        $id = 0;
+        $i = 0;
         foreach($options as $k => $v) :
-            if (is_int($k)) :
+            if (is_numeric($k)) :
                 if (!is_array($v)) :
                     $v = [
                         'label' => $v,
@@ -219,7 +478,7 @@ abstract class AbstractFieldController extends AppController
             endif;
             $option = array_merge(
                 [
-                    'id'     => $id++,
+                    'name'     => $i++,
                     'group'  => false,
                     'attrs'  => [],
                     'parent' => ''
@@ -254,48 +513,18 @@ abstract class AbstractFieldController extends AppController
     }
 
     /**
-     * Récupération de la liste des attributs de configuration.
+     * Définition d'un attribut de balise HTML
      *
-     * @return array
+     * @param string $key Clé d'indexe de l'attribut.
+     * @param string $value Valeur de l'attribut.
+     *
+     * @return $this
      */
-    public function all()
+    public function setAttr($key, $value)
     {
-        return $this->attributes;
-    }
+        Arr::set($this->attributes, "attrs.{$key}", $value);
 
-    /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
-    }
-
-    /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     *
-     * @return bool
-     */
-    public function has($key)
-    {
-        return Arr::has($this->attributes, $key);
-    }
-
-    /**
-     * Récupération de la liste des clés d'indexes des attributs de configuration.
-     *
-     * @return string[]
-     */
-    public function keys()
-    {
-        return array_keys($this->attributes);
+        return $this;
     }
 
     /**
@@ -309,258 +538,11 @@ abstract class AbstractFieldController extends AppController
     }
 
     /**
-     * Récupération une liste d'attributs de configuration.
-     *
-     * @param string[] $keys Clé d'index des attributs à retourner.
-     *
-     * @return array
-     */
-    public function compact($keys = [])
-    {
-        if (empty($keys)) :
-            return $this->all();
-        endif;
-
-        $attrs = [];
-        foreach ($keys as $key) :
-            $attrs[$key] = $this->get($key);
-        endforeach;
-
-        return $attrs;
-    }
-
-    /**
-     * Récupération de l'identifiant de qualification du controleur.
-     *
-     * @return string
-     */
-    final public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Récupération de l'indice de la classe courante.
-     *
-     * @return int
-     */
-    public function getIndex()
-    {
-        return $this->index;
-    }
-
-    /**
-     * Récupération de l'attribut de configuration de la qualification de soumission du champ "name"
-     *
-     * @return string
-     */
-    protected function getName()
-    {
-        return $this->get('name', '');
-    }
-
-    /**
-     * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value"
-     *
-     * @return mixed
-     */
-    protected function getValue()
-    {
-        return $this->get('value', null);
-    }
-
-    /**
-     * Définition d'un attribut de balise HTML
-     *
-     * @param string $key Clé d'indexe de l'attribut.
-     * @param string $value Valeur de l'attribut.
-     *
-     * @return $this
-     */
-    protected function setAttr($key, $value)
-    {
-        Arr::set($this->attributes, "attrs.{$key}", $value);
-
-        return $this;
-    }
-
-    /**
-     * Récupération d'un attribut de balise HTML.
-     *
-     * @param string $key Clé d'indexe de l'attribut.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return string
-     */
-    public function getAttr($key, $default = '')
-    {
-        return Arr::get($this->attributes, "attrs.{$key}", $default);
-    }
-
-    /**
-     * Vérification d'existance d'un attribut de balise HTML.
-     *
-     * @param string $key Clé d'indexe de l'attribut.
-     *
-     * @return string
-     */
-    final public function hasAttr($key)
-    {
-        return Arr::has($this->attributes, "attrs.{$key}");
-    }
-
-    /**
-     * Récupération de la liste des attributs HTML.
-     *
-     * @return array
-     */
-    public function getAttrs()
-    {
-        $html_attrs = [];
-
-        if ($attrs = $this->get('attrs')) :
-            foreach ($attrs as $k => $v) :
-                if (is_array($v)) :
-                    $v = rawurlencode(json_encode($v));
-                endif;
-                if (is_int($k)) :
-                    $html_attrs[]= "{$v}";
-                else :
-                    $html_attrs[]= "{$k}=\"{$v}\"";
-                endif;
-            endforeach;
-        endif;
-
-        return $html_attrs;
-    }
-
-    /**
-     * Récupération des attributs des options de liste de sélection
-     *
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->get('options', []);
-    }
-
-    /**
-     * Récupération des attributs des options de liste de sélection
-     *
-     * @return string[]
-     */
-    final public function getOptionValues()
-    {
-        if (!$options = $this->getOptionList()) :
-            return [];
-        endif;
-
-        return array_column($options, 'value');
-    }
-
-    /**
-     * Récupération des attributs d'une option de liste de sélection selon sa valeur
-     *
-     * @param mixed $value Valeur de l'option à récupérer
-     *
-     * @return null|array
-     */
-    public function getOption($value)
-    {
-        if (!$options = $this->getOptionList()) :
-            return null;
-        endif;
-
-        foreach($options as $option) :
-            if ($option['value'] == $value) :
-                return $option;
-            endif;
-        endforeach;
-
-        return null;
-    }
-
-    /**
-     * Affichage du contenu placé avant le champ
-     *
-     * @return void
-     */
-    final public function before()
-    {
-        echo $this->get('before', '');
-    }
-
-    /**
-     * Affichage du contenu placé après le champ
-     *
-     * @return void
-     */
-    final public function after()
-    {
-        echo $this->get('after', '');
-    }
-
-    /**
-     * Affichage de la liste des attributs de balise
-     *
-     * @return string
-     */
-    final public function attrs()
-    {
-        if (!$html_attrs = $this->getAttrs()) :
-            return '';
-        endif;
-
-        echo implode(' ', $html_attrs);
-    }
-
-    /**
-     * Affichage du contenu de la balise champ
-     *
-     * @return void
-     */
-    final public function content()
-    {
-        echo $this->get('content', '');
-    }
-
-    /**
-     * Affichage du contenu de la liste de selection
-     *
-     * @return void
-     */
-    final public function options()
-    {
-       echo WalkerOptions::output($this->get('options', []), ['selected' => $this->getValue()]);
-    }
-
-    /**
-     * Vérification de correspondance entre la valeur de coche et celle du champ.
-     *
-     * @return bool
-     */
-    final public function isChecked()
-    {
-        if (!$this->issetAttr('value')) :
-            return false;
-        endif;
-
-        return $this->get('checked') === $this->getValue();
-    }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    abstract protected function display();
-
-    /**
      * Récupération de l'affichage du controleur depuis l'instance.
      *
      * @return string
      */
-    final public function __toString()
+    public function __toString()
     {
         return $this->display();
     }

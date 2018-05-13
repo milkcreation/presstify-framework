@@ -44,7 +44,7 @@ class File extends AbstractFieldController
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($args = [])
     {
         parent::parse($args);
 

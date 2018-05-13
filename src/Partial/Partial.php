@@ -19,11 +19,15 @@ use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
 use tiFy\Components\Partials\Breadcrumb\Breadcrumb;
 use tiFy\Components\Partials\Notice\Notice;
+use tiFy\Components\Partials\Sidebar\Sidebar;
+use tiFy\Components\Partials\Table\Table;
 use tiFy\Components\Partials\Tag\Tag;
 
 /**
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
  * @method static Notice Notice(string $id = null,array $attrs = [])
+ * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
+ * @method static Table Table(string $id = null,array $attrs = [])
  * @method static Tag Tag(string $id = null,array $attrs = [])
  */
 final class Partial extends AppController

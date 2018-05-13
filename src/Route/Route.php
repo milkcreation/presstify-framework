@@ -16,7 +16,6 @@
 namespace tiFy\Route;
 
 use InvalidArgumentException;
-use League\Container\Container;
 use League\Route\RouteCollection;
 use League\Route\Http\Exception\NotFoundException;
 use League\Route\Http\Exception\MethodNotAllowedException;
@@ -27,16 +26,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use tiFy\Apps\AppController;
 use tiFy\tiFy;
+use tiFy\Route\View;
 use Zend\Diactoros\Response\SapiEmitter;
 
 final class Route extends AppController
 {
-    /**
-     * Classe de rappel du conteneur d'injection de dépendances.
-     * @var Container
-     */
-    private $container;
-
     /**
      * Classe de rappel de la reponse de la requête globale.
      * @var ResponseInterface
@@ -101,38 +95,37 @@ final class Route extends AppController
      */
     public function appBoot()
     {
-        // Déclaration des dépendances
-        $this->container = new Container();
+        $this->appServiceAdd(View::class);
 
         // Définition du traitement de la réponse
-        $this->container->share('tfy.route.response', function () {
-            $response = new Response;
+        $this->appServiceShare('tfy.route.response', function () {
+            $response = new Response();
 
             return (new DiactorosFactory())->createResponse($response);
         });
 
         // Définition du traitement de la requête
-        $this->container->share('tfy.route.request', function () {
+        $this->appServiceShare('tfy.route.request', function () {
             return (new DiactorosFactory())->createRequest(tiFy::instance()->request());
         });
 
         // Définition du traitement de l'affichage
-        $this->container->share('tfy.route.emitter', new SapiEmitter());
+        $this->appServiceShare('tfy.route.emitter', new SapiEmitter());
 
         // Définition du traitement des routes
-        $this->container->share('tfy.route.collection', new RouteCollection($this->container));
+        $this->appServiceShare('tfy.route.collection', new RouteCollection(tiFy::instance()->container()));
 
         // Déclaration des événements
-        $this->appAddAction('init', null, 0);
+        $this->appAddAction('wp_loaded', null, 0);
         $this->appAddAction('pre_get_posts', null, 0);
     }
 
     /**
-     * Initialisation globale de Wordpress.
+     * A l'issue du chargement complet de Wordpress.
      *
      * @return void
      */
-    public function init()
+    public function wp_loaded()
     {
         do_action('tify_route_register', $this);
 
@@ -169,9 +162,9 @@ final class Route extends AppController
 
         // Traitement des routes
         try {
-            $this->response = $this->getContainer('collection')->dispatch(
-                $this->getContainer('request'),
-                $this->getContainer('response')
+            $this->response = $this->appServiceGet('tfy.route.collection')->dispatch(
+                $this->appServiceGet('tfy.route.request'),
+                $this->appServiceGet('tfy.route.response')
             );
         } catch (NotFoundException $e) {
 
@@ -232,7 +225,7 @@ final class Route extends AppController
         $scheme = $this->appRequest()->getScheme();
         $host = $this->appRequest()->getHost();
 
-        return $this->getContainer('collection')->map(
+        return $this->appServiceGet('tfy.route.collection')->map(
             $method,
             $path,
             new Handler($name, $this->map[$name])
@@ -240,18 +233,6 @@ final class Route extends AppController
             ->setName($name)
             ->setScheme($scheme)
             ->setHost($host);
-    }
-
-    /**
-     * Récupération du conteneur d'injection de dépendances
-     *
-     * @param string $alias response|request|emitter|collection
-     *
-     * @return Container
-     */
-    public function getContainer($alias)
-    {
-        return $this->container->get('tfy.route.' . $alias);
     }
 
     /**
@@ -306,7 +287,7 @@ final class Route extends AppController
     public function url($name, $replacements = [])
     {
         try {
-            $router = $this->getContainer('collection');
+            $router = $this->appServiceGet('tfy.route.collection');
             $route = $router->getNamedRoute($name);
             $host = $route->getHost();
             $port = $this->appRequest()->getPort();

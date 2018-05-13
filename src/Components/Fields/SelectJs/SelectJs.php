@@ -267,7 +267,7 @@ class SelectJs extends AbstractFieldController
      *
      * @return mixed
      */
-    protected function getValue()
+    public function getValue()
     {
         $value = $this->get('value', null);
 

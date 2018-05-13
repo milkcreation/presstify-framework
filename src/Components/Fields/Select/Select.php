@@ -50,7 +50,7 @@ class Select extends AbstractFieldController
      */
     protected function parse($attrs = [])
     {
-        parent::parse($args);
+        parent::parse($attrs);
 
         if (!isset($this->attributes['attrs']['id'])) :
             $this->attributes['attrs']['id'] = 'tiFyField-select--' . $this->getIndex();
@@ -82,7 +82,7 @@ class Select extends AbstractFieldController
      *
      * @return mixed
      */
-    protected function getValue()
+    public function getValue()
     {
         $value = $this->get('value', null);
         if (is_null($value)) :

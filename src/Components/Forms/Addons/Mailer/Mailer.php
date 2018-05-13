@@ -4,7 +4,7 @@ namespace tiFy\Components\Forms\Addons\Mailer;
 
 use tiFy\Form\Addons\AbstractAddonController;
 use tiFy\Components\Addons\Mailer\AdminMailerOptions;
-use tiFy\Librairies\Mailer\Mailer as tFyLibMailer;
+use tiFy\Components\Tools\Mailer\Mailer as tFyLibMailer;
 use tiFy\Options\Options;
 
 class Mailer extends AbstractAddonController

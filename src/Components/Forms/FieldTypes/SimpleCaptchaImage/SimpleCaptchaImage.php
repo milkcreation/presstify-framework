@@ -69,7 +69,7 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
      */
     public function cb_field_init_params($field)
     {
-        if ($field->getType() !== 'simple-captcha-image') :
+        if ($field->get('type') !== 'simple-captcha-image') :
             return;
         endif;
 
@@ -83,7 +83,7 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
      */
     public function cb_handle_check_field(&$errors, $field)
     {
-        if ($field->getType() !== 'simple-captcha-image') :
+        if ($field->get('type') !== 'simple-captcha-image') :
             return;
         endif;
 

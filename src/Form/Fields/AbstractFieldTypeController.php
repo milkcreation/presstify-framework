@@ -24,7 +24,7 @@ abstract class AbstractFieldTypeController extends AbstractCommonDependency impl
      * Liste des classes de rappel active
      * @var array
      */
-    public $callbacks = [];
+    protected $callbacks = [];
 
     /**
      * Liste des attributs de configuration par defaut.
@@ -43,6 +43,14 @@ abstract class AbstractFieldTypeController extends AbstractCommonDependency impl
      * @var array
      */
     protected $support = [];
+
+    /**
+     * CONSTRUCTEUR
+     */
+    public function __construct()
+    {
+
+    }
 
     /**
      * {@inheritdoc}
@@ -92,7 +100,6 @@ abstract class AbstractFieldTypeController extends AbstractCommonDependency impl
                     ->callbacks()
                     ->set(
                         $hookname,
-                        $this->getName(),
                         $args
                     );
             elseif (isset($args['function']) && is_callable($args['function'])) :
@@ -104,7 +111,6 @@ abstract class AbstractFieldTypeController extends AbstractCommonDependency impl
                     ->callbacks()
                     ->set(
                         $hookname,
-                        $this->getName(),
                         $args['function'],
                         $args['order']
                     );
@@ -190,11 +196,6 @@ abstract class AbstractFieldTypeController extends AbstractCommonDependency impl
     public function display()
     {
         $output = "";
-
-        // Affichage de l'intitulé
-        if ($this->support('label')) :
-            //$output .= $this->displayLabel();
-        endif;
 
         $output .= $this->render();
 

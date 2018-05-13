@@ -45,7 +45,7 @@ final class Api extends AppController
         $classname = "tiFy\\Api\\{$name}\\{$name}";
 
         if (class_exists($classname)) :
-            $instance = $classname::make($attrs);
+            $instance = $classname::create($attrs);
             $this->appServiceShare($classname, $instance);
 
             return $this->appServiceGet($classname);
