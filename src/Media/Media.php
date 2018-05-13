@@ -24,7 +24,7 @@ class Media extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddFilter('wp_get_attachment_url', null, 10, 2);
         $this->appAddFilter('get_attached_file', null, 10, 2);

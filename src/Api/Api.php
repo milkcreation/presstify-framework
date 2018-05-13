@@ -22,7 +22,7 @@ final class Api extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         if ($apis = $this->appConfig()) :
             foreach ($apis as $api => $attrs) :
@@ -45,7 +45,7 @@ final class Api extends AppController
         $classname = "tiFy\\Api\\{$name}\\{$name}";
 
         if (class_exists($classname)) :
-            $instance = $classname::make($attrs);
+            $instance = $classname::create($attrs);
             $this->appServiceShare($classname, $instance);
 
             return $this->appServiceGet($classname);

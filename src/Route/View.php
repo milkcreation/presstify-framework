@@ -19,17 +19,6 @@ class View extends AppController
     private $args = [];
 
     /**
-     * Traitement de la classe comme une chaîne de caractère.
-     * @internal Affichage du rendu
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->render();
-    }
-
-    /**
      * Déclaration.
      *
      * @return self
@@ -80,5 +69,15 @@ class View extends AppController
     public function render()
     {
         return $this->appTemplateRender($this->path, $this->args);
+    }
+
+    /**
+     * Récupération de l'affichage depuis l'instance.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
     }
 }

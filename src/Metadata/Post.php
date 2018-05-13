@@ -27,7 +27,7 @@ final class Post extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('save_post', 'save', 10, 2);
     }
@@ -40,7 +40,7 @@ final class Post extends AppController
      *
      * @return void
      */
-    final public function save($post_id, $post)
+    public function save($post_id, $post)
     {
         // Bypass - S'il s'agit d'une routine de sauvegarde automatique.
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) :

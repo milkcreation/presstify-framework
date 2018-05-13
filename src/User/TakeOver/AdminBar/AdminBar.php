@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name TakeOver - AdminBar
  * @desc Controleur d'affichage d'une interface barre d'administration de bascule de compte utilisateur et de récupération de l'utilisateur principal
@@ -14,88 +15,71 @@
 
 namespace tiFy\User\TakeOver\AdminBar;
 
-use tiFy\Control\Control;
+use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\Partial;
 use tiFy\User\TakeOver\TakeOver;
 
-class AdminBar extends \tiFy\Control\Factory
+class AdminBar extends AbstractPartialController
 {
     /**
-     * DECLENCHEURS
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $take_over_id Identifiant de qualification du contrôleur d'affichage (requis).
+     *      @var bool $in_footer Affichage automatique dans le pied de page du site.
+     * }
      */
+    protected $attributes = [
+        'take_over_id'  => '',
+        'in_footer'     => true
+    ];
+
     /**
-     * Initialisation globale
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
-    final protected function init()
+    protected function init()
     {
         \wp_register_style(
             'tify_control-take_over_admin_bar',
-            self::tFyAppAssetsUrl('AdminBar.css', get_class()),
+            $this->appAsset('/TakeOver/AdminBar/css/styles.css', get_class()),
             [],
             171218
         );
     }
 
     /**
-     * Mise en file des scripts
+     * Mise en file des scripts.
      *
      * @return void
      */
-    final protected function enqueue_scripts()
+    protected function enqueue_scripts()
     {
-        Control::enqueue_scripts('take_over_action_link');
-        Control::enqueue_scripts('take_over_switcher_form');
+        $this->appServiceGet(Partial::class)->enqueue('take_over_action_link');
+        $this->appServiceGet(Partial::class)->enqueue('take_over_switcher_form');
         \wp_enqueue_style('tify_control-take_over_admin_bar');
     }
 
     /**
-     * CONTROLEURS
-     */
-    /**
-     * Affichage
-     *
-     * @param array $attrs {
-     *      Liste des attributs de configuration
-     *
-     *      @var string $take_over_id Identifiant de qualification du contrôleur d'affichage (requis).
-     *      @var bool $in_footer Affichage automatique dans le pied de page du site.
-     * }
-     * @param bool $echo Activation de l'affichage
+     * Affichage.
      *
      * @return string
      */
-    protected function display($attrs = [], $echo = true)
+    protected function display()
     {
-        // Traitement des attributs de configuration
-        $defaults = [
-            'take_over_id'  => '',
-            'in_footer'     => true
-        ];
-        $attrs = array_merge($defaults, $attrs);
-
-        /**
-         * @var string $take_over_id Identifiant de qualification du contrôleur d'affichage (requis).
-         * @var bool $in_footer Affichage automatique dans le pied de page du site.
-         */
-        extract($attrs);
-
-        // Bypass - L'identification de qualification ne fait référence à aucune classe de rappel déclarée
-        if (!$takeOver = TakeOver::get($take_over_id)) :
+        if (!$this->appServiceGet(TakeOver::class)->get($this->get('take_over_id'))) :
             return;
         endif;
 
         $output  = "";
-        $output .= "<div class=\"tiFyTakeOver-Control--admin_bar\">";
-        $output .= Control::TakeOverSwitcherForm(compact('take_over_id'));
-        $output .= Control::TakeOverActionLink(compact('take_over_id'));
+        $output .= "<div class=\"tiFyTakeOver-AdminBar\">";
+        $output .= $this->appServiceGet(Partial::class)->display('TakeOverSwitcherForm', ['take_over_id' => $this->get('take_over_id')]);
+        $output .= $this->appServiceGet(Partial::class)->display('TakeOverActionLink', ['take_over_id' => $this->get('take_over_id')]);
         $output .= "</div>";
 
         if ($in_footer) :
             $footer = function () use ($output) { echo $output; };
             \add_action((!is_admin() ? 'wp_footer' : 'admin_footer'), $footer);
-        elseif ($echo) :
-            echo $output;
         else :
             return $output;
         endif;

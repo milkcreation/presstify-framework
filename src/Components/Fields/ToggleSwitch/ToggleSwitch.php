@@ -19,33 +19,45 @@
 
 namespace tiFy\Components\Fields\ToggleSwitch;
 
-use tiFy\Field\AbstractFactory;
+use tiFy\Field\AbstractFieldController;
 use tiFy\Field\Field;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
- * @var string $before Contenu placé avant le champ
- * @var string $after Contenu placé après le champ
- * @var string $container_id Id HTML du conteneur du champ
- * @var string $container_class Classe HTML du conteneur du champ
- * @var string $name Attribut de configuration de la qualification de soumission du champ "name"
- * @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value"
- * @var string $label_on
- * @var string $label_off
- * @var bool|int|string $value_on
- * @var bool|int|string $value_off
- * }
- */
-class ToggleSwitch extends AbstractFactory
+class ToggleSwitch extends AbstractFieldController
 {
     /**
-     * Initialisation globale
+     * Liste des attributs de configuration.
+     * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $container_id Id HTML du conteneur du champ.
+     *      @var string $container_class Classe HTML du conteneur du champ.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var string $label_on
+     *      @var string $label_off
+     *      @var bool|int|string $value_on
+     *      @var bool|int|string $value_off
+     * }
+     */
+    protected $attributes = [
+        'before'          => '',
+        'after'           => '',
+        'container_id'    => '',
+        'container_class' => '',
+        'name'            => '',
+        'value'           => 'on',
+        'label_on'        => '',
+        'label_off'       => '',
+        'value_on'        => 'on',
+        'value_off'       => 'off',
+    ];
+
+    /**
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
-    final public function init()
+    public function init()
     {
         \wp_register_style(
             'tiFyFieldToggleSwitch',
@@ -62,52 +74,42 @@ class ToggleSwitch extends AbstractFactory
     }
 
     /**
-     * Mise en file des scripts
+     * Mise en file des scripts.
      *
      * @return void
      */
-    final public function enqueue_scripts()
+    public function enqueue_scripts()
     {
         \wp_enqueue_style('tiFyFieldToggleSwitch');
         \wp_enqueue_script('tiFyFieldToggleSwitch');
     }
 
     /**
-     * Traitement des attributs de configuration
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    final protected function parse($args = [])
+    protected function parse($attrs = [])
     {
-        // Pré-traitement des attributs de configuration
-        $args = parent::parse($args);
-
-        // Traitement des attributs de configuration
-        $defaults = [
-            'before'          => '',
-            'after'           => '',
+        $this->attributes = [
             'container_id'    => 'tiFyField-toggleSwitch--' . $this->getIndex(),
-            'container_class' => '',
-            'name'            => 'tiFyField-toggleSwitch-' . $this->getIndex(),
-            'value'           => 'on',
             'label_on'        => _x('Oui', 'tiFyFieldToggleSwitch', 'tify'),
-            'label_off'       => _x('Non', 'tiFyFieldToggleSwitch', 'tify'),
-            'value_on'        => 'on',
-            'value_off'       => 'off',
+            'label_off'       => _x('Non', 'tiFyFieldToggleSwitch', 'tify')
         ];
-        $args = array_merge($defaults, $args);
 
-        if (!isset($args['container_class'])) :
-            $args['container_class'] = 'tiFyField-toggleSwitch';
+        parent::parse($args);
+
+        if (!isset($this->attributes['container_class'])) :
+            $this->attributes['container_class'] = 'tiFyField-toggleSwitch';
         else :
-            $args['container_class'] = 'tiFyField-toggleSwitch ' . $args['container_class'];
+            $this->attributes['container_class'] = 'tiFyField-toggleSwitch ' . $args['container_class'];
         endif;
-
-        return $args;
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */

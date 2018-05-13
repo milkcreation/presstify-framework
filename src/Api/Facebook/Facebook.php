@@ -9,39 +9,45 @@ namespace tiFy\Api\Facebook;
 
 use tiFy\tiFy;
 use tiFy\Apps\AppTrait;
+use Facebook\Facebook as FacebookSdk;
+use Facebook\Authentication\AccessToken;
+use Facebook\Authentication\AccessTokenMetadata;
+use Facebook\GraphNodes\GraphUser;
 use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Exceptions\FacebookSDKException;
 
-class Facebook extends \Facebook\Facebook
+class Facebook extends FacebookSdk
 {
     use AppTrait;
 
     /**
-     * Instance de la classe
+     * Instance de la classe.
      * @var Facebook
      */
     private static $instance;
 
     /**
-     * Attributs de configuration du SDK Facebook
+     * Attributs de configuration du SDK Facebook.
      * @var array
      */
     protected $config = [];
 
-    /**var_dump($ModClass);
-     * Classe de rappel des modules actifs
+    /**
+     * Classe de rappel des modules actifs.
      * @var array
      */
     protected $mods = [];
 
     /**
-     * Classe de rappel du jeton d'accès d'un utilisateur connecté
-     * @var \Facebook\Authentication\AccessToken|null
+     * Classe de rappel du jeton d'accès d'un utilisateur connecté.
+     * @var null|AccessToken
      */
     private $accessToken;
 
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
+     *
+     * @param array $args Liste des attributs de configuration.
      *
      * @return void
      */
@@ -83,7 +89,7 @@ class Facebook extends \Facebook\Facebook
                     $callable = '';
                 endif;
 
-                $this->appShareContainer($ModClass, new $ModClass($callable));
+                $this->appServiceShare($ModClass, new $ModClass($callable));
             endforeach;
         endif;
 
@@ -92,7 +98,7 @@ class Facebook extends \Facebook\Facebook
     }
 
     /**
-     * Après le chargement complet de Wordpress
+     * A l'issue du chargement complet de Wordpress.
      *
      * @return void
      */
@@ -106,7 +112,7 @@ class Facebook extends \Facebook\Facebook
     }
 
     /**
-     * Initialisation
+     * Instanciation de la classe.
      *
      * @param array $attrs {
      *      Liste des attributs de configuration du SDK Facebook
@@ -128,7 +134,7 @@ class Facebook extends \Facebook\Facebook
      */
     public static function create($args = [])
     {
-        if (self::$instance instanceof Facebook) :
+        if (self::$instance instanceof static) :
             return self::$instance;
         else :
             return self::$instance = new static($args);
@@ -148,9 +154,9 @@ class Facebook extends \Facebook\Facebook
     }
 
     /**
-     * Connection à Facebook
+     * Connection à Facebook.
      *
-     * @param string $redirect_url Url de redirection OAuth valides
+     * @param string $redirect_url Url de redirection OAuth valides.
      *
      * @return array
      */
@@ -161,13 +167,13 @@ class Facebook extends \Facebook\Facebook
 
         /**
          * Classe de rappel du jeton d'authentification
-         * @var null|\Facebook\Authentication\AccessToken $accessToken
+         * @var null|AccessToken $accessToken
          */
         $accessToken = null;
 
         /**
          * Classe de rappel de traitement des métadonnées du jeton d'authentification
-         * @var null|\Facebook\Authentication\AccessTokenMetadata $tokenMetadata
+         * @var null|AccessTokenMetadata $tokenMetadata
          */
         $tokenMetadata = null;
 
@@ -268,7 +274,7 @@ class Facebook extends \Facebook\Facebook
         endif;
 
         // Bypass - La classe de rappel du jeton d'authentification n'est pas conforme
-        if (!$accessToken instanceof \Facebook\Authentication\AccessToken) :
+        if (!$accessToken instanceof AccessToken) :
             $error = new \WP_Error(
                 401,
                 __('Impossible de définir le jeton d\'authentification Facebook.', 'tify'),
@@ -279,7 +285,7 @@ class Facebook extends \Facebook\Facebook
         endif;
 
         // Bypass - La classe de rappel de traitement des métadonnées du jeton d'authentification
-        if (!$tokenMetadata instanceof \Facebook\Authentication\AccessTokenMetadata) :
+        if (!$tokenMetadata instanceof AccessTokenMetadata) :
             $error = new \WP_Error(
                 401,
                 __('Impossible de définir les données du jeton d\'authentification Facebook.', 'tify'),
@@ -300,7 +306,7 @@ class Facebook extends \Facebook\Facebook
     }
 
     /**
-     * Déconnection de Facebook
+     * Déconnection de Facebook.
      *
      * @return array
      */
@@ -315,11 +321,11 @@ class Facebook extends \Facebook\Facebook
     }
 
     /**
-     * Récupération d'informations utilisateur
+     * Récupération d'informations utilisateur.
      * @see https://developers.facebook.com/docs/graph-api/reference/user/
      * @see https://developers.facebook.com/docs/php/howto/example_retrieve_user_profile
      *
-     * @param array $fields Tableau indexés des champs à récupérer
+     * @param array $fields Tableau indexés des champs à récupérer.
      *
      * @return array
      */
@@ -330,7 +336,7 @@ class Facebook extends \Facebook\Facebook
 
         /**
          * Informations utilisateur
-         * @var \Facebook\GraphNodes\GraphUser $infos
+         * @var null|GraphUser $infos
          */
         $infos = null;
 
@@ -340,7 +346,7 @@ class Facebook extends \Facebook\Facebook
          */
         $error = null;
 
-        if (!$this->accessToken instanceof \Facebook\Authentication\AccessToken) :
+        if (!$this->accessToken instanceof AccessToken) :
             $error = new \WP_Error(
                 401,
                 __('Impossible de définir le jeton d\'authentification Facebook.', 'tify'),
@@ -372,7 +378,7 @@ class Facebook extends \Facebook\Facebook
     }
 
     /**
-     * Affichage de message d'erreur
+     * Affichage de message d'erreur.
      *
      * @param \WP_Error $e
      *
@@ -384,7 +390,7 @@ class Facebook extends \Facebook\Facebook
         $data = $e->get_error_data();
 
         // Affichage des erreurs
-        wp_die($e->get_error_message(), (! empty($data['title']) ? $data['title'] : __('Processus en erreur', 'tify')), $e->get_error_code());
+        \wp_die($e->get_error_message(), (! empty($data['title']) ? $data['title'] : __('Processus en erreur', 'tify')), $e->get_error_code());
         exit;
     }
 }

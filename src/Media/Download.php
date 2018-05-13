@@ -4,7 +4,7 @@ namespace tiFy\Media;
 
 use Symfony\Component\HttpFoundation\Request;
 use tiFy\Apps\AppController;
-use tiFy\Librairies\Cryptor\Cryptor;
+use tiFy\Components\Tools\Cryptor\Cryptor;
 
 class Download extends AppController
 {
@@ -19,7 +19,7 @@ class Download extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('admin_init');
         $this->appAddAction('tify_media_download_register');

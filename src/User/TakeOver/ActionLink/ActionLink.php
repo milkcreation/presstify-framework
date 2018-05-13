@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name TakeOver - ActionLink
  * @desc Controleur d'affichage de lien de récupération de l'utilisateur principal ou de bascule de compte utilisateur
@@ -14,19 +15,16 @@
 
 namespace tiFy\User\TakeOver\ActionLink;
 
+use tiFy\Kernel\Tools;
+use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\Partial;
 use tiFy\User\TakeOver\TakeOver;
 
-class ActionLink extends \tiFy\Control\Factory
+class ActionLink extends AbstractPartialController
 {
     /**
-     * CONTROLEURS
-     */
-    /**
-     * Affichage
-     *
-     * @param array $args {
-     *      Liste des attributs de configuration
-     *
+     * Liste des attributs de configuration.
+     * @var array $attrs {
      *      @var string $take_over_id Identifiant de qualification du contrôleur d'affichage (requis).
      *      @var int $user_id Identifiant de qualification de l'utilisateur (requis). Mais uniquement pour l'action 'switch'.
      *      @var string $action $action Type d'action. 'switch': prise de contrôle d'un utilisateur|'restore': Récupération de l'utilsateur principal (défaut).
@@ -34,64 +32,73 @@ class ActionLink extends \tiFy\Control\Factory
      *      @var array $attrs Attributs de la balise du lien. Hors 'href' défini automatiquement par le controleur.
      *      @var string $redirect_url Url de redirection après l'action.
      * }
-     * @param bool $echo Activation de l'affichage
+     */
+    protected $attributes = [
+        'take_over_id'  => '',
+        'user_id'       => 0,
+        'action'        => 'restore',
+        'text'          => '',
+        'attrs'         => [],
+        'redirect_url'  => ''
+    ];
+
+    /**
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
+     *
+     * @return array
+     */
+    protected function parse($attrs = [])
+    {
+        $this->attributes['redirect_url'] = home_url('/');
+
+        parent::parse($attrs);
+    }
+
+    /**
+     * Affichage.
      *
      * @return string
      */
-    protected function display($args = [], $echo = true)
+    protected function display()
     {
-        // Traitement des attributs de configuration
-        $defaults = [
-            'take_over_id'  => '',
-            'user_id'       => 0,
-            'action'        => 'restore',
-            'text'          => '',
-            'attrs'         => [],
-            'redirect_url'  => home_url('/')
-        ];
-        $_args = array_merge($defaults, $args);
-
-        /**
-         * @var string $take_over_id Identifiant de qualification du contrôleur d'affichage.
-         * @var int $user_id Identifiant de qualification de l'utilisateur (requis). Mais uniquement pour l'action 'switch'.
-         * @var string $action $action Type d'action. 'switch': prise de contrôle d'un utilisateur|'restore': Récupération de l'utilsateur principal (défaut).
-         * @var string $text Texte du bouton.
-         * @var array $attrs Attributs de la balise du lien. Hors 'href' défini automatiquement par le controleur.
-         * @var string $redirect_url Url de redirection après l'action.
-         */
-        extract($_args);
-
-        // Bypass - L'identification de qualification ne fait référence à aucune classe de rappel déclarée
-        if (!$takeOver = TakeOver::get($take_over_id)) :
+        if (!$takeOverController = $this->appServiceGet(TakeOver::class)->get($this->get('take_over_id'))) :
             return;
         endif;
 
-        switch($action) :
+        switch($this->get('action')) :
             case 'switch' :
                 // Bypass - L'utilisateur principal n'est pas habilité à utiliser l'interface
-                if (!$takeOver->isAuth($action)) :
+                if (!$takeOverController->isAuth($action)) :
                     return;
                 // Bypass - L'utilisateur n'existe pas
-                elseif (!$user = $takeOver->getUserData($user_id)) :
+                elseif (!$user = $takeOverController->getUserData($user_id)) :
                     return;
                 // Bypass - L'utilisateur n'est pas habilité à prendre le contrôle
-                elseif (!$takeOver->isAllowed($user->ID)) :
+                elseif (!$takeOverController->isAllowed($user->ID)) :
                     return;
                 endif;
 
-                // Définition de l'intitulé par défaut du lien si ce dernier n'est pas court-circuité dans les attributs personnalisés.
-                if (!isset($args['text'])) :
-                    $text = __('Naviguer comme', 'tify');
+                if (!$this->get('text')) :
+                    $this->set('text', __('Naviguer comme', 'tify'));
                 endif;
 
-                // Définition du titre de la balise par défaut si ce dernier n'est pas court-circuité dans les attributs personnalisés.
-                if (!isset($args['attrs']['title'])) :
-                    $attrs['title'] = sprintf(__('Naviguer sur le site en tant que %s', 'tify'), $user->display_name);
+                if (!$this->get('attrs.title')) :
+                    $this->set('attrs.title', sprintf(__('Naviguer sur le site en tant que %s', 'tify'), $user->display_name));
                 endif;
 
-                // Définition de l'url
-                $url = wp_nonce_url($redirect_url, 'tiFyTakeOver-switch');
-                $url = add_query_arg(['action' => $action, 'tfy_take_over_id' => $take_over_id, 'user_id' => $user->ID], $url);
+                $this->set(
+                    'attrs.href',
+                    add_query_arg(
+                        [
+                            'action' => $this->get('action'),
+                            'tfy_take_over_id' => $this->get('take_over_id'),
+                            'user_id' => $user->ID
+                        ],
+                        wp_nonce_url($this->get('redirect_url'), 'tiFyTakeOver-switch')
+                    )
+                );
                 break;
             case 'restore' :
                 // Bypass - L'utilisateur n'est pas autorisé à utiliser l'interface
@@ -99,42 +106,40 @@ class ActionLink extends \tiFy\Control\Factory
                     return;
                 endif;
 
-                // Définition de l'intitulé par défaut du lien si ce dernier n'est pas court-circuité dans les attributs personnalisés.
-                if (!isset($args['text'])) :
-                    $text = __('Rétablir', 'tify');
+                if (!$this->get('text')) :
+                    $this->set('text', __('Rétablir', 'tify'));
                 endif;
 
-                // Définition du titre de la balise par défaut si ce dernier n'est pas court-circuité dans les attributs personnalisés.
-                if (!isset($args['attrs']['title'])) :
-                    $attrs['title'] = __('Rétablissement l\'utilisateur principal', 'tify');
+                if (!$this->get('attrs.title')) :
+                    $this->set('attrs.title', __('Rétablissement l\'utilisateur principal', 'tify'));
                 endif;
 
-                // Définition de l'url
-                $url = wp_nonce_url($redirect_url, 'tiFyTakeOver-restore');
-                $url = add_query_arg(['action' => $action, 'tfy_take_over_id' => $take_over_id], $url);
+                $this->set(
+                    'attrs.href',
+                    add_query_arg(
+                        [
+                            'action' => $this->get('action'),
+                            'tfy_take_over_id' => $this->get('take_over_id')
+                        ],
+                        wp_nonce_url($this->get('redirect_url'), 'tiFyTakeOver-restore')
+                    )
+                );
+                break;
+            default:
+                return;
                 break;
         endswitch;
 
-        // Définition de la classe de qualification du lien.
-        $attrs['class'] = !isset($attrs['class']) ? "tiFyTakeOver-Control--action_link" : "tiFyTakeOver-Control--action_link " . $attrs['class'];
-
-        // Traitement des attributs de balise
-        $_attrs = "";
-        foreach ($attrs as $k => $v) :
-            if ($k === 'href') :
-                continue;
-            endif;
-
-            $_attrs .= " {$k}=\"{$v}\"";
-        endforeach;
-
-        // Affichage du controleur
-        $output = "<a href=\"{$url}\"{$_attrs}>{$text}</a>";
-
-        if ($echo) :
-            echo $output;
-        else :
-            return $output;
+        if (!$this->get('attrs.class')) :
+            $this->set('attrs.class', 'tiFyTakeOver-ActionLink tiFyTakeOver-ActionLink--' . $this->get('action'));
         endif;
+
+        return Partial::Tag(
+            [
+                'tag'       => 'a',
+                'attrs'     => Tools::Html()->parseAttrs($this->get('attrs', [])),
+                'content'   => $this->get('text')
+            ]
+        );
     }
 }

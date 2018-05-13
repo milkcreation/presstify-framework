@@ -4,7 +4,7 @@
  * @name Session
  * @desc Gestion d'enregistrement de données de session
  * @package presstiFy
- * @namespace tiFy\User\Login
+ * @namespace tiFy\User\Session
  * @version 1.1
  * @subpackage Core
  * @since 1.2.535
@@ -17,6 +17,7 @@ namespace tiFy\User\Session;
 
 use tiFy\Apps\AppController;
 use tiFy\Db\Db;
+use tiFy\Db\DbController;
 use tiFy\Cron\Cron;
 
 final class Session extends AppController
@@ -29,7 +30,7 @@ final class Session extends AppController
 
     /**
      * Classe de rappel de la base de données
-     * @var \tiFy\Db\Factory
+     * @var DbController
      */
     private $db;
 
@@ -38,7 +39,7 @@ final class Session extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         $this->appAddAction('init', null, 0);
         //$this->appAddAction('wp_footer');
@@ -113,11 +114,11 @@ final class Session extends AppController
      */
     public function register($name, $attrs = [])
     {
-        if ($this->has($name)) :
+        $alias = "tfy.user.session.{$name}";
+        if ($this->appServiceHas($alias)) :
             return null;
         endif;
 
-        $alias = "tfy.user.session.{$name}";
         $this->appServiceShare($alias, new Store($name, $attrs));
         array_push($this->sessionNames, $name);
 
@@ -155,7 +156,7 @@ final class Session extends AppController
      * Initialisation de la table de base de données
      * @see https://github.com/kloon/woocommerce-large-sessions
      *
-     * @return \tiFy\Db\Factory
+     * @return DbController
      */
     private function initDb()
     {
@@ -198,6 +199,7 @@ final class Session extends AppController
                 'keys'       => ['session_id' => ['cols' => 'session_id', 'type' => 'UNIQUE']],
             ]
         );
+
         $this->db->install();
 
         return $this->db;
@@ -206,13 +208,13 @@ final class Session extends AppController
     /**
      * Récupération de la base de données
      *
-     * @return \Exception|\tiFy\Db\Factory
+     * @return DbController
      *
      * @throws \Exception
      */
     public function getDb()
     {
-        if (! $this->db instanceof \tiFy\Db\Factory) :
+        if (! $this->db instanceof DbController) :
             throw new \Exception(__('La table de base de données de stockage des sessions est indisponible.', 'tify'), 500);
         endif;
 

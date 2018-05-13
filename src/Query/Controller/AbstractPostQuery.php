@@ -88,12 +88,12 @@ abstract class AbstractPostQuery implements QueryInterface
         endif;
 
         $name = 'tify.query.post.' . $post->ID;
-        if (! $this->appHasContainer($name)) :
+        if (! $this->appServiceHas($name)) :
             $controller = $this->getItemController();
-            $this->appAddContainer($name, new $controller($post));
+            $this->appServiceShare($name, new $controller($post));
         endif;
 
-        return $this->appGetContainer($name);
+        return $this->appServiceGet($name);
     }
 
     /**

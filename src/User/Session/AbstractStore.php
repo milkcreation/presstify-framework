@@ -6,12 +6,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
-use tiFy\App\Traits\App as TraitsApp;
+use tiFy\Apps\AppController;
 
-abstract class AbstractStore implements StoreInterface
+abstract class AbstractStore extends AppController implements StoreInterface
 {
-    use TraitsApp;
-
     /**
      * Nom de qualification de la session
      * @var string
@@ -78,46 +76,42 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * Initialisation globale
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
     public function init()
     {
-        // Initialisation de la liste des attributs de qualification de la session
         $this->initSession();
     }
 
     /**
-     * A l'issue de la définition de l'environnement Wordpress
+     * A l'issue de la définition de l'environnement Wordpress.
      *
      * @return void
      */
     public function wp_loaded()
     {
-        // Définition du cookie de session
         $this->setCookie();
     }
 
     /**
-     * Au moment de la deconnection
+     * Lors de la deconnection.
      *
      * @return void
      */
     public function wp_logout()
     {
-        // Destruction de la session
         $this->destroy();
     }
 
     /**
-     * A l'issue de l'execution de PHP
+     * A l'issue de l'execution de PHP.
      *
      * @return void
      */
     public function shutdown()
     {
-        // Sauvegarde des données en base
         $this->save();
     }
 
@@ -264,7 +258,7 @@ abstract class AbstractStore implements StoreInterface
      */
     public function getCookie()
     {
-        if (!$cookie = $this->appRequestGet($this->getCookieName(), '', 'COOKIE')) :
+        if (!$cookie = $this->appRequest('COOKIE')->get($this->getCookieName(), '')) :
             return false;
         endif;
 
@@ -347,7 +341,7 @@ abstract class AbstractStore implements StoreInterface
     public function getDb()
     {
         try {
-            $Db = Session::getDb();
+            $Db = $this->appServiceGet(Session::class)->getDb();
 
             return $Db;
         } catch (\Exception $e) {

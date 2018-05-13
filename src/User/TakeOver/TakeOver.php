@@ -29,7 +29,7 @@ class TakeOver extends AppController
      *
      * @return void
      */
-    public function boot()
+    public function appBoot()
     {
         // Activation des permissions de prises de contrôle de comptes utilisateurs
         if ($take_over = $this->appConfig('take_over', [], User::class)) :
@@ -73,7 +73,7 @@ class TakeOver extends AppController
      */
     final public function init()
     {
-        do_action('tify_user_take_over_register');
+        do_action('tify_user_take_over_register', $this);
     }
 
     /**
@@ -99,11 +99,11 @@ class TakeOver extends AppController
     /**
      * Récupération des classes de rappel de prise de contrôle de compte utilisateur
      *
-     * @param string $id Identifiant de qualification
+     * @param string $name Identifiant de qualification
      *
      * @return null|TakeOverController
      */
-    public function get($id)
+    public function get($name)
     {
         $alias = "tfy.user.take_over.{$name}";
         if ($this->appServiceHas($alias)) :

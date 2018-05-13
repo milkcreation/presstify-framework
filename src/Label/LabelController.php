@@ -2,6 +2,7 @@
 
 namespace tiFy\Label;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
 
@@ -130,6 +131,47 @@ class LabelController extends AppController
     }
 
     /**
+     * Définition d'un attribut.
+     *
+     * @param string $key Clé d'index de qualification de l'attribut.
+     * @param mixed $value Valeur de l'attribut.
+     *
+     * @return $this
+     */
+    public function set($key, $value)
+    {
+        Arr::set($this->attributes, $key, $value);
+
+        return $this;
+    }
+
+    /**
+     * Récupération de la liste des attributs définis.
+     *
+     * @param string $key Clé d'index de qualification de l'attribut.
+     * @param string $default Valeur de retour par défaut.
+     *
+     * @return string
+     */
+    public function all()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Récupération de la valeur d'un attribut défini.
+     *
+     * @param string $key Clé d'index de qualification de l'attribut.
+     * @param string $default Valeur de retour par défaut.
+     *
+     * @return string
+     */
+    public function get($key, $default = '')
+    {
+        return Arr::get($this->attributes, $key, $default);
+    }
+
+    /**
      * @return string
      */
     public function default_edit_item()
@@ -155,33 +197,6 @@ class LabelController extends AppController
         endif;
 
         return sprintf(__('Données %s %s', 'tify'), $determinant, $this->singular);
-    }
-
-    /**
-     * @param $label
-     * @param string $value
-     */
-    public function set($label, $value = '')
-    {
-        $this->Labels[$label] = $value;
-    }
-
-    /**
-     * @param null $label
-     * @param string $default
-     *
-     * @return array|mixed|string
-     */
-    public function get($label = null, $default = '')
-    {
-        if (!$label) :
-            return $this->Labels;
-        elseif (isset($this->Labels[$label])) :
-
-            return $this->Labels[$label];
-        endif;
-
-        return $default;
     }
 
     /**

@@ -129,14 +129,14 @@ class Profile extends AbstractMod
         $defaults = [
             'action'     => 'profile',
             'permissions' => ['email'],
-            'text'       => "<span class=\"dashicons dashicons-facebook-alt\" style=\"line-height:28px;\"></span>&nbsp;" . (!self::is() ? __('Associer avec Facebook', 'tify') : __('Dissocier de Facebook', 'tify')),
+            'text'       => "<span class=\"dashicons dashicons-facebook-alt\" style=\"line-height:28px;\"></span>&nbsp;" . (!$this->is() ? __('Associer avec Facebook', 'tify') : __('Dissocier de Facebook', 'tify')),
             'attrs'      => [
                 'class' => 'button-primary'
             ]
         ];
         $args = array_merge($defaults, $args);
 
-        $args['attrs']['href'] = self::url($args['action'], $args['permissions']);
+        $args['attrs']['href'] = $this->url($args['action'], $args['permissions']);
 
         echo Partial::Tag(
             [
@@ -173,7 +173,7 @@ class Profile extends AbstractMod
         // Récupération des données utilisateur
         $user_id = get_current_user_id();
 
-        if (!self::is($user_id)) :
+        if (!$this->is($user_id)) :
             // Tentative de connection
             $response = $fb->connect(
                 add_query_arg(
