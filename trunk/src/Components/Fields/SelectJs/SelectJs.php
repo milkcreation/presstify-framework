@@ -130,7 +130,7 @@ class SelectJs extends AbstractFieldController
      */
     public function enqueue_scripts()
     {
-        Partial::enqueue('spinkit', 'three-bounce');
+        $this->appServiceGet(Partial::class)->enqueue('spinkit', 'three-bounce');
         \wp_enqueue_style('tifyselect');
         \wp_enqueue_script('tiFyFieldSelectJs');
     }

@@ -352,7 +352,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     public function getRelPath($classname)
     {
         if (!$relPath = Arr::get($this->apps, "{$classname}.relPath", '')) :
-            $relPath = (new fileSystem())->makePathRelative($this->tfy->absDir(), $this->getDirname($classname));
+            $relPath = (new fileSystem())->makePathRelative($this->getDirname($classname), $this->tfy->absPath());
             $this->setAttr($classname, 'relPath', $relPath);
         endif;
 
