@@ -15,39 +15,39 @@ class PostTypeController extends AppController
     protected $name = '';
 
     /**
-     * Liste des attributs de post par defaut.
-     * @var array
-     */
-    protected $defaults = [
-        'description'           => '',
-        'public'                => true,
-        'exclude_from_search'   => false,
-        'publicly_queryable'    => true,
-        'show_ui'               => true,
-        'show_in_nav_menus'     => true,
-        'show_in_menu'          => true,
-        'show_in_admin_bar'     => true,
-        'menu_position'         => null,
-        'menu_icon'             => false,
-        'capability_type'       => 'page',
-        'map_meta_cap'          => null,
-        'hierarchical'          => false,
-        'supports'              => ['title', 'editor', 'thumbnail'],
-        'register_meta_box_cb'  => '',
-        'taxonomies'            => [],
-        'has_archive'           => true,
-        'permalink_epmask'      => EP_PERMALINK,
-        'query_var'             => true,
-        'can_export'            => true,
-        'show_in_rest'          => true,
-        'rest_controller_class' => 'WP_REST_Posts_Controller',
-    ];
-
-    /**
      * Liste des attributs de configuration.
      * @var array
      */
-    protected $attributes = [];
+    protected $attributes = [
+        //'label'              => '',
+        //'labels'             => '',
+        'description'           => '',
+        'public'                => true,
+        // @todo 'exclude_from_search'   => false,
+        //'publicly_queryable'    => true,
+        //'show_ui'               => true,
+        //'show_in_nav_menus'     => true,
+        //'show_in_menu'          => true,
+        //'show_in_admin_bar'     => true,
+        'menu_position'         => null,
+        'menu_icon'             => null,
+        'capability_type'       => 'post',
+        // @todo capabilities   => [],
+        'map_meta_cap'          => null,
+        'hierarchical'          => false,
+        'supports'              => ['title', 'editor'],
+        // @todo 'register_meta_box_cb'  => '',
+        'taxonomies'            => [],
+        'has_archive'           => false,
+        'rewrite'               => true,
+        'permalink_epmask'      => EP_PERMALINK,
+        'query_var'             => true,
+        'can_export'            => true,
+        'delete_with_user'      => null,
+        'show_in_rest'          => false,
+        //'rest_base'             => ''
+        'rest_controller_class' => 'WP_REST_Posts_Controller'
+    ];
 
     /**
      * CONSTRUCTEUR.
@@ -61,16 +61,7 @@ class PostTypeController extends AppController
     {
         $this->name = $name;
 
-        $this->defaults['rewrite'] = [
-            'slug'       => $this->getName(),
-            'with_front' => false,
-            'feeds'      => true,
-            'pages'      => true,
-            'ep_mask'    => EP_PERMALINK,
-        ];
-        $this->defaults['rest_base'] = $this->getName();
-
-        $this->attributes = $this->parse($attrs);
+        $this->parse($attrs);
 
         \register_post_type(
             $name,
@@ -99,57 +90,52 @@ class PostTypeController extends AppController
      *
      * @param array $attrs Liste des attributs personnalisés.
      *
-     * @return array
+     * @return void
      */
     public function parse($attrs = [])
     {
-        $label = _x($this->getName(), 'post type general name', 'tify');
-        $plural = _x($this->getName(), 'post type plural name', 'tify');
-        $singular = _x($this->getName(), 'post type singular name', 'tify');
-        $gender = false;
+        $this->attributes['rewrite'] = [
+            'slug'       => $this->getName(),
+            'with_front' => false,
+            'feeds'      => true,
+            'pages'      => true,
+            'ep_mask'    => EP_PERMALINK,
+        ];
+        $this->attributes['rest_base'] = $this->getName();
 
-        if (!isset($attrs['labels'])) :
-            $attrs['labels'] = [];
-        endif;
+        $this->attributes = array_merge(
+            $this->attributes,
+            $attrs
+        );
+
+        $this->set('label', $this->get('label', _x($this->getName(), 'post type general name', 'tify')));
+        $this->set('plural', $this->get('plural', $this->get('label')));
+        $this->set('singular', $this->get('singular', $this->get('label')));
+        $this->set('gender', $this->get('gender', false));
+        $this->set('labels', $this->get('labels', []));
 
         $label = $this->appServiceGet(Label::class)->register(
             'tfy.post_type.' . $this->getName(),
             array_merge(
-                compact('singular', 'plural', 'gender'),
-                $attrs['labels']
+                [
+                    'singular' => $this->get('singular'),
+                    'plural'   => $this->get('plural'),
+                    'gender'   => $this->get('gender'),
+                ],
+                $this->get('labels')
             )
         );
-        $attrs['labels'] = $label->all();
+        $this->set('labels', $label->all());
 
-        $attrs = array_merge($this->defaults, $attrs);
+        $this->set('publicly_queryable', $this->has('publicly_queryable') ? $this->get('publicly_queryable') : $this->get('public'));
 
-        if (!isset($attrs['publicly_queryable'])) :
-            $attrs['publicly_queryable'] = $attrs['public'];
-        endif;
+        $this->set('show_ui', $this->has('show_ui') ? $this->get('show_ui') : $this->get('public'));
 
-        if (!isset($attrs['show_ui'])) :
-            $attrs['show_ui'] = $attrs['public'];
-        endif;
+        $this->set('show_in_nav_menus', $this->has('show_in_nav_menus') ? $this->get('show_in_nav_menus') : $this->get('public'));
 
-        if (!isset($attrs['show_in_nav_menus'])) :
-            $attrs['show_in_nav_menus'] = $attrs['public'];
-        endif;
+        $this->set('show_in_menu', $this->has('show_in_menu') ? $this->get('show_in_menu') : $this->get('show_ui'));
 
-        if (!isset($attrs['show_in_menu'])) :
-            $attrs['show_in_menu'] = $attrs['show_ui'];
-        endif;
-
-        if (!isset($attrs['show_in_admin_bar'])) :
-            $attrs['show_in_admin_bar'] = $attrs['show_in_menu'];
-        endif;
-
-        if(isset($attrs['taxonomies'])) :
-            $attrs['taxonomies'] = is_array($attrs['taxonomies'])
-                ? $attrs['taxonomies']
-                : array_map('trim', explode(',', $attrs['taxonomies']));
-        endif;
-
-        return $attrs;
+        $this->set('show_in_admin_bar', $this->has('show_in_admin_bar') ? $this->get('show_in_admin_bar') : $this->get('show_in_menu'));
     }
 
     /**
@@ -166,12 +152,37 @@ class PostTypeController extends AppController
      * Récupération d'un attribut de configuration.
      *
      * @param string $key Clé d'index de qualification de l'attribut.
-     * @param mixed $default Valeur de retoru par defaut.
+     * @param mixed $default Valeur de retour par defaut.
      *
      * @return mixed
      */
     public function get($key, $default = null)
     {
         return Arr::get($this->attributes, $key, $default);
+    }
+
+    /**
+     * Définition d'un attribut de configuration.
+     *
+     * @param string $key Clé d'index de qualification de l'attribut.
+     * @param mixed $value Valeur attribuée.
+     *
+     * @return mixed
+     */
+    public function set($key, $value)
+    {
+        return Arr::set($this->attributes, $key, $value);
+    }
+
+    /**
+     * Vérification d'existance d'un attribut de configuration.
+     *
+     * @param string $key Clé d'index de qualification de l'attribut.
+     *
+     * @return mixed
+     */
+    public function has($key)
+    {
+        return Arr::has($this->attributes, $key);
     }
 }
