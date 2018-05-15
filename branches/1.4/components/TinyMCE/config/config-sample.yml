@@ -39,7 +39,7 @@ external_plugins:
   # Selecteur de glyphs personnalisés
   ownglyphs:
     hookname      : 'tify-font'
-    css           : '<?php echo get_template_directory_uri();?>/assets/fonts/presstify/styles.css'
+    css           : '<?php echo get_stylesheet_directory_uri();?>/assets/fonts/presstify/styles.css'
     version       : '0.2.151207'
     dependencies  : []    
     prefix        : 'tify'

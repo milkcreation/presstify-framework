@@ -1339,8 +1339,8 @@ trait App
         endif;
 
         // Cas particulier à traiter - App déclarée dans le répertoire de surcharge des apps du thème
-        if (!$located && preg_match('#^'. preg_quote(get_template_directory() . '/app', '/') .'#', self::tFyAppDirname($classname))) :
-            $subdir = preg_replace('#^'. preg_quote(get_template_directory() . '/app/', '/') .'#', '', self::tFyAppDirname($classname));
+        if (!$located && preg_match('#^'. preg_quote(get_stylesheet_directory() . '/app', '/') .'#', self::tFyAppDirname($classname))) :
+            $subdir = preg_replace('#^'. preg_quote(get_stylesheet_directory() . '/app/', '/') .'#', '', self::tFyAppDirname($classname));
 
             reset($templates);
             // Récupération du gabarit depuis le thème
@@ -1350,7 +1350,7 @@ trait App
                     continue;
                 endif;
 
-                $template_file = get_template_directory() . "/templates/{$subdir}/{$template_name}";
+                $template_file = get_stylesheet_directory() . "/templates/{$subdir}/{$template_name}";
                 // Bypass - le fichier n'existe pas physiquement
                 if (!file_exists($template_file)) :
                     continue;
@@ -1409,8 +1409,8 @@ trait App
             reset($templates);
 
             foreach ($templates as $template_name) :
-                if (file_exists(get_template_directory() . '/templates/' . $template_name)) :
-                    $located = get_template_directory() . '/templates/' . $template_name;
+                if (file_exists(get_stylesheet_directory() . '/templates/' . $template_name)) :
+                    $located = get_stylesheet_directory() . '/templates/' . $template_name;
                     break;
                 elseif (file_exists($template_name)) :
                     $located = $template_name;
@@ -1423,8 +1423,8 @@ trait App
             reset($templates);
 
             foreach ($templates as $template_name) :
-                if (file_exists(get_template_directory() . '/' . $template_name)) :
-                    $located = get_template_directory() . '/' . $template_name;
+                if (file_exists(get_stylesheet_directory() . '/' . $template_name)) :
+                    $located = get_stylesheet_directory() . '/' . $template_name;
                     break;
                 elseif (file_exists($template_name)) :
                     $located = $template_name;
