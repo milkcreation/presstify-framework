@@ -808,7 +808,7 @@ final class Apps
 
             // Répertoire de stockage
             if (! isset($app['base_dir'])) :
-                $app['base_dir'] = get_template_directory() . "/app";
+                $app['base_dir'] = get_stylesheet_directory() . "/app";
             endif;
             $app['base_dir'] = $app['base_dir'];
 
@@ -1205,11 +1205,11 @@ final class Apps
         // Chemins de gabarits de surchage du thème
         if (in_array($attrs['Type'], ['Core', 'Components','Set', 'Plugins']) || $attrs['Parent']) :
             $OverridePath['theme_app']       = [
-                'path'    => get_template_directory() . '/app' . $_subdir,
-                'url'     => get_template_directory_uri() . '/app' . $_subdir,
+                'path'    => get_stylesheet_directory() . '/app' . $_subdir,
+                'url'     => get_stylesheet_directory_uri() . '/app' . $_subdir,
                 'subdir'  => $_subdir,
-                'basedir' => get_template_directory() . '/app',
-                'baseurl' => get_template_directory_uri() . '/app',
+                'basedir' => get_stylesheet_directory() . '/app',
+                'baseurl' => get_stylesheet_directory_uri() . '/app',
                 'error'   => false
             ];
         else :
@@ -1226,11 +1226,11 @@ final class Apps
         endif;
 
         $OverridePath['theme_templates'] = [
-            'path'    => get_template_directory() . '/templates' . $_subdir,
-            'url'     => get_template_directory_uri() . '/templates' . $_subdir,
+            'path'    => get_stylesheet_directory() . '/templates' . $_subdir,
+            'url'     => get_stylesheet_directory_uri() . '/templates' . $_subdir,
             'subdir'  => $_subdir,
-            'basedir' => get_template_directory() . '/templates',
-            'baseurl' => get_template_directory_uri() . '/templates',
+            'basedir' => get_stylesheet_directory() . '/templates',
+            'baseurl' => get_stylesheet_directory_uri() . '/templates',
             'error'   => false
         ];
 

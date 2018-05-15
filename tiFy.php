@@ -5,7 +5,7 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.34
+ * @version 1.4.35
  */
 
 namespace tiFy;
@@ -87,7 +87,7 @@ final class tiFy
 
         // Définition des constantes d'environnement
         if (!defined('TIFY_CONFIG_DIR')) :
-            define('TIFY_CONFIG_DIR', get_template_directory() . '/config');
+            define('TIFY_CONFIG_DIR', get_stylesheet_directory() . '/config');
         endif;
         if (!defined('TIFY_CONFIG_EXT')) :
             define('TIFY_CONFIG_EXT', 'yml');
