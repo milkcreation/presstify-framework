@@ -36,8 +36,8 @@ abstract class AbstractPartialController extends AppController
     {
         $partial = $this->appServiceGet(Partial::class);
 
-        if (! $partial->existsInstance(__CLASS__)) :
-            $partial->setInstance(__CLASS__, Str::random(32), $this);
+        if (! $partial->existsInstance(get_called_class())) :
+            $partial->setInstance(get_called_class(), Str::random(32), $this);
             $this->boot();
         endif;
     }

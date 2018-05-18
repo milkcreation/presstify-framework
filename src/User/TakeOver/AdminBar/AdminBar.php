@@ -38,11 +38,11 @@ class AdminBar extends AbstractPartialController
      *
      * @return void
      */
-    protected function init()
+    public function init()
     {
         \wp_register_style(
             'tify_control-take_over_admin_bar',
-            $this->appAsset('/TakeOver/AdminBar/css/styles.css', get_class()),
+            $this->appAsset('/User/TakeOver/AdminBar/css/styles.css', get_class()),
             [],
             171218
         );
@@ -53,7 +53,7 @@ class AdminBar extends AbstractPartialController
      *
      * @return void
      */
-    protected function enqueue_scripts()
+    public function enqueue_scripts()
     {
         $this->appServiceGet(Partial::class)->enqueue('take_over_action_link');
         $this->appServiceGet(Partial::class)->enqueue('take_over_switcher_form');

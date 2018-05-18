@@ -132,29 +132,47 @@ trait AppTrait
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function appEvent()
+    {
+        return tiFy::instance()->emitter();
+    }
+
+    /**
+     * Déclaration d'un événement.
+     * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
+     *
+     * @param string $name Identifiant de qualification de l'événement.
+     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
+     * @param int $priority Priorité de traitement.
+     *
+     * @return EmitterInterface
+     */
+    public function appEventListen($name, $listener, $priority = 0)
+    {
+        return $this->appEvent()->addListener($name, $listener, $priority);
+    }
+
+    /**
      * Déclenchement d'un événement.
      * @see http://event.thephpleague.com/2.0/events/classes/
      *
      * @param string|object $event Identifiant de qualification de l'événement.
-     * @param mixed $args Variable(s) passée(s) en argument.
+     * @param mixed ... $args Variable(s) passée(s) en argument.
      *
      * @return null|EventInterface
      */
-    final public function appEmit($event, $args = null)
+    public function appEventTrigger($event)
     {
         if (! is_object($event) && ! is_string($event)) :
             return null;
         endif;
 
-        return $this->appEmitter()->emit(is_object($event) ? $event : Event::named($event), $args);
-    }
+        $args = func_get_args();
+        $args[0] = is_object($event) ? $event : Event::named($event);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function appEmitter()
-    {
-        return tiFy::instance()->emitter();
+        return call_user_func_array([$this->appEvent(), 'emit'], $args);
     }
 
     /**
@@ -175,25 +193,12 @@ trait AppTrait
 
     /**
      * {@inheritdoc}
+     *
+     * @return self|object
      */
     public static function appInstance($classname = null, $args = [])
     {
         return tiFy::instance()->serviceGet($classname ? : get_called_class(), $args);
-    }
-
-    /**
-     * Déclaration d'un événement.
-     * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
-     *
-     * @param string $name Identifiant de qualification de l'événement.
-     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
-     * @param int $priority Priorité de traitement.
-     *
-     * @return EmitterInterface
-     */
-    public function appListen($name, $listener, $priority = 0)
-    {
-        return $this->appEmitter()->addListener($name, $listener, $priority);
     }
 
     /**

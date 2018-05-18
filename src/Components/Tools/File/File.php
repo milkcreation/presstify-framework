@@ -2,14 +2,49 @@
 
 namespace tiFy\Components\Tools\File;
 
+use tiFy\tiFy;
+use tiFy\Kernel\Tools;
+
 class File
 {
+    /**
+     * Récupère le contenu d'un fichier.
+     *
+     * @param string $filename Chemin relatif ou absolue ou url vers un fichier.
+     *
+     * @return mixed
+     */
+    public function getContents($filename)
+    {
+        $contents = '';
+
+        // Vérifie si le chemin du fichier est une url
+        if (Tools::Checker()->checkerIsUrl($filename)) :
+            if (preg_match('/^' . preg_quote(site_url('/'), '/') . '/', $filename)) :
+                $filename = preg_replace('/^' . preg_quote(site_url('/'), '/') . '/', tiFy::instance()->absPath(), $filename);
+
+                if (file_exists($filename)) :
+                    $contents = file_get_contents($filename);
+                endif;
+            else :
+                $response = wp_remote_get($filename);
+                $contents = wp_remote_retrieve_body($response);
+            endif;
+        elseif (file_exists(tiFy::instance()->absPath() . ltrim($filename))) :
+            $contents = file_get_contents(tiFy::instance()->absPath() . ltrim($filename));
+        elseif (file_exists($filename)) :
+            $contents = file_get_contents($filename);
+        endif;
+
+        return $contents;
+    }
+
     /**
      * Récupération du contenu d'un SVG depuis son chemin
      *
      * @return string
      */
-    public function getContentSvg( $filename)
+    public function svgGetContents($filename)
     {
         $output = "";
 
@@ -23,7 +58,6 @@ class File
 
         return $output;
     }
-
 
     /**
      * A REECRIRE
@@ -73,37 +107,7 @@ class File
         
         return null;
     }
-    
-    /** 
-     * Récupère le contenu d'un fichier
-     * 
-     * @param $filename chemin relatif ou chemin absolue ou url du fichier  
-     */
-    public static function getContents( $filename )
-    {
-        $contents = ''; 
 
-        // Vérifie si le chemin du fichier est une url
-        if( Checker::isUrl( $filename ) ) :
-            if( preg_match( '/^'. preg_quote( site_url( '/' ), '/' ) .'/', $filename ) ) :
-                $filename = preg_replace( '/^'. preg_quote(site_url('/'), '/') .'/', tiFy::$AbsPath, $filename );
-
-                if( file_exists( $filename ) ) :
-                    $contents = file_get_contents( $filename );
-                endif;
-            else :
-                $response = wp_remote_get( $filename );            
-                $contents = wp_remote_retrieve_body( $response );
-            endif;
-        elseif( file_exists( tiFy::$AbsPath . ltrim( $filename ) ) ) :
-            $contents = file_get_contents( tiFy::$AbsPath . ltrim( $filename ) );
-        elseif( file_exists( $filename ) ) :
-            $contents = file_get_contents( $filename );
-        endif;
-        
-        return $contents;
-    }
-    
     /**
      * Récupération de l'identifiant d'un médias depuis son URL
      */

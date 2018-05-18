@@ -4,7 +4,7 @@ namespace tiFy\Taxonomy;
 
 use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
-use tiFy\Label\Label;
+use tiFy\Components\Labels\LabelsTaxonomyController;
 
 class TaxonomyController extends AppController
 {
@@ -131,8 +131,8 @@ class TaxonomyController extends AppController
         $this->set('gender', $this->get('gender', false));
         $this->set('labels', $this->get('labels', []));
 
-        $label = $this->appServiceGet(Label::class)->register(
-            'tfy.taxonomy.' . $this->getName(),
+        $label = new LabelsTaxonomyController(
+            $this->get('label'),
             array_merge(
                 [
                     'singular' => $this->get('singular'),

@@ -5,10 +5,12 @@ namespace tiFy\Form\Fields;
 use tiFy\Form\AbstractCommonDependency;
 use tiFy\Form\Fields\FieldItemController;
 use tiFy\Form\Forms\FormItemController;
-use tiFy\Components\Tools\Checker\Checker;
+use tiFy\Components\Tools\Checker\CheckerTrait;
 
 class FieldIntegrityCheckController extends AbstractCommonDependency
 {
+    use CheckerTrait;
+
     /**
      * Classe de rappel du controleur de champ associé.
      * @var Field
@@ -21,33 +23,37 @@ class FieldIntegrityCheckController extends AbstractCommonDependency
      */
     protected $alias = [
         // Vérifie si une chaine de caractères est vide
-        'is_empty'           => 'isEmpty',
+        'is_empty'           => 'checkerIsEmpty',
         // Vérifie si une chaine de caractères ne contient que des chiffres
-        'is_integer'         => 'isInteger',
+        'is_integer'         => 'checkerIsInteger',
         // Vérifie si une chaine de caractères ne contient que des lettres
-        'is_alpha'           => 'isAlpha',
+        'is_alpha'           => 'checkerIsAlpha',
         // Vérifie si une chaine de caractères ne contient que des chiffres et des lettres (spéciale dédicace à Bertrand Renard)
-        'is_alphanum'        => 'isAlphaNum',
+        'is_alphanum'        => 'checkerIsAlphaNum',
         // Vérifie si une chaine de caractères est un email valide
-        'is_email'           => 'isEmail',
+        'is_email'           => 'checkerIsEmail',
         // Vérifie si une chaine de caractères est une url valide
-        'is_url'             => 'isUrl',
+        'is_url'             => 'checkerIsUrl',
         // Vérifie si une chaîne de caractères est une date
-        'is_date'            => 'isDate',
+        'is_date'            => 'checkerIsDate',
         // Vérifie si une chaine de caractères repond à un regex personnalisé
-        'check_regex'        => 'customRegex',
+        'check_regex'        => 'checkerRegex',
         // Vérifie si une chaine de caractères contient un nombre de caractères maximum
-        'check_max_length'   => 'MaxLength',
+        'check_max_length'   => 'checkerMaxLength',
         // Vérifie si une chaine de caractères contient un nombre de caractères minimum
-        'check_min_length'   => 'MinLength',
+        'check_min_length'   => 'checkerMinLength',
         // Vérifie si une chaine de caractères contient un nombre de caractères défini
-        'check_equal_length' => 'ExactLength',
+        'check_equal_length' => 'checkerExactLength',
         // Vérifie si une chaine de caractères contient des caractères spéciaux
-        'check_specialchars' => 'hasSpecialChars',
+        'check_specialchars' => 'checkerHasSpecialChars',
         // Vérifie si une chaine de caractères contient des majuscules
-        'check_maj'          => 'hasMaj',
+        'check_maj'          => 'checkerHasMaj',
         // Vérifie si la valeur d'un champ est un mot de passe valide
-        'is_valid_password'  => 'isValidPassword',
+        'is_valid_password'  => 'checkerIsValidPassword',
+        // Vérifie si la valeur d'un champ est égale à une valeur donnée
+        'is_equal'           => 'checkerIsEqual',
+        // Vérifie si la valeur d'un champ est différente d'une valeur donnée
+        'is_diff'            => 'checkerIsDifferent',
     ];
 
     /**
@@ -83,8 +89,6 @@ class FieldIntegrityCheckController extends AbstractCommonDependency
 
             if (method_exists(__CLASS__, $cb)) :
                 $valid = call_user_func_array([__CLASS__, $cb], $args);
-            elseif (is_callable(Checker::class ."::{$cb}")) :
-                $valid = call_user_func_array(Checker::class ."::{$cb}", $args);
             elseif (function_exists($cb)) :
                 $valid = call_user_func_array($cb, $args);
             endif;

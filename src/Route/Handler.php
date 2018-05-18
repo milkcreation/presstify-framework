@@ -77,6 +77,7 @@ class Handler extends AppController
 
         // Affichage de la sortie
         $this->appServiceGet('tfy.route.emitter')->emit($response);
+
         exit;
     }
 
