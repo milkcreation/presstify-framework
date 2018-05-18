@@ -21,7 +21,7 @@ use tiFy\User\TakeOver\TakeOver;
 use tiFy\Lib\User\User;
 use tiFy\Partial\AbstractPartialController;
 
-class SwitcherForm extends \tiFy\Control\Factory
+class SwitcherForm extends AbstractPartialController
 {
     /**
      * Liste des attributs de configuration.
@@ -54,7 +54,7 @@ class SwitcherForm extends \tiFy\Control\Factory
      *
      * @return void
      */
-    protected function init()
+    public function init()
     {
         // Actions ajax
         $this->appAddAction(
@@ -68,7 +68,7 @@ class SwitcherForm extends \tiFy\Control\Factory
 
         \wp_register_script(
             'tiFyTakeOver-SwitcherForm',
-            $this->appAsset('/TakeOver/SwitcherForm/js/scripts.js', get_class()),
+            $this->appAsset('/User/TakeOver/SwitcherForm/js/scripts.js', get_class()),
             [],
             171218,
             true
@@ -80,7 +80,7 @@ class SwitcherForm extends \tiFy\Control\Factory
      *
      * @return void
      */
-    protected function enqueue_scripts()
+    public function enqueue_scripts()
     {
         Field::enqueue('tiFyTakeOver-SwitcherForm');
         \wp_enqueue_script('tify_control-take_over_switcher_form');
@@ -151,9 +151,9 @@ class SwitcherForm extends \tiFy\Control\Factory
             )
         );
         $this->set(
-            'fields.role.class',
+            'fields.role.attrs.class',
             $this->get(
-                'fields.role.class',
+                'fields.role.attrs.class',
                 'tiFyTakeOverSwitcherForm-selectField--role'
             )
         );
@@ -170,16 +170,18 @@ class SwitcherForm extends \tiFy\Control\Factory
                     ],
                     'removable'       => false
                 ],
-                $this->get('fields.role', [])
+                $this->get('fields.user', [])
             )
         );
         $this->set(
-            'fields.user.class',
+            'fields.user.attrs.class',
             $this->get(
-                'fields.user.class',
+                'fields.user.attrs.class',
                 'tiFyTakeOverSwitcherForm-selectField--user'
             )
         );
+
+
     }
 
     /**
@@ -187,18 +189,18 @@ class SwitcherForm extends \tiFy\Control\Factory
      *
      * @return string
      */
-    protected function display($attrs = [], $echo = true)
+    public function display()
     {
         if (!$takeOverController = $this->appServiceGet(TakeOver::class)->get($this->get('take_over_id'))) :
             return;
-        elseif (!$takeOverController ->isAuth('switch')) :
+        elseif (!$takeOverController->isAuth('switch')) :
             return;
         elseif (!$allowed_roles = $takeOverController->getAllowedRoleList()) :
             return;
         endif;
 
         $role_options = [];
-        foreach($allowed_roles as $allowed_role) :
+        foreach ($allowed_roles as $allowed_role) :
             if (!$role = \get_role($allowed_role)) :
                 continue;
             endif;
@@ -208,8 +210,14 @@ class SwitcherForm extends \tiFy\Control\Factory
 
         $user_options = [-1 => __('Choix de l\'utilisateur', 'tify')];
 
+        $data_options = [
+            'ajax_action' => $this->get('ajax_action'),
+            'ajax_nonce'  => $this->get('ajax_nonce'),
+            'fields'      => $this->get('fields')
+        ];
+
         $output = "";
-        $output .= "<form class=\"tiFyTakeOver-Control--switch_form\" method=\"post\" action=\"\" data-options=\"" . rawurlencode(json_encode(compact('ajax_action', 'ajax_nonce', 'fields'))) . "\" >";
+        $output .= "<form class=\"tiFyTakeOver-Control--switch_form\" method=\"post\" action=\"\" data-options=\"" . rawurlencode(json_encode($data_options)) . "\" >";
         $output .= \wp_nonce_field('tiFyTakeOver-switch', '_wpnonce', false, false);
         $output .= Field::Hidden(
             [
@@ -228,7 +236,7 @@ class SwitcherForm extends \tiFy\Control\Factory
                 [
                     'options' => $role_options
                 ],
-                $fields['role']
+                $this->get('fields.role', [])
             )
         );
         $output .= Field::SelectJs(
@@ -236,7 +244,7 @@ class SwitcherForm extends \tiFy\Control\Factory
                 [
                     'options' => $user_options
                 ],
-                $fields['user']
+                $this->get('fields.user', [])
             )
         );
         $output .= "</form>";

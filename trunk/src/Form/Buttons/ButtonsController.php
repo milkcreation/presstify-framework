@@ -3,8 +3,8 @@
 namespace tiFy\Form\Buttons;
 
 use tiFy\Apps\AppController;
-use tiFy\Components\Forms\Buttons\ButtonControllerInterface;
-use tiFy\Components\Forms\Buttons\Submit\Submit;
+use tiFy\Components\Form\Buttons\ButtonControllerInterface;
+use tiFy\Components\Form\Buttons\Submit\Submit;
 use tiFy\Form\Forms\FormItemController;
 
 final class ButtonsController extends AppController

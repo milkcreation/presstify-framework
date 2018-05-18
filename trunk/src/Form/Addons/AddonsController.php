@@ -4,12 +4,12 @@ namespace tiFy\Form\Addons;
 
 use tiFy\Apps\AppController;
 use tiFy\Form\Addons\AddonControllerInterface;
-use tiFy\Components\Forms\Addons\AjaxSubmit\AjaxSubmit;
-use tiFy\Components\Forms\Addons\CookieTransport\CookieTransport;
-use tiFy\Components\Forms\Addons\Mailer\Mailer;
-use tiFy\Components\Forms\Addons\Preview\Preview;
-use tiFy\Components\Forms\Addons\Record\Record;
-use tiFy\Components\Forms\Addons\User\User;
+use tiFy\Components\Form\Addons\AjaxSubmit\AjaxSubmit;
+use tiFy\Components\Form\Addons\CookieTransport\CookieTransport;
+use tiFy\Components\Form\Addons\Mailer\Mailer;
+use tiFy\Components\Form\Addons\Preview\Preview;
+use tiFy\Components\Form\Addons\Record\Record;
+use tiFy\Components\Form\Addons\User\User;
 use tiFy\Form\Forms\FormItemController;
 
 final class AddonsController extends AppController

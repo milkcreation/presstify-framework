@@ -17,23 +17,24 @@ namespace tiFy\Field;
 
 use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
-use tiFy\Components\Fields\Button\Button;
-use tiFy\Components\Fields\Checkbox\Checkbox;
-use tiFy\Components\Fields\DatetimeJs\DatetimeJs;
-use tiFy\Components\Fields\File\File;
-use tiFy\Components\Fields\Hidden\Hidden;
-use tiFy\Components\Fields\Label\Label;
-use tiFy\Components\Fields\Number\Number;
-use tiFy\Components\Fields\NumberJs\NumberJs;
-use tiFy\Components\Fields\Password\Password;
-use tiFy\Components\Fields\Radio\Radio;
-use tiFy\Components\Fields\Repeater\Repeater;
-use tiFy\Components\Fields\Select\Select;
-use tiFy\Components\Fields\SelectJs\SelectJs;
-use tiFy\Components\Fields\Submit\Submit;
-use tiFy\Components\Fields\Text\Text;
-use tiFy\Components\Fields\Textarea\Textarea;
-use tiFy\Components\Fields\ToggleSwitch\ToggleSwitch;
+use tiFy\Components\Field\Button\Button;
+use tiFy\Components\Field\Checkbox\Checkbox;
+use tiFy\Components\Field\DatetimeJs\DatetimeJs;
+use tiFy\Components\Field\File\File;
+use tiFy\Components\Field\Hidden\Hidden;
+use tiFy\Components\Field\Label\Label;
+use tiFy\Components\Field\MediaImage\MediaImage;
+use tiFy\Components\Field\Number\Number;
+use tiFy\Components\Field\NumberJs\NumberJs;
+use tiFy\Components\Field\Password\Password;
+use tiFy\Components\Field\Radio\Radio;
+use tiFy\Components\Field\Repeater\Repeater;
+use tiFy\Components\Field\Select\Select;
+use tiFy\Components\Field\SelectJs\SelectJs;
+use tiFy\Components\Field\Submit\Submit;
+use tiFy\Components\Field\Text\Text;
+use tiFy\Components\Field\Textarea\Textarea;
+use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
 
 /**
  * Class Field
@@ -45,6 +46,7 @@ use tiFy\Components\Fields\ToggleSwitch\ToggleSwitch;
  * @method static File(string $id = null, array $attrs = [])
  * @method static Hidden(string $id = null, array $attrs = [])
  * @method static Label(string $id = null, array $attrs = [])
+ * @method static MediaImage(string $id = null, array $attrs = [])
  * @method static Number(string $id = null, array $attrs = [])
  * @method static NumberJs(string $id = null, array $attrs = [])
  * @method static Password(string $id = null, array $attrs = [])
@@ -73,10 +75,10 @@ final class Field extends AppController
     public function appBoot()
     {
         // Déclaration des controleurs d'affichage natifs
-        foreach(glob($this->appAbsDir() . '/Components/Fields/*/', GLOB_ONLYDIR) as $filename) :
+        foreach(glob($this->appAbsDir() . '/Components/Field/*/', GLOB_ONLYDIR) as $filename) :
             $name = basename($filename);
 
-            $this->register($name, "tiFy\\Components\\Fields\\{$name}\\{$name}::make");
+            $this->register($name, "tiFy\\Components\\Field\\{$name}\\{$name}::make");
         endforeach;
 
         do_action('tify_field_register');
