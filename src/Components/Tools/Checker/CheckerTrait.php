@@ -11,7 +11,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isEmpty($str)
+    public function checkerIsEmpty($str)
     {
         if (empty($str)) :
             return false;
@@ -27,7 +27,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isInteger($value)
+    public function checkerIsInteger($value)
     {
         if (!preg_match('/^[[:digit:]]*$/', $value)) :
             return false;
@@ -43,7 +43,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isAlpha($value)
+    public function checkerIsAlpha($value)
     {
         if (!preg_match('/^[[:alpha:]]*$/', $value)) :
             return false;
@@ -59,7 +59,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isAlphaNum($value)
+    public function checkerIsAlphaNum($value)
     {
         if (!preg_match('/^[[:alnum:]]*$/', $value)) :
             return false;
@@ -75,7 +75,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isEmail($value)
+    public function checkerIsEmail($value)
     {
         if (!preg_match('/^[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}$/', $value)) :
             return false;
@@ -91,7 +91,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isUrl($value)
+    public function checkerIsUrl($value)
     {
         if (!preg_match('@^(https?|ftp)://[^\s/$.?#].[^\s]*$@iS', $value)) :
             return false;
@@ -108,7 +108,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isDate($value, $format = 'd/m/Y')
+    public function checkerIsDate($value, $format = 'd/m/Y')
     {
         switch ($format) :
             default :
@@ -131,7 +131,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function regex($value, $regex)
+    public function checkerRegex($value, $regex)
     {
         if (!preg_match('#' . $regex . '#', $value)) :
             return false;
@@ -148,7 +148,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function maxLength($value, $max = 0)
+    public function checkerMaxLength($value, $max = 0)
     {
         if (strlen($value) > $max) {
             return false;
@@ -164,7 +164,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function minLength($value, $min = 0)
+    public function checkerMinLength($value, $min = 0)
     {
         if (strlen($value) < $min) :
             return false;
@@ -181,7 +181,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function exactLength($value, $length = 0)
+    public function checkerExactLength($value, $length = 0)
     {
         if (strlen($value) != $length) :
             return false;
@@ -197,7 +197,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function hasSpecialChars($value)
+    public function checkerHasSpecialChars($value)
     {
         if (!preg_match('/^.*(?=.{7,})(?=.*\d)(?=.*[a-z])(?=.*[\W_]).*$/', $value)) :
             return false;
@@ -213,7 +213,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function hasMaj($value)
+    public function checkerHasMaj($value)
     {
         if (!preg_match('/^.*(?=.*[A-Z]).*$/', $value)) :
             return false;
@@ -239,7 +239,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isValidPassword($value, $args = [])
+    public function checkerIsValidPassword($value, $args = [])
     {
         $args = array_merge(
             [
@@ -290,7 +290,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isEqual($a, $b)
+    public function checkerIsEqual($a, $b)
     {
         if ($a !== $b) :
             return false;
@@ -307,7 +307,7 @@ trait CheckerTrait
      *
      * @return bool
      */
-    public static function isDifferent($a, $b)
+    public function checkerIsDifferent($a, $b)
     {
         return !isEqual($a, $b);
     }

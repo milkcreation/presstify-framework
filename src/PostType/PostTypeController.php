@@ -4,7 +4,7 @@ namespace tiFy\PostType;
 
 use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
-use tiFy\Label\Label;
+use tiFy\Components\Labels\LabelsPostTypeController;
 
 class PostTypeController extends AppController
 {
@@ -114,8 +114,8 @@ class PostTypeController extends AppController
         $this->set('gender', $this->get('gender', false));
         $this->set('labels', $this->get('labels', []));
 
-        $label = $this->appServiceGet(Label::class)->register(
-            'tfy.post_type.' . $this->getName(),
+        $label = new LabelsPostTypeController(
+            $this->get('label'),
             array_merge(
                 [
                     'singular' => $this->get('singular'),

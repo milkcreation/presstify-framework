@@ -2,29 +2,26 @@
 
 namespace tiFy\Field;
 
-use tiFy\Components\Tools\Walkers\AbstractWalkBase;
+use tiFy\Components\Tools\Walkers\WalkerBaseController;
 
-class WalkerOptions extends AbstractWalkBase
+class WalkerOptions extends WalkerBaseController
 {
     /**
-     * {@inheritdoc}
+     * Liste des options.
+     * @var array {
+     *
+     *      @var string $indent Caractère d'indendation.
+     *      @var int $start_indent Nombre de caractère d'indendation au départ.
+     *      @var bool|string $sort Ordonnancement des éléments.false|true|append(défaut)|prepend.
+     *      @var string $prefixe Préfixe de nommage des éléments HTML.
+     * }
      */
-    public function parseHtmlAttrs($attrs, $name)
-    {
-        if(!isset($attrs['id'])) :
-            $attrs['id'] = "tiFyFieldOption-Item--{$name}";
-        endif;
-
-        if (!isset($attrs['class'])) :
-            $attrs['class'] = "tiFyFieldOption-Item tiFyFieldOption--{$name}";
-        endif;
-
-        if(!isset($attrs['aria-current'])) :
-            $attrs['aria-current'] = $this->isCurrent($name);
-        endif;
-
-        return $attrs;
-    }
+    protected $options = [
+        'indent'       => '\t',
+        'start_indent' => 0,
+        'sort'         => 'append',
+        'prefix'       => 'tiFyFieldOption-'
+    ];
 
     /**
      * Récupération des attributs de la balise HTML d'un élément
@@ -35,8 +32,9 @@ class WalkerOptions extends AbstractWalkBase
      *
      * @return string
      */
-    public function getItemHtmlAttrs($item = null, $depth = 0, $parent = '')
+    public function getItemHtmlAttrs($item)
     {
+        /*
         $attrs = $item['attrs'];
 
         $attrs['id'] = "tiFyField-itemOption--{$item['id']}";
@@ -55,8 +53,9 @@ class WalkerOptions extends AbstractWalkBase
                 endforeach;
             endif;
         endif;
-
+        */
         $html_attrs = [];
+        /*
         foreach ($attrs as $k => $v) :
             if (is_array($v)) :
                 $v = rawurlencode(json_encode($v));
@@ -67,14 +66,14 @@ class WalkerOptions extends AbstractWalkBase
                 $html_attrs[]= "{$k}=\"{$v}\"";
             endif;
         endforeach;
-
+        */
         return implode(' ', $html_attrs);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function openItems($item = null, $depth = 0, $parent = '')
+    public function openItems($item)
     {
         return '';
     }
@@ -82,7 +81,7 @@ class WalkerOptions extends AbstractWalkBase
     /**
      * {@inheritdoc}
      */
-    public function closeItems($item = null, $depth = 0, $parent = '')
+    public function closeItems($item)
     {
         return '';
     }
@@ -90,12 +89,12 @@ class WalkerOptions extends AbstractWalkBase
     /**
      * {@inheritdoc}
      */
-    public function openItem($item = null, $depth = 0, $parent = '')
+    public function openItem($item)
     {
         if ($item['group']) :
-            return $this->getIndent($depth) . "<optgroup ". $this->getItemHtmlAttrs($item, $depth, $parent) . ">\n";
+            return $this->getIndent($item->getDepth()) . "<optgroup ". $this->getItemHtmlAttrs($item) . ">\n";
         else :
-            return $this->getIndent($depth) . "<option ". $this->getItemHtmlAttrs($item, $depth, $parent) . ">\n";
+            return $this->getIndent($item->getDepth()) . "<option ". $this->getItemHtmlAttrs($item) . ">\n";
         endif;
 
     }
@@ -103,19 +102,19 @@ class WalkerOptions extends AbstractWalkBase
     /**
      * {@inheritdoc}
      */
-    public function closeItem($item = null, $depth = 0, $parent = '')
+    public function closeItem($item)
     {
         if ($item['group']) :
-            return $this->getIndent($depth) . "</optgroup>\n";
+            return $this->getIndent($item->getDepth()) . "</optgroup>\n";
         else :
-            return $this->getIndent($depth) . "</option>\n";
+            return $this->getIndent($item->getDepth()) . "</option>\n";
         endif;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function contentItem($item = null, $depth = 0, $parent = '')
+    public function contentItem($item)
     {
         if (!$item['group']) :
             return ! empty($item['label']) ? esc_attr($item['label']) : '';

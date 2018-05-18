@@ -82,7 +82,6 @@ final class Column extends AppController
                     __('tiFy\Column : Ajout de colonne impossible', 'tify'),
                     500
                 );
-                exit;
                 break;
         endswitch;
 

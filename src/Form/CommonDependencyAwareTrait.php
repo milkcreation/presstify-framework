@@ -10,6 +10,7 @@ use tiFy\Form\Forms\FormItemController;
 use tiFy\Form\Forms\FormHandleController;
 use tiFy\Form\Forms\FormNoticesController;
 use tiFy\Form\Forms\FormTransportController;
+use tiFy\Kernel\Tools;
 
 trait CommonDependencyAwareTrait
 {
@@ -281,18 +282,6 @@ trait CommonDependencyAwareTrait
      */
     public function parseHtmlAttrs($attrs = [], $linearized = true)
     {
-        $html_attrs = [];
-        foreach ($attrs as $k => $v) :
-            if (is_array($v)) :
-                $v = rawurlencode(json_encode($v));
-            endif;
-            if (is_numeric($k)) :
-                $html_attrs[]= "{$v}";
-            else :
-                $html_attrs[]= "{$k}=\"{$v}\"";
-            endif;
-        endforeach;
-
-        return $linearized ? implode(' ', $html_attrs) : $html_attrs;
+        return Tools::Html()->parseAttrs($attrs, $linearized);
     }
 }

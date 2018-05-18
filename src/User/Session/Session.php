@@ -82,7 +82,7 @@ final class Session extends AppController
         if (! empty($this->sessionNames)) :
             $this->initDb();
 
-            $this->appAddAction('tify_cron_register');
+            //$this->appAddAction('tify_cron_register');
         endif;
     }
 

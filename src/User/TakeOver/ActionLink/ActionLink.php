@@ -15,7 +15,6 @@
 
 namespace tiFy\User\TakeOver\ActionLink;
 
-use tiFy\Kernel\Tools;
 use tiFy\Partial\AbstractPartialController;
 use tiFy\Partial\Partial;
 use tiFy\User\TakeOver\TakeOver;
@@ -61,13 +60,15 @@ class ActionLink extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         if (!$takeOverController = $this->appServiceGet(TakeOver::class)->get($this->get('take_over_id'))) :
             return;
         endif;
 
-        switch($this->get('action')) :
+        $action = $this->get('action');
+
+        switch($action) :
             case 'switch' :
                 // Bypass - L'utilisateur principal n'est pas habilité à utiliser l'interface
                 if (!$takeOverController->isAuth($action)) :
@@ -102,7 +103,7 @@ class ActionLink extends AbstractPartialController
                 break;
             case 'restore' :
                 // Bypass - L'utilisateur n'est pas autorisé à utiliser l'interface
-                if (!$takeOver->isAuth($action)) :
+                if (!$takeOverController->isAuth($action)) :
                     return;
                 endif;
 
@@ -134,10 +135,10 @@ class ActionLink extends AbstractPartialController
             $this->set('attrs.class', 'tiFyTakeOver-ActionLink tiFyTakeOver-ActionLink--' . $this->get('action'));
         endif;
 
-        return Partial::Tag(
+        return (string) Partial::Tag(
             [
                 'tag'       => 'a',
-                'attrs'     => Tools::Html()->parseAttrs($this->get('attrs', [])),
+                'attrs'     => $this->get('attrs', []),
                 'content'   => $this->get('text')
             ]
         );

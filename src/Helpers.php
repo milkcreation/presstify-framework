@@ -510,6 +510,27 @@ function tify_partial_sidebar($attrs = [], $echo = true)
 }
 
 /**
+ * Diaporama.
+ *
+ * @param array $attrs {
+ *      Liste des attributs de configuration.
+ * }
+ * @param bool $echo Activation de l'affichage. défaut true.
+ *
+ * @return string
+ */
+function tify_partial_slick_carousel($attrs = [], $echo = true)
+{
+    $layout = (string)Partial::SlickCarousel($attrs);
+
+    if ($echo) :
+        echo $layout;
+    else :
+        return $layout;
+    endif;
+}
+
+/**
  * Tableau basé sur des div.
  *
  * @param array $attrs {

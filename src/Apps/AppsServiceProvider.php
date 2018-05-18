@@ -3,6 +3,7 @@
 namespace tiFy\Apps;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use League\Container\Container;
 use League\Container\ContainerInterface;
@@ -61,7 +62,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
 
         // Déclaration des extensions
         if ($plugins = $this->tfy->getConfig('plugins', [])) :
-            foreach ($plugins as $name => $attrs) :
+            foreach ($plugins as $classname => $attrs) :
                 $this->setApp($classname, $attrs);
             endforeach;
         endif;
@@ -70,7 +71,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
         foreach (glob($this->tfy->absDir() . '/*', GLOB_ONLYDIR) as $dirname) :
             $name = basename($dirname);
             $classname = "tiFy\\{$name}\\{$name}";
-            $config = $tfy->getConfig(strtolower($name)) ? : [];
+            $config = $tfy->getConfig(Str::kebab($name)) ? : [];
 
             $this->setApp($classname, $config);
             array_push($this->bootable, $classname);
@@ -234,7 +235,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
      */
     public function getAsset($filename, $classname)
     {
-        return $this->tfy->absUrl() . '/Components/Assets/src/'. ltrim($filename, '/');
+        return $this->tfy->absUrl() . ltrim('/Components/Assets/src/', '/') . ltrim($filename, '/');
     }
 
     /**
@@ -390,6 +391,6 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
             $this->setAttr($classname, 'url', $url);
         endif;
 
-        return $url;
+        return rtrim($url, '/');
     }
 }
