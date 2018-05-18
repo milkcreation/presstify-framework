@@ -120,6 +120,8 @@ final class tiFy
         endif;
 
         add_action('after_setup_theme', [$this, 'after_setup_theme'], 0);
+        add_action('after_setup_tify', function() { do_action('tify_app_boot'); }, 9999);
+        add_action('plugins_loaded', [$this, 'plugins_loaded']);
     }
 
     /**
@@ -146,15 +148,21 @@ final class tiFy
         endforeach;
         $this->classLoad("tiFy\\Plugins\\", TIFY_PLUGINS_DIR);
 
-        // Déclenchement de la méthode de démarrage des applications
-        add_action('after_setup_tify', function() { do_action('tify_app_boot'); }, 9999);
-
         // Initialisation du fournisseur de service des applications
         $apps = new AppsServiceProvider($this);
         $this->serviceShare(AppsServiceProvider::class, $apps);
         $this->serviceProvider($apps);
+    }
 
-        // Chargement des traductions
+    /**
+     * Après le chargement des plugins.
+     *
+     * @return void
+     */
+    public function plugins_loaded()
+    {
+        load_muplugin_textdomain('tify', '/presstify/languages/');
+
         do_action('tify_load_textdomain');
     }
 

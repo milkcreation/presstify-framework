@@ -4,10 +4,10 @@ namespace tiFy\Form\Fields;
 
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
-use tiFy\Components\Forms\FieldTypes\Html\Html;
-use tiFy\Components\Forms\FieldTypes\Native\Native;
-use tiFy\Components\Forms\FieldTypes\Recaptcha\Recaptcha;
-use tiFy\Components\Forms\FieldTypes\SimpleCaptchaImage\SimpleCaptchaImage;
+use tiFy\Components\Form\FieldTypes\Html\Html;
+use tiFy\Components\Form\FieldTypes\Native\Native;
+use tiFy\Components\Form\FieldTypes\Recaptcha\Recaptcha;
+use tiFy\Components\Form\FieldTypes\SimpleCaptchaImage\SimpleCaptchaImage;
 use tiFy\Form\Fields\FieldItemController;
 
 final class FieldTypesController extends AppController

@@ -55,7 +55,7 @@ class FieldItemController extends AbstractCommonDependency
      * @var string|array $integrity_cb {
      * Liste des fonctions de test d'intégrité du champ lors de la soumission.
      *
-     * @var string|callable $cb Intitulé d'alias de vérification @see Checker ou Fonction de rappel personnalisée.
+     * @var string|callable $cb Intitulé d'alias de vérification @see \tiFy\Components\Tools\Checker\CheckerTrait ou Fonction de rappel personnalisée.
      * @var array $args Liste des variables passées en arguments dans la fonction de rappel.
      * @var string $message Message de notification d'erreur.
      * }

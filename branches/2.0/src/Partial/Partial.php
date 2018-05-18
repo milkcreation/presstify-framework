@@ -17,16 +17,20 @@ namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
-use tiFy\Components\Partials\Breadcrumb\Breadcrumb;
-use tiFy\Components\Partials\Notice\Notice;
-use tiFy\Components\Partials\Sidebar\Sidebar;
-use tiFy\Components\Partials\Table\Table;
-use tiFy\Components\Partials\Tag\Tag;
+use tiFy\Components\Partial\Breadcrumb\Breadcrumb;
+use tiFy\Components\Partial\Navtabs\Navtabs;
+use tiFy\Components\Partial\Notice\Notice;
+use tiFy\Components\Partial\Sidebar\Sidebar;
+use tiFy\Components\Partial\SlickCarousel\SlickCarousel;
+use tiFy\Components\Partial\Table\Table;
+use tiFy\Components\Partial\Tag\Tag;
 
 /**
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
+ * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
  * @method static Notice Notice(string $id = null,array $attrs = [])
  * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
+ * @method static SlickCarousel SlickCarousel(string $id = null,array $attrs = [])
  * @method static Table Table(string $id = null,array $attrs = [])
  * @method static Tag Tag(string $id = null,array $attrs = [])
  */
@@ -46,10 +50,10 @@ final class Partial extends AppController
     public function appBoot()
     {
         // Déclaration des controleurs d'affichage natifs
-        foreach(glob($this->appAbsDir() . '/Components/Partials/*/', GLOB_ONLYDIR) as $filename) :
+        foreach(glob($this->appAbsDir() . '/Components/Partial/*/', GLOB_ONLYDIR) as $filename) :
             $name = basename($filename);
 
-            $this->register($name, "tiFy\\Components\\Partials\\{$name}\\{$name}::make");
+            $this->register($name, "tiFy\\Components\\Partial\\{$name}\\{$name}::make");
         endforeach;
 
         do_action('tify_partial_register', $this);

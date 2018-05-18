@@ -37,8 +37,8 @@ abstract class AbstractFieldController extends AppController
     {
         $field = $this->appServiceGet(Field::class);
 
-        if (! $field->existsInstance(__CLASS__)) :
-            $field->setInstance(__CLASS__, Str::random(32), $this);
+        if (! $field->existsInstance(get_called_class())) :
+            $field->setInstance(get_called_class(), Str::random(32), $this);
             $this->boot();
         endif;
     }

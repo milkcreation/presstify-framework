@@ -22,8 +22,19 @@ use tiFy\User\TakeOver\AdminBar\AdminBar;
 use tiFy\User\TakeOver\SwitcherForm\SwitcherForm;
 use tiFy\Apps\AppController;
 
+/**
+ * @method static ActionLink ActionLink(string $id = null, array $attrs = [])
+ * @method static AdminBar AdminBar(string $id = null,array $attrs = [])
+ * @method static SwitcherForm SwitcherForm(string $id = null,array $attrs = [])
+ */
 class TakeOver extends AppController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->appAddAction('tify_partial_register');
+    }
+
     /**
      * Initialisation du controleur.
      *
@@ -38,31 +49,29 @@ class TakeOver extends AppController
             endforeach;
         endif;
 
-        // Déclaration des événements de déclenchement
-        $this->appAddAction('tify_partial_register');
         $this->appAddAction('init');
     }
 
     /**
      * Déclaration de controleur d'affichage.
      *
-     * @param Partial $partial Classe de rappel des controleurs d'affichage.
+     * @param Partial $partialController Classe de rappel des controleurs d'affichage.
      *
      * @return void
      */
-    public function tify_partial_register($partial)
+    public function tify_partial_register($partialController)
     {
-        $partial->register(
+        $partialController->register(
             'TakeOverActionLink',
-            ActionLink::class
+            ActionLink::class . "::make"
         );
-        $partial->register(
+        $partialController->register(
             'TakeOverAdminBar',
-            AdminBar::class
+            AdminBar::class . "::make"
         );
-        $partial->register(
+        $partialController->register(
             'TakeOverSwitcherForm',
-            SwitcherForm::class
+            SwitcherForm::class . "::make"
         );
     }
 
@@ -109,5 +118,22 @@ class TakeOver extends AppController
         if ($this->appServiceHas($alias)) :
             return $this->appServiceGet($alias);
         endif;
+    }
+
+    /**
+     * Affichage ou récupération du contenu d'un controleur natif.
+     *
+     * @param string $name Nom de qualification du controleur d'affichage.
+     * @param array $args {
+     *      Liste des attributs de configuration.
+     *
+     *      @var array $attrs Attributs de configuration du champ.
+     *      @var bool $echo Activation de l'affichage du champ.
+     *
+     * @return null|callable
+     */
+    public static function __callStatic($name, $args)
+    {
+        return call_user_func_array(Partial::class . "::TakeOver{$name}", $args);
     }
 }
