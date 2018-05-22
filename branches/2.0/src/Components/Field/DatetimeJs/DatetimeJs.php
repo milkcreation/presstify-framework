@@ -25,9 +25,8 @@ class DatetimeJs extends AbstractFieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var string $container_id Id HTML du conteneur du champ.
-     *      @var string $container_class Classe HTML du conteneur du champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var array $attrs Liste des propriétés de la balise HTML.
      *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
      *      @var string $format Format d'enregistrement de la valeur 'datetime': Y-m-d H:i:s|'date': Y-m-d|'time': H:i:s.
      *      @var bool $none_allowed Activation de permission d'utilisation de valeur de nulle liée au format de la valeur (ex: datetime 0000-00-00 00:00:00).
@@ -41,9 +40,8 @@ class DatetimeJs extends AbstractFieldController
     protected $attributes = [
         'before'          => '',
         'after'           => '',
-        'container_id'    => '',
-        'container_class' => '',
         'name'            => '',
+        'attrs'           => [],
         'value'           => '',
         'format'          => 'datetime',
         'none_allowed'    => false,
@@ -92,15 +90,7 @@ class DatetimeJs extends AbstractFieldController
      */
     protected function parse($attrs = [])
     {
-        $this->attributes['container_id'] = 'tiFyField-datetimeJs--' . $this->getIndex();
-
         parent::parse($attrs);
-
-        if (!isset($this->attributes['container_class'])) :
-            $this->attributes['container_class'] = 'tiFyField-datetimeJs ' . $this->attributes['container_class'];
-        else :
-            $this->attributes['container_class'] = 'tiFyField-datetimeJs';
-        endif;
 
         if (!$this->attributes['fields']) :
             switch ($this->attributes['format']) :
@@ -167,7 +157,7 @@ class DatetimeJs extends AbstractFieldController
                     $defaults = [
                         'attrs'      => [
                             'id'            => $this->getId() . "-handler-yyyy",
-                            'class'         => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--year',
+                            'class'         => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--year',
                             'size'         => 4,
                             'maxlength'    => 4,
                             'min'          => 0,
@@ -193,7 +183,7 @@ class DatetimeJs extends AbstractFieldController
                     $defaults = [
                         'attrs'      => [
                             'id'    => $this->getId() . "-handler-mm",
-                            'class' => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--month',
+                            'class' => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--month',
                             'autocomplete' => 'off'
                         ],
                         'selected'        => $m,
@@ -209,7 +199,7 @@ class DatetimeJs extends AbstractFieldController
                     $defaults = [
                         'attrs'      => [
                             'id'           => $this->getId() . "-handler-dd",
-                            'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--day',
+                            'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--day',
                             'size'         => 2,
                             'maxlength'    => 2,
                             'min'          => $this->get('none_allowed') ? 0 : 1,
@@ -227,7 +217,7 @@ class DatetimeJs extends AbstractFieldController
                     $defaults = [
                         'attrs'      => [
                             'id'           => $this->getId() . "-handler-hh",
-                            'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--hour',
+                            'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--hour',
                             'size'         => 2,
                             'maxlength'    => 2,
                             'min'          => 0,
@@ -245,7 +235,7 @@ class DatetimeJs extends AbstractFieldController
                     $defaults = [
                         'attrs'      => [
                             'id'           => $this->getId() . "-handler-ii",
-                            'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--minute',
+                            'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--minute',
                             'size'         => 2,
                             'maxlength'    => 2,
                             'min'          => 0,
@@ -263,7 +253,7 @@ class DatetimeJs extends AbstractFieldController
                     $defaults = [
                         'attrs'      => [
                             'id'           => $this->getId() . "-handler-ss",
-                            'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--second',
+                            'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--second',
                             'size'         => 2,
                             'maxlength'    => 2,
                             'min'          => 0,
@@ -281,18 +271,15 @@ class DatetimeJs extends AbstractFieldController
 
         ob_start();
 ?><?php $this->before(); ?>
-    <div
-        id="<?php echo $this->get('container_id'); ?>"
-        class="<?php echo $this->get('container_class'); ?>"
-    >
+    <div <?php echo $this->attrs(); ?>>
         <?php printf('%3$s %2$s %1$s %4$s %5$s %6$s', $year, $month, $day, $hour, $minute, $second); ?>
 
         <?php
             echo Field::Hidden(
                 [
                     'attrs' => [
-                        'id'           => 'tiFyField-datetimeJsInput--' . $this->getIndex(),
-                        'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--value',
+                        'id'           => 'tiFyField-DatetimeJsInput--' . $this->getIndex(),
+                        'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--value',
                         'name'         => $this->getName(),
                         'value'        => $value
                     ]

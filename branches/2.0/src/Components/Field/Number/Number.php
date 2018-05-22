@@ -46,10 +46,7 @@ class Number extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-number--' . $this->getIndex();
-        endif;
-        $this->attributes['attrs']['type'] = 'number';
+        $this->setAttr('type', 'number');
     }
 
     /**

@@ -36,22 +36,6 @@ class Label extends AbstractFieldController
     ];
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
-     */
-    protected function parse($attrs = [])
-    {
-        parent::parse($attrs);
-
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attribute['attrs']['id'] = 'tiFyField-label--' . $this->getIndex();
-        endif;
-    }
-
-    /**
      * Affichage.
      *
      * @return string

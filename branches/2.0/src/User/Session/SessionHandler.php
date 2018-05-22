@@ -109,7 +109,7 @@ class SessionHandler
     /**
      * Récupération de la classe de rappel de la table de base de données
      *
-     * @return \tiFy\Db\Factory
+     * @return \tiFy\Db\DbControllerInterface
      */
     public function getDb()
     {

@@ -40,16 +40,21 @@ class File
     }
 
     /**
-     * Récupération du contenu d'un SVG depuis son chemin
+     * Récupération du contenu d'un SVG depuis son chemin.
+     *
+     * @param string $filename Chemin relatif ou absolue ou url vers un fichier.
      *
      * @return string
      */
     public function svgGetContents($filename)
     {
-        $output = "";
+        if(!$content = $this->getContents($filename)) :
+            return '';
+        endif;
 
-        $dom = new \DOMDocument;
-        @$dom->loadXML(file_get_contents($filename));
+        $output = "";
+        $dom = new \DOMDocument();
+        @$dom->loadXML($content);
         if ($svgs = $dom->getElementsByTagName('svg')) :
             foreach ($svgs as $n => $svg) :
                 $output .= $svgs->item($n)->C14N();
@@ -57,6 +62,34 @@ class File
         endif;
 
         return $output;
+    }
+
+    /**
+     * Récupération de la source image base64 d'un fichier.
+     *
+     * @param string $filename Chemin relatif ou absolue ou url vers un fichier.
+     *
+     * @return string
+     */
+    public function imgBase64Src($filename)
+    {
+        $mime_type = mime_content_type($filename);
+        if(!preg_match('#^image\/(.*)#', $mime_type, $match)) :
+            return '';
+        endif;
+
+        if(!$content = $this->getContents($filename)) :
+            return '';
+        endif;
+
+        switch($match[1]) :
+            case 'svg' :
+                return "data:{$mime_type}+xml;base64," . base64_encode($content);
+                break;
+            default:
+                return "data:{$mime_type};base64," . base64_encode($content);
+                break;
+        endswitch;
     }
 
     /**
@@ -249,18 +282,5 @@ class File
             'upload'        => tify_upload_url( $attachment_id ),
             'icon'            => wp_get_attachment_image( $attachment_id, array( 80, 60 ), true )
         );
-    }
-
-    /* = Transforme le chemin absolue = */
-    public static function pathToDataImage( $filename )
-    {
-        if( 'svg' !== pathinfo( $filename, PATHINFO_EXTENSION ) )
-            return;
-        if( ! $svg = @ file_get_contents( $filename ) )
-            return;
-        if( ! $base64_img = base64_encode( $svg ) )
-            return;
-
-        return 'data:image/svg+xml;base64,'.$base64_img;
     }
 }

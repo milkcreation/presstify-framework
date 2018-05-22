@@ -1197,9 +1197,9 @@
 })(jQuery, document, window);
 
 jQuery(document).ready(function($){
-    $('.tiFyField-selectJs').tifyselect();
+    $('.tiFyField-SelectJs').tifyselect();
 
-    $(document).on('mouseenter.tify_field.ajax_select', '.tiFyField-selectJs', function (e) {
+    $(document).on('mouseenter.tify_field.ajax_select', '.tiFyField-SelectJs', function (e) {
         $(this).each(function () {
             $(this).tifyselect();
         });

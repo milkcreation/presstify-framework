@@ -137,13 +137,13 @@ abstract class AbstractFieldController extends AppController
     }
 
     /**
-     * Affichage de la liste des attributs de balise
+     * Affichage de la liste des attributs de balise.
      *
      * @return string
      */
     public function attrs()
     {
-        echo Tools::Html()->parseAttrs($this->get('attrs', []));
+        echo $this->parseHtmlAttrs($this->get('attrs', []));
     }
 
     /**
@@ -347,7 +347,7 @@ abstract class AbstractFieldController extends AppController
      */
     public function isChecked()
     {
-        if (!$this->issetAttr('value')) :
+        if (!$this->hasAttr('value')) :
             return false;
         endif;
 
@@ -390,8 +390,47 @@ abstract class AbstractFieldController extends AppController
 
         $this->parseName($attrs);
         $this->parseValue($attrs);
+        $this->parseId($attrs);
         $this->parseClass($attrs);
         $this->parseOptions($attrs);
+    }
+
+    /**
+     * Traitement de l'attribut de configuration de l'attribut HTML "class".
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
+     *
+     * @return void
+     */
+    protected function parseClass($attrs = [])
+    {
+        $class = 'tiFyField-' . $this->appShortname();
+        $this->attributes['attrs']['class'] = isset($attrs['attrs']['class']) ? $class . ' ' . $attrs['attrs']['class'] : $class;
+    }
+
+    /**
+     * Traitement d'une liste d'attributs HTML.
+     *
+     * @param array $attrs Liste des attributs HTML.
+     * @param bool $linearized Activation de la linéarisation.
+     *
+     * @return string
+     */
+    protected function parseHtmlAttrs($attrs = [], $linearized = true)
+    {
+        return Tools::Html()->parseAttrs($attrs, $linearized);
+    }
+
+    /**
+     * Traitement de l'attribut de configuration de l'attribut HTML "id".
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
+     *
+     * @return void
+     */
+    protected function parseId($attrs = [])
+    {
+        $this->set('attrs.id', isset($attrs['attrs']['id']) ? $attrs['attrs']['id'] : "tiFyField-{$this->appShortname()}--{$this->getIndex()}");
     }
 
     /**
@@ -404,22 +443,9 @@ abstract class AbstractFieldController extends AppController
     protected function parseName($attrs = [])
     {
         if (isset($attrs['name'])) :
-            $this->attributes['attrs']['name'] = $attrs['name'];
+            $this->set('attrs.name', $attrs['name']);
             unset($attrs['name']);
         endif;
-    }
-
-    /**
-     * Traitement de l'attribut de configuration de l'attribut HTML "class".
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return void
-     */
-    protected function parseClass($attrs = [])
-    {
-        $class = 'tiFyField-' . lcfirst($this->appShortname());
-        $this->attributes['attrs']['class'] = isset($attrs['attrs']['class']) ? $class . ' ' . $attrs['attrs']['class'] : $class;
     }
 
     /**
@@ -507,7 +533,7 @@ abstract class AbstractFieldController extends AppController
      */
     public function set($key, $value)
     {
-        Arr::set($this->attributes, $key, $defaults);
+        Arr::set($this->attributes, $key, $value);
 
         return $this;
     }
@@ -516,13 +542,17 @@ abstract class AbstractFieldController extends AppController
      * Définition d'un attribut de balise HTML
      *
      * @param string $key Clé d'indexe de l'attribut.
-     * @param string $value Valeur de l'attribut.
+     * @param null|mixed $value Valeur de l'attribut.
      *
      * @return $this
      */
-    public function setAttr($key, $value)
+    public function setAttr($key, $value = null)
     {
-        Arr::set($this->attributes, "attrs.{$key}", $value);
+        if(is_null($value)) :
+            Arr::set($this->attributes, 'attrs', $this->get('attrs', [])+[$key]);
+        else :
+            Arr::set($this->attributes, "attrs.{$key}", $value);
+        endif;
 
         return $this;
     }

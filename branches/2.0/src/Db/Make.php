@@ -2,14 +2,14 @@
 
 namespace tiFy\Db;
 
-use tiFy\Db\DbController;
 use tiFy\Apps\AppController;
+use tiFy\Db\DbControllerInterface;
 
 class Make extends AppController
 {
     /**
      * Classe de rappel du controleur de base de données associé.
-     * @var DbController
+     * @var DbControllerInterface
      */
     protected $db;
 
@@ -22,11 +22,11 @@ class Make extends AppController
     /**
      * CONSTRUCTEUR.
      *
-     * @param DbController $db Classe de rappel du controleur de base de données associé.
+     * @param DbControllerInterface $db Classe de rappel du controleur de base de données associé.
      *
      * @return void
      */
-    public function __construct(DbController $db)
+    public function __construct(DbControllerInterface $db)
     {
         $this->db = $db;
 

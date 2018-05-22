@@ -40,7 +40,9 @@ class Radio extends AbstractFieldController
     ];
 
     /**
-     * Traitement des attributs de configuration.
+     * Traitement des attributs de configuration.        if (!isset($this->attributes['attrs']['id'])) :
+            $this->attributes['attrs']['id'] = 'tiFyField-password--' . $this->getIndex();
+        endif;
      *
      * @param array $attrs Liste des attributs de configuration personnalisés.
      *
@@ -50,10 +52,11 @@ class Radio extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-radio--' . $this->getIndex();
+        $this->setAttr('type', 'radio');
+
+        if ($this->isChecked()) :
+            $this->setAttr('checked', 'checked');
         endif;
-        $this->attributes['attrs']['type'] = 'radio';
     }
 
     /**
@@ -63,10 +66,6 @@ class Radio extends AbstractFieldController
      */
     protected function display()
     {
-        if ($this->isChecked()) :
-            $this->setAttr('checked', 'checked');
-        endif;
-
         ob_start();
 ?><?php $this->before(); ?><input <?php $this->attrs(); ?>/><?php $this->after(); ?><?php
 

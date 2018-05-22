@@ -4,7 +4,7 @@ namespace tiFy\Media;
 
 use Symfony\Component\HttpFoundation\Request;
 use tiFy\Apps\AppController;
-use tiFy\Components\Tools\Cryptor\Cryptor;
+use tiFy\Kernel\Tools;
 
 class Download extends AppController
 {
@@ -72,7 +72,7 @@ class Download extends AppController
                 $this->register($abspath);
             endif;
         else :
-            $media = Cryptor::decrypt($token);
+            $media = Tools::Cryptor()->decrypt($token);
 
             if (is_numeric($media)) :
                 if (get_post_meta($media, '_tify_media_download_token', true) === $token) :
@@ -146,7 +146,7 @@ class Download extends AppController
             $vars['tify_media_download'] = is_int($file) ? $file : urlencode_deep($file);
         else :
             $baseurl = home_url('/');
-            $token = Cryptor::encrypt($file);
+            $token = Tools::Cryptor()->encrypt($file);
 
             if (is_numeric($file)) :
                 if ($token !== get_post_meta($file, '_tify_media_download_token', true)) :
@@ -175,7 +175,7 @@ class Download extends AppController
         endif;
 
         if (! is_admin()) :
-            $media = Cryptor::decrypt($media);
+            $media = Tools::Cryptor()->decrypt($media);
         endif;
 
         if (is_numeric($media)) :

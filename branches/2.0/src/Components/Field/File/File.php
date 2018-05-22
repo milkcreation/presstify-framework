@@ -48,10 +48,7 @@ class File extends AbstractFieldController
     {
         parent::parse($args);
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-file--' . $this->getIndex();
-        endif;
-        $this->attributes['attrs']['type'] = 'file';
+        $this->setAttr('type', 'file');
     }
 
     /**

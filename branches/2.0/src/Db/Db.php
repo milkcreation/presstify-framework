@@ -3,21 +3,10 @@
 namespace tiFy\Db;
 
 use tiFy\Apps\AppController;
+use tiFy\Db\DbControllerInterface;
 
 final class Db extends AppController
 {
-    /**
-     * Liste des controleurs de bases de données déclarées.
-     * @var Table
-     */
-    protected $registered = [];
-
-    /**
-     * Classe de rappel
-     * @var unknown
-     */
-    public static $Query = null;
-
     /**
      * Initialisation du controleur.
      *
@@ -33,10 +22,10 @@ final class Db extends AppController
      *
      * @return void
      */
-    final public function init()
+    public function init()
     {
         foreach($this->appConfig(null, []) as $name => $attrs) :
-            $this->register($name, $args);
+            $this->register($name, $attrs);
         endforeach;
 
         do_action('tify_db_register', $this);
@@ -48,7 +37,7 @@ final class Db extends AppController
      * @param string $name Nom de qualification du controleur de base de données.
      * @param array $attrs Attributs de configuration de la base de données
      *
-     * @return DbController
+     * @return DbControllerInterface
      */
     public function register($name, $attrs = [])
     {
@@ -57,7 +46,9 @@ final class Db extends AppController
             return;
         endif;
 
-        $this->appServiceShare($alias, new DbController($name, $attrs));
+        $classname = isset($attrs['controller']) ? $attrs['controller'] : DbBaseController::class;
+
+        $this->appServiceShare($alias, new $classname($name, $attrs));
 
         return $this->appServiceGet($alias);
     }
@@ -67,7 +58,7 @@ final class Db extends AppController
      *
      * @param string $name Nom de qualification du controleur de base de données.
      *
-     * @return null|DbController
+     * @return null|DbControllerInterface
      */
     public function get($name)
     {
