@@ -52,12 +52,6 @@ class Select extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-select--' . $this->getIndex();
-        endif;
-
-        $this->attributes['attrs']['type'] = 'text';
-
         if ($this->attributes['multiple']) :
             array_push($this->attributes['attrs'], 'multiple');
         endif;
@@ -70,7 +64,7 @@ class Select extends AbstractFieldController
      *
      * @return array
      */
-    protected function parseName($args = [])
+    protected function parseName($attrs = [])
     {
         if (isset($this->attributes['name'])) :
             $this->attributes['attrs']['name'] = !empty($this->attributes['multiple']) ? "{$this->attributes['name']}[]" : $this->attributes['name'];

@@ -31,79 +31,6 @@ class Factory extends \tiFy\App\FactoryConstructor
     protected $ParentId = null;
 
     /**
-     * CONSTRUCTEUR
-     *
-     * @return void
-     */
-    public function __construct($id, $attrs = [])
-    {
-        parent::__construct($id, $attrs);
-
-        // Définition des événements de déclenchement
-        $this->init();
-    }
-
-    /**
-     * DECLENCHEUR
-     */
-    /**
-     * Initialisation global
-     *
-     * @return void
-     */
-    public function init()
-    {
-
-    }
-
-    /**
-     * CONTROLEURS
-     */
-    /**
-     * Traitement des attributs de configuration
-     *
-     * @param array $attrs Tableau associatif des attributs de configuration à traiter
-     *
-     * @return array
-     */
-    protected function parseAttrs($attrs = [])
-    {
-        // Récupération du gabarit parent
-        if (class_exists($attrs['cb'])) :
-            $this->ParentId = $this->queryParentId($attrs['cb']);
-        endif;
-
-        // Définition de la classe de rappel de la base de données
-        if (!isset($attrs['db'])) :
-            $db = '';
-        else :
-            $db = $attrs['db'];
-        endif;
-        if ($db === false) :
-        elseif ($db instanceof \tiFy\Core\Db\Factory) :
-        elseif (is_string($db) && ($_db = Db::get($db))) :
-            $attrs['db'] = $_db;
-        elseif ($db = $this->getParentAttr('db')) :
-            $attrs['db'] = Db::get($db);
-        endif;
-
-        // Définition de la classe de rappel des intitulés
-        $labels = !empty($attrs['labels']) ? $attrs['labels'] : null;
-        if ($labels instanceof \tiFy\Core\Labels\Factory) :
-        elseif (is_string($labels) && ($_labels = Labels::get($labels))) :
-            $attrs['labels'] = $_labels;
-        elseif (is_array($labels)) :
-            $attrs['labels'] = Labels::register('_UiLabels-' . $this->getId(), $attrs['labels']);
-        elseif ($label = $this->getParentAttr('label')) :
-            $attrs['labels'] = Labels::get($label);
-        else :
-            $attrs['labels'] = Labels::register('_UiLabels-' . $this->getId());
-        endif;
-
-        return $attrs;
-    }
-
-    /**
      * Récupération de la liste des attributs de configuration des gabarits parent
      *
      * @return array
@@ -205,29 +132,6 @@ class Factory extends \tiFy\App\FactoryConstructor
     }
 
     /**
-     * Récupération de la classe de rappel de l'object base de données
-     *
-     * @return \tiFy\Core\Db\Factory
-     */
-    final public function getDb()
-    {
-        return $this->getAttr('db', null);
-    }
-
-    /**
-     * Récupération d'intitulé
-     *
-     * @param $label Identifiant de qualification de l'intitulé
-     * @param $default Valeur de retour par défaut
-     *
-     * @return void|string|array Chaîne vide ou Chaîne de caractére ou Tableau associatif des intitulés
-     */
-    final public function getLabel($label, $default = '')
-    {
-        return $this->getAttr('labels')->get($label, $default);
-    }
-
-    /**
      * Récupération de la liste des classes de rappel des gabarits de traitement externe
      *
      * @return array|\tiFy\Core\Ui\Factory[]
@@ -255,13 +159,5 @@ class Factory extends \tiFy\App\FactoryConstructor
         endif;
 
         return $handle_list[$task];
-    }
-
-    /**
-     * Affichage
-     */
-    public function render()
-    {
-
     }
 }

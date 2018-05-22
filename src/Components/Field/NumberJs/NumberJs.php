@@ -88,18 +88,18 @@ class NumberJs extends AbstractFieldController
      */
     protected function parse($attrs = [])
     {
-        $this->attributes['container_id'] = 'tiFyField-numberJsContainer--' . $this->getIndex();
+        $this->attributes['container_id'] = 'tiFyField-NumberJsContainer--' . $this->getIndex();
 
         parent::parse($attrs);
 
         if (!isset($this->attributes['container_class'])) :
-            $this->attributes['container_class'] = 'tiFyField-numberJsContainer ' . $this->attributes['container_class'];
+            $this->attributes['container_class'] = 'tiFyField-NumberJsContainer ' . $this->attributes['container_class'];
         else :
-            $this->attributes['container_class'] = 'tiFyField-numberJsContainer';
+            $this->attributes['container_class'] = 'tiFyField-NumberJsContainer';
         endif;
 
         if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-numberJs--' . $this->getIndex();
+            $this->attributes['attrs']['id'] = 'tiFyField-NumberJs--' . $this->getIndex();
         endif;
         $this->attributes['attrs']['type'] = 'text';
         $this->attributes['attrs']['data-options'] = array_merge(

@@ -5,7 +5,7 @@ namespace tiFy\Components\Tools\Html;
 class Html
 {
     /**
-     * Traitement de la liste des attributs HTML.
+     * Traitement d'une liste d'attributs HTML.
      *
      * @param array $attrs Liste des attributs HTML.
      * @param bool $linearized Activation de la linéarisation.

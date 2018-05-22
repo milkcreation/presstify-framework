@@ -1,18 +1,5 @@
 <?php
 
-/**
- * @name Checkbox
- * @desc Case à cocher
- * @package presstiFy
- * @namespace tiFy\Components\Field\Checkbox
- * @version 1.1
- * @subpackage Core
- * @since 1.2.535
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Components\Field\Checkbox;
 
 use tiFy\Field\AbstractFieldController;
@@ -50,10 +37,7 @@ class Checkbox extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-checkbox--' . $this->getIndex();
-        endif;
-        $this->attributes['attrs']['type'] = 'checkbox';
+        $this->setAttr('type', 'checkbox');
     }
 
     /**

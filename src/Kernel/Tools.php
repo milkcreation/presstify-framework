@@ -4,12 +4,14 @@ namespace tiFy\Kernel;
 
 use tiFy\Apps\AppTrait;
 use tiFy\Components\Tools\Checker\Checker;
+use tiFy\Components\Tools\Cryptor\Cryptor;
 use tiFy\Components\Tools\Html\Html;
 use tiFy\Components\Tools\File\File;
 use tiFy\Components\Tools\User\User;
 
 /**
  * @method static Checker Checker()
+ * @method static Cryptor Cryptor()
  * @method static Html Html()
  * @method static File File()
  * @method static User User()

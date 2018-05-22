@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    $('.tiFyField-numberJs').each(function() {
+    $('.tiFyField-NumberJs').each(function() {
         var options = JSON.parse(
             decodeURIComponent($(this).data('options'))
         );
