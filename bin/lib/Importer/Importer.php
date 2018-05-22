@@ -184,26 +184,26 @@ abstract class Importer
 
                     // Filtrage des données par type
                     $import->_filterValues($type);
-                    if ($import->Stop) break2;
+                    if ($import->Stop) break 2;
 
                     // Vérification d'intégrité des données par type
                     $import->_checkValues($type);
-                    if ($import->Stop) break2;
+                    if ($import->Stop) break 2;
 
                     // Evénement pré-insertion des données par type
                     call_user_func([$import, "before_insert_{$type}s"], $insert_id);
-                    if ($import->Stop) break2;
+                    if ($import->Stop) break 2;
 
                     // Import des données par type
                     $list = call_user_func([$import, "get{$Type}List"]);
                     foreach ($list as $key => $value) :
                         call_user_func([$import, "insert_{$type}"], $key, $value, $insert_id);
-                        if ($import->Stop) break3;
+                        if ($import->Stop) break 3;
                     endforeach;
 
                     // Evénement post-insertion des données principales
                     call_user_func([$import, "after_insert_{$type}s"], $insert_id);
-                    if ($import->Stop) break2;
+                    if ($import->Stop) break 2;
                 endforeach;
             endif;
 
