@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
 
-class LabelsBaseController extends AppController
+class LabelsBaseController extends AppController implements LabelsControllerInterface
 {
     /**
      * Nom de qualification par defaut.
@@ -54,30 +54,7 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Traitement des intitulés.
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return array
-     */
-    protected function parse($attrs = [])
-    {
-        $this->attributes = $attrs;
-
-        $this->set('gender', $this->getGender());
-
-        $this->set('plural', $this->getPlural());
-
-        $this->set('singular', $this->getSingular());
-    }
-
-    /**
-     * Récupération de la liste des attributs définis.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param string $default Valeur de retour par défaut.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function all()
     {
@@ -113,12 +90,7 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Récupération de la valeur d'un attribut défini.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param string $default Valeur de retour par défaut.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function get($key, $default = '')
     {
@@ -126,9 +98,7 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Récupération du genre.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function getGender()
     {
@@ -136,9 +106,7 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Récupération du nom de qualification.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -146,9 +114,7 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Récupération de la forme plurielle.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getPlural()
     {
@@ -156,9 +122,7 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Récupération de la forme singulière.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSingular()
     {
@@ -166,12 +130,25 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Définition d'un attribut.
+     * Traitement des intitulés.
      *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param mixed $value Valeur de l'attribut.
+     * @param array $attrs Liste des attributs de configuration.
      *
-     * @return $this
+     * @return array
+     */
+    protected function parse($attrs = [])
+    {
+        $this->attributes = $attrs;
+
+        $this->set('gender', $this->getGender());
+
+        $this->set('plural', $this->getPlural());
+
+        $this->set('singular', $this->getSingular());
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function set($key, $value)
     {
@@ -181,11 +158,7 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Permet de vérifier si la première lettre d'une chaîne de caractère est une voyelle.
-     *
-     * @param string $string Chaîne de caractère à traiter.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function isFirstVowel($string)
     {
@@ -195,12 +168,7 @@ class LabelsBaseController extends AppController
     }
 
     /**
-     * Récupération du déterminant de qualification d'une chaîne de caractère.
-     *
-     * @param string $string Chaîne de caractère à traiter.
-     * @param bool $gender Genre de la chaîne de caractère à traiter (false : masculin, true : féminin).
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDeterminant($string, $gender = false)
     {

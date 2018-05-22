@@ -10,11 +10,7 @@ use Illuminate\Support\Str;
 class LabelsPostTypeController extends LabelsBaseController
 {
     /**
-     * Traitement des intitulés.
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     protected function parse($attrs = [])
     {

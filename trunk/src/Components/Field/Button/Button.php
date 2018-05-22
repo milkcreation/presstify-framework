@@ -1,18 +1,5 @@
 <?php
 
-/**
- * @name Button
- * @desc Bouton d'action
- * @package presstiFy
- * @namespace tiFy\Components\Field\Button
- * @version 1.1
- * @subpackage Core
- * @since 1.2.535
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Components\Field\Button;
 
 use tiFy\Field\AbstractFieldController;
@@ -53,10 +40,6 @@ class Button extends AbstractFieldController
         $this->attributes['content'] = __('Envoyer', 'tify');
 
         parent::parse($attrs);
-
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-button--' . $this->getIndex();
-        endif;
 
         if (!isset($this->attributes['attrs']['type'])) :
             $this->attributes['attrs']['type'] = $this->attributes['type'];

@@ -48,10 +48,7 @@ class Text extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-text--' . $this->getIndex();
-        endif;
-        $this->attributes['attrs']['type'] = 'text';
+        $this->setAttr('type', 'text');
     }
 
     /**

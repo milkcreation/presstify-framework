@@ -19,6 +19,7 @@ use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
 use tiFy\Components\Field\Button\Button;
 use tiFy\Components\Field\Checkbox\Checkbox;
+use tiFy\Components\Field\Crypted\Crypted;
 use tiFy\Components\Field\DatetimeJs\DatetimeJs;
 use tiFy\Components\Field\File\File;
 use tiFy\Components\Field\Hidden\Hidden;
@@ -42,6 +43,7 @@ use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
  *
  * @method static Button Button(string $id = null, array $attrs = [])
  * @method static Checkbox(string $id = null, array $attrs = [])
+ * @method static Crypted(string $id = null, array $attrs = [])
  * @method static DatetimeJs(string $id = null, array $attrs = [])
  * @method static File(string $id = null, array $attrs = [])
  * @method static Hidden(string $id = null, array $attrs = [])

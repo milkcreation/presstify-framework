@@ -173,7 +173,7 @@ class Sidebar extends AbstractPartialController
                     'items'         => SidebarWalker::display(
                         $this->get('nodes', []),
                         [
-                            'prefix' => 'tifyPartial-Sidebar'
+                            'prefix' => 'tiFyPartial-Sidebar'
                         ]
                     ),
                     'html_attrs'    => Tools::Html()->parseAttrs($this->get('attrs', []))

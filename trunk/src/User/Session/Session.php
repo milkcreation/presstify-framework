@@ -17,7 +17,7 @@ namespace tiFy\User\Session;
 
 use tiFy\Apps\AppController;
 use tiFy\Db\Db;
-use tiFy\Db\DbController;
+use tiFy\Db\DbControllerInterface;
 use tiFy\Cron\Cron;
 
 final class Session extends AppController
@@ -30,7 +30,7 @@ final class Session extends AppController
 
     /**
      * Classe de rappel de la base de données
-     * @var DbController
+     * @var DbControllerInterface
      */
     private $db;
 
@@ -156,7 +156,7 @@ final class Session extends AppController
      * Initialisation de la table de base de données
      * @see https://github.com/kloon/woocommerce-large-sessions
      *
-     * @return DbController
+     * @return DbControllerInterface
      */
     private function initDb()
     {
@@ -208,13 +208,13 @@ final class Session extends AppController
     /**
      * Récupération de la base de données
      *
-     * @return DbController
+     * @return DbControllerInterface
      *
      * @throws \Exception
      */
     public function getDb()
     {
-        if (! $this->db instanceof DbController) :
+        if (! $this->db instanceof DbControllerInterface) :
             throw new \Exception(__('La table de base de données de stockage des sessions est indisponible.', 'tify'), 500);
         endif;
 

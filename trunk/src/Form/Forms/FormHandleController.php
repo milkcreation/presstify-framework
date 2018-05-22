@@ -38,7 +38,7 @@ class FormHandleController extends AbstractCommonDependency
 
     /**
      * Traitement de la requête de soumission du formulaire.
-     *
+     *                'required'     => true,
      * @return bool|void
      */
     public function proceed()

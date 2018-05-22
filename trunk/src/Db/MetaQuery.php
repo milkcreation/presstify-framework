@@ -2,8 +2,8 @@
 
 namespace tiFy\Db;
 
-use tiFy\Db\DbController;
 use tiFy\Apps\AppTrait;
+use tiFy\Db\DbControllerInterface;
 
 class MetaQuery extends \WP_Meta_Query
 {
@@ -11,19 +11,19 @@ class MetaQuery extends \WP_Meta_Query
 
     /**
      * Classe de rappel du controleur de base de données associé.
-     * @var DbController
+     * @var DbControllerInterface
      */
     protected $db;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param DbController $db Classe de rappel du controleur de base de données associé.
+     * @param DbControllerInterface $db Classe de rappel du controleur de base de données associé.
      * @param array $meta_query Paramètre de requête des metadonnées.
      *
      * @return void
      */
-    public function __construct(DbController $db, $meta_query = false)
+    public function __construct(DbControllerInterface $db, $meta_query = false)
     {
         $this->db = $db;
 
