@@ -1,4 +1,4 @@
-.tiFyField-toggleSwitch {
+.tiFyField-ToggleSwitch {
     background: #FFF;
     padding:2px;
     -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
@@ -6,19 +6,19 @@
     display:inline-block;
     vertical-align:middle;
 }
-.tiFyField-toggleSwitchWrapper::before,
-.tiFyField-toggleSwitchWrapper::after {
+.tiFyField-ToggleSwitchWrapper::before,
+.tiFyField-ToggleSwitchWrapper::after {
     display:table;
     content:"";
 }
-.tiFyField-toggleSwitchWrapper::after {
+.tiFyField-ToggleSwitchWrapper::after {
     clear:both;
 }
-.tiFyField-toggleSwitchWrapper {
+.tiFyField-ToggleSwitchWrapper {
     position: relative;
     width: 80px; height:20px;
 }
-.tiFyField-toggleSwitchLabel {
+.tiFyField-ToggleSwitchLabel {
     position: relative;
     z-index: 2;
     float: left;
@@ -31,13 +31,13 @@
     text-align: center;
     cursor: pointer;
 }
-.tiFyField-toggleSwitchLabel:active {
+.tiFyField-ToggleSwitchLabel:active {
     font-weight: bold;
 }
-.tiFyField-toggleSwitch .tiFyField-toggleSwitchRadio{
+tiFyField-ToggleSwitchRadio{
     display: none;
 }
-.tiFyField-toggleSwitchHandler {
+.tiFyField-ToggleSwitchHandler {
     position: absolute;
     top:0; right:auto; bottom:0; left:0;
     display: block;     
@@ -50,17 +50,17 @@
     transition:             transform 0.15s ease-out;
     z-index: 1; 
 }
-.tiFyField-toggleSwitchRadio--on:checked + .tiFyField-toggleSwitchLabel--on ~ .tiFyField-toggleSwitchHandler {
+.tiFyField-ToggleSwitchRadio--on:checked + .tiFyField-ToggleSwitchLabel--on ~ .tiFyField-ToggleSwitchHandler {
     background: #0074A2;
 }
-.tiFyField-toggleSwitchRadio--off:checked + .tiFyField-toggleSwitchLabel--off ~ .tiFyField-toggleSwitchHandler {
+.tiFyField-ToggleSwitchRadio--off:checked + .tiFyField-ToggleSwitchLabel--off ~ .tiFyField-ToggleSwitchHandler {
     -webkit-transform:     translateX(100%);
     -ms-transform:         translateX(100%);
     transform:             translateX(100%);
     background: #AAA;
 }
-.tiFyField-toggleSwitchRadio--on:checked + .tiFyField-toggleSwitchLabel--on,
-.tiFyField-toggleSwitchRadio--off:checked + .tiFyField-toggleSwitchLabel--off {
+.tiFyField-ToggleSwitchRadio--on:checked + .tiFyField-ToggleSwitchLabel--on,
+.tiFyField-ToggleSwitchRadio--off:checked + .tiFyField-ToggleSwitchLabel--off {
     font-weight: bold;
     color: #FFF;
     cursor:default;

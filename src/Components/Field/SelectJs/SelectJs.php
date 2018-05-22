@@ -169,16 +169,6 @@ class SelectJs extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        // Attributs de configuration du controleur
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-selectJs--' . $this->getIndex();
-        endif;
-        if (!isset($this->attributes['attrs']['class'])) :
-            $this->attributes['attrs']['class'] = 'tiFy-select tiFyField-selectJs';
-        else :
-            $this->attributes['attrs']['class'] = 'tiFy-select tiFyField-selectJs '. $this->attributes['attrs']['class'];
-        endif;
-
         // Attributs du selecteur de gestion de traitement
         $this->attributes['handler_args'] = [
             'name'      => $this->attributes['name'],

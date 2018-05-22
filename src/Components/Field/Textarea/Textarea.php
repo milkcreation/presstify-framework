@@ -38,22 +38,6 @@ class Textarea extends AbstractFieldController
     ];
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
-     */
-    protected function parse($attrs = [])
-    {
-        parent::parse($attrs);
-
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-textarea--' . $this->getIndex();
-        endif;
-    }
-
-    /**
      * Traitement de l'attribut de configuration de la valeur de soumission du champ "value".
      *
      * @param array $attrs Liste des attributs de configuration personnalisés.

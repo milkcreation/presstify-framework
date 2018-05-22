@@ -503,6 +503,7 @@ class TakeOverController extends AppController
                 $this->_handleSwitch($user_id);
 
                 \wp_redirect(home_url('/'));
+                exit;
                 break;
 
             // Récupération de l'utilisateur principal
@@ -514,6 +515,7 @@ class TakeOverController extends AppController
                 endif;
 
                 \wp_redirect(home_url('/'));
+                exit;
                 break;
 
             // Action non définie

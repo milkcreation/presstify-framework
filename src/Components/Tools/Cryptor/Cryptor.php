@@ -40,56 +40,7 @@ class Cryptor
     }
 
     /**
-     * Récupération de la clée secrète de hashage.
-     *
-     * @return string
-     */
-    final public function getSecret()
-    {
-        return $this->secret;
-    }
-
-    /**
-     * Récupération de la clé privée de hashage.
-     *
-     * @return string
-     */
-    final public function getPrivate()
-    {
-        return $this->private;
-    }
-
-    /**
-     * Encryptage.
-     *
-     * @param string $plain Texte à encrypter.
-     * @param string $secret Clé secrète de hashage.
-     * @param string $private Clé privée de hashage.
-     *
-     *
-     * @return string
-     */
-    final public static function encrypt($plain, $secret = null, $private = null)
-    {
-        return self::crypt($plain, 'encrypt', $secret, $private);
-    }
-
-    /**
-     * Décryptage.
-     *
-     * @param string $hash Texte à décrypter.
-     * @param string $secret Clé secrète de hashage.
-     * @param string $private Clé privée de hashage.
-     *
-     * @return string
-     */
-    final public static function decrypt($hash, $secret = null, $private = null)
-    {
-        return self::crypt($hash, 'decrypt', $secret, $private);
-    }
-
-    /**
-     * Lancement de l'action de cryptage ou de decryptage.
+     * Traitement de l'action de cryptage ou de decryptage.
      *
      * @param string $value Valeur à traiter.
      * @param string $action Traitement de la valeur à réaliser. encrypt|decrypt. encrypt par défaut.
@@ -98,7 +49,7 @@ class Cryptor
      *
      * @return bool|string
      */
-    final private static function crypt($value, $action = 'encrypt', $secret = null, $private = null)
+    protected function handle($value, $action = 'encrypt', $secret = null, $private = null)
     {
         $inst = new self($secret, $private);
         $secret_key = $inst->getSecret();
@@ -117,5 +68,68 @@ class Cryptor
                 return openssl_decrypt(base64_decode($value), $encrypt_method, $key, 0, $iv);
                 break;
         endswitch;
+    }
+
+    /**
+     * Décryptage.
+     *
+     * @param string $hash Texte à décrypter.
+     * @param string $secret Clé secrète de hashage.
+     * @param string $private Clé privée de hashage.
+     *
+     * @return string
+     */
+    public function decrypt($hash, $secret = null, $private = null)
+    {
+        return $this->handle($hash, 'decrypt', $secret, $private);
+    }
+
+    /**
+     * Encryptage.
+     *
+     * @param string $plain Texte à encrypter.
+     * @param string $secret Clé secrète de hashage.
+     * @param string $private Clé privée de hashage.
+     *
+     *
+     * @return string
+     */
+    public function encrypt($plain, $secret = null, $private = null)
+    {
+        return $this->handle($plain, 'encrypt', $secret, $private);
+    }
+
+    /**
+     * Generation.
+     *
+     * @param int $length Longueur de la chaine.
+     * @param bool $special_chars Activation des caractère spéciaux. !|@|#|$|%|^|&|*|(|)|.
+     * @param bool $extra_special_chars Activation des caractère spéciaux complémentaires. -|_| |[|]|{|}|<|>|~|`|+|=|,|.|;|:|/|?|||.
+     *
+     * @return string
+     */
+    public function generate($length = 12, $special_chars = true, $extra_special_chars = false)
+    {
+        return \wp_generate_password($length, $special_chars, $extra_special_chars);
+    }
+
+    /**
+     * Récupération de la clée secrète de hashage.
+     *
+     * @return string
+     */
+    final public function getSecret()
+    {
+        return $this->secret;
+    }
+
+    /**
+     * Récupération de la clé privée de hashage.
+     *
+     * @return string
+     */
+    final public function getPrivate()
+    {
+        return $this->private;
     }
 }

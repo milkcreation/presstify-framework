@@ -1,198 +1,342 @@
 <?php
+
 namespace tiFy\Db;
+
+use tiFy\Apps\AppController;
+use tiFy\Db\DbControllerInterface;
 
 class Query
 {
-	/* = ARGUMENTS = */
-	private $Db = null;
-			
-	public	// Paramètres
-			$query,						// Query vars set by the user
-			$query_vars = array(),		// Query vars, after parsing
-			$queried_object,			// Holds the data for a single object that is queried.
-			$queried_object_id,			// The ID of the queried object.
-			$request,					// Get post database query
-			
-			$items,						// Liste des éléments
-			$item_count 	= 0,		// Quantité d'éléments trouvé
-			$current_item 	= -1,		// Index de l'élément courant dans la boucle
-			$in_the_loop 	= false,	// Chaque fois que la boucle est commencée et que le demandeur est dans cette boucle.
-			$item,						// Elément courant.
-			$found_items;				// The amount of found posts for the current query
-	
-	/* = CONSTRUCTEUR = */
-	public function __construct( Factory $Db, $query = null )
-	{
-		$this->Db = $Db;
-		
-		Db::$Query = $this; 
-		
-		if ( ! empty( $query ) )
-			$this->query( $query );
-	}	
-	
-	/* = PARAMETRAGE = */
-	/** == Initiates object properties and sets default values. == **/
-	public function init() 
-	{
-		unset( $this->items );
-		unset( $this->query );
-		$this->query_vars = array();
-		unset( $this->queried_object );
-		unset( $this->queried_object_id );
-		$this->item_count = 0;
-		$this->current_item = -1;
-		$this->in_the_loop = false;
-		unset( $this->request );
-		unset( $this->item );
-		$this->found_items = 0;
-	}
-	
-	/** ==  == **/
-	public function query( $query = '' ) 
-	{
-		$this->init();
-		$this->query = $this->query_vars = wp_parse_args( $query );
+    /**
+     * Classe de rappel du controleur de base de données associé.
+     * @var DbControllerInterface
+     */
+    protected $db;
 
-		return $this->get_items();
-	}
-	
-	/** == Récupération des éléments à partir des variables de requête == **/
-	public function get_items()
-	{
-		if( $this->items = $this->Db->select()->rows( $this->query_vars ) ) :
-			$this->item_count = count( $this->items );
-			$this->item = reset( $this->items );
-		else :			
-			$this->item_count = 0;
-			$this->items = array();
-		endif;
-		
-		$this->found_items = $this->Db->select()->count( $this->query_vars );
-		
-		return $this->items;
-	}
-	
-	/** == Récupération des éléments à partir de conditions de requêtes == **/
-	public function query_items( $clauses = array() )
-	{
-		extract( $clauses );
-		
-		$where 		= isset( $clauses[ 'where' ] ) ? $clauses[ 'where' ] : '';
-		$groupby 	= isset( $clauses[ 'groupby' ] ) ? $clauses[ 'groupby' ] : '';
-		$join 		= isset( $clauses[ 'join' ] ) ? $clauses[ 'join' ] : '';
-		$orderby 	= isset( $clauses[ 'orderby' ] ) ? $clauses[ 'orderby' ] : '';
-		$distinct 	= isset( $clauses[ 'distinct' ] ) ? $clauses[ 'distinct' ] : '';
-		$fields 	= isset( $clauses[ 'fields' ] ) ? $clauses[ 'fields' ] : "{$this->Db->Name}.*";;
-		$limits 	= isset( $clauses[ 'limits' ] ) ? $clauses[ 'limits' ] : '';
-		
-		if ( ! empty( $groupby ) )
-			$groupby = 'GROUP BY ' . $groupby;
-		if ( ! empty( $orderby ) )
-			$orderby = 'ORDER BY ' . $orderby;
-		
-		$found_rows = '';
-		if ( ! empty( $limits ) )
-			$found_rows = 'SQL_CALC_FOUND_ROWS';
-		
-		$this->request 	= "SELECT $found_rows $distinct $fields FROM {$this->Db->Name} $join WHERE 1=1 $where $groupby $orderby $limits";
-		
-		if( $this->items = $this->Db->sql()->get_results( $this->request ) ) :
-			$this->item_count = count( $this->items );
-			$this->item = reset( $this->items );
-		else :
-			$this->item_count = 0;
-			$this->items = array();
-		endif;
-		
-		$this->set_found_items( $limits );
+    /**
+     * Variables de requête brutes, passées en arguments.
+     * @var array
+     */
+    protected $query = [];
 
-		return $this->items;
-	}
-	
-	private function set_found_items( $limits ) 
-	{
-		if ( is_array( $this->items ) && ! $this->items )
-			return;
+    /**
+     * Variables de requête après traitement.
+     * @var array
+     */
+    protected $query_vars = [];
 
-		if ( ! empty( $limits ) ) :	
-			$this->found_items = $this->Db->sql()->get_var( 'SELECT FOUND_ROWS()' );
-		else :
-			$this->found_items = count( $this->items );
-		endif;
-		
-		if ( ! empty( $limits ) )
-			$this->max_num_pages = ceil($this->found_items / 10 );
-	}
-		
-	/* = CONTRÔLEUR = */
-	/** == == **/
-	public function get_field( $name )
-	{
-		if( isset( $this->Db->ColMap[$name] ) ) :
-			$_name = $this->Db->ColMap[$name];
+    /**
+     * Conservation de données de l'objet courant récupéré.
+     * @var object
+     */
+    protected $queried_object;
 
-			return $this->item->{$_name};
-		endif;
-	}
-	
-	/** == == **/
-	public function get_meta( $meta_key, $single = true )
-	{
-		if( ! $this->Db->meta() )
-			return;
-		
-		return $this->Db->meta()->get( $this->item->{$this->Db->Primary}, $meta_key, $single );
-	}
-	
-	/* = BOUCLE = */
-	/** == Set up the next post and iterate current post index. == **/
-	public function next_item() 
-	{
-		$this->current_item++;
+    /**
+     * Valeur de la clé primaire de l'objet récupéré
+     * @var int|string
+     */
+    protected $queried_object_id;
 
-		$this->item = $this->items[$this->current_item];
-		return $this->item;
-	}
+    /**
+     * Liste des éléments.
+     * @var array
+     */
+    protected $items = [];
 
-	/** == Sets up the current item. == **/
-	public function the_item() 
-	{
-		$this->in_the_loop = true;
+    /**
+     * Nombre d'élément trouvés
+     * @var int
+     */
+    protected $item_count = 0;
 
-		if ( $this->current_item == -1 ) // loop has just started
-			do_action_ref_array( 'tify_query_loop_start', array( &$this ) );
+    /**
+     * Indice de l'élément courant dans la boucle
+     * @var int
+     */
+    protected $current_item = -1;
 
-		$item = $this->next_item();
-		//$this->setup_itemdata( $item );
-	}
+    /**
+     * Indicateur d'activation de bouclage
+     * @var bool
+     */
+    protected $in_the_loop = false;
 
-	/** == Whether there are more posts available in the loop. == **/
-	public function have_items() 
-	{
-		if ( $this->current_item + 1 < $this->item_count ) :
-			return true;
-		elseif ( $this->current_item + 1 == $this->item_count && $this->item_count > 0 ) :
-			do_action_ref_array( 'tify_query_loop_end', array( &$this ) );
-			$this->rewind_items();
-		endif;
+    /**
+     * Données de l'élément courant dans la boucle.
+     * @var object
+     */
+    protected $item;
 
-		$this->in_the_loop = false;
-		return false;
-	}
+    /**
+     * Nombre total d'élément correspondant à la requête
+     * @var int
+     */
+    protected $found_items = 0;
 
-	/** == Rewind the posts and reset post index. == **/
-	public function rewind_items() 
-	{
-		$this->current_item = -1;
-		if ( $this->item_count > 0 )
-			$this->item = $this->items[0];
-	}
-	
-	/** == 	== **/
-	public function get_adjacent( $previous = true, $args = array() )
-	{
-		$args = wp_parse_args( $args, $this->query );
-		return $this->Db->select()->adjacent( $this->item->{$this->Db->Primary}, $previous, $args );		
-	}	
+
+    public $request;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param DbControllerInterface $db Classe de rappel du controleur de base de données associé.
+     *
+     * @return void
+     */
+    public function __construct(DbControllerInterface $db, $query = null)
+    {
+        $this->db = $db;
+
+        if (!empty($query)) :
+            $this->query($query);
+        endif;
+    }
+
+    /**
+     * Récupération du nombre d'éléments récupérés.
+     *
+     * @return array
+     */
+    public function getCount()
+    {
+        return $this->found_items;
+    }
+
+    /**
+     * Récupération de l'attribut de l'élément dans la boucle.
+     *
+     * @param string $key Clé d'indexe de l'attribut.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getField($key, $default = '')
+    {
+        if($key = $this->db->existsCol($key)) :
+            return $this->item->{$key};
+        endif;
+
+        return $default;
+    }
+
+    /**
+     * Récupération d'une metadonnée de l'élément dans la boucle.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée.
+     * @param mixed $default Valeur de retour par défaut.
+     * @param bool $single Indicateur de métadonnée simple ou multiple.
+     *
+     * @return mixed|void
+     */
+    public function getMeta($meta_key, $default = '', $single = true)
+    {
+        if (!$this->db->hasMeta()) :
+            return $default;
+        endif;
+
+        return $this->db->meta()->get($this->item->{$this->db->getPrimary()}, $meta_key, $single);
+    }
+
+    /** ==    == **/
+    public function get_adjacent($previous = true, $args = [])
+    {
+        $args = wp_parse_args($args, $this->query);
+        return $this->db->select()->adjacent($this->item->{$this->db->getPrimary()}, $previous, $args);
+    }
+
+    /**
+     * Récupération du nombre total d'éléments trouvés, correspondant aux variables de requête passé en argument.
+     *
+     * @return array
+     */
+    public function getFoundItems()
+    {
+        return $this->found_items;
+    }
+
+    /**
+     * Récupération de la liste des éléments récupérés.
+     *
+     * @return array
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Vérifie l'existance d'éléments complémentaire dans la boucle.
+     *
+     * @return bool
+     */
+    public function haveItems()
+    {
+        if ($this->current_item + 1 < $this->item_count) :
+            return true;
+        elseif ($this->current_item + 1 == $this->item_count && $this->item_count > 0) :
+            do_action_ref_array('tify_query_loop_end', [&$this]);
+            $this->rewindItems();
+        endif;
+
+        $this->in_the_loop = false;
+
+        return false;
+    }
+
+    /**
+     * Définition du prochain élément dans boucle.
+     *
+     * @return object
+     */
+    public function nextItem()
+    {
+        $this->current_item++;
+
+        $this->item = $this->items[$this->current_item];
+        return $this->item;
+    }
+
+    /**
+     * Traitement des variable de requête et récupération des éléments en base.
+     *
+     * @param array $query Liste des arguments de requêtes personnalisés.
+     *
+     * @return array
+     */
+    public function query($query = [])
+    {
+        $this->reset();
+        $this->query = $this->query_vars = $query;
+
+        return $this->queryItems();
+    }
+
+    /**
+     * Récupération de la liste des éléments basé sur la configuration.
+     *
+     * @return array
+     */
+    public function queryItems()
+    {
+        if ($this->items = $this->db->select()->rows($this->query_vars)) :
+            $this->item_count = count($this->items);
+            $this->item = reset($this->items);
+        else :
+            $this->item_count = 0;
+            $this->items = [];
+        endif;
+
+        $this->found_items = $this->db->select()->count($this->query_vars);
+
+        return $this->items;
+    }
+
+    /**
+     * Réinitialisation des propriétés et définition des valeurs par defaut.
+     *
+     * @return void
+     */
+    public function reset()
+    {
+        unset($this->items);
+        unset($this->query);
+        $this->query_vars = [];
+        unset($this->queried_object);
+        unset($this->queried_object_id);
+        $this->item_count = 0;
+        $this->current_item = -1;
+        $this->in_the_loop = false;
+        unset($this->request);
+        unset($this->item);
+        $this->found_items = 0;
+    }
+
+    /**
+     * Réinitialisation de la boucle.
+     *
+     * @return void
+     */
+    public function rewindItems()
+    {
+        $this->current_item = -1;
+        if ($this->item_count > 0) :
+            $this->item = $this->items[0];
+        endif;
+    }
+
+    /**
+     * Définition de l'élément courant dans la boucle.
+     *
+     * @return void
+     */
+    public function theItem()
+    {
+        $this->in_the_loop = true;
+
+        if ($this->current_item == -1) :
+            do_action_ref_array('tify_db_query_loop_start', [&$this]);
+        endif;
+
+        $item = $this->nextItem();
+    }
+
+    /**
+     * @todo
+     */
+    /** == Récupération des éléments à partir de conditions de requêtes == **/
+    public function query_items($clauses = [])
+    {
+        extract($clauses);
+
+        $where = isset($clauses['where']) ? $clauses['where'] : '';
+        $groupby = isset($clauses['groupby']) ? $clauses['groupby'] : '';
+        $join = isset($clauses['join']) ? $clauses['join'] : '';
+        $orderby = isset($clauses['orderby']) ? $clauses['orderby'] : '';
+        $distinct = isset($clauses['distinct']) ? $clauses['distinct'] : '';
+        $fields = isset($clauses['fields']) ? $clauses['fields'] : "{$this->db->Name}.*";;
+        $limits = isset($clauses['limits']) ? $clauses['limits'] : '';
+
+        if (!empty($groupby)) {
+            $groupby = 'GROUP BY ' . $groupby;
+        }
+        if (!empty($orderby)) {
+            $orderby = 'ORDER BY ' . $orderby;
+        }
+
+        $found_rows = '';
+        if (!empty($limits)) {
+            $found_rows = 'SQL_CALC_FOUND_ROWS';
+        }
+
+        $this->request = "SELECT $found_rows $distinct $fields FROM {$this->db->Name} $join WHERE 1=1 $where $groupby $orderby $limits";
+
+        if ($this->items = $this->db->sql()->get_results($this->request)) :
+            $this->item_count = count($this->items);
+            $this->item = reset($this->items);
+        else :
+            $this->item_count = 0;
+            $this->items = [];
+        endif;
+
+        $this->set_found_items($limits);
+
+        return $this->items;
+    }
+
+    private function set_found_items($limits)
+    {
+        if (is_array($this->items) && !$this->items) {
+            return;
+        }
+
+        if (!empty($limits)) :
+            $this->found_items = $this->db->sql()->get_var('SELECT FOUND_ROWS()');
+        else :
+            $this->found_items = count($this->items);
+        endif;
+
+        if (!empty($limits)) {
+            $this->max_num_pages = ceil($this->found_items / 10);
+        }
+    }
 }

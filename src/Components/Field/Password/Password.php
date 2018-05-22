@@ -55,10 +55,7 @@ class Password extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-password--' . $this->getIndex();
-        endif;
-        $this->attributes['attrs']['type'] = 'password';
+        $this->setAttr('type', 'password');
     }
 
     /**

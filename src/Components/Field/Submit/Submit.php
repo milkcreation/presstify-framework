@@ -50,10 +50,7 @@ class Submit extends AbstractFieldController
 
         parent::parse($attrs);
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-submit--' . $this->getIndex();
-        endif;
-        $this->attributes['attrs']['type'] = 'submit';
+        $this->setAttr('type', 'submit');
     }
 
     /**
