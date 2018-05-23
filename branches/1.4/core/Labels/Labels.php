@@ -47,7 +47,7 @@ class Labels extends \tiFy\App\Core
     /**
      * Déclaration d'intitulés
      *
-     * @param $id Identifiant de qualification unique
+     * @param string $id Identifiant de qualification unique
      * @param array $attrs Attribut de configuration
      *
      * @return \tiFy\Core\Labels\Factory
@@ -60,7 +60,7 @@ class Labels extends \tiFy\App\Core
     /**
      * Récupération des intitulés
      *
-     * @param $id Identifiant de qualification
+     * @param string $id Identifiant de qualification
      *
      * @return null|\tiFy\Core\Labels\Factory
      */

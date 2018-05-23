@@ -25,7 +25,11 @@
                 
                 var $closest = $(this).closest('.tiFyControlAccordionMenu-item');
                 var $parents = $(this).parents('.tiFyControlAccordionMenu-items');
-                
+
+                $closest.siblings().removeClass('active');
+                $closest.siblings().children('.tiFyControlAccordionMenu-items').css('max-height', 0);
+                $closest.siblings().children('.tiFyControlAccordionMenu-items').children('.tiFyControlAccordionMenu-item').removeClass('active').children('.tiFyControlAccordionMenu-items').css('max-height', 0);
+
                 if($closest.hasClass('active')){
                     $('> .tiFyControlAccordionMenu-items', $closest).css('max-height', 0);
                     $closest.removeClass('active'); 

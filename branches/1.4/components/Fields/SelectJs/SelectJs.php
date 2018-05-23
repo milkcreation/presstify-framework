@@ -33,6 +33,8 @@ use tiFy\Core\Field\Field;
  * @var null|string|array $select_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de des éléments selectionnés
  * @var null|string|array $picker_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de selection
  * @var null|string|array $item_cb Classe ou méthode ou fonction de rappel de traitement d'un élément
+ * @var null|string|array $query_items_cb Classe ou méthode ou fonction de rappel de gestion de la requête de récupération des éléments
+ * @var null|string|array $get_items_cb Classe ou méthode ou fonction de rappel de récupération de la liste des éléments
  * @var bool $disabled Activation/Désactivation du controleur de champ
  * @var bool $removable Activation/Désactivation de la suppression d'un élément dans la liste des éléments séléctionné
  * @var bool $multiple Autorise la selection multiple d'éléments
@@ -42,25 +44,25 @@ use tiFy\Core\Field\Field;
  *
  * @var array $sortable {
  *      Liste des options du contrôleur ajax d'ordonnancement
- *      @see http://jqueryui.com/sortable/
+ * @see http://jqueryui.com/sortable/
  * }
  * @var array trigger {
  *      Liste des attributs de configuration de l'interface d'action
  *
- *      @var string $class Classes HTML de l'élément
- *      @var bool $arrow Affichage de la fléche de selection
+ * @var string $class Classes HTML de l'élément
+ * @var bool $arrow Affichage de la fléche de selection
  * }
  * @var array picker {
  *      Liste des attributs de configuration de l'interface de selection des éléments
  *
- *      @var string $class Classes HTML de l'élément
- *      @var string $appendTo Selecteur jQuery de positionnement dans le DOM. défaut body.
- *      @var string $placement Comportement de la liste déroulante. top|bottom|clever. défaut clever adaptatif
- *      @var array $delta {
+ * @var string $class Classes HTML de l'élément
+ * @var string $appendTo Selecteur jQuery de positionnement dans le DOM. défaut body.
+ * @var string $placement Comportement de la liste déroulante. top|bottom|clever. défaut clever adaptatif
+ * @var array $delta {
  *
- *          @var int $top
- *          @var int $left
- *          @var int $width
+ * @var int $top
+ * @var int $left
+ * @var int $width
  *      }
  * @var bool $adminbar Gestion de la barre d'administration Wordpress. défaut true
  * @var bool $filter Champ de filtrage des éléments de la liste de selection
@@ -127,7 +129,9 @@ class SelectJs extends AbstractFactory
         $args = $this->appRequestGet('args', [], 'POST');
         $args = \wp_unslash($args);
 
-        $items = $this->queryItems($query_args, $args);
+        $items = is_callable($args['query_items_cb'])
+            ? call_user_func($args['query_items_cb'], $query_args, $args)
+            : call_user_func([$this, $args['query_items_cb']], $query_args, $args);
 
         wp_send_json($items);
     }
@@ -146,25 +150,27 @@ class SelectJs extends AbstractFactory
 
         // Traitement des attributs de configuration
         $defaults = [
-            'before'          => '',
-            'after'           => '',
-            'attrs'           => [],
-            'name'            => '',
-            'value'           => null,
-            'options'         => [],
-            'source'          => false,
-            'select_cb'       => 'selectCallback',
-            'picker_cb'       => 'pickerCallback',
-            'item_cb'         => 'itemCallback',
-            'disabled'        => false,
-            'removable'       => true,
-            'multiple'        => false,
-            'duplicate'       => false,
-            'sortable'        => true,
-            'autocomplete'    => false,
-            'max'             => -1,
-            'trigger'         => [],
-            'picker'          => [],
+            'before'         => '',
+            'after'          => '',
+            'attrs'          => [],
+            'name'           => '',
+            'value'          => null,
+            'options'        => [],
+            'source'         => false,
+            'select_cb'      => 'selectCallback',
+            'picker_cb'      => 'pickerCallback',
+            'item_cb'        => 'itemCallback',
+            'query_items_cb' => 'queryItems',
+            'get_items_cb'   => 'getItems',
+            'disabled'       => false,
+            'removable'      => true,
+            'multiple'       => false,
+            'duplicate'      => false,
+            'sortable'       => true,
+            'autocomplete'   => false,
+            'max'            => -1,
+            'trigger'        => [],
+            'picker'         => [],
         ];
         $args = array_merge($defaults, $args);
 
@@ -175,7 +181,7 @@ class SelectJs extends AbstractFactory
         if (!isset($args['attrs']['class'])) :
             $args['attrs']['class'] = 'tiFy-select tiFyField-selectJs';
         else :
-            $args['attrs']['class'] = 'tiFy-select tiFyField-selectJs '. $args['attrs']['class'];
+            $args['attrs']['class'] = 'tiFy-select tiFyField-selectJs ' . $args['attrs']['class'];
         endif;
 
         // Attributs du selecteur de gestion de traitement
@@ -226,9 +232,11 @@ class SelectJs extends AbstractFactory
                     '_ajax_nonce' => \wp_create_nonce('tiFyField-selectJs'),
                     'query_args'  => [],
                     'args'        => [
-                        'select_cb' => $args['select_cb'],
-                        'picker_cb' => $args['picker_cb'],
-                        'item_cb'   => $args['item_cb'],
+                        'select_cb'      => $args['select_cb'],
+                        'picker_cb'      => $args['picker_cb'],
+                        'item_cb'        => $args['item_cb'],
+                        'query_items_cb' => $args['query_items_cb'],
+                        'get_items_cb'   => $args['get_items_cb']
                     ],
                 ],
                 $args['source']
@@ -341,6 +349,7 @@ class SelectJs extends AbstractFactory
 
     /**
      * @param $item
+     *
      * @return mixed
      */
     public function itemCallback($item)
@@ -373,17 +382,21 @@ class SelectJs extends AbstractFactory
 
         $values = (new \WP_Query)->query($query_args);
 
-        return $this->getItems($values, $args);
+        return is_callable($args['get_items_cb'])
+            ? call_user_func($args['get_items_cb'], $query_args['post_type'], $values, $args)
+            : call_user_func([$this, $args['get_items_cb']], $query_args['post_type'], $values, $args);
     }
 
     /**
      * Récupération de la liste des éléments
      *
+     * @param string $post_type Type de contenu recherché
      * @param string[] $selected Liste des valeurs des éléments
+     * @param array $args Attributs personnalisés
      *
      * @return array
      */
-    public function getItems($values = [], $args = [])
+    public function getItems($post_type = '', $values = [], $args = [])
     {
         if (empty($values)) :
             return [];
@@ -395,7 +408,7 @@ class SelectJs extends AbstractFactory
         if (!empty($args['source'])) :
             // Récupération des élements depuis la liste de seelection
             $query_items = new \WP_Query([
-                'post_type' => 'any',
+                'post_type' => $post_type,
                 'post__in'  => $values,
                 'orderby'   => 'post__in',
                 'order'     => 'ASC',
@@ -461,15 +474,25 @@ class SelectJs extends AbstractFactory
         $select_cb = $this->get('select_cb');
         $picker_cb = $this->get('picker_cb');
         $item_cb = $this->get('item_cb');
+        $query_items_cb = $this->get('query_items_cb');
+        $get_items_cb = $this->get('get_items_cb');
         $source = $this->get('source', false);
+        $post_type = !empty($source['query_args']['post_type']) ? $source['query_args']['post_type'] : 'any';
 
-        $selected_items = $this->getItems($this->getValue(), compact('select_cb', 'picker_cb', 'item_cb', 'source'));
+        $selected_items = is_callable($get_items_cb)
+            ? call_user_func($get_items_cb, $post_type, $this->getValue(), compact('select_cb', 'picker_cb', 'item_cb', 'source'))
+            : call_user_func([$this, $get_items_cb], $post_type, $this->getValue(), compact('select_cb', 'picker_cb', 'item_cb', 'source'));
 
         $picker_items = $source
-            ? $this->queryItems($source['query_args'], compact('select_cb', 'picker_cb', 'item_cb'))
-            : $this->getItems($this->getOptionValues(), compact('select_cb', 'picker_cb', 'item_cb', 'source'));
+            ? (is_callable($query_items_cb)
+                ? call_user_func($query_items_cb, $source['query_args'], compact('select_cb', 'picker_cb', 'item_cb', 'get_items_cb'))
+                : call_user_func([$this, $query_items_cb], $source['query_args'], compact('select_cb', 'picker_cb', 'item_cb', 'get_items_cb')))
+            : (is_callable($get_items_cb)
+                ? call_user_func($get_items_cb, $post_type, $this->getValue(), compact('select_cb', 'picker_cb', 'item_cb', 'source'))
+                : call_user_func([$this, $get_items_cb], $post_type, $this->getValue(), compact('select_cb', 'picker_cb', 'item_cb', 'source')));
 
         ob_start();
+
         ?><?php $this->before(); ?>
         <div <?php $this->attrs(); ?>>
             <?php echo Field::Select($this->get('handler_args')); ?>
