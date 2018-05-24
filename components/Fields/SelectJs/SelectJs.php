@@ -488,8 +488,8 @@ class SelectJs extends AbstractFactory
                 ? call_user_func($query_items_cb, $source['query_args'], compact('select_cb', 'picker_cb', 'item_cb', 'get_items_cb'))
                 : call_user_func([$this, $query_items_cb], $source['query_args'], compact('select_cb', 'picker_cb', 'item_cb', 'get_items_cb')))
             : (is_callable($get_items_cb)
-                ? call_user_func($get_items_cb, $post_type, $this->getValue(), compact('select_cb', 'picker_cb', 'item_cb', 'source'))
-                : call_user_func([$this, $get_items_cb], $post_type, $this->getValue(), compact('select_cb', 'picker_cb', 'item_cb', 'source')));
+                ? call_user_func($get_items_cb, $post_type, $this->getOptionValues(), compact('select_cb', 'picker_cb', 'item_cb', 'source'))
+                : call_user_func([$this, $get_items_cb], $post_type, $this->getOptionValues(), compact('select_cb', 'picker_cb', 'item_cb', 'source')));
 
         ob_start();
 
