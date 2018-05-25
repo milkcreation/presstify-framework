@@ -7,9 +7,8 @@ use tiFy\Partial\Partial;
 use tiFy\Route\Route;
 
 /**
- * Field
+ * FIELD
  */
-
 if (!function_exists('tify_field_button')) :
     /**
      * Bouton.
@@ -23,12 +22,12 @@ if (!function_exists('tify_field_button')) :
      */
     function tify_field_button($attrs = [], $echo = true)
     {
-        $field = (string)Field::Button($attrs);
+        $output = (string)Field::Button($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -46,12 +45,12 @@ if (!function_exists('tify_field_checkbox')) :
      */
     function tify_field_checkbox($attrs = [], $echo = true)
     {
-        $field = (string)Field::Checkbox($attrs);
+        $output = (string)Field::Checkbox($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -69,12 +68,12 @@ if (!function_exists('tify_field_crypted')) :
      */
     function tify_field_crypted($attrs = [], $echo = true)
     {
-        $field = (string)Field::Crypted($attrs);
+        $output = (string)Field::Crypted($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -92,12 +91,12 @@ if (!function_exists('tify_field_datetime_js')) :
      */
     function tify_field_datetime_js($attrs = [], $echo = true)
     {
-        $field = (string)Field::DatetimeJs($attrs);
+        $output = (string)Field::DatetimeJs($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -115,12 +114,12 @@ if (!function_exists('tify_field_file')) :
      */
     function tify_field_file($attrs = [], $echo = true)
     {
-        $field = (string)Field::File($attrs);
+        $output = (string)Field::File($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -138,12 +137,12 @@ if (!function_exists('tify_field_hidden')) :
      */
     function tify_field_hidden($attrs = [], $echo = true)
     {
-        $field = (string)Field::Hidden($attrs);
+        $output = (string)Field::Hidden($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -161,12 +160,12 @@ if (!function_exists('tify_field_label')) :
      */
     function tify_field_label($attrs = [], $echo = true)
     {
-        $field = (string)Field::Label($attrs);
+        $output = (string)Field::Label($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -184,12 +183,12 @@ if (!function_exists('tify_field_number')) :
      */
     function tify_field_number($attrs = [], $echo = true)
     {
-        $field = (string)Field::Number($attrs);
+        $output = (string)Field::Number($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -207,12 +206,12 @@ if (!function_exists('tify_field_number_js')) :
      */
     function tify_field_number_js($attrs = [], $echo = true)
     {
-        $field = (string)Field::NumberJs($attrs);
+        $output = (string)Field::NumberJs($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -230,12 +229,12 @@ if (!function_exists('tify_field_password')) :
      */
     function tify_field_password($attrs = [], $echo = true)
     {
-        $field = (string)Field::Password($attrs);
+        $output = (string)Field::Password($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -253,12 +252,12 @@ if (!function_exists('tify_field_radio')) :
      */
     function tify_field_radio($attrs = [], $echo = true)
     {
-        $field = (string)Field::Radio($attrs);
+        $output = (string)Field::Radio($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -276,12 +275,12 @@ if (!function_exists('tify_field_repeater')) :
      */
     function tify_field_repeater($attrs = [], $echo = true)
     {
-        $field = (string)Field::Repeater($attrs);
+        $output = (string)Field::Repeater($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -299,12 +298,12 @@ if (!function_exists('tify_field_select')) :
      */
     function tify_field_select($attrs = [], $echo = true)
     {
-        $field = (string)Field::Select($attrs);
+        $output = (string)Field::Select($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -322,12 +321,12 @@ if (!function_exists('tify_field_select_js')) :
      */
     function tify_field_select_js($attrs = [], $echo = true)
     {
-        $field = (string)Field::SelectJs($attrs);
+        $output = (string)Field::SelectJs($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -345,12 +344,12 @@ if (!function_exists('tify_field_submit')) :
      */
     function tify_field_submit($attrs = [], $echo = true)
     {
-        $field = (string)Field::Submit($attrs);
+        $output = (string)Field::Submit($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -368,12 +367,12 @@ if (!function_exists('tify_field_text')) :
      */
     function tify_field_text($attrs = [], $echo = true)
     {
-        $field = (string)Field::Text($attrs);
+        $output = (string)Field::Text($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -391,12 +390,12 @@ if (!function_exists('tify_field_textarea')) :
      */
     function tify_field_textarea($attrs = [], $echo = true)
     {
-        $field = (string)Field::Textarea($attrs);
+        $output = (string)Field::Textarea($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -414,12 +413,12 @@ if (!function_exists('tify_field_toggle_switch')) :
      */
     function tify_field_toggle_switch($attrs = [], $echo = true)
     {
-        $field = (string)Field::ToggleSwitch($attrs);
+        $output = (string)Field::ToggleSwitch($attrs);
 
         if ($echo) :
-            echo $field;
+            echo $output;
         else :
-            return $field;
+            return $output;
         endif;
     }
 endif;
@@ -430,7 +429,10 @@ endif;
 /**
  * Affichage d'un formulaire.
  *
+ * @param string $name Nom de qualification du formulaire.
+ * @param bool $echo Activation de l'affichage. défaut true.
  *
+ * @return string
  */
 function tify_form_display($name, $echo = true)
 {
@@ -442,95 +444,164 @@ function tify_form_display($name, $echo = true)
 }
 
 /**
- * Partial
+ * PARTIAL
  */
-/**
- * Fil d'arianne.
- *
- * @param array $attrs {
- *      Liste des attributs de configuration.
- * }
- * @param bool $echo Activation de l'affichage. défaut true.
- *
- * @return string
- */
-function tify_partial_breadcrumb($attrs = [], $echo = true)
-{
-    $layout = (string)Partial::Breadcrumb($attrs);
+if (!function_exists('tify_partial_breadcrumb')) :
+    /**
+     * Fil d'arianne.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_breadcrumb($attrs = [], $echo = true)
+    {
+        $output = (string)Partial::Breadcrumb($attrs);
 
-    if ($echo) :
-        echo $layout;
-    else :
-        return $layout;
-    endif;
-}
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
 
-/**
- * Message de notification
- *
- * @param array $attrs {
- *      Liste des attributs de configuration.
- *
- * @var string $id Identifiant de qualification du controleur d'affichage.
- * @var string $container_id ID HTML du conteneur de l'élément.
- * @var string $container_class Classes HTML du conteneur de l'élément.
- * @var string $text Texte de notification. défaut 'Lorem ipsum dolor site amet'.
- * @var string $dismissible Bouton de masquage de la notification.
- * @var string $type Type de notification info|warning|success|error. défaut info.
- * }
- * @param bool $echo Activation de l'affichage. défaut true.
- *
- * @return string
- */
-function tify_partial_notice($attrs = [], $echo = true)
-{
-    $layout = (string)Partial::Notice($attrs);
+if (!function_exists('tify_partial_cookie_notice')) :
+    /**
+     * Message de notification validée par enregistrement de cookie.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_cookie_notice($attrs = [], $echo = true)
+    {
+        $output = (string)Partial::CookieNotice($attrs);
 
-    if ($echo) :
-        echo $layout;
-    else :
-        return $layout;
-    endif;
-}
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
 
-/**
- * Barre latéral de navigation
- *
- * @var array $attrs {
- *      Liste des attributs de configuration.
- *
- * @var string $pos Position de l'interface left (default)|right.
- * @var string $initial Etat initial de l'interface closed (default)|opened.
- * @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
- * @var string|int $min -width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
- * @var int $z -index Profondeur de champs.
- * @var bool $animated Activation de l'animation à l'ouverture et la fermeture.
- * @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou desactive le bouton; la valeur chaîne de caractère active et affiche la chaîne ex : <span>X</span>.
- * @var bool $enqueue_scripts Mise en file automatique des scripts (dans tous les contextes).
- * @var array $nodes {
- *          Liste des greffons (node) Elements de menu.
- *
- * @var string $id Identifiant du greffon.
- * @var string $class Classe HTML du greffon.
- * @var string $content Contenu du greffon.
- * @var int $position Position du greffon.
- * @todo \tiFy\Lib\Nodes\Base ne gère pas encore la position.
- *      }
- * }
- * @param bool $echo Activation de l'affichage. défaut true.
- *
- * @return string
- */
-function tify_partial_sidebar($attrs = [], $echo = true)
-{
-    $layout = (string)Partial::Sidebar($attrs);
+if (!function_exists('tify_partial_modal')) :
+    /**
+     * Fenêtre modale.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_modal($attrs = [], $echo = true)
+    {
+        $output = (string)Partial::Modal($attrs);
 
-    if ($echo) :
-        echo $layout;
-    else :
-        return $layout;
-    endif;
-}
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
+if (!function_exists('tify_partial_modal_trigger')) :
+    /**
+     * Déclencheur de fenêtre modale.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_modal_trigger($attrs = [], $echo = true)
+    {
+        $output = (string)Partial::ModalTrigger($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
+if (!function_exists('tify_partial_notice')) :
+    /**
+     * Message de notification
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     *
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_notice($attrs = [], $echo = true)
+    {
+        $output = (string)Partial::Notice($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
+if (!function_exists('tify_partial_sidebar')) :
+    /**
+     * Barre latéral de navigation
+     *
+     * @var array $attrs {
+     *      Liste des attributs de configuration.
+     *
+     * @var string $pos Position de l'interface left (default)|right.
+     * @var string $initial Etat initial de l'interface closed (default)|opened.
+     * @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
+     * @var string|int $min -width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
+     * @var int $z -index Profondeur de champs.
+     * @var bool $animated Activation de l'animation à l'ouverture et la fermeture.
+     * @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou desactive le bouton; la valeur chaîne de caractère active et affiche la chaîne ex : <span>X</span>.
+     * @var bool $enqueue_scripts Mise en file automatique des scripts (dans tous les contextes).
+     * @var array $nodes {
+     *          Liste des greffons (node) Elements de menu.
+     *
+     * @var string $id Identifiant du greffon.
+     * @var string $class Classe HTML du greffon.
+     * @var string $content Contenu du greffon.
+     * @var int $position Position du greffon.
+     * @todo \tiFy\Lib\Nodes\Base ne gère pas encore la position.
+     *      }
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_sidebar($attrs = [], $echo = true)
+    {
+        $output = (string)Partial::Sidebar($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
 
 /**
  * Diaporama.

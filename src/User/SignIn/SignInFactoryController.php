@@ -149,19 +149,21 @@ class SignInFactoryController extends SignInHandleController implements SignInCo
         endif;
 
         if (count($errors)>1) :
-            $text = "<ol>";
+            $content = "<ol>";
             foreach ($errors as $message) :
-                $text .= "<li>{$message}</li>";
+                $content .= "<li>{$message}</li>";
             endforeach;
-            $text .= "</ol>";
+            $content .= "</ol>";
         else :
-            $text = reset($errors);
+            $content = reset($errors);
         endif;
 
         return Partial::Notice(
             [
-                'class' => "tiFySignIn-FormPart tiFySignIn-FormErrors",
-                'text'  => $text,
+                'attrs' => [
+                    'class' => 'tiFySignIn-FormPart tiFySignIn-FormErrors'
+                ],
+                'content'  => $content,
                 'type'  => 'error'
             ],
             false
@@ -307,19 +309,21 @@ class SignInFactoryController extends SignInHandleController implements SignInCo
         endif;
 
         if (count($infos)>1) :
-            $text = "<ol>";
+            $content = "<ol>";
             foreach ($infos as $message) :
-                $text .= "<li>{$message}</li>";
+                $content .= "<li>{$message}</li>";
             endforeach;
-            $text .= "</ol>";
+            $content .= "</ol>";
         else :
-            $text = reset($infos);
+            $content = reset($infos);
         endif;
 
         return Partial::Notice(
             [
-                'class' => "tiFySignIn-FormPart tiFySignIn-FormInfos",
-                'text'  => $text,
+                'attrs' => [
+                    'class' => 'tiFySignIn-FormPart tiFySignIn-FormInfos'
+                ],
+                'content'  => $content,
                 'type'  => 'info'
             ],
             false

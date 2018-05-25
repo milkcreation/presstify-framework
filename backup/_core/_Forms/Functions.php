@@ -72,23 +72,4 @@ class Functions
 
         return false;
     }
-
-    /* = = */
-    public static function parseMergeVars($subject, $form)
-    {
-        if (is_string($subject)) :
-            if (preg_match_all('/([^%%]*)%%(.*?)%%([^%%]*)?/', $subject, $matches)) :
-                $subject = "";
-                foreach ($matches[2] as $i => $slug) :
-                    $subject .= $matches[1][$i] . (($field = $form->getField($slug)) ? $field->getValue() : $matches[2][$i]) . $matches[3][$i];
-                endforeach;
-            endif;
-        elseif (is_array($subject)) :
-            foreach ($subject as $k => &$i) :
-                $i = self::parseMergeVars($i, $form);
-            endforeach;
-        endif;
-
-        return $subject;
-    }
 }

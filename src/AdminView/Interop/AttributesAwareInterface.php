@@ -5,7 +5,7 @@ namespace tiFy\AdminView\Interop;
 interface AttributesAwareInterface
 {
     /**
-     * Récupération de la liste des paramètres.
+     * Récupération de la liste des attributs.
      *
      * @return array
      */

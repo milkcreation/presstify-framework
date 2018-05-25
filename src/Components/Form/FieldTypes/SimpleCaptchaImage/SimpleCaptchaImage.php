@@ -3,7 +3,9 @@
 namespace tiFy\Components\Form\FieldTypes\SimpleCaptchaImage;
 
 use Mexitek\PHPColors\Color;
+use tiFy\Field\Field;
 use tiFy\Form\Fields\AbstractFieldTypeController;
+use tiFy\Form\Fields\FieldItemController;
 
 class SimpleCaptchaImage extends AbstractFieldTypeController
 {
@@ -11,8 +13,7 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
      * Liste des propriétés supportées.
      * @var array
      */
-    protected $supports = [
-        'integrity',
+    protected $support = [
         'label',
         'request',
         'wrapper',
@@ -26,7 +27,7 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
     public function __construct()
     {
         // Options par défaut
-        $this->attributes = [
+        $this->defaultOptions = [
             // Chemins vers l'image relatif ou absolue
             'imagepath' => $this->appDirname() . '/texture.jpg',
             // Couleur du texte (hexadecimal ou array rgb)
@@ -39,7 +40,7 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
             'handle_check_field' => [$this, 'cb_handle_check_field'],
         ];
 
-        add_action('tify_form_loaded', [$this, 'tify_form_loaded']);
+        $this->appAddAction('tify_form_loaded', [$this, 'tify_form_loaded']);
     }
 
     /**
@@ -49,13 +50,13 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
      */
     public function tify_form_loaded()
     {
-        if (!isset($_REQUEST[$this->ID])) :
+        if (!$request = $this->appRequest()->get($this->getName())) :
             return;
         endif;
 
-        list($form_id, $field_slug) = explode('::', $_REQUEST[$this->ID]);
+        list($field_slug, $form_name) = explode('@', $request);
 
-        if (($form_id != $this->getForm()->getName()) || ($field_slug != $this->field()->getSlug())) :
+        if (($form_name != $this->getForm()->getName()) || ($field_slug != $this->relField()->getSlug())) :
             return;
         endif;
 
@@ -64,6 +65,8 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
 
     /**
      * Court-circuitage de la définition des paramètres du champ.
+     *
+     * @param FieldItemController $field
      *
      * @return void
      */
@@ -79,6 +82,9 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
     /**
      * Court-circuitage de contrôle d'intégrité des champs.
      *
+     *
+     * @param FieldItemController $field
+     *
      * @return void
      */
     public function cb_handle_check_field(&$errors, $field)
@@ -93,27 +99,26 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
 
         if (!isset($_SESSION['security_number'])) :
             $errors[] = __('ERREUR SYSTÈME : Impossible de définir le code de sécurité');
-        elseif ((int)$field->getValue() !== $_SESSION['security_number']) :
+        elseif ($field->getValue() != $_SESSION['security_number']) :
             $errors[] = __('La valeur du champs de sécurité doit être identique à celle de l\'image', 'tify');
         endif;
     }
 
     /**
-     * Affichage
+     * Affichage.
      *
      * @return string
      */
     public function render()
     {
         $output = "";
-
-        // Affichage du champ de saisie
         $output .= "<img 
             src=\"" .
             esc_url(
                 add_query_arg(
                     [
-                        $this->ID => $this->getForm()->getName() . '::' . $this->field()->getSlug(),
+                        $this->getName() => $this->relField()->getSlug() . '@' . $this->getForm()->getName(),
+                        '_nonce' => wp_create_nonce('tiFyFormSimpleCaptchaImage')
                     ],
                     site_url()
                 )
@@ -121,23 +126,14 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
             "alt=\"" . __('captcha introuvable', 'tify') . "\" " .
             "style=\"vertical-align: middle;\"" .
             "/>";
-        $output .= "<input type=\"text\"";
-        /// ID HTML
-        $output .= " id=\"" . $this->getInputID() . "\"";
-        /// Classe HTML
-        $output .= " class=\"" . join(' ', $this->getInputClasses()) . "\"";
-        /// Name
-        $output .= " name=\"" . esc_attr($this->field()->getName()) . "\"";
 
-        /// Attributs
-        $output .= $this->getInputHtmlAttrs();
-        $output .= " autocomplete=\"off\"";
-        $output .= " style=\"height:50px;vertical-align: middle;\"";
-        /// Value
-        $output .= " value=\"\"";
-        /// TabIndex
-        $output .= " " . $this->getTabIndex();
-        $output .= " />";
+        $output .= Field::Text(
+            [
+                'name'  => $this->relField()->getName(),
+                'value' => '',
+                'attrs' => $this->relField()->getHtmlAttrs()
+            ]
+        );
 
         return $output;
     }
@@ -149,6 +145,10 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
      */
     private function createImage()
     {
+        if(! \wp_verify_nonce($this->appRequest()->get('_nonce'), 'tiFyFormSimpleCaptchaImage')) :
+            exit;
+        endif;
+
         if (!session_id()) :
             session_start();
         endif;
@@ -192,8 +192,6 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
             ob_end_clean();
         endif;
 
-        ob_start();
-
         // Configuration
         $src = $this->getOption('imagepath');
         $txt_color = $this->getOption('textcolor');
@@ -214,11 +212,13 @@ class SimpleCaptchaImage extends AbstractFieldTypeController
         // Alternative imagettftext (Serveur MacOSX)
         if (function_exists('imagettftext')) :
             $text = imagettftext($img, 16, rand(-10, 10), rand(10, 30), rand(25, 35), $text_color,
-                self::tFyAppDirname() . '/fonts/courbd.ttf', $image_text);
+                dirname(__FILE__) . '/fonts/courbd.ttf', $image_text);
         else :
-            $font = imageloadfont("./fonts/DaveThin_8x16_BE.gdf");
+            $font = imageloadfont(dirname(__FILE__) . "/fonts/DaveThin_8x16_BE.gdf");
             $text = imagestring($img, $font, rand(10, 30), rand(25, 35), $image_text, $text_color);
         endif;
+
+        ob_start();
 
         header("Content-type:image/jpeg");
         header("Content-Disposition:inline ; filename=" . basename($src . $image_text));
