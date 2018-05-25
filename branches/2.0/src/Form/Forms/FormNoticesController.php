@@ -227,16 +227,16 @@ class FormNoticesController extends AbstractCommonDependency
             $count = count($notices);
             $datas = Arr::sort($this->datas[$code], 'order');
 
-            $text = "<ol class=\"tiFyForm-NoticesMessages tiFyForm-NoticesMessages--{$code}\">\n";
+            $content = "<ol class=\"tiFyForm-NoticesMessages tiFyForm-NoticesMessages--{$code}\">\n";
             foreach($datas as $key => $message) :
-                $text .= "\t<li class=\"tiFyForm-NoticesMessage tiFyForm-NoticesMessage--{$code}\">";
-                $text .= Arr::get($notices, $key, '');
-                $text .= "\t</li>\n";
+                $content .= "\t<li class=\"tiFyForm-NoticesMessage tiFyForm-NoticesMessage--{$code}\">";
+                $content .= Arr::get($notices, $key, '');
+                $content .= "\t</li>\n";
             endforeach;
-            $text .= "</ol>\n";
+            $content .= "</ol>\n";
         endif;
 
-        $args['text'] = $notices ? $text : '';
+        $args['content'] = $notices ? $content : '';
         $args['type'] = $code;
 
         $output = Partial::Notice($args);

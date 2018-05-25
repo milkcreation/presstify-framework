@@ -18,6 +18,9 @@ namespace tiFy\Partial;
 use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
 use tiFy\Components\Partial\Breadcrumb\Breadcrumb;
+use tiFy\Components\Partial\CookieNotice\CookieNotice;
+use tiFy\Components\Partial\Modal\Modal;
+use tiFy\Components\Partial\ModalTrigger\ModalTrigger;
 use tiFy\Components\Partial\Navtabs\Navtabs;
 use tiFy\Components\Partial\Notice\Notice;
 use tiFy\Components\Partial\Sidebar\Sidebar;
@@ -27,6 +30,9 @@ use tiFy\Components\Partial\Tag\Tag;
 
 /**
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
+ * @method static CookieNotice CookieNotice(string $id = null, array $attrs = [])
+ * @method static Modal Modal(string $id = null,array $attrs = [])
+ * @method static ModalTrigger ModalTrigger(string $id = null,array $attrs = [])
  * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
  * @method static Notice Notice(string $id = null,array $attrs = [])
  * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
@@ -188,7 +194,7 @@ final class Partial extends AppController
             return null;
         endif;
 
-        if (! is_object($callable) || ! method_exists($callable, 'enqueue_scripts')) :
+        if (!is_object($callable) || !method_exists($callable, 'enqueue_scripts')) :
             return null;
         endif;
 

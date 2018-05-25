@@ -35,7 +35,7 @@
                 <h3><?php echo $subject;?></h3>
             </td>
         </tr>
-        <?php foreach ((array) $fields as $slug => $attrs) :?>
+        <?php foreach ($fields as $slug => $attrs) :?>
         <tr>
         <?php if ($attrs['label']) :?>
             <td width="200" valign="top"><?php echo $attrs['label'];?></td>

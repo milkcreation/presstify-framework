@@ -19,8 +19,8 @@ final class AddonsController extends AppController
      * @var array
      */
     protected $predefined = [
-        'ajax_submit'      => AjaxSubmit::class,
-        'cookie_transport' => CookieTransport::class,
+        //'ajax_submit'      => AjaxSubmit::class,
+        //'cookie_transport' => CookieTransport::class,
         'mailer'           => Mailer::class,
         //'preview'         => Preview::class,
         'record'           => Record::class,

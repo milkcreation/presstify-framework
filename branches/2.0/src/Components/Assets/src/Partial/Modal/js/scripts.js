@@ -420,10 +420,11 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 jQuery(document).ready(function($){
-    $('.tiFyControl-modal').modal();
-    $(document).on('click','.tiFyControl-modalTrigger',function(e){
+    $('[aria-control="modal"]').modal();
+
+    $(document).on('click','[aria-control="modal_trigger"]',function(e){
         e.preventDefault();
 
-        $('[data-modal="'+ $(this).data('target') + '"]').modal('show');
+        $($(this).data('target') + '[aria-control="modal"]').modal('show');
     });
 });

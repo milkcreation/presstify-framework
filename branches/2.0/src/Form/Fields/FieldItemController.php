@@ -43,13 +43,13 @@ class FieldItemController extends AbstractCommonDependency
      * @var array $attrs Listes des attributs HTML complémentaires (hors 'name' et 'value')
      * @var bool|string|array $required {
      *
-     * @var bool|string $tag Affichage de l'indicateur de champ requis
-     * @var bool $active Activation du test d'existance natif.
-     * @var mixed $value_none Valeur à comparer pour le test d'existance.
-     * @var string|callable $cb Fonction de rappel.
-     * @var array $args Liste des variables passées en argument dans la fonction de rappel.
-     * @var string $message Message de notification en cas d'erreur.
-     * @var bool $html5 Utilisation du court-circuitage HTML5.
+     *      @var bool|string $tag Affichage de l'indicateur de champ requis
+     *      @var bool $check Activation du test d'existance natif.
+     *      @var mixed $value_none Valeur à comparer pour le test d'existance.
+     *      @var string|callable $cb Fonction de rappel.
+     *      @var array $args Liste des variables passées en argument dans la fonction de rappel.
+     *      @var string $message Message de notification en cas d'erreur.
+     *      @var bool $html5 Utilisation du court-circuitage HTML5.
      *
      * }
      * @var string|array $integrity_cb {
@@ -197,11 +197,11 @@ class FieldItemController extends AbstractCommonDependency
     {
         if ($required = $this->get('required', false)) :
             $defaults = [
-                'tag'        => false,
-                'check'      => false,
+                'tag'        => true,
+                'check'      => true,
                 'value_none' => '',
-                'cb'         => 'is_empty',
-                'args'       => [],
+                'cb'         => isset($required['value_none']) ? 'is_diff' : 'is_empty',
+                'args'       => isset($required['value_none']) ? [] + [$required['value_none']] : [],
                 'message'    => __('Le champ "%s" doit être renseigné.', 'tify'),
                 'html5'      => false,
             ];

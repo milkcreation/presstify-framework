@@ -282,7 +282,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     {
         if (!$dirname = Arr::get($this->apps, "{$classname}.dirname", '')) :
             $dirname = dirname($this->getFilename($classname));
-            $this->setAttr($classname, 'filename', $dirname);
+            $this->setAttr($classname, 'dirname', $dirname);
         endif;
 
         return $dirname;

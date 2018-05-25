@@ -80,14 +80,14 @@ abstract class AbstractPartialController extends AppController
         endif;
 
         $partial = $this->appServiceGet(Partial::class);
-        if (!$instance = $partial->getInstance(__CLASS__, $id)) :
+        if (!$instance = $partial->getInstance(get_called_class(), $id)) :
             $instance = $this;
-            $count = $partial->countInstance(__CLASS__);
+            $count = $partial->countInstance(get_called_class());
             $this->id = $id;
             $this->index = $count++;
             $this->parse($attrs);
 
-            $partial->setInstance(__CLASS__, $instance->getId(), $instance);
+            $partial->setInstance(get_called_class(), $instance->getId(), $instance);
         endif;
 
         return $instance;
