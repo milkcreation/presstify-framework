@@ -390,12 +390,25 @@ trait AppTrait
      */
     public function appTemplates($classname = null)
     {
-        if (! $templates = $this->appGet('templates', null, $classname)) :
-            $templates = new \League\Plates\Engine(get_template_directory() . '/templates');
+        if (!$templates = $this->appGet('templates', null, $classname)) :
+            $classname = $classname ? : get_called_class();
 
-            $appTemplatePath = $this->appDirname($classname) . '/templates';
-            if (is_dir($appTemplatePath)) :
-                $templates->addFolder($classname ? : get_called_class(), $appTemplatePath, true);
+            $directory = $this->appDirname($classname) . '/templates';
+            $directory  = is_dir($directory) ? $directory : null;
+
+            $templates = new \League\Plates\Engine($directory);
+
+            $basedir = get_template_directory() . '/templates';
+
+            $subdir = '';
+            if(preg_match('#^\/?vendor/presstify-plugins/(.*)#', $this->appRelPath($classname), $matches)) :
+                $subdir = "/plugins/{$matches[1]}";
+            endif;
+
+            if(is_dir($basedir . $subdir)) :
+                $templates->addFolder($classname, $basedir . $subdir, true);
+            else :
+                $templates->addFolder($classname, $basedir, true);
             endif;
 
             $this->appSet('templates', $templates, $classname);
@@ -408,13 +421,14 @@ trait AppTrait
      * @todo
      * @return string
      */
-    public function appTemplateMake($name, $args = [], $classname = null)
+    public function appTemplateMake($name, $classname = null)
     {
         $classname = $classname ? : get_called_class();
 
         $templates = $this->appTemplates($classname);
         $name = $templates->getFolders()->exists($classname) ? "{$classname}::{$name}" : $name;
-        return $templates->make($name, $args);
+
+        return $templates->make($name);
     }
 
     /**
@@ -423,13 +437,7 @@ trait AppTrait
      */
     public function appTemplateRender($name, $args = [], $classname = null)
     {
-        $classname = $classname ? : get_called_class();
-
-        $templates = $this->appTemplates($classname);
-        $name = $templates->getFolders()->exists($classname) ? "{$classname}::{$name}" : $name;
-        $template = $templates->make($name);
-
-        return $template->render($args);
+        return $this->appTemplateMake($name, $classname)->render($args);
     }
 
     /**

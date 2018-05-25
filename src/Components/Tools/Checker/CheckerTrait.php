@@ -292,7 +292,7 @@ trait CheckerTrait
      */
     public function checkerIsEqual($a, $b)
     {
-        if ($a !== $b) :
+        if ($a != $b) :
             return false;
         endif;
 
@@ -309,6 +309,6 @@ trait CheckerTrait
      */
     public function checkerIsDifferent($a, $b)
     {
-        return !isEqual($a, $b);
+        return !$this->checkerIsEqual($a, $b);
     }
 }

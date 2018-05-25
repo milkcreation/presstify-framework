@@ -284,4 +284,29 @@ trait CommonDependencyAwareTrait
     {
         return Tools::Html()->parseAttrs($attrs, $linearized);
     }
+
+    /**
+     * Récupération des variables de champ.
+     *
+     * @param mixed $vars
+     *
+     * @return string
+     */
+    public function parseFieldVars($vars)
+    {
+        if (is_string($vars)) :
+            if (preg_match_all('#([^%%]*)%%(.*?)%%([^%%]*)?#', $vars, $matches)) :
+                $vars = "";
+                foreach ($matches[2] as $i => $slug) :
+                    $vars .= $matches[1][$i] . (($field = $this->getField($slug)) ? $field->getValue() : $matches[2][$i]) . $matches[3][$i];
+                endforeach;
+            endif;
+        elseif (is_array($vars)) :
+            foreach ($vars as $k => &$i) :
+                $i = $this->parseFieldVars($i);
+            endforeach;
+        endif;
+
+        return $vars;
+    }
 }

@@ -3,25 +3,25 @@
 namespace tiFy\Components\Partial\Notice;
 
 use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\Partial;
 
 class Notice extends AbstractPartialController
 {
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string $container_id ID HTML du conteneur de l'élément.
-     *      @var string $container_class Classes HTML du conteneur de l'élément.
-     *      @var string $text Texte de notification. défaut 'Lorem ipsum dolor site amet'.
-     *      @var string $dismissible Bouton de masquage de la notification.
+     *
+     *      @var array $attrs Attributs HTML du conteneur de l'élément.
+     *      @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
+     *      @var bool $dismiss Affichage du bouton de masquage de la notification.
      *      @var string $type Type de notification info|warning|success|error. défaut info.
      * }
      */
     protected $attributes = [
-        'container_id'    => '',
-        'container_class' => '',
-        'text'            => 'Lorem ipsum dolor site amet',
-        'dismissible'     => false,
-        'type'            => 'info'
+        'attrs'     => [],
+        'content'   => 'Lorem ipsum dolor site amet',
+        'dismiss'   => false,
+        'type'      => 'info'
     ];
 
     /**
@@ -67,19 +67,49 @@ class Notice extends AbstractPartialController
      */
     protected function parse($attrs = [])
     {
-        $this->attributes['container_id'] = 'tiFyPartial-Notice--' . $this->getIndex();
+        $this->attributes['attrs']['id'] = 'tiFyPartial-Notice--' . $this->getIndex();
 
         parent::parse($attrs);
 
-        $class = "tiFyPartial-Notice tiFyPartial-Notice--" . $this->getId() . " tiFyPartial-Notice--" . strtolower($this->attributes['type']);
-        $this->attributes['container_class'] = $this->attributes['container_class']
-            ? $class . " " . $this->attributes['container_class']
-            : $class;
+        if(!$this->get('attrs.class')) :
+            $this->set('attrs.class', 'tiFyPartial-Notice');
+        endif;
 
-        if ($this->attributes['dismissible'] !== false) :
-            $this->attributes['dismissible'] = is_bool($attrs['dismissible'])
-                ? '&times;'
-                : (string)$this->attributes['dismissible'];
+        $this->set(
+            'attrs.aria-control',
+            'notice'
+        );
+
+        $this->set(
+            'attrs.aria-type',
+            $this->get('type')
+        );
+
+        $content = $this->get('content', '');
+        $this->set('content', is_callable($content) ? call_user_func($content) : $content);
+
+        if($dismiss = $this->get('dismiss')) :
+            if (!is_array($dismiss)) :
+                $dismiss= [];
+            endif;
+
+            $this->set(
+                'dismiss',
+                (string) Partial::Tag(
+                    array_merge(
+                        [
+                            'tag' => 'button',
+                            'attrs' => [
+                                'aria-toggle' => 'dismiss'
+                            ],
+                            'content' => '&times;'
+                        ],
+                        $dismiss
+                    )
+                )
+            );
+        else :
+            $this->set('dismiss', '');
         endif;
     }
 
