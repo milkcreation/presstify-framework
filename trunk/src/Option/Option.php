@@ -326,7 +326,7 @@ class Option extends AppController
     }
 
     /**
-     * Rendu de l'interface d'administration
+     * Rendu de l'interface d'administration.
      *
      * return string
      */

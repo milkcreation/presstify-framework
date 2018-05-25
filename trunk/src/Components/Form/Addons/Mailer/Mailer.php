@@ -5,7 +5,8 @@ namespace tiFy\Components\Form\Addons\Mailer;
 use tiFy\Form\Addons\AbstractAddonController;
 use tiFy\Components\Addons\Mailer\AdminMailerOptions;
 use tiFy\Components\Tools\Mailer\Mailer as tFyLibMailer;
-use tiFy\Options\Options;
+use tiFy\Form\Fields\FieldItemController;
+use tiFy\Option\Option;
 
 class Mailer extends AbstractAddonController
 {
@@ -48,7 +49,7 @@ class Mailer extends AbstractAddonController
 
         ],
         'confirmation'       => [
-            'to' => 'email',
+            'to' => '%%email%%',
         ],
         'notification'       => [],
         'option_name_prefix' => '',
@@ -91,17 +92,21 @@ class Mailer extends AbstractAddonController
      */
     public function appBoot()
     {
+        /*
         if ($this->getFormOption('debug')) :
-            $this->getForm()->callbacks()->setAddons('handle_submit_request', $this->getName(),
-                [$this, 'cb_handle_submit_request']);
+            $this->getForm()->callbacks()->setAddons(
+                'handle_submit_request',
+                $this->getName(),
+                [$this, 'cb_handle_submit_request']
+            );
         endif;
         $id = @ sanitize_html_class(base64_encode($this->getForm()->getUid()));
 
         // Bypass
-        if ($admin = $this->getFormAttr('admin')) :
+        if ($admin = $this->getFormOption('admin')) :
             // Définition des attributs de configuration de l'interface d'administration
             $defaults = [
-                'form_id'            => $this->getForm()->getId(),
+                'form_id'            => $this->getForm()->getName(),
                 'confirmation'       => true,
                 'notification'       => true,
                 'option_name_prefix' => '',
@@ -112,7 +117,7 @@ class Mailer extends AbstractAddonController
                     'recipients'   => '',
                 ],
             ];
-            $args = \wp_parse_args($admin, $defaults);
+            $args = array_merge($defaults, $admin);
 
             // Déclaration de l'interface d'administration des options d'expédition de mail
             $this->appServiceGet(Options::class)->registerNode(
@@ -126,7 +131,7 @@ class Mailer extends AbstractAddonController
         endif;
 
         // Définition du prefixe du nom de l'option d'enregistrement en base de données
-        if (!$this->getFormAttr('option_name_prefix')) :
+        if (!$this->getFormOption('option_name_prefix')) :
             $this->setFormAttr('option_name_prefix', 'tiFyFormMailer_' . $id);
         endif;
         $option_name_prefix = $this->getFormAttr('option_name_prefix');
@@ -153,6 +158,7 @@ class Mailer extends AbstractAddonController
             $notification['to'] = $to;
             $this->setFormAttr('notification', $notification);
         endif;
+        */
     }
 
     /**
@@ -164,11 +170,11 @@ class Mailer extends AbstractAddonController
      */
     public function cb_handle_submit_request($handle)
     {
-        switch ($this->getFormAttr('debug')) :
+        switch ($this->getFormOption('debug')) :
             default:
             case 'confirmation' :
                 // Expédition du message de confirmation
-                if ($options = $this->getFormAttr('confirmation')) :
+                if ($options = $this->getFormOption('confirmation')) :
                     $options = $this->parseOptions($options, 'confirmation');
 
                     echo tFyLibMailer::preview($options);
@@ -179,7 +185,7 @@ class Mailer extends AbstractAddonController
                 break;
             case 'notification' :
                 // Expédition du message de notification
-                if ($options = $this->getFormAttr('notification')) :
+                if ($options = $this->getFormOption('notification')) :
                     $options = $this->parseOptions($options, 'notification');
 
                     echo tFyLibMailer::preview($options);
@@ -202,14 +208,14 @@ class Mailer extends AbstractAddonController
     public function cb_handle_successfully($handle)
     {
         // Expédition du message de confirmation
-        if ($options = $this->getFormAttr('confirmation')) :
+        if ($options = $this->getFormOption('confirmation')) :
             $options = $this->parseOptions($options, 'confirmation');
 
             tFyLibMailer::send($options);
         endif;
 
         // Expédition du message de notification
-        if ($options = $this->getFormAttr('notification')) :
+        if ($options = $this->getFormOption('notification')) :
             $options = $this->parseOptions($options, 'notification');
 
             tFyLibMailer::send($options);
@@ -226,7 +232,7 @@ class Mailer extends AbstractAddonController
      */
     public function parseOptions($options, $context)
     {
-        $options = Helpers::parseMergeVars($options, $this->getForm());
+        $options = $this->parseFieldVars($options);
 
         // Définition du sujet du mail
         if (!isset($options['subject'])) :
@@ -244,24 +250,25 @@ class Mailer extends AbstractAddonController
 
             $form = $this->getForm();
             $fields = [];
-            foreach ((array)$this->getForm()->fields() as $field) :
-                if (!$this->getFieldAttr($field, 'show', false) ||
-                    !$field->typeSupport('request') ||
-                    in_array($field->getType(), ['password', 'file'])
+            /** @var FieldItemController $field */
+            foreach ($this->getForm()->fields() as $field) :
+                if (!$this->getFieldOption($field, 'show', false) ||
+                    !$field->support('request') ||
+                    in_array($field->get('type'), ['password', 'file'])
                 ) :
                     continue;
                 endif;
 
                 $fields[$field->getSlug()] = [
-                    'label' => $field->getLabel(),
-                    'value' => $field->getDisplayValue(),
+                    'label' => $field->getTitle(),
+                    'value' => $field->getValueDisplay(),
                 ];
             endforeach;
 
             $slug = 'message';
             $name = $context;
 
-            if ($template = $this->getFormAttr('template')) :
+            if ($template = $this->getFormOption('template')) :
                 if (is_array($template)) :
                     if (isset($template['slug'])) :
                         $slug = $template['slug'];

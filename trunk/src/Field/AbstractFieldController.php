@@ -81,14 +81,14 @@ abstract class AbstractFieldController extends AppController
         endif;
 
         $field = $this->appServiceGet(Field::class);
-        if (!$instance = $field->getInstance(__CLASS__, $id)) :
+        if (!$instance = $field->getInstance(get_called_class(), $id)) :
             $instance = $this;
-            $count = $field->countInstance(__CLASS__);
+            $count = $field->countInstance(get_called_class());
             $this->id = $id;
             $this->index = $count++;
             $this->parse($attrs);
 
-            $field->setInstance(__CLASS__, $instance->getId(), $instance);
+            $field->setInstance(get_called_class(), $instance->getId(), $instance);
         endif;
 
         return $instance;
