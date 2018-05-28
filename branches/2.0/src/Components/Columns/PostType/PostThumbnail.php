@@ -3,7 +3,7 @@
 namespace tiFy\Components\Columns\PostType;
 
 use tiFy\Column\ColumnPostType;
-use tiFy\Control\Control;
+use tiFy\Partial\Partial;
 
 class PostThumbnail extends ColumnPostType
 {
@@ -24,7 +24,7 @@ class PostThumbnail extends ColumnPostType
      */
     public function admin_enqueue_scripts()
     {
-        Control::enqueue_scripts('HolderImage');
+        $this->appServiceGet(Partial::class)->enqueue('HolderImage');
         $this->appAddAction('admin_print_styles');
     }
 
@@ -56,7 +56,7 @@ class PostThumbnail extends ColumnPostType
         if (($attachment = wp_get_attachment_image_src($attachment_id)) && isset($attachment[0]) && ($path = tify_get_relative_url($attachment[0])) && file_exists(ABSPATH . $path)) :
             $thumb = wp_get_attachment_image($attachment_id, [80, 60], true);
         else :
-            $thumb = Control::HolderImage();
+            $thumb = Partial::HolderImage();
         endif;
 
         echo $thumb;

@@ -492,6 +492,29 @@ if (!function_exists('tify_partial_cookie_notice')) :
     }
 endif;
 
+if (!function_exists('tify_partial_holder_image')) :
+    /**
+     * Image de remplacement.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_holder_image($attrs = [], $echo = true)
+    {
+        $output = (string)Partial::HolderImage($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
 if (!function_exists('tify_partial_modal')) :
     /**
      * Fenêtre modale.

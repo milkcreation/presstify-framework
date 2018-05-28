@@ -93,18 +93,16 @@ class ToggleSwitch extends AbstractFieldController
      */
     protected function parse($attrs = [])
     {
-        $this->attributes = [
-            'container_id'    => 'tiFyField-toggleSwitch--' . $this->getIndex(),
-            'label_on'        => _x('Oui', 'tiFyFieldToggleSwitch', 'tify'),
-            'label_off'       => _x('Non', 'tiFyFieldToggleSwitch', 'tify')
-        ];
+        $this->set('container_id', 'tiFyField-ToggleSwitch--' . $this->getIndex());
+        $this->set('label_on', _x('Oui', 'tiFyFieldToggleSwitch', 'tify'));
+        $this->set('label_off', _x('Non', 'tiFyFieldToggleSwitch', 'tify'));
 
-        parent::parse($args);
+        parent::parse($attrs);
 
-        if (!isset($this->attributes['container_class'])) :
-            $this->attributes['container_class'] = 'tiFyField-toggleSwitch';
+        if (!$class = $this->get('container_class')) :
+            $this->set('container_class', 'tiFyField-ToggleSwitch');
         else :
-            $this->attributes['container_class'] = 'tiFyField-toggleSwitch ' . $args['container_class'];
+            $this->set('container_class', 'tiFyField-ToggleSwitch ' . $class);
         endif;
     }
 
@@ -118,7 +116,7 @@ class ToggleSwitch extends AbstractFieldController
         ob_start();
         ?><?php $this->before(); ?>
         <div id="<?php echo $this->get('container_id'); ?>" class="<?php echo $this->get('container_class'); ?>">
-            <div class="tiFyField-toggleSwitchWrapper">
+            <div class="tiFyField-ToggleSwitchWrapper">
                 <?php
                 echo Field::Radio(
                     [
@@ -126,12 +124,12 @@ class ToggleSwitch extends AbstractFieldController
                             'content' => $this->get('label_on'),
                             'attrs'   => [
                                 'for'   => $this->getId() . '--on',
-                                'class' => 'tiFyField-toggleSwitchLabel tiFyField-toggleSwitchLabel--on'
+                                'class' => 'tiFyField-ToggleSwitchLabel tiFyField-ToggleSwitchLabel--on'
                             ]
                         ]),
                         'attrs'   => [
                             'id'           => $this->getId() . '--on',
-                            'class'        => 'tiFyField-toggleSwitchRadio tiFyField-toggleSwitchRadio--on',
+                            'class'        => 'tiFyField-ToggleSwitchRadio tiFyField-ToggleSwitchRadio--on',
                             'autocomplete' => 'off'
                         ],
                         'name'    => $this->getName(),
@@ -149,13 +147,13 @@ class ToggleSwitch extends AbstractFieldController
                                 'content' => $this->get('label_off'),
                                 'attrs'   => [
                                     'for'   => $this->getId() . '--off',
-                                    'class' => 'tiFyField-toggleSwitchLabel tiFyField-toggleSwitchLabel--off'
+                                    'class' => 'tiFyField-ToggleSwitchLabel tiFyField-ToggleSwitchLabel--off'
                                 ]
                             ]
                         ),
                         'attrs'   => [
                             'id'           => $this->getId() . '--off',
-                            'class'        => 'tiFyField-toggleSwitchRadio tiFyField-toggleSwitchRadio--off',
+                            'class'        => 'tiFyField-ToggleSwitchRadio tiFyField-ToggleSwitchRadio--off',
                             'autocomplete' => 'off'
                         ],
                         'name'    => $this->getName(),
@@ -165,7 +163,7 @@ class ToggleSwitch extends AbstractFieldController
                     true
                 );
                 ?>
-                <span class="tiFyField-toggleSwitchHandler"></span>
+                <span class="tiFyField-ToggleSwitchHandler"></span>
             </div>
         </div>
         <?php $this->after(); ?>
