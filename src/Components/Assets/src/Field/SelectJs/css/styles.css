@@ -1,19 +1,19 @@
-.tiFy-select,
-.tiFy-select > *,
-.tiFy-selectPicker,
-.tiFy-selectPicker > * {
+.tiFyField-SelectJs,
+.tiFyField-SelectJs > *,
+.tiFyField-SelectJsPicker,
+.tiFyField-SelectJsPicker > * {
     box-sizing: border-box;
 }
 
-.tiFy-select {
+.tiFyField-SelectJs {
     position: relative;
 }
 
-.tiFy-selectHandler {
+.tiFyField-SelectJsHandler {
     display: none;
 }
 
-.tiFy-selectTrigger {
+.tiFyField-SelectJsTrigger {
     position: relative;
     min-height: 1.8em;
     cursor: pointer;
@@ -21,15 +21,15 @@
     border: 1px solid #E4E4E4;
 }
 
-.tiFy-selectTrigger[aria-arrow="true"] {
+.tiFyField-SelectJsTrigger[aria-arrow="true"] {
     padding-right: 20px;
 }
 
-.tiFy-select[aria-disabled="true"] .tiFy-selectTrigger {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger {
     cursor: inherit;
 }
 
-.tiFy-selectTrigger[aria-arrow="true"]::before {
+.tiFyField-SelectJsTrigger[aria-arrow="true"]::before {
     position: absolute;
     top: 0;
     right: 0;
@@ -43,7 +43,7 @@
     background-color: #F4F4F4;
 }
 
-.tiFy-selectTrigger[aria-arrow="true"]::after {
+.tiFyField-SelectJsTrigger[aria-arrow="true"]::after {
     position: absolute;
     top: 50%;
     right: 5px;
@@ -62,56 +62,56 @@
     border-left-width: 4px;
 }
 
-.tiFy-select[aria-open="true"] .tiFy-selectTrigger[aria-arrow="true"]::after {
+.tiFyField-SelectJs[aria-open="true"] .tiFyField-SelectJsTrigger[aria-arrow="true"]::after {
     border-top-width: 0;
     border-right-width: 4px;
     border-bottom-width: 4px;
     border-left-width: 4px;
 }
 
-.tiFy-select[aria-disabled="true"] .tiFy-selectTrigger {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger {
     background-color: #F4F4F4;
     color: #BBB;
 }
 
-.tiFy-select[aria-disabled="true"] .tiFy-selectTrigger[aria-arrow="true"]::before,
-.tiFy-select[aria-disabled="true"] .tiFy-selectTrigger[aria-arrow="true"]::after {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger[aria-arrow="true"]::before,
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger[aria-arrow="true"]::after {
     opacity: 0.5;
 }
 
-.tiFy-select[aria-disabled="true"] .tiFy-selectTrigger {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger {
     background-color: #F4F4F4;
     color: #BBB;
 }
 
-.tiFy-selectAutocomplete {
+.tiFyField-SelectJsAutocomplete {
     margin: 0;
     border: none;
     width: 100%;
 }
 
-.tiFy-select[aria-disabled="true"] .tiFy-selectAutocomplete {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsAutocomplete {
     display: none;
 }
 
-.tiFy-selectSelectedItems::before,
-.tiFy-selectSelectedItems:after {
+.tiFyField-SelectJsSelectedItems::before,
+.tiFyField-SelectJsSelectedItems:after {
     display: table;
     content: "";
 }
 
-.tiFy-selectSelectedItems:after {
+.tiFyField-SelectJsSelectedItems:after {
     clear: both;
 }
 
-.tiFy-selectSelectedItems {
+.tiFyField-SelectJsSelectedItems {
     position: relative;
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
 
-.tiFy-select[aria-multiple="false"] .tiFy-selectSelectedItems {
+.tiFyField-SelectJs[aria-multiple="false"] .tiFyField-SelectJsSelectedItems {
     position: relative;
     top: 0;
     right: 0;
@@ -119,11 +119,11 @@
     bottom: 0;
 }
 
-.tiFy-select[aria-multiple="false"] .tiFy-selectTrigger[aria-arrow="true"] .tiFy-selectSelectedItems {
+.tiFyField-SelectJs[aria-multiple="false"] .tiFyField-SelectJsTrigger[aria-arrow="true"] .tiFyField-SelectJsSelectedItems {
     right: 20px;
 }
 
-.tiFy-selectSelectedItems > li {
+.tiFyField-SelectJsSelectedItems > li {
     position: relative;
     cursor: default;
     margin: 2px 0;
@@ -135,28 +135,28 @@
     background-color: #FFF;
 }
 
-.tiFy-select[aria-multiple="true"] .tiFy-selectSelectedItems > li {
+.tiFyField-SelectJs[aria-multiple="true"] .tiFyField-SelectJsSelectedItems > li {
     float: left;
     background-color: #E4E4E4;
     border: 1px solid #BBB;
     border-radius: 2px;
 }
 
-.tiFy-select[aria-sortable="true"] .tiFy-selectSelectedItems > li {
+.tiFyField-SelectJs[aria-sortable="true"] .tiFyField-SelectJsSelectedItems > li {
     padding-left: 15px;
 }
 
-.tiFy-select[aria-disabled="true"] .tiFy-selectSelectedItems > li {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsSelectedItems > li {
     padding-right: 5px;
     color: #BBB;
     background-color: #F4F4F4;
 }
 
-.tiFy-select[aria-disabled="true"][aria-multiple="true"] .tiFy-selectSelectedItems > li {
+.tiFyField-SelectJs[aria-disabled="true"][aria-multiple="true"] .tiFyField-SelectJsSelectedItems > li {
     border: 1px solid #DDD;
 }
 
-.tiFy-selectSelectedItems > li[aria-highlight="true"] {
+.tiFyField-SelectJsSelectedItems > li[aria-highlight="true"] {
     animation: 1s tiFySelectHighlightItem;
 }
 
@@ -174,7 +174,7 @@
     }
 }
 
-.tiFy-selectSelectedItems > li > [aria-handle="sort"] {
+.tiFyField-SelectJsSelectedItems > li > [aria-handle="sort"] {
     position: absolute;
     top: 50%;
     left: 4px;
@@ -193,7 +193,7 @@
     margin-right: 2px;
 }
 
-.tiFy-selectSelectedItems > li > [aria-handle="remove"] {
+.tiFyField-SelectJsSelectedItems > li > [aria-handle="remove"] {
     position: absolute;
     top: 50%;
     right: 2px;
@@ -211,7 +211,7 @@
     margin-right: 2px;
 }
 
-.tiFy-selectPicker {
+.tiFyField-SelectJsPicker {
     position: absolute;
     display: none;
     margin: 0;
@@ -223,11 +223,11 @@
     border: 1px solid #E4E4E4;
 }
 
-.tiFy-selectPicker[aria-open="true"] {
+.tiFyField-SelectJsPicker[aria-open="true"] {
     display: inherit;
 }
 
-.tiFy-selectPickerItems {
+.tiFyField-SelectJsPickerItems {
     margin: 0 -4px;
     max-height: 10em;
     list-style-type: none;
@@ -235,16 +235,16 @@
     overflow-y: auto;
 }
 
-.tiFy-selectPicker[aria-complete="false"] .tiFy-selectPickerItems {
+.tiFyField-SelectJsPicker[aria-complete="false"] .tiFyField-SelectJsPickerItems {
     padding-bottom: 20px;
 }
 
-.tiFy-selectPickerFilter {
+.tiFyField-SelectJsPickerFilter {
     margin: 4px 0;
     width: 100%;
 }
 
-.tiFy-selectPickerItems > li {
+.tiFyField-SelectJsPickerItems > li {
     position: relative;
     margin: 0;
     padding: 5px;
@@ -257,36 +257,36 @@
     color: #444;
 }
 
-.tiFy-selectPickerItems > li[aria-selected="true"] {
+.tiFyField-SelectJsPickerItems > li[aria-selected="true"] {
     background-color: DodgerBlue;
     color: #FFF;
 }
 
-.tiFy-selectPickerItems > li:not([aria-selected="true"])[aria-disabled="true"] {
+.tiFyField-SelectJsPickerItems > li:not([aria-selected="true"])[aria-disabled="true"] {
     color: #AAA;
 }
 
-.tiFy-selectPicker[aria-duplicable="true"] .tiFy-selectPickerItems > li[aria-selected="true"] {
+.tiFyField-SelectJsPicker[aria-duplicable="true"] .tiFyField-SelectJsPickerItems > li[aria-selected="true"] {
     background-color: #DDD;
     color: inherit;
 }
 
-.tiFy-selectPickerItems > li:hover,
-.tiFy-selectPicker[aria-duplicable="true"] .tiFy-selectPickerItems > li[aria-selected="true"]:hover {
+.tiFyField-SelectJsPickerItems > li:hover,
+.tiFyField-SelectJsPicker[aria-duplicable="true"] .tiFyField-SelectJsPickerItems > li[aria-selected="true"]:hover {
     background-color: DodgerBlue;
     color: #FFF;
 }
 
-.tiFy-selectPickerItems > li:not([aria-selected="true"])[aria-disabled="true"]:hover {
+.tiFyField-SelectJsPickerItems > li:not([aria-selected="true"])[aria-disabled="true"]:hover {
     background-color: #FFF;
     color: #AAA;
 }
 
-.tiFy-selectPickerItems > li[aria-disabled="true"]:hover {
+.tiFyField-SelectJsPickerItems > li[aria-disabled="true"]:hover {
     cursor: inherit;
 }
 
-.tiFy-selectPickerMore {
+.tiFyField-SelectJsPickerMore {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -303,21 +303,21 @@
     background: #F4F4F4;
 }
 
-.tiFy-selectPickerMore:hover,
-.tiFy-selectPickerMore:active,
-.tiFy-selectPickerMore:focus {
+.tiFyField-SelectJsPickerMore:hover,
+.tiFyField-SelectJsPickerMore:active,
+.tiFyField-SelectJsPickerMore:focus {
     color: #444;
 }
 
-.tiFy-selectPickerMore:focus {
+.tiFyField-SelectJsPickerMore:focus {
     outline: none;
 }
 
-.tiFy-selectPicker[aria-complete="true"] .tiFy-selectPickerMore {
+.tiFyField-SelectJsPicker[aria-complete="true"] .tiFyField-SelectJsPickerMore {
     display: none;
 }
 
-.tiFy-selectPickerLoader {
+.tiFyField-SelectJsPickerLoader {
     position: absolute;
     left: 0;
     right: 0;
@@ -330,7 +330,7 @@
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
 }
 
-.tiFy-selectPickerSpinkit {
+.tiFyField-SelectJsPickerSpinkit {
     margin: 0 auto;
 
     -webkit-transform: scale(0.3);

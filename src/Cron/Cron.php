@@ -49,6 +49,7 @@ final class Cron extends AppController
      */
     public function appBoot()
     {
+        return;
         $this->appAddAction('init');
         $this->appAddAction('tify_templates_register');
     }
@@ -121,6 +122,7 @@ final class Cron extends AppController
      */
     public function register($name, $attrs = [])
     {
+        return;
         if (isset($this->schedules[$name])) :
             return;
         endif;
