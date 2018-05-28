@@ -17,18 +17,11 @@ namespace tiFy\Components\Field\Password;
 
 use tiFy\Field\AbstractFieldController;
 
-/**
- * @param array $args {
- *      Liste des attributs de configuration du champ
- *
-
- * }
- */
 class Password extends AbstractFieldController
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attrs {
+     * @var array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var array $attrs Liste des propriétés de la balise HTML.

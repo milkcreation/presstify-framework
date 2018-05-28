@@ -14,6 +14,7 @@ use LogicException;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Filesystem\Filesystem;
+use tiFy\Apps\AppControllerInterface;
 use tiFy\tiFy;
 
 final class AppsServiceProvider extends LeagueAbstractServiceProvider implements BootableServiceProviderInterface
@@ -151,7 +152,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Déclaration d'un application.
      *
-     * @param string $classname Nom de la classe de l'application.
+     * @param string $classname Nom de la classe de l'application à déclarer.
      * @param array $attrs Liste des attributs de configuration.
      *
      * @return bool
@@ -187,40 +188,46 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération d'un attribut d'une application déclarée.
      *
-     * @param string $classname Nom de la classe de l'application.
      * @param string $key Clé d'index de l'attribut de configuration. Syntaxe à point permise. Tous les attributs si null.
      * @param mixed $default Valeur de l'attribut de configuration.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return void
      */
-    public function getAttr($classname, $key = null, $default = null)
+    public function getAttr($key = null, $default = null, $app)
     {
+        $classname = get_class($app);
+
         return Arr::get($this->apps, $key ? "{$classname}.{$key}" : "{$classname}");
     }
 
     /**
      * Définition d'un attribut d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
      * @param string $key Clé d'index de l'attribut de configuration.
      * @param mixed $value Valeur de l'attribut de configuration.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return void
      */
-    public function setAttr($classname, $key, $value)
+    public function setAttr($key, $value, $app)
     {
+        $classname = get_class($app);
+
         Arr::set($this->apps, "{$classname}.{$key}", $value);
     }
 
     /**
      * Vérification de déclaration d'une application.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return bool
      */
-    public function exists($classname)
+    public function exists($app)
     {
+        $classname = get_class($app);
+
         return in_array($classname, $this->apps);
     }
 
@@ -229,11 +236,10 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
      * @todo
      *
      * @param string $filename Chemin relatif vers le fichier du dossier des assets.
-     * @param object|string $classname Nom ou instance de l'application.
      *
      * @return string
      */
-    public function getAsset($filename, $classname)
+    public function getAsset($filename)
     {
         return $this->tfy->absUrl() . ltrim('/Components/Assets/src/', '/') . ltrim($filename, '/');
     }
@@ -241,15 +247,17 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération du nom complet d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return string
      */
-    public function getClassname($classname)
+    public function getClassname($app)
     {
+        $classname = get_class($app);
+
         if (!$_classname = Arr::get($this->apps, "{$classname}.classname", '')) :
-            $_classname = $this->getReflectionClass($classname)->getName();
-            $this->setAttr($classname, 'classname', $_classname);
+            $_classname = $this->getReflectionClass($app)->getName();
+            $this->setAttr('classname', $_classname, $app);
         endif;
 
         return $_classname;
@@ -258,14 +266,16 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération d'un attribut ou de la liste des attributs de configuration d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
      * @param string $key Clé d'index de l'attribut de configuration.
      * @param mixed $default Valeur de l'attribut de configuration.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return string
      */
-    public function getConfig($classname, $key = null, $default = null)
+    public function getConfig($key = null, $default = null, $app)
     {
+        $classname = get_class($app);
+
         $config = Arr::get($this->apps, "{$classname}.config", []);
 
         return !$key ? $config : Arr::get($config, $key, $default);
@@ -274,15 +284,17 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération du chemin absolu vers le repertoire de stockage d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return string
      */
-    public function getDirname($classname)
+    public function getDirname($app)
     {
+        $classname = get_class($app);
+
         if (!$dirname = Arr::get($this->apps, "{$classname}.dirname", '')) :
-            $dirname = dirname($this->getFilename($classname));
-            $this->setAttr($classname, 'dirname', $dirname);
+            $dirname = dirname($this->getFilename($app));
+            $this->setAttr('dirname', $dirname, $app);
         endif;
 
         return $dirname;
@@ -291,15 +303,17 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération du chemin absolu vers le fichier d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return string
      */
-    public function getFilename($classname)
+    public function getFilename($app)
     {
+        $classname = get_class($app);
+
         if (!$filename = Arr::get($this->apps, "{$classname}.filename", '')) :
-            $filename = $this->getReflectionClass($classname)->getFileName();
-            $this->setAttr($classname, 'filename', $filename);
+            $filename = $this->getReflectionClass($app)->getFileName();
+            $this->setAttr('filename', $filename, $app);
         endif;
 
         return $filename;
@@ -308,15 +322,17 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération de l'espace de nom d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return string
      */
-    public function getNamespace($classname)
+    public function getNamespace($app)
     {
+        $classname = get_class($app);
+
         if (!$namespace = Arr::get($this->apps, "{$classname}.namespace", '')) :
-            $namespace = $this->getReflectionClass($classname)->getNamespaceName();
-            $this->setAttr($classname, 'namespace', $namespace);
+            $namespace = $this->getReflectionClass($app)->getNamespaceName();
+            $this->setAttr('namespace', $namespace, $app);
         endif;
 
         return $namespace;
@@ -325,19 +341,21 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération de la classe de reflection d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return ReflectionClass
      */
-    public function getReflectionClass($classname)
+    public function getReflectionClass($app)
     {
+        $classname = get_class($app);
+
         if (!$reflectionClass = Arr::get($this->apps, "{$classname}.reflectionClass", null)) :
             try {
                 $reflectionClass = new ReflectionClass($classname);
             } catch (ReflectionException $e) {
                 wp_die($e->getMessage(), __('Classe indisponible', 'tify'), $e->getCode());
             }
-            $this->setAttr($classname, 'reflectionClass', $reflectionClass);
+            $this->setAttr('reflectionClass', $reflectionClass, $app);
         endif;
 
         return $reflectionClass;
@@ -346,15 +364,17 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération du chemin relatif vers le repertoire de stockage d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return string
      */
-    public function getRelPath($classname)
+    public function getRelPath($app)
     {
+        $classname = get_class($app);
+
         if (!$relPath = Arr::get($this->apps, "{$classname}.relPath", '')) :
-            $relPath = (new fileSystem())->makePathRelative($this->getDirname($classname), $this->tfy->absPath());
-            $this->setAttr($classname, 'relPath', $relPath);
+            $relPath = (new fileSystem())->makePathRelative($this->getDirname($app), $this->tfy->absPath());
+            $this->setAttr('relPath', $relPath, $app);
         endif;
 
         return $relPath;
@@ -363,15 +383,17 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération du nom court d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return string
      */
-    public function getShortname($classname)
+    public function getShortname($app)
     {
+        $classname = get_class($app);
+
         if (!$shortname = Arr::get($this->apps, "{$classname}.shortname", '')) :
-            $shortname = $this->getReflectionClass($classname)->getShortName();
-            $this->setAttr($classname, 'shortname', $shortname);
+            $shortname = $this->getReflectionClass($app)->getShortName();
+            $this->setAttr('shortname', $shortname, $app);
         endif;
 
         return $shortname;
@@ -380,15 +402,17 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     /**
      * Récupération de l'url vers le repertoire de stockage d'une application déclarée.
      *
-     * @param object|string $classname Nom ou instance de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return string
      */
-    public function getUrl($classname)
+    public function getUrl($app)
     {
+        $classname = get_class($app);
+
         if (!$url = Arr::get($this->apps, "{$classname}.url", '')) :
-            $url = home_url($this->getRelPath($classname));
-            $this->setAttr($classname, 'url', $url);
+            $url = home_url($this->getRelPath($app));
+            $this->setAttr('url', $url, $app);
         endif;
 
         return rtrim($url, '/');

@@ -19,6 +19,7 @@ use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
 use tiFy\Components\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Components\Partial\CookieNotice\CookieNotice;
+use tiFy\Components\Partial\HolderImage\HolderImage;
 use tiFy\Components\Partial\Modal\Modal;
 use tiFy\Components\Partial\ModalTrigger\ModalTrigger;
 use tiFy\Components\Partial\Navtabs\Navtabs;
@@ -31,6 +32,7 @@ use tiFy\Components\Partial\Tag\Tag;
 /**
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
  * @method static CookieNotice CookieNotice(string $id = null, array $attrs = [])
+ * @method static HolderImage HolderImage(string $id = null,array $attrs = [])
  * @method static Modal Modal(string $id = null,array $attrs = [])
  * @method static ModalTrigger ModalTrigger(string $id = null,array $attrs = [])
  * @method static Navtabs Navtabs(string $id = null,array $attrs = [])

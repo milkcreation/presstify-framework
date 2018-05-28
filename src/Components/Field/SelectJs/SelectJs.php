@@ -103,7 +103,6 @@ class SelectJs extends AbstractFieldController
      */
     public function init()
     {
-        // Déclaration des actions Ajax
         $this->appAddAction(
             'wp_ajax_tify_field_select_js',
             'wp_ajax'
@@ -113,11 +112,17 @@ class SelectJs extends AbstractFieldController
             'wp_ajax'
         );
 
-        // Déclaration des scripts
+        \wp_register_style(
+            'tiFyFieldSelectJs',
+            $this->appAsset('/Field/SelectJs/css/styles.css'),
+            [],
+            171218
+        );
+
         \wp_register_script(
             'tiFyFieldSelectJs',
             $this->appAsset('/Field/SelectJs/js/scripts.js'),
-            ['tifyselect'],
+            ['jquery-ui-widget', 'jquery-ui-sortable'],
             171218,
             true
         );
@@ -131,7 +136,7 @@ class SelectJs extends AbstractFieldController
     public function enqueue_scripts()
     {
         $this->appServiceGet(Partial::class)->enqueue('spinkit', 'three-bounce');
-        \wp_enqueue_style('tifyselect');
+        \wp_enqueue_style('tiFyFieldSelectJs');
         \wp_enqueue_script('tiFyFieldSelectJs');
     }
 
@@ -142,7 +147,7 @@ class SelectJs extends AbstractFieldController
      */
     public function wp_ajax()
     {
-        check_ajax_referer('tiFyField-selectJs');
+        check_ajax_referer('tiFyField-SelectJs');
 
         // Définition des arguments de requête
         $query_args = $this->appRequest('POST')->get('query_args', []);
@@ -178,8 +183,8 @@ class SelectJs extends AbstractFieldController
             'multiple'  => $this->attributes['multiple'],
             'attrs'     => [],
         ];
-        $this->attributes['handler_args']['attrs']['id'] = 'tiFyField-selectJsHandler--' . $this->getId();
-        $this->attributes['handler_args']['attrs']['class'] = 'tiFy-selectHandler tiFyField-selectJsHandler';
+        $this->attributes['handler_args']['attrs']['id'] = 'tiFyField-SelectJsHandler--' . $this->getId();
+        $this->attributes['handler_args']['attrs']['class'] = 'tiFyField-SelectJsHandler';
 
         // Attributs de configuration du controleur Ajax
         // Sortable
@@ -190,13 +195,11 @@ class SelectJs extends AbstractFieldController
         endif;
 
         // Liste de selection
-        ob_start();
-        echo Partial::Spinkit([
-            'container_id'    => 'tiFyField-selectJsPickerSpinkit--' . $this->getIndex(),
-            'container_class' => 'tiFy-selectPickerSpinkit tiFyField-selectJsPickerSpinkit',
+        $picker_loader = (string)Partial::Spinkit([
+            'container_id'    => 'tiFyField-SelectJsPickerSpinkit--' . $this->getIndex(),
+            'container_class' => 'tiFyField-SelectJsPickerSpinkit',
             'type'            => 'three-bounce',
         ]);
-        $picker_loader = ob_get_clean();
 
         $this->attributes['picker'] = array_merge(
             [
@@ -215,7 +218,7 @@ class SelectJs extends AbstractFieldController
             $this->attributes['source'] = array_merge(
                 [
                     'action'      => 'tify_field_select_js',
-                    '_ajax_nonce' => \wp_create_nonce('tiFyField-selectJs'),
+                    '_ajax_nonce' => \wp_create_nonce('tiFyField-SelectJs'),
                     'query_args'  => [],
                     'args'        => [
                         'select_cb' => $this->attributes['select_cb'],
@@ -462,9 +465,9 @@ class SelectJs extends AbstractFieldController
         <div <?php $this->attrs(); ?>>
             <?php echo Field::Select($this->get('handler_args')); ?>
 
-            <div id="tiFyField-selectJsTrigger--<?php echo $this->getId(); ?>" class="tiFy-selectTrigger">
-                <ul id="tiFyField-selectJsSelectedItems--<?php echo $this->getId(); ?>"
-                    class="tiFy-selectSelectedItems">
+            <div id="tiFyField-SelectJsTrigger--<?php echo $this->getId(); ?>" class="tiFyField-SelectJsTrigger">
+                <ul id="tiFyField-SelectJsSelectedItems--<?php echo $this->getId(); ?>"
+                    class="tiFyField-SelectJsSelectedItems">
                     <?php foreach ($selected_items as $item) : ?>
                         <li
                                 data-label="<?php echo $item['label']; ?>"
@@ -478,8 +481,8 @@ class SelectJs extends AbstractFieldController
                 </ul>
             </div>
 
-            <div id="tiFyField-selectJsPicker--<?php echo $this->getId(); ?>" class="tiFy-selectPicker">
-                <ul id="tiFyField-selectJsPickerItems--<?php echo $this->getId(); ?>" class="tiFy-selectPickerItems">
+            <div id="tiFyField-SelectJsPicker--<?php echo $this->getId(); ?>" class="tiFyField-SelectJsPicker">
+                <ul id="tiFyField-SelectJsPickerItems--<?php echo $this->getId(); ?>" class="tiFyField-SelectJsPickerItems">
                     <?php foreach ($picker_items as $item) : ?>
                         <li
                                 data-label="<?php echo $item['label']; ?>"

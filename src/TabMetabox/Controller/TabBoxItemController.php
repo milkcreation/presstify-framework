@@ -28,7 +28,7 @@ class TabBoxItemController extends AbstractTabItemController
         );
 
         if (!$this->get('title')) :
-            $this->set('title', $this->get('name'));
+            $this->set('title', __('Réglages', 'tify'));
         endif;
     }
 }
