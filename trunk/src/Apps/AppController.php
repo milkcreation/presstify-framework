@@ -3,7 +3,7 @@
 namespace tiFy\Apps;
 
 
-abstract class AppController
+abstract class AppController implements AppControllerInterface
 {
     use AppTrait;
 
@@ -14,8 +14,8 @@ abstract class AppController
      */
     public function __construct()
     {
-        if (! $this->appExists($this)) :
-            $this->appRegister($this);
+        if (! $this->appExists()) :
+            $this->appRegister();
         endif;
 
         if (did_action('tify_app_boot')) :

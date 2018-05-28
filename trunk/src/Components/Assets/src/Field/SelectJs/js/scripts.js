@@ -42,14 +42,14 @@
 
             // Liste des agents de controle
             controllers: {
-                handler: 'tiFy-selectHandler',
-                trigger: 'tiFy-selectTrigger',
-                autocompleteInput: 'tiFy-selectAutocomplete',
-                selectedList: 'tiFy-selectSelectedItems',
-                picker: 'tiFy-selectPicker',
-                pickerList: 'tiFy-selectPickerItems',
-                pickerFilter: 'tiFy-selectPickerFilter',
-                pickerLoader: 'tiFy-selectPickerLoader'
+                handler: 'tiFyField-SelectJsHandler',
+                trigger: 'tiFyField-SelectJsTrigger',
+                autocompleteInput: 'tiFyField-SelectJsAutocomplete',
+                selectedList: 'tiFyField-SelectJsSelectedItems',
+                picker: 'tiFyField-SelectJsPicker',
+                pickerList: 'tiFyField-SelectJsPickerItems',
+                pickerFilter: 'tiFyField-SelectJsPickerFilter',
+                pickerLoader: 'tiFyField-SelectJsPickerLoader'
             },
 
             // Instanciation de l'élément
@@ -211,7 +211,7 @@
                     }
 
                     // Récupération d'élément dans la liste de selection
-                    self.autocompleteInput = $('<input class="tiFy-selectAutocomplete" autocomplete="off"/>')
+                    self.autocompleteInput = $('<input class="tiFyField-SelectJsAutocomplete" autocomplete="off"/>')
                         .prependTo(self.trigger);
                 }
             },
@@ -256,17 +256,17 @@
                     self.picker.attr('aria-filter', true);
 
                     self.pickerFilter = $(
-                        '<input class="tiFy-selectPickerFilter" autocomplete="off"/>').prependTo(self.picker);
+                        '<input class="tiFyField-SelectJsPickerFilter" autocomplete="off"/>').prependTo(self.picker);
                 }
 
                 // Définition de l'indicateur de chargement
-                self.pickerLoader = $('<div class="tiFy-selectPickerLoader" />')
+                self.pickerLoader = $('<div class="tiFyField-SelectJsPickerLoader" />')
                     .html(o.loader)
                     .prependTo(self.picker);
 
                 // Définition de l'indicateur de chargement
                 if (this.flags.hasSource) {
-                    self.pickerMore = $('<a href="#" class="tiFy-selectPickerMore" />')
+                    self.pickerMore = $('<a href="#" class="tiFyField-SelectJsPickerMore" />')
                         .html(o.more)
                         .prependTo(self.picker);
 

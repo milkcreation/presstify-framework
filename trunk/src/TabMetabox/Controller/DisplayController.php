@@ -190,13 +190,7 @@ class DisplayController
 
         $title = $this->get('box')->get('title');
         $output .= "\t\t<h3 class=\"hndle\"><span>" .
-            (empty($title)
-                ? __('Réglages', 'tify')
-                : (is_callable($title)
-                    ? call_user_func_array($title, $args)
-                    : $title
-                )
-            ) .
+            (is_callable($title) ? call_user_func_array($title, $args) : $title) .
             "</span></h3>";
 
         $output .= "\t</div>";
