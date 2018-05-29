@@ -19,7 +19,7 @@ trait Views
     public function parseView( $args = array() )
     {
         static $index;
-        
+
         $defaults = array(
             'base_uri'              => $this->getConfig( 'base_url' ),
             'label'                 => sprintf( __( 'Filtre #%d', 'tify' ), $index++ ),    
@@ -50,7 +50,7 @@ trait Views
         else :
             $request_query_args = array();
         endif;
-        
+
         /// Traitement de l'url de la vue
         $parsed_base_uri = parse_url( $base_uri );    
         if( isset( $parsed_base_uri['query'] ) ) :
@@ -58,7 +58,7 @@ trait Views
         else: 
             $base_query_args = array();
         endif;
-            
+
         /// Traitement des arguments de requête à ajouter
         if( ! empty( $add_query_args ) ) :
             $base_query_args = wp_parse_args( $add_query_args, $base_query_args );
@@ -76,9 +76,16 @@ trait Views
         foreach( $remove_query_args as $key ) :
             unset( $base_query_args[$key] );
         endforeach;
-                
+
+        /// Définition de l'url de la vue
+        $uri = $parsed_base_uri['scheme'] .'://'. $parsed_base_uri['host'];
+        if (!empty($parsed_base_uri['port'])) :
+            $uri .= ':' . $parsed_base_uri['port'];
+        endif;
+        $uri .= $parsed_base_uri['path'];
+
         /// Traitement du lien    
-        $href = esc_url( add_query_arg( $base_query_args, $parsed_base_uri['scheme'] .'://'. $parsed_base_uri['host'] . $parsed_base_uri['path'] ) );
+        $href = esc_url( add_query_arg( $base_query_args, $uri ) );
         
         /// Vérifie si le lien est actif                
         if( ! is_null( $current ) ) :
