@@ -15,6 +15,7 @@
 
 namespace tiFy\Components\Field\Repeater;
 
+use tiFy\Components\Field\Repeater\TemplateController;
 use tiFy\Field\AbstractFieldController;
 
 class Repeater extends AbstractFieldController
@@ -22,29 +23,29 @@ class Repeater extends AbstractFieldController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string $class Classe(s) HTML du conteneur.
      *      @var string $name Clé d'indice de la valeur à enregistrer.
      *      @var array $value Liste de valeurs existantes.
-     *      @var mixed $default Valeur par défaut.
      *      @var string $ajax_action Action Ajax lancée pour récupérer le formulaire d'un élément.
      *      @var string $ajax_nonce Agent de sécurisation de la requête de récupération Ajax.
      *      @var callable $item_cb Fonction ou méthode de rappel d'affichage d'un élément (doit être une méthode statique ou une fonction).
-     *      @var string $add_button_txt Intitulé du bouton d'ajout d'un élément.
-     *      @var string $add_button_class Classe(s) HTML du bouton d'ajout.
+     *      @var array $container Liste des attributs de configuration du conteneur de champ.
+     *      @var array $button Liste des attributs de configuration du bouton d'ajout d'un élément.
      *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
      *      @var bool $order Activation de l'ordonnacemment des éléments.
+     *      @var array $templates Attributs de configuration des templates.
      * }
      */
     protected $attributes = [
         'name'             => '',
         'value'            => '',
-        'default'          => '',
         'ajax_action'      => 'tify_field_repeater',
         'ajax_nonce'       => '',
         'item_cb'          => '',
+        'container'        => [],
         'button'           => [],
         'max'              => -1,
-        'order'            => true
+        'order'            => true,
+        'templates'        => []
     ];
 
     /**
@@ -66,7 +67,7 @@ class Repeater extends AbstractFieldController
         \wp_register_style(
             'tiFyFieldRepeater',
             $this->appAsset('/Field/Repeater/css/styles.css'),
-            [],
+            [is_admin() ? 'tiFyAdmin' : ''],
             170421
         );
         \wp_register_script(
@@ -75,13 +76,6 @@ class Repeater extends AbstractFieldController
             ['jquery', 'jquery-ui-sortable'],
             170421,
             true
-        );
-        \wp_localize_script(
-            'tiFyFieldRepeater',
-            'tiFyFieldRepeater',
-            [
-                'maxAttempt' => __('Nombre de valeur maximum atteinte', 'tify')
-            ]
         );
     }
 
@@ -106,7 +100,7 @@ class Repeater extends AbstractFieldController
     protected function parse($attrs = [])
     {
         $this->set('ajax_nonce', wp_create_nonce('tiFyField-Repeater'));
-        $this->set('button.content', __('Ajouter', 'tify'));
+        $this->set('button.content', __('Ajouter un élément', 'tify'));
         $this->set('container.attrs.id', 'tiFyField-Repeater--' . $this->getId());
         $this->set('container.attrs.class', 'tiFyField-Repeater');
 
@@ -129,6 +123,18 @@ class Repeater extends AbstractFieldController
         if ($this->get('order')) :
             $this->set('order', '__order_' . $this->getName());
         endif;
+
+        $this->set(
+            'container.attrs.data-options',
+            [
+                'ajax_action' => $this->get('ajax_action'),
+                'ajax_nonce'  => $this->get('ajax_nonce'),
+                'name'        => $this->getName(),
+                'max'         => $this->get('max'),
+                'order'       => $this->get('order'),
+                'templates'   => $this->get('templates')
+            ]
+        );
     }
 
     /**
@@ -138,19 +144,19 @@ class Repeater extends AbstractFieldController
      */
     protected function display()
     {
-        $this->appTemplateMake('item');
-
         return $this->appTemplateRender('repeater', $this->all());
     }
 
     /**
      * Génération d'un indice aléatoire
      *
+     * @param
+     *
      * @return string
      */
-    public static function parseIndex($index)
+    public function parseIndex($index = 0)
     {
-        if (! is_numeric($index)) :
+        if (!is_numeric($index)) :
             return $index;
         endif;
 
@@ -166,20 +172,22 @@ class Repeater extends AbstractFieldController
     {
         check_ajax_referer('tiFyField-Repeater');
 
-        $index = self::parseIndex($_POST['index']);
-        $value = $_POST['value'];
-        $attrs = $_POST['attrs'];
+        $options = \wp_unslash($this->appRequest('POST')->get('options'));
+        $index = $this->appRequest('POST')->getInt('index');
 
-        ob_start();
-        if (!empty($_POST['attrs']['item_cb'])) :
-            call_user_func(\wp_unslash($_POST['attrs']['item_cb']), $index, $value, $attrs);
-        else :
-            static::item($index, $value, $attrs);
-        endif;
-        $item = ob_get_clean();
-
-        echo self::itemWrap($item, $index, $value, $attrs);
-
-        wp_die();
+        if (($options['max'] > 0) && ($index >= $options['max'])) {
+            wp_send_json_error(__('Nombre de valeur maximum atteinte', 'tify'));
+        } else {
+            $this->appTemplates($options['templates']);
+            wp_send_json_success(
+                $this->appTemplateRender(
+                    'item-wrap',
+                    array_merge(
+                        $options,
+                        ['index' => $index, 'value' => '']
+                    )
+                )
+            );
+        }
     }
 }

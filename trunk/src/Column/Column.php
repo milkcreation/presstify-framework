@@ -52,7 +52,7 @@ final class Column extends AppController
      */
     public function admin_init()
     {
-        do_action('tify_column_register');
+        do_action('tify_column_register', $this);
     }
 
     /**
@@ -111,7 +111,7 @@ final class Column extends AppController
         } catch (NotFoundException $e) {
             wp_die(
                 $e->getMessage(),
-                __(__CLASS__ .' - Contrôleur principal introuvable', 'tify'),
+                __(__CLASS__ . ' - Contrôleur principal introuvable', 'tify'),
                 $e->getCode()
             );
         }

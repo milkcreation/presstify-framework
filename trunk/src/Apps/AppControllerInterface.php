@@ -75,7 +75,7 @@ interface AppControllerInterface
     /**
      * {@inheritdoc}
      */
-    public function appDirname();
+    public function appDirname($app = null);
 
     /**
      * {@inheritdoc}
@@ -152,7 +152,7 @@ interface AppControllerInterface
     /**
      * {@inheritdoc}
      */
-    public function appRelPath();
+    public function appRelPath($app = null);
 
     /**
      * {@inheritdoc}
@@ -258,5 +258,5 @@ interface AppControllerInterface
     /**
      * {@inheritdoc}
      */
-    public function appUrl();
+    public function appUrl($app = null);
 }
