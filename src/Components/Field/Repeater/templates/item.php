@@ -1,17 +1,16 @@
 <?php
 /**
- * @var \tiFy\Kernel\Templates\Template $this Controleur de template.
+ * @var \tiFy\Components\Field\Repeater\TemplateController $this Controleur de template.
  */
 ?>
 
 <?php
-tify_field_text(
-    [
-        'name' =>  "{$name}[{$index}]",
-        'value' => $value,
-        'attrs' => [
-            'class' => 'widefat'
+    tify_field_text(
+        [
+            'name' =>  "{$name}[" . (!is_numeric($index) ? $index : uniqid()) ."]",
+            'value' => $value,
+            'attrs' => [
+                'class' => 'widefat'
+            ]
         ]
-    ]
-);
-?>
+    );

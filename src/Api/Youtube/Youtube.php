@@ -1,11 +1,20 @@
 <?php
+
 /**
  * @see https://github.com/madcoda/php-youtube-api
+ * @see https://github.com/oscarotero/Embed
+ * @see https://oscarotero.com/embed3/demo/index.php
  */
 namespace tiFy\Api\Youtube;
 
+use Illuminate\Support\Arr;
+use Embed\Embed;
+use tiFy\Apps\AppTrait;
+
 class Youtube extends \Madcoda\Youtube\Youtube
 {
+    use AppTrait;
+
     /**
      * Instance de la classe
      * @var tiFy\Api\Youtube\Youtube
@@ -41,9 +50,9 @@ class Youtube extends \Madcoda\Youtube\Youtube
     }
     
     /**
-     * Vérification de correspondance d'url
+     * Vérification de correspondance d'url.
      *
-     * @param string $url
+     * @param string $url Url de la vidéo.
      *
      * @return string
      */
@@ -53,8 +62,9 @@ class Youtube extends \Madcoda\Youtube\Youtube
     }
 
     /**
-     * Récupération de miniature
+     * Récupération de miniature.
      *
+     * @param string $url Url de la vidéo.
      * @param string $formats Format de l'image, par ordre de préférence.
      *
      * @return array
@@ -99,5 +109,42 @@ class Youtube extends \Madcoda\Youtube\Youtube
 
             return $src;
         endforeach;
+    }
+
+    /**
+     * Récupération du code d'intégration d'une vidéo.
+     *
+     * @param string $url Url de la video.
+     * @param array $params {
+     *      Liste des paramètres.
+     *      @see https://developers.google.com/youtube/player_parameters?hl=fr#Parameters
+     * }
+     *
+     * @return string|void
+     */
+    public function getVideoEmbed($url, $params = [])
+    {
+        try{
+            $id = self::parseVIdFromURL($url);
+        } catch (\Exception $e) {
+            return;
+        }
+
+        try{
+            $info = Embed::create($url);
+
+            if (Arr::get($params, 'loop')) :
+                Arr::set($params, 'playlist', $id);
+            endif;
+
+            $height = $info->getHeight();
+            $ratio = $info->getAspectRatio();
+            $src = esc_url("//www.youtube.com/embed/{$id}". ($params ? '?' . http_build_query($params) : ''));
+            $width = $info->getWidth();
+
+            return $this->appTemplateRender('iframe', compact('height', 'ratio', 'src', 'width'));
+        } catch (\Exception $e) {
+            return;
+        }
     }
 }
