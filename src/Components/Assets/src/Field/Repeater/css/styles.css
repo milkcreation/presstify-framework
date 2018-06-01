@@ -23,13 +23,13 @@
     cursor: move;
 }
 
-.tiFyControlRepeater-ItemPlaceholder {
+.tiFyField-RepeaterItemPlaceholder {
     background-color: #F9F9F9;
     border: dashed 2px #DDD;
     padding: 8px 23px;
     min-height: 20px;
 }
 
-.tiFyControlRepeater-ItemPlaceholder::before {
+.tiFyField-RepeaterItemPlaceholder::before {
     display: none;
 }

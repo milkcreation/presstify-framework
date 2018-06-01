@@ -392,6 +392,7 @@ abstract class AbstractFieldController extends AppController
         $this->parseValue($attrs);
         $this->parseId($attrs);
         $this->parseClass($attrs);
+        $this->parseTemplates();
         $this->parseOptions($attrs);
     }
 
@@ -461,6 +462,25 @@ abstract class AbstractFieldController extends AppController
             $this->attributes['attrs']['value'] = $attrs['value'];
             unset($attrs['name']);
         endif;
+    }
+
+    /**
+     * Traitement des l'attributs de configuration du controleur de templates.
+     *
+     * @return array
+     */
+    protected function parseTemplates()
+    {
+        $this->set(
+            'templates',
+            array_merge(
+                [
+                    'basedir'    => get_template_directory() . '/templates/presstify/field/' . $this->appLowerName(),
+                ],
+                $this->get('templates', [])
+            )
+        );
+        $this->appTemplates($this->get('templates'));
     }
 
     /**

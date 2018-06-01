@@ -3,11 +3,22 @@
 namespace tiFy\Kernel\Templates;
 
 use Illuminate\Support\Arr;
+use League\Plates\Engine;
 use League\Plates\Template\Template as LeagueTemplate;
 use tiFy\Kernel\Tools;
 
 class Template extends LeagueTemplate
 {
+    /**
+     * Récupération de la liste complète des attributs de configuration.
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->data;
+    }
+
     /**
      * Récupération d'un attribut de configuration.
      *
@@ -44,10 +55,12 @@ class Template extends LeagueTemplate
     }
 
     /**
+     * Affichage d'un template frère.
      *
+     * @return null
      */
     public function partial($name, $datas = [])
     {
-        return 'tutu';
+        echo $this->insert($name, $datas);
     }
 }

@@ -109,9 +109,9 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
-    public function appDirname()
+    public function appDirname($app = null)
     {
-        return tiFy::instance()->apps()->getDirname($this);
+        return tiFy::instance()->apps()->getDirname($app ? : $this);
     }
 
     /**
@@ -202,7 +202,7 @@ trait AppTrait
      */
     public function appLowerName($name = null, $separator = '-')
     {
-        return tiFy::instance()->formatLowerName($name ? : get_class($this), $separator);
+        return tiFy::instance()->formatLowerName($name ? : $this->appShortname(), $separator);
     }
 
     /**
@@ -232,9 +232,9 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
-    public function appRelPath()
+    public function appRelPath($app = null)
     {
-        return tiFy::instance()->apps()->getRelPath($this);
+        return tiFy::instance()->apps()->getRelPath($app ? : $this);
     }
 
     /**
@@ -328,10 +328,10 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
-    public function appTemplates()
+    public function appTemplates($options = [])
     {
         if (!$templates = $this->appGet('templates')) :
-            $templates = new Templates($this);
+            $templates = new Templates($this, $options);
         endif;
 
         return $templates;
@@ -348,9 +348,9 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
-    public function appTemplateRender($name, $args = [], $classname = null)
+    public function appTemplateRender($name, $args = [])
     {
-        return $this->appTemplateMake($name, $classname)->render($args);
+        return $this->appTemplateMake($name)->render($args);
     }
 
     /**
@@ -358,14 +358,14 @@ trait AppTrait
      */
     public function appUpperName($name = null, $underscore = true)
     {
-        return tiFy::instance()->formatUpperName($name ? : get_class($this), $underscore);
+        return tiFy::instance()->formatUpperName($name ? : $this->appShortname(), $underscore);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appUrl()
+    public function appUrl($app = null)
     {
-        return tiFy::instance()->apps()->getUrl($this);
+        return tiFy::instance()->apps()->getUrl($app ? : $this);
     }
 }
