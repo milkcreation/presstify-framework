@@ -1,6 +1,9 @@
 <?php
 /**
- * @var \tiFy\Components\Field\Repeater\TemplateController $this Controleur de template.
+ * @var string $name
+ * @var string $index
+ * @var string $value
+ * @var \tiFy\Kernel\Templates\Template $this Controleur de template.
  */
 ?>
 

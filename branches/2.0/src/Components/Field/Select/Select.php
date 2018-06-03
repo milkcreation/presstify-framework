@@ -79,6 +79,7 @@ class Select extends AbstractFieldController
     public function getValue()
     {
         $value = $this->get('value', null);
+
         if (is_null($value)) :
             return null;
         endif;
@@ -87,7 +88,6 @@ class Select extends AbstractFieldController
             $value = array_map('trim', explode(',', (string)$value));
         endif;
 
-        // Suppression des doublons
         $value = array_unique($value);
 
         if (!$this->get('multiple')) :

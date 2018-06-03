@@ -9,7 +9,7 @@ use tiFy\Components\Labels\LabelsPostTypeController;
 class PostTypeController extends AppController
 {
     /**
-     * Nom de qualification du type de post
+     * Nom de qualification du type de post.
      * @var string
      */
     protected $name = '';
@@ -52,8 +52,8 @@ class PostTypeController extends AppController
     /**
      * CONSTRUCTEUR.
      *
-     * @param string $name Nom de qualification du type de post
-     * @param array $attrs Attribut de configuration
+     * @param string $name Nom de qualification du type de post.
+     * @param array $attrs Attribut de configuration.
      *
      * @return void
      */
@@ -63,79 +63,19 @@ class PostTypeController extends AppController
 
         $this->parse($attrs);
 
-        \register_post_type(
-            $name,
-            $this->attributes
-        );
+        \register_post_type($name, $this->all());
 
         $this->appAddAction('init', null, 25);
     }
 
     /**
-     * Initialisation globale de Wordpress.
+     * Récupération de la liste complète des attributs de configuration.
      *
-     * @return void
+     * @return array
      */
-    public function init()
+    public function all()
     {
-        if ($taxonomies = $this->get('taxonomies', [])) :
-            foreach ($taxonomies as $taxonomy) :
-                \register_taxonomy_for_object_type($taxonomy, $this->getName());
-            endforeach;
-        endif;
-    }
-
-    /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs personnalisés.
-     *
-     * @return void
-     */
-    public function parse($attrs = [])
-    {
-        $this->attributes['rewrite'] = [
-            'slug'       => $this->getName(),
-            'with_front' => false,
-            'feeds'      => true,
-            'pages'      => true,
-            'ep_mask'    => EP_PERMALINK,
-        ];
-        $this->attributes['rest_base'] = $this->getName();
-
-        $this->attributes = array_merge(
-            $this->attributes,
-            $attrs
-        );
-
-        $this->set('label', $this->get('label', _x($this->getName(), 'post type general name', 'tify')));
-        $this->set('plural', $this->get('plural', $this->get('label')));
-        $this->set('singular', $this->get('singular', $this->get('label')));
-        $this->set('gender', $this->get('gender', false));
-        $this->set('labels', $this->get('labels', []));
-
-        $label = new LabelsPostTypeController(
-            $this->get('label'),
-            array_merge(
-                [
-                    'singular' => $this->get('singular'),
-                    'plural'   => $this->get('plural'),
-                    'gender'   => $this->get('gender'),
-                ],
-                $this->get('labels')
-            )
-        );
-        $this->set('labels', $label->all());
-
-        $this->set('publicly_queryable', $this->has('publicly_queryable') ? $this->get('publicly_queryable') : $this->get('public'));
-
-        $this->set('show_ui', $this->has('show_ui') ? $this->get('show_ui') : $this->get('public'));
-
-        $this->set('show_in_nav_menus', $this->has('show_in_nav_menus') ? $this->get('show_in_nav_menus') : $this->get('public'));
-
-        $this->set('show_in_menu', $this->has('show_in_menu') ? $this->get('show_in_menu') : $this->get('show_ui'));
-
-        $this->set('show_in_admin_bar', $this->has('show_in_admin_bar') ? $this->get('show_in_admin_bar') : $this->get('show_in_menu'));
+        return $this->attributes;
     }
 
     /**
@@ -162,6 +102,129 @@ class PostTypeController extends AppController
     }
 
     /**
+     * Vérification d'existance d'un attribut de configuration.
+     *
+     * @param string $key Clé d'index de qualification de l'attribut.
+     *
+     * @return mixed
+     */
+    public function has($key)
+    {
+        return Arr::has($this->attributes, $key);
+    }
+
+    /**
+     * Initialisation globale de Wordpress.
+     *
+     * @return void
+     */
+    public function init()
+    {
+        if ($taxonomies = $this->get('taxonomies', [])) :
+            foreach ($taxonomies as $taxonomy) :
+                \register_taxonomy_for_object_type($taxonomy, $this->getName());
+            endforeach;
+        endif;
+    }
+
+    /**
+     * Traitement des attributs de configuration.
+     *
+     * @param array $attrs Liste des attributs personnalisés.
+     *
+     * @return void
+     */
+    public function parse($attrs = [])
+    {
+        $this->set(
+            'rewrite',
+            [
+                'slug'       => $this->getName(),
+                'with_front' => false,
+                'feeds'      => true,
+                'pages'      => true,
+                'ep_mask'    => EP_PERMALINK,
+            ]
+        );
+
+        $this->set('rest_base', $this->getName());
+
+        $this->attributes = array_merge(
+            $this->attributes,
+            $attrs
+        );
+
+        $this->set(
+            'label',
+            $this->get('label', _x($this->getName(), 'post type general name', 'tify'))
+        );
+
+        $this->set(
+            'plural',
+            $this->get('plural', $this->get('label'))
+        );
+
+        $this->set(
+            'singular',
+            $this->get('singular', $this->get('label'))
+        );
+
+        $this->set('gender', $this->get('gender', false));
+
+        $this->set('labels', $this->get('labels', []));
+
+        $this->set(
+            'labels',
+            (new LabelsPostTypeController(
+                $this->get('label'),
+                array_merge(
+                    [
+                        'singular' => $this->get('singular'),
+                        'plural'   => $this->get('plural'),
+                        'gender'   => $this->get('gender'),
+                    ],
+                    $this->get('labels')
+                )
+            ))->all()
+        );
+
+        $this->set(
+            'publicly_queryable',
+            $this->has('publicly_queryable')
+                ? $this->get('publicly_queryable')
+                : $this->get('public')
+        );
+
+        $this->set(
+            'show_ui',
+            $this->has('show_ui')
+                ? $this->get('show_ui')
+                : $this->get('public')
+        );
+
+        $this->set(
+            'show_in_nav_menus',
+            $this->has('show_in_nav_menus')
+                ? $this->get('show_in_nav_menus')
+                : $this->get('public')
+        );
+
+        $this->set(
+            'show_in_menu',
+            $this->has('show_in_menu')
+                ? $this->get('show_in_menu')
+                : $this->get('show_ui')
+        );
+
+        $this->set(
+            'show_in_admin_bar',
+            $this->has('show_in_admin_bar')
+                ? $this->get('show_in_admin_bar')
+                : $this->get('show_in_menu')
+        );
+    }
+
+    /**
      * Définition d'un attribut de configuration.
      *
      * @param string $key Clé d'index de qualification de l'attribut.
@@ -172,17 +235,5 @@ class PostTypeController extends AppController
     public function set($key, $value)
     {
         return Arr::set($this->attributes, $key, $value);
-    }
-
-    /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     *
-     * @return mixed
-     */
-    public function has($key)
-    {
-        return Arr::has($this->attributes, $key);
     }
 }
