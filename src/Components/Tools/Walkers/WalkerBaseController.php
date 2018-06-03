@@ -21,13 +21,17 @@ class WalkerBaseController
      *      @var int $start_indent Nombre de caractère d'indendation au départ.
      *      @var bool|string $sort Ordonnancement des éléments.false|true|append(défaut)|prepend.
      *      @var string $prefixe Préfixe de nommage des éléments HTML.
+     *      @var string $items_controller Controleur de traitement de la liste des éléments.
+     *      @var string $item_controller Controleur de traitement d'un élément.
      * }
      */
     protected $options = [
-        'indent'       => '\t',
-        'start_indent' => 0,
-        'sort'         => 'append',
-        'prefix'       => 'tiFyWalker-'
+        'indent'           => '\t',
+        'start_indent'     => 0,
+        'sort'             => 'append',
+        'prefix'           => 'tiFyWalker-',
+        'items_controller' => '',
+        'item_controller'  => '',
     ];
 
     /**
@@ -40,9 +44,11 @@ class WalkerBaseController
      */
     public function __construct($items = [], $options = [])
     {
-        $this->itemCollection = new WalkerItemCollectionBaseController($items, $this);
+        $items_controller = $this->getOption('items_controller', WalkerItemCollectionBaseController::class);
 
-        $this->options = $options;
+        $this->itemCollection = new $items_controller($items, $this);
+
+        $this->options = array_merge($this->options, $options);
     }
 
     /**
@@ -236,6 +242,8 @@ class WalkerBaseController
      */
     public function sort($items = [])
     {
+        return $items;
+
         if (!$sort = $this->getOption('sort', false)) :
             return $items;
         endif;

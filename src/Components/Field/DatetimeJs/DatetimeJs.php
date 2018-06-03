@@ -186,9 +186,8 @@ class DatetimeJs extends AbstractFieldController
                             'class' => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--month',
                             'autocomplete' => 'off'
                         ],
-                        'selected'        => $m,
                         'options'         => $field_options,
-                        'value'           => zeroise($m, 4)
+                        'value'           => zeroise($m, 2)
                     ];
                     $field_attrs = \wp_parse_args($field_attrs, $defaults);
 

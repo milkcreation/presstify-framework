@@ -371,7 +371,20 @@ abstract class AbstractFieldController extends AppController
      */
     public function options()
     {
-        echo WalkerOptions::display($this->get('options', []), ['selected' => $this->getValue()]);
+        $selected = $this->getValue();
+
+        $options = array_map(
+            function($item) use ($selected) {
+                if (in_array($item['value'],$selected)) :
+                    $item['attrs'][] = 'selected';
+                endif;
+
+                return $item;
+            },
+            $this->get('options', [])
+        );
+
+        echo WalkerOptions::display($options);
     }
 
     /**

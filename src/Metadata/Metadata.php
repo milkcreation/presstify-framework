@@ -18,8 +18,8 @@ class Metadata extends AppController
     public function __construct()
     {
         $this->appServiceShare(Post::class, new Post());
-        $this->appServiceShare(Term::class, new Post());
-        $this->appServiceShare(User::class, new Post());
-        $this->appServiceShare(UserOption::class, new Post());
+        $this->appServiceShare(Term::class, new Term());
+        //@todo $this->appServiceShare(User::class, new User());
+        //@todo $this->appServiceShare(UserOption::class, new UserOption());
     }
 }

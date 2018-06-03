@@ -66,6 +66,16 @@ class WalkerItemBaseController extends Fluent
     }
 
     /**
+     * Récupération de la liste complète des attributs de configuration.
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->attributes;
+    }
+
+    /**
      * Récupération de la liste des variables passées en arguments lorsque le contenu est de type callable.
      *
      * @return string
