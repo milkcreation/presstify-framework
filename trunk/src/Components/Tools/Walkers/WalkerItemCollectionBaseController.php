@@ -51,11 +51,13 @@ class WalkerItemCollectionBaseController extends Collection
      */
     protected function parse($items)
     {
+        $item_controller = $this->walker->getOption('item_controller', WalkerItemBaseController::class);
+
         foreach ($items as $attrs) :
             $name =  $this->uniqName($attrs);
             unset($attrs['name']);
 
-            $this->items[] = new WalkerItemBaseController($name, $attrs, $this->walker);
+            $this->items[] = new $item_controller($name, $attrs, $this->walker);
         endforeach;
     }
 

@@ -78,7 +78,7 @@ class SignUp extends AbstractMod
         $args['attrs']['title'] = empty($args['attrs']['title']) ? $args['text'] : $args['attrs']['title'];
         $args['attrs']['class'] = empty($args['attrs']['class']) ? 'FacebookTrigger' : 'FacebookTrigger ' . $args['attrs']['class'];
 
-        echo Partial::Tag(
+        return Partial::Tag(
             [
                 'tag'     => 'a',
                 'attrs'   => $args['attrs'],

@@ -12,7 +12,7 @@ final class Term extends AppController
      *
      * @var array
      */
-    private static $metaKeys = [];
+    protected $metaKeys = [];
 
     /**
      * Liste des types d'enregistrement unique (true)|multiple (false) d'une metadonnée.
@@ -20,41 +20,16 @@ final class Term extends AppController
      *
      * @var array
      */
-    private static $singles = [];
+    protected $single = [];
 
     /**
-     * CONSTRUCTEUR.
+     * Initialisation du controleur.
      *
      * @return void
      */
-    public function __construct()
+    public function appBoot()
     {
-        $this->appAddAction('edited_term', [$this, 'Save'], 10, 3);
-    }
-
-    /**
-     * Déclaration d'une métadonné de taxonomie.
-     *
-     * @param string $taxonomy Identifiant de qualification de la taxonomie associée.
-     * @param string $meta_key Clé d'identification de la métadonnée enregistrées en base de données.
-     * @param bool $single Type d'enregistrement de la metadonnées en base. true (unique)|false (multiple).
-     * @param callable $sanitize_callback Fonction ou Méthode de rappel appelé avant la sauvegarde en base de données. wp_unslash par défaut.
-     *
-     * @return void
-     */
-    public static function set($taxonomy, $meta_key, $single = false, $sanitize_callback = 'wp_unslash')
-    {
-        // Bypass
-        if (!empty(self::$metaKeys[$taxonomy]) && in_array($meta_key, self::$metaKeys[$taxonomy])) :
-            return null;
-        endif;
-
-        self::$metaKeys[$taxonomy][] = $meta_key;
-        self::$singles[$taxonomy][$meta_key] = $single;
-
-        if ($sanitize_callback !== '') :
-            add_filter("tify_sanitize_meta_term_{$taxonomy}_{$meta_key}", $sanitize_callback);
-        endif;
+        $this->appAddAction('edited_term', 'save', 10, 3);
     }
 
     /**
@@ -65,7 +40,7 @@ final class Term extends AppController
      *
      * @return mixed[]
      */
-    public static function get($term_id, $meta_key)
+    public function get($term_id, $meta_key)
     {
         global $wpdb;
 
@@ -99,9 +74,34 @@ final class Term extends AppController
      *
      * @return bool
      */
-    public static function isSingle($taxonomy, $meta_key)
+    public function isSingle($taxonomy, $meta_key)
     {
-        return isset(self::$singles[$taxonomy][$meta_key]) ? self::$singles[$taxonomy][$meta_key] : null;
+        return isset($this->single[$taxonomy][$meta_key]) ? $this->single[$taxonomy][$meta_key] : false;
+    }
+
+    /**
+     * Déclaration d'une métadonné.
+     *
+     * @param string $taxonomy Identifiant de qualification de la taxonomie associée.
+     * @param string $meta_key Clé d'identification de la métadonnée enregistrées en base de données.
+     * @param bool $single Type d'enregistrement de la metadonnées en base. true (unique)|false (multiple).
+     * @param callable $sanitize_callback Fonction ou Méthode de rappel appelé avant la sauvegarde en base de données. wp_unslash par défaut.
+     *
+     * @return void
+     */
+    public function register($taxonomy, $meta_key, $single = false, $sanitize_callback = 'wp_unslash')
+    {
+        // Bypass
+        if (!empty($this->metaKeys[$taxonomy]) && in_array($meta_key, $this->metaKeys[$taxonomy])) :
+            return;
+        endif;
+
+        $this->metaKeys[$taxonomy][] = $meta_key;
+        $this->single[$taxonomy][$meta_key] = $single;
+
+        if ($sanitize_callback !== '') :
+            add_filter("tify_sanitize_meta_term_{$taxonomy}_{$meta_key}", $sanitize_callback);
+        endif;
     }
 
     /**
@@ -126,29 +126,29 @@ final class Term extends AppController
         endif;
 
         // Vérification d'existance de metadonnées déclarées pour la taxonomy
-        if (empty(self::$metaKeys[$taxonomy])) :
+        if (empty($this->metaKeys[$taxonomy])) :
             return;
         endif;
 
-        // Récupération des metadonnés en $_POST
-        $request = $this->appRequestGet('tify_meta_term', [], 'POST');
-        foreach (self::$metaKeys[$taxonomy] as $key) :
-            if (! $this->appRequestHas($key, 'POST')) :
-                continue;
-            endif;
-            $request[$key] = $this->appRequestGet($key, '', 'POST');
-        endforeach;
-
-
-        // Variables
+        // Déclaration des variables
+        $meta_keys = $this->metaKeys[$taxonomy];
         $termmeta = [];
-        $meta_keys = self::$metaKeys[$taxonomy];
         $meta_ids = [];
         $meta_exists = [];
+        $request = [];
+
+        // Récupération des metadonnés en $_POST
+        foreach ($this->metaKeys[$taxonomy] as $key) :
+            if (! $this->appRequest('POST')->has($key)) :
+                continue;
+            endif;
+
+            $request[$key] = $this->appRequest('POST')->get($key, '');
+        endforeach;
 
         foreach ($meta_keys as $meta_key) :
             // Vérification d'existance de la metadonnées en base
-            if ($_meta = self::get($term_id, $meta_key)) :
+            if ($_meta = $this->get($term_id, $meta_key)) :
                 $meta_exists += $_meta;
             endif;
 
@@ -157,12 +157,13 @@ final class Term extends AppController
             endif;
 
             // Récupération des meta_ids de metadonnées unique
-            if (self::isSingle($taxonomy, $meta_key)) :
+            if ($this->isSingle($taxonomy, $meta_key)) :
                 $meta_id = $_meta ? key($_meta) : uniqid();
                 array_push($meta_ids, $meta_id);
                 $termmeta[$meta_key][$meta_id] = $request[$meta_key];
+
             // Récupération des meta_ids de metadonnées multiple
-            else :
+            elseif ($this->isSingle($taxonomy, $meta_key) === false) :
                 $meta_ids += array_keys($request[$meta_key]);
                 $termmeta[$meta_key] = $request[$meta_key];
             endif;
@@ -192,7 +193,7 @@ final class Term extends AppController
                     $_meta_id = add_term_meta($term_id, $meta_key, $meta_value);
                 endif;
                 // Récupération de l'ordre des metadonnées multiple
-                if (self::isSingle($taxonomy, $meta_key) === false) :
+                if ($this->isSingle($taxonomy, $meta_key) === false) :
                     $order[] = $_meta_id;
                 endif;
             endforeach;
@@ -204,15 +205,5 @@ final class Term extends AppController
         endforeach;
 
         return;
-    }
-
-    /**
-     * @deprecated
-     *
-     * {@inheritdoc}
-     */
-    public static function Register($taxonomy, $meta_key, $single = false, $sanitize_callback = 'wp_unslash')
-    {
-        return self::set($taxonomy, $meta_key, $single, $sanitize_callback);
     }
 }

@@ -8,6 +8,19 @@ use tiFy\Apps\AppController;
 final class Asset extends AppController
 {
     /**
+     * Liste des librairies tierces JS
+     * @var array
+     */
+    protected $jsLib = [
+        'moment' => [
+            '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js',
+            [],
+            '2.18.1',
+            true
+        ]
+    ];
+
+    /**
      * Liste des attributs JS.
      * @return array
      */
@@ -40,8 +53,12 @@ final class Asset extends AppController
      */
     public function init()
     {
-        \wp_register_script('tiFyAdmin', $this->appAsset('/Admin/js/scripts.js'), ['jquery'], 180528, true);
         \wp_register_style('tiFyAdmin', $this->appAsset('/Admin/css/styles.css'), [], 180528);
+        \wp_register_script('tiFyAdmin', $this->appAsset('/Admin/js/scripts.js'), ['jquery'], 180528, true);
+
+        foreach($this->jsLib as $handle => $attrs) :
+            \wp_register_script($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
+        endforeach;
     }
 
     /**
