@@ -138,7 +138,7 @@ class Profile extends AbstractMod
 
         $args['attrs']['href'] = $this->url($args['action'], $args['permissions']);
 
-        echo Partial::Tag(
+        return Partial::Tag(
             [
                 'tag'    => 'a',
                 'content' => $args['text'],

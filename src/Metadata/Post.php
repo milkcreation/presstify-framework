@@ -23,6 +23,30 @@ final class Post extends AppController
     protected $single = [];
 
     /**
+     * Ajout d'une metadonnée.
+     *
+     * @param int $post_id Identifiant de qualification du post.
+     * @param string $meta_key Clé d'index de la metadonnée.
+     * @param mixed $meta_value Valeur de la métadonnée à ajouter.
+     *
+     * @return bool|int
+     */
+    public function add($post_id, $meta_key, $meta_value)
+    {
+        if (!$post_type = \get_post_type($post_id)) :
+            return false;
+        endif;
+
+        $unique = $this->isSingle($post_type, $meta_key);
+
+        if ($unique=== null):
+            return false;
+        endif;
+
+        return \add_post_meta($post_id, $meta_key, $meta_value, $unique);
+    }
+
+    /**
      * Initialisation du controleur.
      *
      * @return void
@@ -30,6 +54,74 @@ final class Post extends AppController
     public function appBoot()
     {
         $this->appAddAction('save_post', 'save', 10, 2);
+    }
+
+    /**
+     * Récupération d'une métadonnée.
+     *
+     * @param int $post_id Identifiant de qualification du post.
+     * @param string $meta_key Clé d'index de la metadonnée.
+     *
+     * @return mixed[]
+     */
+    public function get($post_id, $meta_key)
+    {
+        global $wpdb;
+        $query = "SELECT meta_id, meta_value" . " FROM {$wpdb->postmeta}" .
+            " WHERE 1" . " AND {$wpdb->postmeta}.post_id = %d" . " AND {$wpdb->postmeta}.meta_key = %s";
+
+        if ($order = get_post_meta($post_id, '_order_' . $meta_key, true)) :
+            $query .= " ORDER BY FIELD( {$wpdb->postmeta}.meta_id," . implode(',', $order) . ")";
+        endif;
+
+        if (!$metas = $wpdb->get_results($wpdb->prepare($query, $post_id, $meta_key))) :
+            return [];
+        endif;
+
+        $_metas = [];
+        foreach ((array)$metas as $index => $args) :
+            $_metas[$args->meta_id] = maybe_unserialize($args->meta_value);
+        endforeach;
+
+        return $_metas;
+    }
+
+    /**
+     * Vérifie si une métadonnées déclarée est de type single ou multi.
+     *
+     * @param string $post_type Type de post.
+     * @param string $meta_key Clé d'index de la metadonnée.
+     *
+     * @return bool
+     */
+    public function isSingle($post_type, $meta_key)
+    {
+        return isset($this->single[$post_type][$meta_key]) ? $this->single[$post_type][$meta_key] : false;
+    }
+
+    /**
+     * Déclaration d'une métadonnée.
+     *
+     * @param string $post_type Type de post.
+     * @param string $meta_key Clé d'index de la metadonnée.
+     * @param bool $single Indicateur d'enregistrement de la métadonnée unique (true)|multiple (false).
+     * @param string $sanitize_callback Méthode ou fonction de rappel avant l'enregistrement.
+     *
+     * @return void
+     */
+    public function register($post_type, $meta_key, $single = false, $sanitize_callback = 'wp_unslash')
+    {
+        // Bypass
+        if (! empty($this->metaKeys[$post_type]) && in_array($meta_key, $this->metaKeys[$post_type])) :
+            return;
+        endif;
+
+        $this->metaKeys[$post_type][] = $meta_key;
+        $this->single[$post_type][$meta_key] = $single;
+
+        if ($sanitize_callback !== '') :
+            add_filter("tify_sanitize_meta_post_{$post_type}_{$meta_key}", $sanitize_callback);
+        endif;
     }
 
     /**
@@ -61,6 +153,7 @@ final class Post extends AppController
         if (('page' === $post_type) && ! current_user_can('edit_page', $post_id)) :
             return;
         endif;
+
         if (('page' !== $post_type) && ! current_user_can('edit_post', $post_id)) :
             return;
         endif;
@@ -111,6 +204,7 @@ final class Post extends AppController
                 $meta_id = $_meta ? key($_meta) : uniqid();
                 array_push($meta_ids, $meta_id);
                 $postmeta[$meta_key][$meta_id] = $request[$meta_key];
+
             // Récupération des meta_ids de metadonnées multiple
             elseif ($this->isSingle($post_type, $meta_key) === false) :
                 $meta_ids += array_keys($request[$meta_key]);
@@ -120,7 +214,7 @@ final class Post extends AppController
 
         // Suppression des metadonnées absente du processus de sauvegarde
         foreach ($meta_exists as $meta_id => $meta_value) :
-            if (!in_array($meta_id, $meta_ids)) :
+            if (! in_array($meta_id, $meta_ids)) :
                 delete_metadata_by_mid('post', $meta_id);
             endif;
         endforeach;
@@ -157,85 +251,6 @@ final class Post extends AppController
     }
 
     /**
-     * Déclaration d'une métadonnée.
-     *
-     * @param string $post_type Type de post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     * @param bool $single Indicateur d'enregistrement de la métadonnée unique (true)|multiple (false).
-     * @param string $sanitize_callback Méthode ou fonction de rappel avant l'enregistrement.
-     *
-     * @return void
-     */
-    public function register($post_type, $meta_key, $single = false, $sanitize_callback = 'wp_unslash')
-    {
-        // Bypass
-        if (! empty($this->metaKeys[$post_type]) && in_array($meta_key, $this->metaKeys[$post_type])) :
-            return;
-        endif;
-
-        $this->metaKeys[$post_type][] = $meta_key;
-        $this->single[$post_type][$meta_key] = $single;
-
-        if ($sanitize_callback !== '') :
-            add_filter("tify_sanitize_meta_post_{$post_type}_{$meta_key}", $sanitize_callback);
-        endif;
-    }
-
-    /**
-     * Récupération d'une métadonnée
-     *
-     * @param int $post_id Identifiant de qualification du post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     *
-     * @return mixed[]
-     */
-    public function get($post_id, $meta_key)
-    {
-        global $wpdb;
-        $query = "SELECT meta_id, meta_value" . " FROM {$wpdb->postmeta}" .
-            " WHERE 1" . " AND {$wpdb->postmeta}.post_id = %d" . " AND {$wpdb->postmeta}.meta_key = %s";
-
-        if ($order = get_post_meta($post_id, '_order_' . $meta_key, true)) :
-            $query .= " ORDER BY FIELD( {$wpdb->postmeta}.meta_id," . implode(',', $order) . ")";
-        endif;
-
-        if (!$metas = $wpdb->get_results($wpdb->prepare($query, $post_id, $meta_key))) :
-            return [];
-        endif;
-
-        $_metas = [];
-        foreach ((array)$metas as $index => $args) :
-            $_metas[$args->meta_id] = maybe_unserialize($args->meta_value);
-        endforeach;
-
-        return $_metas;
-    }
-
-    /**
-     * Ajout d'une metadonnée
-     *
-     * @param int $post_id Identifiant de qualification du post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     * @param mixed $meta_value Valeur de la métadonnée à ajouter.
-     *
-     * @return bool|int
-     */
-    public function add($post_id, $meta_key, $meta_value)
-    {
-        if (!$post_type = \get_post_type($post_id)) :
-            return false;
-        endif;
-
-        $unique = $this->isSingle($post_type, $meta_key);
-
-        if ($unique=== null):
-            return false;
-        endif;
-
-        return \add_post_meta($post_id, $meta_key, $meta_value, $unique);
-    }
-
-    /**
      * Mise à jour d'une metadonnée.
      *
      * @param int $post_id Identifiant de qualification du post.
@@ -257,18 +272,5 @@ final class Post extends AppController
         endif;
 
         return \update_post_meta($post_id, $meta_key, $meta_value, $unique);
-    }
-
-    /**
-     * Vérifie si une métadonnées déclarée est de type single ou multi.
-     *
-     * @param string $post_type Type de post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     *
-     * @return bool
-     */
-    final public function isSingle($post_type, $meta_key)
-    {
-        return isset($this->single[$post_type][$meta_key]) ? $this->single[$post_type][$meta_key] : false;
     }
 }
