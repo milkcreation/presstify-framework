@@ -159,17 +159,19 @@ class MailerNew
         // Cartographie des paramètres
         $_params = array();
         array_walk( $params, function( $v, $k ) use (&$_params){ $_params[self::sanitizeName($k)] = $v;});
-                
+
         foreach( self::getAllowedParams() as $param ) :
             if( ! isset( $_params[$param] ) )
                 continue;
             self::${$param} = $_params[$param];
         endforeach;
-        
+
         // Traitement des arguments de contact
         foreach( array( 'From', 'To', 'ReplyTo', 'Cc', 'Bcc' ) as $param ) :
-            if( empty( self::${$param} ) )
-                continue; 
+            if( empty( self::${$param} ) ):
+                continue;
+            endif;
+
             self::${$param} = self::parseContact(self::${$param});
         endforeach;
 
@@ -365,7 +367,7 @@ class MailerNew
     public static function parseContact( $contact, $depth = 0 )
     {
         $output = "";
-        
+
         if( is_string( $contact ) && preg_match( '/,/', $contact ) ) :
             $contact  = array_map( 'trim', explode( ',', $contact ) );
         endif;       
@@ -391,8 +393,7 @@ class MailerNew
                 endif;
                 if( $depth < 1 ) :
                     return array_map( function( $contact ){ return self::parseContact( $contact, 1 ); }, $contact );
-                endif;    
-                
+                endif;
             // Tableau Associatif
             /// Format array( 'email' => [email], 'name' => [name] );
             elseif( isset( $contact['email'] ) && is_email( $contact['email'] ) ) :
@@ -401,6 +402,13 @@ class MailerNew
                 endif;
                 
                 return ! $depth ? array( $contact ) : $contact;
+            else :
+                $result = [];
+                foreach($contact as $c) :
+                    $result[] = self::parseContact( $c, 1 );
+                endforeach;
+
+                return $result;
             endif;
         endif;            
     }
