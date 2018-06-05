@@ -100,4 +100,39 @@ class Youtube extends \Madcoda\Youtube\Youtube
             return $src;
         endforeach;
     }
+
+    /**
+     * Récupération du code d'intégration d'une vidéo.
+     * @see https://developers.google.com/youtube/player_parameters?hl=fr#Parameters
+     *
+     * @param string $url Url de la video.
+     * @param array $params Liste des paramètres.
+     *
+     * @return string|void
+     */
+    public function getVideoEmbed($url, $params = [])
+    {
+        try{
+            $id = self::parseVIdFromURL($url);
+        } catch (\Exception $e) {
+            return;
+        }
+
+        try{
+            $info = $this->getVideoInfo($id);
+
+            preg_match('#<iframe.*width=\"([\d]+)\"\s+height=\"([\d]+)\".*><\/iframe>#', $info->player->embedHtml, $matches);
+            $ratio = round(($matches[2]/$matches[1])*100, 2);
+
+            ob_start();
+            ?>
+            <div style="position:relative;width:100%;height:0;padding-bottom:<?php echo $ratio; ?>%;">
+                <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;" width="<?php echo $matches[1]; ?>" height="<?php echo $matches[2]; ?>" src="//www.youtube.com/embed/<?php echo $id; ?>?<?php echo http_build_query($params);?>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+            <?php
+            return ob_get_clean();
+        } catch (\Exception $e) {
+            return;
+        }
+    }
 }

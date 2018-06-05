@@ -32,7 +32,7 @@ class AjaxActions extends \tiFy\App\Core
 		// Traitement des arguments de requête
 		if( isset( $_POST['post_id'] ) )
 			$post_id = intval( $_POST['post_id'] );
-		if( ! empty( $_POST['relative'] ) ) 
+		if( isset($_POST['relative']))
 			$relative = $_POST['relative'];
 		if( isset( $_POST['default'] ) )
 			$default = $_POST['default'];
