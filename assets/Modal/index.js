@@ -1,5 +1,5 @@
 /** Sass */
-import './scss/styles.scss';
+import './css/styles.css';
 
 /** Scripts */
 import './js/scripts';
