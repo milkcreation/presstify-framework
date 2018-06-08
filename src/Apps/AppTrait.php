@@ -17,6 +17,12 @@ use tiFy\tiFy;
 trait AppTrait
 {
     /**
+     * Classe de rappel de gestion des templates
+     * @var Templates
+     */
+    protected $appTemplates;
+
+    /**
      * {@inheritdoc}
      */
     public function appAbsPath()
@@ -330,11 +336,11 @@ trait AppTrait
      */
     public function appTemplates($options = [])
     {
-        if (!$templates = $this->appGet('templates')) :
-            $templates = new Templates($this, $options);
+        if (!$this->appTemplates) :
+            $this->appTemplates = new Templates($this, $options);
         endif;
 
-        return $templates;
+        return $this->appTemplates;
     }
 
     /**
