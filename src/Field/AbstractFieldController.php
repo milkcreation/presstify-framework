@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
 use tiFy\Field\Field;
+use tiFy\Field\TemplateController;
 use tiFy\Kernel\Tools;
 
 abstract class AbstractFieldController extends AppController
@@ -405,7 +406,7 @@ abstract class AbstractFieldController extends AppController
         $this->parseValue($attrs);
         $this->parseId($attrs);
         $this->parseClass($attrs);
-        $this->parseTemplates();
+        $this->parseTemplates($attrs);
         $this->parseOptions($attrs);
     }
 
@@ -418,8 +419,10 @@ abstract class AbstractFieldController extends AppController
      */
     protected function parseClass($attrs = [])
     {
-        $class = 'tiFyField-' . $this->appShortname();
-        $this->attributes['attrs']['class'] = isset($attrs['attrs']['class']) ? $class . ' ' . $attrs['attrs']['class'] : $class;
+        $this->set(
+            'attrs.class',
+            sprintf(Arr::get($attrs, 'attrs.class', '%s'), "tiFyField-{$this->appShortname()}")
+        );
     }
 
     /**
@@ -444,7 +447,11 @@ abstract class AbstractFieldController extends AppController
      */
     protected function parseId($attrs = [])
     {
-        $this->set('attrs.id', isset($attrs['attrs']['id']) ? $attrs['attrs']['id'] : "tiFyField-{$this->appShortname()}--{$this->getIndex()}");
+        $this->set(
+            'attrs.id',
+            Arr::get($attrs, 'attrs.id')
+                ? : "tiFyField-{$this->appShortname()}--{$this->getIndex()}"
+        );
     }
 
     /**
@@ -456,9 +463,8 @@ abstract class AbstractFieldController extends AppController
      */
     protected function parseName($attrs = [])
     {
-        if (isset($attrs['name'])) :
-            $this->set('attrs.name', $attrs['name']);
-            unset($attrs['name']);
+        if ($name = Arr::get($attrs, 'name')) :
+            $this->set('attrs.name', $name);
         endif;
     }
 
@@ -471,29 +477,9 @@ abstract class AbstractFieldController extends AppController
      */
     protected function parseValue($attrs = [])
     {
-        if (isset($attrs['value'])) :
-            $this->attributes['attrs']['value'] = $attrs['value'];
-            unset($attrs['name']);
+        if ($value = Arr::get($attrs, 'value')) :
+            $this->set('attrs.value', $value);
         endif;
-    }
-
-    /**
-     * Traitement des l'attributs de configuration du controleur de templates.
-     *
-     * @return array
-     */
-    protected function parseTemplates()
-    {
-        $this->set(
-            'templates',
-            array_merge(
-                [
-                    'basedir'    => get_template_directory() . '/templates/presstify/field/' . $this->appLowerName(),
-                ],
-                $this->get('templates', [])
-            )
-        );
-        $this->appTemplates($this->get('templates'));
     }
 
     /**
@@ -554,6 +540,40 @@ abstract class AbstractFieldController extends AppController
         endforeach;
 
         $this->attributes['options'] = $_options;
+    }
+
+    /**
+     * Traitement des l'attributs de configuration du controleur de templates.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
+     *
+     * @return array
+     */
+    protected function parseTemplates($attrs = [])
+    {
+        $this->set(
+            'templates',
+            array_merge(
+                [
+                    'basedir'    => get_template_directory() . '/templates/presstify/field/' . $this->appLowerName(),
+                    'controller' => TemplateController::class,
+                    'args'       => []
+                ],
+                Arr::get($attrs, 'templates', [])
+            )
+        );
+        $this->set(
+            'templates.args',
+            array_merge(
+                [
+                    'id'    => $this->id,
+                    'index' => $this->index
+                ],
+                $this->get('templates.args', [])
+            )
+        );
+
+        $this->appTemplates($this->get('templates'));
     }
 
     /**

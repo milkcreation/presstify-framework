@@ -44,7 +44,7 @@ class WalkerBaseController
      */
     public function __construct($items = [], $options = [])
     {
-        $items_controller = $this->getOption('items_controller', WalkerItemCollectionBaseController::class);
+        $items_controller = $this->getOption('items_controller') ? : WalkerItemCollectionBaseController::class;
 
         $this->itemCollection = new $items_controller($items, $this);
 

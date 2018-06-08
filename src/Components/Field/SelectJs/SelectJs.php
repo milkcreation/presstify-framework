@@ -15,8 +15,10 @@
 
 namespace tiFy\Components\Field\SelectJs;
 
+use Illuminate\Support\Arr;
 use tiFy\Partial\Partial;
 use tiFy\Field\AbstractFieldController;
+use tiFy\Field\TemplateController;
 use tiFy\Field\Field;
 
 class SelectJs extends AbstractFieldController
@@ -32,9 +34,6 @@ class SelectJs extends AbstractFieldController
      *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value".
      *      @var array $options Liste des choix de selection disponibles.
      *      @var array $source Liste des attributs de requête de récupération des élèments.
-     *      @var null|string|array $select_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de des éléments selectionnés.
-     *      @var null|string|array $picker_cb Classe ou méthode ou fonction de rappel d'affichage d'un élément dans la liste de selection.
-     *      @var null|string|array $item_cb Classe ou méthode ou fonction de rappel de traitement d'un élément.
      *      @var bool $disabled Activation/Désactivation du controleur de champ.
      *      @var bool $removable Activation/Désactivation de la suppression d'un élément dans la liste des éléments séléctionné.
      *      @var bool $multiple Autorise la selection multiple d'éléments.
@@ -82,9 +81,6 @@ class SelectJs extends AbstractFieldController
         'value'           => null,
         'options'         => [],
         'source'          => false,
-        'select_cb'       => 'selectCallback',
-        'picker_cb'       => 'pickerCallback',
-        'item_cb'         => 'itemCallback',
         'disabled'        => false,
         'removable'       => true,
         'multiple'        => false,
@@ -93,39 +89,19 @@ class SelectJs extends AbstractFieldController
         'autocomplete'    => false,
         'max'             => -1,
         'trigger'         => [],
-        'picker'          => []
+        'picker'          => [],
+        'templates'       => [],
+        'controller'      => []
     ];
 
     /**
-     * Initialisation globale de Wordpress.
+     * Affichage.
      *
-     * @return void
+     * @return string
      */
-    public function init()
+    protected function display()
     {
-        $this->appAddAction(
-            'wp_ajax_tify_field_select_js',
-            'wp_ajax'
-        );
-        $this->appAddAction(
-            'wp_ajax_nopriv_tify_field_select_js',
-            'wp_ajax'
-        );
-
-        \wp_register_style(
-            'tiFyFieldSelectJs',
-            $this->appAsset('/Field/SelectJs/css/styles.css'),
-            [],
-            171218
-        );
-
-        \wp_register_script(
-            'tiFyFieldSelectJs',
-            $this->appAsset('/Field/SelectJs/js/scripts.js'),
-            ['jquery-ui-widget', 'jquery-ui-sortable'],
-            171218,
-            true
-        );
+        return $this->appTemplateRender('select-js', $this->all());
     }
 
     /**
@@ -138,121 +114,6 @@ class SelectJs extends AbstractFieldController
         $this->appServiceGet(Partial::class)->enqueue('spinkit', 'three-bounce');
         \wp_enqueue_style('tiFyFieldSelectJs');
         \wp_enqueue_script('tiFyFieldSelectJs');
-    }
-
-    /**
-     * Récupération de la liste des résultats via Ajax
-     *
-     * @return callable
-     */
-    public function wp_ajax()
-    {
-        check_ajax_referer('tiFyField-SelectJs');
-
-        // Définition des arguments de requête
-        $query_args = $this->appRequest('POST')->get('query_args', []);
-        $query_args['paged'] = $this->appRequest('POST')->get('page', 1);
-        $query_args['s'] = $this->appRequest('POST')->get('term', '');
-
-        // Définition des arguments de récupération complémentaires
-        $args = $this->appRequest('POST')->get('args', []);
-        $args = \wp_unslash($args);
-
-        $items = $this->queryItems($query_args, $args);
-
-        \wp_send_json($items);
-    }
-
-    /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
-     */
-    protected function parse($attrs = [])
-    {
-        parent::parse($attrs);
-
-        // Attributs du selecteur de gestion de traitement
-        $this->attributes['handler_args'] = [
-            'name'      => $this->attributes['name'],
-            'value'     => $this->attributes['value'],
-            'disabled'  => $this->attributes['disabled'],
-            'removable' => $this->attributes['removable'],
-            'multiple'  => $this->attributes['multiple'],
-            'attrs'     => [],
-        ];
-        $this->attributes['handler_args']['attrs']['id'] = 'tiFyField-SelectJsHandler--' . $this->getId();
-        $this->attributes['handler_args']['attrs']['class'] = 'tiFyField-SelectJsHandler';
-
-        // Attributs de configuration du controleur Ajax
-        // Sortable
-        if ($this->attributes['sortable']) :
-            if ($this->attributes['sortable'] === true) :
-                $this->attributes['sortable'] = [];
-            endif;
-        endif;
-
-        // Liste de selection
-        $picker_loader = (string)Partial::Spinkit([
-            'container_id'    => 'tiFyField-SelectJsPickerSpinkit--' . $this->getIndex(),
-            'container_class' => 'tiFyField-SelectJsPickerSpinkit',
-            'type'            => 'three-bounce',
-        ]);
-
-        $this->attributes['picker'] = array_merge(
-            [
-                'loader' => $picker_loader,
-                'more'   => '+',
-            ],
-            (array)$this->attributes['picker']
-        );
-
-        // Définition des attributs de la liste de selection
-        if ($this->attributes['source']) :
-            if (!is_array($this->attributes['source'])) :
-                $this->attributes['source'] = [];
-            endif;
-
-            $this->attributes['source'] = array_merge(
-                [
-                    'action'      => 'tify_field_select_js',
-                    '_ajax_nonce' => \wp_create_nonce('tiFyField-SelectJs'),
-                    'query_args'  => [],
-                    'args'        => [
-                        'select_cb' => $this->attributes['select_cb'],
-                        'picker_cb' => $this->attributes['picker_cb'],
-                        'item_cb'   => $this->attributes['item_cb'],
-                    ],
-                ],
-                $this->attributes['source']
-            );
-        endif;
-
-        // Attributs de configuration des options du controleur Js
-        $this->attributes['attrs']['data-options'] = rawurlencode(
-            json_encode(
-                [
-                    'disabled'     => (bool)$this->attributes['disabled'],
-                    'removable'    => (bool)$this->attributes['removable'],
-                    'multiple'     => (bool)$this->attributes['multiple'],
-                    'duplicate'    => (bool)$this->attributes['duplicate'],
-                    'autocomplete' => (bool)$this->attributes['autocomplete'],
-                    'max'          => (bool)$this->attributes['max'],
-                    'sortable'     => $this->attributes['sortable'],
-                    'trigger'      => $this->attributes['trigger'],
-                    'picker'       => array_merge(
-                        [
-                            'adminbar' => (is_admin() && (!defined('DOING_AJAX') || (DOING_AJAX !== true))) ? false : true,
-                        ],
-                        $this->attributes['picker']
-                    ),
-                    'source'       => $this->attributes['source'],
-                ],
-                JSON_FORCE_OBJECT
-            )
-        );
     }
 
     /**
@@ -287,56 +148,174 @@ class SelectJs extends AbstractFieldController
     }
 
     /**
-     * Formatage de l'affichage de l'élément dans la liste des éléments selectionnés.
+     * Initialisation globale de Wordpress.
      *
-     * @param array $item {
-     *      Liste des attributs de configuration de l'élément.
-     *
-     *      @var string $id Identifiant de qualification de l'élément.
-     *      @var mixed $value Valeur de retour.
-     *      @var string $label Intitulé de qualification.
-     *      @var bool $group
-     *      @var string $parent Identifiant de qualification de l'élément parent.
-     *      @var bool $disabled
-     *      @var string $select Rendu HTML dans la liste des éléments selectionnés.
-     *      @var string $picker Rendu HTML dans la liste de selection des éléments.
-     * }
-     *
-     * @return string
+     * @return void
      */
-    public function selectCallback($item)
+    public function init()
     {
-        return isset($item['select']) ? $item['select'] : $item['label'];
+        $this->appAddAction(
+            'wp_ajax_tify_field_select_js',
+            'wp_ajax'
+        );
+        $this->appAddAction(
+            'wp_ajax_nopriv_tify_field_select_js',
+            'wp_ajax'
+        );
+
+        \wp_register_style(
+            'tiFyFieldSelectJs',
+            $this->appAsset('/Field/SelectJs/css/styles.css'),
+            [],
+            171218
+        );
+
+        \wp_register_script(
+            'tiFyFieldSelectJs',
+            $this->appAsset('/Field/SelectJs/js/scripts.js'),
+            ['jquery-ui-widget', 'jquery-ui-sortable'],
+            171218,
+            true
+        );
     }
 
     /**
-     * Formatage de l'affichage de l'élément dans la liste de selection des éléments.
+     * Traitement des attributs de configuration.
      *
-     * @param array $item {
-     *      Liste des attributs de configuration de l'élément.
+     * @param array $attrs Liste des attributs de configuration personnalisés.
      *
-     *      @var string $id Identifiant de qualification de l'élément.
-     *      @var mixed $value Valeur de retour.
-     *      @var string $label Intitulé de qualification.
-     *      @var bool $group
-     *      @var string $parent Identifiant de qualification de l'élément parent.
-     *      @var bool $disabled
-     *      @var string $select Rendu HTML dans la liste des éléments selectionnés.
-     *      @var string $picker Rendu HTML dans la liste de selection des éléments.
-     * }
-     *
-     * @return string
+     * @return array
      */
-    public function pickerCallback($item)
+    protected function parse($attrs = [])
     {
-        return isset($item['picker']) ? $item['picker'] : $item['label'];
+        parent::parse($attrs);
+
+        $this->set(
+            'handler_args',
+            [
+                'name'      => $this->get('name'),
+                'value'     => $this->get('value'),
+                'disabled'  => $this->get('disabled'),
+                'removable' => $this->get('removable'),
+                'multiple'  => $this->get('multiple'),
+                'attrs'     => [
+                    'id'        => 'tiFyField-SelectJsHandler--' . $this->getId(),
+                    'class'     => 'tiFyField-SelectJsHandler'
+                ],
+            ]
+        );
+
+        if ($this->get('sortable') === true) :
+            $this->set('sortable', []);
+        endif;
+
+        $this->set(
+            'picker',
+            array_merge(
+                [
+                    'loader' => (string)Partial::Spinkit([
+                        'container_id'    => 'tiFyField-SelectJsPickerSpinkit--' . $this->getIndex(),
+                        'container_class' => 'tiFyField-SelectJsPickerSpinkit',
+                        'type'            => 'three-bounce',
+                    ]),
+                    'more'   => '+',
+                ],
+                $this->get('picker', [])
+            )
+        );
+
+        if ($source = $this->get('source')) :
+            if (!is_array($source)) :
+                $source = [];
+            endif;
+
+            $this->set(
+                'source',
+                array_merge(
+                    [
+                        'action'         => 'tify_field_select_js',
+                        '_ajax_nonce'    => \wp_create_nonce('tiFyField-SelectJs'),
+                        'query_args'     => [],
+                        'templates'      => $this->get('templates', []),
+                        'controller'     => $this->get('controller')
+                    ],
+                    $source
+                )
+            );
+        endif;
+
+        $this->set('attrs.data-disabled', (int)$this->get('disabled'));
+        $this->set('attrs.data-removable', (int)$this->get('removable'));
+        $this->set('attrs.data-multiple', (int)$this->get('multiple'));
+        $this->set('attrs.data-duplicate', (int)$this->get('duplicate'));
+        $this->set('attrs.data-autocomplete', (int)$this->get('autocomplete'));
+        $this->set('attrs.data-max', (int)$this->get('max'));
+        $this->set(
+            'attrs.data-sortable',
+            rawurlencode(json_encode($this->get('sortable'), JSON_FORCE_OBJECT))
+        );
+        $this->set(
+            'attrs.data-trigger',
+            rawurlencode(json_encode($this->get('trigger', true), JSON_FORCE_OBJECT))
+        );
+        $this->set(
+            'attrs.data-picker',
+            rawurlencode(
+                json_encode(
+                    array_merge(
+                        [
+                            'adminbar' => (is_admin() && (!defined('DOING_AJAX') || (DOING_AJAX !== true))) ? false : true,
+                        ],
+                        $this->get('picker')
+                    ),
+                    JSON_FORCE_OBJECT
+                )
+            )
+        );
+        $this->set(
+            'attrs.data-source',
+            rawurlencode(
+                json_encode(
+                    $this->get('source'),
+                    JSON_FORCE_OBJECT
+                )
+            )
+        );
+
+        $this->set(
+            'attrs.aria-control',
+            'select_js'
+        );
+
+        $source = $this->get('source', false);
+
+        $this->set(
+            'picker_items',
+            $source
+                ? $this->queryItems($source)
+                : $this->getItems($this->getOptionValues())
+        );
+
+        $this->set(
+            'selected_items',
+            ! $this->getValue()
+              ? []
+              : (
+                  $source
+                    ? $this->queryItems(Arr::set($source, 'query_args', ['post__in' => $this->getValue(), 'orderby' => 'post__in']))
+                    : $this->getItems($this->getValue())
+                )
+        );
     }
 
     /**
-     * @param $item
-     * @return mixed
+     * Traitement des attributs d'un élément récupéré.
+     *
+     * @param array $item Liste des attributs de l'élément récupéré.
+     *
+     * @return array
      */
-    public function itemCallback($item)
+    public function parseItem($item)
     {
         return $item;
     }
@@ -344,39 +323,56 @@ class SelectJs extends AbstractFieldController
     /**
      * Requête de récupération des éléments.
      *
-     * @param array $query_args Arguments de requête de récupération des éléments.
-     * @param array $args Attributs personnalisés.
+     * @param array $args Arguments de requête de récupération des éléments.
      *
      * @return array
      */
-    public function queryItems($query_args = [], $args = [])
+    public function queryItems($args = [])
     {
-        $args['source'] = true;
-
-        // Définition des arguments de requête par défaut
-        $query_args['fields'] = 'ids';
-
-        if (!isset($query_args['paged'])) :
-            $query_args['paged'] = 1;
-        endif;
+        $query_args = Arr::get($args, 'query_args', []);
+        $parse_item_cb = Arr::get($args, 'controller.parse_item', '');
 
         if (!isset($query_args['post_type'])) :
             $query_args['post_type'] = 'any';
         endif;
+        if (!isset($query_args['paged'])) :
+            $query_args['paged'] = isset($query_args['page']) ? $query_args['page'] : 1;
+        endif;
 
-        $values = (new \WP_Query)->query($query_args);
+        $items = [];
+        $wp_query = new \WP_Query($query_args);
+        if ($wp_query->have_posts()) :
+            while($wp_query->have_posts()) : $wp_query->the_post();
+                $item = [];
 
-        return $this->getItems($values, $args);
+                $item['index'] = get_the_ID();
+                $item['label'] = get_the_title();
+                $item['value'] = get_the_ID();
+                $item['disabled'] = (get_post_status() !== 'publish') ? 'true' : 'false';
+
+                $item = is_callable((string)$parse_item_cb)
+                    ? call_user_func($parse_item_cb, $item)
+                    : $this->parseItem($item);
+
+                $item['selected_render'] = $this->appTemplateRender('selected-item', $item);
+                $item['picker_render'] = $this->appTemplateRender('picker-item', $item);
+
+                $items[] = $item;
+            endwhile;
+        endif;
+        wp_reset_query();
+
+        return $items;
     }
 
     /**
      * Récupération de la liste des éléments.
      *
-     * @param string[] $selected Liste des valeurs des éléments.
+     * @param string[] $values Liste des valeurs des éléments.
      *
      * @return array
      */
-    public function getItems($values = [], $args = [])
+    public function getItems($values = [])
     {
         if (empty($values)) :
             return [];
@@ -385,119 +381,42 @@ class SelectJs extends AbstractFieldController
         $items = [];
         $index = 0;
 
-        if (!empty($args['source'])) :
-            // Récupération des élements depuis la liste de seelection
-            $query_items = new \WP_Query([
-                'post_type' => 'any',
-                'post__in'  => $values,
-                'orderby'   => 'post__in',
-                'order'     => 'ASC',
-            ]);
+        foreach ($values as $v) :
+            if (!$item = $this->getOption($v)) :
+                continue;
+            endif;
 
-            while ($query_items->have_posts()) : $query_items->the_post();
-                $item = [];
+            $item['index'] = $index++;
+            $item['disabled'] = in_array('disabled', $item['attrs']) ? 'true' : 'false';
+            $item['selected_render'] = $this->appTemplateRender('selected-item', $item);
+            $item['picker_render'] = $this->appTemplateRender('picker-item', $item);
 
-                $item['index'] = $index++;
-                $item['label'] = get_the_title();
-                $item['value'] = get_the_ID();
-                $item['disabled'] = (get_post_status() !== 'publish') ? 'true' : 'false';
-
-                $item['select'] = (is_callable($args['select_cb']))
-                    ? call_user_func($args['select_cb'], $item)
-                    : call_user_func([$this, $args['select_cb']], $item);
-
-                $item['picker'] = (is_callable($args['picker_cb']))
-                    ? call_user_func($args['picker_cb'], $item)
-                    : call_user_func([$this, $args['picker_cb']], $item);
-
-                $items[] = (is_callable($args['item_cb']))
-                    ? call_user_func($args['item_cb'], $item)
-                    : call_user_func([$this, $args['item_cb']], $item);
-            endwhile;
-
-            wp_reset_query();
-        else :
-            foreach ($values as $v) :
-                if (!$item = $this->getOption($v)) :
-                    continue;
-                endif;
-                $item['index'] = $index++;
-                $item['disabled'] = in_array('disabled', $item['attrs']) ? 'true' : 'false';
-
-                $item['select'] = (is_callable($args['select_cb']))
-                    ? call_user_func($args['select_cb'], $item)
-                    : call_user_func([$this, $args['select_cb']], $item);
-
-                $item['picker'] = (is_callable($args['picker_cb']))
-                    ? call_user_func($args['picker_cb'], $item)
-                    : call_user_func([$this, $args['picker_cb']], $item);
-
-                $items[] = (is_callable($args['item_cb']))
-                    ? call_user_func($args['item_cb'], $item)
-                    : call_user_func([$this, $args['item_cb']], $item);
-            endforeach;
-        endif;
+            $items[] = $item;
+        endforeach;
 
         return $items;
     }
 
     /**
-     * Affichage.
+     * Récupération de la liste des résultats via Ajax.
      *
-     * @return string
+     * @return callable
      */
-    protected function display()
+    public function wp_ajax()
     {
-        // Traitement des arguments
-        $select_cb = $this->get('select_cb');
-        $picker_cb = $this->get('picker_cb');
-        $item_cb = $this->get('item_cb');
-        $source = $this->get('source', false);
+        check_ajax_referer('tiFyField-SelectJs');
 
-        $selected_items = $this->getItems($this->getValue(), compact('select_cb', 'picker_cb', 'item_cb', 'source'));
+        $args = \wp_unslash($this->appRequest('POST')->all());
 
-        $picker_items = $source
-            ? $this->queryItems($source['query_args'], compact('select_cb', 'picker_cb', 'item_cb'))
-            : $this->getItems($this->getOptionValues(), compact('select_cb', 'picker_cb', 'item_cb', 'source'));
+        $this->parseTemplates($args);
 
-        ob_start();
-        ?><?php $this->before(); ?>
-        <div <?php $this->attrs(); ?>>
-            <?php echo Field::Select($this->get('handler_args')); ?>
+        $query_items_cb = Arr::get($args, 'controller.query_items', '');
+        $items = is_callable((string)$query_items_cb)
+            ? call_user_func($query_items_cb, $args)
+            : $this->queryItems($args);
 
-            <div id="tiFyField-SelectJsTrigger--<?php echo $this->getId(); ?>" class="tiFyField-SelectJsTrigger">
-                <ul id="tiFyField-SelectJsSelectedItems--<?php echo $this->getId(); ?>"
-                    class="tiFyField-SelectJsSelectedItems">
-                    <?php foreach ($selected_items as $item) : ?>
-                        <li
-                                data-label="<?php echo $item['label']; ?>"
-                                data-value="<?php echo $item['value']; ?>"
-                                data-index="<?php echo $item['index']; ?>"
-                                aria-disabled="<?php echo $item['disabled']; ?>"
-                        >
-                            <?php echo $item['select']; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
+        $items = $this->queryItems($args);
 
-            <div id="tiFyField-SelectJsPicker--<?php echo $this->getId(); ?>" class="tiFyField-SelectJsPicker">
-                <ul id="tiFyField-SelectJsPickerItems--<?php echo $this->getId(); ?>" class="tiFyField-SelectJsPickerItems">
-                    <?php foreach ($picker_items as $item) : ?>
-                        <li
-                                data-label="<?php echo $item['label']; ?>"
-                                data-value="<?php echo $item['value']; ?>"
-                                data-index="<?php echo $item['index']; ?>"
-                                aria-disabled="<?php echo $item['disabled']; ?>"
-                        >
-                            <?php echo $item['picker']; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        </div>
-        <?php $this->after(); ?><?php
-
-        return ob_get_clean();
+        \wp_send_json($items);
     }
 }

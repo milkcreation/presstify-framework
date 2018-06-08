@@ -3,12 +3,39 @@
 namespace tiFy\Kernel\Templates;
 
 use Illuminate\Support\Arr;
-use League\Plates\Engine;
 use League\Plates\Template\Template as LeagueTemplate;
+use tiFy\Apps\AppControllerInterface;
+use tiFy\Kernel\Templates\Templates;
 use tiFy\Kernel\Tools;
 
-class Template extends LeagueTemplate
+class TemplateBaseController extends LeagueTemplate
 {
+    /**
+     * Liste des variables passées en argument.
+     * @var array
+     */
+    protected $args = [];
+
+    /**
+     * Instance of the template engine.
+     * @var Templates
+     */
+    protected $engine;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param Engine $engine
+     * @param string $name
+     * @param array $args Liste des variables passées en argument
+     *
+     * @return void
+     */
+    public function __construct(Templates $engine, $name, $args = [])
+    {
+        parent::__construct($engine, $name);
+    }
+
     /**
      * Récupération de la liste complète des attributs de configuration.
      *
@@ -17,6 +44,16 @@ class Template extends LeagueTemplate
     public function all()
     {
         return $this->data;
+    }
+
+    /**
+     * Récupération de la classe de rappel du controleur d'application associée.
+     *
+     * @return AppControllerInterface
+     */
+    public function app()
+    {
+        return $this->engine->app();
     }
 
     /**
@@ -30,6 +67,16 @@ class Template extends LeagueTemplate
     public function get($key, $default = '')
     {
         return Arr::get($this->data, $key, $default);
+    }
+
+    /**
+     * Récupération de l'une variable passée en argument.
+     *
+     * @return string
+     */
+    public function getArg($key, $default = null)
+    {
+        return Arr::get($this->args, $key, $default);
     }
 
     /**

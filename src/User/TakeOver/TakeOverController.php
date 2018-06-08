@@ -177,6 +177,8 @@ class TakeOverController extends AppController
             return false;
         endif;
 
+        $this->appEventTrigger("tify.takeover.restore.{$this->name}", $user);
+
         $this->_clearCookies();
         \wp_clear_auth_cookie();
         \wp_set_auth_cookie((int)$user->ID);
@@ -198,13 +200,18 @@ class TakeOverController extends AppController
         endif;
 
         if ($user instanceof \WP_User) :
-            $user_id = $user->ID;
         else :
-            $user_id = $user;
+            $user = get_userdata($user);
         endif;
 
+        if (!$user instanceof \WP_User) :
+            return;
+        endif;
+
+        $this->appEventTrigger("tify.takeover.switch.{$this->name}", $user);
+
         if ($this->_setCookies()) :
-            \wp_set_auth_cookie((int)$user_id);
+            \wp_set_auth_cookie((int)$user->ID);
         endif;
     }
 

@@ -101,9 +101,9 @@ class SwitcherForm extends AbstractPartialController
         $fields = wp_unslash($fields);
 
         // Récupération de la liste de choix des utilisateurs
-        $user_options = Tools::User()->userQueryKeyValue(
-            'ID',
+        $user_options = Tools::User()->pluck(
             'display_name',
+            'ID',
             [
                 'role'      => $this->appRequest('POST')->get('role', ''),
                 'number'    => -1
@@ -154,7 +154,7 @@ class SwitcherForm extends AbstractPartialController
             'fields.role.attrs.class',
             $this->get(
                 'fields.role.attrs.class',
-                'tiFyTakeOverSwitcherForm-selectField--role'
+                '%s tiFyTakeOverSwitcherForm-selectField--role'
             )
         );
 
@@ -177,7 +177,7 @@ class SwitcherForm extends AbstractPartialController
             'fields.user.attrs.class',
             $this->get(
                 'fields.user.attrs.class',
-                'tiFyTakeOverSwitcherForm-selectField--user'
+                '%s tiFyTakeOverSwitcherForm-selectField--user'
             )
         );
 
