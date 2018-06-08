@@ -5,7 +5,7 @@ namespace tiFy\Kernel\Templates;
 use Illuminate\Support\Arr;
 use League\Plates\Engine;
 use tiFy\Apps\AppControllerInterface;
-use tiFy\Kernel\Templates\Template;
+use tiFy\Kernel\Templates\TemplateBaseController;
 
 class Templates extends Engine
 {
@@ -17,12 +17,18 @@ class Templates extends Engine
 
     /**
      * Liste des attributs de configuration.
-     * @var array
+     * @var array {
+     *      @var string $ext Extension des fichiers de template.
+     *      @var string $basedir Chemin absolu vers le répertoire des templates.
+     *      @var string $controller Controleur de template.
+     *      @var string $args Liste des variables passées en argument au controleur de template.
+     * }
      */
     protected $attributes = [
         'ext'           => 'php',
         'basedir'       => '',
-        'controller'    => Template::class
+        'controller'    => TemplateBaseController::class,
+        'args'          => []
     ];
 
     /**
@@ -54,8 +60,6 @@ class Templates extends Engine
         if(is_dir($basedir)) :
             $this->addFolder($this->app->appClassname(), $basedir, true);
         endif;
-
-        $this->app->appSet('templates', $this);
     }
 
     /**
@@ -66,6 +70,16 @@ class Templates extends Engine
     public function all()
     {
         return $this->attributes;
+    }
+
+    /**
+     * Récupération de la classe de rappel du controleur d'application associée.
+     *
+     * @return AppControllerInterface
+     */
+    public function app()
+    {
+        return $this->app;
     }
 
     /**
@@ -102,6 +116,6 @@ class Templates extends Engine
 
         $controller = $this->get('controller');
 
-        return new $controller($this, $name);
+        return new $controller($this, $name, $this->get('args', []));
     }
 }

@@ -77,7 +77,7 @@ final class Field extends AppController
     public function appBoot()
     {
         // Déclaration des controleurs d'affichage natifs
-        foreach(glob($this->appAbsDir() . '/Components/Field/*/', GLOB_ONLYDIR) as $filename) :
+        foreach (glob($this->appAbsDir() . '/Components/Field/*/', GLOB_ONLYDIR) as $filename) :
             $name = basename($filename);
 
             $this->register($name, "tiFy\\Components\\Field\\{$name}\\{$name}::make");
@@ -139,7 +139,7 @@ final class Field extends AppController
      */
     public static function __callStatic($name, $args)
     {
-        if(! $callable = self::appInstance()->get($name)) :
+        if (!$callable = self::appInstance()->get($name)) :
             return null;
         endif;
 
@@ -206,11 +206,11 @@ final class Field extends AppController
      */
     public function enqueue($name, $args = [])
     {
-        if(!$callable = $this->get($name)) :
+        if (!$callable = $this->get($name)) :
             return null;
         endif;
 
-        if (! is_object($callable) || ! method_exists($callable, 'enqueue_scripts')) :
+        if (!is_object($callable) || !method_exists($callable, 'enqueue_scripts')) :
             return null;
         endif;
 

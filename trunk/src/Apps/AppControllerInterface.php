@@ -2,7 +2,6 @@
 
 namespace tiFy\Apps;
 
-
 interface AppControllerInterface
 {
     /**
@@ -14,17 +13,23 @@ interface AppControllerInterface
     public function appBoot();
 
     /**
-     * {@inheritdoc}
+     * Récupération du chemin absolu vers la racine du projet Web.
+     *
+     * @return void
      */
     public function appAbsPath();
 
     /**
-     * {@inheritdoc}
+     * Récupération du chemin absolu vers la racine de PresstiFy.
+     *
+     * @return void
      */
     public function appAbsDir();
 
     /**
-     * {@inheritdoc}
+     * Récupération de l'url absolue vers la racine de PresstiFy.
+     *
+     * @return void
      */
     public function appAbsUrl();
 
@@ -239,7 +244,7 @@ interface AppControllerInterface
     public function appTemplates();
 
     /**
-     * @todo
+     *
      * @return string
      */
     public function appTemplateMake($name);

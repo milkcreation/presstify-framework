@@ -60,6 +60,9 @@
                 // Définition de l'alias court du controleur d'affichage
                 this.el = this.element;
 
+                // Initialisation de la liste des éléments
+                this.items = {};
+
                 // Initialisation des attributs de configuration du controleur
                 this._initOptions();
 
@@ -75,21 +78,32 @@
 
             // Privée - Initialisation des attributs de configuration du controleur
             _initOptions: function () {
-                // Traitement des options passées dans la balise du controleur
-                if (this.el.data('options')) {
-                    $.extend(this.options,
-                        $.parseJSON(decodeURIComponent(this.el.data('options'))));
-                }
-
-                // Traitement des attributs de configuration de la source de récupération de données
-                if (this.options.source) {
-                    if (typeof this.options.source !== 'object') {
-                        this.options.source = {};
-                    }
-                    this.dataSource = this.options.source;
-                } else {
-                    this.dataSource = undefined;
-                }
+                this.options.disabled = this.el.data('disabled');
+                this.options.removable = this.el.data('removable');
+                this.options.multiple = this.el.data('multiple');
+                this.options.duplicate = this.el.data('duplicate');
+                this.options.autocomplete = this.el.data('autocomplete');
+                this.options.max = this.el.data('max');
+                this.options.sortable = $.parseJSON(
+                    decodeURIComponent(
+                        this.el.data('sortable')
+                    )
+                );
+                this.options.trigger = $.parseJSON(
+                    decodeURIComponent(
+                        this.el.data('trigger')
+                    )
+                );
+                this.options.picker = $.parseJSON(
+                    decodeURIComponent(
+                        this.el.data('picker')
+                    )
+                );
+                this.options.source = $.parseJSON(
+                    decodeURIComponent(
+                        this.el.data('source')
+                    )
+                );
             },
 
             // Privée - Initialisation des indicateurs d'état
@@ -114,12 +128,12 @@
                 this.flags.Disabled = this.options.disabled;
                 this.flags.isMultiple = this.options.multiple;
                 this.flags.isDuplicable = (this.options.duplicate && this.flags.isMultiple);
-                this.flags.isRemovable = !this.flags.Disabled && (this.options.removable !== false);
+                this.flags.isRemovable = !this.flags.Disabled && this.options.removable;
                 this.flags.isSortable = ((this.options.sortable !== false) && this.flags.isMultiple && !this.flags.Disabled);
                 this.flags.isOpen = false;
                 this.flags.isComplete = false;
                 this.flags.page = 1;
-                this.flags.hasSource = (this.dataSource !== undefined);
+                this.flags.hasSource = (this.options.source !== false);
             },
 
             // Privée - Définition des agents de controle
@@ -180,7 +194,7 @@
 
                 // Traitement des options
                 var o = {
-                    class : '',
+                    class: '',
                     arrow: true
                 };
                 self.options.trigger = $.extend(o, self.options.trigger);
@@ -217,7 +231,7 @@
             },
 
             /**
-             * Initialisation de la liste de selection
+             * Initialisation de la liste de selection.
              *
              * @private
              */
@@ -226,7 +240,7 @@
 
                 // Traitement des options
                 var o = {
-                    class : '',
+                    class: '',
                     placement: 'clever',
                     appendTo: 'body',
                     delta: {
@@ -272,10 +286,15 @@
 
                     self.picker.attr('aria-complete', false);
                 }
+
+                $('> li', this.pickerList).each(function() {
+                    var item = self._getAttrs($(this));
+                    self._setItem(item);
+                });
             },
 
             /**
-             * Initialisation de la liste des éléments selectionnés
+             * Initialisation de la liste des éléments selectionnés.
              *
              * @private
              */
@@ -306,7 +325,7 @@
             },
 
             /**
-             * Ouverture de la liste de selection
+             * Ouverture de la liste de selection.
              *
              * @private
              */
@@ -334,7 +353,7 @@
             },
 
             /**
-             * Fermeture de la liste de selection
+             * Fermeture de la liste de selection.
              *
              * @private
              */
@@ -355,7 +374,7 @@
             },
 
             /**
-             * Activation du controleur
+             * Activation du controleur.
              *
              * @private
              */
@@ -372,7 +391,7 @@
             },
 
             /**
-             * Désactivation du controleur
+             * Désactivation du controleur.
              *
              * @private
              */
@@ -389,58 +408,7 @@
             },
 
             /**
-             * Ajout d'un élément dans la liste des éléments sélectionnés
-             *
-             * @param item Attributs de l'élément {
-             *      @var mixed value Valeur de retour
-             *      @var string label Intitulé de qualification
-             *      @var string select Rendu dans la liste des éléments selectionnés
-             *      @var string picker Rendu dans la liste de selection
-             * }
-             *
-             * @private
-             */
-            _add: function (item) {
-                var self = this;
-
-                // Bypass - L'élément doit être unique et existe déja
-                if (!this.flags.isDuplicable &&
-                    $('> [data-value="' + item.value + '"]',
-                        self.selectedList).length) {
-                    item.new = false;
-
-                    // Création du nouvel élément dans la liste de selection
-                } else {
-                    item.new = true;
-
-                    // Vérification d'habititation d'ajout multiple
-                    if (!self.flags.isMultiple) {
-                        self._removeAll();
-                    }
-
-                    // Définition de l'index de l'élément
-                    item['index'] = self._count();
-
-                    // Ajout de l'élément dans la liste des éléments sélectionnés
-                    $(
-                        '<li ' +
-                        'data-label="' + item.label + '" ' +
-                        'data-value="' + item.value + '" ' +
-                        'data-index="' + item.index + '"' +
-                        '>' +
-                        ((typeof item.select !== 'undefined')
-                            ? item.select
-                            : item.label) +
-                        '</li>'
-                    ).appendTo(self.selectedList);
-                }
-
-                // Définition de la liste des événements suite à l'ajout d'un élément dans la liste de selection
-                self._onAdd(item);
-            },
-
-            /**
-             * Suppression d'un élément de la liste des éléments selectionnés
+             * Suppression d'un élément de la liste des éléments selectionnés.
              *
              * @param item Attributs de l'élément {
              *      @var mixed value Valeur de retour
@@ -526,7 +494,7 @@
 
                     self._setRemovable(item);
                     self._setSortable(item);
-                    self._addHandler(item);
+                    self._addHandlerItem(item);
                     self._setPicker(item);
                 });
 
@@ -700,7 +668,7 @@
                             }
                         )
                         .on('click.tify_select.picker_filter.' + self.instance.uuid,
-                            function(e) {
+                            function (e) {
                                 e.stopPropagation();
                             }
                         )
@@ -755,7 +723,7 @@
                     function () {
                         var item = self._getAttrs($(this));
 
-                        self._add(item);
+                        self._addSelectedItem(item);
                     });
 
                 // Activation de la suppression d'élément dans la liste des éléments selectionnés
@@ -872,7 +840,7 @@
                     self._setPicker(item);
 
                     // Mise à jour de l'éléments dans le controleur de traitement
-                    self._addHandler(item);
+                    self._addHandlerItem(item);
                 }
 
                 // Modification du statut de selection
@@ -941,14 +909,90 @@
                 return {
                     label: $item.data('label'),
                     value: $item.data('value'),
-                    index: $item.data('index'),
-                    picker: $item.data('picker')
-                        ? $item.data('picker')
-                        : $item.data('label'),
-                    select: $item.data('select')
-                        ? $item.data('select')
-                        : $item.data('label')
+                    index: $item.data('index')
                 };
+            },
+
+            /**
+             * Définition d'un élément.
+             *
+             * @param item Attributs de l'élément {
+             *      @var mixed value Valeur de retour
+             *      @var string label Intitulé de qualification
+             *      @var string select Rendu dans la liste des éléments selectionnés
+             *      @var string picker Rendu dans la liste de selection
+             * }
+             *
+             * @private
+             */
+            _setItem: function (item) {
+                var self = this;
+
+                self.items[item.index] = item;
+
+                if (typeof self.items[item.index].picker_render === 'undefined') {
+                    self.items[item.index].picker_render =
+                        $('> [data-index="' + item.index + '"]', self.pickerList).length
+                            ? $('> [data-index="' + item.index + '"]', self.pickerList)[0]
+                            : '<li ' +
+                                'data-label="' + item.label + '" ' +
+                                'data-value="' + item.value + '" ' +
+                                'data-index="' + item.index + '" ' +
+                                '>' +
+                                item.label +
+                                '</li>';
+                }
+
+                if (typeof self.items[item.index].selected_render === 'undefined') {
+                    self.items[item.index].selected_render =
+                        $('> [data-index="' + item.index + '"]', self.selectedList).length
+                            ? $('> [data-index="' + item.index + '"]', self.selectedList)[0]
+                            : '<li ' +
+                                'data-label="' + item.label + '" ' +
+                                'data-value="' + item.value + '" ' +
+                                'data-index="' + item.index + '" ' +
+                                '>' +
+                                item.label +
+                                '</li>';
+                }
+            },
+
+            /**
+             * Ajout d'un élément dans la liste des éléments sélectionnés
+             *
+             * @param item Attributs de l'élément {
+             *      @var mixed value Valeur de retour
+             *      @var string label Intitulé de qualification
+             *      @var string select Rendu dans la liste des éléments selectionnés
+             *      @var string picker Rendu dans la liste de selection
+             * }
+             *
+             * @private
+             */
+            _addSelectedItem: function (item) {
+                var self = this;
+
+                // Bypass - L'élément doit être unique et existe déja
+                if (!this.flags.isDuplicable &&
+                    $('> [data-value="' + item.value + '"]',
+                        self.selectedList).length) {
+                    item.new = false;
+
+                    // Création du nouvel élément dans la liste de selection
+                } else {
+                    item.new = true;
+
+                    // Vérification d'habititation d'ajout multiple
+                    if (!self.flags.isMultiple) {
+                        self._removeAll();
+                    }
+
+                    // Ajout de l'élément dans la liste des éléments sélectionnés
+                    $(self.items[item.index].selected_render).appendTo(self.selectedList);
+                }
+
+                // Définition de la liste des événements suite à l'ajout d'un élément dans la liste de selection
+                self._onAdd(item);
             },
 
             /**
@@ -963,30 +1007,23 @@
              *
              * @private
              */
-            _addPicker: function (item) {
+            _addPickerItem: function (item) {
                 var self = this;
 
-                // Bypass - l'élément est déjà présent
+                // Bypass - l'élément est déjà  présent
                 if ($('> [data-value="' + item.value + '"]',
                     self.pickerList).length) {
                     return;
                 }
 
                 // Ajout de l'élément dans la liste des éléments sélectionnés
-                $(
-                    '<li ' +
-                    'data-label="' + item.label + '" ' +
-                    'data-value="' + item.value + '" ' +
-                    'data-index="' + item.value + '" ' +
-                    '>' +
-                    ((typeof item.picker !== 'undefined')
-                        ? item.picker
-                        : item.label) +
-                    '</li>'
-                ).appendTo(self.pickerList).on('click.tify_select.picker_item_select.' + self.instance.uuid,
-                    function () {
-                        self._add(item);
-                    });
+                $(self.items[item.index].picker_render)
+                    .appendTo(self.pickerList).on(
+                        'click.tify_select.picker_item_select.' + self.instance.uuid,
+                        function () {
+                            self._addSelectedItem(item);
+                        }
+                );
 
                 // Mise à jour du statut de selection de l'élément dans la liste de selection
                 self._setPicker(item);
@@ -1020,16 +1057,11 @@
              *
              * @private
              */
-            _queryPickerArgs: function () {
-                var args = {
-                    page: this.flags.page
+            _pickerQueryArgs: function () {
+                return {
+                    page: this.flags.page,
+                    term: this.flags.hasAutocomplete ? this.autocompleteInput.val() : ''
                 };
-
-                if (this.flags.hasAutocomplete) {
-                    args.term = this.autocompleteInput.val();
-                }
-
-                return args;
             },
 
             /**
@@ -1045,17 +1077,18 @@
                 }
 
                 if (this.flags.hasSource) {
-                    // Lancement de la requête
                     self.pickerLoader.show();
+                    self.options.source.query_args = $.extend(self.options.source.query_args, self._pickerQueryArgs());
 
                     self.xhr = $.ajax({
                         url: tify_ajaxurl,
-                        data: $.extend(self.dataSource, self._queryPickerArgs()),
+                        data: self.options.source,
                         method: 'POST'
                     }).done(function (data) {
                         if (data.length) {
                             $.each(data, function (u, item) {
-                                self._addPicker(item);
+                                self._setItem(item);
+                                self._addPickerItem(item);
                             });
                             self.flags.page++;
                         } else {
@@ -1131,7 +1164,7 @@
              *
              * @private
              */
-            _addHandler: function (item) {
+            _addHandlerItem: function (item) {
                 if (!$('[data-index="' + item.index + '"]', this.handler).length) {
                     $('<option value="' + item.value + '" data-index="' +
                         item.index + '" selected>' + item.label + '</option>').appendTo(this.handler);
@@ -1196,10 +1229,10 @@
         });
 })(jQuery, document, window);
 
-jQuery(document).ready(function($){
-    $('.tiFyField-SelectJs').tifyselect();
+jQuery(document).ready(function ($) {
+    $('[aria-control="select_js"]').tifyselect();
 
-    $(document).on('mouseenter.tify_field.ajax_select', '.tiFyField-SelectJs', function (e) {
+    $(document).on('mouseenter.tify_field.ajax_select', '[aria-control="select_js"]', function (e) {
         $(this).each(function () {
             $(this).tifyselect();
         });

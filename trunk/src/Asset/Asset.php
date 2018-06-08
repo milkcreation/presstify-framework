@@ -73,7 +73,7 @@ final class Asset extends AppController
         endif;
 
         if ($js = Arr::get($this->dataJs, 'admin', [])) :
-        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tFy=' . wp_json_encode($js) . ';'; ?>/* ]]> */</script><?php
+        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify=' . wp_json_encode($js) . ';'; ?>/* ]]> */</script><?php
         endif;
     }
 
@@ -89,7 +89,7 @@ final class Asset extends AppController
         endif;
 
         if ($js = Arr::get($this->dataJs, 'user', [])) :
-        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tFy=' . wp_json_encode($js) . ';'; ?>/* ]]> */</script><?php
+        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify=' . wp_json_encode($js) . ';'; ?>/* ]]> */</script><?php
         endif;
     }
 
