@@ -48,19 +48,7 @@ class Text extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        $this->setAttr('type', 'text');
-    }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-?><?php $this->before(); ?><input <?php $this->attrs(); ?>/><?php $this->after(); ?><?php
-
-        return ob_get_clean();
+        $this->set('attrs.type', 'text');
+        $this->set('attrs.value', $this->get('value'));
     }
 }

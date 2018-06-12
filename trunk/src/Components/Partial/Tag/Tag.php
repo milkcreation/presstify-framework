@@ -13,19 +13,24 @@ class Tag extends AbstractPartialController
      *      @var string $tag Balise HTML div|span|a|... défaut div.
      *      @var array $attrs Liste des attributs de balise HTML.
      *      @var string|callable $content Contenu de la balise HTML.
+     *      @var bool $singleton
      * }
      */
     protected $attributes = [
-        'tag'     => 'div',
-        'attrs'   => [],
-        'content' => 'lorem ipsum dolor sit amet'
+        'tag'       => 'div',
+        'attrs'     => [],
+        'content'   => 'lorem ipsum dolor sit amet',
+        'singleton' => false
     ];
 
     /**
-     * Liste des attributs de la balise Html.
-     * @var array
+     * Liste des champs connu de type singleton
+     * @see http://html-css-js.com/html/tags
+     * @var string[]
      */
-    private $tagAttrs = [];
+    protected $singleton = [
+        'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source'
+    ];
 
     /**
      * Traitement des attributs de configuration.
@@ -34,26 +39,12 @@ class Tag extends AbstractPartialController
      *
      * @return array
      */
-    public function parse($attrs = [])
+    protected function parse($attrs = [])
     {
         parent::parse($attrs);
-    }
 
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        $id = $this->getId();
-        $index = $this->getIndex();
-        $tag = $this->get('tag', 'div');
-        $tag_attrs = $this->get('attrs', []);
-        $_tag_attrs = Tools::Html()->parseAttrs($tag_attrs);
-        $content = $this->get('content');
-        $content = is_callable($content) ? call_user_func($content) : $content;
-
-        return $this->appTemplateRender('tag', compact('id', 'index', 'tag', 'tag_attrs', '_tag_attrs', 'content'));
+        if (in_array($this->get('tag'), $this->singleton)) :
+            $this->set('singleton', true);
+        endif;
     }
 }
