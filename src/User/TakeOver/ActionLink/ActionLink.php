@@ -50,7 +50,7 @@ class ActionLink extends AbstractPartialController
      */
     protected function parse($attrs = [])
     {
-        $this->attributes['redirect_url'] = home_url('/');
+        $this->set('redirect_url', home_url('/'));
 
         parent::parse($attrs);
     }
@@ -122,7 +122,7 @@ class ActionLink extends AbstractPartialController
                             'action' => $this->get('action'),
                             'tfy_take_over_id' => $this->get('take_over_id')
                         ],
-                        wp_nonce_url($this->get('redirect_url'), 'tiFyTakeOver-restore')
+                        \wp_nonce_url($this->get('redirect_url'), 'tiFyTakeOver-restore')
                     )
                 );
                 break;

@@ -146,7 +146,7 @@ class Crypted extends AbstractFieldController
         parent::parse($attrs);
 
         $this->set('container.attrs.id', 'tiFyField-CryptedContainer--' . $this->getId());
-        $this->set('container.attrs.aria-control', 'tify_field_crypted');
+        $this->set('container.attrs.aria-control', 'crypted');
         $this->set('container.attrs.aria-hide', $this->get('hide') ? 'true' : 'false');
         $this->set(
             'container.attrs.data-options',
@@ -170,32 +170,5 @@ class Crypted extends AbstractFieldController
         $cypher = $this->getAttr('value');
         $this->setAttr('aria-cypher', Tools::Cryptor()->encrypt($cypher));
         $this->setAttr('value', $this->get('hide') ? $cypher : $this->getAttr('value'));
-    }
-    
-    /**
-     * Affichage
-     *
-     * @param array $attrs Liste des attributs de configuration
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-        ?><div <?php echo $this->parseHtmlAttrs($this->get('container.attrs'));?>>
-            <div class="tiFyField-CryptedWrapper">
-                <a href="#<?php echo $this->get('container.attrs.id'); ?>" class="tiFyField-CryptedToggle" aria-control="toggle"></a>
-
-                <input <?php $this->attrs(); ?> />
-            </div>
-        <!--
-        if ($generate_cb && !$readonly) :
-            $output .= "\t<a href=\"#{$container_id}\" class=\"tiFyControlCryptedData-generator\" data-tify_control_crypted_data=\"generate\">" . __('Générer',
-                    'tify') . "</a>\n";
-        endif;
-        -->
-        </div><?php
-
-        return ob_get_clean();
     }
 }

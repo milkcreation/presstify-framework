@@ -83,11 +83,6 @@ final class Route extends AppController
         'is_post_type_archive'
     ];
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * Initialisation du controleur.
      *
@@ -95,8 +90,6 @@ final class Route extends AppController
      */
     public function appBoot()
     {
-        $this->appServiceAdd(View::class);
-
         // Définition du traitement de la réponse
         $this->appServiceShare('tfy.route.response', function () {
             $response = new Response();

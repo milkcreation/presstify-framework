@@ -377,6 +377,29 @@ if (!function_exists('tify_field_text')) :
     }
 endif;
 
+if (!function_exists('tify_field_text_remaining')) :
+    /**
+     * Champ de saisie limité.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_field_text_remaining($attrs = [], $echo = true)
+    {
+        $output = (string)Field::TextRemaining($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
 if (!function_exists('tify_field_textarea')) :
     /**
      * Zone de saisie libre.

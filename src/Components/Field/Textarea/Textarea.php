@@ -21,7 +21,7 @@ class Textarea extends AbstractFieldController
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attrs {
+     * @var array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var array $attrs Liste des propriétés de la balise HTML.
@@ -38,29 +38,16 @@ class Textarea extends AbstractFieldController
     ];
 
     /**
-     * Traitement de l'attribut de configuration de la valeur de soumission du champ "value".
+     * Traitement des attributs de configuration.
      *
      * @param array $attrs Liste des attributs de configuration personnalisés.
      *
      * @return array
      */
-    protected function parseValue($attrs = [])
+    protected function parse($attrs = [])
     {
-        if (isset($this->attributes['value'])) :
-            $this->attributes['content'] = $this->attributes['value'];
-        endif;
-    }
+        parent::parse($attrs);
 
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-?><?php $this->before(); ?><textarea <?php $this->attrs(); ?>><?php $this->content(); ?></textarea><?php $this->after(); ?><?php
-
-        return ob_get_clean();
+        $this->set('content', $this->get('value'));
     }
 }

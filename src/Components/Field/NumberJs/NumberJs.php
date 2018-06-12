@@ -24,8 +24,7 @@ class NumberJs extends AbstractFieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var string $container_id Id HTML du conteneur du champ.
-     *      @var string $container_class Classe HTML du conteneur du champ.
+     *      @var string $container Liste des attribut de configuration du conteneur de champ
      *      @var array $attrs Liste des propriétés de la balise HTML.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var int $value Attribut de configuration de la valeur initiale de soumission du champ "value".
@@ -38,8 +37,7 @@ class NumberJs extends AbstractFieldController
     protected $attributes = [
         'before'          => '',
         'after'           => '',
-        'container_id'    => '',
-        'container_class' => '',
+        'container'       => '',
         'attrs'           => [],
         'name'            => '',
         'value'           => 0,
@@ -88,45 +86,32 @@ class NumberJs extends AbstractFieldController
      */
     protected function parse($attrs = [])
     {
-        $this->attributes['container_id'] = 'tiFyField-NumberJsContainer--' . $this->getIndex();
+        $this->set('container.attrs.id', 'tiFyField-NumberJsContainer--' . $this->getIndex());
 
         parent::parse($attrs);
 
-        if (!isset($this->attributes['container_class'])) :
-            $this->attributes['container_class'] = 'tiFyField-NumberJsContainer ' . $this->attributes['container_class'];
+        if ($container_class = $this->get('container.attrs.class')) :
+            $this->set('container.attrs.class', "tiFyField-NumberJsContainer {$container_class}");
         else :
-            $this->attributes['container_class'] = 'tiFyField-NumberJsContainer';
+            $this->set('container.attrs.class', 'tiFyField-NumberJsContainer');
         endif;
 
-        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-NumberJs--' . $this->getIndex();
+        if (!$this->has('attrs.id')) :
+            $this->set('attrs.id', 'tiFyField-NumberJs--' . $this->getIndex());
         endif;
-        $this->attributes['attrs']['type'] = 'text';
-        $this->attributes['attrs']['data-options'] = array_merge(
-            [
-                'icons' => [
-                    'down' => 'dashicons dashicons-arrow-down-alt2',
-                    'up'   => 'dashicons dashicons-arrow-up-alt2',
-                ]
-            ],
-            $this->attributes['data-options']
+        $this->set('attrs.type', 'text');
+        $this->set(
+            'attrs.data-options',
+            array_merge(
+                [
+                    'icons' => [
+                        'down' => 'dashicons dashicons-arrow-down-alt2',
+                        'up'   => 'dashicons dashicons-arrow-up-alt2',
+                    ]
+                ],
+                $this->get('data-options', [])
+            )
         );
-    }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-?><?php $this->before(); ?>
-    <div id="<?php echo $this->get('container_id'); ?>" class="<?php echo $this->get('container_class'); ?>">
-        <input <?php echo $this->attrs(); ?> />
-    </div>
-<?php $this->after(); ?><?php
-
-        return ob_get_clean();
+        $this->set('attrs.aria-control', 'number_js');
     }
 }
