@@ -179,7 +179,7 @@ abstract class AbstractFieldController extends AppController
     }
 
     /**
-     * Affichage du contenu de la balise champ
+     * Affichage du contenu de la balise champ.
      *
      * @return void
      */
@@ -193,7 +193,10 @@ abstract class AbstractFieldController extends AppController
      *
      * @return string
      */
-    abstract protected function display();
+    protected function display()
+    {
+        return $this->appTemplateRender($this->appLowerName(), $this->all());
+    }
 
     /**
      * Récupération d'un attribut de configuration.
@@ -402,10 +405,10 @@ abstract class AbstractFieldController extends AppController
             $attrs
         );
 
-        $this->parseName($attrs);
-        $this->parseValue($attrs);
-        $this->parseId($attrs);
-        $this->parseClass($attrs);
+        $this->parseName();
+        $this->parseValue();
+        $this->parseId();
+        $this->parseClass();
         $this->parseTemplates($attrs);
         $this->parseOptions($attrs);
     }
@@ -413,15 +416,13 @@ abstract class AbstractFieldController extends AppController
     /**
      * Traitement de l'attribut de configuration de l'attribut HTML "class".
      *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
      * @return void
      */
-    protected function parseClass($attrs = [])
+    protected function parseClass()
     {
         $this->set(
             'attrs.class',
-            sprintf(Arr::get($attrs, 'attrs.class', '%s'), "tiFyField-{$this->appShortname()}")
+            sprintf($this->get('attrs.class', '%s'), "tiFyField-{$this->appShortname()}")
         );
     }
 
@@ -441,15 +442,13 @@ abstract class AbstractFieldController extends AppController
     /**
      * Traitement de l'attribut de configuration de l'attribut HTML "id".
      *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
      * @return void
      */
-    protected function parseId($attrs = [])
+    protected function parseId()
     {
         $this->set(
             'attrs.id',
-            Arr::get($attrs, 'attrs.id')
+            $this->get('attrs.id')
                 ? : "tiFyField-{$this->appShortname()}--{$this->getIndex()}"
         );
     }
@@ -457,13 +456,11 @@ abstract class AbstractFieldController extends AppController
     /**
      * Traitement de l'attribut de configuration de la clé d'indexe de soumission du champ "name".
      *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
      * @return void
      */
-    protected function parseName($attrs = [])
+    protected function parseName()
     {
-        if ($name = Arr::get($attrs, 'name')) :
+        if ($name = $this->get('name')) :
             $this->set('attrs.name', $name);
         endif;
     }
@@ -471,13 +468,11 @@ abstract class AbstractFieldController extends AppController
     /**
      * Traitement de l'attribut de configuration de la valeur de soumission du champ "value".
      *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
      * @return array
      */
-    protected function parseValue($attrs = [])
+    protected function parseValue()
     {
-        if ($value = Arr::get($attrs, 'value')) :
+        if ($value = $this->get('value')) :
             $this->set('attrs.value', $value);
         endif;
     }

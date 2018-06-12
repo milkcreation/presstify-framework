@@ -1,8 +1,8 @@
-[aria-control='tify_field_crypted'] {
+[aria-control='crypted'] {
     position: relative;
 }
 
-[aria-control='tify_field_crypted'] [aria-control='toggle']::before {
+[aria-control='crypted'] [aria-control='toggle']::before {
     position: absolute;
     font-family: "dashicons";
     content: "\f530";
@@ -15,11 +15,11 @@
     z-index: 1;
 }
 
-[aria-control='tify_field_crypted'][aria-hide='true'] [aria-control='toggle']::before {
+[aria-control='crypted'][aria-hide='true'] [aria-control='toggle']::before {
     content: "\f177";
 }
 
-[aria-control='tify_field_crypted'] [aria-control='toggle'] {
+[aria-control='crypted'] [aria-control='toggle'] {
     position: absolute;
     content: "";
     width: 30px;
@@ -31,7 +31,7 @@
     box-shadow: 0px 0px 1px 0px #ccc;
 }
 
-[aria-control='tify_field_crypted'] .tiFyField-CryptedWrapper::before {
+[aria-control='crypted'] .tiFyField-CryptedWrapper::before {
     position: absolute;
     font-family: "dashicons";
     content: "\f112";
@@ -43,13 +43,13 @@
     color: #AAA;
 }
 
-[aria-control='tify_field_crypted'] .tiFyField-CryptedWrapper {
+[aria-control='crypted'] .tiFyField-CryptedWrapper {
     position: relative;
     display: inline-block;
     font-size: 14px;
 }
 
-[aria-control='tify_field_crypted'].loading .tiFyField-CryptedWrapper::before {
+[aria-control='crypted'].loading .tiFyField-CryptedWrapper::before {
     content: "\f463";
     margin-top: -10px;
     -webkit-animation: rotating 2s infinite linear;

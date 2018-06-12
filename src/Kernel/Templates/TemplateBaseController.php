@@ -92,7 +92,7 @@ class TemplateBaseController extends LeagueTemplate
     }
 
     /**
-     * Linératisation d'une liste d'attributs HTML.
+     * Linéarisation d'une liste d'attributs HTML.
      *
      * @return string
      */

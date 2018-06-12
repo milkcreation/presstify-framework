@@ -1,8 +1,9 @@
 jQuery(document).ready(function ($) {
-    $(document).on('click', '[aria-control="tify_field_crypted"] [aria-control="toggle"]', function (e) {
+
+    $(document).on('click', '[aria-control="crypted"] [aria-control="toggle"]', function (e) {
         e.preventDefault();
 
-        var $closest = $(this).closest('[aria-control="tify_field_crypted"]'),
+        var $closest = $(this).closest('[aria-control="crypted"]'),
             o = $.parseJSON(decodeURIComponent($closest.data('options'))),
             $input = $('[aria-control="input"]', $closest),
             cypher = $input.attr('aria-cypher');

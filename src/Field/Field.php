@@ -35,6 +35,7 @@ use tiFy\Components\Field\SelectJs\SelectJs;
 use tiFy\Components\Field\Submit\Submit;
 use tiFy\Components\Field\Text\Text;
 use tiFy\Components\Field\Textarea\Textarea;
+use tiFy\Components\Field\TextRemaining\TextRemaining;
 use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
 
 /**
@@ -59,6 +60,7 @@ use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
  * @method static Submit(string $id = null, array $attrs = [])
  * @method static Text(string $id = null, array $attrs = [])
  * @method static Textarea(string $id = null, array $attrs = [])
+ * @method static TextRemaining(string $id = null, array $attrs = [])
  * @method static ToggleSwitch(string $id = null, array $attrs = [])
  */
 final class Field extends AppController

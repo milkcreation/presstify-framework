@@ -37,24 +37,10 @@ class Checkbox extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        $this->setAttr('type', 'checkbox');
-    }
+        $this->set('attrs.type', 'checkbox');
 
-    /**
-     * Affichage
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        // Définition des attributs de balise HTML
         if ($this->isChecked()) :
-            $this->setAttr('checked', 'checked');
+            $this->set('attrs.checked', 'checked');
         endif;
-
-        ob_start();
-?><?php $this->before(); ?><input <?php $this->attrs(); ?>/><?php $this->after(); ?><?php
-
-        return ob_get_clean();
     }
 }

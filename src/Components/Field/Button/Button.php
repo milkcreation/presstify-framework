@@ -37,25 +37,12 @@ class Button extends AbstractFieldController
      */
     protected function parse($attrs = [])
     {
-        $this->attributes['content'] = __('Envoyer', 'tify');
+        $this->set('content', __('Envoyer', 'tify'));
 
         parent::parse($attrs);
 
-        if (!isset($this->attributes['attrs']['type'])) :
-            $this->attributes['attrs']['type'] = $this->attributes['type'];
+        if (!$this->has('attrs.type')) :
+            $this->set('attrs.type',  $this->get('type', 'button'));
         endif;
-    }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-?><?php $this->before(); ?><button <?php $this->attrs(); ?>><?php $this->content(); ?></button><?php $this->after(); ?><?php
-
-        return ob_get_clean();
     }
 }

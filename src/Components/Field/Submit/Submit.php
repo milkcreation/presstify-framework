@@ -46,23 +46,10 @@ class Submit extends AbstractFieldController
      */
     protected function parse($attrs = [])
     {
-        $this->attributes['value'] = __('Envoyer', 'tify');
+        $this->set('value', __('Envoyer', 'tify'));
 
         parent::parse($attrs);
 
         $this->setAttr('type', 'submit');
-    }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-?><?php $this->before(); ?><input <?php $this->attrs(); ?>/><?php $this->after(); ?><?php
-
-        return ob_get_clean();
     }
 }
