@@ -91,7 +91,7 @@ class LabelsPostTypeController extends LabelsBaseController
 
             // @todo 'filter_items_list' => ''
 
-            'name_admin_bar'             => _x($this->getSingular(), 'add new on admin bar', 'tify'),
+            'name_admin_bar'             => _x(Str::ucfirst($this->getSingular()), 'add new on admin bar', 'tify'),
 
             /* @todo
                 'datas_item'                 => $this->defaultDatasItem(),

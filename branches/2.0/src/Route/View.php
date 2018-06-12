@@ -10,13 +10,13 @@ class View extends AppController
      * Chemin vers le template d'affichage.
      * @var string
      */
-    private $path = '';
+    protected $path = '';
 
     /**
      * Liste des arguments passés à la vue.
      * @var array
      */
-    private $args = [];
+    protected $args = [];
 
     /**
      * Déclaration.
@@ -37,7 +37,7 @@ class View extends AppController
      *
      * @return $this
      */
-    private function path($path)
+    protected function path($path)
     {
         $this->path = $path;
 
@@ -51,7 +51,7 @@ class View extends AppController
      *
      * @return $this
      */
-    private function with($args)
+    protected function with($args)
     {
         $this->args = array_merge(
             $args,

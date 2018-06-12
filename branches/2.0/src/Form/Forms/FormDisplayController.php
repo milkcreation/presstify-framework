@@ -31,49 +31,42 @@ class FormDisplayController extends AbstractCommonDependency
     }
 
     /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut à récupérer.
-     * @param mixed $defaul Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
-    }
-
-    /**
-     * Rendu de l'affichage.
+     * Récupération de l'affichage du formulaire depuis l'instance.
      *
      * @return string
      */
-    public function render()
+    public function __toString()
     {
-        $output = "";
-
-        // Court-circuitage post-affichage
-        $this->call('form_before_display', [&$output, $this->getForm()]);
-
-        $output .= $this->get('wrapper');
-
-        // Court-circuitage post-affichage
-        $this->call('form_after_display', [&$output, $this->getForm()]);
-
-        return $output;
+        return $this->render();
     }
 
     /**
-     * Encapsulation du contenu.
+     * Corps de page du formulaire.
      *
      * @return string
      */
-    public function wrapper()
+    public function body()
     {
-        $output = "";
+        $has_group = $this->getFields()->hasGroup();
 
-        $output .= $this->get('notices');
-        $output .= $this->get('content');
+        $output = "";
+        $output .= "\t\t<div class=\"tiFyForm-Fields\">\n";
+
+        if($has_group) :
+            foreach ($this->getFields()->byGroup() as $num => $fields) :
+                $output .= "\t\t\t<div class=\"tiFyForm-FieldsGroup tiFyForm-FieldsGroup--{$num}\">";
+                foreach($fields->byOrder() as $field) :
+                    $output .= $field->display();
+                endforeach;
+                $output .= "\t\t\t</div>";
+            endforeach;
+        else :
+            foreach($this->getFields()->byOrder() as $field) :
+                $output .= $field->display();
+            endforeach;
+        endif;
+
+        $output .= "\t\t</div>";
 
         return $output;
     }
@@ -98,18 +91,16 @@ class FormDisplayController extends AbstractCommonDependency
     }
 
     /**
-     * Affichage du formulaire de soumission.
+     * Récupération d'un attribut de configuration.
      *
-     * @return string
+     * @param string $key Clé d'indexe de l'attribut à récupérer.
+     * @param mixed $defaul Valeur de retour par défaut.
+     *
+     * @return mixed
      */
-    public function form()
+    public function get($key, $default = null)
     {
-        $output = "";
-        $output .= $this->header();
-        $output .= $this->body();
-        $output .= $this->footer();
-
-        return $output;
+        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
@@ -122,39 +113,6 @@ class FormDisplayController extends AbstractCommonDependency
         $output = "";
 
         $output .= $this->get('hidden_fields');
-
-        return $output;
-    }
-
-    /**
-     * Corps de page du formulaire.
-     *
-     * @return string
-     */
-    public function body()
-    {
-        $has_group = $this->getFields()->hasGroup();
-
-        $output = "";
-
-        // Affichage des champs de formulaire
-        $output .= "\t\t<div class=\"tiFyForm-Fields\">\n";
-
-        if($has_group) :
-            foreach ($this->getFields()->byGroup() as $num => $fields) :
-                $output .= "\t\t\t<div class=\"tiFyForm-FieldsGroup tiFyForm-FieldsGroup--{$num}\">";
-                foreach($fields->byOrder() as $field) :
-                    $output .= $field->display();
-                endforeach;
-                $output .= "\t\t\t</div>";
-            endforeach;
-        else :
-            foreach($this->getFields()->byOrder() as $field) :
-                $output .= $field->display();
-            endforeach;
-        endif;
-
-        $output .= "\t\t</div>";
 
         return $output;
     }
@@ -297,12 +255,37 @@ class FormDisplayController extends AbstractCommonDependency
     }
 
     /**
-     * Récupération de l'affichage du formulaire depuis l'instance.
+     * Rendu de l'affichage.
      *
      * @return string
      */
-    public function __toString()
+    public function render()
     {
-        return $this->render();
+        $output = "";
+
+        // Court-circuitage post-affichage
+        $this->call('form_before_display', [&$output, $this->getForm()]);
+
+        $output .= $this->get('wrapper');
+
+        // Court-circuitage post-affichage
+        $this->call('form_after_display', [&$output, $this->getForm()]);
+
+        return $output;
+    }
+
+    /**
+     * Encapsulation du contenu.
+     *
+     * @return string
+     */
+    public function wrapper()
+    {
+        $output = "";
+
+        $output .= $this->get('notices');
+        $output .= $this->get('content');
+
+        return $output;
     }
 }

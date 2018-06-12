@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
 use tiFy\Partial\Partial;
+use tiFy\Partial\TemplateController;
 
 abstract class AbstractPartialController extends AppController
 {
@@ -128,6 +129,42 @@ abstract class AbstractPartialController extends AppController
             $this->attributes,
             $attrs
         );
+
+        $this->parseTemplates($attrs);
+    }
+
+    /**
+     * Traitement des l'attributs de configuration du controleur de templates.
+     *
+     * @param array $attrs Liste des attributs de configuration personnalisés.
+     *
+     * @return array
+     */
+    protected function parseTemplates($attrs = [])
+    {
+        $this->set(
+            'templates',
+            array_merge(
+                [
+                    'basedir'    => get_template_directory() . '/templates/presstify/partial/' . $this->appLowerName(),
+                    'controller' => TemplateController::class,
+                    'args'       => []
+                ],
+                Arr::get($attrs, 'templates', [])
+            )
+        );
+        $this->set(
+            'templates.args',
+            array_merge(
+                [
+                    'id'    => $this->id,
+                    'index' => $this->index
+                ],
+                $this->get('templates.args', [])
+            )
+        );
+
+        $this->appTemplates($this->get('templates'));
     }
 
     /**
@@ -250,7 +287,10 @@ abstract class AbstractPartialController extends AppController
      *
      * @return string
      */
-    abstract protected function display();
+    protected function display()
+    {
+        return $this->appTemplateRender($this->appLowerName(), $this->all());
+    }
 
     /**
      * Récupération de l'affichage du controleur depuis l'instance.

@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    $('.tiFyField-NumberJs').each(function() {
+    $('[aria-control="number_js"]').each(function() {
         var options = JSON.parse(
             decodeURIComponent($(this).data('options'))
         );
