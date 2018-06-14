@@ -72,6 +72,7 @@ class WpQueryPart
         // Page de contenu de type page
         elseif (is_page()) :
             $this->Parts[] = $this->linkRoot();
+            $this->getAncestorsPartList();
             $this->Parts[] = $this->currentPost();
 
         // Page liste de contenus associés à une catégorie
