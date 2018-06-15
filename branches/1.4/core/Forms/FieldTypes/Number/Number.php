@@ -69,6 +69,8 @@ class Number extends \tiFy\Core\Forms\FieldTypes\Factory
         $output .= " name=\"" . esc_attr($this->field()->getDisplayName()) . "\"";
         /// Value
         $output .= " value=\"" . esc_attr($this->field()->getValue()) . "\"";
+        /// Placeholder
+        $output .= " placeholder=\"" . esc_attr($this->getInputPlaceholder()) . "\"";
         /// Attributs
         $output .= $this->getInputHtmlAttrs();
         /// TabIndex
