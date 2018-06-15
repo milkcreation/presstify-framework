@@ -50,17 +50,4 @@ class Password extends AbstractFieldController
 
         $this->setAttr('type', 'password');
     }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-?><?php $this->before(); ?><input <?php $this->attrs(); ?>/><?php $this->after(); ?><?php
-
-        return ob_get_clean();
-    }
 }

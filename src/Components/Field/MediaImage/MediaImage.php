@@ -148,8 +148,6 @@ class MediaImage extends AbstractFieldController
             return;
         endif;
 
-
-
         return $this->appTemplateRender(
             'media-image',
             [
@@ -165,16 +163,5 @@ class MediaImage extends AbstractFieldController
                 'content'         => $this->get('content')
             ]
         );
-
-
-        // Calcul du ratio
-
-        /*$this->appAddAction(
-            'admin_print_footer_scripts',
-            function() use ($id, $ratio) {
-                echo "<style type=\"text/css\">#{$id}:before{padding-top:{$ratio}%;}</style>";
-            }
-        );
-        */
     }
 }

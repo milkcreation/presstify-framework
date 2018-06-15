@@ -408,7 +408,7 @@ class SelectJs extends AbstractFieldController
 
         $args = \wp_unslash($this->appRequest('POST')->all());
 
-        $this->parseTemplates($args);
+        $this->parseTemplates(Arr::get($args, 'templates', []));
 
         $query_items_cb = Arr::get($args, 'controller.query_items', '');
         $items = is_callable((string)$query_items_cb)

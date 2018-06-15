@@ -39,6 +39,7 @@ use tiFy\Components\Partial\Tag\Tag;
  * @method static Notice Notice(string $id = null,array $attrs = [])
  * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
  * @method static SlickCarousel SlickCarousel(string $id = null,array $attrs = [])
+ * @method static Spinner Spinner(string $id = null,array $attrs = [])
  * @method static Table Table(string $id = null,array $attrs = [])
  * @method static Tag Tag(string $id = null,array $attrs = [])
  */

@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-06-12",
+  "time": "2018-06-15",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -100,9 +100,9 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "config": {
+    "optimize-autoloader": true,
     "preferred-install": "dist",
-    "sort-packages": true,
-    "optimize-autoloader": true
+    "sort-packages": true
   },
   "scripts": {
     "post-install-cmd": [
