@@ -52,7 +52,7 @@ class Select extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        if ($this->attributes['multiple']) :
+        if ($this->get('multiple')) :
             array_push($this->attributes['attrs'], 'multiple');
         endif;
     }

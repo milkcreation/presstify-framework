@@ -15,15 +15,18 @@
 
 namespace tiFy\Route;
 
+use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use InvalidArgumentException;
 use League\Route\RouteCollection;
 use League\Route\Http\Exception\NotFoundException;
 use League\Route\Http\Exception\MethodNotAllowedException;
+use League\Route\Strategy\ApplicationStrategy;
+use League\Route\Strategy\JsonStrategy;
+use League\Route\Strategy\StrategyInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use tiFy\Apps\AppController;
 use tiFy\tiFy;
 use tiFy\Route\View;
@@ -92,9 +95,7 @@ final class Route extends AppController
     {
         // Définition du traitement de la réponse
         $this->appServiceShare('tfy.route.response', function () {
-            $response = new Response();
-
-            return (new DiactorosFactory())->createResponse($response);
+            return (new DiactorosFactory())->createResponse(new Response());
         });
 
         // Définition du traitement de la requête
@@ -206,6 +207,7 @@ final class Route extends AppController
          * @var string $group
          * @var string $path
          * @var string $cb
+         * @var string|object $strategy
          */
         extract($this->map[$name]);
 
@@ -218,6 +220,28 @@ final class Route extends AppController
         $scheme = $this->appRequest()->getScheme();
         $host = $this->appRequest()->getHost();
 
+        $strategy = $strategy ? : new ApplicationStrategy();
+        switch($strategy) :
+            case 'app' :
+            case 'html' :
+                $strategy = new ApplicationStrategy();
+                break;
+            case 'json' :
+                $strategy = new JsonStrategy();
+                break;
+        endswitch;
+        if (!$strategy instanceof StrategyInterface) :
+            \wp_die(
+                sprintf(
+                    __('La stratégie de sortie de la route %s devrait être une instance de %s', 'tify'),
+                    $name,
+                    StrategyInterface::class
+                ),
+                __('tiFy\Route\Route: Stratégie invalide', 'tify'),
+                500
+            );
+        endif;
+
         return $this->appServiceGet('tfy.route.collection')->map(
             $method,
             $path,
@@ -225,7 +249,8 @@ final class Route extends AppController
         )
             ->setName($name)
             ->setScheme($scheme)
-            ->setHost($host);
+            ->setHost($host)
+            ->setStrategy($strategy);
     }
 
     /**
