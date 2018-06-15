@@ -130,14 +130,33 @@ abstract class AbstractPartialController extends AppController
             $attrs
         );
 
-        $this->parseTemplates($attrs);
+        $this->parseClass();
+        $this->parseTemplates();
+    }
+
+    /**
+     * Traitement de l'attribut de configuration de l'attribut HTML "class".
+     *
+     * @return void
+     */
+    protected function parseClass()
+    {
+        $this->set(
+            'attrs.class',
+            sprintf($this->get('attrs.class', '%s'), "tiFyPartial-{$this->appShortname()}")
+        );
     }
 
     /**
      * Traitement des l'attributs de configuration du controleur de templates.
      *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
+     * @param array $attrs {
+     *      Liste des attributs de template personnalisés.
      *
+     *      @var string $basedir Répertoire de stockage des templates.
+     *      @var string|callable Classe de rappel du controleur de template.
+     *      @var array $args Liste des variables d'environnement passée en argument.
+     * }
      * @return array
      */
     protected function parseTemplates($attrs = [])
@@ -150,7 +169,7 @@ abstract class AbstractPartialController extends AppController
                     'controller' => TemplateController::class,
                     'args'       => []
                 ],
-                Arr::get($attrs, 'templates', [])
+                $attrs
             )
         );
         $this->set(

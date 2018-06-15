@@ -409,7 +409,7 @@ abstract class AbstractFieldController extends AppController
         $this->parseValue();
         $this->parseId();
         $this->parseClass();
-        $this->parseTemplates($attrs);
+        $this->parseTemplates();
         $this->parseOptions($attrs);
     }
 
@@ -540,8 +540,13 @@ abstract class AbstractFieldController extends AppController
     /**
      * Traitement des l'attributs de configuration du controleur de templates.
      *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
+     * @param array $attrs {
+     *      Liste des attributs de template personnalisés.
      *
+     *      @var string $basedir Répertoire de stockage des templates.
+     *      @var string|callable Classe de rappel du controleur de template.
+     *      @var array $args Liste des variables d'environnement passée en argument.
+     * }
      * @return array
      */
     protected function parseTemplates($attrs = [])
@@ -554,7 +559,7 @@ abstract class AbstractFieldController extends AppController
                     'controller' => TemplateController::class,
                     'args'       => []
                 ],
-                Arr::get($attrs, 'templates', [])
+                $attrs
             )
         );
         $this->set(

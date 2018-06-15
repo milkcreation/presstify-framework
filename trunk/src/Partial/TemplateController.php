@@ -25,6 +25,36 @@ class TemplateController extends TemplateBaseController
     }
 
     /**
+     * Affichage du contenu placé après le champ.
+     *
+     * @return void
+     */
+    public function after()
+    {
+        echo $this->get('after', '');
+    }
+
+    /**
+     * Affichage des attributs HTML linéarisé.
+     *
+     * @return void
+     */
+    public function attrs()
+    {
+        echo $this->htmlAttrs($this->get('attrs', []));
+    }
+
+    /**
+     * Affichage du contenu placé avant le champ.
+     *
+     * @return void
+     */
+    public function before()
+    {
+        echo $this->get('before', '');
+    }
+
+    /**
      * Récupération de l'identifiant de qualification du controleur.
      *
      * @return string

@@ -58,17 +58,4 @@ class Radio extends AbstractFieldController
             $this->setAttr('checked', 'checked');
         endif;
     }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-?><?php $this->before(); ?><input <?php $this->attrs(); ?>/><?php $this->after(); ?><?php
-
-        return ob_get_clean();
-    }
 }

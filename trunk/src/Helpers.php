@@ -670,6 +670,30 @@ function tify_partial_slick_carousel($attrs = [], $echo = true)
     endif;
 }
 
+if (!function_exists('tify_partial_spinner')) :
+    /**
+     * Indicateur de chargement
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     *
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_spinner($attrs = [], $echo = true)
+    {
+        $output = (string)Partial::Spinner($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
 /**
  * Tableau basé sur des div.
  *
