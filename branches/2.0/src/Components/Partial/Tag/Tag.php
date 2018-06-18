@@ -10,6 +10,8 @@ class Tag extends AbstractPartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
+     *      @var string $before Contenu placé avant le controleur d'affichage.
+     *      @var string $after Contenu placé après le controleur d'affichage.
      *      @var string $tag Balise HTML div|span|a|... défaut div.
      *      @var array $attrs Liste des attributs de balise HTML.
      *      @var string|callable $content Contenu de la balise HTML.
@@ -19,7 +21,7 @@ class Tag extends AbstractPartialController
     protected $attributes = [
         'tag'       => 'div',
         'attrs'     => [],
-        'content'   => 'lorem ipsum dolor sit amet',
+        'content'   => '',
         'singleton' => false
     ];
 

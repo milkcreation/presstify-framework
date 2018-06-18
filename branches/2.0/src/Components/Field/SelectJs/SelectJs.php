@@ -1,18 +1,5 @@
 <?php
 
-/**
- * @name SelectJs
- * @desc Liste de selection enrichie
- * @package presstiFy
- * @namespace tiFy\Components\Field\SelectJs
- * @version 1.1
- * @subpackage Core
- * @since 1.2.535
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Components\Field\SelectJs;
 
 use Illuminate\Support\Arr;
@@ -25,11 +12,9 @@ class SelectJs extends AbstractFieldController
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attrs {
+     * @var array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var string $container_id Id HTML du conteneur du champ.
-     *      @var string $container_class Classe HTML du conteneur du champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value".
      *      @var array $options Liste des choix de selection disponibles.

@@ -24,6 +24,7 @@ use tiFy\Components\Field\DatetimeJs\DatetimeJs;
 use tiFy\Components\Field\File\File;
 use tiFy\Components\Field\Hidden\Hidden;
 use tiFy\Components\Field\Label\Label;
+use tiFy\Components\Field\MediaFile\MediaFile;
 use tiFy\Components\Field\MediaImage\MediaImage;
 use tiFy\Components\Field\Number\Number;
 use tiFy\Components\Field\NumberJs\NumberJs;
@@ -49,6 +50,7 @@ use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
  * @method static File(string $id = null, array $attrs = [])
  * @method static Hidden(string $id = null, array $attrs = [])
  * @method static Label(string $id = null, array $attrs = [])
+ * @method static MediaFile(string $id = null, array $attrs = [])
  * @method static MediaImage(string $id = null, array $attrs = [])
  * @method static Number(string $id = null, array $attrs = [])
  * @method static NumberJs(string $id = null, array $attrs = [])
