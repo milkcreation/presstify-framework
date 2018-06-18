@@ -1,8 +1,10 @@
 <?php
 /**
- * @var \tiFy\Kernel\Templates\Template $this Controleur de template.
+ * @var \tiFy\Field\TemplateController $this
  */
 ?>
+
+<?php $this->before(); ?>
 
 <div <?php echo $this->htmlAttrs($this->get('container.attrs', []));?>>
     <ul class="tiFyField-RepeaterItems" aria-control="items">
@@ -23,3 +25,5 @@
 
     <?php $this->partial('button', $this->all()); ?>
 </div>
+
+<?php $this->after(); ?>

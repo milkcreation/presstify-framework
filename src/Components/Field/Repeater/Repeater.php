@@ -138,16 +138,6 @@ class Repeater extends AbstractFieldController
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        return $this->appTemplateRender('repeater', $this->all());
-    }
-
-    /**
      * Génération d'un indice aléatoire
      *
      * @param

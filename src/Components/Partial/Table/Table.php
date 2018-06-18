@@ -9,7 +9,13 @@ class Table extends AbstractPartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *
+     *      @var string $before Contenu placé avant le controleur d'affichage.
+     *      @var string $after Contenu placé après le controleur d'affichage.
+     *      @var bool $header Activation de l'entête de table.
+     *      @var bool $footer Activation du pied de table.
+     *      @var string[] $columns Intitulé des colonnes.
+     *      @var array[] $datas Données de la table.
+     *      @var string $none Intitulé de la table lorsque la table ne contient aucune donnée.
      * }
      */
     protected $attributes = [
@@ -63,49 +69,10 @@ class Table extends AbstractPartialController
      */
     public function parse($attrs = [])
     {
-        $this->attributes['none'] = __('Aucun élément à afficher dans le tableau', 'tify');
+        $this->set('none', __('Aucun élément à afficher dans le tableau', 'tify'));
 
         parent::parse($attrs);
-    }
 
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    public function display()
-    {
-        /**
-         * @var array $columns
-         * @var array $datas
-         */
-        extract($this->attributes);
-
-        $count = count($columns);
-        $num = 0;
-
-        $header = $header
-            ? $this->appTemplateRender(
-                    'header',
-                    compact('datas', 'columns', 'count', 'num')
-                )
-            : '';
-
-        $footer = $footer
-            ? $this->appTemplateRender(
-                'footer',
-                compact('datas', 'columns', 'count', 'num')
-            )
-            : '';
-
-        $body = $this->appTemplateRender(
-            'body',
-            compact('datas', 'columns', 'count', 'num', 'none')
-        );
-
-        return $this->appTemplateRender(
-                'table',
-                compact('header', 'footer', 'body', 'datas', 'columns', 'count', 'num', 'none')
-        );
+        $this->set('count', count($columns));
     }
 }
