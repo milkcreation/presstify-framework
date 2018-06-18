@@ -170,6 +170,52 @@ if (!function_exists('tify_field_label')) :
     }
 endif;
 
+if (!function_exists('tify_field_media_file')) :
+    /**
+     * Fichier de la médiathèque.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_field_media_file($attrs = [], $echo = true)
+    {
+        $output = (string)Field::MediaFile($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
+if (!function_exists('tify_field_media_image')) :
+    /**
+     * Image de la médiathèque.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_field_media_image($attrs = [], $echo = true)
+    {
+        $output = (string)Field::MediaImage($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
 if (!function_exists('tify_field_number')) :
     /**
      * Nombre.

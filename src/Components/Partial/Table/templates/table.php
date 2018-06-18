@@ -1,19 +1,17 @@
 <?php
 /**
- * @var string $header
- * @var string $footer
- * @var string $body
- * @var array $datas
- * @var array $columns
- * @var int count
- * @var int num
- * @var string none
+ * @var \tiFy\Partial\TemplateController $this
  */
 ?>
+
+<?php $this->before(); ?>
+
 <div class="tiFyPartial-Table">
-    <?php echo $header; ?>
+    <?php if ($this->get('header')) $this->partial('header', $this->all()); ?>
 
-    <?php echo $body; ?>
+    <?php $this->partial('body', $this->all()); ?>
 
-    <?php echo $footer; ?>
+    <?php if ($this->get('footer')) $this->partial('footer', $this->all()); ?>
 </div>
+
+<?php $this->after(); ?>

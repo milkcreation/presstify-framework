@@ -1,8 +1,11 @@
 <?php
+/**
+ * @var \tiFy\Partial\TemplateController $this
+ */
 ?>
 
 <div class="tiFyPartial-TableBody">
-<?php if ($datas) : ?>
+<?php if ($datas = $this->get('datas', [])) : ?>
     <?php foreach ($datas as $row => $dr) : ?>
     <div class="tiFyPartial-TableBodyTr tiFyPartial-TableBodyTr--<?php echo $row; ?> tiFyPartial-TableTr tiFyPartial-TableTr-<?php echo ($num++ % 2 === 0) ? 'even' : 'odd'; ?>">
         <?php foreach ($columns as $name => $label) : ?>
