@@ -54,13 +54,13 @@ class ScrollPaginate extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-scroll_paginate',
-            self::tFyAppAssetsUrl('ScrollPaginate.css', get_class()),
+            $this->appAbsUrl() . '/assets/ScrollPaginate/css/styles.css',
             [],
             171204
         );
         \wp_register_script(
             'tify_control-scroll_paginate',
-            self::tFyAppAssetsUrl('ScrollPaginate.js', get_class()),
+            $this->appAbsUrl() . '/assets/ScrollPaginate/js/scripts.js',
             ['jquery'],
             171204,
             true
@@ -141,7 +141,8 @@ class ScrollPaginate extends \tiFy\Core\Control\Factory
             'before_item'       => '<li>',
             'after_item'        => '</li>',
             'query_items_cb'    => get_called_class() . "::queryItems",
-            'item_display_cb'   => get_called_class() . "::itemDisplay"
+            'item_display_cb'   => get_called_class() . "::itemDisplay",
+            'in_footer'         => true
         ];
         $attrs = \wp_parse_args($attrs, $defaults);
 
@@ -169,24 +170,9 @@ class ScrollPaginate extends \tiFy\Core\Control\Factory
         $output .= "<a href=\"#{$container_id}\"";
         $output .= " id=\"{$container_id}\"";
         $output .= " class=\"tiFyCoreControl-ScrollPaginate" . ($attrs['container_class'] ? " {$attrs['container_class']}" : "") . "\"";
-        $output .= " data-options=\"" . rawurlencode(json_encode(compact(array_keys($defaults)))) . "\">";
+        $output .= " data-options=\"" . rawurlencode(json_encode(compact(array_keys($attrs)))) . "\" aria-control=\"scroll_paginate\">";
         $output .= $text;
         $output .= "</a>";
-
-        // Mise en file du script dynamique
-        \add_action(
-            (is_admin() ? 'admin_footer' : 'wp_footer'),
-            function () use ($attrs)
-            {
-            ?><script type="text/javascript">/* <![CDATA[ */
-                jQuery(document).ready(function ($) {
-                    var handler = '#<?php echo $attrs['container_id']; ?>', target = '<?php echo $attrs['target'];?>';
-                    tify_scroll_paginate(handler, target);
-                });
-                /* ]]> */</script><?php
-            },
-            99
-        );
 
         echo $output;
     }
