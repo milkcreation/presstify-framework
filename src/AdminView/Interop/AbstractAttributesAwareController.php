@@ -10,9 +10,9 @@ abstract class AbstractAttributesAwareController extends AppController implement
 {
     /**
      * Classe de rappel du controleur de l'interface d'administration associée.
-     * @var AdminViewControllerInterface
+     * @var AdminViewInterface
      */
-    protected $admin_view;
+    protected $app;
 
     /**
      * Liste des paramètres.
@@ -24,15 +24,20 @@ abstract class AbstractAttributesAwareController extends AppController implement
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des paramètres personnalisés.
-     * @param AdminViewControllerInterface $admin_view  Classe de rappel du controleur de l'interface d'administration associée.
+     * @param AdminViewInterface $app  Classe de rappel du controleur de l'interface d'administration associée.
      *
      * @return void
      */
-    public function __construct($attrs = [], $admin_view)
+    public function __construct($attrs = [], $app)
     {
         parent::__construct();
 
-        $this->admin_view = $admin_view;
+        $this->app = $app;
+
+        $attrs = array_merge(
+            $this->defaults(),
+            $attrs
+        );
 
         $this->parse($attrs);
     }
@@ -43,6 +48,14 @@ abstract class AbstractAttributesAwareController extends AppController implement
     public function all()
     {
         return $this->attributes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [];
     }
 
     /**

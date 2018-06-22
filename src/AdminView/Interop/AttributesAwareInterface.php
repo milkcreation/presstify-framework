@@ -12,6 +12,13 @@ interface AttributesAwareInterface
     public function all();
 
     /**
+     * Définition de la liste des attributs par défaut.
+     *
+     * @return array
+     */
+    public function defaults();
+
+    /**
      * Récupération d'un attribut.
      *
      * @param array $key Clé d'indexe de l'attribut. Syntaxe à point permise.
