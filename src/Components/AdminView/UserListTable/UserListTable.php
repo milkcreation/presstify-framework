@@ -1,4 +1,5 @@
 <?php
+
 namespace tiFy\Core\Ui\Admin\Templates\UserListTable;
 
 class UserListTable extends \tiFy\Core\Ui\Admin\Templates\ListTable\ListTable

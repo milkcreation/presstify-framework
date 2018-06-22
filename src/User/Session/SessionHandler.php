@@ -243,7 +243,7 @@ class SessionHandler
      */
     public function getCookie()
     {
-        if (!$cookie = $this->appRequestGet($this->getCookieName(), '', 'COOKIE')) :
+        if (!$cookie = $this->appRequest('COOKIE')->get($this->getCookieName(), '')) :
             return false;
         endif;
 

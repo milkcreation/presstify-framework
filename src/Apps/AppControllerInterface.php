@@ -165,43 +165,6 @@ interface AppControllerInterface
     public function appRequest($property = '');
 
     /**
-     * Vérification d'existance d'une variable de requête globale
-     * @deprecated
-     *
-     * @param string $key Identifiant de qualification de l'argument de requête
-     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
-     *
-     *
-     * @throws LogicException
-     * @throws ReflectionException
-     * @return mixed
-     */
-    public function appRequestHas($key, $type = '');
-
-    /**
-     * Récupération d'une variable de requête globale
-     * @deprecated
-     *
-     * @param string $key Identifiant de qualification de l'argument de requête
-     * @param mixed $default Valeur de retour par défaut
-     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
-     *
-     * @return mixed
-     */
-    public function appRequestGet($key, $default = '', $type = '');
-
-    /**
-     * Définition d'une variable de requête globale
-     * @deprecated
-     *
-     * @param array $parameters Liste des paramètres. Tableau associatif
-     * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
-     *
-     * @return mixed
-     */
-    public function appRequestAdd($parameters = [], $type = '');
-
-    /**
      * {@inheritdoc}
      */
     public function appServiceAdd($alias, $concrete = null, $share = false);

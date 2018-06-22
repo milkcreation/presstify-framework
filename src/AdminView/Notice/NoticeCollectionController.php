@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\AdminView;
+namespace tiFy\AdminView\Notice;
 
 use tiFy\AdminView\Interop\AbstractAttributesAwareController;
 
-class AdminViewNoticesController extends AbstractAttributesAwareController implements AdminViewNoticesControllerInterface
+class NoticeCollectionController extends AbstractAttributesAwareController implements NoticeCollectionInterface
 {
     /**
      * Initialisation du controleur.

@@ -9,22 +9,6 @@ use tiFy\Kernel\Templates\TemplateBaseController;
 class TemplateController extends TemplateBaseController
 {
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param Engine $engine
-     * @param string $name
-     * @param array $args Liste des variables passées en argument
-     *
-     * @return void
-     */
-    public function __construct(Engine $engine, $name, $args = [])
-    {
-        $this->args = $args;
-
-        parent::__construct($engine, $name, $args);
-    }
-
-    /**
      * Affichage du contenu placé après le champ.
      *
      * @return void

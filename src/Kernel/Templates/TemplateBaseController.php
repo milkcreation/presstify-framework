@@ -33,6 +33,8 @@ class TemplateBaseController extends LeagueTemplate
      */
     public function __construct(Templates $engine, $name, $args = [])
     {
+        $this->args = $args;
+
         parent::__construct($engine, $name);
     }
 

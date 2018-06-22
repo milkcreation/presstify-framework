@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\AdminView;
+namespace tiFy\AdminView\AdminMenu;
 
 use tiFy\AdminView\Interop\AbstractAttributesAwareController;
 
-class AdminViewMenuController extends AbstractAttributesAwareController implements AdminViewMenuControllerInterface
+class AdminMenuController extends AbstractAttributesAwareController implements AdminMenuInterface
 {
     /**
      * Initialisation du controleur.
@@ -48,8 +48,8 @@ class AdminViewMenuController extends AbstractAttributesAwareController implemen
             );
         endif;
 
-        $this->admin_view->set('hookname', $hookname);
-        $this->admin_view->set('page_url', \menu_page_url($attrs['menu_slug'], false));
+        $this->app->set('hookname', $hookname);
+        $this->app->set('page_url', \menu_page_url($attrs['menu_slug'], false));
     }
 
 }

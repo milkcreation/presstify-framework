@@ -125,7 +125,7 @@ trait AppTrait
      */
     public function appEvent()
     {
-        return tiFy::instance()->emitter();
+        return tiFy::instance()->event();
     }
 
     /**
@@ -249,30 +249,6 @@ trait AppTrait
     public function appRequest($property = '')
     {
         return tiFy::instance()->request($property);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appRequestHas($key, $type = '')
-    {
-        return tiFy::instance()->requestCall('has', compact('key'), $type);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appRequestGet($key, $default = '', $type = '')
-    {
-        return tiFy::instance()->requestCall('get', compact('key', 'default'), $type);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appRequestAdd($parameters = [], $type = '')
-    {
-        return tiFy::instance()->requestCall('add', compact('parameters'), $type);
     }
 
     /**
