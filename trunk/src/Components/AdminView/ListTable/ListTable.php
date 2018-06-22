@@ -3,13 +3,29 @@
 namespace tiFy\Components\AdminView\ListTable;
 
 use tiFy\AdminView\AdminViewBaseController;
-use tiFy\AdminView\AdminViewMenuController;
-use tiFy\AdminView\Traits\WpListTableTrait;
-use tiFy\Components\AdminView\ListTable\ListTableParams;
+use tiFy\Components\AdminView\ListTable\BulkAction\BulkActionCollectionController;
+use tiFy\Components\AdminView\ListTable\Column\ColumnCollectionController;
+use tiFy\Components\AdminView\ListTable\Column\ColumnCollectionInterface;
+use tiFy\Components\AdminView\ListTable\Filter\FilterCollectionController;
+use tiFy\Components\AdminView\ListTable\Item\ItemCollectionController;
+use tiFy\Components\AdminView\ListTable\Item\ItemCollectionInterface;
+use tiFy\Components\AdminView\ListTable\Item\ItemInterface;
+use tiFy\Components\AdminView\ListTable\Param\ParamCollectionController;
+use tiFy\Components\AdminView\ListTable\RowAction\RowActionCollectionController;
 
 class ListTable extends AdminViewBaseController
 {
-    use ParamsTrait, RowActionsTrait, ViewsTrait, WpListTableTrait;
+    use WpListTableTrait;
+
+    /**
+     * Liste des classes de rappel des services.
+     * @var array
+     */
+    protected $providers = [
+        'params'    => ParamCollectionController::class,
+        'columns'   => ColumnCollectionController::class,
+        'items'     => ItemCollectionController::class
+    ];
 
     /**
      * Mise en file des scripts de l'interface d'administration.
@@ -18,7 +34,7 @@ class ListTable extends AdminViewBaseController
      */
     public function admin_enqueue_scripts()
     {
-        if ($preview_item_mode = $this->params()->get('preview_item_mode')) :
+        if ($preview_item_mode = $this->param('preview_item_mode')) :
             wp_enqueue_script(
                 'tiFyAdminView-ListTable',
                 $this->appAsset('/AdminView/ListTable/js/scripts.js'),
@@ -33,7 +49,7 @@ class ListTable extends AdminViewBaseController
                     'action'          => $this->getName() . '_preview_item',
                     'mode'            => $preview_item_mode,
                     'nonce_action'    => '_wpnonce',
-                    'item_index_name' => $this->params()->get('item_index_name'),
+                    'item_index_name' => $this->param('item_index_name'),
                 ]
             );
 
@@ -51,10 +67,14 @@ class ListTable extends AdminViewBaseController
      */
     public function boot()
     {
-        $this->init();
-        
-        $this->menu = new AdminViewMenuController($this->get('admin_menu', []), $this);
-        $this->params = new ListTableParams($this->get('params', []), $this);
+        parent::boot();
+
+        if ($columns = $this->getConcrete('columns')) :
+            $this->appServiceAdd(
+                ColumnCollectionInterface::class,
+                new $columns($this->param('columns', []), $this)
+            );
+        endif;
 
         $this->appAddAction(
             "wp_ajax_{$this->getName()}_preview_item",
@@ -63,70 +83,25 @@ class ListTable extends AdminViewBaseController
     }
 
     /**
-     * Contenu de la colonne - Case à cocher
-     * @see \WP_List_Table::column_cb()
+     * Récupération du controleur de gestion des colonnes.
      *
-     * @param object $item Attributs de l'élément courant
+     * @return ColumnCollectionInterface
+     */
+    public function columns()
+    {
+        return $this->appServiceGet(ColumnCollectionInterface::class);
+    }
+
+    /**
+     * Contenu de la colonne - Case à cocher
+     *
+     * @param ItemInterface $item Attributs de l'élément courant.
      *
      * @return string
      */
     public function column_cb($item)
     {
         return (($db = $this->getDb()) && ($primary = $db->getPrimary()) && isset($item->{$primary})) ? sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />', $primary, $item->{$primary}) : parent::column_cb($item);
-    }
-
-    /**
-     * Contenu par défaut des colonnes
-     * @see \WP_List_Table::column_default()
-     *
-     * @param object $item Attributs de l'élément courant
-     * @param string $column_name Identifiant de qualification de la colonne courante
-     *
-     * @return string
-     */
-    public function column_default($item, $column_name)
-    {
-        $custom_columns_content = apply_filters_ref_array("manage_" . $this->getName() . "_custom_column", [null, $column_name, $item]);
-        if (!is_null($custom_columns_content)) :
-            return $custom_columns_content;
-        endif;
-
-        // Bypass
-        if (!isset($item->{$column_name})) :
-            return;
-        endif;
-
-        // Définition du type de données de la valeur de la colonne
-        $type = (($db = $this->getDb()) && $db->existsCol($column_name)) ? strtoupper($db->getColAttr($column_name, 'type') ) : '';
-
-        switch($type) :
-            default:
-                if(is_array($item->{$column_name})) :
-                    return join(', ', $item->{$column_name});
-                else :
-                    return $item->{$column_name};
-                endif;
-                break;
-            case 'DATETIME' :
-                return \mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $item->{$column_name});
-                break;
-        endswitch;
-    }
-
-    /**
-     * Récupération d'élément courant à traiter.
-     *
-     * @return null|array Identifiant de qualification ou Tableau indexé de la liste des identifiants de qualification
-     */
-    public function current_item_index()
-    {
-        if ($item_indexes = $this->getRequestItemIndex()) :
-            if (!is_array($item_indexes)) :
-                return array_map('trim', explode(',', $item_indexes));
-            else :
-                return $item_indexes;
-            endif;
-        endif;
     }
 
     /**
@@ -141,21 +116,378 @@ class ListTable extends AdminViewBaseController
         // Initialisation de l'émulation de la classe de table native de Wordpress
         $this->_wp_list_table_init(
             [
-                'plural'   => $this->params()->get('plural'),
-                'singular' => $this->params()->get('singular'),
-                'ajax'     => $this->params()->get('ajax'),
+                'plural'   => $this->param('plural'),
+                'singular' => $this->param('singular'),
+                'ajax'     => $this->param('ajax'),
                 'screen'   => $this->getScreen()
             ]
         );
 
         // Activation de l'interface de gestion du nombre d'éléments par page
-        $this->getScreen()->add_option('per_page', ['option' => $this->params()->get('per_page_option_name')]);
+        $this->getScreen()->add_option('per_page', ['option' => $this->param('per_page_option_name')]);
 
         // Exécution des actions
         $this->process_actions();
 
         // Préparation de la liste des éléments à afficher
         $this->prepare_items();
+    }
+
+    /**
+     * Affichage du selecteur d'action groupées.
+     *
+     * @param string $which Choix de l'interface de navigation. top|bottom.
+     *
+     * @return void
+     */
+    protected function displayBulkActions($which = '')
+    {
+        echo new BulkActionCollectionController($this->param('bulk_actions', []), $which, $this);
+    }
+
+    /**
+     * Affichage du corps de la table.
+     *
+     * @return void
+     */
+    public function displayBody()
+    {
+        /*if ($this->items()->has()) :
+            $this->displayRows();
+        else : */
+            echo '<tr class="no-items"><td class="colspanchange" colspan="' . $this->get_column_count() . '">';
+            $this->displayNoItems();
+            echo '</td></tr>';
+        //endif;
+    }
+
+    /**
+     * Affichage de la liste des filtres.
+     *
+     * @return void
+     */
+    protected function displayFilters()
+    {
+        if (!$filters = $this->getFilters()) :
+            return;
+        endif;
+
+        $this->getScreen()->render_screen_reader_content('heading_views');
+
+        echo "<ul class='subsubsub'>\n";
+        foreach ($filters as $class => $filter) :
+            $filters[$class] = "\t<li class='$class'>$filter";
+        endforeach;
+        echo implode( " |</li>\n", $filters ) . "</li>\n";
+        echo "</ul>";
+    }
+
+    /**
+     * Affichage du message indiquant que la liste des éléments est vide.
+     *
+     * @return void
+     */
+    public function displayNoItems()
+    {
+        echo $this->param('no_items', __('No items found.'));
+    }
+
+    /**
+     * Affichage de la liste des lignes de la table.
+     *
+     * @return void
+     */
+    public function displayRows()
+    {
+        foreach ($this->items() as $item) :
+            $this->displaySingleRow($item);
+        endforeach;
+    }
+
+    /**
+     * Affichage d'une ligne de la table.
+     *
+     * @param ItemInterface $item Liste des données de l'élément courant.
+     *
+     * @return void
+     */
+    public function displaySingleRow($item)
+    {
+        echo '<tr>';
+        $this->displaySingleRowColumns($item);
+        echo '</tr>';
+    }
+
+    /**
+     * Affichage de la liste des colonnes d'un ligne de la table.
+     *
+     * @param ItemInterface $item Liste des données de l'élément courant.
+     *
+     * @return void
+     */
+    protected function displaySingleRowColumns($item)
+    {
+        list($columns, $hidden, $sortable, $primary) = $this->getColumnInfos();
+
+        foreach ($columns as $column_name => $column_display_name) :
+            $classes = "$column_name column-$column_name";
+            $classes .= ($primary === $column_name ) ? ' has-row-actions column-primary' : '';
+            $classes .= in_array($column_name, $hidden) ? ' hidden' : '';
+
+            $data = 'data-colname="' . wp_strip_all_tags($column_display_name) . '"';
+
+            $attributes = "class=\"{$classes}\" {$data}";
+
+            if ('cb' === $column_name) :
+                echo '<th scope="row" class="check-column">';
+                echo $this->column_cb( $item );
+                echo '</th>';
+            else :
+                echo "<td $attributes>";
+                echo $this->getColumnDisplay($column_name, $item);
+                echo $this->getRowActions($item, $column_name, $primary);
+                echo "</td>";
+            endif;
+        endforeach;
+    }
+
+    /**
+     * Affichage de la table.
+     *
+     * @return void
+     */
+    protected function displayTable()
+    {
+        $singular = $this->_args['singular'];
+
+        $this->displayTablenav('top');
+
+        $this->getScreen()->render_screen_reader_content('heading_list');
+        ?>
+        <table class="wp-list-table <?php echo implode(' ', $this->getTableClasses()); ?>">
+            <thead>
+                <tr>
+                    <?php $this->print_column_headers(); ?>
+                </tr>
+            </thead>
+
+            <tbody id="the-list"<?php echo $singular ? " data-wp-lists=\"list:{$singular}\"" : ''; ?>>
+                <?php $this->displayBody(); ?>
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <?php $this->print_column_headers( false ); ?>
+                </tr>
+            </tfoot>
+
+        </table>
+        <?php
+        $this->displayTablenav('bottom');
+    }
+
+    /**
+     * Affichage des l'interface de navigation de la table.
+     *
+     * @param string $which Choix de l'interface de navigation. top|bottom.
+     *
+     * @return void
+     */
+    protected function displayTablenav($which)
+    {
+        if ('top' === $which) :
+            wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+        endif;
+        ?>
+        <div class="tablenav <?php echo esc_attr( $which ); ?>">
+
+            <?php if ($this->has_items()): ?>
+                <div class="alignleft actions bulkactions">
+                    <?php $this->displayBulkActions($which); ?>
+                </div>
+            <?php endif;
+            $this->displayTablenavExtra($which);
+            $this->pagination( $which );
+            ?>
+
+            <br class="clear" />
+        </div>
+        <?php
+    }
+
+    /**
+     * Affichage des l'interface de navigation complémentaire de la table.
+     *
+     * @param string $which Choix de l'interface de navigation. top|bottom.
+     *
+     * @return void
+     */
+    protected function displayTablenavExtra($which)
+    {
+
+    }
+
+    /**
+     * Return number of visible columns
+     *
+     * @since 3.1.0
+     *
+     * @return int
+     */
+    public function get_column_count() {
+        list ( $columns, $hidden ) = $this->getColumnInfos();
+        $hidden = array_intersect( array_keys( $columns ), array_filter( $hidden ) );
+        return count( $columns ) - count( $hidden );
+    }
+
+    /**
+     * Récupération de l'affichage d'une colonne.
+     *
+     * @param string $name Nom de qualification de la colonne.
+     * @param ItemInterface $item Données de l'élément courant à afficher.
+     *
+     * @return string
+     */
+    protected function getColumnDisplay($name, $item)
+    {
+        return $this->columns()->get($name)->display($item);
+    }
+
+    /**
+     * Récupération des information complètes concernant les colonnes
+     *
+     * @return array
+     */
+    protected function getColumnInfos()
+    {
+        return $this->columns()->getInfos();
+    }
+
+    /**
+     * Récupération de la liste des colonnes.
+     *
+     * @return array
+     */
+    protected function getColumns()
+    {
+        return $this->columns()->getList();
+    }
+
+    /**
+     * Récupération de la liste des filtres.
+     *
+     * @return array
+     */
+    protected function getFilters()
+    {
+        return (new FilterCollectionController($this->param('views'), $this))->all();
+    }
+
+    /**
+     * Récupération de la liste des colonnes masquées.
+     *
+     * @return array
+     */
+    protected function getHiddenColumns()
+    {
+        return $this->columns()->getHidden();
+    }
+
+
+    /**
+     * Récupération de la liste des actions sur un élément.
+     *
+     * @param ItemInterface $item Liste des données de l'élément courant.
+     * @param string $column_name Nom de qualification de la colonne courante.
+     * @param string $primary Identifiant de qualification de la colonne principale
+     *
+     * @return string
+     */
+    public function getRowActions($item, $column_name, $primary)
+    {
+        if (!$row_actions = $this->param('row_actions')) :
+            return;
+        endif;
+
+        if ($primary !== $column_name) :
+            return;
+        endif;
+
+        return new RowActionCollectionController($row_actions, $item, $this);
+    }
+
+    /**
+     * Récupération de la liste des colonnes pouvant être ordonnancées.
+     *
+     * @return array
+     */
+    protected function getSortableColumns()
+    {
+        return $this->columns()->getSortable();
+    }
+
+    /**
+     * Récupération de la liste des éléments.
+     *
+     * @return ItemCollectionInterface
+     */
+    public function items()
+    {
+        return $this->appServiceGet(ItemCollectionInterface::class);
+    }
+
+    /**
+     * Récupération de la liste des arguments de requête
+     *
+     * @return array
+     */
+    public function getQueryArgs()
+    {
+        $query_args = $this->param('query_args', []);
+
+        if (!$db = $this->getDb()) :
+            return $query_args;
+        endif;
+
+        $per_page = $this->get_items_per_page($this->param('per_page_option_name'), $this->param('per_page'));
+        $paged = $this->get_pagenum();
+
+        $query_args = array_merge(
+            [
+                'per_page' => $per_page,
+                'paged'    => $paged,
+                'order'    => 'DESC',
+                'orderby'  => $db->getPrimary()
+            ],
+            $query_args
+        );
+
+        /*
+        if ($request_query_vars = $this->getRequestQueryVars()) :
+            foreach($request_query_vars as $key => $value) :
+                if (method_exists($this, "filter_query_arg_{$key}")) :
+                    $query_args[$key] = call_user_func_array([$this, "filter_query_arg_{$key}"], [$value, &$query_args]);
+                elseif($db->existsCol($key)) :
+                    $query_args[$key] = $value;
+                endif;
+            endforeach;
+        endif;
+        */
+
+        return $query_args;
+    }
+
+    /**
+     * Récupération de la liste des classe CSS de la balise table.
+     *
+     * @return array
+     */
+    protected function getTableClasses()
+    {
+        return array_merge(
+            ['widefat', 'fixed', 'striped', $this->_args['plural']],
+            $this->param('table_classes')
+        );
     }
 
     /**
@@ -176,99 +508,6 @@ class ListTable extends AdminViewBaseController
     }
 
     /**
-     * Récupération de la liste des actions groupées
-     * @see \WP_List_Table::get_bulk_actions()
-     *
-     * @return array
-     */
-    public function get_bulk_actions()
-    {
-        return $this->params()->get('bulk_actions');
-    }
-
-    /**
-     * Récupération de la liste des colonnes
-     * @see \WP_List_Table::get_columns()
-     *
-     * @return array
-     */
-    public function get_columns()
-    {
-        return apply_filters("manage_" . $this->getName() . "_columns", $this->params()->get('columns'));
-    }
-
-    /**
-     * Récupération de la liste des colonnes de prévisualisation d'un élément
-     *
-     * @return array
-     */
-    public function get_preview_item_columns()
-    {
-        if (!$preview_item_columns = $this->params()->get('preview_item_columns')) :
-            $preview_item_columns = $this->get_columns();
-            unset($preview_item_columns['cb']);
-        endif;
-
-        return $preview_item_columns;
-    }
-
-    /**
-     * Récupération de la liste des colonnes
-     * @see \WP_List_Table::get_sortable_columns()
-     *
-     * @return array
-     */
-    public function get_sortable_columns()
-    {
-        return $this->params()->get('sortable_columns');
-    }
-
-    /**
-     * Récupération de la liste des classe CSS de la balise table.
-     * @see \WP_List_Table::get_sortable_columns()
-     *
-     * @return array List of CSS classes for the table tag.
-     */
-    protected function get_table_classes()
-    {
-        return $this->params()->get('table_classes');
-    }
-
-    /**
-     * Récupération de la liste des vues filtrées
-     * @see \WP_List_Table::get_views()
-     *
-     * @return array
-     */
-    public function get_views()
-    {
-        return $this->parseViews($this->params()->get('views'));
-    }
-
-    /**
-     * Génération et affichage des actions sur un élément
-     * @see \WP_List_Table::handle_row_actions()
-     *
-     * @param object $item Attributs de l'élément courant
-     * @param string $column_name Identifiant de qualification de la colonne courante
-     * @param string $primary Identifiant de qualification de la colonne principale
-     *
-     * @return string
-     */
-    public function handle_row_actions($item, $column_name, $primary)
-    {
-        if (!$row_actions = $this->params()->get('row_actions')) :
-            return;
-        endif;
-
-        if ($primary !== $column_name) :
-            return;
-        endif;
-
-        return $this->parseRowActions($item, $row_actions);
-    }
-
-    /**
      * Récupération de l'entête de colonne.
      *
      * @return void
@@ -285,74 +524,9 @@ class ListTable extends AdminViewBaseController
      */
     public function hidden_fields()
     {
-        if($preview_item_mode = $this->params()->get('preview_item_mode')) :
-            ?><input type="hidden" id="PreviewItemAjaxData" value="<?php echo rawurlencode(json_encode($this->params()->get('preview_ajax_datas')));?>" /><?php
+        if($preview_item_mode = $this->param('preview_item_mode')) :
+            ?><input type="hidden" id="PreviewItemAjaxData" value="<?php echo rawurlencode(json_encode($this->param('preview_ajax_datas')));?>" /><?php
         endif;
-    }
-
-    /**
-     * Initialisation  du titre de la page
-     *
-     * @param string $page_title Titre de la page défini en paramètre
-     *
-     * @return string
-     */
-    public function init_param_page_title($page_title = '')
-    {
-        if (!$page_title) :
-            $page_title = $this->getLabel('all_items', '');
-        endif;
-
-        return $page_title;
-    }
-
-    /**
-     * Récupération du contenu de la table lorsque la liste des éléments est vide
-     * @see \WP_List_Table::no_items()
-     *
-     * @return string
-     */
-    public function no_items()
-    {
-        echo $this->params()->get('no_items');
-    }
-
-    /**
-     * Traitement des arguments de requête
-     *
-     * @return array Tableau associatif des arguments de requête
-     */
-    public function parse_query_args()
-    {
-        if (!$db = $this->getDb()) :
-            return;
-        endif;
-
-        // Récupération des arguments
-        $per_page   = $this->get_items_per_page($this->params()->get('per_page_option_name'), $this->params()->get('per_page'));
-        $paged      = $this->get_pagenum();
-
-        // Arguments par défaut
-        $query_args = [
-            'per_page' => $per_page,
-            'paged'    => $paged,
-            'order'    => 'DESC',
-            'orderby'  => $db->getPrimary()
-        ];
-        $query_args = \wp_parse_args($this->params()->get('query_args', []), $query_args);
-
-        // Traitement des arguments de requête
-        if ($request_query_vars = $this->getRequestQueryVars()) :
-            foreach($request_query_vars as $key => $value) :
-                if (method_exists($this, "filter_query_arg_{$key}")) :
-                    $query_args[$key] = call_user_func_array([$this, "filter_query_arg_{$key}"], [$value, &$query_args]);
-                elseif($db->existsCol($key)) :
-                    $query_args[$key] = $value;
-                endif;
-            endforeach;
-        endif;
-
-        return $query_args;
     }
 
     /**
@@ -362,17 +536,14 @@ class ListTable extends AdminViewBaseController
      */
     public function prepare_items()
     {
-        if (!$db = $this->getDb()) :
+        if (!$items = $this->getConcrete('items')) :
             return;
         endif;
 
-        $query_args = $this->parse_query_args();
-        $query = $db->query($query_args);
+        $this->appServiceAdd(ItemCollectionInterface::class, new $items($this->getQueryArgs(), $this));
 
-        $this->items = $query->getItems();
-
-        $total_items = $query->getFoundItems();
-        $per_page = $this->get_items_per_page($this->params()->get('per_page_option_name'), $this->params()->get('per_page'));
+        $total_items = $this->items()->getTotal();
+        $per_page = $this->get_items_per_page($this->param('per_page_option_name'), $this->param('per_page'));
 
         $this->set_pagination_args(
             [
@@ -381,6 +552,81 @@ class ListTable extends AdminViewBaseController
                 'total_pages' => ceil($total_items/$per_page)
             ]
         );
+    }
+
+    /**
+     * Affichage de la page.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        ?>
+        <div class="wrap">
+            <h2>
+                <?php echo $this->param('page_title', $this->getLabel('all_items', '')); ?>
+
+                <?php if($edit_base_uri = $this->param('edit_base_uri')) : ?>
+                    <a class="add-new-h2" href="<?php echo $edit_base_uri;?>"><?php echo $this->getLabel('add_new');?></a>
+                <?php endif;?>
+            </h2>
+
+            <?php $this->displayFilters(); ?>
+
+            <form method="get" action="">
+                <?php if($base_uri_query_vars = $this->getBaseUriQueryVars()) : ?>
+                    <?php foreach ($base_uri_query_vars as $k => $v) : ?>
+                        <input type="hidden" name="<?php echo $k;?>" value="<?php echo $v;?>" />
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
+                <?php $this->hidden_fields(); ?>
+
+                <?php $this->search_box($this->getLabel('search_items'), $this->getName()); ?>
+
+                <?php $this->displayTable(); ?>
+
+                <?php $this->preview_items(); ?>
+            </form>
+        </div>
+        <?php
+    }
+
+    /**
+     * Récupération ajax de la prévisualisation d'un élément
+     *
+     * @return string
+     */
+    public function wp_ajax_preview_item()
+    {
+        $this->initParams();
+
+        if (!$item_index = $this->getRequestItemIndex()) :
+            die(0);
+        endif;
+
+        check_ajax_referer($this->getActionNonce('preview_item', $item_index));
+
+        $this->prepare_items();
+        $item = current($this->items);
+        $this->preview_item($item);
+        die();
+    }
+
+
+    /**
+     * Récupération de la liste des colonnes de prévisualisation d'un élément
+     *
+     * @return array
+     */
+    public function get_preview_item_columns()
+    {
+        if (!$preview_item_columns = $this->param('preview_item_columns')) :
+            $preview_item_columns = $this->getColumns();
+            unset($preview_item_columns['cb']);
+        endif;
+
+        return $preview_item_columns;
     }
 
     /**
@@ -431,7 +677,7 @@ class ListTable extends AdminViewBaseController
         elseif (method_exists($this, 'column_' . $column_name)) :
             return call_user_func([$this, 'column_' . $column_name], $item);
         else :
-            return $this->column_default($item, $column_name);
+            return $this->getColumnDisplay($column_name, $item);
         endif;
     }
 
@@ -442,72 +688,13 @@ class ListTable extends AdminViewBaseController
      */
     public function preview_items()
     {
-        switch($this->params()->get('preview_item_mode')) :
+        switch($this->param('preview_item_mode')) :
             case 'dialog' :
                 ?><div id="Item-previewContainer" class="hidden" style="max-width:800px; min-width:800px;"><div class="Item-previewContent"></div></div><?php
                 break;
             case 'row' :
-                ?><table class="hidden"><tbody><tr id="Item-previewContainer"><td class="Item-previewContent" colspan="<?php echo count($this->get_columns());?>"><h3><?php _e( 'Chargement en cours ...', 'tify' );?></h3></td></tr></tbody></table><?php
+                ?><table class="hidden"><tbody><tr id="Item-previewContainer"><td class="Item-previewContent" colspan="<?php echo count($this->getColumns());?>"><h3><?php _e( 'Chargement en cours ...', 'tify' );?></h3></td></tr></tbody></table><?php
                 break;
         endswitch;
-    }
-
-    /**
-     * Affichage de la page.
-     *
-     * @return string
-     */
-    public function render()
-    {
-        ?>
-        <div class="wrap">
-            <h2>
-                <?php echo $this->params()->get('page_title');?>
-
-                <?php if($edit_base_uri = $this->params()->get('edit_base_uri')) : ?>
-                    <a class="add-new-h2" href="<?php echo $edit_base_uri;?>"><?php echo $this->getLabel('add_new');?></a>
-                <?php endif;?>
-            </h2>
-
-            <?php $this->views(); ?>
-
-            <form method="get" action="">
-                <?php if($base_uri_query_vars = $this->getBaseUriQueryVars()) : ?>
-                    <?php foreach ($base_uri_query_vars as $k => $v) : ?>
-                        <input type="hidden" name="<?php echo $k;?>" value="<?php echo $v;?>" />
-                    <?php endforeach; ?>
-                <?php endif; ?>
-
-                <?php $this->hidden_fields();?>
-
-                <?php $this->search_box($this->getLabel('search_items'), $this->getName());?>
-
-                <?php $this->display();?>
-
-                <?php $this->preview_items();?>
-            </form>
-        </div>
-        <?php
-    }
-
-    /**
-     * Récupération ajax de la prévisualisation d'un élément
-     *
-     * @return string
-     */
-    public function wp_ajax_preview_item()
-    {
-        $this->initParams();
-
-        if (!$item_index = $this->getRequestItemIndex()) :
-            die(0);
-        endif;
-
-        check_ajax_referer($this->getActionNonce('preview_item', $item_index));
-
-        $this->prepare_items();
-        $item = current($this->items);
-        $this->preview_item($item);
-        die();
     }
 }

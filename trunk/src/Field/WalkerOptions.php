@@ -73,7 +73,7 @@ class WalkerOptions extends WalkerBaseController
     public function contentItem($item)
     {
         if (!$item->get('group')) :
-            return ! empty($item->get('label')) ? esc_attr($item->get('label')) : '';
+            return ! empty($item->get('content')) ? esc_attr($item->get('content')) : '';
         endif;
 
         return '';

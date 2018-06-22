@@ -73,6 +73,6 @@ class Table extends AbstractPartialController
 
         parent::parse($attrs);
 
-        $this->set('count', count($columns));
+        $this->set('count', count($this->get('columns', [])));
     }
 }
