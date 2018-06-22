@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Components\AdminView\ListTable;
+namespace tiFy\Components\AdminView\ListTable\Param;
 
-use tiFy\AdminView\AdminViewParamsController;
+use tiFy\AdminView\Param\ParamCollectionBaseController;
 
-class ListTableParams extends AdminViewParamsController
+class ParamCollectionController extends ParamCollectionBaseController
 {
     /**
      * Liste des paramètres.
@@ -26,6 +26,6 @@ class ListTableParams extends AdminViewParamsController
         'views'                      => [],
         'bulk_actions'               => [],
         'row_actions'                => [],
-        'row_actions_always_visible' => false,
+        'row_actions_always_visible' => false
     ];
 }

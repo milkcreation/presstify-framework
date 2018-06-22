@@ -3,25 +3,20 @@
 namespace tiFy\AdminView;
 
 use Illuminate\Support\Arr;
-use tiFy\AdminView\Traits\ActionTrait;
-use tiFy\AdminView\Traits\HelpersTrait;
-use tiFy\AdminView\Traits\NoticesTrait;
-use tiFy\AdminView\AdminViewMenuController;
-use tiFy\AdminView\AdminViewMenuControllerInterface;
-use tiFy\AdminView\AdminViewNoticesController;
-use tiFy\AdminView\AdminViewNoticesControllerInterface;
-use tiFy\AdminView\AdminViewParamsController;
-use tiFy\AdminView\AdminViewParamsControllerInterface;
+use tiFy\AdminView\AdminMenu\AdminMenuController;
+use tiFy\AdminView\AdminMenu\AdminMenuInterface;
+use tiFy\AdminView\Notice\NoticeCollectionController;
+use tiFy\AdminView\Notice\NoticeCollectionInterface;
+use tiFy\AdminView\Param\ParamCollectionBaseController;
+use tiFy\AdminView\Param\ParamCollectionInterface;
 use tiFy\Apps\AppController;
-use tiFy\Db\DbControllerInterface;
 use tiFy\Components\Db\DbPostsController;
 use tiFy\Components\Labels\LabelsBaseController;
 use tiFy\Components\Labels\LabelsControllerInterface;
+use tiFy\Components\Partial\Notice\Notice;
 
-class AdminViewBaseController extends AppController implements AdminViewControllerInterface
+class AdminViewBaseController extends AppController implements AdminViewInterface
 {
-    use ActionTrait, HelpersTrait, NoticesTrait;
-
     /**
      * Nom de qualification du controleur.
      * @var string
@@ -35,18 +30,6 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     protected $attributes = [];
 
     /**
-     * Classe de rappel de traitement du menu d'administration.
-     * @var AdminViewMenuControllerInterface
-     */
-    protected $menu;
-
-    /**
-     * Classe de rappel de traitement des message de notification.
-     * @var AdminViewNoticesControllerInterface
-     */
-    protected $notices;
-
-    /**
      * Classe de rappel de traitement des paramètres.
      * @var AdminViewParamsControllerInterface
      */
@@ -57,6 +40,12 @@ class AdminViewBaseController extends AppController implements AdminViewControll
      * @var null|\WP_Screen
      */
     protected $screen;
+
+    /**
+     * Liste des classes de rappel des services.
+     * @var array
+     */
+    protected $providers = [];
 
     /**
      * CONSTRUCTEUR.
@@ -72,7 +61,19 @@ class AdminViewBaseController extends AppController implements AdminViewControll
 
         $this->name = $name;
 
-        $this->attributes = $attrs;
+        $this->attributes = array_merge(
+            $this->attributes,
+            $attrs
+        );
+
+        $this->providers = array_merge(
+            [
+                'admin_menu' => AdminMenuController::class,
+                'notices'    => NoticeCollectionController::class,
+                'params'     => ParamCollectionBaseController::class
+            ],
+            $this->providers
+        );
 
         if (method_exists($this, 'boot')) :
             $this->boot();
@@ -90,9 +91,24 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     {
         $this->init();
 
-        $this->menu = new AdminViewMenuController($this->get('admin_menu', []), $this);
-        $this->notices = new AdminViewNoticesController($this->get('notices', []), $this);
-        $this->params = new AdminViewParamsController($this->get('params', []), $this);
+        if ($admin_menu = $this->getConcrete('admin_menu')) :
+            $this->appServiceAdd(
+                AdminMenuInterface::class,
+                new $admin_menu($this->get('admin_menu', []), $this)
+            );
+        endif;
+        /*if ($notices = $this->getConcrete('notices')) :
+            $this->appServiceAdd(
+                NoticeCollectionInterface::class,
+                new $notices($this->get('notices', []), $this)
+            );
+        endif;*/
+        if ($params = $this->getConcrete('params')) :
+            $this->appServiceAdd(
+                ParamCollectionInterface::class,
+                new $params($this->get('params', []), $this)
+            );
+        endif;
     }
 
     /**
@@ -120,12 +136,7 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function get($key, $default = null)
     {
@@ -133,9 +144,15 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Récupération de la classe de rappel de l'object base de données
-     *
-     * @return null|DbControllerInterface
+     * {@inheritdoc}
+     */
+    public function getConcrete($key, $default = null)
+    {
+        return Arr::get($this->providers, $key);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getDb()
     {
@@ -143,9 +160,7 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Récupération du nom de qualification d'accroche de la page d'affichage de l'interface.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getHookname()
     {
@@ -153,12 +168,7 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Récupération d'un intitulé.
-     *
-     * @param string $key Clé d'indexe de l'intitulé.
-     * @param string $default Valeur de retour par défaut.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getLabel($key, $default = '')
     {
@@ -169,9 +179,7 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Récupération du nom de qualification du controleur.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -179,9 +187,7 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Récupération du nom de qualification du controleur.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getScreen()
     {
@@ -189,7 +195,7 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Récupération de la liste des classes de rappel des gabarits de traitement externe
+     * Récupération de la liste des classes de rappel des gabarits de traitement externe.
      *
      * @return array|\tiFy\Core\Ui\Admin\Factory[]
      */
@@ -210,13 +216,9 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function has($key, $default = null)
+    public function has($key)
     {
         return Arr::has($this->attributes, $key);
     }
@@ -268,21 +270,23 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Récupération de la classe de rappel du controleur de gestion des paramètres.
-     * @var AdminViewParamsControllerInterface
+     * {@inheritdoc}
      */
-    public function params()
+    public function param($key, $default = null)
     {
-        return $this->params;
+        return $this->params()->get($key, $default);
     }
 
     /**
-     * Définition d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $value Valeur de l'attribut.
-     *
-     * @return mixed
+     * {@inheritdoc}
+     */
+    public function params()
+    {
+        return $this->appServiceGet(ParamCollectionInterface::class);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function set($key, $value)
     {
@@ -290,9 +294,7 @@ class AdminViewBaseController extends AppController implements AdminViewControll
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function render()
     {

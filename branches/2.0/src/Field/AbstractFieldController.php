@@ -377,16 +377,20 @@ abstract class AbstractFieldController extends AppController
     {
         $selected = $this->getValue();
 
-        $options = array_map(
-            function($item) use ($selected) {
-                if (in_array($item['value'],$selected)) :
-                    $item['attrs'][] = 'selected';
-                endif;
+        if (!is_null($selected)) :
+            $options = array_map(
+                function($item) use ($selected) {
+                    if (in_array($item['value'],$selected)) :
+                        $item['attrs'][] = 'selected';
+                    endif;
 
-                return $item;
-            },
-            $this->get('options', [])
-        );
+                    return $item;
+                },
+                $this->get('options', [])
+            );
+        else :
+            $options = $this->get('options', []);
+        endif;
 
         echo WalkerOptions::display($options);
     }
@@ -410,7 +414,7 @@ abstract class AbstractFieldController extends AppController
         $this->parseId();
         $this->parseClass();
         $this->parseTemplates();
-        $this->parseOptions($attrs);
+        $this->parseOptions();
     }
 
     /**
@@ -480,29 +484,24 @@ abstract class AbstractFieldController extends AppController
     /**
      * Traitement de l'attribut de configuration de liste de selection "options".
      *
-     * @param array $args Liste des attributs de configuration
-     *
      * @return void
      */
-    protected function parseOptions($args = [])
+    protected function parseOptions()
     {
-        if (!isset($args['options'])) :
-            return $args;
+        if (!$options = $this->get('options', [])) :
+            return;
         endif;
 
-        if (!is_array($args['options'])) :
-            $options = array_map('trim', explode(',', (string)$args['options']));
-        else:
-            $options = $args['options'];
+        if (is_string($options)) :
+            $options = array_map('trim', explode(',', $options));
         endif;
 
-        $_options = [];
-        $i = 0;
+        $_options = []; $i = 0;
         foreach($options as $k => $v) :
             if (is_numeric($k)) :
                 if (!is_array($v)) :
                     $v = [
-                        'label' => $v,
+                        'content' => $v,
                         'value' => $k
                     ];
                 else :
@@ -512,7 +511,7 @@ abstract class AbstractFieldController extends AppController
                 endif;
             else :
                 $v = [
-                    'label' => $v,
+                    'content' => $v,
                     'value' => $k
                 ];
             endif;
@@ -527,14 +526,14 @@ abstract class AbstractFieldController extends AppController
             );
 
             // Formatage des attributs
-            if (!isset($option['label'])) :
-                $option['label'] = $option['value'];
+            if (!isset($option['content'])) :
+                $option['content'] = $option['value'];
             endif;
 
             $_options[] = $option;
         endforeach;
 
-        $this->attributes['options'] = $_options;
+        $this->set('options', $_options);
     }
 
     /**
@@ -559,7 +558,7 @@ abstract class AbstractFieldController extends AppController
                     'controller' => TemplateController::class,
                     'args'       => []
                 ],
-                $attrs
+                $attrs ? : $this->get('templates', [])
             )
         );
         $this->set(

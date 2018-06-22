@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\AdminView\Traits;
+namespace tiFy\Components\AdminView\ListTable;
 
 /**
  * @see https://codex.wordpress.org/Class_Reference/WP_List_Table
@@ -11,14 +11,6 @@ endif;
 
 trait WpListTableTrait
 {
-    /**
-     * The current list of items.
-     *
-     * @since 3.1.0
-     * @var array
-     */
-    public $items;
-
     /**
      * Various information about the current table.
      *
@@ -80,17 +72,31 @@ trait WpListTableTrait
      *
      * @var array
      */
-    protected $compat_fields = array( '_args', '_pagination_args', 'screen', '_actions', '_pagination' );
+    protected $compat_fields = ['_args', '_pagination_args', 'screen', '_actions', '_pagination'];
 
     /**
      * {@internal Missing Summary}
      *
      * @var array
      */
-    protected $compat_methods = array( 'set_pagination_args', 'get_views', 'get_bulk_actions', 'bulk_actions',
-        'row_actions', 'months_dropdown', 'view_switcher', 'comments_bubble', 'get_items_per_page', 'pagination',
-        'get_sortable_columns', 'get_column_info', 'get_table_classes', 'display_tablenav', 'extra_tablenav',
-        'single_row_columns' );
+    protected $compat_methods = [
+        'set_pagination_args',
+        'get_views',
+        'get_bulk_actions',
+        'bulk_actions',
+        'row_actions',
+        'months_dropdown',
+        'view_switcher',
+        'comments_bubble',
+        'get_items_per_page',
+        'pagination',
+        'get_sortable_columns',
+        'get_column_info',
+        'get_table_classes',
+        'display_tablenav',
+        'extra_tablenav',
+        'single_row_columns'
+    ];
 
     /**
      * Initialisation de la classe WP_List_Table
@@ -128,7 +134,7 @@ trait WpListTableTrait
 
         $this->screen = convert_to_screen( $args['screen'] );
 
-        add_filter( "manage_{$this->screen->id}_columns", array( $this, 'get_columns' ), 0 );
+        add_filter( "manage_{$this->screen->id}_columns", array( $this, 'getColumns' ), 0 );
 
         if ( !$args['plural'] )
             $args['plural'] = $this->screen->base;
@@ -290,26 +296,6 @@ trait WpListTableTrait
     }
 
     /**
-     * Whether the table has items to display or not
-     *
-     * @since 3.1.0
-     *
-     * @return bool
-     */
-    public function has_items() {
-        return !empty( $this->items );
-    }
-
-    /**
-     * Message to be displayed when there are no items
-     *
-     * @since 3.1.0
-     */
-    public function no_items() {
-        _e( 'No items found.' );
-    }
-
-    /**
      * Displays the search box.
      *
      * @since 3.1.0
@@ -318,7 +304,7 @@ trait WpListTableTrait
      * @param string $input_id ID attribute value for the search input field.
      */
     public function search_box( $text, $input_id ) {
-        if ( empty( $_REQUEST['s'] ) && !$this->has_items() )
+        if ( empty( $_REQUEST['s'] ) && !$this->items()->has() )
             return;
 
         $input_id = $input_id . '-search-input';
@@ -338,159 +324,6 @@ trait WpListTableTrait
             <?php submit_button( $text, '', '', false, array( 'id' => 'search-submit' ) ); ?>
         </p>
         <?php
-    }
-
-    /**
-     * Get an associative array ( id => link ) with the list
-     * of views available on this table.
-     *
-     * @since 3.1.0
-     *
-     * @return array
-     */
-    protected function get_views() {
-        return array();
-    }
-
-    /**
-     * Display the list of views available on this table.
-     *
-     * @since 3.1.0
-     */
-    public function views() {
-        $views = $this->get_views();
-        /**
-         * Filters the list of available list table views.
-         *
-         * The dynamic portion of the hook name, `$this->screen->id`, refers
-         * to the ID of the current screen, usually a string.
-         *
-         * @since 3.5.0
-         *
-         * @param array $views An array of available list table views.
-         */
-        $views = apply_filters( "views_{$this->screen->id}", $views );
-
-        if ( empty( $views ) )
-            return;
-
-        $this->screen->render_screen_reader_content( 'heading_views' );
-
-        echo "<ul class='subsubsub'>\n";
-        foreach ( $views as $class => $view ) {
-            $views[ $class ] = "\t<li class='$class'>$view";
-        }
-        echo implode( " |</li>\n", $views ) . "</li>\n";
-        echo "</ul>";
-    }
-
-    /**
-     * Get an associative array ( option_name => option_title ) with the list
-     * of bulk actions available on this table.
-     *
-     * @since 3.1.0
-     *
-     * @return array
-     */
-    protected function get_bulk_actions() {
-        return array();
-    }
-
-    /**
-     * Display the bulk actions dropdown.
-     *
-     * @since 3.1.0
-     *
-     * @param string $which The location of the bulk actions: 'top' or 'bottom'.
-     *                      This is designated as optional for backward compatibility.
-     */
-    protected function bulk_actions( $which = '' ) {
-        if ( is_null( $this->_actions ) ) {
-            $this->_actions = $this->get_bulk_actions();
-            /**
-             * Filters the list table Bulk Actions drop-down.
-             *
-             * The dynamic portion of the hook name, `$this->screen->id`, refers
-             * to the ID of the current screen, usually a string.
-             *
-             * This filter can currently only be used to remove bulk actions.
-             *
-             * @since 3.5.0
-             *
-             * @param array $actions An array of the available bulk actions.
-             */
-            $this->_actions = apply_filters( "bulk_actions-{$this->screen->id}", $this->_actions );
-            $two = '';
-        } else {
-            $two = '2';
-        }
-
-        if ( empty( $this->_actions ) )
-            return;
-
-        echo '<label for="bulk-action-selector-' . esc_attr( $which ) . '" class="screen-reader-text">' . __( 'Select bulk action' ) . '</label>';
-        echo '<select name="action' . $two . '" id="bulk-action-selector-' . esc_attr( $which ) . "\">\n";
-        echo '<option value="-1">' . __( 'Bulk Actions' ) . "</option>\n";
-
-        foreach ( $this->_actions as $name => $title ) {
-            $class = 'edit' === $name ? ' class="hide-if-no-js"' : '';
-
-            echo "\t" . '<option value="' . $name . '"' . $class . '>' . $title . "</option>\n";
-        }
-
-        echo "</select>\n";
-
-        submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction$two" ) );
-        echo "\n";
-    }
-
-    /**
-     * Get the current action selected from the bulk actions dropdown.
-     *
-     * @since 3.1.0
-     *
-     * @return string|false The action name or False if no action was selected
-
-    public function current_action() {
-        if ( isset( $_REQUEST['filter_action'] ) && ! empty( $_REQUEST['filter_action'] ) )
-            return false;
-
-        if ( isset( $_REQUEST['action'] ) && -1 != $_REQUEST['action'] )
-            return $_REQUEST['action'];
-
-        if ( isset( $_REQUEST['action2'] ) && -1 != $_REQUEST['action2'] )
-            return $_REQUEST['action2'];
-
-        return false;
-    }*/
-
-    /**
-     * Generate row actions div
-     *
-     * @since 3.1.0
-     *
-     * @param array $actions The list of actions
-     * @param bool $always_visible Whether the actions should be always visible
-     * @return string
-     */
-    protected function row_actions( $actions, $always_visible = false ) {
-        $action_count = count( $actions );
-        $i = 0;
-
-        if ( !$action_count )
-            return '';
-
-        $out = '<div class="' . ( $always_visible ? 'row-actions visible' : 'row-actions' ) . '">';
-        foreach ( $actions as $action => $link ) {
-            ++$i;
-            ( $i == $action_count ) ? $sep = '' : $sep = ' | ';
-            $out .= "<span class='$action'>$link$sep</span>";
-        }
-        $out .= '</div>';
-
-        $out .= '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __( 'Show more details' ) . '</span></button>';
-
-        return $out;
     }
 
     /**
@@ -822,176 +655,6 @@ trait WpListTableTrait
     }
 
     /**
-     * Get a list of columns. The format is:
-     * 'internal-name' => 'Title'
-     *
-     * @since 3.1.0
-     * @abstract
-     *
-     * @return array
-     */
-    public function get_columns() {
-        die( 'function WP_List_Table::get_columns() must be over-ridden in a sub-class.' );
-    }
-
-    /**
-     * Get a list of sortable columns. The format is:
-     * 'internal-name' => 'orderby'
-     * or
-     * 'internal-name' => array( 'orderby', true )
-     *
-     * The second format will make the initial sorting order be descending
-     *
-     * @since 3.1.0
-     *
-     * @return array
-     */
-    protected function get_sortable_columns() {
-        return array();
-    }
-
-    /**
-     * Gets the name of the default primary column.
-     *
-     * @since 4.3.0
-     *
-     * @return string Name of the default primary column, in this case, an empty string.
-     */
-    protected function get_default_primary_column_name() {
-        $columns = $this->get_columns();
-        $column = '';
-
-        if ( empty( $columns ) ) {
-            return $column;
-        }
-
-        // We need a primary defined so responsive views show something,
-        // so let's fall back to the first non-checkbox column.
-        foreach ( $columns as $col => $column_name ) {
-            if ( 'cb' === $col ) {
-                continue;
-            }
-
-            $column = $col;
-            break;
-        }
-
-        return $column;
-    }
-
-    /**
-     * Public wrapper for WP_List_Table::get_default_primary_column_name().
-     *
-     * @since 4.4.0
-     *
-     * @return string Name of the default primary column.
-     */
-    public function get_primary_column() {
-        return $this->get_primary_column_name();
-    }
-
-    /**
-     * Gets the name of the primary column.
-     *
-     * @since 4.3.0
-     *
-     * @return string The name of the primary column.
-     */
-    protected function get_primary_column_name() {
-        $columns = get_column_headers( $this->screen );
-        $default = $this->get_default_primary_column_name();
-
-        // If the primary column doesn't exist fall back to the
-        // first non-checkbox column.
-        if ( ! isset( $columns[ $default ] ) ) {
-            $default = '';//(new \WP_List_Table())->get_default_primary_column_name();
-        }
-
-        /**
-         * Filters the name of the primary column for the current list table.
-         *
-         * @since 4.3.0
-         *
-         * @param string $default Column name default for the specific list table, e.g. 'name'.
-         * @param string $context Screen ID for specific list table, e.g. 'plugins'.
-         */
-        $column  = apply_filters( 'list_table_primary_column', $default, $this->screen->id );
-
-        if ( empty( $column ) || ! isset( $columns[ $column ] ) ) {
-            $column = $default;
-        }
-
-        return $column;
-    }
-
-    /**
-     * Get a list of all, hidden and sortable columns, with filter applied
-     *
-     * @since 3.1.0
-     *
-     * @return array
-     */
-    protected function get_column_info() {
-        // $_column_headers is already set / cached
-        if ( isset( $this->_column_headers ) && is_array( $this->_column_headers ) ) {
-            // Back-compat for list tables that have been manually setting $_column_headers for horse reasons.
-            // In 4.3, we added a fourth argument for primary column.
-            $column_headers = array( array(), array(), array(), $this->get_primary_column_name() );
-            foreach ( $this->_column_headers as $key => $value ) {
-                $column_headers[ $key ] = $value;
-            }
-
-            return $column_headers;
-        }
-
-        $columns = get_column_headers( $this->screen );
-        $hidden = get_hidden_columns( $this->screen );
-
-        $sortable_columns = $this->get_sortable_columns();
-        /**
-         * Filters the list table sortable columns for a specific screen.
-         *
-         * The dynamic portion of the hook name, `$this->screen->id`, refers
-         * to the ID of the current screen, usually a string.
-         *
-         * @since 3.5.0
-         *
-         * @param array $sortable_columns An array of sortable columns.
-         */
-        $_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $sortable_columns );
-
-        $sortable = array();
-        foreach ( $_sortable as $id => $data ) {
-            if ( empty( $data ) )
-                continue;
-
-            $data = (array) $data;
-            if ( !isset( $data[1] ) )
-                $data[1] = false;
-
-            $sortable[$id] = $data;
-        }
-
-        $primary = $this->get_primary_column_name();
-        $this->_column_headers = array( $columns, $hidden, $sortable, $primary );
-
-        return $this->_column_headers;
-    }
-
-    /**
-     * Return number of visible columns
-     *
-     * @since 3.1.0
-     *
-     * @return int
-     */
-    public function get_column_count() {
-        list ( $columns, $hidden ) = $this->get_column_info();
-        $hidden = array_intersect( array_keys( $columns ), array_filter( $hidden ) );
-        return count( $columns ) - count( $hidden );
-    }
-
-    /**
      * Print column headers, accounting for hidden and sortable columns.
      *
      * @since 3.1.0
@@ -1001,7 +664,7 @@ trait WpListTableTrait
      * @param bool $with_id Whether to set the id attribute or not
      */
     public function print_column_headers( $with_id = true ) {
-        list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
+        list( $columns, $hidden, $sortable, $primary ) = $this->getColumnInfos();
 
         $current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
         $current_url = remove_query_arg( 'paged', $current_url );
@@ -1069,207 +732,6 @@ trait WpListTableTrait
     }
 
     /**
-     * Display the table
-     *
-     * @since 3.1.0
-     */
-    public function display() {
-        $singular = $this->_args['singular'];
-
-        $this->display_tablenav( 'top' );
-
-        $this->screen->render_screen_reader_content( 'heading_list' );
-        ?>
-        <table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
-            <thead>
-            <tr>
-                <?php $this->print_column_headers(); ?>
-            </tr>
-            </thead>
-
-            <tbody id="the-list"<?php
-            if ( $singular ) {
-                echo " data-wp-lists='list:$singular'";
-            } ?>>
-            <?php $this->display_rows_or_placeholder(); ?>
-            </tbody>
-
-            <tfoot>
-            <tr>
-                <?php $this->print_column_headers( false ); ?>
-            </tr>
-            </tfoot>
-
-        </table>
-        <?php
-        $this->display_tablenav( 'bottom' );
-    }
-
-    /**
-     * Get a list of CSS classes for the WP_List_Table table tag.
-     *
-     * @since 3.1.0
-     *
-     * @return array List of CSS classes for the table tag.
-     */
-    protected function get_table_classes() {
-        return array( 'widefat', 'fixed', 'striped', $this->_args['plural'] );
-    }
-
-    /**
-     * Generate the table navigation above or below the table
-     *
-     * @since 3.1.0
-     * @param string $which
-     */
-    protected function display_tablenav( $which ) {
-        if ( 'top' === $which ) {
-            wp_nonce_field( 'bulk-' . $this->_args['plural'] );
-        }
-        ?>
-        <div class="tablenav <?php echo esc_attr( $which ); ?>">
-
-            <?php if ( $this->has_items() ): ?>
-                <div class="alignleft actions bulkactions">
-                    <?php $this->bulk_actions( $which ); ?>
-                </div>
-            <?php endif;
-            $this->extra_tablenav( $which );
-            $this->pagination( $which );
-            ?>
-
-            <br class="clear" />
-        </div>
-        <?php
-    }
-
-    /**
-     * Extra controls to be displayed between bulk actions and pagination
-     *
-     * @since 3.1.0
-     *
-     * @param string $which
-     */
-    protected function extra_tablenav( $which ) {}
-
-    /**
-     * Generate the tbody element for the list table.
-     *
-     * @since 3.1.0
-     */
-    public function display_rows_or_placeholder() {
-        if ( $this->has_items() ) {
-            $this->display_rows();
-        } else {
-            echo '<tr class="no-items"><td class="colspanchange" colspan="' . $this->get_column_count() . '">';
-            $this->no_items();
-            echo '</td></tr>';
-        }
-    }
-
-    /**
-     * Generate the table rows
-     *
-     * @since 3.1.0
-     */
-    public function display_rows() {
-        foreach ( $this->items as $item )
-            $this->single_row( $item );
-    }
-
-    /**
-     * Generates content for a single row of the table
-     *
-     * @since 3.1.0
-     *
-     * @param object $item The current item
-     */
-    public function single_row( $item ) {
-        echo '<tr>';
-        $this->single_row_columns( $item );
-        echo '</tr>';
-    }
-
-    /**
-     *
-     * @param object $item
-     * @param string $column_name
-     */
-    protected function column_default( $item, $column_name ) {}
-
-    /**
-     *
-     * @param object $item
-     */
-    protected function column_cb( $item ) {}
-
-    /**
-     * Generates the columns for a single row of the table
-     *
-     * @since 3.1.0
-     *
-     * @param object $item The current item
-     */
-    protected function single_row_columns( $item ) {
-        list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
-
-        foreach ( $columns as $column_name => $column_display_name ) {
-            $classes = "$column_name column-$column_name";
-            if ( $primary === $column_name ) {
-                $classes .= ' has-row-actions column-primary';
-            }
-
-            if ( in_array( $column_name, $hidden ) ) {
-                $classes .= ' hidden';
-            }
-
-            // Comments column uses HTML in the display name with screen reader text.
-            // Instead of using esc_attr(), we strip tags to get closer to a user-friendly string.
-            $data = 'data-colname="' . wp_strip_all_tags( $column_display_name ) . '"';
-
-            $attributes = "class='$classes' $data";
-
-            if ( 'cb' === $column_name ) {
-                echo '<th scope="row" class="check-column">';
-                echo $this->column_cb( $item );
-                echo '</th>';
-            } elseif ( method_exists( $this, '_column_' . $column_name ) ) {
-                echo call_user_func(
-                    array( $this, '_column_' . $column_name ),
-                    $item,
-                    $classes,
-                    $data,
-                    $primary
-                );
-            } elseif ( method_exists( $this, 'column_' . $column_name ) ) {
-                echo "<td $attributes>";
-                echo call_user_func( array( $this, 'column_' . $column_name ), $item );
-                echo $this->handle_row_actions( $item, $column_name, $primary );
-                echo "</td>";
-            } else {
-                echo "<td $attributes>";
-                echo $this->column_default( $item, $column_name );
-                echo $this->handle_row_actions( $item, $column_name, $primary );
-                echo "</td>";
-            }
-        }
-    }
-
-    /**
-     * Generates and display row actions links for the list table.
-     *
-     * @since 4.3.0
-     *
-     * @param object $item        The item being acted upon.
-     * @param string $column_name Current column name.
-     * @param string $primary     Primary column name.
-     * @return string The row actions HTML, or an empty string if the current column is the primary column.
-     */
-    protected function handle_row_actions( $item, $column_name, $primary ) {
-        return $column_name === $primary ? '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __( 'Show more details' ) . '</span></button>' : '';
-    }
-
-    /**
      * Handle an incoming ajax request (called from admin-ajax.php)
      *
      * @since 3.1.0
@@ -1279,9 +741,9 @@ trait WpListTableTrait
 
         ob_start();
         if ( ! empty( $_REQUEST['no_placeholder'] ) ) {
-            $this->display_rows();
+            $this->displayRows();
         } else {
-            $this->display_rows_or_placeholder();
+            $this->displayBody();
         }
 
         $rows = ob_get_clean();

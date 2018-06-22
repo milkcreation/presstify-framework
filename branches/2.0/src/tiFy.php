@@ -67,13 +67,13 @@ final class tiFy
      * Classe de rappel de gestion des événements.
      * @var Emitter
      */
-    protected $emitter;
+    protected $event;
 
     /**
      * Classe de rappel de la requête globale.
      * @var Request
      */
-    protected $globalRequest;
+    protected $request;
 
     /**
      * Attributs de configuration.
@@ -95,14 +95,14 @@ final class tiFy
             return;
         endif;
 
-        if (! self::$instance) :
+        if (!self::$instance) :
             $this->setInstance();
         else :
             return;
         endif;
 
         // Définition des chemins
-        $absPath = $absPath ? : (defined('PUBLIC_PATH') ? PUBLIC_PATH : ABSPATH);
+        $absPath = $absPath ?: (defined('PUBLIC_PATH') ? PUBLIC_PATH : ABSPATH);
         $this->absPath = rtrim(wp_normalize_path($absPath), '/') . '/';
         $this->absDir = dirname(__FILE__);
         $rel = (new fileSystem())->makePathRelative($this->absDir(), $this->absPath());
@@ -120,7 +120,9 @@ final class tiFy
         endif;
 
         add_action('after_setup_theme', [$this, 'after_setup_theme'], 0);
-        add_action('after_setup_tify', function() { do_action('tify_app_boot'); }, 9999);
+        add_action('after_setup_tify', function () {
+            do_action('tify_app_boot');
+        }, 9999);
         add_action('plugins_loaded', [$this, 'plugins_loaded']);
     }
 
@@ -133,16 +135,16 @@ final class tiFy
     {
         // Traitement de la configuration
         $finder = (new Finder())->files()->name('/\.php$/')->in(TIFY_CONFIG_DIR);
-        foreach($finder as $file) :
-            $keys = preg_split('#' . DIRECTORY_SEPARATOR . '#', $file->getRelativePath(), NULL, PREG_SPLIT_NO_EMPTY);
+        foreach ($finder as $file) :
+            $keys = preg_split('#' . DIRECTORY_SEPARATOR . '#', $file->getRelativePath(), null, PREG_SPLIT_NO_EMPTY);
             $keys[] = basename($file->getFilename(), ".{$file->getExtension()}");
 
             $this->setConfig(implode('.', $keys), include($file->getRealPath()));
         endforeach;
 
         // Chargement automatique des classes
-        foreach($this->getConfig('autoload', []) as $type => $value) :
-            foreach($value as $namespace => $path) :
+        foreach ($this->getConfig('autoload', []) as $type => $value) :
+            foreach ($value as $namespace => $path) :
                 $this->classLoad($namespace, $path, $type);
             endforeach;
         endforeach;
@@ -185,7 +187,7 @@ final class tiFy
      */
     private function setInstance()
     {
-        if (! self::$instance) :
+        if (!self::$instance) :
             self::$instance = $this;
         endif;
 
@@ -272,11 +274,11 @@ final class tiFy
      */
     public function classLoad($prefix, $paths, $type = 'psr-4')
     {
-        if (! $this->classLoader) :
+        if (!$this->classLoader) :
             $this->classLoader = new ClassLoader();
         endif;
 
-        switch($type) :
+        switch ($type) :
             default :
             case 'psr-4' :
                 $this->classLoader->addPsr4($prefix, $paths);
@@ -303,7 +305,7 @@ final class tiFy
      */
     public function container()
     {
-        if (! $this->container) :
+        if (!$this->container) :
             $this->container = new Container();
             /**
              * Activation de l'auto-wiring
@@ -313,6 +315,21 @@ final class tiFy
         endif;
 
         return $this->container;
+    }
+
+    /**
+     * Récupération de la classe de rappel de gestion des événements
+     * @see http://event.thephpleague.com/2.0/
+     *
+     * @return Emitter
+     */
+    public function event()
+    {
+        if (!$this->event) :
+            $this->event = new Emitter();
+        endif;
+
+        return $this->event;
     }
 
     /**
@@ -395,80 +412,41 @@ final class tiFy
      */
     public function request($property = '')
     {
-        if (! $this->globalRequest) :
-            $this->globalRequest = Request::createFromGlobals();
+        if (!$this->request) :
+            $this->request = Request::createFromGlobals();
         endif;
 
         switch (strtolower($property)) :
             default :
-                return $this->globalRequest;
+                return $this->request;
                 break;
             case 'post' :
             case 'request' :
-                return $this->globalRequest->request;
+                return $this->request->request;
                 break;
             case 'get' :
             case 'query' :
-                return $this->globalRequest->query;
+                return $this->request->query;
                 break;
             case 'cookie' :
             case 'cookies' :
-                return $this->globalRequest->cookies;
+                return $this->request->cookies;
                 break;
             case 'attributes' :
-                return $this->globalRequest->attributes;
+                return $this->request->attributes;
                 break;
             case 'files' :
-                return $this->globalRequest->files;
+                return $this->request->files;
                 break;
             case 'server' :
-                return $this->globalRequest->server;
+                return $this->request->server;
                 break;
             case 'headers' :
-                return $this->globalRequest->headers;
+                return $this->request->headers;
                 break;
         endswitch;
     }
 
-    /**
-     * Appel d'une méthode de la classe de rappel de la requête global.
-     *
-     * @see https://laravel.com/api/5.6/Illuminate/Http/Request.html
-     * @see https://symfony.com/doc/current/components/http_foundation.html
-     * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
-     *
-     * @param string $method Nom de la méthode à appeler (all|keys|replace|add|get|set|has|remove|getAlpha|getAlnum|getBoolean|getDigits|getInt|filter)
-     * @param array $args Tableau associatif des arguments passés dans la méthode.
-     * @param string $property Propriété de la requête à traiter $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes|$_FILES (alias files)|SERVER (alias server)|headers.
-     *
-     * @return mixed
-     */
-    public function requestCall($method, $args = [], $property = '')
-    {
-        $object = $this->request($property);
-
-        if (method_exists($object, $method)) :
-            return call_user_func_array([$object, $method], $args);
-        endif;
-
-        return null;
-    }
-
-    /**
-     * Récupération de la classe de rappel de gestion des événements
-     * @see http://event.thephpleague.com/2.0/
-     *
-     * @return Emitter
-     */
-    public function emitter()
-    {
-        if (! $this->emitter) :
-            $this->emitter = new Emitter();
-        endif;
-
-        return $this->emitter;
-    }
-    
     /**
      * Formatage lower_name d'une chaine de caratère
      * Converti une chaine de caractère CamelCase en snake_case
