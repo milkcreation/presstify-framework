@@ -19,7 +19,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
      * Liste des colonnes.
      * @var Collection|ColumnItemInterface[]
      */
-    protected $columns = [];
+    protected $items = [];
 
     /**
      * CONSTRUCTEUR.
@@ -33,7 +33,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
     {
         $this->app = $app;
 
-        $this->columns = $this->parse($this->app->param('columns', []));
+        $this->parse($this->app->param('columns', []));
     }
 
     /**
@@ -41,7 +41,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
      */
     public function all()
     {
-        return $this->columns;
+        return $this->items;
     }
 
     /**
@@ -49,8 +49,8 @@ class ColumnCollectionController implements ColumnCollectionInterface
      */
     public function get($name)
     {
-        if (isset($this->columns[$name])) :
-            return $this->columns[$name];
+        if (isset($this->items[$name])) :
+            return $this->items[$name];
         endif;
     }
 
@@ -59,7 +59,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
      */
     public function getHeaders($with_id = true)
     {
-        return $this->columns->mapWithKeys(function($item, $key) use ($with_id){
+        return $this->items->mapWithKeys(function($item, $key) use ($with_id){
             /** @var ColumnItemInterface $item */
             return [$key => $item->getHeader($with_id)];
         })->all();
@@ -70,7 +70,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
      */
     public function getHidden()
     {
-        return $this->columns
+        return $this->items
             ->filter(function($item, $key){
                 /** @var ColumnItemInterface $item */
                 return $item->isHidden();
@@ -97,7 +97,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
      */
     public function getList()
     {
-        return $this->columns->pluck('title', 'name')->all();
+        return $this->items->pluck('title', 'name')->all();
     }
 
     /**
@@ -107,10 +107,10 @@ class ColumnCollectionController implements ColumnCollectionInterface
     {
         if (!$this->getList()) :
             return '';
-        elseif ($primary = $this->columns->first(function ($item) {return $item['primary'] === true;})) :
+        elseif ($primary = $this->items->first(function ($item) {return $item['primary'] === true;})) :
             return $primary->getName();
         else :
-            return $this->columns->first(function ($item) {return $item['name'] !== 'cb';})->getName();
+            return $this->items->first(function ($item) {return $item['name'] !== 'cb';})->getName();
         endif;
     }
 
@@ -119,7 +119,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
      */
     public function getSortable()
     {
-        return $this->columns
+        return $this->items
             ->filter(function($item, $key){
                 /** @var ColumnItemInterface $item */
                 return $item->isSortable();
@@ -133,7 +133,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
      */
     public function getVisible()
     {
-        return $this->columns
+        return $this->items
             ->filter(function($item, $key){
                 /** @var ColumnItemInterface $item */
                 return !$item->isHidden();
@@ -167,24 +167,20 @@ class ColumnCollectionController implements ColumnCollectionInterface
         foreach ($columns as $name => $attrs) :
             if (is_numeric($name)) :
                 $name = $attrs;
-                $attrs = [
-                    'title' => $name
-                ];
+                $attrs = [];
             elseif (is_string($attrs)) :
                 $attrs = [
                     'title' => $attrs
                 ];
             endif;
 
-            $controller = Arr::get($attrs, 'controller', ColumnItemController::class);
+            $provide = $this->app->provider()->has("columns.item.{$name}")
+                ? "columns.item.{$name}"
+                : 'columns.item';
 
-            if ($name === 'cb') :
-                $controller = ColumnItemCbController::class;
-            endif;
-
-            $_columns[$name] = new $controller($name, $attrs, $this->app);
+            $_columns[$name] = $this->app->provide($provide, [$name, $attrs, $this->app]);
         endforeach;
 
-        return new Collection($_columns);
+        return $this->items = new Collection($_columns);
     }
 }
