@@ -3,11 +3,12 @@
 namespace tiFy\Components\AdminView\ListTable\RowAction;
 
 use Illuminate\Support\Arr;
-use tiFy\AdminView\AdminViewInterface;
+use tiFy\AdminView\AdminViewControllerInterface;
+use tiFy\Apps\Attributes\AbstractAttributesController;
 use tiFy\Components\AdminView\ListTable\Item\ItemInterface;
 use tiFy\Partial\Partial;
 
-class RowActionItemController implements RowActionItemInterface
+class RowActionItemController extends AbstractAttributesController implements RowActionItemInterface
 {
     /**
      * Nom de qualification.
@@ -23,13 +24,19 @@ class RowActionItemController implements RowActionItemInterface
 
     /**
      * Classe de rappel de la vue associée.
-     * @var AdminViewInterface
+     * @var AdminViewControllerInterface
      */
-    protected $view;
+    protected $app;
 
     /**
      * Liste des attributs de configuration.
-     * @return array
+     * @return array {
+     *      @var string $content Contenu du lien (chaîne de caractère ou éléments HTML).
+     *      @var array $attrs Liste des attributs complémentaires de la balise du lien.
+     *      @var array $query_args Tableau associatif des arguments passés en requête dans l'url du lien.
+     *      @var bool|string $nonce Activation de la création de l'identifiant de qualification de la clef de sécurisation passé en requête dans l'url du lien ou identifiant de qualification de la clef de sécurisation.
+     *      @var bool|string $referer Activation de l'argument de l'url de référence passée en requête dans l'url du lien.
+     * }
      */
     protected $attributes = [
         'content'    => '',
@@ -45,46 +52,16 @@ class RowActionItemController implements RowActionItemInterface
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration personnalisés.
      * @param ItemInterface $item Données de l'élément courant.
-     * @param AdminViewInterface $view Classe de rappel de la vue associée.
+     * @param AdminViewControllerInterface $app Classe de rappel de la vue associée.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], $item, AdminViewInterface $view)
+    public function __construct($name, $attrs = [], $item, AdminViewControllerInterface $app)
     {
         $this->name = $name;
         $this->item = $item;
-        $this->view = $view;
 
-        $this->attributes = array_merge(
-            $this->attributes,
-            $this->defaults()
-        );
-
-        $this->parse($attrs);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function all()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function defaults()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
+        parent::__construct($attrs, $app);
     }
 
     /**
@@ -92,7 +69,7 @@ class RowActionItemController implements RowActionItemInterface
      */
     public function getNonce()
     {
-        if (($item_index_name = $this->view->param('item_index_name')) && isset($this->item->{$item_index_name})) :
+        if (($item_index_name = $this->app->param('item_index_name')) && isset($this->item->{$item_index_name})) :
             $item_index = $this->item->{$item_index_name};
         else :
             $item_index = '';
@@ -104,9 +81,9 @@ class RowActionItemController implements RowActionItemInterface
         endif;
 
         if (!$item_index || (count($item_index) === 1)) :
-            $nonce_action = $this->view->param('singular') . '-' . $this->name;
+            $nonce_action = $this->app->param('singular') . '-' . $this->name;
         else :
-            $nonce_action = $this->view->param('plural') . '-' . $this->name;
+            $nonce_action = $this->app->param('plural') . '-' . $this->name;
         endif;
 
         if ($item_index && count($item_index) === 1) :
@@ -121,17 +98,10 @@ class RowActionItemController implements RowActionItemInterface
      */
     public function parse($attrs = [])
     {
-        if (method_exists($this->view, "get_row_action_attrs_{$this->name}")) :
-            $attrs = call_user_func([$this->view, "get_row_action_attrs_{$this->name}"], $attrs);
-        endif;
-
-        $this->attributes = array_merge(
-            $this->attributes,
-            $attrs
-        );
+        parent::parse($attrs);
 
         if (!$this->get('attrs.href')) :
-            $this->set('attrs.href', $this->view->get('page_url'));
+            $this->set('attrs.href', $this->app->get('page_url'));
         endif;
 
         if($query_args = $this->get('query_args', [])) :
@@ -140,7 +110,7 @@ class RowActionItemController implements RowActionItemInterface
 
         if ($nonce = $this->get('nonce')) :
             if ($nonce === true) :
-                $nonce = $this->view->get('page_url');
+                $nonce = $this->app->get('page_url');
             endif;
 
             $this->set('attrs.href', \wp_nonce_url($this->get('attrs.href'), $nonce));
@@ -184,16 +154,6 @@ class RowActionItemController implements RowActionItemInterface
     /**
      * {@inheritdoc}
      */
-    public function set($key, $value)
-    {
-        Arr::set($this->attributes, $key, $value);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function display()
     {
         if ($this->get('hide_empty') && !$this->get('count_items', 0)) :
@@ -204,8 +164,7 @@ class RowActionItemController implements RowActionItemInterface
             [
                 'tag'   => 'a',
                 'attrs' => $this->get('attrs', []),
-                'content' => $this->get('content') .
-                    ($this->get('show_count') ? " <span class=\"count\">(". $this->get('count_items') .")</span>" : '')
+                'content' => $this->get('content')
             ]
         );
     }

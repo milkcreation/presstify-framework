@@ -47,7 +47,7 @@ final class PostType extends AppController
             return;
         endif;
 
-        $this->appServiceShare($alias, new PostTypeController($name, $attrs));
+        $this->appServiceShare($alias, new PostTypeController($name, $attrs, $this));
 
         return $this->appServiceGet($alias);
     }

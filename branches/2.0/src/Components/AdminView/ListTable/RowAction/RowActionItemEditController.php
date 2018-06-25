@@ -12,7 +12,7 @@ class RowActionItemEditController extends RowActionItemController
         return [
             'content' => __('Modifier', 'tify'),
             'title'   => __('Modification de l\'élément', 'tify'),
-            'href'    => $this->view->param('edit_base_uri'),
+            'href'    => $this->app->param('edit_base_uri'),
             'nonce'   => false,
             'referer' => false
         ];

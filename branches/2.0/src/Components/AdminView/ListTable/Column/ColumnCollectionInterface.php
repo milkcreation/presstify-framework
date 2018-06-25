@@ -4,7 +4,7 @@ namespace tiFy\Components\AdminView\ListTable\Column;
 
 use Illuminate\Support\Collection;
 use tiFy\Components\AdminView\ListTable\Column\ColumnItemInterface;
-use tiFy\AdminView\AdminViewInterface;
+use tiFy\AdminView\AdminViewControllerInterface;
 
 interface ColumnCollectionInterface
 {
@@ -25,12 +25,13 @@ interface ColumnCollectionInterface
     public function get($name);
 
     /**
-     * Récupération de la liste de définition des colonnes.
-     * @internal Couple nom de qualification => intitulé.
+     * Récupération de la liste des entêtes HTML.
+     *
+     * @param bool $with_id Action de l'id HTML.
      *
      * @return array
      */
-    public function getList();
+    public function getHeaders($with_id = true);
 
     /**
      * Récupération de la liste des noms de qualification des colonnes masquées.
@@ -47,6 +48,21 @@ interface ColumnCollectionInterface
     public function getInfos();
 
     /**
+     * Récupération de la liste de définition des colonnes.
+     * @internal Couple nom de qualification => intitulé.
+     *
+     * @return array
+     */
+    public function getList();
+
+    /**
+     * Récupération du nom de qualification de la colonne principale.
+     *
+     * @return string
+     */
+    public function getPrimary();
+
+    /**
      * Récupération de la liste des noms de qualification des colonnes ouverte à l'ordonnacement.
      *
      * @return string[]
@@ -59,6 +75,22 @@ interface ColumnCollectionInterface
      * @return string[]
      */
     public function getVisible();
+
+    /**
+     * Récupération du nombre de colonne affichée.
+     *
+     * @return int
+     */
+    public function countVisible();
+
+    /**
+     * Vérifie si le nom de qualification d'une colonne correspond à la colonne principale.
+     *
+     * @param string $name Nom de qualification de la colonne à vérifier.
+     *
+     * @return bool
+     */
+    public function isPrimary($name);
 
     /**
      * Traitement de la liste des colonnes.

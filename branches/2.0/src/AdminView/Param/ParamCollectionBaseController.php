@@ -2,9 +2,14 @@
 
 namespace tiFy\AdminView\Param;
 
-use tiFy\AdminView\Interop\AbstractAttributesAwareController;
+use tiFy\AdminView\AdminViewControllerInterface;
+use tiFy\Apps\Attributes\AbstractAttributesController;
 
-class ParamCollectionBaseController extends AbstractAttributesAwareController implements ParamCollectionInterface
+class ParamCollectionBaseController extends AbstractAttributesController implements ParamCollectionInterface
 {
-
+    /**
+     * Classe de rappel du controleur de l'interface d'administration associée.
+     * @var AdminViewControllerInterface
+     */
+    protected $app;
 }

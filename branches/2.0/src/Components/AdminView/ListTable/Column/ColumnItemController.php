@@ -4,9 +4,11 @@ namespace tiFy\Components\AdminView\ListTable\Column;
 
 use ArrayIterator;
 use Illuminate\Support\Arr;
-use tiFy\AdminView\AdminViewInterface;
+use tiFy\Components\AdminView\ListTable\ListTableInterface;
+use tiFy\Apps\Attributes\AbstractAttributesIterator;
+use tiFy\Partial\Partial;
 
-class ColumnItemController implements ColumnItemInterface
+class ColumnItemController extends AbstractAttributesIterator implements ColumnItemInterface
 {
     /**
      * Nom de qualification.
@@ -16,9 +18,9 @@ class ColumnItemController implements ColumnItemInterface
 
     /**
      * Classe de rappel de la vue associée.
-     * @var AdminViewInterface
+     * @var ListTableInterface
      */
-    protected $view;
+    protected $app;
 
     /**
      * Liste des attributs de configuration.
@@ -39,24 +41,15 @@ class ColumnItemController implements ColumnItemInterface
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration personnalisés.
      * @param array|object $item Données de l'élément courant.
-     * @param AdminViewInterface $view Classe de rappel de la vue associée.
+     * @param ListTableInterface $app Classe de rappel de la vue associée.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], AdminViewInterface $view)
+    public function __construct($name, $attrs = [], ListTableInterface $app)
     {
         $this->name = $name;
-        $this->view = $view;
 
-        $this->parse($attrs);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function all()
-    {
-        return $this->attributes;
+        parent::__construct($attrs, $app);
     }
 
     /**
@@ -68,7 +61,7 @@ class ColumnItemController implements ColumnItemInterface
             return;
         endif;
 
-        $type = (($db = $this->view->getDb()) && $db->existsCol($this->name)) ? strtoupper($db->getColAttr($this->name,
+        $type = (($db = $this->app->getDb()) && $db->existsCol($this->name)) ? strtoupper($db->getColAttr($this->name,
             'type')) : '';
 
         switch ($type) :
@@ -88,9 +81,11 @@ class ColumnItemController implements ColumnItemInterface
     /**
      * {@inheritdoc}
      */
-    public function get($key, $default = null)
+    public function defaults()
     {
-        return Arr::get($this->attributes, $key, $default);
+        return [
+            'title' => $this->getName()
+        ];
     }
 
     /**
@@ -102,66 +97,90 @@ class ColumnItemController implements ColumnItemInterface
     }
 
     /**
-     * Récupération de l'itérateur.
-     *
-     * @return ArrayIterator
+     * {@inheritdoc}
      */
-    public function getIterator()
+    public function getTitle()
     {
-        return new ArrayIterator($this->attributes);
+        return $this->get('title');
     }
 
     /**
-     * Vérifie l'existance d'un attribut selon une clé d'indice.
-     *
-     * @param mixed $key Clé d'indice.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function offsetExists($key)
+    public function getHeader($with_id = true)
     {
-        return array_key_exists($key, $this->attributes);
-    }
+        $class = ['manage-column', "column-{$this->getName()}"];
 
-    /**
-     * Récupération de la valeur d'un attribut selon une clé d'indice.
-     *
-     * @param mixed $key Clé d'indice.
-     *
-     * @return mixed
-     */
-    public function offsetGet($key)
-    {
-        return $this->attributes[$key];
-    }
-
-    /**
-     * Définition de la valeur d'un attribut selon une clé d'indice.
-     *
-     * @param mixed $key Clé d'indice.
-     * @param mixed $value Valeur à définir.
-     *
-     * @return void
-     */
-    public function offsetSet($key, $value)
-    {
-        if (is_null($key)) :
-            $this->attributes[] = $value;
-        else :
-            $this->attributes[$key] = $value;
+        if ($this->isHidden()) :
+            $class[] = 'hidden';
         endif;
+
+        if ($this->isPrimary()) :
+            $class[] = 'column-primary';
+        endif;
+
+        $title = $this->getTitle();
+
+        if ($this->isSortable()) :
+            $current_url = $this->app->request()->currentUrl();
+            $current_url = remove_query_arg('paged', $current_url);
+            $current_orderby = $this->app->appRequest('GET')->get('orderby');
+            $current_order = $this->app->appRequest('GET')->get('order') === 'desc' ? 'desc' : 'asc';
+
+            list($orderby, $desc_first) = $this->get('sortable');
+
+            if ( $current_orderby === $orderby ) :
+                $order = 'asc' === $current_order ? 'desc' : 'asc';
+                $class[] = 'sorted';
+                $class[] = $current_order;
+            else :
+                $order = $desc_first ? 'desc' : 'asc';
+                $class[] = 'sortable';
+                $class[] = $desc_first ? 'asc' : 'desc';
+            endif;
+
+            $title = "<a href=\"" . esc_url(add_query_arg(compact('orderby', 'order'), $current_url)) . "\">" .
+                "<span>{$title}</span><span class=\"sorting-indicator\"></span></a>";
+        endif;
+
+        $attrs = [
+            'tag' => 'th',
+            'attrs'  => [
+                'class' => join(' ', $class),
+                'scope' => 'col'
+            ],
+            'content' => $title
+        ];
+
+        if ($with_id) :
+            $attrs['attrs']['id'] = $this->getName();
+        endif;
+
+        return (string)Partial::Tag($attrs);
     }
 
     /**
-     * Suppression de la valeur d'un attribut selon une clé d'indice.
-     *
-     * @param mixed $key Clé d'indice.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function offsetUnset($key)
+    public function isHidden()
     {
-        unset($this->attributes[$key]);
+        return !empty($this->get('hidden'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isPrimary()
+    {
+        return $this->app->columns()->isPrimary($this->getName());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSortable()
+    {
+        return !empty($this->get('sortable'));
     }
 
     /**
@@ -169,25 +188,17 @@ class ColumnItemController implements ColumnItemInterface
      */
     public function parse($attrs = [])
     {
-        $this->attributes = array_merge(
-            $this->attributes,
-            $attrs
-        );
+        parent::parse($attrs);
 
         if ($sortable = $this->get('sortable')) :
-            $this->set('sortable', is_bool($sortable) ? $this->name : $sortable);
+            $this->set(
+                'sortable',
+                is_bool($sortable)
+                    ? [$this->getName(), false]
+                    : (is_string($sortable) ? [$sortable, false] : $sortable)
+            );
         endif;
 
-        $this->set('name', $this->name);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function set($key, $value)
-    {
-        Arr::set($this->attributes, $key, $value);
-
-        return $this;
+        $this->set('name', $this->getName());
     }
 }
