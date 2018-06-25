@@ -2,11 +2,12 @@
 
 namespace tiFy\AdminView;
 
-use tiFy\AdminView\AdminViewParamsControllerInterface;
+use tiFy\AdminView\Param\ParamCollectionInterface;
+use tiFy\AdminView\Request\RequestInterface;
 use tiFy\Apps\AppControllerInterface;
 use tiFy\Db\DbControllerInterface;
 
-interface AdminViewInterface extends AppControllerInterface
+interface AdminViewControllerInterface extends AppControllerInterface
 {
     /**
      * Récupération d'un attribut de configuration.
@@ -76,6 +77,27 @@ interface AdminViewInterface extends AppControllerInterface
     public function has($key);
 
     /**
+     * Récupération de la classe de rappel du controleur de message de notification.
+     *
+     * @return NoticeCollectionInterface
+     */
+    public function notices();
+
+    /**
+     * Récupération de la classe de rappel d'un controleur.
+     *
+     * @return object
+     */
+    public function provide($key, $args = []);
+
+    /**
+     * Récupération de la classe de rappel du controleur de service.
+     *
+     * @return AdminViewServiceProvider
+     */
+    public function provider();
+
+    /**
      * Récupération d'un paramètre.
      *
      * @param string $key Clé d'indice du paramètres.Syntaxe à point permise.
@@ -88,7 +110,7 @@ interface AdminViewInterface extends AppControllerInterface
     /**
      * Récupération de la classe de rappel du controleur de gestion des paramètres.
      *
-     * @return AdminViewParamsControllerInterface
+     * @return ParamCollectionInterface
      */
     public function params();
 
@@ -101,6 +123,13 @@ interface AdminViewInterface extends AppControllerInterface
      * @return mixed
      */
     public function set($key, $value);
+
+    /**
+     * Récupération de la classe de rappel du controleur de requete Http.
+     *
+     * @return RequestInterface
+     */
+    public function request();
 
     /**
      * Affichage.

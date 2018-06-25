@@ -6,25 +6,32 @@ use tiFy\AdminView\AdminViewBaseController;
 use tiFy\Components\AdminView\ListTable\BulkAction\BulkActionCollectionController;
 use tiFy\Components\AdminView\ListTable\Column\ColumnCollectionController;
 use tiFy\Components\AdminView\ListTable\Column\ColumnCollectionInterface;
-use tiFy\Components\AdminView\ListTable\Filter\FilterCollectionController;
+use tiFy\Components\AdminView\ListTable\ViewFilter\ViewFilterCollectionController;
 use tiFy\Components\AdminView\ListTable\Item\ItemCollectionController;
 use tiFy\Components\AdminView\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\AdminView\ListTable\Item\ItemInterface;
 use tiFy\Components\AdminView\ListTable\Param\ParamCollectionController;
 use tiFy\Components\AdminView\ListTable\RowAction\RowActionCollectionController;
+use tiFy\Components\AdminView\ListTable\TemplateController;
 
-class ListTable extends AdminViewBaseController
+class ListTable extends AdminViewBaseController implements ListTableInterface
 {
     use WpListTableTrait;
+
+    /**
+     * Controleur du fournisseur de service.
+     * @var string
+     */
+    protected $serviceProvider = ListTableServiceProvider::class;
 
     /**
      * Liste des classes de rappel des services.
      * @var array
      */
     protected $providers = [
-        'params'    => ParamCollectionController::class,
         'columns'   => ColumnCollectionController::class,
-        'items'     => ItemCollectionController::class
+        'items'     => ItemCollectionController::class,
+        'params'    => ParamCollectionController::class
     ];
 
     /**
@@ -69,12 +76,12 @@ class ListTable extends AdminViewBaseController
     {
         parent::boot();
 
-        if ($columns = $this->getConcrete('columns')) :
-            $this->appServiceAdd(
-                ColumnCollectionInterface::class,
-                new $columns($this->param('columns', []), $this)
-            );
-        endif;
+        $this->appTemplates(
+            [
+                'directory'  => dirname(__FILE__) . '/Templates',
+                'controller' => TemplateController::class,
+            ]
+        );
 
         $this->appAddAction(
             "wp_ajax_{$this->getName()}_preview_item",
@@ -83,13 +90,11 @@ class ListTable extends AdminViewBaseController
     }
 
     /**
-     * Récupération du controleur de gestion des colonnes.
-     *
-     * @return ColumnCollectionInterface
+     * {@inheritdoc}
      */
     public function columns()
     {
-        return $this->appServiceGet(ColumnCollectionInterface::class);
+        return $this->provide('columns');
     }
 
     /**
@@ -134,156 +139,26 @@ class ListTable extends AdminViewBaseController
     }
 
     /**
-     * Affichage du selecteur d'action groupées.
+     * Affichage.
      *
-     * @param string $which Choix de l'interface de navigation. top|bottom.
-     *
-     * @return void
+     * @return string
      */
-    protected function displayBulkActions($which = '')
+    public function display()
     {
-        echo new BulkActionCollectionController($this->param('bulk_actions', []), $which, $this);
-    }
-
-    /**
-     * Affichage du corps de la table.
-     *
-     * @return void
-     */
-    public function displayBody()
-    {
-        /*if ($this->items()->has()) :
-            $this->displayRows();
-        else : */
-            echo '<tr class="no-items"><td class="colspanchange" colspan="' . $this->get_column_count() . '">';
-            $this->displayNoItems();
-            echo '</td></tr>';
-        //endif;
-    }
-
-    /**
-     * Affichage de la liste des filtres.
-     *
-     * @return void
-     */
-    protected function displayFilters()
-    {
-        if (!$filters = $this->getFilters()) :
-            return;
-        endif;
-
-        $this->getScreen()->render_screen_reader_content('heading_views');
-
-        echo "<ul class='subsubsub'>\n";
-        foreach ($filters as $class => $filter) :
-            $filters[$class] = "\t<li class='$class'>$filter";
-        endforeach;
-        echo implode( " |</li>\n", $filters ) . "</li>\n";
-        echo "</ul>";
-    }
-
-    /**
-     * Affichage du message indiquant que la liste des éléments est vide.
-     *
-     * @return void
-     */
-    public function displayNoItems()
-    {
-        echo $this->param('no_items', __('No items found.'));
-    }
-
-    /**
-     * Affichage de la liste des lignes de la table.
-     *
-     * @return void
-     */
-    public function displayRows()
-    {
-        foreach ($this->items() as $item) :
-            $this->displaySingleRow($item);
-        endforeach;
-    }
-
-    /**
-     * Affichage d'une ligne de la table.
-     *
-     * @param ItemInterface $item Liste des données de l'élément courant.
-     *
-     * @return void
-     */
-    public function displaySingleRow($item)
-    {
-        echo '<tr>';
-        $this->displaySingleRowColumns($item);
-        echo '</tr>';
-    }
-
-    /**
-     * Affichage de la liste des colonnes d'un ligne de la table.
-     *
-     * @param ItemInterface $item Liste des données de l'élément courant.
-     *
-     * @return void
-     */
-    protected function displaySingleRowColumns($item)
-    {
-        list($columns, $hidden, $sortable, $primary) = $this->getColumnInfos();
-
-        foreach ($columns as $column_name => $column_display_name) :
-            $classes = "$column_name column-$column_name";
-            $classes .= ($primary === $column_name ) ? ' has-row-actions column-primary' : '';
-            $classes .= in_array($column_name, $hidden) ? ' hidden' : '';
-
-            $data = 'data-colname="' . wp_strip_all_tags($column_display_name) . '"';
-
-            $attributes = "class=\"{$classes}\" {$data}";
-
-            if ('cb' === $column_name) :
-                echo '<th scope="row" class="check-column">';
-                echo $this->column_cb( $item );
-                echo '</th>';
-            else :
-                echo "<td $attributes>";
-                echo $this->getColumnDisplay($column_name, $item);
-                echo $this->getRowActions($item, $column_name, $primary);
-                echo "</td>";
-            endif;
-        endforeach;
-    }
-
-    /**
-     * Affichage de la table.
-     *
-     * @return void
-     */
-    protected function displayTable()
-    {
-        $singular = $this->_args['singular'];
-
-        $this->displayTablenav('top');
-
-        $this->getScreen()->render_screen_reader_content('heading_list');
+        return $this->appTemplateRender('list-table');
         ?>
-        <table class="wp-list-table <?php echo implode(' ', $this->getTableClasses()); ?>">
-            <thead>
-                <tr>
-                    <?php $this->print_column_headers(); ?>
-                </tr>
-            </thead>
 
-            <tbody id="the-list"<?php echo $singular ? " data-wp-lists=\"list:{$singular}\"" : ''; ?>>
-                <?php $this->displayBody(); ?>
-            </tbody>
+            <?php if($base_uri_query_vars = $this->getBaseUriQueryVars()) : ?>
+                <?php foreach ($base_uri_query_vars as $k => $v) : ?>
+                    <input type="hidden" name="<?php echo $k;?>" value="<?php echo $v;?>" />
+                <?php endforeach; ?>
+            <?php endif; ?>
 
-            <tfoot>
-                <tr>
-                    <?php $this->print_column_headers( false ); ?>
-                </tr>
-            </tfoot>
+            <?php $this->hidden_fields(); ?>
 
-        </table>
+
+            <?php $this->preview_items(); ?>
         <?php
-        $this->displayTablenav('bottom');
     }
 
     /**
@@ -295,49 +170,16 @@ class ListTable extends AdminViewBaseController
      */
     protected function displayTablenav($which)
     {
-        if ('top' === $which) :
-            wp_nonce_field( 'bulk-' . $this->_args['plural'] );
-        endif;
-        ?>
-        <div class="tablenav <?php echo esc_attr( $which ); ?>">
-
-            <?php if ($this->has_items()): ?>
-                <div class="alignleft actions bulkactions">
-                    <?php $this->displayBulkActions($which); ?>
-                </div>
-            <?php endif;
-            $this->displayTablenavExtra($which);
-            $this->pagination( $which );
-            ?>
-
-            <br class="clear" />
-        </div>
-        <?php
+        $this->displayTablenavExtra($which);
+        $this->pagination($which);
     }
 
     /**
-     * Affichage des l'interface de navigation complémentaire de la table.
-     *
-     * @param string $which Choix de l'interface de navigation. top|bottom.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    protected function displayTablenavExtra($which)
+    public function getBulkActions($which = '')
     {
-
-    }
-
-    /**
-     * Return number of visible columns
-     *
-     * @since 3.1.0
-     *
-     * @return int
-     */
-    public function get_column_count() {
-        list ( $columns, $hidden ) = $this->getColumnInfos();
-        $hidden = array_intersect( array_keys( $columns ), array_filter( $hidden ) );
-        return count( $columns ) - count( $hidden );
+        echo $this->provide('bulk_actions', [$which, $this]);
     }
 
     /**
@@ -371,69 +213,6 @@ class ListTable extends AdminViewBaseController
     protected function getColumns()
     {
         return $this->columns()->getList();
-    }
-
-    /**
-     * Récupération de la liste des filtres.
-     *
-     * @return array
-     */
-    protected function getFilters()
-    {
-        return (new FilterCollectionController($this->param('views'), $this))->all();
-    }
-
-    /**
-     * Récupération de la liste des colonnes masquées.
-     *
-     * @return array
-     */
-    protected function getHiddenColumns()
-    {
-        return $this->columns()->getHidden();
-    }
-
-
-    /**
-     * Récupération de la liste des actions sur un élément.
-     *
-     * @param ItemInterface $item Liste des données de l'élément courant.
-     * @param string $column_name Nom de qualification de la colonne courante.
-     * @param string $primary Identifiant de qualification de la colonne principale
-     *
-     * @return string
-     */
-    public function getRowActions($item, $column_name, $primary)
-    {
-        if (!$row_actions = $this->param('row_actions')) :
-            return;
-        endif;
-
-        if ($primary !== $column_name) :
-            return;
-        endif;
-
-        return new RowActionCollectionController($row_actions, $item, $this);
-    }
-
-    /**
-     * Récupération de la liste des colonnes pouvant être ordonnancées.
-     *
-     * @return array
-     */
-    protected function getSortableColumns()
-    {
-        return $this->columns()->getSortable();
-    }
-
-    /**
-     * Récupération de la liste des éléments.
-     *
-     * @return ItemCollectionInterface
-     */
-    public function items()
-    {
-        return $this->appServiceGet(ItemCollectionInterface::class);
     }
 
     /**
@@ -478,16 +257,76 @@ class ListTable extends AdminViewBaseController
     }
 
     /**
-     * Récupération de la liste des classe CSS de la balise table.
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getTableClasses()
+    public function getRowActions($item, $column_name, $primary)
+    {
+        if ($primary !== $column_name) :
+            return;
+        endif;
+
+        return $this->provide('row_actions', [$item, $this]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSingleRow($item)
+    {
+        list($columns, $hidden, $sortable, $primary) = $this->getColumnInfos();
+
+        $output = '';
+        foreach ($columns as $column_name => $column_display_name) :
+            $classes = "$column_name column-$column_name";
+            $classes .= ($primary === $column_name ) ? ' has-row-actions column-primary' : '';
+            $classes .= in_array($column_name, $hidden) ? ' hidden' : '';
+
+            $data = 'data-colname="' . wp_strip_all_tags($column_display_name) . '"';
+
+            $attributes = "class=\"{$classes}\" {$data}";
+
+            if ('cb' === $column_name) :
+                $output .= '<th scope="row" class="check-column">';
+                $output .= $this->getColumnDisplay($column_name, $item);
+                $output .= '</th>';
+            else :
+                $output .= "<td {$attributes}>";
+                $output .= $this->getColumnDisplay($column_name, $item);
+                $output .= $this->getRowActions($item, $column_name, $primary);
+                $output .= '</td>';
+            endif;
+        endforeach;
+
+        return $output;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTableClasses()
     {
         return array_merge(
             ['widefat', 'fixed', 'striped', $this->_args['plural']],
             $this->param('table_classes')
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewFilters()
+    {
+        return $this->provide('view_filters')->all();
+    }
+
+    /**
+     * Récupération de la liste des éléments.
+     *
+     * @return ItemCollectionInterface
+     */
+    public function items()
+    {
+        return $this->provide('items');
     }
 
     /**
@@ -505,16 +344,6 @@ class ListTable extends AdminViewBaseController
         endif;
 
         return $value;
-    }
-
-    /**
-     * Récupération de l'entête de colonne.
-     *
-     * @return void
-     */
-    public function header_cb()
-    {
-        return "<input id=\"cb-select-all-1\" type=\"checkbox\" />";
     }
 
     /**
@@ -536,13 +365,11 @@ class ListTable extends AdminViewBaseController
      */
     public function prepare_items()
     {
-        if (!$items = $this->getConcrete('items')) :
+        if (!$items = $this->items()) :
             return;
         endif;
 
-        $this->appServiceAdd(ItemCollectionInterface::class, new $items($this->getQueryArgs(), $this));
-
-        $total_items = $this->items()->getTotal();
+        $total_items = $items->getTotal();
         $per_page = $this->get_items_per_page($this->param('per_page_option_name'), $this->param('per_page'));
 
         $this->set_pagination_args(
@@ -561,35 +388,7 @@ class ListTable extends AdminViewBaseController
      */
     public function render()
     {
-        ?>
-        <div class="wrap">
-            <h2>
-                <?php echo $this->param('page_title', $this->getLabel('all_items', '')); ?>
-
-                <?php if($edit_base_uri = $this->param('edit_base_uri')) : ?>
-                    <a class="add-new-h2" href="<?php echo $edit_base_uri;?>"><?php echo $this->getLabel('add_new');?></a>
-                <?php endif;?>
-            </h2>
-
-            <?php $this->displayFilters(); ?>
-
-            <form method="get" action="">
-                <?php if($base_uri_query_vars = $this->getBaseUriQueryVars()) : ?>
-                    <?php foreach ($base_uri_query_vars as $k => $v) : ?>
-                        <input type="hidden" name="<?php echo $k;?>" value="<?php echo $v;?>" />
-                    <?php endforeach; ?>
-                <?php endif; ?>
-
-                <?php $this->hidden_fields(); ?>
-
-                <?php $this->search_box($this->getLabel('search_items'), $this->getName()); ?>
-
-                <?php $this->displayTable(); ?>
-
-                <?php $this->preview_items(); ?>
-            </form>
-        </div>
-        <?php
+        echo $this->display();
     }
 
     /**

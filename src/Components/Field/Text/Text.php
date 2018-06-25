@@ -48,7 +48,10 @@ class Text extends AbstractFieldController
     {
         parent::parse($attrs);
 
-        $this->set('attrs.type', 'text');
+        if (!$this->get('attrs.type')) :
+            $this->set('attrs.type', 'text');
+        endif;
+
         $this->set('attrs.value', $this->get('value'));
     }
 }

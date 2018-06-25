@@ -9,13 +9,6 @@ use tiFy\Components\AdminView\ListTable\Item\ItemInterface;
 interface ColumnItemInterface extends ArrayAccess, IteratorAggregate
 {
     /**
-     * Récupération de la liste des attributs de configuration.
-     *
-     * @return array
-     */
-    public function all();
-
-    /**
      * Affichage.
      *
      * @param ItemInterface $item Données de l'élément courant à afficher.
@@ -25,16 +18,6 @@ interface ColumnItemInterface extends ArrayAccess, IteratorAggregate
     public function display($item);
 
     /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indice de l'attributs. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null);
-
-    /**
      * Récupération du nom de qualification.
      *
      * @return string
@@ -42,21 +25,39 @@ interface ColumnItemInterface extends ArrayAccess, IteratorAggregate
     public function getName();
 
     /**
-     * Traitement des attributs de configuration.
+     * Récupération de l'intitulé de qualification.
      *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return void
+     * @return string
      */
-    public function parse($attrs = []);
+    public function getTitle();
 
     /**
-     * Définition d'un attribut de configuration.
+     * Récupération de l'entête au format HTML.
      *
-     * @param string $key Clé d'indice de l'attributs. Syntaxe à point permise.
-     * @param mixed $value Valeur de de l'attribut.
+     * @param bool $with_id Activation de l'id de la balise HTML.
      *
-     * @return $this
+     * @return string
      */
-    public function set($key, $value);
+    public function getHeader($with_id = true);
+
+    /**
+     * Vérification de maquage de la colonne.
+     *
+     * @return bool
+     */
+    public function isHidden();
+
+    /**
+     * Vérifie si la colonne est la colonne principale.
+     *
+     * @return bool
+     */
+    public function isPrimary();
+
+    /**
+     * Vérifie si la colonne peut être ordonnancée.
+     *
+     * @return bool
+     */
+    public function isSortable();
 }

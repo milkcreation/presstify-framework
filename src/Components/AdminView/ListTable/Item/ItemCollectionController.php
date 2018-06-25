@@ -5,15 +5,15 @@ namespace tiFy\Components\AdminView\ListTable\Item;
 use ArrayIterator;
 use Illuminate\Support\Collection;
 use tiFy\Components\AdminView\ListTable\Item\ItemController;
-use tiFy\AdminView\AdminViewInterface;
+use tiFy\Components\AdminView\ListTable\ListTableInterface;
 
 class ItemCollectionController implements ItemCollectionInterface
 {
     /**
      * Classe de rappel de la vue associée.
-     * @var AdminViewInterface
+     * @var ListTableInterface
      */
-    protected $view;
+    protected $app;
 
     /**
      * Liste des éléments.
@@ -30,16 +30,15 @@ class ItemCollectionController implements ItemCollectionInterface
     /**
      * CONSTRUCTEUR.
      *
-     * @param array $query_args Liste des arguments de requête de récupération.
-     * @param AdminViewInterface $view Classe de rappel de la vue associée.
+     * @param AdminViewControllerInterface $app Classe de rappel de la vue associée.
      *
      * @return void
      */
-    public function __construct($query_args = [], AdminViewInterface $view)
+    public function __construct(ListTableInterface $app)
     {
-        $this->view = $view;
+        $this->app = $app;
 
-        $this->query($query_args);
+        $this->query($this->app->getQueryArgs());
     }
 
     /**
@@ -142,7 +141,7 @@ class ItemCollectionController implements ItemCollectionInterface
      */
     public function query($query_args = [])
     {
-        if (!$db = $this->view->getDb()) :
+        if (!$db = $this->app->getDb()) :
             return;
         endif;
 
@@ -150,7 +149,7 @@ class ItemCollectionController implements ItemCollectionInterface
 
         if ($items = $query->getItems()) :
             foreach($items as $item) :
-                $this->items[] = new ItemController($item, $this->view);
+                $this->items[] = new ItemController($item, $this->app);
             endforeach;
         endif;
 
