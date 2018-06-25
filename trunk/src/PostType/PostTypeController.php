@@ -3,11 +3,17 @@
 namespace tiFy\PostType;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
+use tiFy\Apps\Attributes\AbstractAttributesController;
 use tiFy\Components\Labels\LabelsPostTypeController;
 
-class PostTypeController extends AppController
+class PostTypeController extends AbstractAttributesController
 {
+    /**
+     * Classe de rappel du controleur de gestion des types de post.
+     * @return PostType
+     */
+    protected $app;
+
     /**
      * Nom de qualification du type de post.
      * @var string
@@ -45,7 +51,7 @@ class PostTypeController extends AppController
         'can_export'            => true,
         'delete_with_user'      => null,
         'show_in_rest'          => false,
-        //'rest_base'             => ''
+        'rest_base'             => '',
         'rest_controller_class' => 'WP_REST_Posts_Controller'
     ];
 
@@ -54,28 +60,19 @@ class PostTypeController extends AppController
      *
      * @param string $name Nom de qualification du type de post.
      * @param array $attrs Attribut de configuration.
+     * @param PostTyype $app Classe de rappel du controleur de gestion des types de post
      *
      * @return void
      */
-    public function __construct($name, $attrs = [])
+    public function __construct($name, $attrs = [], $app)
     {
         $this->name = $name;
 
-        $this->parse($attrs);
+        parent::__construct($attrs, $app);
 
         \register_post_type($name, $this->all());
 
-        $this->appAddAction('init', null, 25);
-    }
-
-    /**
-     * Récupération de la liste complète des attributs de configuration.
-     *
-     * @return array
-     */
-    public function all()
-    {
-        return $this->attributes;
+        $this->app->appAddAction('init', [$this, 'init'], 25);
     }
 
     /**
@@ -86,31 +83,6 @@ class PostTypeController extends AppController
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param mixed $default Valeur de retour par defaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
-    }
-
-    /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     *
-     * @return mixed
-     */
-    public function has($key)
-    {
-        return Arr::has($this->attributes, $key);
     }
 
     /**
@@ -149,10 +121,7 @@ class PostTypeController extends AppController
 
         $this->set('rest_base', $this->getName());
 
-        $this->attributes = array_merge(
-            $this->attributes,
-            $attrs
-        );
+        parent::parse($attrs);
 
         $this->set(
             'label',
@@ -222,18 +191,5 @@ class PostTypeController extends AppController
                 ? $this->get('show_in_admin_bar')
                 : $this->get('show_in_menu')
         );
-    }
-
-    /**
-     * Définition d'un attribut de configuration.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param mixed $value Valeur attribuée.
-     *
-     * @return mixed
-     */
-    public function set($key, $value)
-    {
-        return Arr::set($this->attributes, $key, $value);
     }
 }

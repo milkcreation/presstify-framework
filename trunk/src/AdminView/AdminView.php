@@ -56,7 +56,7 @@ final class AdminView extends AppController
      *      @param array handle Tableau associatif de la liste des templates en relation
      * }
      *
-     * @return AdminViewInterface
+     * @return AdminViewControllerInterface
      */
     public function register($name, $attrs = [])
     {

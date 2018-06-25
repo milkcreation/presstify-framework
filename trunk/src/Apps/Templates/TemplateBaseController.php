@@ -1,15 +1,21 @@
 <?php
 
-namespace tiFy\Kernel\Templates;
+namespace tiFy\Apps\Templates;
 
 use Illuminate\Support\Arr;
 use League\Plates\Template\Template as LeagueTemplate;
 use tiFy\Apps\AppControllerInterface;
-use tiFy\Kernel\Templates\Templates;
+use tiFy\Apps\Templates\Templates;
 use tiFy\Kernel\Tools;
 
 class TemplateBaseController extends LeagueTemplate
 {
+    /**
+     * Classe de rappel de l'application
+     * @var AppControllerInterface
+     */
+    protected $app;
+
     /**
      * Liste des variables passées en argument.
      * @var array
@@ -31,8 +37,9 @@ class TemplateBaseController extends LeagueTemplate
      *
      * @return void
      */
-    public function __construct(Templates $engine, $name, $args = [])
+    public function __construct(Templates $engine, $name, $args = [], AppControllerInterface $app)
     {
+        $this->app = $app;
         $this->args = $args;
 
         parent::__construct($engine, $name);
@@ -46,16 +53,6 @@ class TemplateBaseController extends LeagueTemplate
     public function all()
     {
         return $this->data;
-    }
-
-    /**
-     * Récupération de la classe de rappel du controleur d'application associée.
-     *
-     * @return AppControllerInterface
-     */
-    public function app()
-    {
-        return $this->engine->app();
     }
 
     /**

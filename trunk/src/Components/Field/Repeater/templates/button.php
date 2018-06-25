@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \tiFy\Kernel\Templates\Template $this Controleur de template.
+ * @var \tiFy\Field\TemplateController $this Controleur de template.
  */
 ?>
 

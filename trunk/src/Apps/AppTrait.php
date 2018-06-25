@@ -11,7 +11,7 @@ use League\Plates\Engine;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
-use tiFy\Kernel\Templates\Templates;
+use tiFy\Apps\Templates\Templates;
 use tiFy\tiFy;
 
 trait AppTrait
@@ -59,11 +59,11 @@ trait AppTrait
      */
     public function appAddFilter($tag, $method = '', $priority = 10, $accepted_args = 1)
     {
-        if (! $method) :
+        if (!$method) :
             $method = $tag;
         endif;
 
-        if (is_string($method) && ! preg_match('#::#', $method)) :
+        if (is_string($method) && !preg_match('#::#', $method)) :
             if ((new \ReflectionMethod($this, $method))->isStatic()) :
                 $classname = get_class($this);
             else :
@@ -117,7 +117,7 @@ trait AppTrait
      */
     public function appDirname($app = null)
     {
-        return tiFy::instance()->apps()->getDirname($app ? : $this);
+        return tiFy::instance()->apps()->getDirname($app ?: $this);
     }
 
     /**
@@ -141,7 +141,7 @@ trait AppTrait
      */
     public function appEventTrigger($event)
     {
-        if (! is_object($event) && ! is_string($event)) :
+        if (!is_object($event) && !is_string($event)) :
             return null;
         endif;
 
@@ -174,7 +174,7 @@ trait AppTrait
      */
     public static function appInstance($classname = null, $args = [])
     {
-        return tiFy::instance()->serviceGet($classname ? : get_called_class(), $args);
+        return tiFy::instance()->serviceGet($classname ?: get_called_class(), $args);
     }
 
     /**
@@ -208,7 +208,7 @@ trait AppTrait
      */
     public function appLowerName($name = null, $separator = '-')
     {
-        return tiFy::instance()->formatLowerName($name ? : $this->appShortname(), $separator);
+        return tiFy::instance()->formatLowerName($name ?: $this->appShortname(), $separator);
     }
 
     /**
@@ -240,7 +240,7 @@ trait AppTrait
      */
     public function appRelPath($app = null)
     {
-        return tiFy::instance()->apps()->getRelPath($app ? : $this);
+        return tiFy::instance()->apps()->getRelPath($app ?: $this);
     }
 
     /**
@@ -313,7 +313,7 @@ trait AppTrait
     public function appTemplates($options = [])
     {
         if (!$this->appTemplates) :
-            $this->appTemplates = new Templates($this, $options);
+            $this->appTemplates = new Templates($options, $this);
         endif;
 
         return $this->appTemplates;
@@ -340,7 +340,7 @@ trait AppTrait
      */
     public function appUpperName($name = null, $underscore = true)
     {
-        return tiFy::instance()->formatUpperName($name ? : $this->appShortname(), $underscore);
+        return tiFy::instance()->formatUpperName($name ?: $this->appShortname(), $underscore);
     }
 
     /**
@@ -348,6 +348,6 @@ trait AppTrait
      */
     public function appUrl($app = null)
     {
-        return tiFy::instance()->apps()->getUrl($app ? : $this);
+        return tiFy::instance()->apps()->getUrl($app ?: $this);
     }
 }

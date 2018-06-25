@@ -1,16 +1,15 @@
 <?php
 
-namespace tiFy\AdminView\Interop;
+namespace tiFy\Apps\Attributes;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
-use tiFy\AdminView\Interop\AttributesAwareInterface;
+use tiFy\Apps\AppControllerInterface;
 
-abstract class AbstractAttributesAwareController extends AppController implements AttributesAwareInterface
+abstract class AbstractAttributesController implements AttributesControllerInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'administration associée.
-     * @var AdminViewInterface
+     * @var AppControllerInterface
      */
     protected $app;
 
@@ -24,14 +23,12 @@ abstract class AbstractAttributesAwareController extends AppController implement
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des paramètres personnalisés.
-     * @param AdminViewInterface $app  Classe de rappel du controleur de l'interface d'administration associée.
+     * @param AppControllerInterface $app  Classe de rappel du controleur de l'application.
      *
      * @return void
      */
-    public function __construct($attrs = [], $app)
+    public function __construct($attrs = [], AppControllerInterface $app)
     {
-        parent::__construct();
-
         $this->app = $app;
 
         $attrs = array_merge(
@@ -91,5 +88,7 @@ abstract class AbstractAttributesAwareController extends AppController implement
     public function set($key, $value)
     {
         Arr::set($this->attributes, $key, $value);
+
+        return $this;
     }
 }

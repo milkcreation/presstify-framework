@@ -2,24 +2,24 @@
 
 namespace tiFy\Components\AdminView\ListTable\Handle;
 
-use tiFy\AdminView\AdminViewInterface;
+use tiFy\AdminView\AdminViewControllerInterface;
 
 class Handle
 {
     /**
      * Classe de rappel de la vue associée.
-     * @var AdminViewInterface
+     * @var AdminViewControllerInterface
      */
-    protected $view;
+    protected $app;
 
     /**
      * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function __construct(AdminViewInterface $view)
+    public function __construct(AdminViewControllerInterface $app)
     {
-        $this->view = $view;
+        $this->app = $app;
 
         $this->proceed();
     }
@@ -52,10 +52,10 @@ class Handle
      */
     public function getAction()
     {
-        if ($this->view->appRequest()->get('action', -1) != -1) :
+        if ($this->app->appRequest()->get('action', -1) != -1) :
             return $this->appRequest()->get('action');
         endif;
-        if ($this->view->appRequest()->get('action2', -1) != -1) :
+        if ($this->app->appRequest()->get('action2', -1) != -1) :
             return $this->appRequest()->get('action2');
         endif;
 
@@ -138,7 +138,7 @@ class Handle
 
         if (method_exists($this, "proceed_{$action}")) :
             call_user_func([$this, "proceed_{$action}"]);
-        elseif ($this->view->appRequest()->get('_wp_http_referer')) :
+        elseif ($this->app->appRequest()->get('_wp_http_referer')) :
             \wp_redirect(
                 \remove_query_arg(
                     ['_wp_http_referer', '_wpnonce'],

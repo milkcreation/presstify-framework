@@ -4,7 +4,7 @@ namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
 use League\Plates\Engine;
-use tiFy\Kernel\Templates\TemplateBaseController;
+use tiFy\Apps\Templates\TemplateBaseController;
 
 class TemplateController extends TemplateBaseController
 {
@@ -36,6 +36,22 @@ class TemplateController extends TemplateBaseController
     public function before()
     {
         echo $this->get('before', '');
+    }
+
+    /**
+     * Vérifie si une variable peut-être appelé comme une fonction
+     *
+     * @param mixed $var Variable à tester.
+     *
+     * @return bool
+     */
+    public function isCallable($var)
+    {
+        if (is_string($var) && !preg_match('#\\\#', $var)) :
+            return false;
+        else :
+            return is_callable($var);
+        endif;
     }
 
     /**
