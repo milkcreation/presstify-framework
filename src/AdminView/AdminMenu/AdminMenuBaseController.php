@@ -2,18 +2,32 @@
 
 namespace tiFy\AdminView\AdminMenu;
 
-use tiFy\AdminView\Interop\AbstractAttributesAwareController;
+use tiFy\AdminView\AdminViewControllerInterface;
+use tiFy\Apps\Attributes\AbstractAttributesController;
 
-class AdminMenuController extends AbstractAttributesAwareController implements AdminMenuInterface
+class AdminMenuBaseController extends AbstractAttributesController implements AdminMenuInterface
 {
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * Classe de rappel du controleur de l'interface d'administration associée.
+     * @var AdminViewControllerInterface
      */
-    public function appBoot()
+    protected $app;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults()
     {
-        $this->appAddAction('admin_menu');
+        return [
+            'menu_slug'   => $this->app->getName(),
+            'parent_slug' => '',
+            'page_title'  => $this->app->getName(),
+            'menu_title'  => $this->app->getName(),
+            'capability'  => 'manage_options',
+            'icon_url'    => null,
+            'position'    => null,
+            'function'    => [$this->app, 'render'],
+        ];
     }
 
     /**

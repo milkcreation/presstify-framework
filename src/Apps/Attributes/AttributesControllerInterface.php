@@ -1,8 +1,8 @@
 <?php
 
-namespace tiFy\AdminView\Interop;
+namespace tiFy\Apps\Attributes;
 
-interface AttributesAwareInterface
+interface AttributesControllerInterface
 {
     /**
      * Récupération de la liste des attributs.

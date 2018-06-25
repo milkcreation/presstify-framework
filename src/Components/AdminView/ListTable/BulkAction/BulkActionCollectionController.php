@@ -3,10 +3,10 @@
 namespace tiFy\Components\AdminView\ListTable\BulkAction;
 
 use tiFy\Components\AdminView\ListTable\BulkAction\BulkActionItemController;
-use tiFy\AdminView\AdminViewInterface;
+use tiFy\Components\AdminView\ListTable\ListTableInterface;
 use tiFy\Field\Field;
 
-class BulkActionCollectionController
+class BulkActionCollectionController implements BulkActionCollectionInterface
 {
     /**
      * Compteur d'instance d'affichage.
@@ -16,15 +16,15 @@ class BulkActionCollectionController
 
     /**
      * Classe de rappel de la vue associée.
-     * @var AdminViewInterface
+     * @var ListTableInterface
      */
-    protected $view;
+    protected $app;
 
     /**
      * Liste des actions groupées.
      * @var void|BulkActionItemController[]
      */
-    protected $bulk_actions = [];
+    protected $items = [];
 
     /**
      * Position de l'interface de navigation.
@@ -35,17 +35,16 @@ class BulkActionCollectionController
     /**
      * CONSTRUCTEUR.
      *
-     * @param array $bulk_actions Liste des actions groupées.
      * @param string $which Position de l'interface de navigation. top|bottom.
-     * @param AdminViewInterface $view Classe de rappel de la vue associée.
+     * @param ListTableInterface $app Classe de rappel de la vue associée.
      *
      * @return void
      */
-    public function __construct($bulk_actions, $which, AdminViewInterface $view)
+    public function __construct($which, ListTableInterface $app)
     {
-        $this->view = $view;
+        $this->app = $app;
         $this->which = $which;
-        $this->bulk_actions = $this->parse($bulk_actions);
+        $this->parse($this->app->param('bulk_actions', []));
     }
 
     /**
@@ -55,7 +54,7 @@ class BulkActionCollectionController
      */
     public function all()
     {
-        return $this->bulk_actions;
+        return $this->items;
     }
 
     /**
@@ -67,7 +66,6 @@ class BulkActionCollectionController
      */
     public function parse($bulk_actions = [])
     {
-        $_bulk_actions = [];
         foreach ($bulk_actions as $name => $attrs) :
             if (is_numeric($name)) :
                 $value = $name;
@@ -80,12 +78,10 @@ class BulkActionCollectionController
                 ];
             endif;
 
-            if ($attrs = (new BulkActionItemController($name, $attrs, $this->view))->all()) :
-                $_bulk_actions[] = $attrs;
+            if ($attrs = (new BulkActionItemController($name, $attrs, $this->app))->all()) :
+                $this->items[] = $attrs;
             endif;
         endforeach;
-
-        return $_bulk_actions;
     }
 
     /**
@@ -95,7 +91,7 @@ class BulkActionCollectionController
      */
     public function display()
     {
-        if (!$options = $this->bulk_actions) :
+        if (!$options = $this->all()) :
             return '';
         endif;
 

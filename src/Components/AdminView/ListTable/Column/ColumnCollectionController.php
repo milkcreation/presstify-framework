@@ -3,16 +3,17 @@
 namespace tiFy\Components\AdminView\ListTable\Column;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use tiFy\Components\AdminView\ListTable\Column\ColumnItemInterface;
-use tiFy\AdminView\AdminViewInterface;
+use tiFy\Components\AdminView\ListTable\ListTableInterface;
 
 class ColumnCollectionController implements ColumnCollectionInterface
 {
     /**
      * Classe de rappel de la vue associée.
-     * @var AdminViewInterface
+     * @var ListTableInterface
      */
-    protected $view;
+    protected $app;
 
     /**
      * Liste des colonnes.
@@ -23,17 +24,16 @@ class ColumnCollectionController implements ColumnCollectionInterface
     /**
      * CONSTRUCTEUR.
      *
-     * @param array $columns Liste des colonnes.
      * @param array|object $item Données de l'élément courant.
-     * @param AdminViewInterface $view Classe de rappel de la vue associée.
+     * @param ListTableInterface $app Classe de rappel de la vue associée.
      *
      * @return void
      */
-    public function __construct($columns, AdminViewInterface $view)
+    public function __construct(ListTableInterface $app)
     {
-        $this->view = $view;
+        $this->app = $app;
 
-        $this->columns = $this->parse($columns);
+        $this->columns = $this->parse($this->app->param('columns', []));
     }
 
     /**
@@ -57,11 +57,23 @@ class ColumnCollectionController implements ColumnCollectionInterface
     /**
      * {@inheritdoc}
      */
+    public function getHeaders($with_id = true)
+    {
+        return $this->columns->mapWithKeys(function($item, $key) use ($with_id){
+            /** @var ColumnItemInterface $item */
+            return [$key => $item->getHeader($with_id)];
+        })->all();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getHidden()
     {
         return $this->columns
-            ->filter(function($value, $key){
-                return !empty($value['hidden']);
+            ->filter(function($item, $key){
+                /** @var ColumnItemInterface $item */
+                return $item->isHidden();
             })
             ->pluck('name', null)
             ->all();
@@ -108,8 +120,9 @@ class ColumnCollectionController implements ColumnCollectionInterface
     public function getSortable()
     {
         return $this->columns
-            ->filter(function($value, $key){
-                return !empty($value['sortable']);
+            ->filter(function($item, $key){
+                /** @var ColumnItemInterface $item */
+                return $item->isSortable();
             })
             ->pluck('sortable', 'name')
             ->all();
@@ -121,11 +134,28 @@ class ColumnCollectionController implements ColumnCollectionInterface
     public function getVisible()
     {
         return $this->columns
-            ->filter(function($value, $key){
-                return empty($value['hidden']);
+            ->filter(function($item, $key){
+                /** @var ColumnItemInterface $item */
+                return !$item->isHidden();
             })
             ->pluck('name', null)
             ->all();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function countVisible()
+    {
+        return count($this->getVisible());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isPrimary($name)
+    {
+        return $name === $this->getPrimary();
     }
 
     /**
@@ -146,7 +176,13 @@ class ColumnCollectionController implements ColumnCollectionInterface
                 ];
             endif;
 
-            $_columns[$name] = new ColumnItemController($name, $attrs, $this->view);
+            $controller = Arr::get($attrs, 'controller', ColumnItemController::class);
+
+            if ($name === 'cb') :
+                $controller = ColumnItemCbController::class;
+            endif;
+
+            $_columns[$name] = new $controller($name, $attrs, $this->app);
         endforeach;
 
         return new Collection($_columns);

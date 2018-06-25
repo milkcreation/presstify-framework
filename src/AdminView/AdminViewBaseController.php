@@ -3,19 +3,21 @@
 namespace tiFy\AdminView;
 
 use Illuminate\Support\Arr;
-use tiFy\AdminView\AdminMenu\AdminMenuController;
+use tiFy\AdminView\AdminMenu\AdminMenuBaseController;
 use tiFy\AdminView\AdminMenu\AdminMenuInterface;
-use tiFy\AdminView\Notice\NoticeCollectionController;
+use tiFy\AdminView\Notice\NoticeCollectionBaseController;
 use tiFy\AdminView\Notice\NoticeCollectionInterface;
 use tiFy\AdminView\Param\ParamCollectionBaseController;
 use tiFy\AdminView\Param\ParamCollectionInterface;
+use tiFy\AdminView\Request\RequestBaseController;
+use tiFy\AdminView\Request\RequestInterface;
 use tiFy\Apps\AppController;
 use tiFy\Components\Db\DbPostsController;
 use tiFy\Components\Labels\LabelsBaseController;
 use tiFy\Components\Labels\LabelsControllerInterface;
 use tiFy\Components\Partial\Notice\Notice;
 
-class AdminViewBaseController extends AppController implements AdminViewInterface
+class AdminViewBaseController extends AppController implements AdminViewControllerInterface
 {
     /**
      * Nom de qualification du controleur.
@@ -36,10 +38,16 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
     protected $params;
 
     /**
-     * Ecran courant d'affichage de la page
+     * Ecran courant d'affichage de la page.
      * @var null|\WP_Screen
      */
     protected $screen;
+
+    /**
+     * Controleur du fournisseur de service.
+     * @var string
+     */
+    protected $serviceProvider = AdminViewServiceProvider::class;
 
     /**
      * Liste des classes de rappel des services.
@@ -68,9 +76,11 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
 
         $this->providers = array_merge(
             [
-                'admin_menu' => AdminMenuController::class,
-                'notices'    => NoticeCollectionController::class,
-                'params'     => ParamCollectionBaseController::class
+                'admin_menu' => AdminMenuBaseController::class,
+                'notices'    => NoticeCollectionBaseController::class,
+                'params'     => ParamCollectionBaseController::class,
+                'labels'     => LabelsBaseController::class,
+                'request'    => RequestBaseController::class
             ],
             $this->providers
         );
@@ -79,7 +89,19 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
             $this->boot();
         endif;
 
+        $this->appAddAction('admin_menu', [$this->adminMenu(), 'admin_menu']);
+        $this->appAddAction('admin_notices', [$this->notices(), 'admin_notices']);
         $this->appAddAction('current_screen');
+    }
+
+    /**
+     * Récupération de la classe de rappel du controleur de menu d'administration
+     *
+     * @return AdminMenuInterface
+     */
+    public function adminMenu()
+    {
+        return $this->provide('admin_menu');
     }
 
     /**
@@ -91,24 +113,13 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
     {
         $this->init();
 
-        if ($admin_menu = $this->getConcrete('admin_menu')) :
-            $this->appServiceAdd(
-                AdminMenuInterface::class,
-                new $admin_menu($this->get('admin_menu', []), $this)
-            );
-        endif;
-        /*if ($notices = $this->getConcrete('notices')) :
-            $this->appServiceAdd(
-                NoticeCollectionInterface::class,
-                new $notices($this->get('notices', []), $this)
-            );
-        endif;*/
-        if ($params = $this->getConcrete('params')) :
-            $this->appServiceAdd(
-                ParamCollectionInterface::class,
-                new $params($this->get('params', []), $this)
-            );
-        endif;
+        $serviceProviderConcrete = $this->serviceProvider;
+        $this->appServiceAdd('tify.admin_view.service_provider', new $serviceProviderConcrete([], $this));
+        $this->appServiceProvider($this->appServiceGet('tify.admin_view.service_provider'));
+
+        foreach(['admin_menu', 'notices', 'params', 'request'] as $service) :
+            $this->provide($service);
+        endforeach;
     }
 
     /**
@@ -148,7 +159,7 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
      */
     public function getConcrete($key, $default = null)
     {
-        return Arr::get($this->providers, $key);
+        return Arr::get($this->providers, $key, $default);
     }
 
     /**
@@ -195,27 +206,6 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
     }
 
     /**
-     * Récupération de la liste des classes de rappel des gabarits de traitement externe.
-     *
-     * @return array|\tiFy\Core\Ui\Admin\Factory[]
-     */
-    public function getHandleList()
-    {
-        if (!$handle_templates = $this->get('handle')) :
-            return [];
-        endif;
-
-        $handle = [];
-        foreach ($handle_templates as $task => $id) :
-            if ($factory = Ui::getAdmin($id)) :
-                $handle[$task] = $factory;
-            endif;
-        endforeach;
-
-        return $handle;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function has($key)
@@ -230,7 +220,6 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
      */
     public function init()
     {
-        // Traitement de la liste des attributs de configuration
         $db = $this->get('db');
         if ($db instanceof DbControllerInterface) :
         else :
@@ -239,34 +228,45 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
         $this->set('db', $db);
 
         $labels = $this->get('labels');
-        if ($labels instanceof \tiFy\Core\Labels\Factory) :
-        elseif (is_string($labels)) :
-            $labels = new LabelsBaseController($labels);
-        elseif (is_array($labels)) :
-            $labels = new LabelsBaseController($this->getName(), $attrs['labels']);
+        if ($labels instanceof LabelsControllerInterface) :
         else :
-            $labels = new LabelsBaseController($this->getName());
+            $labelConcrete = $this->getConcrete('labels');
+
+            if (is_string($labels)) :
+                $this->appServiceAdd(LabelsControllerInterface::class, new $labelConcrete($labels));
+            elseif (is_array($labels)) :
+                $this->appServiceAdd(LabelsControllerInterface::class, new $labelConcrete($this->getName(), $labels));
+            else :
+                $this->appServiceAdd(LabelsControllerInterface::class, new $labelConcrete($this->getName()));
+            endif;
+
+            $labels = $this->appServiceGet(LabelsControllerInterface::class);
         endif;
         $this->set('labels', $labels);
+    }
 
-        if ($admin_menu = $this->get('admin_menu')) :
-            $this->set(
-                'admin_menu',
-                array_merge(
-                    [
-                        'menu_slug'   => $this->getName(),
-                        'parent_slug' => '',
-                        'page_title'  => $this->getName(),
-                        'menu_title'  => $this->getName(),
-                        'capability'  => 'manage_options',
-                        'icon_url'    => null,
-                        'position'    => null,
-                        'function'    => [$this, 'render'],
-                    ],
-                    $admin_menu
-                )
-            );
-        endif;
+    /**
+     * {@inheritdoc}
+     */
+    public function notices()
+    {
+        return $this->provide('notices');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function provide($key, $args = [])
+    {
+        return $this->provider()->get($key, $args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function provider()
+    {
+        return $this->appServiceGet('tify.admin_view.service_provider');
     }
 
     /**
@@ -282,7 +282,7 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
      */
     public function params()
     {
-        return $this->appServiceGet(ParamCollectionInterface::class);
+        return $this->provide('params');
     }
 
     /**
@@ -291,6 +291,14 @@ class AdminViewBaseController extends AppController implements AdminViewInterfac
     public function set($key, $value)
     {
         return Arr::set($this->attributes, $key, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function request()
+    {
+        return $this->provide('request');
     }
 
     /**

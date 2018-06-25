@@ -2,19 +2,16 @@
 
 namespace tiFy\AdminView\Notice;
 
-use tiFy\AdminView\Interop\AbstractAttributesAwareController;
+use tiFy\AdminView\AdminViewControllerInterface;
+use tiFy\Apps\Attributes\AbstractAttributesController;
 
-class NoticeCollectionController extends AbstractAttributesAwareController implements NoticeCollectionInterface
+class NoticeCollectionBaseController extends AbstractAttributesController implements NoticeCollectionInterface
 {
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * Classe de rappel du controleur de l'interface d'administration associée.
+     * @var AdminViewControllerInterface
      */
-    public function appBoot()
-    {
-        $this->appAddAction('admin_notices');
-    }
+    protected $app;
 
     /**
      * Affichage des message de notifications de l'interface d'administration.
@@ -23,7 +20,7 @@ class NoticeCollectionController extends AbstractAttributesAwareController imple
      */
     public function admin_notices()
     {
-        if ($notice = $this->getNotice()) :
+        if ($notice = $this->all()) :
             ?><div class="notice notice-<?php echo $notice['notice'];?><?php echo $notice['dismissible'] ? ' is-dismissible':'';?>"><p><?php echo $notice['message'] ?></p></div><?php
         endif;
     }
