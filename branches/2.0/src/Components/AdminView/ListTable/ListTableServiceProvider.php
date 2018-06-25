@@ -8,6 +8,9 @@ use tiFy\Components\AdminView\ListTable\BulkAction\BulkActionCollectionControlle
 use tiFy\Components\AdminView\ListTable\BulkAction\BulkActionCollectionInterface;
 use tiFy\Components\AdminView\ListTable\Column\ColumnCollectionController;
 use tiFy\Components\AdminView\ListTable\Column\ColumnCollectionInterface;
+use tiFy\Components\AdminView\ListTable\Column\ColumnItemController;
+use tiFy\Components\AdminView\ListTable\Column\ColumnItemInterface;
+use tiFy\Components\AdminView\ListTable\Column\ColumnItemCbController;
 use tiFy\Components\AdminView\ListTable\Item\ItemCollectionController;
 use tiFy\Components\AdminView\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\AdminView\ListTable\RowAction\RowActionCollectionController;
@@ -51,6 +54,18 @@ class ListTableServiceProvider extends AdminViewServiceProvider
                     'bootable'  => false,
                     'singleton' => true,
                     'args'      => [$this->app]
+                ],
+                'columns.item' => [
+                    'alias'     => ColumnItemInterface::class,
+                    'concrete'  => $this->app->getConcrete('columns.item', ColumnItemController::class),
+                    'bootable'  => false,
+                    'singleton' => false
+                ],
+                'columns.item.cb' => [
+                    'alias'     => ColumnItemCbController::class,
+                    'concrete'  => $this->app->getConcrete('columns.item.cb', ColumnItemCbController::class),
+                    'bootable'  => false,
+                    'singleton' => false
                 ],
                 'bulk_actions' => [
                     'alias'     => BulkActionCollectionInterface::class,
