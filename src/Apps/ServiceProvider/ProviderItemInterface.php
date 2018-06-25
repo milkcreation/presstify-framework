@@ -2,7 +2,7 @@
 
 namespace tiFy\Apps\ServiceProvider;
 
-interface ProviderItem
+interface ProviderItemInterface
 {
     /**
      * Récupération de l'alias.
