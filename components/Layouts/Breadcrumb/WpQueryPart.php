@@ -16,13 +16,13 @@ class WpQueryPart
      * Classe de la balise d'encapsulation d'un élément
      * @var string
      */
-    private $ItemWrapperClass = 'tiFyCore-layoutBreadcrumbItem';
+    private $ItemWrapperClass = 'tiFyLayout-breadcrumbItem';
 
     /**
      * Classe de la balise de contenu d'un élément
      * @var string
      */
-    private $ItemContentClass = 'tiFyCore-layoutBreadcrumbItemContent';
+    private $ItemContentClass = 'tiFyLayout-breadcrumbItemContent';
 
     /**
      * Récupération de la liste des éléments de contenu relatif à la requête globale de Wordpress
@@ -67,6 +67,7 @@ class WpQueryPart
         // Page de contenu de type post
         elseif (is_single()) :
             $this->Parts[] = $this->linkRoot();
+            $this->getAncestorsPartList();
             $this->Parts[] = $this->currentPost();
 
         // Page de contenu de type page

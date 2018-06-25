@@ -61,7 +61,9 @@ class Breadcrumb extends AbstractFactory
         $attrs['container_class'] = $attrs['container_class']
             ? $class . " " . $attrs['container_class']
             : $class;
-
+        
+        $this->Parts = $attrs['parts'];
+        
         return $attrs;
     }
 
@@ -101,7 +103,7 @@ class Breadcrumb extends AbstractFactory
         if (!$this->Parts) :
             $this->Parts = (new WpQueryPart())->getList();
         endif;
-
+        
         $parts = [];
         foreach($this->Parts as $part) :
             $parts[] = $this->parsePart($part);
