@@ -4,7 +4,7 @@ namespace tiFy\Apps\ServiceProvider;
 
 use tiFy\Apps\Attributes\AbstractAttributesIterator;
 
-class ProviderItem extends AbstractAttributesIterator
+class ProviderItem extends AbstractAttributesIterator implements ProviderItemInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'administration associée.
