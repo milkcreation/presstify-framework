@@ -1,11 +1,11 @@
 <?php
 
-namespace tiFy\AdminView;
+namespace tiFy\View;
 
 use tiFy\Apps\AppController;
 use tiFy\Kernel\Layout\LayoutViewInterface;
 
-final class AdminView extends AppController
+final class View extends AppController
 {
     /**
      * Initialisation du controleur.
@@ -28,7 +28,7 @@ final class AdminView extends AppController
             $this->register($name, $attrs);
         endforeach;
 
-        do_action('tify_admin_view_register', $this);
+        do_action('tify_view_register', $this);
     }
 
     /**
@@ -42,25 +42,13 @@ final class AdminView extends AppController
      *      @param array $params Liste des paramètres.
      *      @param string $db Identifiant de base de données.
      *      @param string|array $labels Identifiant des intitulés.
-     *      @param bool|array $admin_menu {
-     *          Attributs de configuration du menu d'administration (false: désactiver l'affichage)
-     *
-     *          @param string $menu_slug Identifiant du menu - Identifiant du template par défaut
-     *          @param string $parent_slug Identifiant du menu parent pour les sous-menus uniquement.
-     *          @param string $page_title Intitulé de la page
-     *          @param string $menu_title Intitulé du menu - Intitulé du modèle prédéfini si vide
-     *          @param string $capability Habiltation d'affichage
-     *          @param string $icon_url Icone de menu (hors sous-menu : 'parent_slug' => null)
-     *          @param int $position Ordre d'affichage de l'entrée de menu
-     *          @param string Fonction d'affichage de la page - Factory::render() par défaut
-     *      }
      * }
      *
      * @return LayoutViewInterface
      */
     public function register($name, $attrs = [])
     {
-        $alias = "tfy.admin_view.{$name}";
+        $alias = "tfy.view.{$name}";
         if($this->appServiceHas($alias)) :
             return;
         endif;
@@ -72,7 +60,7 @@ final class AdminView extends AppController
         $classname = $attrs['controller'];
         unset($attrs['controller']);
 
-        $this->appServiceShare($alias, new $classname($name, $attrs, new AdminViewBaseController($alias)));
+        $this->appServiceShare($alias, new $classname($name, $attrs, new ViewBaseController($alias)));
 
         return $this->appServiceGet($alias);
     }

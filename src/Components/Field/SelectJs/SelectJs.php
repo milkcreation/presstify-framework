@@ -331,7 +331,7 @@ class SelectJs extends AbstractFieldController
                 $item = [];
 
                 $item['index'] = get_the_ID();
-                $item['label'] = get_the_title();
+                $item['content'] = get_the_title();
                 $item['value'] = get_the_ID();
                 $item['disabled'] = (get_post_status() !== 'publish') ? 'true' : 'false';
 

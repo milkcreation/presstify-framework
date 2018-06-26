@@ -2,34 +2,9 @@
 
 namespace tiFy\Components\AdminView\PostListTable;
 
-use tiFy\Components\AdminView\ListTable\ListTable;
-use tiFy\Components\AdminView\PostListTable\Param\ParamCollectionController;
-use tiFy\Components\AdminView\PostListTable\Column\ColumnItemPostTitleController;
-use tiFy\Components\Labels\LabelsPostTypeController;
+use tiFy\Components\Layout\PostListTable\PostListTable as LayoutPostListTable;
 
-class PostListTable extends ListTable
+class PostListTable extends LayoutPostListTable
 {
-    /**
-     * Controleur du fournisseur de service.
-     * @var string
-     */
-    protected $serviceProvider = PostListTableServiceProvider::class;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConcrete($key, $default = null)
-    {
-        switch($key) :
-            default :
-                return parent::getConcrete($key, $default);
-                break;
-            case 'labels' :
-                return LabelsPostTypeController::class;
-                break;
-            case 'params' :
-                return ParamCollectionController::class;
-                break;
-        endswitch;
-    }
 }
