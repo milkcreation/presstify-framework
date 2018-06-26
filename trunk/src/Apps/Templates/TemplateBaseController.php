@@ -3,12 +3,12 @@
 namespace tiFy\Apps\Templates;
 
 use Illuminate\Support\Arr;
-use League\Plates\Template\Template as LeagueTemplate;
+use League\Plates\Template\Template;
 use tiFy\Apps\AppControllerInterface;
 use tiFy\Apps\Templates\Templates;
 use tiFy\Kernel\Tools;
 
-class TemplateBaseController extends LeagueTemplate implements TemplateControllerInterface
+class TemplateBaseController extends Template implements TemplateControllerInterface
 {
     /**
      * Classe de rappel de l'application

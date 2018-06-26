@@ -47,12 +47,14 @@ class Templates extends Engine
 
         $this->parse($attrs);
 
-        $directory = $this->get('directory', null);
+        $directory = $this->get('directory');
         parent::__construct(is_dir($directory) ? $directory : null, $this->get('ext'));
 
         $basedir = $this->get('basedir');
         if(is_dir($basedir)) :
             $this->addFolder($this->app->appClassname(), $basedir, true);
+        elseif ($directory !== get_template_directory() . '/templates') :
+            $this->addFolder($this->app->appClassname(), get_template_directory() . '/templates', true);
         endif;
     }
 
