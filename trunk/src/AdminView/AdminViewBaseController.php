@@ -116,10 +116,6 @@ class AdminViewBaseController extends AppController implements AdminViewControll
         $serviceProviderConcrete = $this->serviceProvider;
         $this->appServiceAdd('tify.admin_view.service_provider', new $serviceProviderConcrete([], $this));
         $this->appServiceProvider($this->appServiceGet('tify.admin_view.service_provider'));
-
-        foreach(['admin_menu', 'notices', 'params', 'request'] as $service) :
-            $this->provide($service);
-        endforeach;
     }
 
     /**
@@ -242,6 +238,7 @@ class AdminViewBaseController extends AppController implements AdminViewControll
 
             $labels = $this->appServiceGet(LabelsControllerInterface::class);
         endif;
+
         $this->set('labels', $labels);
     }
 

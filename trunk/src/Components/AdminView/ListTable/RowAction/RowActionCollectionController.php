@@ -76,7 +76,7 @@ class RowActionCollectionController
                 ? "row_actions.item.{$name}"
                 : 'row_actions.item';
 
-            $this->items[$name] = $this->app->provide($provide, [$name, $attrs, $this->item, $this->app]);
+            $this->items[$name] = $this->app->provide($provide, [$name, $attrs, $this->item]);
         endforeach;
 
         $this->items = array_filter($this->items, function ($value) {

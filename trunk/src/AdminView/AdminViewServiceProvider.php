@@ -34,35 +34,27 @@ class AdminViewServiceProvider extends AbstractProviderCollection
                 'concrete'  => $this->app->getConcrete('admin_menu', AdminMenuBaseController::class),
                 'bootable'  => true,
                 'singleton' => true,
-                'args'      => [$this->app->get('admin_menu', []), $this->app]
-            ],
-            'labels'    => [
-                'alias'     => LabelsControllerInterface::class,
-                'concrete'  => $this->app->getConcrete('labels', LabelsBaseController::class),
-                'bootable'  => true,
-                'singleton' => true,
-                'args'      => [$this->app->get('notices', []), $this->app]
+                'args'      => [$this->app->get('admin_menu', [])]
             ],
             'notices' => [
                 'alias'     => NoticeCollectionInterface::class,
                 'concrete'  => $this->app->getConcrete('notices', NoticeCollectionBaseController::class),
                 'bootable'  => true,
                 'singleton' => true,
-                'args'      => [$this->app->get('notices', []), $this->app]
+                'args'      => [$this->app->get('notices', [])]
             ],
             'params' => [
                 'alias'     => ParamCollectionInterface::class,
                 'concrete'  => $this->app->getConcrete('params', ParamCollectionBaseController::class),
                 'bootable'  => true,
                 'singleton' => true,
-                'args'      => [$this->app->get('params', []), $this->app]
+                'args'      => [$this->app->get('params', [])]
             ],
             'request' => [
                 'alias'     => RequestInterface::class,
                 'concrete'  => $this->app->getConcrete('request', RequestBaseController::class),
                 'bootable'  => true,
-                'singleton' => true,
-                'args'      => [$this->app]
+                'singleton' => true
             ]
         ];
     }

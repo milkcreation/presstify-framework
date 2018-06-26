@@ -2,6 +2,7 @@
 
 namespace tiFy\Apps;
 
+use App\App;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
@@ -52,6 +53,14 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     public function __construct(tiFy $tfy)
     {
         $this->tfy = $tfy;
+
+        // Déclaration de l'application
+        if ($app = $this->tfy->getConfig('app', [])) :
+            $classname = Arr::get($app, 'classname', App::class);
+
+            $this->setApp($classname, $app);
+            array_push($this->bootable, $classname);
+        endif;
 
         // Déclaration des applications configurées
         if ($apps = $this->tfy->getConfig('apps', [])) :

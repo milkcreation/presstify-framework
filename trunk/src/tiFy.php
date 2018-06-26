@@ -134,13 +134,15 @@ final class tiFy
     final public function after_setup_theme()
     {
         // Traitement de la configuration
-        $finder = (new Finder())->files()->name('/\.php$/')->in(TIFY_CONFIG_DIR);
-        foreach ($finder as $file) :
-            $keys = preg_split('#' . DIRECTORY_SEPARATOR . '#', $file->getRelativePath(), null, PREG_SPLIT_NO_EMPTY);
-            $keys[] = basename($file->getFilename(), ".{$file->getExtension()}");
+        if (is_dir(TIFY_CONFIG_DIR)) :
+            $finder = (new Finder())->files()->name('/\.php$/')->in(TIFY_CONFIG_DIR);
+            foreach ($finder as $file) :
+                $keys = preg_split('#' . DIRECTORY_SEPARATOR . '#', $file->getRelativePath(), null, PREG_SPLIT_NO_EMPTY);
+                $keys[] = basename($file->getFilename(), ".{$file->getExtension()}");
 
-            $this->setConfig(implode('.', $keys), include($file->getRealPath()));
-        endforeach;
+                $this->setConfig(implode('.', $keys), include($file->getRealPath()));
+            endforeach;
+        endif;
 
         // Chargement automatique des classes
         foreach ($this->getConfig('autoload', []) as $type => $value) :
