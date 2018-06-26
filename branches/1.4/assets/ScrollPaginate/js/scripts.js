@@ -66,6 +66,7 @@
                             self.xhr = undefined;
                         });
                 });
+                this._listenEvents();
             },
             _initOptions: function () {
                 if (this.el.data('options')) {
@@ -74,49 +75,35 @@
                         $.parseJSON(decodeURIComponent(this.el.data('options')))
                     );
                 }
+            },
+            _isScrolledIntoView: function () {
+                var offset = this.element.offset();
+
+                if (!offset) {
+                    return false;
+                }
+
+                var lBound = this.window.scrollTop(),
+                    uBound = lBound + this.window.height(),
+                    top = offset.top,
+                    bottom = top + this.element.outerHeight(true);
+
+                return (top > lBound && top < uBound)
+                    || (bottom > lBound && bottom < uBound)
+                    || (lBound >= top && lBound <= bottom)
+                    || (uBound >= top && uBound <= bottom);
+            },
+            _listenEvents: function() {
+                this._on(this.document, {
+                    scroll: function(event) {
+                        if ((this.xhr === undefined) && !this.element.hasClass('tiFyCoreControl-ScrollPaginateComplete') && this._isScrolledIntoView()) {
+                            this.element.trigger('click');
+                        }
+                    }
+                });
             }
     });
 })(jQuery, document, window);
-/*
-var tify_scroll_paginate_xhr, tify_scroll_paginate;
-!(function ($, doc, win, undefined) {
-    tify_scroll_paginate = function (handler, target)
-    {
-        // Récupération du receveur d'éléments
-        var $target = !target ? $(handler).prev() : $(target);
-
-        // Contrôle d'existance des éléments dans le DOM
-        if (!$target.length) {
-            return;
-        }
-
-        $(window).scroll(function (e) {
-            if ((tify_scroll_paginate_xhr === undefined) && !$target.hasClass('tiFyCoreControl-ScrollPaginateComplete') && isScrolledIntoView($(handler))) {
-                $(handler).trigger('click');
-            }
-        });
-
-
-    }
-
-    function isScrolledIntoView($ele) {
-        var offset = $ele.offset();
-        if (!offset)
-            return false;
-
-        var lBound = $(window).scrollTop(),
-            uBound = lBound + $(window).height(),
-            top = offset.top,
-            bottom = top + $ele.outerHeight(true);
-
-        return (top > lBound && top < uBound)
-            || (bottom > lBound && bottom < uBound)
-            || (lBound >= top && lBound <= bottom)
-            || (uBound >= top && uBound <= bottom);
-    }
-})(jQuery, document, window, undefined);
-*/
-
 jQuery(document).ready(function($){
     $('[aria-control="scroll_paginate"]').tifypaginate();
 });
