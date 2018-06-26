@@ -59,7 +59,7 @@ class ViewFilterCollectionController implements ViewFilterCollectionInterface
                 ? "view_filters.item.{$name}"
                 : 'view_filters.item';
 
-            $this->items[$name] = $this->app->provide($provide, [$name, $attrs, $this->app]);
+            $this->items[$name] = $this->app->provide($provide, [$name, $attrs]);
         endforeach;
 
         $this->items = array_filter($this->items, function ($value) {

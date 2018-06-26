@@ -49,7 +49,6 @@ class LabelsBaseController extends AppController implements LabelsControllerInte
     public function __construct($name, $attrs = [])
     {
         $this->name = $name;
-
         $this->parse($attrs);
     }
 

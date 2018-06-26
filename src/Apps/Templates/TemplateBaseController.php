@@ -8,7 +8,7 @@ use tiFy\Apps\AppControllerInterface;
 use tiFy\Apps\Templates\Templates;
 use tiFy\Kernel\Tools;
 
-class TemplateBaseController extends LeagueTemplate
+class TemplateBaseController extends LeagueTemplate implements TemplateControllerInterface
 {
     /**
      * Classe de rappel de l'application
@@ -17,7 +17,7 @@ class TemplateBaseController extends LeagueTemplate
     protected $app;
 
     /**
-     * Liste des variables passées en argument.
+     * Liste des variables passées en argument dans le controleur.
      * @var array
      */
     protected $args = [];
@@ -46,9 +46,7 @@ class TemplateBaseController extends LeagueTemplate
     }
 
     /**
-     * Récupération de la liste complète des attributs de configuration.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function all()
     {
@@ -56,12 +54,7 @@ class TemplateBaseController extends LeagueTemplate
     }
 
     /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function get($key, $default = '')
     {
@@ -69,9 +62,7 @@ class TemplateBaseController extends LeagueTemplate
     }
 
     /**
-     * Récupération de l'une variable passée en argument.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getArg($key, $default = null)
     {
@@ -79,11 +70,7 @@ class TemplateBaseController extends LeagueTemplate
     }
 
     /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function has($key)
     {
@@ -91,9 +78,7 @@ class TemplateBaseController extends LeagueTemplate
     }
 
     /**
-     * Linéarisation d'une liste d'attributs HTML.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function htmlAttrs($attrs)
     {
@@ -101,9 +86,7 @@ class TemplateBaseController extends LeagueTemplate
     }
 
     /**
-     * Affichage d'un template frère.
-     *
-     * @return null
+     * {@inheritdoc}
      */
     public function partial($name, $datas = [])
     {

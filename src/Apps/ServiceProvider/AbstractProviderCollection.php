@@ -9,6 +9,7 @@ use League\Container\ContainerInterface;
 use League\Container\Exception\NotFoundException;
 use League\Container\ServiceProvider\AbstractServiceProvider as LeagueAbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
+use League\Container\ReflectionContainer;
 use LogicException;
 use ReflectionFunction;
 use ReflectionException;
@@ -22,6 +23,12 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
      * @var AppControllerInterface
      */
     protected $app;
+
+    /**
+     * Activation de l'auto-wiring.
+     * @var bool
+     */
+    protected $delegate = false;
 
     /**
      * Liste des alias de services fournis.
@@ -55,6 +62,7 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
 
         $this->parse($items);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -66,9 +74,11 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
             $resolve = $this->getContainer()->add($item->getAlias(), $item->getConcrete());
         endif;
 
-        if($args = $item->getArgs()) :
-            $resolve->withArguments($args);
-        endif;
+        $args = $item->getArgs();
+
+        array_push($args, $this->app);
+
+        $resolve->withArguments($args);
     }
 
     /**
@@ -76,8 +86,16 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
      */
     public function boot()
     {
+        if ($this->delegate) :
+            $this->getContainer()->delegate(new ReflectionContainer());
+        endif;
+
         foreach ($this->getBootable() as $item) :
             $this->add($item);
+        endforeach;
+
+        foreach ($this->getBootable() as $key => $item) :
+            $this->get($key);
         endforeach;
     }
 
@@ -97,6 +115,8 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
         if (!$item =  Arr::get($this->items, $key)) :
             return;
         endif;
+
+        array_push($args, $this->app);
 
         return $this->getContainer()->get($item->getAlias(), $args);
     }
