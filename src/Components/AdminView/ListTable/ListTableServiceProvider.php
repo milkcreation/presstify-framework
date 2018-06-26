@@ -52,8 +52,7 @@ class ListTableServiceProvider extends AdminViewServiceProvider
                     'alias'     => ColumnCollectionInterface::class,
                     'concrete'  => $this->app->getConcrete('columns', ColumnCollectionController::class),
                     'bootable'  => false,
-                    'singleton' => true,
-                    'args'      => [$this->app]
+                    'singleton' => true
                 ],
                 'columns.item' => [
                     'alias'     => ColumnItemInterface::class,
@@ -77,8 +76,7 @@ class ListTableServiceProvider extends AdminViewServiceProvider
                     'alias'     => ItemCollectionInterface::class,
                     'concrete'  => $this->app->getConcrete('items', ItemCollectionController::class),
                     'bootable'  => false,
-                    'singleton' => true,
-                    'args'      => [$this->app]
+                    'singleton' => true
                 ],
                 'row_actions' => [
                     'alias'     => RowActionCollectionInterface::class,
@@ -144,8 +142,7 @@ class ListTableServiceProvider extends AdminViewServiceProvider
                     'alias'     => ViewFilterCollectionInterface::class,
                     'concrete'  => $this->app->getConcrete('view_filters', ViewFilterCollectionController::class),
                     'bootable'  => false,
-                    'singleton' => true,
-                    'args'      => [$this->app]
+                    'singleton' => true
                 ],
                 'view_filters.item' => [
                     'alias'     => ViewFilterItemInterface::class,

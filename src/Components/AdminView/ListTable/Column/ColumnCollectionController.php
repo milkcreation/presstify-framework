@@ -178,7 +178,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
                 ? "columns.item.{$name}"
                 : 'columns.item';
 
-            $_columns[$name] = $this->app->provide($provide, [$name, $attrs, $this->app]);
+            $_columns[$name] = $this->app->provide($provide, [$name, $attrs]);
         endforeach;
 
         return $this->items = new Collection($_columns);
