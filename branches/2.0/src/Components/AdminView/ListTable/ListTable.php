@@ -179,7 +179,7 @@ class ListTable extends AdminViewBaseController implements ListTableInterface
      */
     public function getBulkActions($which = '')
     {
-        echo $this->provide('bulk_actions', [$which, $this]);
+        echo $this->provide('bulk_actions', [$which]);
     }
 
     /**
@@ -265,7 +265,7 @@ class ListTable extends AdminViewBaseController implements ListTableInterface
             return;
         endif;
 
-        return $this->provide('row_actions', [$item, $this]);
+        return $this->provide('row_actions', [$item]);
     }
 
     /**
