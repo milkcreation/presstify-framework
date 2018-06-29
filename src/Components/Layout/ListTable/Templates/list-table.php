@@ -7,13 +7,13 @@
 ?>
 
 <div class="wrap">
-    <?php $this->partial('header'); ?>
+    <?php $this->insert('header'); ?>
 
-    <?php $this->partial('view-filters'); ?>
+    <?php $this->insert('view-filters'); ?>
 
     <form method="get" action="">
-        <?php $this->partial('search-box'); ?>
+        <?php $this->insert('search-box'); ?>
 
-        <?php $this->partial('table'); ?>
+        <?php $this->insert('table'); ?>
     </form>
 </div>

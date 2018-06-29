@@ -322,9 +322,9 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
-    public function appTemplateMake($name)
+    public function appTemplateMake($name, $args = [])
     {
-        return $this->appTemplates()->make($name);
+        return $this->appTemplates()->make($name, $args);
     }
 
     /**
@@ -333,6 +333,14 @@ trait AppTrait
     public function appTemplateRender($name, $args = [])
     {
         return $this->appTemplateMake($name)->render($args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appTemplateView($name, $args = [])
+    {
+        return $this->appTemplates()->view($name, $args);
     }
 
     /**

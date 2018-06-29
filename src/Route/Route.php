@@ -31,7 +31,7 @@ use tiFy\Apps\AppController;
 use tiFy\tiFy;
 use tiFy\Route\RouteCollectionController;
 use tiFy\Route\RouteCollectionInterface;
-use tiFy\Route\View;
+use tiFy\Route\RouteHandle;
 use Zend\Diactoros\Response\SapiEmitter;
 
 final class Route extends AppController
@@ -95,6 +95,8 @@ final class Route extends AppController
 
         $this->appServiceShare(RouteCollectionInterface::class, new RouteCollectionController(tiFy::instance()->container()));
 
+        $this->appServiceAdd(RouteHandle::class);
+
         $this->appAddAction('wp_loaded', null, 0);
         $this->appAddAction('pre_get_posts', null, 0);
     }
@@ -122,7 +124,7 @@ final class Route extends AppController
 
         do_action('tify_route_register', $this);
 
-        if ($this->appConfig('remove_trailing_slash', true)) :
+        if ($this->appConfig('remove_trailing_slash', false)) :
             /**
              * Suppression du slash de fin dans l'url
              * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html
@@ -255,7 +257,7 @@ final class Route extends AppController
         return $this->collection()->map(
             $method,
             $path,
-            new Handler($name, $attrs)
+            $this->appServiceGet(RouteHandle::class, [$name, $attrs])
         )
             ->setName($name)
             ->setScheme($scheme)
@@ -387,6 +389,6 @@ final class Route extends AppController
      */
     public function hasCurrent()
     {
-        return $this->currentName() !== '';
+        return !empty($this->currentName());
     }
 }

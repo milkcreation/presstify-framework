@@ -9,7 +9,7 @@
 <tbody id="the-list"<?php echo ($singular = $this->params()->get('singular', '')) ? " data-wp-lists=\"list:{$singular}\"" : ''; ?>>
     <?php if ($items = $this->getItems()) : ?>
         <?php foreach($items as $item) : ?>
-            <?php $this->partial('tbody-row', ['item' => $item]); ?>
+            <?php $this->insert('tbody-row', ['item' => $item]); ?>
         <?php endforeach; ?>
     <?php else : ?>
         <tr class="no-items">
