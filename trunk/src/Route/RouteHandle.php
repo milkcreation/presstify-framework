@@ -7,9 +7,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Apps\AppController;
 use tiFy\Route\Route;
-use tiFy\Route\View;
 
-class Handler extends AppController
+class RouteHandle extends AppController
 {
     /**
      * Nom de qualification de la route.
@@ -22,12 +21,6 @@ class Handler extends AppController
      * @var array
      */
     protected $attributes = [];
-
-    /**
-     * Valeur de retour du controleur.
-     * @var string
-     */
-    private $return;
 
     /**
      * CONSTRUCTEUR.
@@ -46,42 +39,6 @@ class Handler extends AppController
     }
 
     /**
-     * Traitement de l'affichage de l'interface utilisateur.
-     *
-     * @return string
-     */
-    final public function template_redirect()
-    {
-        /**
-         * Bypass
-         * @var \tiFy\Route\Route $route
-         */
-        if (!$route = $this->appServiceGet(Route::class)) :
-            return;
-        endif;
-
-        if (!$response = $route->getResponse()) :
-            return;
-        endif;
-
-        // Récupération de la sortie
-        $body = '';
-        if ($this->return instanceof View) :
-            $body = $this->return->render();
-        elseif(is_string($this->return)) :
-            $body = $this->return;
-        endif;
-
-        // Déclaration de la sortie
-        $response->getBody()->write($body);
-
-        // Affichage de la sortie
-        $this->appServiceGet('tfy.route.emitter')->emit($response);
-
-        exit;
-    }
-
-    /**
      * Récupération d'attribut de configuration.
      *
      * @param string $key Clé d'index de l'attribut.
@@ -95,6 +52,30 @@ class Handler extends AppController
     }
 
     /**
+     * Vérifie si le controleur d'appel de la route est une fonction anonyme.
+     *
+     * @param mixed $callable
+     *
+     * @return bool
+     */
+    public function isClosure($cb)
+    {
+        if (is_string($cb)) :
+            return false;
+        elseif (is_object($cb)) :
+            return $cb instanceof \Closure;
+        endif;
+
+        try {
+            $reflection = new \ReflectionFunction($cb);
+
+            return $reflection->isClosure();
+        } catch (\ReflectionException $e) {
+            return false;
+        }
+    }
+
+    /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
@@ -103,7 +84,6 @@ class Handler extends AppController
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        // Définition des attribut de requête de la route courante
         $this->appRequest('attributes')->add(
             [
                 'tify_route_name' => $this->name,
@@ -111,27 +91,27 @@ class Handler extends AppController
             ]
         );
 
-        // Appel du controleur de route
         $cb = $this->get('cb');
-
-        // Ajout de la requête et de la réponse HTTP (PSR-7) à la liste des arguments
         array_push($args, $request, $response);
 
-        if (is_callable($cb)) :
+        if ($this->isClosure($cb)) :
+            call_user_func_array($cb, $args);
+        else :
             $this->appAddAction(
                 'template_redirect',
-                function() use ($cb, $args) {
-                    $this->return = call_user_func_array($cb, $args);
+                function () use ($cb, $args) {
+                    $output = call_user_func_array($cb, $args);
+                    if (is_string($output)) :
+                        $response = end($args);
+                        $response->getBody()->write($output);
+                        $this->appServiceGet('tfy.route.emitter')->emit($response);
+                    endif;
+
+                    exit;
                 },
                 0
             );
-        elseif(class_exists($cb)) :
-            $reflection = new \ReflectionClass($cb);
-            $this->return = $reflection->newInstanceArgs($args);
         endif;
-
-        // Instanciation de traitement du retour
-        $this->appAddAction('template_redirect', null, 0);
 
         return $response;
     }

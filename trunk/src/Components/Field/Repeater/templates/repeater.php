@@ -10,7 +10,7 @@
     <ul class="tiFyField-RepeaterItems" aria-control="items">
         <?php foreach($this->get('value', []) as $index => $value) : ?>
         <?php
-            $this->partial(
+            $this->insert(
                 'item-wrap',
                 [
                     'index' => $index,
@@ -23,7 +23,7 @@
         <?php endforeach; ?>
     </ul>
 
-    <?php $this->partial('button', $this->all()); ?>
+    <?php $this->insert('button', $this->all()); ?>
 </div>
 
 <?php $this->after(); ?>
