@@ -91,7 +91,9 @@ class ImageLightbox extends \tiFy\Core\Control\Factory
             // Source de l'image
             'src'             => 'https://fr.facebookbrand.com/wp-content/uploads/2016/05/FB-fLogo-Blue-broadcast-2.png',
             // Liste des slides
-            'content'         => ''
+            'content'         => '',
+            // Texte alternatif
+            'text'            => ''
         ];
         $attrs = wp_parse_args($attrs, $defaults);
         extract($attrs);
@@ -129,6 +131,9 @@ class ImageLightbox extends \tiFy\Core\Control\Factory
         $output = "";
         $output .= "<a href=\"{$src}\" id=\"{$container_id}\" class=\"tiFyControlImageLightbox" . ($container_class ? ' ' . $container_class : '') . "\" data-tify_control=\"image_lightbox\" data-options=\"" . htmlentities(json_encode($options)) . "\" data-group=\"{$group}\">\n";
         $output .= $content;
+        if($text):
+            $output .= "<span class=\"tiFyControlImageLightbox-text\">{$text}</span>";
+        endif;
         $output .= "</a>\n";
 
         if ($group && !in_array($group, self::$Group)) :
