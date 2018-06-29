@@ -95,14 +95,19 @@ class Templates extends Engine
 
     /**
      * {@inheritdoc}
+     *
+     * @return TemplateControllerInterface
      */
-    public function make($name)
+    public function make($name, $args = [])
     {
         $name = $this->getFolders()->exists($this->app->appClassname()) ? "{$this->app->appClassname()}::{$name}" : $name;
 
         $controller = $this->get('controller');
 
-        return new $controller($this, $name, $this->get('args', []), $this->app);
+        $template = new $controller($this, $name, $this->get('args', []), $this->app);
+        $template->data($args);
+
+        return $template;
     }
 
     /**
@@ -143,5 +148,26 @@ class Templates extends Engine
         Arr::set($this->attributes, $key, $value);
 
         return $this;
+    }
+
+    /**
+     * Affichage d'une vue basé sur un template.
+     *
+     * @return TemplateControllerInterface
+     */
+    public function view($name, $args = [])
+    {
+        $template = $this->make($name, $args);
+
+        $this->app->appAddAction(
+            'template_redirect',
+            function () use ($template) {
+                echo $template->render();
+                exit;
+            },
+            0
+        );
+
+        return $template;
     }
 }

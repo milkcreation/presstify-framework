@@ -8,11 +8,11 @@
 
 <div <?php $this->attrs(); ?>>
 
-    <?php $this->partial('handler', $this->all()); ?>
+    <?php $this->insert('handler', $this->all()); ?>
 
-    <?php $this->partial('selected-items', $this->all()); ?>
+    <?php $this->insert('selected-items', $this->all()); ?>
 
-    <?php $this->partial('picker-items', $this->all()); ?>
+    <?php $this->insert('picker-items', $this->all()); ?>
 
 </div>
 
