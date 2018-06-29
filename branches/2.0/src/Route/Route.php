@@ -124,7 +124,7 @@ final class Route extends AppController
 
         do_action('tify_route_register', $this);
 
-        if ($this->appConfig('remove_trailing_slash', false)) :
+        if ($this->appConfig('remove_trailing_slash', true)) :
             /**
              * Suppression du slash de fin dans l'url
              * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html
