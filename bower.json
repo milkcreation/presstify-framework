@@ -1,0 +1,17 @@
+{
+  "name": "presstify-framework",
+  "dependencies": {
+    "bootstrap": "*",
+    "dentistjs": "*",
+    "flag-icon-css" : "*",
+    "font-awesome": "*",
+    "jquery-easing-original": "*",
+    "mobile-detect": "*",
+    "moment": "*",
+    "nanoscroller": "*",
+    "pace": "*",
+    "spectrum": "*",
+    "spinkit": "*",
+    "threesixty-slider": "*"
+  }
+}
