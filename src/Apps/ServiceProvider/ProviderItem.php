@@ -56,7 +56,7 @@ class ProviderItem extends AbstractAttributesIterator implements ProviderItemInt
     public function isClosure()
     {
         try {
-            $reflection = new ReflectionFunction($this->getConcrete());
+            $reflection = new \ReflectionFunction($this->getConcrete());
             return $reflection->isClosure();
         } catch (\ReflectionException $e) {
             return false;

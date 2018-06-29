@@ -1,36 +1,19 @@
 <?php
 
-namespace tiFy\Apps\Attributes;
+namespace tiFy\Route;
 
 use ArrayIterator;
+use League\Route\RouteCollection as LeagueRouteCollection;
+use tiFy\Route\RouteController;
 
-abstract class AbstractAttributesIterator extends AbstractAttributesController implements AttributesIteratorInterface
+class RouteCollectionController extends LeagueRouteCollection implements RouteCollectionInterface
 {
     /**
-     * @param $key
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function __get($key)
+    public function all()
     {
-        return $this->get($key);
-    }
-
-    /**
-     * @param $key
-     * @return mixed
-     */
-    public function __set($key, $value)
-    {
-        return $this->set($key, $value);
-    }
-
-    /**
-     * @param $key
-     * @return mixed
-     */
-    public function __isset($key)
-    {
-        return $this->has($key);
+        return $this->routes;
     }
 
     /**
@@ -38,7 +21,7 @@ abstract class AbstractAttributesIterator extends AbstractAttributesController i
      */
     public function count()
     {
-        return count($this->attributes);
+        return count($this->routes);
     }
 
     /**
@@ -48,7 +31,28 @@ abstract class AbstractAttributesIterator extends AbstractAttributesController i
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->attributes);
+        return new ArrayIterator($this->routes);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function has()
+    {
+        return !empty($this->routes);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function map($method, $path, $handler)
+    {
+        $path  = sprintf('/%s', ltrim($path, '/'));
+        $route = (new RouteController())->setMethods((array) $method)->setPath($path)->setCallable($handler);
+
+        $this->routes[] = $route;
+
+        return $route;
     }
 
     /**
@@ -60,7 +64,7 @@ abstract class AbstractAttributesIterator extends AbstractAttributesController i
      */
     public function offsetExists($key)
     {
-        return array_key_exists($key, $this->attributes);
+        return array_key_exists($key, $this->routes);
     }
 
     /**
@@ -72,7 +76,7 @@ abstract class AbstractAttributesIterator extends AbstractAttributesController i
      */
     public function offsetGet($key)
     {
-        return $this->attributes[$key];
+        return $this->routes[$key];
     }
 
     /**
@@ -86,9 +90,9 @@ abstract class AbstractAttributesIterator extends AbstractAttributesController i
     public function offsetSet($key, $value)
     {
         if (is_null($key)) :
-            $this->attributes[] = $value;
+            $this->routes[] = $value;
         else :
-            $this->attributes[$key] = $value;
+            $this->routes[$key] = $value;
         endif;
     }
 
@@ -101,6 +105,6 @@ abstract class AbstractAttributesIterator extends AbstractAttributesController i
      */
     public function offsetUnset($key)
     {
-        unset($this->attributes[$key]);
+        unset($this->routes[$key]);
     }
 }

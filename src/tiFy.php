@@ -292,7 +292,7 @@ final class tiFy
                 /** @todo */
                 break;
             case 'files' :
-                /** @todo */
+                include_once dirname(TIFY_CONFIG_DIR) . DIRECTORY_SEPARATOR . $paths;
                 break;
         endswitch;
 
