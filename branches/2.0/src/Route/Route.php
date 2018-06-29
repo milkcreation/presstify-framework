@@ -17,8 +17,8 @@ namespace tiFy\Route;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use League\Route\RouteCollection;
 use League\Route\Http\Exception\NotFoundException;
 use League\Route\Http\Exception\MethodNotAllowedException;
 use League\Route\Strategy\ApplicationStrategy;
@@ -29,6 +29,8 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Apps\AppController;
 use tiFy\tiFy;
+use tiFy\Route\RouteCollectionController;
+use tiFy\Route\RouteCollectionInterface;
 use tiFy\Route\View;
 use Zend\Diactoros\Response\SapiEmitter;
 
@@ -39,18 +41,6 @@ final class Route extends AppController
      * @var ResponseInterface
      */
     private $response;
-
-    /**
-     * Cartographie des routes déclarées.
-     * @var array
-     */
-    protected $map = [];
-
-    /**
-     * Options d'activation de suppression du slash à la fin de l'url.
-     * @var bool
-     */
-    private $removeTrailingSlash = false;
 
     /**
      * Indicateur de contexte d'affichage de page de Wordpress.
@@ -93,25 +83,30 @@ final class Route extends AppController
      */
     public function appBoot()
     {
-        // Définition du traitement de la réponse
         $this->appServiceShare('tfy.route.response', function () {
             return (new DiactorosFactory())->createResponse(new Response());
         });
 
-        // Définition du traitement de la requête
         $this->appServiceShare('tfy.route.request', function () {
             return (new DiactorosFactory())->createRequest(tiFy::instance()->request());
         });
 
-        // Définition du traitement de l'affichage
         $this->appServiceShare('tfy.route.emitter', new SapiEmitter());
 
-        // Définition du traitement des routes
-        $this->appServiceShare('tfy.route.collection', new RouteCollection(tiFy::instance()->container()));
+        $this->appServiceShare(RouteCollectionInterface::class, new RouteCollectionController(tiFy::instance()->container()));
 
-        // Déclaration des événements
         $this->appAddAction('wp_loaded', null, 0);
         $this->appAddAction('pre_get_posts', null, 0);
+    }
+
+    /**
+     * Récupération du controleur de gestion des routes déclarées.
+     *
+     * @return RouteCollectionInterface
+     */
+    public function collection()
+    {
+        return $this->appServiceGet(RouteCollectionInterface::class);
     }
 
     /**
@@ -121,19 +116,13 @@ final class Route extends AppController
      */
     public function wp_loaded()
     {
-        do_action('tify_route_register', $this);
-
-        // Bypass
-        if (!$this->map) :
-            return;
-        endif;
-
-        // Définition de la cartographie des routes
-        foreach ($this->map as $name => $attrs) :
-            $this->_set($name);
+        foreach($this->appConfig('map', []) as $name => $attrs) :
+            $this->register($name, $attrs);
         endforeach;
 
-        if ($this->removeTrailingSlash) :
+        do_action('tify_route_register', $this);
+
+        if ($this->appConfig('remove_trailing_slash', true)) :
             /**
              * Suppression du slash de fin dans l'url
              * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html
@@ -142,21 +131,27 @@ final class Route extends AppController
              * @var Request $request
              */
             $request = $this->appRequest();
-            $pathInfo = $request->getPathInfo();
-            $requestUri = $request->getRequestUri();
-            $method = $request->getMethod();
+            $path = $request->getBaseUrl() . $request->getPathInfo();
 
-            if (($pathInfo != '/') && (substr($pathInfo, -1) == '/') && ($method === 'GET')) :
-
-                $url = str_replace($pathInfo, rtrim($pathInfo, '/'), $requestUri);
-                wp_safe_redirect($url, 301);
+            if(
+                ($path != '/') &&
+                (substr($path, -1) == '/') &&
+                ($request->getMethod() === 'GET') &&
+                ((new Collection($this->collection()->all()))->first(
+                    function($route) use ($path) {
+                        /** @var RouteInterface $route */
+                        return (in_array('GET', $route->getMethods()) && preg_match('#^'. preg_quote($route->getPath(), '/') . '/$#', $path));
+                    })
+                )
+            ) :
+                wp_safe_redirect($request->fullUrl(), 301);
                 exit;
             endif;
         endif;
 
         // Traitement des routes
         try {
-            $this->response = $this->appServiceGet('tfy.route.collection')->dispatch(
+            $this->response = $this->collection()->dispatch(
                 $this->appServiceGet('tfy.route.request'),
                 $this->appServiceGet('tfy.route.response')
             );
@@ -189,18 +184,33 @@ final class Route extends AppController
     }
 
     /**
-     * Définition d'une route
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * Déclaration
      *
      * @param string $name Identifiant de qualification de la route
+     * @param array $attrs Attributs de configuration
      *
-     * @return null|\League\Route\Route
+     * @return null|array
      */
-    private function _set($name)
+    public function register($name, $attrs = [])
     {
-        // Bypass
-        if (!isset($this->map[$name])) :
-            return null;
-        endif;
+        $attrs = array_merge(
+            [
+                'method'   => 'any',
+                'group'    => '',
+                'path'     => '/',
+                'cb'       => '',
+                'strategy' => ''
+            ],
+            $attrs
+        );
 
         /**
          * @var string|array $method
@@ -209,10 +219,10 @@ final class Route extends AppController
          * @var string $cb
          * @var string|object $strategy
          */
-        extract($this->map[$name]);
+        extract($attrs);
 
         // Traitement du sous repertoire
-        $path = ($sub = trim(basename(dirname($_SERVER['PHP_SELF'])), '/')) ? "/{$sub}/" . ltrim($path, '/') : $path;
+        $path = $this->appRequest()->getBaseUrl() . $path;
 
         // Traitement de la méthode
         $method = ($method === 'any') ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'] : array_map('strtoupper', (array)$method);
@@ -242,44 +252,15 @@ final class Route extends AppController
             );
         endif;
 
-        return $this->appServiceGet('tfy.route.collection')->map(
+        return $this->collection()->map(
             $method,
             $path,
-            new Handler($name, $this->map[$name])
+            new Handler($name, $attrs)
         )
             ->setName($name)
             ->setScheme($scheme)
             ->setHost($host)
             ->setStrategy($strategy);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * Déclaration
-     *
-     * @param string $name Identifiant de qualification de la route
-     * @param array $attrs Attributs de configuration
-     *
-     * @return null|array
-     */
-    public function register($name, $attrs = [])
-    {
-        $defaults = [
-            'method'   => 'any',
-            'group'    => '',
-            'path'     => '/',
-            'cb'       => '',
-            'strategy' => ''
-        ];
-
-        return $this->map[$name] = array_merge($defaults, $attrs);
     }
 
     /**
@@ -291,7 +272,7 @@ final class Route extends AppController
      */
     public function exists($name)
     {
-        return isset($this->map[$name]);
+        return !empty($this->collection()->getNamedRoute($name));
     }
 
     /**
@@ -305,8 +286,7 @@ final class Route extends AppController
     public function url($name, $replacements = [])
     {
         try {
-            $router = $this->appServiceGet('tfy.route.collection');
-            $route = $router->getNamedRoute($name);
+            $route = $this->collection()->getNamedRoute($name);
             $host = $route->getHost();
             $port = $this->appRequest()->getPort();
             $scheme = $route->getScheme();

@@ -140,6 +140,8 @@ class Templates extends Engine
      */
     public function set($key, $value)
     {
-        return Arr::set($this->attributes, $key, $value);
+        Arr::set($this->attributes, $key, $value);
+
+        return $this;
     }
 }
