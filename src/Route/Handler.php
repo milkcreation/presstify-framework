@@ -118,7 +118,13 @@ class Handler extends AppController
         array_push($args, $request, $response);
 
         if (is_callable($cb)) :
-            $this->return = call_user_func_array($cb, $args);
+            $this->appAddAction(
+                'template_redirect',
+                function() use ($cb, $args) {
+                    $this->return = call_user_func_array($cb, $args);
+                },
+                0
+            );
         elseif(class_exists($cb)) :
             $reflection = new \ReflectionClass($cb);
             $this->return = $reflection->newInstanceArgs($args);
