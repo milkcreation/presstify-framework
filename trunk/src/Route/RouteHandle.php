@@ -62,6 +62,8 @@ class RouteHandle extends AppController
     {
         if (is_string($cb)) :
             return false;
+        elseif (is_array($cb)) :
+            return false;
         elseif (is_object($cb)) :
             return $cb instanceof \Closure;
         endif;
