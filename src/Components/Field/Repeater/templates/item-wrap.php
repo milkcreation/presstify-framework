@@ -7,7 +7,7 @@
 <li class="tiFyField-RepeaterItem" data-index="<?php echo $index; ?>" aria-control="item">
     <div class="tiFyField-RepeaterItemContent">
     <?php
-        $this->partial(
+        $this->insert(
             'item',
             [
                 'index' => $index,
