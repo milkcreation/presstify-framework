@@ -21,7 +21,7 @@ interface AttributesControllerInterface
     /**
      * Récupération d'un attribut.
      *
-     * @param array $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
      * @param mixed $default Valeur de retour par defaut.
      *
      * @return mixed
@@ -49,8 +49,8 @@ interface AttributesControllerInterface
     /**
      * Définition d'un attribut.
      *
-     * @param array $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param array $value Valeur de l'attribut.
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $value Valeur de l'attribut.
      *
      * @return void
      */
