@@ -5,6 +5,10 @@ namespace tiFy\Components\Layout\ListTable;
 use tiFy\Apps\ServiceProvider\AbstractProviderCollection;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionController;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
+use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemController;
+use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemInterface;
+use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemTrashController;
+use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemTrashInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionController;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnItemController;
@@ -70,6 +74,14 @@ class ListTableServiceProvider extends LayoutServiceProvider
                 'bulk_actions' => [
                     'alias'     => BulkActionCollectionInterface::class,
                     'concrete'  => BulkActionCollectionController::class
+                ],
+                'bulk_actions.item' => [
+                    'alias'     => BulkActionItemInterface::class,
+                    'concrete'  => BulkActionItemController::class
+                ],
+                'bulk_actions.item.trash' => [
+                    'alias'     => BulkActionItemTrashInterface::class,
+                    'concrete'  => BulkActionItemTrashController::class
                 ],
                 'items' => [
                     'alias'     => ItemCollectionInterface::class,
