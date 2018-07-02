@@ -47,7 +47,7 @@ final class Taxonomy extends AppController
             return;
         endif;
 
-        $this->appServiceShare($alias, new TaxonomyController($name, $attrs));
+        $this->appServiceShare($alias, new TaxonomyController($name, $attrs, $this));
 
         return $this->appServiceGet($alias);
     }

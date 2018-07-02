@@ -8,7 +8,7 @@ use tiFy\Apps\AppControllerInterface;
 abstract class AbstractAttributesController implements AttributesControllerInterface
 {
     /**
-     * Classe de rappel du controleur de l'interface d'administration associée.
+     * Classe de rappel du controleur de l'application associée.
      * @var AppControllerInterface
      */
     protected $app;
@@ -30,11 +30,6 @@ abstract class AbstractAttributesController implements AttributesControllerInter
     public function __construct($attrs = [], AppControllerInterface $app)
     {
         $this->app = $app;
-
-        $attrs = array_merge(
-            $this->defaults(),
-            $attrs
-        );
 
         $this->parse($attrs);
     }
@@ -78,7 +73,10 @@ abstract class AbstractAttributesController implements AttributesControllerInter
     {
         $this->attributes = array_merge(
             $this->attributes,
-            $attrs
+            array_merge(
+                $this->defaults(),
+                $attrs
+            )
         );
     }
 

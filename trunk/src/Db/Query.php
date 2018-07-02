@@ -83,7 +83,7 @@ class Query
      *
      * @return void
      */
-    public function __construct(DbControllerInterface $db, $query = null)
+    public function __construct($query = null, DbControllerInterface $db)
     {
         $this->db = $db;
 

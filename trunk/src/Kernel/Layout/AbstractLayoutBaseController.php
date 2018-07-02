@@ -11,13 +11,18 @@ use tiFy\Kernel\Layout\Param\ParamCollectionInterface;
 use tiFy\Kernel\Layout\Request\RequestBaseController;
 use tiFy\Kernel\Layout\Request\RequestInterface;
 use tiFy\Apps\AppController;
-use tiFy\Components\Db\DbPostsController;
 use tiFy\Components\Labels\LabelsBaseController;
 use tiFy\Components\Labels\LabelsControllerInterface;
 use tiFy\Components\Partial\Notice\Notice;
 
-class LayoutBaseController extends AppController implements LayoutControllerInterface
+abstract class AbstractLayoutBaseController extends AppController implements LayoutControllerInterface
 {
+    /**
+     * Classe de rappel du controleur de vue associé.
+     * @var LayoutViewInterface
+     */
+    protected $app;
+
     /**
      * Nom de qualification du controleur.
      * @var string
@@ -37,52 +42,30 @@ class LayoutBaseController extends AppController implements LayoutControllerInte
     protected $params;
 
     /**
-     * Liste des classes de rappel des services.
-     * @var array
-     */
-    protected $providers = [];
-
-    /**
      * Controleur du fournisseur de service.
      * @var string
      */
     protected $serviceProvider = LayoutServiceProvider::class;
 
     /**
-     * Controleur de vue.
-     * @var LayoutViewInterface
-     */
-    protected $view;
-
-    /**
      * CONSTRUCTEUR.
      *
      * @param string $name Nom de qualification du controleur.
      * @param array $attrs Liste des attributs de configuration.
-     * @param LayoutViewInterface $view Liste des attributs de configuration.
+     * @param LayoutViewInterface $app Classe de rappel du controleur de vue associé.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], $view)
+    public function __construct($name, $attrs = [], $app)
     {
         parent::__construct();
 
         $this->name = $name;
-        $this->view = $view;
+        $this->app = $app;
 
         $this->attributes = array_merge(
             $this->attributes,
             $attrs
-        );
-
-        $this->providers = array_merge(
-            [
-                'notices'    => NoticeCollectionBaseController::class,
-                'params'     => ParamCollectionBaseController::class,
-                'labels'     => LabelsBaseController::class,
-                'request'    => RequestBaseController::class
-            ],
-            $this->providers
         );
 
         if (method_exists($this, 'boot')) :
@@ -97,11 +80,26 @@ class LayoutBaseController extends AppController implements LayoutControllerInte
      */
     public function boot()
     {
-        $this->init();
-
         $serviceProviderConcrete = $this->serviceProvider;
         $this->appServiceAdd('tify.layout.service_provider' . $this->getName(), new $serviceProviderConcrete([], $this));
         $this->appServiceProvider($this->appServiceGet('tify.layout.service_provider' . $this->getName()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function current()
+    {
+        $this->process();
+        $this->prepare();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function db()
+    {
+        return $this->provide('db');
     }
 
     /**
@@ -115,28 +113,9 @@ class LayoutBaseController extends AppController implements LayoutControllerInte
     /**
      * {@inheritdoc}
      */
-    public function getConcrete($key, $default = null)
-    {
-        return Arr::get($this->providers, $key, $default);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDb()
-    {
-        return $this->get('db', null);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getLabel($key, $default = '')
     {
-        /** @var  LabelsControllerInterface $labels */
-        $labels = $this->get('labels');
-
-        return $labels->get($key, $default);
+        return $this->labels()->get($key, $default);
     }
 
     /**
@@ -150,50 +129,17 @@ class LayoutBaseController extends AppController implements LayoutControllerInte
     /**
      * {@inheritdoc}
      */
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function has($key)
     {
         return Arr::has($this->attributes, $key);
     }
 
     /**
-     * Initialisation.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function init()
+    public function labels()
     {
-        $db = $this->get('db');
-        if ($db instanceof DbControllerInterface) :
-        else :
-            $db = new DbPostsController($this->getName());
-        endif;
-        $this->set('db', $db);
-
-        $labels = $this->get('labels');
-        if ($labels instanceof LabelsControllerInterface) :
-        else :
-            $labelConcrete = $this->getConcrete('labels');
-
-            if (is_string($labels)) :
-                $this->appServiceAdd(LabelsControllerInterface::class, new $labelConcrete($labels));
-            elseif (is_array($labels)) :
-                $this->appServiceAdd(LabelsControllerInterface::class, new $labelConcrete($this->getName(), $labels));
-            else :
-                $this->appServiceAdd(LabelsControllerInterface::class, new $labelConcrete($this->getName()));
-            endif;
-
-            $labels = $this->appServiceGet(LabelsControllerInterface::class);
-        endif;
-
-        $this->set('labels', $labels);
+        return $this->provide('labels');
     }
 
     /**
@@ -207,7 +153,7 @@ class LayoutBaseController extends AppController implements LayoutControllerInte
     /**
      * {@inheritdoc}
      */
-    public function provide($key, $args = [])
+    public function provide($key, $args = null)
     {
         return $this->provider()->get($key, $args);
     }
@@ -258,5 +204,13 @@ class LayoutBaseController extends AppController implements LayoutControllerInte
     public function render()
     {
         _e('Aucun contenu à afficher', 'tify');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function view()
+    {
+        return $this->app;
     }
 }

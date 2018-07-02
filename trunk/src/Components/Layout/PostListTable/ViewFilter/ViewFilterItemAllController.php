@@ -11,7 +11,7 @@ class ViewFilterItemAllController extends ViewFilterItemController
      */
     public function defaults()
     {
-        $count = ($db = $this->app->getDb())
+        $count = ($db = $this->app->db())
             ? $db->select()->count(
                 [
                     'status' => [

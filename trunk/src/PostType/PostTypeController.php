@@ -2,9 +2,7 @@
 
 namespace tiFy\PostType;
 
-use Illuminate\Support\Arr;
 use tiFy\Apps\Attributes\AbstractAttributesController;
-use tiFy\Components\Labels\LabelsPostTypeController;
 
 class PostTypeController extends AbstractAttributesController
 {
@@ -60,7 +58,7 @@ class PostTypeController extends AbstractAttributesController
      *
      * @param string $name Nom de qualification du type de post.
      * @param array $attrs Attribut de configuration.
-     * @param PostTyype $app Classe de rappel du controleur de gestion des types de post
+     * @param PostType $app Classe de rappel du controleur de gestion des types de post.
      *
      * @return void
      */
@@ -100,11 +98,7 @@ class PostTypeController extends AbstractAttributesController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs personnalisés.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -140,11 +134,9 @@ class PostTypeController extends AbstractAttributesController
 
         $this->set('gender', $this->get('gender', false));
 
-        $this->set('labels', $this->get('labels', []));
-
         $this->set(
             'labels',
-            (new LabelsPostTypeController(
+            (new PostTypeLabelsController(
                 $this->get('label'),
                 array_merge(
                     [
@@ -152,8 +144,9 @@ class PostTypeController extends AbstractAttributesController
                         'plural'   => $this->get('plural'),
                         'gender'   => $this->get('gender'),
                     ],
-                    $this->get('labels')
-                )
+                    $this->get('labels', [])
+                ),
+                $this->app
             ))->all()
         );
 

@@ -5,7 +5,7 @@ namespace tiFy\Kernel\Layout\Traits;
 trait ActionTrait
 {
     /**
-     * Vérification des habilitations d'accès de l'utilisateur à l'interface
+     * Vérification des habilitations d'accès de l'utilisateur à l'interface.
      *
      * @return void
      */
