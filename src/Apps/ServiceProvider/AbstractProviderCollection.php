@@ -19,7 +19,7 @@ use tiFy\Apps\ServiceProvider\ProviderItem;
 abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider implements ProviderCollectionInterface
 {
     /**
-     * Classe de rappel du controleur de l'interface d'administration associée.
+     * Classe de rappel du controleur de l'interface associée.
      * @var AppControllerInterface
      */
     protected $app;
@@ -42,6 +42,13 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
      * @var array
      */
     protected $items = [];
+
+    /**
+     * Cartographie des services fournis.
+     * @internal Couple $key => $concrete.
+     * @var array
+     */
+    protected $providers = [];
 
     /**
      * CONSTRUCTEUR.
@@ -68,17 +75,22 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
      */
     public function add($item)
     {
-        if ($item->isSingleton()) :
-            $resolve = $this->getContainer()->share($item->getAlias(), $item->getConcrete());
-        else :
+        if ($item->isInstanciated()) :
+            return;
+        endif;
+
+        if (!$item->isSingleton()) :
             $resolve = $this->getContainer()->add($item->getAlias(), $item->getConcrete());
+        else :
+            $resolve = $this->getContainer()->add($item->getAlias(), $item->getConcrete(), true);
         endif;
 
         $args = $item->getArgs();
-
         array_push($args, $this->app);
 
         $resolve->withArguments($args);
+
+        return $item->setInstanciated();
     }
 
     /**
@@ -89,10 +101,6 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
         if ($this->delegate) :
             $this->getContainer()->delegate(new ReflectionContainer());
         endif;
-
-        foreach ($this->getBootable() as $item) :
-            $this->add($item);
-        endforeach;
 
         foreach ($this->getBootable() as $key => $item) :
             $this->get($key);
@@ -110,15 +118,25 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
     /**
      * {@inheritdoc}
      */
-    public function get($key, $args = [])
+    public function get($key, $args = null)
     {
-        if (!$item =  Arr::get($this->items, $key)) :
+        /** @var ProviderItem $item */
+        if (!$item = Arr::get($this->items, $key)) :
             return;
         endif;
 
-        array_push($args, $this->app);
+        if ($item->isDeferred() && !is_null($args)) :
+            $item->setArgs($args);
+        endif;
 
-        return $this->getContainer()->get($item->getAlias(), $args);
+        if ($this->add($item)) :
+            return $this->getContainer()->get($item->getAlias());
+        else :
+            $args = !is_null($args) ? $args : [];
+            array_push($args, $this->app);
+
+            return $this->getContainer()->get($item->getAlias(), $args);
+        endif;
     }
 
     /**
@@ -158,7 +176,7 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
      */
     public function parse($items)
     {
-        foreach($items as $key => $attrs) :
+        foreach($items as $name => $attrs) :
             if (is_string($attrs)) :
                 $attrs = [
                     'alias'     => $attrs,
@@ -166,11 +184,21 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
                 ];
             endif;
 
-            $item = new ProviderItem($attrs, $this->app);
+            $attrs['concrete'] = $this->parseConcrete($name, $attrs['concrete']);
+
+            $item = new ProviderItem($name, $attrs, $this->app);
             array_push($this->provides, $item->getAlias());
 
-            $this->items[$key] = $item;
+            $this->items[$name] = $item;
         endforeach;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseConcrete($key, $default)
+    {
+        return Arr::get($this->providers, 'key', $default);
     }
 
     /**
@@ -178,8 +206,6 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
      */
     public function register()
     {
-        foreach ($this->getDeferred() as $item) :
-            $this->add($item);
-        endforeach;
+
     }
 }

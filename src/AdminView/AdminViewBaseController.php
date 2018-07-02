@@ -21,6 +21,7 @@ class AdminViewBaseController extends AbstractLayoutViewController implements Ad
     public function appBoot()
     {
         $this->appAddAction('admin_menu');
+        $this->appAddAction('current_screen');
     }
 
     /**
@@ -51,7 +52,6 @@ class AdminViewBaseController extends AbstractLayoutViewController implements Ad
 
     /**
      * Affichage de l'écran courant.
-     * @todo
      *
      * @param \WP_Screen $wp_screen Classe de rappel du controleur de la page courante de l'interface d'administration de Wordpress.
      *
@@ -65,11 +65,15 @@ class AdminViewBaseController extends AbstractLayoutViewController implements Ad
 
         $this->screen = $wp_screen;
 
-        if (method_exists($this, 'admin_enqueue_scripts')) :
-            $this->appAddAction('admin_enqueue_scripts');
+        if (method_exists($this->layout(), 'admin_enqueue_scripts')) :
+            $this->appAddAction('admin_enqueue_scripts', [$this->layout(), 'admin_enqueue_scripts']);
         endif;
 
-        $this->appAddAction('admin_notices');
+        //$this->appAddAction('admin_notices');
+
+        $this->getScreen()->add_option('per_page', ['option' => $this->layout()->param('per_page_option_name')]);
+
+        $this->layout()->current();
     }
 
     /**

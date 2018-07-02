@@ -14,18 +14,6 @@ class RequestBaseController implements RequestInterface
     protected $app;
 
     /**
-     * Classe de rappel du controleur de requête Http.
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * Url de la page courante
-     * @var string
-     */
-    protected $currentUrl = '';
-
-    /**
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des paramètres personnalisés.
@@ -36,18 +24,33 @@ class RequestBaseController implements RequestInterface
     public function __construct(LayoutControllerInterface $app)
     {
         $this->app = $app;
-        $this->request = $this->app->appRequest();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function currentUrl()
+    public function getQueryArgs()
     {
-        if ($this->currentUrl) :
-            return $this->currentUrl;
+        return $this->app->param('query_args', []);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function url()
+    {
+       return $this->app->appRequest()->fullUrl();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sanitizeUrl($remove_query_args = [], $url = '')
+    {
+        if(empty($remove_query_args)) :
+            $remove_query_args = \wp_removable_query_args();
         endif;
 
-        return $this->currentUrl = $this->request->fullUrl();
+        return remove_query_arg($remove_query_args, $url ? : $this->url());
     }
 }

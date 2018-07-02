@@ -9,7 +9,7 @@ use tiFy\Kernel\Layout\LayoutControllerInterface;
 class AdminViewMenuController extends AbstractAttributesController
 {
     /**
-     * Classe de rappel du controleur de l'interface d'administration associée.
+     * Classe de rappel du controleur de l'interface associée.
      * @var LayoutControllerInterface
      */
     protected $app;

@@ -48,7 +48,7 @@ final class Db extends AppController
 
         $classname = isset($attrs['controller']) ? $attrs['controller'] : DbBaseController::class;
 
-        $this->appServiceShare($alias, new $classname($name, $attrs));
+        $this->appServiceShare($alias, new $classname($name, $attrs, $this));
 
         return $this->appServiceGet($alias);
     }
