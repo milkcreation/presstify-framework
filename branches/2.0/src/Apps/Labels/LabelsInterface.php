@@ -1,29 +1,11 @@
 <?php
 
-namespace tiFy\Components\Labels;
+namespace tiFy\Apps\Labels;
 
-interface LabelsControllerInterface
+use tiFy\Apps\Attributes\AttributesControllerInterface;
+
+interface LabelsInterface extends AttributesControllerInterface
 {
-    /**
-     * Récupération de la liste des attributs définis.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param string $default Valeur de retour par défaut.
-     *
-     * @return string
-     */
-    public function all();
-
-    /**
-     * Récupération de la valeur d'un attribut défini.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param string $default Valeur de retour par défaut.
-     *
-     * @return string
-     */
-    public function get($key, $default = '');
-
     /**
      * Récupération du genre.
      *
@@ -51,16 +33,6 @@ interface LabelsControllerInterface
      * @return string
      */
     public function getSingular();
-
-    /**
-     * Définition d'un attribut.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param mixed $value Valeur de l'attribut.
-     *
-     * @return $this
-     */
-    public function set($key, $value);
 
     /**
      * Permet de vérifier si la première lettre d'une chaîne de caractère est une voyelle.

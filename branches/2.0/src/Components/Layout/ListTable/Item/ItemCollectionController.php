@@ -38,7 +38,7 @@ class ItemCollectionController implements ItemCollectionInterface
     {
         $this->app = $app;
 
-        $this->query($this->app->getQueryArgs());
+        $this->query($this->app->request()->getQueryArgs());
     }
 
     /**
@@ -141,15 +141,15 @@ class ItemCollectionController implements ItemCollectionInterface
      */
     public function query($query_args = [])
     {
-        if (!$db = $this->app->getDb()) :
+        if (!$db = $this->app->db()) :
             return;
         endif;
 
         $query = $db->query($query_args);
 
         if ($items = $query->getItems()) :
-            foreach($items as $item) :
-                $this->items[] = new ItemController($item, $this->app);
+            foreach ($items as $item) :
+                $this->items[] = $this->app->provide('item', [$item]);
             endforeach;
         endif;
 

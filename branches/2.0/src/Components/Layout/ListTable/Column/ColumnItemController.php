@@ -61,7 +61,7 @@ class ColumnItemController extends AbstractAttributesIterator implements ColumnI
             return;
         endif;
 
-        $type = (($db = $this->app->getDb()) && $db->existsCol($this->name)) ? strtoupper($db->getColAttr($this->name,
+        $type = (($db = $this->app->db()) && $db->existsCol($this->name)) ? strtoupper($db->getColAttr($this->name,
             'type')) : '';
 
         switch ($type) :
@@ -122,7 +122,7 @@ class ColumnItemController extends AbstractAttributesIterator implements ColumnI
         $title = $this->getTitle();
 
         if ($this->isSortable()) :
-            $current_url = $this->app->request()->currentUrl();
+            $current_url = $this->app->request()->url();
             $current_url = remove_query_arg('paged', $current_url);
             $current_orderby = $this->app->appRequest('GET')->get('orderby');
             $current_order = $this->app->appRequest('GET')->get('order') === 'desc' ? 'desc' : 'asc';

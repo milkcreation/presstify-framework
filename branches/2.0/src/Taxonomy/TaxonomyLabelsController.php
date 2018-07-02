@@ -1,22 +1,21 @@
 <?php
 
-namespace tiFy\Components\Labels;
+namespace tiFy\Taxonomy;
 
 use Illuminate\Support\Str;
+use tiFy\Apps\Labels\AbstractLabelsController;
 
 /**
  * @see https://codex.wordpress.org/Function_Reference/register_taxonomy
  */
-class LabelsTaxonomyController extends LabelsBaseController
+class TaxonomyLabelsController extends AbstractLabelsController
 {
     /**
      * {@inheritdoc}
      */
-    protected function parse($attrs = [])
+    public function defaults()
     {
-        parent::parse($attrs);
-
-        $defaults = [
+        return [
             'name'                       => Str::ucfirst($this->getPlural()),
 
             'singular_name'              => Str::ucfirst($this->getSingular()),
@@ -78,7 +77,5 @@ class LabelsTaxonomyController extends LabelsBaseController
                 'export_items'               => sprintf(__('Export des %s', 'tify'), $this->getPlural()),
              */
         ];
-
-        $this->attributes = array_merge($defaults, $this->attributes);
     }
 }

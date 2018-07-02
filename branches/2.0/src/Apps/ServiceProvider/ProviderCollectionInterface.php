@@ -44,11 +44,11 @@ interface ProviderCollectionInterface extends ServiceProviderInterface, Bootable
      * Récupération d'un fournisseur de service.
      *
      * @param string $key Clé d'index de qualification du service.
-     * @param array $args Liste des variables passée en argument.
+     * @param null|array $args Liste des variables passée en argument.
      *
      * @return null|object
      */
-    public function get($key, $args = []);
+    public function get($key, $args = null);
 
     /**
      * Récupération de la liste des controleurs au démarrage.
@@ -86,6 +86,16 @@ interface ProviderCollectionInterface extends ServiceProviderInterface, Bootable
      * @return void
      */
     public function parse($items);
+
+    /**
+     * Traitement du service selon sa clé d'indice de qualification.
+     *
+     * @param string $key Clé d'indice de qualification du service.
+     * @param string|callable Valeur de retour par défaut.
+     *
+     * @return string|callable
+     */
+    public function parseConcrete($key, $default);
 
     /**
      * Déclaration des services instanciés de manière différées.

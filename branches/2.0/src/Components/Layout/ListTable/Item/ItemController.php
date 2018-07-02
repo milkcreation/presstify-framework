@@ -2,7 +2,6 @@
 
 namespace tiFy\Components\Layout\ListTable\Item;
 
-use ArrayIterator;
 use Illuminate\Support\Collection;
 use tiFy\Apps\Attributes\AbstractAttributesIterator;
 use tiFy\Kernel\Layout\LayoutControllerInterface;
@@ -33,7 +32,7 @@ class ItemController extends AbstractAttributesIterator implements ItemInterface
      */
     public function getPrimary()
     {
-         if (($db = $this->app->getDb()) && ($primary = $db->getPrimary()) && $this->has($primary)) :
+         if (($db = $this->app->db()) && ($primary = $db->getPrimary()) && $this->has($primary)) :
             return $this->get($primary);
          else :
             return Arr::first($this->attributes);

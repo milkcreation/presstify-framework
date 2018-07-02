@@ -6,6 +6,8 @@ use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
+use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
+use tiFy\Components\Layout\ListTable\Request\RequestInterface;
 use tiFy\Kernel\Layout\LayoutControllerInterface;
 
 interface ListTableInterface extends LayoutControllerInterface
@@ -16,6 +18,23 @@ interface ListTableInterface extends LayoutControllerInterface
      * @return ColumnCollectionInterface
      */
     public function columns();
+
+    /**
+     * Récupération de l'affichage d'une colonne.
+     *
+     * @param string $name Nom de qualification de la colonne.
+     * @param ItemInterface $item Données de l'élément courant à afficher.
+     *
+     * @return string
+     */
+    public function getColumnDisplay($name, $item);
+
+    /**
+     * Récupération des information complètes concernant les colonnes
+     *
+     * @return array
+     */
+    public function getColumnInfos();
 
     /**
      * Récupération du selecteur d'action groupées.
@@ -61,9 +80,23 @@ interface ListTableInterface extends LayoutControllerInterface
     public function getViewFilters();
 
     /**
-     * Récupération de la liste des éléments.
+     * Récupération de la classe de rappel de récupération de la liste des éléments à afficher.
      *
-     * @return ItemCollectionInterface|ItemInterface[]
+     * @return ItemCollectionInterface
      */
     public function items();
+
+    /**
+     * Récupération de la classe de rappel de traitement de la pagination.
+     *
+     * @return PaginationInterface
+     */
+    public function pagination();
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return RequestInterface
+     */
+    public function request();
 }

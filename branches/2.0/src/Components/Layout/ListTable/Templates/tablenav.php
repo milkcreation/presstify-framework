@@ -14,5 +14,7 @@
         </div>
     <?php endif;?>
 
+    <?php $this->insert('pagination', compact('which')); ?>
+
     <br class="clear" />
 </div>

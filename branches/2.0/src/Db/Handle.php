@@ -61,7 +61,7 @@ class Handle extends AppController
         endif;
 
         // Formatage des données
-        $data = $this->db->parse()->validate($data);
+        $data = $this->db->parser()->validate($data);
         $data = array_map('maybe_serialize', $data);
 
         // Enregistrement de l'élément en base de données
@@ -97,7 +97,7 @@ class Handle extends AppController
         endif;
 
         // Formatage des données
-        $data = $this->db->parse()->validate($data);
+        $data = $this->db->parser()->validate($data);
         $data = array_map('maybe_serialize', $data);
 
         $this->db->sql()->update($this->db->getTableName(), $data, [$this->db->getPrimary() => $id]);

@@ -9,6 +9,7 @@ use tiFy\Components\Layout\ListTable\Column\ColumnInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
+use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
 use tiFy\Kernel\Layout\Param\ParamCollectionInterface;
 use tiFy\Kernel\Layout\LayoutControllerInterface;
 
@@ -127,6 +128,16 @@ class TemplateController extends TemplateBaseController
     public function hasItems()
     {
         return $this->app->items()->has();
+    }
+
+    /**
+     * Récupération de la classe de rappel du controleur de pagination.
+     *
+     * @return PaginationInterface
+     */
+    public function pagination()
+    {
+        return $this->app->pagination();
     }
 
     /**

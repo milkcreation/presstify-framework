@@ -3,16 +3,23 @@
 namespace tiFy\Db;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
+use tiFy\Apps\AppControllerInterface;
+use tiFy\Apps\Attributes\AbstractAttributesController;
 use tiFy\Db\Make;
 use tiFy\Db\Handle;
 use tiFy\Db\Meta;
-use tiFy\Db\Parse;
+use tiFy\Db\Parser;
 use tiFy\Db\Query;
 use tiFy\Db\Select;
 
-class DbBaseController extends AppController implements DbControllerInterface
+class DbBaseController extends AbstractAttributesController implements DbControllerInterface
 {
+    /**
+     * Classe de rappel du controleur de l'interface d'affichage associée.
+     * @var AppControllerInterface
+     */
+    protected $app;
+
     /**
      * Nom de qualification du controleur de base de données
      * @var string
@@ -157,62 +164,35 @@ class DbBaseController extends AppController implements DbControllerInterface
      *
      * @return void
      */
-    public function __construct($name, $attrs = [])
+    public function __construct($name, $attrs = [], AppControllerInterface $app)
     {
         $this->name = $name;
 
-        $this->attributes = array_merge(
-            [
-                'install'    => false,
-                'version'    => 1,
-                'name'       => '',
-                'primary'    => '',
-                'col_prefix' => '',
-                'columns'    => [],
-                'keys'       => [],
-                'search'     => [],
-                'meta'       => false,
-                // moteur de requete SQL global $wpdb par défaut | new \wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
-                'sql_engine' => null,
-            ],
-            $this->attributes
-        );
+        parent::__construct($attrs, $app);
 
-        $attrs = array_merge(
-            $this->attributes,
-            $attrs
-        );
-
-        // Définition du numéro de version
-        $this->version = $attrs['version'];
-
-        // Définition du moteur de requête SQL
-        $this->_parseSQLEngine($attrs['sql_engine']);
-
-        // Définition du nom de la table en base de données
-        $this->_parseTableName($attrs['name']);
-
-        // Définition du préfixe par défaut des noms de colonnes
-        $this->colPrefix = $attrs['col_prefix'];
-
-        // Traitement des attributs de colonnes
-        $this->_parseColumns($attrs['columns']);
-
-        // Définition de la clé primaire
-        $this->_parsePrimary($attrs['primary']);
-
-        // Définition des clés d'index
-        $this->indexKeys = $attrs['keys'];
-
-        // Définition des colonnes ouvertes à la recherche de termes
-        $this->_parseSearchColNames($attrs['search']);
-
-        // Définition de nom de la table de metadonnées en base
-        $this->_parseMeta($attrs['meta']);
-
-        if ($attrs['install']) :
+        if ($this->get('install', false)) :
             $this->install();
         endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [
+            'install'    => false,
+            'version'    => 1,
+            'name'       => '',
+            'primary'    => '',
+            'col_prefix' => '',
+            'columns'    => [],
+            'keys'       => [],
+            'search'     => [],
+            'meta'       => false,
+            // moteur de requete SQL global $wpdb par défaut | new \wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
+            'sql_engine' => null,
+        ];
     }
 
     /**
@@ -531,9 +511,44 @@ class DbBaseController extends AppController implements DbControllerInterface
     /**
      * {@inheritdoc}
      */
-    public function parse()
+    public function parse($attrs = [])
     {
-        return new Parse($this);
+        parent::parse($attrs);
+
+        // Définition du numéro de version
+        $this->version = $this->get('version');
+
+        // Définition du moteur de requête SQL
+        $this->_parseSQLEngine($this->get('sql_engine'));
+
+        // Définition du nom de la table en base de données
+        $this->_parseTableName($this->get('name'));
+
+        // Définition du préfixe par défaut des noms de colonnes
+        $this->colPrefix = $this->get('col_prefix');
+
+        // Traitement des attributs de colonnes
+        $this->_parseColumns($this->get('columns'));
+
+        // Définition de la clé primaire
+        $this->_parsePrimary($this->get('primary'));
+
+        // Définition des clés d'index
+        $this->indexKeys = $this->get('keys');
+
+        // Définition des colonnes ouvertes à la recherche de termes
+        $this->_parseSearchColNames($this->get('search'));
+
+        // Définition de nom de la table de metadonnées en base
+        $this->_parseMeta($this->get('meta'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parser()
+    {
+        return new Parser($this);
     }
 
     /**
@@ -541,7 +556,7 @@ class DbBaseController extends AppController implements DbControllerInterface
      */
     public function query($query = null)
     {
-        return new Query($this, $query);
+        return new Query($query, $this);
     }
 
     /**
