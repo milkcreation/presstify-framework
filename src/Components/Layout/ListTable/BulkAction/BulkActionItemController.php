@@ -3,9 +3,9 @@
 namespace tiFy\Components\Layout\ListTable\BulkAction;
 
 use tiFy\Kernel\Layout\LayoutControllerInterface;
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Attributes\AbstractAttributesIterator;
 
-class BulkActionItemController extends AbstractAttributesController implements BulkActionItemInterface
+class BulkActionItemController extends AbstractAttributesIterator implements BulkActionItemInterface
 {
     /**
      * Nom de qualification.
@@ -24,7 +24,7 @@ class BulkActionItemController extends AbstractAttributesController implements B
      * @return array
      */
     protected $attributes = [
-        'value'   => '',
+        'value'   => null,
         'content' => '',
         'group'   => false,
         'attrs'   => [],
@@ -53,6 +53,10 @@ class BulkActionItemController extends AbstractAttributesController implements B
     public function parse($attrs = [])
     {
         parent::parse($attrs);
+
+        if ($this->get('value', null) === null) :
+            $this->set('value', $this->name);
+        endif;
 
         if (!$this->get('content')) :
             $this->set('content', $this->name);
