@@ -1,87 +1,16 @@
 <?php
 
-namespace tiFy\Core\Ui\Admin\Templates\UserListTable;
+namespace tiFy\Components\Layout\UserListTable;
 
-class UserListTable extends \tiFy\Core\Ui\Admin\Templates\ListTable\ListTable
+use tiFy\Components\Layout\ListTable\ListTable;
+
+class UserListTable extends ListTable
 {
-    // Paramètres
-    use Traits\Params;
-
     /**
-     * CONSTRUCTEUR
-     *
-     * @param string $id Identifiant de qualification
-     * @param array $attrs Attributs de configuration
-     *
-     * @return void
+     * Controleur du fournisseur de service.
+     * @var string
      */
-    public function __construct($id = null, $attrs = [])
-    {
-        parent::__construct($id, $attrs);
-
-
-
-        // Définition de la liste des paramètres autorisés
-        $this->setAllowedParamList(['roles']);
-
-        // Définition de la liste des paramètres par défaut
-        $this->setDefaultParam(
-            'columns',
-            [
-                'cb'              => $this->header_cb(),
-                'user_login'      => __('Identifiant', 'tify'),
-                'display_name'    => __('Nom', 'tify'),
-                'user_email'      => __('E-mail', 'tify'),
-                'user_registered' => __('Enregistrement', 'tify'),
-                'role'            => __('Rôle', 'tify')
-            ]
-        );
-        $this->setDefaultParam('bulk_actions', ['delete']);
-        $this->setDefaultParam('row_actions', ['edit', 'delete']);
-    }
-
-    /**
-     * DECLENCHEURS
-     */
-    /**
-     * Mise en file des scripts de l'interface d'administration
-     * @see \tiFy\Core\Ui\Admin\Templates\Table\Table::admin_enqueue_scripts()
-     *
-     * @return void
-     */
-    public function admin_enqueue_scripts()
-    {
-        parent::admin_enqueue_scripts();
-
-        \wp_enqueue_style('tiFyCoreUiAdminTemplatesUserListTable', self::tFyAppAssetsUrl('UserListTable.css', get_class()), [], 171115);
-    }
-
-    /**
-     * CONTROLEURS
-     */
-    /**
-     * Préparation de la liste des éléments à afficher
-     *
-     * @return void
-     */
-    public function prepare_items()
-    {
-        $query_args = $this->parse_query_args();
-        $query = new \WP_User_Query($query_args);
-        $this->items = $query->get_results();
-
-        // Pagination
-        $total_items = $query->get_total();
-        $per_page = $this->get_items_per_page($this->getParam('per_page_option_name'), $this->getParam('per_page'));
-
-        $this->set_pagination_args(
-            [
-                'total_items' => $total_items,
-                'per_page'    => $per_page,
-                'total_pages' => ceil($total_items / $per_page)
-            ]
-        );
-    }
+    protected $serviceProvider = UserListTableServiceProvider::class;
 
     /**
      * Traitement des arguments de requête
@@ -90,10 +19,6 @@ class UserListTable extends \tiFy\Core\Ui\Admin\Templates\ListTable\ListTable
      */
     public function parse_query_args()
     {
-        // Récupération des arguments
-        $per_page = $this->get_items_per_page($this->getParam('per_page_option_name'), $this->getParam('per_page'));
-        $paged = $this->get_pagenum();
-
         // Arguments par défaut
         $query_args = [
             'number'      => $per_page,
@@ -163,50 +88,42 @@ class UserListTable extends \tiFy\Core\Ui\Admin\Templates\ListTable\ListTable
     }
 
     /**
-     * Contenu de la colonne - Login
+     * Définition de la liste des roles à afficher
      *
-     * @param object $item Attributs de l'élément courant
+     * @param array $roles Liste des roles à afficher définis en paramètre
      *
-     * @return string
+     * @return array
      */
-    public function column_user_login($item)
+    public function set_param_roles($roles = [])
     {
-        $avatar = get_avatar($item->ID, 32);
+        return $roles;
+    }
 
-        if (current_user_can('edit_user', $item->ID) && $this->EditBaseUri) :
-            return sprintf('%1$s<strong>%2$s</strong>', $avatar,
-                $this->get_item_edit_link($item, [], $item->user_login));
-        else :
-            return sprintf('%1$s<strong>%2$s</strong>', $avatar, $item->user_login);
+    /**
+     * Initialisation de la liste des roles à afficher
+     *
+     * @param array $roles Liste des roles à afficher existants
+     *
+     * @return array
+     */
+    public function init_param_roles($roles = [])
+    {
+        if ($editable_roles = array_reverse(\get_editable_roles())) :
+            $editable_roles = array_keys($editable_roles);
         endif;
-    }
 
-    /**
-     * Contenu de la colonne - date d'enregistrement
-     *
-     * @param object $item Attributs de l'élément courant
-     *
-     * @return string
-     */
-    public function column_user_registered($item)
-    {
-        return mysql2date(__('d/m/Y à H:i', 'tify'), $item->user_registered, true);
-    }
+        $_roles = [];
+        if ($roles) :
+            foreach ($roles as $role) :
+                if (!in_array($role, $editable_roles)) :
+                    continue;
+                endif;
+                array_push($_roles, $role);
+            endforeach;
+        else :
+            $_roles = $editable_roles;
+        endif;
 
-    /**
-     * Contenu de la colonne - Role
-     *
-     * @param object $item Attributs de l'élément courant
-     *
-     * @return string
-     */
-    public function column_role($item)
-    {
-        global $wp_roles;
-
-        $user_role = reset($item->roles);
-        $role_link = esc_url(add_query_arg('role', $user_role, $this->BaseUri));
-
-        return isset($wp_roles->role_names[$user_role]) ? "<a href=\"{$role_link}\">" . translate_user_role($wp_roles->role_names[$user_role]) . "</a>" : __('Aucun', 'tify');
+        return $_roles;
     }
 }

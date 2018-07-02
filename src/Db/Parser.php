@@ -5,7 +5,7 @@ namespace tiFy\Db;
 use tiFy\Apps\AppController;
 use tiFy\Db\DbControllerInterface;
 
-class Parse extends AppController
+class Parser extends AppController
 {
     /**
      * Classe de rappel du controleur de base de données associé.

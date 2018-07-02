@@ -13,7 +13,7 @@ class ColumnItemCbController extends ColumnItemController
      */
     public function display($item)
     {
-        return (($db = $this->app->getDb()) && ($primary = $db->getPrimary()) && isset($item->{$primary})) ? sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />', $primary, $item->{$primary}) : '';
+        return (($db = $this->app->db()) && ($primary = $db->getPrimary()) && isset($item->{$primary})) ? sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />', $primary, $item->{$primary}) : '';
     }
 
     /**

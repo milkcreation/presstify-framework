@@ -2,12 +2,16 @@
 
 namespace tiFy\Taxonomy;
 
-use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
-use tiFy\Components\Labels\LabelsTaxonomyController;
+use tiFy\Apps\Attributes\AbstractAttributesController;
 
-class TaxonomyController extends AppController
+class TaxonomyController extends AbstractAttributesController
 {
+    /**
+     * Classe de rappel du controleur de gestion des types de post.
+     * @return Taxonomy
+     */
+    protected $app;
+
     /**
      * Nom de qualification du type de post
      * @var string
@@ -45,16 +49,17 @@ class TaxonomyController extends AppController
     /**
      * CONSTRUCTEUR.
      *
-     * @param string $name Nom de qualification du type de post
-     * @param array $attrs Attribut de configuration
+     * @param string $name Nom de qualification de la taxonomy.
+     * @param array $attrs Attribut de configuration.
+     * @param Taxonomy $app Classe de rappel du controleur de gestion des taxonomies.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [])
+    public function __construct($name, $attrs = [], Taxonomy $app)
     {
         $this->name = $name;
 
-        $this->parse($attrs);
+        parent::__construct($attrs, $app);
 
         \register_taxonomy(
             $name,
@@ -62,23 +67,8 @@ class TaxonomyController extends AppController
             $this->attributes
         );
 
-        $this->appAddAction('init', null, 25);
-        $this->appAddAction('admin_init');
-    }
-
-    /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    public function init()
-    {
-        if ($post_types = $this->get('object_type', [])) :
-            $post_types = is_array($post_types) ? $post_types : array_map('trim', explode(',', $post_types));
-            foreach ($post_types as $post_type) :
-                \register_taxonomy_for_object_type($this->getName(), $post_type);
-            endforeach;
-        endif;
+        $this->app->appAddAction('init', [$this, 'init'], 25);
+        $this->app->appAddAction('admin_init', [$this, 'admin_init']);
     }
 
     /**
@@ -112,37 +102,61 @@ class TaxonomyController extends AppController
     }
 
     /**
-     * Traitement des attributs de configuration.
+     * Récupération du nom de qualification du type de post
      *
-     * @param array $attrs Liste des attributs personnalisés.
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Initialisation globale de Wordpress.
      *
-     * @return array
+     * @return void
+     */
+    public function init()
+    {
+        if ($post_types = $this->get('object_type', [])) :
+            $post_types = is_array($post_types) ? $post_types : array_map('trim', explode(',', $post_types));
+            foreach ($post_types as $post_type) :
+                \register_taxonomy_for_object_type($this->getName(), $post_type);
+            endforeach;
+        endif;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
-        $this->attributes = array_merge(
-            $this->attributes,
-            $attrs
-        );
+        parent::parse($attrs);
 
         $this->set('label', $this->get('label', _x($this->getName(), 'taxonomy general name', 'tify')));
-        $this->set('plural', $this->get('plural', $this->get('label')));
-        $this->set('singular', $this->get('singular', $this->get('label')));
-        $this->set('gender', $this->get('gender', false));
-        $this->set('labels', $this->get('labels', []));
 
-        $label = new LabelsTaxonomyController(
-            $this->get('label'),
-            array_merge(
-                [
-                    'singular' => $this->get('singular'),
-                    'plural'   => $this->get('plural'),
-                    'gender'   => $this->get('gender'),
-                ],
-                $this->get('labels')
-            )
+        $this->set('plural', $this->get('plural', $this->get('label')));
+
+        $this->set('singular', $this->get('singular', $this->get('label')));
+
+        $this->set('gender', $this->get('gender', false));
+
+        $this->set(
+            'labels',
+            (new TaxonomyLabelsController(
+                    $this->get('label'),
+                    array_merge(
+                        [
+                            'singular' => $this->get('singular'),
+                            'plural'   => $this->get('plural'),
+                            'gender'   => $this->get('gender'),
+                        ],
+                        $this->get('labels', [])
+                    ),
+                    $this->app
+                )
+            )->all()
         );
-        $this->set('labels', $label->all());
 
         $this->set('publicly_queryable', $this->has('publicly_queryable') ? $this->get('publicly_queryable') : $this->get('public'));
 
@@ -157,55 +171,5 @@ class TaxonomyController extends AppController
         $this->set('show_tagcloud', $this->has('show_tagcloud') ? $this->get('show_tagcloud') : $this->get('show_ui'));
 
         $this->set('show_in_quick_edit', $this->has('show_in_quick_edit') ? $this->get('show_in_quick_edit') : $this->get('show_ui'));
-
-        return $attrs;
-    }
-
-    /**
-     * Récupération du nom de qualification du type de post
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param mixed $default Valeur de retoru par defaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
-    }
-
-    /**
-     * Définition d'un attribut de configuration.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     * @param mixed $value Valeur attribuée.
-     *
-     * @return mixed
-     */
-    public function set($key, $value)
-    {
-        return Arr::set($this->attributes, $key, $value);
-    }
-
-    /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'index de qualification de l'attribut.
-     *
-     * @return mixed
-     */
-    public function has($key)
-    {
-        return Arr::has($this->attributes, $key);
     }
 }

@@ -162,7 +162,7 @@ interface DbControllerInterface
      *
      * @return Parse
      */
-    public function parse();
+    public function parser();
 
     /**
      * Traitement de la boucle de requêtes de récupération de données en base.

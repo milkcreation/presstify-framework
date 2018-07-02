@@ -162,7 +162,7 @@ class Handle
             return;
         endif;
 
-        if (!$db = $this->getDb()) :
+        if (!$db = $this->db()) :
             return;
         endif;
 
@@ -198,7 +198,7 @@ class Handle
             return;
         endif;
 
-        if (!$db = $this->getDb()) :
+        if (!$db = $this->db()) :
             return;
         endif;
 
@@ -234,7 +234,7 @@ class Handle
             return;
         endif;
 
-        if (!$db = $this->getDb()) :
+        if (!$db = $this->db()) :
             return;
         endif;
 
@@ -271,7 +271,7 @@ class Handle
             return;
         endif;
 
-        if (!$db = $this->getDb()) :
+        if (!$db = $this->db()) :
             return;
         endif;
 
@@ -313,7 +313,7 @@ class Handle
             return;
         endif;
 
-        if (!$db = $this->getDb()) :
+        if (!$db = $this->db()) :
             return;
         endif;
 

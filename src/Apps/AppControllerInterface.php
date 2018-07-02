@@ -2,6 +2,12 @@
 
 namespace tiFy\Apps;
 
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\FileBag;
+use Symfony\Component\HttpFoundation\HeaderBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\ServerBag;
+
 interface AppControllerInterface
 {
     /**
@@ -160,7 +166,11 @@ interface AppControllerInterface
     public function appRelPath($app = null);
 
     /**
-     * {@inheritdoc}
+     * Récupération de la classe de rappel de propriété de la requête globale.
+     *
+     * @param string $property Propriété de la requête à traiter $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes|$_FILES (alias files)|SERVER (alias server)|headers.
+     *
+     * @return Request|FileBag|HeaderBag|ParameterBag|ServerBag
      */
     public function appRequest($property = '');
 

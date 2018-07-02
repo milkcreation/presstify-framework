@@ -45,7 +45,7 @@ class Select extends AppController
         ];
 
         // Traitement des arguments
-        $parse = $this->db->parse();
+        $parse = $this->db->parser();
         $query_args = $parse->query_vars($query_args, $defaults);
 
         // Traitement de la requête
@@ -137,7 +137,7 @@ class Select extends AppController
         ];
 
         // Traitement des arguments
-        $parse = $this->db->parse();
+        $parse = $this->db->parser();
         $query_args = $parse->query_vars($query_args, $defaults);
 
         // Traitement de la requête
@@ -214,7 +214,7 @@ class Select extends AppController
         endif;
 
         // Traitement des arguments
-        $parse = $this->db->parse();
+        $parse = $this->db->parser();
         $query_args = $parse->query_vars($query_args);
 
         // Traitement de la requête
@@ -299,7 +299,7 @@ class Select extends AppController
         $query_args['fields'] = [$key_col, $value_col];
 
         // Traitement de la requête
-        if (!$query = $this->db->parse()->query($query_args)) :
+        if (!$query = $this->db->parser()->query($query_args)) :
             return;
         endif;
 
@@ -309,7 +309,7 @@ class Select extends AppController
         endif;
 
         // Tratiement du resultat
-        if (!$results = $this->db->parse()->parse_output($items, OBJECT)) :
+        if (!$results = $this->db->parser()->parse_output($items, OBJECT)) :
             return;
         endif;
 
@@ -419,7 +419,7 @@ class Select extends AppController
         ];
 
         // Traitement des arguments
-        $parse = $this->db->parse();
+        $parse = $this->db->parser();
         $query_args = $parse->query_vars($query_args, $defaults);
         unset($query_args[$primary]);
 

@@ -12,6 +12,10 @@ use tiFy\Components\Layout\ListTable\Column\ColumnItemInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnItemCbController;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionController;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
+use tiFy\Components\Layout\ListTable\Item\ItemController;
+use tiFy\Components\Layout\ListTable\Item\ItemInterface;
+use tiFy\Components\Layout\ListTable\Pagination\PaginationController;
+use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
 use tiFy\Components\Layout\ListTable\RowAction\RowActionCollectionController;
 use tiFy\Components\Layout\ListTable\RowAction\RowActionCollectionInterface;
 use tiFy\Components\Layout\ListTable\RowAction\RowActionItemController;
@@ -30,6 +34,7 @@ use tiFy\Components\Layout\ListTable\ViewFilter\ViewFilterItemController;
 use tiFy\Components\Layout\ListTable\ViewFilter\ViewFilterItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Components\Layout\ListTable\Param\ParamCollectionController;
+use tiFy\Components\Layout\ListTable\Request\RequestController;
 use tiFy\Kernel\Layout\LayoutControllerInterface;
 use tiFy\Kernel\Layout\LayoutServiceProvider;
 
@@ -51,107 +56,103 @@ class ListTableServiceProvider extends LayoutServiceProvider
             [
                 'columns' => [
                     'alias'     => ColumnCollectionInterface::class,
-                    'concrete'  => $this->app->getConcrete('columns', ColumnCollectionController::class),
-                    'bootable'  => false,
+                    'concrete'  => ColumnCollectionController::class,
                     'singleton' => true
                 ],
                 'columns.item' => [
                     'alias'     => ColumnItemInterface::class,
-                    'concrete'  => $this->app->getConcrete('columns.item', ColumnItemController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => ColumnItemController::class
                 ],
                 'columns.item.cb' => [
                     'alias'     => ColumnItemCbController::class,
-                    'concrete'  => $this->app->getConcrete('columns.item.cb', ColumnItemCbController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => ColumnItemCbController::class
                 ],
                 'bulk_actions' => [
                     'alias'     => BulkActionCollectionInterface::class,
-                    'concrete'  => $this->app->getConcrete('bulk_actions', BulkActionCollectionController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => BulkActionCollectionController::class
                 ],
                 'items' => [
                     'alias'     => ItemCollectionInterface::class,
-                    'concrete'  => $this->app->getConcrete('items', ItemCollectionController::class),
-                    'bootable'  => false,
+                    'concrete'  => ItemCollectionController::class,
+                    'singleton' => true
+                ],
+                'item' => [
+                    'alias'     => ItemInterface::class,
+                    'concrete'  => ItemController::class
+                ],
+                'pagination' => [
+                    'alias'     => PaginationInterface::class,
+                    'concrete'  => PaginationController::class,
                     'singleton' => true
                 ],
                 'row_actions' => [
                     'alias'     => RowActionCollectionInterface::class,
-                    'concrete'  => $this->app->getConcrete('row_actions', RowActionCollectionController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionCollectionController::class
                 ],
                 'row_actions.item' => [
                     'alias'     => RowActionItemInterface::class,
-                    'concrete'  => $this->app->getConcrete('row_actions', RowActionItemController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemController::class
                 ],
                 'row_actions.item.activate' => [
                     'alias'     => RowActionItemActivateController::class,
-                    'concrete'  => $this->app->getConcrete('row_actions.item.activate', RowActionItemActivateController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemActivateController::class
                 ],
                 'row_actions.item.deactivate' => [
                     'alias'     => RowActionItemDeactivateController::class,
-                    'concrete'  => $this->app->getConcrete('row_actions.item.activate', RowActionItemDeactivateController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemDeactivateController::class
                 ],
                 'row_actions.item.delete' => [
                     'alias'     => RowActionItemDeleteController::class,
-                    'concrete'  => $this->app->getConcrete('row_actions.item.activate', RowActionItemDeleteController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemDeleteController::class
                 ],
                 'row_actions.item.duplicate' => [
                     'alias'     => RowActionItemDuplicateController::class,
-                    'concrete'  => $this->app->getConcrete('row_actions.item.activate', RowActionItemDuplicateController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemDuplicateController::class
                 ],
                 'row_actions.item.edit' => [
                     'alias'     => RowActionItemEditController::class,
-                    'concrete'  => $this->app->getConcrete('row_actions.item.activate', RowActionItemEditController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemEditController::class
                 ],
                 'row_actions.item.preview' => [
                     'alias'     => RowActionItemPreviewController::class,
-                    'concrete'  => $this->app->getConcrete('row_actions.item.activate', RowActionItemPreviewController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemPreviewController::class
                 ],
                 'row_actions.item.trash' => [
                     'alias'     => RowActionItemTrashController::class,
-                    'concrete'  => $this->app->getConcrete('row_actions.item.activate', RowActionItemTrashController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemTrashController::class
                 ],
                 'row_actions.item.untrash' => [
                     'alias'     => RowActionItemUntrashController::class,
-                    'concrete'  => $this->app->getConcrete('row_actions.item.activate', RowActionItemUntrashController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => RowActionItemUntrashController::class
                 ],
                 'view_filters' => [
                     'alias'     => ViewFilterCollectionInterface::class,
-                    'concrete'  => $this->app->getConcrete('view_filters', ViewFilterCollectionController::class),
-                    'bootable'  => false,
+                    'concrete'  => ViewFilterCollectionController::class,
                     'singleton' => true
                 ],
                 'view_filters.item' => [
                     'alias'     => ViewFilterItemInterface::class,
-                    'concrete'  => $this->app->getConcrete('view_filters.item', ViewFilterItemController::class),
-                    'bootable'  => false,
-                    'singleton' => false
+                    'concrete'  => ViewFilterItemController::class
                 ]
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseConcrete($key, $default)
+    {
+        switch($key) :
+            default :
+                return parent::parseConcrete($key, $default);
+                break;
+            case 'params' :
+                return ParamCollectionController::class;
+                break;
+            case 'request' :
+                return RequestController::class;
+                break;
+        endswitch;
     }
 }
