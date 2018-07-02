@@ -22,7 +22,7 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
 
     /**
      * Liste des actions groupées.
-     * @var void|BulkActionItemController[]
+     * @var void|BulkActionItemInterface[]
      */
     protected $items = [];
 
@@ -50,7 +50,7 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
     /**
      * Récupération de la liste des actions groupées.
      *
-     * @return array
+     * @return void|BulkActionItemInterface[]
      */
     public function all()
     {
@@ -68,9 +68,8 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
     {
         foreach ($bulk_actions as $name => $attrs) :
             if (is_numeric($name)) :
-                $value = $name;
                 $name = (string)$attrs;
-                $attrs = compact('value');
+                $attrs = [];
             elseif (is_string($attrs)) :
                 $attrs = [
                     'value'   => $name,
@@ -78,9 +77,11 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
                 ];
             endif;
 
-            if ($attrs = (new BulkActionItemController($name, $attrs, $this->app))->all()) :
-                $this->items[] = $attrs;
-            endif;
+            $provide = $this->app->provider()->has("bulk_actions.item.{$name}")
+                ? "bulk_actions.item.{$name}"
+                : 'bulk_actions.item';
+
+            $this->items[$name] = $this->app->provide($provide, [$name, $attrs]);
         endforeach;
     }
 
@@ -91,9 +92,14 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
      */
     public function display()
     {
-        if (!$options = $this->all()) :
+        if (!$items = $this->all()) :
             return '';
         endif;
+
+        $options = [];
+        foreach ($items as $item) :
+            $options[] = $item->all();
+        endforeach;
 
         array_unshift(
             $options,

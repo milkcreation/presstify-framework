@@ -2,7 +2,9 @@
 
 namespace tiFy\Components\Layout\ListTable\BulkAction;
 
-interface BulkActionItemInterface
+use tiFy\Apps\Attributes\AttributesIteratorInterface;
+
+interface BulkActionItemInterface extends AttributesIteratorInterface
 {
 
 }
