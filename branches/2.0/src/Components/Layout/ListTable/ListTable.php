@@ -119,7 +119,7 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
     public function getTableClasses()
     {
         return array_merge(
-            ['widefat', 'fixed', 'striped', $this->_args['plural']],
+            ['widefat', 'fixed', 'striped', $this->get('plural')],
             $this->param('table_classes')
         );
     }

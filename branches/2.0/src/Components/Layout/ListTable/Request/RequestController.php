@@ -48,12 +48,12 @@ class RequestController extends RequestBaseController implements RequestInterfac
             $option_name = $this->app->param('per_page_option_name');
             $default = $this->app->param('per_page', 20);
 
-            $per_page = (int)get_user_option($option);
+            $per_page = (int)get_user_option($option_name);
             if (empty($per_page) || $per_page < 1) :
                 $per_page = $default;
             endif;
 
-            $this->perPage = (int)apply_filters("{$option}", $per_page);
+            $this->perPage = (int)apply_filters("{$option_name}", $per_page);
         endif;
 
         return $this->perPage;
