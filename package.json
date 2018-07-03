@@ -1,17 +1,13 @@
 {
-    "private": true,
+    "name": "tiFyGulp",
+    "version": "0.2.0",
+    "description": "Minification des CSS et JS des librairies tiFy",
+    "author": "Milkcreation",
     "dependencies": {
-        "dentistjs": "*",
-        "flag-icon-css" : "*",
-        "font-awesome": "*",
-        "jquery-easing-original": "*",
-        "mobile-detect": "*",
-        "moment": "*",
-        "nanoscroller": "*",
-        "pace": "*",
-        "spectrum": "*",
-        "spinkit": "*",
-        "slick-carousel": "*",
-        "threesixty-slider": "*"
+        "gulp": "latest",
+        "gulp-csso": "latest",
+        "gulp-plumber": "latest",
+        "gulp-rename": "latest",
+        "gulp-uglify": "latest"
     }
 }
