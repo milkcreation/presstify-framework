@@ -49,6 +49,18 @@ abstract class ColumnFactory extends App
     protected $Content = '';
 
     /**
+     * Attributs par défaut
+     * @var array
+     */
+    protected $DefaultAttrs = [];
+
+    /**
+     * Attributs
+     * @var array
+     */
+    protected $Attrs = [];
+
+    /**
      * CONSTRUCTEUR
      *
      * @param array $attrs {
@@ -67,11 +79,16 @@ abstract class ColumnFactory extends App
         parent::__construct();
 
         // Définition des variables d'environnement
-        foreach (['column_name', 'title', 'position'] as $attr) :
-            if (isset($attrs[$attr])) :
-                $Attr = $this->appUpperName($attr, false);
-                $this->{$Attr} = $attrs[$attr];
-            endif;
+        foreach (['column_name', 'title', 'position', 'attrs'] as $attr) :
+            $Attr = $this->appUpperName($attr, false);
+            switch ($attr) :
+                case 'attrs':
+                    $this->{$Attr} = (isset($attrs[$attr])) ? array_merge((array) $this->getDefaultAttrs(), (array) $attrs[$attr]) : (array) $this->getDefaultAttrs();
+                    break;
+                default:
+                    $this->{$Attr} = (isset($attrs[$attr])) ? $attrs[$attr] : $this->{$Attr};
+                    break;
+            endswitch;
         endforeach;
 
         $this->Content = !isset($attrs['content']) ? [$this, 'content'] : $attrs['content'];
@@ -223,6 +240,28 @@ abstract class ColumnFactory extends App
         else :
             call_user_func_array([$this, 'content'], func_get_args());
         endif;
+    }
+
+    /**
+     * Récupération des attributs par défaut.
+     *
+     * @return array
+     */
+    public function getDefaultAttrs()
+    {
+        return $this->DefaultAttrs;
+    }
+
+    /**
+     * Récupération d'un attribut.
+     *
+     * @param string $attr Attribut.
+     *
+     * @return mixed|null
+     */
+    public function getAttr($attr = '')
+    {
+        return isset($this->Attrs[$attr]) ? $this->Attrs[$attr] : null;
     }
 
     /**
