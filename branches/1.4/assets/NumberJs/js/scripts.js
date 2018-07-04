@@ -1,8 +1,18 @@
 jQuery(document).ready(function ($) {
-    $('.tiFyField-numberJs').each(function() {
-        var options = JSON.parse(
-            decodeURIComponent($(this).data('options'))
+    let initNumberJs = function($el) {
+        let options = JSON.parse(
+            decodeURIComponent($el.data('options'))
         );
-        $(this).spinner(options);
+        $el.spinner(options);
+    };
+
+    $('.tiFyField-numberJs').each(function() {
+        initNumberJs($(this));
+    });
+
+    $(document).on('mouseenter', '.tiFyField-numberJs', function() {
+        $(this).each(function() {
+            initNumberJs($(this));
+        });
     });
 });
