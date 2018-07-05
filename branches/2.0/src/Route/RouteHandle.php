@@ -5,10 +5,10 @@ namespace tiFy\Route;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use tiFy\Apps\AppController;
-use tiFy\Route\Route;
+use tiFy\Apps\AppControllerInterface;
+use tiFy\Apps\Item\AbstractAppItemController;
 
-class RouteHandle extends AppController
+class RouteHandle extends AbstractAppItemController
 {
     /**
      * Nom de qualification de la route.
@@ -17,38 +17,53 @@ class RouteHandle extends AppController
     protected $name = '';
 
     /**
-     * Liste des attributs de configuration de la route.
-     * @var array
+     * Indicateur de contexte d'affichage de page de Wordpress.
+     * @var string[]
      */
-    protected $attributes = [];
+    protected $conditionnalTags = [
+        'is_single',
+        'is_preview',
+        'is_page',
+        'is_archive',
+        'is_date',
+        'is_year',
+        'is_month',
+        'is_day',
+        'is_time',
+        'is_author',
+        'is_category',
+        'is_tag',
+        'is_tax',
+        'is_search',
+        'is_feed',
+        'is_comment_feed',
+        'is_trackback',
+        'is_home',
+        'is_404',
+        'is_embed',
+        'is_paged',
+        'is_admin',
+        'is_attachment',
+        'is_singular',
+        'is_robots',
+        'is_posts_page',
+        'is_post_type_archive'
+    ];
 
     /**
      * CONSTRUCTEUR.
      *
      * @param string $name Identifiant de qualification de la route.
      * @param array $attrs Liste des attributs de configuration de la route.
+     * @param  $app .
      *
      * @return void
      */
-    public function __construct($name, $attrs = [])
+    public function __construct($name, $attrs = [], AppControllerInterface $app)
     {
-        parent::__construct();
-
         $this->name = $name;
-        $this->attributes = $attrs;
-    }
 
-    /**
-     * Récupération d'attribut de configuration.
-     *
-     * @param string $key Clé d'index de l'attribut.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default  = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
+        parent::__construct($attrs, $app);
     }
 
     /**
@@ -86,7 +101,7 @@ class RouteHandle extends AppController
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $this->appRequest('attributes')->add(
+        $this->app->appRequest('attributes')->add(
             [
                 'tify_route_name' => $this->name,
                 'tify_route_args' => $args
@@ -99,14 +114,14 @@ class RouteHandle extends AppController
         if ($this->isClosure($cb)) :
             call_user_func_array($cb, $args);
         else :
-            $this->appAddAction(
+            $this->app->appAddAction(
                 'template_redirect',
                 function () use ($cb, $args) {
                     $output = call_user_func_array($cb, $args);
                     if (is_string($output)) :
                         $response = end($args);
                         $response->getBody()->write($output);
-                        $this->appServiceGet('tfy.route.emitter')->emit($response);
+                        $this->app->appServiceGet('tfy.route.emitter')->emit($response);
                     endif;
 
                     exit;
@@ -115,6 +130,32 @@ class RouteHandle extends AppController
             );
         endif;
 
+        $this->app->appAddAction('pre_get_posts', [$this, 'pre_get_posts'], 0);
+
         return $response;
+    }
+
+    /**
+     * Pré-traitement de la requête de récupération de post WP.
+     *
+     * @param \WP_Query $wp_query Classe de rappel de traitement de requête Wordpress.
+     *
+     * @return void
+     */
+    public function pre_get_posts(&$wp_query)
+    {
+        if ($wp_query->is_main_query() && ! $wp_query->is_admin()) :
+            foreach($this->conditionnalTags as $ct) :
+                $wp_query->{$ct} = false;
+            endforeach;
+
+            if ($query_args = $this->get('query_args', [])) :
+                $wp_query->query_vars = $query_args;
+            else :
+                $wp_query->query_vars = $wp_query->fill_query_vars([]);
+            endif;
+
+            $wp_query->is_route = true;
+        endif;
     }
 }

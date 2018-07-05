@@ -166,7 +166,7 @@ class Findposts extends \tiFy\Control\Factory
      *
      * @return string
      */
-    protected function display($attrs = [])
+    public function display($attrs = [])
     {
         static $init;
 

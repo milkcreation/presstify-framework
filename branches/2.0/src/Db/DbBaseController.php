@@ -4,7 +4,7 @@ namespace tiFy\Db;
 
 use Illuminate\Support\Arr;
 use tiFy\Apps\AppControllerInterface;
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 use tiFy\Db\Make;
 use tiFy\Db\Handle;
 use tiFy\Db\Meta;
@@ -12,7 +12,7 @@ use tiFy\Db\Parser;
 use tiFy\Db\Query;
 use tiFy\Db\Select;
 
-class DbBaseController extends AbstractAttributesController implements DbControllerInterface
+class DbBaseController extends AbstractAppItemController implements DbControllerInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.

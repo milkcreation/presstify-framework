@@ -322,7 +322,7 @@ class FormItemController extends AbstractCommonDependency
      * Récupération d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut à récupérer.
-     * @param mixed $defaul Valeur de retour par défaut.
+     * @param mixed $default Valeur de retour par défaut.
      *
      * @return mixed
      */

@@ -5,9 +5,9 @@ namespace tiFy\Apps\Labels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppControllerInterface;
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 
-abstract class AbstractLabelsController extends AbstractAttributesController implements LabelsInterface
+abstract class AbstractLabelsController extends AbstractAppItemController implements LabelsInterface
 {
     /**
      * Classe de rappel du controleur de l'application associée.

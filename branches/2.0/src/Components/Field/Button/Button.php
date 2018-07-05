@@ -2,9 +2,9 @@
 
 namespace tiFy\Components\Field\Button;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Button extends AbstractFieldController
+class Button extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -35,7 +35,7 @@ class Button extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('content', __('Envoyer', 'tify'));
 

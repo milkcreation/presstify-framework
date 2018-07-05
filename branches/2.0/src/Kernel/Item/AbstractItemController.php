@@ -1,18 +1,11 @@
 <?php
 
-namespace tiFy\Apps\Attributes;
+namespace tiFy\Kernel\Item;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppControllerInterface;
 
-abstract class AbstractAttributesController implements AttributesControllerInterface
+abstract class AbstractItemController implements ItemInterface
 {
-    /**
-     * Classe de rappel du controleur de l'application associée.
-     * @var AppControllerInterface
-     */
-    protected $app;
-
     /**
      * Liste des paramètres.
      * @var array
@@ -23,14 +16,11 @@ abstract class AbstractAttributesController implements AttributesControllerInter
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des paramètres personnalisés.
-     * @param AppControllerInterface $app  Classe de rappel du controleur de l'application.
      *
      * @return void
      */
-    public function __construct($attrs = [], AppControllerInterface $app)
+    public function __construct($attrs = [])
     {
-        $this->app = $app;
-
         $this->parse($attrs);
     }
 
@@ -69,6 +59,14 @@ abstract class AbstractAttributesController implements AttributesControllerInter
     /**
      * {@inheritdoc}
      */
+    public function keys()
+    {
+        return array_keys($this->attributes);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function parse($attrs = [])
     {
         $this->attributes = array_merge(
@@ -83,10 +81,26 @@ abstract class AbstractAttributesController implements AttributesControllerInter
     /**
      * {@inheritdoc}
      */
+    public function pull($key, $default = null)
+    {
+        return Arr::pull($this->attributes, $key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function set($key, $value)
     {
         Arr::set($this->attributes, $key, $value);
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function values()
+    {
+        return array_values($this->attributes);
     }
 }

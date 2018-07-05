@@ -5,10 +5,10 @@ namespace tiFy\Components\Layout\ListTable\Column;
 use ArrayIterator;
 use Illuminate\Support\Arr;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
-use tiFy\Apps\Attributes\AbstractAttributesIterator;
+use tiFy\Apps\Item\AbstractAppItemIterator;
 use tiFy\Partial\Partial;
 
-class ColumnItemController extends AbstractAttributesIterator implements ColumnItemInterface
+class ColumnItemController extends AbstractAppItemIterator implements ColumnItemInterface
 {
     /**
      * Nom de qualification.

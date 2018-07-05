@@ -13,9 +13,9 @@
 
 namespace tiFy\Components\Field\Number;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Number extends AbstractFieldController
+class Number extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -42,7 +42,7 @@ class Number extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

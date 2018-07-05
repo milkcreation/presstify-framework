@@ -2,9 +2,9 @@
 
 namespace tiFy\Components\Field\Checkbox;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Checkbox extends AbstractFieldController
+class Checkbox extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -33,7 +33,7 @@ class Checkbox extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

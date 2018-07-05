@@ -9,7 +9,7 @@ use tiFy\Field\Field;
 use tiFy\Field\TemplateController;
 use tiFy\Kernel\Tools;
 
-abstract class AbstractFieldController extends AppController
+abstract class AbstractFieldItemController extends AppController implements FieldItemInterface
 {
     /**
      * Identifiant de qualification du champ.
@@ -124,7 +124,9 @@ abstract class AbstractFieldController extends AppController
      */
     public function after()
     {
-        echo $this->get('after', '');
+        $after = $this->get('after', '');
+
+        echo is_callable($after) ? call_user_func($after) : $after;
     }
 
     /**
@@ -154,7 +156,9 @@ abstract class AbstractFieldController extends AppController
      */
     public function before()
     {
-        echo $this->get('before', '');
+        $before = $this->get('before', '');
+
+        echo is_callable($before) ? call_user_func($before) : $before;
     }
 
     /**
@@ -193,7 +197,7 @@ abstract class AbstractFieldController extends AppController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         return $this->appTemplateRender($this->appLowerName(), $this->all());
     }
@@ -377,22 +381,25 @@ abstract class AbstractFieldController extends AppController
     {
         $selected = $this->getValue();
 
+        $options = [];
+        foreach($this->getOptions() as $option) :
+            $options[] = $option->all();
+        endforeach;
+
         if (!is_null($selected)) :
             $options = array_map(
                 function($item) use ($selected) {
-                    if (in_array($item['value'],$selected)) :
+                    if (!$item['group'] && in_array($item['value'], $selected)) :
                         $item['attrs'][] = 'selected';
                     endif;
 
                     return $item;
                 },
-                $this->get('options', [])
+                $options
             );
-        else :
-            $options = $this->get('options', []);
         endif;
 
-        echo WalkerOptions::display($options);
+        echo FieldOptionsCollectionWalker::display($options);
     }
 
     /**
@@ -402,7 +409,7 @@ abstract class AbstractFieldController extends AppController
      *
      * @return void
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->attributes = array_merge(
             $this->attributes,
@@ -496,44 +503,39 @@ abstract class AbstractFieldController extends AppController
             $options = array_map('trim', explode(',', $options));
         endif;
 
-        $_options = []; $i = 0;
+        $items = []; $n = 0;
         foreach($options as $k => $v) :
-            if (is_numeric($k)) :
-                if (!is_array($v)) :
-                    $v = [
-                        'content' => $v,
-                        'value' => $k
-                    ];
-                else :
-                    if (!isset($v['value'])) :
-                        $v['value'] = $k;
-                    endif;
-                endif;
+            if ($v instanceof FieldOptionsItem) :
+                $items[] = $v;
             else :
-                $v = [
-                    'content' => $v,
-                    'value' => $k
-                ];
-            endif;
-            $option = array_merge(
-                [
-                    'name'     => $i++,
-                    'group'  => false,
-                    'attrs'  => [],
-                    'parent' => ''
-                ],
-                $v
-            );
+                $name = (is_numeric($k) && $k>=0) ? $n++ : $k;
 
-            // Formatage des attributs
-            if (!isset($option['content'])) :
-                $option['content'] = $option['value'];
-            endif;
+                if (is_array($v)) :
+                    $attrs = ['group' => true];
 
-            $_options[] = $option;
+                    foreach($v as $i => $j) :
+                        if ($j instanceof FieldOptionsItem) :
+                            $j['group'] = false;
+                            $j['parent'] = $name;
+                            $items[] = $j;
+                        else :
+                            $_name = (is_numeric($i) && $i>=0) ? $n++ : $i;
+
+                            $items[] = new FieldOptionsItem(
+                                $_name,
+                                ['group' => false, 'content' => $j, 'parent' => $name]
+                            );
+                        endif;
+                    endforeach;
+                else :
+                    $attrs = ['group' => false, 'content' => $v];
+                endif;
+
+                $items[] = new FieldOptionsItem($name, $attrs);
+            endif;
         endforeach;
 
-        $this->set('options', $_options);
+        $this->set('options', $items);
     }
 
     /**
@@ -555,20 +557,9 @@ abstract class AbstractFieldController extends AppController
             array_merge(
                 [
                     'basedir'    => get_template_directory() . '/templates/presstify/field/' . $this->appLowerName(),
-                    'controller' => TemplateController::class,
-                    'args'       => []
+                    'controller' => TemplateController::class
                 ],
                 $attrs ? : $this->get('templates', [])
-            )
-        );
-        $this->set(
-            'templates.args',
-            array_merge(
-                [
-                    'id'    => $this->id,
-                    'index' => $this->index
-                ],
-                $this->get('templates.args', [])
             )
         );
 

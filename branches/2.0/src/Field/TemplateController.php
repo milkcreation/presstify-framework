@@ -9,52 +9,23 @@ use tiFy\Apps\Templates\TemplateBaseController;
 class TemplateController extends TemplateBaseController
 {
     /**
-     * Affichage du contenu placé après le champ.
-     *
-     * @return void
+     * Classe de rappel de l'application associée.
+     * @var FieldItemInterface
      */
-    public function after()
-    {
-        echo $this->get('after', '');
-    }
+    protected $app;
 
     /**
-     * Affichage des attributs HTML linéarisé.
+     * Translation d'appel des méthodes de l'application associée.
      *
-     * @return void
-     */
-    public function attrs()
-    {
-        echo $this->htmlAttrs($this->get('attrs', []));
-    }
-
-    /**
-     * Affichage du contenu placé avant le champ.
+     * @param string $name Nom de la méthode à appeler.
+     * @param array $arguments Liste des variables passées en argument.
      *
-     * @return void
+     * @return mixed
      */
-    public function before()
+    public function __call($name, $arguments)
     {
-        echo $this->get('before', '');
-    }
-
-    /**
-     * Récupération de l'identifiant de qualification du controleur.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->getArg('id');
-    }
-
-    /**
-     * Récupération de l'indice de la classe courante.
-     *
-     * @return int
-     */
-    public function getIndex()
-    {
-        return $this->getArg('index', 0);
+        if (method_exists($this->app, $name)) :
+            return call_user_func_array([$this->app, $name], $arguments);
+        endif;
     }
 }

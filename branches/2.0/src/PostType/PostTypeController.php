@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType;
 
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 
-class PostTypeController extends AbstractAttributesController
+class PostTypeController extends AbstractAppItemController
 {
     /**
      * Classe de rappel du controleur de gestion des types de post.

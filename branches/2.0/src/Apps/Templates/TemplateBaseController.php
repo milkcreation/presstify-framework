@@ -11,7 +11,7 @@ use tiFy\Kernel\Tools;
 class TemplateBaseController extends Template implements TemplateControllerInterface
 {
     /**
-     * Classe de rappel de l'application
+     * Classe de rappel de l'application associée.
      * @var AppControllerInterface
      */
     protected $app;

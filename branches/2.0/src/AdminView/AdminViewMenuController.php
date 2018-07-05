@@ -3,10 +3,10 @@
 namespace tiFy\AdminView;
 
 use tiFy\Apps\AppControllerInterface;
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 use tiFy\Kernel\Layout\LayoutControllerInterface;
 
-class AdminViewMenuController extends AbstractAttributesController
+class AdminViewMenuController extends AbstractAppItemController
 {
     /**
      * Classe de rappel du controleur de l'interface associée.
