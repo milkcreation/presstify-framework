@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Field\MediaFile;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 use tiFy\Lib\File;
 
-class MediaFile extends AbstractFieldController
+class MediaFile extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -68,7 +68,7 @@ class MediaFile extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('attrs.id', 'tiFyField-MediaFile--' . $this->getId());
 
@@ -92,7 +92,7 @@ class MediaFile extends AbstractFieldController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         if (!is_admin()) :
             return;

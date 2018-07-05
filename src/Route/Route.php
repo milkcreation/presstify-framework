@@ -43,40 +43,6 @@ final class Route extends AppController
     private $response;
 
     /**
-     * Indicateur de contexte d'affichage de page de Wordpress.
-     * @var string[]
-     */
-    protected $conditionnalTags = [
-        'is_single',
-        'is_preview',
-        'is_page',
-        'is_archive',
-        'is_date',
-        'is_year',
-        'is_month',
-        'is_day',
-        'is_time',
-        'is_author',
-        'is_category',
-        'is_tag',
-        'is_tax',
-        'is_search',
-        'is_feed',
-        'is_comment_feed',
-        'is_trackback',
-        'is_home',
-        'is_404',
-        'is_embed',
-        'is_paged',
-        'is_admin',
-        'is_attachment',
-        'is_singular',
-        'is_robots',
-        'is_posts_page',
-        'is_post_type_archive'
-    ];
-
-    /**
      * Initialisation du controleur.
      *
      * @return void
@@ -98,7 +64,6 @@ final class Route extends AppController
         $this->appServiceAdd(RouteHandle::class);
 
         $this->appAddAction('wp_loaded', null, 0);
-        $this->appAddAction('pre_get_posts', null, 0);
     }
 
     /**
@@ -164,25 +129,6 @@ final class Route extends AppController
         }
 
         return;
-    }
-
-    /**
-     * Pré-traitement de la requête de récupération de post WP.
-     *
-     * @param \WP_Query $wp_query Classe de rappel de traitement de requête Wordpress.
-     *
-     * @return void
-     */
-    public function pre_get_posts(&$wp_query)
-    {
-        if ($wp_query->is_main_query() && ! $wp_query->is_admin() && $this->hasCurrent()) :
-            foreach($this->conditionnalTags as $ct) :
-                $wp_query->{$ct} = false;
-            endforeach;
-
-            $wp_query->query_vars = $wp_query->fill_query_vars([]);
-            $wp_query->is_route = true;
-        endif;
     }
 
     /**
@@ -257,7 +203,7 @@ final class Route extends AppController
         return $this->collection()->map(
             $method,
             $path,
-            $this->appServiceGet(RouteHandle::class, [$name, $attrs])
+            $this->appServiceGet(RouteHandle::class, [$name, $attrs, $this])
         )
             ->setName($name)
             ->setScheme($scheme)

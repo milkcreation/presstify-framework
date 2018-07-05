@@ -2,11 +2,11 @@
 
 namespace tiFy\Components\Layout\ListTable\ViewFilter;
 
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Partial\Partial;
 
-class ViewFilterItemController extends AbstractAttributesController implements ViewFilterItemInterface
+class ViewFilterItemController extends AbstractAppItemController implements ViewFilterItemInterface
 {
     /**
      * Nom de qualification.

@@ -71,7 +71,7 @@ class WalkerItemCollectionBaseController extends Collection
      */
     public function uniqName($item, $index = 0)
     {
-        $item['name'] = isset($item['name']) ? $item['name'] : uniqid();
+        $item['name'] = isset($item['name']) ? (string)$item['name'] : uniqid();
 
         if (in_array($item['name'], $this->names)) :
             $item['name'] = $item['name'] . '-' . $index++;

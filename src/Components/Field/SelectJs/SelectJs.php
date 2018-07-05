@@ -4,11 +4,12 @@ namespace tiFy\Components\Field\SelectJs;
 
 use Illuminate\Support\Arr;
 use tiFy\Partial\Partial;
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 use tiFy\Field\TemplateController;
 use tiFy\Field\Field;
+use tiFy\Field\FieldOptionsItem;
 
-class SelectJs extends AbstractFieldController
+class SelectJs extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -17,7 +18,7 @@ class SelectJs extends AbstractFieldController
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value".
-     *      @var array $options Liste des choix de selection disponibles.
+     *      @var array|FieldOptionsItem[] $options Liste des choix de selection disponibles.
      *      @var array $source Liste des attributs de requête de récupération des élèments.
      *      @var bool $disabled Activation/Désactivation du controleur de champ.
      *      @var bool $removable Activation/Désactivation de la suppression d'un élément dans la liste des éléments séléctionné.
@@ -50,12 +51,11 @@ class SelectJs extends AbstractFieldController
      *              @var int $left
      *              @var int $width
      *          }
+     *          @var bool $adminbar Gestion de la barre d'administration Wordpress. défaut true.
+     *          @var bool $filter Champ de filtrage des éléments de la liste de selection.
+     *          @var string $loader Rendu de l'indicateur de préchargement.
+     *          @var string $more Rendu de '+'.
      *      }
-     *
-     *      @var bool $adminbar Gestion de la barre d'administration Wordpress. défaut true.
-     *      @var bool $filter Champ de filtrage des éléments de la liste de selection.
-     *      @var string $loader Rendu de l'indicateur de préchargement.
-     *      @var string $more Rendu de '+'.
      * }
      */
     protected $attributes = [
@@ -78,16 +78,6 @@ class SelectJs extends AbstractFieldController
         'templates'       => [],
         'controller'      => []
     ];
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        return $this->appTemplateRender('select-js', $this->all());
-    }
 
     /**
      * Mise en file des scripts.
@@ -171,7 +161,7 @@ class SelectJs extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

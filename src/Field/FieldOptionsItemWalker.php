@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 use tiFy\Components\Tools\Walkers\WalkerItemBaseController;
 use tiFy\Kernel\Tools;
 
-class WalkerOptionsItem extends WalkerItemBaseController
+class FieldOptionsItemWalker extends WalkerItemBaseController
 {
     /**
      * Traitement de la liste des attributs de balise HTML.

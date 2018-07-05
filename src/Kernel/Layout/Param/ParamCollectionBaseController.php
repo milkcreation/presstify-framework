@@ -3,9 +3,9 @@
 namespace tiFy\Kernel\Layout\Param;
 
 use tiFy\Kernel\Layout\LayoutControllerInterface;
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 
-class ParamCollectionBaseController extends AbstractAttributesController implements ParamCollectionInterface
+class ParamCollectionBaseController extends AbstractAppItemController implements ParamCollectionInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.

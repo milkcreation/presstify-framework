@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Textarea;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Textarea extends AbstractFieldController
+class Textarea extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -44,7 +44,7 @@ class Textarea extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

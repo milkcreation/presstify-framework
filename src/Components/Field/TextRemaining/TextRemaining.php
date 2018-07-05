@@ -3,10 +3,10 @@
 namespace tiFy\Components\Field\TextRemaining;
 
 use tiFy\Asset\Asset;
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 use tiFy\Lib\Chars;
 
-class TextRemaining extends AbstractFieldController
+class TextRemaining extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -82,7 +82,7 @@ class TextRemaining extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

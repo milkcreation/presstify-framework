@@ -3,10 +3,10 @@
 namespace tiFy\Components\Layout\ListTable\Item;
 
 use Illuminate\Support\Collection;
-use tiFy\Apps\Attributes\AbstractAttributesIterator;
+use tiFy\Apps\Item\AbstractAppItemIterator;
 use tiFy\Kernel\Layout\LayoutControllerInterface;
 
-class ItemController extends AbstractAttributesIterator implements ItemInterface
+class ItemController extends AbstractAppItemIterator implements ItemInterface
 {
     /**
      * Classe de rappel de la vue associée.
