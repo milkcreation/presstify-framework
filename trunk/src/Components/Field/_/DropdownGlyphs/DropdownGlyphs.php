@@ -77,7 +77,7 @@ class DropdownGlyphs extends \tiFy\Control\Factory
      *
      * @return string
      */
-    protected function display($attrs = [])
+    public function display($attrs = [])
     {
         // Traitement des attributs de configuration
         $defaults = [

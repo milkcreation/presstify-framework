@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\File;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class File extends AbstractFieldController
+class File extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -44,7 +44,7 @@ class File extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($args = [])
+    public function parse($args = [])
     {
         parent::parse($args);
 

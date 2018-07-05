@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\NumberJs;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class NumberJs extends AbstractFieldController
+class NumberJs extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -84,7 +84,7 @@ class NumberJs extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('container.attrs.id', 'tiFyField-NumberJsContainer--' . $this->getIndex());
 

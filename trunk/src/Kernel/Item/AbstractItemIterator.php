@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Apps\Attributes;
+namespace tiFy\Kernel\Item;
 
 use ArrayIterator;
 
-abstract class AbstractAttributesIterator extends AbstractAttributesController implements AttributesIteratorInterface
+abstract class AbstractItemIterator extends AbstractItemController implements ItemIteratorInterface
 {
     /**
      * @param $key

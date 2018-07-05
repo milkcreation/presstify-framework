@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Select;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Select extends AbstractFieldController
+class Select extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -48,7 +48,7 @@ class Select extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 
@@ -95,18 +95,5 @@ class Select extends AbstractFieldController
         endif;
 
         return $value;
-    }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        ob_start();
-?><?php $this->before(); ?><select <?php $this->attrs(); ?>><?php $this->options(); ?></select><?php $this->after(); ?><?php
-
-        return ob_get_clean();
     }
 }

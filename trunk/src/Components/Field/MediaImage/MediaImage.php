@@ -13,10 +13,10 @@
 
 namespace tiFy\Components\Field\MediaImage;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 use tiFy\Kernel\Tools;
 
-class MediaImage extends AbstractFieldController
+class MediaImage extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -93,7 +93,7 @@ class MediaImage extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->attributes['name'] = 'tiFyField-MediaImage-' . $this->getName();
 
@@ -142,7 +142,7 @@ class MediaImage extends AbstractFieldController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         if (!is_admin()) :
             return;

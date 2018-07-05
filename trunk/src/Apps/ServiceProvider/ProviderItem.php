@@ -2,10 +2,10 @@
 
 namespace tiFy\Apps\ServiceProvider;
 
-use tiFy\Apps\Attributes\AbstractAttributesIterator;
+use tiFy\Apps\Item\AbstractAppItemIterator;
 use tiFy\Apps\AppControllerInterface;
 
-class ProviderItem extends AbstractAttributesIterator implements ProviderItemInterface
+class ProviderItem extends AbstractAppItemIterator implements ProviderItemInterface
 {
     /**
      * Classe de rappel du controleur de l'interface associée.

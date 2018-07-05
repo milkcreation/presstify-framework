@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Submit;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Submit extends AbstractFieldController
+class Submit extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -44,7 +44,7 @@ class Submit extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('value', __('Envoyer', 'tify'));
 

@@ -15,7 +15,7 @@ abstract class AbstractWalkerMenuTree extends WalkerBaseController
      * }
      */
     protected $options = [
-        'indent'       => '\t',
+        'indent'       => "\t",
         'start_indent' => 0,
         'sort'         => 'append',
         'prefix'       => 'tiFyWalkerMenuTree-'

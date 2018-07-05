@@ -42,6 +42,7 @@ class FieldItemController extends AbstractCommonDependency
      * @var array $choices Liste de choix des valeurs multiples.
      * @var array $attrs Listes des attributs HTML complémentaires (hors 'name' et 'value')
      * @var bool|string|array $required {
+     *      Liste des attributs de configuration du champ requis.
      *
      *      @var bool|string $tag Affichage de l'indicateur de champ requis
      *      @var bool $check Activation du test d'existance natif.
@@ -49,15 +50,14 @@ class FieldItemController extends AbstractCommonDependency
      *      @var string|callable $cb Fonction de rappel.
      *      @var array $args Liste des variables passées en argument dans la fonction de rappel.
      *      @var string $message Message de notification en cas d'erreur.
-     *      @var bool $html5 Utilisation du court-circuitage HTML5.
-     *
+     *      @var bool $html5 Utilisation du court-circuitage HTML5.     *
      * }
      * @var string|array $integrity_cb {
-     * Liste des fonctions de test d'intégrité du champ lors de la soumission.
+     *      Liste des fonctions de test d'intégrité du champ lors de la soumission.
      *
-     * @var string|callable $cb Intitulé d'alias de vérification @see \tiFy\Components\Tools\Checker\CheckerTrait ou Fonction de rappel personnalisée.
-     * @var array $args Liste des variables passées en arguments dans la fonction de rappel.
-     * @var string $message Message de notification d'erreur.
+     *      @var string|callable $cb Intitulé d'alias de vérification @see \tiFy\Components\Tools\Checker\CheckerTrait ou Fonction de rappel personnalisée.
+     *      @var array $args Liste des variables passées en arguments dans la fonction de rappel.
+     *      @var string $message Message de notification d'erreur.
      * }
      */
     protected $attributes = [

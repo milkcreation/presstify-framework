@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Field\Crypted;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 use tiFy\Kernel\Tools;
 
-class Crypted extends AbstractFieldController
+class Crypted extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -141,7 +141,7 @@ class Crypted extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

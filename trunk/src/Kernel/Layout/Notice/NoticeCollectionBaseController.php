@@ -3,9 +3,9 @@
 namespace tiFy\Kernel\Layout\Notice;
 
 use tiFy\Kernel\Layout\LayoutControllerInterface;
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 
-class NoticeCollectionBaseController extends AbstractAttributesController implements NoticeCollectionInterface
+class NoticeCollectionBaseController extends AbstractAppItemController implements NoticeCollectionInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.

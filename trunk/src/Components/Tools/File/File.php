@@ -42,7 +42,7 @@ class File
     /**
      * Récupération du contenu d'un SVG depuis son chemin.
      *
-     * @param string $filename Chemin relatif ou absolue ou url vers un fichier.
+     * @param string $filename Chemin relatif ou absolu ou url vers un fichier.
      *
      * @return string
      */

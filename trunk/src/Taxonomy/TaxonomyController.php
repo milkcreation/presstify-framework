@@ -2,9 +2,9 @@
 
 namespace tiFy\Taxonomy;
 
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 
-class TaxonomyController extends AbstractAttributesController
+class TaxonomyController extends AbstractAppItemController
 {
     /**
      * Classe de rappel du controleur de gestion des types de post.

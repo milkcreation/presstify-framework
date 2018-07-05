@@ -3,12 +3,12 @@
 namespace tiFy\Components\Layout\ListTable\RowAction;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\Attributes\AbstractAttributesController;
+use tiFy\Apps\Item\AbstractAppItemController;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Partial\Partial;
 
-class RowActionItemController extends AbstractAttributesController implements RowActionItemInterface
+class RowActionItemController extends AbstractAppItemController implements RowActionItemInterface
 {
     /**
      * Nom de qualification.

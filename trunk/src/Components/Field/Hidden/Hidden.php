@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Hidden;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Hidden extends AbstractFieldController
+class Hidden extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -44,7 +44,7 @@ class Hidden extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 
