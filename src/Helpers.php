@@ -34,7 +34,7 @@ endif;
 
 if (!function_exists('tify_field_checkbox')) :
     /**
-     * Case à coché.
+     * Case à cocher.
      *
      * @param array $attrs {
      *      Liste des attributs de configuration
@@ -46,6 +46,29 @@ if (!function_exists('tify_field_checkbox')) :
     function tify_field_checkbox($attrs = [], $echo = true)
     {
         $output = (string)Field::Checkbox($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
+if (!function_exists('tify_field_checkbox_collection')) :
+    /**
+     * Liste de cases à cocher.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_field_checkbox_collection($attrs = [], $echo = true)
+    {
+        $output = (string)Field::CheckboxCollection($attrs);
 
         if ($echo) :
             echo $output;
@@ -299,6 +322,29 @@ if (!function_exists('tify_field_radio')) :
     function tify_field_radio($attrs = [], $echo = true)
     {
         $output = (string)Field::Radio($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
+if (!function_exists('tify_field_radio_collection')) :
+    /**
+     * Liste de boutons radio.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_field_radio_collection($attrs = [], $echo = true)
+    {
+        $output = (string)Field::RadioCollection($attrs);
 
         if ($echo) :
             echo $output;

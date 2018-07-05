@@ -2,11 +2,11 @@
 
 namespace tiFy\Components\Layout\ListTable\Pagination;
 
-use tiFy\Apps\Attributes\AbstractAttributesIterator;
+use tiFy\Apps\Item\AbstractAppItemIterator;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Partial\Partial;
 
-class PaginationController extends AbstractAttributesIterator implements PaginationInterface
+class PaginationController extends AbstractAppItemIterator implements PaginationInterface
 {
     /**
      * Classe de rappel de la vue associée.

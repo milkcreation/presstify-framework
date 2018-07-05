@@ -15,10 +15,10 @@
 
 namespace tiFy\Components\Field\DatetimeJs;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 use tiFy\Field\Field;
 
-class DatetimeJs extends AbstractFieldController
+class DatetimeJs extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -88,7 +88,7 @@ class DatetimeJs extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 
@@ -113,7 +113,7 @@ class DatetimeJs extends AbstractFieldController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         // Traitement de la valeur
         $date = new \DateTime($this->getValue());

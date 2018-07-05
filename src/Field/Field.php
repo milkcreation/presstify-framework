@@ -19,6 +19,7 @@ use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
 use tiFy\Components\Field\Button\Button;
 use tiFy\Components\Field\Checkbox\Checkbox;
+use tiFy\Components\Field\CheckboxCollection\CheckboxCollection;
 use tiFy\Components\Field\Crypted\Crypted;
 use tiFy\Components\Field\DatetimeJs\DatetimeJs;
 use tiFy\Components\Field\File\File;
@@ -30,6 +31,7 @@ use tiFy\Components\Field\Number\Number;
 use tiFy\Components\Field\NumberJs\NumberJs;
 use tiFy\Components\Field\Password\Password;
 use tiFy\Components\Field\Radio\Radio;
+use tiFy\Components\Field\RadioCollection\RadioCollection;
 use tiFy\Components\Field\Repeater\Repeater;
 use tiFy\Components\Field\Select\Select;
 use tiFy\Components\Field\SelectJs\SelectJs;
@@ -45,6 +47,7 @@ use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
  *
  * @method static Button Button(string $id = null, array $attrs = [])
  * @method static Checkbox(string $id = null, array $attrs = [])
+ * @method static CheckboxCollection(string $id = null, array $attrs = [])
  * @method static Crypted(string $id = null, array $attrs = [])
  * @method static DatetimeJs(string $id = null, array $attrs = [])
  * @method static File(string $id = null, array $attrs = [])
@@ -56,6 +59,7 @@ use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
  * @method static NumberJs(string $id = null, array $attrs = [])
  * @method static Password(string $id = null, array $attrs = [])
  * @method static Radio(string $id = null, array $attrs = [])
+ * @method static RadioCollection(string $id = null, array $attrs = [])
  * @method static Repeater(string $id = null, array $attrs = [])
  * @method static Select(string $id = null, array $attrs = [])
  * @method static SelectJs(string $id = null, array $attrs = [])
@@ -121,7 +125,7 @@ final class Field extends AppController
      *
      * @param string $name Nom de qualification du controleur d'affichage.
      *
-     * @return mixed|AbstractFieldController
+     * @return mixed|AbstractFieldItemController
      */
     public function get($name)
     {

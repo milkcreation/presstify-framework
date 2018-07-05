@@ -6,7 +6,7 @@ use tiFy\Components\Tools\Walkers\WalkerBaseController;
 use tiFy\Field\WalkerOptionsItem;
 use tiFy\Kernel\Tools;
 
-class WalkerOptions extends WalkerBaseController
+class FieldOptionsCollectionWalker extends WalkerBaseController
 {
     /**
      * Liste des options.
@@ -19,11 +19,11 @@ class WalkerOptions extends WalkerBaseController
      * }
      */
     protected $options = [
-        'indent'          => '\t',
+        'indent'          => "\t",
         'start_indent'    => 0,
         'sort'            => 'append',
         'prefix'          => 'tiFyFieldOption-',
-        'item_controller' => WalkerOptionsItem::class,
+        'item_controller' => FieldOptionsItemWalker::class,
     ];
 
     /**
@@ -72,10 +72,6 @@ class WalkerOptions extends WalkerBaseController
      */
     public function contentItem($item)
     {
-        if (!$item->get('group')) :
-            return ! empty($item->get('content')) ? esc_attr($item->get('content')) : '';
-        endif;
-
-        return '';
+        return ! empty($item->get('content')) ? esc_attr($item->get('content')) : '';
     }
 }

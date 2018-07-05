@@ -19,10 +19,10 @@
 
 namespace tiFy\Components\Field\ToggleSwitch;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 use tiFy\Field\Field;
 
-class ToggleSwitch extends AbstractFieldController
+class ToggleSwitch extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -91,7 +91,7 @@ class ToggleSwitch extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('container_id', 'tiFyField-ToggleSwitch--' . $this->getIndex());
         $this->set('label_on', _x('Oui', 'tiFyFieldToggleSwitch', 'tify'));
@@ -111,7 +111,7 @@ class ToggleSwitch extends AbstractFieldController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         ob_start();
         ?><?php $this->before(); ?>

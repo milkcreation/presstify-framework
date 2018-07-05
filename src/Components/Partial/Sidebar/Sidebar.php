@@ -59,7 +59,7 @@ class Sidebar extends AbstractPartialController
         'toggle'          => true,
         'min-width'       => '991px',
         'nodes'           => [],
-        'theme'           => 'dark'
+        'theme'           => 'light'
     ];
 
     /**
@@ -153,11 +153,14 @@ class Sidebar extends AbstractPartialController
             'attrs.style',
             'width:' . $this->get('width') .';z-index:' . $this->get('z-index') . $this->get('attrs.style', '')
         )
-            ->set('attrs.aria-position', $this->get('pos'))
+
+            ->set('attrs.aria-animate', $this->get('animate') ? 'true' : 'false')
 
             ->set('attrs.aria-closed', $this->get('closed') ? 'true' : 'false')
 
-            ->set('attrs.aria-animate', $this->get('animate') ? 'true' : 'false');
+            ->set('attrs.aria-position', $this->get('pos'))
+
+            ->set('attrs.aria-theme', $this->get('theme'));
     }
 
     /**

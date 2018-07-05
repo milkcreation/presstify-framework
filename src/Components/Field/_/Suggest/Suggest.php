@@ -177,7 +177,7 @@ class Suggest extends \tiFy\Control\Factory
      *
      * @return string
      */
-    protected function display($args = [])
+    public function display($args = [])
     {
 
         // Traitement des attributs de configuration

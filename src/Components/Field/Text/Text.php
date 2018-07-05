@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Text;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Text extends AbstractFieldController
+class Text extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -44,7 +44,7 @@ class Text extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

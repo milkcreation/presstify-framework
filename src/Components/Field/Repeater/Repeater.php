@@ -16,9 +16,9 @@
 namespace tiFy\Components\Field\Repeater;
 
 use tiFy\Components\Field\Repeater\TemplateController;
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Repeater extends AbstractFieldController
+class Repeater extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -97,7 +97,7 @@ class Repeater extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('ajax_nonce', wp_create_nonce('tiFyField-Repeater'));
         $this->set('button.content', __('Ajouter un élément', 'tify'));

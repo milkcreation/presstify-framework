@@ -2,9 +2,9 @@
 
 namespace tiFy\Apps\Labels;
 
-use tiFy\Apps\Attributes\AttributesControllerInterface;
+use tiFy\Kernel\Item\ItemInterface;
 
-interface LabelsInterface extends AttributesControllerInterface
+interface LabelsInterface extends ItemInterface
 {
     /**
      * Récupération du genre.

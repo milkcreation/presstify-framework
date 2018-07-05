@@ -1,8 +1,8 @@
 <?php
 
-namespace tiFy\Apps\Attributes;
+namespace tiFy\Kernel\Item;
 
-interface AttributesControllerInterface
+interface ItemInterface
 {
     /**
      * Récupération de la liste des attributs.
@@ -22,7 +22,7 @@ interface AttributesControllerInterface
      * Récupération d'un attribut.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par defaut.
+     * @param mixed $default Valeur de retour par defaut lorsque l'attribut n'est pas défini.
      *
      * @return mixed
      */
@@ -38,6 +38,13 @@ interface AttributesControllerInterface
     public function has($key, $default = null);
 
     /**
+     * Récupération de la liste des clés d'indexes des attributs de configuration.
+     *
+     * @return string[]
+     */
+    public function keys();
+
+    /**
      * Traitement de la liste des attributs.
      *
      * @param array $attrs Liste des attribut à traiter.
@@ -45,6 +52,16 @@ interface AttributesControllerInterface
      * @return void
      */
     public function parse($attrs = []);
+
+    /**
+     * Récupére la valeur d'un attribut avant de le supprimer.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par defaut lorsque l'attribut n'est pas défini.
+     *
+     * @return mixed
+     */
+    public function pull($key, $default = null);
 
     /**
      * Définition d'un attribut.
@@ -55,4 +72,11 @@ interface AttributesControllerInterface
      * @return void
      */
     public function set($key, $value);
+
+    /**
+     * Récupération de la liste des valeurs des attributs de configuration.
+     *
+     * @return mixed[]
+     */
+    public function values();
 }

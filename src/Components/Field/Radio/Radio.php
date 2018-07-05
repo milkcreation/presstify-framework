@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Radio;
 
-use tiFy\Field\AbstractFieldController;
+use tiFy\Field\AbstractFieldItemController;
 
-class Radio extends AbstractFieldController
+class Radio extends AbstractFieldItemController
 {
     /**
      * Liste des attributs de configuration.
@@ -48,7 +48,7 @@ class Radio extends AbstractFieldController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

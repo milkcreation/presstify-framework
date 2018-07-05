@@ -3,9 +3,9 @@
 namespace tiFy\Components\Layout\ListTable\BulkAction;
 
 use tiFy\Kernel\Layout\LayoutControllerInterface;
-use tiFy\Apps\Attributes\AbstractAttributesIterator;
+use tiFy\Apps\Item\AbstractAppItemIterator;
 
-class BulkActionItemController extends AbstractAttributesIterator implements BulkActionItemInterface
+class BulkActionItemController extends AbstractAppItemIterator implements BulkActionItemInterface
 {
     /**
      * Nom de qualification.
