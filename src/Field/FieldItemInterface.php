@@ -104,27 +104,11 @@ interface FieldItemInterface
     public function getName();
 
     /**
-     * Récupération des attributs d'une option de liste de sélection selon sa valeur
-     *
-     * @param mixed $value Valeur de l'option à récupérer
-     *
-     * @return null|array
-     */
-    public function getOption($value);
-
-    /**
      * Récupération des attributs des options de liste de sélection
      *
-     * @return array
+     * @return Collection|FieldOptionsItem[]
      */
     public function getOptions();
-
-    /**
-     * Récupération des attributs des options de liste de sélection
-     *
-     * @return string[]
-     */
-    public function getOptionValues();
 
     /**
      * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
