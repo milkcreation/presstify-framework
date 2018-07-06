@@ -41,6 +41,33 @@ class Select extends AbstractFieldItemController
         'options'  => []
     ];
 
+
+    /**
+     * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
+     *
+     * @return array
+     */
+    public function getValue()
+    {
+        $value = $this->get('value', null);
+
+        if (is_null($value)) :
+            return [];
+        endif;
+
+        if (!is_array($value)) :
+            $value = array_map('trim', explode(',', (string)$value));
+        endif;
+
+        $value = array_unique($value);
+
+        if (!$this->get('multiple')) :
+            $value = [reset($value)];
+        endif;
+
+        return $value;
+    }
+
     /**
      * Traitement des attributs de configuration.
      *
@@ -69,31 +96,5 @@ class Select extends AbstractFieldItemController
         if (isset($this->attributes['name'])) :
             $this->attributes['attrs']['name'] = !empty($this->attributes['multiple']) ? "{$this->attributes['name']}[]" : $this->attributes['name'];
         endif;
-    }
-
-    /**
-     * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
-     *
-     * @return mixed
-     */
-    public function getValue()
-    {
-        $value = $this->get('value', null);
-
-        if (is_null($value)) :
-            return null;
-        endif;
-
-        if (!is_array($value)) :
-            $value = array_map('trim', explode(',', (string)$value));
-        endif;
-
-        $value = array_unique($value);
-
-        if (!$this->get('multiple')) :
-            $value = [reset($value)];
-        endif;
-
-        return $value;
     }
 }

@@ -81,9 +81,51 @@ abstract class AbstractItemController implements ItemInterface
     /**
      * {@inheritdoc}
      */
+    public function push($value, $key)
+    {
+        if (!$this->has($key)) :
+            $this->set($key, []);
+        endif;
+
+        $arr = $this->get($key);
+
+        if (!is_array($arr)) :
+            return false;
+        else :
+            array_push($arr, $value);
+            $this->set($key, $arr);
+
+            return true;
+        endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function pull($key, $default = null)
     {
         return Arr::pull($this->attributes, $key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unshift($value, $key)
+    {
+        if (!$this->has($key)) :
+            $this->set($key, []);
+        endif;
+
+        $arr = $this->get($key);
+
+        if (!is_array($arr)) :
+            return false;
+        else :
+            array_unshift($arr, $value);
+            $this->set($key, $arr);
+
+            return true;
+        endif;
     }
 
     /**
