@@ -54,6 +54,16 @@ interface ItemInterface
     public function parse($attrs = []);
 
     /**
+     * Ajout d'un attribut au début de la liste des attributs.
+     *
+     * @param  mixed $value Valeur à ajouter
+     * @param  string $key $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     *
+     * @return array
+     */
+    public function unshift($value, $key);
+
+    /**
      * Récupére la valeur d'un attribut avant de le supprimer.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
