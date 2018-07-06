@@ -33,13 +33,53 @@ class FieldOptionsItem extends AbstractItemIterator
     public function defaults()
     {
         return [
-            'name'    => $this->name,
-            'group'   => false,
-            'attrs'   => [],
-            'parent'  => '',
-            'value'   => $this->name,
-            'content' => $this->name
+            'name'      => $this->name,
+            'group'     => false,
+            'attrs'     => [],
+            'parent'    => '',
+            'value'     => $this->name,
+            'content'   => $this->name
         ];
+    }
+
+    /**
+     * Récupération de la valeur.
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->get('value');
+    }
+
+    /**
+     * Vérification de l'état de désactivation.
+     *
+     * @return bool
+     */
+    public function isDisabled()
+    {
+        return in_array('disabled', $this->get('attrs', []));
+    }
+
+    /**
+     * Vérification s'il s'agit d'un groupe d'options.
+     *
+     * @return bool
+     */
+    public function isGroup()
+    {
+        return $this->get('group');
+    }
+
+    /**
+     * Vérification s'il s'agit d'une option selectionné.
+     *
+     * @return bool
+     */
+    public function isSelected()
+    {
+        return in_array('selected', $this->get('attrs', []));
     }
 
     /**

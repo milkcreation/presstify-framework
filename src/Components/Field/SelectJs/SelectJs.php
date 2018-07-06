@@ -67,7 +67,7 @@ class SelectJs extends AbstractFieldItemController
         'options'         => [],
         'source'          => false,
         'disabled'        => false,
-        'removable'       => true,
+        'removable'       => false,
         'multiple'        => false,
         'duplicate'       => false,
         'sortable'        => true,
@@ -94,14 +94,14 @@ class SelectJs extends AbstractFieldItemController
     /**
      * Récupération de la liste des valeurs initiales de soumission du champ "value".
      *
-     * @return mixed
+     * @return array
      */
     public function getValue()
     {
         $value = $this->get('value', null);
 
         if (is_null($value)) :
-            return $value;
+            return [];
         endif;
 
         // Formatage de la liste des valeur
@@ -268,7 +268,7 @@ class SelectJs extends AbstractFieldItemController
             'picker_items',
             $source
                 ? $this->queryItems($source)
-                : $this->getItems($this->getOptionValues())
+                : $this->getItems($this->getOptions())
         );
 
         $this->set(
@@ -278,7 +278,7 @@ class SelectJs extends AbstractFieldItemController
               : (
                   $source
                     ? $this->queryItems(Arr::set($source, 'query_args', ['post__in' => $this->getValue(), 'orderby' => 'post__in']))
-                    : $this->getItems($this->getValue())
+                    : $this->getItems($this->getOptions()->filter(function($item) { return $item->isSelected();}))
                 )
         );
     }
@@ -343,33 +343,27 @@ class SelectJs extends AbstractFieldItemController
     /**
      * Récupération de la liste des éléments.
      *
-     * @param string[] $values Liste des valeurs des éléments.
+     * @param FieldOptionsItem[] $options Liste des valeurs des éléments.
      *
      * @return array
      */
-    public function getItems($values = [])
+    public function getItems($options = [])
     {
-        if (empty($values)) :
+        if (empty($options)) :
             return [];
         endif;
 
         $items = [];
         $index = 0;
 
-        foreach ($values as $v) :
-            if (!$item = $this->getOption($v)) :
-                continue;
-            endif;
-
-            $item['index'] = $index++;
-            $item['disabled'] = in_array('disabled', $item['attrs']) ? 'true' : 'false';
-            $item['selected_render'] = $this->appTemplateRender('selected-item', $item);
-            $item['picker_render'] = $this->appTemplateRender('picker-item', $item);
-
-            $items[] = $item;
+        foreach ($options as $option) :
+            $option->set('index', $index++);
+            $option->set('disabled', $option->isDisabled() ? 'true' : 'false');
+            $option->set('selected_render', $this->appTemplateRender('selected-item', $option->all()));
+            $option->set('picker_render', $this->appTemplateRender('picker-item', $option->all()));
         endforeach;
 
-        return $items;
+        return $options->all();
     }
 
     /**

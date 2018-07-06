@@ -3,6 +3,7 @@
 namespace tiFy\Field;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
 use tiFy\Field\Field;
@@ -118,9 +119,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Affichage du contenu placé après le champ
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function after()
     {
@@ -130,9 +129,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération de la liste des attributs de configuration.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function all()
     {
@@ -140,9 +137,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Affichage de la liste des attributs de balise.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function attrs()
     {
@@ -150,9 +145,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Affichage du contenu placé avant le champ
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function before()
     {
@@ -162,11 +155,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération une liste d'attributs de configuration.
-     *
-     * @param string[] $keys Clé d'index des attributs à retourner.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function compact($keys = [])
     {
@@ -183,19 +172,17 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Affichage du contenu de la balise champ.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function content()
     {
-        echo $this->get('content', '');
+        $content = $this->get('content', '');
+
+        echo is_callable($content) ? call_user_func($content) : $content;
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function display()
     {
@@ -203,12 +190,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function get($key, $default = null)
     {
@@ -216,12 +198,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération d'un attribut de balise HTML.
-     *
-     * @param string $key Clé d'indexe de l'attribut.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getAttr($key, $default = '')
     {
@@ -229,9 +206,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération de la liste des attributs HTML.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getAttrs()
     {
@@ -239,9 +214,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération de l'identifiant de qualification du controleur.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -249,9 +222,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération de l'indice de la classe courante.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getIndex()
     {
@@ -259,9 +230,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération de l'attribut de configuration de la qualification de soumission du champ "name"
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -269,55 +238,15 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération des attributs d'une option de liste de sélection selon sa valeur
-     *
-     * @param mixed $value Valeur de l'option à récupérer
-     *
-     * @return null|array
-     */
-    public function getOption($value)
-    {
-        if (!$options = $this->getOptions()) :
-            return null;
-        endif;
-
-        foreach($options as $option) :
-            if ($option['value'] == $value) :
-                return $option;
-            endif;
-        endforeach;
-
-        return null;
-    }
-
-    /**
-     * Récupération des attributs des options de liste de sélection
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getOptions()
     {
-        return $this->get('options', []);
+        return new Collection($this->get('options', []));
     }
 
     /**
-     * Récupération des attributs des options de liste de sélection
-     *
-     * @return string[]
-     */
-    public function getOptionValues()
-    {
-        if (!$options = $this->getOptions()) :
-            return [];
-        endif;
-
-        return array_column($options, 'value');
-    }
-
-    /**
-     * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getValue()
     {
@@ -325,11 +254,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function has($key)
     {
@@ -337,11 +262,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Vérification d'existance d'un attribut de balise HTML.
-     *
-     * @param string $key Clé d'indexe de l'attribut.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function hasAttr($key)
     {
@@ -349,9 +270,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Vérification de correspondance entre la valeur de coche et celle du champ.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isChecked()
     {
@@ -363,9 +282,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération de la liste des clés d'indexes des attributs de configuration.
-     *
-     * @return string[]
+     * {@inheritdoc}
      */
     public function keys()
     {
@@ -373,41 +290,21 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Affichage du contenu de la liste de selection
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function options()
     {
-        $selected = $this->getValue();
-
-        $options = [];
-        foreach($this->getOptions() as $option) :
-            $options[] = $option->all();
+        $options = $this->getOptions();
+        $items = [];
+        foreach($options as $option) :
+            $items[] = $option->all();
         endforeach;
 
-        if (!is_null($selected)) :
-            $options = array_map(
-                function($item) use ($selected) {
-                    if (!$item['group'] && in_array($item['value'], $selected)) :
-                        $item['attrs'][] = 'selected';
-                    endif;
-
-                    return $item;
-                },
-                $options
-            );
-        endif;
-
-        echo FieldOptionsCollectionWalker::display($options);
+        echo FieldOptionsCollectionWalker::display($items);
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -506,7 +403,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
         $items = []; $n = 0;
         foreach($options as $k => $v) :
             if ($v instanceof FieldOptionsItem) :
-                $items[] = $v;
+                $item = $v;
             else :
                 $name = (is_numeric($k) && $k>=0) ? $n++ : $k;
 
@@ -517,22 +414,33 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
                         if ($j instanceof FieldOptionsItem) :
                             $j['group'] = false;
                             $j['parent'] = $name;
-                            $items[] = $j;
+                            $_item = $j;
                         else :
                             $_name = (is_numeric($i) && $i>=0) ? $n++ : $i;
 
-                            $items[] = new FieldOptionsItem(
+                            $_item = new FieldOptionsItem(
                                 $_name,
                                 ['group' => false, 'content' => $j, 'parent' => $name]
                             );
+                            if (!$_item->isGroup() && in_array((string)$_item->getValue(), $this->getValue(), true)) :
+                                $item->push('selected', 'attrs');
+                            endif;
                         endif;
+
+                        $items[] = $_item;
                     endforeach;
                 else :
                     $attrs = ['group' => false, 'content' => $v];
                 endif;
 
-                $items[] = new FieldOptionsItem($name, $attrs);
+                $item = new FieldOptionsItem($name, $attrs);
             endif;
+
+            if (!$item->isGroup() && in_array((string)$item->getValue(), $this->getValue(), true)) :
+                $item->push('selected', 'attrs');
+            endif;
+
+            $items[] = $item;
         endforeach;
 
         $this->set('options', $items);
@@ -567,12 +475,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Définition d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $value Valeur de l'attribut.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function set($key, $value)
     {
@@ -582,12 +485,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Définition d'un attribut de balise HTML
-     *
-     * @param string $key Clé d'indexe de l'attribut.
-     * @param null|mixed $value Valeur de l'attribut.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setAttr($key, $value = null)
     {
@@ -601,9 +499,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération de la liste des valeurs des attributs de configuration.
-     *
-     * @return mixed[]
+     * {@inheritdoc}
      */
     public function values()
     {
