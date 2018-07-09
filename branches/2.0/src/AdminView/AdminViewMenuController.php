@@ -4,7 +4,7 @@ namespace tiFy\AdminView;
 
 use tiFy\Apps\AppControllerInterface;
 use tiFy\Apps\Item\AbstractAppItemController;
-use tiFy\Kernel\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutControllerInterface;
 
 class AdminViewMenuController extends AbstractAppItemController
 {

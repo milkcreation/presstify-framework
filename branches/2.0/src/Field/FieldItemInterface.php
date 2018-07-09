@@ -2,6 +2,9 @@
 
 namespace tiFy\Field;
 
+use tiFy\Field\FieldOptions\FieldOptionsCollectionController;
+use tiFy\Field\FieldOptions\FieldOptionsItemController;
+
 interface FieldItemInterface
 {
     /**
@@ -106,7 +109,7 @@ interface FieldItemInterface
     /**
      * Récupération des attributs des options de liste de sélection
      *
-     * @return Collection|FieldOptionsItem[]
+     * @return FieldOptionsCollectionController|FieldOptionsItemController[]
      */
     public function getOptions();
 

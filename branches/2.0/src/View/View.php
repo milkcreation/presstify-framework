@@ -3,7 +3,7 @@
 namespace tiFy\View;
 
 use tiFy\Apps\AppController;
-use tiFy\Kernel\Layout\LayoutViewInterface;
+use tiFy\Apps\Layout\LayoutViewInterface;
 
 final class View extends AppController
 {

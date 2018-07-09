@@ -4,7 +4,7 @@ namespace tiFy\Components\Layout\ListTable\Request;
 
 use Illuminate\Http\Request;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
-use tiFy\Kernel\Layout\Request\RequestBaseController;
+use tiFy\Apps\Layout\Request\RequestBaseController;
 
 class RequestController extends RequestBaseController implements RequestInterface
 {
@@ -25,19 +25,6 @@ class RequestController extends RequestBaseController implements RequestInterfac
      * @var null|int
      */
     protected $pageNum;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param array $attrs Liste des paramètres personnalisés.
-     * @param LayoutControllerInterface $app  Classe de rappel du controleur de l'application.
-     *
-     * @return void
-     */
-    public function __construct(ListTableInterface $app)
-    {
-        parent::__construct($app);
-    }
 
     /**
      * {@inheritdoc}

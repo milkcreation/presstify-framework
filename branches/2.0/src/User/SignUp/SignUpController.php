@@ -141,7 +141,7 @@ final class SignUpController extends AppController
     }
 
     /**
-     * Récupération d'instance de la classe sous forme de chaîne de caractère.
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
      * @return string
      */

@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Partial\SlickCarousel;
 
-use tiFy\Components\Tools\Walkers\WalkerBaseController;
+use tiFy\Kernel\Walker\WalkerBaseController;
 
 class SlickCarouselWalker extends WalkerBaseController
 {

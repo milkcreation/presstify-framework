@@ -8,10 +8,29 @@ use tiFy\Apps\AppController;
 final class Asset extends AppController
 {
     /**
+     * Liste des librairies tierces CSS
+     * @var array
+     */
+    protected $cssLib = [
+        'datatables' => [
+            '//cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css',
+            [],
+            '1.10.19',
+            'screen'
+        ]
+    ];
+
+    /**
      * Liste des librairies tierces JS
      * @var array
      */
     protected $jsLib = [
+        'datatables' => [
+            '//cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js',
+            ['jquery'],
+            '1.10.19',
+            true
+        ],
         'moment' => [
             '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js',
             [],
@@ -55,6 +74,10 @@ final class Asset extends AppController
     {
         \wp_register_style('tiFyAdmin', $this->appAsset('/Admin/css/styles.css'), [], 180528);
         \wp_register_script('tiFyAdmin', $this->appAsset('/Admin/js/scripts.js'), ['jquery'], 180528, true);
+
+        foreach($this->cssLib as $handle => $attrs) :
+            \wp_register_style($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
+        endforeach;
 
         foreach($this->jsLib as $handle => $attrs) :
             \wp_register_script($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);

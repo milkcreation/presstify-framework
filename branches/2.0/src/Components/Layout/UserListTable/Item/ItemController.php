@@ -3,7 +3,7 @@
 namespace tiFy\Components\Layout\UserListTable\Item;
 
 use tiFy\Components\Layout\ListTable\Item\ItemController as ListTableItemController;
-use tiFy\Kernel\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutControllerInterface;
 
 class ItemController extends ListTableItemController
 {

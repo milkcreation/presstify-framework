@@ -1,176 +1,185 @@
-var AjaxListTable;
+jQuery(document).ready(function ($) {
+    // Désactivation des actions de masquage des colonnes natif de Wordpress
+    $('.hide-column-tog').unbind();
 
-jQuery( document ).ready( function($){
-    // Désactivation des action de masquage des colonnes natif de Wordpress
-    $( '.hide-column-tog' ).unbind();
+    /** DEBUG
+    $.post(
+        tify.ajax_url,
+        {'action' : tify.dataTables.viewName + '_get_items'}
+    ).done(function(resp)  {
+        console.log(resp);
+    });
+     */
 
-    $.extend( 
-        $.fn.dataTable.defaults, 
+    $.extend(
+        $.fn.dataTable.defaults,
         {
             // Liste des colonnes
-            columns:                tiFyTemplatesAdminAjaxListTable.columns,
-            
+            columns: tify.dataTables.columns,
             // Nombre d'éléments par page
-            iDisplayLength:         parseInt( tiFyTemplatesAdminAjaxListTable.per_page ),
-            
+            iDisplayLength: parseInt(tify.dataTables.per_page),
             // Tri par défaut
-            order:                  [],  
-            
+            order: [],
             // Traduction
-            language:               tiFyTemplatesAdminAjaxListTable.language,
-            
+            language: tify.dataTables.language,
             // Interface
             dom: 'rt'
         }
     );
 
-    var $table  = $( '.wp-list-table' ),
+    var $table = $('.wp-list-table'),
         filters = {},
-        o       = {
+        o = {
             // Activation de l'indicateur de chargement 
-            processing:     true,
-            
+            processing: true,
             // Activation du chargement Ajax
-            serverSide:     true,
-            
+            serverSide: true,
             // Désactivation du chargement Ajax à l'initialisation 
-            deferLoading:   [ tiFyTemplatesAdminAjaxListTable.total_items, tiFyTemplatesAdminAjaxListTable.per_page ],
-                        
+            deferLoading: [tify.dataTables.total_items, tify.dataTables.per_page],
             // Attributs de la requête de traitement Ajax
-            ajax:            
-            {
-               url:         tify_ajaxurl,
-               
-               data:        function ( d ) {
-                    d = $.extend(d, filters, { action: tiFyTemplatesAdminAjaxListTable.action_prefix +'_get_items' });
-                    /**
-                     * Ajout dynamique d'arguments passés dans la requête ajax de récupération d'éléments
-                     * @see tiFy\Core\Templates\Admin\Model\AjaxListTable\AjaxListTable::hidden_fields();
-                     * $( '#ajaxDatatablesData' ).val( encodeURIComponent( JSON.stringify( resp.data ) ) );
-                     */
-                    if( $( '#ajaxDatatablesData' ).val() )
-                    {
-                        var ajax_data = JSON.parse( decodeURIComponent( $( '#ajaxDatatablesData' ).val() ) );
-                        d = $.extend( d, ajax_data );
-                    }
-                    
-                    return d;
-                },
-                
-                dataType:   'json', 
-                
-                method:     'GET',
-                
-                dataSrc:    function(json)
+            ajax:
                 {
-                    if( ! $( '.search-box' ).length ){
-                        $( json.search_form ).insertBefore( '.tablenav.top' );
+                    url: tify.ajax_url,
+                    data: function (d) {
+                        d = $.extend(d, filters, {action: tify.dataTables.viewName + '_get_items'});
+                        /**
+                         * Ajout dynamique d'arguments passés dans la requête ajax de récupération d'éléments
+                         * @see tiFy\Core\Templates\Admin\Model\AjaxListTable\AjaxListTable::hidden_fields();
+                         * $( '#ajaxDatatablesData' ).val( encodeURIComponent( JSON.stringify( resp.data ) ) );
+                         */
+                        if ($('#ajaxDatatablesData').val()) {
+                            var ajax_data = JSON.parse(decodeURIComponent($('#ajaxDatatablesData').val()));
+                            d = $.extend(d, ajax_data);
+                        }
+                        console.log(d);
+                        return d;
+                    },
+                    dataType: 'json',
+                    method: 'GET',
+                    dataSrc: function (json) {
+                        if (!$('.search-box').length) {
+                            $(json.search_form).insertBefore('.tablenav.top');
+                        }
+                        $(".tablenav-pages").each(function () {
+                            $(this).replaceWith(json.pagination);
+                        });
+                        return json.data;
                     }
-                    
-                    $( ".tablenav-pages" ).each( function(){
-                        $(this).replaceWith( json.pagination );
-                    });
-                    
-                    return json.data;
-                }
+                },
+            // Au moment du traitement
+            drawCallback: function (settings) {
+                /** DEBUG
+                    var dataTable = this.api();
+                    console.log(dataTable.params());
+                 */
             },
-            
-            drawCallback:     function( settings ) {
-                var api = this.api();    
-                //console.log( api.ajax.params() );
-            },
-            
             // Initialisation
-            initComplete:     function( settings, json ) 
-            {
-                $.each( AjaxListTable.columns().visible(), function( u, v ){
-                    var name = AjaxListTable.settings()[0].aoColumns[u].name;
-                    $( '.hide-column-tog[name="'+ name +'-hide"]' ).prop( 'checked', v );
+            initComplete: function (settings, json) {
+                var dataTable = this.api();
+
+                dataTable.columns().every(function () {
+                    var column = this;
+                    if (column.visible()) {
+                        return;
+                    };
                 });
-                
+
+                /*$.each(this.api().columns().visible(), function (u, v) {
+                    var name = settings()[0].aoColumns[u].name;
+                    $('.hide-column-tog[name="' + name + '-hide"]').prop('checked', v);
+                });*/
+
                 // Affichage/Masquage des colonnes
-                $( '.hide-column-tog' ).change( function(e){
+                $('.hide-column-tog').change(function (e) {
                     e.preventDefault();
-                    var $this = $( this );
-        
-                    var column = AjaxListTable.column( $this.val()+':name' );
-                      column.visible( ! column.visible() );
-                    
+                    var $this = $(this);
+
+                    var column = dataTable.column($this.val() + ':name');
+                    column.visible(!column.visible());
+
                     return false;
                 });
-                
+
                 // Soumission du formulaire
-                $( 'form#adv-settings' ).submit( function(e){
+                $('form#adv-settings').submit(function (e) {
                     e.preventDefault();
-                    
-                    var value = parseInt( $( '.screen-per-page', $(this) ).val() )
-                    
-                    $.post( tify_ajaxurl, { action: tiFyTemplatesAdminAjaxListTable.action_prefix +'_per_page', per_page: value }, function(){
-                        $( '#show-settings-link' ).trigger( 'click' );
-                    });
-                    
-                    AjaxListTable.
-                        page.len( value )
+
+                    var value = parseInt($('.screen-per-page', $(this)).val())
+
+                    $.post(
+                        tify.ajax_url,
+                        {
+                            action: tify.dataTables.action_prefix + '_per_page',
+                            per_page: value
+                        }
+                    ).
+                        done(function () {
+                            $('#show-settings-link').trigger('click');
+                        });
+
+                    dataTable
+                        .page
+                        .len(value)
                         .draw();
-                        
+
                     return false;
                 });
-                
+
                 // Filtrage
-                $( '#table-filter' ).submit( function(e){
+                $('#table-filter').submit(function (e) {
                     e.preventDefault();
-                    
+
                     filters = {};
-                                    
-                    $.each( $( this ).serializeArray(), function(u,v){
-                        if( ( v.name === '_wpnonce' ) || ( v.name === '_wp_http_referer' ) || ( v.name === 's' )  || ( v.name === 'paged' )  )
+
+                    $.each($(this).serializeArray(), function (u, v) {
+                        if ((v.name === '_wpnonce') || (v.name === '_wp_http_referer') || (v.name === 's') || (v.name === 'paged'))
                             return true;
                         filters[v.name] = v.value;
                     });
-                    
-                    AjaxListTable.draw(true);
-                    
+
+                    dataTable
+                        .draw(true);
+
                     return false;
                 });
-                
+
                 // Pagination
-                $( document ).on( 'click', '.tablenav-pages a', function(e){
+                $(document).on('click', '.tablenav-pages a', function (e) {
                     e.preventDefault();
                     
                     var page = 0;
-                    if( $(this).hasClass( 'next-page' ) ){
+                    if ($(this).hasClass('next-page')) {
                         page = 'next';
-                    } else if( $(this).hasClass( 'prev-page' ) ){
+                    } else if ($(this).hasClass('prev-page')) {
                         page = 'previous';
-                    } else if( $(this).hasClass( 'first-page' ) ){
-                        page = 'first';    
-                    } else if( $(this).hasClass( 'last-page' ) ){
+                    } else if ($(this).hasClass('first-page')) {
+                        page = 'first';
+                    } else if ($(this).hasClass('last-page')) {
                         page = 'last';
-                    } 
-                    
-                    AjaxListTable
-                        .page( page )
-                        .draw( 'page' );
-                    
+                    }
+
+                    dataTable
+                        .page(page)
+                        .draw('page');
+
                     return false;
                 });
-                
+
                 // Champ de recherche
-                $( document).on( 'click', '.search-box #search-submit', function(e){
+                $(document).on('click', '.search-box #search-submit', function (e) {
                     e.preventDefault();
-                    
+
                     var value = $(this).prev().val();
-                    
-                    AjaxListTable
-                        .search( value )
+
+                    dataTable
+                        .search(value)
                         .draw();
-                    
+
                     return false;
                 });
             }
         };
-    o = $.extend(o, tiFyTemplatesAdminAjaxListTable.options );
+    o = $.extend(o, tify.dataTables.options);
 
-    AjaxListTable = $table
-        .DataTable(o);
+    $table.dataTable(o);
 });

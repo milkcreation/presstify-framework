@@ -170,7 +170,9 @@ class RowActionItemController extends AbstractAppItemController implements RowAc
     }
 
     /**
-     * {@inheritdoc}
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
      */
     public function __toString()
     {

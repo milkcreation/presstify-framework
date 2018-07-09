@@ -13,37 +13,6 @@ class UserListTable extends ListTable
     protected $serviceProvider = UserListTableServiceProvider::class;
 
     /**
-     * Traitement des arguments de requête
-     *
-     * @return array Tableau associatif des arguments de requête
-     */
-    public function parse_query_args()
-    {
-        // Arguments par défaut
-        $query_args = [
-            'number'      => $per_page,
-            'paged'       => $paged,
-            'count_total' => true,
-            'fields'      => 'all_with_meta',
-            'orderby'     => 'user_registered',
-            'order'       => 'DESC',
-            'role__in'    => $this->getParam('roles', []),
-            'include'     => $this->current_item_index()
-        ];
-
-        // Traitement des arguments
-        if ($request_query_vars = $this->getRequestQueryVars()) :
-            foreach($request_query_vars as $key => $value) :
-                if (method_exists($this, "filter_query_arg_{$key}")) :
-                    $query_args[$key] = call_user_func_array([$this, "filter_query_arg_{$key}"], [$value, &$query_args]);
-                endif;
-            endforeach;
-        endif;
-
-        return \wp_parse_args($this->getParam('query_args', []), $query_args);
-    }
-
-    /**
      * Filtrage de l'argument de requête terme de recherche
      *
      * @param string $value Valeur du terme de recherche passé en argument
@@ -85,18 +54,6 @@ class UserListTable extends ListTable
                 $query_args['role__in'] = $roles;
             endif;
         endif;
-    }
-
-    /**
-     * Définition de la liste des roles à afficher
-     *
-     * @param array $roles Liste des roles à afficher définis en paramètre
-     *
-     * @return array
-     */
-    public function set_param_roles($roles = [])
-    {
-        return $roles;
     }
 
     /**

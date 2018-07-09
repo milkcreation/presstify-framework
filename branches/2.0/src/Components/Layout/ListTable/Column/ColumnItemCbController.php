@@ -2,6 +2,7 @@
 
 namespace tiFy\Components\Layout\ListTable\Column;
 
+use tiFy\Field\Field;
 use tiFy\Partial\Partial;
 
 class ColumnItemCbController extends ColumnItemController
@@ -29,10 +30,7 @@ class ColumnItemCbController extends ColumnItemController
                 'class' => join(' ', $class),
                 'scope' => 'col'
             ],
-            'content' => "<label class=\"screen-reader-text\" for=\"cb-select-all-" . self::$counter . "\">" .
-                __( 'Select All' ) .
-                "</label>" .
-                "<input id=\"cb-select-all-" . self::$counter . "\" type=\"checkbox\" />"
+            'content' => $this->getHeaderContent()
         ];
 
         self::$counter++;
@@ -42,5 +40,30 @@ class ColumnItemCbController extends ColumnItemController
         endif;
 
         return (string)Partial::Tag($attrs);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeaderContent()
+    {
+        $content = (string)Field::Label(
+            [
+                'attrs' => [
+                    'class' => 'screen-reader-text',
+                    'for' => 'cb-select-all-' . self::$counter
+                ],
+                'content' => __( 'Select All' )
+            ]
+        );
+        $content .= (string)Field::Checkbox(
+            [
+                'attrs' => [
+                    'id' => 'cb-select-all-' . self::$counter
+                ]
+            ]
+        );
+
+        return $content;
     }
 }

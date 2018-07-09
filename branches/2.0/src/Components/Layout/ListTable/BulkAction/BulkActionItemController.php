@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Layout\ListTable\BulkAction;
 
-use tiFy\Kernel\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutControllerInterface;
 use tiFy\Apps\Item\AbstractAppItemIterator;
 
 class BulkActionItemController extends AbstractAppItemIterator implements BulkActionItemInterface
@@ -45,6 +45,14 @@ class BulkActionItemController extends AbstractAppItemIterator implements BulkAc
         $this->name = $name;
 
         parent::__construct($attrs, $app);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

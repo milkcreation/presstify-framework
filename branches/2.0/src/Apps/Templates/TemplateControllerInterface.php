@@ -40,16 +40,11 @@ interface TemplateControllerInterface
     /**
      * Linéarisation d'une liste d'attributs HTML.
      *
+     * @param array Liste des attributs HTML.
+     *
      * @return string
      */
     public function htmlAttrs($attrs);
-
-    /**
-     * Affichage d'un template frère.
-     *
-     * @return null
-     */
-    public function partial($name, $datas = []);
 
     /**
      * Assignation ou récupération de donnée(s).
@@ -68,6 +63,26 @@ interface TemplateControllerInterface
     public function exists();
 
     /**
+     * Affiche le contenu d'un ganarit.
+     *
+     * @param string $name Nom de qualification.
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return string
+     */
+    public function insert($name, array $data = []);
+
+    /**
+     * Définition d'une composition d'affichage (layout).
+     *
+     * @param string $name Nom de qualification.
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return null
+     */
+    public function layout($name, array $data = []);
+
+    /**
      * Récupération du chemin vers le template.
      *
      * @return string
@@ -75,56 +90,51 @@ interface TemplateControllerInterface
     public function path();
 
     /**
-     * Render the template and layout.
-     * @param  array  $data
-     * @throws \Throwable
-     * @throws \Exception
-     * @return string
-     */
-    public function render(array $data = array());
-
-    /**
-     * Définition du canevas d'affichage (layout) du template.
+     * Ouverture de déclaration de contenu de section ajouté.
      *
-     * @param string $name Nom de qualification du layout.
-     * @param array $data Variables passées en argument au layout.
+     * param string $name Nom de qualification de la section.
      *
-     * @return null
-     */
-    public function layout($name, array $data = array());
-
-    /**
-     * Start a new section block.
-     * @param  string  $name
-     * @return null
-     */
-    public function start($name);
-
-    /**
-     * Start a new append section block.
-     * @param  string $name
      * @return null
      */
     public function push($name);
 
     /**
-     * Stop the current section block.
-     * @return null
+     * Récupération de l'affichage.
+     *
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return string
+     *
+     * @throws \Throwable
+     * @throws \Exception
      */
-    public function stop();
+    public function render(array $data = []);
 
     /**
-     * Alias of stop().
-     * @return null
-     */
-    public function end();
-    /**
-     * Returns the content for a section block.
-     * @param  string      $name    Section name
-     * @param  string      $default Default section content
+     * Affiche le contenu d'une section.
+     *
+     * @param string $name Nom de qualification.
+     * @param string $default Valeur d'affichage par défaut.
+     *
      * @return string|null
      */
     public function section($name, $default = null);
+
+    /**
+     * Ouverture de déclaration de contenu de section.
+     *
+     * @param string $name Nom de qualification.
+     *
+     * @return null
+     */
+    public function start($name);
+
+    /**
+     * Fermeture de déclaration du contenu de la section courante.
+     *
+     * @return null
+     */
+    public function stop();
 
     /**
      * Fetch a rendered template.
@@ -133,14 +143,6 @@ interface TemplateControllerInterface
      * @return string
      */
     public function fetch($name, array $data = array());
-
-    /**
-     * Output a rendered template.
-     * @param  string $name
-     * @param  array  $data
-     * @return null
-     */
-    public function insert($name, array $data = array());
 
     /**
      * Apply multiple functions to variable.
