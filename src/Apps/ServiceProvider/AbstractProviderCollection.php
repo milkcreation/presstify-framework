@@ -62,10 +62,7 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
     {
         $this->app = $app;
 
-        $items = array_merge(
-            $this->defaults(),
-            $items
-        );
+        $this->app->appServiceProvider($this);
 
         $this->parse($items);
     }
@@ -176,6 +173,8 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
      */
     public function parse($items)
     {
+        $items = array_merge($this->defaults(), $items);
+
         foreach($items as $name => $attrs) :
             if (is_string($attrs)) :
                 $attrs = [

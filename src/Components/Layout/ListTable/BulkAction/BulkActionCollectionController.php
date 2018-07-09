@@ -5,6 +5,7 @@ namespace tiFy\Components\Layout\ListTable\BulkAction;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemController;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Field\Field;
+use tiFy\Field\FieldOptions\FieldOptionsItemController;
 
 class BulkActionCollectionController implements BulkActionCollectionInterface
 {
@@ -96,18 +97,13 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
             return '';
         endif;
 
-        $options = [];
+        $options = [
+            -1 => __('Bulk Actions')
+        ];
         foreach ($items as $item) :
-            $options[] = $item->all();
+            $options[] = new FieldOptionsItemController($item->getName(), $item->all());
         endforeach;
 
-        array_unshift(
-            $options,
-            [
-                'value'   => -1,
-                'content' => __('Bulk Actions')
-            ]
-        );
         $displayed = ! self::$displayed++ ? '' : 2;
 
         $output = '';

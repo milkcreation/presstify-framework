@@ -10,8 +10,8 @@ use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
-use tiFy\Kernel\Layout\Param\ParamCollectionInterface;
-use tiFy\Kernel\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\Param\ParamCollectionInterface;
+use tiFy\Apps\Layout\LayoutControllerInterface;
 
 class TemplateController extends TemplateBaseController
 {

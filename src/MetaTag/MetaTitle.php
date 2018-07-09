@@ -118,7 +118,7 @@ class MetaTitle extends AppController
     }
 
     /**
-     * Récupération de l'affichage du controleur
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
      * @return string
      */

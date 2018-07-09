@@ -8,7 +8,7 @@ use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
 use tiFy\Components\Layout\ListTable\Request\RequestInterface;
-use tiFy\Kernel\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutControllerInterface;
 
 interface ListTableInterface extends LayoutControllerInterface
 {
