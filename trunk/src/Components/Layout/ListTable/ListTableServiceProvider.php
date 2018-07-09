@@ -18,6 +18,7 @@ use tiFy\Components\Layout\ListTable\Item\ItemCollectionController;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemController;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
+use tiFy\Components\Layout\ListTable\Labels\LabelsController;
 use tiFy\Components\Layout\ListTable\Pagination\PaginationController;
 use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
 use tiFy\Components\Layout\ListTable\RowAction\RowActionCollectionController;
@@ -39,8 +40,8 @@ use tiFy\Components\Layout\ListTable\ViewFilter\ViewFilterItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Components\Layout\ListTable\Param\ParamCollectionController;
 use tiFy\Components\Layout\ListTable\Request\RequestController;
-use tiFy\Kernel\Layout\LayoutControllerInterface;
-use tiFy\Kernel\Layout\LayoutServiceProvider;
+use tiFy\Apps\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutServiceProvider;
 
 class ListTableServiceProvider extends LayoutServiceProvider
 {
@@ -158,6 +159,9 @@ class ListTableServiceProvider extends LayoutServiceProvider
         switch($key) :
             default :
                 return parent::parseConcrete($key, $default);
+                break;
+            case 'labels' :
+                return LabelsController::class;
                 break;
             case 'params' :
                 return ParamCollectionController::class;

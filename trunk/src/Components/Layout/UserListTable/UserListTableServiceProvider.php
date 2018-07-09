@@ -9,7 +9,9 @@ use tiFy\Components\Layout\UserListTable\Column\ColumnItemUserLoginController;
 use tiFy\Components\Layout\UserListTable\Column\ColumnItemUserRegisteredController;
 use tiFy\Components\Layout\UserListTable\Item\ItemCollectionController;
 use tiFy\Components\Layout\UserListTable\Item\ItemController;
+use tiFy\Components\Layout\UserListTable\Labels\LabelsController;
 use tiFy\Components\Layout\UserListTable\Param\ParamCollectionController;
+use tiFy\Components\Layout\UserListTable\Request\RequestController;
 
 class UserListTableServiceProvider extends ListTableServiceProvider
 {
@@ -46,8 +48,14 @@ class UserListTableServiceProvider extends ListTableServiceProvider
             case 'item' :
                 return ItemController::class;
                 break;
+            case 'labels' :
+                return LabelsController::class;
+                break;
             case 'params' :
                 return ParamCollectionController::class;
+                break;
+            case 'request' :
+                return RequestController::class;
                 break;
         endswitch;
     }

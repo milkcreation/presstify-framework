@@ -312,7 +312,7 @@ abstract class AbstractPartialController extends AppController
     }
 
     /**
-     * Récupération de l'affichage du controleur depuis l'instance.
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
      * @return string
      */

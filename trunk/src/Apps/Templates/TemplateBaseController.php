@@ -84,12 +84,4 @@ class TemplateBaseController extends Template implements TemplateControllerInter
     {
         return Tools::Html()->parseAttrs($attrs, true);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function partial($name, $datas = [])
-    {
-        echo $this->insert($name, $datas);
-    }
 }

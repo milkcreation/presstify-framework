@@ -31,7 +31,7 @@ class FormDisplayController extends AbstractCommonDependency
     }
 
     /**
-     * Récupération de l'affichage du formulaire depuis l'instance.
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
      * @return string
      */

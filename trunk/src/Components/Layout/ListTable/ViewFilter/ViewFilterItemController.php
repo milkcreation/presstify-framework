@@ -110,7 +110,9 @@ class ViewFilterItemController extends AbstractAppItemController implements View
     }
 
     /**
-     * {@inheritdoc}
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
      */
     public function __toString()
     {

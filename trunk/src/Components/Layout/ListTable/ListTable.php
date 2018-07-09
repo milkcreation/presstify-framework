@@ -11,8 +11,8 @@ use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\RowAction\RowActionCollectionController;
 use tiFy\Components\Layout\ListTable\TemplateController;
-use tiFy\Kernel\Layout\AbstractLayoutBaseController;
-use tiFy\Kernel\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\AbstractLayoutBaseController;
+use tiFy\Apps\Layout\LayoutControllerInterface;
 
 class ListTable extends AbstractLayoutBaseController implements ListTableInterface
 {

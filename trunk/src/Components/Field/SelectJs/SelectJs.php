@@ -7,7 +7,7 @@ use tiFy\Partial\Partial;
 use tiFy\Field\AbstractFieldItemController;
 use tiFy\Field\TemplateController;
 use tiFy\Field\Field;
-use tiFy\Field\FieldOptionsItem;
+use tiFy\Field\FieldOptions\FieldOptionsItemController;
 
 class SelectJs extends AbstractFieldItemController
 {
@@ -18,7 +18,7 @@ class SelectJs extends AbstractFieldItemController
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value".
-     *      @var array|FieldOptionsItem[] $options Liste des choix de selection disponibles.
+     *      @var array|FieldOptionsItemController[] $options Liste des choix de selection disponibles.
      *      @var array $source Liste des attributs de requête de récupération des élèments.
      *      @var bool $disabled Activation/Désactivation du controleur de champ.
      *      @var bool $removable Activation/Désactivation de la suppression d'un élément dans la liste des éléments séléctionné.
@@ -67,7 +67,7 @@ class SelectJs extends AbstractFieldItemController
         'options'         => [],
         'source'          => false,
         'disabled'        => false,
-        'removable'       => false,
+        'removable'       => true,
         'multiple'        => false,
         'duplicate'       => false,
         'sortable'        => true,
@@ -164,6 +164,7 @@ class SelectJs extends AbstractFieldItemController
     public function parse($attrs = [])
     {
         parent::parse($attrs);
+        $this->parseOptions();
 
         $this->set(
             'handler_args',
@@ -332,7 +333,7 @@ class SelectJs extends AbstractFieldItemController
                 $item['selected_render'] = $this->appTemplateRender('selected-item', $item);
                 $item['picker_render'] = $this->appTemplateRender('picker-item', $item);
 
-                $items[] = $item;
+                $items[] = new FieldOptionsItemController($item['index'], $item);
             endwhile;
         endif;
         wp_reset_query();
@@ -343,7 +344,7 @@ class SelectJs extends AbstractFieldItemController
     /**
      * Récupération de la liste des éléments.
      *
-     * @param FieldOptionsItem[] $options Liste des valeurs des éléments.
+     * @param FieldOptionsItemController[] $options Liste des valeurs des éléments.
      *
      * @return array
      */
@@ -384,7 +385,12 @@ class SelectJs extends AbstractFieldItemController
             ? call_user_func($query_items_cb, $args)
             : $this->queryItems($args);
 
-        $items = $this->queryItems($args);
+        $items = [];
+        if ($_items = $this->queryItems($args)) :
+            foreach($_items as $item) :
+                $items[] = $item->all();
+            endforeach;
+        endif;
 
         \wp_send_json($items);
     }

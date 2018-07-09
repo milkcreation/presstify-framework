@@ -4,7 +4,7 @@ namespace tiFy\Components\Layout\ListTable\Column;
 
 use Illuminate\Support\Collection;
 use tiFy\Components\Layout\ListTable\Column\ColumnItemInterface;
-use tiFy\Kernel\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutControllerInterface;
 
 interface ColumnCollectionInterface
 {

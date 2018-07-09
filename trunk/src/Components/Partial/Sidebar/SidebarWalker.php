@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Partial\Sidebar;
 
-use tiFy\Components\Tools\Walkers\AbstractWalkerMenuTree;
+use tiFy\Kernel\Walker\AbstractWalkerMenuTree;
 
 class SidebarWalker extends AbstractWalkerMenuTree
 {

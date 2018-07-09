@@ -101,17 +101,19 @@ class SwitcherForm extends AbstractPartialController
         $fields = wp_unslash($fields);
 
         // Récupération de la liste de choix des utilisateurs
-        $user_options = Tools::User()->pluck(
+        if ($user_options = Tools::User()->pluck(
             'display_name',
             'ID',
             [
                 'role'      => $this->appRequest('POST')->get('role', ''),
                 'number'    => -1
             ]
-        );
+        )) :
+            array_map(function($item){ $item[0] = (string)$item[0]; return $item;}, $user_options);
+        endif;
         $disabled = empty($user_options);
 
-        $user_options = [-1 => __('Choix de l\'utilisateur', 'tify')] + $user_options;
+        $user_options = ['-1' => __('Choix de l\'utilisateur', 'tify')] + $user_options;
 
         $fields['user']['options'] = $user_options;
         $fields['user']['disabled'] = $disabled;
@@ -180,8 +182,6 @@ class SwitcherForm extends AbstractPartialController
                 '%s tiFyTakeOverSwitcherForm-selectField--user'
             )
         );
-
-
     }
 
     /**
@@ -206,9 +206,9 @@ class SwitcherForm extends AbstractPartialController
             endif;
             $role_options[$allowed_role] = Tools::User()->roleDisplayName($allowed_role);
         endforeach;
-        $role_options = [-1 => __('Choix du role', 'tify')] + $role_options;
+        $role_options = ['-1' => __('Choix du role', 'tify')] + $role_options;
 
-        $user_options = [-1 => __('Choix de l\'utilisateur', 'tify')];
+        $user_options = ['-1' => __('Choix de l\'utilisateur', 'tify')];
 
         $data_options = [
             'ajax_action' => $this->get('ajax_action'),

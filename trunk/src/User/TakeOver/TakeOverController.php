@@ -501,7 +501,7 @@ class TakeOverController extends AppController
             case 'switch' :
                 check_admin_referer('tiFyTakeOver-switch');
 
-                $user_id = $this->appRequest()->get('user_id', 0);
+                $user_id = $this->appRequest('POST')->getInt('user_id', 0);
 
                 if (!$this->_canSwitch($user_id)) :
                     \wp_die(__('Vous ne disposez pas des habilitations suffisantes pour effectuer cette action. ', 'tify'), __('Habilitations insuffisantes', 'tify'), 500);

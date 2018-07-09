@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
 use tiFy\Field\Field;
+use tiFy\Field\FieldOptions\FieldOptionsCollectionController;
 use tiFy\Field\TemplateController;
 use tiFy\Kernel\Tools;
 
@@ -242,7 +243,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
      */
     public function getOptions()
     {
-        return new Collection($this->get('options', []));
+        return $this->appServiceGet('tify.field.item.field_options.collection.' . $this->getId());
     }
 
     /**
@@ -294,13 +295,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
      */
     public function options()
     {
-        $options = $this->getOptions();
-        $items = [];
-        foreach($options as $option) :
-            $items[] = $option->all();
-        endforeach;
-
-        echo FieldOptionsCollectionWalker::display($items);
+        echo $this->appServiceGet('tify.field.item.field_options.collection.' . $this->getId());
     }
 
     /**
@@ -318,7 +313,6 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
         $this->parseId();
         $this->parseClass();
         $this->parseTemplates();
-        $this->parseOptions();
     }
 
     /**
@@ -392,58 +386,15 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
      */
     protected function parseOptions()
     {
-        if (!$options = $this->get('options', [])) :
-            return;
-        endif;
+        $optionsCollection = new FieldOptionsCollectionController($this->get('options', []));
+        $this->appServiceAdd('tify.field.item.field_options.collection.' . $this->getId(), $optionsCollection);
 
-        if (is_string($options)) :
-            $options = array_map('trim', explode(',', $options));
-        endif;
-
-        $items = []; $n = 0;
-        foreach($options as $k => $v) :
-            if ($v instanceof FieldOptionsItem) :
-                $item = $v;
-            else :
-                $name = (is_numeric($k) && $k>=0) ? $n++ : $k;
-
-                if (is_array($v)) :
-                    $attrs = ['group' => true];
-
-                    foreach($v as $i => $j) :
-                        if ($j instanceof FieldOptionsItem) :
-                            $j['group'] = false;
-                            $j['parent'] = $name;
-                            $_item = $j;
-                        else :
-                            $_name = (is_numeric($i) && $i>=0) ? $n++ : $i;
-
-                            $_item = new FieldOptionsItem(
-                                $_name,
-                                ['group' => false, 'content' => $j, 'parent' => $name]
-                            );
-                            if (!$_item->isGroup() && in_array((string)$_item->getValue(), $this->getValue(), true)) :
-                                $item->push('selected', 'attrs');
-                            endif;
-                        endif;
-
-                        $items[] = $_item;
-                    endforeach;
-                else :
-                    $attrs = ['group' => false, 'content' => $v];
-                endif;
-
-                $item = new FieldOptionsItem($name, $attrs);
-            endif;
-
-            if (!$item->isGroup() && in_array((string)$item->getValue(), $this->getValue(), true)) :
+        $optionsCollection->init();
+        foreach($optionsCollection as $item) :
+            if (!$item->isGroup() && in_array($item->getValue(), $this->getValue(), true)) :
                 $item->push('selected', 'attrs');
             endif;
-
-            $items[] = $item;
         endforeach;
-
-        $this->set('options', $items);
     }
 
     /**
@@ -507,7 +458,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
     }
 
     /**
-     * Récupération de l'affichage du controleur depuis l'instance.
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
      * @return string
      */

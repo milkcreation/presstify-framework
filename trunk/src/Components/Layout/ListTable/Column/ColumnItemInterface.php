@@ -41,6 +41,13 @@ interface ColumnItemInterface extends ArrayAccess, IteratorAggregate
     public function getHeader($with_id = true);
 
     /**
+     * Récupération du texte contenu dans l'entête.
+     *
+     * @return string
+     */
+    public function getHeaderContent();
+
+    /**
      * Vérification de maquage de la colonne.
      *
      * @return bool

@@ -78,6 +78,7 @@ class Select extends AbstractFieldItemController
     public function parse($attrs = [])
     {
         parent::parse($attrs);
+        $this->parseOptions();
 
         if ($this->get('multiple')) :
             array_push($this->attributes['attrs'], 'multiple');
