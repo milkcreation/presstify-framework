@@ -55,10 +55,20 @@ class ColumnItemController extends AbstractAppItemIterator implements ColumnItem
     /**
      * {@inheritdoc}
      */
+    public function defaults()
+    {
+        return [
+            'title' => $this->getName()
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function display($item)
     {
         if (!$value = $item->get($this->name)) :
-            return;
+            return '';
         endif;
 
         $type = (($db = $this->app->db()) && $db->existsCol($this->name)) ? strtoupper($db->getColAttr($this->name,
@@ -76,16 +86,6 @@ class ColumnItemController extends AbstractAppItemIterator implements ColumnItem
                 return \mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
                 break;
         endswitch;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function defaults()
-    {
-        return [
-            'title' => $this->getName()
-        ];
     }
 
     /**
@@ -119,7 +119,28 @@ class ColumnItemController extends AbstractAppItemIterator implements ColumnItem
             $class[] = 'column-primary';
         endif;
 
-        $title = $this->getTitle();
+        $attrs = [
+            'tag' => 'th',
+            'attrs'  => [
+                'class' => join(' ', $class),
+                'scope' => 'col'
+            ],
+            'content' => $this->getHeaderContent()
+        ];
+
+        if ($with_id) :
+            $attrs['attrs']['id'] = $this->getName();
+        endif;
+
+        return (string)Partial::Tag($attrs);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeaderContent()
+    {
+        $content = $this->getTitle();
 
         if ($this->isSortable()) :
             $current_url = $this->app->request()->url();
@@ -139,24 +160,17 @@ class ColumnItemController extends AbstractAppItemIterator implements ColumnItem
                 $class[] = $desc_first ? 'asc' : 'desc';
             endif;
 
-            $title = "<a href=\"" . esc_url(add_query_arg(compact('orderby', 'order'), $current_url)) . "\">" .
-                "<span>{$title}</span><span class=\"sorting-indicator\"></span></a>";
+            $content = (string)Partial::Tag(
+                [
+                    'tag' => 'a',
+                    'attrs' => [
+                        'href' => esc_url(add_query_arg(compact('orderby', 'order'), $current_url))
+                    ],
+                    'content' => "<span>{$content}</span><span class=\"sorting-indicator\"></span></a>"
+            ]);
         endif;
 
-        $attrs = [
-            'tag' => 'th',
-            'attrs'  => [
-                'class' => join(' ', $class),
-                'scope' => 'col'
-            ],
-            'content' => $title
-        ];
-
-        if ($with_id) :
-            $attrs['attrs']['id'] = $this->getName();
-        endif;
-
-        return (string)Partial::Tag($attrs);
+        return $content;
     }
 
     /**

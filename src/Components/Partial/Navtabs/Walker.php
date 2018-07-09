@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Partial\Navtabs;
 
-use tiFy\Components\Tools\Walkers\AbstractWalkerNavtabs;
+use tiFy\Kernel\Walker\AbstractWalkerNavtabs;
 
 class Walker extends AbstractWalkerNavtabs
 {

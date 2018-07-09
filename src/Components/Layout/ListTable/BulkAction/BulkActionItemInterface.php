@@ -2,9 +2,14 @@
 
 namespace tiFy\Components\Layout\ListTable\BulkAction;
 
-use tiFy\Apps\Attributes\AttributesIteratorInterface;
+use tiFy\Kernel\Item\ItemIteratorInterface;
 
-interface BulkActionItemInterface extends AttributesIteratorInterface
+interface BulkActionItemInterface extends ItemIteratorInterface
 {
-
+    /**
+     * Récupération du nom de qualification.
+     *
+     * @return string
+     */
+    public function getName();
 }

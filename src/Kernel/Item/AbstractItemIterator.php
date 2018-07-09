@@ -2,10 +2,25 @@
 
 namespace tiFy\Kernel\Item;
 
+use Illuminate\Support\Fluent;
 use ArrayIterator;
 
 abstract class AbstractItemIterator extends AbstractItemController implements ItemIteratorInterface
 {
+    /**
+     * Handle dynamic calls to the container to set attributes.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return $this
+     */
+    public function __call($method, $parameters)
+    {
+        $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
+
+        return $this;
+    }
+
     /**
      * @param $key
      * @return mixed
@@ -21,7 +36,7 @@ abstract class AbstractItemIterator extends AbstractItemController implements It
      */
     public function __set($key, $value)
     {
-        return $this->set($key, $value);
+        $this->offsetSet($key, $value);
     }
 
     /**
@@ -30,7 +45,18 @@ abstract class AbstractItemIterator extends AbstractItemController implements It
      */
     public function __isset($key)
     {
-        return $this->has($key);
+        return $this->offsetExists($key);
+    }
+
+    /**
+     * Dynamically unset an attribute.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        $this->offsetUnset($key);
     }
 
     /**
@@ -52,15 +78,25 @@ abstract class AbstractItemIterator extends AbstractItemController implements It
     }
 
     /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /**
      * Vérifie l'existance d'un attribut selon une clé d'indice.
      *
      * @param mixed $key Clé d'indice.
      *
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($offset)
     {
-        return array_key_exists($key, $this->attributes);
+        return isset($this->attributes[$offset]);
     }
 
     /**
@@ -70,9 +106,9 @@ abstract class AbstractItemIterator extends AbstractItemController implements It
      *
      * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet($offset)
     {
-        return $this->attributes[$key];
+        return $this->get($offset);
     }
 
     /**
@@ -83,13 +119,9 @@ abstract class AbstractItemIterator extends AbstractItemController implements It
      *
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($offset, $value)
     {
-        if (is_null($key)) :
-            $this->attributes[] = $value;
-        else :
-            $this->attributes[$key] = $value;
-        endif;
+        $this->attributes[$offset] = $value;
     }
 
     /**
@@ -99,8 +131,29 @@ abstract class AbstractItemIterator extends AbstractItemController implements It
      *
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset($offset)
     {
-        unset($this->attributes[$key]);
+        unset($this->attributes[$offset]);
+    }
+
+    /**
+     * Convert the Fluent instance to an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Convert the Fluent instance to JSON.
+     *
+     * @param  int  $options
+     * @return string
+     */
+    public function toJson($options = 0)
+    {
+        return json_encode($this->jsonSerialize(), $options);
     }
 }

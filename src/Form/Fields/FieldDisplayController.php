@@ -270,7 +270,7 @@ class FieldDisplayController extends AbstractCommonDependency
     }
 
     /**
-     * Récupération de l'affichage du champ depuis l'instance.
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
      * @return string
      */

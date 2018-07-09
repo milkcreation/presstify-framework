@@ -2,7 +2,7 @@
 // SpinKit
 import 'spinkit/scss/spinners/7-three-bounce.scss';
 // jQueryUi
-import 'jquery-ui/ui/widget.js';
+import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable'
 
 /** CSS */
