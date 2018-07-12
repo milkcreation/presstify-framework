@@ -62,9 +62,9 @@ abstract class AbstractProviderCollection extends LeagueAbstractServiceProvider 
     {
         $this->app = $app;
 
-        $this->app->appServiceProvider($this);
-
         $this->parse($items);
+
+        $this->app->appServiceProvider($this);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace tiFy\Apps\Templates;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Traits\Macroable;
 use League\Plates\Template\Template;
 use tiFy\Apps\AppControllerInterface;
 use tiFy\Apps\Templates\Templates;

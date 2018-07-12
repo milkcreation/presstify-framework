@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use League\Plates\Engine;
 use tiFy\Apps\AppControllerInterface;
 use tiFy\Apps\Templates\TemplateBaseController;
+use tiFy\Apps\Templates\TemplateControllerInterface;
 
 class Templates extends Engine
 {
@@ -82,6 +83,16 @@ class Templates extends Engine
     }
 
     /**
+     * Récupération du controleur de template.
+     *
+     * @return TemplateControllerInterface
+     */
+    public function getController()
+    {
+        return $this->get('controller');
+    }
+
+    /**
      * Vérification d'existance d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
@@ -91,6 +102,18 @@ class Templates extends Engine
     public function has($key)
     {
         return Arr::has($this->attributes, $key);
+    }
+
+    /**
+     * Récupération du controleur de template.
+     *
+     * @return mixed
+     */
+    public function macro($name, $function)
+    {
+        $controller = $this->getController();
+
+        return ''; //$controller::macro($name, $function);
     }
 
     /**

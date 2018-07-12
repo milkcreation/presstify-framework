@@ -201,7 +201,7 @@ class FormDisplayController extends AbstractCommonDependency
 
         Arr::set($form_attrs, 'method', $this->getForm()->getMethod());
 
-        $action_link = remove_query_arg('success');
+        $action_link = remove_query_arg('success', $this->getForm()->getAction());
         $action = ($anchor = $this->getForm()->getOption('anchor')) ? \add_query_arg("#{$anchor}", $action_link) : $action_link;
         Arr::set($form_attrs, 'action', $action);
 

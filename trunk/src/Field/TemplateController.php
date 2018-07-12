@@ -13,7 +13,6 @@ use tiFy\Apps\Templates\TemplateBaseController;
  * @method mixed get() get(string $key, mixed $default = '') Récupération d'un attribut de configuration.
  * @method bool has() has(string $key) Vérification d'existance d'un attribut de configuration.
  * @method string htmlAttrs() htmlAttrs(array $attrs) Linéarisation d'une liste d'attributs HTML.
- *
  */
 class TemplateController extends TemplateBaseController
 {
