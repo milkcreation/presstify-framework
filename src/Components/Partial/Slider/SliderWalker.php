@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Components\Partial\SlickCarousel;
+namespace tiFy\Components\Partial\Slider;
 
 use tiFy\Kernel\Walker\WalkerBaseController;
 
-class SlickCarouselWalker extends WalkerBaseController
+class SliderWalker extends WalkerBaseController
 {
     /**
      * {@inheritdoc}

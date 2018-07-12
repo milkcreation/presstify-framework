@@ -108,6 +108,10 @@ class RouteHandle extends AbstractAppItemController
             ]
         );
 
+        foreach($args as $key => $value) :
+            $this->app->appRequest($request->getMethod())->set($key, $value);
+        endforeach;
+
         $cb = $this->get('cb');
         array_push($args, $request, $response);
 

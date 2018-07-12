@@ -6,11 +6,11 @@
 
 <?php $this->before(); ?>
 
-<<?php echo $this->get('tag'); ?> <?php echo $this->htmlAttrs($this->get('attrs', [])); ?>
+<<?php echo $this->get('tag'); ?> <?php $this->attrs(); ?>
 <?php if ($this->get('singleton')) : ?>
-    />
+/>
 <?php else : ?>
-    ><?php echo $this->isCallable($this->get('content')) ? call_user_func($this->get('content')) : $this->get('content'); ?></<?php echo $this->get('tag'); ?>>
+><?php $this->content(); ?></<?php echo $this->get('tag'); ?>>
 <?php endif; ?>
 
 <?php $this->after(); ?>

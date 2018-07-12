@@ -104,29 +104,20 @@ class Recaptcha extends AbstractFieldTypeController
         $instance = $this;
 
         // Chargement des scripts dans le pied de page
+        if (!self::$instanceCount++) :
+            add_action(
+                'wp_footer',
+                function () use ($ID, $instance) {
+?><script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=<?php echo $instance->getLanguage(); ?>&onload=onloadCallback_<?php echo $ID; ?>&render=explicit" async defer></script><?php
+                }
+            );
+        endif;
+
         add_action(
             'wp_footer',
-            function () use ($ID, $options, $instance) {
-                if (!self::$instanceCount++) :
-                    ?>
-                    <script
-                            type="text/javascript"
-                            src="https://www.google.com/recaptcha/api.js?hl=<?php echo $instance->getLanguage(); ?>&onload=onloadCallback_<?php echo $ID; ?>&render=explicit"
-                            async defer
-                    ></script><?php
-                endif;
-                ?>
-                <script type="text/javascript">/* <![CDATA[ */
-                    var onloadCallback_<?php echo $ID;?>= function () {
-                        grecaptcha.render('g-recaptcha-<?php echo $ID;?>',<?php echo json_encode($options);?>);
-                    };
-                    if (jQuery('tiFyForm-<?php echo $ID;?>').length) ;
-                    jQuery(document).on('tify_forms.ajax_submit.after', function (e, ID) {
-                        onloadCallback_<?php echo $ID;?>();
-                    });
-                    /* ]]> */</script><?php
-            },
-            99
+            function () use ($ID, $options) {
+?><script type="text/javascript">/* <![CDATA[ */var onloadCallback_<?php echo $ID;?>=function(){grecaptcha.render('g-recaptcha-<?php echo $ID;?>',<?php echo json_encode($options);?>);};/* ]]> */</script><?php
+            }
         );
 
         // Affichage du champ ReCaptcha

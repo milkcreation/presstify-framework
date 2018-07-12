@@ -107,7 +107,7 @@ class Breadcrumb extends AbstractPartialController
 
         elseif (is_array($part)) :
             $defaults = [
-                'class'     => '',
+                'class'     => 'tiFyPartial-BreadcrumbItem',
                 'content'   => ''
             ];
             $part = array_merge($defaults, $part);

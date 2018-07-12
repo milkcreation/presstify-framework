@@ -1,12 +1,12 @@
 <?php
 
-namespace tiFy\Components\Partial\SlickCarousel;
+namespace tiFy\Components\Partial\Slider;
 
-use tiFy\Components\Partial\SlickCarousel\SlickCarouselWalker;
+use tiFy\Components\Partial\Slider\SliderWalker;
 use tiFy\Partial\AbstractPartialController;
 use tiFy\Kernel\Tools;
 
-class SlickCarousel extends AbstractPartialController
+class Slider extends AbstractPartialController
 {
     /**
      * Liste des attributs de configuration.
@@ -31,14 +31,14 @@ class SlickCarousel extends AbstractPartialController
     public function init()
     {
         \wp_register_style(
-            'tiFyPartialSlickCarousel',
-            $this->appAsset('/Partial/SlickCarousel/css/styles.css'),
+            'tiFyPartialSlider',
+            $this->appAsset('/Partial/Slider/css/styles.css'),
             ['slick', 'slick-theme'],
             170722
         );
         \wp_register_script(
-            'tiFyPartialSlickCarousel',
-            $this->appAsset('/Partial/SlickCarousel/js/scripts.js'),
+            'tiFyPartialSlider',
+            $this->appAsset('/Partial/Slider/js/scripts.js'),
             ['slick'],
             170722,
             true
@@ -52,8 +52,8 @@ class SlickCarousel extends AbstractPartialController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartialSlickCarousel');
-        \wp_enqueue_script('tiFyPartialSlickCarousel');
+        \wp_enqueue_style('tiFyPartialSlider');
+        \wp_enqueue_script('tiFyPartialSlider');
     }
 
     /**
@@ -65,8 +65,8 @@ class SlickCarousel extends AbstractPartialController
      */
     protected function parse($attrs = [])
     {
-        $this->set('attrs.id', 'tiFyPartial-SlickCarousel--' . $this->getId());
-        $this->set('attrs.class', 'tiFyPartial-SlickCarousel tiFyPartial-SlickCarousel--' . $this->getId());
+        $this->set('attrs.id', 'tiFyPartial-Slider--' . $this->getId());
+        $this->set('attrs.class', 'tiFyPartial-Slider tiFyPartial-Slider--' . $this->getId());
 
         $this->set(
             'items',
@@ -78,7 +78,7 @@ class SlickCarousel extends AbstractPartialController
 
         parent::parse($attrs);
 
-        $this->set('attrs.aria-control', 'slick_carousel');
+        $this->set('attrs.aria-control', 'slider');
         $this->set('attrs.data-slick', htmlentities(json_encode($this->get('options', []))));
     }
 
@@ -90,12 +90,12 @@ class SlickCarousel extends AbstractPartialController
     public function display()
     {
         return  $this->appTemplateRender(
-            'slick-carousel',
+            'slider',
             [
-                'items'         => SlickCarouselWalker::display(
+                'items'         => SliderWalker::display(
                     $this->get('items', []),
                     [
-                        'prefix' => 'tiFyPartial-SlickCarousel'
+                        'prefix' => 'tiFyPartial-Slider'
                     ]
                 ),
                 'html_attrs'    => Tools::Html()->parseAttrs($this->get('attrs', []))

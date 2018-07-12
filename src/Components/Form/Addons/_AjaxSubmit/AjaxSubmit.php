@@ -132,6 +132,12 @@ class AjaxSubmit extends AbstractAddonController
                         return false;
                     });
                 });
+
+                /*if (jQuery('tiFyForm-<?php echo $ID;?>').length) ;
+                    jQuery(document).on('tify_forms.ajax_submit.after', function (e, ID) {
+                        onloadCallback_<?php echo $ID;?>();
+                    });*/
+
                 /* ]]> */</script><?php
         };
         add_action('wp_footer', $wp_footer, 99);
