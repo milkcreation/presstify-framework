@@ -10,19 +10,27 @@ class WpQueryPart
      * Liste des éléments à inclure dans le fil d'ariane
      * @var array
      */
-    private $Parts = [];
+    private $parts = [];
 
     /**
-     * Classe de la balise d'encapsulation d'un élément
-     * @var string
+     * Récupération de la classe du contenu de l'élément
+     *
+     * @return string
      */
-    private $ItemWrapperClass = 'tiFyCore-layoutBreadcrumbItem';
+    public function getItemContentClass()
+    {
+        return 'tiFyPartial-BreadcrumbItemContent';
+    }
 
     /**
-     * Classe de la balise de contenu d'un élément
-     * @var string
+     * Récupération de la classe de l'encapsulation de l'élément
+     *
+     * @return string
      */
-    private $ItemContentClass = 'tiFyCore-layoutBreadcrumbItemContent';
+    public function getItemWrapperClass()
+    {
+        return 'tiFyPartial-BreadcrumbItem';
+    }
 
     /**
      * Récupération de la liste des éléments de contenu relatif à la requête globale de Wordpress
@@ -33,71 +41,71 @@ class WpQueryPart
     {
         // Page 404 - Contenu introuvable
         if (is_404()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->current404();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->current404();
 
         // Page liste de résultats de recherche
         elseif (is_search()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentSearch();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentSearch();
 
         // Page de contenus associés à une taxonomie
         elseif (is_tax()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentTax();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentTax();
 
         // Page d'accueil du site
         elseif (is_front_page()) :
-            $this->Parts[] = $this->currentPost();
+            $this->parts[] = $this->currentPost();
 
         // Page liste des articles du blog
         elseif (is_home()) :
             if (get_option('page_for_posts')) :
-                $this->Parts[] = $this->linkRoot();
-                $this->Parts[] = $this->currentHome();
+                $this->parts[] = $this->linkRoot();
+                $this->parts[] = $this->currentHome();
             else :
-                $this->Parts[] = $this->linkRoot();
+                $this->parts[] = $this->linkRoot();
             endif;
 
         // Page de contenu de type fichier média
         elseif (is_attachment()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentPost();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentPost();
 
         // Page de contenu de type post
         elseif (is_single()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentPost();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentPost();
 
         // Page de contenu de type page
         elseif (is_page()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentPost();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentPost();
 
         // Page liste de contenus associés à une catégorie
         elseif (is_category()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentCategory();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentCategory();
 
         // Page liste de contenus associés à un mot-clef
         elseif (is_tag()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentTag();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentTag();
 
         // Page liste de contenus associés à un auteur
         elseif (is_author()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentAuthor();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentAuthor();
 
         // Page liste de contenus relatifs à une date
         elseif (is_date()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentDate();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentDate();
 
         // Pages liste de contenus
         elseif (is_archive()) :
-            $this->Parts[] = $this->linkRoot();
-            $this->Parts[] = $this->currentArchive();
+            $this->parts[] = $this->linkRoot();
+            $this->parts[] = $this->currentArchive();
 
         // Page liste de contenus paginé
         // @todo
@@ -105,7 +113,7 @@ class WpQueryPart
 
         endif;
 
-        return $this->Parts;
+        return $this->parts;
     }
 
     /**
@@ -121,14 +129,14 @@ class WpQueryPart
             $title = $this->getPostTitle($fp_post_id);
 
             $part = [
-                'class'   => $this->ItemWrapperClass,
+                'class'   => $this->getItemWrapperClass(),
                 'content' => Partial::Tag(
                     [
                         'tag'     => 'a',
                         'attrs'   => [
                             'href'  => home_url('/'),
                             'title' => sprintf(__('Revenir à %s', 'tify'), $title),
-                            'class' => $this->ItemContentClass
+                            'class' => $this->getItemContentClass()
                         ],
                         'content' => $title
                     ]
@@ -136,14 +144,14 @@ class WpQueryPart
             ];
         else :
             $part = [
-                'class'   => $this->ItemWrapperClass,
+                'class'   => $this->getItemWrapperClass(),
                 'content' => Partial::Tag(
                     [
                         'tag'     => 'a',
                         'attrs'   => [
                             'href'  => home_url('/'),
                             'title' => sprintf(__('Revenir à l\'accueil du site %s', 'theme'), get_bloginfo('name')),
-                            'class' => $this->ItemContentClass
+                            'class' => $this->getItemContentClass()
                         ],
                         'content' => __('Accueil', 'tify')
                     ]
@@ -162,12 +170,12 @@ class WpQueryPart
     public function current404()
     {
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => __('Erreur 404 - Page introuvable', 'tify')
                 ]
@@ -185,12 +193,12 @@ class WpQueryPart
     public function currentSearch()
     {
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => sprintf(__('Résultats de recherche pour : "%s"', 'tify'), get_search_query()),
                 ]
@@ -213,12 +221,12 @@ class WpQueryPart
         $term = get_queried_object();
 
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => sprintf('%s : %s', get_taxonomy($term->taxonomy)->label, $term->name),
                 ]
@@ -238,12 +246,12 @@ class WpQueryPart
         global $wp_query;
 
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => is_paged()
                         ?  sprintf(
@@ -267,12 +275,12 @@ class WpQueryPart
     public function currentPost()
     {
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => $this->getPostTitle(get_the_ID())
                 ]
@@ -292,12 +300,12 @@ class WpQueryPart
         $category = get_category(get_query_var('cat'), false);
 
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => sprintf('Catégorie : %s', $category->name)
                 ]
@@ -317,12 +325,12 @@ class WpQueryPart
         $tag = get_tag( get_query_var( 'tag' ), false );
 
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => sprintf('Mot-Clef : %s', $tag->name)
                 ]
@@ -342,12 +350,12 @@ class WpQueryPart
         $name = get_the_author_meta('display_name', get_query_var('author'));
 
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => sprintf('Auteur : %s', $name)
                 ]
@@ -373,12 +381,12 @@ class WpQueryPart
         endif;
 
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => $content
                 ]
@@ -400,12 +408,12 @@ class WpQueryPart
             : __('Actualités', 'tify');
 
         $part = [
-            'class'   => $this->ItemWrapperClass,
+            'class'   => $this->getItemWrapperClass(),
             'content' => Partial::Tag(
                 [
                     'tag'     => 'span',
                     'attrs'   => [
-                        'class' => $this->ItemContentClass
+                        'class' => $this->getItemContentClass()
                     ],
                     'content' => $content
                 ]
@@ -465,15 +473,15 @@ class WpQueryPart
                 if (('post' === get_post_type(reset($parents))) && ($page_for_posts = get_option('page_for_posts'))) :
                     $title = $this->getPostTitle($page_for_posts);
 
-                    $this->Parts[] = [
-                        'class'   => $this->ItemWrapperClass,
+                    $this->parts[] = [
+                        'class'   => $this->getItemWrapperClass(),
                         'content' => Partial::Tag(
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
                                     'href'  => \get_permalink($page_for_posts),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
-                                    'class' => $this->ItemContentClass
+                                    'class' => $this->getItemContentClass()
                                 ],
                                 'content' => $title
                             ]
@@ -486,15 +494,15 @@ class WpQueryPart
                 foreach (array_reverse($parents) as $parent) :
                     $title = $this->getPostTitle($parent);
 
-                    $this->Parts[] = [
-                        'class'   => $this->ItemWrapperClass,
+                    $this->parts[] = [
+                        'class'   => $this->getItemWrapperClass(),
                         'content' => Partial::Tag(
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
                                     'href'  => \get_permalink($parent),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
-                                    'class' => $this->ItemContentClass
+                                    'class' => $this->getItemContentClass()
                                 ],
                                 'content' => $title
                             ]
@@ -509,30 +517,30 @@ class WpQueryPart
                 if ($page_for_posts = get_option('page_for_posts')) :
                     $title = $this->getPostTitle($page_for_posts);
 
-                    $this->Parts[] = [
-                        'class'   => $this->ItemWrapperClass,
+                    $this->parts[] = [
+                        'class'   => $this->getItemWrapperClass(),
                         'content' => Partial::Tag(
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
                                     'href'  => \get_permalink($page_for_posts),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
-                                    'class' => $this->ItemContentClass
+                                    'class' => $this->getItemContentClass()
                                 ],
                                 'content' => $title
                             ]
                         )
                     ];
                 else :
-                    $this->Parts[] = [
-                        'class'   => $this->ItemWrapperClass,
+                    $this->parts[] = [
+                        'class'   => $this->getItemWrapperClass(),
                         'content' => Partial::Tag(
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
                                     'href'  => \home_url('/'),
                                     'title' => __('Revenir à la liste des actualités', 'tify'),
-                                    'class' => $this->ItemContentClass
+                                    'class' => $this->getItemContentClass()
                                 ],
                                 'content' => __('Actualités', 'tify')
                             ]
@@ -544,15 +552,15 @@ class WpQueryPart
             elseif (($post_type_obj = get_post_type_object(get_post_type())) && $post_type_obj->has_archive) :
                 $title = $post_type_obj->labels->name;
 
-                $this->Parts[] = [
-                    'class'   => $this->ItemWrapperClass,
+                $this->parts[] = [
+                    'class'   => $this->getItemWrapperClass(),
                     'content' => Partial::Tag(
                         [
                             'tag'     => 'a',
                             'attrs'   => [
                                 'href'  => \get_post_type_archive_link(\get_post_type()),
                                 'title' => sprintf(__('Revenir à %s', 'tify'), $title),
-                                'class' => $this->ItemContentClass
+                                'class' => $this->getItemContentClass()
                             ],
                             'content' => $title
                         ]
@@ -565,15 +573,15 @@ class WpQueryPart
                 foreach (array_reverse($parents) as $parent) :
                     $title = $this->getPostTitle($parent);
 
-                    $this->Parts[] = [
-                        'class'   => $this->ItemWrapperClass,
+                    $this->parts[] = [
+                        'class'   => $this->getItemWrapperClass(),
                         'content' => Partial::Tag(
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
                                     'href'  => \get_permalink($parent),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
-                                    'class' => $this->ItemContentClass
+                                    'class' => $this->getItemContentClass()
                                 ],
                                 'content' => $title
                             ]
@@ -587,15 +595,15 @@ class WpQueryPart
                 foreach (array_reverse($parents) as $parent) :
                     $title = $this->getPostTitle($parent);
 
-                    $this->Parts[] = [
-                        'class'   => $this->ItemWrapperClass,
+                    $this->parts[] = [
+                        'class'   => $this->getItemWrapperClass(),
                         'content' => Partial::Tag(
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
                                     'href'  => \get_permalink($parent),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
-                                    'class' => $this->ItemContentClass
+                                    'class' => $this->getItemContentClass()
                                 ],
                                 'content' => $title
                             ]

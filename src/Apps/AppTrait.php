@@ -322,6 +322,14 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
+    public function appTemplateMacro($name, $function)
+    {
+        return $this->appTemplates()->registerFunction($name, $function);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function appTemplateMake($name, $args = [])
     {
         return $this->appTemplates()->make($name, $args);

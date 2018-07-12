@@ -345,6 +345,16 @@ class FormItemController extends AbstractCommonDependency
     }
 
     /**
+     * Récupération de l'action du formulaire (url).
+     *
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->get('action', '');
+    }
+
+    /**
      * Récupération d'un addon actif
      *
      * @param string $name Nom de qualification de l'addon.
@@ -383,7 +393,6 @@ class FormItemController extends AbstractCommonDependency
     {
         return $this->get("addons.{$name}", []);
     }
-
 
     /**
      * Récupération de la méthode de soumission du formulaire.
