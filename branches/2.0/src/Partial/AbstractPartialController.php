@@ -5,6 +5,7 @@ namespace tiFy\Partial;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Apps\AppController;
+use tiFy\Kernel\Tools;
 use tiFy\Partial\Partial;
 use tiFy\Partial\TemplateController;
 
@@ -117,6 +118,168 @@ abstract class AbstractPartialController extends AppController
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function after()
+    {
+        $after = $this->get('after', '');
+
+        echo is_callable($after) ? call_user_func($after) : $after;
+    }
+
+    /**
+     * Récupération de la liste des attributs de configuration.
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attrs()
+    {
+        echo $this->parseHtmlAttrs($this->get('attrs', []));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function before()
+    {
+        $before = $this->get('before', '');
+
+        echo is_callable($before) ? call_user_func($before) : $before;
+    }
+
+    /**
+     * Récupération une liste d'attributs de configuration.
+     *
+     * @param string[] $keys Clé d'index des attributs de configuration à retourner.
+     * @param array $customs Liste des attributs personnalisés.
+     *
+     * @return array
+     */
+    public function compact($keys = [], $customs = [])
+    {
+        if (empty($keys)) :
+            return $this->all();
+        endif;
+
+        $attrs = [];
+        foreach ($keys as $key) :
+            $attrs[$key] = $this->get($key);
+        endforeach;
+
+        return array_merge(
+            $attrs,
+            $customs
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function content()
+    {
+        $content = $this->get('content', '');
+
+        echo is_callable($content) ? call_user_func($content) : $content;
+    }
+
+    /**
+     * Affichage.
+     *
+     * @return string
+     */
+    protected function display()
+    {
+        return $this->appTemplateRender($this->appLowerName(), $this->all());
+    }
+
+    /**
+     * Récupération d'un attribut de configuration.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function get($key, $default = null)
+    {
+        return Arr::get($this->attributes, $key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttr($key, $default = '')
+    {
+        return Arr::get($this->attributes, "attrs.{$key}", $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttrs()
+    {
+        return Tools::Html()->parseAttrs($this->get('attrs', []), false);
+    }
+
+    /**
+     * Récupération de l'identifiant de qualification du controleur.
+     *
+     * @return string
+     */
+    final public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Récupération de l'indice de la classe courante.
+     *
+     * @return int
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
+     * Vérification d'existance d'un attribut de configuration.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     *
+     * @return bool
+     */
+    public function has($key)
+    {
+        return Arr::has($this->attributes, $key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasAttr($key)
+    {
+        return Arr::has($this->attributes, "attrs.{$key}");
+    }
+
+    /**
+     * Récupération de la liste des clés d'indexes des attributs de configuration.
+     *
+     * @return string[]
+     */
+    public function keys()
+    {
+        return array_keys($this->attributes);
+    }
+
+    /**
      * Traitement des attributs de configuration.
      *
      * @param array $attrs Liste des attributs de configuration personnalisés.
@@ -145,6 +308,19 @@ abstract class AbstractPartialController extends AppController
             'attrs.class',
             sprintf($this->get('attrs.class', '%s'), "tiFyPartial-{$this->appShortname()}")
         );
+    }
+
+    /**
+     * Traitement d'une liste d'attributs HTML.
+     *
+     * @param array $attrs Liste des attributs HTML.
+     * @param bool $linearized Activation de la linéarisation.
+     *
+     * @return string
+     */
+    protected function parseHtmlAttrs($attrs = [], $linearized = true)
+    {
+        return Tools::Html()->parseAttrs($attrs, $linearized);
     }
 
     /**
@@ -202,48 +378,17 @@ abstract class AbstractPartialController extends AppController
     }
 
     /**
-     * Récupération de la liste des attributs de configuration.
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function all()
+    public function setAttr($key, $value = null)
     {
-        return $this->attributes;
-    }
+        if(is_null($value)) :
+            Arr::set($this->attributes, 'attrs', $this->get('attrs', [])+[$key]);
+        else :
+            Arr::set($this->attributes, "attrs.{$key}", $value);
+        endif;
 
-    /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
-    }
-
-    /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     *
-     * @return bool
-     */
-    public function has($key)
-    {
-        return Arr::has($this->attributes, $key);
-    }
-
-    /**
-     * Récupération de la liste des clés d'indexes des attributs de configuration.
-     *
-     * @return string[]
-     */
-    public function keys()
-    {
-        return array_keys($this->attributes);
+        return $this;
     }
 
     /**
@@ -254,61 +399,6 @@ abstract class AbstractPartialController extends AppController
     public function values()
     {
         return array_values($this->attributes);
-    }
-
-    /**
-     * Récupération une liste d'attributs de configuration.
-     *
-     * @param string[] $keys Clé d'index des attributs de configuration à retourner.
-     * @param array $customs Liste des attributs personnalisés.
-     *
-     * @return array
-     */
-    public function compact($keys = [], $customs = [])
-    {
-        if (empty($keys)) :
-            return $this->all();
-        endif;
-
-        $attrs = [];
-        foreach ($keys as $key) :
-            $attrs[$key] = $this->get($key);
-        endforeach;
-
-        return array_merge(
-            $attrs,
-            $customs
-        );
-    }
-
-    /**
-     * Récupération de l'identifiant de qualification du controleur.
-     *
-     * @return string
-     */
-    final public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Récupération de l'indice de la classe courante.
-     *
-     * @return int
-     */
-    public function getIndex()
-    {
-        return $this->index;
-    }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    protected function display()
-    {
-        return $this->appTemplateRender($this->appLowerName(), $this->all());
     }
 
     /**

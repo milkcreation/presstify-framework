@@ -27,6 +27,8 @@ class FormBaseController extends AppController
      */
     public function __construct($name, $attrs = [])
     {
+        $this->boot();
+
         // Initialisation des attributs de formulaire
         $attrs = $this->_initAttrs($attrs);
 
@@ -35,6 +37,16 @@ class FormBaseController extends AppController
 
         // Déclenchement des événements
         $this->appAddAction('tify_form_loaded');
+    }
+
+    /**
+     * Initialisation du controleur.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+
     }
 
     /**

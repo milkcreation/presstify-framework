@@ -25,7 +25,7 @@ use tiFy\Components\Partial\ModalTrigger\ModalTrigger;
 use tiFy\Components\Partial\Navtabs\Navtabs;
 use tiFy\Components\Partial\Notice\Notice;
 use tiFy\Components\Partial\Sidebar\Sidebar;
-use tiFy\Components\Partial\SlickCarousel\SlickCarousel;
+use tiFy\Components\Partial\Slider\Slider;
 use tiFy\Components\Partial\Table\Table;
 use tiFy\Components\Partial\Tag\Tag;
 
@@ -38,7 +38,7 @@ use tiFy\Components\Partial\Tag\Tag;
  * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
  * @method static Notice Notice(string $id = null,array $attrs = [])
  * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
- * @method static SlickCarousel SlickCarousel(string $id = null,array $attrs = [])
+ * @method static Slider Slider(string $id = null,array $attrs = [])
  * @method static Spinner Spinner(string $id = null,array $attrs = [])
  * @method static Table Table(string $id = null,array $attrs = [])
  * @method static Tag Tag(string $id = null,array $attrs = [])

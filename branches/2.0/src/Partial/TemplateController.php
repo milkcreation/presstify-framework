@@ -6,71 +6,34 @@ use Illuminate\Support\Arr;
 use League\Plates\Engine;
 use tiFy\Apps\Templates\TemplateBaseController;
 
+/**
+ * Class TemplateController
+ *
+ * @method array all() all() Récupération de la liste complète des attributs de configuration.
+ * @method mixed get() get(string $key, mixed $default = '') Récupération d'un attribut de configuration.
+ * @method bool has() has(string $key) Vérification d'existance d'un attribut de configuration.
+ * @method string htmlAttrs() htmlAttrs(array $attrs) Linéarisation d'une liste d'attributs HTML.
+ */
 class TemplateController extends TemplateBaseController
 {
     /**
-     * Affichage du contenu placé après le champ.
-     *
-     * @return void
+     * Classe de rappel de l'application associée.
+     * @var FieldItemInterface
      */
-    public function after()
-    {
-        echo $this->get('after', '');
-    }
+    protected $app;
 
     /**
-     * Affichage des attributs HTML linéarisé.
+     * Translation d'appel des méthodes de l'application associée.
      *
-     * @return void
+     * @param string $name Nom de la méthode à appeler.
+     * @param array $arguments Liste des variables passées en argument.
+     *
+     * @return mixed
      */
-    public function attrs()
+    public function __call($name, $arguments)
     {
-        echo $this->htmlAttrs($this->get('attrs', []));
-    }
-
-    /**
-     * Affichage du contenu placé avant le champ.
-     *
-     * @return void
-     */
-    public function before()
-    {
-        echo $this->get('before', '');
-    }
-
-    /**
-     * Vérifie si une variable peut-être appelé comme une fonction
-     *
-     * @param mixed $var Variable à tester.
-     *
-     * @return bool
-     */
-    public function isCallable($var)
-    {
-        if (is_string($var) && !preg_match('#\\\#', $var)) :
-            return false;
-        else :
-            return is_callable($var);
+        if (method_exists($this->app, $name)) :
+            return call_user_func_array([$this->app, $name], $arguments);
         endif;
-    }
-
-    /**
-     * Récupération de l'identifiant de qualification du controleur.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->getArg('id');
-    }
-
-    /**
-     * Récupération de l'indice de la classe courante.
-     *
-     * @return int
-     */
-    public function getIndex()
-    {
-        return $this->getArg('index', 0);
     }
 }

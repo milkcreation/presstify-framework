@@ -741,26 +741,28 @@ if (!function_exists('tify_partial_sidebar')) :
     }
 endif;
 
-/**
- * Diaporama.
- *
- * @param array $attrs {
- *      Liste des attributs de configuration.
- * }
- * @param bool $echo Activation de l'affichage. défaut true.
- *
- * @return string
- */
-function tify_partial_slick_carousel($attrs = [], $echo = true)
-{
-    $layout = (string)Partial::SlickCarousel($attrs);
+if (!function_exists('tify_partial_slider')) :
+    /**
+     * Diaporama.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_partial_slider($attrs = [], $echo = true)
+    {
+        $layout = (string)Partial::Slider($attrs);
 
-    if ($echo) :
-        echo $layout;
-    else :
-        return $layout;
-    endif;
-}
+        if ($echo) :
+            echo $layout;
+        else :
+            return $layout;
+        endif;
+    }
+endif;
 
 if (!function_exists('tify_partial_spinner')) :
     /**

@@ -17,7 +17,7 @@ abstract class AbstractAppItemController extends AbstractItemController
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des paramètres personnalisés.
-     * @param AppControllerInterface $app  Classe de rappel du controleur de l'application.
+     * @param AppControllerInterface $app Classe de rappel du controleur de l'application.
      *
      * @return void
      */

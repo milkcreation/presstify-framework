@@ -2,6 +2,7 @@
 
 namespace tiFy\Asset;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 use tiFy\Apps\AppController;
 
@@ -41,13 +42,13 @@ final class Asset extends AppController
 
     /**
      * Liste des attributs JS.
-     * @return array
+     * @var array
      */
     protected $dataJs = [];
 
     /**
      * Liste des styles CSS.
-     * @return array
+     * @var array
      */
     protected $inlineCSS = [];
 
@@ -59,10 +60,12 @@ final class Asset extends AppController
     public function appBoot()
     {
         $this->appAddAction('init');
-        $this->appAddAction('admin_head');
-        $this->appAddAction('wp_head');
+        $this->appAddAction('admin_head', null);
+        $this->appAddAction('admin_print_footer_scripts', null);
+        $this->appAddAction('wp_head', null);
+        $this->appAddAction('wp_footer', null);
 
-        $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both');
+        $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
     }
 
     /**
@@ -85,7 +88,7 @@ final class Asset extends AppController
     }
 
     /**
-     * Entête de l'interface d'administration de Wordpress.
+     * Scripts de l'entête de l'interface d'administration de Wordpress.
      *
      * @return void
      */
@@ -95,13 +98,33 @@ final class Asset extends AppController
         ?><style type="text/css"><?php echo $css; ?></style><?php
         endif;
 
-        if ($js = Arr::get($this->dataJs, 'admin', [])) :
-        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify=' . wp_json_encode($js) . ';'; ?>/* ]]> */</script><?php
+        $datas = (new Collection(Arr::get($this->dataJs, 'admin', [])))
+            ->where('in_footer', '===', false)
+            ->pluck('value', 'key')
+            ->all();
+
+        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify={};'; ?><?php foreach($datas as $k => $v) : echo "tify['{$k}'] =". \wp_json_encode($v); endforeach; ?>/* ]]> */</script><?php
+    }
+
+    /**
+     * Scripts du pied de page de l'interface d'administration de Wordpress.
+     *
+     * @return void
+     */
+    public function admin_print_footer_scripts()
+    {
+        $datas = (new Collection(Arr::get($this->dataJs, 'admin', [])))
+            ->where('in_footer', '===', true)
+            ->pluck('value', 'key')
+            ->all();
+
+        if ($datas) :
+            ?><script type="text/javascript">/* <![CDATA[ */<?php foreach($datas as $k => $v) : echo "tify['{$k}'] =". \wp_json_encode($v); endforeach; ?>/* ]]> */</script><?php
         endif;
     }
 
     /**
-     * Entête de l'interface utilisateur de Wordpress.
+     * Scripts de l'entête de l'interface utilisateur de Wordpress.
      *
      * @return void
      */
@@ -111,8 +134,28 @@ final class Asset extends AppController
         ?><style type="text/css"><?php echo $css; ?></style><?php
         endif;
 
-        if ($js = Arr::get($this->dataJs, 'user', [])) :
-        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify=' . wp_json_encode($js) . ';'; ?>/* ]]> */</script><?php
+        $datas = (new Collection(Arr::get($this->dataJs, 'user', [])))
+                ->where('in_footer', '===', false)
+                ->pluck('value', 'key')
+                ->all();
+
+        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify={};'; ?><?php foreach($datas as $k => $v) : echo "tify['{$k}'] =". \wp_json_encode($v); endforeach; ?>/* ]]> */</script><?php
+    }
+
+    /**
+     * Scripts du pied de page de l'interface utilisateur de Wordpress.
+     *
+     * @return void
+     */
+    public function wp_footer()
+    {
+        $datas = (new Collection(Arr::get($this->dataJs, 'user', [])))
+            ->where('in_footer', '===', true)
+            ->pluck('value', 'key')
+            ->all();
+
+        if ($datas) :
+            ?><script type="text/javascript">/* <![CDATA[ */<?php foreach($datas as $k => $v) : echo "tify['{$k}'] =". \wp_json_encode($v); endforeach; ?>/* ]]> */</script><?php
         endif;
     }
 
@@ -121,12 +164,19 @@ final class Asset extends AppController
      *
      * @param string $key Clé d'indexe de l'attribut à ajouter.
      * @param mixed $value Valeur de l'attribut.
-     * @param string $ui Interface de l'attribut. user|admin|both
+     * @param array $context Contexte d'instanciation de l'attribut. user|admin|both
+     * @param bool $in_footer Ecriture des attributs dans le pied de page du site.
      *
      * @return void
      */
-    public function setDataJs($key, $value, $ui = 'user')
+    public function setDataJs($key, $value, $context = ['admin', 'user'], $in_footer = true)
     {
+        if (is_string($context)) :
+            $context = (array)$context;
+        endif;
+
+        $context = in_array('both', $context) ? ['admin', 'user'] : $context;
+
         if (is_array($value)) :
             foreach($value as $k => &$v) :
                 if (!is_scalar($v)) :
@@ -139,16 +189,9 @@ final class Asset extends AppController
             $value = html_entity_decode((string)$value, ENT_QUOTES, 'UTF-8');
         endif;
 
-        switch($ui) :
-            case 'admin' :
-            case 'user' :
-                Arr::set($this->dataJs, "{$ui}.{$key}", $value);
-                break;
-            case 'both' :
-                Arr::set($this->dataJs, "admin.{$key}", $value);
-                Arr::set($this->dataJs, "user.{$key}", $value);
-                break;
-        endswitch;
+        foreach($context as $ui) :
+            Arr::set($this->dataJs, "{$ui}.{$key}", compact('in_footer', 'key', 'value'));
+        endforeach;
     }
 
     /**

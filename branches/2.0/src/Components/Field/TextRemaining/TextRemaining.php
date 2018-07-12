@@ -26,7 +26,7 @@ class TextRemaining extends AbstractFieldItemController
         'container'     => [],
         'infos_area'    => [],
         'name'          => '',
-        'selector'      => 'input',
+        'selector'      => 'textarea',
         'value'         => '',
         'attrs'         => [],
         'max'           => 150
@@ -51,16 +51,6 @@ class TextRemaining extends AbstractFieldItemController
             ['jquery'],
             180611,
             true
-        );
-
-        $this->appServiceGet(Asset::class)->setDataJs(
-            'fieldTextRemaining',
-            [
-                'plural'   => __('caractères restants', 'tify'),
-                'singular' => __('caractère restant', 'tify'),
-                'none'     => __('Aucun caractère restant', 'tify')
-            ],
-            'both'
         );
     }
 
@@ -116,5 +106,23 @@ class TextRemaining extends AbstractFieldItemController
             $value = \wp_unslash($value);
         endif;
          */
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function display()
+    {
+        $this->appServiceGet(Asset::class)->setDataJs(
+            'fieldTextRemaining',
+            [
+                'plural'   => __('caractères restants', 'tify'),
+                'singular' => __('caractère restant', 'tify'),
+                'none'     => __('Aucun caractère restant', 'tify')
+            ],
+            'both'
+        );
+
+        return $this->appTemplateRender($this->appLowerName(), $this->all());
     }
 }
