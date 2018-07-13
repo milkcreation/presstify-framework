@@ -4,7 +4,7 @@ namespace tiFy\Apps\Container;
 
 use tiFy\Apps\AppControllerInterface;
 
-interface Container extends AppControllerInterface
+interface ContainerInterface extends AppControllerInterface
 {
     /**
      * Récupération d'un service fourni.
@@ -14,5 +14,5 @@ interface Container extends AppControllerInterface
      *
      * @return object
      */
-    public function resolve($alias, $args = [])
+    public function resolve($alias, $args = []);
 }
