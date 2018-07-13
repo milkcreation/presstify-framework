@@ -13,6 +13,7 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use tiFy\Apps\Templates\Templates;
 use tiFy\tiFy;
+use tiFy\Kernel\Tools;
 
 trait AppTrait
 {
@@ -85,7 +86,7 @@ trait AppTrait
      */
     public function appAsset($filename)
     {
-        return tiFy::instance()->apps()->getAsset($filename);
+        return tiFy::instance()->absUrl() . ltrim('/Components/Assets/src/', '/') . ltrim($filename, '/');
     }
 
     /**
@@ -101,7 +102,7 @@ trait AppTrait
      */
     public function appClassname()
     {
-        return tiFy::instance()->apps()->getClassname($this);
+        return Tools::ClassInfo($this)->getName();
     }
 
     /**
@@ -117,7 +118,7 @@ trait AppTrait
      */
     public function appDirname($app = null)
     {
-        return tiFy::instance()->apps()->getDirname($app ?: $this);
+        return Tools::ClassInfo($app ?: $this)->getDirname();
     }
 
     /**
@@ -216,15 +217,15 @@ trait AppTrait
      */
     public function appNamespace()
     {
-        return tiFy::instance()->apps()->getNamespace($this);
+        return Tools::ClassInfo($this)->getNamespaceName();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appReflectionClass()
+    public function appClassInfo()
     {
-        return tiFy::instance()->apps()->getReflectionClass($this);
+        return Tools::ClassInfo($this);
     }
 
     /**
@@ -240,7 +241,7 @@ trait AppTrait
      */
     public function appRelPath($app = null)
     {
-        return tiFy::instance()->apps()->getRelPath($app ?: $this);
+        return Tools::ClassInfo($app ?: $this)->getRelPath();
     }
 
     /**
@@ -304,7 +305,7 @@ trait AppTrait
      */
     public function appShortname()
     {
-        return tiFy::instance()->apps()->getShortname($this);
+        return Tools::ClassInfo($this)->getShortName();
     }
 
     /**
@@ -364,6 +365,6 @@ trait AppTrait
      */
     public function appUrl($app = null)
     {
-        return tiFy::instance()->apps()->getUrl($app ?: $this);
+        return Tools::ClassInfo($app ?: $this)->getUrl();
     }
 }

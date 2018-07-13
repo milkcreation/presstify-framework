@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
+use tiFy\Components\Tools\ClassInfo\ClassInfo;
 
 interface AppControllerInterface
 {
@@ -64,7 +65,11 @@ interface AppControllerInterface
     public function appAddFilter($tag, $method = '', $priority = 10, $accepted_args = 1);
 
     /**
-     * {@inheritdoc}
+     * Récupération de l'url vers un asset.
+     *
+     * @param string $filename Chemin relatif vers le fichier du dossier des assets.
+     *
+     * @return string
      */
     public function appAsset($filename);
 
@@ -74,7 +79,9 @@ interface AppControllerInterface
     public function appClassLoad($namespace, $base_dir = null);
 
     /**
-     * {@inheritdoc}
+     * Récupération du nom complet de l'application.
+     *
+     * @return string
      */
     public function appClassname();
 
@@ -84,7 +91,11 @@ interface AppControllerInterface
     public function appConfig($key = null, $default = null);
 
     /**
-     * {@inheritdoc}
+     * Récupération du chemin absolu vers le repertoire de stockage de l'application.
+     *
+     * @param string|object $app Classe de rappel du controleur de l'application associée.
+     *
+     * @return string
      */
     public function appDirname($app = null);
 
@@ -146,14 +157,18 @@ interface AppControllerInterface
     public function appLowerName($name = null, $separator = '-');
 
     /**
-     * {@inheritdoc}
+     * Récupération de l'espace de nom de l'application.
+     *
+     * @return string
      */
     public function appNamespace();
 
     /**
-     * {@inheritdoc}
+     * Récupération de la classe de reflection d'une application déclarée.
+     *
+     * @return ClassInfo|\ReflectionClass
      */
-    public function appReflectionClass();
+    public function appClassInfo();
 
     /**
      * {@inheritdoc}
@@ -161,7 +176,10 @@ interface AppControllerInterface
     public function appRegister($attrs = []);
 
     /**
-     * {@inheritdoc}
+     * Récupération du chemin relatif vers le répertoire de stockage de l'application.
+     * @internal Basé sur le chemin absolu de la racine du projet
+     *
+     * @return string
      */
     public function appRelPath($app = null);
 
@@ -205,7 +223,9 @@ interface AppControllerInterface
     public function appSet($key, $value);
 
     /**
-     * {@inheritdoc}
+     * Récupération du nom court de l'application.
+     *
+     * @return string
      */
     public function appShortname();
 
@@ -235,7 +255,9 @@ interface AppControllerInterface
     public function appUpperName($name = null, $underscore = true);
 
     /**
-     * {@inheritdoc}
+     * Récupération de l'url absolue vers le repertoire de stockage de l'application.
+     *
+     * @return string
      */
     public function appUrl($app = null);
 }
