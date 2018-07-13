@@ -5,7 +5,6 @@ namespace tiFy\Apps;
 use App\App;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
 use League\Container\Container;
 use League\Container\ContainerInterface;
 use League\Container\Exception\NotFoundException;
@@ -14,7 +13,6 @@ use League\Container\ServiceProvider\BootableServiceProviderInterface;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Component\Filesystem\Filesystem;
 use tiFy\Apps\AppControllerInterface;
 use tiFy\tiFy;
 
@@ -157,38 +155,6 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     }
 
     /**
-     * Récupération de l'url vers un asset.
-     * @todo
-     *
-     * @param string $filename Chemin relatif vers le fichier du dossier des assets.
-     *
-     * @return string
-     */
-    public function getAsset($filename)
-    {
-        return $this->tfy->absUrl() . ltrim('/Components/Assets/src/', '/') . ltrim($filename, '/');
-    }
-
-    /**
-     * Récupération du nom complet d'une application déclarée.
-     *
-     * @param string|AppControllerInterface $app Classe de rappel du controleur de l'application associée.
-     *
-     * @return string
-     */
-    public function getClassname($app)
-    {
-        $appName = $this->getAppName($app);
-
-        if (!$classname = Arr::get($this->apps, "{$appName}.classname", '')) :
-            $classname = $this->getReflectionClass($appName)->getName();
-            $this->setAttr('classname', $classname, $appName);
-        endif;
-
-        return $classname;
-    }
-
-    /**
      * Récupération d'un attribut ou de la liste des attributs de configuration d'une application déclarée.
      *
      * @param string $key Clé d'index de l'attribut de configuration.
@@ -215,144 +181,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     {
         return parent::getContainer();
     }
-
-    /**
-     * Récupération du chemin absolu vers le repertoire de stockage d'une application déclarée.
-     *
-     * @param string|AppControllerInterface $app Classe de rappel du controleur de l'application associée.
-     *
-     * @return string
-     */
-    public function getDirname($app)
-    {
-        $appName = $this->getAppName($app);
-
-        if (!$dirname = Arr::get($this->apps, "{$appName}.dirname", '')) :
-            $dirname = dirname($this->getFilename($appName));
-            $this->setAttr('dirname', $dirname, $appName);
-        endif;
-
-        return $dirname;
-    }
-
-    /**
-     * Récupération du chemin absolu vers le fichier d'une application déclarée.
-     *
-     * @param string|AppControllerInterface $app Classe de rappel du controleur de l'application associée.
-     *
-     * @return string
-     */
-    public function getFilename($app)
-    {
-        $appName = $this->getAppName($app);
-
-        if (!$filename = Arr::get($this->apps, "{$appName}.filename", '')) :
-            $filename = $this->getReflectionClass($appName)->getFileName();
-            $this->setAttr('filename', $filename, $appName);
-        endif;
-
-        return $filename;
-    }
-
-    /**
-     * Récupération de l'espace de nom d'une application déclarée.
-     *
-     * @param string|AppControllerInterface $app Classe de rappel du controleur de l'application associée.
-     *
-     * @return string
-     */
-    public function getNamespace($app)
-    {
-        $appName = $this->getAppName($app);
-
-        if (!$namespace = Arr::get($this->apps, "{$appName}.namespace", '')) :
-            $namespace = $this->getReflectionClass($appName)->getNamespaceName();
-            $this->setAttr('namespace', $namespace, $appName);
-        endif;
-
-        return $namespace;
-    }
-
-    /**
-     * Récupération de la classe de reflection d'une application déclarée.
-     *
-     * @param string|AppControllerInterface $app Classe de rappel du controleur de l'application associée.
-     *
-     * @return ReflectionClass
-     */
-    public function getReflectionClass($app)
-    {
-        $appName = $this->getAppName($app);
-
-        if (!$reflectionClass = Arr::get($this->apps, "{$appName}.reflectionClass", null)) :
-            try {
-                $reflectionClass = new ReflectionClass($appName);
-            } catch (ReflectionException $e) {
-                wp_die($e->getMessage(), __('Classe indisponible', 'tify'), $e->getCode());
-            }
-            $this->setAttr('reflectionClass', $reflectionClass, $appName);
-        endif;
-
-        return $reflectionClass;
-    }
-
-    /**
-     * Récupération du chemin relatif vers le repertoire de stockage d'une application déclarée.
-     *
-     * @param string|AppControllerInterface $app Classe de rappel du controleur de l'application associée.
-     *
-     * @return string
-     */
-    public function getRelPath($app)
-    {
-        $appName = $this->getAppName($app);
-
-        if (!$relPath = Arr::get($this->apps, "{$appName}.relPath", '')) :
-            $relPath = (new fileSystem())->makePathRelative($this->getDirname($appName), $this->tfy->absPath());
-            $this->setAttr('relPath', $relPath, $appName);
-        endif;
-
-        return $relPath;
-    }
-
-    /**
-     * Récupération du nom court d'une application déclarée.
-     *
-     * @param string|AppControllerInterface $app Classe de rappel du controleur de l'application associée.
-     *
-     * @return string
-     */
-    public function getShortname($app)
-    {
-        $appName = $this->getAppName($app);
-
-        if (!$shortname = Arr::get($this->apps, "{$appName}.shortname", '')) :
-            $shortname = $this->getReflectionClass($appName)->getShortName();
-            $this->setAttr('shortname', $shortname, $appName);
-        endif;
-
-        return $shortname;
-    }
-
-    /**
-     * Récupération de l'url vers le repertoire de stockage d'une application déclarée.
-     *
-     * @param string|AppControllerInterface $app Classe de rappel du controleur de l'application associée.
-     *
-     * @return string
-     */
-    public function getUrl($app)
-    {
-        $appName = $this->getAppName($app);
-
-        if (!$url = Arr::get($this->apps, "{$appName}.url", '')) :
-            $url = home_url($this->getRelPath($appName));
-            $this->setAttr('url', $url, $appName);
-        endif;
-
-        return rtrim($url, '/');
-    }
-
+    
     /**
      * Vérification de déclaration d'une application.
      *
