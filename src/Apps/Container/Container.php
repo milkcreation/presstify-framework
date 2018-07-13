@@ -5,7 +5,8 @@ namespace tiFy\Apps\Container;
 use Illuminate\Support\Collection;
 use tiFy\Apps\AppController;
 
-class Container extends AppController
+
+class Container extends AppController implements ContainerInterface
 {
     /**
      * Liste des services déclarés.
@@ -34,12 +35,7 @@ class Container extends AppController
     }
 
     /**
-     * Récupération d'un service fourni.
-     *
-     * @param string $alias Identifiant de qualification du controleur.
-     * @param null|array $args Liste des variables passés en argument.
-     *
-     * @return object
+     * {@inheritdoc}
      */
     public function resolve($alias, $args = [])
     {
