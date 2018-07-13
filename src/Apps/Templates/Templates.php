@@ -103,19 +103,7 @@ class Templates extends Engine
     {
         return Arr::has($this->attributes, $key);
     }
-
-    /**
-     * Récupération du controleur de template.
-     *
-     * @return mixed
-     */
-    public function macro($name, $function)
-    {
-        $controller = $this->getController();
-
-        return ''; //$controller::macro($name, $function);
-    }
-
+    
     /**
      * {@inheritdoc}
      *
