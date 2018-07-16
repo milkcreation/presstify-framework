@@ -4,13 +4,13 @@ namespace tiFy\AdminView;
 
 use tiFy\Apps\AppControllerInterface;
 use tiFy\Apps\Item\AbstractAppItemController;
-use tiFy\Apps\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutInterface;
 
 class AdminViewMenuController extends AbstractAppItemController
 {
     /**
      * Classe de rappel du controleur de l'interface associée.
-     * @var LayoutControllerInterface
+     * @var LayoutInterface
      */
     protected $app;
 
@@ -19,7 +19,7 @@ class AdminViewMenuController extends AbstractAppItemController
      *
      * @return void
      */
-    public function __construct(LayoutControllerInterface $app)
+    public function __construct(LayoutInterface $app)
     {
         parent::__construct($app->get('admin_menu', []), $app);
     }

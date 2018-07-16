@@ -3,7 +3,6 @@
 namespace tiFy\Components\Layout\ListTable\BulkAction;
 
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemController;
-use tiFy\Apps\Layout\LayoutControllerInterface;
 use tiFy\Field\Field;
 
 interface BulkActionCollectionInterface

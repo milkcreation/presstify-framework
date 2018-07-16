@@ -78,11 +78,11 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
                 ];
             endif;
 
-            $provide = $this->app->provider()->has("bulk_actions.item.{$name}")
+            $alias = $this->app->bound("bulk_actions.item.{$name}")
                 ? "bulk_actions.item.{$name}"
-                : 'bulk_actions.item';
+                : BulkActionItemInterface::class;
 
-            $this->items[$name] = $this->app->provide($provide, [$name, $attrs]);
+            $this->items[$name] = $this->app->resolve($alias, [$name, $attrs]);
         endforeach;
     }
 

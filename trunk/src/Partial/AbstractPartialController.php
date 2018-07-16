@@ -124,7 +124,7 @@ abstract class AbstractPartialController extends AppController
     {
         $after = $this->get('after', '');
 
-        echo is_callable($after) ? call_user_func($after) : $after;
+        echo $this->isCallable($after) ? call_user_func($after) : $after;
     }
 
     /**
@@ -152,7 +152,7 @@ abstract class AbstractPartialController extends AppController
     {
         $before = $this->get('before', '');
 
-        echo is_callable($before) ? call_user_func($before) : $before;
+        echo $this->isCallable($before) ? call_user_func($before) : $before;
     }
 
     /**
@@ -187,7 +187,7 @@ abstract class AbstractPartialController extends AppController
     {
         $content = $this->get('content', '');
 
-        echo is_callable($content) ? call_user_func($content) : $content;
+        echo $this->isCallable($content) ? call_user_func($content) : $content;
     }
 
     /**
@@ -267,6 +267,18 @@ abstract class AbstractPartialController extends AppController
     public function hasAttr($key)
     {
         return Arr::has($this->attributes, "attrs.{$key}");
+    }
+
+    /**
+     * Vérifie si une variable peut être appelée en tant que fonction.
+     *
+     * @return bool
+     */
+    public function isCallable($var)
+    {
+        return is_string($var)
+            ? preg_match('#\\\#', $var) && is_callable($var, true)
+            : is_callable($var, true);
     }
 
     /**

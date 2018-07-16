@@ -12,13 +12,6 @@ interface RequestInterface
     public function getQueryArgs();
 
     /**
-     * Récupération de l'url courante.
-     *
-     * @return string
-     */
-    public function url();
-
-    /**
      * Nettoyage et récupération d'une url.
      *
      * @param string[] Liste des arguments de l'url à supprimer.

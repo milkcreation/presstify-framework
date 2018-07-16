@@ -30,8 +30,8 @@ class ViewFilterItemAllController extends ViewFilterItemController
             'content'           => __('Tous', 'tify'),
             'count_items'       => $count,
             'show_count'        => true,
-            'remove_query_args' => 'status',
-            'current'           => !$this->app->appRequest()->get('status', '')
+            'remove_query_args' => ['post_status'],
+            'current'           => !$this->app->appRequest()->get('post_status', '')
         ];
     }
 }

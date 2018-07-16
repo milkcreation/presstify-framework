@@ -4,7 +4,7 @@ namespace tiFy\Components\Layout\ListTable\Item;
 
 use ArrayIterator;
 use Illuminate\Support\Collection;
-use tiFy\Components\Layout\ListTable\Item\ItemController;
+use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 
 class ItemCollectionController implements ItemCollectionInterface
@@ -17,7 +17,7 @@ class ItemCollectionController implements ItemCollectionInterface
 
     /**
      * Liste des éléments.
-     * @var void|ItemController[]
+     * @var void|ItemInterface[]
      */
     protected $items = [];
 
@@ -149,7 +149,7 @@ class ItemCollectionController implements ItemCollectionInterface
 
         if ($items = $query->getItems()) :
             foreach ($items as $item) :
-                $this->items[] = $this->app->provide('item', [$item]);
+                $this->items[] = $this->app->resolve(ItemInterface::class, [$item]);
             endforeach;
         endif;
 

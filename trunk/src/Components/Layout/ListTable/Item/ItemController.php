@@ -4,13 +4,13 @@ namespace tiFy\Components\Layout\ListTable\Item;
 
 use Illuminate\Support\Collection;
 use tiFy\Apps\Item\AbstractAppItemIterator;
-use tiFy\Apps\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutInterface;
 
 class ItemController extends AbstractAppItemIterator implements ItemInterface
 {
     /**
      * Classe de rappel de la vue associée.
-     * @var LayoutControllerInterface
+     * @var LayoutInterface
      */
     protected $app;
 
@@ -18,11 +18,11 @@ class ItemController extends AbstractAppItemIterator implements ItemInterface
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des attributs de configuration personnalisés.
-     * @param LayoutControllerInterface $app Classe de rappel de la vue associée.
+     * @param LayoutInterface $app Classe de rappel de la vue associée.
      *
      * @return void
      */
-    public function __construct($attrs = [], LayoutControllerInterface $app)
+    public function __construct($attrs = [], LayoutInterface $app)
     {
         parent::__construct((array)$attrs, $app);
     }

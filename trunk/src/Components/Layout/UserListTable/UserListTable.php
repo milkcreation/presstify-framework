@@ -3,14 +3,34 @@
 namespace tiFy\Components\Layout\UserListTable;
 
 use tiFy\Components\Layout\ListTable\ListTable;
+use tiFy\Components\Layout\UserListTable\Column\ColumnItemRoleController;
+use tiFy\Components\Layout\UserListTable\Column\ColumnItemUserLoginController;
+use tiFy\Components\Layout\UserListTable\Column\ColumnItemUserRegisteredController;
 
 class UserListTable extends ListTable
 {
     /**
-     * Controleur du fournisseur de service.
-     * @var string
+     * Liste des fournisseurs de service.
+     * @var string[]
      */
-    protected $serviceProvider = UserListTableServiceProvider::class;
+    protected $providers = [
+        UserListTableServiceProvider::class
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAliases()
+    {
+        return array_merge(
+            parent::getAliases(),
+            [
+                'columns.item.role'            => ColumnItemRoleController::class,
+                'columns.item.user_login'      => ColumnItemUserLoginController::class,
+                'columns.item.user_registered' => ColumnItemUserRegisteredController::class,
+            ]
+        );
+    }
 
     /**
      * Filtrage de l'argument de requête terme de recherche

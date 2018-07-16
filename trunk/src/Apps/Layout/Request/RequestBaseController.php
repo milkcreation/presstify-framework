@@ -3,27 +3,36 @@
 namespace tiFy\Apps\Layout\Request;
 
 use Illuminate\Http\Request;
-use tiFy\Apps\Layout\LayoutControllerInterface;
+use tiFy\Apps\AbstractAppController;
+use tiFy\Apps\Layout\LayoutInterface;
 
-class RequestBaseController implements RequestInterface
+/**
+ * Class RequestBaseController
+ * @package tiFy\Apps\Layout\Request
+ *
+ * @method Request get(string $key, mixed $default = null)
+ * @method Request fullUrl()
+ */
+class RequestBaseController extends AbstractAppController implements RequestInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.
-     * @var LayoutControllerInterface
+     * @var LayoutInterface;
      */
     protected $app;
 
     /**
-     * CONSTRUCTEUR.
+     * Appel des méthodes de requête.
+     * @see Request
      *
-     * @param array $attrs Liste des paramètres personnalisés.
-     * @param LayoutControllerInterface $app  Classe de rappel du controleur de l'application.
-     *
-     * @return void
+     * @return mixed
      */
-    public function __construct(LayoutControllerInterface $app)
+    public function __call($name, $arguments)
     {
-        $this->app = $app;
+        $request = $this->app->appRequest();
+        if (method_exists($request, $name)) :
+            return call_user_func_array([$request, $name], $arguments);
+        endif;
     }
 
     /**
@@ -37,20 +46,12 @@ class RequestBaseController implements RequestInterface
     /**
      * {@inheritdoc}
      */
-    public function url()
-    {
-       return $this->app->appRequest()->fullUrl();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function sanitizeUrl($remove_query_args = [], $url = '')
     {
         if(empty($remove_query_args)) :
             $remove_query_args = \wp_removable_query_args();
         endif;
 
-        return remove_query_arg($remove_query_args, $url ? : $this->url());
+        return remove_query_arg($remove_query_args, $url ? : $this->fullUrl());
     }
 }
