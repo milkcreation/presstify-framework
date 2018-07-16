@@ -5,7 +5,7 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.50
+ * @version 1.4.51
  */
 
 namespace tiFy;
@@ -94,7 +94,7 @@ final class tiFy
         endif;
         /// Répertoire des plugins
         if (!defined('TIFY_PLUGINS_DIR')) :
-            define('TIFY_PLUGINS_DIR', self::$AbsDir . '/plugins');
+            define('TIFY_PLUGINS_DIR', dirname(dirname(self::$AbsDir)) . '/presstify-plugins');
         endif;
 
         // Instanciation du moteur

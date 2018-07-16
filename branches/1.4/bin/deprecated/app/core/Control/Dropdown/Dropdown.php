@@ -40,14 +40,14 @@ class Dropdown extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-dropdown',
-            self::tFyAppUrl(get_class()) . '/Dropdown.min.css',
+            $this->appAbsUrl() . '/assets/Dropdown/css/styles.css',
             [],
             141212
         );
         \wp_register_script(
             'tify_control-dropdown',
-            self::tFyAppUrl(get_class()) . '/Dropdown.min.js',
-            ['jquery'],
+            $this->appAbsUrl() . '/assets/Dropdown/js/scripts.js',
+            [],
             141212,
             true
         );

@@ -40,13 +40,13 @@ class Slider extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-slider',
-            self::tFyAppAssetsUrl('Slider.css', get_class()),
+            $this->appAbsUrl() . '/assets/Slider/css/styles.css',
             [],
             170215
         );
         \wp_register_script(
             'tify_control-slider',
-            self::tFyAppAssetsUrl('Slider.js', get_class()),
+            $this->appAbsUrl() . '/assets/Slider/js/scripts.js',
             ['tify-slideshow'],
             170215,
             true
