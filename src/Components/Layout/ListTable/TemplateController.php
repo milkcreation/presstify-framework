@@ -2,16 +2,15 @@
 
 namespace tiFy\Components\Layout\ListTable;
 
+use tiFy\Apps\Layout\Params\ParamsInterface;
 use tiFy\Apps\Templates\TemplateBaseController;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionInterface;
-use tiFy\Components\Layout\ListTable\Column\ColumnInterface;
+use tiFy\Components\Layout\ListTable\Column\ColumnItemInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
-use tiFy\Apps\Layout\Param\ParamCollectionInterface;
-use tiFy\Apps\Layout\LayoutControllerInterface;
 
 class TemplateController extends TemplateBaseController
 {
@@ -36,7 +35,7 @@ class TemplateController extends TemplateBaseController
     /**
      * Récupération de la liste des colonnes.
      *
-     * @return ColumnCollectionInterface|ColumnInterface[]
+     * @return ColumnCollectionInterface|ColumnItemInterface[]
      */
     public function getColumns()
     {
@@ -143,7 +142,7 @@ class TemplateController extends TemplateBaseController
     /**
      * Récupération de la classe de rappel de gestion des paramètres.
      *
-     * @return ParamCollectionInterface
+     * @return ParamsInterface
      */
     public function params()
     {

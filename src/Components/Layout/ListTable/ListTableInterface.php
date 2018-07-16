@@ -2,15 +2,15 @@
 
 namespace tiFy\Components\Layout\ListTable;
 
+use tiFy\Apps\Layout\LayoutInterface;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
 use tiFy\Components\Layout\ListTable\Request\RequestInterface;
-use tiFy\Apps\Layout\LayoutControllerInterface;
 
-interface ListTableInterface extends LayoutControllerInterface
+interface ListTableInterface extends LayoutInterface
 {
     /**
      * Récupération du controleur de gestion des colonnes.

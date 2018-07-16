@@ -13,16 +13,15 @@ use LogicException;
 use ReflectionFunction;
 use ReflectionException;
 use tiFy\Apps\AppControllerInterface;
-use tiFy\Apps\ServiceProvider\ProviderItem;
 
 interface ServiceProviderInterface extends LeagueServiceProviderInterface, BootableServiceProviderInterface
 {
     /**
-     * Liste des service par défaut.
+     * Récupération de la liste des services à instances multiples auto-déclarés.
      *
-     * @return void
+     * @return array
      */
-    public function defaults();
+    public function getBindings();
 
     /**
      * Récupération de la classe de rappel du conteneur d'injection utilisé par le fournisseur de service.
@@ -31,11 +30,24 @@ interface ServiceProviderInterface extends LeagueServiceProviderInterface, Boota
      */
     public function getContainer();
 
+    /**
+     * Récupération de la liste des services à instances unique auto-déclarés.
+     *
+     * @return array
+     */
+    public function getSingletons();
+
+    /**
+     * Vérifie si le nom de qualification répond à un service à instance unique auto-déclarés.
+     *
+     * @param string $abstract Nom de qualification d'appel du service.
+     *
+     * @return array
+     */
+    public function isSingleton($abstract);
 
     /**
      * Traitement de la liste des services.
-     *
-     * @param array $items
      *
      * @return void
      */

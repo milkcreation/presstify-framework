@@ -12,56 +12,56 @@ use tiFy\tiFy;
  * @package tiFy\Components\Tools\Html
  * @see http://php.net/manual/class.reflectionclass.php
  *
- * @method mixed getConstant(string $name) — Récupère une constante
- * @method array getConstants() — Récupère les constantes
- * @method ReflectionMethod getConstructor() — Récupère le constructeur d'une classe
- * @method array getDefaultProperties() — Récupère les propriétés par défaut
- * @method string getDocComment() — Récupère les commentaires
- * @method int getEndLine() — Récupère la fin d'une ligne
- * @method ReflectionExtension getExtension() — Récupère un objet ReflectionExtension pour l'extension définissant la classe
- * @method string getExtensionName() — Récupère le nom de l'extension qui définit la classe
- * @method string getFileName() — Récupère le nom du fichier déclarant la classe considérée
- * @method array getInterfaceNames() — Récupère les noms des interfaces
- * @method array getInterfaces() — Récupère les interfaces
- * @method ReflectionMethod getMethod(string $name) — Récupère un objet ReflectionMethod pour une méthode d'une classe
- * @method array getMethods(null|int $filter = null) — Récupère un tableau de méthodes
- * @method int getModifiers() — Récupère les modificateurs de classe
- * @method string getName() — Récupère le nom de la classe
- * @method string getNamespaceName() — Récupère l'espace de noms
+ * @method ReflectionClass getConstant(string $name) — Récupère une constante
+ * @method ReflectionClass getConstants() — Récupère les constantes
+ * @method ReflectionClass getConstructor() — Récupère le constructeur d'une classe
+ * @method ReflectionClass getDefaultProperties() — Récupère les propriétés par défaut
+ * @method ReflectionClass getDocComment() — Récupère les commentaires
+ * @method ReflectionClass getEndLine() — Récupère la fin d'une ligne
+ * @method ReflectionClass getExtension() — Récupère un objet ReflectionExtension pour l'extension définissant la classe
+ * @method ReflectionClass getExtensionName() — Récupère le nom de l'extension qui définit la classe
+ * @method ReflectionClass getFileName() — Récupère le nom du fichier déclarant la classe considérée
+ * @method ReflectionClass getInterfaceNames() — Récupère les noms des interfaces
+ * @method ReflectionClass getInterfaces() — Récupère les interfaces
+ * @method ReflectionClass getMethod(string $name) — Récupère un objet ReflectionMethod pour une méthode d'une classe
+ * @method ReflectionClass getMethods(null|int $filter = null) — Récupère un tableau de méthodes
+ * @method ReflectionClass getModifiers() — Récupère les modificateurs de classe
+ * @method ReflectionClass getName() — Récupère le nom de la classe
+ * @method ReflectionClass getNamespaceName() — Récupère l'espace de noms
  * @method ReflectionClass getParentClass() — Récupère la classe parente
- * @method array getProperties(null|int $filter = null) — Récupère les propriétés
- * @method ReflectionProperty getProperty(string $name) — Récupère une ReflectionProperty pour une propriété d'une classe
- * @method ReflectionClassConstant getReflectionConstant(string $name) — Gets a ReflectionClassConstant for a class's constant
- * @method array getReflectionConstants() — Gets class constants
- * @method string getShortName() — Récupère le nom court d'une classe
- * @method int getStartLine() — Récupère le numéro de ligne de départ
- * @method array getStaticProperties() — Récupère les propriétés statiques
- * @method mixed getStaticPropertyValue(string $name , mixed &$def_value = null) — Récupère la valeur d'une propriété statique
- * @method array getTraitAliases() — Retourne un tableau des alias du trait
- * @method array getTraitNames() — Retourne un tableau de noms des traits utilisés par cette classe
- * @method array getTraits() — Retourne un tableau des traits utilisés par cette classe
- * @method bool hasConstant(string $name) — Vérifie si une constante est définie
- * @method bool hasMethod(string $name) — Vérifie si une méthode est définie
- * @method bool hasProperty(string $name) — Vérifie si une propriété est définie
- * @method bool implementsInterface(string $interface) — Vérifie si une classe implémente une interface
- * @method bool inNamespace() — Vérifie si une classe est définie dans un espace de noms
- * @method bool isAbstract() — Vérifie si une classe est abstraite
- * @method bool isAnonymous() — Checks if class is anonymous
- * @method bool isCloneable() — Renseigne à propos de la propriété de duplication de la classe
- * @method bool isFinal() — Vérifie si une classe est finale
- * @method bool isInstance(object $object) — Vérifie si une classe est une instance d'une autre classe
- * @method bool isInstantiable() — Vérifie si une classe est instanciable
- * @method bool isInterface() — Vérifie si une classe est une interface
- * @method bool isInternal() — Vérifie si une classe est définie comme interne par une extension
- * @method bool isIterable() — Check whether this class is iterable
- * @method bool isIterateable() — Vérifie si la classe est itérable
- * @method bool isSubclassOf(string $class) — Vérifie si la classe est une sous-classe
- * @method bool isTrait() — Renseigne s'il s'agit d'un trait
- * @method bool isUserDefined() — Vérifie si une classe a été définie dans l'espace utilisateur
- * @method object newInstance(mixed $args , ...$mixed) — Créer une nouvelle instance de la classe en utilisant les arguments fournis
- * @method object newInstanceArgs(array $args) — Créer une nouvelle instance en utilisant les arguments fournis
- * @method object newInstanceWithoutConstructor() — Crée une nouvelle instance de la classe sans invoquer le constructeur
- * @method void setStaticPropertyValue(string $name, string $value) — Définit la valeur d'une propriété statiques
+ * @method ReflectionClass getProperties(null|int $filter = null) — Récupère les propriétés
+ * @method ReflectionClass getProperty(string $name) — Récupère une ReflectionProperty pour une propriété d'une classe
+ * @method ReflectionClass getReflectionConstant(string $name) — Gets a ReflectionClassConstant for a class's constant
+ * @method ReflectionClass getReflectionConstants() — Gets class constants
+ * @method ReflectionClass getShortName() — Récupère le nom court d'une classe
+ * @method ReflectionClass getStartLine() — Récupère le numéro de ligne de départ
+ * @method ReflectionClass getStaticProperties() — Récupère les propriétés statiques
+ * @method ReflectionClass getStaticPropertyValue(string $name , mixed &$def_value = null) — Récupère la valeur d'une propriété statique
+ * @method ReflectionClass getTraitAliases() — Retourne un tableau des alias du trait
+ * @method ReflectionClass getTraitNames() — Retourne un tableau de noms des traits utilisés par cette classe
+ * @method ReflectionClass getTraits() — Retourne un tableau des traits utilisés par cette classe
+ * @method ReflectionClass hasConstant(string $name) — Vérifie si une constante est définie
+ * @method ReflectionClass hasMethod(string $name) — Vérifie si une méthode est définie
+ * @method ReflectionClass hasProperty(string $name) — Vérifie si une propriété est définie
+ * @method ReflectionClass implementsInterface(string $interface) — Vérifie si une classe implémente une interface
+ * @method ReflectionClass inNamespace() — Vérifie si une classe est définie dans un espace de noms
+ * @method ReflectionClass isAbstract() — Vérifie si une classe est abstraite
+ * @method ReflectionClass isAnonymous() — Checks if class is anonymous
+ * @method ReflectionClass isCloneable() — Renseigne à propos de la propriété de duplication de la classe
+ * @method ReflectionClass isFinal() — Vérifie si une classe est finale
+ * @method ReflectionClass isInstance(object $object) — Vérifie si une classe est une instance d'une autre classe
+ * @method ReflectionClass isInstantiable() — Vérifie si une classe est instanciable
+ * @method ReflectionClass isInterface() — Vérifie si une classe est une interface
+ * @method ReflectionClass isInternal() — Vérifie si une classe est définie comme interne par une extension
+ * @method ReflectionClass isIterable() — Check whether this class is iterable
+ * @method ReflectionClass isIterateable() — Vérifie si la classe est itérable
+ * @method ReflectionClass isSubclassOf(string $class) — Vérifie si la classe est une sous-classe
+ * @method ReflectionClass isTrait() — Renseigne s'il s'agit d'un trait
+ * @method ReflectionClass isUserDefined() — Vérifie si une classe a été définie dans l'espace utilisateur
+ * @method ReflectionClass newInstance(mixed $args , ...$mixed) — Créer une nouvelle instance de la classe en utilisant les arguments fournis
+ * @method ReflectionClass newInstanceArgs(array $args) — Créer une nouvelle instance en utilisant les arguments fournis
+ * @method ReflectionClass newInstanceWithoutConstructor() — Crée une nouvelle instance de la classe sans invoquer le constructeur
+ * @method ReflectionClass setStaticPropertyValue(string $name, string $value) — Définit la valeur d'une propriété statiques
 */
 class ClassInfo
 {

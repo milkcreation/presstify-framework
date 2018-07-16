@@ -51,7 +51,6 @@ jQuery(document).ready(function ($) {
                             var ajax_data = JSON.parse(decodeURIComponent($('#ajaxDatatablesData').val()));
                             d = $.extend(d, ajax_data);
                         }
-                        console.log(d);
                         return d;
                     },
                     dataType: 'json',
@@ -60,7 +59,7 @@ jQuery(document).ready(function ($) {
                         if (!$('.search-box').length) {
                             $(json.search_form).insertBefore('.tablenav.top');
                         }
-                        $(".tablenav-pages").each(function () {
+                        $('.tablenav-pages').each(function () {
                             $(this).replaceWith(json.pagination);
                         });
                         return json.data;

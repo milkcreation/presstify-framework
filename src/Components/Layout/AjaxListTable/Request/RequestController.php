@@ -9,6 +9,24 @@ class RequestController extends ListTableRequestController
     /**
      * {@inheritdoc}
      */
+    public function getPagenum()
+    {
+        if (is_null($this->pageNum)) :
+            if (!$this->get('draw')) :
+                $pagenum = $this->get('paged', 0);
+            else :
+                $pagenum = ceil(($this->get('start', 0)/$this->get('length', 0))+1);
+            endif;
+
+            $this->pageNum = max(1, $pagenum);
+        endif;
+
+        return $this->pageNum;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getQueryArgs()
     {
         $query_args = $this->app->param('query_args', []);
@@ -25,22 +43,14 @@ class RequestController extends ListTableRequestController
                 'per_page' => $per_page,
                 'paged'    => $paged,
                 'order'    => 'DESC',
-                'orderby'  => $db->getPrimary()
+                'orderby'  => $db->getPrimary(),
             ],
             $query_args
         );
 
-        if ($draw = $this->app->appRequest('GET')->get('draw')) :
-            $query_args['draw'] = $draw;
-
-            if ($length = $this->app->appRequest('GET')->get('length')) :
+        if ($query_args['draw'] = $this->get('draw', 0)) :
+            if ($length = $this->get('length', 0)) :
                 $query_args['per_page'] = $length;
-            endif;
-
-            if ($length && ($start = $this->app->appRequest('GET')->get('start'))) :
-                $query_args['paged'] = /*$query_args['page'] =*/ ceil(($start / $length) + 1);
-                $this->app->appRequest('GET')->set('paged', $query_args['paged']);
-                $this->app->appRequest('GET')->set('page', $query_args['paged']);
             endif;
             /*
             if (isset($_REQUEST['search']) && isset($_REQUEST['search']['value'])) :

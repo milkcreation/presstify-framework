@@ -71,11 +71,11 @@ class RowActionCollectionController
                 $this->items[$name] = new $controller($name, $attrs, $this->item, $this->app);
             endif;
 
-            $provide = $this->app->provider()->has("row_actions.item.{$name}")
+            $alias = $this->app->bound("row_actions.item.{$name}")
                 ? "row_actions.item.{$name}"
-                : 'row_actions.item';
+                : RowActionItemInterface::class;
 
-            $this->items[$name] = $this->app->provide($provide, [$name, $attrs, $this->item]);
+            $this->items[$name] = $this->app->resolve($alias, [$name, $attrs, $this->item]);
         endforeach;
 
         $this->items = array_filter($this->items, function ($value) {

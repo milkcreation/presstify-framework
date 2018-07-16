@@ -52,7 +52,7 @@ class RequestController extends RequestBaseController implements RequestInterfac
     public function getPagenum()
     {
         if (is_null($this->pageNum)) :
-            $pagenum = (int)$this->app->appRequest()->get('paged', 0);
+            $pagenum = (int)$this->get('paged', 0);
 
             /*if ($pagenum > $this->getTotalPages()) :
                 $pagenum = $this->getTotalPages();
@@ -87,18 +87,6 @@ class RequestController extends RequestBaseController implements RequestInterfac
             ],
             $query_args
         );
-
-        /*
-        if ($request_query_vars = $this->getRequestQueryVars()) :
-            foreach($request_query_vars as $key => $value) :
-                if (method_exists($this, "filter_query_arg_{$key}")) :
-                    $query_args[$key] = call_user_func_array([$this, "filter_query_arg_{$key}"], [$value, &$query_args]);
-                elseif($db->existsCol($key)) :
-                    $query_args[$key] = $value;
-                endif;
-            endforeach;
-        endif;
-        */
 
         return $query_args;
     }

@@ -134,7 +134,7 @@ class Modal extends AbstractPartialController
     protected function display()
     {
         if($backdrop_close = $this->get('backdrop_close')) :
-            $backdrop_close = is_callable($backdrop_close)
+            $backdrop_close = $this->isCallable($backdrop_close)
                 ? call_user_func($this->get('backdrop_close'), $this->all())
                 : (is_string($backdrop_close)
                     ? $backdrop_close
@@ -142,7 +142,7 @@ class Modal extends AbstractPartialController
         endif;
 
         if($body = $this->get('body')) :
-            $body = is_callable($body)
+            $body = $this->isCallable($body)
                 ? call_user_func($this->get('body'), $this->all())
                 : (is_string($body)
                     ? $body
@@ -150,7 +150,7 @@ class Modal extends AbstractPartialController
         endif;
 
         if($footer = $this->get('footer')) :
-            $footer = is_callable($footer)
+            $footer = $this->isCallable($footer)
                 ? call_user_func($this->get('footer'), $this->all())
                 : (is_string($footer)
                     ? $footer
@@ -158,7 +158,7 @@ class Modal extends AbstractPartialController
         endif;
 
         if($header = $this->get('header')) :
-            $header = is_callable($header)
+            $header = $this->isCallable($header)
                 ? call_user_func($this->get('header'), $this->all())
                 : (is_string($header)
                     ? $header

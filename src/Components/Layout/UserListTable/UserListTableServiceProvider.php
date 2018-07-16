@@ -2,7 +2,13 @@
 
 namespace tiFy\Components\Layout\UserListTable;
 
+use tiFy\Apps\Layout\Db\DbInterface;
+use tiFy\Apps\Layout\Labels\LabelsInterface;
+use tiFy\Apps\Layout\Params\ParamsInterface;
+use tiFy\Apps\Layout\Request\RequestInterface;
 use tiFy\Components\Db\DbUsersController;
+use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
+use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableServiceProvider;
 use tiFy\Components\Layout\UserListTable\Column\ColumnItemRoleController;
 use tiFy\Components\Layout\UserListTable\Column\ColumnItemUserLoginController;
@@ -10,7 +16,7 @@ use tiFy\Components\Layout\UserListTable\Column\ColumnItemUserRegisteredControll
 use tiFy\Components\Layout\UserListTable\Item\ItemCollectionController;
 use tiFy\Components\Layout\UserListTable\Item\ItemController;
 use tiFy\Components\Layout\UserListTable\Labels\LabelsController;
-use tiFy\Components\Layout\UserListTable\Param\ParamCollectionController;
+use tiFy\Components\Layout\UserListTable\Params\ParamsController;
 use tiFy\Components\Layout\UserListTable\Request\RequestController;
 
 class UserListTableServiceProvider extends ListTableServiceProvider
@@ -18,14 +24,35 @@ class UserListTableServiceProvider extends ListTableServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function defaults()
+    public function boot()
+    {
+        parent::boot();
+
+        $this->app->singleton(DbInterface::class, function ($app) {
+            return new DbUsersController($app->getName(), [], $app);
+        });
+
+        $this->app->singleton(LabelsInterface::class, function ($app) {
+            return new LabelsController($app->getName(), [], $app);
+        });
+
+        $this->app->singleton(ParamsInterface::class, function ($app) {
+            return new ParamsController($app->get('params', []), $app);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBindings()
     {
         return array_merge(
-            parent::defaults(),
+            parent::getBindings(),
             [
-                'columns.item.role'            => ColumnItemRoleController::class,
-                'columns.item.user_login'      => ColumnItemUserLoginController::class,
-                'columns.item.user_registered' => ColumnItemUserRegisteredController::class,
+                ColumnItemRoleController::class,
+                ColumnItemUserLoginController::class,
+                ColumnItemUserRegisteredController::class,
+                ItemInterface::class => ItemController::class,
             ]
         );
     }
@@ -33,30 +60,14 @@ class UserListTableServiceProvider extends ListTableServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function parseConcrete($key, $default)
+    public function getSingletons()
     {
-        switch ($key) :
-            default :
-                return parent::parseConcrete($key, $default);
-                break;
-            case 'db' :
-                return DbUsersController::class;
-                break;
-            case 'items' :
-                return ItemCollectionController::class;
-                break;
-            case 'item' :
-                return ItemController::class;
-                break;
-            case 'labels' :
-                return LabelsController::class;
-                break;
-            case 'params' :
-                return ParamCollectionController::class;
-                break;
-            case 'request' :
-                return RequestController::class;
-                break;
-        endswitch;
+        return array_merge(
+            parent::getSingletons(),
+            [
+                ItemCollectionInterface::class => ItemCollectionController::class,
+                RequestInterface::class        => RequestController::class,
+            ]
+        );
     }
 }
