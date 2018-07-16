@@ -2,6 +2,7 @@
 
 namespace tiFy\Apps\Container;
 
+use League\Container\Definition\DefinitionInterface;
 use tiFy\Apps\Item\AbstractAppItemIterator;
 use tiFy\Apps\AppControllerInterface;
 
@@ -14,31 +15,63 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
     protected $app;
 
     /**
-     * Indicateur d'instanciation.
-     * @var bool
-     */
-    protected $instanciated = false;
-
-    /**
      * Nom de qualification du service.
      * @var string
      */
-    protected $alias;
+    protected $abstract;
+
+    /**
+     * Définition du service déclaré.
+     * @var DefinitionInterface
+     */
+    protected $definition;
+
+    /**
+     * Instance courante du service.
+     * @var mixed
+     */
+    protected $instance;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param string $name Nom de qualification du service.
+     * @param string $abstract Nom de qualification du service.
      * @param array $attrs Attributs de configuration.
      * @param AppControllerInterface Classe de rappel du controleur de l'interface associée.
      *
      * @return void
      */
-    public function __construct($alias, $attrs = [], AppControllerInterface $app)
+    public function __construct($abstract, $attrs = [], AppControllerInterface $app)
     {
-        $this->alias = $alias;
+        $this->abstract = $abstract;
 
         parent::__construct($attrs, $app);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function bind()
+    {
+        return $this->definition = $this->app->appServiceAdd($this->getAbstract(), $this->getConcrete(), $this->isSingleton());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function build($args = [])
+    {
+        if ($this->isSingleton() && $this->resolved()) :
+            return $this->instance;
+        endif;
+
+        if (!$this->resolved()) :
+            $this->bind();
+        endif;
+
+        array_push($args, $this->app);
+
+        return $this->instance = $this->definition->build($args);
     }
 
     /**
@@ -47,11 +80,20 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
     public function defaults()
     {
         return [
-            'concrete'  => '',
+            'alias'     => $this->abstract,
+            'args'      => [],
             'bootable'  => false,
+            'concrete'  => null,
             'singleton' => false,
-            'args'      => []
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAbstract()
+    {
+        return $this->abstract;
     }
 
     /**
@@ -59,7 +101,7 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
      */
     public function getAlias()
     {
-        return $this->alias;
+        return $this->get('alias');
     }
 
     /**
@@ -67,7 +109,7 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
      */
     public function getArgs()
     {
-        return $this->get('args', []);
+        return $this->args;
     }
 
     /**
@@ -110,14 +152,6 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function isInstanciated()
-    {
-        return !empty($this->instanciated);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function isSingleton()
     {
         return !empty($this->get('singleton'));
@@ -134,8 +168,8 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function setInstanciated()
+    public function resolved()
     {
-        return $this->instanciated = true;
+        return !empty($this->instance);
     }
 }

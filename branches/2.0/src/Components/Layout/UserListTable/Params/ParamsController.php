@@ -1,20 +1,20 @@
 <?php
 
-namespace tiFy\Components\Layout\UserListTable\Param;
+namespace tiFy\Components\Layout\UserListTable\Params;
 
-use tiFy\Components\Layout\ListTable\Param\ParamCollectionController as ListTableParamCollectionController;
+use tiFy\Components\Layout\ListTable\Params\ParamsController as ListTableParamsController;
 use tiFy\Components\Layout\UserListTable\Column\ColumnItemRoleController;
 use tiFy\Components\Layout\UserListTable\Column\ColumnItemUserLoginController;
 use tiFy\Components\Layout\UserListTable\Column\ColumnItemUserRegisteredController;
 
-class ParamCollectionController extends ListTableParamCollectionController
+class ParamsController extends ListTableParamsController
 {
     /**
      * {@inheritdoc}
      */
     public function defaults()
     {
-        $attrs = array_merge(
+        return  array_merge(
             parent::defaults(),
             [
                 'columns'      => [
@@ -35,7 +35,5 @@ class ParamCollectionController extends ListTableParamCollectionController
                 'row_actions'  => ['edit', 'delete']
             ]
         );
-
-        return $attrs;
     }
 }

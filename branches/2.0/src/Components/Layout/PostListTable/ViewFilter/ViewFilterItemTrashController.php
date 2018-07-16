@@ -20,8 +20,8 @@ class ViewFilterItemTrashController extends ViewFilterItemController
             'count_items' => $count,
             'hide_empty'  => true,
             'show_count'  => true,
-            'query_args'  => ['status' => 'trash'],
-            'current'     => $this->app->appRequest()->get('status', '') === 'trash'
+            'query_args'  => ['post_status' => 'trash'],
+            'current'     => $this->app->appRequest()->get('post_status', '') === 'trash'
         ];
     }
 }

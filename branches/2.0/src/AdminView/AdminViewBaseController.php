@@ -5,7 +5,7 @@ namespace tiFy\AdminView;
 use tiFy\AdminView\AdminViewMenuController;
 use tiFy\Apps\Layout\AbstractLayoutViewController;
 
-class AdminViewBaseController extends AbstractLayoutViewController implements AdminViewControllerInterface
+class AdminViewBaseController extends AbstractLayoutViewController implements AdminViewInterface
 {
     /**
      * Ecran courant d'affichage de la page.

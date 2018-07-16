@@ -46,6 +46,6 @@ class SidebarItemController extends AbstractItemIterator
      */
     public function __toString()
     {
-        return (is_callable($this->get('content'))) ? call_user_func($this->get('content')) : $this->get('content');
+        return ($this->isCallable($this->get('content'))) ? call_user_func($this->get('content')) : $this->get('content');
     }
 }

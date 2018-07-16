@@ -174,11 +174,11 @@ class ColumnCollectionController implements ColumnCollectionInterface
                 ];
             endif;
 
-            $provide = $this->app->provider()->has("columns.item.{$name}")
+            $alias = $this->app->bound("columns.item.{$name}")
                 ? "columns.item.{$name}"
-                : 'columns.item';
+                : ColumnItemInterface::class;
 
-            $_columns[$name] = $this->app->provide($provide, [$name, $attrs]);
+            $_columns[$name] = $this->app->resolve($alias, [$name, $attrs]);
         endforeach;
 
         return $this->items = new Collection($_columns);

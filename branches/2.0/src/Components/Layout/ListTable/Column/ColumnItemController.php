@@ -143,7 +143,7 @@ class ColumnItemController extends AbstractAppItemIterator implements ColumnItem
         $content = $this->getTitle();
 
         if ($this->isSortable()) :
-            $current_url = $this->app->request()->url();
+            $current_url = $this->app->request()->fullUrl();
             $current_url = remove_query_arg('paged', $current_url);
             $current_orderby = $this->app->appRequest('GET')->get('orderby');
             $current_order = $this->app->appRequest('GET')->get('order') === 'desc' ? 'desc' : 'asc';

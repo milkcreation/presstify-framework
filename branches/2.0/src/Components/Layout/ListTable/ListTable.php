@@ -2,25 +2,36 @@
 
 namespace tiFy\Components\Layout\ListTable;
 
-use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionController;
-use tiFy\Components\Layout\ListTable\Column\ColumnCollectionController;
+use tiFy\Apps\Layout\AbstractLayoutBaseController;
+use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
+use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemTrashController;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionInterface;
-use tiFy\Components\Layout\ListTable\ViewFilter\ViewFilterCollectionController;
-use tiFy\Components\Layout\ListTable\Item\ItemCollectionController;
+use tiFy\Components\Layout\ListTable\Column\ColumnItemCbController;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
-use tiFy\Components\Layout\ListTable\RowAction\RowActionCollectionController;
+use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
+use tiFy\Components\Layout\ListTable\ListTableServiceProvider;
 use tiFy\Components\Layout\ListTable\TemplateController;
-use tiFy\Apps\Layout\AbstractLayoutBaseController;
-use tiFy\Apps\Layout\LayoutControllerInterface;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionCollectionInterface;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionItemActivateController;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionItemDeactivateController;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionItemDeleteController;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionItemDuplicateController;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionItemEditController;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionItemPreviewController;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionItemTrashController;
+use tiFy\Components\Layout\ListTable\RowAction\RowActionItemUntrashController;
+use tiFy\Components\Layout\ListTable\ViewFilter\ViewFilterCollectionInterface;
 
 class ListTable extends AbstractLayoutBaseController implements ListTableInterface
 {
     /**
-     * Controleur du fournisseur de service.
-     * @var string
+     * Liste des fournisseurs de service.
+     * @var string[]
      */
-    protected $serviceProvider = ListTableServiceProvider::class;
+    protected $providers = [
+        ListTableServiceProvider::class
+    ];
 
     /**
      * {@inheritdoc}
@@ -42,7 +53,29 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function columns()
     {
-        return $this->provide('columns');
+        return $this->resolve(ColumnCollectionInterface::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAliases()
+    {
+        return array_merge(
+            parent::getAliases(),
+            [
+                'columns.item.cb'             => ColumnItemCbController::class,
+                'bulk_actions.item.trash'     => BulkActionItemTrashController::class,
+                'row_actions.item.activate'   => RowActionItemActivateController::class,
+                'row_actions.item.deactivate' => RowActionItemDeactivateController::class,
+                'row_actions.item.delete'     => RowActionItemDeleteController::class,
+                'row_actions.item.duplicate'  => RowActionItemDuplicateController::class,
+                'row_actions.item.edit'       => RowActionItemEditController::class,
+                'row_actions.item.preview'    => RowActionItemPreviewController::class,
+                'row_actions.item.trash'      => RowActionItemTrashController::class,
+                'row_actions.item.untrash'    => RowActionItemUntrashController::class,
+            ]
+        );
     }
 
     /**
@@ -50,7 +83,7 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function getBulkActions($which = '')
     {
-        echo $this->provide('bulk_actions', [$which]);
+        echo $this->resolve(BulkActionCollectionInterface::class, [$which]);
     }
 
     /**
@@ -78,7 +111,7 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
             return;
         endif;
 
-        return $this->provide('row_actions', [$item]);
+        return $this->resolve(RowActionCollectionInterface::class, [$item]);
     }
 
     /**
@@ -129,7 +162,7 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function getViewFilters()
     {
-        return $this->provide('view_filters')->all();
+        return $this->resolve(ViewFilterCollectionInterface::class)->all();
     }
 
     /**
@@ -137,7 +170,7 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function items()
     {
-        return $this->provide('items');
+        return $this->resolve(ItemCollectionInterface::class);
     }
 
     /**
@@ -145,7 +178,7 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function pagination()
     {
-        return $this->provide('pagination');
+        return $this->resolve(PaginationInterface::class);
     }
 
     /**
@@ -153,23 +186,15 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function prepare()
     {
-        if (!$items = $this->items()) :
+        if (!$this->items()->all()) :
             return;
         endif;
 
-        $total_items = $items->getTotal();
+        $total_items = $this->items()->getTotal();
         $per_page = $this->request()->getPerPage();
+        $total_pages = ceil($total_items/$per_page);
 
-        $this->provide(
-            'pagination',
-            [
-                [
-                    'total_items' => $total_items,
-                    'per_page'    => $per_page,
-                    'total_pages' => ceil($total_items/$per_page)
-                ]
-            ]
-        );
+        $this->resolve(PaginationInterface::class, [compact('per_page', 'total_items', 'total_pages')]);
     }
 
     /**
@@ -195,7 +220,6 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function display()
     {
-
         ?>
 
         <?php if($base_uri_query_vars = $this->getBaseUriQueryVars()) : ?>

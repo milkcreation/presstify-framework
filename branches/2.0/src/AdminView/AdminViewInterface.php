@@ -4,7 +4,7 @@ namespace tiFy\AdminView;
 
 use tiFy\Apps\Layout\LayoutViewInterface;
 
-interface AdminViewControllerInterface extends LayoutViewInterface
+interface AdminViewInterface extends LayoutViewInterface
 {
     /**
      * Récupération du nom de qualification d'accroche de la page d'affichage de l'interface.

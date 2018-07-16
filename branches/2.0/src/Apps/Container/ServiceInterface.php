@@ -2,8 +2,33 @@
 
 namespace tiFy\Apps\Container;
 
+use League\Container\Definition\DefinitionInterface;
+
 interface ServiceInterface
 {
+    /**
+     * Déclaration du service dans le conteneur.
+     *
+     * @return DefinitionInterface
+     */
+    public function bind();
+
+    /**
+     * Résolution d'instance du service.
+     *
+     * @param array $args Liste des variables passées en argument.
+     *
+     * @return mixed
+     */
+    public function build($args = []);
+
+    /**
+     * Récupération du nom de qualification de récupération.
+     *
+     * @return string
+     */
+    public function getAbstract();
+
     /**
      * Récupération de l'alias.
      *
@@ -47,13 +72,6 @@ interface ServiceInterface
     public function isDeferred();
 
     /**
-     * Vérification d'existance d'une instanciation du controleur.
-     *
-     * @return bool
-     */
-    public function isInstanciated();
-
-    /**
      * Vérifie si le controleur de service doit être traité comme un singleton.
      * @internal Une seule instance unique de la classe dans l'écosystème
      *
@@ -71,9 +89,9 @@ interface ServiceInterface
     public function setArgs($args = []);
 
     /**
-     * Définition de l'instanciation du controleur.
+     * Vérification d'existance d'une instance
      *
      * @return bool
      */
-    public function setInstanciated();
+    public function resolved();
 }

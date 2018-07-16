@@ -2,13 +2,14 @@
 
 namespace tiFy\Apps\Layout;
 
-use tiFy\Apps\Layout\Db\DbControllerInterface;
-use tiFy\Apps\Layout\Labels\LabelsControllerInterface;
-use tiFy\Apps\Layout\Param\ParamCollectionInterface;
+use tiFy\Apps\Layout\Db\DbInterface;
+use tiFy\Apps\Layout\Labels\LabelsInterface;
+use tiFy\Apps\Layout\Notices\NoticesInterface;
+use tiFy\Apps\Layout\Params\ParamsInterface;
 use tiFy\Apps\Layout\Request\RequestInterface;
-use tiFy\Apps\AppControllerInterface;
+use tiFy\Apps\Container\ContainerInterface;
 
-interface LayoutControllerInterface extends AppControllerInterface
+interface LayoutInterface extends ContainerInterface
 {
     /**
      * Intialisation de la page d'affichage courant.
@@ -20,7 +21,7 @@ interface LayoutControllerInterface extends AppControllerInterface
     /**
      * Récupération de la classe de rappel de l'object base de données
      *
-     * @return null|DbControllerInterface
+     * @return null|DbInterface
      */
     public function db();
 
@@ -63,14 +64,14 @@ interface LayoutControllerInterface extends AppControllerInterface
     /**
      * Récupération de la classe de rappel du controleur des intitulés.
      *
-     * @return LabelsControllerInterface
+     * @return LabelsInterface
      */
     public function labels();
 
     /**
      * Récupération de la classe de rappel du controleur de message de notification.
      *
-     * @return NoticeCollectionInterface
+     * @return NoticesInterface
      */
     public function notices();
 
@@ -87,7 +88,7 @@ interface LayoutControllerInterface extends AppControllerInterface
     /**
      * Récupération de la classe de rappel du controleur de gestion des paramètres.
      *
-     * @return ParamCollectionInterface
+     * @return ParamsInterface
      */
     public function params();
 
@@ -104,23 +105,6 @@ interface LayoutControllerInterface extends AppControllerInterface
      * @return void
      */
     public function process();
-
-    /**
-     * Récupération de la classe de rappel d'un controleur de service.
-     *
-     * @param string $key Clé d'indice de qualification du service.
-     * @param null|array $args Listes des variables passées en argument.
-     *
-     * @return object
-     */
-    public function provide($key, $args = null);
-
-    /**
-     * Récupération de la classe de rappel du controleur de service.
-     *
-     * @return LayoutServiceProvider
-     */
-    public function provider();
 
     /**
      * Définition d'un attribut de configuration.

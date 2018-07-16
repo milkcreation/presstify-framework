@@ -2,24 +2,24 @@
 
 namespace tiFy\Components\Layout\ListTable\Handle;
 
-use tiFy\Apps\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutInterface;
 
 class Handle
 {
     /**
      * Classe de rappel de la vue associée.
-     * @var LayoutControllerInterface
+     * @var LayoutInterface
      */
     protected $app;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param LayoutControllerInterface $app Classe de rappel de la vue associée.
+     * @param LayoutInterface $app Classe de rappel de la vue associée.
      *
      * @return void
      */
-    public function __construct(LayoutControllerInterface $app)
+    public function __construct(LayoutInterface $app)
     {
         $this->app = $app;
 

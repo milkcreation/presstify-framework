@@ -1,15 +1,15 @@
 <?php
 
-namespace tiFy\Apps\Layout\Notice;
+namespace tiFy\Apps\Layout\Notices;
 
-use tiFy\Apps\Layout\LayoutControllerInterface;
 use tiFy\Apps\Item\AbstractAppItemController;
+use tiFy\Apps\Layout\LayoutInterface;
 
-class NoticeCollectionBaseController extends AbstractAppItemController implements NoticeCollectionInterface
+class NoticesBaseController extends AbstractAppItemController implements NoticesInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.
-     * @var LayoutControllerInterface
+     * @var LayoutInterface
      */
     protected $app;
 

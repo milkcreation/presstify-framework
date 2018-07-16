@@ -89,7 +89,7 @@ class CookieNotice extends AbstractPartialController
         parent::parse($attrs);
 
         $content = $this->get('content', '');
-        $this->set('content', is_callable($content) ? call_user_func($content) : $content);
+        $this->set('content', $this->isCallable($content) ? call_user_func($content) : $content);
 
         if (!$this->get('cookie_name')) :
             $this->set('cookie_name', md5('tiFyPartial-CookieNotice--' . $this->getIndex()));
