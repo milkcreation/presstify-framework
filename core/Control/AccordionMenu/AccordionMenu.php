@@ -41,13 +41,13 @@ class AccordionMenu extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-accordion_menu',
-            self::tFyAppAssetsUrl('AccordionMenu.css', get_class()),
+            $this->appAbsUrl() . '/assets/AccordionMenu/css/styles.css',
             [],
             170704
         );
         \wp_register_script(
             'tify_control-accordion_menu',
-            self::tFyAppAssetsUrl('AccordionMenu.js', get_class()),
+            $this->appAbsUrl() . '/assets/AccordionMenu/js/scripts.js',
             ['jquery-ui-widget'],
             170704,
             true

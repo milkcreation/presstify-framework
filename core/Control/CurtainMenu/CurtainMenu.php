@@ -40,13 +40,13 @@ class CurtainMenu extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-curtain_menu',
-            self::tFyAppAssetsUrl('CurtainMenu.css', get_class()),
+            $this->appAbsUrl() . '/assets/CurtainMenu/css/styles.css',
             [],
             170704
         );
         \wp_register_script(
             'tify_control-curtain_menu',
-            self::tFyAppAssetsUrl('CurtainMenu.js', get_class()),
+            $this->appAbsUrl() . '/assets/CurtainMenu/js/scripts.js',
             ['jquery-ui-widget'],
             170704,
             true
