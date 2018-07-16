@@ -3,7 +3,7 @@
 namespace tiFy\Apps\Layout;
 
 use tiFy\Apps\AppControllerInterface;
-use tiFy\Apps\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutInterface;
 
 interface LayoutViewInterface extends AppControllerInterface
 {
@@ -24,7 +24,7 @@ interface LayoutViewInterface extends AppControllerInterface
     /**
      * Récupération du controleur d'affichage.
      *
-     * @return LayoutControllerInterface
+     * @return LayoutInterface
      */
     public function layout();
 }

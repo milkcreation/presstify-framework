@@ -3,19 +3,16 @@
 namespace tiFy\Apps\Layout;
 
 use Illuminate\Support\Arr;
+use tiFy\Apps\Layout\Db\DbInterface;
+use tiFy\Apps\Layout\Labels\LabelsInterface;
 use tiFy\Apps\Layout\LayoutViewInterface;
-use tiFy\Apps\Layout\Notice\NoticeCollectionBaseController;
-use tiFy\Apps\Layout\Notice\NoticeCollectionInterface;
-use tiFy\Apps\Layout\Param\ParamCollectionBaseController;
-use tiFy\Apps\Layout\Param\ParamCollectionInterface;
-use tiFy\Apps\Layout\Request\RequestBaseController;
+use tiFy\Apps\Layout\LayoutServiceProvider;
+use tiFy\Apps\Layout\Notices\NoticesInterface;
+use tiFy\Apps\Layout\Params\ParamsInterface;
 use tiFy\Apps\Layout\Request\RequestInterface;
-use tiFy\Apps\AppController;
-use tiFy\Components\Labels\LabelsBaseController;
-use tiFy\Components\Labels\LabelsControllerInterface;
-use tiFy\Components\Partial\Notice\Notice;
+use tiFy\Apps\Container\Container;
 
-abstract class AbstractLayoutBaseController extends AppController implements LayoutControllerInterface
+abstract class AbstractLayoutBaseController extends Container implements LayoutInterface
 {
     /**
      * Classe de rappel du controleur de vue associé.
@@ -36,16 +33,12 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
     protected $attributes = [];
 
     /**
-     * Classe de rappel de traitement des paramètres.
-     * @var ParamsControllerInterface
+     * Liste des fournisseurs de service.
+     * @var string[]
      */
-    protected $params;
-
-    /**
-     * Controleur du fournisseur de service.
-     * @var string
-     */
-    protected $serviceProvider = LayoutServiceProvider::class;
+    protected $providers = [
+        LayoutServiceProvider::class
+    ];
 
     /**
      * CONSTRUCTEUR.
@@ -58,8 +51,6 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
      */
     public function __construct($name, $attrs = [], $app)
     {
-        parent::__construct();
-
         $this->name = $name;
         $this->app = $app;
 
@@ -67,6 +58,8 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
             $this->attributes,
             $attrs
         );
+
+        parent::__construct();
 
         if (method_exists($this, 'boot')) :
             $this->boot();
@@ -80,8 +73,7 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
      */
     public function boot()
     {
-        $serviceProviderConcrete = $this->serviceProvider;
-        $this->appServiceAdd('tify.layout.service_provider' . $this->getName(), new $serviceProviderConcrete([], $this));
+
     }
 
     /**
@@ -98,7 +90,7 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
      */
     public function db()
     {
-        return $this->provide('db');
+        return $this->resolve(DbInterface::class);
     }
 
     /**
@@ -138,7 +130,7 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
      */
     public function labels()
     {
-        return $this->provide('labels');
+        return $this->resolve(LabelsInterface::class);
     }
 
     /**
@@ -146,7 +138,7 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
      */
     public function notices()
     {
-        return $this->provide('notices');
+        return $this->resolve(NoticesInterface::class);
     }
 
     /**
@@ -168,22 +160,6 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
     /**
      * {@inheritdoc}
      */
-    public function provide($key, $args = null)
-    {
-        return $this->provider()->get($key, $args);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function provider()
-    {
-        return $this->appServiceGet('tify.layout.service_provider' . $this->getName());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function param($key, $default = null)
     {
         return $this->params()->get($key, $default);
@@ -194,7 +170,7 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
      */
     public function params()
     {
-        return $this->provide('params');
+        return $this->resolve(ParamsInterface::class);
     }
 
     /**
@@ -210,7 +186,7 @@ abstract class AbstractLayoutBaseController extends AppController implements Lay
      */
     public function request()
     {
-        return $this->provide('request');
+        return $this->resolve(RequestInterface::class);
     }
 
     /**

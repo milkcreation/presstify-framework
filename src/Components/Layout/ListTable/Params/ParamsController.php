@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Components\Layout\ListTable\Param;
+namespace tiFy\Components\Layout\ListTable\Params;
 
-use tiFy\Apps\Layout\Param\ParamCollectionBaseController;
+use tiFy\Apps\Layout\Params\ParamsBaseController;
 
-class ParamCollectionController extends ParamCollectionBaseController
+class ParamsController extends ParamsBaseController
 {
     /**
      * Liste des paramètres.

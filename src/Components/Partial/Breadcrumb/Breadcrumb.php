@@ -103,7 +103,7 @@ class Breadcrumb extends AbstractPartialController
             return $part;
         elseif (is_object($part) && is_string((string) $part)) :
             return (string)$part;
-        elseif (is_callable($part)) :
+        elseif ($this->isCallable($part)) :
 
         elseif (is_array($part)) :
             $defaults = [

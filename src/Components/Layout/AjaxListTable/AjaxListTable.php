@@ -5,14 +5,37 @@ namespace tiFy\Components\Layout\AjaxListTable;
 use tiFy\Asset\Asset;
 use tiFy\Components\Layout\AjaxListTable\AjaxListTableServiceProvider;
 use tiFy\Components\Layout\ListTable\ListTable;
+use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
+use tiFy\Components\Layout\PostListTable\Column\ColumnItemPostTitleController;
+use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemAllController;
+use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemPublishController;
+use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemTrashController;
 
 class AjaxListTable extends ListTable
 {
     /**
-     * Controleur du fournisseur de service.
-     * @var string
+     * Liste des fournisseurs de service.
+     * @var string[]
      */
-    protected $serviceProvider = AjaxListTableServiceProvider::class;
+    protected $providers = [
+        AjaxListTableServiceProvider::class
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAliases()
+    {
+        return array_merge(
+            parent::getAliases(),
+            [
+                'columns.item.post_title'   => ColumnItemPostTitleController::class,
+                'view_filters.item.all'     => ViewFilterItemAllController::class,
+                'view_filters.item.publish' => ViewFilterItemPublishController::class,
+                'view_filters.item.trash'   => ViewFilterItemTrashController::class,
+            ]
+        );
+    }
 
     /**
      * {@inheritdoc}
@@ -160,7 +183,6 @@ class AjaxListTable extends ListTable
      */
     public function ajaxGetItems()
     {
-        $this->app->appRequest('POST')->set('draw', 2);
         $this->prepare();
 
         list($columns, $hidden, $sortable, $primary) = $this->getColumnInfos();
@@ -193,6 +215,10 @@ class AjaxListTable extends ListTable
                 endforeach;
                 $n++;
             endforeach;
+
+            $total_items = 94;
+            $per_page = 20;
+            $total_pages = ceil($total_items/$per_page);
         endif;
 
         $response = [

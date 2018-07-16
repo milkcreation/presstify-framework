@@ -2,22 +2,22 @@
 
 namespace tiFy\Components\Layout\ListTable\BulkAction;
 
-use tiFy\Apps\Layout\LayoutControllerInterface;
+use tiFy\Apps\Layout\LayoutInterface;
 use tiFy\Apps\Item\AbstractAppItemIterator;
 
 class BulkActionItemController extends AbstractAppItemIterator implements BulkActionItemInterface
 {
     /**
+     * Classe de rappel de la vue associée.
+     * @var LayoutInterface
+     */
+    protected $app;
+
+    /**
      * Nom de qualification.
      * @var string
      */
     protected $name = '';
-
-    /**
-     * Classe de rappel de la vue associée.
-     * @var LayoutControllerInterface
-     */
-    protected $app;
 
     /**
      * Liste des attributs de configuration.
@@ -36,11 +36,11 @@ class BulkActionItemController extends AbstractAppItemIterator implements BulkAc
      *
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration personnalisés.
-     * @param LayoutControllerInterface $app Classe de rappel de la vue associée.
+     * @param LayoutInterface $app Classe de rappel de la vue associée.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], LayoutControllerInterface $app)
+    public function __construct($name, $attrs = [], LayoutInterface $app)
     {
         $this->name = $name;
 

@@ -2,10 +2,15 @@
 
 namespace tiFy\Components\Layout\PostListTable;
 
+use tiFy\Apps\Layout\Db\DbInterface;
+use tiFy\Apps\Layout\Labels\LabelsInterface;
+use tiFy\Apps\Layout\Params\ParamsInterface;
+use tiFy\Apps\Layout\Request\RequestInterface;
 use tiFy\Components\Db\DbPostsController;
-use tiFy\Components\Layout\ListTable\ListTableServiceProvider;
-use tiFy\Components\Layout\PostListTable\Param\ParamCollectionController;
 use tiFy\Components\Layout\PostListTable\Column\ColumnItemPostTitleController;
+use tiFy\Components\Layout\ListTable\ListTableServiceProvider;
+use tiFy\Components\Layout\PostListTable\Params\ParamsController;
+use tiFy\Components\Layout\PostListTable\Request\RequestController;
 use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemAllController;
 use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemPublishController;
 use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemTrashController;
@@ -16,27 +21,35 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function defaults()
+    public function boot()
+    {
+        parent::boot();
+
+        $this->app->singleton(DbInterface::class, function ($app) {
+            return new DbPostsController($app->getName(), [], $app);
+        });
+
+        $this->app->singleton(LabelsInterface::class, function ($app) {
+            return new PostTypeLabelsController($app->getName(), [], $app);
+        });
+
+        $this->app->singleton(ParamsInterface::class, function ($app) {
+            return new ParamsController($app->get('params', []), $app);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBindings()
     {
         return array_merge(
-            parent::defaults(),
+            parent::getBindings(),
             [
-                'columns.item.post_title' => [
-                    'alias'     => ColumnItemPostTitleController::class,
-                    'concrete'  => ColumnItemPostTitleController::class
-                ],
-                'view_filters.item.all' => [
-                    'alias'     => ViewFilterItemAllController::class,
-                    'concrete'  => ViewFilterItemAllController::class
-                ],
-                'view_filters.item.publish' => [
-                    'alias'     => ViewFilterItemPublishController::class,
-                    'concrete'  => ViewFilterItemPublishController::class
-                ],
-                'view_filters.item.trash' => [
-                    'alias'     => ViewFilterItemTrashController::class,
-                    'concrete'  => ViewFilterItemTrashController::class
-                ]
+                ColumnItemPostTitleController::class,
+                ViewFilterItemAllController::class,
+                ViewFilterItemPublishController::class,
+                ViewFilterItemTrashController::class,
             ]
         );
     }
@@ -44,21 +57,13 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function parseConcrete($key, $default)
+    public function getSingletons()
     {
-        switch($key) :
-            default :
-                return parent::parseConcrete($key, $default);
-                break;
-            case 'db' :
-                return DbPostsController::class;
-                break;
-            case 'labels' :
-                return PostTypeLabelsController::class;
-                break;
-            case 'params' :
-                return ParamCollectionController::class;
-                break;
-        endswitch;
+        return array_merge(
+            parent::getSingletons(),
+            [
+                RequestInterface::class => RequestController::class,
+            ]
+        );
     }
 }

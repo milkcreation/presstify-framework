@@ -19,13 +19,8 @@ abstract class AbstractAppController
     {
         $this->app = $app;
 
-        $this->boot();
+        if (method_exists($this, 'boot')) :
+            $this->boot();
+        endif;
     }
-
-    /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    abstract function boot();
 }

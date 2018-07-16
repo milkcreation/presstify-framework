@@ -174,7 +174,7 @@ class Sidebar extends AbstractPartialController
     {
         $header = $this->get('header', '');
 
-        return is_callable($header) ? call_user_func($header) : $header;
+        return $this->isCallable($header) ? call_user_func($header) : $header;
     }
 
     /**
@@ -186,7 +186,7 @@ class Sidebar extends AbstractPartialController
     {
         $footer = $this->get('footer', '');
 
-        return is_callable($footer) ? call_user_func($footer) : $footer;
+        return $this->isCallable($footer) ? call_user_func($footer) : $footer;
     }
 
     /**

@@ -1,11 +1,14 @@
 <?php
 
-namespace tiFy\Components\Layout\AjaxListTable\Param;
+namespace tiFy\Components\Layout\PostListTable\Params;
 
-use tiFy\Components\Layout\ListTable\Param\ParamCollectionController as ListTableParamCollectionController;
+use tiFy\Components\Layout\ListTable\Params\ParamsController as ListTableParamsController;
 use tiFy\Components\Layout\PostListTable\Column\ColumnItemPostTitleController;
+use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemAllController;
+use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemPublishController;
+use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemTrashController;
 
-class ParamCollectionController extends ListTableParamCollectionController
+class ParamsController extends ListTableParamsController
 {
     /**
      * {@inheritdoc}
@@ -23,8 +26,19 @@ class ParamCollectionController extends ListTableParamCollectionController
                     'post_type'  => __('Type de post', 'tify'),
                     'post_date'  => __('Date', 'tify'),
                 ],
+                'view_filters' => [
+                    'all' => [
+                        'controller' => ViewFilterItemAllController::class
+                    ],
+                    'publish' => [
+                        'controller' => ViewFilterItemPublishController::class
+                    ],
+                    'trash' => [
+                        'controller' => ViewFilterItemTrashController::class
+                    ]
+                ],
                 'query_args'   => [
-                    'status' => ['publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit'],
+                    'post_status' => ['publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit'],
                 ],
             ]
         );

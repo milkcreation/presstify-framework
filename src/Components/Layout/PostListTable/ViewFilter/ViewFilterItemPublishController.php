@@ -19,8 +19,8 @@ class ViewFilterItemPublishController extends ViewFilterItemController
             'content'     => _n('Publié', 'Publiés', ($count > 1 ? 2 : 1), 'tify'),
             'count_items' => $count,
             'show_count'  => true,
-            'query_args'  => ['status' => 'publish'],
-            'current'     => $this->app->appRequest()->get('status', '') === 'publish'
+            'query_args'  => ['post_status' => 'publish'],
+            'current'     => $this->app->appRequest()->get('post_status', '') === 'publish'
         ];
     }
 }

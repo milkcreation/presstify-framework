@@ -3,7 +3,7 @@
 namespace tiFy\Components\Layout\UserListTable\Item;
 
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionController as ListTableItemCollectionController;
-use tiFy\Components\Layout\ListTable\Item\ItemController;
+use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 
 class ItemCollectionController extends ListTableItemCollectionController
 {
@@ -19,7 +19,7 @@ class ItemCollectionController extends ListTableItemCollectionController
         $query = new \WP_User_Query($query_args);
         if ($items = $query->get_results()) :
             foreach ($items as $item) :
-                $this->items[] = $this->app->provide('item', [$item]);
+                $this->items[] = $this->app->resolve(ItemInterface::class, [$item]);
             endforeach;
         endif;
 

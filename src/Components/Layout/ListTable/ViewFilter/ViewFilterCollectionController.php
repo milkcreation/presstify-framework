@@ -55,11 +55,11 @@ class ViewFilterCollectionController implements ViewFilterCollectionInterface
                 $attrs = ['content' => $attrs];
             endif;
 
-            $provide = $this->app->provider()->has("view_filters.item.{$name}")
+            $alias = $this->app->bound("view_filters.item.{$name}")
                 ? "view_filters.item.{$name}"
-                : 'view_filters.item';
+                : ViewFilterItemInterface::class;
 
-            $this->items[$name] = $this->app->provide($provide, [$name, $attrs]);
+            $this->items[$name] = $this->app->resolve($alias, [$name, $attrs]);
         endforeach;
 
         $this->items = array_filter($this->items, function ($value) {
