@@ -72,8 +72,9 @@ final class AdminView extends AppController
         $classname = $attrs['controller'];
         unset($attrs['controller']);
 
-        $this->appServiceShare($alias, new $classname($name, $attrs, new AdminViewBaseController($alias)));
+        $concrete = new $classname($name, $attrs, new AdminViewBaseController($alias));
+        $this->appServiceShare($alias, $concrete);
 
-        return $this->appServiceGet($alias);
+        return $concrete;
     }
 }

@@ -106,6 +106,8 @@ class DatetimeJs extends AbstractFieldItemController
                     break;
             endswitch;
         endif;
+
+        $this->set('attrs.aria-control', 'datetime_js');
     }
 
     /**

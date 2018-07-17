@@ -37,7 +37,9 @@ class AdminViewMenuController extends AbstractAppItemController
             'capability'  => 'manage_options',
             'icon_url'    => null,
             'position'    => null,
-            'function'    => [$this->app, 'render'],
+            'function'    => function() {
+                echo call_user_func([$this->app, 'render']);
+            }
         ];
     }
 

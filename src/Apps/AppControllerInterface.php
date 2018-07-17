@@ -3,11 +3,13 @@
 namespace tiFy\Apps;
 
 use Illuminate\Http\Request;
+use League\Plates\Engine;
 use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
 use tiFy\Components\Tools\ClassInfo\ClassInfo;
+use tiFy\Apps\Templates\TemplateControllerInterface;
 
 interface AppControllerInterface
 {
@@ -232,22 +234,50 @@ interface AppControllerInterface
     /**
      * Récupération de la classe de rappel du controleur de templates.
      *
-     * @return \League\Plates\Engine
+     * @return Engine
      */
     public function appTemplates();
 
-    /**
-     *
-     *
-     * @return string
-     */
-    public function appTemplateMake($name);
 
     /**
+     * Définition de fonction d'appel.
+     *
+     * @param string $name Nom de qualification d'appel de la fonction.
+     * @param string|callable Fonction à executer.
+     *
+     * @return Engine
+     */
+    public function appTemplateMacro($name, $function);
+
+    /**
+     * Définition d'un template d'affichage.
+     *
+     * @param string $name Nom de qualification du gabarit.
+     * @param array $args Listes des variables passées en argument.
+     *
+     * @return TemplateControllerInterface
+     */
+    public function appTemplateMake($name, $args = []);
+
+    /**
+     * Rendu d'un gabarit d'affichage.
+     *
+     * @param string $name Nom de qualification du gabarit.
+     * @param array $args Listes des variables passées en argument.
      *
      * @return string
      */
     public function appTemplateRender($name, $args = []);
+
+    /**
+     * Récupération d'une vue basée sur un gabarit d'affichage.
+     *
+     * @param string $name Nom de qualification du gabarit.
+     * @param array $args Listes des variables passées en argument.
+     *
+     * @return string
+     */
+    public function appTemplateView($name, $args = []);
 
     /**
      * {@inheritdoc}

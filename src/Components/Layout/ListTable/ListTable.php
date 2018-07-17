@@ -151,9 +151,9 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function getTableClasses()
     {
-        return array_merge(
-            ['widefat', 'fixed', 'striped', $this->get('plural')],
-            $this->param('table_classes')
+        return sprintf(
+            $this->param('table_classes', '%s'),
+            'widefat fixed striped '. $this->get('plural')
         );
     }
 
@@ -178,7 +178,7 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function pagination()
     {
-        return $this->resolve(PaginationInterface::class);
+        return $this->resolve(PaginationInterface::class, [[]]);
     }
 
     /**
@@ -210,7 +210,7 @@ class ListTable extends AbstractLayoutBaseController implements ListTableInterfa
      */
     public function render()
     {
-        echo $this->appTemplateRender('list-table');
+        return $this->appTemplateRender('list-table');
     }
 
     /**
