@@ -8,7 +8,7 @@
 
 <?php $this->insert('tablenav', ['which' => 'top']); ?>
 
-<table class="wp-list-table <?php echo implode(' ', $this->getTableClasses()); ?>">
+<table class="wp-list-table <?php echo $this->getTableClasses(); ?>">
 
     <?php $this->insert('thead'); ?>
 

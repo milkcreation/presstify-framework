@@ -30,34 +30,41 @@ class Sidebar extends AbstractPartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     * @var string $pos Position de l'interface left (default)|right.
-     * @var string $initial Etat initial de l'interface closed (default)|opened.
-     * @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
-     * @var string|int $min -width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
-     * @var int $z -index Profondeur de champs.
-     * @var bool $animated Activation de l'animation à l'ouverture et la fermeture.
-     * @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou desactive le bouton; la valeur chaîne de caractère active et affiche la chaîne ex : <span>X</span>.
-     * @var SidebarItemController[]|array $items {
+     *      @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
+     *      @var int $z -index Profondeur de champs.
+     *      @var attrs $attrs Liste des attributs HTML.
+     *      @var string $pos Position de l'interface left (default)|right.
+     *      @var bool $closed Etat de fermeture initial de l'interface.
+     *      @var bool $outside_close Fermeture au clic en dehors de l'interface.
+     *      @var bool $animate Activation de l'animation à l'ouverture et la fermeture.
+     *      @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou desactive le bouton; la valeur chaîne de caractère active et affiche la chaîne ex : <span>X</span>.
+     *      @var string|int $min-width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
+     *      @var SidebarItemController[]|array $items {
      *          Liste des élements.
-     *
-     * @var string $name Nom de qualification.
-     * @var attrs $attrs Liste des attributs HTML.
-     * @var string $content Contenu HTML.
-     * @var int $position Position du greffon.
+     *          @var string $name Nom de qualification
+     *          @var string|callable $content Contenu
+     *          @var array $attrs Liste des attributs HTML du conteneur.
+     *          @var int $position Position de l'élément.
      *      }
+     *      @var string|callable $header Contenu de l'entête de l'interface.
+     *      @var string|callable $footer Contenu du pied de l'interface.
+     *      @var string $theme Theme couleur de l'interface light|dark.
      * }
      */
     protected $attributes = [
-        'width'     => '300px',
-        'z-index'   => 99990,
-        'attrs'     => [],
-        'pos'       => 'left',
-        'closed'    => true,
-        'animated'  => true,
-        'toggle'    => true,
-        'min-width' => '991px',
-        'items'     => [],
-        'theme'     => 'light'
+        'width'         => '300px',
+        'z-index'       => 99990,
+        'attrs'         => [],
+        'pos'           => 'left',
+        'closed'        => true,
+        'outside_close' => true,
+        'animate'       => true,
+        'toggle'        => true,
+        'min-width'     => '991px',
+        'items'         => [],
+        'header'        => '',
+        'footer'        => '',
+        'theme'         => 'light'
     ];
 
     /**
@@ -125,6 +132,7 @@ class Sidebar extends AbstractPartialController
             ->set('attrs.aria-control', 'sidebar')
             ->set('attrs.aria-animate', $this->get('animate') ? 'true' : 'false')
             ->set('attrs.aria-closed', $this->get('closed') ? 'true' : 'false')
+            ->set('attrs.aria-outside_close', $this->get('outside_close') ? 'true' : 'false')
             ->set('attrs.aria-position', $this->get('pos'))
             ->set('attrs.aria-theme', $this->get('theme'));
 
@@ -147,10 +155,10 @@ class Sidebar extends AbstractPartialController
                 [
                     'tag'     => 'a',
                     'attrs'   => [
-                        'href'        => '#' . $this->get('attrs.id'),
-                        'class'       => 'tiFyPartial-SidebarToggleButton',
-                        'aria-control'=> 'toggle_sidebar',
-                        'data-toggle' => '#' . $this->get('attrs.id')
+                        'href'         => '#' . $this->get('attrs.id'),
+                        'class'        => 'tiFyPartial-SidebarToggleButton',
+                        'aria-control' => 'toggle_sidebar',
+                        'data-toggle'  => '#' . $this->get('attrs.id')
                     ],
                     'content' => ($this->get('theme') === 'light')
                         ? '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 75 75" xml:space="preserve" fill="#2B2B2B"><g><rect width="75" height="10" x="0" y="0" ry="0"/><rect width="75" height="10" x="0" y="22" ry="0"/><rect width="75" height="10" x="0" y="44" ry="0"/></g></svg>'

@@ -81,8 +81,8 @@ class TemplateBaseController extends Template implements TemplateControllerInter
     /**
      * {@inheritdoc}
      */
-    public function htmlAttrs($attrs)
+    public function htmlAttrs($attrs, $linearized = true)
     {
-        return Tools::Html()->parseAttrs($attrs, true);
+        return Tools::Html()->parseAttrs($attrs, $linearized);
     }
 }

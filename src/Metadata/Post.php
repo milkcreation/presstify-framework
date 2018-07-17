@@ -107,7 +107,7 @@ final class Post extends AppController
      * @param bool $single Indicateur d'enregistrement de la métadonnée unique (true)|multiple (false).
      * @param string $sanitize_callback Méthode ou fonction de rappel avant l'enregistrement.
      *
-     * @return void
+     * @return $this
      */
     public function register($post_type, $meta_key, $single = false, $sanitize_callback = 'wp_unslash')
     {
@@ -122,6 +122,8 @@ final class Post extends AppController
         if ($sanitize_callback !== '') :
             add_filter("tify_sanitize_meta_post_{$post_type}_{$meta_key}", $sanitize_callback);
         endif;
+
+        return $this;
     }
 
     /**

@@ -59,6 +59,13 @@ interface ContainerInterface extends AppControllerInterface
     public function getService($abstract);
 
     /**
+     * Récupération de la liste des fournisseurs de services ou services indépendants déclaré.
+     *
+     * @return array
+     */
+    public function getProviders();
+
+    /**
      * Récupération d'une instance de service.
      *
      * @param string $abstract Nom ou alias de qualification du service.

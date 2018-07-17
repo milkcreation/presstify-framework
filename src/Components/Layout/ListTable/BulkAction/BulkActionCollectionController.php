@@ -67,23 +67,25 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
      */
     public function parse($bulk_actions = [])
     {
-        foreach ($bulk_actions as $name => $attrs) :
-            if (is_numeric($name)) :
-                $name = (string)$attrs;
-                $attrs = [];
-            elseif (is_string($attrs)) :
-                $attrs = [
-                    'value'   => $name,
-                    'content' => $attrs
-                ];
-            endif;
+        if ($bulk_actions) :
+            foreach ($bulk_actions as $name => $attrs) :
+                if (is_numeric($name)) :
+                    $name = (string)$attrs;
+                    $attrs = [];
+                elseif (is_string($attrs)) :
+                    $attrs = [
+                        'value'   => $name,
+                        'content' => $attrs
+                    ];
+                endif;
 
-            $alias = $this->app->bound("bulk_actions.item.{$name}")
-                ? "bulk_actions.item.{$name}"
-                : BulkActionItemInterface::class;
+                $alias = $this->app->bound("bulk_actions.item.{$name}")
+                    ? "bulk_actions.item.{$name}"
+                    : BulkActionItemInterface::class;
 
-            $this->items[$name] = $this->app->resolve($alias, [$name, $attrs]);
-        endforeach;
+                $this->items[$name] = $this->app->resolve($alias, [$name, $attrs]);
+            endforeach;
+        endif;
     }
 
     /**
@@ -98,7 +100,7 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
         endif;
 
         $options = [
-            -1 => __('Bulk Actions')
+            -1 => __('Actions groupées', 'theme')
         ];
         foreach ($items as $item) :
             $options[] = new FieldOptionsItemController($item->getName(), $item->all());
@@ -113,7 +115,7 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
                     'for'   => 'bulk-action-selector-' . esc_attr($this->which),
                     'class' => 'screen-reader-text'
                 ],
-                'content' => __('Select bulk action')
+                'content' => __('Choix de l\'action', 'tify')
             ]
         );
 

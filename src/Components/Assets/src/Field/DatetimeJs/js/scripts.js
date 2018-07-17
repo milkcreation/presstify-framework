@@ -1,9 +1,9 @@
 jQuery(document).ready(function ($) {
     $(document)
-        .on('change.tify.fields.ajax_date', '.tiFyField-DatetimeJsField', function (e) {
+        .on('change.tify.fields.ajax_date', '[aria-control="datetime_js"]', function (e) {
             e.preventDefault();
 
-            var $closest = $(this).closest('.tiFyField-DatetimeJs');
+            var $closest = $(this).closest('[aria-control="datetime_js"]');
             var value = "", dateFormat = "";
             if ($('.tiFyField-DatetimeJsField--year', $closest).length) {
                 value += $('.tiFyField-DatetimeJsField--year', $closest).val();
