@@ -21,7 +21,7 @@ class ParamsController extends ParamsBaseController
         'preview_item_mode'          => [],
         'preview_item_columns'       => [],
         'preview_item_ajax_args'     => [],
-        'table_classes'              => [],
+        'table_classes'              => '%s',
         'view_filters'               => [],
         'row_actions'                => [],
         'row_actions_always_visible' => false

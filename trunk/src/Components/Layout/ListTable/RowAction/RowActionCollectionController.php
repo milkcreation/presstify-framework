@@ -61,26 +61,28 @@ class RowActionCollectionController
      */
     public function parse($row_actions = [])
     {
-        foreach ($row_actions as $name => $attrs) :
-            if (is_numeric($name)) :
-                $name = $attrs;
-                $attrs = [];
-            elseif (is_string($attrs)) :
-                $attrs['content'] = $attrs;
-            else :
-                $this->items[$name] = new $controller($name, $attrs, $this->item, $this->app);
-            endif;
+        if ($row_actions) :
+            foreach ($row_actions as $name => $attrs) :
+                if (is_numeric($name)) :
+                    $name = $attrs;
+                    $attrs = [];
+                elseif (is_string($attrs)) :
+                    $attrs['content'] = $attrs;
+                else :
+                    $this->items[$name] = new $controller($name, $attrs, $this->item, $this->app);
+                endif;
 
-            $alias = $this->app->bound("row_actions.item.{$name}")
-                ? "row_actions.item.{$name}"
-                : RowActionItemInterface::class;
+                $alias = $this->app->bound("row_actions.item.{$name}")
+                    ? "row_actions.item.{$name}"
+                    : RowActionItemInterface::class;
 
-            $this->items[$name] = $this->app->resolve($alias, [$name, $attrs, $this->item]);
-        endforeach;
+                $this->items[$name] = $this->app->resolve($alias, [$name, $attrs, $this->item]);
+            endforeach;
 
-        $this->items = array_filter($this->items, function ($value) {
-            return (string)$value !== '';
-        });
+            $this->items = array_filter($this->items, function ($value) {
+                return (string)$value !== '';
+            });
+        endif;
     }
 
     /**

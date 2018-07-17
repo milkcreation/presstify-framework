@@ -38,10 +38,8 @@ final class View extends AppController
      * @param array $attrs {
      *      Attributs de configuration
      *
-     *      @param string|callable $controller Classe de rappel
+     *      @param string|callable $controller Classe de rappel du controleur d'affichage.
      *      @param array $params Liste des paramètres.
-     *      @param string $db Identifiant de base de données.
-     *      @param string|array $labels Identifiant des intitulés.
      * }
      *
      * @return LayoutViewInterface
@@ -60,8 +58,9 @@ final class View extends AppController
         $classname = $attrs['controller'];
         unset($attrs['controller']);
 
-        $this->appServiceShare($alias, new $classname($name, $attrs, new ViewBaseController($alias)));
+        $concrete = new $classname($name, $attrs, new ViewBaseController($alias));
+        $this->appServiceShare($alias, $concrete);
 
-        return $this->appServiceGet($alias);
+        return $concrete;
     }
 }

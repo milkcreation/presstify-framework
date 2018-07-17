@@ -1,11 +1,31 @@
 <?php
 
-namespace tiFy\AdminView;
+namespace tiFy\View;
 
 use tiFy\Apps\Layout\AbstractLayoutViewController;
 
 class ViewBaseController extends AbstractLayoutViewController implements ViewControllerInterface
 {
+    /**
+     * Initialisation du controleur.
+     *
+     * @return void
+     */
+    public function appBoot()
+    {
+        $this->appAddAction('wp_loaded');
+    }
+
+    /**
+     * A l'issue du chargement de Wordpress.
+     *
+     * @return void
+     */
+    public function wp_loaded()
+    {
+        $this->layout()->current();
+    }
+
     /**
      * {@inheritdoc}
      */

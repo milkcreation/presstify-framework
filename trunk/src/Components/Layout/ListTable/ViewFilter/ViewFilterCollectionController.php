@@ -47,23 +47,25 @@ class ViewFilterCollectionController implements ViewFilterCollectionInterface
      */
     public function parse($filters = [])
     {
-        foreach ($filters as $name => $attrs) :
-            if (is_numeric($name)) :
-                $name = $attrs;
-                $attrs = [];
-            elseif (is_string($attrs)) :
-                $attrs = ['content' => $attrs];
-            endif;
+        if ($filters) :
+            foreach ($filters as $name => $attrs) :
+                if (is_numeric($name)) :
+                    $name = $attrs;
+                    $attrs = [];
+                elseif (is_string($attrs)) :
+                    $attrs = ['content' => $attrs];
+                endif;
 
-            $alias = $this->app->bound("view_filters.item.{$name}")
-                ? "view_filters.item.{$name}"
-                : ViewFilterItemInterface::class;
+                $alias = $this->app->bound("view_filters.item.{$name}")
+                    ? "view_filters.item.{$name}"
+                    : ViewFilterItemInterface::class;
 
-            $this->items[$name] = $this->app->resolve($alias, [$name, $attrs]);
-        endforeach;
+                $this->items[$name] = $this->app->resolve($alias, [$name, $attrs]);
+            endforeach;
 
-        $this->items = array_filter($this->items, function ($value) {
-            return (string)$value !== '';
-        });
+            $this->items = array_filter($this->items, function ($value) {
+                return (string)$value !== '';
+            });
+        endif;
     }
 }

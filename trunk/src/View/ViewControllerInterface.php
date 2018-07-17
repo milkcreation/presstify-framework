@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\AdminView;
+namespace tiFy\View;
 
 use tiFy\Apps\Layout\LayoutViewInterface;
 

@@ -54,8 +54,6 @@ class Templates extends Engine
         $basedir = $this->get('basedir');
         if(is_dir($basedir)) :
             $this->addFolder($this->app->appClassname(), $basedir, true);
-        elseif ($directory !== get_template_directory() . '/templates') :
-            $this->addFolder($this->app->appClassname(), get_template_directory() . '/templates', true);
         endif;
     }
 
@@ -122,7 +120,7 @@ class Templates extends Engine
     }
 
     /**
-     * Traiteement des attributs de configuration.
+     * Traitement des attributs de configuration.
      *
      * @param array $attrs Liste des attributs de configuration.
      *
@@ -130,20 +128,10 @@ class Templates extends Engine
      */
     public function parse($attrs = [])
     {
-        $this->set('directory', $this->app->appDirname() . '/templates');
-
         $this->attributes = array_merge(
             $this->attributes,
             $attrs
         );
-
-        if (!$basedir = $this->get('basedir', '')) :
-            $basedir = get_template_directory() . '/templates';
-
-            if(preg_match('#^\/?vendor/presstify-plugins/(.*)#', $this->app->appRelPath(), $matches)) :
-                $basedir .= "/presstify-plugins/{$matches[1]}";
-            endif;
-        endif;
     }
 
     /**

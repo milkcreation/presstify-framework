@@ -415,7 +415,7 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
             'templates',
             array_merge(
                 [
-                    'basedir'    => get_template_directory() . '/templates/presstify/field/' . $this->appLowerName(),
+                    'directory'  => $this->appDirname() . '/templates',
                     'controller' => TemplateController::class
                 ],
                 $attrs ? : $this->get('templates', [])

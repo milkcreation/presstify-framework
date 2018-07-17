@@ -2,14 +2,7 @@
 
 namespace tiFy\User\SignIn;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use tiFy\Apps\AppController;
-use tiFy\Field\Field;
-use tiFy\Components\Tools\Notices\NoticesAwareTrait;
-use tiFy\Partial\Partial;
-
-interface SignInControllerInterface
+interface SignInItemInterface
 {
     /**
      * Vérification des droits d'authentification d'un utilisateur.
