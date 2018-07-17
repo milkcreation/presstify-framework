@@ -64,7 +64,7 @@ class PaginationController extends AbstractAppItemIterator implements Pagination
         else :
             $page_links[] = sprintf("<a class='first-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                 esc_url(remove_query_arg('paged', $current_url)),
-                __('First page'),
+                __('Première page', 'tify'),
                 '&laquo;'
             );
         endif;
@@ -83,17 +83,17 @@ class PaginationController extends AbstractAppItemIterator implements Pagination
         else :
             $page_links[] = sprintf("<a class='prev-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                 esc_url(add_query_arg('paged', max(1, $page_num - 1), $current_url)),
-                __('Previous page'),
+                __('Page précédente', 'tify'),
                 '&lsaquo;'
             );
         endif;
 
         if ('bottom' === $which) :
             $html_current_page = $this->app->request()->getPagenum();
-            $total_pages_before = '<span class="screen-reader-text">' . __('Current Page') . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
+            $total_pages_before = '<span class="screen-reader-text">' . __('Page courante', 'tify') . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
         else :
             $html_current_page = sprintf("%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
-                '<label for="current-page-selector" class="screen-reader-text">' . __('Current Page') . '</label>',
+                '<label for="current-page-selector" class="screen-reader-text">' . __('Page courante', 'tify') . '</label>',
                 $page_num,
                 strlen($this->getTotalPages())
             );
@@ -113,7 +113,7 @@ class PaginationController extends AbstractAppItemIterator implements Pagination
         else :
             $page_links[] = sprintf("<a class='next-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                 esc_url(add_query_arg('paged', min($this->getTotalPages(), $page_num + 1), $current_url)),
-                __('Next page'),
+                __('Page suivante', 'tify'),
                 '&rsaquo;'
             );
         endif;
@@ -123,7 +123,7 @@ class PaginationController extends AbstractAppItemIterator implements Pagination
         else :
             $page_links[] = sprintf("<a class='last-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                 esc_url(add_query_arg('paged', $this->getTotalPages(), $current_url)),
-                __('Last page'),
+                __('Dernière page', 'tify'),
                 '&raquo;'
             );
         endif;

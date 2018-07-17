@@ -3,6 +3,7 @@
 namespace tiFy\Components\Partial\Sidebar;
 
 use tiFy\Kernel\Item\AbstractItemIterator;
+use tiFy\Kernel\Tools;
 
 class SidebarItemController extends AbstractItemIterator
 {
@@ -46,6 +47,8 @@ class SidebarItemController extends AbstractItemIterator
      */
     public function __toString()
     {
-        return ($this->isCallable($this->get('content'))) ? call_user_func($this->get('content')) : $this->get('content');
+        $content = $this->get('content', '');
+
+        return (Tools::Functions()->isCallable($content)) ? call_user_func($content) : $content;
     }
 }

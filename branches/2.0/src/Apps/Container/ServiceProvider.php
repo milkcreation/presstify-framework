@@ -96,14 +96,24 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
     public function parse()
     {
         $provides = [];
-        $provides += $this->getBindings();
-        $provides += $this->getSingletons();
+        if ($bindings = $this->getBindings()) :
+            foreach ($bindings as $abstract => $concrete) :
+                if (is_numeric($abstract)) :
+                    $abstract = $concrete;
+                endif;
+                $provides[$abstract] = $concrete;
+            endforeach;
+        endif;
+        if ($singletons = $this->getSingletons()) :
+            foreach ($singletons as $abstract => $concrete) :
+                if (is_numeric($abstract)) :
+                    $abstract = $concrete;
+                endif;
+                $provides[$abstract] = $concrete;
+            endforeach;
+        endif;
 
         foreach($provides as $abstract => $concrete) :
-            if (is_numeric($abstract)) :
-                $abstract = $concrete;
-            endif;
-
             array_push($this->provides, $abstract);
 
             if ($this->isSingleton($abstract)) :

@@ -18,7 +18,7 @@ namespace tiFy\User\SignIn;
 use tiFy\Apps\AppController;
 use tiFy\User\User;
 use tiFy\User\SignIn\SignInControllerInterface;
-use tiFy\User\SignIn\SignInFactoryController;
+use tiFy\User\SignIn\SignInItemController;
 
 final class SignIn extends AppController
 {
@@ -54,8 +54,9 @@ final class SignIn extends AppController
      * Déclaration d'un formulaire d'authentification.
      *
      * @param string $name Nom de qualification du formulaire d'authentification.
-     * @param array $attrs Attributs de configuration.
-     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration.
+     * }
      * @return SignInControllerInterface
      */
     public function register($name, $attrs = [])
@@ -65,14 +66,17 @@ final class SignIn extends AppController
             return;
         endif;
 
-        $attrs = array_merge(['controller' => SignInFactoryController::class], $attrs);
+        $attrs = array_merge(['controller' => SignInItemController::class], $attrs);
         $controller = $attrs['controller'];
 
-        $this->appServiceShare($alias, function () use ($controller, $name, $attrs) {
-            return call_user_func_array("{$controller}::create", [$name, $attrs]);
-        });
+        try {
+            $concrete = new $controller($name, $attrs, $this);
+            $this->appServiceShare($alias, $concrete);
+        } catch(\InvalidArgumentException $e) {
+            wp_die($e->getMessage(), '', $e->getCode());
+        }
 
-        return $this->appServiceGet($alias);
+        return $concrete;
     }
 
     /**

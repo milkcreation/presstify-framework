@@ -16,10 +16,8 @@ jQuery(document).ready(function ($) {
             }
         })
         .on('click', function (e) {
-            var pos = $('.tiFySidebar').data('pos');
-
             if (!$(e.target).closest('[aria-control="sidebar"][aria-closed="false"]').length && !$(e.target).closest('[aria-control="toggle_sidebar"]').length) {
-                $('[aria-control="sidebar"][aria-closed="false"]').each(function(){
+                $('[aria-control="sidebar"][aria-closed="false"][aria-outside_close="true"]').each(function(){
                     $(this).attr('aria-closed', 'true');
                 });
             }

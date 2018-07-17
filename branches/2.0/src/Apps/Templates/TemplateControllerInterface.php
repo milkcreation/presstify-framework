@@ -40,11 +40,12 @@ interface TemplateControllerInterface
     /**
      * Linéarisation d'une liste d'attributs HTML.
      *
-     * @param array Liste des attributs HTML.
+     * @param array $attrs Liste des attributs HTML.
+     * @param bool $linearized Activation de la linéarisation.
      *
      * @return string
      */
-    public function htmlAttrs($attrs);
+    public function htmlAttrs($attrs, $linearized = true);
 
     /**
      * Assignation ou récupération de donnée(s).

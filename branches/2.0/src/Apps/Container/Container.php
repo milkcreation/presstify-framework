@@ -34,7 +34,7 @@ class Container extends AppController implements ContainerInterface
     {
         parent::__construct();
 
-        foreach ($this->providers as $provider) :
+        foreach ($this->getProviders() as $provider) :
             $concrete = new $provider($this);
 
             if ($concrete instanceof ServiceProvider) :
@@ -111,6 +111,17 @@ class Container extends AppController implements ContainerInterface
                 501
             );
         endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProviders()
+    {
+        return array_merge(
+            $this->providers,
+            $this->appConfig('providers', [])
+        );
     }
 
     /**

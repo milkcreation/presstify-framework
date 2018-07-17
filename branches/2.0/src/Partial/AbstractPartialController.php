@@ -276,9 +276,7 @@ abstract class AbstractPartialController extends AppController
      */
     public function isCallable($var)
     {
-        return is_string($var)
-            ? preg_match('#\\\#', $var) && is_callable($var, true)
-            : is_callable($var, true);
+        return Tools::Functions()->isCallable($var);
     }
 
     /**
@@ -353,21 +351,10 @@ abstract class AbstractPartialController extends AppController
             'templates',
             array_merge(
                 [
-                    'basedir'    => get_template_directory() . '/templates/presstify/partial/' . $this->appLowerName(),
-                    'controller' => TemplateController::class,
-                    'args'       => []
+                    'directory'  => $this->appDirname() . '/templates',
+                    'controller' => TemplateController::class
                 ],
                 $attrs
-            )
-        );
-        $this->set(
-            'templates.args',
-            array_merge(
-                [
-                    'id'    => $this->id,
-                    'index' => $this->index
-                ],
-                $this->get('templates.args', [])
             )
         );
 

@@ -6,6 +6,7 @@ use ArrayIterator;
 use Illuminate\Support\Arr;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Apps\Item\AbstractAppItemIterator;
+use tiFy\Kernel\Tools;
 use tiFy\Partial\Partial;
 
 class ColumnItemController extends AbstractAppItemIterator implements ColumnItemInterface
@@ -67,25 +68,27 @@ class ColumnItemController extends AbstractAppItemIterator implements ColumnItem
      */
     public function display($item)
     {
-        if (!$value = $item->get($this->name)) :
-            return '';
+        if ($value = $item->get($this->name)) :
+            $type = (($db = $this->app->db()) && $db->existsCol($this->name)) ? strtoupper($db->getColAttr($this->name,
+                'type')) : '';
+
+            switch ($type) :
+                default:
+                    if (is_array($value)) :
+                        return join(', ', $value);
+                    else :
+                        return $value;
+                    endif;
+                    break;
+                case 'DATETIME' :
+                    return \mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
+                    break;
+            endswitch;
+        elseif (Tools::Functions()->isCallable($this->get('content'))) :
+            return call_user_func($this->get('content'), $item);
+        else :
+            return $this->get('content');
         endif;
-
-        $type = (($db = $this->app->db()) && $db->existsCol($this->name)) ? strtoupper($db->getColAttr($this->name,
-            'type')) : '';
-
-        switch ($type) :
-            default:
-                if (is_array($value)) :
-                    return join(', ', $value);
-                else :
-                    return $value;
-                endif;
-                break;
-            case 'DATETIME' :
-                return \mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
-                break;
-        endswitch;
     }
 
     /**

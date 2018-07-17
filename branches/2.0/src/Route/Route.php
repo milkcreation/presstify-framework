@@ -318,7 +318,7 @@ final class Route extends AppController
     {
         global $wp_query;
 
-        if (! did_action('pre_get_posts')) :
+        if (!$wp_query instanceof \WP_Query) :
             throw new LogicException(
                 __('Cette méthode est appelée de la mauvaise manière, elle devrait être déclenchée après l\'action "pre_get_posts', 'tify'),
                 500
