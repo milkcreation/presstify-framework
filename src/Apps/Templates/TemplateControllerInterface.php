@@ -112,9 +112,18 @@ interface TemplateControllerInterface
     public function render(array $data = []);
 
     /**
+     * Réinitialisation du contenu d'une section.
+     *
+     * @param string $name Nom de qualification de la section.
+     *
+     * @return $this
+     */
+    public function reset($name);
+
+    /**
      * Affiche le contenu d'une section.
      *
-     * @param string $name Nom de qualification.
+     * @param string $name Nom de qualification de la section.
      * @param string $default Valeur d'affichage par défaut.
      *
      * @return string|null
@@ -124,14 +133,14 @@ interface TemplateControllerInterface
     /**
      * Ouverture de déclaration de contenu de section.
      *
-     * @param string $name Nom de qualification.
+     * @param string $name Nom de qualification de la section.
      *
      * @return null
      */
     public function start($name);
 
     /**
-     * Fermeture de déclaration du contenu de la section courante.
+     * Fermeture de déclaration du contenu de la section ouverte.
      *
      * @return null
      */

@@ -85,4 +85,30 @@ class TemplateBaseController extends Template implements TemplateControllerInter
     {
         return Tools::Html()->parseAttrs($attrs, $linearized);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reset($name)
+    {
+        $this->start($name); $this->stop();
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function share($datas)
+    {
+        return $this->engine->addData($datas);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set($key, $value)
+    {
+        return Arr::set($this->data, $key, $value);
+    }
 }

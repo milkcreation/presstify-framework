@@ -154,7 +154,7 @@ class RouteHandle extends AbstractAppItemController
             endforeach;
 
             if ($query_args = $this->get('query_args', [])) :
-                $wp_query->query_vars = $query_args;
+                $wp_query->parse_query($query_args);
             else :
                 $wp_query->query_vars = $wp_query->fill_query_vars([]);
             endif;
