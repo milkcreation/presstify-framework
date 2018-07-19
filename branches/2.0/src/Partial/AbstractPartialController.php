@@ -354,7 +354,7 @@ abstract class AbstractPartialController extends AppController
                     'directory'  => $this->appDirname() . '/templates',
                     'controller' => TemplateController::class
                 ],
-                $attrs
+                $attrs ? : $this->get('templates', [])
             )
         );
 
