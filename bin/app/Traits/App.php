@@ -231,7 +231,7 @@ trait App
      *
      * @return mixed
      */
-    final public function appConfig($attr = null, $default = '', $classname = null)
+    public function appConfig($attr = null, $default = '', $classname = null)
     {
         return self::tFyAppConfig($attr, $default, $classname);
     }
