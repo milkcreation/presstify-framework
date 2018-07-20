@@ -136,7 +136,7 @@ class Route extends \tiFy\App\Core
      */
     public function init()
     {
-        do_action('tify_route_register');
+        do_action('tify_route_register', $this);
 
         // Bypass
         if (!$this->map) :
