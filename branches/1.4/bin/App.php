@@ -1,9 +1,11 @@
 <?php
+
 namespace tiFy;
 
+use tiFy\App\AppControllerInterface;
 use tiFy\App\Traits\App as TraitsApp;
 
-abstract class App
+abstract class App implements AppControllerInterface
 {
     use TraitsApp;
 
@@ -15,5 +17,6 @@ abstract class App
     public function __construct()
     {
         $this->tFyAppOnInit();
+        $this->appBoot();
     }
 }

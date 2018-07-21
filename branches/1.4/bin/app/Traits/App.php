@@ -16,47 +16,387 @@ use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
+use tiFy\App\Templates\Engine as TemplatesEngine;
 use tiFy\tiFy;
 use tiFy\Apps;
 
 trait App
 {
     /**
-     * FORMATAGE
+     * Classe de rappel de gestion des templates
+     * @var TemplatesEngine
      */
+    protected $appTemplates;
+
     /**
-     * Formatage lower_name d'une chaine de caractère
-     * @internal Converti une chaine de caractère CamelCase en snake_case
-     *
-     * @param null|string $name
-     * @param string $separator
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    final public function appLowerName($name = null, $separator = '-')
+    public function appAbsDir()
+    {
+        return tiFy::$AbsDir;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appAbsPath()
+    {
+        return tiFy::$AbsPath;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appAbsUrl()
+    {
+        return tiFy::$AbsUrl;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appAddAction($tag, $method = '', $priority = 10, $accepted_args = 1, $classname = null)
+    {
+        return self::tFyAppAddAction($tag, $method, $priority, $accepted_args, $classname);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appAddFilter($tag, $class_method = '', $priority = 10, $accepted_args = 1, $classname = null)
+    {
+        return self::tFyAppAddFilter($tag, $class_method, $priority, $accepted_args, $classname);
+    }
+
+    /**
+     * @todo
+     * {@inheritdoc}
+     */
+    public function appAsset($filename)
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appBoot()
+    {
+
+    }
+
+    /**
+     * @todo
+     * {@inheritdoc}
+     */
+    public function appClassInfo()
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appClassLoad($namespace, $base_dir = null)
+    {
+        return tiFy::classLoad($namespace, $base_dir);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appClassname($classname = null)
+    {
+        return self::tFyAppClassname($classname);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appConfig($attr = null, $default = '', $classname = null)
+    {
+        return self::tFyAppConfig($attr, $default, $classname);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appDirname($classname = null)
+    {
+        return self::tFyAppDirname($classname);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appEvent()
+    {
+        return self::tFyAppEmitter();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appEventListen($name, $listener, $priority = 0)
+    {
+        return self::tFyAppListen($name, $listener, $priority);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appEventTrigger($event, $args = null)
+    {
+        return self::tFyAppEmit($event, $args);
+    }
+
+    /**
+     * @todo
+     * {@inheritdoc}
+     */
+    public function appExists()
+    {
+
+    }
+
+    /**
+     * @todo
+     * {@inheritdoc}
+     */
+    public function appGet($key = null, $default = null)
+    {
+
+    }
+
+    /**
+     * @todo
+     * {@inheritdoc}
+     *
+     * @return self|object
+     */
+    public static function appInstance($classname = null, $args = [])
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appLog($classname = null)
+    {
+        return self::tFyAppLog($classname);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appLowerName($name = null, $separator = '-')
     {
         return self::tFyAppLowerName($name, $separator);
     }
 
     /**
-     * Formatage UpperName d'une chaine de caratère
-     * @internal Converti une chaine de caractère snake_case en CamelCase
-     *
-     * @param null|string $name Chaine de caractère à traité. Nom de la classe par défaut.
-     * @param bool $underscore Conservation des underscores
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    final public function appUpperName($name = null, $underscore = true)
+    public function appNamespace($classname = null)
+    {
+        return self::tFyAppNamespace($classname);
+    }
+
+    /**
+     * @todo
+     * {@inheritdoc}
+     */
+    public function appRegister($attrs = [])
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appRelPath($app = null)
+    {
+        return self::tFyAppRel($app);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appRequest($property = '')
+    {
+        return self::tFyAppRequest($property);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceAdd($alias, $concrete = null, $share = false)
+    {
+        return $this->appContainer()->add($alias, $concrete, $share);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceGet($alias, $args = [])
+    {
+        return $this->appContainer()->get($alias, $args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceHas($alias)
+    {
+        return $this->appContainer()->has($alias);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceProvider($provider)
+    {
+        return $this->appContainer()->addServiceProvider($provider);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appServiceShare($alias, $concrete = null)
+    {
+        return $this->appContainer()->share($alias, $concrete);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appSet($key, $value)
+    {
+        return self::tFyAppSetAttr($key, $value, $this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appShortname($classname = null)
+    {
+        return self::tFyAppShortname($classname);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appTemplates($options = [])
+    {
+        if (!$this->appTemplates) :
+            $this->appTemplates = new TemplatesEngine($options, $this);
+        endif;
+
+        return $this->appTemplates;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appTemplateMacro($name, $function)
+    {
+        return $this->appTemplates()->registerFunction($name, $function);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appTemplateMake($name, $args = [])
+    {
+        return $this->appTemplates()->make($name, $args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appTemplateRender($name, $args = [])
+    {
+        return $this->appTemplateMake($name)->render($args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appTemplateView($name, $args = [])
+    {
+        return $this->appTemplates()->view($name, $args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appUpperName($name = null, $underscore = true)
     {
         return self::tFyAppUpperName($name, $underscore);
     }
 
     /**
-     * ATTRIBUTS
+     * {@inheritdoc}
+     */
+    public function appUrl($classname = null)
+    {
+        return self::tFyAppUrl($classname);
+    }
+
+    /**
+     * LES METHODES SUIVANTES SONT DESORMAIS DEPRECIEES ET NE DEVRAIT PLUS ETRE UTILISEESDANS VOS DEVELOPPEMENT
+     * NEANMOINS ELLE PERMETTENT D'ASSURER LA RETRO-COMPATIBILITE DE PRESSTIFY 1.4
+     * --------------------------------------------------------------------------------------------------------------------
      */
     /**
+     * COMPATIBILITE 1.4
+     */
+    /**
+     * Ajout d'un conteneur d’injection de dépendances
+     * @deprecated
+     *
+     * @param string $alias
+     *
+     * @return \League\Container\Definition\DefinitionInterface
+     */
+    public function appAddContainer($alias, $concrete = null)
+    {
+        return self::tFyAppAddContainer($alias, $concrete);
+    }
+
+    /**
+     * Ajout d'une fonction d'aide à la saisie
+     * @deprecated
+     *
+     * @param string $tag Identification de l'accroche
+     * @param string $method Méthode de la classe à executer
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
+     *
+     * @return null|callable \add_filter()
+     */
+    public function appAddHelper($tag, $method = '', $classname = null)
+    {
+        return self::tFyAppAddHelper($tag, $method, $classname);
+    }
+
+    /**
+     * Récupération d'un attribut de l'applicatif
+     * @deprecated
+     *
+     * @param string $attr Id|Type|ReflectionClass|ClassName|ShortName|Namespace|Filename|Dirname|Url|Rel|Config|OverridePath
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
+     *
+     * @return null|mixed
+     */
+    public function appAttr($attr, $classname = null)
+    {
+        return self::tFyAppAttr($attr, $classname);
+    }
+
+    /**
      * Récupération de la liste des attributs de l'applicatif
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -98,241 +438,15 @@ trait App
      *      }
      * }
      */
-    final public function appAttrList($classname = null)
+    public function appAttrList($classname = null)
     {
         return self::tFyAppAttrList($classname);
     }
 
     /**
-     * Récupération d'un attribut de l'applicatif
-     *
-     * @param string $attr Id|Type|ReflectionClass|ClassName|ShortName|Namespace|Filename|Dirname|Url|Rel|Config|OverridePath
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|mixed
-     */
-    final public function appAttr($attr, $classname = null)
-    {
-        return self::tFyAppAttr($attr, $classname);
-    }
-
-    /**
-     * Définition d'un attribut d'application déclarée.
-     *
-     * @param string $key Clé de qualification de l'attribut à définir. Syntaxe à point permise pour permettre l'enregistrement de sous niveau.
-     * @param mixed $value Valeur de définition de l'attribut.
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'applicatif.
-     *
-     * @return bool
-     */
-    final public static function appSetAttr($key, $value, $classname)
-    {
-        return self::tFyAppSetAttr($key, $value, $classname);
-    }
-
-    /**
-     * Récupération du nom complet de la classe (Espace de nom inclus)
-     *
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|string
-     */
-    final public function appClassname($classname = null)
-    {
-        return self::tFyAppClassname($classname);
-    }
-
-    /**
-     * Récupération du nom cours de la classe (hors espace de nom)
-     *
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|string
-     */
-    final public function appShortname($classname = null)
-    {
-        return self::tFyAppShortname($classname);
-    }
-
-    /**
-     * Récupération de l'espace de nom
-     *
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|string
-     */
-    final public function appNamespace($classname = null)
-    {
-        return self::tFyAppNamespace($classname);
-    }
-
-    /**
-     * Récupération du chemin absolu de la racine de tiFy
-     *
-     * @return resource
-     */
-    final public function appAbsDir()
-    {
-        return self::tFyAppAbsDir();
-    }
-
-    /**
-     * Récupération de l'url absolue de la racine de tiFy
-     *
-     * @return string
-     */
-    final public function appAbsUrl()
-    {
-        return self::tFyAppAbsUrl();
-    }
-
-    /**
-     * Récupération du chemin absolu vers le repertoire racine de la classe
-     *
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|string
-     */
-    final public function appDirname($classname = null)
-    {
-        return self::tFyAppDirname($classname);
-    }
-
-    /**
-     * Récupération de l'url absolue vers le repertoire racine de la classe
-     *
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|string
-     */
-    final public function appUrl($classname = null)
-    {
-        return self::tFyAppUrl($classname);
-    }
-
-    /**
-     * Récupération du chemin relatif vers le repertoire racine de la classe
-     *
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|string
-     */
-    final public function appRel($classname = null)
-    {
-        return self::tFyAppRel($classname);
-    }
-
-    /**
-     * Récupération d'attributs de configuration de l'application
-     *
-     * @param null|string $attr Attribut de configuration, renvoie la liste complète des attributs de configuration si non qualifié
-     * @param void|mixed $default Valeur par défaut de retour
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return mixed
-     */
-    public function appConfig($attr = null, $default = '', $classname = null)
-    {
-        return self::tFyAppConfig($attr, $default, $classname);
-    }
-
-    /**
-     * EVENEMENTS
-     */
-    /**
-     * Ajout d'un filtre
-     *
-     * @param string $tag Identification de l'accroche
-     * @param string $class_method Méthode de la classe à executer.
-     * @param int $priority Priorité d'execution
-     * @param int $accepted_args Nombre d'argument permis
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|true
-     */
-    final public function appAddFilter($tag, $class_method = '', $priority = 10, $accepted_args = 1, $classname = null)
-    {
-        return self::tFyAppAddFilter($tag, $class_method, $priority, $accepted_args, $classname);
-    }
-
-    /**
-     * Ajout d'une action
-     *
-     * @param string $tag Identification de l'accroche
-     * @param string $method Méthode de la classe à executer
-     * @param int $priority Priorité d'execution
-     * @param int $accepted_args Nombre d'argument permis
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|true
-     */
-    final public function appAddAction($tag, $method = '', $priority = 10, $accepted_args = 1, $classname = null)
-    {
-        return self::tFyAppAddAction($tag, $method, $priority, $accepted_args, $classname);
-    }
-
-    /**
-     * Récupération du déclencheur d'événement
-     *
-     * @return Emitter
-     */
-    final public function appEmitter()
-    {
-        return self::tFyAppEmitter();
-    }
-
-    /**
-     * Déclaration d'un événement.
-     * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
-     *
-     * @param string $name Identifiant de qualification de l'événement.
-     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
-     * @param int $priority Priorité de traitement.
-     *
-     * @return EmitterInterface
-     */
-    final public function appListen($name, $listener, $priority = 0)
-    {
-        return self::tFyAppListen($name, $listener, $priority);
-    }
-
-    /**
-     * Déclenchement d'un événement.
-     * @see http://event.thephpleague.com/2.0/events/classes/
-     *
-     * @param string|object $event Identifiant de qualification de l'événement.
-     * @param mixed $args Variable(s) passée(s) en argument.
-     *
-     * @return null|EventInterface
-     */
-    final public function appEmit($event, $args = null)
-    {
-        return self::tFyAppEmit($event, $args);
-    }
-
-    /**
-     * AIDE A LA SAISIE
-     */
-    /**
-     * Ajout d'une fonction d'aide à la saisie
-     *
-     * @param string $tag Identification de l'accroche
-     * @param string $method Méthode de la classe à executer
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return null|callable \add_filter()
-     */
-    final public function appAddHelper($tag, $method = '', $classname = null)
-    {
-        return self::tFyAppAddHelper($tag, $method, $classname);
-    }
-
-    /**
-     * CONTENEUR D'INJECTION
-     */
-    /**
      * Conteneur d’injection de dépendances
      * @see http://container.thephpleague.com/
+     * @deprecated
      *
      * @return \League\Container\Container
      */
@@ -342,43 +456,34 @@ trait App
     }
 
     /**
-     * Ajout d'un conteneur d’injection de dépendances
+     * Déclenchement d'un événement.
+     * @see http://event.thephpleague.com/2.0/events/classes/
+     * @deprecated
      *
-     * @param string $alias
+     * @param string|object $event Identifiant de qualification de l'événement.
+     * @param mixed $args Variable(s) passée(s) en argument.
      *
-     * @return \League\Container\Definition\DefinitionInterface
+     * @return null|EventInterface
      */
-    public function appAddContainer($alias, $concrete = null)
+    public function appEmit($event, $args = null)
     {
-        return self::tFyAppAddContainer($alias, $concrete);
+        return self::tFyAppEmit($event, $args);
     }
 
     /**
-     * Déclaration d'un conteneur d’injection de dépendances unique
+     * Récupération du déclencheur d'événement
+     * @deprecated
      *
-     * @param string $alias
-     *
-     * @return mixed
+     * @return Emitter
      */
-    public function appShareContainer($alias, $concrete = null)
+    public function appEmitter()
     {
-        return self::tFyAppShareContainer($alias, $concrete);
-    }
-
-    /**
-     * Vérification d'existance conteneur d’injection de dépendances
-     *
-     * @param string $alias
-     *
-     * @return bool
-     */
-    public function appHasContainer($alias)
-    {
-        return self::tFyAppHasContainer($alias);
+        return self::tFyAppEmitter();
     }
 
     /**
      * Récupérateur d'un conteneur d’injection de dépendances
+     * @deprecated
      *
      * @param string $alias
      *
@@ -390,25 +495,8 @@ trait App
     }
 
     /**
-     * JOURNALISATION
-     */
-    /**
-     * Récupération de la classe de rappel de journalisation.
-     *
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
-     *
-     * @return Logger
-     */
-    public function appLog($classname = null)
-    {
-        return self::tFyAppLog($classname);
-    }
-
-    /**
-     * SURCHARGE
-     */
-    /**
      * Récupération d'une classe de surcharge
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      * @param array $path Liste des chemins à parcourir
@@ -421,7 +509,37 @@ trait App
     }
 
     /**
+     * Vérification d'existance conteneur d’injection de dépendances
+     * @deprecated
+     *
+     * @param string $alias
+     *
+     * @return bool
+     */
+    public function appHasContainer($alias)
+    {
+        return self::tFyAppHasContainer($alias);
+    }
+
+    /**
+     * Déclaration d'un événement.
+     * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
+     * @deprecated
+     *
+     * @param string $name Identifiant de qualification de l'événement.
+     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
+     * @param int $priority Priorité de traitement.
+     *
+     * @return EmitterInterface
+     */
+    public function appListen($name, $listener, $priority = 0)
+    {
+        return self::tFyAppListen($name, $listener, $priority);
+    }
+
+    /**
      * Instanciation d'une classe de surcharge
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      * @param array $path Liste des chemins à parcourir
@@ -435,28 +553,23 @@ trait App
     }
 
     /**
-     * REQUETE
+     * Récupération du chemin relatif vers le repertoire racine de la classe
+     * @deprecated
+     *
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
+     *
+     * @return null|string
      */
-    /**
-     * Récupération de la classe de rappel de propriété de la requête globale.
-     *
-     * @see https://laravel.com/api/5.6/Illuminate/Http/Request.html
-     * @see https://symfony.com/doc/current/components/http_foundation.html
-     * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
-     *
-     * @param string $property Propriété de la requête à traiter $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes|$_FILES (alias files)|SERVER (alias server)|headers.
-     *
-     * @return Request|FileBag|HeaderBag|ParameterBag|ServerBag
-     */
-    public function appRequest($property = '')
+    public function appRel($classname = null)
     {
-        return self::tFyAppRequest($property);
+        return self::tFyAppRel($classname);
     }
 
     /**
      * Appel d'une méthode de requête global
      * @see https://symfony.com/doc/current/components/http_foundation.html
      * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
+     * @deprecated
      *
      * @param string $method Nom de la méthode à appeler (all|keys|replace|add|get|set|has|remove|getAlpha|getAlnum|getBoolean|getDigits|getInt|filter)
      * @param array $args Tableau associatif des arguments passés dans la méthode.
@@ -471,6 +584,7 @@ trait App
 
     /**
      * Vérification d'existance d'une variable de requête globale
+     * @deprecated
      *
      * @param string $key Identifiant de qualification de l'argument de requête
      * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
@@ -484,6 +598,7 @@ trait App
 
     /**
      * Récupération d'une variable de requête globale
+     * @deprecated
      *
      * @param string $key Identifiant de qualification de l'argument de requête
      * @param mixed $default Valeur de retour par défaut
@@ -498,6 +613,7 @@ trait App
 
     /**
      * Définition d'une variable de requête globale
+     * @deprecated
      *
      * @param array $parameters Liste des paramètres. Tableau associatif
      * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
@@ -510,10 +626,40 @@ trait App
     }
 
     /**
+     * Définition d'un attribut d'application déclarée.
+     * @deprecated
+     *
+     * @param string $key Clé de qualification de l'attribut à définir. Syntaxe à point permise pour permettre l'enregistrement de sous niveau.
+     * @param mixed $value Valeur de définition de l'attribut.
+     * @param object|string $classname Instance (objet) ou Nom de la classe de l'applicatif.
+     *
+     * @return bool
+     */
+    public static function appSetAttr($key, $value, $classname)
+    {
+        return self::tFyAppSetAttr($key, $value, $classname);
+    }
+
+    /**
+     * Déclaration d'un conteneur d’injection de dépendances unique
+     * @deprecated
+     *
+     * @param string $alias
+     *
+     * @return mixed
+     */
+    public function appShareContainer($alias, $concrete = null)
+    {
+        return self::tFyAppShareContainer($alias, $concrete);
+    }
+
+    /**
      * METHODES STATIQUES
+     * @deprecated
      */
     /**
      * Ajout d'un filtre
+     * @deprecated
      *
      * @param string $tag Identification de l'accroche
      * @param string $method Méthode de la classe à executer.
@@ -549,6 +695,7 @@ trait App
 
     /**
      * Ajout d'une action
+     * @deprecated
      *
      * @param string $tag Identification de l'accroche
      * @param string $method Méthode de la classe à executer
@@ -565,6 +712,7 @@ trait App
 
     /**
      * Ajout d'une fonction d'aide à la saisie
+     * @deprecated
      *
      * @param string $tag Identification de l'accroche
      * @param string $method Méthode de la classe à executer
@@ -582,6 +730,7 @@ trait App
 
     /**
      * Récupération du déclencheur d'événement
+     * @deprecated
      *
      * @return Emitter
      */
@@ -593,6 +742,7 @@ trait App
     /**
      * Déclaration d'un événement.
      * @see http://event.thephpleague.com/2.0/emitter/basic-usage/
+     * @deprecated
      *
      * @param string $name Identifiant de qualification de l'événement.
      * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
@@ -609,6 +759,7 @@ trait App
      * Déclenchement d'un événement.
      * @see http://event.thephpleague.com/2.0/events/classes/
      * @see http://event.thephpleague.com/2.0/events/arguments/
+     * @deprecated
      *
      * @param string|object $event Identifiant de qualification de l'événement.
      * @param mixed $args Variable(s) passée(s) en argument.
@@ -625,10 +776,8 @@ trait App
     }
 
     /**
-     * ATTRIBUTS
-     */
-    /**
      * Définition d'attributs de l'applicatif
+     * @deprecated
      *
      * @param array $attrs Liste des attributs à définir
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
@@ -644,6 +793,7 @@ trait App
 
     /**
      * Récupération de la liste des attributs de l'applicatif
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -696,6 +846,7 @@ trait App
 
     /**
      * Récupération d'un attribut de l'applicatif
+     * @deprecated
      *
      * @param string $attr Id|Type|ReflectionClass|ClassName|ShortName|Namespace|Filename|Dirname|Url|Rel|Config|OverridePath
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
@@ -715,6 +866,7 @@ trait App
 
     /**
      * Définition d'un attribut d'application déclarée.
+     * @deprecated
      *
      * @param string $key Clé de qualification de l'attribut à définir. Syntaxe à point permise pour permettre l'enregistrement de sous niveau.
      * @param mixed $value Valeur de définition de l'attribut.
@@ -729,6 +881,7 @@ trait App
 
     /**
      * Récupération du nom complet de la classe (Espace de nom inclus)
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -741,6 +894,7 @@ trait App
 
     /**
      * Récupération du nom cours de la classe (hors espace de nom)
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -753,6 +907,7 @@ trait App
 
     /**
      * Récupération de l'espace de nom
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -765,6 +920,7 @@ trait App
 
     /**
      * Récupération du chemin absolu de la racine de tiFy
+     * @deprecated
      *
      * @return resource
      */
@@ -775,6 +931,7 @@ trait App
 
     /**
      * Récupération de l'url absolue de la racine de tiFy
+     * @deprecated
      *
      * @return string
      */
@@ -785,6 +942,7 @@ trait App
 
     /**
      * Récupération du chemin absolu vers le repertoire racine de la classe
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -797,6 +955,7 @@ trait App
 
     /**
      * Récupération de l'url absolue vers le repertoire racine de la classe
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -809,6 +968,7 @@ trait App
 
     /**
      * Récupération du chemin relatif vers le repertoire racine de la classe
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -821,6 +981,7 @@ trait App
 
     /**
      * Récupération du chemin absolu vers le repertoire racine de presstiFy
+     * @deprecated
      *
      * @return null|string
      */
@@ -831,6 +992,7 @@ trait App
 
     /**
      * Récupération de l'url absolue vers le repertoire racine de presstiFy
+     * @deprecated
      *
      * @return null|string
      */
@@ -841,6 +1003,7 @@ trait App
 
     /**
      * Liste des chemins vers le repertoire de stockage des gabarits de l'applicatif
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -853,6 +1016,7 @@ trait App
 
     /**
      * Récupération des chemins vers le repertoire des assets (stockage des ressources de type feuilles de styles CSS, scripts JS, images, SVG)
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -879,6 +1043,8 @@ trait App
     }
 
     /**
+     * @deprecated
+     *
      * @param null $asset
      * @param null $classname
      */
@@ -921,10 +1087,8 @@ trait App
     }
 
     /**
-     * CONFIGURATION
-     */
-    /**
      * Récupération des attributs de configuration par défaut de l'app
+     * @deprecated
      *
      * @param null|string $attr Attribut de configuration, renvoie la liste complète des attributs de configuration si non qualifié
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
@@ -944,6 +1108,7 @@ trait App
 
     /**
      * Récupération d'attributs de configuration de l'application
+     * @deprecated
      *
      * @param null|string $attr Attribut de configuration, renvoie la liste complète des attributs de configuration si non qualifié.
      * @param void|mixed $default Valeur par défaut de retour
@@ -964,6 +1129,7 @@ trait App
 
     /**
      * Définition de la liste des attributs de configuration de l'application
+     * @deprecated
      *
      * @param mixed $attrs Liste des attributs de configuration
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
@@ -979,6 +1145,7 @@ trait App
 
     /**
      * Définition d'un attribut de configuration de l'applicatif
+     * @deprecated
      *
      * @param string $name Qualification de l'attribut de configuration
      * @param null|mixed $value Valeur de l'attribut de configuration
@@ -994,14 +1161,9 @@ trait App
     }
 
     /**
-     * SURCHARGES
-     */
-    /**
-     * FORMATAGE
-     */
-    /**
      * Formatage lower_name d'une chaine de caractère
      * Converti une chaine de caractère CamelCase en snake_case
+     * @deprecated
      *
      * @param null|string $name
      * @param string $separator
@@ -1020,6 +1182,7 @@ trait App
     /**
      * Formatage UpperName d'une chaine de caratère
      * Converti une chaine de caractère snake_case en CamelCase
+     * @deprecated
      *
      * @param null|string $name Chaine de caractère à traité. Nom de la classe par défaut.
      * @param bool $underscore Conservation des underscore
@@ -1037,6 +1200,7 @@ trait App
 
     /**
      * Récupération d'une classe de surcharge
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      * @param array $path Liste des chemins à parcourir
@@ -1065,6 +1229,7 @@ trait App
 
     /**
      * Chargement d'une classe de surcharge
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      * @param array $path Liste des chemins à parcourir
@@ -1085,6 +1250,7 @@ trait App
 
     /**
      * Récupération de la liste des noms de classe de surcharge
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1115,6 +1281,7 @@ trait App
 
     /**
      * Récupération du nom d'appel de la classe dans l'espace de surcharge
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1129,6 +1296,7 @@ trait App
 
     /**
      * Récupération de la liste des noms de classe de surcharge des jeux de fonctionnalités
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1151,6 +1319,7 @@ trait App
 
     /**
      * Récupération de la liste des noms de classe de surcharge des extensions
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1173,6 +1342,7 @@ trait App
 
     /**
      * Récupération de la liste des espaces de nom de surcharge
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1203,6 +1373,7 @@ trait App
 
     /**
      * Récupération de l'espace de nom de surcharge principal
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1220,6 +1391,7 @@ trait App
 
     /**
      * Récupération de la liste des espaces de nom de surcharge des jeux de fonctionnalités
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1243,6 +1415,7 @@ trait App
 
     /**
      * Récupération de la liste des espaces de nom de surcharge des jeux de fonctionnalités
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1265,10 +1438,8 @@ trait App
     }
 
     /**
-     * SURCHAGES - Gabarits
-     */
-    /**
      * Chargement d'un gabarit d'affichage
+     * @deprecated
      *
      * @param string $slug Identification du template ou chemin relatif .
      * @param string $name Modifieur de template.
@@ -1299,6 +1470,7 @@ trait App
 
     /**
      * Récupération d'un gabarit d'affichage
+     * @deprecated
      *
      * @param $template
      * @param $templates
@@ -1451,6 +1623,7 @@ trait App
 
     /**
      * Récupération de la classe de rappel de propriété de la requête globale.
+     * @deprecated
      *
      * @see https://laravel.com/api/5.6/Illuminate/Http/Request.html
      * @see https://symfony.com/doc/current/components/http_foundation.html
@@ -1483,6 +1656,7 @@ trait App
 
     /**
      * Vérification d'existance d'une variable de requête globale
+     * @deprecated
      *
      * @param string $key Identifiant de qualification de l'argument de requête
      * @param string $type Type de requête à traiter POST|GET|COOKIE|FILES|SERVER ...
@@ -1496,6 +1670,7 @@ trait App
 
     /**
      * Récupération d'une variable de requête globale
+     * @deprecated
      *
      * @param string $key Identifiant de qualification de l'argument de requête
      * @param mixed $default Valeur de retour par défaut
@@ -1510,6 +1685,7 @@ trait App
 
     /**
      * Définition d'une variable de requête globale
+     * @deprecated
      *
      * @param string $key Identifiant de qualification de l'argument de requête
      * @param mixed $value Valeur de retour
@@ -1525,6 +1701,7 @@ trait App
     /**
      * Conteneur d’injection de dépendances
      * @see http://container.thephpleague.com/
+     * @deprecated
      *
      * @return \League\Container\Container
      */
@@ -1535,6 +1712,7 @@ trait App
 
     /**
      * Ajout d'un conteneur d’injection de dépendances
+     * @deprecated
      *
      * @param string $alias
      *
@@ -1547,6 +1725,7 @@ trait App
 
     /**
      * Déclaration d'un conteneur d’injection de dépendances unique
+     * @deprecated
      *
      * @param string $alias
      *
@@ -1559,6 +1738,7 @@ trait App
 
     /**
      * Vérification d'existance conteneur d’injection de dépendances
+     * @deprecated
      *
      * @param string $alias
      *
@@ -1571,6 +1751,7 @@ trait App
 
     /**
      * Récupérateur d'un conteneur d’injection de dépendances
+     * @deprecated
      *
      * @param string $alias
      *
@@ -1582,10 +1763,8 @@ trait App
     }
 
     /**
-     * JOURNALISATION
-     */
-    /**
      * Récupération de la classe de rappel de journalisation.
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1617,6 +1796,7 @@ trait App
 
     /**
      * Traitement du nom de la classe
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1637,6 +1817,7 @@ trait App
 
     /**
      * Déclaration si nécessaire de l'application
+     * @deprecated
      *
      * @param string $classname Nom de la classe de l'application
      *
@@ -1664,6 +1845,7 @@ trait App
     /**
      * Récupère les arguments d'une classe externe pour ventiler les arguments de l'application (experimental)
      * @see https://stackoverflow.com/questions/119281/how-do-you-copy-a-php-object-into-a-different-object-type
+     * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
@@ -1684,10 +1866,6 @@ trait App
         endforeach;
     }
 
-
-    /**
-     * DEPRECATED
-     */
     /**
      * Lancement à l'initialisation de la classe
      * @deprecated
