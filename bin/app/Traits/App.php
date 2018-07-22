@@ -345,12 +345,9 @@ trait App
     }
 
     /**
-     * LES METHODES SUIVANTES SONT DESORMAIS DEPRECIEES ET NE DEVRAIT PLUS ETRE UTILISEESDANS VOS DEVELOPPEMENT
+     * LES METHODES SUIVANTES SONT DESORMAIS DEPRECIEES ET NE DEVRAIT PLUS ETRE UTILISEES DANS VOS DEVELOPPEMENTS
      * NEANMOINS ELLE PERMETTENT D'ASSURER LA RETRO-COMPATIBILITE DE PRESSTIFY 1.4
      * --------------------------------------------------------------------------------------------------------------------
-     */
-    /**
-     * COMPATIBILITE 1.4
      */
     /**
      * Ajout d'un conteneur d’injection de dépendances
