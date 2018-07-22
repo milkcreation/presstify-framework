@@ -27,4 +27,14 @@ abstract class AbstractAppController
             $this->boot();
         endif;
     }
+
+    /**
+     * Initialisation du controleur
+     *
+     * @return void
+     */
+    public function boot()
+    {
+
+    }
 }
