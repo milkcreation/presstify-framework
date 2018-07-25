@@ -40,13 +40,7 @@ class Radio extends AbstractFieldItemController
     ];
 
     /**
-     * Traitement des attributs de configuration.        if (!isset($this->attributes['attrs']['id'])) :
-            $this->attributes['attrs']['id'] = 'tiFyField-password--' . $this->getIndex();
-        endif;
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {

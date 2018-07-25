@@ -13,11 +13,11 @@
     <?php echo $this->toggle(); ?>
 
     <div class="tiFyPartial-SidebarPanel">
-        <div class="tiFyPartial-SidebarItemsHeader">
+        <div class="tiFyPartial-SidebarHeader">
             <?php echo $this->header(); ?>
         </div>
 
-        <div class="tiFyPartial-SidebarItemsBody">
+        <div class="tiFyPartial-SidebarBody">
             <?php if ($items = $this->get('items', [])) : ?>
                 <ul class="tiFyPartial-SidebarItems">
                 <?php foreach($items as $item) : ?>
@@ -27,7 +27,7 @@
             <?php endif; ?>
         </div>
 
-        <div class="tiFyPartial-SidebarItemsFooter">
+        <div class="tiFyPartial-SidebarFooter">
             <?php echo $this->footer(); ?>
         </div>
     </div>

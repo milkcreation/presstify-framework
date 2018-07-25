@@ -15,7 +15,7 @@ class UserListTable extends LayoutUserListTable
     {
         \wp_enqueue_style(
             'tiFyAdminViewUserListTable',
-            $this->appAsset('AdminView/UserListTable/css/styles.css'),
+            $this->appAssetUrl('AdminView/UserListTable/css/styles.css'),
             [],
             171115
         );

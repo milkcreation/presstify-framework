@@ -16,7 +16,7 @@ class ListTable extends LayoutListTable
         if ($preview_item_mode = $this->param('preview_item_mode')) :
             wp_enqueue_script(
                 'tiFyAdminView-ListTable',
-                $this->appAsset('/AdminView/ListTable/js/scripts.js'),
+                $this->appAssetUrl('/AdminView/ListTable/js/scripts.js'),
                 ['jquery', 'url'],
                 171118,
                 true

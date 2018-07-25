@@ -35,7 +35,7 @@ interface ItemInterface
      *
      * @return mixed
      */
-    public function has($key, $default = null);
+    public function has($key);
 
     /**
      * Récupération de la liste des clés d'indexes des attributs de configuration.

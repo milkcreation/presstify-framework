@@ -53,13 +53,13 @@ class Modal extends AbstractPartialController
     {
         \wp_register_style(
             'tiFyPartialModal',
-            $this->appAsset('/Partial/Modal/css/styles.css'),
+            $this->appAssetUrl('/Partial/Modal/css/styles.css'),
             [],
             171206
         );
         \wp_register_script(
             'tiFyPartialModal',
-            $this->appAsset('/Partial/Modal/js/scripts.js'),
+            $this->appAssetUrl('/Partial/Modal/js/scripts.js'),
             ['jquery'],
             171206,
             true

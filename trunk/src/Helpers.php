@@ -78,6 +78,29 @@ if (!function_exists('tify_field_checkbox_collection')) :
     }
 endif;
 
+if (!function_exists('tify_field_colorpicker')) :
+    /**
+     * Selecteur de couleur.
+     *
+     * @param array $attrs {
+     *      Liste des attributs de configuration
+     * }
+     * @param bool $echo Activation de l'affichage. défaut true.
+     *
+     * @return string
+     */
+    function tify_field_colorpicker($attrs = [], $echo = true)
+    {
+        $output = (string)Field::Colorpicker($attrs);
+
+        if ($echo) :
+            echo $output;
+        else :
+            return $output;
+        endif;
+    }
+endif;
+
 if (!function_exists('tify_field_crypted')) :
     /**
      * Champ crypté.

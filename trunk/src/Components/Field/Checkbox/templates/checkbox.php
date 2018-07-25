@@ -7,7 +7,7 @@
 <?php $this->before(); ?>
 
 <?php
-    echo tify_partial_tag(
+    tify_partial_tag(
         [
             'tag'   => 'input',
             'attrs' => $this->get('attrs', [])

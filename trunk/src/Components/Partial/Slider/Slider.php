@@ -32,13 +32,13 @@ class Slider extends AbstractPartialController
     {
         \wp_register_style(
             'tiFyPartialSlider',
-            $this->appAsset('/Partial/Slider/css/styles.css'),
+            $this->appAssetUrl('/Partial/Slider/css/styles.css'),
             ['slick', 'slick-theme'],
             170722
         );
         \wp_register_script(
             'tiFyPartialSlider',
-            $this->appAsset('/Partial/Slider/js/scripts.js'),
+            $this->appAssetUrl('/Partial/Slider/js/scripts.js'),
             ['slick'],
             170722,
             true

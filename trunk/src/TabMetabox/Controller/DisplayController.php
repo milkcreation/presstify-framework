@@ -62,13 +62,13 @@ class DisplayController
     {
         \wp_enqueue_style(
             'tiFyTabMetabox',
-            $this->appAsset('/TabMetabox/css/styles.css'),
+            $this->appAssetUrl('/TabMetabox/css/styles.css'),
             ['tiFyPartial-Navtabs'],
             150216
         );
         \wp_enqueue_script(
             'tiFyTabMetabox',
-            $this->appAsset('/TabMetabox/js/scripts.js'),
+            $this->appAssetUrl('/TabMetabox/js/scripts.js'),
             ['tiFyPartial-Navtabs'],
             151019,
             true
@@ -181,7 +181,9 @@ class DisplayController
      */
     public function render()
     {
-        $args = func_num_args() ? func_get_args() : [];
+        $args = func_num_args() && ($this->getScreenOption('object_type') !== 'options')
+            ? func_get_args()
+            : [];
 
         $output = "";
         $output .= "<div id=\"tiFyTaboox-Container--" . $this->get('box')->getName() . "\" class=\"tiFyTaboox-Container\">";

@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
 use tiFy\Apps\AppsServiceProvider;
+use tiFy\Kernel\Assets\Assets;
 
 final class tiFy
 {
@@ -50,6 +51,12 @@ final class tiFy
      * @var string
      */
     protected $absUrl;
+
+    /**
+     * Classe de rappel du controleur des assets.
+     * @var Assets
+     */
+    protected $assets;
 
     /**
      * Classe de chargement automatique.
@@ -156,6 +163,9 @@ final class tiFy
         $apps = new AppsServiceProvider($this);
         $this->serviceShare(AppsServiceProvider::class, $apps);
         $this->serviceProvider($apps);
+
+        // Pré-initialisation des services
+        $this->assets();
     }
 
     /**
@@ -234,6 +244,20 @@ final class tiFy
     public function apps()
     {
         return $this->serviceGet(AppsServiceProvider::class);
+    }
+
+    /**
+     * Récupération de la classe de rappel du controleur des assets
+     *
+     * @return Assets
+     */
+    public function assets()
+    {
+        if (!$this->assets) :
+            $this->assets = new Assets();
+        endif;
+
+        return $this->assets;
     }
 
     /**

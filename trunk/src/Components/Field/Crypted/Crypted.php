@@ -66,13 +66,13 @@ class Crypted extends AbstractFieldItemController
 
         \wp_register_style(
             'tiFyFieldCrypted',
-            $this->appAsset('/Field/Crypted/css/styles.css'),
+            $this->appAssetUrl('/Field/Crypted/css/styles.css'),
             ['dashicons'],
             180519
         );
         \wp_register_script(
             'tiFyFieldCrypted',
-            $this->appAsset('/Field/Crypted/js/scripts.js'),
+            $this->appAssetUrl('/Field/Crypted/js/scripts.js'),
             ['jquery'],
             180519,
             true
@@ -135,11 +135,7 @@ class Crypted extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {

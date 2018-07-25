@@ -57,13 +57,13 @@ class DatetimeJs extends AbstractFieldItemController
     {
         \wp_register_style(
             'tiFyFieldDatetimeJs',
-            $this->appAsset('/Field/DatetimeJs/css/styles.css'),
+            $this->appAssetUrl('/Field/DatetimeJs/css/styles.css'),
             [],
             171112
         );
         \wp_register_script(
             'tiFyFieldDatetimeJs',
-            $this->appAsset('/Field/DatetimeJs/js/scripts.js'),
+            $this->appAssetUrl('/Field/DatetimeJs/js/scripts.js'),
             ['jquery', 'moment'],
             171112,
             true
@@ -82,11 +82,7 @@ class DatetimeJs extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -111,9 +107,7 @@ class DatetimeJs extends AbstractFieldItemController
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function display()
     {
