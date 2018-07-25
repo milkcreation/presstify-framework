@@ -3,6 +3,7 @@
 namespace tiFy\Components\Columns\PostType;
 
 use tiFy\Column\ColumnPostType;
+use tiFy\Kernel\Tools;
 use tiFy\Partial\Partial;
 
 class PostThumbnail extends ColumnPostType
@@ -53,7 +54,7 @@ class PostThumbnail extends ColumnPostType
         $attachment_id = get_post_thumbnail_id($post_id) ? : 0;
 
         // Vérifie l'existance de l'image
-        if (($attachment = wp_get_attachment_image_src($attachment_id)) && isset($attachment[0]) && ($path = tify_get_relative_url($attachment[0])) && file_exists(ABSPATH . $path)) :
+        if (($attachment = wp_get_attachment_image_src($attachment_id)) && isset($attachment[0]) && ($path = Tools::File()->getRelPath($attachment[0])) && file_exists(ABSPATH . $path)) :
             $thumb = wp_get_attachment_image($attachment_id, [80, 60], true);
         else :
             $thumb = Partial::HolderImage();

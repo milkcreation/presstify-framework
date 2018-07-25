@@ -2,7 +2,6 @@
 
 namespace tiFy\Components\Layout\AjaxListTable;
 
-use tiFy\Asset\Asset;
 use tiFy\Components\Layout\AjaxListTable\AjaxListTableServiceProvider;
 use tiFy\Components\Layout\ListTable\ListTable;
 use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
@@ -86,9 +85,7 @@ class AjaxListTable extends ListTable
             )
         );
 
-        /** @var Asset $assetController */
-        $assetController = $this->app->appServiceGet(Asset::class);
-        $assetController->setDataJs(
+        $this->appAssets()->setDataJs(
             'dataTables',
             [
                 'options'       => $options,

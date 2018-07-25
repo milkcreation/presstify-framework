@@ -315,7 +315,7 @@ final class TabMetabox extends AppController
      *      @var int $position Ordre d'affichage du greffon.
      * }
      * 
-     * @return null|TabBoxNodeController
+     * @return null|TabNodeItemController
      */
     public function registerNode($alias, $attrs = [])
     {

@@ -52,7 +52,7 @@ final class AppsServiceProvider extends LeagueAbstractServiceProvider implements
     {
         $this->tfy = $tfy;
 
-        // Déclaration de l'application
+        // Déclaration de l'application maitresse.
         if ($app = $this->tfy->getConfig('app', [])) :
             $classname = Arr::get($app, 'classname', App::class);
 

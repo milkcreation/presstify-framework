@@ -61,13 +61,13 @@ class ToggleSwitch extends AbstractFieldItemController
     {
         \wp_register_style(
             'tiFyFieldToggleSwitch',
-            $this->appAsset('/Field/ToggleSwitch/css/styles.css'),
+            $this->appAssetUrl('/Field/ToggleSwitch/css/styles.css'),
             [],
             170724
         );
         \wp_register_script(
             'tiFyFieldToggleSwitch',
-            $this->appAsset('/Field/ToggleSwitch/js/scripts.js'),
+            $this->appAssetUrl('/Field/ToggleSwitch/js/scripts.js'),
             ['jquery'],
             170724
         );
@@ -85,11 +85,7 @@ class ToggleSwitch extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -107,9 +103,7 @@ class ToggleSwitch extends AbstractFieldItemController
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function display()
     {

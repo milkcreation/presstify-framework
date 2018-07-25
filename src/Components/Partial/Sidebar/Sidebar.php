@@ -76,13 +76,13 @@ class Sidebar extends AbstractPartialController
     {
         \wp_register_style(
             'tiFyPartialSidebar',
-            $this->appAsset('/Partial/Sidebar/css/styles.css'),
+            $this->appAssetUrl('/Partial/Sidebar/css/styles.css'),
             [],
             180511
         );
         \wp_register_script(
             'tiFyPartialSidebar',
-            $this->appAsset('/Partial/Sidebar/css/scripts.js'),
+            $this->appAssetUrl('/Partial/Sidebar/css/scripts.js'),
             ['jquery'],
             180511,
             true

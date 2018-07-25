@@ -8,7 +8,7 @@
 
     <div <?php $this->attrs(); ?>>
         <?php
-        echo tify_field_hidden(
+        tify_field_hidden(
             [
                 'name'  => $this->get('name'),
                 'value' => $this->get('value'),
@@ -21,7 +21,7 @@
 
         <div class="tiFy-Input--media">
             <?php
-            echo tify_field_text(
+            tify_field_text(
                 [
                     'value'        => $this->get('selected_infos', ''),
                     'attrs' => [
@@ -36,7 +36,7 @@
         </div>
 
         <?php
-        echo tify_partial_tag(
+        tify_partial_tag(
             [
                 'tag'     => 'a',
                 'attrs'   => [

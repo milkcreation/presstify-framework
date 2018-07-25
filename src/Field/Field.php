@@ -20,6 +20,7 @@ use tiFy\Apps\AppController;
 use tiFy\Components\Field\Button\Button;
 use tiFy\Components\Field\Checkbox\Checkbox;
 use tiFy\Components\Field\CheckboxCollection\CheckboxCollection;
+use tiFy\Components\Field\Colorpicker\Colorpicker;
 use tiFy\Components\Field\Crypted\Crypted;
 use tiFy\Components\Field\DatetimeJs\DatetimeJs;
 use tiFy\Components\Field\File\File;
@@ -48,6 +49,7 @@ use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
  * @method static Button Button(string $id = null, array $attrs = [])
  * @method static Checkbox(string $id = null, array $attrs = [])
  * @method static CheckboxCollection(string $id = null, array $attrs = [])
+ * @method static Colorpicker(string $id = null, array $attrs = [])
  * @method static Crypted(string $id = null, array $attrs = [])
  * @method static DatetimeJs(string $id = null, array $attrs = [])
  * @method static File(string $id = null, array $attrs = [])

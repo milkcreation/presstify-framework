@@ -41,11 +41,8 @@ class Select extends AbstractFieldItemController
         'options'  => []
     ];
 
-
     /**
-     * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getValue()
     {
@@ -69,11 +66,7 @@ class Select extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -86,11 +79,7 @@ class Select extends AbstractFieldItemController
     }
 
     /**
-     * Traitement de l'attribut de configuration de la qualification de soumission du champ "name".
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     protected function parseName($attrs = [])
     {

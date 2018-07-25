@@ -55,7 +55,7 @@ class Breadcrumb extends AbstractPartialController
     {
         \wp_register_style(
             'tiFyPartialBreadcrumb',
-            $this->appAsset('/Partial/Breadcrumb/css/styles.css'),
+            $this->appAssetUrl('/Partial/Breadcrumb/css/styles.css'),
             [],
             180122
         );
