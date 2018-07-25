@@ -2,7 +2,6 @@
 
 namespace tiFy\Components\Field\TextRemaining;
 
-use tiFy\Asset\Asset;
 use tiFy\Field\AbstractFieldItemController;
 use tiFy\Lib\Chars;
 
@@ -41,13 +40,13 @@ class TextRemaining extends AbstractFieldItemController
     {
         \wp_register_style(
             'tiFyFieldTextRemaining',
-            $this->appAsset('/Field/TextRemaining/css/styles.css'),
+            $this->appAssetUrl('/Field/TextRemaining/css/styles.css'),
             [],
             180611
         );
         \wp_register_script(
             'tiFyFieldTextRemaining',
-            $this->appAsset('/Field/TextRemaining/js/scripts.js'),
+            $this->appAssetUrl('/Field/TextRemaining/js/scripts.js'),
             ['jquery'],
             180611,
             true
@@ -66,11 +65,7 @@ class TextRemaining extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -113,7 +108,7 @@ class TextRemaining extends AbstractFieldItemController
      */
     public function display()
     {
-        $this->appServiceGet(Asset::class)->setDataJs(
+        $this->appAssets()->setDataJs(
             'fieldTextRemaining',
             [
                 'plural'   => __('caractères restants', 'tify'),

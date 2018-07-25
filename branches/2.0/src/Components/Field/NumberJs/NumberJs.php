@@ -1,18 +1,5 @@
 <?php
 
-/**
- * @name NumberJs
- * @desc Champ de selection de valeur numérique JS
- * @package presstiFy
- * @namespace tiFy\Components\Field\NumberJs
- * @version 1.1
- * @subpackage Core
- * @since 1.2.535
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Components\Field\NumberJs;
 
 use tiFy\Field\AbstractFieldItemController;
@@ -53,13 +40,13 @@ class NumberJs extends AbstractFieldItemController
     {
         \wp_register_style(
             'tiFyFieldNumberJs',
-            $this->appAsset('/Field/NumberJs/css/styles.css'),
+            $this->appAssetUrl('/Field/NumberJs/css/styles.css'),
             ['dashicons'],
             171019
         );
         \wp_register_script(
             'tiFyFieldNumberJs',
-            $this->appAsset('/Field/NumberJs/js/scripts.css'),
+            $this->appAssetUrl('/Field/NumberJs/js/scripts.css'),
             ['jquery-ui-spinner'],
             171019,
             true
@@ -78,11 +65,7 @@ class NumberJs extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {

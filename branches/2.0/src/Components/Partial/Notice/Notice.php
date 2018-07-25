@@ -34,13 +34,13 @@ class Notice extends AbstractPartialController
         // Déclaration des scripts
         \wp_register_style(
             'tiFyPartialNotice',
-            $this->appAsset('/Partial/Notice/css/styles.css'),
+            $this->appAssetUrl('/Partial/Notice/css/styles.css'),
             [],
             180214
         );
         \wp_register_script(
             'tiFyPartialNotice',
-            $this->appAsset('/Partial/Notice/js/scripts.js'),
+            $this->appAssetUrl('/Partial/Notice/js/scripts.js'),
             ['jquery'],
             180214,
             true

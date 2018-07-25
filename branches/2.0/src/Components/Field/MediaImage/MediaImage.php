@@ -61,13 +61,13 @@ class MediaImage extends AbstractFieldItemController
     {
         \wp_register_style(
             'tiFyField-MediaImage',
-            $this->appAsset('/Field/MediaImage/css/styles.css'),
+            $this->appAssetUrl('/Field/MediaImage/css/styles.css'),
             [],
             180516
         );
         \wp_register_script(
             'tiFyField-MediaImage',
-            $this->appAsset('/Field/MediaImage/js/scripts.js'),
+            $this->appAssetUrl('/Field/MediaImage/js/scripts.js'),
             ['jquery'],
             180516,
             true
@@ -87,11 +87,7 @@ class MediaImage extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -107,10 +103,9 @@ class MediaImage extends AbstractFieldItemController
         $this->attributes['container_attrs'] = [
             'id' => $this->get('container_id'),
             'class' => $this->get('container_class'),
-            'style' => "background-color:" . $this->get('default_color') .";" .
+            'style' => "background-color:" . $this->get('default_color') .";"  .
                 "max-width:" . $this->get('width') . "px;" .
-                "max-height:" . $this->get('height') . "px;" .
-                "padding-top:" . 100*($this->get('height')/$this->get('width')) . "%"
+                "max-height:" . $this->get('height') . "px;"
         ];
 
         if ($size_info = $this->get('size_info')) :
@@ -138,9 +133,7 @@ class MediaImage extends AbstractFieldItemController
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function display()
     {
@@ -150,18 +143,7 @@ class MediaImage extends AbstractFieldItemController
 
         return $this->appTemplateRender(
             'media-image',
-            [
-                'index'           => $this->getIndex(),
-                'container_attrs' => Tools::Html()->parseAttrs($this->get('container_attrs')),
-                'name'            => $this->get('name'),
-                'value'           => $this->get('value'),
-                'default'         => $this->get('default'),
-                'value_img'       => $this->get('value_img'),
-                'default_img'     => $this->get('default_img'),
-                'editable'        => $this->get('editable'),
-                'info_txt'        => $this->get('info_txt'),
-                'content'         => $this->get('content')
-            ]
+            $this->all()
         );
     }
 }

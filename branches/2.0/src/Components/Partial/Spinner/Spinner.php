@@ -46,14 +46,14 @@ class Spinner extends AbstractPartialController
     {
         \wp_register_style(
             'tiFyPartialSpinner',
-            $this->appAsset('/Partial/Spinner/css/spinkit.min.css'),
+            $this->appAssetUrl('/Partial/Spinner/css/spinkit.min.css'),
             [],
             '1.2.5'
         );
         foreach($this->spinners as $spinner) :
             \wp_register_style(
                 "tiFyPartialSpinner-{$spinner}",
-                $this->appAsset("/Partial/Spinner/css/{$spinner}.min.css"),
+                $this->appAssetUrl("/Partial/Spinner/css/{$spinner}.min.css"),
                 [],
                 '1.2.5'
             );

@@ -36,13 +36,13 @@ class MediaFile extends AbstractFieldItemController
     {
         \wp_register_style(
             'tiFyFieldMediaFile',
-            $this->appAsset('/Field/MediaFile/css/styles.css'),
+            $this->appAssetUrl('/Field/MediaFile/css/styles.css'),
             ['dashicons'],
             180616
         );
         \wp_register_script(
             'tiFyFieldMediaFile',
-            $this->appAsset('/Field/MediaFile/js/scripts.js'),
+            $this->appAssetUrl('/Field/MediaFile/js/scripts.js'),
             ['jquery'],
             180616,
             true
@@ -62,11 +62,7 @@ class MediaFile extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -88,9 +84,7 @@ class MediaFile extends AbstractFieldItemController
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function display()
     {

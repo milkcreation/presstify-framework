@@ -31,7 +31,7 @@ class HolderImage extends AbstractPartialController
     {
         \wp_register_style(
             'tiFyPartialHolderImage',
-            $this->appAsset('/Partial/HolderImage/css/styles.css'),
+            $this->appAssetUrl('/Partial/HolderImage/css/styles.css'),
             [],
             160714
         );

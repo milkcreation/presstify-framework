@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
 use tiFy\Components\Tools\ClassInfo\ClassInfo;
 use tiFy\Apps\Templates\TemplateControllerInterface;
+use tiFy\Kernel\Assets\Assets;
 
 interface AppControllerInterface
 {
@@ -69,11 +70,18 @@ interface AppControllerInterface
     /**
      * Récupération de l'url vers un asset.
      *
-     * @param string $filename Chemin relatif vers le fichier du dossier des assets.
+     * @param string $path Chemin relatif vers le fichier du dossier des assets.
      *
      * @return string
      */
-    public function appAsset($filename);
+    public function appAssetUrl($path);
+
+    /**
+     * Récupération de la classe de rappel du controleur des Assets.
+     *
+     * @return Assets
+     */
+    public function appAssets();
 
     /**
      * {@inheritdoc}
@@ -234,9 +242,11 @@ interface AppControllerInterface
     /**
      * Récupération de la classe de rappel du controleur de templates.
      *
+     * @param array $options Liste des options de configuration du controleur de template.
+     * 
      * @return Engine
      */
-    public function appTemplates();
+    public function appTemplates($options = []);
 
 
     /**

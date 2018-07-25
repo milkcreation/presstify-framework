@@ -84,9 +84,17 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
-    public function appAsset($filename)
+    public function appAssetUrl($path)
     {
-        return tiFy::instance()->absUrl() . ltrim('/Components/Assets/src/', '/') . ltrim($filename, '/');
+        return $this->appAssets()->url($path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appAssets()
+    {
+        return tiFy::instance()->assets();
     }
 
     /**

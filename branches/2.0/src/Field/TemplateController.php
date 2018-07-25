@@ -9,10 +9,13 @@ use tiFy\Apps\Templates\TemplateBaseController;
 /**
  * Class TemplateController
  *
- * @method array all() all() Récupération de la liste complète des attributs de configuration.
- * @method mixed get() get(string $key, mixed $default = '') Récupération d'un attribut de configuration.
- * @method bool has() has(string $key) Vérification d'existance d'un attribut de configuration.
- * @method string htmlAttrs() htmlAttrs(array $attrs) Linéarisation d'une liste d'attributs HTML.
+ * @method array all() Récupération de la liste complète des attributs de configuration.
+ * @method string attrs() Linéarisation de la liste des attributs HTML du champ.
+ * @method mixed get(string $key, mixed $default = '') Récupération d'un attribut de configuration.
+ * @method string getName() Récupération de l'attribut de configuration de la qualification de soumission du champ "name".
+ * @method mixed getValue() Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
+ * @method bool has(string $key) Vérification d'existance d'un attribut de configuration.
+ * @method string htmlAttrs(array $attrs) Linéarisation d'une liste d'attributs HTML.
  */
 class TemplateController extends TemplateBaseController
 {

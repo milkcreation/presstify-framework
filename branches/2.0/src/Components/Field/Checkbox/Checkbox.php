@@ -27,11 +27,7 @@ class Checkbox extends AbstractFieldItemController
     ];
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {

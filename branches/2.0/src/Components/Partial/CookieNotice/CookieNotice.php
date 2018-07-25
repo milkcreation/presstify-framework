@@ -57,7 +57,7 @@ class CookieNotice extends AbstractPartialController
 
         \wp_register_script(
             'tiFyPartialCookieNotice',
-            $this->appAsset('/Partial/CookieNotice/js/scripts.js'),
+            $this->appAssetUrl('/Partial/CookieNotice/js/scripts.js'),
             ['tiFyPartialNotice'],
             170626,
             true
