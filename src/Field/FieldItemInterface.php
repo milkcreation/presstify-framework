@@ -100,7 +100,7 @@ interface FieldItemInterface
     public function getIndex();
 
     /**
-     * Récupération de l'attribut de configuration de la qualification de soumission du champ "name"
+     * Récupération de l'attribut de configuration de la qualification de soumission du champ "name".
      *
      * @return string
      */

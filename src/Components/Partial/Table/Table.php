@@ -44,7 +44,7 @@ class Table extends AbstractPartialController
     {
         \wp_register_style(
             'tiFyPartialTable',
-            $this->appAsset('/Partial/Table/css/styles.css'),
+            $this->appAssetUrl('/Partial/Table/css/styles.css'),
             [],
             160714
         );

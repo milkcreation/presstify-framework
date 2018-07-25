@@ -49,7 +49,7 @@ class TabNodeItemController extends AbstractTabItemController
         $content = $this->get('content', '');
 
         if (is_string($content) && class_exists($content)) :
-            $content = call_user_func_array("{$content}::create", [$this->object_name, $this->object_type]);
+            $content = new $content($this->object_name, $this->object_type, $this->attributes['args']);
         endif;
 
         $this->set('content', $content);
@@ -66,7 +66,7 @@ class TabNodeItemController extends AbstractTabItemController
     {
         $content = $this->get('content');
 
-        if ($content instanceof TabContentControllerInterface) :
+        if ($content instanceof ContentInterface) :
             $content->_load($current_screen);
         endif;
     }

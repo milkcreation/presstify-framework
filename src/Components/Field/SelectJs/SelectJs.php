@@ -92,9 +92,7 @@ class SelectJs extends AbstractFieldItemController
     }
 
     /**
-     * Récupération de la liste des valeurs initiales de soumission du champ "value".
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getValue()
     {
@@ -140,14 +138,14 @@ class SelectJs extends AbstractFieldItemController
 
         \wp_register_style(
             'tiFyFieldSelectJs',
-            $this->appAsset('/Field/SelectJs/css/styles.css'),
+            $this->appAssetUrl('/Field/SelectJs/css/styles.css'),
             [],
             171218
         );
 
         \wp_register_script(
             'tiFyFieldSelectJs',
-            $this->appAsset('/Field/SelectJs/js/scripts.js'),
+            $this->appAssetUrl('/Field/SelectJs/js/scripts.js'),
             ['jquery-ui-widget', 'jquery-ui-sortable'],
             171218,
             true
@@ -155,11 +153,7 @@ class SelectJs extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {

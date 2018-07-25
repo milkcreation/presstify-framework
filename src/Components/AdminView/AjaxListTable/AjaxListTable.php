@@ -15,13 +15,13 @@ class AjaxListTable extends LayoutAjaxListTable
     {
         \wp_enqueue_style(
             'tiFyAdminView-AjaxListTable',
-            $this->appAsset('/AdminView/AjaxListTable/css/styles.css'),
+            $this->appAssetUrl('/AdminView/AjaxListTable/css/styles.css'),
             ['datatables'],
             160506
         );
         wp_enqueue_script(
             'tiFyAdminView-AjaxListTable',
-            $this->appAsset('/AdminView/AjaxListTable/js/scripts.js'),
+            $this->appAssetUrl('/AdminView/AjaxListTable/js/scripts.js'),
             ['datatables'],
             160506,
             true

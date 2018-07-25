@@ -66,13 +66,13 @@ class Repeater extends AbstractFieldItemController
 
         \wp_register_style(
             'tiFyFieldRepeater',
-            $this->appAsset('/Field/Repeater/css/styles.css'),
+            $this->appAssetUrl('/Field/Repeater/css/styles.css'),
             [is_admin() ? 'tiFyAdmin' : ''],
             170421
         );
         \wp_register_script(
             'tiFyFieldRepeater',
-            $this->appAsset('/Field/Repeater/js/scripts.js'),
+            $this->appAssetUrl('/Field/Repeater/js/scripts.js'),
             ['jquery', 'jquery-ui-sortable'],
             170421,
             true
@@ -91,11 +91,7 @@ class Repeater extends AbstractFieldItemController
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {

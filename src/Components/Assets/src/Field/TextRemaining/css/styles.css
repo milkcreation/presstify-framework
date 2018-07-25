@@ -1,6 +1,5 @@
 [aria-control="text_remaining"] {
     position: relative;
-    display: inline-block;
 }
 
 [aria-control="text_remaining"] [aria-control="input"] {
@@ -13,6 +12,7 @@
 
 [aria-control="text_remaining"] textarea[aria-control="input"] {
     min-height: 5.6em;
+    width: 100%;
     resize: none;
 }
 

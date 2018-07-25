@@ -40,6 +40,40 @@ class File
     }
 
     /**
+     * Récupére le chemin relatif vers un fichier (ou un repertoire) depuis son chemin absolu
+     *
+     * @param string $filename Chemin absolu|Url
+     * @param string $root_path Chemin absolu vers la racine
+     *
+     * @return NULL|string
+     */
+    public function getRelPath($filename, $root_path = ABSPATH)
+    {
+        $root_path = wp_normalize_path($root_path);
+
+        if (Tools::Checker()->checkerIsUrl($filename)) :
+            $root_subdir = preg_replace('#^'. ABSPATH .'#', '', $root_path);
+            $root_subdir = trim($root_subdir, '/');
+
+            // Bypass
+            if (! preg_match('#^'. preg_quote(site_url() . '/' . $root_subdir, '/') .'(.*)#', $filename, $matches) || ! isset($matches[1]))
+                return null;
+
+            return trim($matches[1], '/');
+        else :
+            $filename = rtrim(wp_normalize_path($filename), '/') . '/';
+
+            // Bypass
+            if (! preg_match('#' . preg_quote($root_path, '/') .'(.*)#', $filename, $matches))
+                return null;
+
+            return trim($matches[1], '/');
+        endif;
+
+        return null;
+    }
+
+    /**
      * Récupération du contenu d'un SVG depuis son chemin.
      *
      * @param string $filename Chemin relatif ou absolu ou url vers un fichier.
@@ -105,40 +139,6 @@ class File
     final public static function getFilenameUrl( $filename, $original_path = ABSPATH )
     {
         return home_url() . '/'.  self::getRelativeFilename( $filename, $original_path );
-    }
-    
-    /**
-     * Récupére le chemin relatif vers un fichier (ou un repertoire) depuis son chemin absolu
-     * 
-     * @param string $filename Chemin absolu|Url
-     * @param string $root_path Chemin absolu vers la racine
-     * 
-     * @return NULL|string
-     */
-    final public static function getRelativeFilename($filename, $root_path = ABSPATH)
-    {
-        $root_path = wp_normalize_path($root_path);
-        
-        if (Checker::isUrl($filename)) :
-            $root_subdir = preg_replace('#^'. ABSPATH .'#', '', $root_path);
-            $root_subdir = trim($root_subdir, '/');
-            
-            // Bypass
-            if (! preg_match('#^'. preg_quote(site_url() . '/' . $root_subdir, '/') .'(.*)#', $filename, $matches) || ! isset($matches[1]))
-                return null;
-            
-            return trim($matches[1], '/');
-        else :        
-            $filename = rtrim(wp_normalize_path($filename), '/') . '/';            
-
-            // Bypass
-            if (! preg_match('#' . preg_quote($root_path, '/') .'(.*)#', $filename, $matches))
-                return null;
-
-            return trim($matches[1], '/');
-        endif;
-        
-        return null;
     }
 
     /**

@@ -68,7 +68,7 @@ class SwitcherForm extends AbstractPartialController
 
         \wp_register_script(
             'tiFyTakeOver-SwitcherForm',
-            $this->appAsset('/User/TakeOver/SwitcherForm/js/scripts.js', get_class()),
+            $this->appAssetUrl('/User/TakeOver/SwitcherForm/js/scripts.js', get_class()),
             [],
             171218,
             true

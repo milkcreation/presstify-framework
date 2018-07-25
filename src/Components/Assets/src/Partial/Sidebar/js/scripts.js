@@ -1,7 +1,16 @@
 jQuery(document).ready(function ($) {
     var tiFySidebar = {};
 
-    $('body').addClass('tiFyPartial-SidebarBody');
+    $('body').addClass('tiFyPartial-SidebarSiteBody');
+
+    $(window).resize(function()  {
+        $('[aria-control="sidebar"]').each(function() {
+            headerHeight = $('.tiFyPartial-SidebarHeader', $(this)).height();
+            footerHeight = $('.tiFyPartial-SidebarFooter', $(this)).height();
+            sidebarHeight = $(this).height();
+            $('.tiFyPartial-SidebarBody').height(sidebarHeight-(headerHeight+footerHeight));
+        });
+    }).trigger('resize');
 
     $(document)
         .on('click', '[aria-control="toggle_sidebar"]', function(e){
