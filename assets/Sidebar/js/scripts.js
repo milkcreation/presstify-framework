@@ -54,7 +54,7 @@ jQuery( document ).ready( function( $ ) {
 	
 	$( document ).on( 'click.tify_sidebar', '[data-toggle="tiFySidebar"]', function(e){
 		e.preventDefault();
-		
+
 		var pos = $(this).data('target'),
 			width = tiFySidebar[pos].width,
 			sign = tiFySidebar[pos].sign,
