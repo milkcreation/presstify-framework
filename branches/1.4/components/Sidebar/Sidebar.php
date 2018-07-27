@@ -61,9 +61,19 @@ class Sidebar extends \tiFy\App\Component
      */
     final public function init()
     {
-        wp_register_style('tiFyComponentsSidebar', self::tFyAppAssetsUrl('Sidebar.css', get_class()), [], '150206');
-        wp_register_script('tiFyComponentsSidebar', self::tFyAppAssetsUrl('Sidebar.js', get_class()), ['jquery'],
-            '150206', true);
+        wp_register_style(
+            'tiFyComponentsSidebar',
+            $this->appAbsUrl() . '/assets/Sidebar/css/styles.css',
+            [],
+            '150206'
+        );
+        wp_register_script(
+            'tiFyComponentsSidebar',
+            $this->appAbsUrl() . '/assets/Sidebar/js/scripts.js',
+            [],
+            '150206',
+            true
+        );
     }
 
     /**
