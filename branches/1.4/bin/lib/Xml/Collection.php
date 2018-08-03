@@ -55,7 +55,7 @@ class Collection
      */
     public function all()
     {
-        $this->items = $this->setItems()->collection->values()->toArray();
+        $this->items = $this->setItems()->collection->toArray();
 
         return $this;
     }
@@ -70,7 +70,7 @@ class Collection
      */
     public function where($key = '', $value)
     {
-        $this->items = $this->setItems()->collection->where($key, $value)->values()->toArray();
+        $this->items = $this->setItems()->collection->where($key, $value)->toArray();
 
         return $this;
     }
@@ -84,7 +84,7 @@ class Collection
      */
     public function sortBy($by = '')
     {
-        $this->items = $this->setItems()->collection->sortBy($by)->values()->toArray();
+        $this->items = $this->setItems()->collection->sortBy($by)->toArray();
 
         return $this;
     }
@@ -125,7 +125,7 @@ class Collection
 
         $this->items = $this->setItems()->collection->filter(function ($item, $key) use (&$recursiveFilter, $searchColumns, $needle, $strict) {
             return $recursiveFilter($needle, $item, $strict, $searchColumns);
-        });
+        })->toArray();
 
         return $this;
     }
@@ -143,7 +143,7 @@ class Collection
         if ($perPage < 0) :
             $this->all();
         else :
-            $this->items = $this->setItems()->collection->forPage($pageNumber, $perPage)->values()->toArray();
+            $this->items = $this->setItems()->collection->forPage($pageNumber, $perPage)->toArray();
         endif;
 
         return $this;
@@ -185,12 +185,24 @@ class Collection
     }
 
     /**
+     * Réinitialisation des clés des éléments XML.
+     *
+     * @return $this
+     */
+    public function values()
+    {
+        $this->items = array_values($this->items);
+
+        return $this;
+    }
+
+    /**
      * Récupération des éléments XML.
      *
      * @return array
      */
-    public function get()
+    public function get($index = null)
     {
-        return $this->items;
+        return (!is_null($index) && isset($this->items[$index])) ? $this->items[$index] : $this->items;
     }
 }

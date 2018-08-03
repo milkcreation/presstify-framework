@@ -2,6 +2,7 @@
 
 namespace tiFy\Lib\Xml;
 
+use Illuminate\Support\Collection;
 use XmlIterator\XmlIterator;
 
 class Reader extends XmlIterator
@@ -81,20 +82,36 @@ class Reader extends XmlIterator
     {
         $current = parent::current();
 
-        // Définition des attributs.
-        $attrs = ($this->attrMapping && !empty($current['@attributes'])) ? $this->map($this->attrMapping, $current['@attributes']) : [];
-        // Définition des données.
-        $datas = $this->dataMapping ? $this->map($this->dataMapping, $current) : [];
-
-        if (!empty($attrs) && !empty($datas)) :
-            $current = array_merge($attrs, $datas);
-        elseif (!empty($attrs)) :
-            $current = $attrs;
-        elseif (!empty($datas)) :
-            $current = $datas;
-        endif;
+        $current = $this->setItem($current, $this->attrMapping, $this->dataMapping);
 
         return $current;
+    }
+
+    /**
+     * Définition d'un élément.
+     *
+     * @param array $item Élément courant.
+     * @param array $attrMapping Cartographie des attributs.
+     * @param array $dataMapping Cartographie des données.
+     *
+     * @return array
+     */
+    public function setItem($item = [], $attrMapping = [], $dataMapping = [])
+    {
+        // Définition des attributs.
+        $attrs = (!empty($attrMapping) && !empty($item['@attributes'])) ? $this->map($attrMapping, $item['@attributes']) : [];
+        // Définition des données.
+        $datas = !empty($dataMapping) ? $this->map($dataMapping, $item) : [];
+
+        if (!empty($attrs) && !empty($datas)) :
+            $item = array_merge($attrs, $datas);
+        elseif (!empty($attrs)) :
+            $item = $attrs;
+        elseif (!empty($datas)) :
+            $item = $datas;
+        endif;
+
+        return $item;
     }
 
     /**
@@ -147,7 +164,25 @@ class Reader extends XmlIterator
         endif;
 
         if (isset($mapping[$key])) :
-            return $final[$mapping[$key]] = $item;
+            if (is_array($mapping[$key])) :
+                if (count($item) === count(array_filter(array_keys($item), 'is_numeric'))) :
+                    foreach($item as $n => &$_item) :
+                        if (!is_array($_item)) :
+                            continue;
+                        endif;
+                        $_item = $this->setItem($_item, !empty($mapping[$key]['attrs']) ? $mapping[$key]['attrs'] : [], !empty($mapping[$key]['datas']) ? $mapping[$key]['datas'] : []);
+                    endforeach;
+                else :
+                    $item = $this->setItem($item, !empty($mapping[$key]['attrs']) ? $mapping[$key]['attrs'] : [], !empty($mapping[$key]['datas']) ? $mapping[$key]['datas'] : []);
+                endif;
+                if (!empty($mapping[$key]['name'])) :
+                    return $final[$mapping[$key]['name']] = $item;
+                else :
+                    return $final[$key] = $item;
+                endif;
+            else :
+                return $final[$mapping[$key]] = $item;
+            endif;
         elseif (!is_bool(array_search($key, $mapping))) :
             return $final[$key] = $item;
         endif;
