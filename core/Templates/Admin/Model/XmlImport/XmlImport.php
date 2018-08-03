@@ -167,26 +167,35 @@ class XmlImport extends FileImport
             endif;
 
             $xmlCollection = new Collection($xml);
+            $search = false;
+            $results = [];
 
-            // Tri
-            if (! empty($params['orderby'])) :
-                $xmlCollection->sortBy($params['orderby']);
+            if ($this->current_item()) :
+                $results[current($this->current_item())] = $xmlCollection->all()->get(current($this->current_item()));
+            else :
+                // Tri
+                if (! empty($params['orderby'])) :
+                    $xmlCollection->sortBy($params['orderby']);
+                endif;
+
+                // Recherche
+                if (!empty($params['search'])) :
+                    $search = true;
+                    $xmlCollection->filter($params['search'], false, $this->search);
+                endif;
+
+                $xmlCollection->forPage(isset($params['paged']) ? (int)$params['paged'] : 1, $this->PerPage);
+                $results = $xmlCollection->all()->get();
             endif;
 
-            // Recherche
-            if (!empty($params['search'])) :
-                $xmlCollection->filter($params['search'], false, $this->search);
-            endif;
-
-            $xmlCollection->forPage(isset($params['paged']) ? (int)$params['paged'] : 1, $this->PerPage);
-
-            foreach ($xmlCollection->all()->get() as $import_index => $item) :
+            foreach ($results as $import_index => $item) :
                 $item['_import_row_index'] = $import_index;
-                $items[] = (object)$item;
+                $items[] = (object) $item;
             endforeach;
 
-            $this->TotalItems = $xmlCollection->rewind()->all()->count();
+            $this->TotalItems = $search ? $xmlCollection->all()->count() : $xmlCollection->rewind()->all()->count();
             $this->TotalPages = ($this->PerPage > -1) ? (int)ceil($this->TotalItems / $this->PerPage) : 1;
+            $items = empty($items) ? [] : $items;
         } catch (\Exception $e) {
             $items = [];
         };
