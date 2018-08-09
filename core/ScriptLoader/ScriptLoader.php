@@ -159,7 +159,7 @@ class ScriptLoader extends \tiFy\App
             /// tiFy - Image Lightbox
             'tify-imagelightbox'      => [
                 'src'     => [
-                    'local' => tiFy::$AbsUrl . '/bin/assets/lib/tify-imagelightbox' . $min . '.css',
+                    'local' => $this->appAbsUrl() . '/assets/tiFyImageLightbox/css/styles.css',
                 ],
                 'deps'    => [],
                 'version' => '170724',
@@ -406,9 +406,9 @@ class ScriptLoader extends \tiFy\App
             /// tiFy - Image Lightbox
             'tify-imagelightbox'   => [
                 'src'       => [
-                    'local' => tiFy::$AbsUrl . '/bin/assets/lib/tify-imagelightbox' . $min . '.js',
+                    'local' => $this->appAbsUrl() . '/assets/tiFyImageLightbox/js/scripts.js',
                 ],
-                'deps'      => ['imageLightbox'],
+                'deps'      => ['jquery-ui-widget', 'imageLightbox'],
                 'version'   => '170724',
                 'in_footer' => true,
             ],
@@ -575,7 +575,7 @@ class ScriptLoader extends \tiFy\App
         // Image Lightbox
         self::$JsLib['imageLightbox'] = [
             'src'       => [
-                'local' => tiFy::$AbsUrl . '/bin/assets/vendor/imageLightbox.min.js',
+                'local' => $this->appAbsUrl() . '/assets/tiFyImageLightbox/js/imageLightbox.js',
             ],
             'deps'      => ['jquery'],
             'version'   => '160902',
