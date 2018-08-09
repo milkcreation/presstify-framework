@@ -46,7 +46,7 @@ class ImageLightbox extends \tiFy\Core\Control\Factory
     {
         \wp_register_script(
             'tify_control-image_lightbox',
-            self::tFyAppAssetsUrl('ImageLightbox.js', get_class()),
+            $this->appAbsUrl() . '/assets/ImageLightbox/js/scripts.js',
             ['tify-imagelightbox'],
             170724,
             true
