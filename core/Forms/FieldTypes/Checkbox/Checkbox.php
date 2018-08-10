@@ -32,10 +32,12 @@ class Checkbox extends \tiFy\Core\Forms\FieldTypes\Factory
         $output .= "<ul class=\"tiFyForm-FieldChoices\">\n";
 
         $i = 0;
+        $selected = $this->field()->getValue();
         foreach (
             (array)$this->field()
                         ->getAttr('choices') as $value => $label
         ) :
+            $checked = ( is_array( $selected ) ) ? in_array( $value, $selected ) : $selected;
             $output .= "\t<li class=\"tiFyForm-FieldChoice tiFyForm-FieldChoice--" . $this->getID() . " tiFyForm-FieldChoice--" . $this->field()
                                                                                                                                        ->getSlug() . " tiFyForm-FieldChoice--" . preg_replace('/[^a-zA-Z0-9_\-]/',
                     '', $value) . "\">\n";
@@ -45,7 +47,7 @@ class Checkbox extends \tiFy\Core\Forms\FieldTypes\Factory
             $output .= " value=\"" . esc_attr($value) . "\"";
             $output .= " name=\"" . esc_attr($this->field()
                                                   ->getDisplayName()) . "[]\"";
-            $output .= "" . checked(in_array($value, (array)$this->field()->getValue()), true, false) . "";
+            $output .= "" . checked($checked, true, false) . "";
             $output .= $this->getInputHtmlAttrs();
 
             /// TabIndex
