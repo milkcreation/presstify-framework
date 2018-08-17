@@ -176,7 +176,7 @@ trait App
      */
     public static function appInstance($classname = null, $args = [])
     {
-
+        return tiFy::getContainer()->get($classname ?: get_called_class(), $args);
     }
 
     /**

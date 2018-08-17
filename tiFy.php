@@ -5,12 +5,13 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.59
+ * @version 1.4.60
  */
 
 namespace tiFy;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use League\Container\Container;
 use League\Container\ReflectionContainer;
 use League\Event\Emitter;
@@ -22,6 +23,12 @@ use tiFy\Lib\File;
 
 final class tiFy
 {
+    /**
+     * Instance de la classe
+     * @var self
+     */
+    protected static $instance;
+
     /**
      * Chemin absolu vers la racine de l'environnement
      * @var resource
@@ -77,6 +84,12 @@ final class tiFy
     public function __construct($AbsPath = null)
     {
         if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) :
+            return;
+        endif;
+
+        if (!self::$instance) :
+            self::$instance = $this;
+        else :
             return;
         endif;
 
@@ -146,6 +159,18 @@ final class tiFy
 
         // Instanciation des applicatifs
         new Apps;
+    }
+
+    /**
+     * Récupération de l'instance courante.
+     *
+     * @return $this
+     */
+    final public static function instance()
+    {
+        if (self::$instance instanceof static) :
+            return self::$instance;
+        endif;
     }
 
     /**
@@ -373,11 +398,7 @@ final class tiFy
             return self::$Config;
         endif;
 
-        if (isset(self::$Config[$attr])) :
-            return self::$Config[$attr];
-        endif;
-
-        return $default;
+        return Arr::get(self::$Config, $attr, $default);
     }
 
     /**
@@ -387,6 +408,6 @@ final class tiFy
      */
     public static function setConfig($key, $value = '')
     {
-        self::$Config[$key] = $value;
+        return Arr::set(self::$Config, $key, $value);
     }
 }
