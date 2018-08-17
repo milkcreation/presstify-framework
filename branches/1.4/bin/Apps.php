@@ -820,9 +820,9 @@ final class Apps
 
             tiFy::classLoad($app['namespace'], $app['base_dir']);
             if (!empty($app['bootstrap'])) :
-                $concrete = "\\" . ltrim($app['namespace'], '\\') . "\\" . $app['bootstrap'];
+                $concrete = ltrim($app['namespace'], '\\') . "\\" . $app['bootstrap'];
 
-                tiFy::getContainer()->share('tiFyApp', new  $concrete());
+                tiFy::getContainer()->share($concrete, new $concrete());
             endif;
 
             // Chargement automatique
