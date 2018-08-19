@@ -55,25 +55,15 @@ final class TabMetabox extends AppController
     protected $display;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->appServiceAdd(TabBoxItemController::class);
-        $this->appServiceAdd(TabNodeItemController::class);
-    }
-
-    /**
      * Initialisation du controleur.
      *
      * @return void
      */
     public function appBoot()
     {
+        $this->appServiceAdd(TabBoxItemController::class);
+        $this->appServiceAdd(TabNodeItemController::class);
+
         $this->appAddAction('wp_loaded', null, 0);
         $this->appAddAction('current_screen');
     }

@@ -2,9 +2,9 @@
 
 namespace tiFy\Apps\Container;
 
-use tiFy\Apps\AppControllerInterface;
+use tiFy\Apps\AppInterface;
 
-interface ContainerInterface extends AppControllerInterface
+interface ContainerInterface extends AppInterface
 {
     /**
      * Vérifie de disponibilité d'un service.
@@ -63,7 +63,7 @@ interface ContainerInterface extends AppControllerInterface
      *
      * @return array
      */
-    public function getProviders();
+    public function getServiceProviders();
 
     /**
      * Récupération d'une instance de service.

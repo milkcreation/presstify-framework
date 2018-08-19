@@ -11,14 +11,12 @@ use tiFy\Metadata\UserOption;
 class Metadata extends AppController
 {
     /**
-     * CONSTRUCTEUR.
+     * Initialisation du controleur.
      *
      * @return void
      */
-    public function __construct()
+    public function appBoot()
     {
-        parent::__construct();
-
         $this->appServiceShare(Post::class, new Post());
         $this->appServiceShare(Term::class, new Term());
         //@todo $this->appServiceShare(User::class, new User());

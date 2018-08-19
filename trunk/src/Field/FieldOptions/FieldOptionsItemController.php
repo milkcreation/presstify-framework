@@ -45,6 +45,14 @@ class FieldOptionsItemController extends AbstractItemIterator
     /**
      * {@inheritdoc}
      */
+    public function getLabel()
+    {
+        return (string)htmlentities($this->get('label'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getValue()
     {
         return (string)$this->get('value');

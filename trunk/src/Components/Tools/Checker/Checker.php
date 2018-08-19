@@ -4,8 +4,6 @@ namespace tiFy\Components\Tools\Checker;
 
 class Checker
 {
-    use CheckerTrait;
-
     /**
      * Vérifie si une chaine de caractères est vide.
      *

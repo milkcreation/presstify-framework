@@ -43,9 +43,7 @@ final class Route extends AppController
     private $response;
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function appBoot()
     {
@@ -54,12 +52,12 @@ final class Route extends AppController
         });
 
         $this->appServiceShare('tfy.route.request', function () {
-            return (new DiactorosFactory())->createRequest(tiFy::instance()->request());
+            return (new DiactorosFactory())->createRequest($this->appRequest());
         });
 
         $this->appServiceShare('tfy.route.emitter', new SapiEmitter());
 
-        $this->appServiceShare(RouteCollectionInterface::class, new RouteCollectionController(tiFy::instance()->container()));
+        $this->appServiceShare(RouteCollectionInterface::class, new RouteCollectionController(tiFy::instance()));
 
         $this->appServiceAdd(RouteHandle::class);
 

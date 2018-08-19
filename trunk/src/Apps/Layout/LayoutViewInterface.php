@@ -2,10 +2,10 @@
 
 namespace tiFy\Apps\Layout;
 
-use tiFy\Apps\AppControllerInterface;
+use tiFy\Apps\AppInterface;
 use tiFy\Apps\Layout\LayoutInterface;
 
-interface LayoutViewInterface extends AppControllerInterface
+interface LayoutViewInterface extends AppInterface
 {
     /**
      * Récupération de l'environnement d'affichage de la vue.

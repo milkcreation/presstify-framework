@@ -28,7 +28,6 @@ jQuery(document).ready(function ($) {
         });
     });
 
-    // Suppression d'une interface de saisie vidéo
     $(document).on('click', '.tiFyTabMetaboxPostTypeVideoGallery-itemRemove', function (e) {
         $container = $(this).parent();
         $container.fadeOut(function () {
@@ -36,7 +35,6 @@ jQuery(document).ready(function ($) {
         });
     });
 
-    // Ajout d'une vidéo de la médiathèque
     $(document).on('click', '.tiFyTabMetaboxPostTypeVideoGallery-itemSrcAdd', function (e) {
         e.preventDefault();
 
@@ -75,7 +73,7 @@ jQuery(document).ready(function ($) {
                 text: $(this).data('media_button_text'),
             },
             multiple: false,
-            library: {type: 'image'}// ['image/gif','image/png']}
+            library: {type: 'image'} // ['image/gif','image/png']
         });
 
         taboox_video_gallery_poster_frame.on('select', function () {
@@ -87,8 +85,7 @@ jQuery(document).ready(function ($) {
         taboox_video_gallery_poster_frame.open();
     });
 
-    // Ordonnacement des fichiers
-    $(".taboox_video_gallery-list").sortable({
+    $(".tiFyTabMetaboxPostTypeVideoGallery-items").sortable({
         placeholder: "ui-sortable-placeholder",
         axis: 'y'
     });

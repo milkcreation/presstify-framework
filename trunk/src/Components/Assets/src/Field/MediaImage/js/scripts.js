@@ -1,7 +1,6 @@
 var tify_control_media_image_frame;
 
 jQuery(document).ready(function ($) {
-    // Affichage du selecteur de média
     $(document).on('click', '.tiFyField-MediaImageAdd', function (e) {
         e.preventDefault();
 
@@ -29,18 +28,20 @@ jQuery(document).ready(function ($) {
             $this.css('background-image', 'url(' + attachment.url + '');
             $('.tiFyField-MediaImageInput', $closest).val(attachment.id);
             $('.tiFyField-MediaImageReset:hidden', $closest).fadeIn();
+            $closest.addClass('tiFyField-MediaImage--selected');
         });
 
         tify_control_media_image_frame.open();
     });
-    // Réinitialisation de l'image originale
-    $(document).on('click', '.tiFyField-MediaImageReset', function (e) {
+
+    $(document).on('click', '.tiFyField-MediaImageRemove', function (e) {
         e.preventDefault();
+
         var $this = $(this),
             $closest = $this.closest('.tiFyField-MediaImage');
 
-        $this.hide();
+        $closest.removeClass('tiFyField-MediaImage--selected');
         $('.tiFyField-MediaImageInput', $closest).val('');
-        $('.tiFyField-MediaImageAdd', $closest).css('background-image', 'url(' + $('.tiFyField-MediaImageAdd', $closest).data('default') + ')');
+        $('.tiFyField-MediaImageAdd', $closest).css('background-image', 'url(' + $('.tiFyField-MediaImage', $closest).data('default') + ')');
     });
 });

@@ -20,14 +20,12 @@ use tiFy\Apps\AppController;
 final class MetaTag extends AppController
 {
     /**
-     * CONSTRUCTEUR.
+     * Initialisation du controleur.
      *
      * @return void
      */
-    public function __construct()
+    public function appBoot()
     {
-        parent::__construct();
-
         $this->appServiceShare(MetaTitle::class);
         $this->appServiceShare(Favicon::class);
     }

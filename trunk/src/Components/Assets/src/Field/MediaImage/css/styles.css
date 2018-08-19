@@ -65,8 +65,10 @@
     z-index: 6;
 }
 
-.tiFyField-MediaImageReset {
-    right: -3px;
-    top: -3px;
-    box-shadow: none;
+body.wp-admin .tiFyField-MediaImageRemove {
+    display:none;
+}
+
+body.wp-admin .tiFyField-MediaImage--selected .tiFyField-MediaImageRemove {
+    display:inherit;
 }

@@ -4,7 +4,6 @@ namespace tiFy\User\SignIn;
 
 use Illuminate\Support\Str;
 use tiFy\Field\Field;
-use tiFy\Components\Tools\Notices\NoticesAwareTrait;
 use tiFy\Partial\Partial;
 
 class SignInItemController extends SignInHandleController implements SignInItemInterface

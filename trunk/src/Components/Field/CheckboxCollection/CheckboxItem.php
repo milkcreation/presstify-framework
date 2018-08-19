@@ -84,9 +84,12 @@ class CheckboxItem extends AbstractAppItemController
         if (!$this->get('attrs.id')) :
             $this->set('attrs.id', 'tiFyField-CheckboxCollectionItem--'. self::$index);
         endif;
-
-        $this->set('checkbox.name', $this->app->get('name'));
-        $this->set('checkbox.checked', $this->app->get('checked'));
+        if (!$this->get('checkbox.name')) :
+            $this->set('checkbox.name', $this->app->get('name'));
+        endif;
+        if (!$this->get('checkbox.checked')) :
+            $this->set('checkbox.checked', $this->app->get('checked'));
+        endif;
         if (!$this->get('checkbox.attrs.id')) :
             $this->set('checkbox.attrs.id', 'tiFyField-CheckboxCollectionItemInput--'. self::$index);
         endif;

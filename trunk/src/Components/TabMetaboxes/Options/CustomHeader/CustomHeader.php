@@ -7,24 +7,8 @@ use tiFy\TabMetabox\ContentOptionsController;
 
 class CustomHeader extends ContentOptionsController
 {
-    private $option_name = 'custom_header';
-
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        register_setting($this->object_name, $this->option_name);
-    }
-
-    /**
-     * Chargement de la page d'administration courante de Wordpress.
-     *
-     * @param \WP_Screen $wp_screen Classe de rappel du controleur de la page d'administration courante de Wordpress.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function load($wp_screen)
     {
@@ -34,25 +18,28 @@ class CustomHeader extends ContentOptionsController
     }
 
     /**
-     * Affichage.
-     *
-     * @param \WP_Post $post Objet post Wordpress.
-     * @param array $args Liste des variables passés en argument.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function display($args)
+    public function display($args = [])
     {
         return Field::MediaImage(
             array_merge(
                 [
                     'media_library_title'  => __('Personnalisation de l\'image d\'entête', 'tify'),
                     'media_library_button' => __('Utiliser comme image d\'entête', 'tify'),
-                    'name'                 => $this->option_name,
-                    'value'                => get_option($this->option_name)
+                    'name'                 => 'custom_header',
+                    'value'                => get_option('custom_header')
                 ],
                 $args
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function settings()
+    {
+        return ['custom_header'];
     }
 }

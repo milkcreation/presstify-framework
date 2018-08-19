@@ -11,7 +11,7 @@ use tiFy\Components\Layout\AjaxListTable\Params\ParamsController;
 use tiFy\Components\Layout\AjaxListTable\Request\RequestController;
 use tiFy\Components\Layout\ListTable\ListTableServiceProvider;
 use tiFy\Components\Layout\PostListTable\Column\ColumnItemPostTitleController;
-use tiFy\PostType\PostTypeLabelsController;
+use tiFy\PostType\PostTypeLabelsItemController;
 
 class AjaxListTableServiceProvider extends ListTableServiceProvider
 {
@@ -33,7 +33,7 @@ class AjaxListTableServiceProvider extends ListTableServiceProvider
         });
 
         $this->app->singleton(LabelsInterface::class, function($app) {
-            return new PostTypeLabelsController($app->getName(), [], $app);
+            return new PostTypeLabelsItemController($app->getName(), [], $app);
         });
 
         $this->app->singleton(ParamsInterface::class, function($app) {

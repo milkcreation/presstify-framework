@@ -33,13 +33,13 @@ class ContentPostTypeController extends ContentController
      * Affichage.
      *
      * @param \WP_Post $post Objet post Wordpress.
-     * @param array $args Liste des vaiables passés en argument.
+     * @param array $args Liste des variables passés en argument.
      *
      * @return string
      */
-    public function display($post, $args)
+    public function display($post, $args = [])
     {
-        parent::display();
+        return $this->appTemplateRender('display', $this->all());
     }
 
     /**
