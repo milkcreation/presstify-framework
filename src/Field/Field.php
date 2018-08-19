@@ -35,6 +35,7 @@ use tiFy\Components\Field\Radio\Radio;
 use tiFy\Components\Field\RadioCollection\RadioCollection;
 use tiFy\Components\Field\Repeater\Repeater;
 use tiFy\Components\Field\Select\Select;
+use tiFy\Components\Field\SelectImage\SelectImage;
 use tiFy\Components\Field\SelectJs\SelectJs;
 use tiFy\Components\Field\Submit\Submit;
 use tiFy\Components\Field\Text\Text;
@@ -64,6 +65,7 @@ use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
  * @method static RadioCollection(string $id = null, array $attrs = [])
  * @method static Repeater(string $id = null, array $attrs = [])
  * @method static Select(string $id = null, array $attrs = [])
+ * @method static SelectImage(string $id = null, array $attrs = [])
  * @method static SelectJs(string $id = null, array $attrs = [])
  * @method static Submit(string $id = null, array $attrs = [])
  * @method static Text(string $id = null, array $attrs = [])

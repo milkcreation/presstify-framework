@@ -4,17 +4,17 @@ namespace tiFy\User\SignIn;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\Apps\AppControllerInterface;
+use tiFy\Apps\AppInterface;
 use tiFy\Apps\Item\AbstractAppItemController;
-use tiFy\Components\Tools\Notices\NoticesAwareTrait;
+use tiFy\Components\Tools\Notices\NoticesTrait;
 
 abstract class SignInHandleController extends AbstractAppItemController
 {
-    use NoticesAwareTrait;
+    use NoticesTrait;
 
     /**
      * Classe de rappel de l'application associée.
-     * @var AppControllerInterface
+     * @var AppInterface
      */
     protected $app;
 
@@ -35,11 +35,11 @@ abstract class SignInHandleController extends AbstractAppItemController
      *
      * @param string $name Nom de qualification du controleur.
      * @param array $attrs Lise des attributs de configuration.
-     * @param AppControllerInterface $app Classe de rappel de l'application associée.
+     * @param AppInterface $app Classe de rappel de l'application associée.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], AppControllerInterface $app)
+    public function __construct($name, $attrs = [], AppInterface $app)
     {
         $this->name = $name;
 

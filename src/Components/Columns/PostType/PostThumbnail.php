@@ -55,9 +55,14 @@ class PostThumbnail extends ColumnPostType
 
         // Vérifie l'existance de l'image
         if (($attachment = wp_get_attachment_image_src($attachment_id)) && isset($attachment[0]) && ($path = Tools::File()->getRelPath($attachment[0])) && file_exists(ABSPATH . $path)) :
-            $thumb = wp_get_attachment_image($attachment_id, [80, 60], true);
+            $thumb = wp_get_attachment_image($attachment_id, [60, 60], true);
         else :
-            $thumb = Partial::HolderImage();
+            $thumb = Partial::HolderImage(
+                [
+                    'width'            => 60,
+                    'height'           => 60,
+                ]
+            );
         endif;
 
         echo $thumb;

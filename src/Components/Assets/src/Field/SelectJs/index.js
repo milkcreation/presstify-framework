@@ -1,12 +1,13 @@
 /** Dépendances */
-// SpinKit
+/** SpinKit */
 import 'spinkit/scss/spinners/7-three-bounce.scss';
-// jQueryUi
+
+/** jQueryUi */
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable'
 
 /** CSS */
 import './css/styles.css';
 
-/** Scripts */
+/** JS */
 import './js/scripts';

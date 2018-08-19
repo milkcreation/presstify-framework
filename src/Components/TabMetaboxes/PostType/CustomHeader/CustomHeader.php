@@ -9,11 +9,7 @@ use tiFy\TabMetabox\ContentPostTypeController;
 class CustomHeader extends ContentPostTypeController
 {
     /**
-     * Chargement de la page d'administration courante de Wordpress.
-     *
-     * @param \WP_Screen $wp_screen Classe de rappel du controleur de la page d'administration courante de Wordpress.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function load($wp_screen)
     {
@@ -25,14 +21,9 @@ class CustomHeader extends ContentPostTypeController
     }
 
     /**
-     * Affichage.
-     *
-     * @param \WP_Post $post Objet post Wordpress.
-     * @param array $args Liste des variables passés en argument.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function display($post, $args)
+    public function display($post, $args = [])
     {
         return Field::MediaImage(
             array_merge(

@@ -4,7 +4,7 @@
  */
 ?>
 
-<li <?php $this->attrs(); ?>>
+<li class="tiFyField-CheckboxCollectionItem">
     <?php
         tify_field_checkbox($this->get('checkbox', []));
     ?>

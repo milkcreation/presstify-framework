@@ -6,8 +6,10 @@
 
 <?php $this->before(); ?>
 
-<ul <?php $this->attrs(); ?>>
-<?php foreach($this->get('items', []) as $item) : echo $item; endforeach; ?>
-</ul>
+<nav <?php $this->attrs(); ?>>
+    <ul class="tiFyField-RadioCollectionItems">
+    <?php foreach($this->get('items', []) as $item) : echo $item; endforeach; ?>
+    </ul>
+</nav>
 
 <?php $this->after(); ?>

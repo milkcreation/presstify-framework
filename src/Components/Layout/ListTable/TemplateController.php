@@ -3,7 +3,7 @@
 namespace tiFy\Components\Layout\ListTable;
 
 use tiFy\Apps\Layout\Params\ParamsInterface;
-use tiFy\Apps\Templates\TemplateBaseController;
+use tiFy\Apps\Templates\AppTemplateController;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnItemInterface;
@@ -12,7 +12,7 @@ use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Components\Layout\ListTable\Pagination\PaginationInterface;
 
-class TemplateController extends TemplateBaseController
+class TemplateController extends AppTemplateController
 {
     /**
      * Classe de rappel de l'application

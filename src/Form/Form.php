@@ -23,27 +23,16 @@ final class Form extends AppController
     protected $current;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        // Déclaration des dépendances
-        $this->appServiceShare(AddonsController::class, new AddonsController());
-        $this->appServiceShare(ButtonsController::class, new ButtonsController());
-        $this->appServiceShare(FieldTypesController::class, new FieldTypesController());
-    }
-
-    /**
      * Initialisation du controleur.
      *
      * @return void
      */
     public function appBoot()
     {
+        $this->appServiceShare(AddonsController::class, new AddonsController());
+        $this->appServiceShare(ButtonsController::class, new ButtonsController());
+        $this->appServiceShare(FieldTypesController::class, new FieldTypesController());
+
         $this->appAddAction('init', null, 1);
         $this->appAddAction('wp', null, 0);
         \add_shortcode('formulaire', [$this, 'shortcode']);

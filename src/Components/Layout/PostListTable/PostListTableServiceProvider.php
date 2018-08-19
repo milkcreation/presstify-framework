@@ -14,7 +14,7 @@ use tiFy\Components\Layout\PostListTable\Request\RequestController;
 use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemAllController;
 use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemPublishController;
 use tiFy\Components\Layout\PostListTable\ViewFilter\ViewFilterItemTrashController;
-use tiFy\PostType\PostTypeLabelsController;
+use tiFy\PostType\PostTypeLabelsItemController;
 
 class PostListTableServiceProvider extends ListTableServiceProvider
 {
@@ -30,7 +30,7 @@ class PostListTableServiceProvider extends ListTableServiceProvider
         });
 
         $this->app->singleton(LabelsInterface::class, function ($app) {
-            return new PostTypeLabelsController($app->getName(), [], $app);
+            return new PostTypeLabelsItemController($app->getName(), [], $app);
         });
 
         $this->app->singleton(ParamsInterface::class, function ($app) {

@@ -1,3 +1,4 @@
+/** BOUTON DE SUPPRESSION */
 body.wp-admin .tiFy-Button--remove {
     position: absolute;
     right: 0;
@@ -46,6 +47,58 @@ body.wp-admin .tiFy-Button--remove:hover::before {
     -o-transform: rotate(90deg) perspective(1px);
     -ms-transform: rotate(90deg) perspective(1px);
     transform: rotate(90deg) perspective(1px);
+}
+
+/** CARTE MEDIA */
+body.wp-admin .tiFy-CardItems {
+    list-style-type: none;
+    margin: 0 -10px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+body.wp-admin .tiFy-CardItems.ui-sortable .tiFy-CardItem {
+    cursor: move;
+}
+
+body.wp-admin .tiFy-CardItem {
+    float: left;
+    margin: 0 0 10px;
+    padding:0 10px;
+}
+
+body.wp-admin .tiFy-Card {
+    position: relative;
+    padding: 10px 10px 25px;
+    border: solid 1px #E4E4E4;
+    background-color: #F4F4F4;
+    text-align: center;
+    min-height: 150px;
+}
+
+body.wp-admin .tiFy-CardImg {
+    display: inline-block;
+    margin-bottom: 5px;
+    border: solid 1px #DDD;
+    height:150px;
+    width:150px;
+}
+
+body.wp-admin .tiFy-CardTitle {
+    margin: 5px 0;
+    height: 2.4em;
+    overflow: hidden;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+}
+
+body.wp-admin .tiFy-CardOrder {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    font-size: 0.8em;
+    text-align: center;
+    padding: 0.1em;
 }
 
 /**

@@ -7,25 +7,14 @@ use tiFy\Apps\AppController;
 class Media extends AppController
 {
     /**
-     * CONSTRUCTEUR.
-     * 
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        // Chargement des controleurs
-        $this->appServiceShare(Download::class, new Download());
-    }
-
-    /**
      * Initialisation du controleur.
      *
      * @return void
      */
     public function appBoot()
     {
+        $this->appServiceShare(Download::class, new Download());
+
         $this->appAddFilter('wp_get_attachment_url', null, 10, 2);
         $this->appAddFilter('get_attached_file', null, 10, 2);
         $this->appAddFilter('wp_calculate_image_srcset', null, 10, 5);
