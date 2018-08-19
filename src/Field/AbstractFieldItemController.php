@@ -275,6 +275,10 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
      */
     public function isChecked()
     {
+        if ($this->get('checked') === true) :
+            return true;
+        endif;
+
         if (!$this->hasAttr('value')) :
             return false;
         endif;
@@ -403,9 +407,8 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
      * @param array $attrs {
      *      Liste des attributs de template personnalisés.
      *
-     *      @var string $basedir Répertoire de stockage des templates.
-     *      @var string|callable Classe de rappel du controleur de template.
-     *      @var array $args Liste des variables d'environnement passée en argument.
+     *      @var string $directory Répertoire principal de stockage des templates.
+     *      @var string|callable $controller Classe de rappel du controleur de template.
      * }
      * @return array
      */
@@ -423,6 +426,14 @@ abstract class AbstractFieldItemController extends AppController implements Fiel
         );
 
         $this->appTemplates($this->get('templates'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function pull($key, $default = null)
+    {
+        return  Arr::pull($this->attributes, $key, $default);
     }
 
     /**

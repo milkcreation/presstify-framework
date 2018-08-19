@@ -169,6 +169,16 @@ interface FieldItemInterface
     public function parse($attrs = []);
 
     /**
+     * Récupére la valeur d'un attribut avant de le supprimer.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par defaut lorsque l'attribut n'est pas défini.
+     *
+     * @return mixed
+     */
+    public function pull($key, $default = null);
+
+    /**
      * Définition d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.

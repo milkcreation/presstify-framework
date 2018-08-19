@@ -38,17 +38,6 @@ class Options extends AppController
     ];
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    public function appBoot()
-    {
-        $this->appTemplates(['directory' => $this->appDirname() . '/templates']);
-        $this->appAddAction('init', null, 99999);
-    }
-
-    /**
      * Traitement des attributs de configuration de la page des options
      *
      * @return void
@@ -57,7 +46,7 @@ class Options extends AppController
     {
         $this->set(
             'admin_page',
-                array_merge(
+            array_merge(
                 [
                     'parent_slug'   => 'options-general.php',
                     'page_title'    => $this->get('page_title'),
@@ -130,56 +119,14 @@ class Options extends AppController
     }
 
     /**
-     * Initialisation globale de Wordpress.
+     * Initialisation du controleur.
      *
      * @return void
      */
-    public function init()
+    public function appBoot()
     {
-        $this->attributes['page_title'] = __('Réglages des options du site', 'tify');
-        $this->attributes['menu_title'] = __('Options du site', 'tify');
-
-        $this->attributes = array_merge(
-            $this->attributes,
-            $this->appConfig()
-        );
-
-        $this->_parseAdminPage();
-        $this->_parseAdminBar();
-        $this->_parseBox();
-        $this->_parseNodes();
-
-        do_action('tify_option_register', $this);
-
-        if ($this->getNodes()) :
-            $this->appAddAction('tify_tabmetabox_register');
-            $this->appAddAction('admin_menu');
-            $this->appAddAction('admin_enqueue_scripts');
-            $this->appAddAction('admin_bar_menu');
-        endif;
-    }
-
-    /**
-     * Déclaration de la boîte à onglets.
-     *
-     * @param TabMetabox $tabMetaboxController Classe de rappel du controleur de boite à onglets de controle de saisie.
-     *
-     * @return void
-     */
-    public function tify_tabmetabox_register($tabMetaboxController)
-    {
-        if ($nodes = $this->getNodes()) :
-            if ($attrs = $this->get('box')) :
-                $tabMetaboxController->registerBox(
-                    $this->getHookname(),
-                    $attrs
-                );
-            endif;
-
-            foreach ($nodes as $attrs) :
-                $tabMetaboxController->registerNode($this->getHookname(), $attrs);
-            endforeach;
-        endif;
+        $this->appTemplates(['directory' => $this->appDirname() . '/templates']);
+        $this->appAddAction('init', null, 99999);
     }
 
     /**
@@ -234,29 +181,15 @@ class Options extends AppController
      */
     public function admin_bar_menu(&$wp_admin_bar)
     {
-        /*
-        // Bypass - Vérification d'existance de greffons
-        if (!self::getNodes()) :
+        if (!$this->getNodes() |\is_admin()) :
             return;
         endif;
 
-        // Bypass - La modification n'est effective que sur l'interface utilisateurs
-        if (\is_admin()) :
+        if (!$admin_bar = $this->get('admin_bar', [])) :
             return;
         endif;
 
-        // Bypass - L'utilisateur doit être habilité
-        if (!\current_user_can(self::getAttr('cap'))) :
-            return;
-        endif;
-
-        if (!$attrs = self::getAttr('admin_bar')) :
-            return;
-        endif;
-
-        // Déclaration du lien d'accès à l'interface
-        $wp_admin_bar->add_node($attrs);
-        */
+        $wp_admin_bar->add_node($admin_bar);
     }
 
     /**
@@ -303,27 +236,45 @@ class Options extends AppController
     }
 
     /**
-     * Déclaration d'une section de boîte à onglets.
-     *
-     * @param array $args {
-     *      Attributs de configuration de la section de boîte à onglets
-     *
-     *      @var string $id Requis. Identifiant de la section.
-     *      @var string $title Requis. Titre de la section.
-     *      @var string $parent Identifiant de la section parente
-     *      @var string $cb Classe de rappel d'affichage de la section.
-     *      @var mixed $args Argument passé à la classe de rappel
-     *      @var string $cap Habilitation d'accès à la section
-     *      @var bool $show Affichage de la section
-     *      @var int $order Ordre d'affichage
-     *      @var string|string[] $helpers Chaine de caractères séparés par de virgules|Tableau indexé des classes de rappel d'aides à la saisie
-     * }
+     * Initialisation globale de Wordpress.
      *
      * @return void
      */
-    public function register($attrs)
+    public function init()
     {
-        self::$Attrs['nodes'][] = $attrs;
+        $this->attributes['page_title'] = __('Réglages des options du site', 'tify');
+        $this->attributes['menu_title'] = __('Options du site', 'tify');
+
+        $this->attributes = array_merge(
+            $this->attributes,
+            $this->appConfig()
+        );
+
+        $this->_parseAdminPage();
+        $this->_parseAdminBar();
+        $this->_parseBox();
+        $this->_parseNodes();
+
+        do_action('tify_options_register', $this);
+
+        if ($this->getNodes()) :
+            $this->appAddAction('tify_tabmetabox_register');
+            $this->appAddAction('admin_menu');
+            $this->appAddAction('admin_enqueue_scripts');
+            $this->appAddAction('admin_bar_menu');
+        endif;
+    }
+
+    /**
+     * Déclaration d'une section de boîte à onglets.
+     *
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return void
+     */
+    public function register($attrs = [])
+    {
+        $this->attributes['nodes'][] = $attrs;
     }
 
     /**
@@ -353,5 +304,28 @@ class Options extends AppController
     public function set($key, $value)
     {
         return Arr::set($this->attributes, $key, $value);
+    }
+
+    /**
+     * Déclaration de la boîte à onglets.
+     *
+     * @param TabMetabox $tabMetaboxController Classe de rappel du controleur de boite à onglets de controle de saisie.
+     *
+     * @return void
+     */
+    public function tify_tabmetabox_register($tabMetaboxController)
+    {
+        if ($nodes = $this->getNodes()) :
+            if ($attrs = $this->get('box')) :
+                $tabMetaboxController->registerBox(
+                    $this->getHookname(),
+                    $attrs
+                );
+            endif;
+
+            foreach ($nodes as $attrs) :
+                $tabMetaboxController->registerNode($this->getHookname(), $attrs);
+            endforeach;
+        endif;
     }
 }

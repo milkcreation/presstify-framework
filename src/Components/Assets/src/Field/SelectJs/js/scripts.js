@@ -44,6 +44,7 @@
             controllers: {
                 handler: 'tiFyField-SelectJsHandler',
                 trigger: 'tiFyField-SelectJsTrigger',
+                triggerHandler: 'tiFyField-SelectJsTriggerHandler',
                 autocompleteInput: 'tiFyField-SelectJsAutocomplete',
                 selectedList: 'tiFyField-SelectJsSelectedItems',
                 picker: 'tiFyField-SelectJsPicker',
@@ -208,6 +209,9 @@
                     self.flags.hasArrow = false;
                     self.trigger.attr('aria-arrow', false);
                 }
+
+                self.triggerHandler = $('<a href="#" class="tiFyField-SelectJsTriggerHandler" />')
+                    .prependTo(self.trigger);
 
                 // Activation de l'autocomplétion
                 if (self.options.autocomplete) {
@@ -709,8 +713,10 @@
                 var self = this;
 
                 // Action au clic sur le déclencheur de selection
-                self.trigger.on('click.tify_select.open.' + self.instance.uuid,
-                    function () {
+                self.triggerHandler.on('click.tify_select.open.' + self.instance.uuid,
+                    function (e) {
+                        e.preventDefault();
+
                         if (self.flags.isOpen) {
                             self._close();
                         } else {
@@ -795,7 +801,7 @@
                 var self = this;
 
                 // Désactivation de l'action au clic sur le controleur de selection
-                self.trigger.off('click.tify_select.open.' + self.instance.uuid);
+                self.triggerHandler.off('click.tify_select.open.' + self.instance.uuid);
 
                 // Désactivation de la selection d'un élément dans la liste de selection
                 $('> li', self.pickerList).on('click.tify_select.picker_item_select.' +
@@ -935,7 +941,7 @@
                         $('> [data-index="' + item.index + '"]', self.pickerList).length
                             ? $('> [data-index="' + item.index + '"]', self.pickerList)[0]
                             : '<li ' +
-                                'data-label="' + item.label + '" ' +
+                                'data-label="' + $('<div>').text(item.label).html() + '" ' +
                                 'data-value="' + item.value + '" ' +
                                 'data-index="' + item.index + '" ' +
                                 '>' +
@@ -948,7 +954,7 @@
                         $('> [data-index="' + item.index + '"]', self.selectedList).length
                             ? $('> [data-index="' + item.index + '"]', self.selectedList)[0]
                             : '<li ' +
-                                'data-label="' + item.label + '" ' +
+                                'data-label="' + $('<div>').text(item.label).html() + '" ' +
                                 'data-value="' + item.value + '" ' +
                                 'data-index="' + item.index + '" ' +
                                 '>' +

@@ -18,7 +18,7 @@ class VideoGallery extends ContentPostTypeController
     }
 
     /**
-     * Mise en file des scripts de l'interface d'administration
+     * Mise en file des scripts de l'interface d'administration.
      *
      * @return void
      */
@@ -64,18 +64,23 @@ class VideoGallery extends ContentPostTypeController
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args)
+    public function display($post, $args = [])
     {
         /** @var PostMetadata $postMetadata */
         $postMetadata = $this->appServiceGet(PostMetadata::class);
-
         $this->set('items', $postMetadata->get($post->ID, $this->get('name')) ? : []);
 
         return $this->appTemplateRender('display', $this->all());
     }
 
     /**
-     * {@inheritdoc}
+     * Affichage d'un élément
+     *
+     * @param int $id Identifiant de qualification de l'élément.
+     * @param array $attrs Attributs de configuration de l'élément.
+     * @param string string $name Nom d'enregistrement de l'élément.
+     *
+     * @return string
      */
     public function displayItem($id, $attrs, $name)
     {

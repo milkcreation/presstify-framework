@@ -5,7 +5,7 @@ namespace tiFy\Route;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use tiFy\Apps\AppControllerInterface;
+use tiFy\Apps\AppInterface;
 use tiFy\Apps\Item\AbstractAppItemController;
 
 class RouteHandle extends AbstractAppItemController
@@ -59,7 +59,7 @@ class RouteHandle extends AbstractAppItemController
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], AppControllerInterface $app)
+    public function __construct($name, $attrs = [], AppInterface $app)
     {
         $this->name = $name;
 

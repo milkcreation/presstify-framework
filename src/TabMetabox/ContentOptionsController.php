@@ -28,13 +28,13 @@ class ContentOptionsController extends ContentController
     /**
      * Affichage.
      *
-     * @param array $args Liste des vaiables passés en argument.
+     * @param array $args Liste des variables passés en argument.
      *
      * @return string
      */
-    public function display($args)
+    public function display($args = [])
     {
-        parent::display();
+        return $this->appTemplateRender('display', $this->all());
     }
 
     /**

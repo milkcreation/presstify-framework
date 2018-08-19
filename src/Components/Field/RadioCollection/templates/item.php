@@ -4,7 +4,7 @@
  */
 ?>
 
-<li <?php $this->attrs(); ?>>
+<li class="tiFyField-RadioCollectionItem">
     <?php
         tify_field_radio($this->get('radio', []));
     ?>

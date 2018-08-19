@@ -4,7 +4,7 @@ namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
 use League\Plates\Engine;
-use tiFy\Apps\Templates\TemplateBaseController;
+use tiFy\Apps\Templates\AppTemplateController;
 
 /**
  * Class TemplateController
@@ -14,7 +14,7 @@ use tiFy\Apps\Templates\TemplateBaseController;
  * @method bool has() has(string $key) Vérification d'existance d'un attribut de configuration.
  * @method string htmlAttrs() htmlAttrs(array $attrs) Linéarisation d'une liste d'attributs HTML.
  */
-class TemplateController extends TemplateBaseController
+class TemplateController extends AppTemplateController
 {
     /**
      * Classe de rappel de l'application associée.

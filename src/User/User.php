@@ -25,11 +25,11 @@ use tiFy\User\TakeOver\TakeOver;
 final class User extends AppController
 {
     /**
-     * CONSTRUCTEUR.
+     * Initialisation du controleur.
      *
      * @return void
      */
-    public function __construct()
+    public function appBoot()
     {
         $this->appServiceShare(Role::class, new Role());
         $this->appServiceShare(Session::class, new Session());

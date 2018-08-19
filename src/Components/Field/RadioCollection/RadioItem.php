@@ -84,9 +84,12 @@ class RadioItem extends AbstractAppItemController
         if (!$this->get('attrs.id')) :
             $this->set('attrs.id', 'tiFyField-RadioCollectionItem--'. self::$index);
         endif;
-
-        $this->set('radio.name', $this->app->get('name'));
-        $this->set('radio.checked', $this->app->get('checked'));
+        if (!$this->get('radio.name')) :
+            $this->set('checkbox.name', $this->app->get('name'));
+        endif;
+        if (!$this->get('radio.checked')) :
+            $this->set('checkbox.checked', $this->app->get('checked'));
+        endif;
         if (!$this->get('radio.attrs.id')) :
             $this->set('radio.attrs.id', 'tiFyField-RadioCollectionItemInput--'. self::$index);
         endif;

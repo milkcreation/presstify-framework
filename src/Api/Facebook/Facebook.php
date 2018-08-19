@@ -53,8 +53,6 @@ class Facebook extends FacebookSdk
      */
     public function __construct($args)
     {
-        $this->appRegister();
-
         // Initialisation de la session
         if (!session_id()) :
             session_start();

@@ -3,12 +3,12 @@
 namespace tiFy\Taxonomy;
 
 use Illuminate\Support\Str;
-use tiFy\Apps\Labels\AbstractLabelsController;
+use tiFy\Apps\Labels\AbstractAppLabelsController;
 
 /**
  * @see https://codex.wordpress.org/Function_Reference/register_taxonomy
  */
-class TaxonomyLabelsController extends AbstractLabelsController
+class TaxonomyLabelsController extends AbstractAppLabelsController
 {
     /**
      * {@inheritdoc}

@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 use tiFy\Kernel\Tools;
 use tiFy\tiFy;
 
-final class Assets
+final class Assets implements AssetsInterface
 {
     /**
      * Liste des librairies tierces CSS +JS
@@ -160,13 +160,13 @@ final class Assets
     /**
      * Récupération de l'url vers un asset.
      *
-     * @param string $path Chemin relatif vers le fichier du dossier des assets.
+     * @param string $path Chemin relatif vers un fichier ou un répertoire.
      *
      * @return string
      */
-    public function url($path)
+    public function url($path = '')
     {
-        return tiFy::instance()->absUrl() . ltrim('/Components/Assets/src/', '/') . ltrim($path, '/');
+        return home_url('vendor/presstify/framework/src/Components/Assets/src' . ($path ? '/' . $path : $path));
     }
 
     /**

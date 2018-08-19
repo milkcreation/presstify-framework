@@ -6,6 +6,6 @@
 
 <?php
     tify_field_select(
-        $this->get('handler_args')
+        $this->get('handler')
     );
 ?>

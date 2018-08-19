@@ -1,6 +1,7 @@
 .tiFyPartial-HolderImage {
     position: relative;
     overflow: hidden;
+    margin:0 auto;
 }
 
 .tiFyPartial-HolderImageSizer {

@@ -14,7 +14,7 @@ class Checkbox extends AbstractFieldItemController
      *      @var array $attrs Liste des propriétés de la balise HTML.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string $value Attribut de configuration de la valeur de soumission du champ "value" si l'élément est selectionné.
-     *      @var null|string $checked Valeur de la selection.
+     *      @var null|mixed $checked Valeur de la selection.
      * }
      */
     protected $attributes = [

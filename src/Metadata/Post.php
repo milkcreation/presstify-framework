@@ -39,7 +39,7 @@ final class Post extends AppController
 
         $unique = $this->isSingle($post_type, $meta_key);
 
-        if ($unique=== null):
+        if ($unique === null):
             return false;
         endif;
 

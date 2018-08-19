@@ -2,11 +2,11 @@
 
 namespace tiFy\Apps\Layout\Labels;
 
-use tiFy\Apps\AppControllerInterface;
-use tiFy\Apps\Labels\AbstractLabelsController;
+use tiFy\Apps\AppInterface;
+use tiFy\Apps\Labels\AbstractAppLabelsController;
 use tiFy\Apps\Layout\LayoutInterface;
 
-class LabelsBaseController extends AbstractLabelsController implements LabelsInterface
+class LabelsBaseController extends AbstractAppLabelsController implements LabelsInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.
