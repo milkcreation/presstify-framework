@@ -8,8 +8,8 @@
  */
 ?>
 
-<li data-label="<?php echo $content; ?>"
-    data-value="<?php echo $value; ?>"
+<li data-label="<?php echo $this->e($this->get('content', '')); ?>"
+    data-value="<?php echo $this->get('value', ''); ?>"
     data-index="<?php echo $index; ?>"
     aria-disabled="<?php echo $disabled; ?>"
 >

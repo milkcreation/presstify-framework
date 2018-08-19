@@ -161,10 +161,10 @@ class SelectJs extends AbstractFieldItemController
         $this->parseOptions();
 
         $this->set(
-            'handler_args',
+            'handler',
             [
-                'name'      => $this->get('name'),
-                'value'     => $this->get('value'),
+                'name'      => $this->getName(),
+                'value'     => $this->getValue(),
                 'disabled'  => $this->get('disabled'),
                 'removable' => $this->get('removable'),
                 'multiple'  => $this->get('multiple'),
@@ -214,6 +214,8 @@ class SelectJs extends AbstractFieldItemController
             );
         endif;
 
+        $this->pull('attrs.name');
+        $this->pull('attrs.value');
         $this->set('attrs.data-disabled', (int)$this->get('disabled'));
         $this->set('attrs.data-removable', (int)$this->get('removable'));
         $this->set('attrs.data-multiple', (int)$this->get('multiple'));

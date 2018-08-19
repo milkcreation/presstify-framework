@@ -13,6 +13,10 @@ class CheckboxCollection extends AbstractFieldItemController
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var array|Checkbox $items {
+     *          Liste des attributs de configuration
+     *          @see CheckboxItem
+     *      }
      *      @var null|string $checked Valeur de la selection.
      * }
      */

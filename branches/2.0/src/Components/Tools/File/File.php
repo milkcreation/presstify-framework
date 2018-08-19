@@ -2,7 +2,6 @@
 
 namespace tiFy\Components\Tools\File;
 
-use tiFy\tiFy;
 use tiFy\Kernel\Tools;
 
 class File
@@ -19,9 +18,9 @@ class File
         $contents = '';
 
         // Vérifie si le chemin du fichier est une url
-        if (Tools::Checker()->checkerIsUrl($filename)) :
+        if (Tools::Checker()->isUrl($filename)) :
             if (preg_match('/^' . preg_quote(site_url('/'), '/') . '/', $filename)) :
-                $filename = preg_replace('/^' . preg_quote(site_url('/'), '/') . '/', tiFy::instance()->absPath(), $filename);
+                $filename = preg_replace('/^' . preg_quote(site_url('/'), '/') . '/', \paths()->getPublicPath('/'), $filename);
 
                 if (file_exists($filename)) :
                     $contents = file_get_contents($filename);
@@ -30,8 +29,8 @@ class File
                 $response = wp_remote_get($filename);
                 $contents = wp_remote_retrieve_body($response);
             endif;
-        elseif (file_exists(tiFy::instance()->absPath() . ltrim($filename))) :
-            $contents = file_get_contents(tiFy::instance()->absPath() . ltrim($filename));
+        elseif (file_exists(\paths()->getBasePath() . ltrim($filename))) :
+            $contents = file_get_contents(\paths()->getBasePath() . ltrim($filename));
         elseif (file_exists($filename)) :
             $contents = file_get_contents($filename);
         endif;
@@ -51,7 +50,7 @@ class File
     {
         $root_path = wp_normalize_path($root_path);
 
-        if (Tools::Checker()->checkerIsUrl($filename)) :
+        if (Tools::Checker()->isUrl($filename)) :
             $root_subdir = preg_replace('#^'. ABSPATH .'#', '', $root_path);
             $root_subdir = trim($root_subdir, '/');
 

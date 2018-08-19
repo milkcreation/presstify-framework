@@ -2,33 +2,24 @@
 
 namespace tiFy\Apps;
 
-use League\Event\Emitter;
-use League\Event\EmitterInterface;
-use League\Event\Event;
-use League\Event\EventInterface;
-use League\Event\ListenerInterface;
-use League\Plates\Engine;
-use Monolog\Logger;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RotatingFileHandler;
-use tiFy\Apps\Templates\Templates;
+use Illuminate\Support\Str;
+use tiFy\Apps\Templates\AppEngine;
 use tiFy\tiFy;
-use tiFy\Kernel\Tools;
 
 trait AppTrait
 {
     /**
      * Classe de rappel de gestion des templates
-     * @var Templates
+     * @var AppEngine
      */
-    protected $appTemplates;
+    protected $templatesAppEngine;
 
     /**
      * {@inheritdoc}
      */
     public function appAbsPath()
     {
-        return tiFy::instance()->absPath();
+        return \paths()->getBasePath();
     }
 
     /**
@@ -36,15 +27,7 @@ trait AppTrait
      */
     public function appAbsDir()
     {
-        return tiFy::instance()->absDir();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appAbsUrl()
-    {
-        return tiFy::instance()->absUrl();
+        return \paths()->getTiFyPath();
     }
 
     /**
@@ -84,7 +67,7 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
-    public function appAssetUrl($path)
+    public function appAssetUrl($path = '')
     {
         return $this->appAssets()->url($path);
     }
@@ -94,15 +77,7 @@ trait AppTrait
      */
     public function appAssets()
     {
-        return tiFy::instance()->assets();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appClassLoad($namespace, $base_dir = null)
-    {
-        return tiFy::instance()->classLoad($namespace, $base_dir);
+        return \assets();
     }
 
     /**
@@ -110,31 +85,39 @@ trait AppTrait
      */
     public function appClassname()
     {
-        return Tools::ClassInfo($this)->getName();
+        return $this->appClassInfo()->getName();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appConfig($key = null, $default = null)
+    public function appConfig($key = null, $default = [])
     {
-        return tiFy::instance()->apps()->getConfig($key, $default, $this);
+        $alias = \container()->getAlias(get_class($this));
+
+        if (is_array($key)) :
+            return \config()->set($alias, $key);
+        elseif(!empty($key)) :
+            return \config()->get($alias . '.' .$key, $default);
+        else :
+            return \config()->get($alias, $default);
+        endif;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appDirname($app = null)
+    public function appContainer()
     {
-        return Tools::ClassInfo($app ?: $this)->getDirname();
+        return \container();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appEvent()
+    public function appDirname()
     {
-        return tiFy::instance()->event();
+        return $this->appClassInfo()->getDirname();
     }
 
     /**
@@ -142,7 +125,7 @@ trait AppTrait
      */
     public function appEventListen($name, $listener, $priority = 0)
     {
-        return $this->appEvent()->addListener($name, $listener, $priority);
+        return $this->appEvents()->listen($name, $listener, $priority);
     }
 
     /**
@@ -150,40 +133,23 @@ trait AppTrait
      */
     public function appEventTrigger($event)
     {
-        if (!is_object($event) && !is_string($event)) :
-            return null;
-        endif;
-
-        $args = func_get_args();
-        $args[0] = is_object($event) ? $event : Event::named($event);
-
-        return call_user_func_array([$this->appEvent(), 'emit'], $args);
+        return $this->appEvents()->trigger($event);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appExists()
+    public function appEvents()
     {
-        return tiFy::instance()->apps()->exists($this);
+        return \events();
     }
 
     /**
      * {@inheritdoc}
-     */
-    public function appGet($key = null, $default = null)
-    {
-        return tiFy::instance()->apps()->getAttr($key, $default, $this);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return self|object
      */
     public static function appInstance($classname = null, $args = [])
     {
-        return tiFy::instance()->serviceGet($classname ?: get_called_class(), $args);
+        return \container()->resolve($classname ?: get_called_class(), $args);
     }
 
     /**
@@ -191,33 +157,15 @@ trait AppTrait
      */
     public function appLog()
     {
-        if ($logger = $this->appGet('logger')) :
-            return $logger;
-        endif;
-
-        $filename = WP_CONTENT_DIR . '/uploads/log.log';
-
-        $formatter = new LineFormatter();
-        $stream = new RotatingFileHandler($filename, 7);
-        $stream->setFormatter($formatter);
-
-        $logger = new Logger($this->appClassname());
-        $this->appSet('logger', $logger);
-
-        if ($timezone = get_option('timezone_string')) :
-            $logger->setTimezone(new \DateTimeZone($timezone));
-        endif;
-        $logger->pushHandler($stream);
-
-        return $logger;
+        return \logger();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appLowerName($name = null, $separator = '-')
+    public function appLowerName($name = null)
     {
-        return tiFy::instance()->formatLowerName($name ?: $this->appShortname(), $separator);
+        return Str::kebab($name ?? $this->appShortname());
     }
 
     /**
@@ -225,7 +173,7 @@ trait AppTrait
      */
     public function appNamespace()
     {
-        return Tools::ClassInfo($this)->getNamespaceName();
+        return $this->appClassInfo()->getNamespaceName();
     }
 
     /**
@@ -233,23 +181,15 @@ trait AppTrait
      */
     public function appClassInfo()
     {
-        return Tools::ClassInfo($this);
+        return \class_info($this);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appRegister($attrs = [])
+    public function appRelPath()
     {
-        return tiFy::instance()->apps()->setApp(get_class($this), $attrs);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appRelPath($app = null)
-    {
-        return Tools::ClassInfo($app ?: $this)->getRelPath();
+        return $this->appClassInfo()->getRelPath();
     }
 
     /**
@@ -257,15 +197,15 @@ trait AppTrait
      */
     public function appRequest($property = '')
     {
-        return tiFy::instance()->request($property);
+        return \request()->getProperty($property);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appServiceAdd($alias, $concrete = null, $share = false)
+    public function appServiceAdd($alias, $concrete = null, $singleton = false)
     {
-        return tiFy::instance()->serviceAdd($alias, $concrete, $share);
+        return $this->appContainer()->add($alias, $concrete, $singleton);
     }
 
     /**
@@ -273,7 +213,7 @@ trait AppTrait
      */
     public function appServiceGet($alias, $args = [])
     {
-        return tiFy::instance()->serviceGet($alias, $args);
+        return $this->appContainer()->get($alias, $args);
     }
 
     /**
@@ -281,15 +221,7 @@ trait AppTrait
      */
     public function appServiceHas($alias)
     {
-        return tiFy::instance()->serviceHas($alias);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appServiceProvider($provider)
-    {
-        return tiFy::instance()->serviceProvider($provider);
+        return $this->appContainer()->has($alias);
     }
 
     /**
@@ -297,15 +229,7 @@ trait AppTrait
      */
     public function appServiceShare($alias, $concrete = null)
     {
-        return tiFy::instance()->serviceShare($alias, $concrete);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appSet($key, $value)
-    {
-        return tiFy::instance()->apps()->setAttr($key, $value, $this);
+        return $this->appContainer()->share($alias, $concrete);
     }
 
     /**
@@ -313,7 +237,7 @@ trait AppTrait
      */
     public function appShortname()
     {
-        return Tools::ClassInfo($this)->getShortName();
+        return $this->appClassInfo()->getShortName();
     }
 
     /**
@@ -321,11 +245,11 @@ trait AppTrait
      */
     public function appTemplates($options = [])
     {
-        if (!$this->appTemplates) :
-            $this->appTemplates = new Templates($options, $this);
+        if (!$this->templatesAppEngine) :
+            $this->templatesAppEngine = new AppEngine($options, $this);
         endif;
 
-        return $this->appTemplates;
+        return $this->templatesAppEngine;
     }
 
     /**
@@ -363,16 +287,16 @@ trait AppTrait
     /**
      * {@inheritdoc}
      */
-    public function appUpperName($name = null, $underscore = true)
+    public function appUpperName($name = null)
     {
-        return tiFy::instance()->formatUpperName($name ?: $this->appShortname(), $underscore);
+        return Str::camel($name ?? $this->appShortname());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appUrl($app = null)
+    public function appUrl()
     {
-        return Tools::ClassInfo($app ?: $this)->getUrl();
+        return $this->appClassInfo()->getUrl();
     }
 }

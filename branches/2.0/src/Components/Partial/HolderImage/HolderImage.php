@@ -58,12 +58,17 @@ class HolderImage extends AbstractPartialController
     {
         $this->attributes['attrs']['id'] = 'tiFyPartial-HolderImage--' . $this->getIndex();
         $this->attributes['attrs']['class'] = "tiFyPartial-HolderImage tiFyPartial-HolderImage--" . $this->getId();
-        $this->attributes['content'] = "<span class=\"tiFyPartial-HolderImageContentDefault\">{$this->get('width')}x{$this->get('height')}</span>";
 
         parent::parse($attrs);
 
+        if (!$this->get('content')) :
+            $this->set('content',
+                "<span class=\"tiFyPartial-HolderImageContentDefault\">{$this->get('width')}x{$this->get('height')}</span>"
+            );
+        endif;
+
         $this->set('attrs.aria-control', 'holder_image');
-        $this->set('attrs.style', "background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};font-size:{$this->get('font-size')}\"");
+        $this->set('attrs.style', "max-width:{$this->get('width')}px;max-height:{$this->get('height')}px;background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};font-size:{$this->get('font-size')}\"");
 
         $this->set('_attrs', Tools::Html()->parseAttrs($this->get('attrs')));
     }

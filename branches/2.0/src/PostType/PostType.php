@@ -7,13 +7,20 @@ use tiFy\Apps\AppController;
 final class PostType extends AppController
 {
     /**
+     * Liste des types de post déclarés.
+     * @var array
+     */
+    protected $items = [];
+
+    /**
      * Initialisation du controleur.
      *
      * @return void
      */
     public function appBoot()
     {
-        $this->appAddAction('init', null, 0);
+        $this->appAddAction('init', [$this, 'preInit'], 1);
+        $this->appAddAction('init', [$this, 'postInit'], 9999);
     }
 
     /**
@@ -21,7 +28,7 @@ final class PostType extends AppController
      *
      * @return void
      */
-    public function init()
+    public function preInit()
     {
         if ($post_types = $this->appConfig(null, [])) :
             foreach ($post_types as $name => $attrs) :
@@ -30,6 +37,22 @@ final class PostType extends AppController
         endif;
 
         do_action('tify_post_type_register', $this);
+    }
+
+    /**
+     * Initialisation globale de Wordpress.
+     *
+     * @return void
+     */
+    public function postInit()
+    {
+        global $wp_post_types;
+
+        foreach($wp_post_types as $name => $attrs) :
+            if (!$this->get($name)) :
+                $this->register($name, get_object_vars($attrs));
+            endif;
+        endforeach;
     }
 
     /**
@@ -47,9 +70,9 @@ final class PostType extends AppController
             return;
         endif;
 
-        $this->appServiceShare($alias, new PostTypeController($name, $attrs, $this));
+        $this->appServiceShare($alias, new PostTypeItemController($name, $attrs, $this));
 
-        return $this->appServiceGet($alias);
+        return $this->items[$name] = $this->appServiceGet($alias);
     }
 
     /**

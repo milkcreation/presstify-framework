@@ -6,7 +6,7 @@ abstract class AbstractAppController
 {
     /**
      * Classe de rappel du controleur de l'application.
-     * @var AppControllerInterface
+     * @var AppInterface
      */
     protected $app;
 
@@ -15,7 +15,7 @@ abstract class AbstractAppController
      *
      * @return void
      */
-    public function __construct(AppControllerInterface $app)
+    public function __construct(AppInterface $app)
     {
         $this->app = $app;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \tiFy\Field\TemplateController $this
+ * @var tiFy\Field\TemplateController $this
  */
 ?>
 
