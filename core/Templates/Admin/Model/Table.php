@@ -4,6 +4,10 @@ namespace tiFy\Core\Templates\Admin\Model;
 use tiFy\Apps;
 use tiFy\App\Traits\App as TraitsApp;
 use tiFy\Core\Templates\Admin\Helpers;
+use tiFy\Core\Templates\Traits\Table\Actions as ActionsTrait;
+use tiFy\Core\Templates\Traits\Table\Notices as NoticesTrait;
+use tiFy\Core\Templates\Traits\Table\Params as ParamsTrait;
+use tiFy\Core\Templates\Traits\Table\Views as ViewsTrait;
 
 /** 
  * @see https://codex.wordpress.org/Class_Reference/WP_List_Table
@@ -14,10 +18,10 @@ if( ! class_exists( 'WP_List_Table' ) )
 abstract class Table extends \WP_List_Table
 {
     use TraitsApp;
-    use \tiFy\Core\Templates\Traits\Table\Actions;
-    use \tiFy\Core\Templates\Traits\Table\Notices;
-    use \tiFy\Core\Templates\Traits\Table\Params;
-    use \tiFy\Core\Templates\Traits\Table\Views;
+    use ActionsTrait;
+    use NoticesTrait;
+    use ParamsTrait;
+    use ViewsTrait;
 
     /* = ARGUMENTS = */
     // Écran courant

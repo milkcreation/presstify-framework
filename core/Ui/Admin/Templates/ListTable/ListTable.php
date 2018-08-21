@@ -4,8 +4,8 @@ namespace tiFy\Core\Ui\Admin\Templates\ListTable;
 class ListTable extends \tiFy\Core\Ui\Admin\Factory
 {
     // Gabarit commun
-    use \tiFy\Core\Ui\Common\Traits\Templates\ListTable\ListTable;
-    use \tiFy\Core\Ui\Common\Traits\Templates\ListTable\WpListTable;
+    use tiFy\Core\Ui\Common\Traits\Templates\ListTable\ListTable;
+    use tiFy\Core\Ui\Common\Traits\Templates\ListTable\WpListTable;
 
     // Paramètres
     use Traits\Params;

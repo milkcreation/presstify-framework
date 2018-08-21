@@ -4,8 +4,8 @@
  */
 namespace tiFy\Core\Forms\Addons\Record;
 
-use \tiFy\Core\Forms\Forms;
-use \tiFy\Core\Forms\Addons;
+use tiFy\Core\Forms\Forms;
+use tiFy\Core\Forms\Addons;
 
 class ListTable extends \tiFy\Core\Templates\Admin\Model\ListTable\ListTable
 {

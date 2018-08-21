@@ -121,6 +121,14 @@ trait App
     /**
      * {@inheritdoc}
      */
+    public function appContainer()
+    {
+        return \container();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function appDirname($classname = null)
     {
         return self::tFyAppDirname($classname);
@@ -438,18 +446,6 @@ trait App
     public function appAttrList($classname = null)
     {
         return self::tFyAppAttrList($classname);
-    }
-
-    /**
-     * Conteneur d’injection de dépendances
-     * @see http://container.thephpleague.com/
-     * @deprecated
-     *
-     * @return \League\Container\Container
-     */
-    public function appContainer()
-    {
-        return self::tFyAppContainer();
     }
 
     /**

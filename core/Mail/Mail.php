@@ -1,7 +1,7 @@
 <?php 
 namespace tiFy\Core\Mail;
 
-use \tiFy\Lib\Mailer\MailerNew;
+use tiFy\Lib\Mailer\MailerNew;
 
 class Mail extends \tiFy\App\Core
 {

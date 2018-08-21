@@ -12,7 +12,7 @@ use Facebook\Exceptions\FacebookSDKException;
 
 class Facebook extends \Facebook\Facebook
 {
-    use \tiFy\App\Traits\App;
+    use tiFy\App\Traits\App;
 
     /**
      * Instance de la classe

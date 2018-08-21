@@ -2,14 +2,14 @@
 
 namespace tiFy\App\Partial;
 
-use tiFy\App\AppControllerInterface;
+use tiFy\App\AppInterface;
 use tiFy\App\Item\AbstractAppItemController;
 
 abstract class AbstractAppPartial extends AbstractAppItemController
 {
     /**
      * Classe de rappel du controleur de l'interface d'administration associée.
-     * @var AppControllerInterface
+     * @var AppInterface
      */
     protected $app;
 

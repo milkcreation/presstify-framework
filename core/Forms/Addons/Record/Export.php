@@ -1,8 +1,8 @@
 <?php
 namespace tiFy\Core\Forms\Addons\Record;
 
-use \tiFy\Core\Forms\Forms;
-use \tiFy\Core\Forms\Addons;
+use tiFy\Core\Forms\Forms;
+use tiFy\Core\Forms\Addons;
 
 class Export extends \tiFy\Core\Templates\Admin\Model\Export\Export
 {

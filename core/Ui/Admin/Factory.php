@@ -6,10 +6,10 @@ use tiFy\Core\Ui\Ui;
 class Factory extends \tiFy\Core\Ui\Factory
 {
     // Paramètres
-    use \tiFy\Core\Ui\Admin\Traits\Params;
+    use tiFy\Core\Ui\Admin\Traits\Params;
 
     // Actions
-    use \tiFy\Core\Ui\Admin\Traits\Actions;
+    use tiFy\Core\Ui\Admin\Traits\Actions;
 
     /**
      * Ecran courant d'affichage de la page

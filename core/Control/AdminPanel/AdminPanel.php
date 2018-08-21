@@ -16,8 +16,8 @@
 
 namespace tiFy\Core\Control\AdminPanel;
 
-use \tiFy\Statics\Tools as tiFyStaticsTools;
-use \tiFy\Core\Control\Control;
+use tiFy\Statics\Tools as tiFyStaticsTools;
+use tiFy\Core\Control\Control;
 
 /**
  * @since 1.0.344 Première version du panneau d'administration

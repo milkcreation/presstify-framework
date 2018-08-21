@@ -818,11 +818,11 @@ final class Apps
             endif;
             $app['bootstrap'] = $app['bootstrap'];
 
-            tiFy::classLoad($app['namespace'], $app['base_dir']);
+            //tiFy::classLoad($app['namespace'], $app['base_dir']);
             if (!empty($app['bootstrap'])) :
                 $concrete = ltrim($app['namespace'], '\\') . "\\" . $app['bootstrap'];
 
-                tiFy::getContainer()->share($concrete, new $concrete());
+                //tiFy::getContainer()->share($concrete, new $concrete());
             endif;
 
             // Chargement automatique

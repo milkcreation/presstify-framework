@@ -4,7 +4,7 @@ namespace tiFy\Core\Column;
 
 use tiFy\App\Traits\App as TraitsApp;
 
-final class objectNameFactory
+final class ObjectNameFactory
 {
     use TraitsApp;
 

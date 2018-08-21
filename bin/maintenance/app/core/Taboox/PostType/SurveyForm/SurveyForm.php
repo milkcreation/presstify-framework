@@ -1,7 +1,7 @@
 <?php
 namespace Theme\tiFy\Core\Taboox\PostType\SurveyForm;
 
-use \tiFy\App\Factory;
+use tiFy\App\Factory;
 
 class SurveyForm extends App
 {

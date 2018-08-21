@@ -1,7 +1,7 @@
 <?php
 namespace tiFy\Core\CustomType;
 
-use \tiFy\Core\Labels\Labels;
+use tiFy\Core\Labels\Labels;
 
 class CustomType extends \tiFy\App\Core
 {

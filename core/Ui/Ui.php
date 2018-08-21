@@ -1,8 +1,8 @@
 <?php
 namespace tiFy\Core\Ui;
 
-use \tiFy\Core\Ui\Admin\Factory as AdminFactory;
-use \tiFy\Core\Ui\User\Factory as UserFactory;
+use tiFy\Core\Ui\Admin\Factory as AdminFactory;
+use tiFy\Core\Ui\User\Factory as UserFactory;
 
 final class Ui extends \tiFy\App\Core
 {

@@ -4,12 +4,14 @@ namespace tiFy\App\Container;
 
 use Illuminate\Support\Collection;
 use tiFy\App;
+use tiFy\Kernel\Container\ServiceInterface;
+use tiFy\Kernel\Container\ServiceProviderInterface;
 
 class Container extends App implements ContainerInterface
 {
     /**
      * Liste des services déclarés.
-     * @var Service[]
+     * @var ServiceInterface[]
      */
     protected $items = [];
 
@@ -17,7 +19,7 @@ class Container extends App implements ContainerInterface
      * Liste des fournisseurs de service.
      * @var string[]
      */
-    protected $providers = [];
+    protected $serviceProviders = [];
 
     /**
      * Liste des alias de résolution de services.
@@ -34,13 +36,22 @@ class Container extends App implements ContainerInterface
     {
         parent::__construct();
 
-        foreach ($this->getProviders() as $provider) :
-            $concrete = new $provider($this);
+        foreach ($this->getServiceProviders() as $serviceProvider) :
+            $this->appContainer()->share($serviceProvider)->withArgument($this);
+            $concrete = $this->appContainer()->get($serviceProvider);
 
-            if ($concrete instanceof ServiceProvider) :
-                $this->appServiceProvider($concrete);
+            if ($concrete instanceof ServiceProviderInterface) :
+                $this->appContainer()->addServiceProvider($concrete);
             endif;
         endforeach;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addService($abstract, $attrs = [])
+    {
+        return new AppService($abstract, $attrs, $this);
     }
 
     /**
@@ -60,11 +71,9 @@ class Container extends App implements ContainerInterface
             $concrete = $abstract;
         endif;
 
-        if (!$alias = $this->getAlias($concrete)) :
-            $alias = $abstract;
-        endif;
+        $alias = $this->getAlias($concrete);
 
-        return $this->items[$abstract] = new Service($abstract, compact('alias', 'concrete', 'singleton'), $this);
+        return $this->items[$abstract] = $this->addService($abstract, compact('alias', 'concrete', 'singleton'));
     }
 
     /**
@@ -72,7 +81,9 @@ class Container extends App implements ContainerInterface
      */
     public function getAlias($concrete)
     {
-        return array_search($concrete, $this->getAliases());
+        $alias = array_search($concrete, $this->getAliases());
+
+        return $alias !== false ? $alias : $concrete;
     }
 
     /**
@@ -89,9 +100,9 @@ class Container extends App implements ContainerInterface
     public function getAbstract($alias)
     {
         return (
-            $exists = (new Collection($this->items))->first(function($item) use ($alias) {
-                return $item->getAlias() === $alias;
-            })
+        $exists = (new Collection($this->items))->first(function($item) use ($alias) {
+            return $item->getAlias() === $alias;
+        })
         )
             ? $exists->getAbstract()
             : $alias;
@@ -103,6 +114,7 @@ class Container extends App implements ContainerInterface
     public function getService($abstract)
     {
         $abstract = $this->getAbstract($abstract);
+
         if (isset($this->items[$abstract])) :
             return $this->items[$abstract];
         else :
@@ -116,10 +128,10 @@ class Container extends App implements ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function getProviders()
+    public function getServiceProviders()
     {
         return array_merge(
-            $this->providers,
+            $this->serviceProviders,
             $this->appConfig('providers', [])
         );
     }

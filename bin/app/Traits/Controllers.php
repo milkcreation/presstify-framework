@@ -1,40 +1,41 @@
 <?php
+
 namespace tiFy\App\Traits;
 
 use tiFy\tiFy;
 use tiFy\Lib\StdClass;
-use \tiFy\Apps;
+use tiFy\Apps;
 
 trait Controllers
 {
     /**
      * Liste des controleurs déclarés
      */
-	protected static $Controllers           = array();
-    
-	/**
-	 * CONTROLEURS
-	 */
-	/**
-	 * Définition d'un controleur
+    protected static $Controllers = [];
+
+    /**
+     * CONTROLEURS
+     */
+    /**
+     * Définition d'un controleur
      * @deprecated
      *
      * @param object|string $classname Instance (objet) ou Nom de la classe de l'application
      *
      * @return null|object
-	 */
+     */
     public static function setController($id, $classname)
     {
-        if(is_object($classname) && get_class($classname)) :
-        elseif(class_exists($classname)) :
+        if (is_object($classname) && get_class($classname)) :
+        elseif (class_exists($classname)) :
             $classname = self::loadOverride($classname);
         else :
             return;
         endif;
-        
+
         return self::$Controllers[$id] = $classname;
     }
-    
+
     /**
      * Récupération d'un controleur déclaré
      * @deprecated
@@ -42,10 +43,11 @@ trait Controllers
      */
     public static function getController($id)
     {
-        if( isset( self::$Controllers[$id] ) )
+        if (isset(self::$Controllers[$id])) {
             return self::$Controllers[$id];
+        }
     }
-    
+
     /**
      * Formatage du nom d'un controleur
      *
@@ -59,14 +61,14 @@ trait Controllers
 
         $lcfirst = preg_match('/^tiFy/', $classname);
         $classname = StdClass::sanitizeName($classname);
-        
-        if($lcfirst) :
+
+        if ($lcfirst) :
             $classname = lcfirst($classname);
         endif;
-        
+
         return $classname;
     }
-    
+
     /**
      * Récupération de la liste des espaces de nom de surcharge de l'application
      *
@@ -76,7 +78,7 @@ trait Controllers
     {
         return StdClass::getOverrideNamespaceList();
     }
-    
+
     /**
      * Récupération de l'espace de nom de surcharge principal
      *
@@ -98,28 +100,28 @@ trait Controllers
     {
         $classname = $classname ? $classname : self::tFyAppClassname();
 
-        $dirs = array();
-        if (! $override_path = self::tFyAppOverridePath($classname)) :
+        $dirs = [];
+        if (!$override_path = self::tFyAppOverridePath($classname)) :
             return $dirs;
         endif;
 
-        if (! empty($override_path['theme_app']) && ! is_wp_error($override_path['theme_app']['error'])) :
+        if (!empty($override_path['theme_app']) && !is_wp_error($override_path['theme_app']['error'])) :
             $dirs[] = $override_path['theme_app']['path'];
         endif;
 
         /**
          * @todo
-
-        foreach ((array) Apps::querySet() as $classname => $attrs) :
-
-            $namespaces[] = "{$attrs['Namespace']}\\App";
-        endforeach;
-
-        foreach ((array) Apps::queryPlugins() as $classname => $attrs) :
-            var_dump($attrs);
-            $namespaces[] = "tiFy\\Plugins\\{$attrs['Id']}\\App";
-        endforeach;
-        */
+         *
+         * foreach ((array) Apps::querySet() as $classname => $attrs) :
+         *
+         * $namespaces[] = "{$attrs['Namespace']}\\App";
+         * endforeach;
+         *
+         * foreach ((array) Apps::queryPlugins() as $classname => $attrs) :
+         * var_dump($attrs);
+         * $namespaces[] = "tiFy\\Plugins\\{$attrs['Id']}\\App";
+         * endforeach;
+         */
 
         return $dirs;
     }
@@ -135,27 +137,27 @@ trait Controllers
     {
         $classname = $classname ? $classname : self::tFyAppClassname();
 
-        $dirs = array();
-        if (! $override_path = self::tFyAppOverridePath($classname)) :
+        $dirs = [];
+        if (!$override_path = self::tFyAppOverridePath($classname)) :
             return $dirs;
         endif;
 
-        if (! empty($override_path['theme_templates']) && ! is_wp_error($override_path['theme_templates']['error'])) :
+        if (!empty($override_path['theme_templates']) && !is_wp_error($override_path['theme_templates']['error'])) :
             $dirs[] = $override_path['theme_templates']['path'];
         endif;
 
         /**
          * @todo
-
-        foreach ((array) Apps::querySet() as $classname => $attrs) :
-
-        $namespaces[] = "{$attrs['Namespace']}\\App";
-        endforeach;
-
-        foreach ((array) Apps::queryPlugins() as $classname => $attrs) :
-        var_dump($attrs);
-        $namespaces[] = "tiFy\\Plugins\\{$attrs['Id']}\\App";
-        endforeach;
+         *
+         * foreach ((array) Apps::querySet() as $classname => $attrs) :
+         *
+         * $namespaces[] = "{$attrs['Namespace']}\\App";
+         * endforeach;
+         *
+         * foreach ((array) Apps::queryPlugins() as $classname => $attrs) :
+         * var_dump($attrs);
+         * $namespaces[] = "tiFy\\Plugins\\{$attrs['Id']}\\App";
+         * endforeach;
          */
 
         return $dirs;
@@ -206,7 +208,7 @@ trait Controllers
 
         return StdClass::getOverridePath($classname);
     }
-    
+
     /**
      * Récupération du contrôleur de surcharge courant d'une application
      *
@@ -215,13 +217,13 @@ trait Controllers
      *
      * @return string
      */
-    public static function getOverride($classname = null, $path = array())
+    public static function getOverride($classname = null, $path = [])
     {
         $classname = $classname ? $classname : self::tFyAppClassname();
 
         return StdClass::getOverride($classname, $path);
     }
-    
+
     /**
      * Chargement d'un contrôleur de surcharge courant d'une application
      *
@@ -230,27 +232,27 @@ trait Controllers
      *
      * @return object
      */
-    public static function loadOverride($classname = null, $path = array())
+    public static function loadOverride($classname = null, $path = [])
     {
         $classname = $classname ? $classname : self::tFyAppClassname();
 
-        return StdClass::loadOverride($classname, $path );
+        return StdClass::loadOverride($classname, $path);
     }
 
     /**
-     * Initialisation 
+     * Initialisation
      */
     public static function initOverrideAutoloader($namespace = null, $dirname = null, $autoload = 'Autoload')
     {
-        if (! $namespace) :
+        if (!$namespace) :
             $namespace = self::tFyAppAttr('Namespace');
         endif;
-        if (! $dirname) :
+        if (!$dirname) :
             $dirname = self::tFyAppDirname() . '/app';
         endif;
-        
-        foreach (array('components', 'core', 'plugins', 'set') as $dir) :
-            if (! file_exists($dirname. '/' .$dir)) :
+
+        foreach (['components', 'core', 'plugins', 'set'] as $dir) :
+            if (!file_exists($dirname . '/' . $dir)) :
                 continue;
             endif;
             tiFy::classLoad($namespace . "\\App\\" . ucfirst($dir), $dirname . '/' . $dir, 'Autoload');

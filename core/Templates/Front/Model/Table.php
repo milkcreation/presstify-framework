@@ -3,11 +3,11 @@ namespace tiFy\Core\Templates\Front\Model;
     
 abstract class Table 
 {
-    use \tiFy\Core\Templates\Traits\Factory;
-    use \tiFy\Core\Templates\Traits\Table\Actions;
-    use \tiFy\Core\Templates\Traits\Table\Notices;
-    use \tiFy\Core\Templates\Traits\Table\Params;
-    use \tiFy\Core\Templates\Traits\Table\Views;
+    use tiFy\Core\Templates\Traits\Factory;
+    use tiFy\Core\Templates\Traits\Table\Actions;
+    use tiFy\Core\Templates\Traits\Table\Notices;
+    use tiFy\Core\Templates\Traits\Table\Params;
+    use tiFy\Core\Templates\Traits\Table\Views;
 
     /**
      * Url de la page d'affichage de l'interface d'administration

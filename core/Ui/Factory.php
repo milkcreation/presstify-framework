@@ -7,16 +7,16 @@ use tiFy\Core\Db\Db;
 class Factory extends \tiFy\App\FactoryConstructor
 {
     // Fonctions d'aide
-    use \tiFy\Core\Ui\Common\Traits\Helpers;
+    use tiFy\Core\Ui\Common\Traits\Helpers;
 
     // Paramètres
-    use \tiFy\Core\Ui\Common\Traits\Params;
+    use tiFy\Core\Ui\Common\Traits\Params;
 
     // Actions
-    use \tiFy\Core\Ui\Common\Traits\Actions;
+    use tiFy\Core\Ui\Common\Traits\Actions;
 
     // Notifications
-    use \tiFy\Core\Ui\Common\Traits\Notices;
+    use tiFy\Core\Ui\Common\Traits\Notices;
 
     /**
      * Liste des attributs de configuration des gabarits parent

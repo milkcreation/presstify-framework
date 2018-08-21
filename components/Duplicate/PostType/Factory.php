@@ -1,7 +1,7 @@
 <?php
 namespace tiFy\Components\Duplicate\PostType;
 
-use \tiFy\Lib\File;
+use tiFy\Lib\File;
 
 class Factory
 {

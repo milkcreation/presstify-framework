@@ -2,7 +2,7 @@
 
 namespace tiFy\Core\Templates\Front;
 
-use \tiFy\Core\Templates\Templates;
+use tiFy\Core\Templates\Templates;
 
 class Factory extends \tiFy\Core\Templates\Factory
 {

@@ -1,7 +1,7 @@
 <?php
 namespace tiFy\Core\Templates\Admin;
 
-use \tiFy\Core\Templates\Templates;
+use tiFy\Core\Templates\Templates;
 
 class Admin extends \tiFy\App
 {

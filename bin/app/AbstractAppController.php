@@ -2,24 +2,24 @@
 
 namespace tiFy\App;
 
-use tiFy\App\AppControllerInterface;
+use tiFy\App\AppInterface;
 
 abstract class AbstractAppController
 {
     /**
      * Classe de rappel du controleur de l'application.
-     * @var AppControllerInterface
+     * @var AppInterface
      */
     protected $app;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param AppControllerInterface $app Classe de rappel du controleur de l'application.
+     * @param AppInterface $app Classe de rappel du controleur de l'application.
      *
      * @return void
      */
-    public function __construct(AppControllerInterface $app)
+    public function __construct(AppInterface $app)
     {
         $this->app = $app;
 

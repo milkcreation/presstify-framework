@@ -1,4 +1,5 @@
 <?php
+
 namespace tiFy;
 
 use tiFy\Apps;
