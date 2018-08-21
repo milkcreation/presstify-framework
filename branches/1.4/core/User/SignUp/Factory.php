@@ -110,7 +110,7 @@ final class Factory extends \tiFy\App\FactoryConstructor
 
     /**
      * Affichage du formulaire
-     * @use \tiFy\Core\User\SignUp\SignUp::get($name)
+     * @use tiFy\Core\User\SignUp\SignUp::get($name)
      *
      * @return string
      */

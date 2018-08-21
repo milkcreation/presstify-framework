@@ -5,14 +5,14 @@ namespace tiFy\App\Templates;
 use App\App;
 use Illuminate\Support\Arr;
 use League\Plates\Template\Template;
-use tiFy\App\AppControllerInterface;
+use tiFy\App\AppInterface;
 use tiFy\App\Templates\Engine;
 
 class TemplateBaseController extends Template implements TemplateControllerInterface
 {
     /**
      * Classe de rappel de l'application associée.
-     * @var AppControllerInterface
+     * @var AppInterface
      */
     protected $app;
 
@@ -34,11 +34,11 @@ class TemplateBaseController extends Template implements TemplateControllerInter
      * @param Engine $engine
      * @param string $name
      * @param array $args Liste des variables passées en argument
-     * @param AppControllerInterface Classe de rappel de l'application associée.
+     * @param AppInterface Classe de rappel de l'application associée.
      *
      * @return void
      */
-    public function __construct(Engine $engine, $name, $args = [], AppControllerInterface $app)
+    public function __construct(Engine $engine, $name, $args = [], AppInterface $app)
     {
         $this->app = $app;
         $this->args = $args;

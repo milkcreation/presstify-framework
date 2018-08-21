@@ -2,7 +2,7 @@
 
 namespace App\Core\Options;
 
-use \tiFy\Core\Options\Options;
+use tiFy\Core\Options\Options;
 
 class Config extends \tiFy\App\Config
 {

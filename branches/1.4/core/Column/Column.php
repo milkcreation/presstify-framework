@@ -73,7 +73,7 @@ final class Column extends Core
             case 'post_type' :
             case 'taxonomy' :
             case 'custom' :
-                $controller = 'tiFy\Core\Column\ObjectNameFactory';
+                $controller = ObjectNameFactory::class;
                 break;
             default :
                 wp_die(
@@ -91,16 +91,14 @@ final class Column extends Core
 
         // Récupération du conteneur de type d'objet
         $id = "tify.core.column.{$object_type}.{$object_name}";
-        if (!$this->appHasContainer($id)) :
-            $this->appShareContainer($id, $controller)
-                ->withArgument($object_type)
-                ->withArgument($object_name);
+        if (!$this->appServiceHas($id)) :
+            $this->appServiceShare($id, new $controller($object_type, $object_name));
         endif;
 
         /**
          * @var ObjectNameFactory $ObjectNameFactory
          */
-        $ObjectNameFactory = $this->appGetContainer($id);
+        $ObjectNameFactory = $this->appServiceGet($id);
 
         return $ObjectNameFactory;
     }

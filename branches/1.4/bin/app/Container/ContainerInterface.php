@@ -61,7 +61,7 @@ interface ContainerInterface
      *
      * @return array
      */
-    public function getProviders();
+    public function getServiceProviders();
 
     /**
      * Récupération d'une instance de service.

@@ -2,10 +2,10 @@
 
 namespace tiFy;
 
-use tiFy\App\AppControllerInterface;
+use tiFy\App\AppInterface;
 use tiFy\App\Traits\App as TraitsApp;
 
-abstract class App implements AppControllerInterface
+abstract class App implements AppInterface
 {
     use TraitsApp;
 
@@ -17,6 +17,8 @@ abstract class App implements AppControllerInterface
     public function __construct()
     {
         $this->tFyAppOnInit();
-        $this->appBoot();
+        if (!did_action('tify_app_boot')) :
+            add_action('tify_app_boot', [$this, 'appBoot']);
+        endif;
     }
 }

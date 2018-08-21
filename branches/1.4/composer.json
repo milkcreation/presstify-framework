@@ -91,8 +91,17 @@
     "neitanod/forceutf8": "Forçage d'encodage en utf-8 d'une chaine de caractères"
   },
   "autoload": {
+    "files": [
+      "Helpers.php"
+    ],
     "psr-4": {
-      "tiFy\\": ""
+      "tiFy\\": ["", "bin/"],
+      "tiFy\\App\\": "bin/app/",
+      "tiFy\\Components\\": "components/",
+      "tiFy\\Core\\": "core/",
+      "tiFy\\Deprecated\\": "bin/deprecated",
+      "tiFy\\Kernel\\": "bin/kernel/",
+      "tiFy\\Set\\": "set/"
     }
   },
   "minimum-stability": "dev",

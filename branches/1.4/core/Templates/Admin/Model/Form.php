@@ -6,10 +6,10 @@ use tiFy\Apps;
 
 abstract class Form
 {
-    use \tiFy\Core\Templates\Traits\Factory;
-    use \tiFy\Core\Templates\Traits\Form\Actions;
-    use \tiFy\Core\Templates\Traits\Form\Notices;
-    use \tiFy\Core\Templates\Traits\Form\Params;
+    use tiFy\Core\Templates\Traits\Factory;
+    use tiFy\Core\Templates\Traits\Form\Actions;
+    use tiFy\Core\Templates\Traits\Form\Notices;
+    use tiFy\Core\Templates\Traits\Form\Params;
 
     /* = ARGUMENTS = */
     // Écran courant

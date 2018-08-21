@@ -1,9 +1,9 @@
 <?php
 namespace tiFy\Core\Templates\Traits;
 
-use \tiFy\tiFy;
-use \tiFy\Apps;
-use \tiFy\Lib\File;
+use tiFy\tiFy;
+use tiFy\Apps;
+use tiFy\Lib\File;
 
 trait Factory
 {

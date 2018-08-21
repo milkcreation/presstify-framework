@@ -1,7 +1,7 @@
 <?php
 namespace tiFy\Core\Upload;
 
-use \tiFy\Lib\Cryptor\Cryptor;
+use tiFy\Lib\Cryptor\Cryptor;
 
 class Upload extends \tiFy\App
 {

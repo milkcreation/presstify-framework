@@ -6,7 +6,7 @@ use tiFy\Core\Control\Notices\Notices;
 
 class Factory extends \tiFy\App\FactoryConstructor
 {
-    use \tiFy\Lib\Notices\Traits\Notices;
+    use tiFy\Lib\Notices\Traits\Notices;
 
     /**
      * CONSTRUCTEUR

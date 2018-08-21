@@ -1,8 +1,9 @@
 <?php
 
-namespace tiFy\App\Container;
+namespace tiFy\Kernel\Container;
 
 use League\Container\Definition\DefinitionInterface;
+use tiFy\Kernel\Container\Container;
 
 interface ServiceInterface
 {
@@ -49,6 +50,13 @@ interface ServiceInterface
      * @return callable|object
      */
     public function getConcrete();
+
+    /**
+     * Récupération de la classe de rappel du conteneur de services.
+     *
+     * @return Container
+     */
+    public function getContainer();
 
     /**
      * Vérifie si un controleur de service est instancié au démarrage.

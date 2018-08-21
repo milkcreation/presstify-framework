@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
 use tiFy\Components\Tools\ClassInfo\ClassInfo;
 
-interface AppControllerInterface
+interface AppInterface
 {
     /**
      * Récupération du chemin absolu vers la racine de PresstiFy.

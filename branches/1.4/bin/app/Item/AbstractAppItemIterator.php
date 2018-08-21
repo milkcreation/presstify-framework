@@ -2,13 +2,13 @@
 
 namespace tiFy\App\Item;
 
-use tiFy\App\AppControllerInterface;
+use tiFy\App\AppInterface;
 
 abstract class AbstractAppItemIterator extends AbstractItemIterator
 {
     /**
      * Classe de rappel du controleur de l'application associée.
-     * @var AppControllerInterface
+     * @var AppInterface
      */
     protected $app;
 
@@ -16,11 +16,11 @@ abstract class AbstractAppItemIterator extends AbstractItemIterator
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des paramètres personnalisés.
-     * @param AppControllerInterface $app  Classe de rappel du controleur de l'application.
+     * @param AppInterface $app  Classe de rappel du controleur de l'application.
      *
      * @return void
      */
-    public function __construct($attrs = [], AppControllerInterface $app)
+    public function __construct($attrs = [], AppInterface $app)
     {
         $this->app = $app;
 

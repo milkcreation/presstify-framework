@@ -1,18 +1,18 @@
 <?php
 
-namespace tiFy\App\Container;
+namespace tiFy\Kernel\Container;
 
 use League\Container\Definition\DefinitionInterface;
-use tiFy\App\AppControllerInterface;
-use tiFy\App\Item\AbstractAppItemIterator;
+use tiFy\Kernel\Container\Container;
+use tiFy\Kernel\Item\AbstractItemIterator;
 
-class Service extends AbstractAppItemIterator implements ServiceInterface
+class Service extends AbstractItemIterator implements ServiceInterface
 {
     /**
-     * Classe de rappel du controleur de l'interface associée.
-     * @var AppControllerInterface
+     * Classe de rappel du conteneur de services.
+     * @var Container
      */
-    protected $app;
+    protected $container;
 
     /**
      * Nom de qualification du service.
@@ -37,15 +37,18 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
      *
      * @param string $abstract Nom de qualification du service.
      * @param array $attrs Attributs de configuration.
-     * @param AppControllerInterface Classe de rappel du controleur de l'interface associée.
+     * @param Container $container Classe de rappel du conteneur de services.
      *
      * @return void
      */
-    public function __construct($abstract, $attrs = [], AppControllerInterface $app)
+    public function __construct($abstract, $attrs = [], Container $container)
     {
         $this->abstract = $abstract;
+        $this->container = $container;
 
-        parent::__construct($attrs, $app);
+        parent::__construct($attrs);
+
+        $this->bind();
     }
 
     /**
@@ -53,7 +56,7 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
      */
     public function bind()
     {
-        return $this->definition = $this->app->appServiceAdd($this->getAbstract(), $this->getConcrete(), $this->isSingleton());
+        return $this->definition = $this->getContainer()->add($this->getAbstract(), $this->getConcrete(), $this->isSingleton());
     }
 
     /**
@@ -65,11 +68,9 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
             return $this->instance;
         endif;
 
-        if (!$this->resolved()) :
+        if (!$this->definition) :
             $this->bind();
         endif;
-
-        array_push($args, $this->app);
 
         return $this->instance = $this->definition->build($args);
     }
@@ -122,6 +123,16 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function isBootable()
     {
@@ -170,6 +181,6 @@ class Service extends AbstractAppItemIterator implements ServiceInterface
      */
     public function resolved()
     {
-        return !empty($this->instance);
+        return !empty($this->instance) && $this->definition;
     }
 }

@@ -1,11 +1,10 @@
 <?php
 
-namespace tiFy\App\Container;
+namespace tiFy\Kernel\Container;
 
-use League\Container\Container;
-use League\Container\ContainerInterface;
 use League\Container\ServiceProvider\ServiceProviderInterface as LeagueServiceProviderInterface;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
+use tiFy\Kernel\Container\ContainerInterface;
 
 interface ServiceProviderInterface extends LeagueServiceProviderInterface, BootableServiceProviderInterface
 {
@@ -19,7 +18,7 @@ interface ServiceProviderInterface extends LeagueServiceProviderInterface, Boota
     /**
      * Récupération de la classe de rappel du conteneur d'injection utilisé par le fournisseur de service.
      *
-     * @return ContainerInterface|Container
+     * @return ContainerInterface
      */
     public function getContainer();
 

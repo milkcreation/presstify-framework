@@ -1,16 +1,19 @@
 <?php
 
-namespace tiFy\App\Container;
+namespace tiFy\Kernel\Container;
 
+use Illuminate\Support\Arr;
 use League\Container\ServiceProvider\AbstractServiceProvider;
+use League\Container\ReflectionContainer;
+use tiFy\Kernel\Container\Container;
 
 class ServiceProvider extends AbstractServiceProvider implements ServiceProviderInterface
 {
     /**
-     * Classe de rappel du controleur de l'interface associée.
+     * Classe de rappel du conteneur de services.
      * @var Container
      */
-    protected $app;
+    protected $container;
 
     /**
      * Liste des noms de qualification des services fournis.
@@ -34,14 +37,12 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
     /**
      * CONSTRUCTEUR.
      *
-     * @param array $provides Liste des élements.
-     * @param Container $app Classe de rappel du controleur de l'application.
-     *
      * @return void
      */
-    public function __construct(Container $app)
+    public function __construct(Container $container)
     {
-        $this->app = $app;
+        $this->container = $container;
+
         $this->parse();
     }
 
@@ -114,9 +115,9 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
             array_push($this->provides, $abstract);
 
             if ($this->isSingleton($abstract)) :
-                $this->app->singleton($abstract, $concrete);
+                $this->getContainer()->singleton($abstract, $concrete);
             else :
-                $this->app->bind($abstract, $concrete);
+                $this->getContainer()->bind($abstract, $concrete);
             endif;
         endforeach;
     }

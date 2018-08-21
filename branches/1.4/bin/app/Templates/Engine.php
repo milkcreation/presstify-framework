@@ -4,13 +4,13 @@ namespace tiFy\App\Templates;
 
 use Illuminate\Support\Arr;
 use League\Plates\Engine as PlatesEngine;
-use tiFy\App\AppControllerInterface;
+use tiFy\App\AppInterface;
 
 class Engine extends PlatesEngine
 {
     /**
      * Classe de rappel du controleur d'application associée.
-     * @var AppControllerInterface
+     * @var AppInterface
      */
     protected $app;
 
@@ -36,11 +36,11 @@ class Engine extends PlatesEngine
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des attributs de configuration.
-     * @param AppControllerInterface $app Classe de rappel du controleur d'application associée.
+     * @param AppInterface $app Classe de rappel du controleur d'application associée.
      *
      * @return void
      */
-    public function __construct($attrs = [], AppControllerInterface $app)
+    public function __construct($attrs = [], AppInterface $app)
     {
         $this->app = $app;
 

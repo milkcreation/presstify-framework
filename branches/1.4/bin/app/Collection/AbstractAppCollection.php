@@ -3,20 +3,20 @@
 namespace tiFy\App\Collection;
 
 use Illuminate\Support\Collection;
-use tiFy\App\AppControllerInterface;
+use tiFy\App\AppInterface;
 
 class AbstractAppCollection extends Collection
 {
     /**
      * Classe de rappel du controleur de l'application associée.
-     * @var AppControllerInterface
+     * @var AppInterface
      */
     protected $app;
 
     /**
      * Instanciation.
      *
-     * @param AppControllerInterface $app
+     * @param AppInterface $app
      *
      * @return $this
      */
