@@ -69,12 +69,19 @@ trait App
     }
 
     /**
-     * @todo
      * {@inheritdoc}
      */
-    public function appAsset($filename)
+    public function appAssetUrl($path = '')
     {
+        return $this->appAssets()->url($path);
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function appAssets()
+    {
+        return \assets();
     }
 
     /**
@@ -113,9 +120,17 @@ trait App
     /**
      * {@inheritdoc}
      */
-    public function appConfig($attr = null, $default = '', $classname = null)
+    public function appConfig($key = null, $default = '')
     {
-        return self::tFyAppConfig($attr, $default, $classname);
+        $alias = \container()->getAlias(get_class($this));
+
+        if (is_array($key)) :
+            return \config()->set($alias, $key);
+        elseif(!empty($key)) :
+            return \config()->get($alias . '.' .$key, $default);
+        else :
+            return \config()->get($alias, $default);
+        endif;
     }
 
     /**
@@ -147,33 +162,23 @@ trait App
      */
     public function appEventListen($name, $listener, $priority = 0)
     {
-        return self::tFyAppListen($name, $listener, $priority);
+        return $this->appEvents()->listen($name, $listener, $priority);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appEventTrigger($event, $args = null)
+    public function appEventTrigger($event)
     {
-        return self::tFyAppEmit($event, $args);
+        return $this->appEvents()->trigger($event);
     }
 
     /**
-     * @todo
      * {@inheritdoc}
      */
-    public function appExists()
+    public function appEvents()
     {
-
-    }
-
-    /**
-     * @todo
-     * {@inheritdoc}
-     */
-    public function appGet($key = null, $default = null)
-    {
-
+        return \events();
     }
 
     /**

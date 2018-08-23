@@ -93,6 +93,8 @@ abstract class Config extends \tiFy\App
             return;
         endif;
 
+        \config()->set($parent, $attrs);
+
         return self::tFyAppConfigSetAttrList($attrs, $parent);
     }
 

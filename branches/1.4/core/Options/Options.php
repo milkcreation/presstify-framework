@@ -24,12 +24,12 @@ class Options extends \tiFy\App\Core
         $this->parseAttrs(self::tFyAppConfig());
 
         // Déclaration des événements de déclenchement
-        $this->tFyAppAddAction('init', null, 24);
-        $this->tFyAppAddAction('tify_taboox_register_box');
-        $this->tFyAppAddAction('tify_taboox_register_node');
-        $this->tFyAppAddAction('admin_menu');
-        $this->tFyAppAddAction('admin_enqueue_scripts');
-        $this->tFyAppAddAction('admin_bar_menu');
+        $this->appAddAction('init', null, 24);
+        $this->appAddAction('tify_taboox_register_box');
+        $this->appAddAction('tify_taboox_register_node');
+        $this->appAddAction('admin_menu');
+        $this->appAddAction('admin_enqueue_scripts');
+        $this->appAddAction('admin_bar_menu');
     }
 
     /**
@@ -42,7 +42,7 @@ class Options extends \tiFy\App\Core
      */
     final public function init()
     {
-        do_action('tify_options_register_node');
+        do_action('tify_options_register_node', $this);
     }
 
     /**

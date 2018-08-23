@@ -5,12 +5,15 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.4.62
+ * @version 1.4.63
  */
 
 namespace tiFy;
 
+use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Container\Container;
+use tiFy\Kernel\Config\Config;
+use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\KernelServiceProvider;
 use tiFy\Lib\File;
 use tiFy\Deprecated\DeprecatedtiFyTrait as DeprecatedTrait;
@@ -30,6 +33,11 @@ final class tiFy extends Container
      * @var string[]
      */
     protected $serviceProviders = [
+        /** Ultra-prioritaire */
+        Paths::class,
+        Config::class,
+        ClassLoader::class,
+        /** ----------------- */
         KernelServiceProvider::class
     ];
 
@@ -51,11 +59,11 @@ final class tiFy extends Container
         endif;
 
         add_action(
-            'after_setup_tify',
+            'after_setup_theme',
             function () {
                 do_action('tify_app_boot');
             },
-            9999
+            0
         );
 
         // Définition des chemins absolus
@@ -92,8 +100,6 @@ final class tiFy extends Container
 
         // Instanciation des fonctions d'aide au développement
         new Helpers;
-
-        require_once __DIR__ . '/Helpers.php';
 
         parent::__construct();
 
