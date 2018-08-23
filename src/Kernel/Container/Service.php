@@ -72,7 +72,12 @@ class Service extends AbstractItemIterator implements ServiceInterface
             $this->bind();
         endif;
 
-        return $this->instance = $this->definition->build($args);
+        return $this->instance = is_object($this->getConcrete())
+            ? $this->getConcrete()
+            : ($this->definition instanceof DefinitionInterface
+                ? $this->definition->build($args)
+                : wp_die('!!!cas particulier!!!')
+            );
     }
 
     /**

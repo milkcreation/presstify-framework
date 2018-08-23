@@ -67,6 +67,23 @@ class Config extends AbstractItemController
     }
 
     /**
+     * Définition d'un attribut.
+     *
+     * @param string|array $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param null|mixed $value Valeur de l'attribut.
+     *
+     * @return void
+     */
+    public function set($key, $value = null)
+    {
+        $keys = is_array($key) ? $key : [$key => $value];
+
+        foreach ($keys as $key => $value) :
+            parent::set($key, $value);
+        endforeach;
+    }
+
+    /**
      * Récupération de l'alias de qualification d'un attribut de configuration.
      *
      * @param string $key Nom de qualification original.

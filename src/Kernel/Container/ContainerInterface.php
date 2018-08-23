@@ -2,10 +2,18 @@
 
 namespace tiFy\Kernel\Container;
 
-use League\Container\ContainerInterface as LeagueContainerInterface;
-
-interface ContainerInterface extends LeagueContainerInterface
+interface ContainerInterface
 {
+    /**
+     * Déclaration d'un nouveau service.
+     *
+     * @param string $abstract Nom de qualification du service.
+     * @param array $attrs Attributs de configuration du service.
+     *
+     * @return ServiceInterface
+     */
+    public function addService($abstract, $attrs = []);
+
     /**
      * Vérifie de disponibilité d'un service.
      *
@@ -22,7 +30,7 @@ interface ContainerInterface extends LeagueContainerInterface
      * @param string|object|callable $concrete Nom de classe|Instance de classe|fonction anonyme.
      * @param bool $singleton Indicateur d'instance unique.
      *
-     * @return void
+     * @return ServiceInterface
      */
     public function bind($abstract, $concrete = null, $singleton = false);
 
@@ -81,7 +89,7 @@ interface ContainerInterface extends LeagueContainerInterface
      * @param string $abstract Nom de qualification du service.
      * @param string|object|callable $concrete Nom de classe|Instance de classe|fonction anonyme.
      *
-     * @return void
+     * @return ServiceInterface
      */
     public function singleton($abstract, $concrete = null);
 }

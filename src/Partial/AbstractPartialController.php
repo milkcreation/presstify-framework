@@ -4,7 +4,7 @@ namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Kernel\Tools;
 use tiFy\Partial\Partial;
 use tiFy\Partial\TemplateController;
