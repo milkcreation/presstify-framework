@@ -169,7 +169,7 @@ trait DeprecatedtiFyTrait
      * Récupération de la classe de rappel du conteneur d'injection de dépendances
      * @see http://container.thephpleague.com/
      *
-     * @return Container
+     * @return self
      */
     public static function getContainer()
     {

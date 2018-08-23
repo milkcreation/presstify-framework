@@ -741,17 +741,6 @@ final class Apps
             endwhile;
         endforeach;
 
-        add_action('after_setup_theme', [$this, 'after_setup_theme'], 0);
-    }
-
-    /**
-     * DECLENCHEURS
-     */
-    /**
-     * Après l'initialisation du thème
-     */
-    final public function after_setup_theme()
-    {
         // Récupération des fichier de configuration natifs de PresstiFy
         $_dir = @ opendir(tiFy::$AbsDir . "/bin/config");
         if ($_dir) :
@@ -870,8 +859,9 @@ final class Apps
 
         foreach (array('core', 'components', 'plugins', 'set', 'schema') as $app) :
             // Bypass
-            if (! isset(${$app}))
+            if (! isset(${$app})) :
                 continue;
+            endif;
 
             $App = ucfirst($app);
             self::$Config[$App] = ${$app};
@@ -919,6 +909,12 @@ final class Apps
             $id = basename($dirname);
             $attrs = isset(self::$Config['Core'][$id]) ? self::$Config['Core'][$id] : array();
             Core::register($id, $attrs);
+        endforeach;
+
+        foreach(self::$Config as $type => $components) :
+            foreach($components as $name => $attrs) :
+                \config()->set("tiFy\\{$type}\\{$name}\\{$name}", $attrs);
+            endforeach;
         endforeach;
 
         // Chargement de la configuration dans l'environnement de surcharge
@@ -1023,7 +1019,7 @@ final class Apps
                 // Définition de la liste des chemins vers les repertoires de surcharge
                 self::setOverridePath($classname);
 
-                tiFy::getContainer()->share($attrs['ClassName'], new $attrs['ClassName']);
+                tiFy::getContainer()->singleton($attrs['ClassName'], new $attrs['ClassName']);
             endforeach;
         endforeach;
 

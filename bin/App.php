@@ -17,6 +17,7 @@ abstract class App implements AppInterface
     public function __construct()
     {
         $this->tFyAppOnInit();
+
         if (!did_action('tify_app_boot')) :
             add_action('tify_app_boot', [$this, 'appBoot']);
         endif;

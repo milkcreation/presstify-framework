@@ -39,10 +39,11 @@ class TinyMCE extends \tiFy\App\Component
         'visualblocks'
     ];
 
-    /* = CONSTRUCTEUR = */
-    public function __construct()
+    /**
+     * {@inheritdoc}
+     */
+    public function appBoot()
     {
-        parent::__construct();
 
         // Récupération de la configuration des plugins externe
         self::$ExternalPluginsConfig = $this->appConfig('external_plugins', [])
