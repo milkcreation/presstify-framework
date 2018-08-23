@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Container;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\Kernel\Container\ServiceProvider;
 use tiFy\Kernel\Container\ServiceProviderInterface;
 use tiFy\tiFy;

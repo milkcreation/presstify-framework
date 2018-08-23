@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Db;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\Db\DbBaseController;
 
 abstract class AbstractAppDbController extends DbBaseController implements AppDbInterface

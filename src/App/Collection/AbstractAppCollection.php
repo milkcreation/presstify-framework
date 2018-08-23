@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Collection;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\Kernel\Collection\AbstractCollection;
 
 abstract class AbstractAppCollection extends AbstractCollection

@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Item;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\Kernel\Item\AbstractItemIterator;
 
 abstract class AbstractAppItemIterator extends AbstractItemIterator

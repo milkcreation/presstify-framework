@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Layout\Db;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Db\AbstractAppDbController;
 use tiFy\App\Layout\LayoutInterface;
 

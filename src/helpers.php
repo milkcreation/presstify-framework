@@ -14,12 +14,23 @@ use tiFy\Partial\Partial;
 if (!function_exists('app')) :
     /**
      * App - Controleur de l'application.
+     * {@internal Si $abstract est null > Retourne l'instance de l'appication.}
+     * {@internal Si $abstract est qualifié > Retourne la résolution du service qualifié.}
      *
-     * @return \tiFy\App\AppInterface|\tiFy\App\Container\Container
+     * @param null|string $abstract Nom de qualification du service.
+     * @param array $args Liste des variables passé en arguments lors de la résolution du service.
+     *
+     * @return \tiFy\Contracts\App\AppInterface|\tiFy\App\Container\AppContainer
      */
-    function app()
+    function app($abstract = null, $args = [])
     {
-        return Kernel::App();
+        $factory = Kernel::App();
+
+        if (is_null($abstract)) :
+            return $factory;
+        endif;
+
+        return $factory->resolve($abstract, $args);
     }
 endif;
 
@@ -93,6 +104,7 @@ if (!function_exists('container')) :
     /**
      * Container - Controleur d'injection de dépendances.
      * {@internal Si $alias est null > Retourne la classe de rappel du controleur.}
+     * @deprecated
      *
      * @param string $alias Nom de qualification du service à récupérer.
      *
@@ -157,6 +169,20 @@ if (!function_exists('request')) :
         return Kernel::Request();
     }
 endif;
+
+if (! function_exists('resolve')) {
+    /**
+     * Resolve - Récupération d'une instance de service fourni par le conteneur d'injection de dépendances.
+     *
+     * @param string $name Nom de qualification du service
+     *
+     * @return mixed
+     */
+    function resolve($name)
+    {
+        return app($name);
+    }
+}
 
 if (!function_exists('view')) :
     /**
@@ -767,7 +793,7 @@ if (!function_exists('tify_form_display')) :
      * @param bool $echo Activation de l'affichage. défaut true.
      *
      * @return string
-     */
+
     function tify_form_display($name, $echo = true)
     {
         if ($echo) :
@@ -775,7 +801,7 @@ if (!function_exists('tify_form_display')) :
         else :
             return do_shortcode('[formulaire name="' . $name . '"]');
         endif;
-    }
+    }*/
 endif;
 
 /**

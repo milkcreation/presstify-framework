@@ -4,7 +4,7 @@ namespace tiFy\App\Labels;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Item\AbstractAppItemController;
 
 abstract class AbstractAppLabelsController extends AbstractAppItemController implements AppLabelsInterface

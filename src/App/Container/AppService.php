@@ -4,7 +4,7 @@ namespace tiFy\App\Container;
 
 use League\Container\Definition\DefinitionInterface;
 use tiFy\Kernel\Container\Service;
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\tiFy;
 
 class AppService extends Service
@@ -46,11 +46,8 @@ class AppService extends Service
 
         array_push($args, $this->app);
 
-        return $this->instance = is_object($this->getConcrete())
-            ? $this->getConcrete()
-            : ($this->definition instanceof DefinitionInterface
-                ? $this->definition->build($args)
-                : wp_die('!!!cas particulier!!!')
-            );
+        return $this->instance =  ($this->definition instanceof DefinitionInterface)
+            ? $this->definition->build($args)
+            : $this->definition;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Layout;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Layout\LayoutInterface;
 
 interface LayoutViewInterface extends AppInterface

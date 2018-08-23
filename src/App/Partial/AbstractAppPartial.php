@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Partial;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Item\AbstractAppItemController;
 
 abstract class AbstractAppPartial extends AbstractAppItemController

@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Layout\Labels;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Labels\AbstractAppLabelsController;
 use tiFy\App\Layout\LayoutInterface;
 
