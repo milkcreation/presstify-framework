@@ -72,7 +72,9 @@ class CookieLaw extends \tiFy\App\Set
         endif;
 
         $defaults = [
-            'title' => __('Page d\'affichage des règles de cookie', 'tify')
+            'title' => __('Page d\'affichage des politiques de confidentialité', 'tify'),
+            'option_name' => 'wp_page_for_privacy_policy',
+            'selected' => get_option('wp_page_for_privacy_policy')
         ];
         if (!is_array($attrs)) :
             $attrs = [];
@@ -80,7 +82,7 @@ class CookieLaw extends \tiFy\App\Set
 
         $attrs = \wp_parse_args($attrs, $defaults);
 
-        self::$Router = Router::register('_tiFySet_CookieLaw', $attrs);
+        self::$Router = Router::register('page_for_privacy_policy', $attrs);
     }
 
     /**
