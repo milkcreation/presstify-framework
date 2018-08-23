@@ -2,6 +2,8 @@
 
 namespace tiFy\App;
 
+use tiFy\Contracts\App\AppInterface;
+
 abstract class AppController implements AppInterface
 {
     use AppTrait;

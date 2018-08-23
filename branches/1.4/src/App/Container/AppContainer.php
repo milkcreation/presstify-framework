@@ -4,8 +4,8 @@ namespace tiFy\App\Container;
 
 use Illuminate\Support\Collection;
 use tiFy\App\AppController;
-use tiFy\App\AppInterface;
 use tiFy\App\AppTrait;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\Kernel\Container\Container as KernelContainer;
 use tiFy\Kernel\Container\ContainerInterface;
 use tiFy\Kernel\Container\ContainerTrait;

@@ -3,7 +3,7 @@
 namespace tiFy\App\Templates;
 
 use Illuminate\Support\Arr;
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Templates\AppTemplateController;
 use tiFy\Kernel\Templates\Engine;
 

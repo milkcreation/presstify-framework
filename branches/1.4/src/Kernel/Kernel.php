@@ -2,7 +2,8 @@
 
 namespace tiFy\Kernel;
 
-use tiFy\App\AppInterface;
+use tiFy\App\Container\AppContainer;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
@@ -14,7 +15,7 @@ use tiFy\Kernel\Templates\EngineInterface;
 use tiFy\tiFy;
 
 /**
- * @method static AppInterface App()
+ * @method static AppInterface|AppContainer App()
  * @method static Assets Assets()
  * @method static ClassInfo ClassInfo(string|object $class)
  * @method static ClassLoader ClassLoader()

@@ -2,7 +2,7 @@
 
 namespace tiFy\App\Templates;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Templates\AppEngine;
 use tiFy\Kernel\Templates\TemplateController;
 

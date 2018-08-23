@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\App;
+namespace tiFy\Contracts\App;
 
 use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
 use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
-use tiFy\Kernel\Container\Container;
+use tiFy\Kernel\Container\ContainerInterface;
 use tiFy\Kernel\Request\Request;
 use tiFy\Kernel\Templates\EngineInterface;
 use tiFy\Kernel\Templates\TemplateInterface;
@@ -100,7 +100,7 @@ interface AppInterface
     /**
      * Récupération de la classe de rappel du conteneur d'injection de dépendances.
      *
-     * @return Container
+     * @return ContainerInterface
      */
     public function appContainer();
 

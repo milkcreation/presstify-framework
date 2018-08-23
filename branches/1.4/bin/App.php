@@ -2,7 +2,7 @@
 
 namespace tiFy;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Traits\App as TraitsApp;
 
 abstract class App implements AppInterface
