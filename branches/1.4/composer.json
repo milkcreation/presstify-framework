@@ -100,7 +100,7 @@
       "tiFy\\Components\\": "components/",
       "tiFy\\Core\\": "core/",
       "tiFy\\Deprecated\\": "bin/deprecated/",
-      "tiFy\\Environment" : "bin/deprecated/env/",
+      "tiFy\\Environment\\" : "bin/deprecated/env/",
       "tiFy\\Set\\": "set/"
     }
   },
