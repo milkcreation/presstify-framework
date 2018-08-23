@@ -72,7 +72,9 @@ class Service extends AbstractItemIterator implements ServiceInterface
             $this->bind();
         endif;
 
-        return $this->instance = $this->definition->build($args);
+        return $this->instance =  ($this->definition instanceof DefinitionInterface)
+            ? $this->definition->build($args)
+            : $this->definition;
     }
 
     /**

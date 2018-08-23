@@ -81,7 +81,7 @@ interface ItemInterface
      *
      * @return void
      */
-    public function set($key, $value);
+    public function set($key, $value = null);
 
     /**
      * Récupération de la liste des valeurs des attributs de configuration.
