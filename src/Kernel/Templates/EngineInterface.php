@@ -84,7 +84,7 @@ interface EngineInterface
     public function get($key, $default = '');
 
     /**
-     * Récupération du controleur de template.
+     * Récupération du nom de qualification du controleur de gabarits d'affichage.
      *
      * @return TemplateInterface
      */
@@ -196,6 +196,15 @@ interface EngineInterface
      * @return $this
      */
     public function set($key, $value);
+
+    /**
+     * Définition du nom de qualification du controleur de gabarits d'affichage.
+     *
+     * @param string $controller Nom de qualification de la classe.
+     *
+     * @return TemplateInterface
+     */
+    public function setController($controller);
 
     /**
      * Définition du chemin vers le répertoire principal de stockage des gabarits d'affichage.

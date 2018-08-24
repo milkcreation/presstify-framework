@@ -1,8 +1,10 @@
 <?php
 
-namespace tiFy\Kernel\Container;
+namespace tiFy\Contracts\Container;
 
-interface ContainerInterface
+use League\Container\ContainerInterface as LeagueContainerInterface;
+
+interface ContainerInterface extends LeagueContainerInterface
 {
     /**
      * Déclaration d'un nouveau service.

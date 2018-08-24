@@ -4,11 +4,11 @@ namespace tiFy\Kernel\Container;
 
 use Illuminate\Support\Collection;
 use League\Container\Container as LeagueContainer;
-use League\Container\ContainerInterface as LeagueContainerInterface;
 use League\Container\ReflectionContainer;
 use League\Container\ServiceProvider\ServiceProviderInterface;
+use tiFy\Contracts\Container\ContainerInterface;
 
-class Container extends LeagueContainer implements ContainerInterface, LeagueContainerInterface
+class Container extends LeagueContainer implements ContainerInterface
 {
     /**
      * Liste des services déclarés.
@@ -51,7 +51,7 @@ class Container extends LeagueContainer implements ContainerInterface, LeagueCon
             $concrete = $this->singleton($serviceProvider)
                 ->build([$this]);
 
-            if ($concrete instanceof ServiceProvider) :
+            if ($concrete instanceof ServiceProviderInterface) :
                 $this->addServiceProvider($concrete);
             endif;
         endforeach;

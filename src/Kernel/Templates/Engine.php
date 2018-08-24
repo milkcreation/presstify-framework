@@ -122,4 +122,14 @@ class Engine extends LeaguePlatesEngine implements EngineInterface
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setController($controller)
+    {
+        $this->set('controller', $controller);
+
+        return $this;
+    }
 }
