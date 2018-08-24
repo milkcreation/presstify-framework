@@ -96,8 +96,10 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $app = $this->getContainer()->resolve(App::class);
+
         foreach ($this->getBootables() as $bootable) :
-            $class = $this->getContainer()->resolve($bootable);
+            $class = $this->getContainer()->resolve($bootable, [$app]);
         endforeach;
 
         //do_action('after_setup_tify');
@@ -112,7 +114,6 @@ class KernelServiceProvider extends ServiceProvider
     {
         return array_merge(
             [
-                App::class,
                 AssetsInterface::class
             ],
             $this->components,
@@ -133,7 +134,7 @@ class KernelServiceProvider extends ServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function getSingletons()
+    public function parse()
     {
         $this->singletons += [
             'tiFyLogger'  => function () {
@@ -151,12 +152,13 @@ class KernelServiceProvider extends ServiceProvider
 
         if (file_exists(TIFY_CONFIG_DIR . '/plugins.php')) :
             $plugins = include TIFY_CONFIG_DIR . '/plugins.php';
+
             foreach (array_keys($plugins) as $plugin) :
                 array_push($this->plugins, $plugin);
                 array_push($this->singletons, $plugin);
             endforeach;
         endif;
 
-        return $this->singletons;
+        parent::parse();
     }
 }

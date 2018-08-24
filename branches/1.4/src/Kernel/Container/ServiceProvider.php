@@ -102,6 +102,7 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
                 $provides[$abstract] = $concrete;
             endforeach;
         endif;
+
         if ($singletons = $this->getSingletons()) :
             foreach ($singletons as $abstract => $concrete) :
                 if (is_numeric($abstract)) :

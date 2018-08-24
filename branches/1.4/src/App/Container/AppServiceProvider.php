@@ -3,6 +3,7 @@
 namespace tiFy\App\Container;
 
 use tiFy\Contracts\App\AppInterface;
+use tiFy\Contracts\Container\ContainerInterface;
 use tiFy\Kernel\Container\ServiceProvider;
 use tiFy\Kernel\Container\ServiceProviderInterface;
 use tiFy\tiFy;
@@ -11,7 +12,7 @@ class AppServiceProvider extends ServiceProvider implements ServiceProviderInter
 {
     /**
      * Classe de rappel du controleur de l'interface associée.
-     * @var AppInterface
+     * @var AppInterface|ContainerInterface
      */
     protected $app;
 
