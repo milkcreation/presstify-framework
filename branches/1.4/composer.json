@@ -95,7 +95,7 @@
       "src/helpers.php"
     ],
     "psr-4": {
-      "tiFy\\": ["", "bin/", "src/"],
+      "tiFy\\": ["bin/", "src/"],
       "tiFy\\App\\": "bin/app/",
       "tiFy\\Components\\": "components/",
       "tiFy\\Core\\": "core/",
