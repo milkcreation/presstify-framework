@@ -91,6 +91,7 @@
     "neitanod/forceutf8": "Forçage d'encodage en utf-8 d'une chaine de caractères"
   },
   "autoload": {
+    "classmap": ["tiFy.php"],
     "files": [
       "src/helpers.php"
     ],
