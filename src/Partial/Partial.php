@@ -16,7 +16,7 @@
 namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Components\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Components\Partial\CookieNotice\CookieNotice;
 use tiFy\Components\Partial\HolderImage\HolderImage;

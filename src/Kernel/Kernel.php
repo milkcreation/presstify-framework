@@ -2,16 +2,20 @@
 
 namespace tiFy\Kernel;
 
+use tiFy\App\Container\AppContainer;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Config\Config;
 use tiFy\Kernel\Container\Container;
-use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Filesystem\Paths;
+use tiFy\Kernel\Http\Request;
+use tiFy\Kernel\Templates\EngineInterface;
 use tiFy\tiFy;
 
 /**
+ * @method static AppInterface|AppContainer App()
  * @method static Assets Assets()
  * @method static ClassInfo ClassInfo(string|object $class)
  * @method static ClassLoader ClassLoader()
@@ -21,6 +25,7 @@ use tiFy\tiFy;
  * @method static Logger Logger()
  * @method static Paths Paths()
  * @method static Request Request()
+ * @method static EngineInterface TemplatesEngine()
  */
 class Kernel
 {
@@ -50,6 +55,9 @@ class Kernel
             default :
                 $alias = "tiFy\\Kernel\\{$name}\\{$name}";
                 break;
+            case 'App':
+                return tiFy::instance()->resolve(\App\App::class);
+                break;
             case 'Container' :
                 return tiFy::instance();
                 break;
@@ -58,6 +66,9 @@ class Kernel
                 break;
             case 'Request' :
                 $alias = 'tiFyRequest';
+                break;
+            case 'TemplatesEngine' :
+                $alias = EngineInterface::class;
                 break;
         endswitch;
 

@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use League\Container\Container as LeagueContainer;
 use League\Container\ReflectionContainer;
 use League\Container\ServiceProvider\ServiceProviderInterface;
+use tiFy\Contracts\Container\ContainerInterface;
 
 class Container extends LeagueContainer implements ContainerInterface
 {
@@ -13,7 +14,7 @@ class Container extends LeagueContainer implements ContainerInterface
      * Liste des services déclarés.
      * @var ServiceInterface[]
      */
-    protected $items = [];
+    protected static $items = [];
 
     /**
      * Liste des fournisseurs de service.
@@ -47,10 +48,10 @@ class Container extends LeagueContainer implements ContainerInterface
         endif;
 
         foreach ($this->getServiceProviders() as $serviceProvider) :
-            $this->share($serviceProvider)->withArgument($this);
-            $concrete = $this->get($serviceProvider);
+            $concrete = $this->singleton($serviceProvider)
+                ->build([$this]);
 
-            if ($concrete instanceof ServiceProvider) :
+            if ($concrete instanceof ServiceProviderInterface) :
                 $this->addServiceProvider($concrete);
             endif;
         endforeach;
@@ -69,7 +70,7 @@ class Container extends LeagueContainer implements ContainerInterface
      */
     public function bound($abstract)
     {
-        return isset($this->items[$this->getAbstract($abstract)]);
+        return isset(self::$items[$this->getAbstract($abstract)]);
     }
 
     /**
@@ -83,7 +84,17 @@ class Container extends LeagueContainer implements ContainerInterface
 
         $alias = $this->getAlias($concrete);
 
-        return $this->items[$abstract] = $this->addService($abstract, compact('alias', 'concrete', 'singleton'));
+        self::$items[$abstract] = $this->addService($abstract, compact('alias', 'concrete', 'singleton'));
+
+        return self::$items[$abstract];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get($id, array $args = [])
+    {
+        return $this->resolve($id, $args) ?? parent::get($id, $args);
     }
 
     /**
@@ -109,10 +120,12 @@ class Container extends LeagueContainer implements ContainerInterface
      */
     public function getAbstract($alias)
     {
+        $items = self::$items;
+
         return (
-            $exists = (new Collection($this->items))->first(function($item) use ($alias) {
-                return $item->getAlias() === $alias;
-            })
+        $exists = (new Collection($items))->first(function ($item) use ($alias) {
+            return $item->getAlias() === $alias;
+        })
         )
             ? $exists->getAbstract()
             : $alias;
@@ -124,8 +137,9 @@ class Container extends LeagueContainer implements ContainerInterface
     public function getService($abstract)
     {
         $abstract = $this->getAbstract($abstract);
-        if (isset($this->items[$abstract])) :
-            return $this->items[$abstract];
+
+        if (isset(self::$items[$abstract])) :
+            return self::$items[$abstract];
         else :
             throw new \InvalidArgumentException(
                 sprintf('(%s) n\'est pas distribué par le fournisseur de service.', $abstract),
@@ -150,7 +164,7 @@ class Container extends LeagueContainer implements ContainerInterface
         try {
             $service = $this->getService($abstract);
         } catch (\InvalidArgumentException $e) {
-            return \wp_die($e->getMessage(), '', 501);
+            return;
         }
 
         return $service->build($args);
