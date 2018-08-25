@@ -15,7 +15,7 @@
 
 namespace tiFy\User;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\User\Role\Role;
 use tiFy\User\Session\Session;
 use tiFy\User\SignIn\SignIn;

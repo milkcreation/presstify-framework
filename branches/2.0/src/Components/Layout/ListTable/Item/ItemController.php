@@ -3,8 +3,8 @@
 namespace tiFy\Components\Layout\ListTable\Item;
 
 use Illuminate\Support\Collection;
-use tiFy\Apps\Item\AbstractAppItemIterator;
-use tiFy\Apps\Layout\LayoutInterface;
+use tiFy\App\Item\AbstractAppItemIterator;
+use tiFy\App\Layout\LayoutInterface;
 
 class ItemController extends AbstractAppItemIterator implements ItemInterface
 {

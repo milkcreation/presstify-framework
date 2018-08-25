@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Field\CheckboxCollection;
 
-use tiFy\Apps\Item\AbstractAppItemController;
+use tiFy\App\Item\AbstractAppItemController;
 
 class CheckboxItem extends AbstractAppItemController
 {

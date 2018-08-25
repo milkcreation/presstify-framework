@@ -2,7 +2,7 @@
 
 namespace tiFy\Form;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Form\Addons\AddonsController;
 use tiFy\Form\Buttons\ButtonsController;
 use tiFy\Form\Fields\FieldTypesController;

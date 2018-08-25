@@ -15,7 +15,7 @@
 
 namespace tiFy\User\SignUp;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\User\SignUp\SignUpController;
 
 final class SignUp extends AppController

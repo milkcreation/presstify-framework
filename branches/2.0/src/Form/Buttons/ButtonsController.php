@@ -2,7 +2,7 @@
 
 namespace tiFy\Form\Buttons;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Components\Form\Buttons\ButtonControllerInterface;
 use tiFy\Components\Form\Buttons\Submit\Submit;
 use tiFy\Form\Forms\FormItemController;

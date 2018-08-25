@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Field\Crypted;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 use tiFy\Kernel\Tools;
 
-class Crypted extends AbstractFieldItemController
+class Crypted extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.
@@ -84,7 +84,7 @@ class Crypted extends AbstractFieldItemController
      *
      * @return void
      */
-    protected function enqueue_scripts()
+    public function enqueue_scripts()
     {
         \wp_enqueue_style('tiFyFieldCrypted');
         \wp_enqueue_script('tiFyFieldCrypted');

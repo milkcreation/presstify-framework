@@ -4,12 +4,12 @@ namespace tiFy\Components\Field\SelectJs;
 
 use Illuminate\Support\Arr;
 use tiFy\Partial\Partial;
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 use tiFy\Field\TemplateController;
 use tiFy\Field\Field;
 use tiFy\Field\FieldOptions\FieldOptionsItemController;
 
-class SelectJs extends AbstractFieldItemController
+class SelectJs extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

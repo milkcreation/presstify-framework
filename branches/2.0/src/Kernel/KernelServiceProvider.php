@@ -29,11 +29,10 @@ use tiFy\View\View;
 use tiFy\Kernel\Assets\AssetsInterface;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
-use tiFy\Kernel\Config\Config;
 use tiFy\Kernel\Events\EventsInterface;
 use tiFy\Kernel\Http\Request;
-use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\Logger\Logger;
+use tiFy\Kernel\Templates\EngineInterface;
 use tiFy\Kernel\Service;
 
 use tiFy\Kernel\Container\ServiceProvider;
@@ -46,12 +45,29 @@ class KernelServiceProvider extends ServiceProvider
     protected $singletons = [
         App::class,
         AssetsInterface::class => \tiFy\Kernel\Assets\Assets::class,
-        Config::class,
-        ClassLoader::class,
+        Partial::class
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $bindings = [
+        ClassInfo::class,
+        EngineInterface::class => \tiFy\Kernel\Templates\Engine::class,
+        EventsInterface::class => \tiFy\Kernel\Events\Events::class
+    ];
+
+    /**
+     * Liste des packages natifs (composants)
+     * @return array
+     */
+    protected $components = [
+        AdminView::class,
+        AjaxAction::class,
+        Api::class,
         Column::class,
         Cron::class,
         Db::class,
-        EventsInterface::class => \tiFy\Kernel\Events\Events::class,
         Field::class,
         Form::class,
         Media::class,
@@ -61,7 +77,6 @@ class KernelServiceProvider extends ServiceProvider
         Options::class,
         PageHook::class,
         Partial::class,
-        Paths::class,
         PostType::class,
         Route::class,
         TabMetabox::class,
@@ -71,14 +86,7 @@ class KernelServiceProvider extends ServiceProvider
     ];
 
     /**
-     * {@inheritdoc}
-     */
-    protected $bindings = [
-        ClassInfo::class
-    ];
-
-    /**
-     * Liste des packages additionnels (plugins)
+     * Liste des packages additionnels (extensions)
      * @return array
      */
     protected $plugins = [];
@@ -88,8 +96,10 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        foreach($this->getBootables() as $bootable) :
-            $this->getContainer()->resolve($bootable);
+        $app = $this->getContainer()->resolve(App::class);
+
+        foreach ($this->getBootables() as $bootable) :
+            $class = $this->getContainer()->resolve($bootable, [$app]);
         endforeach;
 
         do_action('after_setup_tify');
@@ -104,32 +114,9 @@ class KernelServiceProvider extends ServiceProvider
     {
         return array_merge(
             [
-                /** Ultra-prioritaire */
-                Paths::class,
-                Config::class,
-                ClassLoader::class,
-                /** ----------------- */
-                App::class,
-                AssetsInterface::class,
-                Column::class,
-                Cron::class,
-                Db::class,
-                Field::class,
-                Form::class,
-                Media::class,
-                Metabox::class,
-                Metadata::class,
-                MetaTag::class,
-                Options::class,
-                PageHook::class,
-                Partial::class,
-                PostType::class,
-                Route::class,
-                TabMetabox::class,
-                Taxonomy::class,
-                User::class,
-                View::class
+                AssetsInterface::class
             ],
+            $this->components,
             $this->plugins
         );
     }
@@ -147,16 +134,20 @@ class KernelServiceProvider extends ServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function getSingletons()
+    public function parse()
     {
         $this->singletons += [
-            'tiFyLogger' => function() {
+            'tiFyLogger'  => function () {
                 return Logger::globalReport();
             },
-            'tiFyRequest' => function() {
+            'tiFyRequest' => function () {
                 return Request::capture();
             }
         ];
+
+        foreach($this->components as $component) :
+            array_push($this->singletons, $component);
+        endforeach;
 
         /** @todo Modifier le chargement des plugins */
         if (!defined('TIFY_CONFIG_DIR')) :
@@ -165,12 +156,13 @@ class KernelServiceProvider extends ServiceProvider
 
         if (file_exists(TIFY_CONFIG_DIR . '/plugins.php')) :
             $plugins = include TIFY_CONFIG_DIR . '/plugins.php';
-            foreach(array_keys($plugins) as $plugin) :
+
+            foreach (array_keys($plugins) as $plugin) :
                 array_push($this->plugins, $plugin);
                 array_push($this->singletons, $plugin);
             endforeach;
         endif;
 
-        return $this->singletons;
+        parent::parse();
     }
 }

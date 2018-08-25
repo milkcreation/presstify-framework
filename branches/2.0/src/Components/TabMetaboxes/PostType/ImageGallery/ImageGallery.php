@@ -65,7 +65,7 @@ class ImageGallery extends ContentPostTypeController
      */
     public function display($post, $args = [])
     {
-        $this->set('items', get_post_meta($post->ID, $this->get('name'), true) ? : []);
+        $this->set('items', get_post_meta($post->ID, $this->get('name')) ? : []);
 
         return $this->appTemplateRender('display', $this->all());
     }

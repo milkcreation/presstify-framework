@@ -3,7 +3,7 @@
 namespace tiFy\Components\Layout\ListTable\RowAction;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\Item\AbstractAppItemController;
+use tiFy\App\Item\AbstractAppItemController;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Partial\Partial;

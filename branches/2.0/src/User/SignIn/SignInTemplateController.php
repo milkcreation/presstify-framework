@@ -2,7 +2,7 @@
 
 namespace tiFy\User\SignIn;
 
-use tiFy\Apps\Templates\AppTemplateController;
+use tiFy\App\Templates\AppTemplateController;
 
 /**
  * Class TemplateController

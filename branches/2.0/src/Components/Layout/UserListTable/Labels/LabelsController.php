@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Layout\UserListTable\Labels;
 
-use tiFy\Apps\Layout\Labels\LabelsBaseController;
+use tiFy\App\Layout\Labels\LabelsBaseController;
 
 class LabelsController extends LabelsBaseController
 {

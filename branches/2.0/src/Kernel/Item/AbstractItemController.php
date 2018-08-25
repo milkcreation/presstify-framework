@@ -131,7 +131,7 @@ abstract class AbstractItemController implements ItemInterface
     /**
      * {@inheritdoc}
      */
-    public function set($key, $value)
+    public function set($key, $value = null)
     {
         Arr::set($this->attributes, $key, $value);
 

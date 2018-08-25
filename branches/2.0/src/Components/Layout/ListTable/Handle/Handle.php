@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Layout\ListTable\Handle;
 
-use tiFy\Apps\Layout\LayoutInterface;
+use tiFy\App\Layout\LayoutInterface;
 
 class Handle
 {

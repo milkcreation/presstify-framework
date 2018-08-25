@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\File;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class File extends AbstractFieldItemController
+class File extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

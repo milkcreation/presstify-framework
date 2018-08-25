@@ -2,7 +2,7 @@
 
 namespace tiFy\Query\Controller;
 
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 
 abstract class AbstractPostQuery implements QueryInterface
 {

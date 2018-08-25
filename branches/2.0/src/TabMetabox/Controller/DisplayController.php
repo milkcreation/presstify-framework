@@ -3,7 +3,7 @@
 namespace tiFy\TabMetabox\Controller;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 use tiFy\TabMetabox\Controller\TabBoxItemController;
 use tiFy\TabMetabox\Controller\TabNodeItemController;
 use tiFy\Partial\Partial;

@@ -5,10 +5,10 @@ namespace tiFy\Components\Partial\CookieNotice;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 use tiFy\Kernel\Tools;
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Partial\Partial;
 
-class CookieNotice extends AbstractPartialController
+class CookieNotice extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -82,7 +82,7 @@ class CookieNotice extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('accept.content', __('Fermer', 'tify'));
 
@@ -222,7 +222,7 @@ class CookieNotice extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         return $this->appTemplateRender('cookie-notice', $this->compact());
     }

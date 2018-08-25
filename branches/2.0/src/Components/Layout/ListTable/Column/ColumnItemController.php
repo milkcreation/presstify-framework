@@ -5,7 +5,7 @@ namespace tiFy\Components\Layout\ListTable\Column;
 use ArrayIterator;
 use Illuminate\Support\Arr;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
-use tiFy\Apps\Item\AbstractAppItemIterator;
+use tiFy\App\Item\AbstractAppItemIterator;
 use tiFy\Kernel\Tools;
 use tiFy\Partial\Partial;
 

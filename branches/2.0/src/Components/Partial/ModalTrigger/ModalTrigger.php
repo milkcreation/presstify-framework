@@ -2,11 +2,11 @@
 
 namespace tiFy\Components\Partial\ModalTrigger;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Partial\Partial;
 use tiFy\Kernel\Tools;
 
-class ModalTrigger extends AbstractPartialController
+class ModalTrigger extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -37,7 +37,7 @@ class ModalTrigger extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->attributes['content'] = __('Lancer', 'tify');
 
@@ -85,7 +85,7 @@ class ModalTrigger extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         return (string)Partial::Tag(
                 [

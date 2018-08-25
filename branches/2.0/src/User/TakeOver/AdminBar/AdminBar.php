@@ -15,11 +15,11 @@
 
 namespace tiFy\User\TakeOver\AdminBar;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Partial\Partial;
 use tiFy\User\TakeOver\TakeOver;
 
-class AdminBar extends AbstractPartialController
+class AdminBar extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.

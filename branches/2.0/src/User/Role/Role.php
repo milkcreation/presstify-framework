@@ -6,7 +6,7 @@
 
 namespace tiFy\User\Role;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\User\Role\RoleController;
 
 class Role extends AppController

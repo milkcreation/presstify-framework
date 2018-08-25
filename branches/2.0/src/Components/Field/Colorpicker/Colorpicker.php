@@ -2,9 +2,9 @@
 
 namespace tiFy\Components\Field\Colorpicker;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Colorpicker extends AbstractFieldItemController
+class Colorpicker extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

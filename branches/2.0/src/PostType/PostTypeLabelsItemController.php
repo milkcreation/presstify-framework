@@ -3,7 +3,7 @@
 namespace tiFy\PostType;
 
 use Illuminate\Support\Str;
-use tiFy\Apps\Labels\AbstractAppLabelsController;
+use tiFy\App\Labels\AbstractAppLabelsController;
 
 /**
  * @see https://codex.wordpress.org/Function_Reference/register_post_type

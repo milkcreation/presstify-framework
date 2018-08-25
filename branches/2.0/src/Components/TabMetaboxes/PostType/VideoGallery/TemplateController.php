@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\TabMetaboxes\PostType\VideoGallery;
 
-use tiFy\Apps\Templates\AppTemplateController;
+use tiFy\App\Templates\AppTemplateController;
 
 /**
  * Class TemplateController

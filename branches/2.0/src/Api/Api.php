@@ -13,7 +13,7 @@
 
 namespace tiFy\Api;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 final class Api extends AppController
 {

@@ -2,7 +2,7 @@
 
 namespace tiFy\View;
 
-use tiFy\Apps\Layout\AbstractLayoutViewController;
+use tiFy\App\Layout\AbstractLayoutViewController;
 
 class ViewBaseController extends AbstractLayoutViewController implements ViewControllerInterface
 {

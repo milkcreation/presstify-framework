@@ -3,7 +3,7 @@
 namespace tiFy\Options;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\TabMetabox\TabMetabox;
 
 class Options extends AppController

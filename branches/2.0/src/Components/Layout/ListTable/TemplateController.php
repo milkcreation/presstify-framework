@@ -2,8 +2,8 @@
 
 namespace tiFy\Components\Layout\ListTable;
 
-use tiFy\Apps\Layout\Params\ParamsInterface;
-use tiFy\Apps\Templates\AppTemplateController;
+use tiFy\App\Layout\Params\ParamsInterface;
+use tiFy\App\Templates\AppTemplateController;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionInterface;
 use tiFy\Components\Layout\ListTable\Column\ColumnItemInterface;

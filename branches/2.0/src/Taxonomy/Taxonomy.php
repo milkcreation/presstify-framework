@@ -2,7 +2,7 @@
 
 namespace tiFy\Taxonomy;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 final class Taxonomy extends AppController
 {

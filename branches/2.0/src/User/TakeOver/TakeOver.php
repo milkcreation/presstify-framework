@@ -20,7 +20,7 @@ use tiFy\User\User;
 use tiFy\User\TakeOver\ActionLink\ActionLink;
 use tiFy\User\TakeOver\AdminBar\AdminBar;
 use tiFy\User\TakeOver\SwitcherForm\SwitcherForm;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 /**
  * @method static ActionLink ActionLink(string $id = null, array $attrs = [])

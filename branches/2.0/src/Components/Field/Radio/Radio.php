@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Radio;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Radio extends AbstractFieldItemController
+class Radio extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

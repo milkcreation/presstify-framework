@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Field\RadioCollection;
 
-use tiFy\Apps\Item\AbstractAppItemController;
+use tiFy\App\Item\AbstractAppItemController;
 
 class RadioItem extends AbstractAppItemController
 {

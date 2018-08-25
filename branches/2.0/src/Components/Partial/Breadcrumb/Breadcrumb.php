@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Partial\Breadcrumb;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Kernel\Tools;
 
-class Breadcrumb extends AbstractPartialController
+class Breadcrumb extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -38,7 +38,7 @@ class Breadcrumb extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->attributes['attrs']['id'] = 'tiFyPartial-Breadcrumb--' . $this->getIndex();
         $this->attributes['attrs']['class'] = "tiFyPartial-Breadcrumb tiFyPartial-Breadcrumb--" . $this->getId();
@@ -187,7 +187,7 @@ class Breadcrumb extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         if ($this->disabled) :
             return '';

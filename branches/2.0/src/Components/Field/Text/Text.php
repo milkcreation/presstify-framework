@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Text;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Text extends AbstractFieldItemController
+class Text extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.
