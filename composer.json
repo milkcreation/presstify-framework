@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-08-19",
+  "time": "2018-08-24",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -89,7 +89,7 @@
   },
   "autoload": {
     "files": [
-      "src/Helpers.php"
+      "src/helpers.php"
     ],
     "psr-4": {
       "tiFy\\": "src"
