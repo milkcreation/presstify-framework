@@ -2,7 +2,7 @@
 
 namespace tiFy\Column;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 abstract class ColumnFactory extends AppController
 {

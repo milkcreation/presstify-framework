@@ -59,6 +59,13 @@ interface FieldItemInterface
     public function display();
 
     /**
+     * Mise en file des scripts CSS et JS utilisés pour l'affichage.
+     *
+     * @return $this
+     */
+    public function enqueue_scripts();
+
+    /**
      * Récupération d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.

@@ -3,7 +3,7 @@
 namespace tiFy\Query\Controller;
 
 use Illuminate\Support\Fluent;
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 
 abstract class AbstractPostItem extends Fluent implements PostItemInterface
 {

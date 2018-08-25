@@ -2,7 +2,7 @@
 
 namespace tiFy\View;
 
-use tiFy\Apps\Layout\LayoutViewInterface;
+use tiFy\App\Layout\LayoutViewInterface;
 
 interface ViewControllerInterface extends LayoutViewInterface
 {

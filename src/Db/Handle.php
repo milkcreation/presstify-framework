@@ -2,7 +2,7 @@
 
 namespace tiFy\Db;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Db\DbControllerInterface;
 
 class Handle extends AppController

@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Layout\ListTable\ViewFilter;
 
-use tiFy\Apps\Item\AbstractAppItemController;
+use tiFy\App\Item\AbstractAppItemController;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Partial\Partial;
 

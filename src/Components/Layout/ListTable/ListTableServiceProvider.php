@@ -2,9 +2,9 @@
 
 namespace tiFy\Components\Layout\ListTable;
 
-use tiFy\Apps\Layout\Labels\LabelsInterface;
-use tiFy\Apps\Layout\Params\ParamsInterface;
-use tiFy\Apps\Layout\Request\RequestInterface;
+use tiFy\App\Layout\Labels\LabelsInterface;
+use tiFy\App\Layout\Params\ParamsInterface;
+use tiFy\App\Layout\Request\RequestInterface;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionController;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemController;
@@ -41,7 +41,7 @@ use tiFy\Components\Layout\ListTable\ViewFilter\ViewFilterItemController;
 use tiFy\Components\Layout\ListTable\ViewFilter\ViewFilterItemInterface;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Components\Layout\ListTable\Request\RequestController;
-use tiFy\Apps\Layout\LayoutServiceProvider;
+use tiFy\App\Layout\LayoutServiceProvider;
 
 class ListTableServiceProvider extends LayoutServiceProvider
 {

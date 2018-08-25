@@ -9,7 +9,7 @@ namespace tiFy\Api\Youtube;
 
 use Illuminate\Support\Arr;
 use Embed\Embed;
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 
 class Youtube extends \Madcoda\Youtube\Youtube
 {

@@ -15,7 +15,7 @@
 
 namespace tiFy\User\Session;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Db\Db;
 use tiFy\Db\DbControllerInterface;
 use tiFy\Cron\Cron;

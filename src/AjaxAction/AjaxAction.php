@@ -2,7 +2,7 @@
 
 namespace tiFy\AjaxAction;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Lib\Video\Video;
 
 final class AjaxAction extends AppController

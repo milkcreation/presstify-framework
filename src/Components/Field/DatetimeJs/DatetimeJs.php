@@ -15,10 +15,10 @@
 
 namespace tiFy\Components\Field\DatetimeJs;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 use tiFy\Field\Field;
 
-class DatetimeJs extends AbstractFieldItemController
+class DatetimeJs extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

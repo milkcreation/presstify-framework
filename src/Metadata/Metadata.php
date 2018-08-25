@@ -2,7 +2,7 @@
 
 namespace tiFy\Metadata;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Metadata\Post;
 use tiFy\Metadata\Term;
 use tiFy\Metadata\User;

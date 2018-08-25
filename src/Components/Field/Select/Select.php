@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Select;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Select extends AbstractFieldItemController
+class Select extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Field\TextRemaining;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 use tiFy\Lib\Chars;
 
-class TextRemaining extends AbstractFieldItemController
+class TextRemaining extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

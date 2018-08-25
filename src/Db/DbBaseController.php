@@ -3,8 +3,8 @@
 namespace tiFy\Db;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppInterface;
-use tiFy\Apps\Item\AbstractAppItemController;
+use tiFy\App\AppInterface;
+use tiFy\App\Item\AbstractAppItemController;
 use tiFy\Db\Make;
 use tiFy\Db\Handle;
 use tiFy\Db\Meta;

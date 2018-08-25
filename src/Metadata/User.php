@@ -2,7 +2,7 @@
 
 namespace tiFy\Metadata;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 final class User extends AppController
 {

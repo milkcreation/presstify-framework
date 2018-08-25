@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Textarea;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Textarea extends AbstractFieldItemController
+class Textarea extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

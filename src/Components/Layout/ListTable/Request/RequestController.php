@@ -4,7 +4,7 @@ namespace tiFy\Components\Layout\ListTable\Request;
 
 use Illuminate\Http\Request;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
-use tiFy\Apps\Layout\Request\RequestBaseController;
+use tiFy\App\Layout\Request\RequestBaseController;
 
 class RequestController extends RequestBaseController implements RequestInterface
 {

@@ -16,7 +16,7 @@
 namespace tiFy\Field;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Components\Field\Button\Button;
 use tiFy\Components\Field\Checkbox\Checkbox;
 use tiFy\Components\Field\CheckboxCollection\CheckboxCollection;
@@ -129,7 +129,7 @@ final class Field extends AppController
      *
      * @param string $name Nom de qualification du controleur d'affichage.
      *
-     * @return mixed|AbstractFieldItemController
+     * @return mixed|FieldItemInterface
      */
     public function get($name)
     {

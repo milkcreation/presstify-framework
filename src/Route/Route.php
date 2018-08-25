@@ -27,7 +27,7 @@ use League\Route\Strategy\StrategyInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\tiFy;
 use tiFy\Route\RouteCollectionController;
 use tiFy\Route\RouteCollectionInterface;

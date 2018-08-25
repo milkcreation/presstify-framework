@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Password;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Password extends AbstractFieldItemController
+class Password extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

@@ -3,7 +3,7 @@
 namespace tiFy\Column;
 
 use League\Container\Exception\NotFoundException;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Column\ObjectNameFactory;
 use tiFy\tiFy;
 

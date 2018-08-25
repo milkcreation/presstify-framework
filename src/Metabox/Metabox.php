@@ -13,7 +13,7 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Field\Field;
 
 class Metabox extends AppController

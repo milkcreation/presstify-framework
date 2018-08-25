@@ -15,7 +15,7 @@
 
 namespace tiFy\User\SignIn;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\User\User;
 use tiFy\User\SignIn\SignInControllerInterface;
 use tiFy\User\SignIn\SignInItemController;

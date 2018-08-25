@@ -4,11 +4,11 @@ namespace tiFy\Components\Field\SelectImage;
 
 use Symfony\Component\Finder\Finder;
 use tiFy\Field\Field;
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 use tiFy\Kernel\Tools;
 use tiFy\Partial\Partial;
 
-class SelectImage extends AbstractFieldItemController
+class SelectImage extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

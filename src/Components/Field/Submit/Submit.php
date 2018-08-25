@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Submit;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Submit extends AbstractFieldItemController
+class Submit extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

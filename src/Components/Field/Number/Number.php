@@ -13,9 +13,9 @@
 
 namespace tiFy\Components\Field\Number;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Number extends AbstractFieldItemController
+class Number extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

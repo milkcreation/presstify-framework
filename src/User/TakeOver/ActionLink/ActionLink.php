@@ -15,11 +15,11 @@
 
 namespace tiFy\User\TakeOver\ActionLink;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Partial\Partial;
 use tiFy\User\TakeOver\TakeOver;
 
-class ActionLink extends AbstractPartialController
+class ActionLink extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.

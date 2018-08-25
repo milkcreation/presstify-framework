@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Partial\Tag;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tify\Kernel\Tools;
 
-class Tag extends AbstractPartialController
+class Tag extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -41,7 +41,7 @@ class Tag extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

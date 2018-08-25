@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Layout\AjaxListTable;
 
-use tiFy\Apps\Layout\Db\DbInterface;
-use tiFy\Apps\Layout\Labels\LabelsInterface;
-use tiFy\Apps\Layout\Params\ParamsInterface;
-use tiFy\Apps\Layout\Request\RequestInterface;
+use tiFy\App\Layout\Db\DbInterface;
+use tiFy\App\Layout\Labels\LabelsInterface;
+use tiFy\App\Layout\Params\ParamsInterface;
+use tiFy\App\Layout\Request\RequestInterface;
 use tiFy\Components\Db\DbPostsController;
 use tiFy\Components\Layout\AjaxListTable\Params\ParamsController;
 use tiFy\Components\Layout\AjaxListTable\Request\RequestController;

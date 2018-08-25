@@ -4,7 +4,7 @@ namespace tiFy\User\SignUp;
 
 use tiFy\Form\Form;
 use tiFy\Form\Forms\FormBaseController;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 final class SignUpController extends AppController
 {

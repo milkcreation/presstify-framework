@@ -3,10 +3,10 @@
 namespace tiFy\Components\Partial\Navtabs;
 
 use tiFy\Kernel\Tools;
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Components\Partial\Navtabs\Walker;
 
-class Navtabs extends AbstractPartialController
+class Navtabs extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -114,7 +114,7 @@ class Navtabs extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 
@@ -140,7 +140,7 @@ class Navtabs extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         return $this->appTemplateRender(
             'navtabs',

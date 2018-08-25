@@ -3,7 +3,7 @@
 namespace tiFy\Query\Controller;
 
 use Illuminate\Support\Collection;
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 
 abstract class AbstractTermList extends Collection implements TermListInterface
 {

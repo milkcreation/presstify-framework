@@ -2,7 +2,7 @@
 
 namespace tiFy\PageHook;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Options\Options;
 use tiFy\PageHook\Admin\PageHookAdminOptions;
 

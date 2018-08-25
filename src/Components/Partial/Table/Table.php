@@ -2,9 +2,9 @@
 
 namespace tiFy\Components\Partial\Table;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 
-class Table extends AbstractPartialController
+class Table extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.

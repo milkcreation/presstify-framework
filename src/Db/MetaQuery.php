@@ -2,7 +2,7 @@
 
 namespace tiFy\Db;
 
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 use tiFy\Db\DbControllerInterface;
 
 class MetaQuery extends \WP_Meta_Query

@@ -2,15 +2,40 @@
 
 use tiFy\tiFy;
 use tiFy\Field\Field;
+use tiFy\Field\FieldItemInterface;
 use tiFy\Form\Form;
 use tiFy\Kernel\Kernel;
 use tiFy\Partial\Partial;
+use tiFy\Partial\PartialItemInterface;
 use tiFy\Route\Route;
 
 /**
  * KERNEL
  * ---------------------------------------------------------------------------------------------------------------------
  */
+if (!function_exists('app')) :
+    /**
+     * App - Controleur de l'application.
+     * {@internal Si $abstract est null > Retourne l'instance de l'appication.}
+     * {@internal Si $abstract est qualifié > Retourne la résolution du service qualifié.}
+     *
+     * @param null|string $abstract Nom de qualification du service.
+     * @param array $args Liste des variables passé en arguments lors de la résolution du service.
+     *
+     * @return \tiFy\Contracts\App\AppInterface|\tiFy\App\Container\AppContainer
+     */
+    function app($abstract = null, $args = [])
+    {
+        $factory = Kernel::App();
+
+        if (is_null($abstract)) :
+            return $factory;
+        endif;
+
+        return $factory->resolve($abstract, $args);
+    }
+endif;
+
 if (!function_exists('assets')) :
     /**
      * Assets - Controleur des assets.
@@ -54,24 +79,48 @@ endif;
 if (!function_exists('config')) :
     /**
      * Config - Controleur de configuration.
+     * {@internal Si $key est null > Retourne la classe de rappel du controleur.}
+     * {@internal Si $key est un tableau > Utilise le tableau en tant que liste des attributs de configuration à définir.}
      *
-     * @return \tiFy\Kernel\Config\Config
+     * @param null|array|string Clé d'indice|Liste des attributs de configuration à définir.
+     *
+     * @return mixed|\tiFy\Kernel\Config\Config
      */
-    function config()
+    function config($key = null, $default = null)
     {
-        return Kernel::Config();
+        $factory = Kernel::Config();
+
+        if (is_null($key)) :
+            return $factory;
+        endif;
+
+        if (is_array($key)) :
+            return $factory->set($key);
+        endif;
+
+        return $factory->get($key, $default);
     }
 endif;
 
 if (!function_exists('container')) :
     /**
      * Container - Controleur d'injection de dépendances.
+     * {@internal Si $alias est null > Retourne la classe de rappel du controleur.}
+     * @deprecated
+     *
+     * @param string $alias Nom de qualification du service à récupérer.
      *
      * @return \tiFy\Kernel\Container\Container
      */
-    function container()
+    function container($alias = null)
     {
-        return Kernel::Container();
+        $factory = Kernel::Container();
+
+        if (is_null($alias)) :
+            return $factory;
+        endif;
+
+        return $factory->get($alias);
     }
 endif;
 
@@ -87,6 +136,33 @@ if (!function_exists('events')) :
     }
 endif;
 
+if (!function_exists('field')) :
+    /**
+     * Field - Controleur de champs.
+     *
+     * @param null|string $name Nom de qualification du champ.
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return null|Field|FieldItemInterface
+     */
+    function field($name = null, $attrs = [])
+    {
+        /** @var Field $factory */
+        $factory = app(Field::class);
+
+        if (is_null($name)) :
+            return $factory;
+        endif;
+
+        $name = studly_case($name);
+        $field = $factory->get($name);
+
+        if (is_callable($field)) :
+            return call_user_func($field, $attrs);
+        endif;
+    }
+endif;
+
 if (!function_exists('logger')) :
     /**
      * Logger - Controleur de journalisation des actions.
@@ -99,9 +175,36 @@ if (!function_exists('logger')) :
     }
 endif;
 
+if (!function_exists('partial')) :
+    /**
+     * Field - Controleur d'événements.
+     *
+     * @param null $name Nom de qualification du champ.
+     * @param $attrs Liste des attributs de configuration.
+     *
+     * @return null|PartialItemInterface
+     */
+    function partial($name = null, $attrs = [])
+    {
+        /** @var Partial $factory */
+        $factory = app(Partial::class);
+
+        if (is_null($name)) :
+            return $factory;
+        endif;
+
+        $name = studly_case($name);
+        $partial = $factory->get($name);
+
+        if (is_callable($partial)) :
+            return call_user_func($partial, $attrs);
+        endif;
+    }
+endif;
+
 if (!function_exists('paths')) :
     /**
-     * Paths - Controleur des chemins vers les repertoires de l'application.
+     * Paths - Controleur des chemins vers les répertoires de l'application.
      *
      * @return \tiFy\Kernel\Filesystem\Paths
      */
@@ -113,13 +216,45 @@ endif;
 
 if (!function_exists('request')) :
     /**
-     * Request
+     * Request - Controleur de traitement de la requête principal
      *
      * @return \tiFy\Kernel\Http\Request
      */
     function request()
     {
         return Kernel::Request();
+    }
+endif;
+
+if (! function_exists('resolve')) {
+    /**
+     * Resolve - Récupération d'une instance de service fourni par le conteneur d'injection de dépendances.
+     *
+     * @param string $name Nom de qualification du service
+     *
+     * @return mixed
+     */
+    function resolve($name)
+    {
+        return app($name);
+    }
+}
+
+if (!function_exists('view')) :
+    /**
+     * View
+     *
+     * @return string|\tiFy\Kernel\Templates\EngineInterface
+     */
+    function view($view = null, $data = [])
+    {
+        $factory = Kernel::TemplatesEngine();
+
+        if (func_num_args() === 0) :
+            return $factory;
+        endif;
+
+        return $factory->make($view, $data);
     }
 endif;
 
@@ -130,6 +265,7 @@ endif;
 if (!function_exists('tify_field_button')) :
     /**
      * Bouton.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -153,6 +289,7 @@ endif;
 if (!function_exists('tify_field_checkbox')) :
     /**
      * Case à cocher.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -176,6 +313,7 @@ endif;
 if (!function_exists('tify_field_checkbox_collection')) :
     /**
      * Liste de cases à cocher.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -199,6 +337,7 @@ endif;
 if (!function_exists('tify_field_colorpicker')) :
     /**
      * Selecteur de couleur.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -222,6 +361,7 @@ endif;
 if (!function_exists('tify_field_crypted')) :
     /**
      * Champ crypté.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -245,6 +385,7 @@ endif;
 if (!function_exists('tify_field_datetime_js')) :
     /**
      * Selecteur de date et heure JS.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -268,6 +409,7 @@ endif;
 if (!function_exists('tify_field_file')) :
     /**
      * Champ de téléversement de fichier.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -291,6 +433,7 @@ endif;
 if (!function_exists('tify_field_hidden')) :
     /**
      * Champ caché.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -314,6 +457,7 @@ endif;
 if (!function_exists('tify_field_label')) :
     /**
      * Intitulé de champ.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -337,6 +481,7 @@ endif;
 if (!function_exists('tify_field_media_file')) :
     /**
      * Fichier de la médiathèque.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -360,6 +505,7 @@ endif;
 if (!function_exists('tify_field_media_image')) :
     /**
      * Image de la médiathèque.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -383,6 +529,7 @@ endif;
 if (!function_exists('tify_field_number')) :
     /**
      * Nombre.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -406,6 +553,7 @@ endif;
 if (!function_exists('tify_field_number_js')) :
     /**
      * Nombre dynamique.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -429,6 +577,7 @@ endif;
 if (!function_exists('tify_field_password')) :
     /**
      * Mot de passe.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -452,6 +601,7 @@ endif;
 if (!function_exists('tify_field_radio')) :
     /**
      * Bouton radio.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -475,6 +625,7 @@ endif;
 if (!function_exists('tify_field_radio_collection')) :
     /**
      * Liste de boutons radio.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -498,6 +649,7 @@ endif;
 if (!function_exists('tify_field_repeater')) :
     /**
      * Répétiteur de champ.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -521,6 +673,7 @@ endif;
 if (!function_exists('tify_field_select')) :
     /**
      * Selecteur.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -544,6 +697,7 @@ endif;
 if (!function_exists('tify_field_select_image')) :
     /**
      * Selecteur d'image.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -567,6 +721,7 @@ endif;
 if (!function_exists('tify_field_select_js')) :
     /**
      * Selecteur dynamique et autocompletion.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -590,6 +745,7 @@ endif;
 if (!function_exists('tify_field_submit')) :
     /**
      * Soumission de formulaire.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -613,6 +769,7 @@ endif;
 if (!function_exists('tify_field_text')) :
     /**
      * Champ de saisie.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -636,6 +793,7 @@ endif;
 if (!function_exists('tify_field_text_remaining')) :
     /**
      * Champ de saisie limité.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -659,6 +817,7 @@ endif;
 if (!function_exists('tify_field_textarea')) :
     /**
      * Zone de saisie libre.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -682,6 +841,7 @@ endif;
 if (!function_exists('tify_field_toggle_switch')) :
     /**
      * Bouton de bascule.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -781,6 +941,7 @@ endif;
 if (!function_exists('tify_partial_breadcrumb')) :
     /**
      * Fil d'arianne.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -804,6 +965,7 @@ endif;
 if (!function_exists('tify_partial_cookie_notice')) :
     /**
      * Message de notification validée par enregistrement de cookie.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -827,6 +989,7 @@ endif;
 if (!function_exists('tify_partial_holder_image')) :
     /**
      * Image de remplacement.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -850,6 +1013,7 @@ endif;
 if (!function_exists('tify_partial_modal')) :
     /**
      * Fenêtre modale.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -873,6 +1037,7 @@ endif;
 if (!function_exists('tify_partial_modal_trigger')) :
     /**
      * Déclencheur de fenêtre modale.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -896,6 +1061,7 @@ endif;
 if (!function_exists('tify_partial_notice')) :
     /**
      * Message de notification
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -920,27 +1086,10 @@ endif;
 if (!function_exists('tify_partial_sidebar')) :
     /**
      * Barre latéral de navigation
+     * @deprecated
      *
      * @var array $attrs {
      *      Liste des attributs de configuration.
-     *
-     * @var string $pos Position de l'interface left (default)|right.
-     * @var string $initial Etat initial de l'interface closed (default)|opened.
-     * @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
-     * @var string|int $min -width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
-     * @var int $z -index Profondeur de champs.
-     * @var bool $animated Activation de l'animation à l'ouverture et la fermeture.
-     * @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou desactive le bouton; la valeur chaîne de caractère active et affiche la chaîne ex : <span>X</span>.
-     * @var bool $enqueue_scripts Mise en file automatique des scripts (dans tous les contextes).
-     * @var array $nodes {
-     *          Liste des greffons (node) Elements de menu.
-     *
-     * @var string $id Identifiant du greffon.
-     * @var string $class Classe HTML du greffon.
-     * @var string $content Contenu du greffon.
-     * @var int $position Position du greffon.
-     * @todo \tiFy\Lib\Nodes\Base ne gère pas encore la position.
-     *      }
      * }
      * @param bool $echo Activation de l'affichage. défaut true.
      *
@@ -961,6 +1110,7 @@ endif;
 if (!function_exists('tify_partial_slider')) :
     /**
      * Diaporama.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -984,6 +1134,7 @@ endif;
 if (!function_exists('tify_partial_spinner')) :
     /**
      * Indicateur de chargement
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -1008,6 +1159,7 @@ endif;
 if (!function_exists('tify_partial_table')) :
     /**
      * Tableau basé sur des div.
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration.
@@ -1032,6 +1184,7 @@ endif;
 if (!function_exists('tify_partial_tag')) :
     /**
      * Balise HTML
+     * @deprecated
      *
      * @param array $attrs {
      *      Liste des attributs de configuration

@@ -15,9 +15,9 @@
 
 namespace tiFy\Components\Field\Label;
 
-use tiFy\Field\AbstractFieldItemController;
+use tiFy\Field\AbstractFieldItem;
 
-class Label extends AbstractFieldItemController
+class Label extends AbstractFieldItem
 {
     /**
      * Liste des attributs de configuration.

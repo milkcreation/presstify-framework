@@ -4,7 +4,7 @@ namespace tiFy\Field;
 
 use Illuminate\Support\Arr;
 use League\Plates\Engine;
-use tiFy\Apps\Templates\AppTemplateController;
+use tiFy\App\Templates\AppTemplateController;
 
 /**
  * Class TemplateController
