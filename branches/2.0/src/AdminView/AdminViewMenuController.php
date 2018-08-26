@@ -2,7 +2,7 @@
 
 namespace tiFy\AdminView;
 
-use tiFy\App\AppInterface;
+use tiFy\Contracts\App\AppInterface;
 use tiFy\App\Item\AbstractAppItemController;
 use tiFy\App\Layout\LayoutInterface;
 

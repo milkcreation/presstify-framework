@@ -4,9 +4,9 @@ namespace tiFy\User\SignIn;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\App\AppInterface;
 use tiFy\App\Item\AbstractAppItemController;
 use tiFy\Components\Tools\Notices\NoticesTrait;
+use tiFy\Contracts\App\AppInterface;
 
 abstract class SignInHandleController extends AbstractAppItemController
 {
