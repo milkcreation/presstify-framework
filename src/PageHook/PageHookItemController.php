@@ -2,8 +2,8 @@
 
 namespace tiFy\PageHook;
 
-use tiFy\App\AppInterface;
 use tiFy\App\Item\AbstractAppItemController;
+use tiFy\Contracts\App\AppInterface;
 
 class PageHookItemController extends AbstractAppItemController implements PageHookItemInterface
 {

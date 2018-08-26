@@ -201,7 +201,7 @@ final class Route extends AppController
         return $this->collection()->map(
             $method,
             $path,
-            $this->appServiceGet(RouteHandle::class, [$name, $attrs, $this])
+            $this->appServiceGet(RouteHandle::class, [$name, $attrs, app()])
         )
             ->setName($name)
             ->setScheme($scheme)

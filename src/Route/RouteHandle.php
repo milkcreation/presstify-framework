@@ -5,8 +5,8 @@ namespace tiFy\Route;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use tiFy\App\AppInterface;
 use tiFy\App\Item\AbstractAppItemController;
+use tiFy\Contracts\App\AppInterface;
 
 class RouteHandle extends AbstractAppItemController
 {
