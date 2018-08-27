@@ -4,10 +4,19 @@ namespace tiFy\Kernel\Config;
 
 use Illuminate\Support\Arr;
 use Symfony\Component\Finder\Finder;
+use tiFy\Kernel\Composer\ClassLoader;
+use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\Item\AbstractItemController;
+use tiFy\tiFy;
 
 class Config extends AbstractItemController
 {
+    /**
+     * Classe de rappel du controleur des chemins.
+     * @var Paths
+     */
+    protected $paths;
+
     /**
      * Liste des alias.
      * @var array
@@ -44,6 +53,18 @@ class Config extends AbstractItemController
      */
     public function __construct()
     {
+        /** @var Paths $paths */
+        $this->paths = tiFy::instance()->resolve(Paths::class);
+
+        if (file_exists($this->paths->getConfigPath('autoload.php'))) :
+            $autoloads = include $this->paths->getConfigPath('autoload.php');
+            foreach ($autoloads as $type => $autoload) :
+                foreach ($autoload as $namespace => $path) :
+                    tiFy::instance()->resolve(ClassLoader::class)->load($namespace, $path, $type);
+                endforeach;
+            endforeach;
+        endif;
+
         $finder = (new Finder())->files()->name('/\.php$/')->in(\paths()->getConfigPath());
         foreach ($finder as $file) :
             $key = basename($file->getFilename(), ".{$file->getExtension()}");

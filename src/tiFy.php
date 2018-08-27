@@ -31,8 +31,8 @@ final class tiFy extends Container
     protected $serviceProviders = [
         /** Ultra-prioritaire */
         Paths::class,
-        Config::class,
         ClassLoader::class,
+        Config::class,
         /** ----------------- */
         KernelServiceProvider::class
     ];
