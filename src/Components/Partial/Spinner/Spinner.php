@@ -2,12 +2,12 @@
 
 namespace tiFy\Components\Partial\Spinner;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 
 /**
  * @see http://tobiasahlin.com/spinkit/
  */
-class Spinner extends AbstractPartialController
+class Spinner extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration
@@ -83,7 +83,7 @@ class Spinner extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('attrs.id', 'tiFyPartial-Spinner--' . $this->getId());
 
@@ -111,7 +111,7 @@ class Spinner extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         return $this->appTemplateRender($this->get('spinner'), $this->all());
     }

@@ -4,7 +4,7 @@ namespace tiFy\Components\Partial\Sidebar;
 
 use Illuminate\Support\Collection;
 use tiFy\Kernel\Tools;
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Partial\Partial;
 
 /**
@@ -25,7 +25,7 @@ use tiFy\Partial\Partial;
  * http://tympanus.net/Development/OffCanvasMenuEffects/
  * http://tympanus.net/Development/MultiLevelPushMenu/
  */
-class Sidebar extends AbstractPartialController
+class Sidebar extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -107,7 +107,7 @@ class Sidebar extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 

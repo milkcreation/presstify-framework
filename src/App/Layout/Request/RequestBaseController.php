@@ -3,7 +3,7 @@
 namespace tiFy\App\Layout\Request;
 
 use Illuminate\Http\Request;
-use tiFy\App\AbstractAppController;
+use tiFy\App\Dependency\AbstractAppDependency;
 use tiFy\App\Layout\LayoutInterface;
 
 /**
@@ -13,7 +13,7 @@ use tiFy\App\Layout\LayoutInterface;
  * @method Request get(string $key, mixed $default = null)
  * @method Request fullUrl()
  */
-class RequestBaseController extends AbstractAppController implements RequestInterface
+class RequestBaseController extends AbstractAppDependency implements RequestInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.

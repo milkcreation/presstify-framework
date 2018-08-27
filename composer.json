@@ -93,6 +93,9 @@
   "autoload": {
     "classmap": ["tiFy.php"],
     "files": [
+      "bin/helpers/Components.php",
+      "bin/helpers/Core.php",
+      "bin/helpers/Lib.php",
       "src/helpers.php"
     ],
     "psr-4": {
@@ -102,6 +105,7 @@
       "tiFy\\Core\\": "core/",
       "tiFy\\Deprecated\\": "bin/deprecated/",
       "tiFy\\Environment\\" : "bin/deprecated/env/",
+      "tiFy\\Maintenance\\" : "bin/maintenance/",
       "tiFy\\Set\\": "set/"
     }
   },

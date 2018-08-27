@@ -1,4 +1,5 @@
 <?php
+
 namespace
 {
     use tiFy\Core\Layout\Layout;

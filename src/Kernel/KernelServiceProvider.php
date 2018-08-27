@@ -62,27 +62,27 @@ class KernelServiceProvider extends ServiceProvider
      * @return array
      */
     protected $components = [
-        //AdminView::class,
-        //AjaxAction::class,
-        //Api::class,
-        //Column::class,
-        //Cron::class,
-        //Db::class,
-        //Field::class,
-        //Form::class,
-        //Media::class,
-        //Metabox::class,
-        //Metadata::class,
-        //MetaTag::class,
-        //Options::class,
-        //PageHook::class,
+        AdminView::class,
+        AjaxAction::class,
+        Api::class,
+        Column::class,
+        Cron::class,
+        Db::class,
+        Field::class,
+        Form::class,
+        Media::class,
+        Metabox::class,
+        Metadata::class,
+        MetaTag::class,
+        Options::class,
+        PageHook::class,
         Partial::class,
-        //PostType::class,
-        //Route::class,
-        //TabMetabox::class,
-        //Taxonomy::class,
-        //User::class,
-        //View::class
+        PostType::class,
+        Route::class,
+        TabMetabox::class,
+        Taxonomy::class,
+        User::class,
+        View::class
     ];
 
     /**
@@ -102,7 +102,7 @@ class KernelServiceProvider extends ServiceProvider
             $class = $this->getContainer()->resolve($bootable, [$app]);
         endforeach;
 
-        //do_action('after_setup_tify');
+        do_action('after_setup_tify');
     }
 
     /**
@@ -144,6 +144,10 @@ class KernelServiceProvider extends ServiceProvider
                 return Request::capture();
             }
         ];
+
+        foreach($this->components as $component) :
+            array_push($this->singletons, $component);
+        endforeach;
 
         /** @todo Modifier le chargement des plugins */
         if (!defined('TIFY_CONFIG_DIR')) :

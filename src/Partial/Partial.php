@@ -74,7 +74,7 @@ final class Partial extends AppController
      * @param string $name Nom de qualification du controleur d'affichage.
      * @param mixed $callable classe ou méthode ou fonction de rappel.
      *
-     * @return null|callable|AbstractPartialController
+     * @return null|callable|PartialItemInterface
      */
     public function register($name, $callable)
     {
@@ -100,7 +100,7 @@ final class Partial extends AppController
      *
      * @param string $name Nom de qualification du controleur d'affichage.
      *
-     * @return mixed|AbstractPartialController
+     * @return mixed|PartialItemInterface
      */
     public function get($name)
     {

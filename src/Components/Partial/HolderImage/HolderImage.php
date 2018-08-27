@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Partial\HolderImage;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Kernel\Tools;
 
-class HolderImage extends AbstractPartialController
+class HolderImage extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -54,7 +54,7 @@ class HolderImage extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->attributes['attrs']['id'] = 'tiFyPartial-HolderImage--' . $this->getIndex();
         $this->attributes['attrs']['class'] = "tiFyPartial-HolderImage tiFyPartial-HolderImage--" . $this->getId();
@@ -78,7 +78,7 @@ class HolderImage extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         return $this->appTemplateRender('holder-image', $this->all());
     }
