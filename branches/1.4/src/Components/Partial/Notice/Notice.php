@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Partial\Notice;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Partial\Partial;
 
-class Notice extends AbstractPartialController
+class Notice extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -65,7 +65,7 @@ class Notice extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->attributes['attrs']['id'] = 'tiFyPartial-Notice--' . $this->getIndex();
 
@@ -118,7 +118,7 @@ class Notice extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         return $this->appTemplateRender('notice', $this->compact());
     }

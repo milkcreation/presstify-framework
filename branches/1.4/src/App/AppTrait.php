@@ -93,7 +93,7 @@ trait AppTrait
      */
     public function appConfig($key = null, $default = [])
     {
-        $alias = \container()->getAlias(get_class($this));
+        $alias = $this->appContainer()->getAlias(get_class($this));
 
         if (is_array($key)) :
             return \config()->set($alias, $key);
@@ -149,7 +149,7 @@ trait AppTrait
      */
     public static function appInstance($classname = null, $args = [])
     {
-        return \container()->resolve($classname ?: get_called_class(), $args);
+        return \app($classname ?: get_called_class(), $args);
     }
 
     /**

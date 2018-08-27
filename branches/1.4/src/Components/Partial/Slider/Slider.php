@@ -3,10 +3,10 @@
 namespace tiFy\Components\Partial\Slider;
 
 use tiFy\Components\Partial\Slider\SliderWalker;
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Kernel\Tools;
 
-class Slider extends AbstractPartialController
+class Slider extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -63,7 +63,7 @@ class Slider extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         $this->set('attrs.id', 'tiFyPartial-Slider--' . $this->getId());
         $this->set('attrs.class', 'tiFyPartial-Slider tiFyPartial-Slider--' . $this->getId());

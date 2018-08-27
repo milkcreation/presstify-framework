@@ -35,8 +35,8 @@ final class tiFy extends Container
     protected $serviceProviders = [
         /** Ultra-prioritaire */
         Paths::class,
-        Config::class,
         ClassLoader::class,
+        Config::class,
         /** ----------------- */
         KernelServiceProvider::class
     ];
@@ -61,6 +61,8 @@ final class tiFy extends Container
         add_action(
             'after_setup_theme',
             function () {
+                new Apps();
+
                 do_action('tify_app_boot');
             },
             0
@@ -84,27 +86,18 @@ final class tiFy extends Container
         endif;
 
         // Instanciation des controleurs en maintenance
-        self::classLoad('tiFy\Maintenance', self::$AbsDir . '/bin/maintenance', 'Maintenance');
+        new Maintenance();
 
         // Instanciation des librairies proriétaires
-        new Libraries;
+        new Libraries();
 
         // Initialisation de la gestion des traductions
-        new Languages;
-
-        // Instanciation des fonctions d'aides au développement
-        self::classLoad('tiFy\Helpers', __DIR__ . '/helpers');
+        new Languages();
 
         // Définition de l'url absolue
         self::$AbsUrl = File::getFilenameUrl(self::$AbsDir, self::$AbsPath);
 
-        // Instanciation des fonctions d'aide au développement
-        new Helpers;
-
         parent::__construct();
-
-        // Instanciation des applicatifs
-        new Apps;
     }
 
     /**

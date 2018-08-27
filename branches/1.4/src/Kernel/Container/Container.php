@@ -84,9 +84,7 @@ class Container extends LeagueContainer implements ContainerInterface
 
         $alias = $this->getAlias($concrete);
 
-        self::$items[$abstract] = $this->addService($abstract, compact('alias', 'concrete', 'singleton'));
-
-        return self::$items[$abstract];
+        return self::$items[$abstract] = $this->addService($abstract, compact('alias', 'concrete', 'singleton'));
     }
 
     /**

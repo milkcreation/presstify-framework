@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Partial\Modal;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Kernel\Tools;
 
-class Modal extends AbstractPartialController
+class Modal extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -84,7 +84,7 @@ class Modal extends AbstractPartialController
      *
      * @return array
      */
-    protected function parse($attrs = [])
+    public function parse($attrs = [])
     {
         parent::parse($attrs);
 
@@ -131,7 +131,7 @@ class Modal extends AbstractPartialController
      *
      * @return string
      */
-    protected function display()
+    public function display()
     {
         if($backdrop_close = $this->get('backdrop_close')) :
             $backdrop_close = $this->isCallable($backdrop_close)
