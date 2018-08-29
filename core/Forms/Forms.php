@@ -62,6 +62,8 @@ class Forms extends \tiFy\App\Core
         if (is_admin()) :
             $this->registration();
         endif;
+
+        add_shortcode('formulaire', 'tify_form_shortcode');
     }
 
     /** == Déclaration des formulaires pour les requêtes ajax - !!! Modifier pour AddonAjaxSubmit puis rétablie pour AddonRecord

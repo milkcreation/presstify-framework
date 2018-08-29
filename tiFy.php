@@ -17,6 +17,7 @@ use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\KernelServiceProvider;
 use tiFy\Lib\File;
 use tiFy\Deprecated\DeprecatedtiFyTrait as DeprecatedTrait;
+use tiFy\Maintenance\Maintenance;
 
 final class tiFy extends Container
 {
@@ -59,10 +60,9 @@ final class tiFy extends Container
         endif;
 
         add_action(
-            'after_setup_theme',
+            'after_setup_tify',
             function () {
                 new Apps();
-
                 do_action('tify_app_boot');
             },
             0

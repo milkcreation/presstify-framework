@@ -15,7 +15,7 @@ interface EngineInterface
      * @param array $data Liste des données à associer.
      * @param null|string|array $templates Nom de qualification des gabarits en relation.
      *
-     * @return $this
+     * @return self
      */
     public function addData(array $data, $templates = null);
 
@@ -26,7 +26,7 @@ interface EngineInterface
      * @param string  $directory Chemin vers le répertoire de stockage du groupe.
      * @param boolean $fallback Activation du parcours du répertoire principal si le un gabarit appelé est manquant.
      *
-     * @return $this
+     * @return self
      */
     public function addFolder($name, $directory, $fallback = false);
 
@@ -51,7 +51,7 @@ interface EngineInterface
      *
      * @param string $name Nom de qualification de la fonction.
      *
-     * @return $this
+     * @return self
      */
     public function dropFunction($name);
 
@@ -135,7 +135,7 @@ interface EngineInterface
      *
      * @param ExtensionInterface $extension Classe de rappel de l'extension
      *
-     * @return $this
+     * @return self
      */
     public function loadExtension(ExtensionInterface $extension);
 
@@ -144,7 +144,7 @@ interface EngineInterface
      *
      * @param ExtensionInterface[] $extensions Liste des classes de rappel des extensions
      *
-     * @return $this
+     * @return self
      */
     public function loadExtensions(array $extensions = []);
 
@@ -165,7 +165,7 @@ interface EngineInterface
      * @param string  $directory Chemin vers le répertoire de stockage du groupe.
      * @param null|boolean $fallback Activation du parcours du répertoire principal si le un gabarit appelé est manquant. si null prend la valeur d'activation du répertoire supprimé.
      *
-     * @return $this
+     * @return self
      */
     public function modifyFolder($name, $directory, $fallback = null);
 
@@ -193,7 +193,7 @@ interface EngineInterface
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
      * @param mixed $value Valeur de l'attribut.
      *
-     * @return $this
+     * @return self
      */
     public function set($key, $value);
 
@@ -202,7 +202,7 @@ interface EngineInterface
      *
      * @param string $controller Nom de qualification de la classe.
      *
-     * @return TemplateInterface
+     * @return self
      */
     public function setController($controller);
 
@@ -210,7 +210,7 @@ interface EngineInterface
      * Définition du chemin vers le répertoire principal de stockage des gabarits d'affichage.
      * @param  string|null $directory Chemin vers le répertoire principal de stockage des gabarits d'affichage. Mettre à null pour désactiver.
      *
-     * @return $this
+     * @return self
      */
     public function setDirectory($directory);
 
@@ -219,7 +219,7 @@ interface EngineInterface
      *
      * @param  string|null $fileExtension Extension des fichiers de gabarit d'affichage. Mettre à null pour personnaliser.
      *
-     * @return $this
+     * @return self
      */
     public function setFileExtension($fileExtension);
 
@@ -229,7 +229,7 @@ interface EngineInterface
      * @param string $name Nom de qualification (d'appel dans les gabarits) de la fonction.
      * @param callback $callback Instance de la fonction.
      *
-     * @return $this
+     * @return self
      */
     public function registerFunction($name, $callback);
 
@@ -238,7 +238,7 @@ interface EngineInterface
      *
      * @param string $name Nom de qualification du répertoire.
      *
-     * @return $this
+     * @return self
      */
     public function removeFolder($name);
 

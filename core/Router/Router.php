@@ -17,14 +17,10 @@ class Router extends Core
     private static $Factory = [];
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function __construct()
+    public function appBoot()
     {
-        parent::__construct();
-
         // Traitement des paramètres de configuration
         if ($config = self::tFyAppConfig()) :
             foreach ($config as $id => $attrs) :

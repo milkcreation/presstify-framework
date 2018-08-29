@@ -1,4 +1,5 @@
 <?php
+
 namespace tiFy;
 
 use Illuminate\Support\Arr;
@@ -911,12 +912,6 @@ final class Apps
             Core::register($id, $attrs);
         endforeach;
 
-        foreach(self::$Config as $type => $components) :
-            foreach($components as $name => $attrs) :
-                \config()->set("tiFy\\{$type}\\{$name}\\{$name}", $attrs);
-            endforeach;
-        endforeach;
-
         // Chargement de la configuration dans l'environnement de surcharge
         if ($app = tiFy::getConfig('app')) :
             foreach (array('core', 'components', 'plugins', 'set') as $type) :
@@ -1022,9 +1017,6 @@ final class Apps
                 tiFy::getContainer()->singleton($attrs['ClassName'], new $attrs['ClassName']);
             endforeach;
         endforeach;
-
-        // Déclenchement des actions post-paramétrage
-        do_action('after_setup_tify');
     }
 
     /**
