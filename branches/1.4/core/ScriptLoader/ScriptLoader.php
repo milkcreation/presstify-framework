@@ -34,9 +34,9 @@ class ScriptLoader extends \tiFy\App
         $this->appAddAction('after_setup_theme');
         $this->appAddAction('init');
         $this->appAddAction('admin_enqueue_scripts');
-        $this->appAddAction('admin_head');
+        //$this->appAddAction('admin_head');
         $this->appAddAction('wp_enqueue_scripts', null, 0);
-        $this->appAddAction('wp_head');
+        //$this->appAddAction('wp_head');
     }
 
     /**

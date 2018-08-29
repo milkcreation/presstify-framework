@@ -74,8 +74,6 @@ class Field extends Core
             self::register($name, "tiFy\\Components\\Fields\\{$name}\\{$name}::make");
         endforeach;
 
-        require_once $this->appAbsDir() . '/components/Fields/Helpers.php';
-
         // Déclaration des événements
         $this->appAddAction('init');
     }

@@ -121,9 +121,6 @@ class Route extends \tiFy\App\Core
         // Déclaration des événements
         $this->appAddAction('init', null, 0);
         $this->appAddAction('pre_get_posts', null, 0);
-
-        // Instanciation des fonctions d'aide à la saisie
-        require_once $this->appDirname() . '/Helpers.php';
     }
 
     /**
