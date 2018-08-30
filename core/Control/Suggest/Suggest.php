@@ -203,7 +203,7 @@ class Suggest extends \tiFy\Core\Control\Factory
             'select' => false,
 
             'button_text'        => '',
-            'delete_button_text' => '',
+            'delete_button'     => true,
 
             // Options Autocomplete
             /// @see http://api.jqueryui.com/autocomplete/
@@ -251,18 +251,18 @@ class Suggest extends \tiFy\Core\Control\Factory
             $button_text = $search_before . $button_text . $search_after;
         endif;
 
-        if ($value) :
+        if ($value && $delete_button) :
             $container_class .= ' tiFyControlSuggest--selected';
             $readonly = true;
         endif;
         $delete_button_before = '<button type="button" class="tiFyControlSuggest-button tiFyControlSuggest-button--delete">';
         $delete_button_after = '</button>';
-        if (!$delete_button_text) :
-            $delete_button_text = $delete_button_before . '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 357 357"><polygon points="312.13 71.6 285.4 44.88 178.5 151.78 71.6 44.88 44.88 71.6 151.78 178.5 44.88 285.4 71.6 312.13 178.5 205.22 285.4 312.13 312.13 285.4 205.22 178.5 312.13 71.6"/></svg>' . $delete_button_after;
+        if ($delete_button === true) :
+            $delete_button = $delete_button_before . '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 357 357"><polygon points="312.13 71.6 285.4 44.88 178.5 151.78 71.6 44.88 44.88 71.6 151.78 178.5 44.88 285.4 71.6 312.13 178.5 205.22 285.4 312.13 312.13 285.4 205.22 178.5 312.13 71.6"/></svg>' . $delete_button_after;
         else :
-            $delete_button_text = $delete_button_before . $delete_button_text . $delete_button_after;
+            $delete_button = $delete_button_before . $delete_button . $delete_button_after;
         endif;
-        $button_text .= $delete_button_text;
+        $button_text .= $delete_button;
 
         // Liste des arguments pour le traitement de la requête Ajax
         $ajax_attrs = compact('ajax_action', 'ajax_nonce', 'query_args', 'elements', 'extras', 'select', 'options',

@@ -43,6 +43,14 @@ final class tiFy extends Container
     ];
 
     /**
+     * Listes des composants natifs de la v2 à désactiver.
+     * @return array
+     */
+    protected $unbindings = [
+        \tiFy\Form\Form::class
+    ];
+
+    /**
      * CONSTRUCTEUR
      *
      * @return void
@@ -98,6 +106,12 @@ final class tiFy extends Container
         self::$AbsUrl = File::getFilenameUrl(self::$AbsDir, self::$AbsPath);
 
         parent::__construct();
+
+        foreach($this->unbindings as $abstract) :
+            $this->unbind($abstract);
+        endforeach;
+
+        do_action('after_setup_tify');
     }
 
     /**
