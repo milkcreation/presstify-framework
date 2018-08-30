@@ -110,8 +110,8 @@ final class Assets implements AssetsInterface
      */
     public function init()
     {
-        \wp_register_style('tiFyAdmin', $this->url('/Admin/css/styles.css'), [], 180528);
-        \wp_register_script('tiFyAdmin', $this->url('/Admin/js/scripts.js'), ['jquery'], 180528, true);
+        \wp_register_style('tiFyAdmin', $this->url('/admin/css/styles.css'), [], 180528);
+        \wp_register_script('tiFyAdmin', $this->url('/admin/js/scripts.js'), ['jquery'], 180528, true);
 
         foreach(Arr::get($this->thirdParty, 'css', []) as $handle => $attrs) :
             \wp_register_style($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
@@ -166,7 +166,7 @@ final class Assets implements AssetsInterface
      */
     public function url($path = '')
     {
-        return home_url('vendor/presstify/framework/src/Components/Assets/src' . ($path ? '/' . $path : $path));
+        return home_url('vendor/presstify/framework/assets' . ($path ? '/' . $path : $path));
     }
 
     /**
