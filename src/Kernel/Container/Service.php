@@ -3,6 +3,7 @@
 namespace tiFy\Kernel\Container;
 
 use League\Container\Definition\DefinitionInterface;
+use tiFy\Contracts\Container\ServiceInterface;
 use tiFy\Kernel\Container\Container;
 use tiFy\Kernel\Item\AbstractItemIterator;
 

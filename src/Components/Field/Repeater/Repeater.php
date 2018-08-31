@@ -65,14 +65,14 @@ class Repeater extends AbstractFieldItem
         );
 
         \wp_register_style(
-            'tiFyFieldRepeater',
-            $this->appAssetUrl('/Field/Repeater/css/styles.css'),
+            'FieldRepeater',
+            \assets()->url('/field/repeater/css/styles.css'),
             [is_admin() ? 'tiFyAdmin' : ''],
             170421
         );
         \wp_register_script(
-            'tiFyFieldRepeater',
-            $this->appAssetUrl('/Field/Repeater/js/scripts.js'),
+            'FieldRepeater',
+            \assets()->url('/field/repeater/js/scripts.js'),
             ['jquery', 'jquery-ui-sortable'],
             170421,
             true
@@ -86,8 +86,8 @@ class Repeater extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyFieldRepeater');
-        \wp_enqueue_script('tiFyFieldRepeater');
+        \wp_enqueue_style('FieldRepeater');
+        \wp_enqueue_script('FieldRepeater');
     }
 
     /**

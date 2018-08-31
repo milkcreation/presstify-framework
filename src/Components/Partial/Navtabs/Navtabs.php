@@ -49,20 +49,20 @@ class Navtabs extends AbstractPartialItem
 
         // Déclaration des scripts
         \wp_register_style(
-            'tiFyPartial-Navtabs',
-            $this->appAssetUrl('/partial/navtabs/css/styles.css'),
+            'PartialNavtabs',
+            \assets()->url('/partial/navtabs/css/styles.css'),
             [],
             170704
         );
         \wp_register_script(
-            'tiFyPartial-Navtabs',
-            $this->appAssetUrl('/partial/navtabs/js/scripts.js'),
+            'PartialNavtabs',
+            \assets()->url('/partial/navtabs/js/scripts.js'),
             ['jquery-ui-widget'],
             170704,
             true
         );
         \wp_localize_script(
-            'tiFyPartial-Navtabs',
+            'PartialNavtabs',
             'tiFyPartialNavtabs',
             [
                 '_ajax_nonce' => wp_create_nonce('tiFyPartialNavTabs')
@@ -77,8 +77,8 @@ class Navtabs extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartial-Navtabs');
-        \wp_enqueue_script('tiFyPartial-Navtabs');
+        \wp_enqueue_style('PartialNavtabs');
+        \wp_enqueue_script('PartialNavtabs');
     }
 
     /**

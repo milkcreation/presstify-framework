@@ -30,8 +30,8 @@ class HolderImage extends AbstractPartialItem
     public function init()
     {
         \wp_register_style(
-            'tiFyPartialHolderImage',
-            $this->appAssetUrl('/Partial/HolderImage/css/styles.css'),
+            'PartialHolderImage',
+            \assets()->url('/partial/holder-image/css/styles.css'),
             [],
             160714
         );
@@ -44,7 +44,7 @@ class HolderImage extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartialHolderImage');
+        \wp_enqueue_style('PartialHolderImage');
     }
 
     /**

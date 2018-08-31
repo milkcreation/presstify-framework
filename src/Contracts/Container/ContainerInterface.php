@@ -3,7 +3,7 @@
 namespace tiFy\Contracts\Container;
 
 use League\Container\ContainerInterface as LeagueContainerInterface;
-use tiFy\Kernel\Container\ServiceInterface;
+use tiFy\Contracts\Container\ServiceInterface;
 
 interface ContainerInterface extends LeagueContainerInterface
 {
@@ -65,7 +65,7 @@ interface ContainerInterface extends LeagueContainerInterface
      *
      * @param string $abstract Nom ou alias de qualification du service.
      *
-     * @return Service
+     * @return ServiceInterface
      */
     public function getService($abstract);
 
@@ -85,6 +85,16 @@ interface ContainerInterface extends LeagueContainerInterface
      * @return object
      */
     public function resolve($abstract, $args = []);
+
+    /**
+     * Définition d'un alias de service.
+     *
+     * @param string $alias Nom ou alias de qualification du service.
+     * @param string $concrete Nom de le classe du service.
+     *
+     * @return $this
+     */
+    public function setAlias($alias, $concrete);
 
     /**
      * Déclaration d'un service à instance unique.

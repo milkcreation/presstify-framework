@@ -20,3 +20,7 @@
 [aria-control='media_file'][aria-active='true'] [aria-control='reset'] {
     display: inherit;
 }
+
+[aria-control='media_file'] .tiFyField-MediaFileInput.tiFy-Input--media {
+    display:block;
+}

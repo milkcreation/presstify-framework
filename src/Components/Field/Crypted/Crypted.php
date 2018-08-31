@@ -65,14 +65,14 @@ class Crypted extends AbstractFieldItem
         );
 
         \wp_register_style(
-            'tiFyFieldCrypted',
-            $this->appAssetUrl('/Field/Crypted/css/styles.css'),
+            'FieldCrypted',
+            \assets()->url('/field/crypted/css/styles.css'),
             ['dashicons'],
             180519
         );
         \wp_register_script(
-            'tiFyFieldCrypted',
-            $this->appAssetUrl('/Field/Crypted/js/scripts.js'),
+            'FieldCrypted',
+            \assets()->url('/field/crypted/js/scripts.js'),
             ['jquery'],
             180519,
             true
@@ -86,8 +86,8 @@ class Crypted extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyFieldCrypted');
-        \wp_enqueue_script('tiFyFieldCrypted');
+        \wp_enqueue_style('FieldCrypted');
+        \wp_enqueue_script('FieldCrypted');
     }
 
     /**

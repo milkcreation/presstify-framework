@@ -43,8 +43,8 @@ class Table extends AbstractPartialItem
     public function init()
     {
         \wp_register_style(
-            'tiFyPartialTable',
-            $this->appAssetUrl('/Partial/Table/css/styles.css'),
+            'PartialTable',
+            \assets()->url('/partial/table/css/styles.css'),
             [],
             160714
         );
@@ -57,7 +57,7 @@ class Table extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartialTable');
+        \wp_enqueue_style('PartialTable');
     }
 
     /**

@@ -2,9 +2,7 @@
 
 namespace tiFy\Components\Partial\Slider;
 
-use tiFy\Components\Partial\Slider\SliderWalker;
 use tiFy\Partial\AbstractPartialItem;
-use tiFy\Kernel\Tools;
 
 class Slider extends AbstractPartialItem
 {
@@ -31,14 +29,15 @@ class Slider extends AbstractPartialItem
     public function init()
     {
         \wp_register_style(
-            'tiFyPartialSlider',
-            $this->appAssetUrl('/Partial/Slider/css/styles.css'),
+            'PartialSlider',
+            \assets()->url('/partial/slider/css/styles.css'),
             ['slick', 'slick-theme'],
             170722
         );
+
         \wp_register_script(
-            'tiFyPartialSlider',
-            $this->appAssetUrl('/Partial/Slider/js/scripts.js'),
+            'PartialSlider',
+            \assets()->url('/partial/slider/js/scripts.js'),
             ['slick'],
             170722,
             true
@@ -52,8 +51,8 @@ class Slider extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartialSlider');
-        \wp_enqueue_script('tiFyPartialSlider');
+        \wp_enqueue_style('PartialSlider');
+        \wp_enqueue_script('PartialSlider');
     }
 
     /**
@@ -71,35 +70,26 @@ class Slider extends AbstractPartialItem
         $this->set(
             'items',
             [
-                ['content' => '<img src="https://fr.facebookbrand.com/wp-content/uploads/2016/05/FB-fLogo-Blue-broadcast-2.png" />'],
-                ['content' => '<img src="https://fr.facebookbrand.com/wp-content/uploads/2016/05/YES-ThumbFinal_4.9.15-2.png" />']
+                /** @see https://picsum.photos/images */
+                "<img src=\"https://picsum.photos/800/800/?image=768\" />",
+                "<img src=\"https://picsum.photos/800/800/?image=669\" />",
+                "<img src=\"https://picsum.photos/800/800/?image=646\" />",
+                "<img src=\"https://picsum.photos/800/800/?image=883\" />"
             ]
         );
 
         parent::parse($attrs);
 
+        $items = $this->get('items', []);
+        foreach($items as &$item) :
+            if (is_string($item)) :
+                $item = ['content' => $item];
+            endif;
+            $item['tag'] = 'div';
+        endforeach;
+        $this->set('items', $items);
+
         $this->set('attrs.aria-control', 'slider');
         $this->set('attrs.data-slick', htmlentities(json_encode($this->get('options', []))));
-    }
-
-    /**
-     * Affichage.
-     *
-     * @return string
-     */
-    public function display()
-    {
-        return  $this->appTemplateRender(
-            'slider',
-            [
-                'items'         => SliderWalker::display(
-                    $this->get('items', []),
-                    [
-                        'prefix' => 'tiFyPartial-Slider'
-                    ]
-                ),
-                'html_attrs'    => Tools::Html()->parseAttrs($this->get('attrs', []))
-            ]
-        );
     }
 }

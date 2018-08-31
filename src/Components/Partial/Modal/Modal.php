@@ -50,14 +50,14 @@ class Modal extends AbstractPartialItem
     public function init()
     {
         \wp_register_style(
-            'tiFyPartialModal',
-            $this->appAssetUrl('/partial/modal/css/styles.css'),
+            'PartialModal',
+            \assets()->url('/partial/modal/css/styles.css'),
             [],
             171206
         );
         \wp_register_script(
-            'tiFyPartialModal',
-            $this->appAssetUrl('/partial/modal/js/scripts.js'),
+            'PartialModal',
+            \assets()->url('/partial/modal/js/scripts.js'),
             ['jquery'],
             171206,
             true
@@ -71,8 +71,8 @@ class Modal extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartialModal');
-        \wp_enqueue_script('tiFyPartialModal');
+        \wp_enqueue_style('PartialModal');
+        \wp_enqueue_script('PartialModal');
     }
 
     /**

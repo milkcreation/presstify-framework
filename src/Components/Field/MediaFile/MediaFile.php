@@ -35,14 +35,14 @@ class MediaFile extends AbstractFieldItem
     public function init()
     {
         \wp_register_style(
-            'tiFyFieldMediaFile',
-            $this->appAssetUrl('/Field/MediaFile/css/styles.css'),
+            'FieldMediaFile',
+            \assets()->url('/field/media-file/css/styles.css'),
             ['dashicons'],
             180616
         );
         \wp_register_script(
-            'tiFyFieldMediaFile',
-            $this->appAssetUrl('/Field/MediaFile/js/scripts.js'),
+            'FieldMediaFile',
+            \assets()->url('/field/media-file/js/scripts.js'),
             ['jquery'],
             180616,
             true
@@ -57,8 +57,8 @@ class MediaFile extends AbstractFieldItem
     public function enqueue_scripts()
     {
         \wp_enqueue_media();
-        \wp_enqueue_style('tiFyFieldMediaFile');
-        \wp_enqueue_script('tiFyFieldMediaFile');
+        \wp_enqueue_style('FieldMediaFile');
+        \wp_enqueue_script('FieldMediaFile');
     }
 
     /**
