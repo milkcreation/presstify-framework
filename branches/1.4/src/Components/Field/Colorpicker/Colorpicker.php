@@ -38,8 +38,8 @@ class Colorpicker extends AbstractFieldItem
     public function init()
     {
         \wp_register_style(
-            'tiFyFieldColorpicker',
-            $this->appAssetUrl('/Field/Colorpicker/css/styles.css'),
+            'FieldColorpicker',
+            $this->appAssetUrl('/field/colorpicker/css/styles.css'),
             ['spectrum'],
             180725
         );
@@ -50,8 +50,8 @@ class Colorpicker extends AbstractFieldItem
         endif;
 
         \wp_register_script(
-            'tiFyFieldColorpicker',
-            $this->appAssetUrl('/Field/Colorpicker/js/scripts.js'),
+            'FieldColorpicker',
+            $this->appAssetUrl('/field/colorpicker/js/scripts.js'),
             $deps,
             180725,
             true
@@ -65,8 +65,8 @@ class Colorpicker extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyFieldColorpicker');
-        \wp_enqueue_script('tiFyFieldColorpicker');
+        \wp_enqueue_style('FieldColorpicker');
+        \wp_enqueue_script('FieldColorpicker');
     }
 
     /**

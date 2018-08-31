@@ -31,8 +31,8 @@ class SelectImage extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyFieldSelectImage');
-        \wp_enqueue_script('tiFyFieldSelectJs');
+        \wp_enqueue_style('FieldSelectImage');
+        \wp_enqueue_script('FieldSelectJs');
     }
 
     /**
@@ -43,9 +43,9 @@ class SelectImage extends AbstractFieldItem
     public function init()
     {
         \wp_register_style(
-            'tiFyFieldSelectImage',
-            $this->appAssetUrl('/Field/SelectImage/css/styles.css'),
-            ['tiFyFieldSelectJs'],
+            'FieldSelectImage',
+            \assets()->url('/field/select-image/css/styles.css'),
+            ['FieldSelectJs'],
             180808
         );
     }

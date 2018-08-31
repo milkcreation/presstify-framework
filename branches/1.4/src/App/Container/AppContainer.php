@@ -6,11 +6,11 @@ use Illuminate\Support\Collection;
 use tiFy\App\AppController;
 use tiFy\App\AppTrait;
 use tiFy\Contracts\App\AppInterface;
+use tiFy\Contracts\Container\ContainerInterface;
+use tiFy\Contracts\Container\ServiceInterface;
+use tiFy\Contracts\Container\ServiceProviderInterface;
 use tiFy\Kernel\Container\Container as KernelContainer;
-use tiFy\Kernel\Container\ContainerInterface;
 use tiFy\Kernel\Container\ContainerTrait;
-use tiFy\Kernel\Container\ServiceInterface;
-use tiFy\Kernel\Container\ServiceProviderInterface;
 
 class AppContainer extends KernelContainer implements AppInterface
 {

@@ -54,8 +54,8 @@ class Breadcrumb extends AbstractPartialItem
     public function init()
     {
         \wp_register_style(
-            'tiFyPartialBreadcrumb',
-            $this->appAssetUrl('/Partial/Breadcrumb/css/styles.css'),
+            'PartialBreadcrumb',
+            \assets()->url('/partial/breadcrumb/css/styles.css'),
             [],
             180122
         );
@@ -68,7 +68,7 @@ class Breadcrumb extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartialBreadcrumb');
+        \wp_enqueue_style('PartialBreadcrumb');
     }
 
     /**

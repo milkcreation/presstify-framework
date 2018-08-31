@@ -61,13 +61,13 @@ class ToggleSwitch extends AbstractFieldItem
     {
         \wp_register_style(
             'tiFyFieldToggleSwitch',
-            $this->appAssetUrl('/Field/ToggleSwitch/css/styles.css'),
+            \assets()->url('/field/toggle-switch/css/styles.css'),
             [],
             170724
         );
         \wp_register_script(
             'tiFyFieldToggleSwitch',
-            $this->appAssetUrl('/Field/ToggleSwitch/js/scripts.js'),
+            \assets()->url('/field/toggle-switch/js/scripts.js'),
             ['jquery'],
             170724
         );
@@ -80,8 +80,8 @@ class ToggleSwitch extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyFieldToggleSwitch');
-        \wp_enqueue_script('tiFyFieldToggleSwitch');
+        \wp_enqueue_style('FieldToggleSwitch');
+        \wp_enqueue_script('FieldToggleSwitch');
     }
 
     /**

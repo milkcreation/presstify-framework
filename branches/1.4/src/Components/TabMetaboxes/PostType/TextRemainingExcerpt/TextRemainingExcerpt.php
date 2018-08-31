@@ -2,7 +2,6 @@
 
 namespace tiFy\Components\TabMetaboxes\PostType\TextRemainingExcerpt;
 
-use tiFy\Field\Field;
 use tiFy\TabMetabox\ContentPostTypeController;
 
 class TextRemainingExcerpt extends ContentPostTypeController
@@ -20,6 +19,21 @@ class TextRemainingExcerpt extends ContentPostTypeController
     /**
      * {@inheritdoc}
      */
+    public function display($post, $args = [])
+    {
+        return field(
+            'text-remaining',
+            [
+                'name'  => 'excerpt',
+                'value' => $post->post_excerpt,
+                'max'   => $this->get('max')
+            ]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function load($wp_screen)
     {
         $this->appAddAction(
@@ -29,30 +43,11 @@ class TextRemainingExcerpt extends ContentPostTypeController
             }
         );
 
-        $this->appAddAction('admin_enqueue_scripts');
-    }
-
-    /**
-     * Mise en file des scripts de l'interface d'administration
-     *
-     * @return void
-     */
-    public function admin_enqueue_scripts()
-    {
-        /** @var Field $field */
-        $field = $this->appServiceGet(Field::class);
-        $field->enqueue('TextRemaining');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display($post, $args = [])
-    {
-        return Field::TextRemaining([
-            'name'  => 'excerpt',
-            'value' => $post->post_excerpt,
-            'max'   => $args['max'],
-        ]);
+        $this->appAddAction(
+            'admin_enqueue_scripts',
+            function () {
+                field('text-remaining')->enqueue_scripts();
+            }
+        );
     }
 }

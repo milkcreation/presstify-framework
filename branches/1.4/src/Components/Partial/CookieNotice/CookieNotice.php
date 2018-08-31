@@ -56,9 +56,9 @@ class CookieNotice extends AbstractPartialItem
         );
 
         \wp_register_script(
-            'tiFyPartialCookieNotice',
-            $this->appAssetUrl('/Partial/CookieNotice/js/scripts.js'),
-            ['tiFyPartialNotice'],
+            'PartialCookieNotice',
+            \assets()->url('/partial/cookie-notice/js/scripts.js'),
+            ['PartialNotice'],
             170626,
             true
         );
@@ -71,8 +71,8 @@ class CookieNotice extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartialNotice');
-        \wp_enqueue_script('tiFyPartialCookieNotice');
+        \wp_enqueue_style('PartialNotice');
+        \wp_enqueue_script('PartialCookieNotice');
     }
 
     /**

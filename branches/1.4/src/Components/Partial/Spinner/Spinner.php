@@ -45,15 +45,16 @@ class Spinner extends AbstractPartialItem
     public function init()
     {
         \wp_register_style(
-            'tiFyPartialSpinner',
-            $this->appAssetUrl('/Partial/Spinner/css/spinkit.min.css'),
+            'PartialSpinner',
+            \assets()->url('/partial/spinner/css/spinkit.min.css'),
             [],
             '1.2.5'
         );
+
         foreach($this->spinners as $spinner) :
             \wp_register_style(
-                "tiFyPartialSpinner-{$spinner}",
-                $this->appAssetUrl("/Partial/Spinner/css/{$spinner}.min.css"),
+                "PartialSpinner-{$spinner}",
+                \assets()->url("/partial/spinner/css/{$spinner}.min.css"),
                 [],
                 '1.2.5'
             );
@@ -70,9 +71,9 @@ class Spinner extends AbstractPartialItem
     public function enqueue_scripts($spinner = null)
     {
         if (!$spinner || !in_array($spinner, $this->spinners)) :
-            \wp_enqueue_style('tiFyPartialSpinner');
+            \wp_enqueue_style('PartialSpinner');
         else :
-            \wp_enqueue_style("tiFyPartialSpinner-{$spinner}");
+            \wp_enqueue_style("PartialSpinner-{$spinner}");
         endif;
     }
 
