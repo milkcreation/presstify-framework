@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Kernel\Container;
+namespace tiFy\Contracts\Container;
 
-use League\Container\ServiceProvider\ServiceProviderInterface as LeagueServiceProviderInterface;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
-use tiFy\Kernel\Container\ContainerInterface;
+use League\Container\ServiceProvider\ServiceProviderInterface as LeagueServiceProviderInterface;
+use tiFy\Contracts\Container\ContainerInterface;
 
 interface ServiceProviderInterface extends LeagueServiceProviderInterface, BootableServiceProviderInterface
 {

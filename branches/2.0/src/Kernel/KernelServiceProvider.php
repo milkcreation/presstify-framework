@@ -26,12 +26,15 @@ use tiFy\Taxonomy\Taxonomy;
 use tiFy\User\User;
 use tiFy\View\View;
 
+use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\Assets\AssetsInterface;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
+use tiFy\Kernel\Events\Events;
 use tiFy\Kernel\Events\EventsInterface;
 use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
+use tiFy\Kernel\Templates\Engine;
 use tiFy\Kernel\Templates\EngineInterface;
 use tiFy\Kernel\Service;
 
@@ -44,7 +47,7 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $singletons = [
         App::class,
-        AssetsInterface::class => \tiFy\Kernel\Assets\Assets::class,
+        Assets::class,
         Partial::class
     ];
 
@@ -53,8 +56,17 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $bindings = [
         ClassInfo::class,
-        EngineInterface::class => \tiFy\Kernel\Templates\Engine::class,
-        EventsInterface::class => \tiFy\Kernel\Events\Events::class
+        Engine::class,
+        Events::class
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $aliases = [
+        AssetsInterface::class => Assets::class,
+        EngineInterface::class => Engine::class,
+        EventsInterface::class => Events::class
     ];
 
     /**
@@ -101,6 +113,21 @@ class KernelServiceProvider extends ServiceProvider
         foreach ($this->getBootables() as $bootable) :
             $class = $this->getContainer()->resolve($bootable, [$app]);
         endforeach;
+
+        $this->getContainer()->singleton(
+            'tiFyLogger',
+            function () {
+                return Logger::globalReport();
+            }
+        );
+        $this->getContainer()->singleton(
+            'tiFyRequest',
+            function () {
+                return Request::capture();
+            }
+        );
+
+        do_action('after_setup_tify');
     }
 
     /**
@@ -134,15 +161,6 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function parse()
     {
-        $this->singletons += [
-            'tiFyLogger'  => function () {
-                return Logger::globalReport();
-            },
-            'tiFyRequest' => function () {
-                return Request::capture();
-            }
-        ];
-
         foreach($this->components as $component) :
             array_push($this->singletons, $component);
         endforeach;

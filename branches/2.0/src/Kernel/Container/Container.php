@@ -171,6 +171,16 @@ class Container extends LeagueContainer implements ContainerInterface
     /**
      * {@inheritdoc}
      */
+    public function setAlias($alias, $concrete)
+    {
+        $this->aliases[$alias] = $concrete;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function singleton($abstract, $concrete = null)
     {
         return $this->bind($abstract, $concrete, true);

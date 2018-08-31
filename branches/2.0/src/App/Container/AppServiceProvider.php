@@ -4,8 +4,8 @@ namespace tiFy\App\Container;
 
 use tiFy\Contracts\App\AppInterface;
 use tiFy\Contracts\Container\ContainerInterface;
+use tiFy\Contracts\Container\ServiceProviderInterface;
 use tiFy\Kernel\Container\ServiceProvider;
-use tiFy\Kernel\Container\ServiceProviderInterface;
 use tiFy\tiFy;
 
 class AppServiceProvider extends ServiceProvider implements ServiceProviderInterface
