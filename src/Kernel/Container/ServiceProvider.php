@@ -5,13 +5,14 @@ namespace tiFy\Kernel\Container;
 use Illuminate\Support\Arr;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ReflectionContainer;
-use tiFy\Kernel\Container\Container;
+use tiFy\Contracts\Container\ContainerInterface;
+use tiFy\Contracts\Container\ServiceProviderInterface;
 
 class ServiceProvider extends AbstractServiceProvider implements ServiceProviderInterface
 {
     /**
      * Classe de rappel du conteneur de services.
-     * @var Container
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -24,15 +25,21 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
 
     /**
      * Liste des services à instance multiples auto-déclarés.
-     * @var array|string[]
+     * @var string[]
      */
     protected $bindings = [];
 
     /**
      * Liste des services à instance unique auto-déclarés.
-     * @var array|string[]
+     * @var string[]
      */
     protected $singletons = [];
+
+    /**
+     * Liste des alias de qualification de services.
+     * @var array
+     */
+    protected $aliases = [];
 
     /**
      * CONSTRUCTEUR.
@@ -93,32 +100,34 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
      */
     public function parse()
     {
+        foreach($this->aliases as $alias => $concrete) :
+            $this->getContainer()->setAlias($alias, $concrete);
+        endforeach;
+
         $provides = [];
         if ($bindings = $this->getBindings()) :
-            foreach ($bindings as $abstract => $concrete) :
-                if (is_numeric($abstract)) :
-                    $abstract = $concrete;
-                endif;
-                $provides[$abstract] = $concrete;
+            foreach ($bindings as $concrete) :
+                $alias = $this->getContainer()->getAlias($concrete);
+
+                $provides[$alias] = $concrete;
             endforeach;
         endif;
 
         if ($singletons = $this->getSingletons()) :
-            foreach ($singletons as $abstract => $concrete) :
-                if (is_numeric($abstract)) :
-                    $abstract = $concrete;
-                endif;
-                $provides[$abstract] = $concrete;
+            foreach ($singletons as $concrete) :
+                $alias = $this->getContainer()->getAlias($concrete);
+
+                $provides[$alias] = $concrete;
             endforeach;
         endif;
 
-        foreach($provides as $abstract => $concrete) :
-            array_push($this->provides, $abstract);
+        foreach($provides as $alias => $concrete) :
+            array_push($this->provides, $concrete);
 
-            if ($this->isSingleton($abstract)) :
-                $this->getContainer()->singleton($abstract, $concrete);
+            if ($this->isSingleton($alias)) :
+                $this->getContainer()->singleton($alias, $concrete);
             else :
-                $this->getContainer()->bind($abstract, $concrete);
+                $this->getContainer()->bind($alias, $concrete);
             endif;
         endforeach;
     }

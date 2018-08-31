@@ -1,9 +1,9 @@
 <?php
 
-namespace tiFy\Kernel\Container;
+namespace tiFy\Contracts\Container;
 
 use League\Container\Definition\DefinitionInterface;
-use tiFy\Kernel\Container\Container;
+use tiFy\Contracts\Container\ContainerInterface;
 
 interface ServiceInterface
 {
@@ -54,7 +54,7 @@ interface ServiceInterface
     /**
      * Récupération de la classe de rappel du conteneur de services.
      *
-     * @return Container
+     * @return ContainerInterface
      */
     public function getContainer();
 
