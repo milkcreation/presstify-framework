@@ -175,4 +175,16 @@ class Container extends LeagueContainer implements ContainerInterface
     {
         return $this->bind($abstract, $concrete, true);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unbind($abstract)
+    {
+        $alias = $this->getAlias($abstract);
+        unset($this->shared[$alias]);
+        unset($this->definitions[$alias]);
+        unset($this->sharedDefinitions[$alias]);
+        unset(self::$items[$alias]);
+    }
 }
