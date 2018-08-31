@@ -40,13 +40,13 @@ class TextRemaining extends AbstractFieldItem
     {
         \wp_register_style(
             'tiFyFieldTextRemaining',
-            $this->appAssetUrl('/Field/TextRemaining/css/styles.css'),
+            $this->appAssetUrl('/field/text-remaining/css/styles.css'),
             [],
             180611
         );
         \wp_register_script(
             'tiFyFieldTextRemaining',
-            $this->appAssetUrl('/Field/TextRemaining/js/scripts.js'),
+            $this->appAssetUrl('/field/text-remaining/js/scripts.js'),
             ['jquery'],
             180611,
             true

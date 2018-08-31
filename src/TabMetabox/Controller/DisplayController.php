@@ -62,13 +62,13 @@ class DisplayController
     {
         \wp_enqueue_style(
             'tiFyTabMetabox',
-            $this->appAssetUrl('/TabMetabox/css/styles.css'),
+            $this->appAssetUrl('/metabox/tab/css/styles.css'),
             ['tiFyPartial-Navtabs'],
             150216
         );
         \wp_enqueue_script(
             'tiFyTabMetabox',
-            $this->appAssetUrl('/TabMetabox/js/scripts.js'),
+            $this->appAssetUrl('/metabox/tab/js/scripts.js'),
             ['tiFyPartial-Navtabs'],
             151019,
             true

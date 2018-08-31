@@ -3,12 +3,13 @@
 namespace tiFy\App\Dependency;
 
 use tiFy\Contracts\App\AppInterface;
+use tiFy\Contracts\Container\ContainerInterface;
 
 abstract class AbstractAppDependency
 {
     /**
      * Classe de rappel du controleur de l'application.
-     * @var AppInterface
+     * @var AppInterface|ContainerInterface
      */
     protected $app;
 

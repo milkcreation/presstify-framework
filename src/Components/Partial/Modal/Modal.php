@@ -25,10 +25,8 @@ class Modal extends AbstractPartialItem
      * }
      */
     protected $attributes = [
-        'container'    => [
-            'attrs' => [
-                'class' => ''
-            ]
+        'attrs' => [
+            'class' => ''
         ],
 
         'options' => [],
@@ -53,13 +51,13 @@ class Modal extends AbstractPartialItem
     {
         \wp_register_style(
             'tiFyPartialModal',
-            $this->appAssetUrl('/Partial/Modal/css/styles.css'),
+            $this->appAssetUrl('/partial/modal/css/styles.css'),
             [],
             171206
         );
         \wp_register_script(
             'tiFyPartialModal',
-            $this->appAssetUrl('/Partial/Modal/js/scripts.js'),
+            $this->appAssetUrl('/partial/modal/js/scripts.js'),
             ['jquery'],
             171206,
             true
@@ -88,8 +86,8 @@ class Modal extends AbstractPartialItem
     {
         parent::parse($attrs);
 
-        if(!$this->get('container.attrs.id')) :
-            $this->set('container.attrs.id', 'tiFyPartial-Modal--' . $this->getIndex());
+        if(!$this->get('attrs.id')) :
+            $this->set('attrs.id', 'tiFyPartial-Modal--' . $this->getIndex());
         endif;
 
         $class = 'tiFyPartial-Modal modal';
@@ -97,15 +95,15 @@ class Modal extends AbstractPartialItem
             $class .= ' fade';
         endif;
 
-        if($this->has('container.attrs.class')) :
-            $this->set('container.attrs.class', "{$class} {$this->get('container.attrs.class')}");
+        if($this->has('attrs.class')) :
+            $this->set('attrs.class', "{$class} {$this->get('attrs.class')}");
         else :
-            $this->set('container.attrs.class', $class);
+            $this->set('attrs.class', $class);
         endif;
 
-        $this->set('container.attrs.data-modal', $this->get('container_id'));
-        $this->set('container.attrs.role', 'dialog');
-        $this->set('container.attrs.aria-control', 'modal');
+        $this->set('attrs.data-modal', $this->get('container_id'));
+        $this->set('attrs.role', 'dialog');
+        $this->set('attrs.aria-control', 'modal');
 
         $this->set(
             'options',
@@ -121,7 +119,7 @@ class Modal extends AbstractPartialItem
         );
         foreach (['backdrop', 'keyboard', 'focus', 'show'] as $key) :
             if ($this->has("options.{$key}")) :
-                $this->set("container.attrs.data-{$key}", $this->get("options.{$key}") ? 'true' : 'false');
+                $this->set("attrs.data-{$key}", $this->get("options.{$key}") ? 'true' : 'false');
             endif;
         endforeach;
     }
@@ -168,7 +166,7 @@ class Modal extends AbstractPartialItem
         $size = in_array($this->get('size'), ['lg', 'sm', 'full']) ? 'modal-' . $this->get('size') : '';
 
         $output  = "";
-        $output .= "<div " . Tools::Html()->parseAttrs($this->get('container.attrs')) . ">";
+        $output .= "<div " . Tools::Html()->parseAttrs($this->get('attrs')) . ">";
         $output .= $this->appTemplateRender('dialog', compact('backdrop_close', 'body', 'footer', 'header', 'size'));
         $output .= "</div>";
 
