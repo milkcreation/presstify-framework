@@ -8,7 +8,8 @@
 
     <div <?php $this->attrs(); ?>>
         <?php
-        tify_field_hidden(
+        echo field(
+            'hidden',
             [
                 'name'  => $this->get('name'),
                 'value' => $this->get('value'),
@@ -19,11 +20,12 @@
         );
         ?>
 
-        <div class="tiFy-Input--media">
+        <div class="tiFyField-MediaFileInput tiFy-Input--media">
             <?php
-            tify_field_text(
+            echo field(
+                'text',
                 [
-                    'value'        => $this->get('selected_infos', ''),
+                    'value' => $this->get('selected_infos', ''),
                     'attrs' => [
                         'autocomplete' => 'off',
                         'disabled',
@@ -36,7 +38,8 @@
         </div>
 
         <?php
-        tify_partial_tag(
+        echo partial(
+            'tag',
             [
                 'tag'     => 'a',
                 'attrs'   => [

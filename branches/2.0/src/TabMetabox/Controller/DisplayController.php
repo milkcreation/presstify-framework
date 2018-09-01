@@ -61,15 +61,15 @@ class DisplayController
     public function admin_enqueue_scripts()
     {
         \wp_enqueue_style(
-            'tiFyTabMetabox',
-            $this->appAssetUrl('/metabox/tab/css/styles.css'),
-            ['tiFyPartial-Navtabs'],
+            'TabMetabox',
+            \assets()->url('/metabox/tab/css/styles.css'),
+            ['PartialNavtabs'],
             150216
         );
         \wp_enqueue_script(
-            'tiFyTabMetabox',
-            $this->appAssetUrl('/metabox/tab/js/scripts.js'),
-            ['tiFyPartial-Navtabs'],
+            'TabMetabox',
+            \assets()->url('/metabox/tab/js/scripts.js'),
+            ['PartialNavtabs'],
             151019,
             true
         );

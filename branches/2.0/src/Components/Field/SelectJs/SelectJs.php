@@ -86,9 +86,9 @@ class SelectJs extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        $this->appServiceGet(Partial::class)->enqueue('spinkit', 'three-bounce');
-        \wp_enqueue_style('tiFyFieldSelectJs');
-        \wp_enqueue_script('tiFyFieldSelectJs');
+        \partial('spinkit')->enqueue_scripts('three-bounce');
+        \wp_enqueue_style('FieldSelectJs');
+        \wp_enqueue_script('FieldSelectJs');
     }
 
     /**
@@ -137,15 +137,15 @@ class SelectJs extends AbstractFieldItem
         );
 
         \wp_register_style(
-            'tiFyFieldSelectJs',
-            $this->appAssetUrl('/Field/SelectJs/css/styles.css'),
+            'FieldSelectJs',
+            \assets()->url('/field/select-js/css/styles.css'),
             [],
             171218
         );
 
         \wp_register_script(
-            'tiFyFieldSelectJs',
-            $this->appAssetUrl('/Field/SelectJs/js/scripts.js'),
+            'FieldSelectJs',
+            \assets()->url('/field/select-js/js/scripts.js'),
             ['jquery-ui-widget', 'jquery-ui-sortable'],
             171218,
             true

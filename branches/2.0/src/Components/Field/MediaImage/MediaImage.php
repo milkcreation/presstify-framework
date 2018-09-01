@@ -61,14 +61,14 @@ class MediaImage extends AbstractFieldItem
     public function init()
     {
         \wp_register_style(
-            'tiFyField-MediaImage',
-            $this->appAssetUrl('/Field/MediaImage/css/styles.css'),
+            'FieldMediaImage',
+            \assets()->url('/field/media-image/css/styles.css'),
             ['tiFyAdmin'],
             180516
         );
         \wp_register_script(
-            'tiFyField-MediaImage',
-            $this->appAssetUrl('/Field/MediaImage/js/scripts.js'),
+            'FieldMediaImage',
+            \assets()->url('/field/media-image/js/scripts.js'),
             ['jquery'],
             180516,
             true
@@ -83,8 +83,8 @@ class MediaImage extends AbstractFieldItem
     public function enqueue_scripts()
     {
         @wp_enqueue_media();
-        \wp_enqueue_style('tiFyField-MediaImage');
-        \wp_enqueue_script('tiFyField-MediaImage');
+        \wp_enqueue_style('FieldMediaImage');
+        \wp_enqueue_script('FieldMediaImage');
     }
 
     /**

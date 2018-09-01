@@ -25,7 +25,6 @@ class Config extends AbstractItemController
         'app'         => \App\App::class,
         'admin-view'  => \tiFy\AdminView\AdminView::class,
         'ajax-action' => \tiFy\AjaxAction\AjaxAction::class,
-        'api'         => \tiFy\Api\Api::class,
         'column'      => \tiFy\Column\Column::class,
         'cron'        => \tiFy\Cron\Cron::class,
         'db'          => \tiFy\Db\Db::class,
