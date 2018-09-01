@@ -39,14 +39,14 @@ class TextRemaining extends AbstractFieldItem
     public function init()
     {
         \wp_register_style(
-            'tiFyFieldTextRemaining',
-            $this->appAssetUrl('/field/text-remaining/css/styles.css'),
+            'FieldTextRemaining',
+            \assets()->url('/field/text-remaining/css/styles.css'),
             [],
             180611
         );
         \wp_register_script(
-            'tiFyFieldTextRemaining',
-            $this->appAssetUrl('/field/text-remaining/js/scripts.js'),
+            'FieldTextRemaining',
+            \assets()->url('/field/text-remaining/js/scripts.js'),
             ['jquery'],
             180611,
             true
@@ -60,8 +60,8 @@ class TextRemaining extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyFieldTextRemaining');
-        \wp_enqueue_script('tiFyFieldTextRemaining');
+        \wp_enqueue_style('FieldTextRemaining');
+        \wp_enqueue_script('FieldTextRemaining');
     }
 
     /**

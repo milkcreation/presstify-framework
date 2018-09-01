@@ -17,36 +17,6 @@ class ImageGallery extends ContentPostTypeController
     }
 
     /**
-     * Mise en file des scripts de l'interface d'administration.
-     *
-     * @return void
-     */
-    public function admin_enqueue_scripts()
-    {
-        wp_enqueue_media();
-        wp_enqueue_style(
-            'tiFyTabMetaboxPostTypeImageGallery',
-            $this->appAssetUrl('/TabMetaboxes/PostType/ImageGallery/css/styles.css'),
-            ['tiFyAdmin'],
-            180808
-        );
-        wp_enqueue_script(
-            'tiFyTabMetaboxPostTypeImageGallery',
-            $this->appAssetUrl('/TabMetaboxes/PostType/ImageGallery/js/scripts.js'),
-            ['jquery', 'jquery-ui-sortable'],
-            180808,
-            true
-        );
-        wp_localize_script(
-            'tiFyTabMetaboxPostTypeImageGallery',
-            'tify_taboox_image_gallery',
-            [
-                'maxAttempt' => __('Nombre maximum d\'images dans la galerie atteint', 'tify'),
-            ]
-        );
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function defaults()
@@ -99,7 +69,34 @@ class ImageGallery extends ContentPostTypeController
      */
     public function load($current_screen)
     {
-        $this->appAddAction('admin_enqueue_scripts');
+        $this->appAddAction(
+            'admin_enqueue_scripts',
+            function () {
+                wp_enqueue_media();
+
+                wp_enqueue_style(
+                    'MetaboxPostTypeImageGallery',
+                    \assets()->url('/metabox/post-type/image-gallery/css/styles.css'),
+                    ['tiFyAdmin'],
+                    180808
+                );
+
+                wp_enqueue_script(
+                    'MetaboxPostTypeImageGallery',
+                    \assets()->url('/metabox/post-type/image-gallery/js/scripts.js'),
+                    ['jquery', 'jquery-ui-sortable'],
+                    180808,
+                    true
+                );
+                wp_localize_script(
+                    'MetaboxPostTypeImageGallery',
+                    'tify_taboox_image_gallery',
+                    [
+                        'maxAttempt' => __('Nombre maximum d\'images dans la galerie atteint', 'tify'),
+                    ]
+                );
+            }
+        );
     }
 
     /**

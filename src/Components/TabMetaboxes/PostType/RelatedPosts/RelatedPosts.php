@@ -189,12 +189,13 @@ class RelatedPosts extends ContentPostTypeController
             function () {
                 wp_enqueue_style(
                     'MetaboxPostTypeRelatedPosts',
-                    $this->appAssetUrl('/metabox/post-type/related-posts/css/styles.css'),
+                    \assets()->url('/metabox/post-type/related-posts/css/styles.css'),
                     ['tify_control-suggest', 'tify_control-holder_image']
                 );
+
                 wp_enqueue_script(
                     'MetaboxPostTypeRelatedPosts',
-                    $this->appAssetUrl('/metabox/post-type/related-posts/js/scripts.js'),
+                    \assets()->url('/metabox/post-type/related-posts/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable', 'tify_control-suggest']
                 );
                 wp_localize_script(

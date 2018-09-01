@@ -18,36 +18,6 @@ class VideoGallery extends ContentPostTypeController
     }
 
     /**
-     * Mise en file des scripts de l'interface d'administration.
-     *
-     * @return void
-     */
-    public function admin_enqueue_scripts()
-    {
-        wp_enqueue_media();
-        wp_enqueue_style(
-            'tiFyTabMetaboxPostTypeVideoGallery',
-            $this->appAssetUrl('/TabMetaboxes/PostType/VideoGallery/css/styles.css'),
-            ['tiFyAdmin'],
-            180724
-        );
-        wp_enqueue_script(
-            'tiFyTabMetaboxPostTypeVideoGallery',
-            $this->appAssetUrl('/TabMetaboxes/PostType/VideoGallery/js/scripts.js'),
-            ['jquery', 'jquery-ui-sortable', 'tiFyAdmin'],
-            180724,
-            true
-        );
-        wp_localize_script(
-            'tiFyTabMetaboxPostTypeVideoGallery',
-            'tify_taboox_video_gallery',
-            [
-                'maxAttempt' => __('Nombre maximum de vidéos dans la galerie atteint', 'tify'),
-            ]
-        );
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function defaults()
@@ -106,7 +76,34 @@ class VideoGallery extends ContentPostTypeController
      */
     public function load($current_screen)
     {
-        $this->appAddAction('admin_enqueue_scripts');
+        $this->appAddAction(
+            'admin_enqueue_scripts',
+            function () {
+                wp_enqueue_media();
+
+                wp_enqueue_style(
+                    'MetaboxPostTypeVideoGallery',
+                    \assets()->url('/metabox/post-type/video-gallery/css/styles.css'),
+                    ['tiFyAdmin'],
+                    180724
+                );
+
+                wp_enqueue_script(
+                    'MetaboxPostTypeVideoGallery',
+                    \assets()->url('/metabox/post-type/video-gallery/js/scripts.js'),
+                    ['jquery', 'jquery-ui-sortable', 'tiFyAdmin'],
+                    180724,
+                    true
+                );
+                wp_localize_script(
+                    'MetaboxPostTypeVideoGallery',
+                    'tify_taboox_video_gallery',
+                    [
+                        'maxAttempt' => __('Nombre maximum de vidéos dans la galerie atteint', 'tify'),
+                    ]
+                );
+            }
+        );
     }
 
     /**

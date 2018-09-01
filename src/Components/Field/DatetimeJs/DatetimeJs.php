@@ -56,14 +56,14 @@ class DatetimeJs extends AbstractFieldItem
     public function init()
     {
         \wp_register_style(
-            'tiFyFieldDatetimeJs',
-            $this->appAssetUrl('/Field/DatetimeJs/css/styles.css'),
+            'FieldDatetimeJs',
+            \assets()->url('/field/datetime-js/css/styles.css'),
             [],
             171112
         );
         \wp_register_script(
-            'tiFyFieldDatetimeJs',
-            $this->appAssetUrl('/Field/DatetimeJs/js/scripts.js'),
+            'FieldDatetimeJs',
+            \assets()->url('/field/datetime-js/js/scripts.js'),
             ['jquery', 'moment'],
             171112,
             true
@@ -77,8 +77,8 @@ class DatetimeJs extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyFieldDatetimeJs');
-        \wp_enqueue_script('tiFyFieldDatetimeJs');
+        \wp_enqueue_style('FieldDatetimeJs');
+        \wp_enqueue_script('FieldDatetimeJs');
     }
 
     /**

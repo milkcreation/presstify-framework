@@ -75,14 +75,14 @@ class Sidebar extends AbstractPartialItem
     public function init()
     {
         \wp_register_style(
-            'tiFyPartialSidebar',
-            $this->appAssetUrl('/Partial/Sidebar/css/styles.css'),
+            'PartialSidebar',
+            \assets()->url('/partial/sidebar/css/styles.css'),
             [],
             180511
         );
         \wp_register_script(
-            'tiFyPartialSidebar',
-            $this->appAssetUrl('/Partial/Sidebar/css/scripts.js'),
+            'PartialSidebar',
+            \assets()->url('/partial/sidebar/css/scripts.js'),
             ['jquery'],
             180511,
             true
@@ -96,8 +96,8 @@ class Sidebar extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        wp_enqueue_style('tiFyPartial-Sidebar');
-        wp_enqueue_script('tiFyPartial-Sidebar');
+        wp_enqueue_style('PartialSidebar');
+        wp_enqueue_script('PartialSidebar');
     }
 
     /**

@@ -39,14 +39,14 @@ class NumberJs extends AbstractFieldItem
     public function init()
     {
         \wp_register_style(
-            'tiFyFieldNumberJs',
-            $this->appAssetUrl('/Field/NumberJs/css/styles.css'),
+            'FieldNumberJs',
+            \assets()->url('/field/number-js/css/styles.css'),
             ['dashicons'],
             171019
         );
         \wp_register_script(
-            'tiFyFieldNumberJs',
-            $this->appAssetUrl('/Field/NumberJs/js/scripts.css'),
+            'FieldNumberJs',
+            \assets()->url('/field/number-js/js/scripts.css'),
             ['jquery-ui-spinner'],
             171019,
             true
@@ -60,8 +60,8 @@ class NumberJs extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyFieldNumberJs');
-        \wp_enqueue_script('tiFyFieldNumberJs');
+        \wp_enqueue_style('FieldNumberJs');
+        \wp_enqueue_script('FieldNumberJs');
     }
 
     /**

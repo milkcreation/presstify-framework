@@ -6,7 +6,7 @@ use App\App;
 
 use tiFy\AdminView\AdminView;
 use tiFy\AjaxAction\AjaxAction;
-use tiFy\Api\Api;
+use tiFy\Api\ApiServiceProvider;
 use tiFy\Column\Column;
 use tiFy\Cron\Cron;
 use tiFy\Db\Db;
@@ -76,7 +76,6 @@ class KernelServiceProvider extends ServiceProvider
     protected $components = [
         AdminView::class,
         AjaxAction::class,
-        Api::class,
         Column::class,
         Cron::class,
         Db::class,

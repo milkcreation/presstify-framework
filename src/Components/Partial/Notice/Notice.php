@@ -31,16 +31,15 @@ class Notice extends AbstractPartialItem
      */
     public function init()
     {
-        // Déclaration des scripts
         \wp_register_style(
-            'tiFyPartialNotice',
-            $this->appAssetUrl('/Partial/Notice/css/styles.css'),
+            'PartialNotice',
+            \assets()->url('/partial/notice/css/styles.css'),
             [],
             180214
         );
         \wp_register_script(
-            'tiFyPartialNotice',
-            $this->appAssetUrl('/Partial/Notice/js/scripts.js'),
+            'PartialNotice',
+            \assets()->url('/partial/notice/js/scripts.js'),
             ['jquery'],
             180214,
             true
@@ -54,8 +53,8 @@ class Notice extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('tiFyPartialNotice');
-        \wp_enqueue_script('tiFyPartialNotice');
+        \wp_enqueue_style('PartialNotice');
+        \wp_enqueue_script('PartialNotice');
     }
 
     /**
