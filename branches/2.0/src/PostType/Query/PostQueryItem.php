@@ -5,7 +5,7 @@ namespace tiFy\PostType\Query;
 use Illuminate\Support\Fluent;
 use tiFy\Contracts\PostType\PostQueryItemInterface;
 
-class PostQueryItem extends Fluent implements QueryPostItemInterface
+class PostQueryItem extends Fluent implements PostQueryItemInterface
 {
     /**
      * Objet Post Wordpress.

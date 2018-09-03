@@ -30,4 +30,23 @@ abstract class AbstractAppDependency
             endif;
         endif;
     }
+
+    /**
+     * Récupération d'une instance de l'application ou d'un service fourni par celle-ci.
+     * {@internal Si $abstract est null > Retourne l'instance de l'appication.}
+     * {@internal Si $abstract est qualifié > Retourne la résolution du service qualifié.}
+     *
+     * @param null|string $abstract Nom de qualification du service.
+     * @param array $args Liste des variables passé en arguments lors de la résolution du service.
+     *
+     * @return object|AppInterface|AppContainer
+     */
+    public function app($abstract = null, $args = [])
+    {
+        if (is_null($abstract)) :
+            return $this->app;
+        endif;
+
+        return $this->app->resolve($abstract, $args);
+    }
 }

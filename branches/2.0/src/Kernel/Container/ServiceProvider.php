@@ -108,7 +108,6 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
         if ($bindings = $this->getBindings()) :
             foreach ($bindings as $concrete) :
                 $alias = $this->getContainer()->getAlias($concrete);
-
                 $provides[$alias] = $concrete;
             endforeach;
         endif;

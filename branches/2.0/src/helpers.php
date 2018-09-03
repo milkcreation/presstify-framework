@@ -15,7 +15,7 @@ use tiFy\Route\Route;
  */
 if (!function_exists('app')) :
     /**
-     * App - Controleur de l'application.
+     * Récupération d'une instance de l'application ou d'un service fourni par celle-ci.
      * {@internal Si $abstract est null > Retourne l'instance de l'appication.}
      * {@internal Si $abstract est qualifié > Retourne la résolution du service qualifié.}
      *
