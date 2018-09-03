@@ -86,7 +86,7 @@ class SelectJs extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \partial('spinkit')->enqueue_scripts('three-bounce');
+        \partial('spinner')->enqueue_scripts('three-bounce');
         \wp_enqueue_style('FieldSelectJs');
         \wp_enqueue_script('FieldSelectJs');
     }
