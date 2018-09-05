@@ -18,7 +18,6 @@ use tiFy\Metadata\Metadata;
 use tiFy\MetaTag\MetaTag;
 use tiFy\Options\Options;
 use tiFy\PageHook\PageHook;
-use tiFy\Partial\Partial;
 use tiFy\PostType\PostType;
 use tiFy\Route\Route;
 use tiFy\TabMetabox\TabMetabox;
@@ -64,7 +63,6 @@ class KernelServiceProvider extends ServiceProvider
      * {@inheritdoc}
      */
     protected $aliases = [
-        AssetsInterface::class => Assets::class,
         EngineInterface::class => Engine::class,
         EventsInterface::class => Events::class
     ];
@@ -87,7 +85,6 @@ class KernelServiceProvider extends ServiceProvider
         MetaTag::class,
         Options::class,
         PageHook::class,
-        Partial::class,
         PostType::class,
         Route::class,
         TabMetabox::class,
@@ -137,9 +134,6 @@ class KernelServiceProvider extends ServiceProvider
     public function getBootables()
     {
         return array_merge(
-            [
-                AssetsInterface::class
-            ],
             $this->components,
             $this->plugins
         );

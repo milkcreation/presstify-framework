@@ -2,12 +2,7 @@
 
 /**
  * @name Partial
- * @desc Gestion de controleurs d'affichage
- * @package presstiFy
- * @namespace \tiFy\Partial
- * @version 1.1
- * @subpackage Core
- * @since 1.2.596
+ * @desc Gestion des controleurs d'affichage.
  *
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
@@ -16,18 +11,19 @@
 namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
-use tiFy\App\AppController;
-use tiFy\Components\Partial\Breadcrumb\Breadcrumb;
-use tiFy\Components\Partial\CookieNotice\CookieNotice;
-use tiFy\Components\Partial\HolderImage\HolderImage;
-use tiFy\Components\Partial\Modal\Modal;
-use tiFy\Components\Partial\ModalTrigger\ModalTrigger;
-use tiFy\Components\Partial\Navtabs\Navtabs;
-use tiFy\Components\Partial\Notice\Notice;
-use tiFy\Components\Partial\Sidebar\Sidebar;
-use tiFy\Components\Partial\Slider\Slider;
-use tiFy\Components\Partial\Table\Table;
-use tiFy\Components\Partial\Tag\Tag;
+use Illuminate\Support\Str;
+use tiFy\App\Dependency\AbstractAppDependency;
+use tiFy\Partial\Breadcrumb\Breadcrumb;
+use tiFy\Partial\CookieNotice\CookieNotice;
+use tiFy\Partial\HolderImage\HolderImage;
+use tiFy\Partial\Modal\Modal;
+use tiFy\Partial\ModalTrigger\ModalTrigger;
+use tiFy\Partial\Navtabs\Navtabs;
+use tiFy\Partial\Notice\Notice;
+use tiFy\Partial\Sidebar\Sidebar;
+use tiFy\Partial\Slider\Slider;
+use tiFy\Partial\Table\Table;
+use tiFy\Partial\Tag\Tag;
 
 /**
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
@@ -43,77 +39,10 @@ use tiFy\Components\Partial\Tag\Tag;
  * @method static Table Table(string $id = null,array $attrs = [])
  * @method static Tag Tag(string $id = null,array $attrs = [])
  */
-final class Partial extends AppController
+class Partial extends AbstractAppDependency
 {
     /**
-     * Liste des instances de champ.
-     * @var array
-     */
-    protected static $instance = [];
-
-    /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    public function appBoot()
-    {
-        // Déclaration des controleurs d'affichage natifs
-        foreach(glob($this->appAbsDir() . '/Components/Partial/*/', GLOB_ONLYDIR) as $filename) :
-            $name = basename($filename);
-
-            $this->register($name, "tiFy\\Components\\Partial\\{$name}\\{$name}::make");
-        endforeach;
-
-        do_action('tify_partial_register', $this);
-    }
-
-    /**
-     * Déclaration d'un controleur d'affichage.
-     *
-     * @param string $name Nom de qualification du controleur d'affichage.
-     * @param mixed $callable classe ou méthode ou fonction de rappel.
-     *
-     * @return null|callable|PartialItemInterface
-     */
-    public function register($name, $callable)
-    {
-        if ($this->appServiceHas($name)) :
-            return null;
-        endif;
-
-        $alias = "tfy.partial.{$name}";
-
-        if (is_callable($callable)) :
-            $this->appServiceAdd($alias, $callable);
-        elseif (class_exists($callable)) :
-            $this->appServiceAdd($alias, $callable);
-        else :
-            return null;
-        endif;
-
-        return $this->appServiceGet($alias);
-    }
-
-    /**
-     * Récupération d'un controleur d'affichage.
-     *
-     * @param string $name Nom de qualification du controleur d'affichage.
-     *
-     * @return mixed|PartialItemInterface
-     */
-    public function get($name)
-    {
-        $alias = "tfy.partial.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
-
-        return null;
-    }
-
-    /**
-     * Affichage ou récupération du contenu d'un controleur natif.
+     * Récupération statique d'un controleur d'affichage.
      *
      * @param string $name Nom de qualification du controleur d'affichage.
      * @param array $args {
@@ -124,85 +53,24 @@ final class Partial extends AppController
      *
      * @return null|callable
      */
-    public static function __callStatic($name, $args)
+    public static function __callStatic($name, $attrs)
     {
-        if(! $callable = self::appInstance()->get($name)) :
-            return null;
-        endif;
+        /** @var PartialServiceProvider $serviceProvider */
+        $serviceProvider = app(PartialServiceProvider::class);
 
-        return call_user_func_array($callable, $args);
+        array_unshift($attrs, $name);
+
+        return call_user_func_array([$serviceProvider, 'get'], $attrs);
     }
 
     /**
-     * Vérification d'existance d'une instance d'un contrôleur de champ.
      *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     *
-     * @return bool
      */
-    public function existsInstance($classname)
+    public function get($name, $attrs = [])
     {
-        return Arr::has(self::$instance, $classname);
-    }
+        /** @var PartialServiceProvider $serviceProvider */
+        $serviceProvider = $this->app(PartialServiceProvider::class);
 
-    /**
-     * Compte le nombre d'instance d'un contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     *
-     * @return int
-     */
-    public function countInstance($classname)
-    {
-        return count(Arr::get(self::$instance, $classname, []));
-    }
-
-    /**
-     * Définition d'une instance de contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     * @param string $hash Hashage des attributs de configuration.
-     *
-     * @return bool
-     */
-    public function setInstance($classname, $hash, $obj)
-    {
-        return Arr::set(self::$instance, "{$classname}.{$hash}", $obj);
-    }
-
-    /**
-     * Définition d'une instance de contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     * @param string $hash Hashage des attributs de configuration.
-     *
-     * @return bool
-     */
-    public function getInstance($classname, $hash)
-    {
-        return Arr::get(self::$instance, "{$classname}.{$hash}");
-    }
-
-    /**
-     * Mise en file des scripts d'un controleur.
-     *
-     * @param string $name Nom de qualification du controleur.
-     * @param array $args Liste des variables passées en argument.
-     *
-     * @return $this
-     */
-    public function enqueue($name, $args = [])
-    {
-        if(!$callable = $this->get($name)) :
-            return null;
-        endif;
-
-        if (!is_object($callable) || !method_exists($callable, 'enqueue_scripts')) :
-            return null;
-        endif;
-
-        call_user_func_array([$callable, 'enqueue_scripts'], $args);
-
-        return $this;
+        return $serviceProvider->get($name, $attrs);
     }
 }

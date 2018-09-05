@@ -48,11 +48,11 @@ class Container extends LeagueContainer implements ContainerInterface
         endif;
 
         foreach ($this->getServiceProviders() as $serviceProvider) :
-            $concrete = $this->singleton($serviceProvider)
+            $resolved = $this->singleton($serviceProvider)
                 ->build([$this]);
 
-            if ($concrete instanceof ServiceProviderInterface) :
-                $this->addServiceProvider($concrete);
+            if ($resolved instanceof ServiceProviderInterface) :
+                $this->addServiceProvider($resolved);
             endif;
         endforeach;
     }
