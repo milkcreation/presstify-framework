@@ -83,9 +83,60 @@ class Youtube extends MadcodaYoutube
     }
 
     /**
+     * Récupération du code d'intégration d'une vidéo.
+     *
+     * @param string $video Identifiant ou url de la vidéo.
+     * @param array $params {
+     *      Liste des paramètres.
+     *      @see https://developers.google.com/youtube/player_parameters?hl=fr#Parameters
+     * }
+     *
+     * @return string
+     */
+    public function getEmbed($video, $params = [])
+    {
+        if(Tools::Checker()->isUrl($video)) :
+            try {
+                $video_id = self::parseVIdFromURL($video);
+                $video_url = $video;
+            } catch (\Exception $e) {
+                return '';
+            }
+        else :
+            try {
+                $video_id = $video;
+                $video_url = $this->getUrlFromId($video);
+            } catch (\Exception $e) {
+                return '';
+            }
+        endif;
+
+        try {
+            $info = Embed::create($video_url);
+
+            if (Arr::get($params, 'loop')) :
+                Arr::set($params, 'playlist', $video_url);
+            endif;
+
+            $height = $info->getHeight();
+            $ratio = $info->getAspectRatio();
+            $src = esc_url("//www.youtube.com/embed/{$video_id}" . ($params ? '?' . http_build_query($params) : ''));
+            $width = $info->getWidth();
+
+            return view()->setDirectory(__DIR__ . '/views')
+                ->render(
+                    'iframe',
+                    compact('height', 'ratio', 'src', 'width')
+                );
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
+    /**
      * Récupération des données de miniature.
      *
-     * @param int|string $video Identifiant ou url de la vidéo.
+     * @param string $video Identifiant ou url de la vidéo.
      * @param array $formats Format de l'image, par ordre de préférence. maxres|standard|height|medium|default.
      *
      * @return array
@@ -150,7 +201,7 @@ class Youtube extends MadcodaYoutube
     /**
      * Récupération des données de miniature.
      *
-     * @param int|string $video Identifiant ou url de la vidéo.
+     * @param string $video Identifiant ou url de la vidéo.
      * @param string $size Taille de l'image.
      *
      * @return array
@@ -175,45 +226,24 @@ class Youtube extends MadcodaYoutube
     }
 
     /**
-     * Récupération du code d'intégration d'une vidéo.
+     * Récupération de l'url à partir de l'Id de la video.
      *
-     * @param int|string $video Identifiant ou url de la vidéo.
-     * @param array $params {
-     *      Liste des paramètres.
-     *      @see https://developers.google.com/youtube/player_parameters?hl=fr#Parameters
-     * }
+     * @param string $id Identifiant de la video.
      *
      * @return string
+     *
+     * @throws \Exception
      */
-    public function getVideoEmbed($video, $params = [])
+    public function getUrlFromId($id)
     {
-        if(Tools::Checker()->isUrl($video)) :
-            try {
-                $video = self::parseVIdFromURL($url);
-            } catch (\Exception $e) {
-                return '';
-            }
-        endif;
+        $url = "https://www.youtube.com/watch?v={$id}";
 
         try {
-            $info = Embed::create($url);
+            self::parseVIdFromURL($url);
 
-            if (Arr::get($params, 'loop')) :
-                Arr::set($params, 'playlist', $video);
-            endif;
-
-            $height = $info->getHeight();
-            $ratio = $info->getAspectRatio();
-            $src = esc_url("//www.youtube.com/embed/{$video}" . ($params ? '?' . http_build_query($params) : ''));
-            $width = $info->getWidth();
-
-            return view(__DIR__ . '/views')
-                ->render(
-                    'iframe',
-                    compact('height', 'ratio', 'src', 'width')
-                );
+            return $url;
         } catch (\Exception $e) {
-            return '';
+            throw new \Exception($e->getMessage());
         }
     }
 }

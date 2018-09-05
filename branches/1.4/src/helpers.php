@@ -193,12 +193,7 @@ if (!function_exists('partial')) :
             return $factory;
         endif;
 
-        $name = studly_case($name);
-        $partial = $factory->get($name);
-
-        if (is_callable($partial)) :
-            return call_user_func($partial, $attrs);
-        endif;
+        return $factory->get($name, $attrs);
     }
 endif;
 
@@ -242,7 +237,12 @@ if (! function_exists('resolve')) {
 
 if (!function_exists('view')) :
     /**
-     * View
+     * View - Récupération d'un instance du controleur des vues ou l'affichage d'un gabarit.
+     * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
+     * {@internal Sinon récupére le gabarit d'affichage et passe les variables en argument.}
+     *
+     * @param null|string view Nom de qualification du gabarit.
+     * @param array $data Liste des variables passées en argument.
      *
      * @return string|\tiFy\Kernel\Templates\EngineInterface
      */

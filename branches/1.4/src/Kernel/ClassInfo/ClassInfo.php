@@ -2,6 +2,7 @@
 
 namespace tiFy\Kernel\ClassInfo;
 
+use Illuminate\Support\Str;
 use ReflectionClass;
 
 /**
@@ -74,6 +75,16 @@ class ClassInfo
     public function getDirname()
     {
         return dirname($this->getFilename());
+    }
+
+    /**
+     * Récupération du nom court de la classe au format kebab (Minuscules séparées par des tirets).
+     *
+     * @return string
+     */
+    public function getKebabName()
+    {
+        return Str::kebab($this->getShortName());
     }
 
     /**

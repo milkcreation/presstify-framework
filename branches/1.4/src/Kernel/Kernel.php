@@ -4,7 +4,7 @@ namespace tiFy\Kernel;
 
 use tiFy\App\Container\AppContainer;
 use tiFy\Contracts\App\AppInterface;
-use tiFy\Kernel\Assets\AssetsInterface;
+use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Config\Config;
@@ -17,7 +17,7 @@ use tiFy\tiFy;
 
 /**
  * @method static AppInterface|AppContainer App()
- * @method static AssetsInterface Assets()
+ * @method static Assets Assets()
  * @method static ClassInfo ClassInfo(string|object $class)
  * @method static ClassLoader ClassLoader()
  * @method static Container Container()
@@ -58,9 +58,6 @@ class Kernel
                 break;
             case 'App':
                 return tiFy::instance()->resolve(\App\App::class);
-                break;
-            case 'Assets' :
-                $alias = AssetsInterface::class;
                 break;
             case 'Container' :
                 return tiFy::instance();

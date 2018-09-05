@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-09-04",
+  "time": "2018-09-05",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -41,6 +41,7 @@
     "composer/installers": "~1.0",
     "defuse/php-encryption": "^2.0",
     "egeloen/google-map": "^1.0",
+    "embed/embed": "^3.3",
     "facebook/graph-sdk": "^5.5",
     "google/apiclient": "^2.2",
     "google/recaptcha": "^1.1",

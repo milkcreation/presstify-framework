@@ -36,7 +36,7 @@ class ApiServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        $this->app->resolve(Api::class);
+        $this->app->resolve(Api::class, [$this->app]);
 
         $this->app->singleton(
             Facebook::class,
