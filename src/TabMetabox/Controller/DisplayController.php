@@ -201,7 +201,11 @@ class DisplayController
         $output .= "\t\t<div class=\"tiFyTaboox-WrapperBack\"></div>";
         $output .= "\t\t<div class=\"tiFyTaboox-WrapperContent\">";
 
-        $output .= Partial::Navtabs(['nodes' => call_user_func_array([$this, 'parseNodes'], $args)]);
+        $output .= Partial::Navtabs(
+            [
+                'nodes' => call_user_func_array([$this, 'parseNodes'], $args)
+            ]
+        );
 
         $output .= "\t\t</div>";
         $output .= "\t</div>";

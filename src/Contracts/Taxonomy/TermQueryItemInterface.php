@@ -5,35 +5,42 @@ namespace tiFy\Contracts\Taxonomy;
 interface TermQueryItemInterface
 {
     /**
-     * Récupération de l'identifiant de qualification Wordpress du terme
+     * Récupération de la description.
+     *
+     * @return string
+     */
+    public function getDescription();
+
+    /**
+     * Récupération de l'identifiant de qualification Wordpress du terme.
      *
      * @return int
      */
     public function getId();
 
     /**
-     * Récupération de l'intitulé de qualification
+     * Récupération de l'intitulé de qualification.
      *
      * @return string
      */
     public function getName();
 
     /**
-     * Récupération du nom de qualification Wordpress du terme
+     * Récupération du nom de qualification Wordpress du terme.
      *
      * @return string
      */
     public function getSlug();
 
     /**
-     * Récupération de la taxonomie relative
+     * Récupération de la taxonomie relative.
      *
      * @return string
      */
     public function getTaxonomy();
 
     /**
-     * Récupération de l'object Post Wordpress associé
+     * Récupération de l'object Terme Wordpress associé.
      *
      * @return \WP_Term
      */

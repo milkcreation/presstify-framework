@@ -4,13 +4,20 @@ namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\App\AppController;
+use tiFy\Contracts\Partial\PartialItemInterface;
 use tiFy\Kernel\Tools;
-use tiFy\Partial\Partial;
+use tiFy\Kernel\Templates\EngineInterface;
+use tiFy\Partial\PartialServiceProvider;
 use tiFy\Partial\TemplateController;
 
-abstract class AbstractPartialItem extends AppController implements PartialItemInterface
+abstract class AbstractPartialItem implements PartialItemInterface
 {
+    /**
+     * Liste des attributs de configuration.
+     * @var array
+     */
+    protected $attributes = [];
+
     /**
      * Identifiant de qualification du champ.
      * @var string
@@ -24,97 +31,42 @@ abstract class AbstractPartialItem extends AppController implements PartialItemI
     protected $index = 0;
 
     /**
-     * Liste des attributs de configuration.
-     * @var array
+     * Instance du moteur de gabarits d'affichage.
+     * @return EngineInterface
      */
-    protected $attributes = [];
+    protected $view;
 
     /**
-     * Court-circuitage de l'intanciation.
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    private function __construct()
-    {
-        $partial = $this->appServiceGet(Partial::class);
-
-        if (! $partial->existsInstance(get_called_class())) :
-            $partial->setInstance(get_called_class(), Str::random(32), $this);
-            $this->boot();
-        endif;
-    }
-
-    /**
-     * Court-circuitage de l'implémentation
-     *
-     * @return void
-     */
-    protected function __clone()
-    {
-
-    }
-
-    /**
-     * Court-circuitage de l'implémentation
-     *
-     * @return void
-     */
-    protected function __wakeup()
-    {
-
-    }
-
-    /**
-     * Instanciation.
-     *
-     * @param string $id Identifiant de qualification du controleur (Optionel).
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return $this
-     */
-    public function __invoke($id = null, $attrs = [])
+    public function __construct($id = null, $attrs = [])
     {
         if (is_null($id)) :
             $id = Str::random(32);
         elseif(is_array($id)) :
             $attrs = $id;
-            $id = Str::random(32);
+            $id = isset($attrs['id']) ? $attrs['id'] : Str::random(32);
         endif;
 
-        $partial = $this->appServiceGet(Partial::class);
-        if (!$instance = $partial->getInstance(get_called_class(), $id)) :
-            $instance = $this;
-            $count = $partial->countInstance(get_called_class());
-            $this->id = $id;
-            $this->index = $count++;
-            $this->parse($attrs);
+        $this->id = $id;
 
-            $partial->setInstance(get_called_class(), $instance->getId(), $instance);
-        endif;
+        /** @var PartialServiceProvider $serviceProvider */
+        $serviceProvider = app(PartialServiceProvider::class);
+        $this->index = $serviceProvider->setInstance($this);
 
-        return $instance;
+        $this->index ? $this->parse($attrs) : $this->boot();
     }
 
     /**
-     * Création d'une instance du controleur.
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
-     * @return static
+     * @return string
      */
-    final public static function make()
+    public function __toString()
     {
-        return new static();
-    }
-
-    /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    protected function boot()
-    {
-        if (method_exists($this, 'init')) :
-            $this->appAddAction('init');
-        endif;
+        return $this->display();
     }
 
     /**
@@ -140,7 +92,7 @@ abstract class AbstractPartialItem extends AppController implements PartialItemI
      */
     public function attrs()
     {
-        echo $this->parseHtmlAttrs($this->get('attrs', []));
+        echo Tools::Html()->parseAttrs($this->get('attrs', []), true);
     }
 
     /**
@@ -156,21 +108,19 @@ abstract class AbstractPartialItem extends AppController implements PartialItemI
     /**
      * {@inheritdoc}
      */
-    public function compact($keys = [], $customs = [])
+    public function boot()
     {
-        if (empty($keys)) :
-            return $this->all();
-        endif;
 
-        $attrs = [];
-        foreach ($keys as $key) :
-            $attrs[$key] = $this->get($key);
-        endforeach;
+    }
 
-        return array_merge(
-            $attrs,
-            $customs
-        );
+    /**
+     * Liste des attributs de configuration par défaut.
+     *
+     * @return array
+     */
+    public function defaults()
+    {
+        return [];
     }
 
     /**
@@ -188,7 +138,10 @@ abstract class AbstractPartialItem extends AppController implements PartialItemI
      */
     public function display()
     {
-        return $this->appTemplateRender($this->appLowerName(), $this->all());
+        return $this->getView()->render(
+            class_info($this)->getKebabName(),
+            $this->all()
+        );
     }
 
     /**
@@ -210,22 +163,6 @@ abstract class AbstractPartialItem extends AppController implements PartialItemI
     /**
      * {@inheritdoc}
      */
-    public function getAttr($key, $default = '')
-    {
-        return Arr::get($this->attributes, "attrs.{$key}", $default);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAttrs()
-    {
-        return Tools::Html()->parseAttrs($this->get('attrs', []), false);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
@@ -242,17 +179,28 @@ abstract class AbstractPartialItem extends AppController implements PartialItemI
     /**
      * {@inheritdoc}
      */
-    public function has($key)
+    public function getView($view = null, $data = [])
     {
-        return Arr::has($this->attributes, $key);
+        if (!$this->view) :
+            $this->view = view();
+            foreach($this->get('view', []) as $key => $value) :
+                $this->view->set($key, $value);
+            endforeach;
+        endif;
+
+        if (func_num_args() === 0) :
+            return $this->view;
+        endif;
+
+        return $this->view->make($view, $data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasAttr($key)
+    public function has($key)
     {
-        return Arr::has($this->attributes, "attrs.{$key}");
+        return Arr::has($this->attributes, $key);
     }
 
     /**
@@ -266,76 +214,51 @@ abstract class AbstractPartialItem extends AppController implements PartialItemI
     /**
      * {@inheritdoc}
      */
-    public function keys()
-    {
-        return array_keys($this->attributes);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function parse($attrs = [])
     {
         $this->attributes = array_merge(
+            $this->defaults(),
             $this->attributes,
             $attrs
         );
 
-        $this->parseClass();
-        $this->parseTemplates();
+        $this->parseDefaults();
     }
 
     /**
-     * Traitement de l'attribut de configuration de l'attribut HTML "class".
+     * Traitement de la liste des attributs par défaut.
      *
      * @return void
      */
-    protected function parseClass()
+    protected function parseDefaults()
     {
+        $this->set(
+            'attrs.id',
+                $this->get('attrs.id', '')
+                ?: 'tiFyPartial-' . class_info($this)->getShortName() . '-' . $this->getId()
+        );
+
         $this->set(
             'attrs.class',
-            sprintf($this->get('attrs.class', '%s'), "tiFyPartial-{$this->appShortname()}")
-        );
-    }
-
-    /**
-     * Traitement d'une liste d'attributs HTML.
-     *
-     * @param array $attrs Liste des attributs HTML.
-     * @param bool $linearized Activation de la linéarisation.
-     *
-     * @return string
-     */
-    protected function parseHtmlAttrs($attrs = [], $linearized = true)
-    {
-        return Tools::Html()->parseAttrs($attrs, $linearized);
-    }
-
-    /**
-     * Traitement des l'attributs de configuration du controleur de templates.
-     *
-     * @param array $attrs {
-     *      Liste des attributs de template personnalisés.
-     *
-     *      @var string $directory Répertoire principal de stockage des templates.
-     *      @var string|callable $controller Classe de rappel du controleur de template.
-     * }
-     * @return array
-     */
-    protected function parseTemplates($attrs = [])
-    {
-        $this->set(
-            'templates',
-            array_merge(
-                [
-                    'directory'  => $this->appDirname() . '/templates',
-                    'controller' => TemplateController::class
-                ],
-                $attrs ? : $this->get('templates', [])
+            sprintf(
+                $this->get('attrs.class', '%s'),
+                'tiFyPartial-' . class_info($this)->getShortName() .
+                ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex()
             )
         );
 
-        $this->appTemplates($this->get('templates'));
+        $default_dir = class_info($this)->getDirname() . '/views';
+        $this->set(
+            'view',
+            array_merge(
+                [
+                    'directory'  => is_dir($default_dir) ? $default_dir : null,
+                    'controller' => PartialViewTemplate::class,
+                    'partial'    => $this
+                ],
+                $this->get('view', [])
+            )
+        );
     }
 
     /**
@@ -359,32 +282,8 @@ abstract class AbstractPartialItem extends AppController implements PartialItemI
     /**
      * {@inheritdoc}
      */
-    public function setAttr($key, $value = null)
-    {
-        if(is_null($value)) :
-            Arr::set($this->attributes, 'attrs', $this->get('attrs', [])+[$key]);
-        else :
-            Arr::set($this->attributes, "attrs.{$key}", $value);
-        endif;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function values()
     {
         return array_values($this->attributes);
-    }
-
-    /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
-     */
-    final public function __toString()
-    {
-        return $this->display();
     }
 }

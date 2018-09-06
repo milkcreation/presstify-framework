@@ -120,6 +120,15 @@ class Engine extends LeaguePlatesEngine implements EngineInterface
     {
         Arr::set($this->attributes, $key, $value);
 
+        switch($key) :
+            case 'directory' :
+                $this->setDirectory($value);
+                break;
+            case 'ext' :
+                $this->setFileExtension($value);
+                break;
+        endswitch;
+
         return $this;
     }
 
