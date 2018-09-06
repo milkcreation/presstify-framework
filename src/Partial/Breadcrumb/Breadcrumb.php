@@ -32,26 +32,11 @@ class Breadcrumb extends AbstractPartialItem
     private $disabled = false;
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
-     */
-    public function parse($attrs = [])
-    {
-        $this->attributes['attrs']['id'] = 'tiFyPartial-Breadcrumb--' . $this->getIndex();
-        $this->attributes['attrs']['class'] = "tiFyPartial-Breadcrumb tiFyPartial-Breadcrumb--" . $this->getId();
-
-        parent::parse($attrs);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
                 \wp_register_style(
@@ -65,9 +50,7 @@ class Breadcrumb extends AbstractPartialItem
     }
 
     /**
-     * Mise en file des scripts
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function enqueue_scripts()
     {
@@ -186,9 +169,7 @@ class Breadcrumb extends AbstractPartialItem
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function display()
     {

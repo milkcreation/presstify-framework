@@ -420,7 +420,38 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 jQuery(document).ready(function($){
-    $('[aria-control="modal"]').modal();
+    $('[aria-control="modal"]')
+        .modal()
+        .on('show.bs.modal', function() {
+            $modal = $(this);
+            var o = $.parseJSON(decodeURIComponent($modal.data('options')));
+
+            if(o.ajax) {
+                if (tify[o.id + '_content']) {
+                    $('.modal-content', $modal).html(tify[o.id + '_content']);
+                } else {
+                    var data = $.extend({}, o.ajax.data, {_ajax_nonce: o.ajax.csrf}, {action: o.ajax.action});
+
+                    $.post(
+                        tify.ajax_url,
+                        data,
+                        function (resp) {
+                            tify[o.id + '_content'] = resp;
+                            $('.modal-content', $modal).html(tify[o.id + '_content']);
+                        }
+                    );
+                }
+            }
+        })
+        .on('hidden.bs.modal', function() {
+            $modal = $(this);
+
+            var o = $.parseJSON(decodeURIComponent($modal.data('options')));
+
+            if(o.ajax) {
+                $('.modal-content', $modal).empty();
+            }
+        });
 
     $(document).on('click','[aria-control="modal_trigger"]',function(e){
         e.preventDefault();
