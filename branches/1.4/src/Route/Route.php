@@ -34,7 +34,7 @@ use tiFy\Route\RouteCollectionInterface;
 use tiFy\Route\RouteHandle;
 use Zend\Diactoros\Response\SapiEmitter;
 
-final class Route extends AppController
+class Route extends AppController
 {
     /**
      * Classe de rappel de la reponse de la requête globale.

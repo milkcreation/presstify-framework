@@ -36,14 +36,14 @@ class Navtabs extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
-                app()->appAddAction(
+                add_action(
                     'wp_ajax_tify_partial_navtabs',
                     [$this, 'wp_ajax']
                 );
-                app()->appAddAction(
+                add_action(
                     'wp_ajax_nopriv_tify_partial_navtabs',
                     [$this, 'wp_ajax']
                 );
@@ -74,9 +74,7 @@ class Navtabs extends AbstractPartialItem
     }
 
     /**
-     * Mise en file des scripts.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function enqueue_scripts()
     {
@@ -111,37 +109,17 @@ class Navtabs extends AbstractPartialItem
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
         parent::parse($attrs);
 
-        if (!$this->has('attrs.id')) :
-            $this->set(
-                'attrs.id',
-                'tiFyPartial-Navtabs--' . $this->getId()
-            );
-        endif;
-
-        if (!$this->has('attrs.class')) :
-            $this->set(
-                'attrs.class',
-                'tiFyPartial-Navtabs tiFyPartial-Navtabs--' . $this->getId()
-            );
-        endif;
-
         $this->set('attrs.aria-control', 'navtabs');
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function display()
     {

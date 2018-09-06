@@ -10,10 +10,10 @@ use tiFy\tiFy;
 final class Assets implements AssetsInterface
 {
     /**
-     * Liste des librairies tierces CSS +JS
-     * @var array
+     * Indicateur de démarrage.
+     * @var boolean
      */
-    protected $thirdParty = [];
+    protected static $booted = false;
 
     /**
      * Liste des attributs JS.
@@ -28,21 +28,32 @@ final class Assets implements AssetsInterface
     protected $inlineCSS = [];
 
     /**
+     * Liste des librairies tierces CSS +JS
+     * @var array
+     */
+    protected $thirdParty = [];
+
+    /**
      * CONSTRUCTEUR.
      *
      * @return void
      */
     public function __construct()
     {
-        $this->thirdParty = require_once (dirname(__FILE__) . '/third-party.php');
+        if (!static::$booted) :
+            static::$booted = true;
 
-        add_action('init', [$this, 'init']);
-        add_action('admin_head', [$this, 'admin_head']);
-        add_action('admin_footer', [$this, 'admin_footer']);
-        add_action('wp_head', [$this, 'wp_head']);
-        add_action('wp_footer', [$this, 'wp_footer']);
+            $this->thirdParty = require_once (dirname(__FILE__) . '/third-party.php');
 
-        $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
+            add_action('init', [$this, 'init']);
+            add_action('admin_head', [$this, 'admin_head']);
+            add_action('admin_footer', [$this, 'admin_footer']);
+            add_action('wp_head', [$this, 'wp_head']);
+            add_action('wp_footer', [$this, 'wp_footer']);
+
+            $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
+            $this->setDataJs('ajax_response', [], 'both', false);
+        endif;
     }
 
     /**
@@ -120,6 +131,14 @@ final class Assets implements AssetsInterface
         foreach(Arr::get($this->thirdParty, 'js', []) as $handle => $attrs) :
             \wp_register_script($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
         endforeach;
+    }
+
+    /**
+     *
+     */
+    public function setAjaxResponse($key, $value, $context = ['admin', 'user'])
+    {
+        return $this->setDataJs("ajax_response.{$key}", $value, $context, true);
     }
 
     /**

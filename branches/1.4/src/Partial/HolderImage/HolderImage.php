@@ -27,7 +27,7 @@ class HolderImage extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
                 \wp_register_style(
@@ -41,9 +41,7 @@ class HolderImage extends AbstractPartialItem
     }
 
     /**
-     * Mise en file des scripts.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function enqueue_scripts()
     {
@@ -51,17 +49,10 @@ class HolderImage extends AbstractPartialItem
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
-        $this->attributes['attrs']['id'] = 'tiFyPartial-HolderImage--' . $this->getIndex();
-        $this->attributes['attrs']['class'] = "tiFyPartial-HolderImage tiFyPartial-HolderImage--" . $this->getId();
-
         parent::parse($attrs);
 
         if (!$this->get('content')) :

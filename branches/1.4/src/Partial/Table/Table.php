@@ -40,7 +40,7 @@ class Table extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
                 \wp_register_style(
@@ -54,9 +54,17 @@ class Table extends AbstractPartialItem
     }
 
     /**
-     * Mise en file des scripts.
-     *
-     * @return void
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [
+            'none' => __('Aucun élément à afficher dans le tableau', 'tify')
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function enqueue_scripts()
     {
@@ -64,16 +72,10 @@ class Table extends AbstractPartialItem
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
-        $this->set('none', __('Aucun élément à afficher dans le tableau', 'tify'));
-
         parent::parse($attrs);
 
         $this->set('count', count($this->get('columns', [])));

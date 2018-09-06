@@ -72,7 +72,7 @@ class Sidebar extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
                 \wp_register_style(
@@ -93,9 +93,7 @@ class Sidebar extends AbstractPartialItem
     }
 
     /**
-     * Mise en file des scripts.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function enqueue_scripts()
     {
@@ -104,29 +102,11 @@ class Sidebar extends AbstractPartialItem
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
         parent::parse($attrs);
-
-        if (!$this->has('attrs.id')) :
-            $this->set(
-                'attrs.id',
-                'tiFyPartial-Sidebar--' . $this->getId()
-            );
-        endif;
-
-        if (!$this->has('attrs.class')) :
-            $this->set(
-                'attrs.class',
-                'tiFyPartial-Sidebar tiFyPartial-Sidebar--' . $this->getId()
-            );
-        endif;
 
         $this->set(
             'attrs.style',

@@ -19,6 +19,7 @@ class Spinner extends AbstractPartialItem
         'attrs'    => [],
         'spinner'  => 'spinner-pulse',
     ];
+
     /**
      * Liste des indicateurs de pré-chargement disponibles
      * @var array
@@ -42,7 +43,7 @@ class Spinner extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
                 \wp_register_style(
@@ -65,11 +66,7 @@ class Spinner extends AbstractPartialItem
     }
 
     /**
-     * Mise en file des scripts.
-     *
-     * @param null|string $spinner Type de préloader rotating-plane|fading-circle|folding-cube|double-bounce|wave|wandering-cubes|spinner-pulse|chasing-dots|three-bounce|circle|cube-grid
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function enqueue_scripts($spinner = null)
     {
@@ -81,16 +78,10 @@ class Spinner extends AbstractPartialItem
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
-        $this->set('attrs.id', 'tiFyPartial-Spinner--' . $this->getId());
-
         parent::parse($attrs);
 
         switch($spinner = $this->get('spinner')) :

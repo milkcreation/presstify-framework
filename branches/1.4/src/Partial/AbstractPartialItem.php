@@ -182,10 +182,11 @@ abstract class AbstractPartialItem implements PartialItemInterface
     public function getView($view = null, $data = [])
     {
         if (!$this->view) :
-            $this->view = view();
-            foreach($this->get('view', []) as $key => $value) :
-                $this->view->set($key, $value);
-            endforeach;
+            $default_dir = class_info($this)->getDirname() . '/views';
+            $this->view = view()
+                ->setDirectory(is_dir($default_dir) ? $default_dir : null)
+                ->setController(PartialViewTemplate::class)
+                ->set('partial', $this);
         endif;
 
         if (func_num_args() === 0) :
@@ -235,7 +236,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
         $this->set(
             'attrs.id',
                 $this->get('attrs.id', '')
-                ?? 'tiFyPartial-' . class_info($this)->getShortName() . '-' . $this->getIndex()
+                ?: 'tiFyPartial-' . class_info($this)->getShortName() . '-' . $this->getId()
         );
 
         $this->set(
@@ -243,22 +244,13 @@ abstract class AbstractPartialItem implements PartialItemInterface
             sprintf(
                 $this->get('attrs.class', '%s'),
                 'tiFyPartial-' . class_info($this)->getShortName() .
-                'tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getId()
+                ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex()
             )
         );
 
-        $default_dir = class_info($this)->getDirname() . '/views';
-        $this->set(
-            'view',
-            array_merge(
-                [
-                    'directory'  => is_dir($default_dir) ? $default_dir : null,
-                    'controller' => PartialViewTemplate::class,
-                    'partial'    => $this
-                ],
-                $this->get('view', [])
-            )
-        );
+        foreach($this->get('view', []) as $key => $value) :
+            $this->getView()->set($key, $value);
+        endforeach;
     }
 
     /**

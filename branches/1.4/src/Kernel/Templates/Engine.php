@@ -82,7 +82,11 @@ class Engine extends LeaguePlatesEngine implements EngineInterface
     {
         $controller = $this->getController();
 
-        return new $controller($this, $name);
+        /** @var TemplateInterface $template */
+        $template = new $controller($this, $name);
+        $template->data($args);
+
+        return $template;
     }
 
     /**

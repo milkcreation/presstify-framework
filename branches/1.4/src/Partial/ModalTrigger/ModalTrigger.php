@@ -31,27 +31,21 @@ class ModalTrigger extends AbstractPartialItem
     ];
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [
+            'content' => __('Lancer', 'tify')
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
-        $this->attributes['content'] = __('Lancer', 'tify');
-
         parent::parse($attrs);
-
-        if(!$this->get('attrs.id')) :
-            $this->set('attrs.id', 'tiFyPartial-ModalTrigger--' . $this->getIndex());
-        endif;
-
-        if($this->has('attrs.class')) :
-            $this->set('attrs.class', "tiFyPartial-ModalTrigger {$this->get('attrs.class')}");
-        else :
-            $this->set('attrs.class', 'tiFyPartial-ModalTrigger');
-        endif;
 
         if (($this->get('tag') === 'a') && !$this->has('attrs.href')) :
             $this->set('attrs.href', "#{$this->get('attrs.id')}");
@@ -81,9 +75,7 @@ class ModalTrigger extends AbstractPartialItem
     }
 
     /**
-     * Affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function display()
     {
