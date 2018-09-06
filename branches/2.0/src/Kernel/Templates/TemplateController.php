@@ -10,7 +10,7 @@ class TemplateController extends Template implements TemplateInterface
 {
     /**
      * Instance of the template engine.
-     * @var Templates
+     * @var Engine
      */
     protected $engine;
 

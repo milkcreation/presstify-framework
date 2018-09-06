@@ -28,6 +28,16 @@ class TermQueryItem extends Fluent implements TermQueryItemInterface
     }
 
     /**
+     * Récupération de la description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return (string)$this->get('description', '');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getId()
