@@ -10,12 +10,6 @@ use tiFy\tiFy;
 final class Assets implements AssetsInterface
 {
     /**
-     * Indicateur de démarrage.
-     * @var boolean
-     */
-    protected static $booted = false;
-
-    /**
      * Liste des attributs JS.
      * @var array
      */
@@ -40,20 +34,16 @@ final class Assets implements AssetsInterface
      */
     public function __construct()
     {
-        if (!static::$booted) :
-            static::$booted = true;
+        $this->thirdParty = require_once (dirname(__FILE__) . '/third-party.php');
 
-            $this->thirdParty = require_once (dirname(__FILE__) . '/third-party.php');
+        add_action('init', [$this, 'init'], 10);
+        add_action('admin_head', [$this, 'admin_head']);
+        add_action('admin_footer', [$this, 'admin_footer']);
+        add_action('wp_head', [$this, 'wp_head']);
+        add_action('wp_footer', [$this, 'wp_footer']);
 
-            add_action('init', [$this, 'init']);
-            add_action('admin_head', [$this, 'admin_head']);
-            add_action('admin_footer', [$this, 'admin_footer']);
-            add_action('wp_head', [$this, 'wp_head']);
-            add_action('wp_footer', [$this, 'wp_footer']);
-
-            $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
-            $this->setDataJs('ajax_response', [], 'both', false);
-        endif;
+        $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
+        $this->setDataJs('ajax_response', [], 'both', false);
     }
 
     /**

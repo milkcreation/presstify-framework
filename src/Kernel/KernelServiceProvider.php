@@ -134,6 +134,9 @@ class KernelServiceProvider extends ServiceProvider
     public function getBootables()
     {
         return array_merge(
+            [
+                Assets::class
+            ],
             $this->components,
             $this->plugins
         );
