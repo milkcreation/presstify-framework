@@ -195,7 +195,7 @@ class Youtube extends MadcodaYoutube
             $src[$format] = $attrs;
         endforeach;
 
-        return $src;
+        return !empty($src) ? $src : [];
     }
 
     /**
