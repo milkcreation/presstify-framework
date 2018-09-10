@@ -1,12 +1,12 @@
 <?php
 
-namespace tiFy\Kernel\Templates;
+namespace tiFy\Contracts\Views;
 
 use League\Plates\Extension\ExtensionInterface;
 use League\Plates\Template\Folders;
 use League\Plates\Template\Func;
 
-interface EngineInterface
+interface ViewsInterface
 {
     /**
      * Déclaration de données associées aux gabarits d'affichage.
@@ -86,7 +86,7 @@ interface EngineInterface
     /**
      * Récupération du nom de qualification du controleur de gabarits d'affichage.
      *
-     * @return TemplateInterface
+     * @return ViewInterface
      */
     public function getController();
 
@@ -154,7 +154,7 @@ interface EngineInterface
      * @param string $name Nom de qualification du gabarit d'affichage.
      * @param array $data Liste des variables passées en argument et accessible depuis le gabarit.
      *
-     * @return TemplateInterface
+     * @return ViewInterface
      */
     public function make($name, $data = []);
 
@@ -249,6 +249,9 @@ interface EngineInterface
      * @param array $data Liste des variables passées en argument et accessible depuis le gabarit.
      *
      * @return string
+     *
+     * @throws \Throwable
+     * @throws \Exception
      */
     public function render($name, array $data = []);
 }
