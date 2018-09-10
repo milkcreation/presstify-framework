@@ -54,4 +54,12 @@ class AppContainer extends KernelContainer implements AppInterface
             $this->appConfig('providers', [])
         );
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function has($alias)
+    {
+        return container()->has($alias);
+    }
 }

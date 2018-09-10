@@ -36,7 +36,7 @@ class Breadcrumb extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
                 \wp_register_style(
@@ -179,7 +179,7 @@ class Breadcrumb extends AbstractPartialItem
 
         $this->set('items', $this->parsePartList());
 
-        return $this->getView()->render(
+        return $this->view()->render(
             'breadcrumb',
             $this->all()
         );

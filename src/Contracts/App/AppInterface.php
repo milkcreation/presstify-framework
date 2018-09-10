@@ -7,11 +7,11 @@ use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
 use tiFy\Contracts\Container\ContainerInterface;
+use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Request\Request;
-use tiFy\Kernel\Templates\EngineInterface;
-use tiFy\Kernel\Templates\TemplateInterface;
 use tiFy\Kernel\Logger\Logger;
 
 interface AppInterface
@@ -232,7 +232,7 @@ interface AppInterface
      *
      * @param array $options Liste des options de configuration du controleur de template.
      * 
-     * @return EngineInterface
+     * @return ViewsInterface
      */
     public function appTemplates($options = []);
 
@@ -242,7 +242,7 @@ interface AppInterface
      * @param string $name Nom de qualification d'appel de la fonction.
      * @param string|callable Fonction à executer.
      *
-     * @return EngineInterface
+     * @return ViewsInterface
      */
     public function appTemplateMacro($name, $function);
 
@@ -252,7 +252,7 @@ interface AppInterface
      * @param string $name Nom de qualification du gabarit.
      * @param array $args Listes des variables passées en argument.
      *
-     * @return TemplateInterface
+     * @return ViewInterface
      */
     public function appTemplateMake($name, $args = []);
 

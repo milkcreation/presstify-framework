@@ -25,6 +25,8 @@ use tiFy\Taxonomy\Taxonomy;
 use tiFy\User\User;
 use tiFy\View\View;
 
+use tiFy\Contracts\Views\ViewsInterface;
+
 use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\Assets\AssetsInterface;
 use tiFy\Kernel\ClassInfo\ClassInfo;
@@ -34,7 +36,6 @@ use tiFy\Kernel\Events\EventsInterface;
 use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Templates\Engine;
-use tiFy\Kernel\Templates\EngineInterface;
 use tiFy\Kernel\Service;
 
 use tiFy\Kernel\Container\ServiceProvider;
@@ -63,7 +64,7 @@ class KernelServiceProvider extends ServiceProvider
      * {@inheritdoc}
      */
     protected $aliases = [
-        EngineInterface::class => Engine::class,
+        ViewsInterface::class => Engine::class,
         EventsInterface::class => Events::class
     ];
 
@@ -134,6 +135,9 @@ class KernelServiceProvider extends ServiceProvider
     public function getBootables()
     {
         return array_merge(
+            [
+                Assets::class
+            ],
             $this->components,
             $this->plugins
         );
