@@ -13,7 +13,10 @@ class VideoGallery extends ContentPostTypeController
      */
     public function boot()
     {
-        $this->appAddAction('wp_ajax_tify_tab_metabox_post_type_video_gallery_add_item', [$this, 'wp_ajax']);
+        add_action(
+            'wp_ajax_tify_tab_metabox_post_type_video_gallery_add_item',
+            [$this, 'wp_ajax']
+        );
         $this->appTemplateMacro('displayItem', [$this, 'displayItem']);
     }
 
@@ -76,7 +79,7 @@ class VideoGallery extends ContentPostTypeController
      */
     public function load($current_screen)
     {
-        $this->appAddAction(
+        add_action(
             'admin_enqueue_scripts',
             function () {
                 wp_enqueue_media();
@@ -95,6 +98,7 @@ class VideoGallery extends ContentPostTypeController
                     180724,
                     true
                 );
+
                 wp_localize_script(
                     'MetaboxPostTypeVideoGallery',
                     'tify_taboox_video_gallery',

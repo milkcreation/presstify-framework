@@ -26,7 +26,7 @@ class Slider extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
                 \wp_register_style(

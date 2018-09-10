@@ -2,9 +2,9 @@
 
 namespace tiFy\App\Templates;
 
-use tiFy\Kernel\Templates\TemplateInterface;
+use tiFy\Contracts\Views\ViewInterface;
 
-interface AppTemplateInterface extends TemplateInterface
+interface AppTemplateInterface extends ViewInterface
 {
 
 }

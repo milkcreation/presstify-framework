@@ -40,9 +40,11 @@ interface ContainerInterface extends LeagueContainerInterface
     /**
      * Récupération d'un alias de service déclaré.
      *
+     * @param string $abstract Nom ou alias de qualification du service.
+     *
      * @return string
      */
-    public function getAlias($concrete);
+    public function getAlias($abstract);
 
     /**
      * Récupération de la liste des alias de services déclarés.

@@ -147,7 +147,7 @@ final class Field extends AppController
      * @param string $name Nom de qualification du controleur d'affichage
      * @param array args Liste des variables passé en arguments
      *
-     * @return null|object
+     * @return null|object|FieldItemInterface
      */
     public static function __callStatic($name, $args)
     {

@@ -22,24 +22,20 @@ class Modal extends AbstractPartialItem
      *      @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen pour activer désactiver ou fonction/méthode d'affichage.
      *      @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou booléen pour activer désactiver ou fonction/méthode d'affichage.
      *      @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
+     *      @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des attributs de récupération Ajax
      * }
      */
     protected $attributes = [
-        'attrs' => [
-            'class' => ''
-        ],
-
-        'options' => [],
-
-        'animation' => true,
-        'size'      => '',
-
-        'backdrop_close'        => true,
-        'header'                => true,
-        'body'                  => true,
-        'footer'                => true,
-
-        'in_footer' => true
+        'attrs'          => [],
+        'options'        => [],
+        'animation'      => true,
+        'size'           => '',
+        'backdrop_close' => true,
+        'header'         => true,
+        'body'           => true,
+        'footer'         => true,
+        'in_footer'      => true,
+        'ajax'           => false
     ];
 
     /**
@@ -47,7 +43,7 @@ class Modal extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
                 \wp_register_style(
@@ -63,6 +59,8 @@ class Modal extends AbstractPartialItem
                     171206,
                     true
                 );
+                add_action('wp_ajax_partial_modal', [$this, 'wp_ajax']);
+                add_action('wp_ajax_nopriv_partial_modal', [$this, 'wp_ajax']);
             }
         );
     }
@@ -87,10 +85,8 @@ class Modal extends AbstractPartialItem
         if($this->get('animation')) :
             $class .= ' fade';
         endif;
+        $this->set('attrs.class', $this->get('attrs.class', '') . " {$class}");
 
-        $this->set('attrs.class', $this->get('class', '') . " {$class}");
-
-        $this->set('attrs.data-modal', $this->get('container_id'));
         $this->set('attrs.role', 'dialog');
         $this->set('attrs.aria-control', 'modal');
 
@@ -111,21 +107,16 @@ class Modal extends AbstractPartialItem
                 $this->set("attrs.data-{$key}", $this->get("options.{$key}") ? 'true' : 'false');
             endif;
         endforeach;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function display()
-    {
         if($backdrop_close = $this->get('backdrop_close')) :
             $backdrop_close = $this->isCallable($backdrop_close)
                 ? call_user_func($this->get('backdrop_close'), $this->all())
                 : (
                 is_string($backdrop_close)
                     ? $backdrop_close
-                    : (string) $this->getView('backdrop_close', $this->all())
+                    : $this->view('backdrop_close', $this->all())
                 );
+            $this->set('backdrop_close', $backdrop_close);
         endif;
 
         if($body = $this->get('body')) :
@@ -134,7 +125,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($body)
                     ? $body
-                    : (string) $this->getView('body', $this->all())
+                    : $this->view('body', $this->all())
                 );
             $this->set('body', $body);
         endif;
@@ -145,7 +136,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($footer)
                     ? $footer
-                    : (string) $this->getView('footer', $this->all())
+                    : $this->view('footer', $this->all())
                 );
             $this->set('footer', $footer);
         endif;
@@ -156,8 +147,9 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($header)
                     ? $header
-                    : (string) $this->getView('header', $this->all())
+                    : $this->view('header', $this->all())
                 );
+
             $this->set('header', $header);
         endif;
 
@@ -168,16 +160,56 @@ class Modal extends AbstractPartialItem
                 : ''
         );
 
+        $this->set('attrs.data-options.id', $this->getId());
+
+        $ajax = $this->get('ajax', false);
+
+        if (is_string($ajax)) :
+            assets()->setDataJs($this->getId() . '_content', $ajax);
+        endif;
+
+        $this->set(
+            'attrs.data-options.ajax',
+            (
+                $ajax !== false
+                ? array_merge(
+                    is_array($ajax) ? $ajax : [],
+                    [
+                        'action'    => 'partial_modal',
+                        'csrf'      => \wp_create_nonce('PartialModal' . $this->getId()),
+                        'data'      => []
+                    ]
+                )
+                : false
+            )
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function display()
+    {
         if ($this->get('in_footer')) :
-            app()->appAddAction(
+            add_action(
                 (!is_admin() ? 'wp_footer' : 'admin_footer'),
                 function () {
-                   echo $this->getView('modal', $this->all());
+                   echo $this->view('modal', $this->all());
                 }
             );
             return '';
         else :
-            return $this->getView('modal', $this->all());
+            return $this->view('modal', $this->all());
         endif;
+    }
+    
+    /**
+     * Chargement du contenu de la modale via Ajax.
+     *
+     * @return void
+     */
+    public function wp_ajax()
+    {
+        wp_send_json((string)$this->view('ajax'));
     }
 }

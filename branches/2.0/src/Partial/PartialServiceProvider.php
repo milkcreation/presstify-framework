@@ -33,18 +33,18 @@ class PartialServiceProvider extends AppServiceProvider
      * @var array
      */
     protected $aliases = [
-        'breadcrumb'    => Breadcrumb::class,
-        'cookie-notice' => CookieNotice::class,
-        'holder-image'  => HolderImage::class,
-        'modal'         => Modal::class,
-        'modal-trigger' => ModalTrigger::class,
-        'navtabs'       => Navtabs::class,
-        'notice'        => Notice::class,
-        'sidebar'       => Sidebar::class,
-        'slider'        => Slider::class,
-        'spinner'       => Spinner::class,
-        'table'         => Table::class,
-        'tag'           => Tag::class
+        'partial.breadcrumb'    => Breadcrumb::class,
+        'partial.cookie-notice' => CookieNotice::class,
+        'partial.holder-image'  => HolderImage::class,
+        'partial.modal'         => Modal::class,
+        'partial.modal-trigger' => ModalTrigger::class,
+        'partial.navtabs'       => Navtabs::class,
+        'partial.notice'        => Notice::class,
+        'partial.sidebar'       => Sidebar::class,
+        'partial.slider'        => Slider::class,
+        'partial.spinner'       => Spinner::class,
+        'partial.table'         => Table::class,
+        'partial.tag'           => Tag::class
     ];
 
     /**
@@ -85,7 +85,7 @@ class PartialServiceProvider extends AppServiceProvider
 
         $this->app->resolve(Partial::class, [$this->app]);
 
-        $this->app->appAddAction(
+        add_action(
             'after_setup_theme',
             function() {
                 foreach ($this->items as $concrete) :
@@ -112,7 +112,7 @@ class PartialServiceProvider extends AppServiceProvider
      */
     public function get($name, $args = [])
     {
-        $alias = Str::kebab($name);
+        $alias = 'partial.' . Str::kebab($name);
 
         return $this->app->resolve($alias, [$args]);
     }

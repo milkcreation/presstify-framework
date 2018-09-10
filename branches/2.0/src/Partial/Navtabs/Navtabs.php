@@ -36,14 +36,14 @@ class Navtabs extends AbstractPartialItem
      */
     public function boot()
     {
-        app()->appAddAction(
+        add_action(
             'init',
             function () {
-                app()->appAddAction(
+                add_action(
                     'wp_ajax_tify_partial_navtabs',
                     [$this, 'wp_ajax']
                 );
-                app()->appAddAction(
+                add_action(
                     'wp_ajax_nopriv_tify_partial_navtabs',
                     [$this, 'wp_ajax']
                 );
@@ -123,7 +123,7 @@ class Navtabs extends AbstractPartialItem
      */
     public function display()
     {
-        return $this->getView()
+        return $this->view()
             ->render(
                 'navtabs',
                 [

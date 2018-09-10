@@ -4,9 +4,10 @@ namespace tiFy\Kernel\Templates;
 
 use Illuminate\Support\Arr;
 use League\Plates\Template\Template;
+use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Kernel\Tools;
 
-class TemplateController extends Template implements TemplateInterface
+class TemplateController extends Template implements ViewInterface
 {
     /**
      * Instance of the template engine.

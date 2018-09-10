@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\App\Item\AbstractAppItemController;
 use tiFy\Contracts\App\AppInterface;
+use tiFy\Contracts\Views\ViewInterface;
 
 class RouteHandle extends AbstractAppItemController
 {
@@ -116,9 +117,20 @@ class RouteHandle extends AbstractAppItemController
         array_push($args, $request, $response);
 
         if ($this->isClosure($cb)) :
-            call_user_func_array($cb, $args);
+            $resolved = call_user_func_array($cb, $args);
+
+            if ($resolved instanceof ViewInterface) :
+                add_action(
+                    'template_redirect',
+                    function () use ($resolved) {
+                        $resolved->render();
+                        exit;
+                    },
+                    0
+                );
+            endif;
         else :
-            $this->app->appAddAction(
+            add_action(
                 'template_redirect',
                 function () use ($cb, $args) {
                     $output = call_user_func_array($cb, $args);
