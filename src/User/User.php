@@ -15,26 +15,7 @@
 
 namespace tiFy\User;
 
-use tiFy\App\AppController;
-use tiFy\User\Role\Role;
-use tiFy\User\Session\Session;
-use tiFy\User\SignIn\SignIn;
-use tiFy\User\SignUp\SignUp;
-use tiFy\User\TakeOver\TakeOver;
-
-final class User extends AppController
+final class User
 {
-    /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    public function appBoot()
-    {
-        $this->appServiceShare(Role::class, new Role());
-        $this->appServiceShare(Session::class, new Session());
-        $this->appServiceShare(SignIn::class, new SignIn());
-        $this->appServiceShare(SignUp::class, new SignUp());
-        $this->appServiceShare(TakeOver::class, new TakeOver());
-    }
+
 }

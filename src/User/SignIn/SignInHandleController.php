@@ -4,50 +4,45 @@ namespace tiFy\User\SignIn;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\App\Item\AbstractAppItemController;
 use tiFy\Components\Tools\Notices\NoticesTrait;
-use tiFy\Contracts\App\AppInterface;
+use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Kernel\Item\AbstractItemController;
 
-abstract class SignInHandleController extends AbstractAppItemController
+abstract class SignInHandleController extends AbstractItemController
 {
     use NoticesTrait;
 
     /**
-     * Classe de rappel de l'application associée.
-     * @var AppInterface
-     */
-    protected $app;
-
-    /**
-     * Nom de qualification du controleur.
+     * Nom de qualification.
      * @var string
      */
     protected $name = '';
 
     /**
-     * Liste des attributs de configuration.
-     * @var array
+     * Instance de la classe de gestion des gabarits d'affichage.
+     * @var ViewsInterface
      */
-    protected $attributes = [];
+    protected $view;
 
     /**
      * CONSTRUCTEUR.
      *
      * @param string $name Nom de qualification du controleur.
      * @param array $attrs Lise des attributs de configuration.
-     * @param AppInterface $app Classe de rappel de l'application associée.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], AppInterface $app)
+    public function __construct($name, $attrs = [])
     {
         $this->name = $name;
 
-        parent::__construct($attrs, $app);
+        add_action('wp_loaded', [$this, '_wp_loaded']);
+
+        parent::parse($attrs);
     }
 
     /**
-     * Procédure de connection.
+     * Processus de connection.
      *
      * @return void
      */
@@ -57,7 +52,7 @@ abstract class SignInHandleController extends AbstractAppItemController
 
         $secure_cookie = '';
 
-        if (($log = $this->app->appRequest('POST')->get('log', false)) && !force_ssl_admin()) :
+        if (($log = request()->getProperty('POST')->get('log', false)) && !force_ssl_admin()) :
             $user_name = \sanitize_user($log);
             if ($user = get_user_by('login', $user_name)) :
                 if (get_user_option('use_ssl', $user->ID)) :
@@ -67,24 +62,31 @@ abstract class SignInHandleController extends AbstractAppItemController
             endif;
         endif;
 
-        $reauth = !$this->app->appRequest()->get('reauth') ? false : true;
+        $reauth = !request()->get('reauth') ? false : true;
         $user = \wp_signon([], $secure_cookie);
 
-        if (!$this->app->appRequest('COOKIE')->get(LOGGED_IN_COOKIE)) :
+        if (!request()->getProperty('COOKIE')->get(LOGGED_IN_COOKIE)) :
             if (headers_sent()) :
                 $user = new \WP_Error(
                     'test_cookie',
                     sprintf(
-                        __('<strong>ERROR</strong>: Cookies are blocked due to unexpected output. For help, please see <a href="%1$s">this documentation</a> or try the <a href="%2$s">support forums</a>.'),
-                        __('https://codex.wordpress.org/Cookies' ),
+                        __('<strong>ERROR</strong>: Cookies are blocked due to unexpected output. ' .
+                            'For help, please see<a href="%1$s">this documentation</a> or try the ' .
+                            '<a href="%2$s">support forums</a>.'
+                        ),
+                        __('https://codex.wordpress.org/Cookies'),
                         __('https://wordpress.org/support/')
                     )
                 );
-            elseif ($this->app->appRequest('POST')->get('testcookie') && !$this->app->appRequest('COOKIE')->get(TEST_COOKIE)) :
+            elseif ($this->app->appRequest('POST')->get('testcookie') &&
+                !$this->app->appRequest('COOKIE')->get(TEST_COOKIE)
+            ) :
                 $user = new \WP_Error(
                     'test_cookie',
                     sprintf(
-                        __('<strong>ERROR</strong>: Cookies are blocked or not supported by your browser. You must <a href="%s">enable cookies</a> to use WordPress.'),
+                        __('<strong>ERROR</strong>: Cookies are blocked or not supported by your browser. ' .
+                            'You must <a href="%s">enable cookies</a> to use WordPress.'
+                        ),
                         __('https://codex.wordpress.org/Cookies')
                     )
                 );
@@ -92,7 +94,7 @@ abstract class SignInHandleController extends AbstractAppItemController
         endif;
 
         if (!is_wp_error($user) && !$reauth) :
-            $redirect_url = $this->app->appRequest()->get('redirect_to');
+            $redirect_url = request()->get('redirect_to');
 
             if ($redirect_url = $this->getFormRedirect($redirect_url, $user)) :
                 if ($secure_cookie && false !== strpos($redirect_url, 'wp-admin')) :
@@ -110,7 +112,7 @@ abstract class SignInHandleController extends AbstractAppItemController
     }
 
     /**
-     * Procédure de déconnection.
+     * Processus de déconnection.
      *
      * @return void
      */
@@ -122,11 +124,18 @@ abstract class SignInHandleController extends AbstractAppItemController
 
         wp_logout();
 
-        $redirect_url = $this->app->appRequest()->get('redirect_to');
+        $redirect_url = request()->get('redirect_to');
 
         if ($redirect_url = $this->getLogoutRedirect($redirect_url, $user)) :
         else :
-            $redirect_url = remove_query_arg(['action', '_wpnonce', 'tiFySignIn'], set_url_scheme('//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']));
+            $redirect_url = remove_query_arg(
+                [
+                    'action',
+                    '_wpnonce',
+                    'tiFySignIn',
+                ],
+                set_url_scheme('//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'])
+            );
         endif;
 
         $redirect_url = add_query_arg('loggedout', true, $redirect_url);
@@ -146,19 +155,36 @@ abstract class SignInHandleController extends AbstractAppItemController
     {
         $attrs = array_merge(
             [
-                'empty_username'        => __('le champ de l’identifiant est vide.', 'tify'),
-                'empty_password'        => __('Veuillez renseigner le mot de passe.', 'tify'),
-                'invalid_username'      => __('Nom d’utilisateur non valide.', 'tify'),
-                'incorrect_password'    => __('Ce mot de passe ne correspond pas à l’identifiant fourni.', 'tify'),
-                'authentication_failed' => __('Les idenfiants de connexion fournis sont invalides.', 'tify'),
-                'role_not_allowed'      => __('Votre utilisateur n\'est pas autorisé à se connecter depuis cette interface.', 'tify')
+                'empty_username'        => __(
+                    'le champ de l’identifiant est vide.',
+                    'tify'
+                ),
+                'empty_password'        => __(
+                    'Veuillez renseigner le mot de passe.',
+                    'tify'
+                ),
+                'invalid_username'      => __(
+                    'Nom d’utilisateur non valide.',
+                    'tify'
+                ),
+                'incorrect_password'    => __(
+                    'Ce mot de passe ne correspond pas à l’identifiant fourni.',
+                    'tify'
+                ),
+                'authentication_failed' => __(
+                    'Les idenfiants de connexion fournis sont invalides.',
+                    'tify'
+                ),
+                'role_not_allowed'      => __(
+                    'Votre utilisateur n\'est pas autorisé à se connecter depuis cette interface.',
+                    'tify'
+                ),
             ],
             $attrs
         );
 
         return $attrs;
     }
-
 
     /**
      * Traitement des attributs de configuration du champ "Mot de passe".
@@ -171,13 +197,13 @@ abstract class SignInHandleController extends AbstractAppItemController
     {
         $attrs = array_merge(
             [
-                'title'    => __('Mot de passe', 'tify'),
-                'attrs'    => [
-                    'id'            => 'tiFySignIn-FormFieldPassword--' . $this->getName(),
-                    'placeholder'   => __('Renseignez votre mot de passe', 'tify'),
-                    'size'          => 20,
-                    'autocomplete'  => 'current-password'
-                ]
+                'title' => __('Mot de passe', 'tify'),
+                'attrs' => [
+                    'id'           => 'tiFySignIn-FormFieldPassword--' . $this->getName(),
+                    'placeholder'  => __('Renseignez votre mot de passe', 'tify'),
+                    'size'         => 20,
+                    'autocomplete' => 'current-password',
+                ],
             ],
             $attrs
         );
@@ -204,11 +230,11 @@ abstract class SignInHandleController extends AbstractAppItemController
     {
         $attrs = array_merge(
             [
-                'label'         => __('Se souvenir de moi', 'tify'),
-                'attrs'         => [
-                    'id' => 'tiFySignIn-FormFieldRemember--' . $this->getName(),
-                    'value'         => 0
-                ]
+                'label' => __('Se souvenir de moi', 'tify'),
+                'attrs' => [
+                    'id'    => 'tiFySignIn-FormFieldRemember--' . $this->getName(),
+                    'value' => 0,
+                ],
             ],
             $attrs
         );
@@ -237,8 +263,8 @@ abstract class SignInHandleController extends AbstractAppItemController
             [
                 'attrs' => [
                     'id'    => 'tiFySignIn-FormFieldSubmit--' . $this->getName(),
-                    'value' => __('Se connecter', 'tify')
-                ]
+                    'value' => __('Se connecter', 'tify'),
+                ],
             ],
             $attrs
         );
@@ -258,13 +284,13 @@ abstract class SignInHandleController extends AbstractAppItemController
     {
         $attrs = array_merge(
             [
-                'title'    => __('Identifiant', 'tify'),
-                'attrs'    => [
-                    'id'            => 'tiFySignIn-FormFieldUsername--' . $this->getName(),
-                    'placeholder'   => __('Renseignez votre identifiant', 'tify'),
-                    'size'          => 20,
-                    'autocomplete'  => 'username'
-                ]
+                'title' => __('Identifiant', 'tify'),
+                'attrs' => [
+                    'id'           => 'tiFySignIn-FormFieldUsername--' . $this->getName(),
+                    'placeholder'  => __('Renseignez votre identifiant', 'tify'),
+                    'size'         => 20,
+                    'autocomplete' => 'username',
+                ],
             ],
             $attrs
         );
@@ -291,10 +317,10 @@ abstract class SignInHandleController extends AbstractAppItemController
     {
         $attrs = array_merge(
             [
-                'redirect'   => '',
-                'text'       => __('Déconnection', 'tify'),
-                'class'      => 'tiFySignIn-logoutLink',
-                'title'      => __('se déconnecter', 'tify'),
+                'redirect' => '',
+                'text'     => __('Déconnection', 'tify'),
+                'class'    => 'tiFySignIn-logoutLink',
+                'title'    => __('se déconnecter', 'tify'),
             ],
             $attrs
         );
@@ -314,7 +340,7 @@ abstract class SignInHandleController extends AbstractAppItemController
         $attrs = array_merge(
             [
                 'redirect' => '',
-                'content'  => __('Mot de passe oublié', 'tify')
+                'content'  => __('Mot de passe oublié', 'tify'),
             ],
             $attrs
         );
@@ -341,19 +367,19 @@ abstract class SignInHandleController extends AbstractAppItemController
                         continue;
                     endif;
 
-                    if(!$messages = $errors->get_error_messages()) :
+                    if (!$messages = $errors->get_error_messages()) :
                         $this->noticesAdd('error', $code, ['alias' => $code]);
                     endif;
 
-                    foreach($messages as $message) :
+                    foreach ($messages as $message) :
                         $this->noticesAdd('error', $message, ['alias' => $code]);
                     endforeach;
                 endforeach;
             else :
                 $this->noticesAdd('error');
             endif;
-        elseif(is_array($errors)) :
-            foreach($errors as $code => $message) :
+        elseif (is_array($errors)) :
+            foreach ($errors as $code => $message) :
                 if (isset($errors_map[$code])) :
                     $this->noticesAdd('error', $errors_map[$code], ['alias' => $code]);
                 else :
@@ -366,40 +392,37 @@ abstract class SignInHandleController extends AbstractAppItemController
     }
 
     /**
-     * Initialisation du controleur.
+     * A l'issue du chargement complet de Wordpress.
      *
      * @return void
      */
-    public function boot()
+    final public function _wp_loaded()
     {
-        $this->app->appTemplates(
-            [
-                'directory'  => $this->app->appDirname() . '/templates',
-                'controller' => SignInTemplateController::class
-            ]
-        );
+        // Bypass
+        if (!$signin = request()->get('tiFySignIn', false)) :
+            return;
+        endif;
 
-        $macros = [
-            'formAfter',
-            'formAdditionnalFields',
-            'formBefore',
-            'formBody',
-            'formErrors',
-            'formFieldPassword',
-            'formFieldUsername',
-            'formFieldRemember',
-            'formFieldSubmit',
-            'formFooter',
-            'formHeader',
-            'formHiddenFields',
-            'formInfos',
-            'lostpasswordLink'
-        ];
-        foreach($macros as $macro) :
-            $this->app->appTemplateMacro($macro, [$this, $macro]);
-        endforeach;
+        if ($signin !== $this->getName()) :
+            return;
+        endif;
 
-        $this->app->appAddAction('wp_loaded', [$this, 'wp_loaded']);
+        $action = request()->get('action', 'login');
+        switch ($action) :
+            default :
+                break;
+
+            case 'login' :
+                add_filter('authenticate', [$this, 'authenticate'], 50, 3);
+                add_action('wp_login', [$this, 'onLoginSuccess'], 10, 2);
+                $this->_login();
+                break;
+
+            case 'logout' :
+                add_action('wp_logout', [$this, 'onLogoutSuccess']);
+                $this->_logout();
+                break;
+        endswitch;
     }
 
     /**
@@ -411,7 +434,7 @@ abstract class SignInHandleController extends AbstractAppItemController
      *
      * @return string
      */
-    final public function display($template = 'form', $attrs = [], $echo = true)
+    public function display($template = 'form', $attrs = [], $echo = true)
     {
         if (!$this->isTemplate($template)) :
             return '';
@@ -431,7 +454,7 @@ abstract class SignInHandleController extends AbstractAppItemController
      *
      * @return array
      */
-    final public function getErrors()
+    public function getErrors()
     {
         $errors = [];
 
@@ -458,10 +481,10 @@ abstract class SignInHandleController extends AbstractAppItemController
      *
      * @return string
      */
-    final public function getLogoutUrl($redirect_url = '')
+    public function getLogoutUrl($redirect_url = '')
     {
         $args = [];
-        if($redirect_url) :
+        if ($redirect_url) :
             $args['redirect_to'] = $redirect_url;
         endif;
         $args['action'] = 'logout';
@@ -478,7 +501,7 @@ abstract class SignInHandleController extends AbstractAppItemController
      *
      * @return string
      */
-    final public function getName()
+    public function getName()
     {
         return $this->name;
     }
@@ -488,7 +511,7 @@ abstract class SignInHandleController extends AbstractAppItemController
      *
      * @return array
      */
-    final public function getRoles()
+    public function getRoles()
     {
         return $this->get('roles', []);
     }
@@ -500,7 +523,7 @@ abstract class SignInHandleController extends AbstractAppItemController
      *
      * @return bool
      */
-    final public function isTemplate($template)
+    public function isTemplate($template)
     {
         return in_array($template, ['form', 'lostpassword_link', 'logout_link']);
     }
@@ -521,7 +544,7 @@ abstract class SignInHandleController extends AbstractAppItemController
         $this->set('form.attrs.method', 'post');
         $this->set('form.attrs.action', '');
 
-        if(!$this->get('form.attrs.id')) :
+        if (!$this->get('form.attrs.id')) :
             $this->set('form.attrs.id', 'tiFySignIn-form--' . $this->getName());
         endif;
         $this->set(
@@ -543,7 +566,8 @@ abstract class SignInHandleController extends AbstractAppItemController
                     continue;
                 endif;
 
-                $this->set("form.fields.{$field_name}", call_user_func([$this, '_parseForm' . Str::studly($field_name)], $field_attrs));
+                $this->set("form.fields.{$field_name}",
+                    call_user_func([$this, '_parseForm' . Str::studly($field_name)], $field_attrs));
             endforeach;
         endif;
 
@@ -564,36 +588,47 @@ abstract class SignInHandleController extends AbstractAppItemController
     }
 
     /**
-     * A l'issue du chargement complet de Wordpress.
+     * Instance du gestionnaire des gabarits d'affichage ou instance d'un gabarit d'affichage.
+     * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
+     * {@internal Sinon récupére le gabarit d'affichage et passe les variables en argument.}
      *
-     * @return void
+     * @param null|string view Nom de qualification du gabarit.
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return ViewsInterface|ViewInterface
      */
-    final public function wp_loaded()
+    public function view($view = null, $data = [])
     {
-        // Bypass
-        if (!$signin = $this->app->appRequest()->get('tiFySignIn', false)) :
-            return;
+        if (!$this->view) :
+            $this->view = view()
+                ->setDirectory(__DIR__ . '/views')
+                ->setController(SignInTemplateController::class);
+
+            $macros = [
+                'formAfter',
+                'formAdditionnalFields',
+                'formBefore',
+                'formBody',
+                'formErrors',
+                'formFieldPassword',
+                'formFieldUsername',
+                'formFieldRemember',
+                'formFieldSubmit',
+                'formFooter',
+                'formHeader',
+                'formHiddenFields',
+                'formInfos',
+                'lostpasswordLink',
+            ];
+            foreach ($macros as $macro) :
+                $this->view->registerFunction($macro, [$this, $macro]);
+            endforeach;
         endif;
 
-        if ($signin !== $this->getName()) :
-            return;
+        if (func_num_args() === 0) :
+            return $this->view;
         endif;
 
-        $action = $this->app->appRequest()->get('action', 'login');
-        switch ($action) :
-            default :
-                break;
-
-            case 'login' :
-                $this->app->appAddFilter('authenticate', [$this, 'authenticate'], 50, 3);
-                $this->app->appAddAction('wp_login', [$this,'onLoginSuccess'], 10, 2);
-                $this->_login();
-                break;
-
-            case 'logout' :
-                $this->app->appAddAction('wp_logout', [$this, 'onLogoutSuccess']);
-                $this->_logout();
-                break;
-        endswitch;
+        return $this->view->make($view, $data);
     }
 }

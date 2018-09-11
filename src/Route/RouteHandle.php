@@ -122,8 +122,9 @@ class RouteHandle extends AbstractAppItemController
             if ($resolved instanceof ViewInterface) :
                 add_action(
                     'template_redirect',
-                    function () use ($resolved) {
-                        $resolved->render();
+                    function () use ($resolved, $response) {
+                        $response->getBody()->write($resolved->render());
+                        $this->app->appServiceGet('tfy.route.emitter')->emit($response);
                         exit;
                     },
                     0
