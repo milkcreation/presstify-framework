@@ -1,3 +1,2 @@
-import '../Notice/index';
-
+import '../notice/index';
 import './js/scripts';
