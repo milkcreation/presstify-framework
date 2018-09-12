@@ -38,22 +38,12 @@ class TermQuery implements TermQueryInterface
         $terms = \get_terms($query_args);
 
         if ($terms && !is_wp_error($terms)) :
-            $items = array_map([$this, 'get'], $terms);
+            $items = array_map([$this, 'getItem'], $terms);
         else :
             $items = [];
         endif;
 
-        $controller = $this->getCollectionController();
-
-        return new $controller($items);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCollectionController()
-    {
-        return $this->collectionController;
+        return $this->resolveCollection($items);
     }
 
     /**
@@ -81,13 +71,17 @@ class TermQuery implements TermQueryInterface
             return null;
         endif;
 
-        $name = 'tify.query.term.' . $term->term_id;
-        if (! $this->appServiceHas($name)) :
-            $controller = $this->getItemController();
-            $this->appServiceShare($name, new $controller($term));
+        $alias = 'taxonomy.query.term.' . $term->term_id;;
+        if (!app()->has($alias)) :
+            app()->singleton(
+                $alias,
+                function() use ($term) {
+                    return $this->resolveItem($term);
+                }
+            );
         endif;
 
-        return $this->appServiceGet($name);
+        return app()->resolve($alias);
     }
 
     /**
@@ -109,16 +103,28 @@ class TermQuery implements TermQueryInterface
     /**
      * {@inheritdoc}
      */
-    public function getItemController()
+    public function getObjectName()
     {
-        return $this->itemController;
+        return $this->objectName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getObjectName()
+    public function resolveCollection($items)
     {
-        return (string) $this->objectName;
+        $concrete = $this->collectionController;
+
+        return new $concrete($items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveItem($wp_term)
+    {
+        $concrete = $this->itemController;
+
+        return new $concrete($wp_term);
     }
 }

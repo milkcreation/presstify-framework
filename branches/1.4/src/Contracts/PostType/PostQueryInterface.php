@@ -2,9 +2,6 @@
 
 namespace tiFy\Contracts\PostType;
 
-use tiFy\Contracts\PostType\PostQueryCollectionInterface;
-use tiFy\Contracts\PostType\PostQueryItemInterface;
-
 interface PostQueryInterface
 {
     /**
@@ -15,13 +12,6 @@ interface PostQueryInterface
      * @return array|PostQueryCollectionInterface|PostQueryItemInterface[]
      */
     public function getCollection($query_args = []);
-
-    /**
-     * Récupération du controleur de données d'une liste d'éléments.
-     *
-     * @return string
-     */
-    public function getCollectionController();
 
     /**
      * Récupération d'un élément.
@@ -43,17 +33,28 @@ interface PostQueryInterface
     public function getItemBy($key = 'name', $value);
 
     /**
-     * Récupération du controleur de données d'un élément.
-     *
-     * @return string
-     */
-    public function getItemController();
-
-    /**
      * Récupération du(es) type(s) de post Wordpress du controleur.
      *
      * @return string|array
      */
     public function getObjectName();
+
+    /**
+     * Récupération d'une instance du controleur de liste d'éléments.
+     *
+     * @param PostQueryItemInterface[] $items Liste des éléments.
+     *
+     * @return string
+     */
+    public function resolveCollection($items);
+
+    /**
+     * Récupération d'une instance du controleur de données d'un élément.
+     *
+     * @param \WP_Post $wp_post Instance de post Wordpress.
+     *
+     * @return string
+     */
+    public function resolveItem(\WP_Post $wp_post);
 }
 

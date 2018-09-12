@@ -151,7 +151,7 @@ class Sidebar extends AbstractPartialItem
             $this->set('toggle', $toggle);
         endif;
 
-        $this->getView()
+        $this->view()
             ->registerFunction('header', [$this, 'header'])
             ->registerFunction('footer', [$this, 'footer'])
             ->registerFunction('toggle', [$this, 'toggle']);

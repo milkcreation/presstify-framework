@@ -57,7 +57,7 @@ class Service extends AbstractItemIterator implements ServiceInterface
      */
     public function bind()
     {
-        return $this->definition = $this->getContainer()->add($this->getAbstract(), $this->getConcrete(), $this->isSingleton());
+        return $this->definition = $this->getContainer()->add($this->getAlias(), $this->getConcrete(), $this->isSingleton());
     }
 
     /**

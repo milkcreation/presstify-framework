@@ -123,7 +123,7 @@ class Navtabs extends AbstractPartialItem
      */
     public function display()
     {
-        return $this->getView()
+        return $this->view()
             ->render(
                 'navtabs',
                 [

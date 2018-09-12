@@ -114,7 +114,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($backdrop_close)
                     ? $backdrop_close
-                    : $this->getView('backdrop_close', $this->all())
+                    : $this->view('backdrop_close', $this->all())
                 );
             $this->set('backdrop_close', $backdrop_close);
         endif;
@@ -125,7 +125,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($body)
                     ? $body
-                    : $this->getView('body', $this->all())
+                    : $this->view('body', $this->all())
                 );
             $this->set('body', $body);
         endif;
@@ -136,7 +136,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($footer)
                     ? $footer
-                    : $this->getView('footer', $this->all())
+                    : $this->view('footer', $this->all())
                 );
             $this->set('footer', $footer);
         endif;
@@ -147,7 +147,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($header)
                     ? $header
-                    : $this->getView('header', $this->all())
+                    : $this->view('header', $this->all())
                 );
 
             $this->set('header', $header);
@@ -194,12 +194,12 @@ class Modal extends AbstractPartialItem
             add_action(
                 (!is_admin() ? 'wp_footer' : 'admin_footer'),
                 function () {
-                   echo $this->getView('modal', $this->all());
+                   echo $this->view('modal', $this->all());
                 }
             );
             return '';
         else :
-            return $this->getView('modal', $this->all());
+            return $this->view('modal', $this->all());
         endif;
     }
     
@@ -210,6 +210,6 @@ class Modal extends AbstractPartialItem
      */
     public function wp_ajax()
     {
-        wp_send_json((string)$this->getView('ajax'));
+        wp_send_json((string)$this->view('ajax'));
     }
 }

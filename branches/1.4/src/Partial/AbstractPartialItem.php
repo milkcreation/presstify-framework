@@ -5,8 +5,8 @@ namespace tiFy\Partial;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialItemInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Tools;
-use tiFy\Kernel\Templates\EngineInterface;
 use tiFy\Partial\PartialServiceProvider;
 use tiFy\Partial\TemplateController;
 
@@ -32,7 +32,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return EngineInterface
+     * @return ViewsInterface
      */
     protected $view;
 
@@ -138,7 +138,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
      */
     public function display()
     {
-        return $this->getView()->render(
+        return $this->view()->render(
             class_info($this)->getKebabName(),
             $this->all()
         );
@@ -174,26 +174,6 @@ abstract class AbstractPartialItem implements PartialItemInterface
     public function getIndex()
     {
         return $this->index;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getView($view = null, $data = [])
-    {
-        if (!$this->view) :
-            $default_dir = class_info($this)->getDirname() . '/views';
-            $this->view = view()
-                ->setDirectory(is_dir($default_dir) ? $default_dir : null)
-                ->setController(PartialViewTemplate::class)
-                ->set('partial', $this);
-        endif;
-
-        if (func_num_args() === 0) :
-            return $this->view;
-        endif;
-
-        return $this->view->make($view, $data);
     }
 
     /**
@@ -249,7 +229,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
         );
 
         foreach($this->get('view', []) as $key => $value) :
-            $this->getView()->set($key, $value);
+            $this->view()->set($key, $value);
         endforeach;
     }
 
@@ -277,5 +257,25 @@ abstract class AbstractPartialItem implements PartialItemInterface
     public function values()
     {
         return array_values($this->attributes);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function view($view = null, $data = [])
+    {
+        if (!$this->view) :
+            $default_dir = class_info($this)->getDirname() . '/views';
+            $this->view = view()
+                ->setDirectory(is_dir($default_dir) ? $default_dir : null)
+                ->setController(PartialViewTemplate::class)
+                ->set('partial', $this);
+        endif;
+
+        if (func_num_args() === 0) :
+            return $this->view;
+        endif;
+
+        return $this->view->make($view, $data);
     }
 }

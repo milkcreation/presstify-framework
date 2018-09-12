@@ -60,13 +60,13 @@ class ToggleSwitch extends AbstractFieldItem
     public function init()
     {
         \wp_register_style(
-            'tiFyFieldToggleSwitch',
+            'FieldToggleSwitch',
             \assets()->url('/field/toggle-switch/css/styles.css'),
             [],
             170724
         );
         \wp_register_script(
-            'tiFyFieldToggleSwitch',
+            'FieldToggleSwitch',
             \assets()->url('/field/toggle-switch/js/scripts.js'),
             ['jquery'],
             170724

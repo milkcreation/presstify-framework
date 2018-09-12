@@ -1,6 +1,8 @@
 <?php
 
 use tiFy\tiFy;
+use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Field\Field;
 use tiFy\Field\FieldItemInterface;
 use tiFy\Form\Form;
@@ -244,7 +246,7 @@ if (!function_exists('view')) :
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return string|\tiFy\Kernel\Templates\EngineInterface
+     * @return ViewsInterface|ViewInterface
      */
     function view($view = null, $data = [])
     {

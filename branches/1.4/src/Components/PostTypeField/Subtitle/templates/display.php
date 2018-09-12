@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Kernel\Templates\TemplateInterface $this
+ * @var tiFy\Contracts\Views\ViewInterface $this
  */
 ?>
 
