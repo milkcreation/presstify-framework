@@ -179,7 +179,7 @@ class Breadcrumb extends AbstractPartialItem
 
         $this->set('items', $this->parsePartList());
 
-        return $this->getView()->render(
+        return $this->view()->render(
             'breadcrumb',
             $this->all()
         );

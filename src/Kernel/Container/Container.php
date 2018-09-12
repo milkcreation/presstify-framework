@@ -17,12 +17,6 @@ class Container extends LeagueContainer implements ContainerInterface
     protected static $items = [];
 
     /**
-     * Liste des fournisseurs de service.
-     * @var string[]
-     */
-    protected $serviceProviders = [];
-
-    /**
      * Liste des alias de résolution de services.
      * @var array
      */
@@ -33,6 +27,12 @@ class Container extends LeagueContainer implements ContainerInterface
      * @see http://container.thephpleague.com/2.x/auto-wiring/
      */
     protected $autoWiring = false;
+
+    /**
+     * Liste des fournisseurs de service.
+     * @var string[]
+     */
+    protected $serviceProviders = [];
 
     /**
      * CONSTRUCTEUR.
@@ -82,7 +82,7 @@ class Container extends LeagueContainer implements ContainerInterface
             $concrete = $abstract;
         endif;
 
-        $alias = $this->getAlias($concrete);
+        $alias = $this->getAlias($abstract);
 
         return self::$items[$abstract] = $this->addService($abstract, compact('alias', 'concrete', 'singleton'));
     }
@@ -98,11 +98,11 @@ class Container extends LeagueContainer implements ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function getAlias($concrete)
+    public function getAlias($abstract)
     {
-        $alias = array_search($concrete, $this->getAliases());
+        $alias = array_search($abstract, $this->getAliases());
 
-        return $alias !== false ? $alias : $concrete;
+        return $alias !== false ? $alias : $abstract;
     }
 
     /**
@@ -121,9 +121,9 @@ class Container extends LeagueContainer implements ContainerInterface
         $items = self::$items;
 
         return (
-        $exists = (new Collection($items))->first(function ($item) use ($alias) {
-            return $item->getAlias() === $alias;
-        })
+            $exists = (new Collection($items))->first(function ($item) use ($alias) {
+                return $item->getAlias() === $alias;
+            })
         )
             ? $exists->getAbstract()
             : $alias;
@@ -184,17 +184,5 @@ class Container extends LeagueContainer implements ContainerInterface
     public function singleton($abstract, $concrete = null)
     {
         return $this->bind($abstract, $concrete, true);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function unbind($abstract)
-    {
-        $alias = $this->getAlias($abstract);
-        unset($this->shared[$alias]);
-        unset($this->definitions[$alias]);
-        unset($this->sharedDefinitions[$alias]);
-        unset(self::$items[$alias]);
     }
 }

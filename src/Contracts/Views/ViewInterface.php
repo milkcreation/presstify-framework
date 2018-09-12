@@ -1,8 +1,8 @@
 <?php
 
-namespace tiFy\Kernel\Templates;
+namespace tiFy\Contracts\Views;
 
-interface TemplateInterface
+interface ViewInterface
 {
     /**
      * Récupération de la liste complète des attributs de configuration.

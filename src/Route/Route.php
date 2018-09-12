@@ -109,6 +109,7 @@ class Route extends AppController
                     })
                 )
             ) :
+
                 wp_safe_redirect($request->fullUrl(), 301);
                 exit;
             endif;

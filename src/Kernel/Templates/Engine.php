@@ -4,9 +4,11 @@ namespace tiFy\Kernel\Templates;
 
 use Illuminate\Support\Arr;
 use League\Plates\Engine as LeaguePlatesEngine;
+use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Kernel;
 
-class Engine extends LeaguePlatesEngine implements EngineInterface
+class Engine extends LeaguePlatesEngine implements ViewsInterface
 {
     /**
      * Liste des attributs de configuration.
@@ -82,11 +84,11 @@ class Engine extends LeaguePlatesEngine implements EngineInterface
     {
         $controller = $this->getController();
 
-        /** @var TemplateInterface $template */
-        $template = new $controller($this, $name);
-        $template->data($args);
+        /** @var ViewInterface $template */
+        $view = new $controller($this, $name);
+        $view->data($args);
 
-        return $template;
+        return $view;
     }
 
     /**

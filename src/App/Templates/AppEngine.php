@@ -54,7 +54,7 @@ class AppEngine extends Engine
     {
         $controller = $this->getController();
 
-        /** @var TemplateInterface $template */
+        /** @var AppTemplateInterface $template */
         $template = new $controller($this, $name, $this->app);
         $template->data($args);
 

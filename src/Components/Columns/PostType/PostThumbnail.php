@@ -25,8 +25,8 @@ class PostThumbnail extends ColumnPostType
      */
     public function admin_enqueue_scripts()
     {
-        $this->appServiceGet(Partial::class)->enqueue('HolderImage');
-        $this->appAddAction('admin_print_styles');
+        Partial::HolderImage()->enqueue_scripts();
+        add_action('admin_print_styles', [$this, 'admin_print_styles']);
     }
 
     /**

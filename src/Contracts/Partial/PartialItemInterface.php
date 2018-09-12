@@ -2,6 +2,8 @@
 
 namespace tiFy\Contracts\Partial;
 
+use tiFy\Contracts\Views\ViewsInterface;
+
 interface PartialItemInterface
 {
     /**
@@ -92,18 +94,6 @@ interface PartialItemInterface
     public function getIndex();
 
     /**
-     * Récupération de la vue.
-     * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
-     * {@internal Sinon récupére le gabarit d'affichage et passe les variables en argument.}
-     *
-     * @param null|string view Nom de qualification du gabarit.
-     * @param array $data Liste des variables passées en argument.
-     *
-     * @return \tiFy\Kernel\Templates\EngineInterface
-     */
-    public function getView($view = null, $data = []);
-
-    /**
      * Vérification d'existance d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
@@ -154,4 +144,16 @@ interface PartialItemInterface
      * @return mixed[]
      */
     public function values();
+
+    /**
+     * Récupération de la vue.
+     * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
+     * {@internal Sinon récupére le gabarit d'affichage et passe les variables en argument.}
+     *
+     * @param null|string view Nom de qualification du gabarit.
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return ViewsInterface
+     */
+    public function view($view = null, $data = []);
 }

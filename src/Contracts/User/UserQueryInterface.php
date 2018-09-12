@@ -2,9 +2,6 @@
 
 namespace tiFy\Contracts\User;
 
-use tiFy\Contracts\User\UserQueryCollectionInterface;
-use tiFy\Contracts\User\UserQueryItemInterface;
-
 interface UserQueryInterface
 {
     /**
@@ -12,16 +9,9 @@ interface UserQueryInterface
      *
      * @param array $query_args Liste des arguments de requête
      *
-     * @return array|UserQueryItemInterface[]|UserQueryCollectionInterface
+     * @return array|UserQueryCollectionInterface|UserQueryItemInterface[]
      */
     public function getCollection($query_args = []);
-
-    /**
-     * Récupération du controleur de données d'une liste d'éléments.
-     *
-     * @return string
-     */
-    public function getCollectionController();
 
     /**
      * Récupération d'un élément
@@ -43,17 +33,29 @@ interface UserQueryInterface
     public function getItemBy($key = 'login', $value);
 
     /**
-     * Récupération du controleur de données d'un élément.
-     *
-     * @return string
-     */
-    public function getItemController();
-
-    /**
      * Récupération du(es) role(s) utilisateur Wordpress du controleur.
      *
      * @return string|array
      */
     public function getObjectName();
+
+
+    /**
+     * Récupération d'une instance du controleur de liste d'éléments.
+     *
+     * @param UserItemInterface[] $items Liste des éléments.
+     *
+     * @return string
+     */
+    public function resolveCollection($items);
+
+    /**
+     * Récupération d'une instance du controleur de données d'un élément.
+     *
+     * @param \WP_User $wp_user Instance d'utilisateur Wordpress.
+     *
+     * @return string
+     */
+    public function resolveItem(\WP_User $wp_user);
 }
 

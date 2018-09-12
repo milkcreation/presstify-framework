@@ -34,22 +34,12 @@ class UserQuery implements UserQueryInterface
         $user_query = new \WP_User_Query($query_args);
 
         if ($user_query->get_total()) :
-            $items = array_map([$this, 'get'], $user_query->get_results());
+            $items = array_map([$this, 'getItem'], $user_query->get_results());
         else :
             $items = [];
         endif;
 
-        $controller = $this->getListController();
-
-        return new $controller($items);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCollectionController()
-    {
-        return $this->collectionController;
+        return $this->resolveCollection($items);
     }
 
     /**
@@ -75,13 +65,17 @@ class UserQuery implements UserQueryInterface
             return null;
         endif;
 
-        $name = 'tify.query.user.' . $user->ID;
-        if (! $this->appServiceHas($name)) :
-            $controller = $this->getItemController();
-            $this->appServiceShare($name, new $controller($user));
+        $alias = 'user.query.user.' . $user->ID;
+        if (!app()->has($alias)) :
+            app()->singleton(
+                $alias,
+                function() use ($user) {
+                    return $this->resolveItem($user);
+                }
+            );
         endif;
 
-        return $this->appServiceGet($name);
+        return app()->resolve($alias);
     }
 
     /**
@@ -117,17 +111,29 @@ class UserQuery implements UserQueryInterface
     /**
      * {@inheritdoc}
      */
-    public function getItemController()
+    public function getObjectName()
     {
-        return $this->itemController;
+        return $this->objectName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getObjectName()
+    public function resolveCollection($items)
     {
-        return $this->objectName;
+        $concrete = $this->collectionController;
+
+        return new $concrete($items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveItem($wp_user)
+    {
+        $concrete = $this->itemController;
+
+        return new $concrete($wp_user);
     }
 }
 

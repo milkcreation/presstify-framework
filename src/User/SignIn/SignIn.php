@@ -15,39 +15,31 @@
 
 namespace tiFy\User\SignIn;
 
-use tiFy\App\AppController;
 use tiFy\User\User;
 use tiFy\User\SignIn\SignInControllerInterface;
 use tiFy\User\SignIn\SignInItemController;
 
-final class SignIn extends AppController
+final class SignIn
 {
     /**
-     * Initialisation du controleur.
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appAddAction('init');
-    }
+        add_action(
+            'init',
+            function () {
+                if ($signins = config('user.signin', [])) :
+                    foreach ($signins as $name => $attrs) :
+                        $this->register($name, $attrs);
+                    endforeach;
+                endif;
 
-    /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    final public function init()
-    {
-        // Déclaration des interfaces d'authentification configurées
-        if ($signins = $this->appConfig('signin', [], User::class)) :
-            foreach ($signins as $name => $attrs) :
-                $this->register($name, $attrs);
-            endforeach;
-        endif;
-
-        // Déclaration des interfaces d'authentification ponctuelles
-        do_action('tify_user_signin_register', $this);
+                do_action('tify_user_signin_register', $this);
+            }
+        );
     }
 
     /**
@@ -61,8 +53,8 @@ final class SignIn extends AppController
      */
     public function register($name, $attrs = [])
     {
-        $alias = "tfy.user.signin.{$name}";
-        if ($this->appServiceHas($alias)) :
+        $alias = "user.signin.{$name}";
+        if (app()->has($alias)) :
             return;
         endif;
 
@@ -70,13 +62,18 @@ final class SignIn extends AppController
         $controller = $attrs['controller'];
 
         try {
-            $concrete = new $controller($name, $attrs, $this);
-            $this->appServiceShare($alias, $concrete);
+            $resolved = new $controller($name, $attrs, $this);
+            app()->singleton(
+                $alias,
+                function () use ($resolved) {
+                    return $resolved;
+                }
+            );
         } catch(\InvalidArgumentException $e) {
             wp_die($e->getMessage(), '', $e->getCode());
         }
 
-        return $concrete;
+        return $resolved;
     }
 
     /**
@@ -88,13 +85,13 @@ final class SignIn extends AppController
      */
     public function get($name)
     {
-        $alias = "tfy.user.signin.{$name}";
+        $alias = "user.signin.{$name}";
 
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
+        if (app()->has($alias)) :
+            return app()->resolve($alias);
+        else :
+            return null;
         endif;
-
-        return null;
     }
 
     /**

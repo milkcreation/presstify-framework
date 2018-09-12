@@ -1,8 +1,8 @@
 <?php
 
-namespace tiFy\User\SignIn;
+namespace tiFy\Contracts\User;
 
-interface SignInItemInterface
+interface UserSignInItemInterface
 {
     /**
      * Vérification des droits d'authentification d'un utilisateur.

@@ -43,22 +43,12 @@ class PostQuery implements PostQueryInterface
         $posts = $wp_query->query($query_args);
 
         if ($posts) :
-            $items =  array_map([$this, 'get'], $posts);
+            $items =  array_map([$this, 'getItem'], $posts);
         else :
             $items = [];
         endif;
 
-        $controller = $this->getCollectionController();
-
-        return new $controller($items);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCollectionController()
-    {
-        return $this->collectionController;
+        return $this->resolveCollection($items);
     }
 
     /**
@@ -88,10 +78,14 @@ class PostQuery implements PostQueryInterface
             return null;
         endif;
 
-        $alias = 'tify.query.post.' . $post->ID;
-        if (! app()->has($alias)) :
-            $controller = $this->getItemController();
-            app()->singleton($alias, new $controller($post));
+        $alias = 'post_type.query.post.' . $post->ID;
+        if (!app()->has($alias)) :
+            app()->singleton(
+                $alias,
+                function() use ($post) {
+                    return $this->resolveItem($post);
+                }
+            );
         endif;
 
         return app()->resolve($alias);
@@ -127,17 +121,29 @@ class PostQuery implements PostQueryInterface
     /**
      * {@inheritdoc}
      */
-    public function getItemController()
+    public function getObjectName()
     {
-        return $this->itemController;
+        return $this->objectName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getObjectName()
+    public function resolveCollection($items)
     {
-        return $this->objectName;
+        $concrete = $this->collectionController;
+
+        return new $concrete($items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveItem($wp_post)
+    {
+        $concrete = $this->itemController;
+
+        return new $concrete($wp_post);
     }
 }
 

@@ -273,7 +273,7 @@ trait AppTrait
      */
     public function appTemplateRender($name, $args = [])
     {
-        return $this->appTemplateMake($name)->render($args);
+        return $this->appTemplateMake($name, $args)->render();
     }
 
     /**
