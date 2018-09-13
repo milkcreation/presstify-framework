@@ -1,11 +1,11 @@
 <?php
 /**
- * @var tiFy\Partial\PartialViewTemplate $this
+ * @var tiFy\Partial\PartialView $this
  */
 ?>
 
-<div <?php echo $this->htmlAttrs($this->get('attrs')); ?>>
+<div <?php $this->attrs(); ?>>
     <?php foreach($this->get('items', []) as $item) : ?>
-        <?php echo \partial('tag', $item); ?>
+        <?php echo partial('tag', $item); ?>
     <?php endforeach; ?>
 </div>

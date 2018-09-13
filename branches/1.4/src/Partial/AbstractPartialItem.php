@@ -7,8 +7,6 @@ use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialItemInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Tools;
-use tiFy\Partial\PartialServiceProvider;
-use tiFy\Partial\TemplateController;
 
 abstract class AbstractPartialItem implements PartialItemInterface
 {
@@ -39,14 +37,14 @@ abstract class AbstractPartialItem implements PartialItemInterface
     /**
      * CONSTRUCTEUR.
      *
+     * @param string $id Nom de qualification.
+     * @param array $attrs Liste des attributs de configuration.
+     *
      * @return void
      */
     public function __construct($id = null, $attrs = [])
     {
         if (is_null($id)) :
-            $id = Str::random(32);
-        elseif(is_array($id)) :
-            $attrs = $id;
             $id = isset($attrs['id']) ? $attrs['id'] : Str::random(32);
         endif;
 
@@ -60,13 +58,11 @@ abstract class AbstractPartialItem implements PartialItemInterface
     }
 
     /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function __toString()
     {
-        return $this->display();
+        return (string)$this->display();
     }
 
     /**
@@ -92,7 +88,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
      */
     public function attrs()
     {
-        echo Tools::Html()->parseAttrs($this->get('attrs', []), true);
+        echo $this->getHtmlAttrs($this->get('attrs', []));
     }
 
     /**
@@ -114,9 +110,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
     }
 
     /**
-     * Liste des attributs de configuration par défaut.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function defaults()
     {
@@ -138,7 +132,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
      */
     public function display()
     {
-        return $this->view()->render(
+        return $this->view(
             class_info($this)->getKebabName(),
             $this->all()
         );
@@ -149,7 +143,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
      */
     public function enqueue_scripts()
     {
-
+        return $this;
     }
 
     /**
@@ -158,6 +152,14 @@ abstract class AbstractPartialItem implements PartialItemInterface
     public function get($key, $default = null)
     {
         return Arr::get($this->attributes, $key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHtmlAttrs($attrs = [], $linearized = true)
+    {
+        return Tools::Html()->parseAttrs($attrs, $linearized);
     }
 
     /**
@@ -244,6 +246,27 @@ abstract class AbstractPartialItem implements PartialItemInterface
     /**
      * {@inheritdoc}
      */
+    public function push($key, $value)
+    {
+        if (!$this->has($key)) :
+            $this->set($key, []);
+        endif;
+
+        $arr = $this->get($key);
+
+        if (!is_array($arr)) :
+            return false;
+        else :
+            array_push($arr, $value);
+            $this->set($key, $arr);
+
+            return true;
+        endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function set($key, $value)
     {
         Arr::set($this->attributes, $key, $value);
@@ -268,7 +291,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
             $default_dir = class_info($this)->getDirname() . '/views';
             $this->view = view()
                 ->setDirectory(is_dir($default_dir) ? $default_dir : null)
-                ->setController(PartialViewTemplate::class)
+                ->setController(PartialView::class)
                 ->set('partial', $this);
         endif;
 

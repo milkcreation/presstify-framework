@@ -5,12 +5,13 @@
 ?>
 
 <?php foreach ($this->get('taxonomy', []) as $tax) : ?>
-    <?php tify_field_hidden(['name' => "tax_input[{$tax}][]", 'value' => '']); ?>
+    <?php echo field('hidden', ['name' => "tax_input[{$tax}][]", 'value' => '']); ?>
 <?php endforeach; ?>
 
 <?php if ($this->get('multiple', true)) : ?>
     <?php
-    tify_field_checkbox_collection(
+    echo field(
+        'checkbox-collection',
         [
             'items' => $this->get('items', []),
         ]
@@ -18,7 +19,8 @@
     ?>
 <?php else : ?>
     <?php
-    tify_field_radio_collection(
+    echo field(
+        'radio-collection'
         [
             'items' => $this->get('items', []),
         ]

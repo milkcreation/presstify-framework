@@ -1,9 +1,9 @@
 <?php
 /**
- * @var tiFy\Partial\PartialViewTemplate $this
+ * @var tiFy\Partial\PartialView $this
  */
 ?>
 
-<div <?php echo $html_attrs; ?>>
-    <?php echo $items; ?>
+<div <?php $this->attrs(); ?>>
+    <?php echo $this->get('items', ''); ?>
 </div>

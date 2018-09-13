@@ -6,8 +6,8 @@
 
 <p class="tiFySignIn-Part tiFySignIn-FormFieldContainer tiFySignIn-FormFieldContainer--username">
     <?php if ($label = $this->get('form.fields.username.label')) : ?>
-        <?php tify_field_label($label); ?>
+        <?php echo field('label', $label); ?>
     <?php endif; ?>
 
-    <?php tify_field_text($this->get('form.fields.username')); ?>
+    <?php echo field('text', $this->get('form.fields.username')); ?>
 </p>
