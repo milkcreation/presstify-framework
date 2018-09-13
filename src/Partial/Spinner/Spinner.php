@@ -48,7 +48,7 @@ class Spinner extends AbstractPartialItem
             function () {
                 \wp_register_style(
                     'PartialSpinner',
-                    \assets()->url('/partial/spinner/css/spinkit.min.css'),
+                    assets()->url('/partial/spinner/css/spinkit.min.css'),
                     [],
                     '1.2.5'
                 );
@@ -56,7 +56,7 @@ class Spinner extends AbstractPartialItem
                 foreach ($this->spinners as $spinner) :
                     \wp_register_style(
                         "PartialSpinner-{$spinner}",
-                        \assets()->url("/partial/spinner/css/{$spinner}.min.css"),
+                        assets()->url("/partial/spinner/css/{$spinner}.min.css"),
                         [],
                         '1.2.5'
                     );

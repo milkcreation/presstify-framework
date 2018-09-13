@@ -7,43 +7,46 @@
 ?>
 
 <?php if ($this->hasItems() || !empty($_REQUEST['s'])) : ?>
-<p class="search-box">
-    <?php
-        echo tify_field_label(
+    <p class="search-box">
+        <?php
+        echo field(
+            'label',
             [
-                'attrs' => [
+                'attrs'   => [
                     'class' => 'screen-reader-text',
-                    'for'   => $this->getName()
+                    'for'   => $this->getName(),
                 ],
-                'content' => $this->getLabel('search_items')
+                'content' => $this->getLabel('search_items'),
             ]
         );
-    ?>
+        ?>
 
-    <?php
-        echo tify_field_text(
+        <?php
+        echo field(
+            'text',
             [
                 'attrs' => [
                     'id'   => $this->getName(),
                     'type' => 'search',
                 ],
                 'name'  => 's',
-                'value' => isset($_REQUEST['s']) ? esc_attr(wp_unslash($_REQUEST['s'])) : ''
+                'value' => isset($_REQUEST['s']) ? esc_attr(wp_unslash($_REQUEST['s'])) : '',
             ]
         );
-    ?>
+        ?>
 
-    <?php
-        echo tify_field_button(
+        <?php
+        echo field(
+            'button',
             [
-                'attrs' => [
+                'attrs'   => [
                     'id'    => 'search-submit',
                     'class' => 'button',
-                    'type'  => 'submit'
+                    'type'  => 'submit',
                 ],
-                'content' => $this->getLabel('search_items')
+                'content' => $this->getLabel('search_items'),
             ]
         )
-    ?>
-</p>
+        ?>
+    </p>
 <?php endif; ?>

@@ -6,8 +6,8 @@
 
 <p class="tiFySignIn-Part tiFySignIn-FormFieldContainer tiFySignIn-FormFieldContainer--password">
     <?php if ($label = $this->get('form.fields.password.label')) : ?>
-        <?php tify_field_label($label); ?>
+        <?php echo field('label', $label); ?>
     <?php endif; ?>
 
-    <?php tify_field_password($this->get('form.fields.password')); ?>
+    <?php echo field('password', $this->get('form.fields.password')); ?>
 </p>

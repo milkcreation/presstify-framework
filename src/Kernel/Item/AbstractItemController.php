@@ -81,7 +81,15 @@ abstract class AbstractItemController implements ItemInterface
     /**
      * {@inheritdoc}
      */
-    public function push($value, $key)
+    public function pull($key, $default = null)
+    {
+        return Arr::pull($this->attributes, $key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function push($key, $value)
     {
         if (!$this->has($key)) :
             $this->set($key, []);
@@ -102,9 +110,11 @@ abstract class AbstractItemController implements ItemInterface
     /**
      * {@inheritdoc}
      */
-    public function pull($key, $default = null)
+    public function set($key, $value = null)
     {
-        return Arr::pull($this->attributes, $key, $default);
+        Arr::set($this->attributes, $key, $value);
+
+        return $this;
     }
 
     /**
@@ -126,16 +136,6 @@ abstract class AbstractItemController implements ItemInterface
 
             return true;
         endif;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function set($key, $value = null)
-    {
-        Arr::set($this->attributes, $key, $value);
-
-        return $this;
     }
 
     /**

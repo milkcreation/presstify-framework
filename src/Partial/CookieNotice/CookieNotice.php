@@ -59,7 +59,7 @@ class CookieNotice extends AbstractPartialItem
 
                 \wp_register_script(
                     'PartialCookieNotice',
-                    \assets()->url('/partial/cookie-notice/js/scripts.js'),
+                    assets()->url('/partial/cookie-notice/js/scripts.js'),
                     ['PartialNotice'],
                     170626,
                     true

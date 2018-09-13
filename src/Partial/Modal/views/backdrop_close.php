@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Partial\PartialViewTemplate $this
+ * @var tiFy\Partial\PartialView $this
  */
 ?>
 

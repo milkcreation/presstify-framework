@@ -2,8 +2,6 @@
 
 namespace tiFy\Partial;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
 use tiFy\App\Container\AppServiceProvider;
 use tiFy\Contracts\Partial\PartialItemInterface;
 use tiFy\Partial\Partial;
@@ -83,7 +81,11 @@ class PartialServiceProvider extends AppServiceProvider
             $this->getContainer()->setAlias($alias, $concrete);
         endforeach;
 
-        $this->app->resolve(Partial::class, [$this->app]);
+        $this->app->singleton(
+            Partial::class,
+            function() {
+                return new Partial();
+            });
 
         add_action(
             'after_setup_theme',
@@ -100,21 +102,6 @@ class PartialServiceProvider extends AppServiceProvider
                 endforeach;
             }
         );
-    }
-
-    /**
-     * Récupération de l'instance d'un élément.
-     *
-     * @param string $name Nom de qualification de l'élément.
-     * @param array $args Liste des variables passées en argument au moment de l'instanciation.
-     *
-     * @return PartialItemInterface
-     */
-    public function get($name, $args = [])
-    {
-        $alias = 'partial.' . Str::kebab($name);
-
-        return $this->app->resolve($alias, [$args]);
     }
 
     /**

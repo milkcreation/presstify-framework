@@ -1,11 +1,12 @@
 <?php
 /**
- * @var tiFy\Partial\PartialViewTemplate $this
+ * @var tiFy\Partial\PartialView $this
  */
 ?>
 
 <?php
-tify_partial_notice(
+echo partial(
+    'notice',
     [
         'attrs'   => $attrs,
         'content' => $content . $accept,
