@@ -28,18 +28,18 @@ interface PartialItemInterface
     public function attrs();
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    public function boot();
-
-    /**
      * Affichage du contenu placé avant le champ
      *
      * @return void
      */
     public function before();
+
+    /**
+     * Initialisation du controleur.
+     *
+     * @return void
+     */
+    public function boot();
 
     /**
      * Affichage du contenu de la balise champ.
@@ -127,6 +127,16 @@ interface PartialItemInterface
      * @return mixed
      */
     public function pull($key, $default = null);
+
+    /**
+     * Insertion d'un attribut à la fin d'une liste d'attributs.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $value Valeur de l'attribut.
+     *
+     * @return mixed
+     */
+    public function push($key, $value);
 
     /**
      * Définition d'un attribut de configuration.

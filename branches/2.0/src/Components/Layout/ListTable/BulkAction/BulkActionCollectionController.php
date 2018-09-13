@@ -5,7 +5,7 @@ namespace tiFy\Components\Layout\ListTable\BulkAction;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemController;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Field\Field;
-use tiFy\Field\FieldOptions\FieldOptionsItemController;
+use tiFy\Field\FieldOptionsItemController;
 
 class BulkActionCollectionController implements BulkActionCollectionInterface
 {

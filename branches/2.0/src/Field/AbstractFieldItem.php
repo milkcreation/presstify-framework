@@ -5,14 +5,20 @@ namespace tiFy\Field;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use tiFy\App\AppController;
+use tiFy\Contracts\Field\FieldItemInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Field\Field;
-use tiFy\Field\FieldOptions\FieldOptionsCollectionController;
-use tiFy\Field\TemplateController;
+use tiFy\Field\FieldOptionsCollectionController;
 use tiFy\Kernel\Tools;
 
-abstract class AbstractFieldItem extends AppController implements FieldItemInterface
+abstract class AbstractFieldItem implements FieldItemInterface
 {
+    /**
+     * Liste des attributs de configuration.
+     * @var array
+     */
+    protected $attributes = [];
+
     /**
      * Identifiant de qualification du champ.
      * @var string
@@ -26,97 +32,40 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     protected $index = 0;
 
     /**
-     * Liste des attributs de configuration.
-     * @var array
+     * Instance du moteur de gabarits d'affichage.
+     * @return ViewsInterface
      */
-    protected $attributes = [];
+    protected $view;
 
     /**
-     * Court-circuitage de l'intanciation.
+     * CONSTRUCTEUR.
      *
-     * @return void
-     */
-    private function __construct()
-    {
-        $field = $this->appServiceGet(Field::class);
-
-        if (! $field->existsInstance(get_called_class())) :
-            $field->setInstance(get_called_class(), Str::random(32), $this);
-            $this->boot();
-        endif;
-    }
-
-    /**
-     * Court-circuitage de l'implémentation
-     *
-     * @return void
-     */
-    protected function __clone()
-    {
-
-    }
-
-    /**
-     * Court-circuitage de l'implémentation
-     *
-     * @return void
-     */
-    protected function __wakeup()
-    {
-
-    }
-
-    /**
-     * Instanciation.
-     *
-     * @param string $id Identifiant de qualification du controleur (Optionel).
+     * @param string $id Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
      *
-     * @return $this
-     */
-    public function __invoke($id = null, $attrs = [])
-    {
-        if (is_null($id)) :
-            $id = Str::random(32);
-        elseif(is_array($id)) :
-            $attrs = $id;
-            $id = Str::random(32);
-        endif;
-
-        $field = $this->appServiceGet(Field::class);
-        if (!$instance = $field->getInstance(get_called_class(), $id)) :
-            $instance = $this;
-            $count = $field->countInstance(get_called_class());
-            $this->id = $id;
-            $this->index = $count++;
-            $this->parse($attrs);
-
-            $field->setInstance(get_called_class(), $instance->getId(), $instance);
-        endif;
-
-        return $instance;
-    }
-
-    /**
-     * Création d'une instance du controleur.
-     *
-     * @return static
-     */
-    final public static function make()
-    {
-        return new static();
-    }
-
-    /**
-     * Initialisation du controleur.
-     *
      * @return void
      */
-    final protected function boot()
+    public function __construct($id = null, $attrs = [])
     {
-        if (method_exists($this, 'init')) :
-            $this->appAddAction('init');
+        if (is_null($id)) :
+            $id = isset($attrs['id']) ? $attrs['id'] : Str::random(32);
         endif;
+
+        $this->id = $id;
+
+        /** @var FieldServiceProvider $serviceProvider */
+        $serviceProvider = app(FieldServiceProvider::class);
+        $this->index = $serviceProvider->setInstance($this);
+
+        $this->index ? $this->parse($attrs) : $this->boot();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return $this->display();
     }
 
     /**
@@ -142,7 +91,7 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
      */
     public function attrs()
     {
-        echo $this->parseHtmlAttrs($this->get('attrs', []));
+        echo $this->getHtmlAttrs($this->get('attrs', []));
     }
 
     /**
@@ -152,24 +101,15 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     {
         $before = $this->get('before', '');
 
-        echo is_callable($before) ? call_user_func($before) : $before;
+        echo $this->isCallable($before) ? call_user_func($before) : $before;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function compact($keys = [])
+    public function boot()
     {
-        if (empty($keys)) :
-            return $this->all();
-        endif;
 
-        $attrs = [];
-        foreach ($keys as $key) :
-            $attrs[$key] = $this->get($key);
-        endforeach;
-
-        return $attrs;
     }
 
     /**
@@ -179,7 +119,15 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     {
         $content = $this->get('content', '');
 
-        echo is_callable($content) ? call_user_func($content) : $content;
+        echo $this->isCallable($content) ? call_user_func($content) : $content;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [];
     }
 
     /**
@@ -187,7 +135,10 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
      */
     public function display()
     {
-        return $this->appTemplateRender($this->appLowerName(), $this->all());
+        return (string)$this->view(
+            class_info($this)->getKebabName(),
+            $this->all()
+        );
     }
 
     /**
@@ -209,17 +160,9 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     /**
      * {@inheritdoc}
      */
-    public function getAttr($key, $default = '')
+    public function getHtmlAttrs($attrs = [], $linearized = true)
     {
-        return Arr::get($this->attributes, "attrs.{$key}", $default);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAttrs()
-    {
-        return Tools::Html()->parseAttrs($this->get('attrs', []), false);
+        return Tools::Html()->parseAttrs($attrs, $linearized);
     }
 
     /**
@@ -251,7 +194,7 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
      */
     public function getOptions()
     {
-        return $this->appServiceGet('tify.field.item.field_options.collection.' . $this->getId());
+        return app()->resolve('field.item.field_options.collection.' . $this->getId());
     }
 
     /**
@@ -273,9 +216,9 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     /**
      * {@inheritdoc}
      */
-    public function hasAttr($key)
+    public function isCallable($var)
     {
-        return Arr::has($this->attributes, "attrs.{$key}");
+        return Tools::Functions()->isCallable($var);
     }
 
     /**
@@ -287,7 +230,7 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
             return true;
         endif;
 
-        if (!$this->hasAttr('value')) :
+        if (!$this->has('attrs.value')) :
             return false;
         endif;
 
@@ -297,17 +240,9 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     /**
      * {@inheritdoc}
      */
-    public function keys()
-    {
-        return array_keys($this->attributes);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function options()
     {
-        echo $this->appServiceGet('tify.field.item.field_options.collection.' . $this->getId());
+        echo $this->getOptions();
     }
 
     /**
@@ -316,55 +251,42 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     public function parse($attrs = [])
     {
         $this->attributes = array_merge(
+            $this->defaults(),
             $this->attributes,
             $attrs
         );
 
-        $this->parseName();
-        $this->parseValue();
-        $this->parseId();
-        $this->parseClass();
-        $this->parseTemplates();
+        $this->parseDefaults();
     }
 
     /**
-     * Traitement de l'attribut de configuration de l'attribut HTML "class".
+     * Traitement de la liste des attributs par défaut.
      *
      * @return void
      */
-    protected function parseClass()
-    {
-        $this->set(
-            'attrs.class',
-            sprintf($this->get('attrs.class', '%s'), "tiFyField-{$this->appShortname()}")
-        );
-    }
-
-    /**
-     * Traitement d'une liste d'attributs HTML.
-     *
-     * @param array $attrs Liste des attributs HTML.
-     * @param bool $linearized Activation de la linéarisation.
-     *
-     * @return string
-     */
-    protected function parseHtmlAttrs($attrs = [], $linearized = true)
-    {
-        return Tools::Html()->parseAttrs($attrs, $linearized);
-    }
-
-    /**
-     * Traitement de l'attribut de configuration de l'attribut HTML "id".
-     *
-     * @return void
-     */
-    protected function parseId()
+    protected function parseDefaults()
     {
         $this->set(
             'attrs.id',
-            $this->get('attrs.id')
-                ? : "tiFyField-{$this->appShortname()}--{$this->getIndex()}"
+            $this->get('attrs.id', '')
+                ?: 'tiFyField-' . class_info($this)->getShortName() . '-' . $this->getId()
         );
+
+        $this->set(
+            'attrs.class',
+            sprintf(
+                $this->get('attrs.class', '%s'),
+                'tiFyField-' . class_info($this)->getShortName() .
+                ' tiFyField-' . class_info($this)->getShortName() . '--' . $this->getIndex()
+            )
+        );
+
+        $this->parseName();
+        $this->parseValue();
+
+        foreach($this->get('view', []) as $key => $value) :
+            $this->view()->set($key, $value);
+        endforeach;
     }
 
     /**
@@ -398,42 +320,19 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
      */
     protected function parseOptions()
     {
-        $optionsCollection = new FieldOptionsCollectionController($this->get('options', []));
-        $this->appServiceAdd('tify.field.item.field_options.collection.' . $this->getId(), $optionsCollection);
+        $resolved = app()->singleton(
+            'field.item.field_options.collection.' . $this->getId(),
+            function() {
+                return new FieldOptionsCollectionController($this->get('options', []));
+            }
+        )->build();
 
-        $optionsCollection->init();
-        foreach($optionsCollection as $item) :
+        $resolved->init();
+        foreach($resolved as $item) :
             if (!$item->isGroup() && in_array($item->getValue(), $this->getValue(), true)) :
                 $item->push('selected', 'attrs');
             endif;
         endforeach;
-    }
-
-    /**
-     * Traitement des l'attributs de configuration du controleur de templates.
-     *
-     * @param array $attrs {
-     *      Liste des attributs de template personnalisés.
-     *
-     *      @var string $directory Répertoire principal de stockage des templates.
-     *      @var string|callable $controller Classe de rappel du controleur de template.
-     * }
-     * @return array
-     */
-    protected function parseTemplates($attrs = [])
-    {
-        $this->set(
-            'templates',
-            array_merge(
-                [
-                    'directory'  => $this->appDirname() . '/templates',
-                    'controller' => TemplateController::class
-                ],
-                $attrs ? : $this->get('templates', [])
-            )
-        );
-
-        $this->appTemplates($this->get('templates'));
     }
 
     /**
@@ -442,6 +341,27 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     public function pull($key, $default = null)
     {
         return  Arr::pull($this->attributes, $key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function push($key, $value)
+    {
+        if (!$this->has($key)) :
+            $this->set($key, []);
+        endif;
+
+        $arr = $this->get($key);
+
+        if (!is_array($arr)) :
+            return false;
+        else :
+            array_push($arr, $value);
+            $this->set($key, $arr);
+
+            return true;
+        endif;
     }
 
     /**
@@ -457,32 +377,28 @@ abstract class AbstractFieldItem extends AppController implements FieldItemInter
     /**
      * {@inheritdoc}
      */
-    public function setAttr($key, $value = null)
-    {
-        if(is_null($value)) :
-            Arr::set($this->attributes, 'attrs', $this->get('attrs', [])+[$key]);
-        else :
-            Arr::set($this->attributes, "attrs.{$key}", $value);
-        endif;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function values()
     {
         return array_values($this->attributes);
     }
 
     /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function __toString()
+    public function view($view = null, $data = [])
     {
-        return $this->display();
+        if (!$this->view) :
+            $default_dir = class_info($this)->getDirname() . '/views';
+            $this->view = view()
+                ->setDirectory(is_dir($default_dir) ? $default_dir : null)
+                ->setController(FieldView::class)
+                ->set('field', $this);
+        endif;
+
+        if (func_num_args() === 0) :
+            return $this->view;
+        endif;
+
+        return $this->view->make($view, $data);
     }
 }

@@ -6,10 +6,10 @@
 
 <?php if ($this->get('form.fields.remember')) : ?>
 <p class="tiFySignIn-Part tiFySignIn-FormFieldContainer tiFySignIn-FormFieldContainer--remember">
-    <?php tify_field_checkbox($this->get('form.fields.remember')); ?>
+    <?php echo field('checkbox', $this->get('form.fields.remember')); ?>
 
     <?php if ($label = $this->get('form.fields.remember.label')) : ?>
-        <?php tify_field_label($label); ?>
+        <?php echo field('label', $label); ?>
     <?php endif; ?>
 </p>
 <?php endif; ?>
