@@ -17,4 +17,4 @@ router: true
 display: true
 
 # @var bool $enqueue_scripts Activation de la mise en file automatique des scripts (CSS+JS) sur toutes les pages du site
-enqueue_scripts: true
+wp_enqueue_scripts: true
