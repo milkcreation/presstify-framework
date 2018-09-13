@@ -51,13 +51,13 @@ class Navtabs extends AbstractPartialItem
                 // Déclaration des scripts
                 \wp_register_style(
                     'PartialNavtabs',
-                    \assets()->url('/partial/navtabs/css/styles.css'),
+                    assets()->url('/partial/navtabs/css/styles.css'),
                     [],
                     170704
                 );
                 \wp_register_script(
                     'PartialNavtabs',
-                    \assets()->url('/partial/navtabs/js/scripts.js'),
+                    assets()->url('/partial/navtabs/js/scripts.js'),
                     ['jquery-ui-widget'],
                     170704,
                     true
@@ -123,16 +123,15 @@ class Navtabs extends AbstractPartialItem
      */
     public function display()
     {
-        return $this->view()
-            ->render(
-                'navtabs',
-                [
-                    'html_attrs' => Tools::Html()->parseAttrs($this->get('attrs', [])),
-                    'items'      => Walker::display(
-                        $this->get('nodes', []),
-                        $this->get('options')
-                    )
-                ]
-            );
+        return $this->view(
+            'navtabs',
+            [
+                'attrs' => Tools::Html()->parseAttrs($this->get('attrs', [])),
+                'items'      => Walker::display(
+                    $this->get('nodes', []),
+                    $this->get('options')
+                )
+            ]
+        );
     }
 }

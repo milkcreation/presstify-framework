@@ -48,13 +48,13 @@ class Modal extends AbstractPartialItem
             function () {
                 \wp_register_style(
                     'PartialModal',
-                    \assets()->url('/partial/modal/css/styles.css'),
+                    assets()->url('/partial/modal/css/styles.css'),
                     [],
                     171206
                 );
                 \wp_register_script(
                     'PartialModal',
-                    \assets()->url('/partial/modal/js/scripts.js'),
+                    assets()->url('/partial/modal/js/scripts.js'),
                     ['jquery'],
                     171206,
                     true
@@ -194,12 +194,12 @@ class Modal extends AbstractPartialItem
             add_action(
                 (!is_admin() ? 'wp_footer' : 'admin_footer'),
                 function () {
-                   echo $this->view('modal', $this->all());
+                   echo parent::display();
                 }
             );
             return '';
         else :
-            return $this->view('modal', $this->all());
+            return parent::display();
         endif;
     }
     

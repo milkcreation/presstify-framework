@@ -79,7 +79,7 @@ class ModalTrigger extends AbstractPartialItem
      */
     public function display()
     {
-        return (string)Partial::Tag(
+        return Partial::Tag(
                 [
                     'tag'     => $this->get('tag'),
                     'attrs'   => $this->get('attrs'),

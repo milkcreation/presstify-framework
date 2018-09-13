@@ -1,11 +1,12 @@
 <?php
 /**
- * @var tiFy\Partial\PartialViewTemplate $this
+ * @var tiFy\Partial\PartialView $this
  */
 ?>
 
 <?php
-tify_partial_tag(
+echo partial(
+    'tag',
     [
         'tag'     => 'div',
         'attrs'   => $this->get('attrs', []),

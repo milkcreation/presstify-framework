@@ -6,32 +6,34 @@
 
 <?php echo $this->formBefore(); ?>
 
-<form <?php $this->attrs(); ?>>
+    <form <?php $this->attrs(); ?>>
 
-    <?php
-        tify_field_hidden(
+        <?php
+        echo field(
+            'hidden',
             [
-                'name' => 'tiFySignIn',
-                'value' => $this->get('name')
+                'name'  => 'tiFySignIn',
+                'value' => $this->get('name'),
             ]
         );
-    ?>
+        ?>
 
-    <?php
-        tify_field_hidden(
+        <?php
+        echo field(
+            'hidden',
             [
-                'name' => '_wpnonce',
-                'value' => \wp_create_nonce('tiFySignIn-in-' . $this->get('name'))
+                'name'  => '_wpnonce',
+                'value' => \wp_create_nonce('tiFySignIn-in-' . $this->get('name')),
             ]
         );
-    ?>
+        ?>
 
-    <?php echo $this->formHeader(); ?>
+        <?php echo $this->formHeader(); ?>
 
-    <?php echo $this->formBody(); ?>
+        <?php echo $this->formBody(); ?>
 
-    <?php echo $this->formFooter(); ?>
+        <?php echo $this->formFooter(); ?>
 
-</form>
+    </form>
 
 <?php echo $this->formAfter(); ?>

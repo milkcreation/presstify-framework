@@ -12,7 +12,6 @@ namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\App\Dependency\AbstractAppDependency;
 use tiFy\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Partial\CookieNotice\CookieNotice;
 use tiFy\Partial\HolderImage\HolderImage;
@@ -39,38 +38,42 @@ use tiFy\Partial\Tag\Tag;
  * @method static Table Table(string $id = null,array $attrs = [])
  * @method static Tag Tag(string $id = null,array $attrs = [])
  */
-class Partial extends AbstractAppDependency
+final class Partial
 {
     /**
-     * Récupération statique d'un controleur d'affichage.
+     * Récupération statique du controleur d'affichage.
      *
-     * @param string $name Nom de qualification du controleur d'affichage.
-     * @param array $args {
-     *      Liste des attributs de configuration.
-     *
-     *      @var array $attrs Attributs de configuration du champ.
-     *      @var bool $echo Activation de l'affichage du champ.
+     * @param string $name Nom de qualification.
+     * @param array $args Liste des variables passées en arguments.
      *
      * @return null|callable
      */
-    public static function __callStatic($name, $attrs)
+    public static function __callStatic($name, $args)
     {
-        /** @var PartialServiceProvider $serviceProvider */
-        $serviceProvider = app(PartialServiceProvider::class);
+        array_unshift($args, $name);
 
-        array_unshift($attrs, $name);
-
-        return call_user_func_array([$serviceProvider, 'get'], $attrs);
+        return call_user_func_array([app(Partial::class), 'get'], $args);
     }
 
     /**
+     * Récupération de l'instance d'un champ déclaré.
      *
+     * @param string $name Nom de qualification de l'élément.
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return FieldItemInterface
      */
     public function get($name, $attrs = [])
     {
-        /** @var PartialServiceProvider $serviceProvider */
-        $serviceProvider = $this->app(PartialServiceProvider::class);
+        $alias = 'partial.' . Str::kebab($name);
 
-        return $serviceProvider->get($name, $attrs);
+        if (!is_array($attrs)) :
+            $id = $attrs;
+            $attrs = func_get_arg(2) ? : [];
+        else :
+            $id = null;
+        endif;
+
+        return app()->resolve($alias, [$id, $attrs]);
     }
 }
