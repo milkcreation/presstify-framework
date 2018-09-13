@@ -54,7 +54,7 @@ class CookieLaw extends \tiFy\App\Set
         // Déclaration des scripts
         \wp_register_style(
             'tiFySet_CookieLaw',
-            self::tFyAppAssetsUrl('CookieLaw.css', get_class()),
+            $this->appAssetUrl('CookieLaw/css/styles.css'),
             ['dashicons'],
             141118
         );
@@ -92,7 +92,7 @@ class CookieLaw extends \tiFy\App\Set
      */
     public function wp_enqueue_scripts()
     {
-        if(self::tFyAppConfig('enqueue_scripts', true)) :
+        if(self::tFyAppConfig('wp_enqueue_scripts', true)) :
             self::enqueue_scripts();
         endif;
     }

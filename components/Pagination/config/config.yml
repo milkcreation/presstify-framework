@@ -27,3 +27,5 @@ query:        false
 per_page:     0
 ## Numéro de la page courante
 paged:        0
+
+wp_enqueue_scripts: true

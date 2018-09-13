@@ -11,4 +11,4 @@ before:           ''
 after:            ''
 
 # Mise en file automatique des scripts
-enqueue_scripts:  true
+wp_enqueue_scripts:  true

@@ -53,7 +53,7 @@ class Breadcrumb extends Component
         // Déclaration des scripts
         wp_register_style(
             'tiFyComponents-breadcrumb',
-            self::tFyAppAssetsUrl('Breadcrumb.css', get_class()),
+            $this->appAssetUrl('Breadcrumb/css/components.css'),
             [],
             160318
         );
@@ -66,7 +66,7 @@ class Breadcrumb extends Component
      */
     final public function wp_enqueue_scripts()
     {
-        if (self::tFyAppConfig('enqueue_scripts')) :
+        if (self::tFyAppConfig('wp_enqueue_scripts')) :
             wp_enqueue_style('tiFyComponents-breadcrumb');
         endif;
     }
