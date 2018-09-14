@@ -35,7 +35,7 @@ abstract class AbstractFieldItem implements FieldItemInterface
      * Instance du moteur de gabarits d'affichage.
      * @return ViewsInterface
      */
-    protected $view;
+    protected $viewer;
 
     /**
      * CONSTRUCTEUR.
@@ -135,7 +135,7 @@ abstract class AbstractFieldItem implements FieldItemInterface
      */
     public function display()
     {
-        return $this->view(
+        return $this->viewer(
             class_info($this)->getKebabName(),
             $this->all()
         );
@@ -251,8 +251,8 @@ abstract class AbstractFieldItem implements FieldItemInterface
     public function parse($attrs = [])
     {
         $this->attributes = array_merge(
-            $this->defaults(),
             $this->attributes,
+            $this->defaults(),
             $attrs
         );
 
@@ -285,7 +285,7 @@ abstract class AbstractFieldItem implements FieldItemInterface
         $this->parseValue();
 
         foreach($this->get('view', []) as $key => $value) :
-            $this->view()->set($key, $value);
+            $this->viewer()->set($key, $value);
         endforeach;
     }
 
@@ -385,20 +385,26 @@ abstract class AbstractFieldItem implements FieldItemInterface
     /**
      * {@inheritdoc}
      */
-    public function view($view = null, $data = [])
+    public function viewer($view = null, $data = [])
     {
-        if (!$this->view) :
-            $default_dir = class_info($this)->getDirname() . '/views';
-            $this->view = view()
+        if (!$this->viewer) :
+            $cinfo = class_info($this);
+            $default_dir = $cinfo->getDirname() . '/views';
+            $this->viewer = view()
                 ->setDirectory(is_dir($default_dir) ? $default_dir : null)
                 ->setController(FieldView::class)
+                ->setOverrideDir(
+                    (($override_dir = $this->get('viewer.override_dir')) && is_dir($override_dir))
+                        ? $override_dir
+                        : (is_dir($default_dir) ? $default_dir : $cinfo->getDirname())
+                )
                 ->set('field', $this);
         endif;
 
         if (func_num_args() === 0) :
-            return $this->view;
+            return $this->viewer;
         endif;
 
-        return $this->view->make($view, $data);
+        return $this->viewer->make("_override::{$view}", $data);
     }
 }

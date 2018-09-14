@@ -133,7 +133,20 @@ class Engine extends LeaguePlatesEngine implements ViewsInterface
             case 'ext' :
                 $this->setFileExtension($value);
                 break;
+            case 'override_dir' :
+                $this->setOverrideDir($value);
+                break;
         endswitch;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOverrideDir($dir)
+    {
+        $this->addFolder('_override', $dir, true);
 
         return $this;
     }

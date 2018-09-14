@@ -6,7 +6,7 @@
 
 <?php $this->before(); ?>
 
-<div <?php echo $this->htmlAttrs($this->get('container.attrs', [])); ?>>
+<div <?php $this->attrs() ?>>
     <ul class="tiFyField-RepeaterItems" aria-control="items">
         <?php foreach ($this->get('value', []) as $index => $value) : ?>
             <?php

@@ -224,6 +224,15 @@ interface ViewsInterface
     public function setFileExtension($fileExtension);
 
     /**
+     * Définition du repertoire de surcharge des gabarits d'affichages.
+     *
+     * @param resource $dir Chemin absolu vers le répertoire de surcharge.
+     *
+     * @return self
+     */
+    public function setOverrideDir($dir);
+
+    /**
      * Déclaration d'une fonction (macro) instanciable dans les gabarits d'affichage.
      *
      * @param string $name Nom de qualification (d'appel dans les gabarits) de la fonction.

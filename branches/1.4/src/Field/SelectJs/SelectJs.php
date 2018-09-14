@@ -329,8 +329,8 @@ class SelectJs extends AbstractFieldItem
                     ? call_user_func($parse_item_cb, $item)
                     : $this->parseItem($item);
 
-                $item['selected_render'] = $this->view('selected-item', $item);
-                $item['picker_render'] = $this->view('picker-item', $item);
+                $item['selected_render'] = $this->viewer('selected-item', $item);
+                $item['picker_render'] = $this->viewer('picker-item', $item);
 
                 $items[] = new FieldOptionsItemController($item['index'], $item);
             endwhile;
@@ -359,8 +359,8 @@ class SelectJs extends AbstractFieldItem
         foreach ($options as $option) :
             $option->set('index', $index++);
             $option->set('disabled', $option->isDisabled() ? 'true' : 'false');
-            $option->set('selected_render', $this->view('selected-item', $option->all()));
-            $option->set('picker_render', $this->view('picker-item', $option->all()));
+            $option->set('selected_render', $this->viewer('selected-item', $option->all()));
+            $option->set('picker_render', $this->viewer('picker-item', $option->all()));
         endforeach;
 
         return $options->all();

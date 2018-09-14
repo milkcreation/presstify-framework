@@ -1,6 +1,7 @@
 <?php
 /**
  * @var tiFy\Field\FieldView $this
+ * @var int $index
  */
 ?>
 

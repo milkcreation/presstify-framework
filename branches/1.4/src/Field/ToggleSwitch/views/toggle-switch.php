@@ -5,7 +5,6 @@
 ?>
 
 <?php $this->before(); ?>
-
     <div <?php $this->attrs(); ?>>
         <div class="tiFyField-ToggleSwitchWrapper">
             <?php
