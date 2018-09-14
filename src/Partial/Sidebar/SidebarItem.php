@@ -5,7 +5,7 @@ namespace tiFy\Partial\Sidebar;
 use tiFy\Kernel\Item\AbstractItemIterator;
 use tiFy\Kernel\Tools;
 
-class SidebarItemController extends AbstractItemIterator
+class SidebarItem extends AbstractItemIterator
 {
     /**
      * {@inheritdoc}
