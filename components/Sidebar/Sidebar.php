@@ -118,6 +118,11 @@ class Sidebar extends \tiFy\App\Component
      */
     final public function wp_head()
     {
+        // Bypass
+        if (!self::tFyAppConfig('enqueue_scripts')) {
+            return;
+        }
+
         ?>
         <style type="text/css">
             .tiFySidebar {

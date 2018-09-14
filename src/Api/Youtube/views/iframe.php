@@ -11,6 +11,8 @@
             src="<?php echo $this->get('src'); ?>"
             frameborder="0"
             allow="autoplay; encrypted-media"
+        <?php if ($this->get('params.fs')) : ?>
             allowfullscreen
+        <?php endif; ?>
     ></iframe>
 </div>

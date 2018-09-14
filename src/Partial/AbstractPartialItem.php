@@ -200,8 +200,8 @@ abstract class AbstractPartialItem implements PartialItemInterface
     public function parse($attrs = [])
     {
         $this->attributes = array_merge(
-            $this->defaults(),
             $this->attributes,
+            $this->defaults(),
             $attrs
         );
 

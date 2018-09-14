@@ -115,6 +115,6 @@ class RadioItem extends AbstractAppItemController
      */
     public function __toString()
     {
-        return (string)$this->view('item', $this->all());
+        return (string)$this->viewer('item', $this->all());
     }
 }
