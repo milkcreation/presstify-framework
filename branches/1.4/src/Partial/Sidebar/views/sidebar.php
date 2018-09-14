@@ -8,12 +8,11 @@
 
 <div <?php echo $this->attrs(); ?>>
 
-    <?php echo $this->toggle(); ?>
+    <?php !$this->get('toggle') ? : $this->insert('toggle', $this->all()); ?>
 
     <div class="tiFyPartial-SidebarPanel">
-        <div class="tiFyPartial-SidebarHeader">
-            <?php echo $this->header(); ?>
-        </div>
+
+        <?php !$this->get('header') ? : $this->insert('header', $this->all()); ?>
 
         <div class="tiFyPartial-SidebarBody">
             <?php if ($items = $this->get('items', [])) : ?>
@@ -25,9 +24,7 @@
             <?php endif; ?>
         </div>
 
-        <div class="tiFyPartial-SidebarFooter">
-            <?php echo $this->footer(); ?>
-        </div>
+        <?php !$this->get('footer') ? : $this->insert('footer', $this->all()); ?>
     </div>
 </div>
 
