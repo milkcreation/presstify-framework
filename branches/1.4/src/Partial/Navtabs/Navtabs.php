@@ -25,7 +25,7 @@ class Navtabs extends AbstractPartialItem
      */
     protected $attributes = [
         'attrs' => [],
-        'nodes' => [],
+        'items' => [],
         'options' => [
             'prefix' => 'tiFyPartial-Navtabs'
         ]
@@ -123,12 +123,12 @@ class Navtabs extends AbstractPartialItem
      */
     public function display()
     {
-        return $this->view(
+        return $this->viewer(
             'navtabs',
             [
-                'attrs' => Tools::Html()->parseAttrs($this->get('attrs', [])),
+                'attrs'      => $this->get('attrs', []),
                 'items'      => Walker::display(
-                    $this->get('nodes', []),
+                    $this->get('items', []),
                     $this->get('options')
                 )
             ]

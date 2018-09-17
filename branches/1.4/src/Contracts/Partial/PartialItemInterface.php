@@ -87,6 +87,16 @@ interface PartialItemInterface
     public function get($key, $default = null);
 
     /**
+     * Traitement d'une liste d'attributs HTML.
+     *
+     * @param array $attrs Liste des attributs HTML.
+     * @param bool $linearized Activation de la linéarisation.
+     *
+     * @return string
+     */
+    public function getHtmlAttrs($attrs = [], $linearized = true);
+
+    /**
      * Récupération de l'identifiant de qualification du controleur.
      *
      * @return string
@@ -172,5 +182,5 @@ interface PartialItemInterface
      *
      * @return ViewsInterface
      */
-    public function view($view = null, $data = []);
+    public function viewer($view = null, $data = []);
 }
