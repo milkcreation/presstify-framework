@@ -789,7 +789,7 @@ final class Apps
         endif;
 
         /// Définition de l'environnement de surcharge
-        if ($app = $config['app']) :
+        /*if ($app = $config['app']) :
             // Espace de nom
             if (! isset($app['namespace'])) :
                 $app['namespace'] = 'App';
@@ -825,7 +825,7 @@ final class Apps
             endforeach;
 
             $config['app'] = $app;
-        endif;
+        endif;*/
 
         // Enregistrement de la configuration globale de PresstiFy
         foreach ($config as $key => $value) :
@@ -1109,6 +1109,7 @@ final class Apps
                 $OverrideNamespace = preg_replace('#^\\\?tiFy\\\#', '', $attrs['Namespace']);
                 break;
         endswitch;
+
         self::setAttrList(compact('OverrideNamespace'), $classname);
     }
 

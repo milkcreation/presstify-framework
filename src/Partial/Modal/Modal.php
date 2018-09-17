@@ -114,7 +114,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($backdrop_close)
                     ? $backdrop_close
-                    : $this->view('backdrop_close', $this->all())
+                    : $this->viewer('backdrop_close', $this->all())
                 );
             $this->set('backdrop_close', $backdrop_close);
         endif;
@@ -125,7 +125,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($body)
                     ? $body
-                    : $this->view('body', $this->all())
+                    : $this->viewer('body', $this->all())
                 );
             $this->set('body', $body);
         endif;
@@ -136,7 +136,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($footer)
                     ? $footer
-                    : $this->view('footer', $this->all())
+                    : $this->viewer('footer', $this->all())
                 );
             $this->set('footer', $footer);
         endif;
@@ -147,7 +147,7 @@ class Modal extends AbstractPartialItem
                 : (
                 is_string($header)
                     ? $header
-                    : $this->view('header', $this->all())
+                    : $this->viewer('header', $this->all())
                 );
 
             $this->set('header', $header);
@@ -210,6 +210,6 @@ class Modal extends AbstractPartialItem
      */
     public function wp_ajax()
     {
-        wp_send_json((string)$this->view('ajax'));
+        wp_send_json((string)$this->viewer('ajax'));
     }
 }

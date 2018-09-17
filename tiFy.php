@@ -43,14 +43,6 @@ final class tiFy extends Container
     ];
 
     /**
-     * Listes des composants natifs de la v2 à désactiver.
-     * @return array
-     */
-    protected $unbindings = [
-        \tiFy\Form\Form::class
-    ];
-
-    /**
      * CONSTRUCTEUR
      *
      * @return void

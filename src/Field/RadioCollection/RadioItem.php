@@ -2,21 +2,22 @@
 
 namespace tiFy\Field\RadioCollection;
 
-use tiFy\App\Item\AbstractAppItemController;
+use tiFy\Contracts\Field\FieldItemInterface;
+use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-class RadioItem extends AbstractAppItemController
+class RadioItem extends AbstractParametersBag
 {
     /**
-     * Définition de l'index de l'élément
-     * @var int
+     * Compteur d'indice.
+     * @var integer
      */
-    static $index = 0;
+    static $_index = 0;
 
     /**
-     * Classe de rappel du controleur de l'application associée.
-     * @var RadioCollection
+     * Indice de qualification.
+     * @var integer
      */
-    protected $app;
+    protected $index = 0;
 
     /**
      * Nom de qualification
@@ -25,18 +26,25 @@ class RadioItem extends AbstractAppItemController
     protected $name = '';
 
     /**
+     * Instance du champ associé.
+     * @var FieldItemInterface
+     */
+    protected $field;
+
+    /**
      * CONSTRUCTEUR.
      *
-     * @param string|int $name
-     * @param array|string $attrs
-     * @param RadioCollection $app
+     * @param string|int $name Nom de qualification.
+     * @param array|string $attrs Liste des attributs de configuration.
+     * @param FieldItemInterface $field Instance du champ associé.
      *
      * @return void
      */
-    public function __construct($name, $attrs, RadioCollection $app)
+    public function __construct($name, $attrs, FieldItemInterface $field)
     {
         $this->name = $name;
-        self::$index++;
+        $this->field = $field;
+        $this->index = self::$_index++;
 
         if (is_string($attrs)) :
             $attrs = [
@@ -46,7 +54,7 @@ class RadioItem extends AbstractAppItemController
             ];
         endif;
 
-        parent::__construct($attrs, $app);
+        parent::__construct($attrs);
     }
 
     /**
@@ -82,29 +90,29 @@ class RadioItem extends AbstractAppItemController
         parent::parse($attrs);
 
         if (!$this->get('attrs.id')) :
-            $this->set('attrs.id', 'tiFyField-RadioCollectionItem--'. self::$index);
+            $this->set('attrs.id', 'tiFyField-RadioCollectionItem--'. $this->index);
         endif;
         if (!$this->get('radio.name')) :
-            $this->set('checkbox.name', $this->app->get('name'));
+            $this->set('checkbox.name', $this->field->get('name'));
         endif;
         if (!$this->get('radio.checked')) :
-            $this->set('checkbox.checked', $this->app->get('checked'));
+            $this->set('checkbox.checked', $this->field->get('checked'));
         endif;
         if (!$this->get('radio.attrs.id')) :
-            $this->set('radio.attrs.id', 'tiFyField-RadioCollectionItemInput--'. self::$index);
+            $this->set('radio.attrs.id', 'tiFyField-RadioCollectionItemInput--'. $this->index);
         endif;
         if (!$this->get('radio.attrs.class')) :
             $this->set('radio.attrs.class', 'tiFyField-RadioCollectionItemInput');
         endif;
 
         if (!$this->get('label.attrs.id')) :
-            $this->set('label.attrs.id', 'tiFyField-RadioCollectionItemLabel--'. self::$index);
+            $this->set('label.attrs.id', 'tiFyField-RadioCollectionItemLabel--'. $this->index);
         endif;
         if (!$this->get('label.attrs.class')) :
             $this->set('label.attrs.class', 'tiFyField-RadioCollectionItemLabel');
         endif;
         if (!$this->get('label.attrs.for')) :
-            $this->set('label.attrs.for', 'tiFyField-RadioCollectionItemInput--'. self::$index);
+            $this->set('label.attrs.for', 'tiFyField-RadioCollectionItemInput--'. $this->index);
         endif;
     }
 
@@ -115,6 +123,6 @@ class RadioItem extends AbstractAppItemController
      */
     public function __toString()
     {
-        return (string)$this->viewer('item', $this->all());
+        return $this->field->viewer('item', $this->all())->render();
     }
 }

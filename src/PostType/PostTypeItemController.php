@@ -2,16 +2,11 @@
 
 namespace tiFy\PostType;
 
-use tiFy\App\Item\AbstractAppItemController;
+use tiFy\Contracts\PostType\PostTypeItemInterface;
+use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-class PostTypeItemController extends AbstractAppItemController
+class PostTypeItemController extends AbstractParametersBag implements PostTypeItemInterface
 {
-    /**
-     * Classe de rappel du controleur de gestion des types de post.
-     * @return PostType
-     */
-    protected $app;
-
     /**
      * Nom de qualification du type de post.
      * @var string
@@ -58,25 +53,49 @@ class PostTypeItemController extends AbstractAppItemController
      *
      * @param string $name Nom de qualification du type de post.
      * @param array $attrs Attribut de configuration.
-     * @param PostType $app Classe de rappel du controleur de gestion des types de post.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], $app)
+    public function __construct($name, $attrs = [])
     {
         $this->name = $name;
 
-        parent::__construct($attrs, $app);
+        parent::__construct($attrs);
+
+        add_action(
+            'init',
+            function () {
+                if ($taxonomies = $this->get('taxonomies', [])) :
+                    foreach ($taxonomies as $taxonomy) :
+                        register_taxonomy_for_object_type($taxonomy, $this->getName());
+                    endforeach;
+                endif;
+            },
+            25
+        );
 
         $this->register();
-
-        $this->app->appAddAction('init', [$this, 'init'], 25);
     }
 
     /**
-     * Récupération du nom de qualification du type de post.
-     *
-     * @return string
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [
+            'rewrite' => [
+                'slug'       => $this->getName(),
+                'with_front' => false,
+                'feeds'      => true,
+                'pages'      => true,
+                'ep_mask'    => EP_PERMALINK,
+            ],
+            'rest_base' => $this->getName()
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -84,37 +103,10 @@ class PostTypeItemController extends AbstractAppItemController
     }
 
     /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    public function init()
-    {
-        if ($taxonomies = $this->get('taxonomies', [])) :
-            foreach ($taxonomies as $taxonomy) :
-                \register_taxonomy_for_object_type($taxonomy, $this->getName());
-            endforeach;
-        endif;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
-        $this->set(
-            'rewrite',
-            [
-                'slug'       => $this->getName(),
-                'with_front' => false,
-                'feeds'      => true,
-                'pages'      => true,
-                'ep_mask'    => EP_PERMALINK,
-            ]
-        );
-
-        $this->set('rest_base', $this->getName());
-
         parent::parse($attrs);
 
         $this->set(
@@ -136,18 +128,22 @@ class PostTypeItemController extends AbstractAppItemController
 
         $this->set(
             'labels',
-            (new PostTypeLabelsItemController(
-                $this->get('label'),
-                array_merge(
+            app()
+                ->resolve(
+                    PostTypeItemLabelsController::class,
                     [
-                        'singular' => $this->get('singular'),
-                        'plural'   => $this->get('plural'),
-                        'gender'   => $this->get('gender'),
-                    ],
-                    (array)$this->get('labels', [])
-                ),
-                $this->app
-            ))->all()
+                        $this->get('label'),
+                        array_merge(
+                            [
+                                'singular' => $this->get('singular'),
+                                'plural'   => $this->get('plural'),
+                                'gender'   => $this->get('gender'),
+                            ],
+                            (array)$this->get('labels', [])
+                        )
+                    ]
+                )
+                ->all()
         );
 
         $this->set(
@@ -187,16 +183,16 @@ class PostTypeItemController extends AbstractAppItemController
     }
 
     /**
-     * Déclaration du type de post.
-     *
-     * @return \WP_Post_Type
+     * {@inheritdoc}
      */
     public function register()
     {
         global $wp_post_types;
 
-        if (!isset($wp_post_types[$this->name])) :
-            return \register_post_type($this->name, $this->all());
+        if (!isset($wp_post_types[$this->getName()])) :
+            return register_post_type($this->getName(), $this->all());
+        else :
+            return $wp_post_types[$this->getName()];
         endif;
     }
 }

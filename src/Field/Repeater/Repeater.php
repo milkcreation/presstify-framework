@@ -174,16 +174,18 @@ class Repeater extends AbstractFieldItem
         if (($options['max'] > 0) && ($index >= $options['max'])) :
             wp_send_json_error(__('Nombre de valeur maximum atteinte', 'tify'));
         else :
-            $this->set('viewer', !empty($options['viewer']) ? $options['viewer'] : []);
+            foreach($options as $key => $value) :
+                $this->set($key, $value);
+            endforeach;
 
             wp_send_json_success(
-                (string)$this->viewer(
+                $this->viewer(
                     'item-wrap',
                     array_merge(
-                        $options,
+                        $this->all(),
                         ['index' => $index, 'value' => '']
                     )
-                )
+                )->render()
             );
         endif;
     }
