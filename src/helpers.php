@@ -179,7 +179,7 @@ if (!function_exists('partial')) :
      * @param null $name Nom de qualification du champ.
      * @param $attrs Liste des attributs de configuration.
      *
-     * @return null|PartialItemInterface
+     * @return null|Partial|PartialItemInterface
      */
     function partial($name = null, $attrs = [])
     {

@@ -1,20 +1,9 @@
 <?php
 
-/**
- * @name User
- * @desc Gestion des utilisateurs
- * @package presstiFy
- * @namespace tiFy\User
- * @version 1.1
- * @subpackage Core
- * @since 1.2.535
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\User;
 
+use tiFy\User\Metadata\User as MetadataUser;
+use tiFy\User\Metadata\UserOption as MetadataUserOption;
 use tiFy\User\Role\Role;
 use tiFy\User\Session\Session;
 use tiFy\User\SignIn\SignIn;
@@ -35,6 +24,14 @@ class UserServiceProvider extends AppServiceProvider
             function () {
                 return new User();
             }
+        )->build();
+
+        $this->app->singleton(
+            MetadataUser::class
+        )->build();
+
+        $this->app->singleton(
+            MetadataUserOption::class
         )->build();
 
         $this->app->singleton(

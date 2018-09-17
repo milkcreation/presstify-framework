@@ -2,49 +2,98 @@
 
 /**
  * @name Metabox
- * @desc Personnalisation des boîtes de saisie
- * @package presstiFy
- * @subpackage Core
- * @namespace tiFy\Metabox
+ * @desc Personnalisation des boîtes de saisie.
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
- * @version 1.2.580
  */
 
 namespace tiFy\Metabox;
 
-use tiFy\App\AppController;
+use Illuminate\Support\Collection;
 use tiFy\Field\Field;
+use tiFy\Metabox\MetaboxItemController;
+use tiFy\Metabox\Tab\MetaboxTabDisplay;
+use tiFy\Wp\WpScreen;
 
-class Metabox extends AppController
+class Metabox
 {
+    /**
+     * Liste des éléments.
+     * @var MetaboxItemController[]
+     */
+    protected $items = [];
+
+    /**
+     * Liste des métaboxes à déclarer.
+     * @var array
+     */
+    protected $registred = [];
+
     /**
      * Liste des métaboxes à supprimer.
      * @var array
      */
-    protected $removed = [];
+    protected $unregistred = [];
 
     /**
-     * Initialisation du controleur.
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appAddAction('add_meta_boxes', null, 99);
+        add_action(
+            'wp_loaded',
+            function () {
+                foreach (config('metabox.add', []) as $screen => $items) :
+                    foreach ($items as $attrs) :
+                        if (is_numeric($screen)) :
+                            $_screen = isset($attrs['screen']) ? $attrs['screen'] : null;
+                        else :
+                            $_screen = $screen;
+                        endif;
+
+                        if(!is_null($_screen)) :
+                            $this->items[] = app()->resolve(MetaboxItemController::class, [$_screen, $attrs]);
+                        endif;
+                    endforeach;
+                endforeach;
+            },
+            0
+        );
+
+        add_action(
+            'current_screen',
+            function ($wp_current_screen) {
+                $current_screen = new WpScreen($wp_current_screen);
+
+                /** @var \WP_Screen  $wp_current_screen */
+                foreach($this->items as $item) :
+                    $item->load($current_screen);
+                endforeach;
+
+                app()->resolve(MetaboxTabDisplay::class, [$current_screen, $this]);
+            },
+            999999
+        );
+
+        add_action(
+            'add_meta_boxes',
+            function () {
+                $this->removeHandle();
+            },
+            999999
+        );
     }
 
     /**
-     * Appel à l'issue des déclarations complète des métaboxes natives Wordpress.
+     * Récupération de la liste des éléments.
      *
-     * @return void
+     * @return Collection
      */
-    final public function add_meta_boxes()
+    public function getItems()
     {
-        do_action('tify_metabox_register');
-
-        // Suppression des metaboxes
-        $this->removeHandle();
+        return new Collection($this->items);
     }
 
     /**
@@ -64,7 +113,7 @@ class Metabox extends AppController
 
                 // Hack Wordpress : Maintient du support de la modification du permalien
                 if ($id === 'slugdiv') :
-                    $this->appAddAction(
+                    add_action(
                         'edit_form_before_permalink',
                         function($post) use ($post_type) {
                             if($post->post_type !== $post_type) :
@@ -101,11 +150,7 @@ class Metabox extends AppController
      */
     public function remove($id, $post_type, $context = 'normal')
     {
-        if (did_action('add_meta_boxes_' . $post_type)) :
-            trigger_error(__('Pour être fonctionnelle, la déclaration de suppression de boîte de saisie devrait être faite avant l\'execution de l\'action "add_meta_boxes". Vous pourriez utiliser l\'action "tify_metabox_register" pour y appeler vos déclarations.', 'tify'));
-        endif;
-
-        if (! isset($this->removed[$post_type])) :
+        if (!isset($this->removed[$post_type])) :
             $this->removed[$post_type] = [];
         endif;
 

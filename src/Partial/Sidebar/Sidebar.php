@@ -46,8 +46,8 @@ class Sidebar extends AbstractPartialItem
      *          @var array $attrs Liste des attributs HTML du conteneur.
      *          @var int $position Position de l'élément.
      *      }
-     *      @var string|callable $header Contenu de l'entête de l'interface.
-     *      @var string|callable $footer Contenu du pied de l'interface.
+     *      @var boolean|string $header Contenu de l'entête de l'interface.
+     *      @var boolean|string $footer Contenu du pied de l'interface.
      *      @var string $theme Theme couleur de l'interface light|dark.
      * }
      */
@@ -59,11 +59,11 @@ class Sidebar extends AbstractPartialItem
         'closed'        => true,
         'outside_close' => true,
         'animate'       => true,
-        'toggle'        => true,
         'min-width'     => '991px',
         'items'         => [],
-        'header'        => '',
-        'footer'        => '',
+        'header'        => true,
+        'footer'        => true,
+        'toggle'        => true,
         'theme'         => 'light'
     ];
 
@@ -120,76 +120,36 @@ class Sidebar extends AbstractPartialItem
             ->set('attrs.aria-theme', $this->get('theme'));
 
         $items = [];
-        foreach ($this->get('items', []) as $name => $item) :
-            if ($item instanceof SidebarItemController) :
+        foreach ($this->get('items', []) as $item) :
+            if ($item instanceof SidebarItem) :
                 $items[] = $item;
-            else :
-                $items[] = new SidebarItemController($item);
+            elseif (is_array($item)) :
+                $items[] = new SidebarItem($item);
+            elseif (is_string($item)) :
+                $item = ['content' => $item];
+                $items[] = new SidebarItem($item);
             endif;
         endforeach;
+
+        $header = $this->get('header');
+        $this->set(
+            'header',
+            $this->isCallable($header)
+                ? call_user_func($header)
+                : (is_string($header) ? $header : '&nbsp;')
+        );
+
+        $footer = $this->get('footer');
+        $this->set(
+            'footer',
+            $this->isCallable($footer)
+                ? call_user_func($footer)
+                : (is_string($footer) ? $footer : '&nbsp;')
+        );
 
         $this->set(
             'items',
             (new Collection($items))->sortBy('position')->all()
         );
-
-        if ($this->get('toggle', true)) :
-            $toggle = Partial::Tag(
-                [
-                    'tag'     => 'a',
-                    'attrs'   => [
-                        'href'         => '#' . $this->get('attrs.id'),
-                        'class'        => 'tiFyPartial-SidebarToggleButton',
-                        'aria-control' => 'toggle_sidebar',
-                        'data-toggle'  => '#' . $this->get('attrs.id')
-                    ],
-                    'content' => ($this->get('theme') === 'light')
-                        ? '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 75 75" xml:space="preserve" fill="#2B2B2B"><g><rect width="75" height="10" x="0" y="0" ry="0"/><rect width="75" height="10" x="0" y="22" ry="0"/><rect width="75" height="10" x="0" y="44" ry="0"/></g></svg>'
-                        : '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 75 75" xml:space="preserve" fill="#FFF"><g><rect width="75" height="10" x="0" y="0" ry="0"/><rect width="75" height="10" x="0" y="22" ry="0"/><rect width="75" height="10" x="0" y="44" ry="0"/></g></svg>'
-                ]
-            );
-            $this->set('toggle', $toggle);
-        endif;
-
-        $this->view()
-            ->registerFunction('header', [$this, 'header'])
-            ->registerFunction('footer', [$this, 'footer'])
-            ->registerFunction('toggle', [$this, 'toggle']);
-    }
-
-    /**
-     * Affichage de l'entête.
-     *
-     * @return string
-     */
-    public function header()
-    {
-        $header = $this->get('header', '');
-
-        return $this->isCallable($header) ? call_user_func($header) : $header;
-    }
-
-    /**
-     * Affichage du pied.
-     *
-     * @return string
-     */
-    public function footer()
-    {
-        $footer = $this->get('footer', '');
-
-        return $this->isCallable($footer) ? call_user_func($footer) : $footer;
-    }
-
-    /**
-     * Affichage du bouton de bascule.
-     *
-     * @return string
-     */
-    public function toggle()
-    {
-        if ($toggle = $this->get('toggle')) :
-            return $toggle;
-        endif;
     }
 }

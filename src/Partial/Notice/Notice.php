@@ -91,7 +91,7 @@ class Notice extends AbstractPartialItem
 
             $this->set(
                 'dismiss',
-                (string) Partial::Tag(
+                Partial::Tag(
                     array_merge(
                         [
                             'tag' => 'button',

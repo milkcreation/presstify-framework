@@ -126,7 +126,7 @@ class Youtube extends MadcodaYoutube
             return view()->setDirectory(__DIR__ . '/views')
                 ->render(
                     'iframe',
-                    compact('height', 'ratio', 'src', 'width')
+                    compact('height', 'ratio', 'src', 'width', 'params')
                 );
         } catch (\Exception $e) {
             return '';

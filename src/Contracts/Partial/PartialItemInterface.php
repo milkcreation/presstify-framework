@@ -7,6 +7,13 @@ use tiFy\Contracts\Views\ViewsInterface;
 interface PartialItemInterface
 {
     /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString();
+
+    /**
      * Affichage du contenu placé après le champ
      *
      * @return void
@@ -78,6 +85,16 @@ interface PartialItemInterface
      * @return mixed
      */
     public function get($key, $default = null);
+
+    /**
+     * Traitement d'une liste d'attributs HTML.
+     *
+     * @param array $attrs Liste des attributs HTML.
+     * @param bool $linearized Activation de la linéarisation.
+     *
+     * @return string
+     */
+    public function getHtmlAttrs($attrs = [], $linearized = true);
 
     /**
      * Récupération de l'identifiant de qualification du controleur.
@@ -165,5 +182,5 @@ interface PartialItemInterface
      *
      * @return ViewsInterface
      */
-    public function view($view = null, $data = []);
+    public function viewer($view = null, $data = []);
 }

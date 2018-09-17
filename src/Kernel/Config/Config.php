@@ -23,26 +23,15 @@ class Config extends AbstractItemController
      */
     protected $aliases = [
         'app'         => \App\App::class,
-        'admin-view'  => \tiFy\AdminView\AdminView::class,
-        'ajax-action' => \tiFy\AjaxAction\AjaxAction::class,
         'column'      => \tiFy\Column\Column::class,
         'cron'        => \tiFy\Cron\Cron::class,
         'db'          => \tiFy\Db\Db::class,
-        'field'       => \tiFy\Field\Field::class,
         'form'        => \tiFy\Form\Form::class,
         'media'       => \tiFy\Media\Media::class,
-        'metabox'     => \tiFy\Metabox\Metabox::class,
-        'metadata'    => \tiFy\Metadata\Metadata::class,
         'meta-tag'    => \tiFy\MetaTag\MetaTag::class,
         'options'     => \tiFy\Options\Options::class,
         'page-hook'   => \tiFy\PageHook\PageHook::class,
-        'partial'     => \tiFy\Partial\Partial::class,
-        'post-type'   => \tiFy\PostType\PostType::class,
-        'route'       => \tiFy\Route\Route::class,
-        'tab-metabox' => \tiFy\TabMetabox\TabMetabox::class,
-        'taxonomy'    => \tiFy\Taxonomy\Taxonomy::class,
-        'user'        => \tiFy\User\User::class,
-        'view'        => \tiFy\View\View::class
+        'route'       => \tiFy\Route\Route::class
     ];
 
     /**

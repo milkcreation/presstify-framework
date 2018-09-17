@@ -28,7 +28,7 @@ class Repeater extends AbstractFieldItem
      *      @var string $ajax_action Action Ajax lancée pour récupérer le formulaire d'un élément.
      *      @var string $ajax_nonce Agent de sécurisation de la requête de récupération Ajax.
      *      @var callable $item_cb Fonction ou méthode de rappel d'affichage d'un élément (doit être une méthode statique ou une fonction).
-     *      @var array $container Liste des attributs de configuration du conteneur de champ.
+     *      @var array $attrs Liste des attributs HTML de la balise HTML.
      *      @var array $button Liste des attributs de configuration du bouton d'ajout d'un élément.
      *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
      *      @var bool $order Activation de l'ordonnacemment des éléments.
@@ -37,14 +37,15 @@ class Repeater extends AbstractFieldItem
      */
     protected $attributes = [
         'name'             => '',
-        'value'            => '',
-        'ajax_action'      => 'tify_field_repeater',
+        'value'            => [],
+        'ajax_action'      => 'field_repeater',
         'ajax_nonce'       => '',
         'item_cb'          => '',
-        'container'        => [],
+        'attrs'            => [],
         'button'           => [],
         'max'              => -1,
-        'order'            => true
+        'order'            => true,
+        'viewer'           => []
     ];
 
     /**
@@ -56,11 +57,11 @@ class Repeater extends AbstractFieldItem
             'init',
             function () {
                 add_action(
-                    'wp_ajax_tify_field_repeater',
+                    'wp_ajax_field_repeater',
                     [$this, 'wp_ajax']
                 );
                 add_action(
-                    'wp_ajax_nopriv_tify_field_repeater',
+                    'wp_ajax_nopriv_field_repeater',
                     [$this, 'wp_ajax']
                 );
 
@@ -95,9 +96,18 @@ class Repeater extends AbstractFieldItem
     /**
      * {@inheritdoc}
      */
+    public function defaults()
+    {
+        return [
+            'ajax_nonce' => wp_create_nonce('FieldRepeater')
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function parse($attrs = [])
     {
-        $this->set('ajax_nonce', wp_create_nonce('tiFyField-Repeater'));
         $this->set('button.content', __('Ajouter un élément', 'tify'));
 
         parent::parse($attrs);
@@ -128,7 +138,7 @@ class Repeater extends AbstractFieldItem
                 'name'        => $this->getName(),
                 'max'         => $this->get('max'),
                 'order'       => $this->get('order'),
-                'templates'   => $this->get('templates')
+                'viewer'      => $this->get('viewer')
             ]
         );
     }
@@ -156,7 +166,7 @@ class Repeater extends AbstractFieldItem
      */
     public function wp_ajax()
     {
-        check_ajax_referer('tiFyField-Repeater');
+        check_ajax_referer('FieldRepeater');
 
         $options = \wp_unslash(request()->getProperty('POST')->get('options'));
         $index = request()->getProperty('POST')->getInt('index');
@@ -164,14 +174,10 @@ class Repeater extends AbstractFieldItem
         if (($options['max'] > 0) && ($index >= $options['max'])) :
             wp_send_json_error(__('Nombre de valeur maximum atteinte', 'tify'));
         else :
-            if (!empty($options['views']) && is_array($options['views'])) :
-                foreach($options['views'] as $o) :
-                    $this->view()->set($key, $value);
-                endforeach;
-            endif;
+            $this->set('viewer', !empty($options['viewer']) ? $options['viewer'] : []);
 
             wp_send_json_success(
-                (string)$this->view(
+                (string)$this->viewer(
                     'item-wrap',
                     array_merge(
                         $options,
