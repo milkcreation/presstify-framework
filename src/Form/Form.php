@@ -2,40 +2,34 @@
 
 namespace tiFy\Form;
 
-use tiFy\Apps\AppController;
+use tiFy\App\Dependency\AbstractAppDependency;
 use tiFy\Form\Addons\AddonsController;
 use tiFy\Form\Buttons\ButtonsController;
 use tiFy\Form\Fields\FieldTypesController;
 use tiFy\Form\Forms\FormBaseController;
 
-final class Form extends AppController
+final class Form extends AbstractAppDependency
 {
     /**
-     * Liste des formulaire déclaré
+     * Liste des formulaires déclarés.
      * @var FormBaseController[]
      */
     protected $registered = [];
 
     /**
-     * Formulaire courant (en cours de traitement)
-     * @var
+     * Formulaire courant.
+     * @var FormBaseController
      */
     protected $current;
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function appBoot()
+    public function boot()
     {
-        $this->appServiceShare(AddonsController::class, new AddonsController());
-        $this->appServiceShare(ButtonsController::class, new ButtonsController());
-        $this->appServiceShare(FieldTypesController::class, new FieldTypesController());
-
-        $this->appAddAction('init', null, 1);
-        $this->appAddAction('wp', null, 0);
         \add_shortcode('formulaire', [$this, 'shortcode']);
+
+        $this->app->appAddAction('init', [$this, 'init'], 1);
     }
 
     /**
@@ -45,22 +39,22 @@ final class Form extends AppController
      */
     public function init()
     {
-        if (is_admin()) :
-            $this->registration();
-        endif;
-    }
+        if (config('form', [])) :
+            $this->app->singleton(AddonsController::class);
+            $this->app->singleton(ButtonsController::class);
+            $this->app->singleton(FieldTypesController::class);
 
-    /**
-     * A l'issue du chargement complet de Wordpress.
-     *
-     * @return void
-     */
-    public function wp()
-    {
-        if (!is_admin()) :
-            $this->registration();
+            if (is_admin()) :
+                $this->registration();
+            else :
+                $this->app->appAddAction(
+                    'wp',
+                    function () {
+                        $this->registration();
+                    }, 0
+                );
+            endif;
         endif;
-
     }
 
     /**
@@ -89,7 +83,7 @@ final class Form extends AppController
      */
     private function registration()
     {
-        foreach ($this->appConfig() as $name => $attrs) :
+        foreach (config('form', []) as $name => $attrs) :
             $this->register($name, $attrs);
         endforeach;
 
@@ -106,15 +100,15 @@ final class Form extends AppController
     public function register($name, $attrs = [])
     {
         $alias = "tify.form.{$name}";
-        if ($this->appServiceHas($alias)) :
+        if ($this->app->has($alias)) :
             return;
         endif;
 
         $controller = (isset($attrs['controller'])) ? $attrs['controller'] : FormBaseController::class;
 
-        $this->appServiceShare($alias, new $controller($name, $attrs));
+        $this->app->bind($alias, new $controller($name, $attrs));
 
-        return $this->registered[$name] = $this->appServiceGet($alias);
+        return $this->registered[$name] = $this->app->resolve($alias);
     }
 
     /**
@@ -126,7 +120,7 @@ final class Form extends AppController
      */
     public function has($name)
     {
-        return $this->appServiceHas("tify.form.{$name}");
+        return $this->app->has("tify.form.{$name}");
     }
 
     /**
@@ -139,8 +133,8 @@ final class Form extends AppController
     public function get($name)
     {
         $alias = "tify.form.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
+        if ($this->app->has($alias)) :
+            return $this->app->resolve($alias);
         endif;
     }
 
@@ -212,7 +206,6 @@ final class Form extends AppController
      */
     public function display($name, $echo = false)
     {
-        // Bypass
         if (!$form = $this->setCurrent($name)) :
             return;
         endif;

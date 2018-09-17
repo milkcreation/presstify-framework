@@ -3,7 +3,7 @@
 namespace tiFy\Options;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\TabMetabox\TabMetabox;
 
 class Options extends AppController
@@ -168,7 +168,7 @@ class Options extends AppController
     public function admin_enqueue_scripts()
     {
         if (get_current_screen()->id === $this->get('hookname')) :
-            \wp_enqueue_style('tiFyOption', $this->appAssetUrl('/Option/css/styles.css'), [], 171030);
+            \wp_enqueue_style('tiFyOption', $this->appAssetUrl('/options/css/styles.css'), [], 171030);
         endif;
     }
 

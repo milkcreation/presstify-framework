@@ -10,12 +10,6 @@ use tiFy\tiFy;
 final class Assets implements AssetsInterface
 {
     /**
-     * Liste des librairies tierces CSS +JS
-     * @var array
-     */
-    protected $thirdParty = [];
-
-    /**
      * Liste des attributs JS.
      * @var array
      */
@@ -28,6 +22,12 @@ final class Assets implements AssetsInterface
     protected $inlineCSS = [];
 
     /**
+     * Liste des librairies tierces CSS +JS
+     * @var array
+     */
+    protected $thirdParty = [];
+
+    /**
      * CONSTRUCTEUR.
      *
      * @return void
@@ -36,13 +36,14 @@ final class Assets implements AssetsInterface
     {
         $this->thirdParty = require_once (dirname(__FILE__) . '/third-party.php');
 
-        add_action('init', [$this, 'init']);
+        add_action('init', [$this, 'init'], 10);
         add_action('admin_head', [$this, 'admin_head']);
         add_action('admin_footer', [$this, 'admin_footer']);
         add_action('wp_head', [$this, 'wp_head']);
         add_action('wp_footer', [$this, 'wp_footer']);
 
         $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
+        $this->setDataJs('ajax_response', [], 'both', false);
     }
 
     /**
@@ -110,8 +111,8 @@ final class Assets implements AssetsInterface
      */
     public function init()
     {
-        \wp_register_style('tiFyAdmin', $this->url('/Admin/css/styles.css'), [], 180528);
-        \wp_register_script('tiFyAdmin', $this->url('/Admin/js/scripts.js'), ['jquery'], 180528, true);
+        \wp_register_style('tiFyAdmin', $this->url('/admin/css/styles.css'), [], 180528);
+        \wp_register_script('tiFyAdmin', $this->url('/admin/js/scripts.js'), ['jquery'], 180528, true);
 
         foreach(Arr::get($this->thirdParty, 'css', []) as $handle => $attrs) :
             \wp_register_style($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
@@ -120,6 +121,14 @@ final class Assets implements AssetsInterface
         foreach(Arr::get($this->thirdParty, 'js', []) as $handle => $attrs) :
             \wp_register_script($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
         endforeach;
+    }
+
+    /**
+     *
+     */
+    public function setAjaxResponse($key, $value, $context = ['admin', 'user'])
+    {
+        return $this->setDataJs("ajax_response.{$key}", $value, $context, true);
     }
 
     /**
@@ -166,7 +175,7 @@ final class Assets implements AssetsInterface
      */
     public function url($path = '')
     {
-        return home_url('vendor/presstify/framework/src/Components/Assets/src' . ($path ? '/' . $path : $path));
+        return home_url('vendor/presstify/framework/assets' . ($path ? '/' . $path : $path));
     }
 
     /**

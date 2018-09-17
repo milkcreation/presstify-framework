@@ -19,9 +19,9 @@ use tiFy\Field\Field;
 use tiFy\Kernel\Tools;
 use tiFy\User\TakeOver\TakeOver;
 use tiFy\Lib\User\User;
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 
-class SwitcherForm extends AbstractPartialController
+class SwitcherForm extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.

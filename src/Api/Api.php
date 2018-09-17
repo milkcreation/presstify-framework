@@ -13,58 +13,15 @@
 
 namespace tiFy\Api;
 
-use tiFy\Apps\AppController;
+use tiFy\App\Dependency\AbstractAppDependency;
 
-final class Api extends AppController
+final class Api extends AbstractAppDependency
 {
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function appBoot()
+    public function boot()
     {
-        if ($apis = $this->appConfig()) :
-            foreach ($apis as $api => $attrs) :
-                $this->register($api, $attrs);
-            endforeach;
-        endif;
-    }
 
-    /**
-     * Déclaration d'une api.
-     *
-     * @param string $name Nom de qualification de l'Api.
-     * @param array $attrs Attributs de configuration.
-     *
-     * @return null|object
-     */
-    public function register($name, $attrs = [])
-    {         
-        $name = $this->appUpperName($name);
-        $classname = "tiFy\\Api\\{$name}\\{$name}";
-
-        if (class_exists($classname)) :
-            $instance = $classname::create($attrs);
-            $this->appServiceShare($classname, $instance);
-
-            return $this->appServiceGet($classname);
-        endif;
-    }
-    
-    /**
-     * Récupération de la classe de rappel d'une Api.
-     *
-     * @param string $name Nom de qualification de l'Api.
-     *
-     * @return null|object
-     */
-    public function get($name)
-    {
-        $name = $this->appUpperName($name);
-
-        if ($this->appServiceHas("tiFy\\Api\\{$name}\\{$name}")) :
-            return $this->appServiceGet("tiFy\\Api\\{$name}\\{$name}");
-        endif;
     }
 }
