@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\CustomFields\PostType\Permalink;
 
-use tiFy\Metadata\Post as MetaPost;
+use tiFy\PostType\Metadata\Post as MetaPost;
 use tiFy\Core\Control\Control;
 
 class Permalink extends \tiFy\App

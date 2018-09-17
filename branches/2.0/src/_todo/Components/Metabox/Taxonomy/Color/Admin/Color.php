@@ -2,7 +2,7 @@
 
 namespace tiFy\Core\Taboox\Taxonomy\Color\Admin;
 
-use tiFy\Metadata\Term as MetaTerm;
+use tiFy\Taxonomy\Metadata\Term as MetaTerm;
 use tiFy\Core\Taboox\Taxonomy\Admin;
 use tiFy\Core\Control\Control;
 

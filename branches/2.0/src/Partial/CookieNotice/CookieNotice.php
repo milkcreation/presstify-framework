@@ -125,7 +125,7 @@ class CookieNotice extends AbstractPartialItem
 
         $this->set(
             'accept',
-            (string) Partial::Tag(
+            Partial::Tag(
                 $this->get('accept')
             )
         );

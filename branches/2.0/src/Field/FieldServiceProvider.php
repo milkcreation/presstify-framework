@@ -64,7 +64,7 @@ class FieldServiceProvider extends AppServiceProvider
         'field.select-js'           => SelectJs::class,
         'field.submit'              => Submit::class,
         'field.text'                => Text::class,
-        'field.textearea'           => Textarea::class,
+        'field.textarea'            => Textarea::class,
         'field.text-remaining'      => TextRemaining::class,
         'field.toggle-switch'       => ToggleSwitch::class,
     ];

@@ -12,6 +12,7 @@ namespace tiFy\Partial;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use tiFy\Contracts\Partial\PartialItemInterface;
 use tiFy\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Partial\CookieNotice\CookieNotice;
 use tiFy\Partial\HolderImage\HolderImage;
@@ -61,7 +62,7 @@ final class Partial
      * @param string $name Nom de qualification de l'élément.
      * @param array $attrs Liste des attributs de configuration.
      *
-     * @return FieldItemInterface
+     * @return PartialItemInterface
      */
     public function get($name, $attrs = [])
     {

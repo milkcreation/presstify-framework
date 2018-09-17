@@ -5,6 +5,13 @@ namespace tiFy\Contracts\Views;
 interface ViewInterface
 {
     /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString();
+
+    /**
      * Récupération de la liste complète des attributs de configuration.
      *
      * @return array

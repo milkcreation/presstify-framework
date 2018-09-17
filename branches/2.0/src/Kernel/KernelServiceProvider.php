@@ -2,28 +2,23 @@
 
 namespace tiFy\Kernel;
 
+/**
+ * Application
+ */
 use App\App;
 
-use tiFy\AdminView\AdminView;
-use tiFy\AjaxAction\AjaxAction;
-use tiFy\Api\ApiServiceProvider;
+/**
+ * Composants
+ */
 use tiFy\Column\Column;
 use tiFy\Cron\Cron;
 use tiFy\Db\Db;
-use tiFy\Field\Field;
 use tiFy\Form\Form;
 use tiFy\Media\Media;
-use tiFy\Metabox\Metabox;
-use tiFy\Metadata\Metadata;
 use tiFy\MetaTag\MetaTag;
 use tiFy\Options\Options;
 use tiFy\PageHook\PageHook;
-use tiFy\PostType\PostType;
 use tiFy\Route\Route;
-use tiFy\TabMetabox\TabMetabox;
-use tiFy\Taxonomy\Taxonomy;
-use tiFy\User\User;
-use tiFy\View\View;
 
 use tiFy\Contracts\Views\ViewsInterface;
 
@@ -73,25 +68,15 @@ class KernelServiceProvider extends ServiceProvider
      * @return array
      */
     protected $components = [
-        AdminView::class,
-        AjaxAction::class,
         Column::class,
         Cron::class,
         Db::class,
-        Field::class,
         Form::class,
         Media::class,
-        Metabox::class,
-        Metadata::class,
         MetaTag::class,
         Options::class,
         PageHook::class,
-        PostType::class,
-        Route::class,
-        TabMetabox::class,
-        Taxonomy::class,
-        User::class,
-        View::class
+        Route::class
     ];
 
     /**

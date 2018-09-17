@@ -2,6 +2,8 @@
 
 namespace tiFy\Contracts\Field;
 
+use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Field\FieldOptionsCollectionController;
 use tiFy\Field\FieldOptionsItemController;
 
@@ -207,4 +209,16 @@ interface FieldItemInterface
      * @return mixed[]
      */
     public function values();
+
+    /**
+     * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
+     * {@internal Si aucun argument n'est passé à la méthode, retourne l'instance du controleur de liste.}
+     * {@internal Sinon récupére l'instance du gabarit d'affichage et passe les variables en argument.}
+     *
+     * @param null|string view Nom de qualification du gabarit.
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return ViewsInterface|ViewInterface
+     */
+    public function viewer($view = null, $data = []);
 }

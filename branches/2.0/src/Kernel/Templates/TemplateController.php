@@ -26,6 +26,20 @@ class TemplateController extends Template implements ViewInterface
     /**
      * {@inheritdoc}
      */
+    public function fetch($name, array $data = [])
+    {
+        return $this->engine->render(
+            ($this->engine->getFolders()->exists('_override')
+                ? '_override::'
+                : ''
+            ) . $name,
+            $data
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function get($key, $default = '')
     {
         return Arr::get($this->data, $key, $default);
@@ -45,6 +59,14 @@ class TemplateController extends Template implements ViewInterface
     public function htmlAttrs($attrs, $linearized = true)
     {
         return Tools::Html()->parseAttrs($attrs, $linearized);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function insert($name, array $data = [])
+    {
+        echo $this->fetch($name, $data);
     }
 
     /**
