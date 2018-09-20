@@ -411,27 +411,27 @@
 /**
  * @deprecated
  */
-.MetaboxTab-TotemList,
-.MetaboxTab-TotemList > * {
+.tiFyTaboox-TotemList,
+.tiFyTaboox-TotemList > * {
     box-sizing: border-box;
 }
 
-.MetaboxTab-TotemList::before,
-.MetaboxTab-TotemList::after {
+.tiFyTaboox-TotemList::before,
+.tiFyTaboox-TotemList::after {
     display: table;
     content: "";
 }
 
-.MetaboxTab-TotemList::after {
+.tiFyTaboox-TotemList::after {
     clear: both;
 }
 
-.MetaboxTab-TotemList {
+.tiFyTaboox-TotemList {
     margin-left: -10px;
     margin-right: -10px;
 }
 
-.MetaboxTab-TotemListItem {
+.tiFyTaboox-TotemListItem {
     float: left;
     width: 25%;
     padding-right: 10px;
@@ -439,11 +439,11 @@
     overflow: hidden;
 }
 
-.MetaboxTab-TotemListItem:nth-child(4n+1) {
+.tiFyTaboox-TotemListItem:nth-child(4n+1) {
     clear: both;
 }
 
-.MetaboxTab-TotemListItemWrapper {
+.tiFyTaboox-TotemListItemWrapper {
     position: relative;
     border: solid 1px #DDD;
     background-color: #F4F4F4;
@@ -451,7 +451,7 @@
     padding: 10px;
 }
 
-.MetaboxTab-TotemListItemWrapperThumbnail {
+.tiFyTaboox-TotemListItemWrapperThumbnail {
     max-width: 100%;
     max-height: 150px;
     min-width: 150px;
@@ -464,7 +464,7 @@
     object-fit: cover;
 }
 
-.MetaboxTab-TotemListItemWrapperTitle {
+.tiFyTaboox-TotemListItemWrapperTitle {
     text-transform: uppercase;
     margin: 5px 0 10px;
     text-align: center;
@@ -473,11 +473,11 @@
     height: 2.4em;
 }
 
-.MetaboxTab-TotemList--sortable .MetaboxTab-TotemListItem {
+.tiFyTaboox-TotemList--sortable .MetaboxTab-TotemListItem {
     cursor: move;
 }
 
-.MetaboxTab-TotemListItem--sortablePlaceholder {
+.tiFyTaboox-TotemListItem--sortablePlaceholder {
     float: left;
     width: 25%;
     display: block;
@@ -485,7 +485,7 @@
     border: dashed 2px #CCC;
 }
 
-.MetaboxTab-TotemListItem--sortablePlaceholder {
+.tiFyTaboox-TotemListItem--sortablePlaceholder {
     height: 300px;
     margin-left: 10px;
     margin-right: 10px;
@@ -494,13 +494,13 @@
 /**
  * @TODO
  */
-.MetaboxTab-Container .ui-sortable-placeholder {
+.MetaboxTab-container .ui-sortable-placeholder {
     visibility: visible !important;
 }
 
 /** Module de galerie d'images */
 /** Images */
-.MetaboxTab-Container .thumb-list {
+.MetaboxTab-container .thumb-list {
     margin: 0;
     padding: 10px;
     list-style-type: none;
@@ -509,7 +509,7 @@
     overflow: hidden;
 }
 
-.MetaboxTab-Container .thumb-list li {
+.MetaboxTab-container .thumb-list li {
     position: relative;
     float: left;
     margin: 0;
@@ -524,13 +524,13 @@
     min-height: 150px;
 }
 
-.MetaboxTab-Container .thumb-list li img {
+.MetaboxTab-container .thumb-list li img {
     display: inline-block;
     margin-bottom: 5px;
     border: solid 1px #DDD;
 }
 
-.MetaboxTab-Container .thumb-list li h4 {
+.MetaboxTab-container .thumb-list li h4 {
     margin: 5px 0;
     height: 2.4em;
     overflow: hidden;
@@ -538,14 +538,14 @@
     text-overflow: ellipsis;
 }
 
-.MetaboxTab-Container .thumb-list .ui-sortable-placeholder {
+.MetaboxTab-container .thumb-list .ui-sortable-placeholder {
     min-width: 150px;
     min-height: 130px;
     border: dashed 3px #E4E4E4;
     background: #F4F4F4;
 }
 
-.MetaboxTab-Container .thumb-list .order {
+.MetaboxTab-container .thumb-list .order {
     position: absolute;
     bottom: -2px;
     right: -2px;
@@ -554,7 +554,7 @@
     padding: 0.1em;
 }
 
-.MetaboxTab-Container .thumb-list .post_status {
+.MetaboxTab-container .thumb-list .post_status {
     position: absolute;
     bottom: 0px;
     left: 10px;
@@ -563,7 +563,7 @@
 }
 
 /** Zone d'ajout de vignette */
-.MetaboxTab-Container .add-thumb-area-150 {
+.MetaboxTab-container .add-thumb-area-150 {
     position: relative;
     width: 150px;
     height: 150px;
@@ -573,7 +573,7 @@
     vertical-align: middle;
 }
 
-.MetaboxTab-Container .add-thumb-area-150 a.add {
+.MetaboxTab-container .add-thumb-area-150 a.add {
     position: absolute;
     display: block;
     color: #666;
@@ -586,7 +586,7 @@
     line-height: 1em;
 }
 
-.MetaboxTab-Container .add-thumb-area-150 img {
+.MetaboxTab-container .add-thumb-area-150 img {
     position: absolute;
     top: 0;
     left: 0;
@@ -595,7 +595,7 @@
     z-index: 2;
 }
 
-.MetaboxTab-Container .add-thumb-area-150 a.remove {
+.MetaboxTab-container .add-thumb-area-150 a.remove {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -603,6 +603,6 @@
     display: none;
 }
 
-.MetaboxTab-Container .add-thumb-area-150:hover a.remove {
+.MetaboxTab-container .add-thumb-area-150:hover a.remove {
     display: block;
 }

@@ -135,6 +135,11 @@ class RouteHandle extends AbstractAppItemController
                 'template_redirect',
                 function () use ($cb, $args) {
                     $output = call_user_func_array($cb, $args);
+
+                    if ($output instanceof ViewInterface) :
+                        $output = $output->render();
+                    endif;
+
                     if (is_string($output)) :
                         $response = end($args);
                         $response->getBody()->write($output);

@@ -1,55 +1,46 @@
 <?php
 
-namespace tiFy\Components\Columns\PostType;
+namespace tiFy\PostType\Column\PostThumbnail;
 
-use tiFy\Column\ColumnPostType;
+use tiFy\Column\AbstractColumnPostTypeDisplayController;
 use tiFy\Kernel\Tools;
 use tiFy\Partial\Partial;
 
-class PostThumbnail extends ColumnPostType
+class PostThumbnail extends AbstractColumnPostTypeDisplayController
 {
     /**
-     * Récupération de l'intitulé de la colonne
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getTitle()
+    public function header()
     {
-        return $this->Title ? : '<span class="dashicons dashicons-format-image"></span>';
+        return $this->item->getTitle() ? : '<span class="dashicons dashicons-format-image"></span>';
     }
 
     /**
-     * Mise en file des scripts de l'interface d'administration
+     * Mise en file des scripts de l'interface d'administration.
      *
      * @return void
      */
     public function admin_enqueue_scripts()
     {
-        Partial::HolderImage()->enqueue_scripts();
-        add_action('admin_print_styles', [$this, 'admin_print_styles']);
+        partial('holder-image')->enqueue_scripts();
     }
 
     /**
-     * Styles dynamiques de l'interface d'administration
+     * Styles dynamiques de l'interface d'administration.
      *
      * @return string
      */
     public function admin_print_styles()
     {
-
-        $column_name = $this->getColumnName();
+        $column_name = $this->item->getName();
         ?><style type="text/css">.wp-list-table th#<?php echo $column_name; ?>,.wp-list-table td.<?php echo $column_name; ?>{width:80px;text-align:center;} .wp-list-table td.<?php echo$column_name; ?> img{max-width:80px;max-height:60px;}</style><?php
     }
 
     /**
-     * Affichage du contenu de la colonne
-     *
-     * @param string $column Identification de la colonne
-     * @param int $post_id Identifiant du post
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function content($column, $post_id)
+    public function content($column_name, $post_id, $var3 = null)
     {
         $attachment_id = get_post_thumbnail_id($post_id) ? : 0;
 
@@ -65,6 +56,15 @@ class PostThumbnail extends ColumnPostType
             );
         endif;
 
-        echo $thumb;
+        return $thumb;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function load($wp_screen)
+    {
+        add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
+        add_action('admin_print_styles', [$this, 'admin_print_styles']);
     }
 }

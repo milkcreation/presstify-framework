@@ -55,6 +55,7 @@ class Container extends LeagueContainer implements ContainerInterface
                 $this->addServiceProvider($resolved);
             endif;
         endforeach;
+
     }
 
     /**

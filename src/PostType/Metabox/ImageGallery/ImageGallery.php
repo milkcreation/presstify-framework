@@ -11,8 +11,14 @@ class ImageGallery extends AbstractMetaboxContentPostController
      */
     public function boot()
     {
-        $this->appAddAction('wp_ajax_tify_tab_metabox_post_type_image_gallery_add_item', [$this, 'wp_ajax']);
-        $this->appTemplateMacro('displayItem', [$this, 'displayItem']);
+        add_action(
+            'wp_ajax_tify_tab_metabox_post_type_image_gallery_add_item',
+            [$this, 'wp_ajax']
+        );
+
+        $this->viewer()
+            ->setController(ViewController::class)
+            ->registerFunction('displayItem', [$this, 'displayItem']);
     }
 
     /**
@@ -22,10 +28,7 @@ class ImageGallery extends AbstractMetaboxContentPostController
     {
         return [
             'name' => '_tify_taboox_image_gallery',
-            'max'  => -1,
-            'templates' => [
-                'controller' => TemplateController::class
-            ]
+            'max'  => -1
         ];
     }
 
@@ -34,9 +37,9 @@ class ImageGallery extends AbstractMetaboxContentPostController
      */
     public function display($post, $args = [])
     {
-        $this->set('items', get_post_meta($post->ID, $this->get('name')) ? : []);
+        $this->set('items', get_post_meta($post->ID, $this->get('name'), true) ? : []);
 
-        return $this->appTemplateRender('display', $this->all());
+        return parent::display($post, $args);
     }
 
     /**
@@ -60,7 +63,7 @@ class ImageGallery extends AbstractMetaboxContentPostController
         $item['name'] = "{$name}[]";
         $item['order'] = $order;
 
-        return $this->appTemplateRender('item', $item);
+        return $this->viewer('item', $item);
     }
 
     /**
@@ -68,21 +71,21 @@ class ImageGallery extends AbstractMetaboxContentPostController
      */
     public function load($current_screen)
     {
-        $this->appAddAction(
+        add_action(
             'admin_enqueue_scripts',
             function () {
                 wp_enqueue_media();
 
                 wp_enqueue_style(
                     'MetaboxPostTypeImageGallery',
-                    \assets()->url('/metabox/post-type/image-gallery/css/styles.css'),
+                    \assets()->url('/post-type/metabox/image-gallery/css/styles.css'),
                     ['tiFyAdmin'],
                     180808
                 );
 
                 wp_enqueue_script(
                     'MetaboxPostTypeImageGallery',
-                    \assets()->url('/metabox/post-type/image-gallery/js/scripts.js'),
+                    \assets()->url('/post-type/metabox/image-gallery/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable'],
                     180808,
                     true
@@ -109,16 +112,16 @@ class ImageGallery extends AbstractMetaboxContentPostController
     }
 
     /**
-     * Action Ajax
+     * Action Ajax.
      *
      * @return string
      */
     public function wp_ajax()
     {
         echo $this->displayItem(
-            $this->appRequest('POST')->get('id'),
-            $this->appRequest('POST')->get('order'),
-            $this->appRequest('POST')->get('name')
+            request()->getProperty('POST')->get('id'),
+            request()->getProperty('POST')->get('order'),
+            request()->getProperty('POST')->get('name')
         );
 
         exit;

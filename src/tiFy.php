@@ -10,6 +10,7 @@
 
 namespace tiFy;
 
+use App\App;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Container\Container;
 use tiFy\Kernel\Config\Config;

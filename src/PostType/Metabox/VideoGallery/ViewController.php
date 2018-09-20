@@ -2,14 +2,14 @@
 
 namespace tiFy\PostType\Metabox\VideoGallery;
 
-use tiFy\App\Templates\AppTemplateController;
+use tiFy\Kernel\Templates\TemplateController;
 
 /**
- * Class TemplateController
+ * Class ViewController
  *
  * @method string displayItem(string|int $id, array $attrs, string $name)
  */
-class TemplateController extends AppTemplateController
+class ViewController extends TemplateController
 {
 
 }

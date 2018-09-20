@@ -22,11 +22,8 @@ class Config extends AbstractItemController
      * @var array
      */
     protected $aliases = [
-        'app'         => \App\App::class,
-        'column'      => \tiFy\Column\Column::class,
         'cron'        => \tiFy\Cron\Cron::class,
         'db'          => \tiFy\Db\Db::class,
-        'form'        => \tiFy\Form\Form::class,
         'media'       => \tiFy\Media\Media::class,
         'meta-tag'    => \tiFy\MetaTag\MetaTag::class,
         'options'     => \tiFy\Options\Options::class,

@@ -1,20 +1,22 @@
 <?php
 
-namespace tiFy\Components\TabMetaboxes\Options\CustomHeader;
+namespace tiFy\Options\Metabox\CustomHeader;
 
-use tiFy\Field\Field;
-use tiFy\TabMetabox\ContentOptionsController;
+use tiFy\Metabox\AbstractMetaboxContentOptionsController;
 
-class CustomHeader extends ContentOptionsController
+class CustomHeader extends AbstractMetaboxContentOptionsController
 {
     /**
      * {@inheritdoc}
      */
     public function load($wp_screen)
     {
-        $this->appAddAction('admin_enqueue_scripts', function(){
-            $this->appServiceGet(Field::class)->enqueue('MediaImage');
-        });
+        add_action(
+            'admin_enqueue_scripts',
+            function(){
+                field('media-image')->enqueue_scripts();
+            }
+        );
     }
 
     /**
@@ -22,7 +24,8 @@ class CustomHeader extends ContentOptionsController
      */
     public function display($args = [])
     {
-        return Field::MediaImage(
+        return field(
+            'media-image',
             array_merge(
                 [
                     'media_library_title'  => __('Personnalisation de l\'image d\'entête', 'tify'),

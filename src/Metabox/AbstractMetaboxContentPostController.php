@@ -22,15 +22,15 @@ abstract class AbstractMetaboxContentPostController
     {
         parent::__construct($screen, $args);
 
-        /** @var MetadataPost $postMetadata */
-        $postMetadata = app(MetadataPost::class);
+        /** @var MetadataPost $metadataPost */
+        $metadataPost = app(MetadataPost::class);
         foreach ($this->metadatas() as $meta => $single) :
             if (is_numeric($meta)) :
                 $meta = (string) $single;
                 $single = true;
             endif;
 
-            $postMetadata->register($object_name, $meta, $single);
+            $metadataPost->register($this->getPostType(), $meta, $single);
         endforeach;
     }
 

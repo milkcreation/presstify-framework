@@ -82,7 +82,7 @@ class TaxonomySelector extends AbstractMetaboxContentPostController
 
         $this->set('items', $items);
 
-        return $this->appTemplateRender('display', $this->all());
+        return parent::display($post, $args);
     }
 
     /**
@@ -90,12 +90,12 @@ class TaxonomySelector extends AbstractMetaboxContentPostController
      */
     public function load($current_screen)
     {
-        $this->appAddAction(
+        add_action(
             'admin_enqueue_scripts',
             function () {
                 \wp_enqueue_style(
                     'MetaboxesPostTypeTaxonomySelector',
-                    \assets()->url('/metabox/post-type/taxonomy-selector/css/styles.css')
+                    assets()->url('/post-type/metabox/taxonomy-selector/css/styles.css')
                 );
             }
         );

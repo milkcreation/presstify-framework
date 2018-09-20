@@ -123,14 +123,14 @@ class Fileshare extends AbstractMetaboxContentPostController
                 if ($this->get('max', -1) !== 1) :
                     \wp_enqueue_style(
                         'MetaboxPostTypeFileshare',
-                        \assets()->url('/metabox/post-type/fileshare/css/styles.css'),
+                        assets()->url('/post-type/metabox/fileshare/css/styles.css'),
                         [],
                         151216
                     );
                     \wp_enqueue_media();
                     \wp_enqueue_script(
                         'MetaboxPostTypeFileshare',
-                        assets()->url('/metabox/post-type/fileshare/js/scripts.js'),
+                        assets()->url('/post-type/metabox/fileshare/js/scripts.js'),
                         ['jquery', 'jquery-ui-sortable'],
                         151216,
                         true

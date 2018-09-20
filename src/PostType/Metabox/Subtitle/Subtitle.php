@@ -1,56 +1,49 @@
 <?php
 
-namespace tiFy\Components\PostTypeField\Subtitle;
+namespace tiFy\PostType\Metabox\Subtitle;
 
-use tiFy\PostType\PostTypeFieldItemController;
+use tiFy\Metabox\AbstractMetaboxContentPostController;
 
-class Subtitle extends PostTypeFieldItemController
+class Subtitle extends AbstractMetaboxContentPostController
 {
-    /**
-     * Liste des attributs de configuration.
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
-    {
-        /** @var PostMetadata $postMetadata */
-        $postMetadata = $this->app->appServiceGet(PostMetadata::class);
-        $postMetadata->register($this->app->getName(), '_subtitle', true);
-    }
-
     /**
      * {@inheritdoc}
      */
     public function defaults()
     {
         return [
-            'context' => 'edit_form_after_title',
             'name'    => '_subtitle',
-            'value'   => '',
             'attrs'   => [
+                'class'       => 'widefat',
                 'placeholder' => __('Sous-titre', 'tify'),
+                'style'       => 'margin-top:10px;margin-bottom:20px;background-color:#fff;font-size:1.4em;' .
+                    ' height:1.7em;line-height:100%;margin:10 0 15px;outline:0 none;padding:3px 8px;' .
+                    ' width:100%;'
             ],
         ];
     }
 
     /**
-     * Affichage.
-     *
-     * @param \WP_Post $post Objet Post Wordpress
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function edit_form_after_title($post)
+    public function display($post, $args = [])
     {
-        ?>
-        <input type="text" class="widefat" name="tify_meta_post[_subtitle]"
-               value="<?php echo wp_unslash(get_post_meta($post->ID, '_subtitle', true)); ?>"
-               placeholder="<?php echo $this->Args['placeholder']; ?>"
-               style="margin-top:10px; margin-bottom:20px; background-color: #fff; font-size: 1.4em; height: 1.7em; line-height: 100%; margin: 10 0 15px; outline: 0 none; padding: 3px 8px; width: 100%;"/>
-        <?php
+        return field('text', [
+                'attrs' => [
+                    'class' => 'widefat'
+                ],
+                'name'  => $this->get('name'),
+                'value' => wp_unslash(get_post_meta($post->ID, $this->get('name'), true))
+            ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function metadatas()
+    {
+        return [
+            $this->get('name') => true
+        ];
     }
 }

@@ -1,14 +1,14 @@
 <?php
 
-namespace tiFy\Metabox;
+namespace tiFy\Column;
 
-use tiFy\Contracts\Metabox\MetaboxItemInterface;
-use tiFy\Contracts\Metabox\MetaboxContentInterface;
+use tiFy\Contracts\Column\ColumnDisplayInterface;
+use tiFy\Contracts\Column\ColumnItemInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 use tiFy\Wp\WpScreen;
 
-class MetaboxItemController extends AbstractParametersBag implements MetaboxItemInterface
+class ColumnItemController extends AbstractParametersBag implements ColumnItemInterface
 {
     /**
      * Compteur d'indices de qualification.
@@ -25,32 +25,22 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
     /**
      * Traitement des arguments de configuration
      *
-     * @param array $attrs {
+     * @var array $attrs {
      *      Attributs de configuration
      *
-     *      @var string $name Nom de qualification. optionnel, généré automatiquement.
-     *      @var string|callable $title Titre du greffon.
-     *      @var string|callable|TabContentControllerInterface $content Fonction ou méthode ou classe de rappel d'affichage du contenu de la section.
-     *      @var mixed $args Liste des variables passées en argument dans les fonction d'affichage du titre, du contenu et dans l'objet.
-     *      @var string $parent Identifiant de la section parente.
-     *      @var string|callable@todo $cap Habilitation d'accès.
-     *      @var bool|callable@todo $show Affichage/Masquage.
-     *      @var int $position Ordre d'affichage du greffon.
+     *      @var string $name Nom de qualification de la colonne.
+     *      @var int $position Position de la colonne.
+     *      @var string $title Intitulé de qualification.
+     *      @var string|callable|ColumnDisplayInterface $content
      * }
      *
      * @return array
      */
     protected $attributes = [
         'name'     => '',
-        'title'    => '',
-        'content'  => '',
-        'context'  => 'advanced',
-        'priority' => 'default',
         'position' => 0,
-        'args'     => [],
-        'cap'      => 'manage_options',
-        'parent'   => '',
-        'show'     => true
+        'title'    => '',
+        'content'  => ''
     ];
 
     /**
@@ -82,14 +72,14 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
         else :
             add_action(
                 'admin_init',
-                function () use ($screen){
+                function () use ($screen) {
                     $this->screen = WpScreen::get($screen);
 
                     $content = $this->getContent();
                     if (class_exists($content)) :
-                        $resolved = new $content($this->screen, $this->getArgs());
+                        $resolved = new $content($this);
 
-                        if ($resolved instanceof MetaboxContentInterface) :
+                        if ($resolved instanceof ColumnDisplayInterface) :
                             $this->set('content', $resolved);
                         endif;
                     endif;
@@ -106,25 +96,11 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
      */
     public function defaults()
     {
+        $id = md5("column-" . uniqid() . "-{$this->getIndex()}");
+
         return [
-            'name' => md5("metabox-" . uniqid() . "-{$this->getIndex()}")
+            'name'  => $id
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getArgs()
-    {
-        return $this->get('args', []);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIndex()
-    {
-        return $this->index;
     }
 
     /**
@@ -138,9 +114,21 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
     /**
      * {@inheritdoc}
      */
-    public function getContext()
+    public function getHeader()
     {
-        return $this->get('context', 'advanced');
+        if ($this->getContent() instanceof ColumnDisplayInterface) :
+            return $this->getContent()->header();
+        else :
+            return $this->getTitle();
+        endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIndex()
+    {
+        return $this->index;
     }
 
     /**
@@ -148,15 +136,7 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
      */
     public function getName()
     {
-        return $this->get('name', '');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return $this->get('parent', '');
+        return $this->get('name');
     }
 
     /**
@@ -180,7 +160,7 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
      */
     public function getTitle()
     {
-        return $this->get('title', '');
+        return $this->get('title');
     }
 
     /**

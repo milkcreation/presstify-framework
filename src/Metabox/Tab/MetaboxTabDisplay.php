@@ -139,7 +139,7 @@ class MetaboxTabDisplay
                 'display',
                 [
                     'title' => __('Réglages', 'tify'),
-                    'items' => $this->parseItems()
+                    'items' => call_user_func_array([$this, 'parseItems'], $args)
                 ]
             );
     }

@@ -1,15 +1,13 @@
 <?php
 
-namespace tiFy\Components\Columns\PostType;
+namespace tiFy\PostType\Column\MenuOrder;
 
-use tiFy\Column\ColumnPostType;
+use tiFy\Column\AbstractColumnPostTypeDisplayController;
 
-class MenuOrder extends ColumnPostType
+class MenuOrder extends AbstractColumnPostTypeDisplayController
 {
     /**
-     * Récupération de l'intitulé de la colonne
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getTitle()
     {
@@ -17,14 +15,9 @@ class MenuOrder extends ColumnPostType
     }
 
     /**
-     * Affichage du contenu de la colonne
-     *
-     * @param string $column_name Identifiant de qualification de la colonne
-     * @param int $post_id Identifiant du post
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function content($column, $post_id)
+    public function content($column_name, $post_id, $var3 = null)
     {
         $level = 0;
         $post = get_post($post_id);
@@ -48,6 +41,6 @@ class MenuOrder extends ColumnPostType
             $_level .= "<strong>&mdash;</strong> ";
         endfor;
 
-        echo $_level . $post->menu_order;
+        return $_level . $post->menu_order;
     }
 }

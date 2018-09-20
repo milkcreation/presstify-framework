@@ -38,10 +38,7 @@ class RelatedPosts extends AbstractMetaboxContentPostController
         $this->ajaxAction = 'tiFyCoreTabooxPostRelatedPostsAdminRelatedPostsItemRender' . 
             ++static::$instance;
         
-        $this->appAddAction(
-            'wp_ajax_'. $this->ajaxAction,
-            [$this, 'wp_ajax']
-        );
+        add_action('wp_ajax_'. $this->ajaxAction, [$this, 'wp_ajax']);
     }
 
     /**
@@ -184,18 +181,18 @@ class RelatedPosts extends AbstractMetaboxContentPostController
      */
     public function load($wp_screen)
     {
-        $this->appAddAction(
+        add_action(
             'admin_enqueue_scripts',
             function () {
                 wp_enqueue_style(
                     'MetaboxPostTypeRelatedPosts',
-                    \assets()->url('/metabox/post-type/related-posts/css/styles.css'),
+                    assets()->url('/post-type/metabox/related-posts/css/styles.css'),
                     ['tify_control-suggest', 'tify_control-holder_image']
                 );
 
                 wp_enqueue_script(
                     'MetaboxPostTypeRelatedPosts',
-                    \assets()->url('/metabox/post-type/related-posts/js/scripts.js'),
+                    assets()->url('/post-type/metabox/related-posts/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable', 'tify_control-suggest']
                 );
                 wp_localize_script(
@@ -209,11 +206,8 @@ class RelatedPosts extends AbstractMetaboxContentPostController
         );
     }
 
-
     /**
-     * Listes des metadonnées à enregistrer.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function metadatas()
     {
