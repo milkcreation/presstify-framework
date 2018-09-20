@@ -10,10 +10,8 @@ use App\App;
 /**
  * Composants
  */
-use tiFy\Column\Column;
 use tiFy\Cron\Cron;
 use tiFy\Db\Db;
-use tiFy\Form\Form;
 use tiFy\Media\Media;
 use tiFy\MetaTag\MetaTag;
 use tiFy\Options\Options;
@@ -34,6 +32,7 @@ use tiFy\Kernel\Templates\Engine;
 use tiFy\Kernel\Service;
 
 use tiFy\Kernel\Container\ServiceProvider;
+use tiFy\tiFy;
 
 class KernelServiceProvider extends ServiceProvider
 {
@@ -41,7 +40,6 @@ class KernelServiceProvider extends ServiceProvider
      * {@inheritdoc}
      */
     protected $singletons = [
-        App::class,
         Assets::class,
         Partial::class
     ];
@@ -68,10 +66,8 @@ class KernelServiceProvider extends ServiceProvider
      * @return array
      */
     protected $components = [
-        Column::class,
         Cron::class,
         Db::class,
-        Form::class,
         Media::class,
         MetaTag::class,
         Options::class,
@@ -90,7 +86,7 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $app = $this->getContainer()->resolve(App::class);
+        $app = $this->getContainer()->singleton(App::class)->build();
 
         foreach ($this->getBootables() as $bootable) :
             $class = $this->getContainer()->resolve($bootable, [$app]);

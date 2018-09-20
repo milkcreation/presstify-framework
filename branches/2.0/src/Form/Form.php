@@ -2,94 +2,99 @@
 
 namespace tiFy\Form;
 
-use tiFy\App\Dependency\AbstractAppDependency;
+use tiFy\Contracts\Form\FormItemInterface;
 use tiFy\Form\Addons\AddonsController;
 use tiFy\Form\Buttons\ButtonsController;
 use tiFy\Form\Fields\FieldTypesController;
 use tiFy\Form\Forms\FormBaseController;
 
-final class Form extends AbstractAppDependency
+final class Form
 {
     /**
      * Liste des formulaires déclarés.
-     * @var FormBaseController[]
+     * @var FormItemInterface[]
      */
-    protected $registered = [];
+    protected $items = [];
 
     /**
      * Formulaire courant.
-     * @var FormBaseController
+     * @var FormItemInterface
      */
     protected $current;
 
     /**
-     * {@inheritdoc}
-     */
-    public function boot()
-    {
-        \add_shortcode('formulaire', [$this, 'shortcode']);
-
-        $this->app->appAddAction('init', [$this, 'init'], 1);
-    }
-
-    /**
-     * Initialisation globale de Wordpress.
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function init()
+    public function __construct()
     {
-        if (config('form', [])) :
-            $this->app->singleton(AddonsController::class);
-            $this->app->singleton(ButtonsController::class);
-            $this->app->singleton(FieldTypesController::class);
+        add_action(
+            'init',
+            function () {
+                if (is_admin()) :
+                    $this->_init();
+                else :
+                    add_action(
+                        'wp',
+                        function () {
+                            $this->_init();
+                        }, 0
+                    );
+                endif;
+            },
+            1
+        );
+    }
 
-            if (is_admin()) :
-                $this->registration();
-            else :
-                $this->app->appAddAction(
-                    'wp',
-                    function () {
-                        $this->registration();
-                    }, 0
-                );
-            endif;
+    /**
+     * Initialisation des formulaires.
+     *
+     * @return void
+     */
+    private function _init()
+    {
+        if ($forms = config('form', [])) :
+            foreach ($forms as $name => $attrs) :
+                $this->register($name, $attrs);
+            endforeach;
+
+            do_action('tify_form_register', $this);
+
+            do_action('tify_form_loaded');
         endif;
     }
 
     /**
-     * Shortcode d'affichage de formulaire.
+     * Récupération de la liste des instance de formulaires déclarés.
      *
-     * @param array $atts Attributs de configuration.
-     *
-     * @return string
+     * @return FormItemInterface[]
      */
-    public function shortcode($atts = [])
+    public function all()
     {
-        extract(
-            shortcode_atts(
-                ['name' => null],
-                $atts
-            )
-        );
-
-        return $this->display($name);
+        return $this->items;
     }
 
     /**
-     * Déclaration des formulaires.
+     * Récupération d'une instance formulaire déclaré.
      *
-     * @return void
+     * @param string $name Nom de qualification du formulaire.
+     *
+     * @return null|FormItemInterface
      */
-    private function registration()
+    public function get($name)
     {
-        foreach (config('form', []) as $name => $attrs) :
-            $this->register($name, $attrs);
-        endforeach;
+        return isset($this->items[$name]) ? $this->items[$name] : null;
+    }
 
-        do_action('tify_form_register', $this);
-
-        do_action('tify_form_loaded');
+    /**
+     * Récupération du formulaire courant.
+     *
+     * @return null|FormItemInterface
+     */
+    public function getCurrent()
+    {
+        return $this->current;
     }
 
     /**
@@ -99,70 +104,48 @@ final class Form extends AbstractAppDependency
      */
     public function register($name, $attrs = [])
     {
-        $alias = "tify.form.{$name}";
-        if ($this->app->has($alias)) :
-            return;
-        endif;
-
         $controller = (isset($attrs['controller'])) ? $attrs['controller'] : FormBaseController::class;
 
-        $this->app->bind($alias, new $controller($name, $attrs));
+        $resolved = new $controller($name, $attrs);
 
-        return $this->registered[$name] = $this->app->resolve($alias);
+        return $this->items[$name] = app()
+            ->bind(
+                "form.{$name}",
+                function () use ($resolved) {
+                    return $resolved;
+                }
+            )
+            ->build();
     }
 
     /**
-     * Vérification d'existance d'un formulaire déclaré
+     * Réinitialisation du formulaire courant.
      *
-     * @param string $name Nom de qualification du formulaire.
-     *
-     * @return null|FormBaseController
+     * @return void
      */
-    public function has($name)
+    public function resetCurrent()
     {
-        return $this->app->has("tify.form.{$name}");
-    }
-
-    /**
-     * Récupération d'un controleur d'un formulaire déclaré.
-     *
-     * @param string $name Nom de qualification du formulaire.
-     *
-     * @return null|FormBaseController
-     */
-    public function get($name)
-    {
-        $alias = "tify.form.{$name}";
-        if ($this->app->has($alias)) :
-            return $this->app->resolve($alias);
+        if ($this->current instanceof FormItemInterface) :
+            $this->current->getForm()->onResetCurrent();
         endif;
-    }
 
-    /**
-     * Récupération de la liste des formulaires déclarés.
-     *
-     * @return FormBaseController[]
-     */
-    public function all()
-    {
-        return $this->registered;
+        $this->current = null;
     }
 
     /**
      * Définition du formulaire courant.
      *
-     * @param string|FormBaseController $form Nom de qualification ou classe de rappel d'un formulaire.
+     * @param string|FormItemInterface $form Nom de qualification ou instance du formulaire.
      *
-     * @return null|FormBaseController
+     * @return null|FormItemInterface
      */
-    /** ==  == **/
     public function setCurrent($form = null)
     {
-        if (!is_object($form)) :
+        if (is_string($form)) :
             $form = $this->get($form);
         endif;
 
-        if (!$form instanceof FormBaseController) :
+        if (!$form instanceof FormItemInterface) :
             return;
         endif;
 
@@ -173,31 +156,8 @@ final class Form extends AbstractAppDependency
     }
 
     /**
-     * Récupération du formulaire courant.
-     *
-     * @return null|FormBaseController
-     */
-    public function getCurrent()
-    {
-        return $this->current;
-    }
-
-    /**
-     * Réinitialisation du formulaire courant.
-     *
-     * @return  void
-     */
-    public function resetCurrent()
-    {
-        if ($this->current instanceof FormBaseController) :
-            $this->current->getForm()->onResetCurrent();
-        endif;
-
-        $this->current = null;
-    }
-
-    /**
      * Affichage d'un formulaire.
+     * @deprecated
      *
      * @param string $name Nom de qualification du formulaire.
      * @param bool $echo Activation/Désactivation de l'affichage.

@@ -10,6 +10,7 @@
 namespace tiFy\Metabox;
 
 use Illuminate\Support\Collection;
+use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Field\Field;
 use tiFy\Metabox\MetaboxItemController;
 use tiFy\Metabox\Tab\MetaboxTabDisplay;
@@ -24,16 +25,22 @@ class Metabox
     protected $items = [];
 
     /**
-     * Liste des métaboxes à déclarer.
+     * Liste des éléments à déclarer.
      * @var array
      */
     protected $registred = [];
 
     /**
-     * Liste des métaboxes à supprimer.
+     * Liste des éléments à supprimer.
      * @var array
      */
     protected $unregistred = [];
+
+    /**
+     * Instance de l'écran d'affichage courant.
+     * @var WpScreenInterface
+     */
+    protected $screen;
 
     /**
      * CONSTRUCTEUR.
@@ -54,6 +61,10 @@ class Metabox
                         endif;
 
                         if(!is_null($_screen)) :
+                            if (preg_match('#(.*)@(options|post_type|taxonomy|user)#', $_screen)) :
+                                $_screen = 'edit::' . $_screen;
+                            endif;
+
                             $this->items[] = app()->resolve(MetaboxItemController::class, [$_screen, $attrs]);
                         endif;
                     endforeach;
@@ -65,14 +76,14 @@ class Metabox
         add_action(
             'current_screen',
             function ($wp_current_screen) {
-                $current_screen = new WpScreen($wp_current_screen);
+                $this->screen = new WpScreen($wp_current_screen);
 
                 /** @var \WP_Screen  $wp_current_screen */
                 foreach($this->items as $item) :
-                    $item->load($current_screen);
+                    $item->load($this->screen);
                 endforeach;
 
-                app()->resolve(MetaboxTabDisplay::class, [$current_screen, $this]);
+                app()->resolve(MetaboxTabDisplay::class, [$this->screen, $this]);
             },
             999999
         );
@@ -89,7 +100,7 @@ class Metabox
     /**
      * Récupération de la liste des éléments.
      *
-     * @return Collection
+     * @return Collection|MetaboxItemController[]
      */
     public function getItems()
     {
@@ -103,11 +114,7 @@ class Metabox
      */
     private function removeHandle()
     {
-        if (! $this->removed) :
-            return;
-        endif;
-
-        foreach ($this->removed as $post_type => $ids) :
+        foreach ($this->unregistred as $post_type => $ids) :
             foreach ($ids as $id => $context) :
                 remove_meta_box($id, $post_type, $context);
 
@@ -150,10 +157,10 @@ class Metabox
      */
     public function remove($id, $post_type, $context = 'normal')
     {
-        if (!isset($this->removed[$post_type])) :
-            $this->removed[$post_type] = [];
+        if (!isset($this->unregistred[$post_type])) :
+            $this->unregistred[$post_type] = [];
         endif;
 
-        $this->removed[$post_type][$id] = $context;
+        $this->unregistred[$post_type][$id] = $context;
     }
 }

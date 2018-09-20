@@ -1,32 +1,24 @@
 <?php
 
-namespace tiFy\Contracts\Metabox;
+namespace tiFy\Contracts\Column;
 
-use tiFy\Contracts\Wp\WpScreenInterface;
+use tiFy\Contracts\Column\ColumnDisplayInterface;
 use tiFy\Contracts\Kernel\ParametersBagInterface;
+use tiFy\Contracts\Wp\WpScreenInterface;
 
-interface MetaboxItemInterface extends ParametersBagInterface
+interface ColumnItemInterface extends ParametersBagInterface
 {
-    /**
-     * Récupération de la liste des variables passées en argument.
-     *
-     * @return array
-     */
-    public function getArgs();
-
     /**
      * Récupération du contenu de l'affichage.
      *
-     * @return string
+     * @return string|ColumnDisplayInterface
      */
     public function getContent();
 
     /**
-     * Récupération du contexte d'affichage.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getContext();
+    public function getHeader();
 
     /**
      * Récupération de l'indice de qualification.
@@ -41,13 +33,6 @@ interface MetaboxItemInterface extends ParametersBagInterface
      * @return string
      */
     public function getName();
-
-    /**
-     * Récupération du nom de qualification du parent associé.
-     *
-     * @return string
-     */
-    public function getParent();
 
     /**
      * Récupération de l'ordre d'affichage.

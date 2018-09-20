@@ -20,7 +20,7 @@
 <?php else : ?>
     <?php
     echo field(
-        'radio-collection'
+        'radio-collection',
         [
             'items' => $this->get('items', []),
         ]

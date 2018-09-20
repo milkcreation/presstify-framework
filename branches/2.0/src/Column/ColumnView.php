@@ -1,13 +1,13 @@
 <?php
 
-namespace tiFy\Metabox;
+namespace tiFy\Column;
 
 use tiFy\Kernel\Templates\TemplateController;
 
 /**
- * Class MetaboxView
+ * Class ColumnView
  */
-class MetaboxView extends TemplateController
+class ColumnView extends TemplateController
 {
     /**
      * Liste des méthodes héritées.
@@ -29,7 +29,7 @@ class MetaboxView extends TemplateController
     {
         if (in_array($name, $this->mixins)) :
             return call_user_func_array(
-                [$this->engine->get('metabox'), $name],
+                [$this->engine->get('column'), $name],
                 $arguments
             );
         endif;

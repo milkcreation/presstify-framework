@@ -2,14 +2,8 @@
 
 namespace tiFy\Column;
 
-class ColumnTaxonomy extends ColumnFactory
+class AbstractColumnTaxonomyDisplayController extends AbstractColumnDisplayController
 {
-    /**
-     * Type d'objet
-     * @var string
-     */
-    protected $objectType = 'taxonomy';
-
     /**
      * Affichage du contenu de la colonne.
      *

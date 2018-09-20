@@ -9,10 +9,9 @@ use tiFy\Contracts\App\AppInterface;
 use tiFy\Contracts\Container\ContainerInterface;
 use tiFy\Contracts\Container\ServiceInterface;
 use tiFy\Contracts\Container\ServiceProviderInterface;
-use tiFy\Kernel\Container\Container as KernelContainer;
-use tiFy\Kernel\Container\ContainerTrait;
+use tiFy\Kernel\Container\Container as Container;
 
-class AppContainer extends KernelContainer implements AppInterface
+class AppContainer extends Container implements AppInterface
 {
     use AppTrait;
 

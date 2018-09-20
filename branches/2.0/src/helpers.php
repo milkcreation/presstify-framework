@@ -34,7 +34,7 @@ if (!function_exists('app')) :
             return $factory;
         endif;
 
-        return $factory->resolve($abstract, $args);
+        return $factory->get($abstract, $args);
     }
 endif;
 
@@ -157,6 +157,27 @@ if (!function_exists('field')) :
         endif;
 
         return $factory->get($name, $attrs);
+    }
+endif;
+
+if (!function_exists('form')) :
+    /**
+     * Formulaire - Controleur de champs.
+     *
+     * @param null|string $name Nom de qualification du formulaire.
+     *
+     * @return null|Field|FieldItemInterface
+     */
+    function form($name = null)
+    {
+        /** @var Form $factory */
+        $factory = app(Form::class);
+
+        if (is_null($name)) :
+            return $factory;
+        endif;
+
+        return $factory->get($name);
     }
 endif;
 

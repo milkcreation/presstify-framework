@@ -2,14 +2,14 @@
 
 namespace tiFy\PostType\Metabox\ImageGallery;
 
-use tiFy\App\Templates\AppTemplateController;
+use tiFy\Kernel\Templates\TemplateController;
 
 /**
  * Class TemplateController
  *
  * @method string displayItem(int $attachment_id, string $name)
  */
-class TemplateController extends AppTemplateController
+class ViewController extends TemplateController
 {
 
 }

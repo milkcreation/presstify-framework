@@ -17,7 +17,10 @@ class VideoGallery extends AbstractMetaboxContentPostController
             'wp_ajax_tify_tab_metabox_post_type_video_gallery_add_item',
             [$this, 'wp_ajax']
         );
-        $this->appTemplateMacro('displayItem', [$this, 'displayItem']);
+
+        $this->viewer()
+            ->setController(ViewController::class)
+            ->registerFunction('displayItem', [$this, 'displayItem']);
     }
 
     /**
@@ -27,10 +30,7 @@ class VideoGallery extends AbstractMetaboxContentPostController
     {
         return [
             'name' => '_tify_taboox_video_gallery',
-            'max'  => -1,
-            'templates' => [
-                'controller' => TemplateController::class
-            ]
+            'max'  => -1
         ];
     }
 
@@ -39,11 +39,11 @@ class VideoGallery extends AbstractMetaboxContentPostController
      */
     public function display($post, $args = [])
     {
-        /** @var MetadataPost $postMetadata */
-        $postMetadata = $this->appServiceGet(MetadataPost::class);
-        $this->set('items', $postMetadata->get($post->ID, $this->get('name')) ? : []);
+        /** @var MetadataPost $metadataPost */
+        $metadataPost = app(MetadataPost::class);
+        $this->set('items', $metadataPost->get($post->ID, $this->get('name')) ? : []);
 
-        return $this->appTemplateRender('display', $this->all());
+        return parent::display($post, $args);
     }
 
     /**
@@ -71,7 +71,7 @@ class VideoGallery extends AbstractMetaboxContentPostController
         $attrs['name'] = $name;
         $attrs['id'] = $id;
 
-        return $this->appTemplateRender('item', $attrs);
+        return $this->viewer('item', $attrs);
     }
 
     /**
@@ -86,14 +86,14 @@ class VideoGallery extends AbstractMetaboxContentPostController
 
                 wp_enqueue_style(
                     'PostTypeMetaboxVideoGallery',
-                    assets()->url('/metabox/post-type/video-gallery/css/styles.css'),
+                    assets()->url('/post-type/metabox/video-gallery/css/styles.css'),
                     ['tiFyAdmin'],
                     180724
                 );
 
                 wp_enqueue_script(
                     'PostTypeMetaboxVideoGallery',
-                    assets()->url('/metabox/post-type/video-gallery/js/scripts.js'),
+                    assets()->url('/post-type/metabox/video-gallery/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable', 'tiFyAdmin'],
                     180724,
                     true
@@ -121,14 +121,13 @@ class VideoGallery extends AbstractMetaboxContentPostController
     }
 
     /**
-     * Action Ajax
+     * Action Ajax.
      *
      * @return string
      */
     public function wp_ajax()
     {
-        echo $this->displayItem(uniqid(), [], $this->appRequest('POST')->get('name'));
-
+        echo $this->displayItem(uniqid(), [], request()->getProperty('POST')->get('name'));
         exit;
     }
 }

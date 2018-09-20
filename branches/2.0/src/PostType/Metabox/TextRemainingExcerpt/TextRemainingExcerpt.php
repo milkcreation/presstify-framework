@@ -36,14 +36,14 @@ class TextRemainingExcerpt extends AbstractMetaboxContentPostController
      */
     public function load($wp_screen)
     {
-        $this->appAddAction(
+        add_action(
             'add_meta_boxes',
             function () {
                 remove_meta_box('postexcerpt', $this->getPostType(), 'normal');
             }
         );
 
-        $this->appAddAction(
+        add_action(
             'admin_enqueue_scripts',
             function () {
                 field('text-remaining')->enqueue_scripts();
