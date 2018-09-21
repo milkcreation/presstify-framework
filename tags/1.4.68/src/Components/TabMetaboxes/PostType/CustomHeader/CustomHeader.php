@@ -12,10 +12,10 @@ class CustomHeader extends ContentPostTypeController
      */
     public function load($wp_screen)
     {
-        $this->appServiceGet(PostMetadata::class)->register($this->getPostType(), '_custom_header', true);
+        app(PostMetadata::class)->register($this->getPostType(), '_custom_header', true);
 
         $this->appAddAction('admin_enqueue_scripts', function(){
-            $this->appServiceGet(Field::class)->enqueue('MediaImage');
+            field('media-image')->enqueue_scripts();
         });
     }
 
