@@ -2,8 +2,8 @@
 
 namespace tiFy\View;
 
-use tiFy\Apps\AppController;
-use tiFy\Apps\Layout\LayoutViewInterface;
+use tiFy\App\AppController;
+use tiFy\App\Layout\LayoutViewInterface;
 
 final class View extends AppController
 {

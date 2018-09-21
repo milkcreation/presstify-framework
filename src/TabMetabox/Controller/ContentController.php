@@ -3,7 +3,7 @@
 namespace tiFy\TabMetabox\Controller;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 class ContentController extends AppController implements ContentInterface
 {

@@ -2,7 +2,7 @@
 
 namespace tiFy\PostType;
 
-use tiFy\Apps\Item\AbstractAppItemController;
+use tiFy\App\Item\AbstractAppItemController;
 
 class PostTypeItemController extends AbstractAppItemController
 {

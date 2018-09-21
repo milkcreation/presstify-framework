@@ -2,7 +2,7 @@
 
 namespace tiFy\PostType;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 final class PostType extends AppController
 {

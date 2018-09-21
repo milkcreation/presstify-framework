@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Layout\ListTable;
 
-use tiFy\Apps\Layout\AbstractLayoutBaseController;
+use tiFy\App\Layout\AbstractLayoutBaseController;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionCollectionInterface;
 use tiFy\Components\Layout\ListTable\BulkAction\BulkActionItemTrashController;
 use tiFy\Components\Layout\ListTable\Column\ColumnCollectionInterface;

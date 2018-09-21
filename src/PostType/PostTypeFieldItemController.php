@@ -2,8 +2,8 @@
 
 namespace tiFy\PostType;
 
-use tiFy\Apps\Partial\AbstractAppPartial;
-use tiFy\Apps\AppInterface;
+use tiFy\App\Partial\AbstractAppPartial;
+use tiFy\Contracts\App\AppInterface;
 
 class PostTypeFieldItemController extends AbstractAppPartial
 {

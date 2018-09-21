@@ -4,7 +4,7 @@ namespace tiFy\User\Role;
 
 use Illuminate\Support\Arr;
 use tiFy\Ui\Ui;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 class RoleController extends AppController
 {

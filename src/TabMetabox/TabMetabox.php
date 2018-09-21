@@ -4,7 +4,7 @@ namespace tiFy\TabMetabox;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\TabMetabox\Controller\DisplayController;
 use tiFy\TabMetabox\Controller\TabContentControllerInterface;
 use tiFy\TabMetabox\Controller\TabBoxItemController;

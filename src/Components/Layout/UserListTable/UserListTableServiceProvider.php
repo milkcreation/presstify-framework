@@ -2,10 +2,10 @@
 
 namespace tiFy\Components\Layout\UserListTable;
 
-use tiFy\Apps\Layout\Db\DbInterface;
-use tiFy\Apps\Layout\Labels\LabelsInterface;
-use tiFy\Apps\Layout\Params\ParamsInterface;
-use tiFy\Apps\Layout\Request\RequestInterface;
+use tiFy\App\Layout\Db\DbInterface;
+use tiFy\App\Layout\Labels\LabelsInterface;
+use tiFy\App\Layout\Params\ParamsInterface;
+use tiFy\App\Layout\Request\RequestInterface;
 use tiFy\Components\Db\DbUsersController;
 use tiFy\Components\Layout\ListTable\Item\ItemCollectionInterface;
 use tiFy\Components\Layout\ListTable\Item\ItemInterface;

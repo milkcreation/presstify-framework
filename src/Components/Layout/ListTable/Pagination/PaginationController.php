@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Layout\ListTable\Pagination;
 
-use tiFy\Apps\Item\AbstractAppItemIterator;
+use tiFy\App\Item\AbstractAppItemIterator;
 use tiFy\Components\Layout\ListTable\ListTableInterface;
 use tiFy\Partial\Partial;
 

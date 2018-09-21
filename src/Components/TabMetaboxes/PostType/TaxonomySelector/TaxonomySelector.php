@@ -2,24 +2,10 @@
 
 namespace tiFy\Components\TabMetaboxes\PostType\TaxonomySelector;
 
-use tiFy\Field\Field;
 use tiFy\TabMetabox\ContentPostTypeController;
 
 class TaxonomySelector extends ContentPostTypeController
 {
-    /**
-     * Mise en file des scripts de l'interface d'administration.
-     *
-     * @return void
-     */
-    public function admin_enqueue_scripts()
-    {
-        wp_enqueue_style(
-            'tiFyTabMetaboxesPostTypeTaxonomySelector',
-            $this->appAssetUrl('/TabMetaboxes/PostType/TaxonomySelector/css/styles.css')
-        );
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -104,6 +90,14 @@ class TaxonomySelector extends ContentPostTypeController
      */
     public function load($current_screen)
     {
-        $this->appAddAction('admin_enqueue_scripts');
+        $this->appAddAction(
+            'admin_enqueue_scripts',
+            function () {
+                \wp_enqueue_style(
+                    'MetaboxesPostTypeTaxonomySelector',
+                    \assets()->url('/metabox/post-type/taxonomy-selector/css/styles.css')
+                );
+            }
+        );
     }
 }

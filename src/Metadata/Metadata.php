@@ -2,23 +2,23 @@
 
 namespace tiFy\Metadata;
 
-use tiFy\Apps\AppController;
+use tiFy\App\Dependency\AbstractAppDependency;
 use tiFy\Metadata\Post;
 use tiFy\Metadata\Term;
 use tiFy\Metadata\User;
 use tiFy\Metadata\UserOption;
 
-class Metadata extends AppController
+class Metadata extends AbstractAppDependency
 {
     /**
      * Initialisation du controleur.
      *
      * @return void
      */
-    public function appBoot()
+    public function boot()
     {
-        $this->appServiceShare(Post::class, new Post());
-        $this->appServiceShare(Term::class, new Term());
+        $this->app->singleton(Post::class)->build();
+        $this->app->singleton(Term::class)->build();
         //@todo $this->appServiceShare(User::class, new User());
         //@todo $this->appServiceShare(UserOption::class, new UserOption());
     }

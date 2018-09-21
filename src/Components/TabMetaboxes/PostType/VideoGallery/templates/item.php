@@ -7,7 +7,8 @@
 <li class="tiFyTabMetaboxPostTypeVideoGallery-item">
     <div class="tiFyTabMetaboxPostTypeVideoGallery-itemPoster">
         <?php
-        tify_partial_tag(
+        echo partial(
+            'tag',
             [
                 'tag'     => 'a',
                 'attrs'   => [
@@ -15,14 +16,15 @@
                     'data-media_title'       => __('Sélectionner une jaquette', 'tify'),
                     'data-media_button_text' => __('Ajouter la jaquette', 'tify'),
                     'style'                  => "background-image:url({$poster_src});",
-                    'class'                  => 'tiFyTabMetaboxPostTypeVideoGallery-itemPosterAdd'
+                    'class'                  => 'tiFyTabMetaboxPostTypeVideoGallery-itemPosterAdd',
                 ],
                 'content' => __('Changer la jaquette', 'tify'),
             ]
         );
         ?>
         <?php
-        tify_field_hidden(
+        echo field(
+            'hidden',
             [
                 'name'  => "{$name}[{$id}][poster]",
                 'value' => $this->get('poster'),
@@ -33,10 +35,11 @@
 
     <div class="tiFyTabMetaboxPostTypeVideoGallery-itemSrc">
         <?php
-        tify_field_textarea(
+        echo field(
+            'textarea',
             [
-                'name'    => "{$name}[{$id}][src]",
-                'attrs'   => [
+                'name'  => "{$name}[{$id}][src]",
+                'attrs' => [
                     'placeholder' => __('Vidéo de la galerie ou iframe', 'tify'),
                     'rows'        => 5,
                     'cols'        => 40,
@@ -45,15 +48,17 @@
             ]
         );
         ?>
+
         <?php
-        tify_partial_tag(
+        echo partial(
+            'tag',
             [
                 'tag'     => 'a',
                 'attrs'   => [
                     'href'                   => '#',
                     'class'                  => 'tiFyTabMetaboxPostTypeVideoGallery-itemSrcAdd dashicons dashicons-admin-media',
                     'data-media_title'       => __('Sélectionner une vidéo', 'tify'),
-                    'data-media_button_text' => __('Ajouter la vidéo', 'tify')
+                    'data-media_button_text' => __('Ajouter la vidéo', 'tify'),
                 ],
                 'content' => '',
             ]

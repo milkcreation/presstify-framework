@@ -2,7 +2,7 @@
 
 namespace tiFy\Components\Layout\ListTable\Request;
 
-use tiFy\Apps\Layout\Request\RequestInterface as KernelRequestInterface;
+use tiFy\App\Layout\Request\RequestInterface as KernelRequestInterface;
 
 interface RequestInterface extends KernelRequestInterface
 {

@@ -4,13 +4,14 @@ namespace tiFy\Kernel\Templates;
 
 use Illuminate\Support\Arr;
 use League\Plates\Template\Template;
+use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Kernel\Tools;
 
-class TemplateController extends Template implements TemplateInterface
+class TemplateController extends Template implements ViewInterface
 {
     /**
      * Instance of the template engine.
-     * @var Templates
+     * @var Engine
      */
     protected $engine;
 
@@ -20,6 +21,20 @@ class TemplateController extends Template implements TemplateInterface
     public function all()
     {
         return $this->data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetch($name, array $data = [])
+    {
+        return $this->engine->render(
+            ($this->engine->getFolders()->exists('_override')
+                ? '_override::'
+                : ''
+            ) . $name,
+            $data
+        );
     }
 
     /**
@@ -44,6 +59,14 @@ class TemplateController extends Template implements TemplateInterface
     public function htmlAttrs($attrs, $linearized = true)
     {
         return Tools::Html()->parseAttrs($attrs, $linearized);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function insert($name, array $data = [])
+    {
+        echo $this->fetch($name, $data);
     }
 
     /**

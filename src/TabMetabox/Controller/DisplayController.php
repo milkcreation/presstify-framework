@@ -3,7 +3,7 @@
 namespace tiFy\TabMetabox\Controller;
 
 use Illuminate\Support\Arr;
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 use tiFy\TabMetabox\Controller\TabBoxItemController;
 use tiFy\TabMetabox\Controller\TabNodeItemController;
 use tiFy\Partial\Partial;
@@ -61,15 +61,15 @@ class DisplayController
     public function admin_enqueue_scripts()
     {
         \wp_enqueue_style(
-            'tiFyTabMetabox',
-            $this->appAssetUrl('/TabMetabox/css/styles.css'),
-            ['tiFyPartial-Navtabs'],
+            'TabMetabox',
+            \assets()->url('/metabox/tab/css/styles.css'),
+            ['PartialNavtabs'],
             150216
         );
         \wp_enqueue_script(
-            'tiFyTabMetabox',
-            $this->appAssetUrl('/TabMetabox/js/scripts.js'),
-            ['tiFyPartial-Navtabs'],
+            'TabMetabox',
+            \assets()->url('/metabox/tab/js/scripts.js'),
+            ['PartialNavtabs'],
             151019,
             true
         );
@@ -201,7 +201,11 @@ class DisplayController
         $output .= "\t\t<div class=\"tiFyTaboox-WrapperBack\"></div>";
         $output .= "\t\t<div class=\"tiFyTaboox-WrapperContent\">";
 
-        $output .= Partial::Navtabs(['nodes' => call_user_func_array([$this, 'parseNodes'], $args)]);
+        $output .= Partial::Navtabs(
+            [
+                'nodes' => call_user_func_array([$this, 'parseNodes'], $args)
+            ]
+        );
 
         $output .= "\t\t</div>";
         $output .= "\t</div>";

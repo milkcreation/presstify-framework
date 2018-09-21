@@ -3,7 +3,7 @@
 namespace tiFy\AdminView;
 
 use tiFy\AdminView\AdminViewMenuController;
-use tiFy\Apps\Layout\AbstractLayoutViewController;
+use tiFy\App\Layout\AbstractLayoutViewController;
 
 class AdminViewBaseController extends AbstractLayoutViewController implements AdminViewInterface
 {

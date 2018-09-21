@@ -6,7 +6,7 @@ use App\App;
 
 use tiFy\AdminView\AdminView;
 use tiFy\AjaxAction\AjaxAction;
-use tiFy\Api\Api;
+use tiFy\Api\ApiServiceProvider;
 use tiFy\Column\Column;
 use tiFy\Cron\Cron;
 use tiFy\Db\Db;
@@ -18,7 +18,6 @@ use tiFy\Metadata\Metadata;
 use tiFy\MetaTag\MetaTag;
 use tiFy\Options\Options;
 use tiFy\PageHook\PageHook;
-use tiFy\Partial\Partial;
 use tiFy\PostType\PostType;
 use tiFy\Route\Route;
 use tiFy\TabMetabox\TabMetabox;
@@ -26,14 +25,17 @@ use tiFy\Taxonomy\Taxonomy;
 use tiFy\User\User;
 use tiFy\View\View;
 
+use tiFy\Contracts\Views\ViewsInterface;
+
+use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\Assets\AssetsInterface;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
-use tiFy\Kernel\Config\Config;
+use tiFy\Kernel\Events\Events;
 use tiFy\Kernel\Events\EventsInterface;
 use tiFy\Kernel\Http\Request;
-use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\Logger\Logger;
+use tiFy\Kernel\Templates\Engine;
 use tiFy\Kernel\Service;
 
 use tiFy\Kernel\Container\ServiceProvider;
@@ -45,13 +47,37 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $singletons = [
         App::class,
-        AssetsInterface::class => \tiFy\Kernel\Assets\Assets::class,
-        Config::class,
-        ClassLoader::class,
+        Assets::class,
+        Partial::class
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $bindings = [
+        ClassInfo::class,
+        Engine::class,
+        Events::class
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $aliases = [
+        ViewsInterface::class => Engine::class,
+        EventsInterface::class => Events::class
+    ];
+
+    /**
+     * Liste des packages natifs (composants)
+     * @return array
+     */
+    protected $components = [
+        AdminView::class,
+        AjaxAction::class,
         Column::class,
         Cron::class,
         Db::class,
-        EventsInterface::class => \tiFy\Kernel\Events\Events::class,
         Field::class,
         Form::class,
         Media::class,
@@ -60,8 +86,6 @@ class KernelServiceProvider extends ServiceProvider
         MetaTag::class,
         Options::class,
         PageHook::class,
-        Partial::class,
-        Paths::class,
         PostType::class,
         Route::class,
         TabMetabox::class,
@@ -71,14 +95,7 @@ class KernelServiceProvider extends ServiceProvider
     ];
 
     /**
-     * {@inheritdoc}
-     */
-    protected $bindings = [
-        ClassInfo::class
-    ];
-
-    /**
-     * Liste des packages additionnels (plugins)
+     * Liste des packages additionnels (extensions)
      * @return array
      */
     protected $plugins = [];
@@ -88,9 +105,24 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        foreach($this->getBootables() as $bootable) :
-            $this->getContainer()->resolve($bootable);
+        $app = $this->getContainer()->resolve(App::class);
+
+        foreach ($this->getBootables() as $bootable) :
+            $class = $this->getContainer()->resolve($bootable, [$app]);
         endforeach;
+
+        $this->getContainer()->singleton(
+            'tiFyLogger',
+            function () {
+                return Logger::globalReport();
+            }
+        );
+        $this->getContainer()->singleton(
+            'tiFyRequest',
+            function () {
+                return Request::capture();
+            }
+        );
 
         do_action('after_setup_tify');
     }
@@ -104,32 +136,9 @@ class KernelServiceProvider extends ServiceProvider
     {
         return array_merge(
             [
-                /** Ultra-prioritaire */
-                Paths::class,
-                Config::class,
-                ClassLoader::class,
-                /** ----------------- */
-                App::class,
-                AssetsInterface::class,
-                Column::class,
-                Cron::class,
-                Db::class,
-                Field::class,
-                Form::class,
-                Media::class,
-                Metabox::class,
-                Metadata::class,
-                MetaTag::class,
-                Options::class,
-                PageHook::class,
-                Partial::class,
-                PostType::class,
-                Route::class,
-                TabMetabox::class,
-                Taxonomy::class,
-                User::class,
-                View::class
+                Assets::class
             ],
+            $this->components,
             $this->plugins
         );
     }
@@ -147,16 +156,11 @@ class KernelServiceProvider extends ServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function getSingletons()
+    public function parse()
     {
-        $this->singletons += [
-            'tiFyLogger' => function() {
-                return Logger::globalReport();
-            },
-            'tiFyRequest' => function() {
-                return Request::capture();
-            }
-        ];
+        foreach($this->components as $component) :
+            array_push($this->singletons, $component);
+        endforeach;
 
         /** @todo Modifier le chargement des plugins */
         if (!defined('TIFY_CONFIG_DIR')) :
@@ -165,12 +169,13 @@ class KernelServiceProvider extends ServiceProvider
 
         if (file_exists(TIFY_CONFIG_DIR . '/plugins.php')) :
             $plugins = include TIFY_CONFIG_DIR . '/plugins.php';
-            foreach(array_keys($plugins) as $plugin) :
+
+            foreach (array_keys($plugins) as $plugin) :
                 array_push($this->plugins, $plugin);
                 array_push($this->singletons, $plugin);
             endforeach;
         endif;
 
-        return $this->singletons;
+        parent::parse();
     }
 }

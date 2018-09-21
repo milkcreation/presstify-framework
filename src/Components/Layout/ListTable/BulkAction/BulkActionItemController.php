@@ -2,8 +2,8 @@
 
 namespace tiFy\Components\Layout\ListTable\BulkAction;
 
-use tiFy\Apps\Layout\LayoutInterface;
-use tiFy\Apps\Item\AbstractAppItemIterator;
+use tiFy\App\Layout\LayoutInterface;
+use tiFy\App\Item\AbstractAppItemIterator;
 
 class BulkActionItemController extends AbstractAppItemIterator implements BulkActionItemInterface
 {

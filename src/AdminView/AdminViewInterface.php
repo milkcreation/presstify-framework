@@ -2,7 +2,7 @@
 
 namespace tiFy\AdminView;
 
-use tiFy\Apps\Layout\LayoutViewInterface;
+use tiFy\App\Layout\LayoutViewInterface;
 
 interface AdminViewInterface extends LayoutViewInterface
 {

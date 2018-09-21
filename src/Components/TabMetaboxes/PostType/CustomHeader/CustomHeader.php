@@ -3,7 +3,6 @@
 namespace tiFy\Components\TabMetaboxes\PostType\CustomHeader;
 
 use tiFy\Metadata\Post as PostMetadata;
-use tiFy\Field\Field;
 use tiFy\TabMetabox\ContentPostTypeController;
 
 class CustomHeader extends ContentPostTypeController
@@ -25,7 +24,8 @@ class CustomHeader extends ContentPostTypeController
      */
     public function display($post, $args = [])
     {
-        return Field::MediaImage(
+        return field(
+            'media-image',
             array_merge(
                 [
                     'media_library_title' => __('Personnalisation de l\'image d\'entête', 'tify'),
