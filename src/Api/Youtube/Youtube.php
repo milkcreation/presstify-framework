@@ -115,7 +115,7 @@ class Youtube extends MadcodaYoutube
             $info = Embed::create($video_url);
 
             if (Arr::get($params, 'loop')) :
-                Arr::set($params, 'playlist', $video_url);
+                Arr::set($params, 'playlist', $video_id);
             endif;
 
             $height = $info->getHeight();

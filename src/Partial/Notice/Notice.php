@@ -34,13 +34,14 @@ class Notice extends AbstractPartialItem
             function () {
                 \wp_register_style(
                     'PartialNotice',
-                    assets()->url('/partial/notice/css/styles.css'),
+                    assets()->url('partial/notice/css/styles.css'),
                     [],
                     180214
                 );
+
                 \wp_register_script(
                     'PartialNotice',
-                    assets()->url('/partial/notice/js/scripts.js'),
+                    assets()->url('partial/notice/js/scripts.js'),
                     ['jquery'],
                     180214,
                     true
@@ -54,8 +55,8 @@ class Notice extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('PartialNotice');
-        \wp_enqueue_script('PartialNotice');
+        wp_enqueue_style('PartialNotice');
+        wp_enqueue_script('PartialNotice');
     }
 
     /**

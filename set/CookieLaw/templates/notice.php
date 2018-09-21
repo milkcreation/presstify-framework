@@ -7,6 +7,7 @@
  * @var $close_text Texte du bouton de fermeture
  */
 ?>
+
 <div class="tiFySet-CookieLawText">
 <?php echo $text; ?>
 </div>
