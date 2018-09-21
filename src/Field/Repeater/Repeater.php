@@ -27,7 +27,6 @@ class Repeater extends AbstractFieldItem
      *      @var array $value Liste de valeurs existantes.
      *      @var string $ajax_action Action Ajax lancée pour récupérer le formulaire d'un élément.
      *      @var string $ajax_nonce Agent de sécurisation de la requête de récupération Ajax.
-     *      @var callable $item_cb Fonction ou méthode de rappel d'affichage d'un élément (doit être une méthode statique ou une fonction).
      *      @var array $attrs Liste des attributs HTML de la balise HTML.
      *      @var array $button Liste des attributs de configuration du bouton d'ajout d'un élément.
      *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
@@ -40,7 +39,6 @@ class Repeater extends AbstractFieldItem
         'value'            => [],
         'ajax_action'      => 'field_repeater',
         'ajax_nonce'       => '',
-        'item_cb'          => '',
         'attrs'            => [],
         'button'           => [],
         'max'              => -1,
