@@ -16,10 +16,16 @@ final class Assets implements AssetsInterface
     protected $dataJs = [];
 
     /**
-     * Liste des styles CSS.
+     * Liste des styles css.
      * @var array
      */
-    protected $inlineCSS = [];
+    protected $inlineCss = [];
+
+    /**
+     * Liste des styles css.
+     * @var array
+     */
+    protected $inlineJs = [];
 
     /**
      * Liste des librairies tierces CSS +JS
@@ -47,9 +53,9 @@ final class Assets implements AssetsInterface
     }
 
     /**
-     * Définition de styles CSS.
+     * Définition de styles Css.
      *
-     * @param string $css propriétés CSS.
+     * @param string $css propriétés Css.
      * @param string $ui Interface de l'attribut. user|admin|both
      *
      * @return void
@@ -59,11 +65,33 @@ final class Assets implements AssetsInterface
         switch($ui) :
             case 'admin' :
             case 'user' :
-                Arr::set($this->inlineCSS, $ui, Arr::get($this->inlineCSS, $ui, '') . (string)$css);
+                Arr::set($this->inlineCss, $ui, Arr::get($this->inlineCss, $ui, '') . (string)$css);
                 break;
             case 'both' :
-                Arr::set($this->inlineCSS, 'admin', Arr::get($this->inlineCSS, 'admin', '') . (string)$css);
-                Arr::set($this->inlineCSS, 'user', Arr::get($this->inlineCSS, 'user', '') . (string)$css);
+                Arr::set($this->inlineCss, 'admin', Arr::get($this->inlineCss, 'admin', '') . (string)$css);
+                Arr::set($this->inlineCss, 'user', Arr::get($this->inlineCss, 'user', '') . (string)$css);
+                break;
+        endswitch;
+    }
+
+    /**
+     * Définition de styles JS.
+     *
+     * @param string $js propriétés Js.
+     * @param string $ui Interface de l'attribut. user|admin|both
+     *
+     * @return void
+     */
+    public function addInlineJs($js, $ui = 'user')
+    {
+        switch($ui) :
+            case 'admin' :
+            case 'user' :
+                Arr::set($this->inlineJs, $ui, Arr::get($this->inlineJs, $ui, '') . (string)$js);
+                break;
+            case 'both' :
+                Arr::set($this->inlineJs, 'admin', Arr::get($this->inlineJs, 'admin', '') . (string)$js);
+                Arr::set($this->inlineJs, 'user', Arr::get($this->inlineJs, 'user', '') . (string)$js);
                 break;
         endswitch;
     }
@@ -75,8 +103,12 @@ final class Assets implements AssetsInterface
      */
     public function admin_head()
     {
-        if ($css = Arr::get($this->inlineCSS, 'admin', '')) :
+        if ($css = Arr::get($this->inlineCss, 'admin', '')) :
         ?><style type="text/css"><?php echo $css; ?></style><?php
+        endif;
+
+        if ($js = Arr::get($this->inlineJs, 'admin', '')) :
+            ?><script type="text/javascript">/* <![CDATA[ */<?php echo $js; ?>/* ]]> */</script><?php
         endif;
 
         $datas = (new Collection(Arr::get($this->dataJs, 'admin', [])))
@@ -185,8 +217,12 @@ final class Assets implements AssetsInterface
      */
     public function wp_head()
     {
-        if ($css = Arr::get($this->inlineCSS, 'user', '')) :
+        if ($css = Arr::get($this->inlineCss, 'user', '')) :
         ?><style type="text/css"><?php echo $css; ?></style><?php
+        endif;
+
+        if ($js = Arr::get($this->inlineJs, 'admin', '')) :
+            ?><script type="text/javascript">/* <![CDATA[ */<?php echo $js; ?>/* ]]> */</script><?php
         endif;
 
         $datas = (new Collection(Arr::get($this->dataJs, 'user', [])))

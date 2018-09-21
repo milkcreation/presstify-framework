@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\TaxonomySelector;
 
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class TaxonomySelector extends AbstractMetaboxContentPostController
+class TaxonomySelector extends AbstractMetaboxDisplayPostController
 {
     /**
      * {@inheritdoc}

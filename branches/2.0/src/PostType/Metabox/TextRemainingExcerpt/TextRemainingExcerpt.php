@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\TextRemainingExcerpt;
 
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class TextRemainingExcerpt extends AbstractMetaboxContentPostController
+class TextRemainingExcerpt extends AbstractMetaboxDisplayPostController
 {
     /**
      * {@inheritdoc}

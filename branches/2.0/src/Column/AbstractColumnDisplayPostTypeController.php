@@ -2,7 +2,7 @@
 
 namespace tiFy\Column;
 
-class AbstractColumnPostTypeDisplayController extends AbstractColumnDisplayController
+class AbstractColumnDisplayPostTypeController extends AbstractColumnDisplayController
 {
     /**
      * Affichage du contenu de la colonne

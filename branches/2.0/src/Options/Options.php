@@ -3,10 +3,9 @@
 namespace tiFy\Options;
 
 use Illuminate\Support\Arr;
-use tiFy\App\AppController;
-use tiFy\TabMetabox\TabMetabox;
+use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-class Options extends AppController
+class Options extends AbstractParametersBag
 {
     /**
      * Liste des attributs de configuration.
@@ -36,6 +35,20 @@ class Options extends AppController
         'nodes'             => [],
         'render'            => 'metaboxes'
     ];
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct(config('options'));
+
+        $this->appAddAction('admin_menu');
+        $this->appAddAction('admin_enqueue_scripts');
+        $this->appAddAction('admin_bar_menu');
+    }
 
     /**
      * Traitement des attributs de configuration de la page des options
@@ -119,14 +132,14 @@ class Options extends AppController
     }
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function appBoot()
+    public function defaults()
     {
-        $this->appTemplates(['directory' => $this->appDirname() . '/templates']);
-        $this->appAddAction('init', null, 99999);
+        return [
+            'page_title' => __('Réglages des options du site', 'tify'),
+            'menu_title' => __('Options du site', 'tify')
+        ];
     }
 
     /**
@@ -193,29 +206,6 @@ class Options extends AppController
     }
 
     /**
-     * Récupération de la liste des attributs de configuration.
-     *
-     * @return array
-     */
-    public function all()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attributs à récupérer. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par defaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
-    }
-
-    /**
      * Récupération de l'identifiant d'accroche de la page d'affichage
      *
      * @return string
@@ -233,36 +223,6 @@ class Options extends AppController
     public function getNodes()
     {
         return $this->get('nodes');
-    }
-
-    /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    public function init()
-    {
-        $this->attributes['page_title'] = __('Réglages des options du site', 'tify');
-        $this->attributes['menu_title'] = __('Options du site', 'tify');
-
-        $this->attributes = array_merge(
-            $this->attributes,
-            $this->appConfig()
-        );
-
-        $this->_parseAdminPage();
-        $this->_parseAdminBar();
-        $this->_parseBox();
-        $this->_parseNodes();
-
-        do_action('tify_options_register', $this);
-
-        if ($this->getNodes()) :
-            $this->appAddAction('tify_tabmetabox_register');
-            $this->appAddAction('admin_menu');
-            $this->appAddAction('admin_enqueue_scripts');
-            $this->appAddAction('admin_bar_menu');
-        endif;
     }
 
     /**
@@ -291,19 +251,6 @@ class Options extends AppController
                 'option_group' => $this->get('menu_slug')
             ]
         );
-    }
-
-    /**
-     * Définition d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attributs à définir. Syntaxe à point permise.
-     * @param mixed $value Valeur de l'attribut.
-     *
-     * @return mixed
-     */
-    public function set($key, $value)
-    {
-        return Arr::set($this->attributes, $key, $value);
     }
 
     /**

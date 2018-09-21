@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Metabox;
 
-interface MetaboxContentTermInterface extends MetaboxContentInterface
+interface MetaboxDisplayTermInterface extends MetaboxDisplayInterface
 {
     /**
      * Affichage.

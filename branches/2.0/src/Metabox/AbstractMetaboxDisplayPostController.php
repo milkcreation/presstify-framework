@@ -2,13 +2,13 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxContentPostInterface;
+use tiFy\Contracts\Metabox\MetaboxDisplayPostInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\PostType\Metadata\Post as MetadataPost;
 
-abstract class AbstractMetaboxContentPostController
-    extends AbstractMetaboxContentController
-    implements MetaboxContentPostInterface
+abstract class AbstractMetaboxDisplayPostController
+    extends AbstractMetaboxDisplayController
+    implements MetaboxDisplayPostInterface
 {
     /**
      * CONSTRUCTEUR.

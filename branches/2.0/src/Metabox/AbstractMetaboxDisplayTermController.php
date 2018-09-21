@@ -2,11 +2,11 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxContentTermInterface;
+use tiFy\Contracts\Metabox\MetaboxDisplayTermInterface;
 
-abstract class AbstractMetaboxContentTermController
-    extends AbstractMetaboxContentController
-    implements MetaboxContentTermInterface
+abstract class AbstractMetaboxDisplayTermController
+    extends AbstractMetaboxDisplayController
+    implements MetaboxDisplayTermInterface
 {
     /**
      * {@inheritdoc}

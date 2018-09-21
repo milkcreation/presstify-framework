@@ -2,16 +2,16 @@
 
 namespace tiFy\PostType\Column\Subtitle;
 
-use tiFy\Column\AbstractColumnPostTypeDisplayController;
+use tiFy\Column\AbstractColumnDisplayPostTypeController;
 
-class Subtitle extends AbstractColumnPostTypeDisplayController
+class Subtitle extends AbstractColumnDisplayPostTypeController
 {
     /**
      * {@inheritdoc}
      */
-    public function getTitle()
+    public function header()
     {
-        return $this->Title ? : __('Sous-titre', 'tify');
+        return $this->item->getTitle() ? : __('Sous-titre', 'tify');
     }
 
     /**

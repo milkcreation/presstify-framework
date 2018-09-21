@@ -26,7 +26,6 @@ class Config extends AbstractItemController
         'db'          => \tiFy\Db\Db::class,
         'media'       => \tiFy\Media\Media::class,
         'meta-tag'    => \tiFy\MetaTag\MetaTag::class,
-        'options'     => \tiFy\Options\Options::class,
         'page-hook'   => \tiFy\PageHook\PageHook::class,
         'route'       => \tiFy\Route\Route::class
     ];

@@ -2,7 +2,7 @@
 
 namespace tiFy\Column;
 
-class AbstractColumnTaxonomyDisplayController extends AbstractColumnDisplayController
+class AbstractColumnDisplayTaxonomyController extends AbstractColumnDisplayController
 {
     /**
      * Affichage du contenu de la colonne.
@@ -13,7 +13,7 @@ class AbstractColumnTaxonomyDisplayController extends AbstractColumnDisplayContr
      *
      * @return void
      */
-    public function content($content, $column_name, $term_id)
+    public function content($content, $column_name, $term_id = null)
     {
         _e('Pas de données à afficher', 'tify');
     }
