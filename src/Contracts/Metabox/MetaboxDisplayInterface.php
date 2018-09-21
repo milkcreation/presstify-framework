@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Metabox;
 
 use tiFy\Contracts\Kernel\ParametersBagInterface;
 
-interface MetaboxContentInterface extends ParametersBagInterface
+interface MetaboxDisplayInterface extends ParametersBagInterface
 {
     /**
      * Initialisation du controleur.

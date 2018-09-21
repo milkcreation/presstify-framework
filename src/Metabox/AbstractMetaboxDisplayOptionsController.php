@@ -2,12 +2,12 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxContentOptionsInterface;
+use tiFy\Contracts\Metabox\MetaboxDisplayOptionsInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 
-abstract class AbstractMetaboxContentOptionsController
-    extends AbstractMetaboxContentController
-    implements MetaboxContentOptionsInterface
+abstract class AbstractMetaboxDisplayOptionsController
+    extends AbstractMetaboxDisplayController
+    implements MetaboxDisplayOptionsInterface
 {
     /**
      * CONSTRUCTEUR.

@@ -11,7 +11,6 @@ namespace tiFy\Metabox;
 
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\Field\Field;
 use tiFy\Metabox\MetaboxItemController;
 use tiFy\Metabox\Tab\MetaboxTabDisplay;
 use tiFy\Wp\WpScreen;
@@ -129,7 +128,8 @@ class Metabox
 
                             $editable_slug = apply_filters('editable_slug', $post->post_name, $post);
 
-                            echo Field::Hidden(
+                            echo field(
+                                'hidden',
                                 [
                                     'name'  => 'post_name',
                                     'value' => esc_attr($editable_slug),

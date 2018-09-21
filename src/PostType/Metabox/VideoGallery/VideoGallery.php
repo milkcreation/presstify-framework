@@ -4,9 +4,9 @@ namespace tiFy\PostType\Metabox\VideoGallery;
 
 use tiFy\Field\Field;
 use tiFy\PostType\Metadata\Post as MetadataPost;
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class VideoGallery extends AbstractMetaboxContentPostController
+class VideoGallery extends AbstractMetaboxDisplayPostController
 {
     /**
      * {@inheritdoc}

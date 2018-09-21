@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Column\Excerpt;
 
-use tiFy\Column\AbstractColumnPostTypeDisplayController;
+use tiFy\Column\AbstractColumnDisplayPostTypeController;
 
-class Excerpt extends AbstractColumnPostTypeDisplayController
+class Excerpt extends AbstractColumnDisplayPostTypeController
 {
     /**
      * {@inheritdoc}

@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\ImageGallery;
 
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class ImageGallery extends AbstractMetaboxContentPostController
+class ImageGallery extends AbstractMetaboxDisplayPostController
 {
     /**
      * {@inheritdoc}

@@ -3,12 +3,12 @@
 namespace tiFy\Metabox;
 
 use Illuminate\Support\Arr;
-use tiFy\Contracts\Metabox\MetaboxContentInterface;
+use tiFy\Contracts\Metabox\MetaboxDisplayInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-abstract class AbstractMetaboxContentController extends AbstractParametersBag implements MetaboxContentInterface
+abstract class AbstractMetaboxDisplayController extends AbstractParametersBag implements MetaboxDisplayInterface
 {
     /**
      * Instance de l'écran d'affichage.

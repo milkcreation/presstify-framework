@@ -3,7 +3,7 @@
 namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxItemInterface;
-use tiFy\Contracts\Metabox\MetaboxContentInterface;
+use tiFy\Contracts\Metabox\MetaboxDisplayInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 use tiFy\Wp\WpScreen;
@@ -89,7 +89,7 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
                     if (class_exists($content)) :
                         $resolved = new $content($this->screen, $this->getArgs());
 
-                        if ($resolved instanceof MetaboxContentInterface) :
+                        if ($resolved instanceof MetaboxDisplayInterface) :
                             $this->set('content', $resolved);
                         endif;
                     endif;

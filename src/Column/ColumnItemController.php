@@ -96,10 +96,8 @@ class ColumnItemController extends AbstractParametersBag implements ColumnItemIn
      */
     public function defaults()
     {
-        $id = md5("column-" . uniqid() . "-{$this->getIndex()}");
-
         return [
-            'name'  => $id
+            'name'  => md5("column-" . uniqid() . "-{$this->getIndex()}")
         ];
     }
 

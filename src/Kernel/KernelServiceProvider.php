@@ -14,7 +14,6 @@ use tiFy\Cron\Cron;
 use tiFy\Db\Db;
 use tiFy\Media\Media;
 use tiFy\MetaTag\MetaTag;
-use tiFy\Options\Options;
 use tiFy\PageHook\PageHook;
 use tiFy\Route\Route;
 
@@ -70,7 +69,6 @@ class KernelServiceProvider extends ServiceProvider
         Db::class,
         Media::class,
         MetaTag::class,
-        Options::class,
         PageHook::class,
         Route::class
     ];

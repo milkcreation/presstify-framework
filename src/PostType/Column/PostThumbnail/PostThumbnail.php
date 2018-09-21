@@ -2,11 +2,10 @@
 
 namespace tiFy\PostType\Column\PostThumbnail;
 
-use tiFy\Column\AbstractColumnPostTypeDisplayController;
+use tiFy\Column\AbstractColumnDisplayPostTypeController;
 use tiFy\Kernel\Tools;
-use tiFy\Partial\Partial;
 
-class PostThumbnail extends AbstractColumnPostTypeDisplayController
+class PostThumbnail extends AbstractColumnDisplayPostTypeController
 {
     /**
      * {@inheritdoc}
@@ -24,17 +23,13 @@ class PostThumbnail extends AbstractColumnPostTypeDisplayController
     public function admin_enqueue_scripts()
     {
         partial('holder-image')->enqueue_scripts();
-    }
 
-    /**
-     * Styles dynamiques de l'interface d'administration.
-     *
-     * @return string
-     */
-    public function admin_print_styles()
-    {
-        $column_name = $this->item->getName();
-        ?><style type="text/css">.wp-list-table th#<?php echo $column_name; ?>,.wp-list-table td.<?php echo $column_name; ?>{width:80px;text-align:center;} .wp-list-table td.<?php echo$column_name; ?> img{max-width:80px;max-height:60px;}</style><?php
+        $column_name = "column-{$this->item->getName()}";
+        assets()->addInlineCss(
+            ".wp-list-table th.{$column_name},.wp-list-table td.{$column_name}{width:80px;text-align:center;}" .
+            ".wp-list-table td.{$column_name} img{max-width:80px;max-height:60px;}",
+            'admin'
+        );
     }
 
     /**
@@ -48,7 +43,8 @@ class PostThumbnail extends AbstractColumnPostTypeDisplayController
         if (($attachment = wp_get_attachment_image_src($attachment_id)) && isset($attachment[0]) && ($path = Tools::File()->getRelPath($attachment[0])) && file_exists(ABSPATH . $path)) :
             $thumb = wp_get_attachment_image($attachment_id, [60, 60], true);
         else :
-            $thumb = Partial::HolderImage(
+            $thumb = partial(
+                'holder-image',
                 [
                     'width'            => 60,
                     'height'           => 60,
@@ -65,6 +61,5 @@ class PostThumbnail extends AbstractColumnPostTypeDisplayController
     public function load($wp_screen)
     {
         add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
-        add_action('admin_print_styles', [$this, 'admin_print_styles']);
     }
 }

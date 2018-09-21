@@ -2,9 +2,9 @@
 
 namespace tiFy\Options\Metabox\CustomHeader;
 
-use tiFy\Metabox\AbstractMetaboxContentOptionsController;
+use tiFy\Metabox\AbstractMetaboxDisplayOptionsController;
 
-class CustomHeader extends AbstractMetaboxContentOptionsController
+class CustomHeader extends AbstractMetaboxDisplayOptionsController
 {
     /**
      * {@inheritdoc}

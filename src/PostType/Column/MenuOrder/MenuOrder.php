@@ -2,16 +2,30 @@
 
 namespace tiFy\PostType\Column\MenuOrder;
 
-use tiFy\Column\AbstractColumnPostTypeDisplayController;
+use tiFy\Column\AbstractColumnDisplayPostTypeController;
 
-class MenuOrder extends AbstractColumnPostTypeDisplayController
+class MenuOrder extends AbstractColumnDisplayPostTypeController
 {
     /**
      * {@inheritdoc}
      */
-    public function getTitle()
+    public function header()
     {
-        return $this->Title ?: __('Ordre d\'affich.', 'tify');
+        return $this->item->getTitle() ? : __('Ordre d\'affich.', 'tify');
+    }
+
+    /**
+     * Mise en file des scripts de l'interface d'administration.
+     *
+     * @return void
+     */
+    public function admin_enqueue_scripts()
+    {
+        $column_name = "column-{$this->item->getName()}";
+        assets()->addInlineCss(
+            ".wp-list-table th.{$column_name},.wp-list-table td.{$column_name}{width:120px;}",
+            'admin'
+        );
     }
 
     /**
@@ -42,5 +56,13 @@ class MenuOrder extends AbstractColumnPostTypeDisplayController
         endfor;
 
         return $_level . $post->menu_order;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function load($wp_screen)
+    {
+        add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
     }
 }

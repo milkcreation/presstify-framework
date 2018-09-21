@@ -110,19 +110,18 @@ class WpScreen implements WpScreenInterface
                     endswitch;
                 endif;
 
-                $screen = WP_Screen::get();
+                $screen = clone WP_Screen::get();
                 foreach($attrs as $key => $value) :
                     $screen->{$key} = $value;
                 endforeach;
-
             elseif (preg_match('#(edit)::(.*)@(options)#', $screen, $matches)) :
                 switch($matches[2]) :
                     case 'options' :
-                        $screen = WP_Screen::get('settings_page_' . $matches[1]);
+                        $screen = clone WP_Screen::get('settings_page_' . $matches[1]);
                         break;
                 endswitch;
             else :
-                $screen = WP_Screen::get($screen);
+                $screen = clone WP_Screen::get($screen);
             endif;
 
             if ($screen instanceof WP_Screen) :
@@ -138,7 +137,7 @@ class WpScreen implements WpScreenInterface
      */
     public function getHookname()
     {
-        return $this->screen->id;
+        return $this->getScreen()->id;
     }
 
     /**
@@ -183,6 +182,13 @@ class WpScreen implements WpScreenInterface
             $this->objectType = 'options';
         elseif(
             ($this->screen->base === 'term') &&
+            preg_match('#^edit-(.*)#', $this->screen->id, $matches) &&
+            taxonomy_exists($matches[1])
+        ) :
+            $this->objectName = $matches[1];
+            $this->objectType = 'taxonomy';
+        elseif(
+            ($this->screen->base === 'edit-tags') &&
             preg_match('#^edit-(.*)#', $this->screen->id, $matches) &&
             taxonomy_exists($matches[1])
         ) :
