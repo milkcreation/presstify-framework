@@ -3,7 +3,7 @@
 namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxDisplayOptionsInterface;
-use tiFy\Contracts\Wp\WpScreenInterface;
+use tiFy\Contracts\Metabox\MetaboxItemInterface;
 
 abstract class AbstractMetaboxDisplayOptionsController
     extends AbstractMetaboxDisplayController
@@ -12,14 +12,14 @@ abstract class AbstractMetaboxDisplayOptionsController
     /**
      * CONSTRUCTEUR.
      *
-     * @param WpScreenInterface $screen Ecran d'affichage.
+     * @param MetaboxItemInterface $item Instance de l'élément.
      * @param array $attrs Liste des variables passées en arguments.
      *
      * @return void
      */
-    public function __construct(WpScreenInterface $screen, $args = [])
+    public function __construct(MetaboxItemInterface $item, $args = [])
     {
-        parent::__construct($screen, $args);
+        parent::__construct($item, $args);
 
         foreach ($this->settings() as $setting => $attrs) :
             if (is_numeric($setting)) :
@@ -27,16 +27,32 @@ abstract class AbstractMetaboxDisplayOptionsController
                 $attrs = [];
             endif;
 
-            \register_setting($object_name, $setting, $attrs);
+            \register_setting($this->getOptionsPage(), $setting, $attrs);
         endforeach;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function display($args = [])
+    public function content($args = null, $null1 = null, $null2 = null)
     {
-        return $this->viewer('display', $this->all());
+        return parent::content($args, $null1, $null2);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptionsPage()
+    {
+        return $this->getObjectName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($args = null, $null1 = null, $null2 = null)
+    {
+        return parent::header($args, $null1, $null2);
     }
 
     /**

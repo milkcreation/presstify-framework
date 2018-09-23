@@ -4,7 +4,7 @@ jQuery(document).ready(function($) {
 
         var $closest = $(this).closest('[aria-control="notice"]');
 
-        var o = JSON.parse(decodeURIComponent($(this).data('options')));
+        var o = JSON.parse(decodeURIComponent($closest.data('options')));
 
         $closest.attr('aria-loading', 'true');
         $.post(

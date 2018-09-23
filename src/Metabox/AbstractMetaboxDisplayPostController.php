@@ -3,8 +3,8 @@
 namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxDisplayPostInterface;
-use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\PostType\Metadata\Post as MetadataPost;
+use tiFy\Contracts\Metabox\MetaboxItemInterface;
+use tiFy\PostType\Metadata\Post as PostMeta;
 
 abstract class AbstractMetaboxDisplayPostController
     extends AbstractMetaboxDisplayController
@@ -13,33 +13,33 @@ abstract class AbstractMetaboxDisplayPostController
     /**
      * CONSTRUCTEUR.
      *
-     * @param WpScreenInterface $screen Ecran d'affichage.
+     * @param MetaboxItemInterface $item Instance de l'élément.
      * @param array $attrs Liste des variables passées en arguments.
      *
      * @return void
      */
-    public function __construct(WpScreenInterface $screen, $args = [])
+    public function __construct(MetaboxItemInterface $item, $args = [])
     {
-        parent::__construct($screen, $args);
+        parent::__construct($item, $args);
 
-        /** @var MetadataPost $metadataPost */
-        $metadataPost = app(MetadataPost::class);
+        /** @var PostMeta $postMeta */
+        $postMeta = app(PostMeta::class);
         foreach ($this->metadatas() as $meta => $single) :
             if (is_numeric($meta)) :
                 $meta = (string) $single;
                 $single = true;
             endif;
 
-            $metadataPost->register($this->getPostType(), $meta, $single);
+            $postMeta->register($this->getPostType(), $meta, $single);
         endforeach;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args = [])
+    public function content($post = null, $args = null, $null = null)
     {
-        return $this->viewer('display', $this->all());
+        return parent::content($post, $args, $null);
     }
 
     /**
@@ -48,6 +48,14 @@ abstract class AbstractMetaboxDisplayPostController
     public function getPostType()
     {
         return $this->getObjectName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($post = null, $args = null, $null = null)
+    {
+        return parent::header($post, $args, $null);
     }
 
     /**

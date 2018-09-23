@@ -3,6 +3,7 @@
 namespace tiFy\PostType\Metabox\Fileshare;
 
 use tiFy\Metabox\AbstractMetaboxDisplayPostController;
+use tiFy\PostType\Metadata\Post as PostMeta;
 
 class Fileshare extends AbstractMetaboxDisplayPostController
 {
@@ -23,11 +24,11 @@ class Fileshare extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args = [])
+    public function content($post = null, $args = null, $null = null)
     {
         $metadatas = $this->get('single')
             ? get_post_meta($post->ID, $this->get('name'), true)
-            : tify_meta_post_get($post->ID, $this->get('name'));
+            : app(PostMeta::class)->get($post->ID, $this->get('name'));
 
         ob_start();
         if ($this->get('max', -1) !== 1) :
@@ -115,6 +116,14 @@ class Fileshare extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
+    public function header($post = null, $args = null, $null = null)
+    {
+        return $this->item->getTitle() ? : __('Partage de fichiers', 'tify');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function load($wp_screen)
     {
         add_action(
@@ -123,14 +132,14 @@ class Fileshare extends AbstractMetaboxDisplayPostController
                 if ($this->get('max', -1) !== 1) :
                     \wp_enqueue_style(
                         'MetaboxPostTypeFileshare',
-                        assets()->url('/post-type/metabox/fileshare/css/styles.css'),
+                        assets()->url('post-type/metabox/fileshare/css/styles.css'),
                         [],
                         151216
                     );
                     \wp_enqueue_media();
                     \wp_enqueue_script(
                         'MetaboxPostTypeFileshare',
-                        assets()->url('/post-type/metabox/fileshare/js/scripts.js'),
+                        assets()->url('post-type/metabox/fileshare/js/scripts.js'),
                         ['jquery', 'jquery-ui-sortable'],
                         151216,
                         true

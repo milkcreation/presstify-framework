@@ -5,7 +5,7 @@ namespace tiFy\Field;
 use tiFy\Kernel\Templates\TemplateController;
 
 /**
- * Class TemplateController
+ * Class FieldView
  *
  * @method string after().
  * @method string attrs().

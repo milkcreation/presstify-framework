@@ -6,10 +6,10 @@ use Illuminate\Support\Arr;
 use Symfony\Component\Finder\Finder;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Filesystem\Paths;
-use tiFy\Kernel\Item\AbstractItemController;
+use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
 use tiFy\tiFy;
 
-class Config extends AbstractItemController
+class Config extends AbstractParametersBagIterator
 {
     /**
      * Classe de rappel du controleur des chemins.

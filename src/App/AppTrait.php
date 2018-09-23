@@ -109,7 +109,7 @@ trait AppTrait
      */
     public function appContainer()
     {
-        return \container();
+        return container();
     }
 
     /**

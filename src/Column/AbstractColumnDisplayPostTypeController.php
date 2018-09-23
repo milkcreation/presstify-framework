@@ -2,19 +2,17 @@
 
 namespace tiFy\Column;
 
-class AbstractColumnDisplayPostTypeController extends AbstractColumnDisplayController
+use tiFy\Contracts\Column\ColumnDisplayPostTypeInterface;
+
+class AbstractColumnDisplayPostTypeController
+    extends AbstractColumnDisplayController
+    implements ColumnDisplayPostTypeInterface
 {
     /**
-     * Affichage du contenu de la colonne
-     *
-     * @param string $column_name Identifiant de qualification de la colonne.
-     * @param int $post_id Identifiant du post.
-     * @param null $var3 Argument homis dans ce contexte.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function content($column_name, $post_id, $var3 = null)
+    public function content($column_name = null, $post_id = null, $null = null)
     {
-        parent::content($column_name, $post_id, $var3);
+        parent::content($column_name, $post_id, $null);
     }
 }

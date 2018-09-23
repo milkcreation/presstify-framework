@@ -77,13 +77,13 @@ class Sidebar extends AbstractPartialItem
             function () {
                 \wp_register_style(
                     'PartialSidebar',
-                    assets()->url('/partial/sidebar/css/styles.css'),
+                    assets()->url('partial/sidebar/css/styles.css'),
                     [],
                     180511
                 );
                 \wp_register_script(
                     'PartialSidebar',
-                    assets()->url('/partial/sidebar/css/scripts.js'),
+                    assets()->url('partial/sidebar/css/scripts.js'),
                     ['jquery'],
                     180511,
                     true

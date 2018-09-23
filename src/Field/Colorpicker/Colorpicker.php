@@ -40,7 +40,7 @@ class Colorpicker extends AbstractFieldItem
             function () {
                 \wp_register_style(
                     'FieldColorpicker',
-                    assets()->url('/field/colorpicker/css/styles.css'),
+                    assets()->url('field/colorpicker/css/styles.css'),
                     ['spectrum'],
                     180725
                 );
@@ -52,7 +52,7 @@ class Colorpicker extends AbstractFieldItem
 
                 \wp_register_script(
                     'FieldColorpicker',
-                    assets()->url('/field/colorpicker/js/scripts.js'),
+                    assets()->url('field/colorpicker/js/scripts.js'),
                     $deps,
                     180725,
                     true

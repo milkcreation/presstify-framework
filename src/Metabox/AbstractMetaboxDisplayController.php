@@ -3,6 +3,7 @@
 namespace tiFy\Metabox;
 
 use Illuminate\Support\Arr;
+use tiFy\Contracts\Metabox\MetaboxItemInterface;
 use tiFy\Contracts\Metabox\MetaboxDisplayInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
@@ -11,10 +12,10 @@ use tiFy\Kernel\Parameters\AbstractParametersBag;
 abstract class AbstractMetaboxDisplayController extends AbstractParametersBag implements MetaboxDisplayInterface
 {
     /**
-     * Instance de l'écran d'affichage.
-     * @var WpScreenInterface
+     * Instance de l'élément.
+     * @var MetaboxItemInterface
      */
-    protected $screen;
+    protected $item;
 
     /**
      * Instance du moteur de gabarits d'affichage.
@@ -25,29 +26,27 @@ abstract class AbstractMetaboxDisplayController extends AbstractParametersBag im
     /**
      * CONSTRUCTEUR.
      *
-     * @param WpScreenInterface $screen Ecran d'affichage.
+     * @param MetaboxItemInterface $item Instance de l'élément.
      * @param array $attrs Liste des variables passées en arguments.
      *
      * @return void
      */
-    public function __construct(WpScreenInterface $screen, $args = [])
+    public function __construct(MetaboxItemInterface $item, $args = [])
     {
-        $this->screen = $screen;
+        $this->item = $item;
 
         parent::__construct($args);
 
         add_action(
             'current_screen',
             function ($wp_current_screen) {
-                if ($wp_current_screen->id === $this->screen->getHookname()) :
+                if ($wp_current_screen->id === $this->item->getScreen()->getHookname()) :
                     $this->load($wp_current_screen);
                 endif;
             }
         );
 
-        if (method_exists($this, 'boot')) :
-            $this->boot();
-        endif;
+        $this->boot();
     }
 
     /**
@@ -57,7 +56,7 @@ abstract class AbstractMetaboxDisplayController extends AbstractParametersBag im
      */
     public function __invoke()
     {
-        return call_user_func_array([$this, 'display'], func_get_args());
+        return call_user_func_array([$this, 'content'], func_get_args());
     }
 
     /**
@@ -71,9 +70,17 @@ abstract class AbstractMetaboxDisplayController extends AbstractParametersBag im
     /**
      * {@inheritdoc}
      */
+    public function content($var1 = null, $var2 = null, $var3 = null)
+    {
+        return __('Aucun contenu à afficher', 'tify');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getObjectName()
     {
-        return $this->screen->getObjectName();
+        return $this->item->getScreen()->getObjectName();
     }
 
     /**
@@ -81,7 +88,15 @@ abstract class AbstractMetaboxDisplayController extends AbstractParametersBag im
      */
     public function getObjectType()
     {
-        return $this->screen->getObjectType();
+        return $this->item->getScreen()->getObjectType();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($var1 = null, $var2 = null, $var3 = null)
+    {
+        return $this->item->getTitle();
     }
 
     /**

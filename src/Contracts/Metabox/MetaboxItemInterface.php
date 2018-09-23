@@ -15,11 +15,18 @@ interface MetaboxItemInterface extends ParametersBagInterface
     public function getArgs();
 
     /**
-     * Récupération du contenu de l'affichage.
+     * Récupération de l'affichage du contenu.
      *
      * @return string
      */
     public function getContent();
+
+    /**
+     * Récupération de l'affichage de l'entête.
+     *
+     * @return string
+     */
+    public function getHeader();
 
     /**
      * Récupération du contexte d'affichage.

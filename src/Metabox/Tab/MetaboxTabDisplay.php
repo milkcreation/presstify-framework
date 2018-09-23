@@ -74,13 +74,13 @@ class MetaboxTabDisplay
                 function () {
                     \wp_enqueue_style(
                         'MetaboxTab',
-                        assets()->url('/metabox/tab/css/styles.css'),
+                        assets()->url('metabox/tab/css/styles.css'),
                         ['PartialNavtabs'],
                         150216
                     );
                     \wp_enqueue_script(
                         'MetaboxTab',
-                        assets()->url('/metabox/tab/js/scripts.js'),
+                        assets()->url('metabox/tab/js/scripts.js'),
                         ['PartialNavtabs'],
                         151019,
                         true
@@ -108,12 +108,14 @@ class MetaboxTabDisplay
          */
 
         foreach($this->items as $item) :
+            $args = array_merge(func_get_args(), [$item->getArgs()]);
+
             $items[] = [
                 'name'      => $item->getName(),
-                'title'     => $item->getTitle(),
+                'title'     => call_user_func_array([$item, 'getHeader'], $args),
                 'parent'    => $item->getParent(),
-                'content'   => $item->getContent(),
-                'args'      => array_merge(func_get_args(), [$item->getArgs()]),
+                'content'   => call_user_func_array([$item, 'getContent'], $args),
+                'args'      => $args,
                 'position'  => $item->getPosition(),
                 // @todo 'current'   => (get_user_meta(get_current_user_id(), 'navtab' . get_current_screen()->id, true) === $node->getName())
             ];

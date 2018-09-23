@@ -32,7 +32,7 @@ class HolderImage extends AbstractPartialItem
             function () {
                 \wp_register_style(
                     'PartialHolderImage',
-                    assets()->url('/partial/holder-image/css/styles.css'),
+                    assets()->url('partial/holder-image/css/styles.css'),
                     [],
                     160714
                 );
@@ -62,6 +62,6 @@ class HolderImage extends AbstractPartialItem
         endif;
 
         $this->set('attrs.aria-control', 'holder_image');
-        $this->set('attrs.style', "max-width:{$this->get('width')}px;max-height:{$this->get('height')}px;background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};font-size:{$this->get('font-size')}\"");
+        $this->set('attrs.style', "background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};font-size:{$this->get('font-size')}\"");
     }
 }

@@ -114,7 +114,7 @@ class WpScreen implements WpScreenInterface
                 foreach($attrs as $key => $value) :
                     $screen->{$key} = $value;
                 endforeach;
-            elseif (preg_match('#(edit)::(.*)@(options)#', $screen, $matches)) :
+            elseif (preg_match('#(.*)@(options)#', $screen, $matches)) :
                 switch($matches[2]) :
                     case 'options' :
                         $screen = clone WP_Screen::get('settings_page_' . $matches[1]);

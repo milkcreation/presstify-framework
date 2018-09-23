@@ -22,7 +22,7 @@ class CustomHeader extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args = [])
+    public function content($post = null, $args = null, $null = null)
     {
         return field(
             'media-image',
@@ -33,9 +33,17 @@ class CustomHeader extends AbstractMetaboxDisplayPostController
                     'name' => '_custom_header',
                     'value' => get_post_meta($post->ID, '_custom_header', true)
                 ],
-                $args
+                $this->all()
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($post = null, $args = null, $null = null)
+    {
+        return $this->item->getTitle() ? : __('Image d\'entête', 'tify');
     }
 
     /**

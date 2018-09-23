@@ -2,19 +2,17 @@
 
 namespace tiFy\Column;
 
-class AbstractColumnDisplayTaxonomyController extends AbstractColumnDisplayController
+use tiFy\Contracts\Column\ColumnDisplayTaxonomyInterface;
+
+class AbstractColumnDisplayTaxonomyController
+    extends AbstractColumnDisplayController
+    implements ColumnDisplayTaxonomyInterface
 {
     /**
-     * Affichage du contenu de la colonne.
-     *
-     * @param string $content Contenu de la colonne.
-     * @param string $column_name Identification de la colonne.
-     * @param int $term_id Identifiant de qualification du terme.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function content($content, $column_name, $term_id = null)
+    public function content($content = null, $column_name = null, $term_id = null)
     {
-        _e('Pas de données à afficher', 'tify');
+        parent::content($content, $column_name, $term_id);
     }
 }

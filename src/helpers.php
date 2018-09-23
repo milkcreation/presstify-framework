@@ -34,7 +34,7 @@ if (!function_exists('app')) :
             return $factory;
         endif;
 
-        return $factory->get($abstract, $args);
+        return tiFy::instance()->resolve($abstract, $args);
     }
 endif;
 
@@ -110,19 +110,19 @@ if (!function_exists('container')) :
      * {@internal Si $alias est null > Retourne la classe de rappel du controleur.}
      * @deprecated
      *
-     * @param string $alias Nom de qualification du service à récupérer.
+     * @param string $abstract Nom de qualification du service à récupérer.
      *
      * @return \tiFy\Kernel\Container\Container
      */
-    function container($alias = null)
+    function container($abstract = null)
     {
         $factory = Kernel::Container();
 
-        if (is_null($alias)) :
+        if (is_null($abstract)) :
             return $factory;
         endif;
 
-        return $factory->get($alias);
+        return $factory->get($abstract);
     }
 endif;
 
@@ -249,7 +249,7 @@ if (! function_exists('resolve')) {
      */
     function resolve($name)
     {
-        return app($name);
+        return container($name);
     }
 }
 

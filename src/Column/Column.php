@@ -3,7 +3,7 @@
 namespace tiFy\Column;
 
 use Illuminate\Support\Collection;
-use tiFy\Wp\WpScreen;
+use tiFy\Contracts\Wp\WpScreenInterface;
 
 final class Column
 {
@@ -49,7 +49,7 @@ final class Column
                             $_screen = $screen;
                         endif;
 
-                        if(!is_null($_screen)) :
+                        if (!is_null($_screen)) :
                             if (preg_match('#(.*)@(post_type|taxonomy|user)#', $_screen)) :
                                 $_screen = 'list::' . $_screen;
                             endif;
@@ -67,10 +67,10 @@ final class Column
         add_action(
             'current_screen',
             function ($wp_current_screen) {
-                $this->screen = new WpScreen($wp_current_screen);
+                $this->screen = app(WpScreenInterface::class, [$wp_current_screen]);
 
-                /** @var \WP_Screen  $wp_current_screen */
-                foreach($this->items as $item) :
+                /** @var \WP_Screen $wp_current_screen */
+                foreach ($this->items as $item) :
                     $item->load($this->screen);
                 endforeach;
 
@@ -137,6 +137,21 @@ final class Column
     }
 
     /**
+     * Ajout d'un élément.
+     *
+     * @param string $screen Ecran d'affichage de l'élément.
+     * @param array $attrs Liste des attributs de configuration de l'élément.
+     *
+     * @return $this
+     */
+    public function add($screen, $attrs = [])
+    {
+        config()->push("column.add.{$screen}", $attrs);
+
+        return $this;
+    }
+
+    /**
      * Récupération de la liste des éléments.
      *
      * @return Collection|ColumnItemController[]
@@ -177,16 +192,16 @@ final class Column
     final public function parseColumnHeaders($headers)
     {
         $i = 0;
-        foreach($headers as $name => $title) :
+        foreach ($headers as $name => $title) :
             /** @var ColumnItemController $column */
-            $column = app()->resolve(
+            $column = app(
                 ColumnItemController::class, [
                     $this->screen,
                     [
-                        'name' => $name,
-                        'title' => $title,
-                        'position' => $i++
-                    ]
+                        'name'     => $name,
+                        'title'    => $title,
+                        'position' => $i++,
+                    ],
                 ]
             );
             $column->load($this->screen);
@@ -194,7 +209,7 @@ final class Column
         endforeach;
 
         $headers = [];
-        foreach($this->getActiveItems() as $c) :
+        foreach ($this->getActiveItems() as $c) :
             $headers[$c->getName()] = $c->getHeader();
         endforeach;
 
@@ -210,7 +225,7 @@ final class Column
      */
     final public function parseColumnContents()
     {
-        foreach($this->getActiveItems() as $c) :
+        foreach ($this->getActiveItems() as $c) :
             $echo = false;
 
             switch ($this->screen->getObjectType()) :
@@ -224,8 +239,8 @@ final class Column
                     break;
 
                 case 'taxonomy' :
-                    $output         = func_get_arg(0);
-                    $column_name    = func_get_arg(1);
+                    $output = func_get_arg(0);
+                    $column_name = func_get_arg(1);
 
                     if ($column_name !== $c->getName()) :
                         continue 2;
@@ -233,8 +248,8 @@ final class Column
                     break;
 
                 case 'custom' :
-                    $output         = func_get_arg(0);
-                    $column_name    = func_get_arg(1);
+                    $output = func_get_arg(0);
+                    $column_name = func_get_arg(1);
 
                     if ($column_name !== $c->getName()) :
                         continue 2;

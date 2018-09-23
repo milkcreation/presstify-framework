@@ -5,13 +5,33 @@ namespace tiFy\Contracts\Metabox;
 interface MetaboxDisplayOptionsInterface extends MetaboxDisplayInterface
 {
     /**
-     * Affichage.
+     * Affichage du contenu.
      *
      * @param array $args Liste des variables passés en argument.
+     * @param null $null1 Paramètre indisponible.
+     * @param null $null2 Paramètre indisponible.
      *
      * @return string
      */
-    public function display($args = []);
+    public function content($args = null, $null1 = null, $null2 = null);
+
+    /**
+     * Récupération du nom de qualification de la page d'affichage.
+     *
+     * @return string
+     */
+    public function getOptionsPage();
+
+    /**
+     * Affichage du contenu.
+     *
+     * @param array $args Liste des variables passés en argument.
+     * @param null $null1 Paramètre indisponible.
+     * @param null $null2 Paramètre indisponible.
+     *
+     * @return string
+     */
+    public function header($args = null, $null1 = null, $null2 = null);
 
     /**
      * Listes des options à enregistrer.

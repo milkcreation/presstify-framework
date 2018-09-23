@@ -59,7 +59,7 @@ class CookieNotice extends AbstractPartialItem
 
                 \wp_register_script(
                     'PartialCookieNotice',
-                    assets()->url('/partial/cookie-notice/js/scripts.js'),
+                    assets()->url('partial/cookie-notice/js/scripts.js'),
                     ['PartialNotice'],
                     170626,
                     true
@@ -73,8 +73,8 @@ class CookieNotice extends AbstractPartialItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('PartialNotice');
-        \wp_enqueue_script('PartialCookieNotice');
+        wp_enqueue_style('PartialNotice');
+        wp_enqueue_script('PartialCookieNotice');
     }
 
     /**
@@ -108,7 +108,7 @@ class CookieNotice extends AbstractPartialItem
         endif;
 
         $this->set(
-            'accept.attrs.data-options',
+            'attrs.data-options',
             [
                 'ajax_action'   => $this->get('ajax_action'),
                 'ajax_nonce'    => $this->get('ajax_nonce'),

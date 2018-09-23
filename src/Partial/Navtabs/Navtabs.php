@@ -51,13 +51,13 @@ class Navtabs extends AbstractPartialItem
                 // Déclaration des scripts
                 \wp_register_style(
                     'PartialNavtabs',
-                    assets()->url('/partial/navtabs/css/styles.css'),
+                    assets()->url('partial/navtabs/css/styles.css'),
                     [],
                     170704
                 );
                 \wp_register_script(
                     'PartialNavtabs',
-                    assets()->url('/partial/navtabs/js/scripts.js'),
+                    assets()->url('partial/navtabs/js/scripts.js'),
                     ['jquery-ui-widget'],
                     170704,
                     true

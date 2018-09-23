@@ -1,9 +1,8 @@
 <?php
 
 /**
- * @name Field
+ * @name Field.
  * @desc Gestion de champs.
- *
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
  */

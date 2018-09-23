@@ -9,6 +9,20 @@ class Subtitle extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
+    public function content($post = null, $args = null, $null = null)
+    {
+        return field('text', [
+                'attrs' => [
+                    'class' => 'widefat'
+                ],
+                'name'  => $this->get('name'),
+                'value' => wp_unslash(get_post_meta($post->ID, $this->get('name'), true))
+            ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function defaults()
     {
         return [
@@ -26,15 +40,9 @@ class Subtitle extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args = [])
+    public function header($post = null, $args = null, $null = null)
     {
-        return field('text', [
-                'attrs' => [
-                    'class' => 'widefat'
-                ],
-                'name'  => $this->get('name'),
-                'value' => wp_unslash(get_post_meta($post->ID, $this->get('name'), true))
-            ]);
+        return $this->item->getTitle() ? : __('Sous-titre', 'tify');
     }
 
     /**

@@ -2,17 +2,8 @@
 
 namespace tiFy\PostType;
 
-use tiFy\App\Partial\AbstractAppPartial;
-use tiFy\Contracts\App\AppInterface;
-
-class PostTypeFieldItemController extends AbstractAppPartial
+class PostTypeFieldItemController
 {
-    /**
-     * Classe de rappel du controleur de l'application associée.
-     * @var \tiFy\PostType\PostTypeItemController
-     */
-    protected $app;
-
     /**
      * Liste des contextes d'accroche autorisés.
      * @var array

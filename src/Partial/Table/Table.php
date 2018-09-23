@@ -45,7 +45,7 @@ class Table extends AbstractPartialItem
             function () {
                 \wp_register_style(
                     'PartialTable',
-                    assets()->url('/partial/table/css/styles.css'),
+                    assets()->url('partial/table/css/styles.css'),
                     [],
                     160714
                 );

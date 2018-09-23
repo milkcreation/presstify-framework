@@ -26,24 +26,24 @@ class VideoGallery extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
+    public function content($post = null, $args = null, $null = null)
+    {
+        /** @var MetadataPost $metadataPost */
+        $metadataPost = app(MetadataPost::class);
+        $this->set('items', $metadataPost->get($post->ID, $this->get('name')) ? : []);
+
+        return $this->viewer('content', $this->all());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function defaults()
     {
         return [
             'name' => '_tify_taboox_video_gallery',
             'max'  => -1
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display($post, $args = [])
-    {
-        /** @var MetadataPost $metadataPost */
-        $metadataPost = app(MetadataPost::class);
-        $this->set('items', $metadataPost->get($post->ID, $this->get('name')) ? : []);
-
-        return parent::display($post, $args);
     }
 
     /**
@@ -77,6 +77,14 @@ class VideoGallery extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
+    public function header($post = null, $args = null, $null = null)
+    {
+        return $this->item->getTitle() ? : __('Galerie de vidéos', 'tify');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function load($current_screen)
     {
         add_action(
@@ -86,14 +94,14 @@ class VideoGallery extends AbstractMetaboxDisplayPostController
 
                 wp_enqueue_style(
                     'PostTypeMetaboxVideoGallery',
-                    assets()->url('/post-type/metabox/video-gallery/css/styles.css'),
+                    assets()->url('post-type/metabox/video-gallery/css/styles.css'),
                     ['tiFyAdmin'],
                     180724
                 );
 
                 wp_enqueue_script(
                     'PostTypeMetaboxVideoGallery',
-                    assets()->url('/post-type/metabox/video-gallery/js/scripts.js'),
+                    assets()->url('post-type/metabox/video-gallery/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable', 'tiFyAdmin'],
                     180724,
                     true
