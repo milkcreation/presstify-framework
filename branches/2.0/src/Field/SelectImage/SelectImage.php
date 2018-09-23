@@ -44,7 +44,7 @@ class SelectImage extends AbstractFieldItem
     {
         \wp_register_style(
             'FieldSelectImage',
-            assets()->url('/field/select-image/css/styles.css'),
+            assets()->url('field/select-image/css/styles.css'),
             ['FieldSelectJs'],
             180808
         );

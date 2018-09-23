@@ -17,7 +17,7 @@ class Subtitle extends AbstractColumnDisplayPostTypeController
     /**
      * {@inheritdoc}
      */
-    public function content($column_name, $post_id, $var3 = null)
+    public function content($column_name = null, $post_id = null, $null = null)
     {
         if ($subtitle = get_post_meta($post_id, '_subtitle', true)) :
             return $subtitle;

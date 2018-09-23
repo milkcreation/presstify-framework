@@ -35,7 +35,7 @@ class PostThumbnail extends AbstractColumnDisplayPostTypeController
     /**
      * {@inheritdoc}
      */
-    public function content($column_name, $post_id, $var3 = null)
+    public function content($column_name = null, $post_id = null, $null = null)
     {
         $attachment_id = get_post_thumbnail_id($post_id) ? : 0;
 

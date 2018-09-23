@@ -11,8 +11,16 @@ abstract class AbstractMetaboxDisplayUserController
     /**
      * {@inheritdoc}
      */
-    public function display($user, $args = [])
+    public function content($user = null, $args = null, $null = null)
     {
-        return $this->viewer('display', $this->all());
+        return parent::content($user, $args, $null);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($user = null, $args = null, $null = null)
+    {
+        return parent::header($user, $args, $null);
     }
 }

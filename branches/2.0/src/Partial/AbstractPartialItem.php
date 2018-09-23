@@ -6,9 +6,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialItemInterface;
 use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Kernel\Parameters\AbstractParametersBag;
 use tiFy\Kernel\Tools;
 
-abstract class AbstractPartialItem implements PartialItemInterface
+abstract class AbstractPartialItem extends AbstractParametersBag implements PartialItemInterface
 {
     /**
      * Liste des attributs de configuration.
@@ -78,14 +79,6 @@ abstract class AbstractPartialItem implements PartialItemInterface
     /**
      * {@inheritdoc}
      */
-    public function all()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function attrs()
     {
         echo $this->getHtmlAttrs($this->get('attrs', []));
@@ -122,14 +115,6 @@ abstract class AbstractPartialItem implements PartialItemInterface
     /**
      * {@inheritdoc}
      */
-    public function defaults()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function display()
     {
         return $this->viewer(
@@ -144,14 +129,6 @@ abstract class AbstractPartialItem implements PartialItemInterface
     public function enqueue_scripts()
     {
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
@@ -181,14 +158,6 @@ abstract class AbstractPartialItem implements PartialItemInterface
     /**
      * {@inheritdoc}
      */
-    public function has($key)
-    {
-        return Arr::has($this->attributes, $key);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function isCallable($var)
     {
         return Tools::Functions()->isCallable($var);
@@ -199,11 +168,7 @@ abstract class AbstractPartialItem implements PartialItemInterface
      */
     public function parse($attrs = [])
     {
-        $this->attributes = array_merge(
-            $this->attributes,
-            $this->defaults(),
-            $attrs
-        );
+        parent::parse($attrs);
 
         $this->parseDefaults();
     }
@@ -233,53 +198,6 @@ abstract class AbstractPartialItem implements PartialItemInterface
         foreach($this->get('view', []) as $key => $value) :
             $this->viewer()->set($key, $value);
         endforeach;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function pull($key, $default = null)
-    {
-        return Arr::pull($this->attributes, $key, $default);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function push($key, $value)
-    {
-        if (!$this->has($key)) :
-            $this->set($key, []);
-        endif;
-
-        $arr = $this->get($key);
-
-        if (!is_array($arr)) :
-            return false;
-        else :
-            array_push($arr, $value);
-            $this->set($key, $arr);
-
-            return true;
-        endif;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function set($key, $value)
-    {
-        Arr::set($this->attributes, $key, $value);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function values()
-    {
-        return array_values($this->attributes);
     }
 
     /**

@@ -99,14 +99,14 @@ class SelectJs extends AbstractFieldItem
 
                 \wp_register_style(
                     'FieldSelectJs',
-                    assets()->url('/field/select-js/css/styles.css'),
+                    assets()->url('field/select-js/css/styles.css'),
                     [],
                     171218
                 );
 
                 \wp_register_script(
                     'FieldSelectJs',
-                    assets()->url('/field/select-js/js/scripts.js'),
+                    assets()->url('field/select-js/js/scripts.js'),
                     ['jquery-ui-widget', 'jquery-ui-sortable'],
                     171218,
                     true

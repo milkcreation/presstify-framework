@@ -9,20 +9,7 @@ class CustomHeader extends AbstractMetaboxDisplayOptionsController
     /**
      * {@inheritdoc}
      */
-    public function load($wp_screen)
-    {
-        add_action(
-            'admin_enqueue_scripts',
-            function(){
-                field('media-image')->enqueue_scripts();
-            }
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display($args = [])
+    public function content($args = [], $null1 = null, $null2 = null)
     {
         return field(
             'media-image',
@@ -33,8 +20,21 @@ class CustomHeader extends AbstractMetaboxDisplayOptionsController
                     'name'                 => 'custom_header',
                     'value'                => get_option('custom_header')
                 ],
-                $args
+                $this->all()
             )
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function load($wp_screen)
+    {
+        add_action(
+            'admin_enqueue_scripts',
+            function(){
+                field('media-image')->enqueue_scripts();
+            }
         );
     }
 

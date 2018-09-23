@@ -4,6 +4,7 @@ namespace tiFy\Column;
 
 use tiFy\Column\ColumnItemController;
 use tiFy\Contracts\Column\ColumnDisplayInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 
 abstract class AbstractColumnDisplayController implements ColumnDisplayInterface
 {
@@ -12,6 +13,12 @@ abstract class AbstractColumnDisplayController implements ColumnDisplayInterface
      * @var ColumnItemController
      */
     protected $item;
+
+    /**
+     * Instance du moteur de gabarits d'affichage.
+     * @return ViewsInterface
+     */
+    protected $viewer;
 
     /**
      * CONSTRUCTEUR.
@@ -31,9 +38,7 @@ abstract class AbstractColumnDisplayController implements ColumnDisplayInterface
             }
         );
 
-        if (method_exists($this, 'boot')) :
-            $this->boot();
-        endif;
+        $this->boot();
     }
 
     /**
@@ -57,17 +62,17 @@ abstract class AbstractColumnDisplayController implements ColumnDisplayInterface
     /**
      * {@inheritdoc}
      */
-    public function header()
+    public function content($var1, $var2, $var3 = null)
     {
-        return $this->item->getTitle() ? : $this->item->getName();
+        return __('Pas de contenu à afficher', 'tify');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function content($var1, $var2, $var3 = null)
+    public function header()
     {
-        return __('Pas de contenu à afficher', 'tify');
+        return $this->item->getTitle() ? : $this->item->getName();
     }
 
     /**

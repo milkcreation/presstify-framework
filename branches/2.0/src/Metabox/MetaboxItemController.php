@@ -44,7 +44,7 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
         'name'     => '',
         'title'    => '',
         'content'  => '',
-        'context'  => 'advanced',
+        'context'  => 'tab',
         'priority' => 'default',
         'position' => 0,
         'args'     => [],
@@ -86,8 +86,9 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
                     $this->screen = WpScreen::get($screen);
 
                     $content = $this->getContent();
-                    if (class_exists($content)) :
-                        $resolved = new $content($this->screen, $this->getArgs());
+
+                    if (is_string($content) && class_exists($content)) :
+                        $resolved = new $content($this, $this->getArgs());
 
                         if ($resolved instanceof MetaboxDisplayInterface) :
                             $this->set('content', $resolved);
@@ -141,6 +142,18 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
     public function getContext()
     {
         return $this->get('context', 'advanced');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeader()
+    {
+        if ($this->getContent() instanceof MetaboxDisplayInterface) :
+            return call_user_func_array([$this->getContent(), 'header'], func_get_args());
+        else :
+            return $this->getTitle();
+        endif;
     }
 
     /**

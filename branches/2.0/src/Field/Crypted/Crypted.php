@@ -66,13 +66,13 @@ class Crypted extends AbstractFieldItem
 
                 \wp_register_style(
                     'FieldCrypted',
-                    assets()->url('/field/crypted/css/styles.css'),
+                    assets()->url('field/crypted/css/styles.css'),
                     ['dashicons'],
                     180519
                 );
                 \wp_register_script(
                     'FieldCrypted',
-                    assets()->url('/field/crypted/js/scripts.js'),
+                    assets()->url('field/crypted/js/scripts.js'),
                     ['jquery'],
                     180519,
                     true

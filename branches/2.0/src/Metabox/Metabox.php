@@ -13,7 +13,6 @@ use Illuminate\Support\Collection;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Metabox\MetaboxItemController;
 use tiFy\Metabox\Tab\MetaboxTabDisplay;
-use tiFy\Wp\WpScreen;
 
 class Metabox
 {
@@ -22,18 +21,6 @@ class Metabox
      * @var MetaboxItemController[]
      */
     protected $items = [];
-
-    /**
-     * Liste des éléments à déclarer.
-     * @var array
-     */
-    protected $registred = [];
-
-    /**
-     * Liste des éléments à supprimer.
-     * @var array
-     */
-    protected $unregistred = [];
 
     /**
      * Instance de l'écran d'affichage courant.
@@ -60,7 +47,7 @@ class Metabox
                         endif;
 
                         if(!is_null($_screen)) :
-                            if (preg_match('#(.*)@(options|post_type|taxonomy|user)#', $_screen)) :
+                            if (preg_match('#(.*)@(post_type|taxonomy|user)#', $_screen)) :
                                 $_screen = 'edit::' . $_screen;
                             endif;
 
@@ -75,7 +62,7 @@ class Metabox
         add_action(
             'current_screen',
             function ($wp_current_screen) {
-                $this->screen = new WpScreen($wp_current_screen);
+                $this->screen = app(WpScreenInterface::class, [$wp_current_screen]);
 
                 /** @var \WP_Screen  $wp_current_screen */
                 foreach($this->items as $item) :
@@ -97,6 +84,21 @@ class Metabox
     }
 
     /**
+     * Ajout d'un élément.
+     *
+     * @param string $screen Ecran d'affichage de l'élément.
+     * @param array $attrs Liste des attributs de configuration de l'élément.
+     *
+     * @return $this
+     */
+    public function add($screen, $attrs = [])
+    {
+        config()->push("metabox.add.{$screen}", $attrs);
+
+        return $this;
+    }
+
+    /**
      * Récupération de la liste des éléments.
      *
      * @return Collection|MetaboxItemController[]
@@ -113,6 +115,7 @@ class Metabox
      */
     private function removeHandle()
     {
+        return;
         foreach ($this->unregistred as $post_type => $ids) :
             foreach ($ids as $id => $context) :
                 remove_meta_box($id, $post_type, $context);

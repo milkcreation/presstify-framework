@@ -42,7 +42,7 @@ class AdminBar extends AbstractPartialItem
     {
         \wp_register_style(
             'tify_control-take_over_admin_bar',
-            $this->appAssetUrl('/User/TakeOver/AdminBar/css/styles.css', get_class()),
+            $this->appAssetUrl('User/TakeOver/AdminBar/css/styles.css', get_class()),
             [],
             171218
         );

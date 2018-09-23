@@ -207,7 +207,7 @@ final class Assets implements AssetsInterface
      */
     public function url($path = '')
     {
-        return home_url('vendor/presstify/framework/assets' . ($path ? '/' . $path : $path));
+        return home_url('vendor/presstify/framework/assets' . ($path ? '/' . ltrim($path, '/') : $path));
     }
 
     /**

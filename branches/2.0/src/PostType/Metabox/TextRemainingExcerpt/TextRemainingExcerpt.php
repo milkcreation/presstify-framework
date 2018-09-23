@@ -9,6 +9,21 @@ class TextRemainingExcerpt extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
+    public function content($post = null, $args = null, $null = null)
+    {
+        return field(
+            'text-remaining',
+            [
+                'name'  => 'excerpt',
+                'value' => $post->post_excerpt,
+                'max'   => $this->get('max')
+            ]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function defaults()
     {
         return [
@@ -19,16 +34,9 @@ class TextRemainingExcerpt extends AbstractMetaboxDisplayPostController
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args = [])
+    public function header($post = null, $args = null, $null = null)
     {
-        return field(
-            'text-remaining',
-            [
-                'name'  => 'excerpt',
-                'value' => $post->post_excerpt,
-                'max'   => $this->get('max')
-            ]
-        );
+        return $this->item->getTitle() ? : __('Extrait', 'tify');
     }
 
     /**

@@ -1,9 +1,8 @@
 <?php
 
 /**
- * @name Partial
+ * @name Partial.
  * @desc Gestion des controleurs d'affichage.
- *
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
  */
