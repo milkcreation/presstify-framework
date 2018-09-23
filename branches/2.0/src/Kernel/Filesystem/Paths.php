@@ -94,7 +94,7 @@ class Paths extends Filesystem
         if(!$this->configPath) :
             $this->configPath = !$this->isWpClassic()
                 ? $this->getBasePath('config')
-                : \get_template_directory() . '/config';
+                : get_template_directory() . '/config';
         endif;
 
         return $this->getPath($this->configPath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);

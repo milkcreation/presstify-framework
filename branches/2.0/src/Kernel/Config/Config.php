@@ -49,26 +49,28 @@ class Config extends AbstractParametersBagIterator
             endforeach;
         endif;
 
-        $finder = (new Finder())->files()->name('/\.php$/')->in(\paths()->getConfigPath());
-        foreach ($finder as $file) :
-            $key = basename($file->getFilename(), ".{$file->getExtension()}");
-            if ($key === 'autoload') :
-                continue;
-            endif;
+        if (is_dir(paths()->getConfigPath())) :
+            $finder = (new Finder())->files()->name('/\.php$/')->in(paths()->getConfigPath());
+            foreach ($finder as $file) :
+                $key = basename($file->getFilename(), ".{$file->getExtension()}");
+                if ($key === 'autoload') :
+                    continue;
+                endif;
 
-            $value = include($file->getRealPath());
+                $value = include($file->getRealPath());
 
-            switch($key) :
-                default :
-                    $this->set($this->getAlias($key), $value);
-                    break;
-                case 'plugins' :
-                    foreach((array)$value as $plugin => $attrs) :
-                        $this->set($plugin, $attrs);
-                    endforeach;
-                    break;
-            endswitch;
-        endforeach;
+                switch($key) :
+                    default :
+                        $this->set($this->getAlias($key), $value);
+                        break;
+                    case 'plugins' :
+                        foreach((array)$value as $plugin => $attrs) :
+                            $this->set($plugin, $attrs);
+                        endforeach;
+                        break;
+                endswitch;
+            endforeach;
+        endif;
     }
 
     /**
