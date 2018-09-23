@@ -8,7 +8,7 @@
 namespace tiFy\Api\Facebook;
 
 use tiFy\tiFy;
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 use Facebook\Facebook as FacebookSdk;
 use Facebook\Authentication\AccessToken;
 use Facebook\Authentication\AccessTokenMetadata;

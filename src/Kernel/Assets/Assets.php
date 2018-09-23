@@ -10,22 +10,28 @@ use tiFy\tiFy;
 final class Assets implements AssetsInterface
 {
     /**
-     * Liste des librairies tierces CSS +JS
-     * @var array
-     */
-    protected $thirdParty = [];
-
-    /**
      * Liste des attributs JS.
      * @var array
      */
     protected $dataJs = [];
 
     /**
-     * Liste des styles CSS.
+     * Liste des styles css.
      * @var array
      */
-    protected $inlineCSS = [];
+    protected $inlineCss = [];
+
+    /**
+     * Liste des styles css.
+     * @var array
+     */
+    protected $inlineJs = [];
+
+    /**
+     * Liste des librairies tierces CSS +JS
+     * @var array
+     */
+    protected $thirdParty = [];
 
     /**
      * CONSTRUCTEUR.
@@ -36,19 +42,20 @@ final class Assets implements AssetsInterface
     {
         $this->thirdParty = require_once (dirname(__FILE__) . '/third-party.php');
 
-        add_action('init', [$this, 'init']);
+        add_action('init', [$this, 'init'], 10);
         add_action('admin_head', [$this, 'admin_head']);
         add_action('admin_footer', [$this, 'admin_footer']);
         add_action('wp_head', [$this, 'wp_head']);
         add_action('wp_footer', [$this, 'wp_footer']);
 
         $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
+        $this->setDataJs('ajax_response', [], 'both', false);
     }
 
     /**
-     * Définition de styles CSS.
+     * Définition de styles Css.
      *
-     * @param string $css propriétés CSS.
+     * @param string $css propriétés Css.
      * @param string $ui Interface de l'attribut. user|admin|both
      *
      * @return void
@@ -58,11 +65,33 @@ final class Assets implements AssetsInterface
         switch($ui) :
             case 'admin' :
             case 'user' :
-                Arr::set($this->inlineCSS, $ui, Arr::get($this->inlineCSS, $ui, '') . (string)$css);
+                Arr::set($this->inlineCss, $ui, Arr::get($this->inlineCss, $ui, '') . (string)$css);
                 break;
             case 'both' :
-                Arr::set($this->inlineCSS, 'admin', Arr::get($this->inlineCSS, 'admin', '') . (string)$css);
-                Arr::set($this->inlineCSS, 'user', Arr::get($this->inlineCSS, 'user', '') . (string)$css);
+                Arr::set($this->inlineCss, 'admin', Arr::get($this->inlineCss, 'admin', '') . (string)$css);
+                Arr::set($this->inlineCss, 'user', Arr::get($this->inlineCss, 'user', '') . (string)$css);
+                break;
+        endswitch;
+    }
+
+    /**
+     * Définition de styles JS.
+     *
+     * @param string $js propriétés Js.
+     * @param string $ui Interface de l'attribut. user|admin|both
+     *
+     * @return void
+     */
+    public function addInlineJs($js, $ui = 'user')
+    {
+        switch($ui) :
+            case 'admin' :
+            case 'user' :
+                Arr::set($this->inlineJs, $ui, Arr::get($this->inlineJs, $ui, '') . (string)$js);
+                break;
+            case 'both' :
+                Arr::set($this->inlineJs, 'admin', Arr::get($this->inlineJs, 'admin', '') . (string)$js);
+                Arr::set($this->inlineJs, 'user', Arr::get($this->inlineJs, 'user', '') . (string)$js);
                 break;
         endswitch;
     }
@@ -74,8 +103,12 @@ final class Assets implements AssetsInterface
      */
     public function admin_head()
     {
-        if ($css = Arr::get($this->inlineCSS, 'admin', '')) :
+        if ($css = Arr::get($this->inlineCss, 'admin', '')) :
         ?><style type="text/css"><?php echo $css; ?></style><?php
+        endif;
+
+        if ($js = Arr::get($this->inlineJs, 'admin', '')) :
+            ?><script type="text/javascript">/* <![CDATA[ */<?php echo $js; ?>/* ]]> */</script><?php
         endif;
 
         $datas = (new Collection(Arr::get($this->dataJs, 'admin', [])))
@@ -110,8 +143,8 @@ final class Assets implements AssetsInterface
      */
     public function init()
     {
-        \wp_register_style('tiFyAdmin', $this->url('/Admin/css/styles.css'), [], 180528);
-        \wp_register_script('tiFyAdmin', $this->url('/Admin/js/scripts.js'), ['jquery'], 180528, true);
+        \wp_register_style('tiFyAdmin', $this->url('/admin/css/styles.css'), [], 180528);
+        \wp_register_script('tiFyAdmin', $this->url('/admin/js/scripts.js'), ['jquery'], 180528, true);
 
         foreach(Arr::get($this->thirdParty, 'css', []) as $handle => $attrs) :
             \wp_register_style($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
@@ -120,6 +153,14 @@ final class Assets implements AssetsInterface
         foreach(Arr::get($this->thirdParty, 'js', []) as $handle => $attrs) :
             \wp_register_script($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
         endforeach;
+    }
+
+    /**
+     *
+     */
+    public function setAjaxResponse($key, $value, $context = ['admin', 'user'])
+    {
+        return $this->setDataJs("ajax_response.{$key}", $value, $context, true);
     }
 
     /**
@@ -166,7 +207,7 @@ final class Assets implements AssetsInterface
      */
     public function url($path = '')
     {
-        return home_url('vendor/presstify/framework/src/Components/Assets/src' . ($path ? '/' . $path : $path));
+        return home_url('vendor/presstify/framework/assets' . ($path ? '/' . ltrim($path, '/') : $path));
     }
 
     /**
@@ -176,8 +217,12 @@ final class Assets implements AssetsInterface
      */
     public function wp_head()
     {
-        if ($css = Arr::get($this->inlineCSS, 'user', '')) :
+        if ($css = Arr::get($this->inlineCss, 'user', '')) :
         ?><style type="text/css"><?php echo $css; ?></style><?php
+        endif;
+
+        if ($js = Arr::get($this->inlineJs, 'admin', '')) :
+            ?><script type="text/javascript">/* <![CDATA[ */<?php echo $js; ?>/* ]]> */</script><?php
         endif;
 
         $datas = (new Collection(Arr::get($this->dataJs, 'user', [])))

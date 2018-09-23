@@ -7,7 +7,7 @@ use League\Event\Event;
 use League\Event\Emitter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 class TakeOverController extends AppController
 {

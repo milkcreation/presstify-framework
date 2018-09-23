@@ -2,49 +2,110 @@
 
 /**
  * @name Metabox
- * @desc Personnalisation des boîtes de saisie
- * @package presstiFy
- * @subpackage Core
- * @namespace tiFy\Metabox
+ * @desc Personnalisation des boîtes de saisie.
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
- * @version 1.2.580
  */
 
 namespace tiFy\Metabox;
 
-use tiFy\Apps\AppController;
-use tiFy\Field\Field;
+use Illuminate\Support\Collection;
+use tiFy\Contracts\Wp\WpScreenInterface;
+use tiFy\Metabox\MetaboxItemController;
+use tiFy\Metabox\Tab\MetaboxTabDisplay;
 
-class Metabox extends AppController
+class Metabox
 {
     /**
-     * Liste des métaboxes à supprimer.
-     * @var array
+     * Liste des éléments.
+     * @var MetaboxItemController[]
      */
-    protected $removed = [];
+    protected $items = [];
 
     /**
-     * Initialisation du controleur.
+     * Instance de l'écran d'affichage courant.
+     * @var WpScreenInterface
+     */
+    protected $screen;
+
+    /**
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appAddAction('add_meta_boxes', null, 99);
+        add_action(
+            'wp_loaded',
+            function () {
+                foreach (config('metabox.add', []) as $screen => $items) :
+                    foreach ($items as $attrs) :
+                        if (is_numeric($screen)) :
+                            $_screen = isset($attrs['screen']) ? $attrs['screen'] : null;
+                        else :
+                            $_screen = $screen;
+                        endif;
+
+                        if(!is_null($_screen)) :
+                            if (preg_match('#(.*)@(post_type|taxonomy|user)#', $_screen)) :
+                                $_screen = 'edit::' . $_screen;
+                            endif;
+
+                            $this->items[] = app()->resolve(MetaboxItemController::class, [$_screen, $attrs]);
+                        endif;
+                    endforeach;
+                endforeach;
+            },
+            0
+        );
+
+        add_action(
+            'current_screen',
+            function ($wp_current_screen) {
+                $this->screen = app(WpScreenInterface::class, [$wp_current_screen]);
+
+                /** @var \WP_Screen  $wp_current_screen */
+                foreach($this->items as $item) :
+                    $item->load($this->screen);
+                endforeach;
+
+                app()->resolve(MetaboxTabDisplay::class, [$this->screen, $this]);
+            },
+            999999
+        );
+
+        add_action(
+            'add_meta_boxes',
+            function () {
+                $this->removeHandle();
+            },
+            999999
+        );
     }
 
     /**
-     * Appel à l'issue des déclarations complète des métaboxes natives Wordpress.
+     * Ajout d'un élément.
      *
-     * @return void
+     * @param string $screen Ecran d'affichage de l'élément.
+     * @param array $attrs Liste des attributs de configuration de l'élément.
+     *
+     * @return $this
      */
-    final public function add_meta_boxes()
+    public function add($screen, $attrs = [])
     {
-        do_action('tify_metabox_register');
+        config()->push("metabox.add.{$screen}", $attrs);
 
-        // Suppression des metaboxes
-        $this->removeHandle();
+        return $this;
+    }
+
+    /**
+     * Récupération de la liste des éléments.
+     *
+     * @return Collection|MetaboxItemController[]
+     */
+    public function getItems()
+    {
+        return new Collection($this->items);
     }
 
     /**
@@ -54,17 +115,14 @@ class Metabox extends AppController
      */
     private function removeHandle()
     {
-        if (! $this->removed) :
-            return;
-        endif;
-
-        foreach ($this->removed as $post_type => $ids) :
+        return;
+        foreach ($this->unregistred as $post_type => $ids) :
             foreach ($ids as $id => $context) :
                 remove_meta_box($id, $post_type, $context);
 
                 // Hack Wordpress : Maintient du support de la modification du permalien
                 if ($id === 'slugdiv') :
-                    $this->appAddAction(
+                    add_action(
                         'edit_form_before_permalink',
                         function($post) use ($post_type) {
                             if($post->post_type !== $post_type) :
@@ -73,7 +131,8 @@ class Metabox extends AppController
 
                             $editable_slug = apply_filters('editable_slug', $post->post_name, $post);
 
-                            echo Field::Hidden(
+                            echo field(
+                                'hidden',
                                 [
                                     'name'  => 'post_name',
                                     'value' => esc_attr($editable_slug),
@@ -101,14 +160,10 @@ class Metabox extends AppController
      */
     public function remove($id, $post_type, $context = 'normal')
     {
-        if (did_action('add_meta_boxes_' . $post_type)) :
-            trigger_error(__('Pour être fonctionnelle, la déclaration de suppression de boîte de saisie devrait être faite avant l\'execution de l\'action "add_meta_boxes". Vous pourriez utiliser l\'action "tify_metabox_register" pour y appeler vos déclarations.', 'tify'));
+        if (!isset($this->unregistred[$post_type])) :
+            $this->unregistred[$post_type] = [];
         endif;
 
-        if (! isset($this->removed[$post_type])) :
-            $this->removed[$post_type] = [];
-        endif;
-
-        $this->removed[$post_type][$id] = $context;
+        $this->unregistred[$post_type][$id] = $context;
     }
 }

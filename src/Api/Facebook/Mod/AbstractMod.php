@@ -2,7 +2,7 @@
 
 namespace tiFy\Api\Facebook\Mod;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 abstract class AbstractMod extends AppController
 {
