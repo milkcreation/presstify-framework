@@ -20,9 +20,7 @@ class ColumnServiceProvider extends AppServiceProvider
      * Liste des services à instance unique auto-déclarés.
      * @var string[]
      */
-    protected $singletons = [
-
-    ];
+    protected $singletons = [];
 
     /**
      * {@inheritdoc}
