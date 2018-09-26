@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Components\Db;
+namespace tiFy\User\Db;
 
-use tiFy\Db\DbBaseController;
+use tiFy\Db\DbItemBaseController;
 
-class DbUsersController extends DbBaseController
+class DbUsersController extends DbItemBaseController
 {
     /**
      * {@inheritdoc}

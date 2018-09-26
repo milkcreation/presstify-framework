@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Components\Db;
+namespace tiFy\PostType\Db;
 
-use tiFy\Db\DbBaseController;
+use tiFy\Db\DbItemBaseController;
 
-class DbPostsController extends DbBaseController
+class DbPostsController extends DbItemBaseController
 {
     /**
      * {@inheritdoc}

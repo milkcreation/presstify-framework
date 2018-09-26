@@ -11,7 +11,6 @@ use App\App;
  * Composants
  */
 use tiFy\Cron\Cron;
-use tiFy\Db\Db;
 use tiFy\Media\Media;
 use tiFy\MetaTag\MetaTag;
 use tiFy\PageHook\PageHook;
@@ -66,7 +65,6 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $components = [
         Cron::class,
-        Db::class,
         Media::class,
         MetaTag::class,
         PageHook::class,

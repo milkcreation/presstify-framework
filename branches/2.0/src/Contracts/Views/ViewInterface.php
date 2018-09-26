@@ -19,6 +19,13 @@ interface ViewInterface
     public function all();
 
     /**
+     * Initialisation du controleur.
+     *
+     * @return void
+     */
+    public function boot();
+
+    /**
      * Récupération d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.

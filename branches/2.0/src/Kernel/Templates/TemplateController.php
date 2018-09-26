@@ -5,15 +5,31 @@ namespace tiFy\Kernel\Templates;
 use Illuminate\Support\Arr;
 use League\Plates\Template\Template;
 use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Tools;
 
 class TemplateController extends Template implements ViewInterface
 {
     /**
-     * Instance of the template engine.
-     * @var Engine
+     * Instance du moteur de gestion des gabarits.
+     * @var ViewsInterface
      */
     protected $engine;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param Engine $engine
+     * @param string $name
+     *
+     * @return void
+     */
+    public function __construct(ViewsInterface $engine, $name)
+    {
+        parent::__construct($engine, $name);
+
+        $this->boot();
+    }
 
     /**
      * {@inheritdoc}
@@ -21,6 +37,14 @@ class TemplateController extends Template implements ViewInterface
     public function all()
     {
         return $this->data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function boot()
+    {
+
     }
 
     /**

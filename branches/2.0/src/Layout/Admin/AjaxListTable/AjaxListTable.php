@@ -1,30 +1,35 @@
 <?php
 
-namespace tiFy\Components\AdminView\AjaxListTable;
+namespace tiFy\Layout\Admin\AjaxListTable;
 
-use tiFy\Components\Layout\AjaxListTable\AjaxListTable as LayoutAjaxListTable;
+use tiFy\Layout\Share\AjaxListTable\AjaxListTable as ShareAjaxListTable;
 
-class AjaxListTable extends LayoutAjaxListTable
+class AjaxListTable extends ShareAjaxListTable
 {
     /**
-     * Mise en file des scripts de l'interface d'administration.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function admin_enqueue_scripts()
+    public function boot()
     {
-        \wp_enqueue_style(
-            'tiFyAdminView-AjaxListTable',
-            $this->appAssetUrl('/AdminView/AjaxListTable/css/styles.css'),
-            ['datatables'],
-            160506
-        );
-        wp_enqueue_script(
-            'tiFyAdminView-AjaxListTable',
-            $this->appAssetUrl('/AdminView/AjaxListTable/js/scripts.js'),
-            ['datatables'],
-            160506,
-            true
+        parent::boot();
+
+        add_action(
+            'admin_enqueue_scripts',
+            function () {
+                \wp_enqueue_style(
+                    'LayoutAdminAjaxListTable',
+                    assets()->url('layout/admin/ajax-list-table/css/styles.css'),
+                    ['datatables'],
+                    160506
+                );
+                wp_enqueue_script(
+                    'LayoutAdminAjaxListTable',
+                    assets()->url('layout/admin/ajax-list-table/js/scripts.js'),
+                    ['datatables'],
+                    160506,
+                    true
+                );
+            }
         );
     }
 }
