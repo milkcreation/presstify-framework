@@ -19,12 +19,22 @@ use tiFy\Kernel\Tools;
  */
 trait NoticesTrait
 {
+    /**
+     * Instance du controleur de notices.
+     * @var Notices
+     */
+    protected $instance;
+
     public function __call($name, $arguments)
     {
         if (preg_match('#^notices(.*)#', $name, $matches)) :
             $method = lcfirst($matches[1]);
-            if (method_exists(Tools::Notices(), $method)) :
-                return call_user_func_array([Tools::Notices(), $method], $arguments);
+            if (!$this->instance) :
+                $this->instance = Tools::Notices();
+            endif;
+
+            if (method_exists($this->instance, $method)) :
+                return call_user_func_array([$this->instance, $method], $arguments);
             endif;
         endif;
     }

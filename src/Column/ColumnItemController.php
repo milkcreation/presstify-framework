@@ -76,7 +76,7 @@ class ColumnItemController extends AbstractParametersBag implements ColumnItemIn
                     $this->screen = WpScreen::get($screen);
 
                     $content = $this->getContent();
-                    if (class_exists($content)) :
+                    if (is_string($content) && class_exists($content)) :
                         $resolved = new $content($this);
 
                         if ($resolved instanceof ColumnDisplayInterface) :

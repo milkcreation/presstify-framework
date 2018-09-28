@@ -31,6 +31,21 @@ final class Db
     }
 
     /**
+     * Ajout d'un élément.
+     *
+     * @param string $name Nom de qualification de l'éléments.
+     * @param array $attrs Liste des attributs de configuration de l'élément.
+     *
+     * @return $this
+     */
+    public function add($name, $attrs = [])
+    {
+        config()->set("db.{$name}", $attrs);
+
+        return $this;
+    }
+
+    /**
      * Déclaration de controleur de base de données.
      *
      * @param string $name Nom de qualification du controleur de base de données.
