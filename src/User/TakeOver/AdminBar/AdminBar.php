@@ -15,11 +15,11 @@
 
 namespace tiFy\User\TakeOver\AdminBar;
 
-use tiFy\Partial\AbstractPartialController;
+use tiFy\Partial\AbstractPartialItem;
 use tiFy\Partial\Partial;
 use tiFy\User\TakeOver\TakeOver;
 
-class AdminBar extends AbstractPartialController
+class AdminBar extends AbstractPartialItem
 {
     /**
      * Liste des attributs de configuration.
@@ -42,7 +42,7 @@ class AdminBar extends AbstractPartialController
     {
         \wp_register_style(
             'tify_control-take_over_admin_bar',
-            $this->appAssetUrl('/User/TakeOver/AdminBar/css/styles.css', get_class()),
+            $this->appAssetUrl('User/TakeOver/AdminBar/css/styles.css', get_class()),
             [],
             171218
         );
