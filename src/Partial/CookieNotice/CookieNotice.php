@@ -93,7 +93,7 @@ class CookieNotice extends AbstractPartialItem
             $this->set('cookie_name', md5('tiFyPartial-CookieNotice--' . $this->getIndex()));
         endif;
 
-        if ($this->getCookie($this->get('cookie_name'), $this->get('cookie_hash'))) :
+        if ($this->getCookie()) :
             $this->set('attrs.aria-hide', 'true');
         endif;
 
@@ -158,20 +158,15 @@ class CookieNotice extends AbstractPartialItem
     /**
      * Récupération d'un cookie.
      *
-     * @var string $name Nom de qualification du cookie.
-     * @var bool|string $salt Chaine de hashage.
-     *
      * @return string
      */
-    protected function getCookie($name, $salt = true)
+    public function getCookie()
     {
-        if (!$salt) :
-            $salt = '';
-        elseif ($salt == 'true') :
-            $salt = '_' . COOKIEHASH;
-        endif;
+        $salt = (!$cookie_hash = $this->get('cookie_hash'))
+            ? ''
+            : (($cookie_hash === true) ? $salt = '_' . COOKIEHASH : $cookie_hash);
 
-        return request()->cookie($name . $salt, '');
+        return request()->cookie($this->get('cookie_name') . $salt, '');
     }
 
     /**

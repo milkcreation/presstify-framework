@@ -59,19 +59,20 @@ final class Partial
      * Récupération de l'instance d'un champ déclaré.
      *
      * @param string $name Nom de qualification de l'élément.
-     * @param array $attrs Liste des attributs de configuration.
+     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
+     * @param mixed $attrs Liste des attributs de configuration.
      *
      * @return PartialItemInterface
      */
-    public function get($name, $attrs = [])
+    public function get($name, $id = null, $attrs = null)
     {
         $alias = 'partial.' . Str::kebab($name);
 
-        if (!is_array($attrs)) :
-            $id = $attrs;
-            $attrs = func_get_arg(2) ? : [];
-        else :
+        if (is_array($id)) :
+            $attrs = $id;
             $id = null;
+        else :
+            $attrs = $attrs ? : [];
         endif;
 
         return app()->resolve($alias, [$id, $attrs]);

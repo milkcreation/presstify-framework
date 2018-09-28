@@ -2,6 +2,7 @@
 
 namespace tiFy\Partial\Modal;
 
+use Illuminate\Support\Arr;
 use tiFy\Partial\AbstractPartialItem;
 use tiFy\Kernel\Tools;
 
@@ -11,18 +12,23 @@ class Modal extends AbstractPartialItem
      * Liste des attributs de configuration.
      * @var array $attributes {
      *
-     *      @var array $container Attributs HTML du conteneur.
-     *      @var array $options {
+     * @var array $container Attributs HTML du conteneur.
+     * @var array $options {
      *              Liste des options d'affichage.
      *      }
-     *      @var bool $animation Activation de l'animation.
-     *      @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full.
-     *      @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou booléen pour activer désactiver ou fonction/méthode d'affichage.
-     *      @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou booléen pour activer désactiver ou fonction/méthode d'affichage.
-     *      @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen pour activer désactiver ou fonction/méthode d'affichage.
-     *      @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou booléen pour activer désactiver ou fonction/méthode d'affichage.
-     *      @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
-     *      @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des attributs de récupération Ajax
+     * @var bool $animation Activation de l'animation.
+     * @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full.
+     * @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de caractère à
+     *     afficher ou booléen pour activer désactiver ou fonction/méthode d'affichage.
+     * @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou booléen
+     *     pour activer désactiver ou fonction/méthode d'affichage.
+     * @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen pour
+     *     activer désactiver ou fonction/méthode d'affichage.
+     * @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
+     *     booléen pour activer désactiver ou fonction/méthode d'affichage.
+     * @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
+     * @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
+     *     attributs de récupération Ajax
      * }
      */
     protected $attributes = [
@@ -82,7 +88,7 @@ class Modal extends AbstractPartialItem
         parent::parse($attrs);
 
         $class = 'modal';
-        if($this->get('animation')) :
+        if ($this->get('animation')) :
             $class .= ' fade';
         endif;
         $this->set('attrs.class', $this->get('attrs.class', '') . " {$class}");
@@ -108,7 +114,7 @@ class Modal extends AbstractPartialItem
             endif;
         endforeach;
 
-        if($backdrop_close = $this->get('backdrop_close')) :
+        if ($backdrop_close = $this->get('backdrop_close')) :
             $backdrop_close = $this->isCallable($backdrop_close)
                 ? call_user_func($this->get('backdrop_close'), $this->all())
                 : (
@@ -119,7 +125,7 @@ class Modal extends AbstractPartialItem
             $this->set('backdrop_close', $backdrop_close);
         endif;
 
-        if($body = $this->get('body')) :
+        if ($body = $this->get('body')) :
             $body = $this->isCallable($body)
                 ? call_user_func($this->get('body'), $this->all())
                 : (
@@ -130,7 +136,7 @@ class Modal extends AbstractPartialItem
             $this->set('body', $body);
         endif;
 
-        if($footer = $this->get('footer')) :
+        if ($footer = $this->get('footer')) :
             $footer = $this->isCallable($footer)
                 ? call_user_func($this->get('footer'), $this->all())
                 : (
@@ -141,7 +147,7 @@ class Modal extends AbstractPartialItem
             $this->set('footer', $footer);
         endif;
 
-        if($header = $this->get('header')) :
+        if ($header = $this->get('header')) :
             $header = $this->isCallable($header)
                 ? call_user_func($this->get('header'), $this->all())
                 : (
@@ -171,15 +177,15 @@ class Modal extends AbstractPartialItem
         $this->set(
             'attrs.data-options.ajax',
             (
-                $ajax !== false
+            $ajax !== false
                 ? array_merge(
-                    is_array($ajax) ? $ajax : [],
-                    [
-                        'action'    => 'partial_modal',
-                        'csrf'      => \wp_create_nonce('PartialModal' . $this->getId()),
-                        'data'      => []
-                    ]
-                )
+                is_array($ajax) ? $ajax : [],
+                [
+                    'action' => 'partial_modal',
+                    'csrf'   => \wp_create_nonce('PartialModal' . $this->getId()),
+                    'data'   => []
+                ]
+            )
                 : false
             )
         );
@@ -194,7 +200,7 @@ class Modal extends AbstractPartialItem
             add_action(
                 (!is_admin() ? 'wp_footer' : 'admin_footer'),
                 function () {
-                   echo parent::display();
+                    echo parent::display();
                 },
                 999999
             );
@@ -203,7 +209,35 @@ class Modal extends AbstractPartialItem
             return parent::display();
         endif;
     }
-    
+
+    /**
+     * Affichage d'un lien de déclenchement de la modale.
+     *
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return string
+     */
+    public function trigger($attrs = [])
+    {
+        $attrs = array_merge(
+            [
+                'tag'     => 'a',
+                'attrs'   => [],
+                'content' => ''
+            ],
+            $attrs
+        );
+
+        if ((Arr::get($attrs, 'tag') === 'a') && !Arr::has($attrs, 'attrs.href')) :
+            Arr::set($attrs, 'attrs.href', "#{$this->get('attrs.id')}");
+        endif;
+
+        Arr::set($attrs, 'attrs.aria-control', 'modal_trigger');
+        Arr::set($attrs, 'attrs.data-target', "#{$this->get('attrs.id')}");
+
+        return $this->viewer('trigger', $attrs);
+    }
+
     /**
      * Chargement du contenu de la modale via Ajax.
      *

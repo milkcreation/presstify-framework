@@ -142,12 +142,13 @@ if (!function_exists('field')) :
     /**
      * Field - Controleur de champs.
      *
-     * @param null|string $name Nom de qualification du champ.
-     * @param array $attrs Liste des attributs de configuration.
+     * @param null|string $name Nom de qualification.
+     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
+     * @param mixed $attrs Liste des attributs de configuration.
      *
      * @return null|Field|FieldItemInterface
      */
-    function field($name = null, $attrs = [])
+    function field($name = null, $id = null, $attrs = null)
     {
         /** @var Field $factory */
         $factory = app(Field::class);
@@ -156,7 +157,7 @@ if (!function_exists('field')) :
             return $factory;
         endif;
 
-        return $factory->get($name, $attrs);
+        return $factory->get($name, $id, $attrs);
     }
 endif;
 
@@ -195,14 +196,15 @@ endif;
 
 if (!function_exists('partial')) :
     /**
-     * Field - Controleur d'événements.
+     * Partial - Contrôleurs d'affichage.
      *
-     * @param null $name Nom de qualification du champ.
-     * @param $attrs Liste des attributs de configuration.
+     * @param null|string $name Nom de qualification.
+     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
+     * @param mixed $attrs Liste des attributs de configuration.
      *
      * @return null|Partial|PartialItemInterface
      */
-    function partial($name = null, $attrs = [])
+    function partial($name = null, $id = null, $attrs = null)
     {
         /** @var Partial $factory */
         $factory = app(Partial::class);
@@ -211,7 +213,7 @@ if (!function_exists('partial')) :
             return $factory;
         endif;
 
-        return $factory->get($name, $attrs);
+        return $factory->get($name, $id, $attrs);
     }
 endif;
 
