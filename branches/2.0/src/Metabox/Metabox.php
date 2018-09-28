@@ -10,11 +10,13 @@
 namespace tiFy\Metabox;
 
 use Illuminate\Support\Collection;
+use tiFy\Contracts\Metabox\MetaboxInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Metabox\MetaboxItemController;
 use tiFy\Metabox\Tab\MetaboxTabDisplay;
+use tiFy\Wp\WpScreen;
 
-class Metabox
+class Metabox implements MetaboxInterface
 {
     /**
      * Liste des éléments.
@@ -69,7 +71,7 @@ class Metabox
                     $item->load($this->screen);
                 endforeach;
 
-                app()->resolve(MetaboxTabDisplay::class, [$this->screen, $this]);
+                app(MetaboxTabDisplay::class, [$this->screen, $this]);
             },
             999999
         );
@@ -77,19 +79,51 @@ class Metabox
         add_action(
             'add_meta_boxes',
             function () {
-                $this->removeHandle();
+                foreach (config('metabox.remove', []) as $screen => $items) :
+                    if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
+                        $screen = 'edit::' . $screen;
+                    endif;
+                    $WpScreen = WpScreen::get($screen);
+
+                    foreach ($items as $id => $contexts) :
+                        foreach($contexts as $context) :
+                            remove_meta_box($id, $WpScreen->getObjectName(), $context);
+                        endforeach;
+
+                        // Hack Wordpress : Maintient du support de la modification du permalien.
+                        if ($id === 'slugdiv') :
+                            add_action(
+                                'edit_form_before_permalink',
+                                function($post) use ($post_type) {
+                                    if($post->post_type !== $post_type) :
+                                        return;
+                                    endif;
+
+                                    $editable_slug = apply_filters('editable_slug', $post->post_name, $post);
+
+                                    echo field(
+                                        'hidden',
+                                        [
+                                            'name'  => 'post_name',
+                                            'value' => esc_attr($editable_slug),
+                                            'attrs' => [
+                                                'id' => 'post_name',
+                                                'autocomplete' => 'off'
+                                            ]
+                                        ]
+                                    );
+                                }
+                            );
+                        endif;
+                    endforeach;
+                endforeach;
             },
             999999
         );
     }
 
     /**
-     * Ajout d'un élément.
-     *
-     * @param string $screen Ecran d'affichage de l'élément.
-     * @param array $attrs Liste des attributs de configuration de l'élément.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function add($screen, $attrs = [])
     {
@@ -99,9 +133,7 @@ class Metabox
     }
 
     /**
-     * Récupération de la liste des éléments.
-     *
-     * @return Collection|MetaboxItemController[]
+     * {@inheritdoc}
      */
     public function getItems()
     {
@@ -109,61 +141,12 @@ class Metabox
     }
 
     /**
-     * Suppression de la liste des metaboxes déclarées
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    private function removeHandle()
+    public function remove($screen, $id, $context = 'normal')
     {
-        return;
-        foreach ($this->unregistred as $post_type => $ids) :
-            foreach ($ids as $id => $context) :
-                remove_meta_box($id, $post_type, $context);
+        config()->push("metabox.remove.{$screen}.{$id}", $context);
 
-                // Hack Wordpress : Maintient du support de la modification du permalien
-                if ($id === 'slugdiv') :
-                    add_action(
-                        'edit_form_before_permalink',
-                        function($post) use ($post_type) {
-                            if($post->post_type !== $post_type) :
-                                return;
-                            endif;
-
-                            $editable_slug = apply_filters('editable_slug', $post->post_name, $post);
-
-                            echo field(
-                                'hidden',
-                                [
-                                    'name'  => 'post_name',
-                                    'value' => esc_attr($editable_slug),
-                                    'attrs' => [
-                                        'id' => 'post_name',
-                                        'autocomplete' => 'off'
-                                    ]
-                                ]
-                            );
-                        }
-                    );
-                endif;
-            endforeach;
-        endforeach;
-    }
-
-    /**
-     * Déclaration d'une boîte de sasie à supprimer
-     *
-     * @param string $id Identifiant de qualification de la metaboxe
-     * @param string $post_type Identifiant de qualification du type de post
-     * @param string $context normal|side|advanced
-     *
-     * @return void
-     */
-    public function remove($id, $post_type, $context = 'normal')
-    {
-        if (!isset($this->unregistred[$post_type])) :
-            $this->unregistred[$post_type] = [];
-        endif;
-
-        $this->unregistred[$post_type][$id] = $context;
+        return $this;
     }
 }

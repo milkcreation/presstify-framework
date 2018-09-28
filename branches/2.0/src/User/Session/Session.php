@@ -2,22 +2,21 @@
 
 /**
  * @name Session
- * @desc Gestion d'enregistrement de données de session
- * @package presstiFy
+ * @desc Gestion d'enregistrement de données de session.
+ * @package tiFy
  * @namespace tiFy\User\Session
- * @version 1.1
- * @subpackage Core
- * @since 1.2.535
  *
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
+ *
+ * @see https://github.com/kloon/woocommerce-large-sessions
  */
 
 namespace tiFy\User\Session;
 
 use tiFy\App\AppController;
+use tiFy\Contracts\Db\DbItemInterface;
 use tiFy\Db\Db;
-use tiFy\Db\DbControllerInterface;
 use tiFy\Cron\Cron;
 
 final class Session extends AppController
@@ -80,7 +79,47 @@ final class Session extends AppController
 
         // Initialisation de la base de données
         if (! empty($this->sessionNames)) :
-            $this->initDb();
+            /** @var Db $dbController */
+            $dbController = app(Db::class);
+            $dbController->add(
+                '_tiFySession',
+                [
+                    'install'    => false,
+                    'name'       => 'tify_session',
+                    'primary'    => 'session_key',
+                    'col_prefix' => 'session_',
+                    'meta'       => false,
+                    'columns'    => [
+                        'id'     => [
+                            'type'           => 'BIGINT',
+                            'size'           => 20,
+                            'unsigned'       => true,
+                            'auto_increment' => true
+                        ],
+                        'name'     => [
+                            'type'           => 'VARCHAR',
+                            'size'           => 255,
+                            'unsigned'       => false,
+                            'auto_increment' => false
+                        ],
+                        'key'    => [
+                            'type' => 'CHAR',
+                            'size' => 32,
+                            'unsigned'       => false,
+                            'auto_increment' => false
+                        ],
+                        'value'  => [
+                            'type' => 'LONGTEXT'
+                        ],
+                        'expiry' => [
+                            'type'     => 'BIGINT',
+                            'size'     => 20,
+                            'unsigned' => true
+                        ]
+                    ],
+                    'keys'       => ['session_id' => ['cols' => 'session_id', 'type' => 'UNIQUE']],
+                ]
+            );
 
             //$this->appAddAction('tify_cron_register');
         endif;
@@ -153,59 +192,6 @@ final class Session extends AppController
     }
 
     /**
-     * Initialisation de la table de base de données
-     * @see https://github.com/kloon/woocommerce-large-sessions
-     *
-     * @return DbControllerInterface
-     */
-    private function initDb()
-    {
-        $this->db = $this->appServiceGet(Db::class)->register(
-            '_tiFySession',
-            [
-                'install'    => false,
-                'name'       => 'tify_session',
-                'primary'    => 'session_key',
-                'col_prefix' => 'session_',
-                'meta'       => false,
-                'columns'    => [
-                    'id'     => [
-                        'type'           => 'BIGINT',
-                        'size'           => 20,
-                        'unsigned'       => true,
-                        'auto_increment' => true
-                    ],
-                    'name'     => [
-                        'type'           => 'VARCHAR',
-                        'size'           => 255,
-                        'unsigned'       => false,
-                        'auto_increment' => false
-                    ],
-                    'key'    => [
-                        'type' => 'CHAR',
-                        'size' => 32,
-                        'unsigned'       => false,
-                        'auto_increment' => false
-                    ],
-                    'value'  => [
-                        'type' => 'LONGTEXT'
-                    ],
-                    'expiry' => [
-                        'type'     => 'BIGINT',
-                        'size'     => 20,
-                        'unsigned' => true
-                    ]
-                ],
-                'keys'       => ['session_id' => ['cols' => 'session_id', 'type' => 'UNIQUE']],
-            ]
-        );
-
-        $this->db->install();
-
-        return $this->db;
-    }
-
-    /**
      * Récupération de la base de données
      *
      * @return DbControllerInterface
@@ -214,7 +200,13 @@ final class Session extends AppController
      */
     public function getDb()
     {
-        if (! $this->db instanceof DbControllerInterface) :
+        if (!$this->db) :
+            /** @var Db $dbController */
+            $dbController = app(Db::class);
+            $this->db = $dbController->get('_tiFySession');
+        endif;
+
+        if (!$this->db instanceof DbItemInterface) :
             throw new \Exception(__('La table de base de données de stockage des sessions est indisponible.', 'tify'), 500);
         endif;
 

@@ -72,6 +72,18 @@ class Engine extends LeaguePlatesEngine implements ViewsInterface
     /**
      * {@inheritdoc}
      */
+    public function getOverrideDir($path = '')
+    {
+        if ($this->folders->exists('_override')) :
+            return $this->folders->get('_override')->getPath() . ($path ? trim($path, '/') : '');
+        else :
+            return '';
+        endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function has($key)
     {
         return Arr::has($this->attributes, $key);

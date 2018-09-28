@@ -6,9 +6,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Components\Tools\Notices\NoticesTrait;
 use tiFy\Contracts\Views\ViewsInterface;
-use tiFy\Kernel\Item\AbstractItemController;
+use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-abstract class SignInHandleController extends AbstractItemController
+abstract class SignInHandleController extends AbstractParametersBag
 {
     use NoticesTrait;
 
@@ -36,9 +36,38 @@ abstract class SignInHandleController extends AbstractItemController
     {
         $this->name = $name;
 
-        add_action('wp_loaded', [$this, '_wp_loaded']);
+        add_action(
+            'wp_loaded',
+            function () {
+                // Bypass
+                if (!$signin = request()->get('tiFySignIn', false)) :
+                    return;
+                endif;
 
-        parent::parse($attrs);
+                if ($signin !== $this->getName()) :
+                    return;
+                endif;
+
+                $action = request()->get('action', 'login');
+                switch ($action) :
+                    default :
+                        break;
+
+                    case 'login' :
+                        add_filter('authenticate', [$this, 'authenticate'], 50, 3);
+                        add_action('wp_login', [$this, 'onLoginSuccess'], 10, 2);
+                        $this->_login();
+                        break;
+
+                    case 'logout' :
+                        add_action('wp_logout', [$this, 'onLogoutSuccess']);
+                        $this->_logout();
+                        break;
+                endswitch;
+            }
+        );
+
+        parent::__construct($attrs);
     }
 
     /**
@@ -52,7 +81,7 @@ abstract class SignInHandleController extends AbstractItemController
 
         $secure_cookie = '';
 
-        if (($log = request()->getProperty('POST')->get('log', false)) && !force_ssl_admin()) :
+        if (($log = request()->post('log', false)) && !force_ssl_admin()) :
             $user_name = \sanitize_user($log);
             if ($user = get_user_by('login', $user_name)) :
                 if (get_user_option('use_ssl', $user->ID)) :
@@ -65,7 +94,7 @@ abstract class SignInHandleController extends AbstractItemController
         $reauth = !request()->get('reauth') ? false : true;
         $user = \wp_signon([], $secure_cookie);
 
-        if (!request()->getProperty('COOKIE')->get(LOGGED_IN_COOKIE)) :
+        if (!request()->cookie(LOGGED_IN_COOKIE)) :
             if (headers_sent()) :
                 $user = new \WP_Error(
                     'test_cookie',
@@ -78,8 +107,8 @@ abstract class SignInHandleController extends AbstractItemController
                         __('https://wordpress.org/support/')
                     )
                 );
-            elseif ($this->app->appRequest('POST')->get('testcookie') &&
-                !$this->app->appRequest('COOKIE')->get(TEST_COOKIE)
+            elseif (request()->post('testcookie') &&
+                !request()->cookie(TEST_COOKIE)
             ) :
                 $user = new \WP_Error(
                     'test_cookie',
@@ -364,16 +393,13 @@ abstract class SignInHandleController extends AbstractItemController
                 foreach ($errors->get_error_codes() as $code) :
                     if (isset($errors_map[$code])) :
                         $this->noticesAdd('error', $errors_map[$code], ['alias' => $code]);
-                        continue;
-                    endif;
-
-                    if (!$messages = $errors->get_error_messages()) :
+                    elseif (!$messages = $errors->get_error_messages()) :
                         $this->noticesAdd('error', $code, ['alias' => $code]);
+                    else :
+                        foreach ($messages as $message) :
+                            $this->noticesAdd('error', $message, ['alias' => $code]);
+                        endforeach;
                     endif;
-
-                    foreach ($messages as $message) :
-                        $this->noticesAdd('error', $message, ['alias' => $code]);
-                    endforeach;
                 endforeach;
             else :
                 $this->noticesAdd('error');
@@ -389,40 +415,6 @@ abstract class SignInHandleController extends AbstractItemController
         else :
             $this->noticesAdd('error', (string)$errors);
         endif;
-    }
-
-    /**
-     * A l'issue du chargement complet de Wordpress.
-     *
-     * @return void
-     */
-    final public function _wp_loaded()
-    {
-        // Bypass
-        if (!$signin = request()->get('tiFySignIn', false)) :
-            return;
-        endif;
-
-        if ($signin !== $this->getName()) :
-            return;
-        endif;
-
-        $action = request()->get('action', 'login');
-        switch ($action) :
-            default :
-                break;
-
-            case 'login' :
-                add_filter('authenticate', [$this, 'authenticate'], 50, 3);
-                add_action('wp_login', [$this, 'onLoginSuccess'], 10, 2);
-                $this->_login();
-                break;
-
-            case 'logout' :
-                add_action('wp_logout', [$this, 'onLogoutSuccess']);
-                $this->_logout();
-                break;
-        endswitch;
     }
 
     /**
@@ -597,12 +589,12 @@ abstract class SignInHandleController extends AbstractItemController
      *
      * @return ViewsInterface|ViewInterface
      */
-    public function view($view = null, $data = [])
+    public function viewer($view = null, $data = [])
     {
         if (!$this->view) :
             $this->view = view()
                 ->setDirectory(__DIR__ . '/views')
-                ->setController(SignInTemplateController::class);
+                ->setController(SignInViewController::class);
 
             $macros = [
                 'formAfter',

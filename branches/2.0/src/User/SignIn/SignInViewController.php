@@ -22,7 +22,7 @@ use tiFy\Kernel\Templates\TemplateController;
  * @method SignInItemController formInfos()
  * @method SignInItemController lostPasswordLink()
  */
-class SignInTemplateController extends TemplateController
+class SignInViewController extends TemplateController
 {
     /**
      * Affichage de la linéarisation des attributs HTML de la balise form.
