@@ -4,7 +4,7 @@ namespace tiFy\Form\Forms;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Form\AbstractCommonDependency;
 use tiFy\Form\Addons\AddonControllerInterface;
 use tiFy\Form\Addons\AddonsController;
