@@ -12,28 +12,19 @@ use tiFy\Form\Form;
 class FormServiceProvider extends AppServiceProvider
 {
     /**
-     * Liste des services à instance multiples auto-déclarés.
-     * @var string[]
-     */
-    protected $bindings = [];
-
-    /**
-     * Liste des services à instance unique auto-déclarés.
-     * @var string[]
-     */
-    protected $singletons = [
-        AddonsController::class,
-        ButtonsController::class,
-        FieldTypesController::class
-    ];
-
-    /**
      * {@inheritdoc}
      */
     public function boot()
     {
-        $this->app->singleton(Form::class, function () {
-            return new Form();
-        })->build();
+        $singletons = [
+            Form::class,
+            AddonsController::class,
+            ButtonsController::class,
+            FieldTypesController::class
+        ];
+
+        foreach($singletons as $singleton) :
+            $this->app->singleton($singleton)->build();
+        endforeach;
     }
 }

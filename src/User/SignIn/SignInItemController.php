@@ -131,7 +131,7 @@ class SignInItemController extends SignInHandleController implements UserSignInI
             'notice',
             [
                 'attrs' => [
-                    'class' => 'tiFySignIn-FormPart tiFySignIn-FormErrors'
+                    'class' => '%s tiFySignIn-FormPart tiFySignIn-FormErrors'
                 ],
                 'content'  => $content,
                 'type'  => 'error'

@@ -9,7 +9,6 @@ use tiFy\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Partial\CookieNotice\CookieNotice;
 use tiFy\Partial\HolderImage\HolderImage;
 use tiFy\Partial\Modal\Modal;
-use tiFy\Partial\ModalTrigger\ModalTrigger;
 use tiFy\Partial\Navtabs\Navtabs;
 use tiFy\Partial\Notice\Notice;
 use tiFy\Partial\Sidebar\Sidebar;
@@ -35,7 +34,6 @@ class PartialServiceProvider extends AppServiceProvider
         'partial.cookie-notice' => CookieNotice::class,
         'partial.holder-image'  => HolderImage::class,
         'partial.modal'         => Modal::class,
-        'partial.modal-trigger' => ModalTrigger::class,
         'partial.navtabs'       => Navtabs::class,
         'partial.notice'        => Notice::class,
         'partial.sidebar'       => Sidebar::class,
@@ -54,7 +52,6 @@ class PartialServiceProvider extends AppServiceProvider
         CookieNotice::class,
         HolderImage::class,
         Modal::class,
-        ModalTrigger::class,
         Navtabs::class,
         Notice::class,
         Sidebar::class,

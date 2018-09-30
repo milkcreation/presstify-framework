@@ -189,7 +189,7 @@ class Paths extends Filesystem
      */
     public function makeRelativePath($target_path, $base_path = null)
     {
-        $base_path = $base_path ?? $this->getBasePath();
+        $base_path = $base_path ? : $this->getBasePath();
 
         $path = (new SfFilesystem())->makePathRelative($target_path, $base_path);
 

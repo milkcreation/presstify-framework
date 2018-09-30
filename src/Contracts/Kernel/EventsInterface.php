@@ -1,7 +1,8 @@
 <?php
 
-namespace tiFy\Kernel\Events;
+namespace tiFy\Contracts\Kernel;
 
+use League\Event\EmitterInterface;
 use League\Event\EventInterface;
 
 interface EventsInterface extends EmitterInterface

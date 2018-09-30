@@ -86,9 +86,8 @@ class FieldIntegrityCheckController extends AbstractCommonDependency
 
         if (is_string($cb)) :
             $cb = !isset($this->alias[$cb]) ? $cb : $this->alias[$cb];
-
-            if (method_exists(__CLASS__, $cb)) :
-                $valid = call_user_func_array([__CLASS__, $cb], $args);
+            if (is_callable([$this, $cb])) :
+                $valid = call_user_func_array([$this, $cb], $args);
             elseif (function_exists($cb)) :
                 $valid = call_user_func_array($cb, $args);
             endif;
