@@ -123,4 +123,24 @@ class PartialServiceProvider extends AppServiceProvider
 
         return $count;
     }
+
+    /**
+     * Déclaration d'un controleur d'affichage.
+     *
+     * @param string $name Nom de qualification d"appel de l'élément.
+     * @param string $concrete Nom de qualification du controleur.
+     *
+     * @return boolean
+     */
+    public function registerPartial($name, $concrete)
+    {
+        if (in_array($this->items, $concrete) || isset($this->aliases["partial.{$name}"])) :
+            return false;
+        endif;
+
+        array_push($this->items, $concrete);
+        $this->aliases["partial.{$name}"] = $concrete;
+
+        return true;
+    }
 }
