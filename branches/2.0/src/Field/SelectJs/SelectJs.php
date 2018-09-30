@@ -138,7 +138,7 @@ class SelectJs extends AbstractFieldItem
 
         // Récupération du premier élément d'une selection non-multiple
         if (!$this->get('multiple')) :
-            $value = [reset($value)];
+            $value = reset($value);
         endif;
 
         return $value;

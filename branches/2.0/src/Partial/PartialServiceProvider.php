@@ -74,10 +74,6 @@ class PartialServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        foreach($this->aliases as $alias => $concrete) :
-            $this->getContainer()->setAlias($alias, $concrete);
-        endforeach;
-
         $this->app->singleton(
             Partial::class,
             function() {
@@ -87,6 +83,10 @@ class PartialServiceProvider extends AppServiceProvider
         add_action(
             'after_setup_theme',
             function() {
+                foreach($this->aliases as $alias => $concrete) :
+                    $this->getContainer()->setAlias($alias, $concrete);
+                endforeach;
+
                 foreach ($this->items as $concrete) :
                     $alias = $this->getContainer()->getAlias($concrete);
 
@@ -134,7 +134,7 @@ class PartialServiceProvider extends AppServiceProvider
      */
     public function registerPartial($name, $concrete)
     {
-        if (in_array($this->items, $concrete) || isset($this->aliases["partial.{$name}"])) :
+        if (in_array($concrete, $this->items) || isset($this->aliases["partial.{$name}"])) :
             return false;
         endif;
 

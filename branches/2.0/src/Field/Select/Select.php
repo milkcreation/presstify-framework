@@ -83,10 +83,10 @@ class Select extends AbstractFieldItem
      */
     protected function parseName()
     {
-        if ($name = $this->has('name')) :
+        if ($name = $this->get('name')) :
             $this->set(
                 'attrs.name',
-                $this->has('multiple')
+                $this->get('multiple')
                     ? "{$name}[]" :
                     $name
             );
