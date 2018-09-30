@@ -18,6 +18,7 @@ use tiFy\Partial\HolderImage\HolderImage;
 use tiFy\Partial\Modal\Modal;
 use tiFy\Partial\Navtabs\Navtabs;
 use tiFy\Partial\Notice\Notice;
+use tiFy\Partial\PartialServiceProvider;
 use tiFy\Partial\Sidebar\Sidebar;
 use tiFy\Partial\Slider\Slider;
 use tiFy\Partial\Table\Table;
@@ -39,7 +40,7 @@ use tiFy\Partial\Tag\Tag;
 final class Partial
 {
     /**
-     * Récupération statique du controleur d'affichage.
+     * Récupération statique d'un élément.
      *
      * @param string $name Nom de qualification.
      * @param array $args Liste des variables passées en arguments.
@@ -54,7 +55,7 @@ final class Partial
     }
 
     /**
-     * Récupération de l'instance d'un champ déclaré.
+     * Récupération de l'instance d'un élément déclaré.
      *
      * @param string $name Nom de qualification de l'élément.
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
@@ -74,5 +75,20 @@ final class Partial
         endif;
 
         return app()->resolve($alias, [$id, $attrs]);
+    }
+
+    /**
+     * Déclaration d'un controleur d'affichage.
+     *
+     * @param string $name Nom de qualification d"appel de l'élément.
+     * @param string $concrete Nom de qualification du controleur.
+     *
+     * @return $this
+     */
+    public function register($name, $concrete)
+    {
+        app(PartialServiceProvider::class)->registerPartial($name, $concrete);
+
+        return $this;
     }
 }
