@@ -43,34 +43,40 @@ class Crypted extends AbstractFieldItem
                     'wp_ajax_tify_field_crypted_encrypt',
                     [$this, 'wp_ajax_encrypt']
                 );
+
                 add_action(
                     'wp_ajax_nopriv_tify_field_crypted_encrypt',
                     [$this, 'wp_ajax_encrypt']
                 );
+
                 add_action(
                     'wp_ajax_tify_field_crypted_decrypt',
                     [$this, 'wp_ajax_decrypt']
                 );
+
                 add_action(
                     'wp_ajax_nopriv_tify_field_crypted_decrypt',
                     [$this, 'wp_ajax_decrypt']
                 );
+
                 add_action(
                     'wp_ajax_tify_field_crypted_generate',
                     [$this, 'wp_ajax_generate']
                 );
+
                 add_action(
                     'wp_ajax_nopriv_tify_field_crypted_generate',
                     [$this, 'wp_ajax_generate']
                 );
 
-                \wp_register_style(
+                wp_register_style(
                     'FieldCrypted',
                     assets()->url('field/crypted/css/styles.css'),
                     ['dashicons'],
                     180519
                 );
-                \wp_register_script(
+
+                wp_register_script(
                     'FieldCrypted',
                     assets()->url('field/crypted/js/scripts.js'),
                     ['jquery'],
@@ -97,7 +103,10 @@ class Crypted extends AbstractFieldItem
      */
     public function wp_ajax_encrypt()
     {
-        $callback = !empty($_REQUEST['encrypt_cb']) ? wp_unslash($_REQUEST['encrypt_cb']) : "tiFy\\Core\\Control\\CryptedData\\CryptedData::encrypt";
+        $callback = !empty($_REQUEST['encrypt_cb'])
+            ? wp_unslash($_REQUEST['encrypt_cb']) :
+            "tiFy\\Core\\Control\\CryptedData\\CryptedData::encrypt";
+
         $response = call_user_func($callback, $_REQUEST['value'], $_REQUEST['data']);
 
         if (is_wp_error($response)) :
@@ -116,7 +125,7 @@ class Crypted extends AbstractFieldItem
     {
         check_ajax_referer('tiFyFieldCrypted');
 
-        \wp_send_json_success(Tools::Cryptor()->decrypt(request()->getProperty('POST')->get('cypher')));
+        \wp_send_json_success(Tools::Cryptor()->decrypt(request()->post('cypher')));
     }
 
     /**
@@ -124,7 +133,10 @@ class Crypted extends AbstractFieldItem
      */
     public function wp_ajax_generate()
     {
-        $callback = !empty($_REQUEST['generate_cb']) ? wp_unslash($_REQUEST['generate_cb']) : "tiFy\\Core\\Control\\CryptedData\\CryptedData::generate";
+        $callback = !empty($_REQUEST['generate_cb'])
+            ? wp_unslash($_REQUEST['generate_cb'])
+            : "tiFy\\Core\\Control\\CryptedData\\CryptedData::generate";
+
         $response = call_user_func($callback, $_REQUEST['data']);
 
         if (is_wp_error($response)) :
@@ -152,7 +164,7 @@ class Crypted extends AbstractFieldItem
         );
 
         $this->set('attrs.type', $this->get('hide') ? 'password' : 'text');
-        $this->set('attrs.size', $this->getAttr('size') ? : $this->get('length'));
+        $this->set('attrs.size', $this->get('attrs.size') ? : $this->get('length'));
 
         if(!$this->has('attrs.autocomplete')) :
             $this->set('attrs.autocomplete', 'off');

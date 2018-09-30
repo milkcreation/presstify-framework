@@ -294,7 +294,7 @@ abstract class AbstractFieldItem extends AbstractParametersBag implements FieldI
 
         $resolved->init();
         foreach($resolved as $item) :
-            if (!$item->isGroup() && in_array($item->getValue(), $this->getValue(), true)) :
+            if (!$item->isGroup() && in_array($item->getValue(), (array)$this->getValue(), true)) :
                 $item->push('selected', 'attrs');
             endif;
         endforeach;
