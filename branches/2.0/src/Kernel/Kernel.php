@@ -10,7 +10,7 @@ use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Config\Config;
 use tiFy\Kernel\Container\Container;
-use tiFy\Kernel\Events\EventsInterface;
+use tiFy\Kernel\Events\Events;
 use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\Http\Request;
 use tiFy\tiFy;
@@ -22,7 +22,7 @@ use tiFy\tiFy;
  * @method static ClassLoader ClassLoader()
  * @method static Container Container()
  * @method static Config Config()
- * @method static EventsInterface Events()
+ * @method static Events Events()
  * @method static Logger Logger()
  * @method static Paths Paths()
  * @method static Request Request()
@@ -62,9 +62,6 @@ class Kernel
                 break;
             case 'Container' :
                 return tiFy::instance();
-                break;
-            case 'Events' :
-                $alias = EventsInterface::class;
                 break;
             case 'Paths' :
                 $alias = Paths::class;

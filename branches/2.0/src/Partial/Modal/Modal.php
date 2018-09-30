@@ -232,7 +232,7 @@ class Modal extends AbstractPartialItem
             Arr::set($attrs, 'attrs.href', "#{$this->get('attrs.id')}");
         endif;
 
-        Arr::set($attrs, 'attrs.aria-control', 'modal_trigger');
+        Arr::set($attrs, 'attrs.aria-control', 'modal-trigger');
         Arr::set($attrs, 'attrs.data-target', "#{$this->get('attrs.id')}");
 
         return $this->viewer('trigger', $attrs);

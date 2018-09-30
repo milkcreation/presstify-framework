@@ -23,7 +23,6 @@ use tiFy\Kernel\Assets\AssetsInterface;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Events\Events;
-use tiFy\Kernel\Events\EventsInterface;
 use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Templates\Engine;
@@ -39,7 +38,8 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $singletons = [
         Assets::class,
-        Partial::class
+        Partial::class,
+        Events::class
     ];
 
     /**
@@ -47,16 +47,14 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $bindings = [
         ClassInfo::class,
-        Engine::class,
-        Events::class
+        Engine::class
     ];
 
     /**
      * {@inheritdoc}
      */
     protected $aliases = [
-        ViewsInterface::class => Engine::class,
-        EventsInterface::class => Events::class
+        ViewsInterface::class => Engine::class
     ];
 
     /**

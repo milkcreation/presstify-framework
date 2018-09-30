@@ -2,6 +2,7 @@
 
 use tiFy\tiFy;
 use tiFy\Contracts\Field\FieldItemInterface;
+use tiFy\Contracts\Kernel\EventsInterface;
 use tiFy\Contracts\Partial\PartialItemInterface;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Contracts\Views\ViewsInterface;
@@ -130,7 +131,7 @@ if (!function_exists('events')) :
     /**
      * Events - Controleur d'événements.
      *
-     * @return \tiFy\Kernel\Events\Events
+     * @return EventsInterface
      */
     function events()
     {

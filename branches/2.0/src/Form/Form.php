@@ -66,6 +66,21 @@ final class Form
     }
 
     /**
+     * Déclaration d'un formulaire.
+     *
+     * @param string $name Nom de qualification.
+     * @param array $attrs Attributs de configuration.
+     *
+     * @return $this
+     */
+    public function add($name, $attrs = [])
+    {
+        config()->set("form.{$name}", $attrs);
+
+        return $this;
+    }
+
+    /**
      * Récupération de la liste des instance de formulaires déclarés.
      *
      * @return FormItemInterface[]
@@ -99,6 +114,9 @@ final class Form
 
     /**
      * Déclaration d'un formulaire.
+     *
+     * @param string $name Nom de qualification.
+     * @param array $attrs Attributs de configuration.
      *
      * @return void
      */
