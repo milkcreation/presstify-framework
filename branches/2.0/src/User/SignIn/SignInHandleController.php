@@ -22,7 +22,7 @@ abstract class SignInHandleController extends AbstractParametersBag
      * Instance de la classe de gestion des gabarits d'affichage.
      * @var ViewsInterface
      */
-    protected $view;
+    protected $viewer;
 
     /**
      * CONSTRUCTEUR.
@@ -591,8 +591,8 @@ abstract class SignInHandleController extends AbstractParametersBag
      */
     public function viewer($view = null, $data = [])
     {
-        if (!$this->view) :
-            $this->view = view()
+        if (!$this->viewer) :
+            $this->viewer = view()
                 ->setDirectory(__DIR__ . '/views')
                 ->setController(SignInViewController::class);
 
@@ -613,14 +613,14 @@ abstract class SignInHandleController extends AbstractParametersBag
                 'lostpasswordLink',
             ];
             foreach ($macros as $macro) :
-                $this->view->registerFunction($macro, [$this, $macro]);
+                $this->viewer->registerFunction($macro, [$this, $macro]);
             endforeach;
         endif;
 
         if (func_num_args() === 0) :
-            return $this->view;
+            return $this->viewer;
         endif;
 
-        return $this->view->make($view, $data);
+        return $this->viewer->make($view, $data);
     }
 }

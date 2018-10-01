@@ -12,7 +12,7 @@ class SignInItemController extends SignInHandleController implements UserSignInI
      */
     public function __toString()
     {
-        return $this->form();
+        return (string)$this->form();
     }
 
     /**
