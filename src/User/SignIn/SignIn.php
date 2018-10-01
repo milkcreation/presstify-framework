@@ -16,11 +16,17 @@
 namespace tiFy\User\SignIn;
 
 use tiFy\User\User;
-use tiFy\User\SignIn\SignInControllerInterface;
+use tiFy\Contracts\User\UserSignInItemInterface;
 use tiFy\User\SignIn\SignInItemController;
 
 final class SignIn
 {
+    /**
+     * Liste des éléments déclarés.
+     * @var UserSignInItemInterface
+     */
+    protected $items = [];
+
     /**
      * CONSTRUCTEUR.
      *
@@ -33,29 +39,25 @@ final class SignIn
             function () {
                 if ($signins = config('user.signin', [])) :
                     foreach ($signins as $name => $attrs) :
-                        $this->register($name, $attrs);
+                        $this->_register($name, $attrs);
                     endforeach;
                 endif;
-
-                do_action('tify_user_signin_register', $this);
             }
         );
     }
 
     /**
-     * Déclaration d'un formulaire d'authentification.
+     * Enregistement de la déclaration d'un formulaire d'authentification.
      *
      * @param string $name Nom de qualification du formulaire d'authentification.
-     * @param array $attrs {
-     *      Liste des attributs de configuration.
-     * }
-     * @return SignInControllerInterface
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return UserSignInItemInterface
      */
-    public function register($name, $attrs = [])
+    public function _register($name, $attrs = [])
     {
-        $alias = "user.signin.{$name}";
-        if (app()->has($alias)) :
-            return;
+        if (isset($this->items[$name])) :
+            return $this->items[$name];
         endif;
 
         $attrs = array_merge(['controller' => SignInItemController::class], $attrs);
@@ -64,7 +66,7 @@ final class SignIn
         try {
             $resolved = new $controller($name, $attrs, $this);
             app()->singleton(
-                $alias,
+                "user.signin.{$name}",
                 function () use ($resolved) {
                     return $resolved;
                 }
@@ -73,7 +75,22 @@ final class SignIn
             wp_die($e->getMessage(), '', $e->getCode());
         }
 
-        return $resolved;
+        return $this->items[$name] = $resolved;
+    }
+
+    /**
+     * Déclaration d'un formulaire d'authentification.
+     *
+     * @param string $name Nom de qualification du formulaire d'authentification.
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return $this
+     */
+    public function add($name, $attrs = [])
+    {
+        config()->set("user.signin.{$name}", $attrs);
+
+        return $this;
     }
 
     /**
@@ -81,14 +98,12 @@ final class SignIn
      *
      * @param string $name Nom de qualification du formulaire d'authentification.
      *
-     * @return null|SignInControllerInterface
+     * @return null|UserSignInItemInterface
      */
     public function get($name)
     {
-        $alias = "user.signin.{$name}";
-
-        if (app()->has($alias)) :
-            return app()->resolve($alias);
+        if (isset($this->items[$name])) :
+            return $this->items[$name];
         else :
             return null;
         endif;
