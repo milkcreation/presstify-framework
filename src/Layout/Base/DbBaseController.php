@@ -1,12 +1,12 @@
 <?php
 
-namespace tiFy\Layout\Display;
+namespace tiFy\Layout\Base;
 
-use tiFy\Contracts\Layout\LayoutDisplayParamsInterface;
+use tiFy\Db\DbItemBaseController;
+use tiFy\Contracts\Layout\LayoutDisplayDbInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-class ParamsBaseController extends AbstractParametersBag implements LayoutDisplayParamsInterface
+class DbBaseController extends DbItemBaseController implements LayoutDisplayDbInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.
@@ -23,6 +23,6 @@ class ParamsBaseController extends AbstractParametersBag implements LayoutDispla
     {
         $this->layout = $layout;
 
-        parent::__construct($this->layout->get('params', []));
+        parent::__construct($this->layout->name(), []);
     }
 }

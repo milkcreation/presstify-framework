@@ -3,10 +3,10 @@
 namespace tiFy\Layout\Share\ListTable;
 
 use tiFy\Layout\Layout;
-use tiFy\Layout\Display\AbstractDisplayController;
+use tiFy\Layout\Base\AbstractBaseController;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 
-class ListTable extends AbstractDisplayController implements ListTableInterface
+class ListTable extends AbstractBaseController implements ListTableInterface
 {
     /**
      * Liste des fournisseurs de service.

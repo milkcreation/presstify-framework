@@ -12,7 +12,7 @@ class LayoutFactoryAdmin extends AbstractLayoutFactory implements LayoutFactoryA
      * Liste des attributs de configuration.
      * @var array {
      *
-     *      @param string|callable $controller Classe de rappel
+     *      @param string|callable $content Classe de rappel du controleur d'affichage.
      *      @param array $params Liste des paramètres.
      *      @param string $db Identifiant de base de données.
      *      @param string|array $labels Identifiant des intitulés.
@@ -60,10 +60,11 @@ class LayoutFactoryAdmin extends AbstractLayoutFactory implements LayoutFactoryA
         add_action(
             'current_screen',
             function ($wp_screen) {
+
                 if ($wp_screen->id === $this->get('hookname')) :
                     $this->screen = $wp_screen;
 
-                    if ($this->layout) :
+                    if ($this->layout()) :
                         $this->load();
                     endif;
 

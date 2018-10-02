@@ -5,7 +5,7 @@ namespace tiFy\Layout\Share\ListTable\Request;
 use Illuminate\Http\Request;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 use tiFy\Layout\Share\ListTable\Contracts\RequestInterface;
-use tiFy\Layout\Display\RequestBaseController;
+use tiFy\Layout\Base\RequestBaseController;
 
 class RequestController extends RequestBaseController implements RequestInterface
 {

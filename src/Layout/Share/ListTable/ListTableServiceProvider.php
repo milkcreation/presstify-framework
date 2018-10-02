@@ -28,7 +28,7 @@ use tiFy\Layout\Share\ListTable\ViewFilter\ViewFilterCollectionController;
 use tiFy\Layout\Share\ListTable\ViewFilter\ViewFilterItemController;
 use tiFy\Layout\Share\ListTable\ViewFilter\ViewFilterItemInterface;
 use tiFy\Layout\Share\ListTable\Request\RequestController;
-use tiFy\Layout\Display\ServiceProvider;
+use tiFy\Layout\Base\ServiceProvider;
 
 class ListTableServiceProvider extends ServiceProvider
 {

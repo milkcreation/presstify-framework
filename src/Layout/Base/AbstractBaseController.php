@@ -1,13 +1,13 @@
 <?php
 
-namespace tiFy\Layout\Display;
+namespace tiFy\Layout\Base;
 
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
 use tiFy\Contracts\Layout\LayoutFactoryInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Container\Container;
 
-abstract class AbstractDisplayController extends Container implements LayoutDisplayInterface
+abstract class AbstractBaseController extends Container implements LayoutDisplayInterface
 {
     /**
      * Instance de la fabrique de disposition associée.

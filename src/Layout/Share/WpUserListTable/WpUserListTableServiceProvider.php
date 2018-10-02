@@ -11,7 +11,7 @@ use tiFy\Layout\Share\WpUserListTable\Labels\LabelsController;
 use tiFy\Layout\Share\WpUserListTable\Params\ParamsController;
 use tiFy\Layout\Share\WpUserListTable\Request\RequestController;
 use tiFy\Layout\Share\ListTable\ListTableServiceProvider as ShareListTableServiceProvider;
-use tiFy\Layout\Display\DbUsersController;
+use tiFy\Layout\Base\DbUsersController;
 
 class WpUserListTableServiceProvider extends ShareListTableServiceProvider
 {

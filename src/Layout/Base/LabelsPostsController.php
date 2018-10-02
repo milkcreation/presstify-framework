@@ -1,12 +1,12 @@
 <?php
 
-namespace tiFy\Layout\Display;
+namespace tiFy\Layout\Base;
 
-use tiFy\PostType\Db\DbPostsController as PostTypeDbController;
-use tiFy\Contracts\Layout\LayoutDisplayDbInterface;
+use tiFy\Contracts\Layout\LayoutDisplayLabelsInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
+use tiFy\PostType\PostTypeItemLabelsController;
 
-class DbPostsController extends PostTypeDbController implements LayoutDisplayDbInterface
+class LabelsPostsController extends PostTypeItemLabelsController implements LayoutDisplayLabelsInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.

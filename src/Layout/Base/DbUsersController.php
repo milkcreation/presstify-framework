@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\Layout\Display;
+namespace tiFy\Layout\Base;
 
 use tiFy\User\Db\DbUsersController as UserDbController;
 use tiFy\Contracts\Layout\LayoutDisplayDbInterface;

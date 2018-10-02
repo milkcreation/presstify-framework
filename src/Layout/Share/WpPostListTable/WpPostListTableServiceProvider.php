@@ -9,8 +9,8 @@ use tiFy\Layout\Share\WpPostListTable\Request\RequestController;
 use tiFy\Layout\Share\WpPostListTable\ViewFilter\ViewFilterItemAllController;
 use tiFy\Layout\Share\WpPostListTable\ViewFilter\ViewFilterItemPublishController;
 use tiFy\Layout\Share\WpPostListTable\ViewFilter\ViewFilterItemTrashController;
-use tiFy\Layout\Display\DbPostsController;
-use tiFy\Layout\Display\LabelsPostsController;
+use tiFy\Layout\Base\DbPostsController;
+use tiFy\Layout\Base\LabelsPostsController;
 
 class WpPostListTableServiceProvider extends ListTableServiceProvider
 {

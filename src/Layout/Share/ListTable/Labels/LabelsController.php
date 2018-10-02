@@ -2,7 +2,7 @@
 
 namespace tiFy\Layout\Share\ListTable\Labels;
 
-use tiFy\Layout\Display\LabelsBaseController;
+use tiFy\Layout\Base\LabelsBaseController;
 
 class LabelsController extends LabelsBaseController
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace tiFy\Layout\Display;
+namespace tiFy\Layout\Base;
 
 use tiFy\Contracts\Layout\LayoutDisplayLabelsInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
-use tiFy\PostType\PostTypeItemLabelsController;
+use tiFy\Kernel\Labels\AbstractLabelsBagController;
 
-class LabelsPostsController extends PostTypeItemLabelsController implements LayoutDisplayLabelsInterface
+class LabelsBaseController extends AbstractLabelsBagController implements LayoutDisplayLabelsInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.
