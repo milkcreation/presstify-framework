@@ -2,7 +2,7 @@
 
 namespace tiFy\Layout\Share\ListTable\Params;
 
-use tiFy\Layout\Display\ParamsBaseController;
+use tiFy\Layout\Base\ParamsBaseController;
 
 class ParamsController extends ParamsBaseController
 {

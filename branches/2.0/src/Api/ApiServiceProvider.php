@@ -27,40 +27,46 @@ class ApiServiceProvider extends AppServiceProvider
             }
         )->build();
 
-        $this->app->singleton(
-            Facebook::class,
-            function ($app) {
-                return Facebook::create(config('api.facebook', []));
-            }
-        )->build();
+        if (config('api.facebook', [])) :
+            $this->app->singleton(
+                Facebook::class,
+                function ($app) {
+                    return Facebook::create(config('api.facebook', []));
+                }
+            )->build();
 
-        $this->app->singleton(
-            'api.facebook.profile',
-            config('api.facebook.profile', FacebookProfileController::class)
-        )->build();
+            $this->app->singleton(
+                'api.facebook.profile',
+                config('api.facebook.profile', FacebookProfileController::class)
+            )->build();
 
-        $this->app->singleton(
-            'api.facebook.signin',
-            config('api.facebook.signin', FacebookSigninController::class)
-        )->build();
+            $this->app->singleton(
+                'api.facebook.signin',
+                config('api.facebook.signin', FacebookSigninController::class)
+            )->build();
 
-        $this->app->singleton(
-            'api.facebook.signup',
-            config('api.facebook.signup', FacebookSignupController::class)
-        )->build();
+            $this->app->singleton(
+                'api.facebook.signup',
+                config('api.facebook.signup', FacebookSignupController::class)
+            )->build();
+        endif;
 
-        $this->app->singleton(
-            Recaptcha::class,
-            function ($app) {
-                return Recaptcha::create(config('api.recaptcha', []));
-            }
-        )->build();
+        if (config('api.recaptcha', [])) :
+            $this->app->singleton(
+                Recaptcha::class,
+                function ($app) {
+                    return Recaptcha::create(config('api.recaptcha', []));
+                }
+            )->build();
+        endif;
 
-        $this->app->singleton(
-            Youtube::class,
-            function ($app) {
-                return Youtube::make(config('api.youtube', []));
-            }
-        )->build();
+        if (config('api.youtube', [])) :
+            $this->app->singleton(
+                Youtube::class,
+                function ($app) {
+                    return Youtube::make(config('api.youtube', []));
+                }
+            )->build();
+        endif;
     }
 }

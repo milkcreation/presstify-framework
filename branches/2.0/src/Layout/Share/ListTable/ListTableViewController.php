@@ -9,7 +9,7 @@ use tiFy\Layout\Share\ListTable\Contracts\ItemCollectionInterface;
 use tiFy\Layout\Share\ListTable\Contracts\ItemInterface;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 use tiFy\Layout\Share\ListTable\Contracts\PaginationInterface;
-use tiFy\Layout\Display\ViewController;
+use tiFy\Layout\Base\ViewController;
 
 class ListTableViewController extends ViewController
 {

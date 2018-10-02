@@ -11,7 +11,7 @@ class LayoutFactoryFront extends AbstractLayoutFactory implements LayoutFactoryF
      * Liste des attributs de configuration.
      * @var array {
      *
-     *      @param string|callable $controller Classe de rappel
+     *      @param string|callable $content Classe de rappel du controleur d'affichage.
      *      @param array $params Liste des paramètres.
      * }
      */

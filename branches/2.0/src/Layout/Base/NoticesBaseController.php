@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\Layout\Display;
+namespace tiFy\Layout\Base;
 
 use tiFy\Contracts\Layout\LayoutDisplayNoticesInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;

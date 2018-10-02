@@ -1,12 +1,12 @@
 <?php
 
-namespace tiFy\Layout\Display;
+namespace tiFy\Layout\Base;
 
-use tiFy\Contracts\Layout\LayoutDisplayLabelsInterface;
+use tiFy\Contracts\Layout\LayoutDisplayParamsInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
-use tiFy\Kernel\Labels\AbstractLabelsBagController;
+use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-class LabelsBaseController extends AbstractLabelsBagController implements LayoutDisplayLabelsInterface
+class ParamsBaseController extends AbstractParametersBag implements LayoutDisplayParamsInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.
@@ -23,6 +23,6 @@ class LabelsBaseController extends AbstractLabelsBagController implements Layout
     {
         $this->layout = $layout;
 
-        parent::__construct($this->layout->name(), []);
+        parent::__construct($this->layout->get('params', []));
     }
 }
