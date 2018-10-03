@@ -52,7 +52,7 @@ class UserQuery implements UserQueryInterface
         elseif (is_numeric($id) && $id > 0) :
             $user = get_userdata($id);
         elseif (is_string($id)) :
-            return $this->getBy(null, $id);
+            return $this->getItemBy(null, $id);
         else :
             $user = $id;
         endif;
@@ -102,7 +102,7 @@ class UserQuery implements UserQueryInterface
 
         $user_query = new \WP_User_Query($args);
         if ($users = $user_query->get_results()) :
-            return $this->get(reset($users));
+            return $this->getItem(reset($users));
         endif;
 
         return null;

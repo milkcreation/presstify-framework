@@ -192,6 +192,14 @@ abstract class AbstractBaseController extends Container implements LayoutDisplay
     /**
      * {@inheritdoc}
      */
+    public function resolve($abstract, $args = [])
+    {
+        return parent::resolve("layout.{$abstract}", $args);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function render()
     {
         return __('Aucun contenu à afficher', 'tify');

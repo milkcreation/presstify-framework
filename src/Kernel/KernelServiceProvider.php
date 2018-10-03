@@ -25,6 +25,7 @@ use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Events\Events;
 use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
+use tiFy\Kernel\Notices\Notices;
 use tiFy\Kernel\Templates\Engine;
 use tiFy\Kernel\Service;
 
@@ -47,7 +48,7 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $bindings = [
         ClassInfo::class,
-        Engine::class
+        Engine::class,
     ];
 
     /**
@@ -87,15 +88,22 @@ class KernelServiceProvider extends ServiceProvider
         endforeach;
 
         $this->getContainer()->singleton(
-            'tiFyLogger',
+            'logger',
             function () {
                 return Logger::globalReport();
             }
         );
         $this->getContainer()->singleton(
-            'tiFyRequest',
+            'request',
             function () {
                 return Request::capture();
+            }
+        );
+
+        $this->getContainer()->bind(
+            'notices',
+            function () {
+                return new Notices();
             }
         );
 

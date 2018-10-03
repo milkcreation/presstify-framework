@@ -104,7 +104,7 @@ class RowActionCollectionController implements RowActionCollectionInterface
                     //$this->items[$name] = new $controller($name, $attrs, $this->item, $this->layout);
                 endif;
 
-                $alias = $this->layout->bound("row_actions.item.{$name}")
+                $alias = $this->layout->bound("layout.row_actions.item.{$name}")
                     ? "row_actions.item.{$name}"
                     : 'row_actions.item';
 

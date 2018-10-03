@@ -11,9 +11,15 @@ class ColumnItemCbController extends ColumnItemController
      */
     public function display($item)
     {
-        return (($db = $this->layout->db()) && ($primary = $db->getPrimary()) && isset($item->{$primary}))
-            ? sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />', $primary, $item->{$primary})
-            : '';
+        if ($db = $this->layout->db()) :
+            if (($primary = $db->getPrimary()) && isset($item->{$primary})) :
+                return sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />', $primary, $item->{$primary});
+            endif;
+        elseif(($primary = $this->layout->columns()->getPrimary()) && isset($item->{$primary})) :
+            return sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />', $primary, $item->{$primary});
+        endif;
+
+        return '';
     }
 
     /**

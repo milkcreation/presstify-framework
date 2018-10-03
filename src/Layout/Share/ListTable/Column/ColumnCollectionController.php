@@ -174,7 +174,7 @@ class ColumnCollectionController implements ColumnCollectionInterface
                 ];
             endif;
 
-            $alias = $this->layout->bound("columns.item.{$name}")
+            $alias = $this->layout->bound("layout.columns.item.{$name}")
                 ? "columns.item.{$name}"
                 : 'columns.item';
 
