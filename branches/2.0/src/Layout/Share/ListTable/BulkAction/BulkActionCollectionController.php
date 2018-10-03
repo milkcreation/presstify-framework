@@ -136,7 +136,7 @@ class BulkActionCollectionController implements BulkActionCollectionInterface
                     ];
                 endif;
 
-                $alias = $this->layout->bound("bulk_actions.item.{$name}")
+                $alias = $this->layout->bound("layout.bulk_actions.item.{$name}")
                     ? "bulk_actions.item.{$name}"
                     : 'bulk_action.item';
 

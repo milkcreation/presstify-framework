@@ -27,7 +27,7 @@ class Role
         add_action(
             'init',
             function () {
-                foreach (config('user.role') as $name => $attrs) :
+                foreach (config('user.role', []) as $name => $attrs) :
                     $this->_register($name, $attrs);
                 endforeach;
             },

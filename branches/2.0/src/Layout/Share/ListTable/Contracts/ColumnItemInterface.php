@@ -14,7 +14,7 @@ interface ColumnItemInterface extends ParametersBagIteratorInterface
      *
      * @return string
      */
-    public function display($item);
+    public function display(ItemInterface $item);
 
     /**
      * Récupération du nom de qualification.

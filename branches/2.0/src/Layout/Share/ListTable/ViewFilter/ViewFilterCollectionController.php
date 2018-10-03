@@ -57,7 +57,7 @@ class ViewFilterCollectionController implements ViewFilterCollectionInterface
                     $attrs = ['content' => $attrs];
                 endif;
 
-                $alias = $this->layout->bound("view_filters.item.{$name}")
+                $alias = $this->layout->bound("layout.view_filters.item.{$name}")
                     ? "view_filters.item.{$name}"
                     : 'view_filters.item';
 

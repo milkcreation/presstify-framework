@@ -21,18 +21,18 @@ class WpPostListTableServiceProvider extends ListTableServiceProvider
     {
         parent::boot();
 
-        $this->getContainer()->bind('columns.item.post_title', ColumnItemPostTitleController::class);
+        $this->getContainer()->bind('layout.columns.item.post_title', ColumnItemPostTitleController::class);
 
-        $this->getContainer()->singleton('db', DbPostsController::class);
+        $this->getContainer()->singleton('layout.db', DbPostsController::class);
 
-        $this->getContainer()->singleton('labels', LabelsPostsController::class);
+        $this->getContainer()->singleton('layout.labels', LabelsPostsController::class);
 
-        $this->getContainer()->singleton('params', ParamsController::class);
+        $this->getContainer()->singleton('layout.params', ParamsController::class);
 
-        $this->getContainer()->singleton('request', RequestController::class);
+        $this->getContainer()->singleton('layout.request', RequestController::class);
 
-        $this->getContainer()->bind('view_filters.item.all', ViewFilterItemAllController::class);
-        $this->getContainer()->bind('view_filters.item.publish', ViewFilterItemPublishController::class);
-        $this->getContainer()->bind('view_filters.item.trash', ViewFilterItemTrashController::class);
+        $this->getContainer()->bind('layout.view_filters.item.all', ViewFilterItemAllController::class);
+        $this->getContainer()->bind('layout.view_filters.item.publish', ViewFilterItemPublishController::class);
+        $this->getContainer()->bind('layout.view_filters.item.trash', ViewFilterItemTrashController::class);
     }
 }

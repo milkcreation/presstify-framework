@@ -67,7 +67,7 @@ class Kernel
                 $alias = Paths::class;
                 break;
             case 'Request' :
-                $alias = 'tiFyRequest';
+                $alias = 'request';
                 break;
             case 'TemplatesEngine' :
             case 'Views' :

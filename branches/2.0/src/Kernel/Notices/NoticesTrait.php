@@ -1,12 +1,12 @@
 <?php
 
-namespace tiFy\Components\Tools\Notices;
+namespace tiFy\Kernel\Notices;
 
 use tiFy\Kernel\Tools;
 
 /**
  * Trait NoticesTrait
- * @package tiFy\Components\Tools\Notices
+ * @package tiFy\Kernel\Notices
  *
  * @method string noticesAdd(string $type, string $message = '', array $datas = [])
  * @method array noticesAll(string $type)

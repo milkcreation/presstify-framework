@@ -39,37 +39,37 @@ class ListTableServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        $this->getContainer()->bind('bulk_actions', BulkActionCollectionController::class);
-        $this->getContainer()->bind('bulk_actions.item', BulkActionItemController::class);
-        $this->getContainer()->bind('bulk_actions.item.trash', BulkActionItemTrashController::class);
+        $this->getContainer()->bind('layout.bulk_actions', BulkActionCollectionController::class);
+        $this->getContainer()->bind('layout.bulk_actions.item', BulkActionItemController::class);
+        $this->getContainer()->bind('layout.bulk_actions.item.trash', BulkActionItemTrashController::class);
 
-        $this->getContainer()->singleton('columns', ColumnCollectionController::class);
-        $this->getContainer()->bind('columns.item', ColumnItemController::class);
-        $this->getContainer()->bind('columns.item.cb', ColumnItemCbController::class);
+        $this->getContainer()->singleton('layout.columns', ColumnCollectionController::class);
+        $this->getContainer()->bind('layout.columns.item', ColumnItemController::class);
+        $this->getContainer()->bind('layout.columns.item.cb', ColumnItemCbController::class);
 
-        $this->getContainer()->singleton('items', ItemCollectionController::class);
-        $this->getContainer()->bind('item', ItemController::class);
+        $this->getContainer()->singleton('layout.items', ItemCollectionController::class);
+        $this->getContainer()->bind('layout.item', ItemController::class);
 
-        $this->getContainer()->singleton('labels', LabelsController::class);
+        $this->getContainer()->singleton('layout.labels', LabelsController::class);
 
-        $this->getContainer()->singleton('pagination', PaginationController::class);
+        $this->getContainer()->singleton('layout.pagination', PaginationController::class);
 
-        $this->getContainer()->singleton('params', ParamsController::class);
+        $this->getContainer()->singleton('layout.params', ParamsController::class);
 
-        $this->getContainer()->singleton('request', RequestController::class);
+        $this->getContainer()->singleton('layout.request', RequestController::class);
 
-        $this->getContainer()->bind('row_actions', RowActionCollectionController::class);
-        $this->getContainer()->bind('row_actions.item', RowActionItemController::class);
-        $this->getContainer()->bind('row_actions.item.activate', RowActionItemActivateController::class);
-        $this->getContainer()->bind('row_actions.item.deactivate', RowActionItemDeactivateController::class);
-        $this->getContainer()->bind('row_actions.item.delete', RowActionItemDeleteController::class);
-        $this->getContainer()->bind('row_actions.item.duplicate', RowActionItemDuplicateController::class);
-        $this->getContainer()->bind('row_actions.item.edit', RowActionItemEditController::class);
-        $this->getContainer()->bind('row_actions.item.preview', RowActionItemPreviewController::class);
-        $this->getContainer()->bind('row_actions.item.trash', RowActionItemTrashController::class);
-        $this->getContainer()->bind('row_actions.item.untrash', RowActionItemUntrashController::class);
+        $this->getContainer()->bind('layout.row_actions', RowActionCollectionController::class);
+        $this->getContainer()->bind('layout.row_actions.item', RowActionItemController::class);
+        $this->getContainer()->bind('layout.row_actions.item.activate', RowActionItemActivateController::class);
+        $this->getContainer()->bind('layout.row_actions.item.deactivate', RowActionItemDeactivateController::class);
+        $this->getContainer()->bind('layout.row_actions.item.delete', RowActionItemDeleteController::class);
+        $this->getContainer()->bind('layout.row_actions.item.duplicate', RowActionItemDuplicateController::class);
+        $this->getContainer()->bind('layout.row_actions.item.edit', RowActionItemEditController::class);
+        $this->getContainer()->bind('layout.row_actions.item.preview', RowActionItemPreviewController::class);
+        $this->getContainer()->bind('layout.row_actions.item.trash', RowActionItemTrashController::class);
+        $this->getContainer()->bind('layout.row_actions.item.untrash', RowActionItemUntrashController::class);
 
-        $this->getContainer()->singleton('view_filters', ViewFilterCollectionController::class);
-        $this->getContainer()->bind('view_filters.item', ViewFilterItemController::class);
+        $this->getContainer()->singleton('layout.view_filters', ViewFilterCollectionController::class);
+        $this->getContainer()->bind('layout.view_filters.item', ViewFilterItemController::class);
     }
 }

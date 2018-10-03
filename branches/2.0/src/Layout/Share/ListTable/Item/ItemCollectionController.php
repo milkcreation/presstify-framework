@@ -123,18 +123,22 @@ class ItemCollectionController implements ItemCollectionInterface
      */
     public function query($query_args = [])
     {
-        if (!$db = $this->layout->db()) :
-            return;
-        endif;
+        if ($db = $this->layout->db()) :
+            $query = $db->query($query_args);
 
-        $query = $db->query($query_args);
+            if ($items = $query->getItems()) :
+                foreach ($items as $item) :
+                    $this->items[] = $this->layout->resolve('item', [$item, $this->layout]);
+                endforeach;
+            endif;
 
-        if ($items = $query->getItems()) :
-            foreach ($items as $item) :
+            $this->total = $query->getFoundItems();
+        else :
+            foreach ($this->layout->param('items', []) as $item) :
                 $this->items[] = $this->layout->resolve('item', [$item, $this->layout]);
             endforeach;
-        endif;
 
-        $this->total = $query->getFoundItems();
+            $this->total = count($this->items);
+        endif;
     }
 }

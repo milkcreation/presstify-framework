@@ -1,11 +1,12 @@
 <?php
 
-namespace tiFy\Components\Tools\Notices;
+namespace tiFy\Kernel\Notices;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use tiFy\Contracts\Kernel\NoticesInterface;
 
-class Notices
+class Notices implements NoticesInterface
 {
     /**
      * Liste des types de notifications permis. error|warning|info|success.
@@ -20,13 +21,7 @@ class Notices
     protected $items = [];
 
     /**
-     * Ajout d'un message de notification.
-     *
-     * @param string $type Type de notification.
-     * @param string $message Message de notification.
-     * @param array $datas Liste des données embarquées associées.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function add($type, $message = '', $datas = [])
     {
@@ -45,11 +40,7 @@ class Notices
     }
 
     /**
-     * Récupération de la liste des notifications par type.
-     *
-     * @param string $type Type de notification.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function all($type)
     {
@@ -57,11 +48,7 @@ class Notices
     }
 
     /**
-     * Récupération des données embarquées associée à une notification.
-     *
-     * @param string $type Type de notification.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getDatas($type)
     {
@@ -76,11 +63,7 @@ class Notices
     }
 
     /**
-     * Récupération des messages de notification par type.
-     *
-     * @param string $type Type de notification.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getMessages($type)
     {
@@ -95,11 +78,15 @@ class Notices
     }
 
     /**
-     * Vérification d'existance d'un type de notification.
-     *
-     * @param string $type Identifiant de qualification du type à vérifier.
-     *
-     * @return bool
+     * {@inheritdoc}
+     */
+    public function getTypes()
+    {
+        return $this->types;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function hasType($type)
     {
@@ -107,12 +94,7 @@ class Notices
     }
 
     /**
-     * Récupération de notification selon une liste d'arguments.
-     *
-     * @param string $type Type de notification.
-     * @param array $query_args Liste d'arguments de données.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function query($type = 'error', $query_args = [])
     {
@@ -135,11 +117,7 @@ class Notices
     }
 
     /**
-     * Ajout d'un type de notification permis.
-     *
-     * @param string $type Type de notification permis.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function setType($type)
     {
@@ -149,11 +127,7 @@ class Notices
     }
 
     /**
-     * Définition des types de notification.
-     *
-     * @param array $types Liste des types de notification permis. error|warning|info|success par défaut.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function setTypes($types = ['error', 'warning', 'info', 'success'])
     {

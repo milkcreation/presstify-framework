@@ -4,7 +4,7 @@ namespace tiFy\User\SignIn;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\Components\Tools\Notices\NoticesTrait;
+use tiFy\Kernel\Notices\NoticesTrait;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 

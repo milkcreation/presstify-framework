@@ -12,15 +12,15 @@ class ServiceProvider extends KernelServiceProvider
      */
     public function boot()
     {
-        $this->getContainer()->singleton('db', DbBaseController::class);
+        $this->getContainer()->singleton('layout.db', DbBaseController::class);
 
-        $this->getContainer()->singleton('labels', LabelsBaseController::class);
+        $this->getContainer()->singleton('layout.labels', LabelsBaseController::class);
 
-        $this->getContainer()->singleton('params', ParamsBaseController::class);
+        $this->getContainer()->singleton('layout.params', ParamsBaseController::class);
 
-        $this->getContainer()->singleton('notices', NoticesBaseController::class);
+        $this->getContainer()->singleton('layout.notices', NoticesBaseController::class);
 
-        $this->getContainer()->singleton('request', RequestBaseController::class);
+        $this->getContainer()->singleton('layout.request', RequestBaseController::class);
     }
 
     /**

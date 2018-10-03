@@ -7,7 +7,7 @@ use tiFy\Components\Tools\Cryptor\Cryptor;
 use tiFy\Components\Tools\File\File;
 use tiFy\Components\Tools\Functions\Functions;
 use tiFy\Components\Tools\Html\Html;
-use tiFy\Components\Tools\Notices\Notices;
+use tiFy\Kernel\Notices\Notices;
 use tiFy\Components\Tools\Str\Str;
 use tiFy\Components\Tools\User\User;
 use tiFy\tiFy;
