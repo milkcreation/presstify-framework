@@ -171,7 +171,7 @@ class Modal extends AbstractPartialItem
         $ajax = $this->get('ajax', false);
 
         if (is_string($ajax)) :
-            assets()->setDataJs($this->getId() . '_content', $ajax);
+            assets()->setDataJs($this->getId(), ['content' => $ajax]);
         endif;
 
         $this->set(
