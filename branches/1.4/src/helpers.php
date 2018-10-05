@@ -2,6 +2,7 @@
 
 use tiFy\tiFy;
 use tiFy\Contracts\Field\FieldItemInterface;
+use tiFy\Contracts\Kernel\EventsInterface;
 use tiFy\Contracts\Partial\PartialItemInterface;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Contracts\Views\ViewsInterface;
@@ -34,7 +35,7 @@ if (!function_exists('app')) :
             return $factory;
         endif;
 
-        return $factory->resolve($abstract, $args);
+        return tiFy::instance()->resolve($abstract, $args);
     }
 endif;
 
@@ -110,19 +111,19 @@ if (!function_exists('container')) :
      * {@internal Si $alias est null > Retourne la classe de rappel du controleur.}
      * @deprecated
      *
-     * @param string $alias Nom de qualification du service à récupérer.
+     * @param string $abstract Nom de qualification du service à récupérer.
      *
      * @return \tiFy\Kernel\Container\Container
      */
-    function container($alias = null)
+    function container($abstract = null)
     {
         $factory = Kernel::Container();
 
-        if (is_null($alias)) :
+        if (is_null($abstract)) :
             return $factory;
         endif;
 
-        return $factory->get($alias);
+        return $factory->get($abstract);
     }
 endif;
 
@@ -130,7 +131,7 @@ if (!function_exists('events')) :
     /**
      * Events - Controleur d'événements.
      *
-     * @return \tiFy\Kernel\Events\Events
+     * @return EventsInterface
      */
     function events()
     {
@@ -142,12 +143,13 @@ if (!function_exists('field')) :
     /**
      * Field - Controleur de champs.
      *
-     * @param null|string $name Nom de qualification du champ.
-     * @param array $attrs Liste des attributs de configuration.
+     * @param null|string $name Nom de qualification.
+     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
+     * @param mixed $attrs Liste des attributs de configuration.
      *
      * @return null|Field|FieldItemInterface
      */
-    function field($name = null, $attrs = [])
+    function field($name = null, $id = null, $attrs = null)
     {
         /** @var Field $factory */
         $factory = app(Field::class);
@@ -156,7 +158,28 @@ if (!function_exists('field')) :
             return $factory;
         endif;
 
-        return $factory->get($name, $attrs);
+        return $factory->get($name, $id, $attrs);
+    }
+endif;
+
+if (!function_exists('form')) :
+    /**
+     * Formulaire - Controleur de champs.
+     *
+     * @param null|string $name Nom de qualification du formulaire.
+     *
+     * @return null|Field|FieldItemInterface
+     */
+    function form($name = null)
+    {
+        /** @var Form $factory */
+        $factory = app(Form::class);
+
+        if (is_null($name)) :
+            return $factory;
+        endif;
+
+        return $factory->get($name);
     }
 endif;
 
@@ -174,14 +197,15 @@ endif;
 
 if (!function_exists('partial')) :
     /**
-     * Field - Controleur d'événements.
+     * Partial - Contrôleurs d'affichage.
      *
-     * @param null $name Nom de qualification du champ.
-     * @param $attrs Liste des attributs de configuration.
+     * @param null|string $name Nom de qualification.
+     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
+     * @param mixed $attrs Liste des attributs de configuration.
      *
      * @return null|Partial|PartialItemInterface
      */
-    function partial($name = null, $attrs = [])
+    function partial($name = null, $id = null, $attrs = null)
     {
         /** @var Partial $factory */
         $factory = app(Partial::class);
@@ -190,7 +214,7 @@ if (!function_exists('partial')) :
             return $factory;
         endif;
 
-        return $factory->get($name, $attrs);
+        return $factory->get($name, $id, $attrs);
     }
 endif;
 
@@ -228,7 +252,7 @@ if (! function_exists('resolve')) {
      */
     function resolve($name)
     {
-        return app($name);
+        return container($name);
     }
 }
 

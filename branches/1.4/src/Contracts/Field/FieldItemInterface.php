@@ -2,12 +2,13 @@
 
 namespace tiFy\Contracts\Field;
 
+use tiFy\Contracts\Kernel\ParametersBagInterface;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Field\FieldOptionsCollectionController;
 use tiFy\Field\FieldOptionsItemController;
 
-interface FieldItemInterface
+interface FieldItemInterface extends ParametersBagInterface
 {
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
@@ -22,13 +23,6 @@ interface FieldItemInterface
      * @return void
      */
     public function after();
-
-    /**
-     * Récupération de la liste des attributs de configuration.
-     *
-     * @return array
-     */
-    public function all();
 
     /**
      * Affichage de la liste des attributs de balise.
@@ -59,13 +53,6 @@ interface FieldItemInterface
     public function content();
 
     /**
-     * Liste des attributs de configuration par défaut.
-     *
-     * @return array
-     */
-    public function defaults();
-
-    /**
      * Affichage.
      *
      * @return string
@@ -78,16 +65,6 @@ interface FieldItemInterface
      * @return $this
      */
     public function enqueue_scripts();
-
-    /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null);
 
     /**
      * Traitement d'une liste d'attributs HTML.
@@ -135,15 +112,6 @@ interface FieldItemInterface
     public function getValue();
 
     /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     *
-     * @return bool
-     */
-    public function has($key);
-
-    /**
      * Vérifie si une variable peut être appelée en tant que fonction.
      *
      * @return bool
@@ -163,52 +131,6 @@ interface FieldItemInterface
      * @return void
      */
     public function options();
-
-    /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     *
-     * @return void
-     */
-    public function parse($attrs = []);
-
-    /**
-     * Récupére la valeur d'un attribut avant de le supprimer.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par defaut lorsque l'attribut n'est pas défini.
-     *
-     * @return mixed
-     */
-    public function pull($key, $default = null);
-
-    /**
-     * Insertion d'un attribut à la fin d'une liste d'attributs.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $value Valeur de l'attribut.
-     *
-     * @return mixed
-     */
-    public function push($key, $value);
-
-    /**
-     * Définition d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $value Valeur de l'attribut.
-     *
-     * @return $this
-     */
-    public function set($key, $value);
-
-    /**
-     * Récupération de la liste des valeurs des attributs de configuration.
-     *
-     * @return mixed[]
-     */
-    public function values();
 
     /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.

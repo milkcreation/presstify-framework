@@ -6,10 +6,10 @@ use Illuminate\Support\Arr;
 use Symfony\Component\Finder\Finder;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Filesystem\Paths;
-use tiFy\Kernel\Item\AbstractItemController;
+use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
 use tiFy\tiFy;
 
-class Config extends AbstractItemController
+class Config extends AbstractParametersBagIterator
 {
     /**
      * Classe de rappel du controleur des chemins.
@@ -22,13 +22,9 @@ class Config extends AbstractItemController
      * @var array
      */
     protected $aliases = [
-        'column'      => \tiFy\Column\Column::class,
         'cron'        => \tiFy\Cron\Cron::class,
-        'db'          => \tiFy\Db\Db::class,
-        'form'        => \tiFy\Form\Form::class,
         'media'       => \tiFy\Media\Media::class,
         'meta-tag'    => \tiFy\MetaTag\MetaTag::class,
-        'options'     => \tiFy\Options\Options::class,
         'page-hook'   => \tiFy\PageHook\PageHook::class,
         'route'       => \tiFy\Route\Route::class
     ];
@@ -52,26 +48,28 @@ class Config extends AbstractItemController
             endforeach;
         endif;
 
-        $finder = (new Finder())->files()->name('/\.php$/')->in(\paths()->getConfigPath());
-        foreach ($finder as $file) :
-            $key = basename($file->getFilename(), ".{$file->getExtension()}");
-            if ($key === 'autoload') :
-                continue;
-            endif;
+        if (is_dir(paths()->getConfigPath())) :
+            $finder = (new Finder())->files()->name('/\.php$/')->in(paths()->getConfigPath());
+            foreach ($finder as $file) :
+                $key = basename($file->getFilename(), ".{$file->getExtension()}");
+                if ($key === 'autoload') :
+                    continue;
+                endif;
 
-            $value = include($file->getRealPath());
+                $value = include($file->getRealPath());
 
-            switch($key) :
-                default :
-                    $this->set($this->getAlias($key), $value);
-                    break;
-                case 'plugins' :
-                    foreach((array)$value as $plugin => $attrs) :
-                        $this->set($plugin, $attrs);
-                    endforeach;
-                    break;
-            endswitch;
-        endforeach;
+                switch($key) :
+                    default :
+                        $this->set($this->getAlias($key), $value);
+                        break;
+                    case 'plugins' :
+                        foreach((array)$value as $plugin => $attrs) :
+                            $this->set($plugin, $attrs);
+                        endforeach;
+                        break;
+                endswitch;
+            endforeach;
+        endif;
     }
 
     /**

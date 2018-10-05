@@ -31,14 +31,14 @@ class Slider extends AbstractPartialItem
             function () {
                 \wp_register_style(
                     'PartialSlider',
-                    assets()->url('/partial/slider/css/styles.css'),
+                    assets()->url('partial/slider/css/styles.css'),
                     ['slick', 'slick-theme'],
                     170722
                 );
 
                 \wp_register_script(
                     'PartialSlider',
-                    assets()->url('/partial/slider/js/scripts.js'),
+                    assets()->url('partial/slider/js/scripts.js'),
                     ['slick'],
                     170722,
                     true

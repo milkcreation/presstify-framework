@@ -11,6 +11,18 @@ use tiFy\Contracts\Container\ServiceProviderInterface;
 class ServiceProvider extends AbstractServiceProvider implements ServiceProviderInterface
 {
     /**
+     * Liste des alias de qualification de services.
+     * @var array
+     */
+    protected $aliases = [];
+
+    /**
+     * Liste des services à instance multiples auto-déclarés.
+     * @var string[]
+     */
+    protected $bindings = [];
+
+    /**
      * Classe de rappel du conteneur de services.
      * @var ContainerInterface
      */
@@ -24,22 +36,10 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
     protected $provides = [];
 
     /**
-     * Liste des services à instance multiples auto-déclarés.
-     * @var string[]
-     */
-    protected $bindings = [];
-
-    /**
      * Liste des services à instance unique auto-déclarés.
      * @var string[]
      */
     protected $singletons = [];
-
-    /**
-     * Liste des alias de qualification de services.
-     * @var array
-     */
-    protected $aliases = [];
 
     /**
      * CONSTRUCTEUR.

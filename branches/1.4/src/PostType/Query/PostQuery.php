@@ -61,7 +61,7 @@ class PostQuery implements PostQueryInterface
         elseif (is_numeric($id) && $id > 0) :
             $post = $id;
         elseif (is_string($id)) :
-            return $this->getBy(null, $id);
+            return $this->getItemBy(null, $id);
         else :
             $post = $id;
         endif;

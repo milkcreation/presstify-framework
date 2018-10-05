@@ -5,15 +5,7 @@ namespace tiFy\Metabox;
 use tiFy\Kernel\Templates\TemplateController;
 
 /**
- * Class PartialViewTemplate
- *
- * @method string after().
- * @method string attrs().
- * @method string before().
- * @method string content().
- * @method string getHtmlAttrs().
- * @method string getId().
- * @method string getIndex().
+ * Class MetaboxView
  */
 class MetaboxView extends TemplateController
 {

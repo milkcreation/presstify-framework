@@ -5,7 +5,7 @@ namespace tiFy\Partial;
 use tiFy\Kernel\Templates\TemplateController;
 
 /**
- * Class PartialViewTemplate
+ * Class PartialView
  *
  * @method string after().
  * @method string attrs().

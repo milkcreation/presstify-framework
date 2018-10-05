@@ -2,10 +2,24 @@
 
 namespace tiFy\PostType\Metabox\Subtitle;
 
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class Subtitle extends AbstractMetaboxContentPostController
+class Subtitle extends AbstractMetaboxDisplayPostController
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function content($post = null, $args = null, $null = null)
+    {
+        return field('text', [
+                'attrs' => [
+                    'class' => 'widefat'
+                ],
+                'name'  => $this->get('name'),
+                'value' => wp_unslash(get_post_meta($post->ID, $this->get('name'), true))
+            ]);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -26,15 +40,9 @@ class Subtitle extends AbstractMetaboxContentPostController
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args = [])
+    public function header($post = null, $args = null, $null = null)
     {
-        return field('text', [
-                'attrs' => [
-                    'class' => 'widefat'
-                ],
-                'name'  => $this->get('name'),
-                'value' => wp_unslash(get_post_meta($post->ID, $this->get('name'), true))
-            ]);
+        return $this->item->getTitle() ? : __('Sous-titre', 'tify');
     }
 
     /**

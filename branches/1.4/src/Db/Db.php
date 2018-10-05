@@ -2,33 +2,47 @@
 
 namespace tiFy\Db;
 
-use tiFy\App\AppController;
-use tiFy\Db\DbControllerInterface;
+use tiFy\Contracts\Db\DbItemInterface;
 
-final class Db extends AppController
+final class Db
 {
     /**
-     * Initialisation du controleur.
+     * Liste des instances déclarées.
+     * @var DbItemInterface[]
+     */
+    protected $items = [];
+
+    /**
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appAddAction('init', null, 9);
+        add_action(
+            'init',
+            function () {
+                foreach(config('db', []) as $name => $attrs) :
+                    $this->register($name, $attrs);
+                endforeach;
+            },
+            9
+        );
     }
 
     /**
-     * Initialisation globale de Wordpress.
+     * Ajout d'un élément.
      *
-     * @return void
+     * @param string $name Nom de qualification de l'éléments.
+     * @param array $attrs Liste des attributs de configuration de l'élément.
+     *
+     * @return $this
      */
-    public function init()
+    public function add($name, $attrs = [])
     {
-        foreach($this->appConfig(null, []) as $name => $attrs) :
-            $this->register($name, $attrs);
-        endforeach;
+        config()->set("db.{$name}", $attrs);
 
-        do_action('tify_db_register', $this);
+        return $this;
     }
 
     /**
@@ -37,20 +51,20 @@ final class Db extends AppController
      * @param string $name Nom de qualification du controleur de base de données.
      * @param array $attrs Attributs de configuration de la base de données
      *
-     * @return DbControllerInterface
+     * @return DbItemInterface
      */
-    public function register($name, $attrs = [])
+    protected function register($name, $attrs = [])
     {
-        $alias = "tfy.db.{$name}";
-        if($this->appServiceHas($alias)) :
-            return;
+        if ($item = $this->get($name)) :
+            return $item;
         endif;
 
-        $classname = isset($attrs['controller']) ? $attrs['controller'] : DbBaseController::class;
+        $controller = isset($attrs['controller']) ? $attrs['controller'] : DbItemBaseController::class;
+        $resolved = new $controller($name, $attrs);
 
-        $this->appServiceShare($alias, new $classname($name, $attrs, $this));
-
-        return $this->appServiceGet($alias);
+        if ($resolved instanceof DbItemInterface) :
+            return $this->items[$name] = $resolved;
+        endif;
     }
 
     /**
@@ -58,13 +72,10 @@ final class Db extends AppController
      *
      * @param string $name Nom de qualification du controleur de base de données.
      *
-     * @return null|DbControllerInterface
+     * @return null|DbItemInterface
      */
     public function get($name)
     {
-        $alias = "tfy.db.{$name}";
-        if ($this->appServiceHas($alias)) :
-            $this->appServiceGet($alias);
-        endif;
+        return isset($this->items[$name]) ? $this->items[$name] : null;
     }
 }

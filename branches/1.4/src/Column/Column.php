@@ -2,120 +2,271 @@
 
 namespace tiFy\Column;
 
-use League\Container\Exception\NotFoundException;
-use tiFy\App\AppController;
-use tiFy\Column\ObjectNameFactory;
-use tiFy\tiFy;
+use Illuminate\Support\Collection;
+use tiFy\Contracts\Wp\WpScreenInterface;
 
-final class Column extends AppController
+final class Column
 {
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * Liste des éléments.
+     * @var ColumnItemController[]
      */
-    public function appBoot()
-    {
-        $this->appAddAction('init');
-        $this->appAddAction('admin_init', null, 99);
-    }
+    protected $items = [];
 
     /**
-     * Initialisation globale de Wordpress.
+     * Liste des éléments à déclarer.
+     * @var array
+     */
+    protected $registred = [];
+
+    /**
+     * Liste des éléments à supprimer.
+     * @var array
+     */
+    protected $unregistred = [];
+
+    /**
+     * Instance de l'écran d'affichage courant.
+     * @var WpScreenInterface
+     */
+    protected $screen;
+
+    /**
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function init()
+    public function __construct()
     {
-        // Traitement des colonnes déclarées dans le fichier configuration
-        if ($config = $this->appConfig()) :
-            foreach ($this->appConfig() as $object_type => $object_names) :
-                if (!is_array($object_names)) :
-                    continue;
-                endif;
+        add_action(
+            'wp_loaded',
+            function () {
+                foreach (config('column.add', []) as $screen => $items) :
+                    foreach ($items as $attrs) :
+                        if (is_numeric($screen)) :
+                            $_screen = isset($attrs['screen']) ? $attrs['screen'] : null;
+                        else :
+                            $_screen = $screen;
+                        endif;
 
-                foreach ($object_names as $object_name => $custom_columns) :
-                    foreach ($custom_columns as $name => $args) :
-                        $this
-                            ->get($object_type, $object_name)
-                            ->add($name, $args);
+                        if (!is_null($_screen)) :
+                            if (preg_match('#(.*)@(post_type|taxonomy|user)#', $_screen)) :
+                                $_screen = 'list::' . $_screen;
+                            endif;
+
+                            $this->items[] = app()->resolve(ColumnItemController::class, [$_screen, $attrs]);
+                        endif;
                     endforeach;
                 endforeach;
-            endforeach;
-        endif;
+            },
+            0
+        );
+
+        //add_action('current_screen', function($screen) { var_dump($screen); exit;});
+
+        add_action(
+            'current_screen',
+            function ($wp_current_screen) {
+                $this->screen = app(WpScreenInterface::class, [$wp_current_screen]);
+
+                /** @var \WP_Screen $wp_current_screen */
+                foreach ($this->items as $item) :
+                    $item->load($this->screen);
+                endforeach;
+
+                /** @var ColumnItemController $c */
+                switch ($this->screen->getObjectType()) :
+                    case 'post_type' :
+                        add_filter(
+                            'manage_edit-' . $this->screen->getObjectName() . '_columns',
+                            [$this, 'parseColumnHeaders']
+                        );
+
+                        add_action(
+                            'manage_' . $this->screen->getObjectName() . '_posts_custom_column',
+                            [$this, 'parseColumnContents'],
+                            25,
+                            2
+                        );
+                        break;
+
+                    case 'taxonomy' :
+                        add_filter(
+                            'manage_edit-' . $this->screen->getObjectName() . '_columns',
+                            [$this, 'parseColumnHeaders']
+                        );
+
+                        add_filter(
+                            'manage_' . $this->screen->getObjectName() . '_custom_column',
+                            [$this, 'parseColumnContents'],
+                            25,
+                            3
+                        );
+                        break;
+
+                    case 'user' :
+                        add_filter(
+                            'manage_edit-' . $this->screen->getObjectName() . '_columns',
+                            [$this, 'parseColumnHeaders']
+                        );
+
+                        add_filter(
+                            'manage_' . $this->screen->getObjectName() . '_custom_column',
+                            [$this, 'parseColumnContents'],
+                            25,
+                            3
+                        );
+                        break;
+
+                    default :
+                        add_filter(
+                            'manage_columns',
+                            [$this, 'parseColumnHeaders']
+                        );
+
+                        add_filter(
+                            'manage_custom_column',
+                            [$this, 'parseColumnContents'],
+                            25,
+                            3
+                        );
+                        break;
+                endswitch;
+            }
+        );
     }
 
     /**
-     * Initialisation de l'interface d'administration.
+     * Ajout d'un élément.
      *
-     * @return void
+     * @param string $screen Ecran d'affichage de l'élément.
+     * @param array $attrs Liste des attributs de configuration de l'élément.
+     *
+     * @return $this
      */
-    public function admin_init()
+    public function add($screen, $attrs = [])
     {
-        do_action('tify_column_register', $this);
+        config()->push("column.add.{$screen}", $attrs);
+
+        return $this;
     }
 
     /**
-     * Récupération du controleur de type d'objet
+     * Récupération de la liste des éléments.
      *
-     * @param $object_type
-     * @param $object_name
-     *
-     * @return ObjectNameFactory
+     * @return Collection|ColumnItemController[]
      */
-    public function get($object_type, $object_name)
+    public function getItems()
     {
-        // Définition du controleur
-        switch($object_type) :
-            case 'post_type' :
-            case 'taxonomy' :
-            case 'custom' :
-                $controller = ObjectNameFactory::class;
-                break;
-            default :
-                wp_die(
-                    sprintf(
-                        __('Ce type de colonne %s n\'est pas valide. Seules les types %s sont permis.', 'tify'),
-                        $object_type,
-                        join(', ', ['post_type', 'taxonomy', 'custom'])
-                    ),
-                    __('tiFy\Column : Ajout de colonne impossible', 'tify'),
-                    500
-                );
-                break;
-        endswitch;
-
-        // Récupération du conteneur de type d'objet
-        $id = "tify.column.{$object_type}.{$object_name}";
-
-        if (!$this->appServiceHas($id)) :
-            $this->appServiceShare($id, new $controller($object_type, $object_name));
-        endif;
-
-        return $this->appServiceGet($id);
+        return new Collection($this->items);
     }
 
     /**
-     * Récupération du controleur de type d'objet
+     * Récupération de la liste des éléments actifs.
      *
-     * @param $object_type
-     * @param $object_name
-     *
-     * @return ObjectNameFactory
+     * @return Collection|ColumnItemController[]
      */
-    public static function make($object_type, $object_name)
+    public function getActiveItems()
     {
-        try {
-            /** @var Column $Column Controleur de colonnes tiFy */
-            $Column = self::appInstance();
-        } catch (NotFoundException $e) {
-            wp_die(
-                $e->getMessage(),
-                __(__CLASS__ . ' - Contrôleur principal introuvable', 'tify'),
-                $e->getCode()
+        return $this->getItems()
+            ->filter(
+                function ($item) {
+                    /** @var ColumnItemController $item */
+                    return $item->isActive();
+                }
+            )
+            ->sortBy(function ($item) {
+                /** @var ColumnItemController $item */
+                return $item->getPosition();
+            })
+            ->all();
+    }
+
+    /**
+     * Traitement de la liste des entêtes de colonnes.
+     *
+     * @param array $headers Liste des entêtes de colonnes.
+     *
+     * @return array
+     */
+    final public function parseColumnHeaders($headers)
+    {
+        $i = 0;
+        foreach ($headers as $name => $title) :
+            /** @var ColumnItemController $column */
+            $column = app(
+                ColumnItemController::class, [
+                    $this->screen,
+                    [
+                        'name'     => $name,
+                        'title'    => $title,
+                        'position' => $i++,
+                    ],
+                ]
             );
-        }
+            $column->load($this->screen);
+            $this->items[] = $column;
+        endforeach;
 
-        return $Column->get($object_type, $object_name);
+        $headers = [];
+        foreach ($this->getActiveItems() as $c) :
+            $headers[$c->getName()] = $c->getHeader();
+        endforeach;
+
+        remove_filter(current_filter(), [$this, 'parseDisplayedHeaders']);
+
+        return $headers;
     }
+
+    /**
+     * Traitement de la liste des contenus de colonnes.
+     *
+     * @return string
+     */
+    final public function parseColumnContents()
+    {
+        foreach ($this->getActiveItems() as $c) :
+            $echo = false;
+
+            switch ($this->screen->getObjectType()) :
+                case 'post_type' :
+                    $column_name = func_get_arg(0);
+                    $echo = true;
+
+                    if ($column_name !== $c->getName()) :
+                        continue 2;
+                    endif;
+                    break;
+
+                case 'taxonomy' :
+                    $output = func_get_arg(0);
+                    $column_name = func_get_arg(1);
+
+                    if ($column_name !== $c->getName()) :
+                        continue 2;
+                    endif;
+                    break;
+
+                case 'custom' :
+                    $output = func_get_arg(0);
+                    $column_name = func_get_arg(1);
+
+                    if ($column_name !== $c->getName()) :
+                        continue 2;
+                    endif;
+                    break;
+            endswitch;
+
+            $content = $c->getContent();
+            $output = call_user_func_array($content, func_get_args());
+
+            if ($echo) :
+                echo $output;
+                break;
+            else :
+                return $output;
+            endif;
+        endforeach;
+    }
+
 }

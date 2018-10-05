@@ -41,7 +41,7 @@ class Breadcrumb extends AbstractPartialItem
             function () {
                 \wp_register_style(
                     'PartialBreadcrumb',
-                    assets()->url('/partial/breadcrumb/css/styles.css'),
+                    assets()->url('partial/breadcrumb/css/styles.css'),
                     [],
                     180122
                 );

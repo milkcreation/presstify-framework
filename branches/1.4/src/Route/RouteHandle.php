@@ -118,6 +118,9 @@ class RouteHandle extends AbstractAppItemController
 
         if ($this->isClosure($cb)) :
             $resolved = call_user_func_array($cb, $args);
+            if (is_callable($resolved)) :
+                $resolved = call_user_func_array($resolved, $args);
+            endif;
 
             if ($resolved instanceof ViewInterface) :
                 add_action(

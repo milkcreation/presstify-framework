@@ -2,25 +2,14 @@
 
 namespace tiFy\PostType\Metabox\TaxonomySelector;
 
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class TaxonomySelector extends AbstractMetaboxContentPostController
+class TaxonomySelector extends AbstractMetaboxDisplayPostController
 {
     /**
      * {@inheritdoc}
      */
-    public function defaults()
-    {
-        return [
-            'multiple'      => true,
-            'taxonomy'      => 'category'
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display($post, $args = [])
+    public function content($post = null, $args = null, $null = null)
     {
         $terms = \get_terms([
             'taxonomy'   => $this->get('taxonomy'),
@@ -82,7 +71,26 @@ class TaxonomySelector extends AbstractMetaboxContentPostController
 
         $this->set('items', $items);
 
-        return parent::display($post, $args);
+        return $this->viewer('content', $this->all());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [
+            'multiple'      => true,
+            'taxonomy'      => 'category'
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($post = null, $args = null, $null = null)
+    {
+        return $this->item->getTitle() ? : __('Catégories associées', 'tify');
     }
 
     /**
@@ -95,7 +103,7 @@ class TaxonomySelector extends AbstractMetaboxContentPostController
             function () {
                 \wp_enqueue_style(
                     'MetaboxesPostTypeTaxonomySelector',
-                    assets()->url('/post-type/metabox/taxonomy-selector/css/styles.css')
+                    assets()->url('post-type/metabox/taxonomy-selector/css/styles.css')
                 );
             }
         );

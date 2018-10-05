@@ -12,7 +12,7 @@
             [
                 'index' => $this->get('index'),
                 'name'  => $this->getName(),
-                'value' => $this->getValue()
+                'value' => $this->get('value')
             ]
         );
     ?>

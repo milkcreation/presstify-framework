@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\RelatedPosts;
 
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class RelatedPosts extends AbstractMetaboxContentPostController
+class RelatedPosts extends AbstractMetaboxDisplayPostController
 {
     /**
      * Numéro de l'intance courante.
@@ -44,6 +44,51 @@ class RelatedPosts extends AbstractMetaboxContentPostController
     /**
      * {@inheritdoc}
      */
+    public function content($post = null, $args = null, $null = null)
+    {
+        $items = get_post_meta($post->ID, $this->get('name'), true);
+
+        $this->items = ! empty($items)
+            ? array_map('intval', (array) $items)
+            : [];
+
+        $query_args = array_merge(
+            $this->get('query_args'),
+            [
+                'post_type'         => $this->get('post_type', 'any'),
+                'post_status'       => $this->get('post_status', 'publish'),
+                'posts_per_page'    => -1
+            ]
+        );
+
+        ob_start();
+        ?>
+        <div id="tiFyTabooxRelatedPosts--<?php echo static::$instance;?>" class="tiFyTabooxRelatedPosts tiFyTabooxRelatedPosts--<?php echo $this->get('name');?>">
+            <input type="hidden" class="tiFyTabooxRelatedPosts-action" value="<?php echo $this->ajaxAction;?>">
+            <input type="hidden" class="tiFyTabooxRelatedPosts-item_name" value="<?php echo $this->get('name');?>">
+            <input type="hidden" class="tiFyTabooxRelatedPosts-item_max" value="<?php echo $this->get('max');?>">
+            <?php
+            tify_control_suggest(
+                array(
+                    'container_class'       => 'tiFyTabooxRelatedPosts-suggest',
+                    'placeholder'           => $this->get('placeholder'),
+                    'options'               => array(
+                        'minLength'             => 2
+                    ),
+                    'query_args'            => $query_args,
+                    'elements'              => $this->get('elements')
+                )
+            );
+            ?>
+            <?php $this->itemsRender();?>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function defaults()
     {
         return [
@@ -60,46 +105,9 @@ class RelatedPosts extends AbstractMetaboxContentPostController
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args = [])
-    {    
-        $items = get_post_meta($post->ID, $this->get('name'), true);
-
-        $this->items = ! empty($items)
-            ? array_map('intval', (array) $items)
-            : [];
-        
-        $query_args = array_merge(
-            $this->get('query_args'),
-            [
-                'post_type'         => $this->get('post_type', 'any'),
-                'post_status'       => $this->get('post_status', 'publish'),
-                'posts_per_page'    => -1
-            ]
-        );
-
-        ob_start();
-?>    
-<div id="tiFyTabooxRelatedPosts--<?php echo static::$instance;?>" class="tiFyTabooxRelatedPosts tiFyTabooxRelatedPosts--<?php echo $this->get('name');?>">
-    <input type="hidden" class="tiFyTabooxRelatedPosts-action" value="<?php echo $this->ajaxAction;?>">
-    <input type="hidden" class="tiFyTabooxRelatedPosts-item_name" value="<?php echo $this->get('name');?>">
-    <input type="hidden" class="tiFyTabooxRelatedPosts-item_max" value="<?php echo $this->get('max');?>">
-    <?php 
-        tify_control_suggest(
-            array(
-                'container_class'       => 'tiFyTabooxRelatedPosts-suggest',
-                'placeholder'           => $this->get('placeholder'),
-                'options'               => array(
-                    'minLength'             => 2
-                ),
-                'query_args'            => $query_args,
-                'elements'              => $this->get('elements')
-            )
-        );
-    ?>
-    <?php $this->itemsRender();?>
-</div>
-<?php
-        return ob_get_clean();
+    public function header($post = null, $args = null, $null = null)
+    {
+        return $this->item->getTitle() ? : __('Éléments en relation', 'tify');
     }
 
     /**
@@ -186,13 +194,13 @@ class RelatedPosts extends AbstractMetaboxContentPostController
             function () {
                 wp_enqueue_style(
                     'MetaboxPostTypeRelatedPosts',
-                    assets()->url('/post-type/metabox/related-posts/css/styles.css'),
+                    assets()->url('post-type/metabox/related-posts/css/styles.css'),
                     ['tify_control-suggest', 'tify_control-holder_image']
                 );
 
                 wp_enqueue_script(
                     'MetaboxPostTypeRelatedPosts',
-                    assets()->url('/post-type/metabox/related-posts/js/scripts.js'),
+                    assets()->url('post-type/metabox/related-posts/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable', 'tify_control-suggest']
                 );
                 wp_localize_script(

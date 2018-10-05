@@ -3,7 +3,7 @@
 namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxItemInterface;
-use tiFy\Contracts\Metabox\MetaboxContentInterface;
+use tiFy\Contracts\Metabox\MetaboxDisplayInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 use tiFy\Wp\WpScreen;
@@ -44,7 +44,7 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
         'name'     => '',
         'title'    => '',
         'content'  => '',
-        'context'  => 'advanced',
+        'context'  => 'tab',
         'priority' => 'default',
         'position' => 0,
         'args'     => [],
@@ -68,32 +68,36 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
     /**
      * CONSTRUCTEUR.
      *
-     * @param null|string|\WP_Screen $display_page Qualification de la page d'affichage.
+     * @param null|string|\WP_Screen|WpScreenInterface $screen Qualification de la page d'affichage.
      * @param array $attrs Liste des attributs de configuration.
      *
      * @return void
      */
-    public function __construct($display_page = null, $attrs = [])
+    public function __construct($screen = null, $attrs = [])
     {
         $this->index = self::$_index++;
-        $attrs['display_page'] = $display_page;
 
-        add_action(
-            'admin_init',
-            function () {
-                $this->screen = WpScreen::get($this->getDisplayPage());
+        if ($screen instanceof WpScreenInterface) :
+            $this->screen = $screen;
+        else :
+            add_action(
+                'admin_init',
+                function () use ($screen){
+                    $this->screen = WpScreen::get($screen);
 
-                $content = $this->getContent();
-                if (class_exists($content)) :
-                    $resolved = new $content($this->screen, $this->getArgs());
+                    $content = $this->getContent();
 
-                    if ($resolved instanceof MetaboxContentInterface) :
-                        $this->set('content', $resolved);
+                    if (is_string($content) && class_exists($content)) :
+                        $resolved = new $content($this, $this->getArgs());
+
+                        if ($resolved instanceof MetaboxDisplayInterface) :
+                            $this->set('content', $resolved);
+                        endif;
                     endif;
-                endif;
-            },
-            9999999
-        );
+                },
+                9999999
+            );
+        endif;
 
         parent::__construct($attrs);
     }
@@ -143,9 +147,13 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
     /**
      * {@inheritdoc}
      */
-    public function getDisplayPage()
+    public function getHeader()
     {
-        return $this->get('display_page', null);
+        if ($this->getContent() instanceof MetaboxDisplayInterface) :
+            return call_user_func_array([$this->getContent(), 'header'], func_get_args());
+        else :
+            return $this->getTitle();
+        endif;
     }
 
     /**
