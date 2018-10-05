@@ -2,6 +2,7 @@
 
 namespace tiFy\Db;
 
+use Illuminate\Support\Arr;
 use tiFy\Contracts\Db\DbItemInterface;
 use tiFy\Contracts\Db\DbItemQueryInterface;
 
@@ -153,6 +154,14 @@ class DbItemQueryController implements DbItemQueryInterface
         $this->_setFoundItems($limits);
 
         return $this->items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get($key, $default = '')
+    {
+        return Arr::get($this->query_vars, $key, $default);
     }
 
     /**
