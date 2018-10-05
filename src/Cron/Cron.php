@@ -14,7 +14,7 @@
 
 namespace tiFy\Cron;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Cron\Admin\ViewList;
 use tiFy\Cron\Schedule;
 use tiFy\Templates\Templates;

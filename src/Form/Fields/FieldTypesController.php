@@ -3,7 +3,7 @@
 namespace tiFy\Form\Fields;
 
 use Illuminate\Support\Str;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Components\Form\FieldTypes\Html\Html;
 use tiFy\Components\Form\FieldTypes\Native\Native;
 use tiFy\Components\Form\FieldTypes\Recaptcha\Recaptcha;
