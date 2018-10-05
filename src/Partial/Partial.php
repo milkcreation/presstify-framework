@@ -1,9 +1,8 @@
 <?php
 
 /**
- * @name Partial
+ * @name Partial.
  * @desc Gestion des controleurs d'affichage.
- *
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
  */
@@ -17,9 +16,9 @@ use tiFy\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Partial\CookieNotice\CookieNotice;
 use tiFy\Partial\HolderImage\HolderImage;
 use tiFy\Partial\Modal\Modal;
-use tiFy\Partial\ModalTrigger\ModalTrigger;
 use tiFy\Partial\Navtabs\Navtabs;
 use tiFy\Partial\Notice\Notice;
+use tiFy\Partial\PartialServiceProvider;
 use tiFy\Partial\Sidebar\Sidebar;
 use tiFy\Partial\Slider\Slider;
 use tiFy\Partial\Table\Table;
@@ -30,7 +29,6 @@ use tiFy\Partial\Tag\Tag;
  * @method static CookieNotice CookieNotice(string $id = null, array $attrs = [])
  * @method static HolderImage HolderImage(string $id = null,array $attrs = [])
  * @method static Modal Modal(string $id = null,array $attrs = [])
- * @method static ModalTrigger ModalTrigger(string $id = null,array $attrs = [])
  * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
  * @method static Notice Notice(string $id = null,array $attrs = [])
  * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
@@ -42,7 +40,7 @@ use tiFy\Partial\Tag\Tag;
 final class Partial
 {
     /**
-     * Récupération statique du controleur d'affichage.
+     * Récupération statique d'un élément.
      *
      * @param string $name Nom de qualification.
      * @param array $args Liste des variables passées en arguments.
@@ -57,24 +55,40 @@ final class Partial
     }
 
     /**
-     * Récupération de l'instance d'un champ déclaré.
+     * Récupération de l'instance d'un élément déclaré.
      *
      * @param string $name Nom de qualification de l'élément.
-     * @param array $attrs Liste des attributs de configuration.
+     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
+     * @param mixed $attrs Liste des attributs de configuration.
      *
      * @return PartialItemInterface
      */
-    public function get($name, $attrs = [])
+    public function get($name, $id = null, $attrs = null)
     {
         $alias = 'partial.' . Str::kebab($name);
 
-        if (!is_array($attrs)) :
-            $id = $attrs;
-            $attrs = func_get_arg(2) ? : [];
-        else :
+        if (is_array($id)) :
+            $attrs = $id;
             $id = null;
+        else :
+            $attrs = $attrs ? : [];
         endif;
 
         return app()->resolve($alias, [$id, $attrs]);
+    }
+
+    /**
+     * Déclaration d'un controleur d'affichage.
+     *
+     * @param string $name Nom de qualification d"appel de l'élément.
+     * @param string $concrete Nom de qualification du controleur.
+     *
+     * @return $this
+     */
+    public function register($name, $concrete)
+    {
+        app(PartialServiceProvider::class)->registerPartial($name, $concrete);
+
+        return $this;
     }
 }

@@ -3,9 +3,11 @@
 namespace tiFy\App\Container;
 
 use League\Container\Definition\DefinitionInterface;
+use League\Container\Argument\RawArgument;
 use tiFy\Kernel\Container\Service;
 use tiFy\Contracts\App\AppInterface;
 use tiFy\tiFy;
+use tiFy\Taxonomy\TaxonomyItemController;
 
 class AppService extends Service
 {
@@ -43,6 +45,10 @@ class AppService extends Service
         if (!$this->definition) :
             $this->bind();
         endif;
+
+        foreach($args as &$arg) :
+            $arg = new RawArgument($arg);
+        endforeach;
 
         array_push($args, $this->app);
 

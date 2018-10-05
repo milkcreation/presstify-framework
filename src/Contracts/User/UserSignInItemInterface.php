@@ -2,8 +2,17 @@
 
 namespace tiFy\Contracts\User;
 
-interface UserSignInItemInterface
+use tiFy\Contracts\Kernel\ParametersBagInterface;
+
+interface UserSignInItemInterface extends ParametersBagInterface
 {
+    /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString();
+
     /**
      * Vérification des droits d'authentification d'un utilisateur.
      *

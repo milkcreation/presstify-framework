@@ -37,6 +37,13 @@ interface WpScreenInterface
     public function getObjectType();
 
     /**
+     * Récupération de l'instance WP_Screen associée.
+     *
+     * @return \WP_Screen
+     */
+    public function getScreen();
+
+    /**
      * Vérification de correspondance avec l'écran d'affichage courant.
      *
      * @return boolean

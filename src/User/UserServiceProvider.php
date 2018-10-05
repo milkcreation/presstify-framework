@@ -8,7 +8,6 @@ use tiFy\User\Role\Role;
 use tiFy\User\Session\Session;
 use tiFy\User\SignIn\SignIn;
 use tiFy\User\SignUp\SignUp;
-use tiFy\User\TakeOver\TakeOver;
 use tiFy\User\User;
 use tiFy\App\Container\AppServiceProvider;
 
@@ -59,13 +58,6 @@ class UserServiceProvider extends AppServiceProvider
             SignUp::class,
             function () {
                 return new SignUp();
-            }
-        )->build();
-
-        $this->app->singleton(
-            TakeOver::class,
-            function () {
-                return new TakeOver();
             }
         )->build();
     }

@@ -67,13 +67,13 @@ class Repeater extends AbstractFieldItem
 
                 \wp_register_style(
                     'FieldRepeater',
-                    assets()->url('/field/repeater/css/styles.css'),
+                    assets()->url('field/repeater/css/styles.css'),
                     [is_admin() ? 'tiFyAdmin' : ''],
                     170421
                 );
                 \wp_register_script(
                     'FieldRepeater',
-                    assets()->url('/field/repeater/js/scripts.js'),
+                    assets()->url('field/repeater/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable'],
                     170421,
                     true

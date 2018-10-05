@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\ImageGallery;
 
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class ImageGallery extends AbstractMetaboxContentPostController
+class ImageGallery extends AbstractMetaboxDisplayPostController
 {
     /**
      * {@inheritdoc}
@@ -24,22 +24,22 @@ class ImageGallery extends AbstractMetaboxContentPostController
     /**
      * {@inheritdoc}
      */
+    public function content($post = null, $args = null, $null = null)
+    {
+        $this->set('items', get_post_meta($post->ID, $this->get('name'), true) ? : []);
+
+        return $this->viewer('content', $this->all());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function defaults()
     {
         return [
             'name' => '_tify_taboox_image_gallery',
             'max'  => -1
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display($post, $args = [])
-    {
-        $this->set('items', get_post_meta($post->ID, $this->get('name'), true) ? : []);
-
-        return parent::display($post, $args);
     }
 
     /**
@@ -66,6 +66,15 @@ class ImageGallery extends AbstractMetaboxContentPostController
         return $this->viewer('item', $item);
     }
 
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($post = null, $args = null, $null = null)
+    {
+        return $this->item->getTitle() ? : __('Galerie d\'images', 'tify');
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -78,14 +87,14 @@ class ImageGallery extends AbstractMetaboxContentPostController
 
                 wp_enqueue_style(
                     'MetaboxPostTypeImageGallery',
-                    \assets()->url('/post-type/metabox/image-gallery/css/styles.css'),
+                    \assets()->url('post-type/metabox/image-gallery/css/styles.css'),
                     ['tiFyAdmin'],
                     180808
                 );
 
                 wp_enqueue_script(
                     'MetaboxPostTypeImageGallery',
-                    \assets()->url('/post-type/metabox/image-gallery/js/scripts.js'),
+                    \assets()->url('post-type/metabox/image-gallery/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable'],
                     180808,
                     true

@@ -10,7 +10,7 @@ echo field(
     'text',
     [
         'name'  => "{$this->getName()}[" . (!is_numeric($index) ? $index : uniqid()) . "]",
-        'value' => $this->getValue(),
+        'value' => $this->get('value'),
         'attrs' => [
             'class' => 'widefat',
         ],

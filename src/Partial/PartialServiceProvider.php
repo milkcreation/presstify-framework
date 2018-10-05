@@ -9,7 +9,6 @@ use tiFy\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Partial\CookieNotice\CookieNotice;
 use tiFy\Partial\HolderImage\HolderImage;
 use tiFy\Partial\Modal\Modal;
-use tiFy\Partial\ModalTrigger\ModalTrigger;
 use tiFy\Partial\Navtabs\Navtabs;
 use tiFy\Partial\Notice\Notice;
 use tiFy\Partial\Sidebar\Sidebar;
@@ -35,7 +34,6 @@ class PartialServiceProvider extends AppServiceProvider
         'partial.cookie-notice' => CookieNotice::class,
         'partial.holder-image'  => HolderImage::class,
         'partial.modal'         => Modal::class,
-        'partial.modal-trigger' => ModalTrigger::class,
         'partial.navtabs'       => Navtabs::class,
         'partial.notice'        => Notice::class,
         'partial.sidebar'       => Sidebar::class,
@@ -54,7 +52,6 @@ class PartialServiceProvider extends AppServiceProvider
         CookieNotice::class,
         HolderImage::class,
         Modal::class,
-        ModalTrigger::class,
         Navtabs::class,
         Notice::class,
         Sidebar::class,
@@ -77,10 +74,6 @@ class PartialServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        foreach($this->aliases as $alias => $concrete) :
-            $this->getContainer()->setAlias($alias, $concrete);
-        endforeach;
-
         $this->app->singleton(
             Partial::class,
             function() {
@@ -90,6 +83,10 @@ class PartialServiceProvider extends AppServiceProvider
         add_action(
             'after_setup_theme',
             function() {
+                foreach($this->aliases as $alias => $concrete) :
+                    $this->getContainer()->setAlias($alias, $concrete);
+                endforeach;
+
                 foreach ($this->items as $concrete) :
                     $alias = $this->getContainer()->getAlias($concrete);
 
@@ -125,5 +122,25 @@ class PartialServiceProvider extends AppServiceProvider
         self::$instances[$alias][] = $instance;
 
         return $count;
+    }
+
+    /**
+     * Déclaration d'un controleur d'affichage.
+     *
+     * @param string $name Nom de qualification d"appel de l'élément.
+     * @param string $concrete Nom de qualification du controleur.
+     *
+     * @return boolean
+     */
+    public function registerPartial($name, $concrete)
+    {
+        if (in_array($concrete, $this->items) || isset($this->aliases["partial.{$name}"])) :
+            return false;
+        endif;
+
+        array_push($this->items, $concrete);
+        $this->aliases["partial.{$name}"] = $concrete;
+
+        return true;
     }
 }

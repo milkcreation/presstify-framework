@@ -2,11 +2,12 @@
 
 namespace tiFy\User\SignUp;
 
+use tiFy\Contracts\User\UserSignUpItemInterface;
 use tiFy\Form\Form;
 use tiFy\Form\Forms\FormBaseController;
-use tiFy\Kernel\Item\AbstractItemController;
+use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-class SignUpItemController extends AbstractItemController
+class SignUpItemController extends AbstractParametersBag implements UserSignUpItemInterface
 {
     /**
      * Nom de qualification.
@@ -16,6 +17,9 @@ class SignUpItemController extends AbstractItemController
 
     /**
      * CONSTRUCTEUR.
+     *
+     * @param string $name Nom de qualification.
+     * @param array $attrs Liste des attributs de configuration.
      *
      * @return void
      */
@@ -35,6 +39,14 @@ class SignUpItemController extends AbstractItemController
                 );
             }
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return $this->form();
     }
 
     /**
@@ -114,9 +126,7 @@ class SignUpItemController extends AbstractItemController
     }
 
     /**
-     * Récupération du nom de qualification du controleur.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -124,22 +134,10 @@ class SignUpItemController extends AbstractItemController
     }
 
     /**
-     * Affichage du formulaire.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function form()
     {
         return app(Form::class)->display('tiFyCore-userSignUp--' . $this->getName());
-    }
-
-    /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->form();
     }
 }

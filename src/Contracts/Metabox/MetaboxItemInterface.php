@@ -15,18 +15,18 @@ interface MetaboxItemInterface extends ParametersBagInterface
     public function getArgs();
 
     /**
-     * Récupération de l'indice de qualification.
-     *
-     * @return integer
-     */
-    public function getIndex();
-
-    /**
-     * Récupération du contenu de l'affichage.
+     * Récupération de l'affichage du contenu.
      *
      * @return string
      */
     public function getContent();
+
+    /**
+     * Récupération de l'affichage de l'entête.
+     *
+     * @return string
+     */
+    public function getHeader();
 
     /**
      * Récupération du contexte d'affichage.
@@ -36,11 +36,11 @@ interface MetaboxItemInterface extends ParametersBagInterface
     public function getContext();
 
     /**
-     * Récupération de la qualification de la page d'affichage.
+     * Récupération de l'indice de qualification.
      *
-     * @return null|string|\WP_Screen
+     * @return integer
      */
-    public function getDisplayPage();
+    public function getIndex();
 
     /**
      * Récupération du nom de qualification.
@@ -85,7 +85,7 @@ interface MetaboxItemInterface extends ParametersBagInterface
     public function isActive();
 
     /**
-     * Chargement.
+     * Chargement de l'écran courant Wordpress.
      *
      * @param WpScreenInterface $screen Instance de l'écran courant.
      *

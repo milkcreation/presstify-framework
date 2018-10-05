@@ -52,13 +52,13 @@ class MediaImage extends AbstractFieldItem
             function () {
                 \wp_register_style(
                     'FieldMediaImage',
-                    assets()->url('/field/media-image/css/styles.css'),
+                    assets()->url('field/media-image/css/styles.css'),
                     ['tiFyAdmin'],
                     180516
                 );
                 \wp_register_script(
                     'FieldMediaImage',
-                    assets()->url('/field/media-image/js/scripts.js'),
+                    assets()->url('field/media-image/js/scripts.js'),
                     ['jquery'],
                     180516,
                     true

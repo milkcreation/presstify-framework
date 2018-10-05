@@ -93,7 +93,7 @@ class Container extends LeagueContainer implements ContainerInterface
      */
     public function get($id, array $args = [])
     {
-        return $this->resolve($id, $args) ?? parent::get($id, $args);
+        return $this->resolve($id, $args) ? : parent::get($id, $args);
     }
 
     /**

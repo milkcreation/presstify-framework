@@ -7,8 +7,7 @@
 
 namespace tiFy\Api\Facebook;
 
-use tiFy\tiFy;
-use tiFy\App\AppTrait;
+use Illuminate\Support\Arr;
 use Facebook\Facebook as FacebookSdk;
 use Facebook\Authentication\AccessToken;
 use Facebook\Authentication\AccessTokenMetadata;
@@ -18,25 +17,11 @@ use Facebook\Exceptions\FacebookSDKException;
 
 class Facebook extends FacebookSdk
 {
-    use AppTrait;
-
     /**
      * Instance de la classe.
-     * @var Facebook
+     * @var self
      */
     private static $instance;
-
-    /**
-     * Attributs de configuration du SDK Facebook.
-     * @var array
-     */
-    protected $config = [];
-
-    /**
-     * Classe de rappel des modules actifs.
-     * @var array
-     */
-    protected $mods = [];
 
     /**
      * Classe de rappel du jeton d'accès d'un utilisateur connecté.
@@ -45,72 +30,13 @@ class Facebook extends FacebookSdk
     private $accessToken;
 
     /**
+     * Liste des attributs de configuration.
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
      * CONSTRUCTEUR.
-     *
-     * @param array $args Liste des attributs de configuration.
-     *
-     * @return void
-     */
-    public function __construct($args)
-    {
-        // Initialisation de la session
-        if (!session_id()) :
-            session_start();
-        endif;
-
-        // Traitement des attributs de configuration du SDK PHP Facebook
-        $allowed = [
-            'app_id',
-            'app_secret',
-            'default_graph_version',
-            'enable_beta_mode',
-            'http_client_handler',
-            'persistent_data_handler',
-            'pseudo_random_string_generator',
-            'url_detection_handler',
-        ];
-        $this->config = array_intersect_key($args, array_flip($allowed));
-
-        // Instanciation du SDK PHP Facebook
-        parent::__construct($this->config);
-
-        // Initialisation des modules
-        if (isset($args['mod'])) :
-            foreach ($args['mod'] as $mod => $callable) :
-                $Mod = $this->appUpperName($mod);
-                $ModClass = "tiFy\\Api\\Facebook\\Mod\\{$Mod}\\{$Mod}";
-                if (!class_exists($ModClass)) :
-                    continue;
-                elseif ($callable === false) :
-                    continue;
-                elseif ($callable === true) :
-                    $callable = '';
-                endif;
-
-                $this->appServiceShare($ModClass, new $ModClass($callable));
-            endforeach;
-        endif;
-
-        // Initialisation des événements de déclenchement
-        $this->appAddAction('wp_loaded');
-    }
-
-    /**
-     * A l'issue du chargement complet de Wordpress.
-     *
-     * @return void
-     */
-    public function wp_loaded()
-    {
-        if (! $action = $this->appRequest()->get('tify_api_fb', '')) :
-            return;
-        endif;
-
-        return do_action_ref_array('tify_api_fb', [$action, &$this]);
-    }
-
-    /**
-     * Instanciation de la classe.
      *
      * @param array $attrs {
      *      Liste des attributs de configuration du SDK Facebook
@@ -124,11 +50,50 @@ class Facebook extends FacebookSdk
      *      @var $pseudo_random_string_generator
      *      @var $url_detection_handler
      * }
-     * @param array $mod {
-     *      Activation/Attributs des modules Facebook tiFy
      *
-     *      @var bool|array $login
-     * }
+     * @return void
+     */
+    public function __construct($attrs = [])
+    {
+        // Initialisation de la session.
+        if (!session_id()) :
+            session_start();
+        endif;
+
+        // Traitement des attributs de configuration du SDK PHP Facebook permis.
+        $allowed = [
+            'app_id',
+            'app_secret',
+            'default_graph_version',
+            'enable_beta_mode',
+            'http_client_handler',
+            'persistent_data_handler',
+            'pseudo_random_string_generator',
+            'url_detection_handler',
+        ];
+        $this->attributes = array_intersect_key($attrs, array_flip($allowed));
+
+        // Instanciation du SDK PHP Facebook
+        parent::__construct($this->attributes);
+
+        add_action(
+            'wp_loaded',
+            function () {
+                if (! $action = request()->get('tify_api_fb', '')) :
+                    return;
+                endif;
+
+                return events()->trigger('api.facebook', $action);
+            }
+        );
+    }
+
+    /**
+     * Instanciation de la classe.
+     *
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return self
      */
     public static function create($args = [])
     {
@@ -140,15 +105,16 @@ class Facebook extends FacebookSdk
     }
 
     /**
-     * Récupération de l'App ID.
+     * Récupération d'un attribut de configuration.
      *
-     * @return string
+     * @param string $key Clé de qualification de l'attribut.
+     * @param mixed $default Valeur de retoru par défaut.
+     *
+     * @return mixed
      */
-    public function getAppId()
+    public function config($key, $default = null)
     {
-        if (!empty($this->config['app_id'])) :
-            return (string)$this->config['app_id'];
-        endif;
+        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
@@ -310,12 +276,39 @@ class Facebook extends FacebookSdk
      */
     public function clear()
     {
-        if (!$id = $this->appRequest()->get('tify_api_fb_clear', false)) :
+        if (!$id = request()->get('tify_api_fb_clear', false)) :
             return;
         endif;
 
-        // Suppression des information de jeton dans les variables de session
+        // Suppression des information de jeton dans les variables de session.
         $_SESSION['fb_access_token'] = '';
+    }
+
+    /**
+     * Affichage des message d'erreurs.
+     *
+     * @param \WP_Error $e
+     *
+     * @return string
+     */
+    public function error($e)
+    {
+        // Récupération des données
+        $data = $e->get_error_data();
+
+        // Affichage des erreurs
+        \wp_die($e->get_error_message(), (! empty($data['title']) ? $data['title'] : __('Processus en erreur', 'tify')), $e->get_error_code());
+        exit;
+    }
+
+    /**
+     * Récupération de l'App ID.
+     *
+     * @return string
+     */
+    public function getAppId()
+    {
+        return $this->config('app_id', '');
     }
 
     /**
@@ -373,22 +366,5 @@ class Facebook extends FacebookSdk
         }
 
         return compact($pieces);
-    }
-
-    /**
-     * Affichage de message d'erreur.
-     *
-     * @param \WP_Error $e
-     *
-     * @return string
-     */
-    public function error($e)
-    {
-        // Récupération des données
-        $data = $e->get_error_data();
-
-        // Affichage des erreurs
-        \wp_die($e->get_error_message(), (! empty($data['title']) ? $data['title'] : __('Processus en erreur', 'tify')), $e->get_error_code());
-        exit;
     }
 }

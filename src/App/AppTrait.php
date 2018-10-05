@@ -109,7 +109,7 @@ trait AppTrait
      */
     public function appContainer()
     {
-        return \container();
+        return container();
     }
 
     /**
@@ -165,7 +165,7 @@ trait AppTrait
      */
     public function appLowerName($name = null)
     {
-        return Str::kebab($name ?? $this->appShortname());
+        return Str::kebab($name ? : $this->appShortname());
     }
 
     /**
@@ -289,7 +289,7 @@ trait AppTrait
      */
     public function appUpperName($name = null)
     {
-        return Str::camel($name ?? $this->appShortname());
+        return Str::camel($name ? : $this->appShortname());
     }
 
     /**

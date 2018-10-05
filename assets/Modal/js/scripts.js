@@ -421,7 +421,7 @@ if (typeof jQuery === 'undefined') {
 
 jQuery(document).ready(function($){
     $('.tiFyControl-modal').modal();
-    $(document).on('click','.tiFyControl-modalTrigger',function(e){
+    $(document).on('click','[aria-control="modal-trigger"]',function(e){
         e.preventDefault();
 
         $('[data-modal="'+ $(this).data('target') + '"]').modal('show');

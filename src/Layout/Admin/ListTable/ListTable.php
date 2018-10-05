@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Components\AdminView\ListTable;
+namespace tiFy\Layout\Admin\ListTable;
 
-use tiFy\Components\Layout\ListTable\ListTable as LayoutListTable;
+use tiFy\Layout\Share\ListTable\ListTable as ShareListTable;
 
-class ListTable extends LayoutListTable
+class ListTable extends ShareListTable
 {
     /**
      * Mise en file des scripts de l'interface d'administration.
@@ -21,6 +21,7 @@ class ListTable extends LayoutListTable
                 171118,
                 true
             );
+
             wp_localize_script(
                 'tiFyAdminView-ListTable',
                 'tiFyAdminViewListTable',

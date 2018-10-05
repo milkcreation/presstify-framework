@@ -40,25 +40,88 @@ class WpScreen implements WpScreenInterface
     /**
      * {@inheritdoc}
      */
-    public static function get($screen)
+    public static function get($screen = '')
     {
-        if ($screen instanceof WP_Screen) :
+        if ($screen instanceof WpScreenInterface) :
+            return $screen;
+        elseif ($screen instanceof WP_Screen) :
             return new static($screen);
         elseif(is_string($screen)):
-            if (preg_match('#(.*)@(options|post_type|taxonomy|user)#', $screen, $matches)) :
+            if (preg_match('#(edit|list)::(.*)@(post_type|taxonomy|user)#', $screen, $matches)) :
+                if ($matches[1] === 'edit') :
+                    switch($matches[3]) :
+                        case 'post_type' :
+                            $attrs = [
+                                'id' => $matches[2],
+                                'base' => 'post',
+                                'action' => '',
+                                'post_type' => $matches[2],
+                                'taxonomy' => ''
+                            ];
+                            break;
+                        case 'taxonomy' :
+                            $attrs = [
+                                'id' => 'edit-' . $matches[2],
+                                'base' => 'term',
+                                'action' => '',
+                                'post_type' => '',
+                                'taxonomy' => $matches[2]
+                            ];
+                            break;
+                        case 'user' :
+                            $attrs = [
+                                'id' => 'users-edit',
+                                'base' => 'users-edit',
+                                'action' => '',
+                                'post_type' => '',
+                                'taxonomy' => '',
+                            ];
+                            break;
+                    endswitch;
+                elseif ($matches[1] === 'list') :
+                    switch($matches[3]) :
+                        case 'post_type' :
+                            $attrs = [
+                                'id' => 'edit-' . $matches[2],
+                                'base' => 'edit',
+                                'action' => '',
+                                'post_type' => $matches[2],
+                                'taxonomy' => ''
+                            ];
+                            break;
+                        case 'taxonomy' :
+                            $attrs = [
+                                'id' => 'edit-' . $matches[2],
+                                'base' => 'edit-tags',
+                                'action' => '',
+                                'post_type' => '',
+                                'taxonomy' => $matches[2],
+                            ];
+                            break;
+                        case 'user' :
+                            $attrs = [
+                                'id' => 'users',
+                                'base' => 'users',
+                                'action' => '',
+                                'post_type' => '',
+                                'taxonomy' => '',
+                            ];
+                            break;
+                    endswitch;
+                endif;
+
+                $screen = clone WP_Screen::get();
+                foreach($attrs as $key => $value) :
+                    $screen->{$key} = $value;
+                endforeach;
+            elseif (preg_match('#(.*)@(options)#', $screen, $matches)) :
                 switch($matches[2]) :
-                    case 'post_type' :
-                        $screen = WP_Screen::get($matches[1]);
-                        break;
-                    case 'taxonomy' :
-                        $screen = WP_Screen::get('edit-' . $matches[1]);
-                        break;
                     case 'options' :
-                        $screen = WP_Screen::get('settings_page_' . $matches[1]);
+                        $screen = clone WP_Screen::get('settings_page_' . $matches[1]);
                         break;
                 endswitch;
             else :
-                $screen = WP_Screen::get($screen);
+                $screen = clone WP_Screen::get($screen);
             endif;
 
             if ($screen instanceof WP_Screen) :
@@ -74,7 +137,7 @@ class WpScreen implements WpScreenInterface
      */
     public function getHookname()
     {
-        return $this->screen->id;
+        return $this->getScreen()->id;
     }
 
     /**
@@ -96,6 +159,14 @@ class WpScreen implements WpScreenInterface
     /**
      * {@inheritdoc}
      */
+    public function getScreen()
+    {
+        return $this->screen;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isCurrent()
     {
         return (($current_screen = get_current_screen()) && ($current_screen->id === $this->getHookname()));
@@ -109,9 +180,27 @@ class WpScreen implements WpScreenInterface
         if(preg_match('#^settings_page_(.*)#', $this->screen->id, $matches)) :
             $this->objectName = $matches[1];
             $this->objectType = 'options';
-        elseif(preg_match('#^edit-(.*)#', $this->screen->id, $matches) && taxonomy_exists($matches[1])) :
+        elseif(
+            ($this->screen->base === 'term') &&
+            preg_match('#^edit-(.*)#', $this->screen->id, $matches) &&
+            taxonomy_exists($matches[1])
+        ) :
             $this->objectName = $matches[1];
             $this->objectType = 'taxonomy';
+        elseif(
+            ($this->screen->base === 'edit-tags') &&
+            preg_match('#^edit-(.*)#', $this->screen->id, $matches) &&
+            taxonomy_exists($matches[1])
+        ) :
+            $this->objectName = $matches[1];
+            $this->objectType = 'taxonomy';
+        elseif(
+            ($this->screen->base === 'edit') &&
+            preg_match('#^edit-(.*)#', $this->screen->id, $matches) &&
+            post_type_exists($matches[1])
+        ) :
+            $this->objectName = $matches[1];
+            $this->objectType = 'post_type';
         elseif(post_type_exists($this->screen->id)) :
             $this->objectName = $this->screen->id;
             $this->objectType = 'post_type';

@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\CustomHeader;
 
-use tiFy\Metabox\AbstractMetaboxContentPostController;
+use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 
-class CustomHeader extends AbstractMetaboxContentPostController
+class CustomHeader extends AbstractMetaboxDisplayPostController
 {
     /**
      * {@inheritdoc}
@@ -22,7 +22,7 @@ class CustomHeader extends AbstractMetaboxContentPostController
     /**
      * {@inheritdoc}
      */
-    public function display($post, $args = [])
+    public function content($post = null, $args = null, $null = null)
     {
         return field(
             'media-image',
@@ -33,9 +33,17 @@ class CustomHeader extends AbstractMetaboxContentPostController
                     'name' => '_custom_header',
                     'value' => get_post_meta($post->ID, '_custom_header', true)
                 ],
-                $args
+                $this->all()
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($post = null, $args = null, $null = null)
+    {
+        return $this->item->getTitle() ? : __('Image d\'entête', 'tify');
     }
 
     /**

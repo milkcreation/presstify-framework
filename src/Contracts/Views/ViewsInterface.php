@@ -91,6 +91,15 @@ interface ViewsInterface
     public function getController();
 
     /**
+     * Récupération du chemin absolu vers le répertoire de surchage des gabarits d'affichage.
+     *
+     * @param string $path Chemin relatif vers un sous dossier du répertoire de surcharge.
+     *
+     * @return string
+     */
+    public function getOverrideDir($path = '');
+
+    /**
      * Récupérations de toutes les données associées aux gabarits d'affichage.
      * {@internal Permet de récupération la listes des données globales|spécifique à un gabarit d'affichage.}
      *

@@ -79,7 +79,7 @@ interface ParametersBagInterface
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
      * @param mixed $value Valeur de l'attribut.
      *
-     * @return void
+     * @return $this
      */
     public function set($key, $value = null);
 

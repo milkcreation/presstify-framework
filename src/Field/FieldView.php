@@ -5,7 +5,7 @@ namespace tiFy\Field;
 use tiFy\Kernel\Templates\TemplateController;
 
 /**
- * Class TemplateController
+ * Class FieldView
  *
  * @method string after().
  * @method string attrs().
@@ -16,6 +16,7 @@ use tiFy\Kernel\Templates\TemplateController;
  * @method string getIndex().
  * @method string getName().
  * @method string getValue().
+ * @method string options().
  */
 class FieldView extends TemplateController
 {
@@ -32,7 +33,8 @@ class FieldView extends TemplateController
         'getId',
         'getIndex',
         'getName',
-        'getValue'
+        'getValue',
+        'options'
     ];
 
     /**

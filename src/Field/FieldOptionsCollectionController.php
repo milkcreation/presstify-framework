@@ -3,9 +3,9 @@
 namespace tiFy\Field;
 
 use Illuminate\Support\Arr;
-use tiFy\Kernel\Collection\AbstractCollection;
+use Illuminate\Support\Collection;
 
-class FieldOptionsCollectionController extends AbstractCollection
+class FieldOptionsCollectionController extends Collection
 {
     /**
      * Liste des éléments.
