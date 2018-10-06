@@ -26,6 +26,7 @@ use tiFy\Kernel\Events\Events;
 use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Notices\Notices;
+use tiFy\Kernel\Parameters\Parameters;
 use tiFy\Kernel\Templates\Engine;
 use tiFy\Kernel\Service;
 
@@ -93,17 +94,25 @@ class KernelServiceProvider extends ServiceProvider
                 return Logger::globalReport();
             }
         );
-        $this->getContainer()->singleton(
-            'request',
-            function () {
-                return Request::capture();
-            }
-        );
 
         $this->getContainer()->bind(
             'notices',
             function () {
                 return new Notices();
+            }
+        );
+
+        $this->getContainer()->bind(
+            'params',
+            function () {
+                return new Parameters();
+            }
+        );
+
+        $this->getContainer()->singleton(
+            'request',
+            function () {
+                return Request::capture();
             }
         );
 

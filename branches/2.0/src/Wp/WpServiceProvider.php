@@ -4,6 +4,7 @@ namespace tiFy\Wp;
 
 use tiFy\App\Container\AppServiceProvider;
 use tiFy\Contracts\Wp\WpScreenInterface;
+use tiFy\Wp\WpQuery;
 use tiFy\Wp\WpScreen;
 
 class WpServiceProvider extends AppServiceProvider
@@ -23,4 +24,12 @@ class WpServiceProvider extends AppServiceProvider
     protected $bindings = [
         WpScreen::class
     ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function boot()
+    {
+        $this->app->singleton('wp.query', function() {new WpQuery();})->build();
+    }
 }

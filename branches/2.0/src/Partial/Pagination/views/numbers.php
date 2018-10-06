@@ -2,42 +2,38 @@
 /**
  * Pagination - Liste des numéros de page.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\Pagination\PaginationView $this
  */
 ?>
-
 <?php if ($this->get('numbers')) : ?>
-    <?php if ($this->get('left_gap') && !$this->get('right_gap')) : ?>
+    <?php if ($this->get('numbers.left_gap') && !$this->get('numbers.right_gap')) : ?>
+        <?php $this->numLoop(1, $this->get('numbers.anchor')); ?>
 
-        self::loop(1, $this-get('anchor'), 0);
+        <?php $this->insert('num-ellipsis', $this->all()); ?>
 
-        <?php $this->insert('ellipis', $this->all()); ?>
+        <?php $this->numLoop($this-get('numbers.block_min'), $this->get('total')); ?>
 
-        self::loop($block_min, $total, $paged));
+    <?php elseif ($this->get('numbers.left_gap') && $this->get('numbers.right_gap')) : ?>
+        <?php $this->numLoop(1, $this->get('numbers.anchor')); ?>
 
-    <?php elseif ($this->get('left_gap') && $this->get('right_gap')) : ?>
+        <?php $this->insert('num-ellipsis', $this->all()); ?>
 
-        self::loop(1, $anchor, 0);
+        <?php $this->numLoop($this->get('numbers.block_min'), $this->get('numbers.block_high')); ?>
 
-        <?php $this->insert('ellipis', $this->all()); ?>
+        <?php $this->insert('num-ellipsis', $this->all()); ?>
 
-        self::loop($block_min, $block_high, $paged);
+        <?php $this->numLoop(($this->get('total')-$this->get('numbers.anchor')+1), $this->get('total')); ?>
 
-        <?php $this->insert('ellipis', $this->all()); ?>
+    <?php elseif (!$this->get('numbers.left_gap') && $this->get('numbers.right_gap')) : ?>
+        <?php $this->numLoop(1, $this->get('numbers.block_high')); ?>
 
-        self::loop(($total - $anchor + 1), $total);
+        <?php $this->insert('num-ellipsis', $this->all()); ?>
 
-    <?php elseif (!$this->get('left_gap') && $this->get('right_gap')) : ?>
-
-        self::loop(1, $block_high, $paged);
-
-        <?php $this->insert('ellipis', $this->all()); ?>
-
-        self::loop(($total - $anchor + 1), $total));
+        <?php $this->numLoop(($this->get('total')-$this->get('numbers.anchor')+1), $this->get('total'));?>
 
     <?php else : ?>
 
-        self::loop(1, $total, $paged);
+        <?php $this->numLoop(1, $this->get('total')); ?>
 
     <?php endif; ?>
 <?php endif;
