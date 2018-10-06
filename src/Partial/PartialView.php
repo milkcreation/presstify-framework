@@ -46,6 +46,8 @@ class PartialView extends TemplateController
                 [$this->engine->get('partial'), $name],
                 $arguments
             );
+        elseif (method_exists($this, $name)) :
+            return call_user_func_array([$this, $name], $args);
         endif;
     }
 }

@@ -2,7 +2,7 @@
 /**
  * Pagination - Séparateur de numéro.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\Pagination\PaginationView $this
  */
 ?>
 

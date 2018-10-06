@@ -18,6 +18,7 @@ use tiFy\Partial\HolderImage\HolderImage;
 use tiFy\Partial\Modal\Modal;
 use tiFy\Partial\Navtabs\Navtabs;
 use tiFy\Partial\Notice\Notice;
+use tiFy\Partial\Pagination\Pagination;
 use tiFy\Partial\PartialServiceProvider;
 use tiFy\Partial\Sidebar\Sidebar;
 use tiFy\Partial\Slider\Slider;
@@ -31,6 +32,7 @@ use tiFy\Partial\Tag\Tag;
  * @method static Modal Modal(string $id = null,array $attrs = [])
  * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
  * @method static Notice Notice(string $id = null,array $attrs = [])
+ * @method static Pagination Pagination(string $id = null,array $attrs = [])
  * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
  * @method static Slider Slider(string $id = null,array $attrs = [])
  * @method static Spinner Spinner(string $id = null,array $attrs = [])

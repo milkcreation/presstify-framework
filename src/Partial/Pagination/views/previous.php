@@ -2,11 +2,11 @@
 /**
  * Pagination - Lien vers la page précédente.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\Pagination\PaginationView $this
  */
 ?>
 
-<?php if ($this->get('paged') > 1) : ?>
+<?php if ($this->get('page') > 1) : ?>
     <li class="Pagination-item Pagination-item--previous">
         <?php
         echo partial(

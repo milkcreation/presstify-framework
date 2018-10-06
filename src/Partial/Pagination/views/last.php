@@ -2,11 +2,11 @@
 /**
  * Pagination - Lien vers la dernière page.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\Pagination\PaginationView $this
  */
 ?>
 
-<?php if ($this->get('paged') < $this->get('total')) : ?>
+<?php if ($this->get('page') < $this->get('total')) : ?>
 <li class="Pagination-item Pagination-item--last">
     <?php
     echo partial(
