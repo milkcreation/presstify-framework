@@ -2,7 +2,7 @@
 
 /**
  * @name Field.
- * @desc Gestion de champs.
+ * @desc Gestion de champs de formulaire.
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
  */
@@ -19,6 +19,7 @@ use tiFy\Field\Colorpicker\Colorpicker;
 use tiFy\Field\Crypted\Crypted;
 use tiFy\Field\DatetimeJs\DatetimeJs;
 use tiFy\Field\File\File;
+use tiFy\Field\Findposts\Findposts;
 use tiFy\Field\Hidden\Hidden;
 use tiFy\Field\Label\Label;
 use tiFy\Field\MediaFile\MediaFile;
@@ -49,6 +50,7 @@ use tiFy\Field\ToggleSwitch\ToggleSwitch;
  * @method static Crypted(string $id = null, array $attrs = [])
  * @method static DatetimeJs(string $id = null, array $attrs = [])
  * @method static File(string $id = null, array $attrs = [])
+ * @method static Findposts(string $id = null, array $attrs = [])
  * @method static Hidden(string $id = null, array $attrs = [])
  * @method static Label(string $id = null, array $attrs = [])
  * @method static MediaFile(string $id = null, array $attrs = [])
