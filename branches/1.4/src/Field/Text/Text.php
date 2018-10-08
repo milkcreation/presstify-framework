@@ -1,18 +1,5 @@
 <?php
 
-/**
- * @name Text
- * @desc Champ texte de saisie libre
- * @package presstiFy
- * @namespace tiFy\Field\Text
- * @version 1.1
- * @subpackage Core
- * @since 1.2.535
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Field\Text;
 
 use tiFy\Field\AbstractFieldItem;
@@ -27,6 +14,7 @@ class Text extends AbstractFieldItem
      *      @var array $attrs Liste des propriétés de la balise HTML.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var array $viewer Liste des attributs de configuration de la classe des gabarits d'affichage.
      * }
      */
     protected $attributes = [
@@ -34,7 +22,8 @@ class Text extends AbstractFieldItem
         'after'  => '',
         'attrs'  => [],
         'name'   => '',
-        'value'  => ''
+        'value'  => '',
+        'viewer' => []
     ];
 
     /**

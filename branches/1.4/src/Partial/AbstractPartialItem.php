@@ -180,20 +180,26 @@ abstract class AbstractPartialItem extends AbstractParametersBag implements Part
      */
     protected function parseDefaults()
     {
-        $this->set(
-            'attrs.id',
-                $this->get('attrs.id', '')
-                ?: 'tiFyPartial-' . class_info($this)->getShortName() . '-' . $this->getId()
-        );
+        if (!$this->has('attrs.id', '')) :
+            $this->set('attrs.id', 'tiFyPartial-' . class_info($this)->getShortName() . '-' . $this->getId());
+        endif;
 
-        $this->set(
-            'attrs.class',
-            sprintf(
-                $this->get('attrs.class', '%s'),
-                'tiFyPartial-' . class_info($this)->getShortName() .
-                ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex()
-            )
-        );
+        $default_class = 'tiFyPartial-' . class_info($this)->getShortName() .
+            ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex();
+        if (!$this->has('attrs.class')) :
+            $this->set(
+                'attrs.class',
+                $default_class
+            );
+        else :
+            $this->set(
+                'attrs.class',
+                sprintf(
+                    $this->get('attrs.class', ''),
+                    $default_class
+                )
+            );
+        endif;
 
         foreach($this->get('view', []) as $key => $value) :
             $this->viewer()->set($key, $value);
