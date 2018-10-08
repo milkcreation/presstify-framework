@@ -12,6 +12,7 @@ use tiFy\Field\Colorpicker\Colorpicker;
 use tiFy\Field\Crypted\Crypted;
 use tiFy\Field\DatetimeJs\DatetimeJs;
 use tiFy\Field\File\File;
+use tiFy\Field\Findposts\Findposts;
 use tiFy\Field\Hidden\Hidden;
 use tiFy\Field\Label\Label;
 use tiFy\Field\MediaFile\MediaFile;
@@ -50,6 +51,7 @@ class FieldServiceProvider extends AppServiceProvider
         'field.crypted'             => Crypted::class,
         'field.datetime-js'         => DatetimeJs::class,
         'field.file'                => File::class,
+        'field.findposts'           => Findposts::class,
         'field.hidden'              => Hidden::class,
         'field.label'               => Label::class,
         'field.media-file'          => MediaFile::class,
@@ -81,6 +83,7 @@ class FieldServiceProvider extends AppServiceProvider
         Crypted::class,
         DatetimeJs::class,
         File::class,
+        Findposts::class,
         Hidden::class,
         Label::class,
         MediaFile::class,
@@ -105,19 +108,19 @@ class FieldServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        foreach($this->aliases as $alias => $concrete) :
+        foreach ($this->aliases as $alias => $concrete) :
             $this->getContainer()->setAlias($alias, $concrete);
         endforeach;
 
         $this->app->singleton(
             Field::class,
-            function() {
+            function () {
                 return new Field();
             });
 
         add_action(
             'after_setup_theme',
-            function() {
+            function () {
                 foreach ($this->items as $concrete) :
                     $alias = $this->getContainer()->getAlias($concrete);
 
