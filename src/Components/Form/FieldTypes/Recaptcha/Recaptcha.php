@@ -4,7 +4,7 @@ namespace tiFy\Components\Form\FieldTypes\Recaptcha;
 
 use ReCaptcha\ReCaptcha as ReCaptchaLib;
 use ReCaptcha\RequestMethod\SocketPost;
-use tiFy\Api\Api;
+use tiFy\Api\Recaptcha\Recaptcha as ApiRecaptcha;
 use tiFy\Form\Fields\AbstractFieldTypeController;
 use tiFy\Form\Fields\FieldItemController;
 
@@ -59,7 +59,7 @@ class Recaptcha extends AbstractFieldTypeController
             return;
         endif;
 
-        if ($recaptcha = $this->appServiceGet(Api::class)->get('recaptcha')) :
+        if ($recaptcha = app(ApiRecaptcha::class)) :
         else :
             $options = $this->getOptions();
 
@@ -96,7 +96,7 @@ class Recaptcha extends AbstractFieldTypeController
 
         // Définition des options
         $options = $this->getOptions();
-        if ($recaptcha = $this->appServiceGet(Api::class)->get('recaptcha')) :
+        if ($recaptcha = app(ApiRecaptcha::class)) :
             $options['sitekey'] = $recaptcha->getSiteKey();
         endif;
         $options['tabindex'] = $this->relField()->getTabIndex();

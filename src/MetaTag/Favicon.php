@@ -2,7 +2,7 @@
 
 namespace tiFy\MetaTag;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 class Favicon extends AppController
 {

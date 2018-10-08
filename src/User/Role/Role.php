@@ -6,79 +6,78 @@
 
 namespace tiFy\User\Role;
 
-use tiFy\Apps\AppController;
+use tiFy\Contracts\User\UserRoleItemController;
 use tiFy\User\Role\RoleController;
 
-class Role extends AppController
+class Role
 {
     /**
-     * Initialisation du controleur.
+     * Liste des éléments déclarés.
+     * @var UserRoleItemController[]
+     */
+    protected $items = [];
+
+    /**
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appAddAction('init', null, 0);
+        add_action(
+            'init',
+            function () {
+                foreach (config('user.role', []) as $name => $attrs) :
+                    $this->_register($name, $attrs);
+                endforeach;
+            },
+            0
+        );
     }
 
     /**
-     * Initialisation globale de Wordpress.
+     * Déclaration de rôle.
      *
-     * @return void
+     * @param string $name Nom de qualification.
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return $this
      */
-    public function init()
+    public function add($name, $attrs = [])
     {
-        if ($config = $this->appConfig()) :
-            foreach ($config as $name => $attrs) :
-                $this->register($id, $attrs);
-            endforeach;
+        config()->set("user.role.{$name}", $attrs);
+
+        return $this;
+    }
+
+    /**
+     * Enregistrement d'un rôle déclaré.
+     *
+     * @param string $name Nom de qualification.
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return UserRoleItemController
+     */
+    private function _register($name, $attrs = [])
+    {
+        if (isset($this->items[$name])) :
+            return $this->items[$name];
         endif;
 
-        do_action('tify_user_role_register', $this);
-    }
-    
-    /**
-     * Déclaration d'un rôle.
-     *
-     * @param string $name Nom de qualification du rôle.
-     * @param array $attrs {
-     *      Liste des attributs de configuration.
-     *
-     *      @var string $display_name Nom d'affichage.
-     *      @var string $desc Texte de description.
-     *      @var array $capabilities {
-     *          Liste des habilitations Tableau indexés des habilitations permises ou tableau dimensionné
-     *
-     *          @var string $cap Nom de l'habilitation => @var bool $grant privilege
-     *      }
-     * }
-     *
-     * @return RoleController
-     */
-    public function register($name, $attrs = [])
-    {
-        $alias = "tfy.user.role.{$name}";
-        if ($this->appServiceHas($alias)):
-            return;
-        endif;
-
-        $this->appServiceShare($alias, new RoleController($name, $attrs));
-
-        return $this->appServiceGet($alias);
+        return $this->items[$name] = new RoleItemController($name, $attrs);
     }
 
     /**
-     * Récupération d'une classe de rappel d'un rôle déclaré.
+     * Récupération d'une instance de rôle déclaré.
      *
      * @param string $name Nom de qualification du rôle.
      *
-     * @return null|RoleController
+     * @return null|UserRoleItemController
      */
     public function get($name)
     {
-        $alias = "tfy.user.role.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
+        return isset($this->items[$name])
+            ? $this->items[$name]
+            : null;
     }
 }

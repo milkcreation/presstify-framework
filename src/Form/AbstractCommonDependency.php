@@ -2,7 +2,7 @@
 
 namespace tiFy\Form;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Form\CommonDependencyAwareTrait;
 use tiFy\Form\Forms\FormItemController;
 
