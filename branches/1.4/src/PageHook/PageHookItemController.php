@@ -139,7 +139,7 @@ class PageHookItemController extends AbstractAppItemController implements PageHo
             return false;
         endif;
 
-        return $this->getValue() === $post->ID;
+        return $this->getId() === $post->ID;
     }
 
     /**
