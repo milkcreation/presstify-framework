@@ -26,19 +26,16 @@ class SelectJs extends AbstractFieldItem
      *      @var bool $duplicate Autorise les doublons dans la liste de selection (multiple actif doit être actif).
      *      @var bool $autocomplete Active le champs de selection par autocomplétion.
      *      @var int $max Nombre d'élément maximum @todo.
-     *
      *      @var array $sortable {
      *          Liste des options du contrôleur ajax d'ordonnancement.
      *          @see http://jqueryui.com/sortable/
      *      }
-     *
      *      @var array trigger {
      *          Liste des attributs de configuration de l'interface d'action.
      *
      *          @var string $class Classes HTML de l'élément.
      *       @var bool $arrow Affichage de la fléche de selection.
      *      }
-     *
      *      @var array picker {
      *          Liste des attributs de configuration de l'interface de selection des éléments.
      *
@@ -56,6 +53,7 @@ class SelectJs extends AbstractFieldItem
      *          @var string $loader Rendu de l'indicateur de préchargement.
      *          @var string $more Rendu de '+'.
      *      }
+     *      @var array $viewer Liste des attributs de configuration de la classe des gabarits d'affichage.
      * }
      */
     protected $attributes = [
@@ -75,7 +73,7 @@ class SelectJs extends AbstractFieldItem
         'max'             => -1,
         'trigger'         => [],
         'picker'          => [],
-        'templates'       => [],
+        'viewer'          => [],
         'controller'      => []
     ];
 
@@ -209,7 +207,7 @@ class SelectJs extends AbstractFieldItem
                         'action'         => 'tify_field_select_js',
                         '_ajax_nonce'    => \wp_create_nonce('tiFyField-SelectJs'),
                         'query_args'     => [],
-                        'templates'      => $this->get('templates', []),
+                        'viewer'         => $this->get('viewer', []),
                         'controller'     => $this->get('controller')
                     ],
                     $source
@@ -376,8 +374,6 @@ class SelectJs extends AbstractFieldItem
         check_ajax_referer('tiFyField-SelectJs');
 
         $args = \wp_unslash(request()->getProperty('POST')->all());
-
-        $this->parseTemplates(Arr::get($args, 'templates', []));
 
         $query_items_cb = Arr::get($args, 'controller.query_items', '');
         $items = is_callable((string)$query_items_cb)

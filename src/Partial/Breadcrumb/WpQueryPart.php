@@ -62,6 +62,7 @@ class WpQueryPart
         elseif (is_home()) :
             if (get_option('page_for_posts')) :
                 $this->parts[] = $this->linkRoot();
+                $this->getAncestorsPartList();
                 $this->parts[] = $this->currentHome();
             else :
                 $this->parts[] = $this->linkRoot();
@@ -75,11 +76,13 @@ class WpQueryPart
         // Page de contenu de type post
         elseif (is_single()) :
             $this->parts[] = $this->linkRoot();
+            $this->getAncestorsPartList();
             $this->parts[] = $this->currentPost();
 
         // Page de contenu de type page
         elseif (is_page()) :
             $this->parts[] = $this->linkRoot();
+            $this->getAncestorsPartList();
             $this->parts[] = $this->currentPost();
 
         // Page liste de contenus associés à une catégorie
@@ -255,7 +258,7 @@ class WpQueryPart
                     ],
                     'content' => is_paged()
                         ?  sprintf(
-                                __('Actualités - page %d sur %d', 'tify'),
+                                __('Page %d sur %d', 'tify'),
                                 (($paged = get_query_var( 'paged' )? get_query_var('paged' ) : 1)),
                                 $wp_query->max_num_pages
                             )
@@ -510,7 +513,40 @@ class WpQueryPart
                     ];
                 endforeach;
             endif;
+        elseif (is_home() && is_paged()) :
+            if ($page_for_posts = get_option('page_for_posts')) :
+                $title = $this->getPostTitle($page_for_posts);
 
+                $this->parts[] = [
+                    'class'   => $this->getItemWrapperClass(),
+                    'content' => Partial::Tag(
+                        [
+                            'tag'     => 'a',
+                            'attrs'   => [
+                                'href'  => \get_permalink($page_for_posts),
+                                'title' => sprintf(__('Revenir à %s', 'tify'), $title),
+                                'class' => $this->getItemContentClass()
+                            ],
+                            'content' => $title
+                        ]
+                    )
+                ];
+            else :
+                $this->parts[] = [
+                    'class'   => $this->getItemWrapperClass(),
+                    'content' => Partial::Tag(
+                        [
+                            'tag'     => 'a',
+                            'attrs'   => [
+                                'href'  => \home_url('/'),
+                                'title' => __('Revenir à la liste des actualités', 'tify'),
+                                'class' => $this->getItemContentClass()
+                            ],
+                            'content' => __('Actualités', 'tify')
+                        ]
+                    )
+                ];
+            endif;
         elseif (is_single()) :
             // Le type du contenu est un article de blog
             if (is_singular('post')) :

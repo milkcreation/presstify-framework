@@ -11,6 +11,7 @@ use tiFy\Partial\HolderImage\HolderImage;
 use tiFy\Partial\Modal\Modal;
 use tiFy\Partial\Navtabs\Navtabs;
 use tiFy\Partial\Notice\Notice;
+use tiFy\Partial\Pagination\Pagination;
 use tiFy\Partial\Sidebar\Sidebar;
 use tiFy\Partial\Slider\Slider;
 use tiFy\Partial\Spinner\Spinner;
@@ -36,6 +37,7 @@ class PartialServiceProvider extends AppServiceProvider
         'partial.modal'         => Modal::class,
         'partial.navtabs'       => Navtabs::class,
         'partial.notice'        => Notice::class,
+        'partial.pagination'    => Pagination::class,
         'partial.sidebar'       => Sidebar::class,
         'partial.slider'        => Slider::class,
         'partial.spinner'       => Spinner::class,
@@ -54,6 +56,7 @@ class PartialServiceProvider extends AppServiceProvider
         Modal::class,
         Navtabs::class,
         Notice::class,
+        Pagination::class,
         Sidebar::class,
         Slider::class,
         Spinner::class,
