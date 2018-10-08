@@ -95,7 +95,7 @@ class MetaboxItemController extends AbstractParametersBag implements MetaboxItem
                         endif;
                     endif;
                 },
-                9999999
+                999999
             );
         endif;
 
