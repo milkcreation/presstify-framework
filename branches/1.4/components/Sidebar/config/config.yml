@@ -20,7 +20,10 @@ animated:           true
 toggle:             true
 
 # @var bool $enqueue_scripts Mise en file automatique des scripts (dans tous les contextes)
-enqueue_scripts:    true
+wp_enqueue_scripts: true
+
+# @var
+wp_inline_scripts:  true
 
 # @var array[] {
 #   Liste des greffons (node) Elements de menu
