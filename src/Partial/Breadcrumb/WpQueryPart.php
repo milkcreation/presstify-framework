@@ -141,7 +141,7 @@ class WpQueryPart
                             'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                             'class' => $this->getItemContentClass()
                         ],
-                        'content' => $title
+                        'content' => __('Accueil', 'tify')
                     ]
                 )
             ];

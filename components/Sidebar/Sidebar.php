@@ -101,7 +101,7 @@ class Sidebar extends \tiFy\App\Component
     final public function wp_enqueue_scripts()
     {
         // Bypass
-        if (!self::tFyAppConfig('enqueue_scripts')) {
+        if (!self::tFyAppConfig('wp_enqueue_scripts')) {
             return;
         }
 
