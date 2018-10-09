@@ -7,31 +7,31 @@ class WpQuery
     /**
      * Liste des indicateurs de condition permis.
      * @see https://codex.wordpress.org/Conditional_Tags
-     * @var string
+     * @var array
      */
     protected $ctags = [
-        //'is_404',
-        //'is_archive',
+        'is_404',
+        'is_archive',
         //'is_attachment',
         //'is_author',
         //'is_category',
-        //'is_date',
-        //'is_day',
-        //'is_front_page',
+        'is_date',
+        'is_day',
+        'is_front_page',
         'is_home',
-        //'is_month',
+        'is_month',
         //'is_page',
-        //'is_paged',
+        'is_paged',
         //'is_post_type_archive',
-        //'is_search',
+        'is_search',
         //'is_single',
         //'is_singular'
         //'is_sticky'
         //'is_tag',
         //'is_tax',
         //'is_template',
-        //'is_time',
-        //'is_year'
+        'is_time',
+        'is_year'
     ];
 
     /**

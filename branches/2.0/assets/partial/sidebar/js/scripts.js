@@ -1,13 +1,14 @@
-jQuery(document).ready(function ($) {
-    var tiFySidebar = {};
+"use strict";
 
+jQuery(document).ready(function ($) {
     $('body').addClass('tiFyPartial-SidebarSiteBody');
 
     $(window).resize(function()  {
         $('[aria-control="sidebar"]').each(function() {
-            headerHeight = $('.tiFyPartial-SidebarHeader', $(this)).height();
-            footerHeight = $('.tiFyPartial-SidebarFooter', $(this)).height();
-            sidebarHeight = $(this).height();
+            let headerHeight = $('.tiFyPartial-SidebarHeader', $(this)).height(),
+                footerHeight = $('.tiFyPartial-SidebarFooter', $(this)).height(),
+                sidebarHeight = $(this).height();
+
             $('.tiFyPartial-SidebarBody').height(sidebarHeight-(headerHeight+footerHeight));
         });
     }).trigger('resize');
@@ -18,7 +19,7 @@ jQuery(document).ready(function ($) {
 
             let $Sidebar = $($(this).data('toggle'));
 
-            if ($Sidebar.attr('aria-closed') == 'true') {
+            if ($Sidebar.attr('aria-closed') === 'true') {
                 $Sidebar.attr('aria-closed', 'false');
             } else {
                 $Sidebar.attr('aria-closed', 'true');

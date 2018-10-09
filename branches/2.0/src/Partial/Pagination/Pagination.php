@@ -4,7 +4,6 @@ namespace tiFy\Partial\Pagination;
 
 use tiFy\Contracts\Db\DbItemQueryInterface;
 use tiFy\Partial\AbstractPartialItem;
-use tiFy\Partial\Pagination\PaginationView;
 use \WP_Query;
 
 class Pagination extends AbstractPartialItem
