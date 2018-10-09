@@ -120,9 +120,9 @@ class WpQueryPart
     }
 
     /**
-     * Récupération du lien vers l'élèment racine
+     * Récupération du lien vers l'élèment racine.
      *
-     * @param bool $current Indicateur d'élément courant
+     * @param bool $current Indicateur d'élément courant.
      *
      * @return array
      */
@@ -141,7 +141,7 @@ class WpQueryPart
                             'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                             'class' => $this->getItemContentClass()
                         ],
-                        'content' => $title
+                        'content' => __('Accueil', 'tify')
                     ]
                 )
             ];
