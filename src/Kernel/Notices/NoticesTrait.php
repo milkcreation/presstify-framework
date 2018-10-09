@@ -30,7 +30,7 @@ trait NoticesTrait
         if (preg_match('#^notices(.*)#', $name, $matches)) :
             $method = lcfirst($matches[1]);
             if (!$this->instance) :
-                $this->instance = Tools::Notices();
+                $this->instance = app('notices');
             endif;
 
             if (method_exists($this->instance, $method)) :
