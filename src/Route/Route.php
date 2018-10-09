@@ -27,14 +27,14 @@ use League\Route\Strategy\StrategyInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\tiFy;
 use tiFy\Route\RouteCollectionController;
 use tiFy\Route\RouteCollectionInterface;
 use tiFy\Route\RouteHandle;
 use Zend\Diactoros\Response\SapiEmitter;
 
-final class Route extends AppController
+class Route extends AppController
 {
     /**
      * Classe de rappel de la reponse de la requête globale.
@@ -109,6 +109,7 @@ final class Route extends AppController
                     })
                 )
             ) :
+
                 wp_safe_redirect($request->fullUrl(), 301);
                 exit;
             endif;
@@ -201,7 +202,7 @@ final class Route extends AppController
         return $this->collection()->map(
             $method,
             $path,
-            $this->appServiceGet(RouteHandle::class, [$name, $attrs, $this])
+            $this->appServiceGet(RouteHandle::class, [$name, $attrs, app()])
         )
             ->setName($name)
             ->setScheme($scheme)
