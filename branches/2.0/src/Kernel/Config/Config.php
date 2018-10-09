@@ -22,7 +22,6 @@ class Config extends AbstractParametersBagIterator
      * @var array
      */
     protected $aliases = [
-        'cron'        => \tiFy\Cron\Cron::class,
         'media'       => \tiFy\Media\Media::class,
         'meta-tag'    => \tiFy\MetaTag\MetaTag::class,
         'page-hook'   => \tiFy\PageHook\PageHook::class,
