@@ -120,9 +120,9 @@ class WpQueryPart
     }
 
     /**
-     * Récupération du lien vers l'élèment racine
+     * Récupération du lien vers l'élèment racine.
      *
-     * @param bool $current Indicateur d'élément courant
+     * @param bool $current Indicateur d'élément courant.
      *
      * @return array
      */
