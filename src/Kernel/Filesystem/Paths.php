@@ -94,7 +94,7 @@ class Paths extends Filesystem
         if(!$this->configPath) :
             $this->configPath = !$this->isWpClassic()
                 ? $this->getBasePath('config')
-                : \get_template_directory() . '/config';
+                : get_template_directory() . '/config';
         endif;
 
         return $this->getPath($this->configPath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);
@@ -189,7 +189,7 @@ class Paths extends Filesystem
      */
     public function makeRelativePath($target_path, $base_path = null)
     {
-        $base_path = $base_path ?? $this->getBasePath();
+        $base_path = $base_path ? : $this->getBasePath();
 
         $path = (new SfFilesystem())->makePathRelative($target_path, $base_path);
 
