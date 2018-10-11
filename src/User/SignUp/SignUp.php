@@ -15,29 +15,24 @@
 
 namespace tiFy\User\SignUp;
 
-use tiFy\Apps\AppController;
-use tiFy\User\SignUp\SignUpController;
+use tiFy\User\SignUp\SignUpItemController;
 
-final class SignUp extends AppController
+final class SignUp
 {
     /**
-     * Initialisation du controleur.
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appAddAction('init', null, 0);
-    }
-
-    /**
-     * Initialisation globale.
-     *
-     * @return void
-     */
-    public function init()
-    {
-        do_action('tify_user_signup_register', $this);
+        add_action(
+            'init',
+            function() {
+                do_action('tify_user_signup_register', $this);
+            },
+            0
+        );
     }
 
     /**
@@ -46,19 +41,31 @@ final class SignUp extends AppController
      * @param string $name Identifiant de qualification du formulaire.
      * @param array $attrs Attributs de configuration.
      *
-     * @return null|SignupController
+     * @return null|SignUpItemController
      */
     public function register($name, $attrs = [])
     {
-        $alias = "tfy.user.signup.{$name}";
-
-        if ($this->appServiceHas($alias)) :
+        $alias = "user.signup.{$name}";
+        if (app()->has($alias)) :
             return;
         endif;
 
-        $this->appServiceShare($alias, new SignUpController($name, $attrs));
+        $attrs = array_merge(['controller' => SignUpItemController::class], $attrs);
+        $controller = $attrs['controller'];
 
-        return $this->appServiceGet($alias);
+        try {
+            $resolved = new $controller($name, $attrs, $this);
+            app()->singleton(
+                $alias,
+                function () use ($resolved) {
+                    return $resolved;
+                }
+            );
+        } catch(\InvalidArgumentException $e) {
+            wp_die($e->getMessage(), '', $e->getCode());
+        }
+
+        return $resolved;
     }
 
     /**
@@ -70,9 +77,12 @@ final class SignUp extends AppController
      */
     public function get($name)
     {
-        $alias = "tfy.user.signup.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
+        $alias = "user.signup.{$name}";
+
+        if (app()->has($alias)) :
+            return app()->resolve($alias);
+        else :
+            return null;
         endif;
     }
 }
