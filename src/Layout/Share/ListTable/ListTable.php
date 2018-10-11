@@ -22,7 +22,7 @@ class ListTable extends AbstractBaseController implements ListTableInterface
     public function boot()
     {
         /** @var Layout $layout */
-        $layout = resolve(Layout::class);
+        $layout = resolve('layout');
 
         $this->viewer()
             ->setDirectory($layout->resourcesDir('/views/list-table'))

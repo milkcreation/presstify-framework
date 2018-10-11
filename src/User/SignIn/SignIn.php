@@ -88,7 +88,13 @@ final class SignIn
      */
     public function add($name, $attrs = [])
     {
-        config()->set("user.signin.{$name}", $attrs);
+        config()->set(
+            'user.signin',
+            array_merge(
+                [$name => $attrs],
+                config('user.signin', [])
+            )
+        );
 
         return $this;
     }

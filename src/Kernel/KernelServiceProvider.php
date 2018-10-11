@@ -26,6 +26,7 @@ use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Notices\Notices;
 use tiFy\Kernel\Parameters\Parameters;
+use tiFy\Kernel\Parameters\ParamsBagController;
 use tiFy\Kernel\Templates\Engine;
 use tiFy\Kernel\Service;
 
@@ -86,10 +87,10 @@ class KernelServiceProvider extends ServiceProvider
             $class = $this->getContainer()->resolve($bootable, [$app]);
         endforeach;
 
-        $this->getContainer()->singleton(
+        $this->getContainer()->bind(
             'logger',
-            function () {
-                return Logger::globalReport();
+            function ($name = null, $attrs = []) use ($app) {
+                return Logger::create($name, $attrs, $app);
             }
         );
 
@@ -104,6 +105,13 @@ class KernelServiceProvider extends ServiceProvider
             'params',
             function () {
                 return new Parameters();
+            }
+        );
+
+        $this->getContainer()->bind(
+            'params.bag',
+            function ($attrs = []) {
+                return new ParamsBagController($attrs);
             }
         );
 

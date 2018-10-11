@@ -7,6 +7,20 @@ use tiFy\Contracts\Container\ContainerInterface;
 interface LayoutDisplayInterface extends ContainerInterface
 {
     /**
+     * Résolution de sortie de la classe en tant qu'instance.
+     *
+     * @return string
+     */
+    public function __invoke();
+
+    /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString();
+
+    /**
      * Récupération de la liste des attributs de configuration.
      *
      * @return array

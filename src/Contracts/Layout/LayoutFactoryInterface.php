@@ -6,6 +6,12 @@ use tiFy\Contracts\Kernel\ParametersBagInterface;
 
 interface LayoutFactoryInterface extends ParametersBagInterface
 {
+    /**
+     * Récupération de contenu d'affichage de la vue.
+     *
+     * @return string string.
+     */
+    public function getContent();
 
 
     /**

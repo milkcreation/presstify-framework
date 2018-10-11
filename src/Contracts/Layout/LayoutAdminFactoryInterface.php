@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Layout;
 
-interface LayoutFactoryAdminInterface extends LayoutFactoryInterface
+interface LayoutAdminFactoryInterface extends LayoutFactoryInterface
 {
     /**
      * Récupération du nom de qualification du controleur.

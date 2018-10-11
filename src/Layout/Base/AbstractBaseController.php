@@ -45,6 +45,11 @@ abstract class AbstractBaseController extends Container implements LayoutDisplay
         $this->boot();
     }
 
+    public function __invoke()
+    {
+        return $this->render();
+    }
+
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
      *

@@ -40,7 +40,13 @@ final class Db
      */
     public function add($name, $attrs = [])
     {
-        config()->set("db.{$name}", $attrs);
+        config()->set(
+            'db',
+            array_merge(
+                [$name => $attrs],
+                config('db', [])
+            )
+        );
 
         return $this;
     }

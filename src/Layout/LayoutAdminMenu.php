@@ -2,26 +2,26 @@
 
 namespace tiFy\Layout;
 
-use tiFy\Contracts\Layout\LayoutFactoryAdminInterface;
+use tiFy\Contracts\Layout\LayoutAdminFactoryInterface;
 use tiFy\Contracts\Layout\LayoutMenuAdminInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-class LayoutMenuAdmin extends AbstractParametersBag implements LayoutMenuAdminInterface
+class LayoutAdminMenu extends AbstractParametersBag implements LayoutMenuAdminInterface
 {
     /**
      * Instance de la fabrique de disposition associée.
-     * @var LayoutFactoryAdminInterface
+     * @var LayoutAdminFactoryInterface
      */
     protected $factory;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param LayoutFactoryAdminInterface $factory Instance de la fabrique de disposition associée.
+     * @param LayoutAdminFactoryInterface $factory Instance de la fabrique de disposition associée.
      *
      * @return void
      */
-    public function __construct(LayoutFactoryAdminInterface $factory)
+    public function __construct(LayoutAdminFactoryInterface $factory)
     {
         $this->factory = $factory;
 
@@ -42,7 +42,7 @@ class LayoutMenuAdmin extends AbstractParametersBag implements LayoutMenuAdminIn
             'icon_url'    => null,
             'position'    => null,
             'function'    => function() {
-                echo $this->factory->layout();
+                echo call_user_func($this->factory->getContent());
             }
         ];
     }
