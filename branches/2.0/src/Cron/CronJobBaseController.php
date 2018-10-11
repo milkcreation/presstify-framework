@@ -2,11 +2,10 @@
 
 namespace tiFy\Cron;
 
-use \DateTime;
 use \DateTimeZone;
-use Monolog\Logger;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RotatingFileHandler;
+use Carbon\Carbon;
+use Illuminate\Support\Arr;
+use Psr\Log\LoggerInterface;
 use tiFy\Contracts\Cron\CronJobInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
 
@@ -17,7 +16,7 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
      * @var array {
      *      @var string $title Intitulé de qualification.
      *      @var string $description Description.
-     *      @var int|string|DateTime $date Date de déclenchement de la première itération.
+     *      @var int|string|Carbon $date Date de déclenchement de la première itération.
      *      @var string $freq Fréquence d'exécution des itérations.
      *      @var array $args Liste des variables complémentaires passées en arguments.
      *      @var boolean|array $log Liste des attributs de configuration de la journalisation.
@@ -30,12 +29,6 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
      * @var string
      */
     protected $name = '';
-
-    /**
-     * Classe de rappel de journalisation
-     * @var \Monolog\Logger
-     */
-    private $logger = null;
 
     /**
      * CONSTRUCTEUR.
@@ -65,11 +58,27 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
     final public function __invoke()
     {
         if (wp_doing_cron() || $this->onTest()) :
+            $start = $this->getDatetime()->setTimestamp(time());
+
             set_time_limit(0);
 
             is_callable($this->getCommand())
                 ? call_user_func_array($this->getCommand(), [$this->getArgs(), $this])
                 : $this->exec();
+
+            $end = $this->getDatetime()->setTimestamp(time());
+
+            $this->updateInfo('last', $end->getTimestamp());
+
+            $this->log()->notice(
+                sprintf(
+                    __('La tâche "%s" démarrée le %s s\'est terminée le %s'),
+                    $this->getName(),
+                    $start->format('d/m/Y à H:i:s'),
+                    $end->format('d/m/Y à H:i:s')
+                )
+            );
+            exit;
         elseif(!$this->onTest()) :
             wp_die(
                 sprintf(
@@ -143,7 +152,7 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
      */
     public function getDatetime($time = 'now')
     {
-        return new DateTime($time, new DateTimeZone(get_option('timezone_string')));
+        return new Carbon($time, new DateTimeZone(get_option('timezone_string')));
     }
 
     /**
@@ -173,6 +182,27 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
     /**
      * {@inheritdoc}
      */
+    public function getInfo($key, $default = null)
+    {
+        $infos = get_option('cron_job_infos', []);
+        return (isset($infos[$this->getHook()][$key]))
+            ? $infos[$this->getHook()][$key]
+            : $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastDate()
+    {
+        return ($timestamp = $this->getInfo('last'))
+            ? $this->getDatetime()->setTimestamp($timestamp)
+            : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return $this->name;
@@ -181,7 +211,7 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
     /**
      * {@inheritdoc}
      */
-    public function getNext()
+    public function getNextDate()
     {
         return ($timestamp = wp_next_scheduled($this->getHook()))
             ? $this->getDatetime()->setTimestamp($timestamp)
@@ -207,9 +237,29 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
     /**
      * {@inheritdoc}
      */
+    public function log()
+    {
+        return $this->get('logger');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function onTest()
     {
         return (bool)$this->get('test', false);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function updateInfo($key, $value)
+    {
+        $jobs = get_option('cron_job_infos', []);
+        $jobs[$this->getHook()][$key] = $value;
+        update_option('cron_job_infos', $jobs, false);
+
+        return $this;
     }
 
     /**
@@ -227,16 +277,18 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
             );
         endif;
 
-        if ($log = $this->get('log')) :
+        $logger = $this->get('logger');
+        if (!$logger instanceof LoggerInterface) :
             $defaults = [
-                'format'  => "%datetime% %level_name% \"%message%\" %context% %extra%\n",
-                'rotate'  => 10,
-                'name'    => $this->getName(),
-                'basedir' => WP_CONTENT_DIR . '/uploads/log',
+                'name'    => 'cron'
             ];
+            $logger = is_array($logger)
+                ? array_merge($defaults, $logger)
+                : $defaults;
+
             $this->set(
-                'log',
-                is_array($log) ? array_merge($defaults, $log) : $defaults
+                'logger',
+                app('logger', [$logger['name'], $logger])
             );
         endif;
 
@@ -273,51 +325,5 @@ class CronJobBaseController extends AbstractParametersBagIterator implements Cro
             endif;
         endif;
         $this->set('freq', $freq);
-    }
-
-    /**
-     * Initialisation de la journalisation
-     */
-    final public function initLogger()
-    {
-        if (!$attrs = $this->getLog()) :
-            return;
-        endif;
-
-        $output = $attrs['format'];
-        $formatter = new LineFormatter($output);
-        $stream = new RotatingFileHandler($attrs['basedir'] . '/' . $attrs['name'] . '.log', $attrs['rotate']);
-        $stream->setFormatter($formatter);
-        $this->Logger = new Logger($this->getId());
-        if ($timezone = get_option('timezone_string')) :
-            $this->Logger->setTimezone(new \DateTimeZone($timezone));
-        endif;
-        $this->Logger->pushHandler($stream);
-    }
-
-    /**
-     * Récupération de la classe de rappel de journalisation
-     *
-     * @return \Monolog\Logger
-     */
-    final public function getLogger()
-    {
-        return $this->Logger;
-    }
-
-    /**
-     *
-     */
-    final public function loggerAddExtras($extras)
-    {
-        if ($this->Logger->getProcessors()) :
-            $this->Logger->popProcessor();
-        endif;
-
-        $this->Logger->pushProcessor(function ($record) use ($extras) {
-            $record['extra'] = $extras;
-
-            return $record;
-        });
     }
 }

@@ -25,7 +25,13 @@ class Layout
      */
     public function add($context = 'admin', $name, $attrs = [])
     {
-        config()->set("layout.{$context}.{$name}", $attrs);
+        config()->set(
+            "layout.{$context}",
+            array_merge(
+                [$name => $attrs],
+                config("layout.{$context}", [])
+            )
+        );
 
         return $this;
     }

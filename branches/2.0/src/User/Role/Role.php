@@ -45,7 +45,13 @@ class Role
      */
     public function add($name, $attrs = [])
     {
-        config()->set("user.role.{$name}", $attrs);
+        config()->set(
+            'user.role',
+            array_merge(
+                [$name =>$attrs],
+                config('user.role', [])
+            )
+        );
 
         return $this;
     }

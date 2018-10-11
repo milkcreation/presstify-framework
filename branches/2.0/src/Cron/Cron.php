@@ -5,6 +5,7 @@ namespace tiFy\Cron;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Cron\CronJobInterface;
 use tiFy\Cron\ScheduleBaseController;
+use tiFy\Layout\Layout;
 
 /**
  * USAGE
@@ -17,7 +18,8 @@ use tiFy\Cron\ScheduleBaseController;
  * > $ crontab -e
  * > $ * * * * * curl -I http(s)://%site_url%/wp-cron.php?doing_wp_cron > /dev/null 2>&1
  *
- * Tester une tâche planifiée de puis le navigateur ou en ligne de commande.
+ * Tester une tâche planifiée depuis le navigateur ou en console. Le mode test de la tâche doit être actif.
+ * IMPORTANT : N'utiliser cette fonctionnalité qu'en développement uniquement. Désactiver absolutment le mode test en production.
  * > http(s)://%site_url%/?job=%task%
  */
 
@@ -39,20 +41,52 @@ final class Cron
         add_action(
             'init',
             function () {
+                /** @var Layout $layout */
+                $layout = app('layout');
+                $layout->add(
+                    'admin',
+                    'cron.layout.list',
+                    [
+                        'admin_menu' => [
+                            'menu_slug'   => 'CronLayoutList',
+                            'parent_slug' => 'tools.php',
+                            'page_title'  => __('Gestion des tâches planifiées', 'tify'),
+                            'menu_title'  => __('Tâches planifiées', 'tify')
+                        ],
+                        'content' => function () {
+                            $jobs = $this->all();
+
+                            return view()
+                                ->setDirectory(__DIR__ . '/views')
+                                ->make('job-list', compact('jobs'));
+                        }
+                    ]
+                );
+            }
+        );
+
+        add_action(
+            'init',
+            function () {
                 foreach (config('cron', []) as $name => $attrs) :
                     $this->_register($name, $attrs);
                 endforeach;
 
                 $collect = new Collection($this->items);
-                foreach(get_option('cron_job', []) as $hook) :
+                foreach(get_option('cron_job_infos', []) as $hook => $attrs) :
                     if (!$collect->firstWhere('hook', $hook)) :
-                        wp_clear_scheduled_hook($hook);
+                        $this->clear($hook);
                     endif;
                 endforeach;
 
+                $jobs = $collect->mapWithKeys(function ($item) {
+                    return [$item['hook'] => []];
+                })->all();
+
                 update_option(
-                    'cron_job',
-                    $collect->pluck('hook')->all()
+                    'cron_job_infos',
+                    array_merge($jobs, get_option('cron_job_infos', [])),
+                    false
                 );
 
                 if (($job = request()->get('job', '')) && ($item = $this->get($job))) :
@@ -78,7 +112,7 @@ final class Cron
         if ($item = $this->get($name)) :
             return $item;
         else :
-            $item = ($controller = $attrs['controller'])
+            $item = (isset($attrs['controller']) && ($controller = $attrs['controller']))
                 ? new $controller($name, $attrs)
                 : app('cron.job', [$name, $attrs]);
         endif;
@@ -88,11 +122,15 @@ final class Cron
         endif;
 
         if (($freq = wp_get_schedule($item->getHook())) && ($freq !== $item->getFrequency())) :
-            wp_clear_scheduled_hook($item->getHook());
+            $this->clear($item->getHook());
         endif;
 
         if (!wp_next_scheduled ($item->getHook())) :
-            wp_schedule_event($item->getTimestamp(), $item->getFrequency(), $item->getHook());
+            wp_schedule_event(
+                $item->getTimestamp(),
+                $item->getFrequency(),
+                $item->getHook()
+            );
         endif;
 
         return $this->items[$name] = $item;
@@ -108,7 +146,13 @@ final class Cron
      */
     public function add($name, $attrs)
     {
-        config()->set("cron.{$name}", $attrs);
+        config()->set(
+            "cron",
+            array_merge(
+                [$name => $attrs],
+                config('cron', [])
+            )
+        );
 
         return $this;
     }
@@ -124,6 +168,23 @@ final class Cron
     }
 
     /**
+     * Suppression d'une tâche planifiée selon son identifiant d'action.
+     *
+     * @param string $hook Identifiant de qualification de l'action.
+     *
+     * @return $this
+     */
+    public function clear($hook)
+    {
+        wp_clear_scheduled_hook($hook);
+
+        if (($jobs = get_option('cron_job_infos', [])) && isset($jobs[$hook])) :
+            unset($jobs[$hook]);
+            update_option('cron_job_infos', $jobs, false);
+        endif;
+    }
+
+    /**
      * Récupération d'une tâche planifiée déclarée.
      *
      * @param string $name Nom de qualification de l'élément.
@@ -133,27 +194,5 @@ final class Cron
     public function get($name)
     {
         return isset($this->items[$name]) ? $this->items[$name] : null;
-    }
-
-    /**
-     * Déclaration de templates.
-     *
-     * @return void
-     */
-    public function tify_templates_register()
-    {
-        Templates::register(
-            'tFyCoreCronList',
-            [
-                'cb'         => ViewList::class,
-                'admin_menu' => [
-                    'menu_slug'   => 'tFyCoreCronList',
-                    'parent_slug' => 'tools.php',
-                    'page_title'  => __('Gestion des tâches planifiées', 'tify'),
-                    'menu_title'  => __('Tâches planifiées', 'tify'),
-                ],
-            ],
-            'admin'
-        );
     }
 }

@@ -34,9 +34,17 @@ abstract class AbstractLayoutFactory extends AbstractParametersBag implements La
 
         parent::__construct($attrs);
 
-        if ($controller = $this->get('content')) :
-            $this->layout = new $controller($this);
+        if (($content = $this->get('content')) && !is_callable($content) && class_exists($content)) :
+            $this->layout = new $content($this);
         endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContent()
+    {
+        return ($this->layout() instanceof LayoutDisplayInterface) ? $this->layout() : $this->get('content');
     }
 
     /**

@@ -15,25 +15,11 @@ use tiFy\Db\DbItemSelectController;
 class DbServiceProvider extends AppServiceProvider
 {
     /**
-     * Liste des services à instance multiples auto-déclarés.
-     * @var string[]
-     */
-    protected $bindings = [];
-
-    /**
-     * Liste des services à instance unique auto-déclarés.
-     * @var string[]
-     */
-    protected $singletons = [
-        Db::class
-    ];
-
-    /**
      * {@inheritdoc}
      */
     public function boot()
     {
-        $this->app->resolve(Db::class);
+        $this->app->singleton('db', function() { return new Db();})->build();
         $this->app->bind('db.item.handle', DbItemHandleController::class);
         $this->app->bind('db.item.make', DbItemMakeController::class);
         $this->app->bind('db.item.meta', DbItemMetaController::class);

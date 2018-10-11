@@ -2,13 +2,13 @@
 
 namespace tiFy\Layout;
 
-use tiFy\Contracts\Layout\LayoutFactoryAdminInterface;
+use tiFy\Contracts\Layout\LayoutAdminFactoryInterface;
 
-final class LayoutContextAdmin
+final class LayoutAdmin
 {
     /**
      * Liste des éléments déclarés.
-     * @var LayoutFactoryAdminInterface[]
+     * @var LayoutAdminFactoryInterface[]
      */
     protected $items = [];
 
@@ -25,7 +25,8 @@ final class LayoutContextAdmin
                 foreach(config('layout.admin', []) as $name => $attrs) :
                     $this->register($name, $attrs);
                 endforeach;
-            }
+            },
+            999999
         );
     }
 
@@ -35,7 +36,7 @@ final class LayoutContextAdmin
      * @param string $name Nom de qualification de la disposition.
      * @param array $attrs Liste des attributs de configuration de la disposition.
      *
-     * @return LayoutFactoryAdminInterface
+     * @return LayoutAdminFactoryInterface
      */
     protected function register($name, $attrs = [])
     {
@@ -43,6 +44,6 @@ final class LayoutContextAdmin
             return $this->items[$name];
         endif;
 
-        return $this->items[$name] = app(LayoutFactoryAdmin::class, [$name, $attrs]);
+        return $this->items[$name] = app('layout.admin.factory', [$name, $attrs]);
     }
 }

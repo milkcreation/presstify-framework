@@ -2,11 +2,11 @@
 
 namespace tiFy\Layout;
 
-use tiFy\Contracts\Layout\LayoutFactoryAdminInterface;
+use tiFy\Contracts\Layout\LayoutAdminFactoryInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
 use tiFy\Layout\LayoutMenuAdmin;
 
-class LayoutFactoryAdmin extends AbstractLayoutFactory implements LayoutFactoryAdminInterface
+class LayoutAdminFactory extends AbstractLayoutFactory implements LayoutAdminFactoryInterface
 {
     /**
      * Liste des attributs de configuration.
@@ -53,7 +53,7 @@ class LayoutFactoryAdmin extends AbstractLayoutFactory implements LayoutFactoryA
         add_action(
             'admin_menu',
             function () {
-                app(LayoutMenuAdmin::class, [$this]);
+                app('layout.admin.menu', [$this]);
             }
         );
 

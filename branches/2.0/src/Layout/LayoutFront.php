@@ -2,13 +2,13 @@
 
 namespace tiFy\Layout;
 
-use tiFy\Contracts\Layout\LayoutFactoryFrontInterface;
+use tiFy\Contracts\Layout\LayoutFrontFactoryInterface;
 
-final class LayoutContextFront
+final class LayoutFront
 {
     /**
      * Liste des éléments déclarés.
-     * @var LayoutFactoryFrontInterface[]
+     * @var LayoutFrontFactoryInterface[]
      */
     protected $items = [];
 
@@ -25,7 +25,8 @@ final class LayoutContextFront
                 foreach(config('layout.front', []) as $name => $attrs) :
                     $this->register($name, $attrs);
                 endforeach;
-            }
+            },
+            999999
         );
     }
 
@@ -35,7 +36,7 @@ final class LayoutContextFront
      * @param string $name Nom de qualification de la disposition.
      * @param array $attrs Liste des attributs de configuration de la disposition.
      *
-     * @return LayoutFactoryFrontInterface
+     * @return LayoutFrontFactoryInterface
      */
     protected function register($name, $attrs = [])
     {
@@ -43,6 +44,6 @@ final class LayoutContextFront
             return $this->items[$name];
         endif;
 
-        return $this->items[$name] = app(LayoutFactoryFront::class, [$name, $attrs]);
+        return $this->items[$name] = app('layout.front.factory', [$name, $attrs]);
     }
 }

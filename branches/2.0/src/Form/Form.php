@@ -75,7 +75,13 @@ final class Form
      */
     public function add($name, $attrs = [])
     {
-        config()->set("form.{$name}", $attrs);
+        config()->set(
+            'form',
+            array_merge(
+                [$name => $attrs],
+                config('form', [])
+            )
+        );
 
         return $this;
     }

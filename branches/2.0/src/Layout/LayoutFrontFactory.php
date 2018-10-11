@@ -2,10 +2,10 @@
 
 namespace tiFy\Layout;
 
-use tiFy\Contracts\Layout\LayoutFactoryFrontInterface;
+use tiFy\Contracts\Layout\LayoutFrontFactoryInterface;
 use tiFy\Contracts\Layout\LayoutItemInterface;
 
-class LayoutFactoryFront extends AbstractLayoutFactory implements LayoutFactoryFrontInterface
+class LayoutFrontFactory extends AbstractLayoutFactory implements LayoutFrontFactoryInterface
 {
     /**
      * Liste des attributs de configuration.
