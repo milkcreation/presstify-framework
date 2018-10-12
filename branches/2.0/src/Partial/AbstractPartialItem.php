@@ -183,6 +183,9 @@ abstract class AbstractPartialItem extends AbstractParametersBag implements Part
         if (!$this->has('attrs.id', '')) :
             $this->set('attrs.id', 'tiFyPartial-' . class_info($this)->getShortName() . '-' . $this->getId());
         endif;
+        if (!$this->get('attrs.id')) :
+            $this->pull('attrs.id');
+        endif;
 
         $default_class = 'tiFyPartial-' . class_info($this)->getShortName() .
             ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex();
@@ -199,6 +202,9 @@ abstract class AbstractPartialItem extends AbstractParametersBag implements Part
                     $default_class
                 )
             );
+        endif;
+        if (!$this->get('attrs.class')) :
+            $this->pull('attrs.class');
         endif;
 
         foreach($this->get('view', []) as $key => $value) :

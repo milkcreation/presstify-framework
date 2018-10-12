@@ -67,7 +67,7 @@ final class Column
         add_action(
             'current_screen',
             function ($wp_current_screen) {
-                $this->screen = app(WpScreenInterface::class, [$wp_current_screen]);
+                $this->screen = app('wp.screen', [$wp_current_screen]);
 
                 /** @var \WP_Screen $wp_current_screen */
                 foreach ($this->items as $item) :
