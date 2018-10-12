@@ -5,7 +5,7 @@ namespace tiFy\Db;
 use tiFy\Contracts\Db\DbItemInterface;
 use tiFy\Contracts\Db\DbItemMakeInterface;
 
-class DbItemMakeItemController implements DbItemMakeInterface
+class DbItemMakeController implements DbItemMakeInterface
 {
     /**
      * Instance du controleur de base de données associé.

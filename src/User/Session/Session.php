@@ -50,9 +50,9 @@ final class Session extends AppController
                     /** @var Db $db */
                     $db = app('db');
                     $db->add(
-                        '_tiFySession',
+                        'session',
                         [
-                            'install'    => false,
+                            'install'    => true,
                             'name'       => 'tify_session',
                             'primary'    => 'session_key',
                             'col_prefix' => 'session_',
@@ -192,7 +192,7 @@ final class Session extends AppController
         if (!$this->db) :
             /** @var Db $db */
             $db = app('db');
-            $this->db = $db->get('_tiFySession');
+            $this->db = $db->get('session');
         endif;
 
         if (!$this->db instanceof DbItemInterface) :
