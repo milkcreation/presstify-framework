@@ -1,5 +1,5 @@
 /** Libraries tierces */
-import 'bootstrap/js/src/modal';
+import 'bootstrap/js/dist/modal';
 
 /** Css */
 import './scss/styles.scss';
