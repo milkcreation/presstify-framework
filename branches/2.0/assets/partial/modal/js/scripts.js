@@ -430,7 +430,13 @@ jQuery(document).ready(function ($) {
             var $modal = $(this);
             var o = $.parseJSON(decodeURIComponent($modal.data('options')));
 
-            tify[o.id].original = $('.modal-content', $modal).html();
+            if (tify[o.id] === undefined){
+                tify[o.id] = {};
+            }
+
+            if ($('.modal-content', $modal).length) {
+                tify[o.id].original = $('.modal-content', $modal).html();
+            }
 
             if (o.ajax) {
                 if (tify[o.id].content === undefined) {
