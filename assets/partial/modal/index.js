@@ -1,5 +1,8 @@
+/** Libraries tierces */
+import 'bootstrap/js/src/modal';
+
 /** Css */
-import './css/styles.css';
+import './scss/styles.scss';
 
 /** Scripts */
 import './js/scripts';

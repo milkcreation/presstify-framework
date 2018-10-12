@@ -35,7 +35,7 @@ class RoleItemController extends AbstractParametersBag implements UserRoleItemCo
     {
         $this->name = $name;
 
-        parent::__construct();
+        parent::__construct($attrs);
 
         add_action(
             'init',
