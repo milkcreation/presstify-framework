@@ -11,7 +11,6 @@ use App\App;
  * Composants
  */
 use tiFy\Media\Media;
-use tiFy\MetaTag\MetaTag;
 use tiFy\PageHook\PageHook;
 use tiFy\Route\Route;
 
@@ -65,7 +64,6 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $components = [
         Media::class,
-        MetaTag::class,
         PageHook::class,
         Route::class
     ];
