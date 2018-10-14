@@ -23,7 +23,6 @@ class Config extends AbstractParametersBagIterator
      */
     protected $aliases = [
         'media'       => \tiFy\Media\Media::class,
-        'meta-tag'    => \tiFy\MetaTag\MetaTag::class,
         'page-hook'   => \tiFy\PageHook\PageHook::class,
         'route'       => \tiFy\Route\Route::class
     ];
