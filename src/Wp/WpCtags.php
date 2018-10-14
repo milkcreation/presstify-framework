@@ -2,7 +2,9 @@
 
 namespace tiFy\Wp;
 
-class WpCtags
+use tiFy\Contracts\Wp\Ctags;
+
+class WpCtags implements Ctags
 {
     /**
      * Liste des indicateurs de condition permis.
@@ -35,10 +37,7 @@ class WpCtags
     ];
 
     /**
-     * Vérifie si la page d'affichage courante correspond au contexte soumis en argument.
-     * @param null $ctags
-     *
-     * @return bool|mixed
+     * {@inheritdoc}
      */
     public function is($ctags = null)
     {
@@ -56,9 +55,7 @@ class WpCtags
     }
 
     /**
-     * Récupération de l'alias du contexte d'affichage de la page courante.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function current()
     {
