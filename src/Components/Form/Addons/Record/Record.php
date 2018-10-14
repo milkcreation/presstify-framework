@@ -254,7 +254,7 @@ class Record extends AbstractAddonController
             'record_date'    => current_time('mysql'),
             'item_meta'      => $this->getForm()->getFieldsValues(),
         ];
-        $db = $this->appServiceGet(Db::class);
+        $db = app('db');
 
         // Définition de la base de données (front)
         if (! $db->has('tify_forms_record')) :

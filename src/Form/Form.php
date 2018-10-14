@@ -2,173 +2,174 @@
 
 namespace tiFy\Form;
 
-use tiFy\Apps\AppController;
+use tiFy\Contracts\Form\FormItemInterface;
 use tiFy\Form\Addons\AddonsController;
 use tiFy\Form\Buttons\ButtonsController;
 use tiFy\Form\Fields\FieldTypesController;
 use tiFy\Form\Forms\FormBaseController;
 
-final class Form extends AppController
+final class Form
 {
     /**
-     * Liste des formulaire déclaré
-     * @var FormBaseController[]
+     * Liste des formulaires déclarés.
+     * @var FormItemInterface[]
      */
-    protected $registered = [];
+    protected $items = [];
 
     /**
-     * Formulaire courant (en cours de traitement)
-     * @var
+     * Formulaire courant.
+     * @var FormItemInterface
      */
     protected $current;
 
     /**
-     * Initialisation du controleur.
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appServiceShare(AddonsController::class, new AddonsController());
-        $this->appServiceShare(ButtonsController::class, new ButtonsController());
-        $this->appServiceShare(FieldTypesController::class, new FieldTypesController());
-
-        $this->appAddAction('init', null, 1);
-        $this->appAddAction('wp', null, 0);
-        \add_shortcode('formulaire', [$this, 'shortcode']);
-    }
-
-    /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    public function init()
-    {
-        if (is_admin()) :
-            $this->registration();
-        endif;
-    }
-
-    /**
-     * A l'issue du chargement complet de Wordpress.
-     *
-     * @return void
-     */
-    public function wp()
-    {
-        if (!is_admin()) :
-            $this->registration();
-        endif;
-
-    }
-
-    /**
-     * Shortcode d'affichage de formulaire.
-     *
-     * @param array $atts Attributs de configuration.
-     *
-     * @return string
-     */
-    public function shortcode($atts = [])
-    {
-        extract(
-            shortcode_atts(
-                ['name' => null],
-                $atts
-            )
+        add_action(
+            'init',
+            function () {
+                if (is_admin()) :
+                    $this->_init();
+                else :
+                    add_action(
+                        'wp',
+                        function () {
+                            $this->_init();
+                        }, 0
+                    );
+                endif;
+            },
+            1
         );
-
-        return $this->display($name);
     }
 
     /**
-     * Déclaration des formulaires.
+     * Initialisation des formulaires.
      *
      * @return void
      */
-    private function registration()
+    private function _init()
     {
-        foreach ($this->appConfig() as $name => $attrs) :
-            $this->register($name, $attrs);
-        endforeach;
+        if ($forms = config('form', [])) :
+            foreach ($forms as $name => $attrs) :
+                $this->register($name, $attrs);
+            endforeach;
 
-        do_action('tify_form_register', $this);
+            do_action('tify_form_register', $this);
 
-        do_action('tify_form_loaded');
+            do_action('tify_form_loaded');
+        endif;
     }
 
     /**
      * Déclaration d'un formulaire.
      *
+     * @param string $name Nom de qualification.
+     * @param array $attrs Attributs de configuration.
+     *
+     * @return $this
+     */
+    public function add($name, $attrs = [])
+    {
+        config()->set(
+            'form',
+            array_merge(
+                [$name => $attrs],
+                config('form', [])
+            )
+        );
+
+        return $this;
+    }
+
+    /**
+     * Récupération de la liste des instance de formulaires déclarés.
+     *
+     * @return FormItemInterface[]
+     */
+    public function all()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Récupération d'une instance formulaire déclaré.
+     *
+     * @param string $name Nom de qualification du formulaire.
+     *
+     * @return null|FormItemInterface
+     */
+    public function get($name)
+    {
+        return isset($this->items[$name]) ? $this->items[$name] : null;
+    }
+
+    /**
+     * Récupération du formulaire courant.
+     *
+     * @return null|FormItemInterface
+     */
+    public function getCurrent()
+    {
+        return $this->current;
+    }
+
+    /**
+     * Déclaration d'un formulaire.
+     *
+     * @param string $name Nom de qualification.
+     * @param array $attrs Attributs de configuration.
+     *
      * @return void
      */
     public function register($name, $attrs = [])
     {
-        $alias = "tify.form.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return;
-        endif;
-
         $controller = (isset($attrs['controller'])) ? $attrs['controller'] : FormBaseController::class;
 
-        $this->appServiceShare($alias, new $controller($name, $attrs));
+        $resolved = new $controller($name, $attrs);
 
-        return $this->registered[$name] = $this->appServiceGet($alias);
+        return $this->items[$name] = app()
+            ->bind(
+                "form.{$name}",
+                function () use ($resolved) {
+                    return $resolved;
+                }
+            )
+            ->build();
     }
 
     /**
-     * Vérification d'existance d'un formulaire déclaré
+     * Réinitialisation du formulaire courant.
      *
-     * @param string $name Nom de qualification du formulaire.
-     *
-     * @return null|FormBaseController
+     * @return void
      */
-    public function has($name)
+    public function resetCurrent()
     {
-        return $this->appServiceHas("tify.form.{$name}");
-    }
-
-    /**
-     * Récupération d'un controleur d'un formulaire déclaré.
-     *
-     * @param string $name Nom de qualification du formulaire.
-     *
-     * @return null|FormBaseController
-     */
-    public function get($name)
-    {
-        $alias = "tify.form.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
+        if ($this->current instanceof FormItemInterface) :
+            $this->current->getForm()->onResetCurrent();
         endif;
-    }
 
-    /**
-     * Récupération de la liste des formulaires déclarés.
-     *
-     * @return FormBaseController[]
-     */
-    public function all()
-    {
-        return $this->registered;
+        $this->current = null;
     }
 
     /**
      * Définition du formulaire courant.
      *
-     * @param string|FormBaseController $form Nom de qualification ou classe de rappel d'un formulaire.
+     * @param string|FormItemInterface $form Nom de qualification ou instance du formulaire.
      *
-     * @return null|FormBaseController
+     * @return null|FormItemInterface
      */
-    /** ==  == **/
     public function setCurrent($form = null)
     {
-        if (!is_object($form)) :
+        if (is_string($form)) :
             $form = $this->get($form);
         endif;
 
-        if (!$form instanceof FormBaseController) :
+        if (!$form instanceof FormItemInterface) :
             return;
         endif;
 
@@ -179,31 +180,8 @@ final class Form extends AppController
     }
 
     /**
-     * Récupération du formulaire courant.
-     *
-     * @return null|FormBaseController
-     */
-    public function getCurrent()
-    {
-        return $this->current;
-    }
-
-    /**
-     * Réinitialisation du formulaire courant.
-     *
-     * @return  void
-     */
-    public function resetCurrent()
-    {
-        if ($this->current instanceof FormBaseController) :
-            $this->current->getForm()->onResetCurrent();
-        endif;
-
-        $this->current = null;
-    }
-
-    /**
      * Affichage d'un formulaire.
+     * @deprecated
      *
      * @param string $name Nom de qualification du formulaire.
      * @param bool $echo Activation/Désactivation de l'affichage.
@@ -212,7 +190,6 @@ final class Form extends AppController
      */
     public function display($name, $echo = false)
     {
-        // Bypass
         if (!$form = $this->setCurrent($name)) :
             return;
         endif;

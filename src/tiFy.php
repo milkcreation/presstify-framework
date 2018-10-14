@@ -5,12 +5,15 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Milkcreation
- * @version 2.0.0
+ * @version 2.0.5
  */
 
 namespace tiFy;
 
+use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Container\Container;
+use tiFy\Kernel\Config\Config;
+use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\KernelServiceProvider;
 
 final class tiFy extends Container
@@ -26,6 +29,11 @@ final class tiFy extends Container
      * @var string[]
      */
     protected $serviceProviders = [
+        /** Ultra-prioritaire */
+        Paths::class,
+        ClassLoader::class,
+        Config::class,
+        /** ----------------- */
         KernelServiceProvider::class
     ];
 
@@ -48,28 +56,23 @@ final class tiFy extends Container
         endif;
 
         add_action(
+            'plugins_loaded',
+            function() {
+                load_muplugin_textdomain('tify', '/presstify/languages/');
+                do_action('tify_load_textdomain');
+            },
+            10
+        );
+
+        add_action(
             'after_setup_tify',
             function () {
                 do_action('tify_app_boot');
             },
-            9999
+            0
         );
 
         parent::__construct();
-
-        add_action('plugins_loaded', [$this, 'plugins_loaded']);
-    }
-
-    /**
-     * Après le chargement des plugins.
-     *
-     * @return void
-     */
-    public function plugins_loaded()
-    {
-        load_muplugin_textdomain('tify', '/presstify/languages/');
-
-        do_action('tify_load_textdomain');
     }
 
     /**

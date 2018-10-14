@@ -2,57 +2,46 @@
 
 namespace tiFy\PostType;
 
-use tiFy\Apps\AppController;
+use tiFy\Contracts\PostType\PostTypeItemInterface;
 
-final class PostType extends AppController
+final class PostType
 {
     /**
      * Liste des types de post déclarés.
-     * @var array
+     * @var PostTypeItemInterface[]
      */
     protected $items = [];
 
     /**
-     * Initialisation du controleur.
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appAddAction('init', [$this, 'preInit'], 1);
-        $this->appAddAction('init', [$this, 'postInit'], 9999);
-    }
+        add_action(
+            'init',
+            function () {
+                foreach (config('post-type', []) as $name => $attrs) :
+                    $this->register($name, $attrs);
+                endforeach;
+            },
+            1
+        );
 
-    /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    public function preInit()
-    {
-        if ($post_types = $this->appConfig(null, [])) :
-            foreach ($post_types as $name => $attrs) :
-                $this->register($name, $attrs);
-            endforeach;
-        endif;
+        add_action(
+            'init',
+            function() {
+                global $wp_post_types;
 
-        do_action('tify_post_type_register', $this);
-    }
-
-    /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    public function postInit()
-    {
-        global $wp_post_types;
-
-        foreach($wp_post_types as $name => $attrs) :
-            if (!$this->get($name)) :
-                $this->register($name, get_object_vars($attrs));
-            endif;
-        endforeach;
+                foreach($wp_post_types as $name => $attrs) :
+                    if (!$this->get($name)) :
+                        $this->register($name, get_object_vars($attrs));
+                    endif;
+                endforeach;
+            },
+            999999
+        );
     }
 
     /**
@@ -61,32 +50,26 @@ final class PostType extends AppController
      * @param string $name Nom de qualification du type de post.
      * @param array $attrs Liste des attributs de configuration.
      *
-     * @return null|PostTypeController
+     * @return PostTypeItemInterface
      */
     public function register($name, $attrs = [])
     {
-        $alias = "tfy.post_type.{$name}";
-        if($this->appServiceHas($alias)) :
-            return;
+        if(!isset($this->items[$name])) :
+            return app()->resolve(PostTypeItemController::class, [$name, $attrs]);
+        else :
+            return $this->items[$name];
         endif;
-
-        $this->appServiceShare($alias, new PostTypeItemController($name, $attrs, $this));
-
-        return $this->items[$name] = $this->appServiceGet($alias);
     }
 
     /**
-     * Récupération d'un controleur de type de post.
+     * Récupération d'une instance de controleur de type de post.
      *
      * @param $name Nom de qualification du controleur.
      *
-     * @return null|PostTypeController
+     * @return null|PostTypeItemInterface
      */
     public function get($name)
     {
-        $alias = "tfy.post_type.{$name}";
-        if($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
+        return isset($this->items['name']) ? $this->items['name'] : null;
     }
 }

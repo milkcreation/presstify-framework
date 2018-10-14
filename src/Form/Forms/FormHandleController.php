@@ -126,11 +126,11 @@ class FormHandleController extends AbstractCommonDependency
         switch ($method) :
             default :
             case 'request' :
-                $this->globalQueryVars = $this->appRequest()->all();
+                $this->globalQueryVars = request()->all();
                 break;
             case 'get' :
             case 'post' :
-                $this->globalQueryVars = $this->appRequest($method)->all();
+                $this->globalQueryVars = request()->getProperty($method)->all();
                 break;
         endswitch;
     }
