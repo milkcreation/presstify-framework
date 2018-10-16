@@ -3,9 +3,10 @@
 namespace tiFy\Column;
 
 use Illuminate\Support\Collection;
+use tiFy\Contracts\Column\Column as ColumnInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 
-final class Column
+final class Column implements ColumnInterface
 {
     /**
      * Liste des éléments.
@@ -41,8 +42,8 @@ final class Column
         add_action(
             'wp_loaded',
             function () {
-                foreach (config('column.add', []) as $screen => $items) :
-                    foreach ($items as $attrs) :
+                foreach (config('column', []) as $screen => $items) :
+                    foreach ($items as $name => $attrs) :
                         if (is_numeric($screen)) :
                             $_screen = isset($attrs['screen']) ? $attrs['screen'] : null;
                         else :
@@ -54,15 +55,13 @@ final class Column
                                 $_screen = 'list::' . $_screen;
                             endif;
 
-                            $this->items[] = app()->resolve(ColumnItemController::class, [$_screen, $attrs]);
+                            $this->items[] = app()->resolve('column.item', [$_screen, $name, $attrs]);
                         endif;
                     endforeach;
                 endforeach;
             },
             0
         );
-
-        //add_action('current_screen', function($screen) { var_dump($screen); exit;});
 
         add_action(
             'current_screen',
@@ -74,7 +73,6 @@ final class Column
                     $item->load($this->screen);
                 endforeach;
 
-                /** @var ColumnItemController $c */
                 switch ($this->screen->getObjectType()) :
                     case 'post_type' :
                         add_filter(
@@ -137,24 +135,20 @@ final class Column
     }
 
     /**
-     * Ajout d'un élément.
-     *
-     * @param string $screen Ecran d'affichage de l'élément.
-     * @param array $attrs Liste des attributs de configuration de l'élément.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function add($screen, $attrs = [])
+    public function add($screen, $name, $attrs = [])
     {
-        config()->push("column.add.{$screen}", $attrs);
+        config()->set(
+            "column.{$screen}.{$name}",
+            $attrs
+        );
 
         return $this;
     }
 
     /**
-     * Récupération de la liste des éléments.
-     *
-     * @return Collection|ColumnItemController[]
+     * {@inheritdoc}
      */
     public function getItems()
     {
@@ -162,9 +156,7 @@ final class Column
     }
 
     /**
-     * Récupération de la liste des éléments actifs.
-     *
-     * @return Collection|ColumnItemController[]
+     * {@inheritdoc}
      */
     public function getActiveItems()
     {
@@ -183,11 +175,7 @@ final class Column
     }
 
     /**
-     * Traitement de la liste des entêtes de colonnes.
-     *
-     * @param array $headers Liste des entêtes de colonnes.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     final public function parseColumnHeaders($headers)
     {
@@ -195,10 +183,11 @@ final class Column
         foreach ($headers as $name => $title) :
             /** @var ColumnItemController $column */
             $column = app(
-                ColumnItemController::class, [
+                'column.item',
+                [
                     $this->screen,
+                    $name,
                     [
-                        'name'     => $name,
                         'title'    => $title,
                         'position' => $i++,
                     ],
@@ -219,9 +208,7 @@ final class Column
     }
 
     /**
-     * Traitement de la liste des contenus de colonnes.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     final public function parseColumnContents()
     {

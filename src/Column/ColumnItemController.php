@@ -3,7 +3,7 @@
 namespace tiFy\Column;
 
 use tiFy\Contracts\Column\ColumnDisplayInterface;
-use tiFy\Contracts\Column\ColumnItemInterface;
+use tiFy\Contracts\Column\ColumnItem as ColumnItemInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 use tiFy\Wp\WpScreen;
@@ -37,7 +37,6 @@ class ColumnItemController extends AbstractParametersBag implements ColumnItemIn
      * @return array
      */
     protected $attributes = [
-        'name'     => '',
         'position' => 0,
         'title'    => '',
         'content'  => ''
@@ -50,6 +49,12 @@ class ColumnItemController extends AbstractParametersBag implements ColumnItemIn
     protected $index = 0;
 
     /**
+     * Nom de qualification.
+     * @var string
+     */
+    protected $name = '';
+
+    /**
      * Instance de l'écran d'affichage associé.
      * @var WpScreenInterface
      */
@@ -59,12 +64,14 @@ class ColumnItemController extends AbstractParametersBag implements ColumnItemIn
      * CONSTRUCTEUR.
      *
      * @param null|string|\WP_Screen|WpScreenInterface $screen Qualification de la page d'affichage.
+     * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
      *
      * @return void
      */
-    public function __construct($screen = null, $attrs = [])
+    public function __construct($screen = null, $name, $attrs = [])
     {
+        $this->name = $name;
         $this->index = self::$_index++;
 
         if ($screen instanceof WpScreenInterface) :
@@ -89,16 +96,6 @@ class ColumnItemController extends AbstractParametersBag implements ColumnItemIn
         endif;
 
         parent::__construct($attrs);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function defaults()
-    {
-        return [
-            'name'  => md5("column-" . uniqid() . "-{$this->getIndex()}")
-        ];
     }
 
     /**
@@ -134,7 +131,7 @@ class ColumnItemController extends AbstractParametersBag implements ColumnItemIn
      */
     public function getName()
     {
-        return $this->get('name');
+        return $this->name;
     }
 
     /**

@@ -16,13 +16,13 @@ class FormServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
+        $this->app->singleton('form', function () { return new Form(); })->build();
+
         $singletons = [
-            Form::class,
             AddonsController::class,
             ButtonsController::class,
             FieldTypesController::class
         ];
-
         foreach($singletons as $singleton) :
             $this->app->singleton($singleton)->build();
         endforeach;

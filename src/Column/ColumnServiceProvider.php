@@ -9,28 +9,11 @@ use tiFy\Column\ColumnItemController;
 class ColumnServiceProvider extends AppServiceProvider
 {
     /**
-     * Liste des services à instance multiples auto-déclarés.
-     * @var string[]
-     */
-    protected $bindings = [
-        ColumnItemController::class
-    ];
-
-    /**
-     * Liste des services à instance unique auto-déclarés.
-     * @var string[]
-     */
-    protected $singletons = [];
-
-    /**
      * {@inheritdoc}
      */
     public function boot()
     {
-        $this->app->singleton(
-            Column::class,
-            function () {
-                return new Column();
-        })->build();
+        $this->app->singleton('column', function () { return new Column(); })->build();
+        $this->app->bind('column.item', function ($screen, $name, $attrs = []) { return new ColumnItemController($screen, $name, $attrs); });
     }
 }

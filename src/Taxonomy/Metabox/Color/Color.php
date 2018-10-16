@@ -28,7 +28,7 @@ class Color extends AbstractMetaboxDisplayTermController
      */
     public function header($term = null, $taxonomy = null, $args = null)
     {
-        return $this->item->getTitle() ? : __('Couleur', 'tify');
+        return $this->item->getTitle() ?: __('Couleur', 'tify');
     }
 
     /**
@@ -38,7 +38,7 @@ class Color extends AbstractMetaboxDisplayTermController
     {
         add_action(
             'admin_enqueue_scripts',
-            function(){
+            function () {
                 field('colorpicker')->enqueue_scripts();
             }
         );
