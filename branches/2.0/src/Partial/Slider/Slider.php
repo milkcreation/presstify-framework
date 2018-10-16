@@ -61,17 +61,14 @@ class Slider extends AbstractPartialItem
      */
     public function parse($attrs = [])
     {
-        $this->set('attrs.id', 'tiFyPartial-Slider--' . $this->getId());
-        $this->set('attrs.class', 'tiFyPartial-Slider tiFyPartial-Slider--' . $this->getId());
-
         $this->set(
             'items',
             [
                 /** @see https://picsum.photos/images */
-                "<img src=\"https://picsum.photos/800/800/?image=768\" />",
-                "<img src=\"https://picsum.photos/800/800/?image=669\" />",
-                "<img src=\"https://picsum.photos/800/800/?image=646\" />",
-                "<img src=\"https://picsum.photos/800/800/?image=883\" />"
+                "<img src=\"https://picsum.photos/800/800/?image=768\"/>",
+                "<img src=\"https://picsum.photos/800/800/?image=669\"/>",
+                "<img src=\"https://picsum.photos/800/800/?image=646\"/>",
+                "<img src=\"https://picsum.photos/800/800/?image=883\"/>"
             ]
         );
 

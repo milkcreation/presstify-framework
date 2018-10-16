@@ -27,7 +27,7 @@ jQuery(document).ready(function ($) {
 
         var count = $('.tiFyTabooxSlideshowList-item', $container).length;
 
-        if (( max > 0 ) && ( count == max )) {
+        if ((max > 0) && (count == max)) {
             alert(tiFyTabooxOptionSlideshowAdmin.l10nMax);
             return false;
         }
