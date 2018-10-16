@@ -3,6 +3,7 @@
 namespace tiFy\PageHook;
 
 use tiFy\App\AppController;
+use tiFy\Metabox\Metabox;
 use tiFy\Options\Options;
 use tiFy\PageHook\Admin\PageHookAdminOptions;
 
@@ -25,9 +26,27 @@ class PageHook extends AppController
             endforeach;
         endif;
 
-        do_action('tify_page_hook_register', $this);
+        add_action(
+            'init',
+            function () {
+                if (!$this->items) :
+                    return;
+                endif;
 
-        $this->appAddAction('tify_options_register');
+                /** @var Metabox $metabox */
+                $metabox = app(Metabox::class);
+                $metabox->add(
+                    'tify_options@options',
+                    [
+                        'name'      => 'tiFyPageHook-optionsNode',
+                        'title'     => __('Pages d\'accroche', 'tify'),
+                        'content'   => PageHookAdminOptions::class
+                    ]
+                );
+            }
+        );
+
+        do_action('tify_page_hook_register', $this);
     }
 
     /**
@@ -115,27 +134,5 @@ class PageHook extends AppController
     public function register($name, $attrs = [])
     {
         return $this->items[$name] = new PageHookItemController($name, $attrs, $this);
-    }
-
-    /**
-     * Déclaration de sections de boîte à onglet de l'interface d'administration des options de presstiFy.
-     *
-     * @param Options $options Classe de rappel du controleur des options de presstiFy.
-     *
-     * @return void
-     */
-    public function tify_options_register($options)
-    {
-        if (!$this->items) :
-            return;
-        endif;
-
-        $options->register(
-            [
-                'name'      => 'tiFyPageHook-optionsNode',
-                'title'     => __('Pages d\'accroche', 'tify'),
-                'content'   => PageHookAdminOptions::class
-            ]
-        );
     }
 }
