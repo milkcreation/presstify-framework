@@ -2,8 +2,8 @@
 
 namespace tiFy\User\SignUp;
 
+use tiFy\Contracts\Form\Form;
 use tiFy\Contracts\User\UserSignUpItemInterface;
-use tiFy\Form\Form;
 use tiFy\Form\Forms\FormBaseController;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 
@@ -30,13 +30,9 @@ class SignUpItemController extends AbstractParametersBag implements UserSignUpIt
         parent::__construct($attrs);
 
         add_action(
-            'tify_form_register',
-            function ($formController) {
-                /** @var Form $formController */
-                return $formController->register(
-                    'tiFyCore-userSignUp--' . $this->getName(),
-                    $this->all()
-                );
+            'init',
+            function () {
+                return form()->add('UserSignUp-' . $this->getName(), $this->all());
             }
         );
     }
@@ -46,7 +42,7 @@ class SignUpItemController extends AbstractParametersBag implements UserSignUpIt
      */
     public function __toString()
     {
-        return $this->form();
+        return (string)$this->form();
     }
 
     /**
@@ -128,16 +124,16 @@ class SignUpItemController extends AbstractParametersBag implements UserSignUpIt
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function form()
     {
-        return $this->name;
+        return form()->get('UserSignUp-' . $this->getName());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function form()
+    public function getName()
     {
-        return app(Form::class)->display('tiFyCore-userSignUp--' . $this->getName());
+        return $this->name;
     }
 }

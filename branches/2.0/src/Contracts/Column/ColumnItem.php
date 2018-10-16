@@ -6,7 +6,7 @@ use tiFy\Contracts\Column\ColumnDisplayInterface;
 use tiFy\Contracts\Kernel\ParametersBagInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 
-interface ColumnItemInterface extends ParametersBagInterface
+interface ColumnItem extends ParametersBagInterface
 {
     /**
      * Récupération du contenu de l'affichage.

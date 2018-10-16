@@ -2,12 +2,12 @@
 
 use tiFy\tiFy;
 use tiFy\Contracts\Field\FieldItemInterface;
+use tiFy\Contracts\Form\Form;
 use tiFy\Contracts\Kernel\EventsInterface;
 use tiFy\Contracts\Partial\PartialItemInterface;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Field\Field;
-use tiFy\Form\Form;
 use tiFy\Kernel\Kernel;
 use tiFy\Partial\Partial;
 use tiFy\Route\Route;
@@ -173,7 +173,7 @@ if (!function_exists('form')) :
     function form($name = null)
     {
         /** @var Form $factory */
-        $factory = app(Form::class);
+        $factory = app('form');
 
         if (is_null($name)) :
             return $factory;

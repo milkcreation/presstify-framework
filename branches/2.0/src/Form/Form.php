@@ -2,13 +2,14 @@
 
 namespace tiFy\Form;
 
-use tiFy\Contracts\Form\FormItemInterface;
+use tiFy\Contracts\Form\Form as FormInterface;
+use tiFy\Contracts\Form\FormItem as FormItemInterface;
 use tiFy\Form\Addons\AddonsController;
 use tiFy\Form\Buttons\ButtonsController;
 use tiFy\Form\Fields\FieldTypesController;
 use tiFy\Form\Forms\FormBaseController;
 
-final class Form
+final class Form implements FormInterface
 {
     /**
      * Liste des formulaires déclarés.
@@ -29,22 +30,11 @@ final class Form
      */
     public function __construct()
     {
-        add_action(
-            'init',
-            function () {
-                if (is_admin()) :
-                    $this->_init();
-                else :
-                    add_action(
-                        'wp',
-                        function () {
-                            $this->_init();
-                        }, 0
-                    );
-                endif;
-            },
-            1
-        );
+        if (is_admin()) :
+            add_action('admin_init', function () { $this->_init(); }, 999999);
+        else :
+            add_action('wp', function () { $this->_init(); }, 999999);
+        endif;
     }
 
     /**
@@ -56,10 +46,8 @@ final class Form
     {
         if ($forms = config('form', [])) :
             foreach ($forms as $name => $attrs) :
-                $this->register($name, $attrs);
+                $this->_register($name, $attrs);
             endforeach;
-
-            do_action('tify_form_register', $this);
 
             do_action('tify_form_loaded');
         endif;
@@ -71,62 +59,9 @@ final class Form
      * @param string $name Nom de qualification.
      * @param array $attrs Attributs de configuration.
      *
-     * @return $this
-     */
-    public function add($name, $attrs = [])
-    {
-        config()->set(
-            'form',
-            array_merge(
-                [$name => $attrs],
-                config('form', [])
-            )
-        );
-
-        return $this;
-    }
-
-    /**
-     * Récupération de la liste des instance de formulaires déclarés.
-     *
-     * @return FormItemInterface[]
-     */
-    public function all()
-    {
-        return $this->items;
-    }
-
-    /**
-     * Récupération d'une instance formulaire déclaré.
-     *
-     * @param string $name Nom de qualification du formulaire.
-     *
-     * @return null|FormItemInterface
-     */
-    public function get($name)
-    {
-        return isset($this->items[$name]) ? $this->items[$name] : null;
-    }
-
-    /**
-     * Récupération du formulaire courant.
-     *
-     * @return null|FormItemInterface
-     */
-    public function getCurrent()
-    {
-        return $this->current;
-    }
-
-    /**
-     * Déclaration d'un formulaire.
-     *
-     * @param string $name Nom de qualification.
-     * @param array $attrs Attributs de configuration.
-     *
      * @return void
      */
-    public function register($name, $attrs = [])
+    public function _register($name, $attrs = [])
     {
         $controller = (isset($attrs['controller'])) ? $attrs['controller'] : FormBaseController::class;
 
@@ -143,28 +78,38 @@ final class Form
     }
 
     /**
-     * Réinitialisation du formulaire courant.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function resetCurrent()
+    public function add($name, $attrs = [])
     {
-        if ($this->current instanceof FormItemInterface) :
-            $this->current->getForm()->onResetCurrent();
-        endif;
+        config()->set(
+            'form',
+            array_merge(
+                [$name => $attrs],
+                config('form', [])
+            )
+        );
 
-        $this->current = null;
+        return $this;
     }
 
     /**
-     * Définition du formulaire courant.
-     *
-     * @param string|FormItemInterface $form Nom de qualification ou instance du formulaire.
-     *
-     * @return null|FormItemInterface
+     * {@inheritdoc}
      */
-    public function setCurrent($form = null)
+    public function all()
     {
+        return $this->items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function current($form = null)
+    {
+        if (is_null($form)) :
+            return $this->current;
+        endif;
+
         if (is_string($form)) :
             $form = $this->get($form);
         endif;
@@ -180,29 +125,22 @@ final class Form
     }
 
     /**
-     * Affichage d'un formulaire.
-     * @deprecated
-     *
-     * @param string $name Nom de qualification du formulaire.
-     * @param bool $echo Activation/Désactivation de l'affichage.
-     *
-     * @return string|void
+     * {@inheritdoc}
      */
-    public function display($name, $echo = false)
+    public function get($name)
     {
-        if (!$form = $this->setCurrent($name)) :
-            return;
+        return isset($this->items[$name]) ? $this->items[$name] : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reset()
+    {
+        if ($this->current instanceof FormItemInterface) :
+            $this->current->getForm()->onResetCurrent();
         endif;
 
-        $output = "";
-        $output .= "\n<div id=\"tiFyForm-{$name}\" class=\"tiFyForm\">";
-        $output .= $form->display(false);
-        $output .= "\n</div>";
-
-        if ($echo) :
-            echo $output;
-        else :
-            return $output;
-        endif;
+        $this->current = null;
     }
 }

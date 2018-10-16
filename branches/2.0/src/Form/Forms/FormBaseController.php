@@ -3,14 +3,13 @@
 namespace tiFy\Form\Forms;
 
 use tiFy\App\AppController;
-use tiFy\Contracts\Form\FormItemInterface;
-use tiFy\Form\Form;
+use tiFy\Contracts\Form\FormItem;
 use tiFy\Form\Buttons\ButtonControllerInterface;
 use tiFy\Form\Fields\FieldItemController;
 use tiFy\Form\Forms\FormCallbacksController;
 use tiFy\Form\Forms\FormItemController;
 
-class FormBaseController extends AppController implements FormItemInterface
+class FormBaseController extends AppController implements FormItem
 {
     /**
      * Classe de rappel du formulaire.
@@ -40,9 +39,9 @@ class FormBaseController extends AppController implements FormItemInterface
         add_action(
             'tify_form_loaded',
             function () {
-                $this->appServiceGet(Form::class)->setCurrent($this);
+                form()->current($this);
                 $this->getForm()->handle()->proceed();
-                $this->appServiceGet(Form::class)->resetCurrent();
+                form()->reset();
             }
         );
     }

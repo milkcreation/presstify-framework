@@ -5,7 +5,7 @@ namespace tiFy\Contracts\Form;
 use tiFy\Form\Fields\FieldItemController;
 use tiFy\Form\Forms\FormItemController;
 
-interface FormItemInterface
+interface FormItem
 {
     /**
      * Récupération de la classe de rappel du formulaire.

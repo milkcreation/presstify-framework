@@ -5,6 +5,8 @@ jQuery(document).ready(function ($) {
                 $(obj).data('options')
             )
         );
+
+        options = $.extend({change: function(color) { $(obj).val(color.toHexString()); }}, options);
         $(obj).spectrum(options);
     });
 

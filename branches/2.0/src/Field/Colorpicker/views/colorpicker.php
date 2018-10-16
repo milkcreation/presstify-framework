@@ -8,7 +8,7 @@
 
 <?php
 echo field(
-    'hidden',
+    'text',
     [
         'name'  => $this->getName(),
         'attrs' => $this->get('attrs', []),
