@@ -3,31 +3,25 @@
 namespace tiFy\Kernel\Events;
 
 use League\Event\Emitter;
-use League\Event\Event;
-use tiFy\Contracts\Kernel\EventsInterface;
+use tiFy\Contracts\Kernel\EventsManager;
 
-class Events extends Emitter implements EventsInterface
+class Events extends Emitter implements EventsManager
 {
     /**
      * {@inheritdoc}
      */
     public function listen($name, $listener, $priority = 0)
     {
+        $listener = new Listener($listener);
+
         return $this->addListener($name, $listener, $priority);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function trigger($event)
+    public function trigger($event, $args = [])
     {
-        if (!is_object($event) && !is_string($event)) :
-            return null;
-        endif;
-
-        $args = func_get_args();
-        $args[0] = is_object($event) ? $event : Event::named($event);
-
-        return call_user_func_array([$this, 'emit'], $args);
+        return call_user_func_array([$this, 'emit'], func_get_args());
     }
 }

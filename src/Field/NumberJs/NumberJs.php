@@ -2,9 +2,9 @@
 
 namespace tiFy\Field\NumberJs;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 
-class NumberJs extends AbstractFieldItem
+class NumberJs extends FieldController
 {
     /**
      * Liste des attributs de configuration.

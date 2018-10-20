@@ -2,9 +2,9 @@
 
 namespace tiFy\Field\Hidden;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 
-class Hidden extends AbstractFieldItem
+class Hidden extends FieldController
 {
     /**
      * Liste des attributs de configuration.

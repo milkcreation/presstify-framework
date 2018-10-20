@@ -83,7 +83,7 @@ class Facebook extends FacebookSdk
                     return;
                 endif;
 
-                return events()->trigger('api.facebook', $action);
+                return events()->trigger('api.facebook', [$action]);
             }
         );
     }

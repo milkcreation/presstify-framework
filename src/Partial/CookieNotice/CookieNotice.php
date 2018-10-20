@@ -5,10 +5,9 @@ namespace tiFy\Partial\CookieNotice;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 use tiFy\Kernel\Tools;
-use tiFy\Partial\AbstractPartialItem;
-use tiFy\Partial\Partial;
+use tiFy\Partial\PartialController;
 
-class CookieNotice extends AbstractPartialItem
+class CookieNotice extends PartialController
 {
     /**
      * Liste des attributs de configuration.
@@ -125,7 +124,8 @@ class CookieNotice extends AbstractPartialItem
 
         $this->set(
             'accept',
-            Partial::Tag(
+            partial(
+                'tag',
                 $this->get('accept')
             )
         );

@@ -19,10 +19,9 @@
 
 namespace tiFy\Field\ToggleSwitch;
 
-use tiFy\Field\AbstractFieldItem;
-use tiFy\Field\Field;
+use tiFy\Field\FieldController;
 
-class ToggleSwitch extends AbstractFieldItem
+class ToggleSwitch extends FieldController
 {
     /**
      * Liste des attributs de configuration.

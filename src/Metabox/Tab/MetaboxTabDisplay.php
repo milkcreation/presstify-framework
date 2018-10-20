@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 use tiFy\Contracts\Metabox\MetaboxItemInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Metabox\Metabox;
-use tiFy\Partial\Partial;
 
 class MetaboxTabDisplay
 {

@@ -63,6 +63,9 @@ class Kernel
             case 'Container' :
                 return tiFy::instance();
                 break;
+            case 'Events' :
+                $alias = 'events';
+                break;
             case 'Paths' :
                 $alias = Paths::class;
                 break;

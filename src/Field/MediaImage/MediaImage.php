@@ -2,10 +2,10 @@
 
 namespace tiFy\Field\MediaImage;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 use tiFy\Kernel\Tools;
 
-class MediaImage extends AbstractFieldItem
+class MediaImage extends FieldController
 {
     /**
      * Liste des attributs de configuration.

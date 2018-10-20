@@ -18,6 +18,6 @@ trait FacebookResolverTrait
      */
     public function fb()
     {
-        return app(Facebook::class);
+        return app('api.facebook');
     }
 }

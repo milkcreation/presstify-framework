@@ -2,10 +2,10 @@
 
 namespace tiFy\Partial\Breadcrumb;
 
-use tiFy\Partial\AbstractPartialItem;
+use tiFy\Partial\PartialController;
 use tiFy\Kernel\Tools;
 
-class Breadcrumb extends AbstractPartialItem
+class Breadcrumb extends PartialController
 {
     /**
      * Liste des attributs de configuration.
@@ -39,7 +39,7 @@ class Breadcrumb extends AbstractPartialItem
         add_action(
             'init',
             function () {
-                \wp_register_style(
+                wp_register_style(
                     'PartialBreadcrumb',
                     assets()->url('partial/breadcrumb/css/styles.css'),
                     [],

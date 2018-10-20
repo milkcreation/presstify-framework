@@ -2,7 +2,6 @@
 
 namespace tiFy\PostType\Metabox\VideoGallery;
 
-use tiFy\Field\Field;
 use tiFy\PostType\Metadata\Post as MetadataPost;
 use tiFy\Metabox\AbstractMetaboxDisplayPostController;
 

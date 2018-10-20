@@ -79,19 +79,22 @@ final class Assets implements AssetsInterface
      *
      * @param string $js propriétés Js.
      * @param string $ui Interface de l'attribut. user|admin|both
+     * @param boolean $footer false (défaut) pour inscrire le script dans le header|true pour inscrire le script dans le footer.
      *
      * @return void
      */
-    public function addInlineJs($js, $ui = 'user')
+    public function addInlineJs($js, $ui = 'user', $footer = false)
     {
+        $place = $footer ? '.footer' : '.header';
+
         switch($ui) :
             case 'admin' :
             case 'user' :
-                Arr::set($this->inlineJs, $ui, Arr::get($this->inlineJs, $ui, '') . (string)$js);
+                Arr::set($this->inlineJs, $ui . $place, Arr::get($this->inlineJs, $ui . $place, '') . (string)$js);
                 break;
             case 'both' :
-                Arr::set($this->inlineJs, 'admin', Arr::get($this->inlineJs, 'admin', '') . (string)$js);
-                Arr::set($this->inlineJs, 'user', Arr::get($this->inlineJs, 'user', '') . (string)$js);
+                Arr::set($this->inlineJs, "admin{$place}", Arr::get($this->inlineJs, "admin{$place}", '') . (string)$js);
+                Arr::set($this->inlineJs, "user{$place}", Arr::get($this->inlineJs, "user{$place}", '') . (string)$js);
                 break;
         endswitch;
     }
@@ -107,16 +110,14 @@ final class Assets implements AssetsInterface
         ?><style type="text/css"><?php echo $css; ?></style><?php
         endif;
 
-        if ($js = Arr::get($this->inlineJs, 'admin', '')) :
-            ?><script type="text/javascript">/* <![CDATA[ */<?php echo $js; ?>/* ]]> */</script><?php
-        endif;
-
         $datas = (new Collection(Arr::get($this->dataJs, 'admin', [])))
             ->where('in_footer', '===', false)
             ->pluck('value', 'key')
             ->all();
 
-        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify={};'; ?><?php foreach($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; ?>/* ]]> */</script><?php
+        $js = Arr::get($this->inlineJs, 'admin.header', '')
+
+        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify={};'; if($datas) : foreach($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
     }
 
     /**
@@ -131,8 +132,10 @@ final class Assets implements AssetsInterface
             ->pluck('value', 'key')
             ->all();
 
-        if ($datas) :
-            ?><script type="text/javascript">/* <![CDATA[ */<?php foreach($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; ?>/* ]]> */</script><?php
+        $js = Arr::get($this->inlineJs, 'admin.footer', '');
+
+        if ($datas || $js) :
+            ?><script type="text/javascript">/* <![CDATA[ */<?php if($datas) : foreach($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
         endif;
     }
 
@@ -221,16 +224,14 @@ final class Assets implements AssetsInterface
         ?><style type="text/css"><?php echo $css; ?></style><?php
         endif;
 
-        if ($js = Arr::get($this->inlineJs, 'admin', '')) :
-            ?><script type="text/javascript">/* <![CDATA[ */<?php echo $js; ?>/* ]]> */</script><?php
-        endif;
-
         $datas = (new Collection(Arr::get($this->dataJs, 'user', [])))
                 ->where('in_footer', '===', false)
                 ->pluck('value', 'key')
                 ->all();
 
-        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify={};'; ?><?php foreach($datas as $k => $v) : echo "tify['{$k}']=". \wp_json_encode($v) . ";"; endforeach; ?>/* ]]> */</script><?php
+        $js = Arr::get($this->inlineJs, 'user.header', '');
+
+        ?><script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl='<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify={};'; if($datas) : foreach($datas as $k => $v) : echo "tify['{$k}']=". \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
     }
 
     /**
@@ -245,8 +246,10 @@ final class Assets implements AssetsInterface
             ->pluck('value', 'key')
             ->all();
 
-        if ($datas) :
-            ?><script type="text/javascript">/* <![CDATA[ */<?php foreach($datas as $k => $v) : echo "tify['{$k}']=". \wp_json_encode($v) . ";"; endforeach; ?>/* ]]> */</script><?php
+        $js = Arr::get($this->inlineJs, 'user.footer', '');
+
+        if ($datas || $js) :
+            ?><script type="text/javascript">/* <![CDATA[ */<?php if($datas) : foreach($datas as $k => $v) : echo "tify['{$k}']=". \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
         endif;
     }
 }

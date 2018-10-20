@@ -2,9 +2,9 @@
 
 namespace tiFy\Partial\Slider;
 
-use tiFy\Partial\AbstractPartialItem;
+use tiFy\Partial\PartialController;
 
-class Slider extends AbstractPartialItem
+class Slider extends PartialController
 {
     /**
      * Liste des attributs de configuration.

@@ -2,12 +2,12 @@
 
 namespace tiFy\Partial\Spinner;
 
-use tiFy\Partial\AbstractPartialItem;
+use tiFy\Partial\PartialController;
 
 /**
  * @see http://tobiasahlin.com/spinkit/
  */
-class Spinner extends AbstractPartialItem
+class Spinner extends PartialController
 {
     /**
      * Liste des attributs de configuration

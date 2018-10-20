@@ -2,8 +2,6 @@
 
 namespace tiFy\Partial\Breadcrumb;
 
-use tiFy\Partial\Partial;
-
 class WpQueryPart
 {
     /**
@@ -133,7 +131,8 @@ class WpQueryPart
 
             $part = [
                 'class'   => $this->getItemWrapperClass(),
-                'content' => Partial::Tag(
+                'content' => partial(
+                    'tag',
                     [
                         'tag'     => 'a',
                         'attrs'   => [
@@ -148,7 +147,8 @@ class WpQueryPart
         else :
             $part = [
                 'class'   => $this->getItemWrapperClass(),
-                'content' => Partial::Tag(
+                'content' => partial(
+                    'tag',
                     [
                         'tag'     => 'a',
                         'attrs'   => [
@@ -174,7 +174,8 @@ class WpQueryPart
     {
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -197,7 +198,8 @@ class WpQueryPart
     {
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -225,7 +227,8 @@ class WpQueryPart
 
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -250,7 +253,8 @@ class WpQueryPart
 
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -279,7 +283,8 @@ class WpQueryPart
     {
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -304,7 +309,8 @@ class WpQueryPart
 
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -329,7 +335,8 @@ class WpQueryPart
 
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -354,7 +361,8 @@ class WpQueryPart
 
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -385,7 +393,8 @@ class WpQueryPart
 
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -412,7 +421,8 @@ class WpQueryPart
 
         $part = [
             'class'   => $this->getItemWrapperClass(),
-            'content' => Partial::Tag(
+            'content' => partial(
+                'tag',
                 [
                     'tag'     => 'span',
                     'attrs'   => [
@@ -478,7 +488,8 @@ class WpQueryPart
 
                     $this->parts[] = [
                         'class'   => $this->getItemWrapperClass(),
-                        'content' => Partial::Tag(
+                        'content' => partial(
+                            'tag',
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
@@ -499,7 +510,8 @@ class WpQueryPart
 
                     $this->parts[] = [
                         'class'   => $this->getItemWrapperClass(),
-                        'content' => Partial::Tag(
+                        'content' => partial(
+                            'tag',
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
@@ -519,7 +531,8 @@ class WpQueryPart
 
                 $this->parts[] = [
                     'class'   => $this->getItemWrapperClass(),
-                    'content' => Partial::Tag(
+                    'content' => partial(
+                        'tag',
                         [
                             'tag'     => 'a',
                             'attrs'   => [
@@ -534,7 +547,8 @@ class WpQueryPart
             else :
                 $this->parts[] = [
                     'class'   => $this->getItemWrapperClass(),
-                    'content' => Partial::Tag(
+                    'content' => partial(
+                        'tag',
                         [
                             'tag'     => 'a',
                             'attrs'   => [
@@ -555,7 +569,8 @@ class WpQueryPart
 
                     $this->parts[] = [
                         'class'   => $this->getItemWrapperClass(),
-                        'content' => Partial::Tag(
+                        'content' => partial(
+                            'tag',
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
@@ -570,7 +585,8 @@ class WpQueryPart
                 else :
                     $this->parts[] = [
                         'class'   => $this->getItemWrapperClass(),
-                        'content' => Partial::Tag(
+                        'content' => partial(
+                            'tag',
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
@@ -590,7 +606,8 @@ class WpQueryPart
 
                 $this->parts[] = [
                     'class'   => $this->getItemWrapperClass(),
-                    'content' => Partial::Tag(
+                    'content' => partial(
+                        'tag',
                         [
                             'tag'     => 'a',
                             'attrs'   => [
@@ -611,7 +628,8 @@ class WpQueryPart
 
                     $this->parts[] = [
                         'class'   => $this->getItemWrapperClass(),
-                        'content' => Partial::Tag(
+                        'content' => partial(
+                            'tag',
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
@@ -633,7 +651,8 @@ class WpQueryPart
 
                     $this->parts[] = [
                         'class'   => $this->getItemWrapperClass(),
-                        'content' => Partial::Tag(
+                        'content' => partial(
+                            'tag',
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [

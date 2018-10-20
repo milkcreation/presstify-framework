@@ -2,10 +2,10 @@
 
 namespace tiFy\Field\RadioCollection;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 use tiFy\Field\Radio\Radio;
 
-class RadioCollection extends AbstractFieldItem
+class RadioCollection extends FieldController
 {
     /**
      * Liste des attributs de configuration.
