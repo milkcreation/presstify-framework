@@ -2,10 +2,10 @@
 
 namespace tiFy\Field\Crypted;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 use tiFy\Kernel\Tools;
 
-class Crypted extends AbstractFieldItem
+class Crypted extends FieldController
 {
     /**
      * Liste des attributs de configuration.

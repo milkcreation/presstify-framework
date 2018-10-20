@@ -4,8 +4,7 @@ namespace tiFy\Partial\Sidebar;
 
 use Illuminate\Support\Collection;
 use tiFy\Kernel\Tools;
-use tiFy\Partial\AbstractPartialItem;
-use tiFy\Partial\Partial;
+use tiFy\Partial\PartialController;
 
 /**
  * @see http://mango.github.io/slideout/
@@ -25,7 +24,7 @@ use tiFy\Partial\Partial;
  * http://tympanus.net/Development/OffCanvasMenuEffects/
  * http://tympanus.net/Development/MultiLevelPushMenu/
  */
-class Sidebar extends AbstractPartialItem
+class Sidebar extends PartialController
 {
     /**
      * Liste des attributs de configuration.

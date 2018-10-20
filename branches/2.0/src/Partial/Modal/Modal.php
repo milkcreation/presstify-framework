@@ -3,10 +3,10 @@
 namespace tiFy\Partial\Modal;
 
 use Illuminate\Support\Arr;
-use tiFy\Partial\AbstractPartialItem;
+use tiFy\Partial\PartialController;
 use tiFy\Kernel\Tools;
 
-class Modal extends AbstractPartialItem
+class Modal extends PartialController
 {
     /**
      * Liste des attributs de configuration.

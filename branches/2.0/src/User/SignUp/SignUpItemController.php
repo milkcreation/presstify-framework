@@ -52,8 +52,7 @@ class SignUpItemController extends AbstractParametersBag implements UserSignUpIt
     {
         return [
             'fields' => [
-                [
-                    'slug'         => 'login',
+                'login' => [
                     'label'        => __('Identifiant', 'tify'),
                     'type'         => 'input',
                     'required'     => true,
@@ -63,8 +62,7 @@ class SignUpItemController extends AbstractParametersBag implements UserSignUpIt
                         ]
                     ]
                 ],
-                [
-                    'slug'         => 'email',
+                'email' => [
                     'label'        => __('Adresse e-mail', 'tify'),
                     'attrs'        => [
                         'placeholder'  => __('Indiquez votre e-mail', 'tify'),
@@ -78,8 +76,7 @@ class SignUpItemController extends AbstractParametersBag implements UserSignUpIt
                         ]
                     ]
                 ],
-                [
-                    'slug'         => 'password',
+                'password' => [
                     'label'        => __('Mot de passe', 'tify'),
                     'attrs'        => [
                         'placeholder'  => __('Renseignez un mot de passe', 'tify'),
@@ -93,8 +90,7 @@ class SignUpItemController extends AbstractParametersBag implements UserSignUpIt
                         ]
                     ]
                 ],
-                [
-                    'slug'         => 'confirm',
+                'confirm' => [
                     'label'        => __('Confirmation de mot de passe', 'tify'),
                     'attrs'        => [
                         'placeholder'  => __('Confirmez votre mot de passe', 'tify'),
@@ -110,10 +106,9 @@ class SignUpItemController extends AbstractParametersBag implements UserSignUpIt
                     ],
                     'required'     => true
                 ],
-                [
-                    'slug'         => 'captcha',
+                'captcha' => [
                     'label'        => __('Code de sécurité', 'tify'),
-                    'type'         => 'simple-captcha-image',
+                    'type'         => 'captcha',
                     'required'     => true
                 ]
             ],

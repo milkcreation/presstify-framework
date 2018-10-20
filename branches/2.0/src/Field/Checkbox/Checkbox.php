@@ -2,9 +2,9 @@
 
 namespace tiFy\Field\Checkbox;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 
-class Checkbox extends AbstractFieldItem
+class Checkbox extends FieldController
 {
     /**
      * Liste des attributs de configuration.

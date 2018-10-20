@@ -3,13 +3,10 @@
 namespace tiFy\Field\SelectJs;
 
 use Illuminate\Support\Arr;
-use tiFy\Partial\Partial;
-use tiFy\Field\AbstractFieldItem;
-use tiFy\Field\TemplateController;
-use tiFy\Field\Field;
+use tiFy\Field\FieldController;
 use tiFy\Field\FieldOptionsItemController;
 
-class SelectJs extends AbstractFieldItem
+class SelectJs extends FieldController
 {
     /**
      * Liste des attributs de configuration.
@@ -184,11 +181,16 @@ class SelectJs extends AbstractFieldItem
             'picker',
             array_merge(
                 [
-                    'loader' => (string)Partial::Spinkit([
-                        'container_id'    => 'tiFyField-SelectJsPickerSpinkit--' . $this->getIndex(),
-                        'container_class' => 'tiFyField-SelectJsPickerSpinkit',
-                        'type'            => 'three-bounce',
-                    ]),
+                    'loader' => (string)partial(
+                        'spinner',
+                        [
+                            'attrs' => [
+                                'id'    => 'tiFyField-SelectJsPickerSpinkit--' . $this->getIndex(),
+                                'class' => 'tiFyField-SelectJsPickerSpinkit',
+                            ],
+                            'spinner' => 'three-bounce',
+                        ]
+                    ),
                     'more'   => '+',
                 ],
                 $this->get('picker', [])

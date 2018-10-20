@@ -14,7 +14,6 @@ namespace tiFy\Api\Facebook;
 
 use Facebook\Authentication\AccessToken;
 use Facebook\Authentication\AccessTokenMetadata;
-use League\Event\Event;
 use tiFy\Api\Facebook\AbstractFacebookItemController;
 use tiFy\Api\Facebook\FacebookResolverTrait;
 
@@ -25,7 +24,7 @@ class FacebookSigninController extends AbstractFacebookItemController
     /**
      * {@inheritdoc}
      */
-    public function process(Event $event, $action = 'signin')
+    public function process($action = 'signin')
     {
         // Bypass
         if ($action !== 'signin') :

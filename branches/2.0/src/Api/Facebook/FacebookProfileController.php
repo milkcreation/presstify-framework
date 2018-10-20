@@ -12,10 +12,9 @@
 
 namespace tiFy\Api\Facebook;
 
-use League\Event\Event;
 use tiFy\Api\Facebook\AbstractFacebookItemController;
 use tiFy\Api\Facebook\FacebookResolverTrait;
-use \WP_User;
+use WP_User;
 
 class FacebookProfileController extends AbstractFacebookItemController
 {
@@ -74,7 +73,7 @@ class FacebookProfileController extends AbstractFacebookItemController
     /**
      * {@inheritdoc}
      */
-    public function process(Event $event, $action = 'profile')
+    public function process($action = 'profile')
     {
         // Bypass
         if ($action !== 'profile') :

@@ -11,7 +11,6 @@
 
 namespace tiFy\Api\Facebook;
 
-use League\Event\Event;
 use tiFy\Api\Facebook\AbstractFacebookItemController;
 use tiFy\Api\Facebook\FacebookResolverTrait;
 
@@ -22,7 +21,7 @@ class FacebookSignupController extends AbstractFacebookItemController
     /**
      * {@inheritdoc}
      */
-    public function process(Event $event, $action = 'signup')
+    public function process($action = 'signup')
     {
         // Bypass
         if ($action !== 'signup') :

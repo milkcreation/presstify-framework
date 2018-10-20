@@ -2,8 +2,6 @@
 
 namespace tiFy\Contracts\Api;
 
-use League\Event\Event;
-
 interface FacebookItemInterface
 {
     /**
@@ -16,12 +14,11 @@ interface FacebookItemInterface
     /**
      * Traitement.
      *
-     * @param Event $event Instance de l'événement.
      * @param string $action Nom de qualification de l'action.
      *
      * @return string
      */
-    public function process(Event $event, $action = '');
+    public function process($action = '');
 
     /**
      * Url de l'action.

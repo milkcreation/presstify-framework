@@ -2,9 +2,9 @@
 
 namespace tiFy\Field\File;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 
-class File extends AbstractFieldItem
+class File extends FieldController
 {
     /**
      * Liste des attributs de configuration.

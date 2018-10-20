@@ -136,9 +136,10 @@ class Engine extends LeaguePlatesEngine implements ViewsInterface
      */
     public function set($key, $value)
     {
-        Arr::set($this->attributes, $key, $value);
-
         switch($key) :
+            case 'controller' :
+                $this->setController($value);
+                break;
             case 'directory' :
                 $this->setDirectory($value);
                 break;
@@ -148,17 +149,10 @@ class Engine extends LeaguePlatesEngine implements ViewsInterface
             case 'override_dir' :
                 $this->setOverrideDir($value);
                 break;
+            default :
+                Arr::set($this->attributes, $key, $value);
+                break;
         endswitch;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setOverrideDir($dir)
-    {
-        $this->addFolder('_override', $dir, true);
 
         return $this;
     }
@@ -168,7 +162,39 @@ class Engine extends LeaguePlatesEngine implements ViewsInterface
      */
     public function setController($controller)
     {
-        $this->set('controller', $controller);
+        Arr::set($this->attributes, 'controller', $controller);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDirectory($directory)
+    {
+        Arr::set($this->attributes, 'directory', $directory);
+
+        return parent::setDirectory($directory);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFileExtension($fileExtension)
+    {
+        Arr::set($this->attributes, 'ext', $fileExtension);
+
+        return parent::setFileExtension($fileExtension);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOverrideDir($override_dir)
+    {
+        Arr::set($this->attributes, 'override_dir', $override_dir);
+
+        $this->addFolder('_override', $override_dir, true);
 
         return $this;
     }

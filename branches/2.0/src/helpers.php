@@ -1,15 +1,15 @@
 <?php
 
 use tiFy\tiFy;
-use tiFy\Contracts\Field\FieldItemInterface;
+use tiFy\Contracts\Field\FieldController;
+use tiFy\Contracts\Field\Manager as FieldManager;
 use tiFy\Contracts\Form\Form;
-use tiFy\Contracts\Kernel\EventsInterface;
-use tiFy\Contracts\Partial\PartialItemInterface;
+use tiFy\Contracts\Kernel\EventsManager;
+use tiFy\Contracts\Partial\PartialController;
+use tiFy\Contracts\Partial\Manager as PartialManager;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Contracts\Views\ViewsInterface;
-use tiFy\Field\Field;
 use tiFy\Kernel\Kernel;
-use tiFy\Partial\Partial;
 use tiFy\Route\Route;
 
 /**
@@ -131,7 +131,7 @@ if (!function_exists('events')) :
     /**
      * Events - Controleur d'événements.
      *
-     * @return EventsInterface
+     * @return EventsManager
      */
     function events()
     {
@@ -147,18 +147,18 @@ if (!function_exists('field')) :
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return null|Field|FieldItemInterface
+     * @return null|FieldManager|FieldController
      */
     function field($name = null, $id = null, $attrs = null)
     {
-        /** @var Field $factory */
-        $factory = app(Field::class);
+        /** @var FieldManager $manager */
+        $manager = app('field');
 
         if (is_null($name)) :
-            return $factory;
+            return $manager;
         endif;
 
-        return $factory->get($name, $id, $attrs);
+        return $manager->get($name, $id, $attrs);
     }
 endif;
 
@@ -168,7 +168,7 @@ if (!function_exists('form')) :
      *
      * @param null|string $name Nom de qualification du formulaire.
      *
-     * @return null|Field|FieldItemInterface
+     * @return null|Form|FormFactory
      */
     function form($name = null)
     {
@@ -203,18 +203,18 @@ if (!function_exists('partial')) :
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return null|Partial|PartialItemInterface
+     * @return null|PartialManager|PartialController
      */
     function partial($name = null, $id = null, $attrs = null)
     {
-        /** @var Partial $factory */
-        $factory = app(Partial::class);
+        /** @var PartialManager $manager */
+        $manager = app('partial');
 
         if (is_null($name)) :
-            return $factory;
+            return $manager;
         endif;
 
-        return $factory->get($name, $id, $attrs);
+        return $manager->get($name, $id, $attrs);
     }
 endif;
 

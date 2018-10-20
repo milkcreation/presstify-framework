@@ -2,10 +2,9 @@
 
 namespace tiFy\Field\DatetimeJs;
 
-use tiFy\Field\AbstractFieldItem;
-use tiFy\Field\Field;
+use tiFy\Field\FieldController;
 
-class DatetimeJs extends AbstractFieldItem
+class DatetimeJs extends FieldController
 {
     /**
      * Liste des attributs de configuration.
@@ -65,8 +64,8 @@ class DatetimeJs extends AbstractFieldItem
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('FieldDatetimeJs');
-        \wp_enqueue_script('FieldDatetimeJs');
+        wp_enqueue_style('FieldDatetimeJs');
+        wp_enqueue_script('FieldDatetimeJs');
     }
 
     /**
@@ -137,20 +136,22 @@ class DatetimeJs extends AbstractFieldItem
 
             switch ($field_name) :
                 case 'year' :
-                    $defaults = [
-                        'attrs'      => [
-                            'id'            => $this->getId() . "-handler-yyyy",
-                            'class'         => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--year',
-                            'size'         => 4,
-                            'maxlength'    => 4,
-                            'min'          => 0,
-                            'autocomplete' => 'off'
+                    $field_attrs = array_merge(
+                        [
+                            'attrs'      => [
+                                'id'            => $this->getId() . "-handler-yyyy",
+                                'class'         => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--year',
+                                'size'         => 4,
+                                'maxlength'    => 4,
+                                'min'          => 0,
+                                'autocomplete' => 'off'
+                            ],
+                            'value'           => zeroise($Y, 4)
                         ],
-                        'value'           => zeroise($Y, 4)
-                    ];
-                    $field_attrs = \wp_parse_args($field_attrs, $defaults);
+                        $field_attrs
+                    );
 
-                    $year = Field::Number($field_attrs);
+                    $year = field('number', $field_attrs);
                     break;
 
                 case 'month' :
@@ -163,90 +164,101 @@ class DatetimeJs extends AbstractFieldItem
                     for ($n = 1; $n <= 12; $n++) :
                         $field_options[zeroise($n, 2)] = $wp_locale->get_month_abbrev($wp_locale->get_month($n));
                     endfor;
-                    $defaults = [
-                        'attrs'      => [
-                            'id'    => $this->getId() . "-handler-mm",
-                            'class' => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--month',
-                            'autocomplete' => 'off'
-                        ],
-                        'options'         => $field_options,
-                        'value'           => zeroise($m, 2)
-                    ];
-                    $field_attrs = \wp_parse_args($field_attrs, $defaults);
 
-                    $month = Field::Select($field_attrs);
+                    $field_attrs = array_merge(
+                        [
+                            'attrs'      => [
+                                'id'    => $this->getId() . "-handler-mm",
+                                'class' => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--month',
+                                'autocomplete' => 'off'
+                            ],
+                            'options'         => $field_options,
+                            'value'           => zeroise($m, 2)
+                        ],
+                        $field_attrs
+                    );
+
+                    $month = field('select', $field_attrs);
                     break;
 
                 case 'day' :
-                    $defaults = [
-                        'attrs'      => [
-                            'id'           => $this->getId() . "-handler-dd",
-                            'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--day',
-                            'size'         => 2,
-                            'maxlength'    => 2,
-                            'min'          => $this->get('none_allowed') ? 0 : 1,
-                            'max'          => 31,
-                            'autocomplete' => 'off',
+                    $field_attrs = array_merge(
+                        [
+                            'attrs'      => [
+                                'id'           => $this->getId() . "-handler-dd",
+                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--day',
+                                'size'         => 2,
+                                'maxlength'    => 2,
+                                'min'          => $this->get('none_allowed') ? 0 : 1,
+                                'max'          => 31,
+                                'autocomplete' => 'off',
+                            ],
+                            'value'           => zeroise($d, 2)
                         ],
-                        'value'           => zeroise($d, 2)
-                    ];
-                    $field_attrs = \wp_parse_args($field_attrs, $defaults);
+                        $field_attrs
+                    );
 
-                    $day = Field::Number($field_attrs);
+                    $day = field('number', $field_attrs);
                     break;
 
                 case 'hour' :
-                    $defaults = [
-                        'attrs'      => [
-                            'id'           => $this->getId() . "-handler-hh",
-                            'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--hour',
-                            'size'         => 2,
-                            'maxlength'    => 2,
-                            'min'          => 0,
-                            'max'          => 23,
-                            'autocomplete' => 'off'
+                    $field_attrs = array_merge(
+                        [
+                            'attrs'      => [
+                                'id'           => $this->getId() . "-handler-hh",
+                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--hour',
+                                'size'         => 2,
+                                'maxlength'    => 2,
+                                'min'          => 0,
+                                'max'          => 23,
+                                'autocomplete' => 'off'
+                            ],
+                            'value'           => zeroise($H, 2)
                         ],
-                        'value'           => zeroise($H, 2)
-                    ];
-                    $field_attrs = \wp_parse_args($field_attrs, $defaults);
+                        $field_attrs
+                    );
 
-                    $hour = Field::Number($field_attrs);
+                    $hour = field('number', $field_attrs);
                     break;
 
                 case 'minute' :
-                    $defaults = [
-                        'attrs'      => [
-                            'id'           => $this->getId() . "-handler-ii",
-                            'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--minute',
-                            'size'         => 2,
-                            'maxlength'    => 2,
-                            'min'          => 0,
-                            'max'          => 59,
-                            'autocomplete' => 'off'
+                    $field_attrs = array_merge(
+                        [
+                            'attrs'      => [
+                                'id'           => $this->getId() . "-handler-ii",
+                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--minute',
+                                'size'         => 2,
+                                'maxlength'    => 2,
+                                'min'          => 0,
+                                'max'          => 59,
+                                'autocomplete' => 'off'
+                            ],
+                            'value'           => zeroise($i, 2)
                         ],
-                        'value'           => zeroise($i, 2)
-                    ];
-                    $field_attrs = \wp_parse_args($field_attrs, $defaults);
+                        $field_attrs
+                    );
 
-                    $minute = Field::Number($field_attrs);
+                    $minute = field('number', $field_attrs);
                     break;
 
                 case 'second' :
-                    $defaults = [
-                        'attrs'      => [
-                            'id'           => $this->getId() . "-handler-ss",
-                            'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--second',
-                            'size'         => 2,
-                            'maxlength'    => 2,
-                            'min'          => 0,
-                            'max'          => 59,
-                            'autocomplete' => 'off'
+                    $field_attrs = array_merge(
+                        [
+                            'attrs'      => [
+                                'id'           => $this->getId() . "-handler-ss",
+                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--second',
+                                'size'         => 2,
+                                'maxlength'    => 2,
+                                'min'          => 0,
+                                'max'          => 59,
+                                'autocomplete' => 'off'
+                            ],
+                            'value'           => zeroise($s, 2)
                         ],
-                        'value'           => zeroise($s, 2)
-                    ];
-                    $field_attrs = \wp_parse_args($field_attrs, $defaults);
+                        $field_attrs
+                    );
 
-                    $second = Field::Number($field_attrs);
+                    $second = field('number', $field_attrs);
                     break;
             endswitch;
         endforeach;
@@ -257,7 +269,8 @@ class DatetimeJs extends AbstractFieldItem
         <?php printf('%3$s %2$s %1$s %4$s %5$s %6$s', $year, $month, $day, $hour, $minute, $second); ?>
 
         <?php
-            echo Field::Hidden(
+            echo field(
+                'hidden',
                 [
                     'attrs' => [
                         'id'           => 'tiFyField-DatetimeJsInput--' . $this->getIndex(),

@@ -2,10 +2,10 @@
 
 namespace tiFy\Partial\Tag;
 
-use tiFy\Partial\AbstractPartialItem;
+use tiFy\Partial\PartialController;
 use tify\Kernel\Tools;
 
-class Tag extends AbstractPartialItem
+class Tag extends PartialController
 {
     /**
      * Liste des attributs de configuration.

@@ -16,9 +16,9 @@
 namespace tiFy\Field\Repeater;
 
 use tiFy\Field\Repeater\TemplateController;
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 
-class Repeater extends AbstractFieldItem
+class Repeater extends FieldController
 {
     /**
      * Liste des attributs de configuration.

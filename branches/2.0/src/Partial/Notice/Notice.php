@@ -2,10 +2,9 @@
 
 namespace tiFy\Partial\Notice;
 
-use tiFy\Partial\AbstractPartialItem;
-use tiFy\Partial\Partial;
+use tiFy\Partial\PartialController;
 
-class Notice extends AbstractPartialItem
+class Notice extends PartialController
 {
     /**
      * Liste des attributs de configuration.
@@ -92,7 +91,8 @@ class Notice extends AbstractPartialItem
 
             $this->set(
                 'dismiss',
-                Partial::Tag(
+                partial(
+                    'tag',
                     array_merge(
                         [
                             'tag' => 'button',

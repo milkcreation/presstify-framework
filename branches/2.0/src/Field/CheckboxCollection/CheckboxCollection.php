@@ -2,10 +2,10 @@
 
 namespace tiFy\Field\CheckboxCollection;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 use tiFy\Field\Checkbox\Checkbox;
 
-class CheckboxCollection extends AbstractFieldItem
+class CheckboxCollection extends FieldController
 {
     /**
      * Liste des attributs de configuration.

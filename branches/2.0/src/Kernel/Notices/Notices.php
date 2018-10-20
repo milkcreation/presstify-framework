@@ -4,7 +4,7 @@ namespace tiFy\Kernel\Notices;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\Contracts\Kernel\NoticesInterface;
+use tiFy\Contracts\Kernel\Notices as NoticesInterface;
 
 class Notices implements NoticesInterface
 {
@@ -45,6 +45,62 @@ class Notices implements NoticesInterface
     public function all($type)
     {
         return Arr::get($this->items, $type, []);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count($type)
+    {
+        return ($notices = $this->get($type))
+            ? count($notices)
+            : 0;
+    }
+
+    /**
+     * Affichage des messages de notification par type.
+     *
+     * @param string $code Type du message de notification. error(défaut)|success|info|warning.
+     *
+     * @return string
+     */
+    public function display($code = 'error')
+    {
+        if($notices = $this->get($code)) :
+            $count = count($notices);
+            $datas = Arr::sort($this->datas[$code], 'order');
+
+            $content = "<ol class=\"tiFyForm-NoticesMessages tiFyForm-NoticesMessages--{$code}\">\n";
+            foreach($datas as $key => $message) :
+                $content .= "\t<li class=\"tiFyForm-NoticesMessage tiFyForm-NoticesMessage--{$code}\">";
+                $content .= Arr::get($notices, $key, '');
+                $content .= "\t</li>\n";
+            endforeach;
+            $content .= "</ol>\n";
+        endif;
+
+        $args['content'] = $notices ? $content : '';
+        $args['type'] = $code;
+
+        $output = Partial::Notice($args);
+
+        return $output;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get($type)
+    {
+        return Arr::get($this->items, $type, []);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function has($type)
+    {
+        return Arr::has($this->items, $type);
     }
 
     /**
@@ -114,6 +170,14 @@ class Notices implements NoticesInterface
         endforeach;
 
         return $results;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reset($type)
+    {
+        Arr::forget($this->items, $type);
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace tiFy\Field\Findposts;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 
-class Findposts extends AbstractFieldItem
+class Findposts extends FieldController
 {
     /**
      * Liste des attributs de configuration.

@@ -141,7 +141,7 @@ trait AppTrait
      */
     public function appEvents()
     {
-        return \events();
+        return events();
     }
 
     /**

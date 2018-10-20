@@ -21,6 +21,7 @@ use tiFy\Kernel\Assets\AssetsInterface;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Events\Events;
+use tiFy\Kernel\Events\Listener;
 use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Notices\Notices;
@@ -38,9 +39,7 @@ class KernelServiceProvider extends ServiceProvider
      * {@inheritdoc}
      */
     protected $singletons = [
-        Assets::class,
-        Partial::class,
-        Events::class
+        Assets::class
     ];
 
     /**
@@ -79,16 +78,16 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $app = $this->getContainer()->singleton(App::class)->build();
-
-        foreach ($this->getBootables() as $bootable) :
-            $class = $this->getContainer()->resolve($bootable, [$app]);
-        endforeach;
-
+        $this->getContainer()->singleton(
+            'events',
+            function () {
+                return new Events();
+            }
+        );
         $this->getContainer()->bind(
-            'logger',
-            function ($name = null, $attrs = []) use ($app) {
-                return Logger::create($name, $attrs, $app);
+            'events.listener',
+            function (callable $callback) {
+                return new Listener($callback);
             }
         );
 
@@ -119,6 +118,19 @@ class KernelServiceProvider extends ServiceProvider
                 return Request::capture();
             }
         );
+
+        $app = $this->getContainer()->singleton(App::class)->build();
+
+        $this->getContainer()->bind(
+            'logger',
+            function ($name = null, $attrs = []) use ($app) {
+                return Logger::create($name, $attrs, $app);
+            }
+        );
+
+        foreach ($this->getBootables() as $bootable) :
+            $class = $this->getContainer()->resolve($bootable, [$app]);
+        endforeach;
 
         do_action('after_setup_tify');
     }

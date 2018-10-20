@@ -3,10 +3,10 @@
 namespace tiFy\Partial\Navtabs;
 
 use tiFy\Kernel\Tools;
-use tiFy\Partial\AbstractPartialItem;
+use tiFy\Partial\PartialController;
 use tiFy\Partial\Navtabs\Walker;
 
-class Navtabs extends AbstractPartialItem
+class Navtabs extends PartialController
 {
     /**
      * Liste des attributs de configuration.

@@ -3,12 +3,10 @@
 namespace tiFy\Field\SelectImage;
 
 use Symfony\Component\Finder\Finder;
-use tiFy\Field\Field;
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 use tiFy\Kernel\Tools;
-use tiFy\Partial\Partial;
 
-class SelectImage extends AbstractFieldItem
+class SelectImage extends FieldController
 {
     /**
      * Liste des attributs de configuration.
@@ -60,7 +58,8 @@ class SelectImage extends AbstractFieldItem
         $options = [];
         $finder = (new Finder())->in($this->get('directory'))->depth('== 0')->name('(.ico|.gif|jpe?g|.png|.svg)');
         foreach ($finder as $file) :
-            $options[$file->getRelativePathname()] = (string)Partial::Tag(
+            $options[$file->getRelativePathname()] = (string)partial(
+                'tag',
                 [
                     'tag'   => 'img',
                     'attrs' => [

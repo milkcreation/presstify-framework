@@ -20,20 +20,14 @@ class ApiServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton(
-            Api::class,
-            function () {
-                return new Api();
-            }
-        )->build();
+        $this->app->singleton('api', function () { return new Api(); })->build();
 
         if (config('api.facebook', [])) :
-            $this->app->singleton(
-                Facebook::class,
-                function ($app) {
-                    return Facebook::create(config('api.facebook', []));
+            $this->app->singleton('api.facebook',
+                function ($args = []) {
+                    return Facebook::create($args);
                 }
-            )->build();
+            )->build([config('api.facebook', [])]);
 
             $this->app->singleton(
                 'api.facebook.profile',
@@ -53,20 +47,20 @@ class ApiServiceProvider extends AppServiceProvider
 
         if (config('api.recaptcha', [])) :
             $this->app->singleton(
-                Recaptcha::class,
-                function ($app) {
-                    return Recaptcha::create(config('api.recaptcha', []));
+                'api.recaptcha',
+                function ($args = []) {
+                    return Recaptcha::create($args);
                 }
-            )->build();
+            )->build([config('api.recaptcha', [])]);
         endif;
 
         if (config('api.youtube', [])) :
             $this->app->singleton(
-                Youtube::class,
-                function ($app) {
-                    return Youtube::make(config('api.youtube', []));
+                'api.youtube',
+                function ($args = []) {
+                    return Youtube::make($args);
                 }
-            )->build();
+            )->build([config('api.youtube', [])]);
         endif;
     }
 }

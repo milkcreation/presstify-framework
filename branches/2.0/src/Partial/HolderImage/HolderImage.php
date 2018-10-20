@@ -2,10 +2,10 @@
 
 namespace tiFy\Partial\HolderImage;
 
-use tiFy\Partial\AbstractPartialItem;
+use tiFy\Partial\PartialController;
 use tiFy\Kernel\Tools;
 
-class HolderImage extends AbstractPartialItem
+class HolderImage extends PartialController
 {
     /**
      * Liste des attributs de configuration.

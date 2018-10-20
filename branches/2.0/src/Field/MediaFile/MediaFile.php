@@ -2,10 +2,10 @@
 
 namespace tiFy\Field\MediaFile;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 use tiFy\Lib\File;
 
-class MediaFile extends AbstractFieldItem
+class MediaFile extends FieldController
 {
     /**
      * Liste des attributs de configuration.

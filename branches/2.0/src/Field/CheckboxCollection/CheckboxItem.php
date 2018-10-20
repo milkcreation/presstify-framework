@@ -2,7 +2,7 @@
 
 namespace tiFy\Field\CheckboxCollection;
 
-use tiFy\Contracts\Field\FieldItemInterface;
+use tiFy\Contracts\Field\FieldController;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 
 class CheckboxItem extends AbstractParametersBag
@@ -27,7 +27,7 @@ class CheckboxItem extends AbstractParametersBag
 
     /**
      * Instance du champ associé.
-     * @var FieldItemInterface
+     * @var FieldController
      */
     protected $field;
 
@@ -36,11 +36,11 @@ class CheckboxItem extends AbstractParametersBag
      *
      * @param string|int $name Nom de qualification.
      * @param array|string $attrs Liste des attributs de configuration.
-     * @param FieldItemInterface $field Instance du champ associé.
+     * @param FieldController $field Instance du contrôleur de champ associé.
      *
      * @return void
      */
-    public function __construct($name, $attrs, FieldItemInterface $field)
+    public function __construct($name, $attrs, FieldController $field)
     {
         $this->name = $name;
         $this->field = $field;

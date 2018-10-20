@@ -2,9 +2,9 @@
 
 namespace tiFy\Field\Button;
 
-use tiFy\Field\AbstractFieldItem;
+use tiFy\Field\FieldController;
 
-class Button extends AbstractFieldItem
+class Button extends FieldController
 {
     /**
      * Liste des attributs de configuration.
