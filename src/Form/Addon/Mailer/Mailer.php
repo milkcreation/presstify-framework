@@ -2,6 +2,7 @@
 
 namespace tiFy\Form\Addon\Mailer;
 
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\AddonController;
 
 class Mailer extends AddonController
@@ -70,15 +71,25 @@ class Mailer extends AddonController
     /**
      * CONSTRUCTEUR.
      *
+     * @param array $attrs Liste des attributs de configuration.
+     * @param FormFactory $form Formulaire associé.
+     *
      * @return void
      */
-    public function __construct()
+    public function __construct($attrs = [], FormFactory $form)
     {
+        parent::__construct('mailer', $attrs, $form);
+
+        return;
+
         $this->defaultFormOptions['notification']['subject'] = sprintf(
             __('Vous avez une nouvelle demande de contact sur le site %s', 'tify'),
             get_bloginfo('name')
         );
-        $this->callbacks['handle_successfully'] = [$this, 'cb_handle_successfully'];
+
+        $this->events()
+            ->listen('request.handle.validate', [$this, 'onRequestHandleValidate'])
+            ->listen('request.success', [$this, 'onRequestSuccess']);
     }
 
     /**
@@ -160,11 +171,11 @@ class Mailer extends AddonController
     /**
      * Court-circuitage du traitement de la requête du formulaire.
      *
-     * @param Handle $handle Classe de rappel de traitement du formulaire.
+     * @param FactoryRequest $request Instance du contrôleur de traitement de la requête de soumission associée au formulaire.
      *
      * @return void
      */
-    public function cb_handle_submit_request($handle)
+    public function onRequestHandleValidate(FactoryRequest &$request)
     {
         switch ($this->getFormOption('debug')) :
             default:
@@ -197,11 +208,11 @@ class Mailer extends AddonController
     /**
      * Court-circuitage de l'issue d'un traitement de formulaire réussi.
      *
-     * @param Handle $handle Classe de rappel de traitement du formulaire.
+     * @param FactoryRequest $request Instance du contrôleur de traitement de la requête de soumission associée au formulaire.
      *
      * @return void
      */
-    public function cb_handle_successfully($handle)
+    public function onRequestSuccess(FactoryRequest &$request)
     {
         // Expédition du message de confirmation
         if ($options = $this->getFormOption('confirmation')) :

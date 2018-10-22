@@ -2,13 +2,13 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Form\FormResolver;
+use tiFy\Contracts\Form\FactoryResolver;
 use tiFy\Contracts\Form\FormView;
 use tiFy\Contracts\Kernel\ParamsBagInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 
 
-interface FormFactory extends FormResolver, ParamsBagInterface
+interface FormFactory extends FactoryResolver, ParamsBagInterface
 {
     /**
      * Résolution de sortie de l'affichage.
@@ -32,11 +32,53 @@ interface FormFactory extends FormResolver, ParamsBagInterface
     public function display();
 
     /**
+     * Récupération de l'action du formulaire (url).
+     *
+     * @return string
+     */
+    public function getAction();
+
+    /**
+     * Récupération de la clé d'indexe de sécurisation du formulaire (CSRF).
+     *
+     * @return string
+     */
+    public function getCsrf();
+
+    /**
+     * Récupération de la méthode de soumission du formulaire.
+     *
+     * @return string
+     */
+    public function getMethod();
+
+    /**
+     * Récupération de l'intitulé de qualification du formulaire.
+     *
+     * @return string
+     */
+    public function getTitle();
+
+    /**
      * Récupération du nom de qualification du formulaire.
      *
      * @return string
      */
     public function name();
+
+    /**
+     * Evénement de déclenchement à l'initialisation du formulaire en tant que formulaire courant.
+     *
+     * @return void
+     */
+    public function onSetCurrent();
+
+    /**
+     * Evénement de déclenchement à la réinitialisation du formulaire courant du formulaire.
+     *
+     * @return void
+     */
+    public function onResetCurrent();
 
     /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.

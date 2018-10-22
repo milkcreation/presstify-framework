@@ -5,11 +5,11 @@ namespace tiFy\Form\Factory;
 use tiFy\Contracts\Form\FactorySession;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Kernel\Parameters\ParamsBagController;
-use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
+use tiFy\Form\Factory\ResolverTrait;
 
 class Session implements FactorySession
 {
-    use FormFactoryResolver;
+    use ResolverTrait;
 
     /**
      * Identifiant de session.

@@ -1,8 +1,8 @@
 <?php
 
-namespace tiFy\Kernel\Assets;
+namespace tiFy\Contracts\Kernel;
 
-interface AssetsInterface
+interface Assets
 {
     /**
      * Définition de styles CSS.
@@ -13,6 +13,17 @@ interface AssetsInterface
      * @return void
      */
     public function addInlineCss($css, $ui = 'user');
+
+    /**
+     * Définition de styles JS.
+     *
+     * @param string $js propriétés Js.
+     * @param string $ui Interface de l'attribut. user|admin|both
+     * @param boolean $footer false (défaut) pour inscrire le script dans le header|true pour inscrire le script dans le footer.
+     *
+     * @return void
+     */
+    public function addInlineJs($js, $ui = 'user', $footer = false);
 
     /**
      * Définition d'attributs JS.

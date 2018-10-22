@@ -2,11 +2,12 @@
 
 namespace tiFy\Form;
 
-use tiFy\Contracts\Form\Addon as AddonInterface;
-use tiFy\Contracts\Form\FormFactory as FormFactoryInterface;
+use tiFy\Contracts\Form\AddonController as AddonControllerInterface;
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\Factory\ResolverTrait;
+use tiFy\Kernel\Parameters\ParamsBagController;
 
-abstract class AddonController implements AddonInterface
+class AddonController extends ParamsBagController implements AddonControllerInterface
 {
     use ResolverTrait;
 
@@ -17,39 +18,20 @@ abstract class AddonController implements AddonInterface
     protected $name;
 
     /**
-     * Liste des options par défaut du formulaire associé.
-     * @var array
-     */
-    protected $defaultFormOptions = [];
-
-    /**
-     * Liste des options par défaut des champs du formulaire associé.
-     * @var array
-     */
-    protected $defaultFieldOptions = [];
-
-    /**
-     * Liste des méthodes de rappel de court-circuitage.
-     * @var array
-     */
-    protected $callbacks = [];
-
-    /**
      * CONSTRUCTEUR.
      *
      * @param $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
-     * @param FormFactoryInterface $form Formulaire associé.
+     * @param FormFactory $form Formulaire associé.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], FormFactoryInterface $form)
+    public function __construct($name, $attrs = [], FormFactory $form)
     {
         $this->name = $name;
         $this->form = $form;
 
-        $this->parseCallbacks();
-        $this->parseDefaultFormOptions();
+        parent::__construct($attrs);
 
         $this->boot();
     }

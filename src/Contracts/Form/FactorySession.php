@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Form\FormResolver;
+use tiFy\Contracts\Form\FactoryResolver;
 
-interface FactorySession extends FormResolver
+interface FactorySession extends FactoryResolver
 {
 
 }

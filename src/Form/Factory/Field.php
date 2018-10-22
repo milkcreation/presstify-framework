@@ -4,13 +4,14 @@ namespace tiFy\Form\Factory;
 
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Form\FactoryField;
+use tiFy\Contracts\Form\FieldController;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Kernel\Parameters\ParamsBagController;
-use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
+use tiFy\Form\Factory\ResolverTrait;
 
 class Field extends ParamsBagController implements FactoryField
 {
-    use FormFactoryResolver;
+    use ResolverTrait;
 
     /**
      * Liste des attributs de configuration.
@@ -21,7 +22,6 @@ class Field extends ParamsBagController implements FactoryField
      * @var string $after Contenu HTML affiché après le champ.
      * @var bool|string|array $wrapper Affichage de l'encapuleur de champ. false si masqué|true charge les attributs par défaut|array permet de définir des attributs personnalisés.
      * @var bool|string|array $label Affichage de l'intitulé de champ. false si masqué|true charge les attributs par défaut|array permet de définir des attributs personnalisés.
-     * @var array $support Définition des attributs de support. label|wrapper|request|tabindex.
      * @var int $group Indice du groupe d'appartenance.
      * @var int $order Ordre d'affichage général ou dans le groupe s'il est défini.
      * @var string $type Type de champ.
@@ -30,6 +30,7 @@ class Field extends ParamsBagController implements FactoryField
      * @var array $choices Liste de choix des valeurs multiples.
      * @var array $attrs Listes des attributs HTML. (hors name & value)
      * @var array $extras Listes des attributs de configuration de champ complémentaire.
+     * @var array $supports Définition des propriétés de support. label|wrapper|request|tabindex.
      * @var boolean|string|array $required Configuration de champs requis. false si désactivé|true charge les attributs par défaut| array {
      *
      *      @var boolean|string|array $tagged Affichage de l'indicateur de champ requis. false si masqué|true charge les attributs par défaut|string valeur de l'indicateur|array permet de définir des attributs personnalisés.
@@ -39,7 +40,7 @@ class Field extends ParamsBagController implements FactoryField
      *      @var array $args Liste des variables passées en argument dans la fonction de validation.
      *      @var string $message Message de notification en cas d'erreur.
      * }
-     * @var array $validation {
+     * @var array $validations {
      *      Liste des fonctions de validation d'intégrité du champ lors de la soumission.
      *
      *      @var string|callable $call Fonction de validation ou alias de qualification.
@@ -53,7 +54,6 @@ class Field extends ParamsBagController implements FactoryField
         'after'           => '',
         'wrapper'         => true,
         'label'           => true,
-        'support'         => [],
         'group'           => 0,
         'position'        => 0,
         'type'            => 'html',
@@ -62,8 +62,9 @@ class Field extends ParamsBagController implements FactoryField
         'choices'         => [],
         'attrs'           => [],
         'extras'          => [],
+        'supports'        => [],
         'required'        => false,
-        'validation'      => [],
+        'validations'     => [],
         //@todo 'transport'       => true,
         //@todo 'addons'          => []
     ];
@@ -73,16 +74,6 @@ class Field extends ParamsBagController implements FactoryField
      * @var string
      */
     protected $slug = '';
-
-
-    /**
-     * -----------------------------------------------------------------------------------------------------------------
-     */
-    /**
-     * Attributs de test d'intégrité de champ requis.
-     * @var false|array
-     */
-    protected $required = false;
 
     /**
      * CONSTRUCTEUR.
@@ -98,14 +89,13 @@ class Field extends ParamsBagController implements FactoryField
         $this->slug = $slug;
         $this->form = $form;
 
-        // A l'issue du chargement complet de la liste des champs.
-        $this->events('field.init', [&$this]);
+        parent::__construct($attrs);
 
         // A l'issue du chargement complet de la liste des champs.
         $this->events()->listen(
             'fields.init',
-            function () use ($attrs) {
-                $this->parse($attrs);
+            function () {
+                $this->prepare();
             }
         );
     }
@@ -118,9 +108,23 @@ class Field extends ParamsBagController implements FactoryField
         return (string)$this->getController();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [
+            'name'   => $this->slug,
+            'title'  => $this->slug
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getController()
     {
-        return app("form.field.controller.{$this->form->name()}.{$this->getSlug()}");
+        return app("form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}");
     }
 
     /**
@@ -163,12 +167,18 @@ class Field extends ParamsBagController implements FactoryField
         return $this->slug;
     }
 
+
+    public function getRequired($key = null, $default = null)
+    {
+        return $this->get('required' . ($key ? ".{$key}" : ''), $default);
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getTitle()
     {
-        return $this->get('title') ? : $this->getSlug();
+        return $this->get('title');
     }
 
     /**
@@ -226,15 +236,7 @@ class Field extends ParamsBagController implements FactoryField
      */
     public function hasLabel()
     {
-        return !empty($this->get('label'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasSupport($support)
-    {
-        return in_array($support, $this->get('support', []));
+        return $this->supports('label') && !empty($this->get('label'));
     }
 
     /**
@@ -242,16 +244,47 @@ class Field extends ParamsBagController implements FactoryField
      */
     public function hasWrapper()
     {
-        return !empty($this->get('wrapper'));
+        return $this->supports('wrapper') && !empty($this->get('wrapper'));
+    }
+
+    /**
+     * Traitement récursif des tests de validation.
+     *
+     * @return void
+     */
+    public function parseValidations($validations, $results = [])
+    {
+        if (is_array($validations)) :
+            if (isset($validations['call'])) :
+                $results[] = array_merge(
+                    [
+                        'call'      => '__return_true',
+                        'args'      => [],
+                        'message'   => __('Le format du champ "%s" est invalide', 'tify'),
+                    ],
+                    $validations
+                );
+            else :
+                foreach($validations as $validation) :
+                    $results += $this->parseValidations($validation, $results);
+                endforeach;
+            endif;
+        elseif (is_string($validations)) :
+            $validations = array_map('trim', explode(',', $validations));
+
+            foreach ($validations as $call) :
+                $results += $this->parseValidations(['call' => $call], $results);
+            endforeach;
+        endif;
+
+        return $results;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function parse($attrs = [])
+    public function prepare()
     {
-        parent::parse($attrs);
-
         if (!$this->has('attrs.id', '')) :
             $this->set('attrs.id', "Form-fieldInput--{$this->getSlug()}");
         endif;
@@ -330,10 +363,10 @@ class Field extends ParamsBagController implements FactoryField
                 );
             endif;
 
-            $required['call'] = isset($required['value_none']) && empty($required['call'])
-                ? 'is_diff'
-                : 'is_empty';
-            $required['args'] = isset($required['value_none']) && empty($required['args'])
+            $required['call'] = !empty($required['value_none']) && empty($required['call'])
+                ? 'is-equal'
+                : 'not-empty';
+            $required['args'] = !empty($required['value_none']) && empty($required['args'])
                 ? [] + [$required['value_none']]
                 : [];
 
@@ -357,6 +390,10 @@ class Field extends ParamsBagController implements FactoryField
                     $this->pull('required.tagged.attrs.class');
                 endif;
             endif;
+        endif;
+
+        if ($validations = $this->get('validations')) :
+            $this->set('validations', $this->parseValidations($validations));
         endif;
 
         if ($label = $this->get('label')) :
@@ -392,16 +429,21 @@ class Field extends ParamsBagController implements FactoryField
             endif;
         endif;
 
-        app()->singleton(
-            "form.field.controller.{$this->form()->name()}.{$this->getSlug()}",
+        /** @var FieldController $control */
+        $control = app()->singleton(
+            "form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}",
             function ($name, FactoryField $field) {
                 if (app()->bound("form.field.{$this->getType()}")) :
                     return app("form.field.{$this->getType()}", [$field]);
                 else :
-                    return app("form.field.defaults", [$name, $field]);
+                    return app("form.field", [$name, $field]);
                 endif;
             }
         )->build([$this->getType(), $this]);
+
+        if (!$this->get('supports')) :
+            $this->set('supports', $control->supports());
+        endif;
     }
 
     /**
@@ -425,113 +467,20 @@ class Field extends ParamsBagController implements FactoryField
     /**
      * {@inheritdoc}
      */
-    public function setSupport($key, $value)
-    {
-        $this->set("support.{$key}", $value);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setValue($value)
     {
         $this->set('value', $value);
     }
 
     /**
-     * -----------------------------------------------------------------------------------------------------------------
+     * {@inheritdoc}
      */
-    /**
-     * Initialisation de la liste des attributs de configuration du champ des addons associés au formulaire.
-     *
-     * @return void
-     */
-    private function _initAddonsOptions()
+    public function supports($support = null)
     {
-        if($addons = $this->getAddons()) :
-            foreach ($this->getAddons() as $name => $addon) :
-                $addon->parseDefaultFieldOptions($this);
-            endforeach;
-        endif;
-    }
-
-    /**
-     * Traitement de la liste des options par défaut d'un addon.
-     *
-     * @param string $name Nom de qualification de l'addon.
-     * @param array $defaults Liste des options par défaut de champs.
-     *
-     * @return void
-     */
-    public function parseDefaultAddonOptions($name, $defaults = [])
-    {
-        $this->set(
-            "addons.{$name}",
-            $this->recursiveParseArgs($this->getAddonOptions($name), $defaults)
-        );
-    }
-
-    /**
-     * Récupération de la liste des options d'un addon.
-     *
-     * @param string $name Nom de qualification de l'addon.
-     *
-     * @return array
-     */
-    public function getAddonOptions($name)
-    {
-        return $this->get("addons.{$name}", []);
-    }
-
-    /**
-     * Récupération d'une option d'un addon.
-     *
-     * @param string $name Nom de qualification de l'addon.
-     * @param string $key Clé d'index de l'option à récupérer.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function getAddonOption($name, $key, $default = '')
-    {
-        return $this->get("addons.{$name}.$key", $default);
-    }
-
-    /**
-     * Traitement récursif des tests d'intégrités a passer lors de la soumission du formulaire.
-     *
-     * @return void
-     */
-    private function _recursiveParseIntegrityCallbacks($integrity_cb)
-    {
-        $defaults = [
-            'cb'        => '__return_true',
-            'args'      => [],
-            'message'   => __('Le format du champ "%s" est invalide', 'tify'),
-        ];
-
-        if (is_string($integrity_cb)) :
-            $integrity_cb = array_map('trim', explode(',', $integrity_cb));
-
-            foreach ($integrity_cb as $cb) :
-                $this->integrityCallbacks[] = array_merge(
-                    $defaults,
-                    ['cb' => $cb]
-                );
-            endforeach;
-        elseif (is_array($integrity_cb)) :
-            if (isset($integrity_cb['cb'])) :
-                $this->integrityCallbacks[] = array_merge(
-                    $defaults,
-                    $integrity_cb
-                );
-            else :
-                foreach($integrity_cb as $cb) :
-                    $this->_recursiveParseintegrityCallbacks($cb);
-                endforeach;
-            endif;
+        if (is_null($support)) :
+            return $this->get('supports', []);
+        else :
+            return in_array($support, $this->get('supports', []));
         endif;
     }
 }

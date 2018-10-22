@@ -2,51 +2,31 @@
 
 namespace tiFy\Form\Button\Submit;
 
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\ButtonController;
 
 class Submit extends ButtonController
 {
     /**
-     * Nom de qualification du bouton.
-     * @var string
-     */
-    protected $name;
-
-    /**
      * CONSTRUCTEUR.
      *
-     * @return void
+     * @param array $attrs Liste des attributs de configuration.
+     * @param FormFactory $form Instance du contrôleur de formulaire associé.
+     *
+     * @void
      */
-    public function __construct()
+    public function __construct($attrs = [], FormFactory $form)
     {
-        $this->attributes['label'] = __('Envoyer', 'tify');
-        $this->attributes['order'] = 1;
+        parent::__construct('submit', $attrs, $form);
     }
 
     /**
-     * Reundu d'affichage du bouton.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function render()
+    public function defaults()
     {
-        $output = "";
-
-        $output .= Field::Hidden(
-            [
-                'name'  => 'submit-' . $this->getForm()->getUid(),
-                'value' => 'submit',
-            ]
-        );
-
-        $output .= Field::Button(
-            [
-                'type'    => 'submit',
-                'attrs'   => $this->getHtmlAttrs(),
-                'content' => $this->get('label', ''),
-            ]
-        );
-
-        return $output;
+        return [
+            'content'   => __('Envoyer', 'tify')
+        ];
     }
 }

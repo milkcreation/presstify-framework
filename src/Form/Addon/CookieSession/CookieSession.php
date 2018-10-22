@@ -1,11 +1,11 @@
 <?php
 
-namespace tiFy\Components\Form\Addons\CookieTransport;
+namespace tiFy\Form\Addon\CookieSession;
 
-use tiFy\Form\Addons\AbstractAddonController;
-use tiFy\Form\Forms\FormItemController;
+use tiFy\Contracts\Form\FormFactory;
+use tiFy\Form\AddonController;
 
-class CookieTransport extends AbstractAddonController
+class CookieSession extends AddonController
 {
     /**
      * Liste des options par défaut du formulaire associé.
@@ -38,14 +38,20 @@ class CookieTransport extends AbstractAddonController
     /**
      * CONSTRUCTEUR.
      *
+     * @param array $attrs Liste des attributs de configuration.
+     * @param FormFactory $form Formulaire associé.
+     *
      * @return void
      */
-    public function __construct()
+    public function __construct($attrs = [], FormFactory $form)
     {
-        $this->callbacks = [
-            'field_set_value'                => [$this, 'cb_field_init_value'],
-            'handle_parse_query_fields_vars' => [$this, 'cb_handle_parse_query_fields_vars'],
-        ];
+        parent::__construct('cookie-session', $attrs, $form);
+
+        return;
+
+        $this->events()
+            ->listen('field.init', [$this, 'onFieldInit'])
+            ->listen('request.prepare', [$this, 'onRequestPrepare']);
     }
 
     /**
@@ -53,7 +59,7 @@ class CookieTransport extends AbstractAddonController
      *
      * @return void
      */
-    public function cb_field_init_value(&$value, $field)
+    public function onFieldInit(&$field)
     {
         if ($this->getFieldOption($field, 'ignore')) :
             return;
@@ -67,11 +73,10 @@ class CookieTransport extends AbstractAddonController
      *
      * @param $fields_vars
      * @param Field[] $fields Liste des classes de rappel de champ.
-     * @param Handle $handle Classe de rappel de traitement du formulaire.
      *
      * @return void
      */
-    public function cb_handle_parse_query_fields_vars(&$fields_vars, $fields, $handle)
+    public function onRequestPrepare(&$vars, $fields)
     {
         $datas = [];
         foreach ($fields as $field) :

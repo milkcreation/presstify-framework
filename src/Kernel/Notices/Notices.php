@@ -4,9 +4,10 @@ namespace tiFy\Kernel\Notices;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\Contracts\Kernel\Notices as NoticesInterface;
+use tiFy\Contracts\Kernel\Notices as NoticesContract;
+use tiFy\Contracts\Views\ViewsInterface;
 
-class Notices implements NoticesInterface
+class Notices implements NoticesContract
 {
     /**
      * Liste des types de notifications permis. error|warning|info|success.
@@ -55,36 +56,6 @@ class Notices implements NoticesInterface
         return ($notices = $this->get($type))
             ? count($notices)
             : 0;
-    }
-
-    /**
-     * Affichage des messages de notification par type.
-     *
-     * @param string $code Type du message de notification. error(défaut)|success|info|warning.
-     *
-     * @return string
-     */
-    public function display($code = 'error')
-    {
-        if($notices = $this->get($code)) :
-            $count = count($notices);
-            $datas = Arr::sort($this->datas[$code], 'order');
-
-            $content = "<ol class=\"tiFyForm-NoticesMessages tiFyForm-NoticesMessages--{$code}\">\n";
-            foreach($datas as $key => $message) :
-                $content .= "\t<li class=\"tiFyForm-NoticesMessage tiFyForm-NoticesMessage--{$code}\">";
-                $content .= Arr::get($notices, $key, '');
-                $content .= "\t</li>\n";
-            endforeach;
-            $content .= "</ol>\n";
-        endif;
-
-        $args['content'] = $notices ? $content : '';
-        $args['type'] = $code;
-
-        $output = Partial::Notice($args);
-
-        return $output;
     }
 
     /**
@@ -183,6 +154,27 @@ class Notices implements NoticesInterface
     /**
      * {@inheritdoc}
      */
+    public function render($type)
+    {
+        if($messages = $this->getMessages($type)) :
+            return (string) partial(
+                'notice',
+                [
+                    'type'      => $type,
+                    'content'   => (string)$this->viewer(
+                        'notices',
+                        compact('messages', 'type')
+                    )
+                ]
+            );
+        endif;
+
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setType($type)
     {
         if (!$this->hasType($type)) :
@@ -196,5 +188,36 @@ class Notices implements NoticesInterface
     public function setTypes($types = ['error', 'warning', 'info', 'success'])
     {
         $this->types = (array)$types;
+    }
+
+    /**
+     *
+     */
+    public function viewer($view = null, $data = [])
+    {
+        $alias = 'notices.viewer' . spl_object_hash ($this);
+
+        /** @var ViewsInterface $viewer */
+        if (!app()->bound($alias)) :
+            /** @var Notices $notices */
+            $notices = app('notices');
+
+            $directory = class_info($notices)->getDirname() . '/views';
+            $override_dir = (($override_dir = class_info($this)->getDirname() . '/views') && is_dir($override_dir))
+                ? $override_dir
+                : $directory;
+
+            $viewer = view()
+                ->setDirectory($directory)
+                ->setOverrideDir($override_dir);
+        else :
+           $viewer =  app()->resolve($alias);
+        endif;
+
+        if (is_null($view)) :
+            return $viewer;
+        endif;
+
+        return $viewer->make("_override::{$view}", $data);
     }
 }

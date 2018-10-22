@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Form;
 
-interface FormResolver
+interface FactoryResolver
 {
     /**
      * Récupération de l'instance du contrôleur d'un addon associé au formulaire.
@@ -35,6 +35,13 @@ interface FormResolver
      * @return mixed|FactoryEvents
      */
     public function events($name = null);
+
+    /**
+     * Récupération de la liste des messages d'erreur.
+     *
+     * @return array
+     */
+    public function errors();
 
     /**
      * Récupération de l'instance du contrôleur d'un champ associé au formulaire.
@@ -84,16 +91,16 @@ interface FormResolver
     public function options();
 
     /**
+     * Récupération de l'instance du contrôleur de traitement de la requête de soumission associée au formulaire.
+     *
+     * @return FactoryRequest
+     */
+    public function request();
+
+    /**
      * Récupération de l'instance du contrôleur de session associé au formulaire.
      *
      * @return FactorySession
      */
     public function session();
-
-    /**
-     * Récupération de l'instance du contrôleur de validation associé au formulaire.
-     *
-     * @return FactoryValidation
-     */
-    public function validation();
 }

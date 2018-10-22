@@ -23,7 +23,6 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
      * Listes des attributs de configuration.
      * @var array {
      *      @var string $title Intitulé de qualification du formulaire.
-     *      @var bool|array $wrapper Activation de l'encapsulation HTML, paramètres par défaut|Liste des attributs de balise HTML.
      *      @var string $before Pré-affichage, avant la balise <form/>.
      *      @var string $after Post-affichage, après la balise <form/>.
      *      @var string $method Propriété 'method' de la balise <form/>.
@@ -32,10 +31,11 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
      *      @var array $attrs Liste des attributs complémentaires de la balise <form/>.
      *      @var array $addons Liste des attributs des addons actifs.
      *      @var array $buttons Liste des attributs des boutons actifs.
+     *      @var array $events Liste des événements de court-circuitage.
      *      @var array $fields Liste des attributs de champs.
      *      @var array $notices Liste des attributs des messages de notification.
      *      @var array $options Liste des options du formulaire.
-     *      @var array $callbacks Liste des fonctions et méthodes de court-circuitage de traitement du formulaire.
+     *      @var array $viewer Attributs de configuration du gestionnaire de gabarits d'affichage.
      * }
      */
     protected $attributes = [
@@ -72,6 +72,13 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
         parent::__construct($attrs);
 
         app()->singleton(
+            "form.factory.events.{$this->name()}",
+            function () {
+                return app()->resolve('form.factory.events', [$this->get('events', []), $this]);
+            }
+        )->build();
+
+        app()->singleton(
             "form.factory.addons.{$this->name()}",
             function () {
                 return app()->resolve('form.factory.addons', [$this->get('addons', []), $this]);
@@ -89,13 +96,6 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
             "form.factory.display.{$this->name()}",
             function () {
                 return app()->resolve('form.factory.display', [$this]);
-            }
-        )->build();
-
-        app()->singleton(
-            "form.factory.events.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.events', [$this->get('events', []), $this]);
             }
         )->build();
 
@@ -121,6 +121,13 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
         )->build();
 
         app()->singleton(
+            "form.factory.request.{$this->name()}",
+            function () {
+                return app()->resolve('form.factory.request', [$this]);
+            }
+        )->build();
+
+        app()->singleton(
             "form.factory.session.{$this->name()}",
             function () {
                 return app()->resolve('form.factory.session', [$this]);
@@ -128,13 +135,6 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
         )->build();
 
         app()->singleton(
-            "form.factory.validation.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.validation', [$this]);
-            }
-        )->build();
-
-        $viewer = app()->singleton(
             "form.factory.viewer.{$this->name()}",
             function () {
                 /** @var Manager $manager */
@@ -154,15 +154,6 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
                 return $view;
             }
         )->build();
-
-        $this->events()->listen(
-            'field.init.value',
-            function($value, $field) {
-                var_dump('tutu');
-                exit;
-            }
-        );
-
 
         $this->events('form.init', [&$this]);
     }
@@ -194,9 +185,88 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
     /**
      * {@inheritdoc}
      */
+    public function getAction()
+    {
+        return $this->get('action', '');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCsrf()
+    {
+        return wp_create_nonce('Form' . $this->name());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMethod()
+    {
+        return $this->get('method', 'post');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTitle()
+    {
+        return $this->get('title') ? : $this->name();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function name()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onSetCurrent()
+    {
+        return $this->events('form.set.current', [&$this]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onResetCurrent()
+    {
+        return $this->events('form.reset.current', [&$this]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parse($attrs = [])
+    {
+        parent::parse($attrs);
+
+        if (!$this->has('attrs.id', '')) :
+            $this->set('attrs.id', "Form-content--{$this->name()}");
+        endif;
+        if (!$this->get('attrs.id')) :
+            $this->pull('attrs.id');
+        endif;
+
+        $default_class = "Form-content Form-content--{$this->name()}";
+        if (!$this->has('attrs.class')) :
+            $this->set('attrs.class', $default_class);
+        else :
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        endif;
+        if (!$this->get('attrs.class')) :
+            $this->pull('attrs.class');
+        endif;
+
+        $this->set('attrs.action', $this->getAction());
+        $this->set('attrs.method', $this->getMethod());
+        if ($enctype = $this->get('enctype')) :
+            $this->set('attrs.enctype', $enctype);
+        endif;
     }
 
     /**
@@ -212,130 +282,5 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
         endif;
 
         return $viewer->make("_override::{$view}", $data);
-    }
-
-    /**
-     * -----------------------------------------------------------------------------------------------------------------
-     */
-    /**
-     * Traitement de la liste des options d'un addon.
-     *
-     * @param string $name Nom de qualification de l'addon.
-     * @param array $default Liste des options par défaut.
-     *
-     * @return void
-     */
-    public function parseDefaultAddonOptions($name, $default = [])
-    {
-        $this->set(
-            "addons.{$name}",
-            $this->recursiveParseArgs($this->getAddonOptions($name), $default)
-        );
-    }
-
-    /**
-     * Récupération de l'action du formulaire (url).
-     *
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->get('action', '');
-    }
-
-    /**
-     * Récupération d'une option d'un addon.
-     *
-     * @param string $name Nom de qualification de l'addon.
-     * @param string $key Clé d'index de l'option à récupérer.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function getAddonOption($name, $key, $default = '')
-    {
-        return $this->get("addons.{$name}.$key", $default);
-    }
-
-    /**
-     * Récupération de la liste des options d'un addon.
-     *
-     * @param string $name Nom de qualification de l'addon.
-     *
-     * @return array
-     */
-    public function getAddonOptions($name)
-    {
-        return $this->get("addons.{$name}", []);
-    }
-
-    /**
-     * Récupération de la méthode de soumission du formulaire.
-     *
-     * @return string
-     */
-    public function getMethod()
-    {
-        return $this->get('method', 'post');
-    }
-
-    /**
-     * Récupération de la clé d'indexe de sécurisation du formulaire (CSRF).
-     *
-     * @return string
-     */
-    public function getNonce()
-    {
-        return "_{$this->getUid()}_nonce";
-    }
-
-    /**
-     * Récupération du préfixe de formulaire.
-     *
-     * @return string
-     */
-    public function getPrefix()
-    {
-        return $this->get('prefix', 'tiFyForm_');
-    }
-
-    /**
-     * Récupération de l'intitulé de qualification du formulaire.
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->get('title') ? : $this->name();
-    }
-
-    /**
-     * Récupération de l'identifiant unique de qualification du formulaire.
-     *
-     * @return string
-     */
-    public function getUid()
-    {
-        return $this->getPrefix() . $this->name();
-    }
-
-    /**
-     * Evénement de déclenchement à l'initialisation du formulaire en tant que formulaire courant.
-     *
-     * @return void
-     */
-    public function onSetCurrent()
-    {
-        return $this->events('form.set.current', [&$this]);
-    }
-
-    /**
-     * Evénement de déclenchement à la réinitialisation du formulaire courant du formulaire.
-     *
-     * @return void
-     */
-    public function onResetCurrent()
-    {
-        return $this->events('form.reset.current', [&$this]);
     }
 }

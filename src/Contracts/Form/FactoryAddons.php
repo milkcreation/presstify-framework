@@ -3,9 +3,9 @@
 namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\Form\AddonFactory;
-use tiFy\Contracts\Form\FormResolver;
+use tiFy\Contracts\Form\FactoryResolver;
 
-interface FactoryAddons extends FormResolver
+interface FactoryAddons extends FactoryResolver
 {
     /**
      * Récupération de l'instance du contrôleur d'un addon.

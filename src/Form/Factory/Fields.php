@@ -6,11 +6,12 @@ use Illuminate\Support\Collection;
 use tiFy\Contracts\Form\FactoryFields;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
+use tiFy\Form\Factory\AbstractItemsIterator;
+use tiFy\Form\Factory\ResolverTrait;
 
-class Fields implements FactoryFields
+class Fields extends AbstractItemsIterator implements FactoryFields
 {
-    use FormFactoryResolver;
+    use ResolverTrait;
 
     /**
      * Liste des éléments associés au formulaire.
@@ -48,12 +49,14 @@ class Fields implements FactoryFields
             $pad = 0;
 
             $group->each(function (FactoryField $field, $key) use (&$pad, $max) {
-                $number = 1000 * ($field->getGroup() + 1);
-                $order = $field->getPosition() ? : ++$pad+$max;
+                $number = 10000 * ($field->getGroup()+1);
+                $position = $field->getPosition() ? : ++$pad+$max;
 
-                return $field->setPosition(absint($number+$order));
+                return $field->setPosition(absint($number+$position));
             });
         endforeach;
+
+        $this->items = $this->byPosition();
 
         $this->events('fields.init', [&$this]);
     }
@@ -71,19 +74,11 @@ class Fields implements FactoryFields
     /**
      * {@inheritdoc}
      */
-    public function byOrder()
+    public function byPosition()
     {
         return (new Collection($this->items))->sortBy(function (FactoryField $field) {
             return $field->getPosition();
         })->all();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function get($slug)
-    {
-        return isset($this->items[$slug]) ? $this->items[$slug] : null;
     }
 
     /**
@@ -94,18 +89,5 @@ class Fields implements FactoryFields
         return !empty((new Collection($this->items))->max(function (FactoryField $field) {
             return $field->getGroup();
         }));
-    }
-
-    /**
-     * -----------------------------------------------------------------------------------------------------------------
-     */
-    /**
-     * Initialisation de la liste des champs.
-     *
-     * @return void
-     */
-    private function _initFields()
-    {
-
     }
 }

@@ -4,11 +4,11 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryEvents;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
+use tiFy\Form\Factory\ResolverTrait;
 
 class Events implements FactoryEvents
 {
-    use FormFactoryResolver;
+    use ResolverTrait;
 
     /**
      * CONSTRUCTEUR.

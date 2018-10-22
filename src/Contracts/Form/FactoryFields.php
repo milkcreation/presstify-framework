@@ -3,9 +3,10 @@
 namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\Form\FactoryField;
-use tiFy\Contracts\Form\FormResolver;
+use tiFy\Contracts\Form\FactoryItemsIterator;
+use tiFy\Contracts\Form\FactoryResolver;
 
-interface FactoryFields extends FormResolver
+interface FactoryFields extends FactoryResolver, FactoryItemsIterator
 {
     /**
      * Récupération de la liste des champs par ordre d'affichage.
@@ -19,7 +20,7 @@ interface FactoryFields extends FormResolver
      *
      * @return FactoryField[]
      */
-    public function byOrder();
+    public function byPosition();
 
     /**
      * Récupération d'un champ selon son identifiant de qualification.

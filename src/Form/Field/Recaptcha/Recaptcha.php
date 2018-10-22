@@ -15,13 +15,25 @@ class Recaptcha extends FieldController
     protected $supports = ['label', 'request', 'wrapper'];
 
     /**
+     * CONSTRUCTEUR.
+     *
+     * @param FactoryField $field Instance du contrôleur de champ de formulaire associé.
+     *
+     * @void
+     */
+    public function __construct(FactoryField $field)
+    {
+        parent::__construct('recaptcha', $field);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function boot()
     {
         $this->events()->listen(
-            'validation.check.field.recaptcha',
-            [$this, 'onValidationCheckField']
+            'validation.field.recaptcha',
+            [$this, 'onValidationField']
         );
     }
 
@@ -33,7 +45,7 @@ class Recaptcha extends FieldController
      *
      * @return void
      */
-    public function onValidationCheckField(&$errors, FactoryField $field)
+    public function onValidationField(&$errors, FactoryField $field)
     {
         /** @var ApiRecaptcha $recaptcha */
         $recaptcha = app('api.recaptcha');
@@ -51,16 +63,19 @@ class Recaptcha extends FieldController
     /**
      * {@inheritdoc}
      */
-    public function content()
+    public function render()
     {
         return field(
             'recaptcha',
-            [
-                'name'  => $this->field()->getName(),
-                'attrs' => [
-                    'id' => preg_replace('/-/', '_', sanitize_key($this->form()->name()))
+            array_merge(
+                $this->field()->getExtras(),
+                [
+                    'name'  => $this->field()->getName(),
+                    'attrs' => [
+                        'id' => preg_replace('#-#', '_', sanitize_key($this->form()->name()))
+                    ]
                 ]
-            ]
+            )
         );
     }
 }

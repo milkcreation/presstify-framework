@@ -20,7 +20,7 @@
  * http://kb.mailchimp.com/merge-tags/all-the-merge-tags-cheat-sheet#Merge-tags-for-list-and-account-information
  **/
 
-namespace tiFy\Components\Tools\Mailer;
+namespace tiFy\Mail\Mailer;
 
 use tiFy\Core\Mail\Queue;
 

@@ -6,4 +6,4 @@
  */
 ?>
 
-FOOTER
+<?php $this->insert('buttons', $this->all()); ?>
