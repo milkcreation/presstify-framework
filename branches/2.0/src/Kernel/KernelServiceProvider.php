@@ -17,9 +17,9 @@ use tiFy\Route\Route;
 use tiFy\Contracts\Views\ViewsInterface;
 
 use tiFy\Kernel\Assets\Assets;
-use tiFy\Kernel\Assets\AssetsInterface;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
+use tiFy\Kernel\Container\ServiceProvider;
 use tiFy\Kernel\Events\Events;
 use tiFy\Kernel\Events\Listener;
 use tiFy\Kernel\Http\Request;
@@ -27,21 +27,13 @@ use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Notices\Notices;
 use tiFy\Kernel\Parameters\Parameters;
 use tiFy\Kernel\Parameters\ParamsBagController;
-use tiFy\Kernel\Templates\Engine;
 use tiFy\Kernel\Service;
-
-use tiFy\Kernel\Container\ServiceProvider;
+use tiFy\Kernel\Templates\Engine;
+use tiFy\Kernel\Validation\Validator;
 use tiFy\tiFy;
 
 class KernelServiceProvider extends ServiceProvider
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $singletons = [
-        Assets::class
-    ];
-
     /**
      * {@inheritdoc}
      */
@@ -84,6 +76,7 @@ class KernelServiceProvider extends ServiceProvider
                 return new Events();
             }
         );
+
         $this->getContainer()->bind(
             'events.listener',
             function (callable $callback) {
@@ -119,7 +112,21 @@ class KernelServiceProvider extends ServiceProvider
             }
         );
 
+        $this->getContainer()->bind(
+            'validator',
+            function () {
+                return new Validator();
+            }
+        );
+
         $app = $this->getContainer()->singleton(App::class)->build();
+
+        $this->getContainer()->singleton(
+            'assets',
+            function () {
+                return new Assets();
+            }
+        )->build();
 
         $this->getContainer()->bind(
             'logger',
@@ -143,9 +150,6 @@ class KernelServiceProvider extends ServiceProvider
     public function getBootables()
     {
         return array_merge(
-            [
-                Assets::class
-            ],
             $this->components,
             $this->plugins
         );

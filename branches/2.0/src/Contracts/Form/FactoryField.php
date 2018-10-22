@@ -2,10 +2,11 @@
 
 namespace tiFy\Contracts\Form;
 
+use tiFy\Contracts\Form\FieldController;
 use tiFy\Contracts\Kernel\ParamsBagInterface;
-use tiFy\Contracts\Form\FormResolver;
+use tiFy\Contracts\Form\FactoryResolver;
 
-interface FactoryField extends FormResolver, ParamsBagInterface
+interface FactoryField extends FactoryResolver, ParamsBagInterface
 {
     /**
      * Résolution de sortie de l'affichage.
@@ -13,6 +14,13 @@ interface FactoryField extends FormResolver, ParamsBagInterface
      * @return string
      */
     public function __toString();
+
+    /**
+     * Récupération de l'instance du contrôleur de champ.
+     *
+     * @return FieldController
+     */
+    public function getController();
 
     /**
      * Récupération d'un ou de la liste des attributs de configuration complémentaires.
@@ -44,6 +52,16 @@ interface FactoryField extends FormResolver, ParamsBagInterface
      * @return int
      */
     public function getPosition();
+
+    /**
+     * Récupération d'attribut de champ requis.
+     *
+     * @param null|string $key Clé d'indexe d'attributs. Syntaxe à point permise. Retour la liste complète si null (défaut).
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getRequired($key = null, $default = null);
 
     /**
      * Récupération de l'identifiant de qualification.
@@ -93,20 +111,18 @@ interface FactoryField extends FormResolver, ParamsBagInterface
     public function hasLabel();
 
     /**
-     * Vérification d'une propriété de support.
-     *
-     * @param string $support Propriété du support à vérifier.
-     *
-     * @return boolean
-     */
-    public function hasSupport($support);
-
-    /**
      * Vérification de l'encapsulation du champ.
      *
      * @return boolean
      */
     public function hasWrapper();
+
+    /**
+     * Initialisation (préparation) du champ.
+     *
+     * @return void
+     */
+    public function prepare();
 
     /**
      * Définition d'une attributs de configuration complémentaire.
@@ -128,16 +144,6 @@ interface FactoryField extends FormResolver, ParamsBagInterface
     public function setPosition($position = 0);
 
     /**
-     * Définition d'une propriété de support.
-     *
-     * @param string $key Clé d'indexe du support.
-     * @param mixed $value Valeur du support.
-     *
-     * @return $this
-     */
-    public function setSupport($key, $value);
-
-    /**
      * Définition de la valeur d'un champ.
      *
      * @param mixed $value Valeur à définir.
@@ -145,4 +151,13 @@ interface FactoryField extends FormResolver, ParamsBagInterface
      * @return $this
      */
     public function setValue($value);
+
+    /**
+     * Vérification d'une propriété ou récupération de la liste des proriétés de support .
+     *
+     * @param null|string $support Propriété du support à vérifier.
+     *
+     * @return array|boolean
+     */
+    public function supports($support = null);
 }

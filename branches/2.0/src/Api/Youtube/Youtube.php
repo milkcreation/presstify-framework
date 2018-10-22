@@ -11,7 +11,7 @@ namespace tiFy\Api\Youtube;
 use Illuminate\Support\Arr;
 use Embed\Embed;
 use Madcoda\Youtube\Youtube as MadcodaYoutube;
-use tiFy\Kernel\Tools;
+use tiFy\Contracts\Kernel\Validator;
 
 class Youtube extends MadcodaYoutube
 {
@@ -95,7 +95,7 @@ class Youtube extends MadcodaYoutube
      */
     public function getEmbed($video, $params = [])
     {
-        if(Tools::Checker()->isUrl($video)) :
+        if(validator()->isUrl($video)) :
             try {
                 $video_id = self::parseVIdFromURL($video);
                 $video_url = $video;
@@ -143,7 +143,7 @@ class Youtube extends MadcodaYoutube
      */
     public function getThumbnailSrc($video, $formats = [])
     {
-        if(Tools::Checker()->isUrl($video)) :
+        if(validator()->isUrl($video)) :
             if (!self::isUrl($video)) :
                 return new \WP_Error(
                     'tFyComponentsApiYtInvalidSrc',

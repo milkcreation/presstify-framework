@@ -4,22 +4,16 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryDisplay;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
+use tiFy\Form\Factory\ResolverTrait;
 
 class Display implements FactoryDisplay
 {
-    use FormFactoryResolver;
-
-    /**
-     * Liste des attributs de configuration.
-     * @return array
-     */
-    protected $attributes = [];
+    use ResolverTrait;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form Instance du contrôleur de formulaire associé.
      *
      * @return void
      */
@@ -39,94 +33,17 @@ class Display implements FactoryDisplay
     }
 
     /**
-     * Corps de page du formulaire.
+     * Rendu de l'affichage.
      *
      * @return string
      */
-    public function body()
+    public function render()
     {
-        $has_group = $this->getFields()->hasGroup();
+        $fields = $this->fields();
+        $buttons = $this->buttons();
+        $errors = $this->errors();
 
-        $output = "";
-        $output .= "\t\t<div class=\"tiFyForm-Fields\">\n";
-
-        if($has_group) :
-            foreach ($this->getFields()->byGroup() as $num => $fields) :
-                $output .= "\t\t\t<div class=\"tiFyForm-FieldsGroup tiFyForm-FieldsGroup--{$num}\">";
-                foreach($fields->byOrder() as $field) :
-                    $output .= $field->display();
-                endforeach;
-                $output .= "\t\t\t</div>";
-            endforeach;
-        else :
-            foreach($this->getFields()->byOrder() as $field) :
-                $output .= $field->display();
-            endforeach;
-        endif;
-
-        $output .= "\t\t</div>";
-
-        return $output;
-    }
-
-    /**
-     * Affichage du formulaire de soumission.
-     *
-     * @return string
-     */
-    public function form_content()
-    {
-        $output = "";
-        $output .= $this->get('form_before');
-
-        $output .= $this->header();
-        $output .= $this->body();
-        $output .= $this->footer();
-
-        $output .= $this->get('form_after');
-
-        return $output;
-    }
-
-    /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut à récupérer.
-     * @param mixed $defaul Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return Arr::get($this->attributes, $key, $default);
-    }
-
-    /**
-     * Entête du formulaire.
-     *
-     * @return string
-     */
-    public function header()
-    {
-        $output = "";
-
-        $output .= $this->get('hidden_fields');
-
-        return $output;
-    }
-
-    /**
-     * Pied de page du formulaire.
-     *
-     * @return string
-     */
-    public function footer()
-    {
-        $output = "";
-
-        $output .= $this->get('buttons');
-
-        return $output;
+        return $this->form()->viewer('form', compact('errors', 'fields', 'buttons'));
     }
 
     /**
@@ -250,46 +167,5 @@ class Display implements FactoryDisplay
         );
 
         $this->attributes = compact('wrapper', 'notices', 'content', 'form_before', 'form_after', 'hidden_fields', 'buttons');
-    }
-
-    /**
-     * Rendu de l'affichage.
-     *
-     * @return string
-     */
-    public function render()
-    {
-        $fields = $this->fields()->byOrder();
-
-        return $this->form()->viewer('form', compact('fields'));
-
-        /*
-        $output = "";
-
-        // Court-circuitage post-affichage
-        $this->call('form_before_display', [&$output, $this->getForm()]);
-
-        $output .= $this->get('wrapper');
-
-        // Court-circuitage post-affichage
-        $this->call('form_after_display', [&$output, $this->getForm()]);
-
-        return $output;
-        */
-    }
-
-    /**
-     * Encapsulation du contenu.
-     *
-     * @return string
-     */
-    public function wrapper()
-    {
-        $output = "";
-
-        $output .= $this->get('notices');
-        $output .= $this->get('content');
-
-        return $output;
     }
 }

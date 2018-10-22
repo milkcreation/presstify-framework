@@ -26,24 +26,18 @@ class Recaptcha extends FieldController
     /**
      * {@inheritdoc}
      */
-    public function display()
-    {
-        $output = "";
-        $output .= "<input type=\"hidden\" name=\"{$this->getName()}\" value=\"-1\">";
-        $output .= "<div id=\"{$this->get('attrs.id')}\" class=\"g-recaptcha\" data-sitekey=\"{$this->get('sitekey')}\" data-theme=\"{$this->get('theme')}\" data-tabindex=\"{$this->get('tabindex')}\"></div>";
-
-        return $output;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function parse($attrs = [])
     {
         parent::parse($attrs);
 
         /** @var RecaptchaInterface $recaptcha */
         $recaptcha = app('api.recaptcha');
+
+        if (!$this->get('attrs.id')) :
+            $this->set('attrs.id', 'tiFyField-recapcha--' . $this->getIndex());
+        endif;
+
+        $this->set('attrs.data-tabindex', $this->get('tabindex'));
 
         if (!$this->get('sitekey')) :
             $this->set('sitekey', $recaptcha->getSiteKey());

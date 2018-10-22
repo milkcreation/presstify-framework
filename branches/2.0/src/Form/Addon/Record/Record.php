@@ -42,6 +42,7 @@
 
 namespace tiFy\Form\Addon\Record;
 
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Db\Db;
 use tiFy\Form\AddonController;
 use tiFy\Components\Addons\Record\ListTable;
@@ -125,13 +126,19 @@ class Record extends AddonController
     /**
      * CONSTRUCTEUR.
      *
+     * @param array $attrs Liste des attributs de configuration.
+     * @param FormFactory $form Formulaire associé.
+     *
      * @return void
      */
-    public function __construct()
+    public function __construct($attrs = [], FormFactory $form)
     {
-        $this->callbacks = [
-            'handle_successfully' => [$this, 'cb_handle_successfully'],
-        ];
+        parent::__construct('record', $attrs, $form);
+
+        return;
+
+        $this->events()
+            ->listen('request.success', [$this, 'onRequestSuccess']);
 
         if (! self::$hasInstance) :
             self::$hasInstance = true;
@@ -241,11 +248,11 @@ class Record extends AddonController
     /**
      * Court-circuitage de l'issue d'un traitement de formulaire réussi.
      *
-     * @param Handle $handle Classe de rappel de traitement du formulaire.
+     * @param FactoryRequest $request Instance du contrôleur de traitement de la requête de soumission associée au formulaire.
      *
      * @return void
      */
-    public function cb_handle_successfully($handle)
+    public function onRequestSuccess($handle)
     {
         $datas = [
             'form_id'        => $this->getForm()->getName(),

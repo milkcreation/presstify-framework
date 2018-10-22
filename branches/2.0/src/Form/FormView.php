@@ -4,6 +4,8 @@ namespace tiFy\Form;
 
 use tiFy\Contracts\Form\FormView as FormViewInterface;
 use tiFy\Kernel\Templates\TemplateController;
+use tiFy\Kernel\Tools;
+use Closure;
 
 class FormView extends TemplateController implements FormViewInterface
 {
@@ -24,5 +26,61 @@ class FormView extends TemplateController implements FormViewInterface
                 $arguments
             );
         endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function after()
+    {
+        if ($content = $this->form()->get('after')) :
+            if ($content instanceof Closure) :
+                return call_user_func($content);
+            elseif (is_string($content)) :
+                return $content;
+            endif;
+        endif;
+
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attrs()
+    {
+        return $this->getHtmlAttrs($this->form()->get('attrs', []));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function before()
+    {
+        if ($content = $this->form()->get('before')) :
+            if ($content instanceof Closure) :
+                return call_user_func($content);
+            elseif (is_string($content)) :
+                return $content;
+            endif;
+        endif;
+
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function form()
+    {
+        return $this->engine->get('form');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHtmlAttrs($attrs = [], $linearized = true)
+    {
+        return Tools::Html()->parseAttrs($attrs, $linearized);
     }
 }

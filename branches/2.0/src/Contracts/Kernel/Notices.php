@@ -105,6 +105,15 @@ interface Notices
     public function reset($type);
 
     /**
+     * Affichage des messages de notification par type.
+     *
+     * @param string $type Type de notification.
+     *
+     * @return string
+     */
+    public function render($type);
+
+    /**
      * Ajout d'un type de notification permis.
      *
      * @param string $type Type de notification permis.

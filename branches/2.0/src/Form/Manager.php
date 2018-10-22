@@ -49,7 +49,11 @@ final class Manager implements ManagerInterface
                 $this->_register($name, $attrs);
             endforeach;
 
-            do_action('tify_form_loaded');
+            foreach($this->all() as $form) :
+                $current = $this->current($form);
+                $current->events('request.handle');
+                $this->reset();
+            endforeach;
         endif;
     }
 

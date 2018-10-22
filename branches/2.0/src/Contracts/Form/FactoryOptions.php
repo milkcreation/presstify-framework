@@ -3,9 +3,9 @@
 namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\Kernel\ParamsBagInterface;
-use tiFy\Contracts\Form\FormResolver;
+use tiFy\Contracts\Form\FactoryResolver;
 
-interface FactoryOptions extends FormResolver, ParamsBagInterface
+interface FactoryOptions extends FactoryResolver, ParamsBagInterface
 {
 
 }

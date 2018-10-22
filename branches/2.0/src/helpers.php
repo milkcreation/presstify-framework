@@ -42,13 +42,13 @@ endif;
 if (!function_exists('assets')) :
     /**
      * Assets - Controleur des assets.
-     * @see \tiFy\Kernel\Assets\Assets
+     * @see \tiFy\Contracts\Kernel\Assets
      *
      * @return string
      */
     function assets()
     {
-        return Kernel::Assets();
+        return app('assets');
     }
 endif;
 
@@ -253,6 +253,18 @@ if (! function_exists('resolve')) {
     function resolve($name)
     {
         return container($name);
+    }
+}
+
+if (! function_exists('validator')) {
+    /**
+     * Récupération d'un instance du contrôleur de validation.
+     *
+     * @return \tiFy\Contracts\Kernel\Validator
+     */
+    function validator()
+    {
+        return app('validator');
     }
 }
 

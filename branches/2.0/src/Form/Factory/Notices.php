@@ -5,12 +5,12 @@ namespace tiFy\Form\Factory;
 use tiFy\Contracts\Form\FactoryNotices;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Kernel\ParamsBagInterface;
-use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
+use tiFy\Form\Factory\ResolverTrait;
 use tiFy\Kernel\Notices\Notices as NoticesController;
 
 class Notices extends NoticesController implements FactoryNotices
 {
-    use FormFactoryResolver;
+    use ResolverTrait;
 
     /**
      * CONSTRUCTEUR.

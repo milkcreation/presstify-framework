@@ -6,14 +6,14 @@ use tiFy\App\Container\AppServiceProvider;
 use tiFy\Contracts\Form\FormFactory as FormFactoryInterface;
 use tiFy\Contracts\Form\FactoryField as FactoryFieldInterface;
 use tiFy\Form\Addon\AjaxSubmit\AjaxSubmit as AddonAjaxSubmit;
-use tiFy\Form\Addon\CookieTransport\CookieTransport as AddonCookieTransport;
+use tiFy\Form\Addon\CookieSession\CookieSession as AddonCookieSession;
 use tiFy\Form\Addon\Mailer\Mailer as AddonMailer;
-use tiFy\Form\Addon\Manager as AddonManager;
 use tiFy\Form\Addon\Preview\Preview as AddonPreview;
 use tiFy\Form\Addon\Record\Record as AddonRecord;
 use tiFy\Form\Addon\User\User as AddonUser;
-use tiFy\Form\Button\Manager as ButtonManager;
+use tiFy\Form\AddonController;
 use tiFy\Form\Button\Submit\Submit as ButtonSubmit;
+use tiFy\Form\ButtonController;
 use tiFy\Form\Factory\Addons as FactoryAddons;
 use tiFy\Form\Factory\Buttons as FactoryButtons;
 use tiFy\Form\Factory\Display as FactoryDisplay;
@@ -22,14 +22,13 @@ use tiFy\Form\Factory\Field as FactoryField;
 use tiFy\Form\Factory\Fields as FactoryFields;
 use tiFy\Form\Factory\Notices as FactoryNotices;
 use tiFy\Form\Factory\Options as FactoryOptions;
+use tiFy\Form\Factory\Request as FactoryRequest;
 use tiFy\Form\Factory\Session as FactorySession;
 use tiFy\Form\Factory\Validation as FactoryValidation;
-use tiFy\Form\Factory\Viewer as FactoryViewer;
-use tiFy\Form\Field\Manager as FieldManager;
 use tiFy\Form\Field\Captcha\Captcha as FieldCaptcha;
-use tiFy\Form\Field\Defaults as FieldDefaults;
 use tiFy\Form\Field\Html\Html as FieldHtml;
 use tiFy\Form\Field\Recaptcha\Recaptcha as FieldRecaptcha;
+use tiFy\Form\FieldController;
 use tiFy\Form\FormFactory;
 use tiFy\Form\Manager;
 
@@ -96,6 +95,12 @@ class FormServiceProvider extends AppServiceProvider
             }
         );
         $this->app->bind(
+            'form.factory.request',
+            function (FormFactoryInterface $form) {
+                return new FactoryRequest($form);
+            }
+        );
+        $this->app->bind(
             'form.factory.session',
             function (FormFactoryInterface $form) {
                 return new FactorySession($form);
@@ -108,47 +113,74 @@ class FormServiceProvider extends AppServiceProvider
             }
         );
 
-        $this->app->singleton('form.addon', function () { return new AddonManager(); })->build();
+        $this->app->bind(
+            'form.addon',
+            function ($name, $attrs = [], FormFactoryInterface $form) {
+                return new AddonController($name, $attrs, $form);
+            }
+        );
+        $this->app->bind(
+            'form.addon.ajax-submit',
+            function ($attrs, FormFactoryInterface $form) {
+                return new AddonAjaxSubmit($attrs, $form);
+            }
+        );
+        $this->app->bind(
+            'form.addon.cookie-session',
+            function ($attrs, FormFactoryInterface $form) {
+                return new AddonCookieSession($attrs, $form);
+            }
+        );
         $this->app->bind(
             'form.addon.mailer',
-            function () {
-                return new AddonMailer();
+            function ($attrs, FormFactoryInterface $form) {
+                return new AddonMailer($attrs, $form);
+            }
+        );
+        $this->app->bind(
+            'form.addon.preview',
+            function ($attrs, FormFactoryInterface $form) {
+                return new AddonPreview($attrs, $form);
             }
         );
         $this->app->bind(
             'form.addon.record',
-            function () {
-                return new AddonRecord();
+            function ($attrs, FormFactoryInterface $form) {
+                return new AddonRecord($attrs, $form);
             }
         );
         $this->app->bind(
             'form.addon.user',
-            function () {
-                return new AddonUser();
+            function ($attrs, FormFactoryInterface $form) {
+                return new AddonUser($attrs, $form);
             }
         );
 
-        $this->app->singleton('form.button', function () { return new ButtonManager(); })->build();
+        $this->app->bind(
+            'form.button',
+            function ($name, $attrs = [], FormFactoryInterface $form) {
+                return new ButtonController($name, $attrs, $form);
+            }
+        );
         $this->app->bind(
             'form.button.submit',
-            function () {
-                return new ButtonSubmit();
+            function ($attrs, FormFactoryInterface $form) {
+                return new ButtonSubmit($attrs, $form);
             }
         );
 
-        $this->app->singleton('form.field', function () { return new FieldManager(); })->build();
+        $this->app->bind(
+            'form.field',
+            function ($name, FactoryFieldInterface $field) {
+                return new FieldController($name, $field);
+            }
+        );
         /*$this->app->bind(
             'form.field.captcha',
             function (FactoryFieldInterface $field) {
                 return new FieldCaptcha($field);
             }
         );*/
-        $this->app->bind(
-            'form.field.defaults',
-            function ($name, FactoryFieldInterface $field) {
-                return new FieldDefaults($name, $field);
-            }
-        );
         $this->app->bind(
             'form.field.html',
             function (FactoryFieldInterface $field) {

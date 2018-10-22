@@ -2,11 +2,8 @@
 
 namespace tiFy\Form\Addon\User;
 
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\AddonController;
-use tiFy\Form\Fields\FieldItemController;
-use tiFy\Form\Forms\FormHandleController;
-use tiFy\Form\Forms\FormItemController;
-use tiFy\Form\Addons\AbstractAddonController;
 
 class User extends AddonController
 {
@@ -48,10 +45,16 @@ class User extends AddonController
     /**
      * CONSTRUCTEUR.
      *
+     * @param array $attrs Liste des attributs de configuration.
+     * @param FormFactory $form Formulaire associé.
+     *
      * @return void
      */
-    public function __construct()
+    public function __construct($attrs = [], FormFactory $form)
     {
+        parent::__construct('user', $attrs, $form);
+
+        return;
         $this->callbacks = [
             'form_set_current'      => [$this, 'cb_form_set_current'],
             'handle_check_field'    => [$this, 'cb_handle_check_field'],

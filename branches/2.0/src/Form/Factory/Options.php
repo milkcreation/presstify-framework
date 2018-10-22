@@ -5,11 +5,11 @@ namespace tiFy\Form\Factory;
 use tiFy\Contracts\Form\FactoryOptions;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Kernel\Parameters\ParamsBagController;
-use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
+use tiFy\Form\Factory\ResolverTrait;
 
 class Options extends ParamsBagController implements FactoryOptions
 {
-    use FormFactoryResolver;
+    use ResolverTrait;
 
     /**
      * Liste des attributs de configuration.

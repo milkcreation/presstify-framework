@@ -1,29 +1,32 @@
 <?php
 
-namespace tiFy\Components\Form\Addons\AjaxSubmit;
+namespace tiFy\Form\Addon\AjaxSubmit;
 
-use tiFy\Form\Addons\AbstractAddonController;
-use tiFy\Form\Forms\FormItemController;
+use tiFy\Contracts\Form\FormFactory;
+use tiFy\Form\AddonController;
 
-class AjaxSubmit extends AbstractAddonController
+class AjaxSubmit extends AddonController
 {
     /**
      * CONSTRUCTEUR.
      *
+     * @param array $attrs Liste des attributs de configuration.
+     * @param FormFactory $form Formulaire associé.
+     *
      * @return void
      */
-    public function __construct()
+    public function __construct($attrs = [], FormFactory $form)
     {
-        $this->callbacks = [
-            'handle_redirect'    => [
-                'function' => [$this, 'cb_handle_redirect'],
-                'order'    => 9999,
-            ],
-            'form_after_display' => [$this, 'cb_form_after_display'],
-        ];
+        parent::__construct('ajax-submit', $attrs, $form);
 
-        $this->appAddAction('wp_ajax_tify_forms_ajax_submit', [$this, 'wp_ajax']);
-        $this->appAddAction('wp_ajax_nopriv_tify_forms_ajax_submit', [$this, 'wp_ajax']);
+        return;
+
+        $this->events()
+            ->listen('form.display.after', [$this, 'onFormDisplayAfter'], 9999)
+            ->listen('request.redirect', [$this, 'onRequestRedirect'], 9999);
+
+        add_action('wp_ajax_tify_forms_ajax_submit', [$this, 'wp_ajax']);
+        add_action('wp_ajax_nopriv_tify_forms_ajax_submit', [$this, 'wp_ajax']);
     }
 
     /**
@@ -33,7 +36,7 @@ class AjaxSubmit extends AbstractAddonController
      *
      * @return void
      */
-    public function cb_handle_redirect(&$redirect_url)
+    public function onRequestRedirect(&$redirect_url)
     {
         $redirect_url = false;
     }
@@ -45,7 +48,7 @@ class AjaxSubmit extends AbstractAddonController
      *
      * @return
      */
-    public function cb_form_after_display($form)
+    public function onFormDisplayAfter($form)
     {
         if (defined('DOING_AJAX')) :
             return;
@@ -155,7 +158,7 @@ class AjaxSubmit extends AbstractAddonController
 
         $data = ['html' => $this->getForm()->display()];
 
-        if ($this->getForm()->handle()->hasError()) :
+        if ($this->form()->request()->hasError()) :
             \wp_send_json_error($data);
         else :
             \wp_send_json_success($data);

@@ -67,7 +67,7 @@ interface FieldController extends ParametersBagInterface
     public function enqueue_scripts();
 
     /**
-     * Traitement d'une liste d'attributs HTML.
+     * Traitement et récupération d'une liste d'attributs HTML.
      *
      * @param array $attrs Liste des attributs HTML.
      * @param bool $linearized Activation de la linéarisation.

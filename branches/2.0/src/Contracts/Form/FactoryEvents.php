@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Form\FormResolver;
+use tiFy\Contracts\Form\FactoryResolver;
 
-interface FactoryEvents extends FormResolver
+interface FactoryEvents extends FactoryResolver
 {
     /**
      * Déclaration d'un événement.
