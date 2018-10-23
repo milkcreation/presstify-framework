@@ -57,8 +57,6 @@ class Fields extends AbstractItemsIterator implements FactoryFields
         endforeach;
 
         $this->items = $this->byPosition();
-
-        $this->events('fields.init', [&$this]);
     }
 
     /**

@@ -5,7 +5,7 @@ namespace tiFy\Contracts\Form;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Contracts\Form\FormFactory;
 
-interface FormView extends ViewInterface
+interface FactoryView extends ViewInterface
 {
     /**
      * Translation d'appel des méthodes de l'application associée.

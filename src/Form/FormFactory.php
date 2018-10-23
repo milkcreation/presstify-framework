@@ -2,14 +2,14 @@
 
 namespace tiFy\Form;
 
-use tiFy\Contracts\Form\Manager;
-use tiFy\Contracts\Form\FormFactory as FormFactoryInterface;
+use tiFy\Contracts\Form\FormManager;
+use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
-use tiFy\Form\FormView;
+use tiFy\Form\Factory\View;
 use tiFy\Kernel\Parameters\ParamsBagController;
 
-class FormFactory extends ParamsBagController implements FormFactoryInterface
+class FormFactory extends ParamsBagController implements FormFactoryContract
 {
     use FormFactoryResolver;
 
@@ -93,13 +93,6 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
         )->build();
 
         app()->singleton(
-            "form.factory.display.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.display', [$this]);
-            }
-        )->build();
-
-        app()->singleton(
             "form.factory.fields.{$this->name()}",
             function () {
                 return app()->resolve('form.factory.fields', [$this->get('fields', []), $this]);
@@ -137,17 +130,17 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
         app()->singleton(
             "form.factory.viewer.{$this->name()}",
             function () {
-                /** @var Manager $manager */
-                $manager = app('form');
+                /** @var FormManager $formManager */
+                $formManager = app('form');
 
-                $directory = $manager->resourcesDir('/views');
+                $directory = $formManager->resourcesDir('/views');
                 $override_dir = (($override_dir = $this->get('viewer.override_dir')) && is_dir($override_dir))
                     ? $override_dir
                     : $directory;
 
                 $view = view()
                     ->setDirectory($directory)
-                    ->setController(FormView::class)
+                    ->setController(View::class)
                     ->setOverrideDir($override_dir)
                     ->set('form', $this);
 
@@ -163,7 +156,7 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
      */
     public function __toString()
     {
-        return (string)$this->display();
+        return (string)$this->render();
     }
 
     /**
@@ -177,9 +170,9 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function display()
+    public function csrf()
     {
-        return app()->resolve("form.factory.display.{$this->name()}");
+        return wp_create_nonce('Form' . $this->name());
     }
 
     /**
@@ -188,14 +181,6 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
     public function getAction()
     {
         return $this->get('action', '');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCsrf()
-    {
-        return wp_create_nonce('Form' . $this->name());
     }
 
     /**
@@ -217,6 +202,14 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
     /**
      * {@inheritdoc}
      */
+    public function index()
+    {
+        return app('form')->index($this->name());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function name()
     {
         return $this->name;
@@ -233,6 +226,14 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
     /**
      * {@inheritdoc}
      */
+    public function onSuccess()
+    {
+        return $this->request()->get('success') === $this->name();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function onResetCurrent()
     {
         return $this->events('form.reset.current', [&$this]);
@@ -241,10 +242,8 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function parse($attrs = [])
+    public function prepare()
     {
-        parent::parse($attrs);
-
         if (!$this->has('attrs.id', '')) :
             $this->set('attrs.id', "Form-content--{$this->name()}");
         endif;
@@ -267,6 +266,40 @@ class FormFactory extends ParamsBagController implements FormFactoryInterface
         if ($enctype = $this->get('enctype')) :
             $this->set('attrs.enctype', $enctype);
         endif;
+
+        foreach($this->fields() as $field) :
+            $field->prepare();
+        endforeach;
+
+        $this->events('request.handle');
+
+        if ($this->onSuccess()) :
+            $this->notices()->add(
+                'success',
+                $this->notices()->params('success.message')
+            );
+            assets()->addInlineJs(
+                'if (window.history && window.history.replaceState){'.
+                'let location=window.location.href.split("#")[0].split("?")[0];'.
+                'window.history.pushState("", document.title, location);};',
+                'both',
+                true
+            );
+        endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render()
+    {
+        $this->events('form.render', [&$this]);
+
+        $fields = $this->fields();
+        $buttons = $this->buttons();
+        $notices = $this->notices()->getMessages();
+
+        return $this->form()->viewer('form', compact('buttons', 'fields', 'notices'));
     }
 
     /**

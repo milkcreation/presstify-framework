@@ -1,6 +1,7 @@
 <?php
 
 use tiFy\tiFy;
+use tiFy\Contracts\Kernel\Assets;
 use tiFy\Contracts\Field\FieldController;
 use tiFy\Contracts\Field\Manager as FieldManager;
 use tiFy\Contracts\Form\Form;
@@ -42,13 +43,15 @@ endif;
 if (!function_exists('assets')) :
     /**
      * Assets - Controleur des assets.
-     * @see \tiFy\Contracts\Kernel\Assets
      *
-     * @return string
+     * @return Assets
      */
     function assets()
     {
-        return app('assets');
+        /** @var Assets assets */
+        $factory = app('assets');
+
+        return $factory;
     }
 endif;
 

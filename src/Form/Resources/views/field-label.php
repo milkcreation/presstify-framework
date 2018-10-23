@@ -2,7 +2,7 @@
 /**
  * Etiquette de champ de formulaire.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FactoryView $this
  * @var tiFy\Contracts\Form\FactoryField $field
  */
 ?>

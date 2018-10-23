@@ -2,7 +2,7 @@
 /**
  * Liste des boutons du formulaire.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FactoryView $this
  * @var tiFy\Contracts\Form\ButtonController[] $buttons
  */
 ?>

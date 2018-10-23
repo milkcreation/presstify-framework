@@ -13,6 +13,12 @@ class Notices extends NoticesController implements FactoryNotices
     use ResolverTrait;
 
     /**
+     * Liste des types de notifications permis.
+     * @var array
+     */
+    protected $types = ['error', 'success'];
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param array $params Liste des paramètres.

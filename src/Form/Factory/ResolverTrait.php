@@ -2,10 +2,10 @@
 
 namespace tiFy\Form\Factory;
 
-use tiFy\Contracts\Form\AddonFactory;
+use tiFy\Contracts\Form\AddonController;
+use tiFy\Contracts\Form\ButtonController;
 use tiFy\Contracts\Form\FactoryAddons;
 use tiFy\Contracts\Form\FactoryButtons;
-use tiFy\Contracts\Form\FactoryDisplay;
 use tiFy\Contracts\Form\FactoryEvents;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryFields;
@@ -14,7 +14,6 @@ use tiFy\Contracts\Form\FactoryOptions;
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Contracts\Form\FactorySession;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Kernel\Tools;
 
 trait ResolverTrait
 {
@@ -45,7 +44,7 @@ trait ResolverTrait
     /**
      * Récupération de l'instance du contrôleur des addons associés au formulaire.
      *
-     * @return FactoryAddons
+     * @return FactoryAddons|AddonController[]
      */
     public function addons()
     {
@@ -55,7 +54,7 @@ trait ResolverTrait
     /**
      * Récupération de l'instance du contrôleur des boutons associés au formulaire.
      *
-     * @return FactoryButtons
+     * @return FactoryButtons|ButtonController[]
      */
     public function buttons()
     {
@@ -82,16 +81,6 @@ trait ResolverTrait
     }
 
     /**
-     * Récupération de la liste des messages d'erreur.
-     *
-     * @return array
-     */
-    public function errors()
-    {
-        return $this->notices()->getMessages('error');
-    }
-
-    /**
      * Récupération de l'instance du contrôleur d'un champ associé au formulaire.
      *
      * @param null|string $name Nom de qualification de l'addon.
@@ -110,11 +99,39 @@ trait ResolverTrait
     /**
      * Récupération de l'instance du contrôleur des champs associés au formulaire.
      *
-     * @return FactoryFields
+     * @return FactoryFields|FactoryField[]
      */
     public function fields()
     {
         return app()->resolve("form.factory.fields.{$this->form()->name()}");
+    }
+
+    /**
+     * Récupération de valeur(s) de champ(s) basée(s) sur leurs variables d'identifiant de qualification.
+     *
+     * @param mixed $tags Variables de qualification de champs.
+     * string ex. "%%{{slug#1}}%% %%{{slug#2}}%%"
+     * array ex ["%%{{slug#1}}%%", "%%{{slug#2}}%%"]
+     * @param boolean $raw Activation de la valeur de retour au format brut.
+     *
+     * @return string
+     */
+    public function fieldTagValue($tags, $raw = true)
+    {
+        if (is_string($tags)) :
+            if (preg_match_all('#([^%%]*)%%(.*?)%%([^%%]*)?#', $tags, $matches)) :
+                $tags = '';
+                foreach ($matches[2] as $i => $slug) :
+                    $tags .= $matches[1][$i] . (($field = $this->field($slug)) ? $field->getValue($raw) : $matches[2][$i]) . $matches[3][$i];
+                endforeach;
+            endif;
+        elseif (is_array($tags)) :
+            foreach ($tags as $k => &$i) :
+                $i = $this->parseFieldTag($i);
+            endforeach;
+        endif;
+
+        return $tags;
     }
 
     /**
@@ -179,30 +196,5 @@ trait ResolverTrait
     public function session()
     {
         return app()->resolve("form.factory.session.{$this->form()->name()}");
-    }
-
-    /**
-     * Récupération des variables de champ.
-     *
-     * @param mixed $tag
-     *
-     * @return string
-     */
-    public function parseFieldTag($tag)
-    {
-        if (is_string($vars)) :
-            if (preg_match_all('#([^%%]*)%%(.*?)%%([^%%]*)?#', $vars, $matches)) :
-                $vars = "";
-                foreach ($matches[2] as $i => $slug) :
-                    $vars .= $matches[1][$i] . (($field = $this->getField($slug)) ? $field->getValue() : $matches[2][$i]) . $matches[3][$i];
-                endforeach;
-            endif;
-        elseif (is_array($vars)) :
-            foreach ($vars as $k => &$i) :
-                $i = $this->parseFieldVars($i);
-            endforeach;
-        endif;
-
-        return $vars;
     }
 }

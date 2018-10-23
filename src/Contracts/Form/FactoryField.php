@@ -16,6 +16,18 @@ interface FactoryField extends FactoryResolver, ParamsBagInterface
     public function __toString();
 
     /**
+     * Récupération d'attributs d'addon.
+     * {@internal Retourne la liste complète si $key est à null.}
+     *
+     * @param string $name Nom de qualification de l'addon.
+     * @param null|string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getAddonOption($name, $key = null, $default = null);
+
+    /**
      * Récupération de l'instance du contrôleur de champ.
      *
      * @return FieldController
@@ -91,7 +103,7 @@ interface FactoryField extends FactoryResolver, ParamsBagInterface
      *
      * @return mixed
      */
-    public function getValue($raw = false);
+    public function getValue($raw = true);
 
     /**
      * Récupération de la liste des valeurs.
@@ -101,7 +113,7 @@ interface FactoryField extends FactoryResolver, ParamsBagInterface
      *
      * @return string|array
      */
-    public function getValues($raw = false, $glue = ', ');
+    public function getValues($raw = true, $glue = ', ');
 
     /**
      * Vérification d'existance d'une étiquette.
@@ -116,6 +128,23 @@ interface FactoryField extends FactoryResolver, ParamsBagInterface
      * @return boolean
      */
     public function hasWrapper();
+
+    /**
+     * Vérification si le champ retourne des erreurs de traitement.
+     *
+     * @return boolean
+     */
+    public function onError();
+
+    /**
+     * Traitement récursif des tests de validation.
+     *
+     * @param mixed $validations Test de validation à traiter.
+     * @param array $results Liste des tests de validations traités.
+     *
+     * @return array
+     */
+    public function parseValidations($validations, $results = []);
 
     /**
      * Initialisation (préparation) du champ.

@@ -32,8 +32,8 @@ class Recaptcha extends FieldController
     public function boot()
     {
         $this->events()->listen(
-            'validation.field.recaptcha',
-            [$this, 'onValidationField']
+            'request.validation.field.recaptcha',
+            [$this, 'onRequestValidationField']
         );
     }
 
@@ -45,18 +45,19 @@ class Recaptcha extends FieldController
      *
      * @return void
      */
-    public function onValidationField(&$errors, FactoryField $field)
+    public function onRequestValidationField(FactoryField $field)
     {
         /** @var ApiRecaptcha $recaptcha */
         $recaptcha = app('api.recaptcha');
 
         if (!$recaptcha->validation()->isSuccess()) :
-            $errors[] = [
-                'message' => __('La saisie de la protection antispam est incorrecte.', 'tify'),
-                'type'    => 'field',
-                'slug'    => $field->getSlug(),
-                'order'   => $field->getOrder(),
-            ];
+            $this->notices()->add(
+                'error',
+                __('La saisie de la protection antispam est incorrecte.', 'tify'),
+                [
+                    'field'   => $field->getSlug(),
+                ]
+            );
         endif;
     }
 
@@ -71,9 +72,10 @@ class Recaptcha extends FieldController
                 $this->field()->getExtras(),
                 [
                     'name'  => $this->field()->getName(),
-                    'attrs' => [
-                        'id' => preg_replace('#-#', '_', sanitize_key($this->form()->name()))
-                    ]
+                    'attrs' => array_merge(
+                        ['id' => preg_replace('#-#', '_', sanitize_key($this->form()->name()))],
+                        $this->field()->get('attrs', [])
+                    )
                 ]
             )
         );

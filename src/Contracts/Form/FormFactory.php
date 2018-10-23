@@ -25,11 +25,11 @@ interface FormFactory extends FactoryResolver, ParamsBagInterface
     public function boot();
 
     /**
-     * Récupération de l'instance du contrôleur d'affichage du formulaire.
+     * Récupération de la chaîne de sécurisation du formulaire (CSRF).
      *
-     * @return FactoryDisplay
+     * @return string
      */
-    public function display();
+    public function csrf();
 
     /**
      * Récupération de l'action du formulaire (url).
@@ -37,13 +37,6 @@ interface FormFactory extends FactoryResolver, ParamsBagInterface
      * @return string
      */
     public function getAction();
-
-    /**
-     * Récupération de la clé d'indexe de sécurisation du formulaire (CSRF).
-     *
-     * @return string
-     */
-    public function getCsrf();
 
     /**
      * Récupération de la méthode de soumission du formulaire.
@@ -58,6 +51,13 @@ interface FormFactory extends FactoryResolver, ParamsBagInterface
      * @return string
      */
     public function getTitle();
+
+    /**
+     * Récupération du numéro d'indice du formulaire.
+     *
+     * @return null|int
+     */
+    public function index();
 
     /**
      * Récupération du nom de qualification du formulaire.
@@ -79,6 +79,20 @@ interface FormFactory extends FactoryResolver, ParamsBagInterface
      * @return void
      */
     public function onResetCurrent();
+
+    /**
+     * Initialisation (préparation) du champ.
+     *
+     * @return void
+     */
+    public function prepare();
+
+    /**
+     * Affichage.
+     *
+     * @return string
+     */
+    public function render();
 
     /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.

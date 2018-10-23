@@ -117,26 +117,6 @@ interface Validator
     public function isUrl($value);
 
     /**
-     * Vérifie si une valeur est un mot de passe valide.
-     * @internal Par défaut le mot de passe doit contenir au moins 1 chiffre, 1 minuscule, 1 majuscule et entre 8 et 16 caractères.
-     *
-     * @param mixed $value Valeur à vérifier.
-     * @param array $args {
-     *      Liste des arguments de contrôle.
-     *
-     *      @var int $digit Nombre de chiffres requis.
-     *      @var int $letter Nombre de lettres requises.
-     *      @var int $maj Nombre de majuscules requises.
-     *      @var int $special_char Nombre de caractères spéciaux requis.
-     *      @var int $min Nombre de caractère minimum.
-     *      @var int $min Nombre de caractère maximum.
-     * }
-     *
-     * @return bool
-     */
-    public function isValidPassword($value, $args = []);
-
-    /**
      * Vérifie si une valeur  ne contient un nombre de caractères maximum.
      *
      * @param mixed $value Valeur à vérifier.
@@ -164,6 +144,26 @@ interface Validator
      * @return bool
      */
     public function notEmpty($value);
+
+    /**
+     * Vérifie si une valeur est un mot de passe valide.
+     * @internal Par défaut le mot de passe doit contenir au moins 1 chiffre, 1 minuscule, 1 majuscule et entre 8 et 16 caractères.
+     *
+     * @param mixed $value Valeur à vérifier.
+     * @param array $args {
+     *      Liste des arguments de contrôle.
+     *
+     *      @var int $digit Nombre de chiffres requis.
+     *      @var int $letter Nombre de lettres requises.
+     *      @var int $maj Nombre de majuscules requises.
+     *      @var int $special_char Nombre de caractères spéciaux requis.
+     *      @var int $min Nombre de caractère minimum.
+     *      @var int $min Nombre de caractère maximum.
+     * }
+     *
+     * @return bool
+     */
+    public function validPassword($value, $args = []);
 
     /**
      * Vérifie si une valeur  repond à un regex personnalisé.

@@ -88,7 +88,7 @@ class Mailer extends AddonController
         );
 
         $this->events()
-            ->listen('request.handle.validate', [$this, 'onRequestHandleValidate'])
+            ->listen('request.validation', [$this, 'onRequestValidation'])
             ->listen('request.success', [$this, 'onRequestSuccess']);
     }
 
@@ -175,7 +175,7 @@ class Mailer extends AddonController
      *
      * @return void
      */
-    public function onRequestHandleValidate(FactoryRequest &$request)
+    public function onRequestValidation(FactoryRequest &$request)
     {
         switch ($this->getFormOption('debug')) :
             default:

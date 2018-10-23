@@ -97,7 +97,7 @@ class Validation
      *
      * @param mixed $value Valeur à vérifier.
      *
-     * @return bool
+     * @return boolean
      */
     public function __return_true($value)
     {
@@ -109,17 +109,13 @@ class Validation
      * @internal ex. mot de passe <> confirmation mot de passe
      *
      * @param mixed $value Valeur du champ courant à comparer.
-     * @param string $slug Identifiant de qualification du champ à comparer.
+     * @param mixed $tags Variables de qualification de champs de comparaison.
      *
-     * @return bool
+     * @return boolean
      */
-    public function compare($value, $slug)
+    public function compare($value, $tags, $raw = false)
     {
-        if ($field = $this->getField($slug)) :
-            $value2 = $field->getValue(true);
-        else :
-            return false;
-        endif;
+        $value2 = $this->fieldTagValue($tags);
 
         if ($value !== $value2) :
             return false;

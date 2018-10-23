@@ -43,9 +43,17 @@ class Notices implements NoticesContract
     /**
      * {@inheritdoc}
      */
-    public function all($type)
+    public function all()
     {
-        return Arr::get($this->items, $type, []);
+        return $this->items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clear($type = null)
+    {
+        $type ? Arr::forget($this->items, $type) :  $this->items = [];
     }
 
     /**
@@ -77,11 +85,15 @@ class Notices implements NoticesContract
     /**
      * {@inheritdoc}
      */
-    public function getDatas($type)
+    public function getDatas($type = null)
     {
         $datas = [];
-        if ($notices = $this->all($type)) :
-            foreach ($notices as $id => $attrs) :
+        if (is_null($type)) :
+            foreach($this->getTypes() as $type) :
+                $datas[$type] = $this->getDatas($type);
+            endforeach;
+        else :
+            foreach ($this->get($type) as $id => $attrs) :
                 $datas[$id] = $attrs['datas'];
             endforeach;
         endif;
@@ -92,11 +104,15 @@ class Notices implements NoticesContract
     /**
      * {@inheritdoc}
      */
-    public function getMessages($type)
+    public function getMessages($type = null)
     {
         $messages = [];
-        if ($notices = $this->all($type)) :
-            foreach ($notices as $id => $attrs) :
+        if (is_null($type)) :
+            foreach($this->getTypes() as $type) :
+                $messages[$type] = $this->getMessages($type);
+            endforeach;
+        else :
+            foreach ($this->get($type) as $id => $attrs) :
                 $messages[$id] = $attrs['message'];
             endforeach;
         endif;
@@ -123,10 +139,10 @@ class Notices implements NoticesContract
     /**
      * {@inheritdoc}
      */
-    public function query($type = 'error', $query_args = [])
+    public function query($type, $query_args = [])
     {
         $results = [];
-        if (!$notices = $this->all($type)) :
+        if (!$notices = $this->get($type)) :
             return $results;
         endif;
 
@@ -141,14 +157,6 @@ class Notices implements NoticesContract
         endforeach;
 
         return $results;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function reset($type)
-    {
-        Arr::forget($this->items, $type);
     }
 
     /**
@@ -191,7 +199,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     *
+     * {@inheritdoc}
      */
     public function viewer($view = null, $data = [])
     {

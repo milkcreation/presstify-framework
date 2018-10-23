@@ -27,23 +27,26 @@ class Request extends ParamsBagController implements FactoryRequest
     }
 
     /**
-     * Traitement de la requête de soumission du formulaire.
-     *
-     * @return bool|void
+     * {@inheritdoc}
      */
     public function handle()
     {
         $this->prepare();
 
-        if (!wp_verify_nonce($this->get('csrf-token', ''), 'Form' . $this->form()->name())) :
+        if (!wp_verify_nonce($this->get('_token', ''), 'Form' . $this->form()->name())) :
             return false;
         endif;
 
-        /** @var FactoryField $field */
+        /**
+         * Validations.
+         * @var FactoryField $field
+         */
         foreach($this->fields() as $name => $field) :
             $check = true;
 
-            // Test d'intégrité de champ requis.
+            $field->setValue($this->get($field->getName()));
+
+            // Validation de champ requis.
             if ($field->getRequired('check')) :
                 $value = $this->get($field->getName());
                 $test = app('form.factory.validation', [$this->form()]);
@@ -54,14 +57,14 @@ class Request extends ParamsBagController implements FactoryRequest
                         sprintf($field->getRequired('message'), $field->getTitle()),
                         [
                             'type'    => 'field',
-                            'slug'    => $field->getSlug(),
-                            'check'   => 'required'
+                            'field'   => $field->getSlug(),
+                            'test'    => 'required'
                         ]
                     );
                 endif;
             endif;
 
-            // Tests d'integrités complémentaires.
+            // Validations complémentaires.
             if ($check) :
                 if ($validations = $field->get('validations', [])) :
                     $value = $this->get($field->getName());
@@ -73,28 +76,44 @@ class Request extends ParamsBagController implements FactoryRequest
                                 'error',
                                 sprintf($validation['message'], $field->getTitle()),
                                 [
-                                    'type'    => 'field',
-                                    'slug'    => $field->getSlug()
+                                    'field'   => $field->getSlug()
                                 ]
                             );
                         endif;
                     endforeach;
                 endif;
             endif;
+
+            $this->events('request.validation.field.' . $field->getType(), [&$field]);
+            $this->events('request.validation.field', [&$field]);
         endforeach;
 
-        $this->events('request.handle.validate', [&$this]);
+        $this->events('request.validation', [&$this]);
 
         if ($this->notices()->has('error')) :
+            $this->resetFields();
+
+            return;
+        endif;
+
+        $this->events('request.submit', [&$this]);
+
+        if ($this->notices()->has('error')) :
+            $this->resetFields();
+
             return;
         endif;
 
         $this->events('request.success', [&$this]);
 
-        // Redirection après le traitement
         $redirect = add_query_arg(
-            $this->_getRedirectQueryArgs(),
-            $this->getGlobalVar('_wp_http_referer', home_url('/'))
+            [
+                'success' => $this->form()->name()
+            ],
+            $this->get(
+                '_http_referer',
+                request()->server('HTTP_REFERER')
+            )
         );
 
         $this->events('request.redirect', [&$redirect]);
@@ -106,66 +125,22 @@ class Request extends ParamsBagController implements FactoryRequest
     }
 
     /**
-     * Traitement de vérification des variables de requête des champs de formulaire.
-     *
-     * @return bool
-     */
-    private function _checkFieldQueryVars()
-    {
-        $errors = [];
-        $fields = $this->getFields();
-
-        // Vérification des variables de saisie du formulaire.
-        /** @var FieldItemController $field */
-        foreach ($fields as $field) :
-            $field_errors = [];
-
-
-            // Court-circuitage de la vérification d'intégrité d'un champ
-            $this->getController()->checkQueryVar($field, $field_errors);
-            $this->call('handle_check_field', [&$field_errors, $field]);
-
-            if (!empty($field_errors)) :
-                foreach ($field_errors as $field_error) :
-                    $errors[] = $field_error;
-                endforeach;
-            endif;
-        endforeach;
-
-        // Court-circuitage de la vérification d'intégrité des champs
-        $this->call('handle_check_fields', [&$errors, $fields]);
-
-        // Traitement des erreurs
-        foreach ($errors as $error) :
-            if (is_string($error)) :
-                $this->addError($error);
-            else :
-                $data = array_merge(
-                    [
-                        'message' => '',
-                        'type'    => 'field',
-                    ],
-                    $error
-                );
-                $message = $data['message'];
-                unset($data['message']);
-
-                $this->addError($message, $data);
-            endif;
-        endforeach;
-
-        if ($this->hasError()) :
-            return false;
-        else :
-            return true;
-        endif;
-    }
-
-    /**
-     *
+     * {@inheritdoc}
      */
     public function prepare()
     {
         $this->parse(call_user_func([request(), $this->form()->getMethod()]));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetFields()
+    {
+        foreach($this->fields() as $field) :
+            if (!$field->supports('transport')) :
+                $field->resetValue();
+            endif;
+        endforeach;
     }
 }

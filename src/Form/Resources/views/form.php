@@ -2,19 +2,21 @@
 /**
  * Structure du formulaire.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FactoryView $this
  */
 ?>
 
 <?php echo $this->before(); ?>
+
+<?php $this->insert('notices', $this->all()); ?>
 
 <form <?php echo $this->attrs(); ?>>
     <?php
     echo field(
         'hidden',
         [
-            'name' => 'csrf-token',
-            'value' => $this->form()->getCsrf(),
+            'name' => '_token',
+            'value' => $this->form()->csrf(),
             'attrs' => [
                 'id' => '',
                 'class' => ''

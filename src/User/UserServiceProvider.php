@@ -8,7 +8,8 @@ use tiFy\User\Metadata\Option as UserOption;
 use tiFy\User\Role\Role as UserRole;
 use tiFy\User\Session\Session as UserSession;
 use tiFy\User\SignIn\SignIn as UserSignIn;
-use tiFy\User\SignUp\SignUp as UserSignUp;
+use tiFy\User\SignUp\SignUpController;
+use tiFy\User\SignUp\SignUpManager;
 use tiFy\User\User;
 
 class UserServiceProvider extends AppServiceProvider
@@ -30,6 +31,12 @@ class UserServiceProvider extends AppServiceProvider
 
         $this->app->singleton('user.signin', function () { return new UserSignIn(); })->build();
 
-        $this->app->singleton('user.signup', function () { return new UserSignUp(); })->build();
+        $this->app->singleton('user.signup', function () { return new SignUpManager(); })->build();
+        $this->app->bind(
+            'user.signup.item',
+            function ($name, $attrs = []) {
+                return new SignUpController($name, $attrs);
+            }
+        );
     }
 }

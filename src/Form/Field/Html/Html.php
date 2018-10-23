@@ -30,6 +30,6 @@ class Html extends FieldController
      */
     public function render()
     {
-        return $this->field()->getValue();
+        return $this->field()->getValue(false);
     }
 }

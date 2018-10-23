@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Form;
 
-interface Manager
+interface FormManager
 {
     /**
      * Déclaration d'un formulaire.
@@ -38,6 +38,15 @@ interface Manager
      * @return null|FormFactory
      */
     public function get($name);
+
+    /**
+     * Récupération du numéro d'indice d'un formulaire déclaré.
+     *
+     * @param string $name Nom de qualification du formulaire.
+     *
+     * @return null|int
+     */
+    public function index($name);
 
     /**
      * Réinitialisation du formulaire courant.
