@@ -6,16 +6,6 @@
 
 <?php $this->before(); ?>
     <?php
-    echo field(
-        'hidden',
-        [
-            'name' => $this->getName(),
-            'value' => -1
-        ]
-    );
-    ?>
-
-    <?php
     echo partial(
         'tag',
         [

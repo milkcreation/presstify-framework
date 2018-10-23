@@ -23,6 +23,7 @@ use tiFy\Partial\Pagination\Pagination;
 use tiFy\Partial\PartialServiceProvider;
 use tiFy\Partial\Sidebar\Sidebar;
 use tiFy\Partial\Slider\Slider;
+use tiFy\Partial\Spinner\Spinner;
 use tiFy\Partial\Table\Table;
 use tiFy\Partial\Tag\Tag;
 

@@ -3,44 +3,38 @@
 namespace tiFy\Form\Addon\User;
 
 use tiFy\Contracts\Form\FormFactory;
+use tiFy\Contracts\Form\FactoryField;
+use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Form\AddonController;
+use WP_User;
 
 class User extends AddonController
 {
     /**
-     * Liste des options par défaut du formulaire associé.
-     * @var array
+     * Utilisateur courant.
+     * @var WP_User
      */
-    protected $defaultFormOptions = [
-        'roles' => [],
+    protected $user;
+
+    /**
+     * Liste des clés de données utilisateurs permises.
+     * @var string[]
+     */
+    protected $userdataKeys = [
+        'user_login',
+        'role',
+        'first_name',
+        'last_name',
+        'nickname',
+        'display_name',
+        'user_email',
+        'user_url',
+        'description',
+        'user_pass',
+        'show_admin_bar_front',
+        'meta',
+        'option'
     ];
-
-    /**
-     * Liste des options par défaut des champs du formulaire associé.
-     * @internal Liste des champs natifs : user_login (requis)|role|first_name|last_name|nickname|display_name|user_email (requis)|user_url|description|user_pass
-     * @var array
-     */
-    protected $defaultFieldOptions = [
-        'userdata' => false,
-    ];
-
-    /**
-     * Liste des rôles concernés.
-     * @var array
-     */
-    protected $roles = [];
-
-    /**
-     * Identifiant de l'utilisateur en relation avec le formulaire.
-     * @var int
-     */
-    protected $userId = 0;
-
-    /**
-     * Indicateur d'édition de l'utilisateur en relation par l'utilisateur lui-même.
-     * @var bool
-     */
-    protected $isProfile = true;
 
     /**
      * CONSTRUCTEUR.
@@ -53,54 +47,137 @@ class User extends AddonController
     public function __construct($attrs = [], FormFactory $form)
     {
         parent::__construct('user', $attrs, $form);
-
-        return;
-        $this->callbacks = [
-            'form_set_current'      => [$this, 'cb_form_set_current'],
-            'handle_check_field'    => [$this, 'cb_handle_check_field'],
-            'handle_submit_request' => [$this, 'cb_handle_submit_request'],
-        ];
-        $this->userId = get_current_user_id();
     }
 
     /**
-     * Court-circuitage de la définition du formulaire courant.
-     *
-     * @param FormItemController $formController Classe de rappel du controleur de formulaire.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function cb_form_set_current($formController)
+    public function boot()
     {
-        foreach ($formController->getFields() as $field) :
-            // Bypass
-            if (!$userdata = $this->getFieldOption($field, 'userdata', false)) :
-                continue;
-            endif;
+        $this->user = wp_get_current_user();
 
-            if ($userdata === 'user_pass') :
-                $field->set('attrs.onpaste', 'off');
-                $field->set('attrs.autocomplete', 'off');
-            endif;
-        endforeach;
+        $this->events()->listen(
+            'field.prepare',
+            function (FactoryField $field) {
+                if ($field->getAddonOption($this->getName(), 'userdata') === 'user_pass') :
+                    $field->set('attrs.onpaste', 'off');
+                    $field->set('attrs.autocomplete', 'off');
+                endif;
+            }
+        );
+
+        $this->events()->listen('request.validation.field', [$this, 'onRequestValidationFields']);
+        $this->events()->listen('request.submit', [$this, 'onRequestSubmit']);
+    }
+
+    /**
+     * Vérification de permission d'un rôle.
+     *
+     * @param string $name Nom de qualification du rôle.
+     *
+     * @return bool
+     */
+    public function canRole($name)
+    {
+        return get_role($this->roles) && in_array($name, $this->roles);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [
+            'roles'                      => ['subscriber'],
+            'send_password_change_email' => false,
+            'send_email_change_email'    => false
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaultFieldOptions()
+    {
+        return [
+            'userdata' => false,
+        ];
+    }
+
+    /**
+     * Récupération de l'identifiant de l'utilisateur concerné par le formulaire.
+     *
+     * @return WP_User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Récupération de la liste de qualification .
+     *
+     * @return WP_User
+     */
+    public function getRoles()
+    {
+        return $this->get('roles', []);
+    }
+
+    /**
+     * Vérifie si l'utilisateur courant édite son profile.
+     *
+     * @var boolean
+     */
+    public function isProfile()
+    {
+        return ($user_id = $this->getUser()->ID) && ($user_id === get_current_user_id());
+    }
+
+    /**
+     * Vérifie si une clé correspond à un clé de données utilisateurs principales.
+     *
+     * @param string $key
+     *
+     * @return boolean
+     */
+    public function isUserdataKey($key)
+    {
+        return in_array($key, $this->userdataKeys);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parse($attrs = [])
+    {
+        parent::parse($attrs);
+
+        $this->set('roles', array_wrap($this->get('roles', [])));
+    }
+
+    /**
+     * Initialisation de l'utilisateur courant.
+     *
+     * @param int|WP_User $user Utilisateur.
+     *
+     * @return WP_User
+     */
+    public function setUser($user)
+    {
+        return $this->user = new WP_User($user);
     }
 
     /**
      * Vérification d'intégrité d'un champ.
      *
-     * @param array $errors Liste des erreurs de traitement du formulaire.
-     * @param FieldItemController $field Classe de rappel du champ à tester.
+     * @param FactoryField $field Instance du contrôleur de champ.
      *
      * @return void
      */
-    public function cb_handle_check_field(&$errors, $field)
+    public function onRequestValidationFields(FactoryField &$field)
     {
-        // Bypass
-        if (!$userdata = $this->getFieldOption($field, 'userdata', false)) :
-            return;
-        endif;
-
-        if (!$this->isNativeUserData($userdata)) :
+        if (!$userdata = $field->getAddonOption($this->getName(), 'userdata', false)) :
             return;
         endif;
 
@@ -112,7 +189,11 @@ class User extends AddonController
             // Identifiant de connexion
             case 'user_login' :
                 if (!$this->isProfile() && get_user_by('login', $field->getValue())) :
-                    $errors[] = __('Cet identifiant est déjà utilisé par un autre utilisateur', 'tify');
+                    $field->notices()->add(
+                        'error',
+                        __('Cet identifiant est déjà utilisé par un autre utilisateur.', 'tify'),
+                        ['field' => $field->getSlug()]
+                    );
                 endif;
 
                 if (is_multisite()) :
@@ -121,9 +202,13 @@ class User extends AddonController
                     $orig_username = $user_name;
                     $user_name = preg_replace('/\s+/', '', sanitize_user($user_name, true));
                     if ($user_name != $orig_username || preg_match('/[^a-z0-9]/', $user_name)) :
-                        $_errors[] = __(
-                            'L\'identifiant de connexion ne devrait contenir que des lettres minuscules (a-z) et des chiffres',
-                            'tify'
+                        $field->notices()->add(
+                            'error',
+                            __('L\'identifiant de connexion ne devrait contenir que des lettres minuscules (a-z)' .
+                                ' et des chiffres.',
+                                'tify'
+                            ),
+                            ['field' => $field->getSlug()]
                         );
                     endif;
 
@@ -133,47 +218,75 @@ class User extends AddonController
                         $illegal_names = ['www', 'web', 'root', 'admin', 'main', 'invite', 'administrator'];
                         add_site_option('illegal_names', $illegal_names);
                     endif;
+
                     if (in_array($user_name, $illegal_names)) :
-                        $_errors[] = __('Désolé, cet identifiant de connexion n\'est pas permis', 'tify');
+                        $field->notices()->add(
+                            'error',
+                            __('Désolé, cet identifiant de connexion n\'est pas permis.', 'tify'),
+                            ['field' => $field->getSlug()]
+                        );
                     endif;
 
                     // Identifiant réservés personnalisés
                     $illegal_logins = (array)apply_filters('illegal_user_logins', []);
                     if (in_array(strtolower($user_name), array_map('strtolower', $illegal_logins))) :
-                        $_errors[] = __('Désolé, cet identifiant de connexion n\'est pas permis', 'tify');
+                        $field->notices()->add(
+                            'error',
+                            __('Désolé, cet identifiant de connexion n\'est pas permis.', 'tify'),
+                            ['field' => $field->getSlug()]
+                        );
                     endif;
 
                     // Longueur minimale
                     if (strlen($user_name) < 4) :
-                        $_errors[] = __('L\'identifiant de connexion doit contenir au moins 4 caractères', 'tify');
+                        $field->notices()->add(
+                            'error',
+                            __('L\'identifiant de connexion doit contenir au moins 4 caractères.', 'tify'),
+                            ['field' => $field->getSlug()]
+                        );
                     endif;
 
                     // Longueur maximale
                     if (strlen($user_name) > 60) :
-                        $_errors[] = __(
-                            'L\'identifiant de connexion ne doit pas contenir plus de 60 caractères',
-                            'tify'
+                        $field->notices()->add(
+                            'error',
+                            __('L\'identifiant de connexion ne doit pas contenir plus de 60 caractères.', 'tify'),
+                            ['field' => $field->getSlug()]
                         );
                     endif;
 
                     // Lettres obligatoire
                     if (preg_match('/^[0-9]*$/', $user_name)) :
-                        $_errors[] = __('L\'identifiant de connexion doit aussi contenir des lettres', 'tify');
+                        $field->notices()->add(
+                            'error',
+                            __('L\'identifiant de connexion doit contenir des lettres.', 'tify'),
+                            ['field' => $field->getSlug()]
+                        );
                     endif;
                 endif;
                 break;
 
             // Email
             case 'user_email' :
-                if (!$this->isProfile() && get_user_by('email', $field->getValue())) :
-                    $errors[] = __('Cet email est déjà utilisé par un autre utilisateur', 'tify');
+                if (get_user_by('email', $field->getValue())) :
+                    if (!$this->isProfile() || ($field->getValue() !== $this->getUser()->user_email)) :
+                        $field->notices()->add(
+                            'error',
+                            __('Cet email est déjà utilisé par un autre utilisateur.', 'tify'),
+                            ['field' => $field->getSlug()]
+                        );
+                    endif;
                 endif;
                 break;
 
-            // Role
+            // Rôle
             case 'role' :
-                if (!$this->hasRole($field->getValue())) :
-                    $_errors[] = __('L\'attribution de ce rôle n\'est pas autorisée.', 'tify');
+                if (!$this->canRole($field->getValue())) :
+                    $field->notices()->add(
+                        'error',
+                        __('L\'attribution de ce rôle n\'est pas permise.', 'tify'),
+                        ['field' => $field->getSlug()]
+                    );
                 endif;
                 break;
         endswitch;
@@ -182,253 +295,112 @@ class User extends AddonController
     /**
      * Court-circuitage du traitement de la requête du formulaire.
      *
-     * @param FormHandleController $handleController Classe de rappel de traitement du formulaire.
+     * @param FactoryRequest $request Instance du contrôleur de traitement de la requête de soumission du formulaire
+     *     associé.
      *
      * @return void
      */
-    public function cb_handle_submit_request($handleController)
+    public function onRequestSubmit(FactoryRequest $request)
     {
-        $request_data = [
-            'user_login'           => '',
-            'role'                 => '',
-            'first_name'           => '',
-            'last_name'            => '',
-            'nickname'             => '',
-            'display_name'         => '',
-            'user_email'           => '',
-            'user_url'             => '',
-            'description'          => '',
-            'user_pass'            => '',
-            'show_admin_bar_front' => false,
-        ];
+        $userdatas = [];
 
-        // Récupération des données utilisateurs dans les variables de requête
-        foreach ($this->getFields() as $field) :
-            if (!$userdata = $this->getFieldOption($field, 'userdata')) :
+        foreach ($this->fields() as $field) :
+            if (!$key = $field->getAddonOption($this->getName(), 'userdata', false)) :
+                continue;
+            endif;
+            if (!$this->isUserdataKey($key)) :
+                continue;
+            endif;
+            if (in_array($key, ['meta', 'option'])) :
                 continue;
             endif;
 
-            if (!isset($request_data[$userdata])) :
-                continue;
-            endif;
-
-            $request_data[$userdata] = $field->getValue(true);
+            $userdatas[$key] = $request->get($field->getName());
         endforeach;
 
-        // Traitement de l'identifiant et récupération des données utilisateur existante
-        if (!$request_data['user_login'] && ($user = get_userdata($this->userId))) :
-            foreach ($request_data as $data => $value) :
-                if (in_array($data, ['user_pass'])) :
-                    continue;
-                endif;
-                if (empty($value)) :
-                    $request_data[$data] = $user->{$data};
-                endif;
-            endforeach;
-        endif;
-
-        // Traitement du rôle
-        if (!$request_data['role']) :
-            if (is_user_logged_in()) :
-                $request_data['role'] = current(wp_get_current_user()->roles);
-            elseif ($names = $this->getRoleNames()) :
-                $request_data['role'] = current($names);
-            else :
-                $request_data['role'] = get_option('default_role', 'subscriber');
+        if (!$this->isProfile()) :
+            if (empty($userdatas['role'])) :
+                $userdatas['role'] = ($roles = $this->getRoles())
+                    ? current($roles)
+                    : get_option('default_role', 'subscriber');
             endif;
         endif;
 
-        // Traitement de l'affichage de la barre d'administration
-        if ($this->hasRole($request_data['role'])) :
-            $show_admin_bar_front =
-                !$this->getRoleAttr(
-                    $request_data['role'],
-                    'show_admin_bar_front',
-                    false
-                )
-                    ? 'false'
-                    : '';
+        if (isset($userdatas['show_admin_bar_front'])) :
+            $userdatas['show_admin_bar_front'] = filter_var($userdatas['show_admin_bar_front'], FILTER_VALIDATE_BOOLEAN)
+                ? ''
+                : 'false';
         endif;
 
-        // Traitement de l'enregistrement de l'utilisateur
-        // Mise à jour
-        if ($current_user = get_userdata($this->getUserID())) :
-            if (empty($request_data['user_pass'])) :
-                unset($request_data['user_pass']);
-            endif;
-            if (empty($request_data['role'])) :
-                unset($request_data['role']);
+
+
+        if ($this->isProfile()) :
+            $userdatas['ID'] = $this->getUser()->ID;
+
+            if (empty($userdatas['user_pass'])) :
+                unset($userdatas['user_pass']);
             endif;
 
-            $exits_data = (array)get_userdata($current_user->ID)->data;
-            unset($exits_data['user_pass']);
-            $request_data = wp_parse_args($request_data, $exits_data);
-            $user_id = wp_update_user($request_data);
+            if (empty($userdatas['role'])) :
+                unset($userdatas['role']);
+            endif;
+
+            add_filter(
+                'send_password_change_email',
+                function () {
+                    return $this->get('send_password_change_email', false);
+                }
+            );
+
+            add_filter(
+                'send_email_change_email',
+                function () {
+                    return $this->get('send_email_change_email', false);
+                }
+            );
+
+            $result = wp_update_user($userdatas);
 
         // Création
         else :
             if (is_multisite()) :
-                $user_details = wpmu_validate_user_signup($request_data['user_login'], $request_data['user_email']);
-                if (is_wp_error($user_details['errors']) && !empty($user_details['errors']->errors)) :
-                    return $handleController->addError($user_details['errors']->get_error_message());
+                $validate = wpmu_validate_user_signup($userdatas['user_login'], $userdatas['user_email']);
+                if (is_wp_error($validate['errors']) && !empty($validate['errors']->errors)) :
+                   $request->notices()->add(
+                        'error',
+                        $user_details['errors']->get_error_message()
+                    );
+                    return;
                 endif;
             endif;
 
-            $user_id = \wp_insert_user($request_data);
+            $result = wp_insert_user($userdatas);
         endif;
 
-        // Traitement des metadonnées et options utilisateur
-        if (!is_wp_error($user_id)) :
-            $this->setUserID($user_id);
+        if (is_wp_error($result)) :
+            $request->notices()->add(
+                'error',
+                $result->get_error_message()
+            );
+        else :
+            $user = $this->setUser($result);
 
-            // Création ou modification des informations personnelles
-            /** @var FieldItemController $field */
-            foreach ($this->getFields() as $field) :
-                if (!$userdata = $this->getFieldOption($field, 'userdata', false)) :
+            foreach ($this->fields() as $field) :
+                if (!$key = $field->getAddonOption($this->getName(), 'userdata', false)) :
                     continue;
                 endif;
 
-                if ($userdata === 'meta') :
-                    \update_user_meta($this->getUserID(), $field->getSlug(), $field->getValue(true));
-                elseif ($userdata === 'option') :
-                    \update_user_option($this->getUserID(), $field->getSlug(), $field->getValue(true));
-                endif;
+                switch($key) :
+                    case 'meta' :
+                        update_user_meta($user->ID, $field->getName(), $field->getValue());
+                        break;
+                    case 'option' :
+                        update_user_option($user->ID, $field->getName(), $field->getValue());
+                        break;
+                endswitch;
             endforeach;
-        else :
-            return $handleController->addError($user_id->get_error_message());
+
+            $this->events('addon.user.success', [$user, $this]);
         endif;
-    }
-
-    /**
-     * Initialisation de l'identifiant de l'utilisateur concerné par le formulaire.
-     *
-     * @param int $user_id Identifiant Wordpress de l'utilisateur.
-     *
-     * @return void
-     */
-    public function setUserID($user_id)
-    {
-        $this->userId = $user_id;
-    }
-
-    /**
-     * Récupération de l'identifiant de l'utilisateur concerné par le formulaire.
-     *
-     * @return int
-     */
-    public function getUserID()
-    {
-        return $this->userId;
-    }
-
-    /**
-     * Vérifie si le traitement du formulaire de l'utilisateur en relation avec le formualire est fait par l'utilisateur lui-même.
-     *
-     * @var bool
-     */
-    public function isProfile()
-    {
-        return $this->isProfile;
-    }
-
-    /**
-     * Récupération de la liste des attributs de configuration des roles concernés.
-     *
-     * @return array
-     */
-    public function getRoles()
-    {
-        if ($this->roles) :
-            return $this->roles;
-        endif;
-
-        $_roles = [];
-        if ($roles = (array)$this->getFormOption('roles', [])) :
-            foreach ($roles as $name => $attrs) :
-                if (is_int($name) && is_string($attrs)) :
-                    $name = $attrs;
-                    $attrs = [];
-                endif;
-
-                $_roles[$name] = array_merge(
-                    [
-                        'capabilities'         => [],
-                        'show_admin_bar_front' => false,
-                    ],
-                    $attrs
-                );
-            endforeach;
-        endif;
-
-        return $this->roles = $_roles;
-    }
-
-    /**
-     * Récupération de la liste des noms de qualification des rôles concernés.
-     *
-     * @return string[]
-     */
-    public function getRoleNames()
-    {
-        if ($roles = $this->getRoles()) :
-            return array_keys($roles);
-        endif;
-    }
-
-    /**
-     * Vérification de l'existance d'un rôle concerné.
-     *
-     * @param string $name Nom de qualification du rôle.
-     *
-     * @return bool
-     */
-    public function hasRole($name)
-    {
-        return array_key_exists($name, $this->getRoles());
-    }
-
-    /**
-     * Récupération d'un attribut de configuration pour un rôle concerné.
-     *
-     * @param string $name Nom de qualification du rôle.
-     * @param string $key Clé d'index de l'attribut à récupérer.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function getRoleAttr($name, $attr, $default = '')
-    {
-        $roles = $this->getRoles();
-        if (isset($roles[$name][$attr])) :
-            return $roles[$name][$attr];
-        endif;
-
-        return $default;
-    }
-
-    /**
-     * Vérifie si un identifiant de donnée utilisateur correspond à une donnée native de Wordpress.
-     *
-     * @param string $userdata Identifiant de donné utilisateur.
-     *
-     * @return bool
-     */
-    public function isNativeUserData($userdata)
-    {
-        return in_array(
-            $userdata,
-            [
-                'user_login',
-                'role',
-                'first_name',
-                'last_name',
-                'nickname',
-                'display_name',
-                'user_email',
-                'user_url',
-                'description',
-                'user_pass',
-            ]
-        );
     }
 }

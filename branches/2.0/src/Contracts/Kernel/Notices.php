@@ -2,6 +2,9 @@
 
 namespace tiFy\Contracts\Kernel;
 
+use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\Views\ViewsInterface;
+
 interface Notices
 {
     /**
@@ -11,18 +14,25 @@ interface Notices
      * @param string $message Message de notification.
      * @param array $datas Liste des données embarquées associées.
      *
-     * @return string
+     * @return string Identifiant de qualification de la notification.
      */
     public function add($type, $message = '', $datas = []);
 
     /**
-     * Récupération de la liste des notifications par type.
-     *
-     * @param string $type Type de notification.
+     * Récupération de la liste des notifications.
      *
      * @return array
      */
-    public function all($type);
+    public function all();
+
+    /**
+     * Suppression de la liste des notifications.
+     *
+     * @param string $type Type de notification.
+     *
+     * @return void
+     */
+    public function clear($type = null);
 
     /**
      * Compte le nombre de notifications par type.
@@ -52,22 +62,22 @@ interface Notices
     public function has($type);
 
     /**
-     * Récupération des données embarquées associée à une notification.
+     * Récupération des données associées.
      *
-     * @param string $type Type de notification.
+     * @param null|string $type Type de notification.
      *
      * @return array
      */
-    public function getDatas($type);
+    public function getDatas($type = null);
 
     /**
-     * Récupération des messages de notification par type.
+     * Récupération des messages de notification.
      *
-     * @param string $type Type de notification.
+     * @param null|string $type Type de notification.
      *
      * @return array
      */
-    public function getMessages($type);
+    public function getMessages($type = null);
 
     /**
      * Récupération de la liste des types de notification déclarés.
@@ -93,16 +103,7 @@ interface Notices
      *
      * @return array
      */
-    public function query($type = 'error', $query_args = []);
-
-    /**
-     * Suppression de la liste des notifications à un type.
-     *
-     * @param string $type Type de notification.
-     *
-     * @return void
-     */
-    public function reset($type);
+    public function query($type, $query_args = []);
 
     /**
      * Affichage des messages de notification par type.
@@ -125,9 +126,21 @@ interface Notices
     /**
      * Définition des types de notification.
      *
-     * @param array $types Liste des types de notification permis. error|warning|info|success par défaut.
+     * @param string $type Type de notification permis.
      *
      * @return void
      */
     public function setTypes($types = ['error', 'warning', 'info', 'success']);
+
+    /**
+     * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
+     * {@internal Si aucun argument n'est passé à la méthode, retourne l'instance du controleur de liste.}
+     * {@internal Sinon récupére l'instance du gabarit d'affichage et passe les variables en argument.}
+     *
+     * @param null|string view Nom de qualification du gabarit (optionnel).
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return ViewInterface|ViewsInterface
+     */
+    public function viewer($view = null, $data = []);
 }

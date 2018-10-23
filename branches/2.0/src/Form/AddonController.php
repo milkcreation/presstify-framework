@@ -47,17 +47,9 @@ class AddonController extends ParamsBagController implements AddonControllerInte
     /**
      * {@inheritdoc}
      */
-    public function getFieldOption($field, $key, $default = '')
+    public function defaultFieldOptions()
     {
-        return $field->getAddonOption($this->getName(), $key, $default);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormOption($key, $default = null)
-    {
-        return $this->getForm()->getAddonOption($this->getName(), $key, $default);
+        return [];
     }
 
     /**
@@ -66,50 +58,5 @@ class AddonController extends ParamsBagController implements AddonControllerInte
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parseCallbacks()
-    {
-        foreach ($this->callbacks as $hookname => $args) :
-            if (is_callable($args)) :
-                $this->getForm()
-                    ->callbacks()
-                    ->set(
-                        $hookname,
-                        $args
-                    );
-            elseif (isset($args['function']) && is_callable($args['function'])) :
-                $args = array_merge(
-                    ['order' => 10],
-                    $args
-                );
-                $this->getForm()
-                    ->callbacks()
-                    ->set(
-                        $hookname,
-                        $args['function'],
-                        $args['order']
-                    );
-            endif;
-        endforeach;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parseDefaultFieldOptions($field)
-    {
-        return $field->parseDefaultAddonOptions($this->getName(), $this->defaultFieldOptions);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parseDefaultFormOptions()
-    {
-        return $this->form()->parseDefaultAddonOptions($this->getName(), $this->defaultFormOptions);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\User;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
+use tiFy\Contracts\Kernel\ParamsBagInterface;
 
-interface UserSignUpItemInterface extends ParametersBagInterface
+interface SignUpController extends ParamsBagInterface
 {
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.

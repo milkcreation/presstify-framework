@@ -1,13 +1,13 @@
 <?php
 
-namespace tiFy\Form;
+namespace tiFy\Form\Factory;
 
-use tiFy\Contracts\Form\FormView as FormViewInterface;
+use tiFy\Contracts\Form\FactoryView as FactoryViewContract;
 use tiFy\Kernel\Templates\TemplateController;
 use tiFy\Kernel\Tools;
 use Closure;
 
-class FormView extends TemplateController implements FormViewInterface
+class View extends TemplateController implements FactoryViewContract
 {
     /**
      * Liste des méthodes héritées.

@@ -16,14 +16,14 @@ interface FactoryResolver
     /**
      * Récupération de l'instance du contrôleur des addons associés au formulaire.
      *
-     * @return FactoryAddons
+     * @return FactoryAddons|AddonController[]
      */
     public function addons();
 
     /**
      * Récupération de l'instance du contrôleur des boutons associés au formulaire.
      *
-     * @return FactoryButtons
+     * @return FactoryButtons|ButtonController[]
      */
     public function buttons();
 
@@ -37,13 +37,6 @@ interface FactoryResolver
     public function events($name = null);
 
     /**
-     * Récupération de la liste des messages d'erreur.
-     *
-     * @return array
-     */
-    public function errors();
-
-    /**
      * Récupération de l'instance du contrôleur d'un champ associé au formulaire.
      *
      * @param string $slug Identifiant de qualification du champ.
@@ -55,7 +48,7 @@ interface FactoryResolver
     /**
      * Récupération de l'instance du contrôleur des champs associés au formulaire.
      *
-     * @return FactoryFields
+     * @return FactoryFields|FactoryField[]
      */
     public function fields();
 

@@ -16,7 +16,6 @@ use tiFy\Form\Button\Submit\Submit as ButtonSubmit;
 use tiFy\Form\ButtonController;
 use tiFy\Form\Factory\Addons as FactoryAddons;
 use tiFy\Form\Factory\Buttons as FactoryButtons;
-use tiFy\Form\Factory\Display as FactoryDisplay;
 use tiFy\Form\Factory\Events as FactoryEvents;
 use tiFy\Form\Factory\Field as FactoryField;
 use tiFy\Form\Factory\Fields as FactoryFields;
@@ -30,7 +29,7 @@ use tiFy\Form\Field\Html\Html as FieldHtml;
 use tiFy\Form\Field\Recaptcha\Recaptcha as FieldRecaptcha;
 use tiFy\Form\FieldController;
 use tiFy\Form\FormFactory;
-use tiFy\Form\Manager;
+use tiFy\Form\FormManager;
 
 class FormServiceProvider extends AppServiceProvider
 {
@@ -39,7 +38,7 @@ class FormServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton('form', function () { return new Manager(); })->build();
+        $this->app->singleton('form', function () { return new FormManager(); })->build();
         $this->app->bind(
             'form.factory',
             function ($name, $attrs = []) {
@@ -56,12 +55,6 @@ class FormServiceProvider extends AppServiceProvider
             'form.factory.buttons',
             function ($buttons = [], FormFactoryInterface $form) {
                 return new FactoryButtons($buttons, $form);
-            }
-        );
-        $this->app->bind(
-            'form.factory.display',
-            function (FormFactoryInterface $form) {
-                return new FactoryDisplay($form);
             }
         );
         $this->app->bind(

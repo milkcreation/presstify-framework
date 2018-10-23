@@ -2,14 +2,14 @@
 
 namespace tiFy\Form;
 
-use tiFy\Contracts\Form\Manager as ManagerInterface;
+use tiFy\Contracts\Form\FormManager as FormManagerContract;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\Addons\AddonsController;
 use tiFy\Form\Buttons\ButtonsController;
 use tiFy\Form\Fields\FieldTypesController;
 use tiFy\Form\Forms\FormBaseController;
 
-final class Manager implements ManagerInterface
+final class FormManager implements FormManagerContract
 {
     /**
      * Liste des formulaires déclarés.
@@ -30,31 +30,27 @@ final class Manager implements ManagerInterface
      */
     public function __construct()
     {
-        if (is_admin()) :
-            add_action('admin_init', function () { $this->_init(); }, 999999);
-        else :
-            add_action('wp', function () { $this->_init(); }, 999999);
-        endif;
-    }
+        add_action(
+            'init',
+            function () {
+                foreach (config('form', []) as $name => $attrs) :
+                    $this->_register($name, $attrs);
+                endforeach;
+            },
+            999999
+        );
 
-    /**
-     * Initialisation des formulaires.
-     *
-     * @return void
-     */
-    private function _init()
-    {
-        if ($forms = config('form', [])) :
-            foreach ($forms as $name => $attrs) :
-                $this->_register($name, $attrs);
-            endforeach;
-
-            foreach($this->all() as $form) :
-                $current = $this->current($form);
-                $current->events('request.handle');
-                $this->reset();
-            endforeach;
-        endif;
+        add_action(
+            'wp',
+            function () {
+                foreach($this->all() as $form) :
+                    $current = $this->current($form);
+                    $current->prepare();
+                    $this->reset();
+                endforeach;
+            },
+            999999
+        );
     }
 
     /**
@@ -65,7 +61,7 @@ final class Manager implements ManagerInterface
      *
      * @return void
      */
-    public function _register($name, $attrs = [])
+    private function _register($name, $attrs = [])
     {
         return $this->items[$name] = app('form.factory', [$name, $attrs]);
     }
@@ -122,7 +118,17 @@ final class Manager implements ManagerInterface
      */
     public function get($name)
     {
-        return isset($this->items[$name]) ? $this->items[$name] : null;
+        return $this->items[$name] ?? null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function index($name)
+    {
+        $index = array_search($name, array_keys($this->items));
+
+        return ($index !== false) ? $index : null;
     }
 
     /**

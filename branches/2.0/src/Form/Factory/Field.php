@@ -23,23 +23,23 @@ class Field extends ParamsBagController implements FactoryField
      * @var bool|string|array $wrapper Affichage de l'encapuleur de champ. false si masqué|true charge les attributs par défaut|array permet de définir des attributs personnalisés.
      * @var bool|string|array $label Affichage de l'intitulé de champ. false si masqué|true charge les attributs par défaut|array permet de définir des attributs personnalisés.
      * @var int $group Indice du groupe d'appartenance.
-     * @var int $order Ordre d'affichage général ou dans le groupe s'il est défini.
+     * @var int $position Ordre d'affichage général ou dans le groupe s'il est défini.
      * @var string $type Type de champ.
      * @var string $name Indice de qualification de la variable de requête.
      * @var mixed $value Valeur courante de la variable de requête.
      * @var array $choices Liste de choix des valeurs multiples.
-     * @var array $attrs Listes des attributs HTML. (hors name & value)
-     * @var array $extras Listes des attributs de configuration de champ complémentaire.
-     * @var array $supports Définition des propriétés de support. label|wrapper|request|tabindex.
-     * @var boolean|string|array $required Configuration de champs requis. false si désactivé|true charge les attributs par défaut| array {
-     *
+     * @var array $attrs Liste des attributs HTML. (hors name & value)
+     * @var array $extras Liste des attributs complémentaires de configuration.
+     * @var array $supports Définition des propriétés de support. label|wrapper|request|tabindex|transport.
+     * @var boolean|string|array $required Configuration de champs requis. false si désactivé|true charge les attributs par défaut|array {
      *      @var boolean|string|array $tagged Affichage de l'indicateur de champ requis. false si masqué|true charge les attributs par défaut|string valeur de l'indicateur|array permet de définir des attributs personnalisés.
      *      @var boolean $check Activation du test d'existance natif.
      *      @var mixed $value_none Valeur à comparer pour le test d'existance.
      *      @var string|callable $call Fonction de validation ou alias de qualification.
      *      @var array $args Liste des variables passées en argument dans la fonction de validation.
-     *      @var string $message Message de notification en cas d'erreur.
+     *      @var string $message Message de notification de retour en cas d'erreur.
      * }
+     * @var null|boolean $transport Court-circuitage de la propriété de support du transport des données à l'issue de la soumission.
      * @var array $validations {
      *      Liste des fonctions de validation d'intégrité du champ lors de la soumission.
      *
@@ -47,6 +47,7 @@ class Field extends ParamsBagController implements FactoryField
      *      @var array $args Liste des variables passées en arguments dans la fonction de validation.
      *      @var string $message Message de notification d'erreur.
      * }
+     * @var array $addons Liste des attributs de configuration associés aux addons.
      */
     protected $attributes = [
         'title'           => '',
@@ -64,10 +65,16 @@ class Field extends ParamsBagController implements FactoryField
         'extras'          => [],
         'supports'        => [],
         'required'        => false,
+        'transport'       => null,
         'validations'     => [],
-        //@todo 'transport'       => true,
-        //@todo 'addons'          => []
+        'addons'          => []
     ];
+
+    /**
+     * Valeur par défaut.
+     * @var mixed
+     */
+    protected $default;
 
     /**
      * Identifiant de qualification du champ.
@@ -91,11 +98,13 @@ class Field extends ParamsBagController implements FactoryField
 
         parent::__construct($attrs);
 
-        // A l'issue du chargement complet de la liste des champs.
+        // Pré-affichage du formulaire.
         $this->events()->listen(
-            'fields.init',
+            'form.render',
             function () {
-                $this->prepare();
+                if ($this->onError()) :
+                    $this->set('attrs.aria-error', 'true');
+                endif;
             }
         );
     }
@@ -117,6 +126,16 @@ class Field extends ParamsBagController implements FactoryField
             'name'   => $this->slug,
             'title'  => $this->slug
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAddonOption($name, $key = null, $default = null)
+    {
+        return (is_null($key))
+            ? $this->get("addons.{$name}", [])
+            : $this->get("addons.{$name}.{$key}", $default);
     }
 
     /**
@@ -192,7 +211,7 @@ class Field extends ParamsBagController implements FactoryField
     /**
      * {@inheritdoc}
      */
-    public function getValue($raw = false)
+    public function getValue($raw = true)
     {
         $value = $this->get('value');
 
@@ -208,7 +227,7 @@ class Field extends ParamsBagController implements FactoryField
     /**
      * {@inheritdoc}
      */
-    public function getValues($raw = false, $glue = ', ')
+    public function getValues($raw = true, $glue = ', ')
     {
         $value = Arr::wrap($this->getValue(false));
 
@@ -248,9 +267,15 @@ class Field extends ParamsBagController implements FactoryField
     }
 
     /**
-     * Traitement récursif des tests de validation.
-     *
-     * @return void
+     * {@inheritdoc}
+     */
+    public function onError()
+    {
+        return $this->supports('request') && !empty($this->notices()->query('error', ['field' => $this->getSlug()]));
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function parseValidations($validations, $results = [])
     {
@@ -285,8 +310,17 @@ class Field extends ParamsBagController implements FactoryField
      */
     public function prepare()
     {
+        // Nom de qualification d'enregistrement de la requête.
+        if ($name = $this->get('name', '')) :
+            $this->set('name', esc_attr($name));
+        endif;
+
+        // Valeur par défaut.
+        $this->default = $this->get('value', null);
+
+        // Attributs HTML du champ.
         if (!$this->has('attrs.id', '')) :
-            $this->set('attrs.id', "Form-fieldInput--{$this->getSlug()}");
+            $this->set('attrs.id', "Form{$this->form()->index()}-fieldInput--{$this->getSlug()}");
         endif;
         if (!$this->get('attrs.id')) :
             $this->pull('attrs.id');
@@ -309,12 +343,13 @@ class Field extends ParamsBagController implements FactoryField
             $this->pull('attrs.tabindex');
         endif;
 
+        // Attributs HTML de l'encapsuleur de champ.
         if ($wrapper = $this->get('wrapper')) :
             $wrapper = (is_array($wrapper)) ? $wrapper : [];
             $this->set('wrapper', array_merge(['tag' => 'div', 'attrs' => []], $wrapper));
 
             if (!$this->has('wrapper.attrs.id', '')) :
-                $this->set('wrapper.attrs.id', "Form-field--{$this->getSlug()}");
+                $this->set('wrapper.attrs.id', "Form{$this->form()->index()}-field--{$this->getSlug()}");
             endif;
             if (!$this->get('wrapper.attrs.id')) :
                 $this->pull('wrapper.attrs.id');
@@ -331,6 +366,41 @@ class Field extends ParamsBagController implements FactoryField
             endif;
         endif;
 
+        // Attributs HTML du libellé.
+        if ($label = $this->get('label')) :
+            $label = (is_array($label)) ? $label : [];
+            $this->set('label', array_merge(['tag' => 'label', 'attrs' => []], $label));
+
+            if (!$this->has('label.attrs.id', '')) :
+                $this->set('label.attrs.id', "Form{$this->form()->index()}-fieldLabel--{$this->getSlug()}");
+            endif;
+            if (!$this->get('label.attrs.id')) :
+                $this->pull('label.attrs.id');
+            endif;
+
+            $default_class = "Form-fieldLabel Form-fieldLabel--{$this->getType()} Form-fieldLabel--{$this->getSlug()}";
+            if (!$this->has('label.attrs.class')) :
+                $this->set('label.attrs.class', $default_class);
+            else :
+                $this->set('label.attrs.class', sprintf($this->get('label.attrs.class', ''), $default_class));
+            endif;
+            if (!$this->get('label.attrs.class')) :
+                $this->pull('label.attrs.class');
+            endif;
+
+            if ($for = $this->get('attrs.id')) :
+                $this->set('label.attrs.for', $for);
+            endif;
+
+            if (!$this->has('label.content', '')) :
+                $this->set('label.content', $this->getTitle());
+            endif;
+            if (!$this->get('label.content')) :
+                $this->pull('label.content');
+            endif;
+        endif;
+
+        // Attributs de champ requis (marqueur et fonction de traitement).
         if ($required = $this->get('required', false)) :
             $required = (is_array($required))
                 ? $required
@@ -374,7 +444,7 @@ class Field extends ParamsBagController implements FactoryField
 
             if ($this->get('required.tagged')) :
                 if (!$this->has('required.tagged.attrs.id', '')) :
-                    $this->set('required.tagged.attrs.id', "Form-fieldTag--{$this->getSlug()}");
+                    $this->set('required.tagged.attrs.id', "Form{$this->form()->index()}-fieldTag--{$this->getSlug()}");
                 endif;
                 if (!$this->get('required.tagged.attrs.id')) :
                     $this->pull('required.tagged.attrs.id');
@@ -392,44 +462,15 @@ class Field extends ParamsBagController implements FactoryField
             endif;
         endif;
 
+        // Liste des tests de validation.
         if ($validations = $this->get('validations')) :
             $this->set('validations', $this->parseValidations($validations));
         endif;
 
-        if ($label = $this->get('label')) :
-            $label = (is_array($label)) ? $label : [];
-            $this->set('label', array_merge(['tag' => 'label', 'attrs' => []], $label));
-
-            if (!$this->has('label.attrs.id', '')) :
-                $this->set('label.attrs.id', "Form-fieldLabel--{$this->getSlug()}");
-            endif;
-            if (!$this->get('label.attrs.id')) :
-                $this->pull('label.attrs.id');
-            endif;
-
-            $default_class = "Form-fieldLabel Form-fieldLabel--{$this->getType()} Form-fieldLabel--{$this->getSlug()}";
-            if (!$this->has('label.attrs.class')) :
-                $this->set('label.attrs.class', $default_class);
-            else :
-                $this->set('label.attrs.class', sprintf($this->get('label.attrs.class', ''), $default_class));
-            endif;
-            if (!$this->get('label.attrs.class')) :
-                $this->pull('label.attrs.class');
-            endif;
-
-            if ($for = $this->get('attrs.id')) :
-                $this->set('label.attrs.for', $for);
-            endif;
-
-            if (!$this->has('label.content', '')) :
-                $this->set('label.content', $this->getTitle());
-            endif;
-            if (!$this->get('label.content')) :
-                $this->pull('label.content');
-            endif;
-        endif;
-
-        /** @var FieldController $control */
+        /**
+         * Initialisation du controleur de champ.
+         * @var FieldController $control
+         */
         $control = app()->singleton(
             "form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}",
             function ($name, FactoryField $field) {
@@ -444,6 +485,26 @@ class Field extends ParamsBagController implements FactoryField
         if (!$this->get('supports')) :
             $this->set('supports', $control->supports());
         endif;
+
+        foreach($this->addons() as $name => $addon) :
+            $this->set(
+                "addons.{$name}",
+                array_merge(
+                    $addon->defaultFieldOptions(),
+                    $this->get("addons.{$name}", [])
+                )
+            );
+        endforeach;
+
+        $this->events('field.prepare', [&$this]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetValue()
+    {
+        $this->set('value', $this->default);
     }
 
     /**

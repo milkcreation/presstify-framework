@@ -115,7 +115,31 @@ class Validator implements ValidatorContract
     /**
      * {@inheritdoc}
      */
-    public function isValidPassword($value, $args = [])
+    public function maxLength($value, $max = 0)
+    {
+        return (strlen($value) < $max);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function minLength($value, $min = 0)
+    {
+        return (strlen($value) > $min);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function notEmpty($value)
+    {
+        return !$this->isEmpty($value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validPassword($value, $args = [])
     {
         $args = array_merge(
             [
@@ -156,30 +180,6 @@ class Validator implements ValidatorContract
         endif;
 
         return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function maxLength($value, $max = 0)
-    {
-        return (strlen($value) < $max);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function minLength($value, $min = 0)
-    {
-        return (strlen($value) > $min);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function notEmpty($value)
-    {
-        return !$this->isEmpty($value);
     }
 
     /**

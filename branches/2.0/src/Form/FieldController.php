@@ -90,16 +90,19 @@ class FieldController implements FieldControllerInterface
      */
     public function render()
     {
-        return field(
-            $this->field()->getType(),
-            array_merge(
-                $this->field()->getExtras(),
-                [
-                    'name'  => $this->field()->getName(),
-                    'value' => $this->field()->getValue(),
-                    'attrs' => $this->field()->get('attrs', [])
-                ]
-            )
+        $args = array_merge(
+            $this->field()->getExtras(),
+            [
+                'name'  => $this->field()->getName(),
+                'value' => $this->field()->getValue(),
+                'attrs' => $this->field()->get('attrs', [])
+            ]
         );
+
+        if (in_array($this->field()->getType(), ['checkbox', 'radio'])) :
+            $args['checked'] = $this->field()->getValue();
+        endif;
+
+        return field($this->field()->getType(), $args);
     }
 }
