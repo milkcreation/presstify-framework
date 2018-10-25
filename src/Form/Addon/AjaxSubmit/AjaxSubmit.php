@@ -8,17 +8,10 @@ use tiFy\Form\AddonController;
 class AjaxSubmit extends AddonController
 {
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     * @param FormFactory $form Formulaire associé.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function __construct($attrs = [], FormFactory $form)
+    public function boot()
     {
-        parent::__construct('ajax-submit', $attrs, $form);
-
         return;
 
         $this->events()

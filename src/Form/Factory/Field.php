@@ -29,6 +29,7 @@ class Field extends ParamsBagController implements FactoryField
      * @var mixed $value Valeur courante de la variable de requête.
      * @var array $choices Liste de choix des valeurs multiples.
      * @var array $attrs Liste des attributs HTML. (hors name & value)
+     * @var array $grid Attributs d'agencement du champ. La propriété doit être active au niveau du formulaire.
      * @var array $extras Liste des attributs complémentaires de configuration.
      * @var array $supports Définition des propriétés de support. label|wrapper|request|tabindex|transport.
      * @var boolean|string|array $required Configuration de champs requis. false si désactivé|true charge les attributs par défaut|array {
@@ -37,15 +38,17 @@ class Field extends ParamsBagController implements FactoryField
      *      @var mixed $value_none Valeur à comparer pour le test d'existance.
      *      @var string|callable $call Fonction de validation ou alias de qualification.
      *      @var array $args Liste des variables passées en argument dans la fonction de validation.
+     *      @var boolean $raw Activation du format brut de la valeur.
      *      @var string $message Message de notification de retour en cas d'erreur.
      * }
-     * @var null|boolean $transport Court-circuitage de la propriété de support du transport des données à l'issue de la soumission.
+     * @var null|boolean $transport Court-circuitage (forçage) de la propriété de support du transport des données à l'issue de la soumission.
      * @var array $validations {
      *      Liste des fonctions de validation d'intégrité du champ lors de la soumission.
      *
      *      @var string|callable $call Fonction de validation ou alias de qualification.
      *      @var array $args Liste des variables passées en arguments dans la fonction de validation.
      *      @var string $message Message de notification d'erreur.
+     *      @var boolean $raw Activation du format brut de la valeur.
      * }
      * @var array $addons Liste des attributs de configuration associés aux addons.
      */
@@ -53,7 +56,6 @@ class Field extends ParamsBagController implements FactoryField
         'title'           => '',
         'before'          => '',
         'after'           => '',
-        'wrapper'         => true,
         'label'           => true,
         'group'           => 0,
         'position'        => 0,
@@ -62,9 +64,11 @@ class Field extends ParamsBagController implements FactoryField
         'value'           => '',
         'choices'         => [],
         'attrs'           => [],
+        'grid'            => [],
         'extras'          => [],
         'supports'        => [],
         'required'        => false,
+        'wrapper'         => null,
         'transport'       => null,
         'validations'     => [],
         'addons'          => []
@@ -97,6 +101,9 @@ class Field extends ParamsBagController implements FactoryField
         $this->form = $form;
 
         parent::__construct($attrs);
+
+        $this->events('field.init.' . $this->getSlug(), [&$this]);
+        $this->events('field.init', [&$this]);
 
         // Pré-affichage du formulaire.
         $this->events()->listen(
@@ -286,6 +293,7 @@ class Field extends ParamsBagController implements FactoryField
                         'call'      => '__return_true',
                         'args'      => [],
                         'message'   => __('Le format du champ "%s" est invalide', 'tify'),
+                        'raw'       => false
                     ],
                     $validations
                 );
@@ -310,13 +318,47 @@ class Field extends ParamsBagController implements FactoryField
      */
     public function prepare()
     {
+        $this->events('field.prepare.' . $this->getType(), [&$this]);
+        $this->events('field.prepare', [&$this]);
+
         // Nom de qualification d'enregistrement de la requête.
-        if ($name = $this->get('name', '')) :
-            $this->set('name', esc_attr($name));
+        $name = $this->get('name', '');
+        if (!is_null($name)) :
+            $this->set('name', $name ? esc_attr($name) : esc_attr($this->getSlug()));
         endif;
 
         // Valeur par défaut.
         $this->default = $this->get('value', null);
+
+        /**
+         * Initialisation du controleur de champ.
+         * @var FieldController $control
+         */
+        $control = app()->singleton(
+            "form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}",
+            function ($name, FactoryField $field) {
+                if (app()->bound("form.field.{$this->getType()}")) :
+                    return app("form.field.{$this->getType()}", [$name, $field]);
+                else :
+                    return app("form.field", [$name, $field]);
+                endif;
+            }
+        )->build([$this->getType(), $this]);
+
+        // Propriétés de support.
+        if (!$this->get('supports')) :
+            $this->set('supports', $control->supports());
+        endif;
+
+        if ($this->get('transport') && !in_array('transport', $this->get('supports', []))) :
+            $this->push('supports', 'transport');
+        endif;
+
+        if ($this->get('wrapper')) :
+            $this->push('supports', 'wrapper');
+        elseif(in_array('wrapper', $this->get('supports', []))) :
+            $this->set('wrapper', true);
+        endif;
 
         // Attributs HTML du champ.
         if (!$this->has('attrs.id', '')) :
@@ -366,6 +408,22 @@ class Field extends ParamsBagController implements FactoryField
             endif;
         endif;
 
+        // Activation de l'agencement des éléments.
+        if ($this->form()->hasGrid()) :
+            $grid = $this->get('grid', []);
+            $prefix = $this->hasWrapper() ? 'wrapper.' : '';
+
+            $grid = is_array($grid) ? $grid : [];
+            $grid = array_merge(
+                $this->form()->get('grid.defaults', []),
+                $grid
+            );
+
+            foreach($grid as $k => $v) :
+                $this->set("{$prefix}attrs.data-grid_{$k}", filter_var($v, FILTER_SANITIZE_STRING));
+            endforeach;
+        endif;
+
         // Attributs HTML du libellé.
         if ($label = $this->get('label')) :
             $label = (is_array($label)) ? $label : [];
@@ -413,6 +471,7 @@ class Field extends ParamsBagController implements FactoryField
                     'value_none' => '',
                     'call'       => '',
                     'args'       => [],
+                    'raw'        => false,
                     'message'    => __('Le champ "%s" doit être renseigné.', 'tify'),
                     'html5'      => false,
                 ],
@@ -467,36 +526,18 @@ class Field extends ParamsBagController implements FactoryField
             $this->set('validations', $this->parseValidations($validations));
         endif;
 
-        /**
-         * Initialisation du controleur de champ.
-         * @var FieldController $control
-         */
-        $control = app()->singleton(
-            "form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}",
-            function ($name, FactoryField $field) {
-                if (app()->bound("form.field.{$this->getType()}")) :
-                    return app("form.field.{$this->getType()}", [$field]);
-                else :
-                    return app("form.field", [$name, $field]);
-                endif;
-            }
-        )->build([$this->getType(), $this]);
-
-        if (!$this->get('supports')) :
-            $this->set('supports', $control->supports());
-        endif;
-
         foreach($this->addons() as $name => $addon) :
             $this->set(
                 "addons.{$name}",
                 array_merge(
-                    $addon->defaultFieldOptions(),
+                    $addon->defaultsFieldOptions(),
                     $this->get("addons.{$name}", [])
                 )
             );
         endforeach;
 
-        $this->events('field.prepare', [&$this]);
+        $this->events('field.prepared.' . $this->getType(), [&$this]);
+        $this->events('field.prepared', [&$this]);
     }
 
     /**

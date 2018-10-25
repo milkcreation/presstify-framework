@@ -36,17 +36,10 @@ class CookieSession extends AddonController
     protected $cookieDatas = null;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     * @param FormFactory $form Formulaire associé.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function __construct($attrs = [], FormFactory $form)
+    public function boot()
     {
-        parent::__construct('cookie-session', $attrs, $form);
-
         return;
 
         $this->events()

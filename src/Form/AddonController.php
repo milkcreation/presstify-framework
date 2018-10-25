@@ -47,7 +47,7 @@ class AddonController extends ParamsBagController implements AddonControllerInte
     /**
      * {@inheritdoc}
      */
-    public function defaultFieldOptions()
+    public function defaultsFieldOptions()
     {
         return [];
     }

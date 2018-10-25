@@ -20,7 +20,7 @@ use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Container\ServiceProvider;
-use tiFy\Kernel\Events\Events;
+use tiFy\Kernel\Events\Manager as EventsManager;
 use tiFy\Kernel\Events\Listener;
 use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
@@ -73,7 +73,7 @@ class KernelServiceProvider extends ServiceProvider
         $this->getContainer()->singleton(
             'events',
             function () {
-                return new Events();
+                return new EventsManager();
             }
         );
 

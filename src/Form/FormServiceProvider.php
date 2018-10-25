@@ -3,8 +3,8 @@
 namespace tiFy\Form;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Contracts\Form\FormFactory as FormFactoryInterface;
-use tiFy\Contracts\Form\FactoryField as FactoryFieldInterface;
+use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
+use tiFy\Contracts\Form\FactoryField as FactoryFieldContract;
 use tiFy\Form\Addon\AjaxSubmit\AjaxSubmit as AddonAjaxSubmit;
 use tiFy\Form\Addon\CookieSession\CookieSession as AddonCookieSession;
 use tiFy\Form\Addon\Mailer\Mailer as AddonMailer;
@@ -27,6 +27,7 @@ use tiFy\Form\Factory\Validation as FactoryValidation;
 use tiFy\Form\Field\Captcha\Captcha as FieldCaptcha;
 use tiFy\Form\Field\Html\Html as FieldHtml;
 use tiFy\Form\Field\Recaptcha\Recaptcha as FieldRecaptcha;
+use tiFy\Form\Field\Tag\Tag as FieldTag;
 use tiFy\Form\FieldController;
 use tiFy\Form\FormFactory;
 use tiFy\Form\FormManager;
@@ -47,143 +48,149 @@ class FormServiceProvider extends AppServiceProvider
         );
         $this->app->bind(
             'form.factory.addons',
-            function ($addons = [], FormFactoryInterface $form) {
+            function ($addons = [], FormFactoryContract $form) {
                 return new FactoryAddons($addons, $form);
             }
         );
         $this->app->bind(
             'form.factory.buttons',
-            function ($buttons = [], FormFactoryInterface $form) {
+            function ($buttons = [], FormFactoryContract $form) {
                 return new FactoryButtons($buttons, $form);
             }
         );
         $this->app->bind(
             'form.factory.events',
-            function ($events = [], FormFactoryInterface $form) {
+            function ($events = [], FormFactoryContract $form) {
                 return new FactoryEvents($events, $form);
             }
         );
         $this->app->bind(
             'form.factory.field',
-            function ($name, $attrs = [], FormFactoryInterface $form) {
+            function ($name, $attrs = [], FormFactoryContract $form) {
                 return new FactoryField($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.factory.fields',
-            function ($fields = [], FormFactoryInterface $form) {
+            function ($fields = [], FormFactoryContract $form) {
                 return new FactoryFields($fields, $form);
             }
         );
         $this->app->bind(
             'form.factory.notices',
-            function ($notices = [], FormFactoryInterface $form) {
+            function ($notices = [], FormFactoryContract $form) {
                 return new FactoryNotices($notices, $form);
             }
         );
         $this->app->bind(
             'form.factory.options',
-            function ($options = [], FormFactoryInterface $form) {
+            function ($options = [], FormFactoryContract $form) {
                 return new FactoryOptions($options, $form);
             }
         );
         $this->app->bind(
             'form.factory.request',
-            function (FormFactoryInterface $form) {
+            function (FormFactoryContract $form) {
                 return new FactoryRequest($form);
             }
         );
         $this->app->bind(
             'form.factory.session',
-            function (FormFactoryInterface $form) {
+            function (FormFactoryContract $form) {
                 return new FactorySession($form);
             }
         );
         $this->app->bind(
             'form.factory.validation',
-            function (FormFactoryInterface $form) {
+            function (FormFactoryContract $form) {
                 return new FactoryValidation($form);
             }
         );
 
         $this->app->bind(
             'form.addon',
-            function ($name, $attrs = [], FormFactoryInterface $form) {
+            function ($name, $attrs = [], FormFactoryContract $form) {
                 return new AddonController($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.addon.ajax-submit',
-            function ($attrs, FormFactoryInterface $form) {
-                return new AddonAjaxSubmit($attrs, $form);
+            function ($name, $attrs, FormFactoryContract $form) {
+                return new AddonAjaxSubmit($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.addon.cookie-session',
-            function ($attrs, FormFactoryInterface $form) {
-                return new AddonCookieSession($attrs, $form);
+            function ($name, $attrs, FormFactoryContract $form) {
+                return new AddonCookieSession($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.addon.mailer',
-            function ($attrs, FormFactoryInterface $form) {
-                return new AddonMailer($attrs, $form);
+            function ($name, $attrs, FormFactoryContract $form) {
+                return new AddonMailer($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.addon.preview',
-            function ($attrs, FormFactoryInterface $form) {
-                return new AddonPreview($attrs, $form);
+            function ($name, $attrs, FormFactoryContract $form) {
+                return new AddonPreview($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.addon.record',
-            function ($attrs, FormFactoryInterface $form) {
-                return new AddonRecord($attrs, $form);
+            function ($name, $attrs, FormFactoryContract $form) {
+                return new AddonRecord($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.addon.user',
-            function ($attrs, FormFactoryInterface $form) {
-                return new AddonUser($attrs, $form);
+            function ($name, $attrs, FormFactoryContract $form) {
+                return new AddonUser($name, $attrs, $form);
             }
         );
 
         $this->app->bind(
             'form.button',
-            function ($name, $attrs = [], FormFactoryInterface $form) {
+            function ($name, $attrs = [], FormFactoryContract $form) {
                 return new ButtonController($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.button.submit',
-            function ($attrs, FormFactoryInterface $form) {
-                return new ButtonSubmit($attrs, $form);
+            function ($name, $attrs, FormFactoryContract $form) {
+                return new ButtonSubmit($name, $attrs, $form);
             }
         );
 
         $this->app->bind(
             'form.field',
-            function ($name, FactoryFieldInterface $field) {
+            function ($name, FactoryFieldContract $field) {
                 return new FieldController($name, $field);
             }
         );
         /*$this->app->bind(
             'form.field.captcha',
-            function (FactoryFieldInterface $field) {
+            function (FactoryFieldContract $field) {
                 return new FieldCaptcha($field);
             }
         );*/
         $this->app->bind(
             'form.field.html',
-            function (FactoryFieldInterface $field) {
-                return new FieldHtml($field);
+            function ($name, FactoryFieldContract $field) {
+                return new FieldHtml($name, $field);
             }
         );
         $this->app->bind(
             'form.field.recaptcha',
-            function (FactoryFieldInterface $field) {
-                return new FieldRecaptcha($field);
+            function ($name, FactoryFieldContract $field) {
+                return new FieldRecaptcha($name, $field);
+            }
+        );
+        $this->app->bind(
+            'form.field.tag',
+            function ($name, FactoryFieldContract $field) {
+                return new FieldTag($name, $field);
             }
         );
     }

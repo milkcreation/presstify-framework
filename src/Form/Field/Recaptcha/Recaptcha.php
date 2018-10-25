@@ -15,18 +15,6 @@ class Recaptcha extends FieldController
     protected $supports = ['label', 'request', 'wrapper'];
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param FactoryField $field Instance du contrôleur de champ de formulaire associé.
-     *
-     * @void
-     */
-    public function __construct(FactoryField $field)
-    {
-        parent::__construct('recaptcha', $field);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function boot()

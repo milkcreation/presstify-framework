@@ -53,6 +53,13 @@ interface FormFactory extends FactoryResolver, ParamsBagInterface
     public function getTitle();
 
     /**
+     * Vérification d'activation de l'agencement des éléments.
+     *
+     * @return boolean
+     */
+    public function hasGrid();
+
+    /**
      * Récupération du numéro d'indice du formulaire.
      *
      * @return null|int

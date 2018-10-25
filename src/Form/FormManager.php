@@ -2,8 +2,9 @@
 
 namespace tiFy\Form;
 
+use Closure;
 use tiFy\Contracts\Form\FormManager as FormManagerContract;
-use tiFy\Contracts\Form\FormFactory;
+use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Form\Addons\AddonsController;
 use tiFy\Form\Buttons\ButtonsController;
 use tiFy\Form\Fields\FieldTypesController;
@@ -13,13 +14,13 @@ final class FormManager implements FormManagerContract
 {
     /**
      * Liste des formulaires déclarés.
-     * @var FormFactory[]
+     * @var FormFactoryContract[]
      */
     protected $items = [];
 
     /**
      * Formulaire courant.
-     * @var FormFactory
+     * @var FormFactoryContract
      */
     protected $current;
 
@@ -63,7 +64,11 @@ final class FormManager implements FormManagerContract
      */
     private function _register($name, $attrs = [])
     {
-        return $this->items[$name] = app('form.factory', [$name, $attrs]);
+        $controller = $attrs['controller'] ?? null;
+
+        return $this->items[$name] = $controller
+            ? new $controller($name, $attrs)
+            : app('form.factory', [$name, $attrs]);
     }
 
     /**
@@ -85,9 +90,51 @@ final class FormManager implements FormManagerContract
     /**
      * {@inheritdoc}
      */
+    public function addonRegister($name, $controller)
+    {
+        app()->bind(
+            "form.addon.{$name}",
+            function ($name, $attrs = [], FormFactoryContract $form) use ($controller) {
+                if (is_object($controller) || $controller instanceof Closure) :
+                    return call_user_func_array($controller, [$name, $attrs, $form]);
+                elseif(class_exists($controller)) :
+                    return new $controller($name, $attrs, $form);
+                else :
+                    return app('form.addon', [$name, $attrs, $form]);
+                endif;
+            }
+        );
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function all()
     {
         return $this->items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buttonRegister($name, $controller)
+    {
+        app()->bind(
+            "form.button.{$name}",
+            function ($name, $attrs = [], FormFactoryContract $form) use ($controller) {
+                if (is_object($controller) || $controller instanceof Closure) :
+                    return call_user_func_array($controller, [$name, $attrs, $form]);
+                elseif(class_exists($controller)) :
+                    return new $controller($name, $attrs, $form);
+                else :
+                    return app('form.button', [$name, $attrs, $form]);
+                endif;
+            }
+        );
+
+        return $this;
     }
 
     /**
@@ -111,6 +158,27 @@ final class FormManager implements FormManagerContract
         $this->current->onSetCurrent();
 
         return $this->current;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fieldRegister($name, $controller)
+    {
+        app()->bind(
+            "form.field.{$name}",
+            function ($name, $attrs = [], FormFactoryContract $form) use ($controller) {
+                if (is_object($controller) || $controller instanceof Closure) :
+                    return call_user_func_array($controller, [$name, $attrs, $form]);
+                elseif(class_exists($controller)) :
+                    return new $controller($name, $attrs, $form);
+                else :
+                    return app('form.field', [$name, $attrs, $form]);
+                endif;
+            }
+        );
+
+        return $this;
     }
 
     /**

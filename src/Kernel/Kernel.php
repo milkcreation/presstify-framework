@@ -9,7 +9,7 @@ use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Config\Config;
 use tiFy\Kernel\Container\Container;
-use tiFy\Kernel\Events\Events;
+use tiFy\Kernel\Events\Manager as Events;
 use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\Http\Request;
 use tiFy\tiFy;

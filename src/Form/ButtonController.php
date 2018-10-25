@@ -27,6 +27,7 @@ class ButtonController extends ParamsBagController implements ButtonControllerIn
         'after'           => '',
         'wrapper'         => true,
         'attrs'           => [],
+        'grid'            => [],
         'type'            => '',
         'position'        => 0
     ];
@@ -80,6 +81,61 @@ class ButtonController extends ParamsBagController implements ButtonControllerIn
     public function getPosition()
     {
         return $this->get('position', 0);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasWrapper()
+    {
+        return !empty($this->get('wrapper'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parse($attrs = [])
+    {
+        parent::parse($attrs);
+
+        // Attributs HTML de l'encapsuleur de champ.
+        if ($wrapper = $this->get('wrapper')) :
+            $wrapper = (is_array($wrapper)) ? $wrapper : [];
+            $this->set('wrapper', array_merge(['tag' => 'div', 'attrs' => []], $wrapper));
+
+            if (!$this->has('wrapper.attrs.id', '')) :
+                $this->set('wrapper.attrs.id', "Form{$this->form()->index()}-button--{$this->getName()}");
+            endif;
+            if (!$this->get('wrapper.attrs.id')) :
+                $this->pull('wrapper.attrs.id');
+            endif;
+
+            $default_class = "Form-button Form-button--{$this->getName()}";
+            if (!$this->has('wrapper.attrs.class')) :
+                $this->set('wrapper.attrs.class', $default_class);
+            else :
+                $this->set('wrapper.attrs.class', sprintf($this->get('wrapper.attrs.class', ''), $default_class));
+            endif;
+            if (!$this->get('wrapper.attrs.class')) :
+                $this->pull('wrapper.attrs.class');
+            endif;
+        endif;
+
+        // Activation de l'agencement des éléments.
+        if ($this->form()->hasGrid()) :
+            $grid = $this->get('grid', []);
+            $prefix = $this->hasWrapper() ? 'wrapper.' : '';
+
+            $grid = is_array($grid) ? $grid : [];
+            $grid = array_merge(
+                $this->form()->get('grid.defaults', []),
+                $grid
+            );
+
+            foreach($grid as $k => $v) :
+                $this->set("{$prefix}attrs.data-grid_{$k}", filter_var($v, FILTER_SANITIZE_STRING));
+            endforeach;
+        endif;
     }
 
     /**
