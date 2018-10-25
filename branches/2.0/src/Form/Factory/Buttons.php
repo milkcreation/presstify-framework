@@ -44,7 +44,7 @@ class Buttons extends AbstractItemsIterator implements FactoryButtons
                     $this->items[$name] = app()->singleton(
                         "form.factory.button.{$name}.{$this->form()->name()}",
                         function ($name, $attrs, FormFactory $form) {
-                            return app()->resolve("form.button.{$name}", [$attrs, $form]);
+                            return app()->resolve("form.button.{$name}", [$name, $attrs, $form]);
                         }
                     )->build([$name, $attrs, $this->form()]);
                 else :

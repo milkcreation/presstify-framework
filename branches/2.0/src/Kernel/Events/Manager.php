@@ -5,7 +5,7 @@ namespace tiFy\Kernel\Events;
 use League\Event\Emitter;
 use tiFy\Contracts\Kernel\EventsManager;
 
-class Events extends Emitter implements EventsManager
+class Manager extends Emitter implements EventsManager
 {
     /**
      * {@inheritdoc}

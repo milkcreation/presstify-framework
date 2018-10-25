@@ -42,7 +42,7 @@ class Addons extends AbstractItemsIterator implements FactoryAddons
                     $this->items[$name] = app()->singleton(
                         "form.factory.addon.{$name}.{$this->form()->name()}",
                         function ($name, $attrs, FormFactory $form) {
-                            return app()->resolve("form.addon.{$name}", [$attrs, $form]);
+                            return app()->resolve("form.addon.{$name}", [$name, $attrs, $form]);
                         }
                     )->build([$name, $attrs, $this->form()]);
                 else :

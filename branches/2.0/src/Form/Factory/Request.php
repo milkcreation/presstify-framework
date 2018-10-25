@@ -48,7 +48,7 @@ class Request extends ParamsBagController implements FactoryRequest
 
             // Validation de champ requis.
             if ($field->getRequired('check')) :
-                $value = $this->get($field->getName());
+                $value = $field->getValue($field->getRequired('raw', false));
                 $test = app('form.factory.validation', [$this->form()]);
 
                 if (!$check = $test->call($field->getRequired('call'), $value, $field->getRequired('args', []))) :
@@ -67,7 +67,7 @@ class Request extends ParamsBagController implements FactoryRequest
             // Validations complémentaires.
             if ($check) :
                 if ($validations = $field->get('validations', [])) :
-                    $value = $this->get($field->getName());
+                    $value = $field->getValue($field->getRequired('raw', false));
                     $test = app('form.factory.validation', [$this->form()]);
 
                     foreach ($validations as $validation) :

@@ -2,6 +2,7 @@
 
 namespace tiFy\Form\Addon\User;
 
+use Illuminate\Support\Arr;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryRequest;
@@ -10,6 +11,17 @@ use WP_User;
 
 class User extends AddonController
 {
+    /**
+     * Liste des attributs de configuration.
+     * @var array
+     */
+    protected $attributes = [
+        'user_id'                    => 0,
+        'roles'                      => ['subscriber'],
+        'send_password_change_email' => false,
+        'send_email_change_email'    => false
+    ];
+
     /**
      * Utilisateur courant.
      * @var WP_User
@@ -37,27 +49,12 @@ class User extends AddonController
     ];
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     * @param FormFactory $form Formulaire associé.
-     *
-     * @return void
-     */
-    public function __construct($attrs = [], FormFactory $form)
-    {
-        parent::__construct('user', $attrs, $form);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function boot()
     {
-        $this->user = wp_get_current_user();
-
         $this->events()->listen(
-            'field.prepare',
+            'field.prepared',
             function (FactoryField $field) {
                 if ($field->getAddonOption($this->getName(), 'userdata') === 'user_pass') :
                     $field->set('attrs.onpaste', 'off');
@@ -85,19 +82,7 @@ class User extends AddonController
     /**
      * {@inheritdoc}
      */
-    public function defaults()
-    {
-        return [
-            'roles'                      => ['subscriber'],
-            'send_password_change_email' => false,
-            'send_email_change_email'    => false
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function defaultFieldOptions()
+    public function defaultsFieldOptions()
     {
         return [
             'userdata' => false,
@@ -153,7 +138,11 @@ class User extends AddonController
     {
         parent::parse($attrs);
 
-        $this->set('roles', array_wrap($this->get('roles', [])));
+        $this->set('roles', Arr::wrap($this->get('roles', [])));
+
+        $this->user = ($user_id = $this->get('user_id'))
+            ? new WP_User($user_id)
+            : wp_get_current_user();
     }
 
     /**
@@ -318,21 +307,11 @@ class User extends AddonController
             $userdatas[$key] = $request->get($field->getName());
         endforeach;
 
-        if (!$this->isProfile()) :
-            if (empty($userdatas['role'])) :
-                $userdatas['role'] = ($roles = $this->getRoles())
-                    ? current($roles)
-                    : get_option('default_role', 'subscriber');
-            endif;
-        endif;
-
         if (isset($userdatas['show_admin_bar_front'])) :
             $userdatas['show_admin_bar_front'] = filter_var($userdatas['show_admin_bar_front'], FILTER_VALIDATE_BOOLEAN)
                 ? ''
                 : 'false';
         endif;
-
-
 
         if ($this->isProfile()) :
             $userdatas['ID'] = $this->getUser()->ID;
@@ -363,6 +342,12 @@ class User extends AddonController
 
         // Création
         else :
+            if (empty($userdatas['role'])) :
+                $userdatas['role'] = ($roles = $this->getRoles())
+                    ? current($roles)
+                    : get_option('default_role', 'subscriber');
+            endif;
+
             if (is_multisite()) :
                 $validate = wpmu_validate_user_signup($userdatas['user_login'], $userdatas['user_email']);
                 if (is_wp_error($validate['errors']) && !empty($validate['errors']->errors)) :

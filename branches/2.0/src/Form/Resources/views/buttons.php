@@ -6,7 +6,10 @@
  * @var tiFy\Contracts\Form\ButtonController[] $buttons
  */
 ?>
-
+<?php if ($buttons) : ?>
+<div class="Form-buttons">
 <?php foreach($buttons as $button) : ?>
     <?php $this->insert('button', compact('button')); ?>
 <?php endforeach; ?>
+</div>
+<?php endif; ?>

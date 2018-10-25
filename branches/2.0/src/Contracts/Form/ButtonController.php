@@ -35,6 +35,13 @@ interface ButtonController extends ParamsBagInterface
     public function getPosition();
 
     /**
+     * Vérification d'existance d'encapsuleur HTML.
+     *
+     * @return boolean
+     */
+    public function hasWrapper();
+
+    /**
      * Affichage.
      *
      * @return string

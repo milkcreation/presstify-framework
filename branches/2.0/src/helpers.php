@@ -4,7 +4,8 @@ use tiFy\tiFy;
 use tiFy\Contracts\Kernel\Assets;
 use tiFy\Contracts\Field\FieldController;
 use tiFy\Contracts\Field\Manager as FieldManager;
-use tiFy\Contracts\Form\Form;
+use tiFy\Contracts\Form\FormFactory;
+use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Partial\PartialController;
 use tiFy\Contracts\Partial\Manager as PartialManager;
@@ -171,11 +172,11 @@ if (!function_exists('form')) :
      *
      * @param null|string $name Nom de qualification du formulaire.
      *
-     * @return null|Form|FormFactory
+     * @return null|FormManager|FormFactory
      */
     function form($name = null)
     {
-        /** @var Form $factory */
+        /** @var FormManager $factory */
         $factory = app('form');
 
         if (is_null($name)) :

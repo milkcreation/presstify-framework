@@ -39,7 +39,7 @@ trait ParametersBagTrait
     /**
      * {@inheritdoc}
      */
-    public function has($key, $default = null)
+    public function has($key)
     {
         return Arr::has($this->attributes, $key);
     }

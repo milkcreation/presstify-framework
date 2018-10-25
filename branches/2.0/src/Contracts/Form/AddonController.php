@@ -18,7 +18,7 @@ interface AddonController extends ParamsBagInterface
      *
      * @return array
      */
-    public function defaultFieldOptions();
+    public function defaultsFieldOptions();
 
     /**
      * Récupération du nom de qualification.

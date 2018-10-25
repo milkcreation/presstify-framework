@@ -29,6 +29,7 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
      *      @var string $action Propriété 'action' de la balise <form/>.
      *      @var string $enctype Propriété 'enctype' de la balise <form/>.
      *      @var array $attrs Liste des attributs complémentaires de la balise <form/>.
+     *      @var boolean|array $grid Activation de l'agencement des éléments.
      *      @var array $addons Liste des attributs des addons actifs.
      *      @var array $buttons Liste des attributs des boutons actifs.
      *      @var array $events Liste des événements de court-circuitage.
@@ -46,6 +47,7 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
         'action'          => '',
         'enctype'         => '',
         'attrs'           => [],
+        'grid'            => false,
         'addons'          => [],
         'buttons'         => [],
         'events'          => [],
@@ -149,6 +151,8 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
         )->build();
 
         $this->events('form.init', [&$this]);
+
+        $this->boot();
     }
 
     /**
@@ -202,6 +206,14 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
     /**
      * {@inheritdoc}
      */
+    public function hasGrid()
+    {
+        return !empty($this->get('grid'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function index()
     {
         return app('form')->index($this->name());
@@ -244,6 +256,9 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
      */
     public function prepare()
     {
+        $this->events('form.prepare', [&$this]);
+
+        // Attributs HTML du champ.
         if (!$this->has('attrs.id', '')) :
             $this->set('attrs.id', "Form-content--{$this->name()}");
         endif;
@@ -267,6 +282,14 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
             $this->set('attrs.enctype', $enctype);
         endif;
 
+        // Activation de l'agencement des éléments.
+        if ($grid = $this->get('grid')) :
+            $grid = is_array($grid) ? $grid : [];
+
+            $this->set("attrs.data-grid", 'true');
+            $this->set("attrs.data-grid_gutter", $grid['gutter']??0);
+        endif;
+
         foreach($this->fields() as $field) :
             $field->prepare();
         endforeach;
@@ -286,6 +309,8 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
                 true
             );
         endif;
+
+        $this->events('form.prepared', [&$this]);
     }
 
     /**

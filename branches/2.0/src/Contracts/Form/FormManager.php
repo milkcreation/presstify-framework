@@ -15,11 +15,31 @@ interface FormManager
     public function add($name, $attrs = []);
 
     /**
+     * Déclaration d'un addon.
+     *
+     * @param string $name Nom de qualification.
+     * @param callable|object|string $concrete Fonction anonyme|Instance|Nom de classe du contrôleur.
+     *
+     * @return $this
+     */
+    public function addonRegister($name, $concrete);
+
+    /**
      * Récupération de la liste des instance de formulaires déclarés.
      *
      * @return FormFactory[]
      */
     public function all();
+
+    /**
+     * Déclaration d'un bouton.
+     *
+     * @param string $name Nom de qualification.
+     * @param callable|object|string $concrete Fonction anonyme|Instance|Nom de classe du contrôleur.
+     *
+     * @return $this
+     */
+    public function buttonRegister($name, $concrete);
 
     /**
      * Récupération ou définition du formulaire courant.
@@ -29,6 +49,16 @@ interface FormManager
      * @return null|FormFactory
      */
     public function current($form = null);
+
+    /**
+     * Déclaration d'un champ.
+     *
+     * @param string $name Nom de qualification.
+     * @param callable|object|string $concrete Fonction anonyme|Instance|Nom de classe du contrôleur.
+     *
+     * @return $this
+     */
+    public function fieldRegister($name, $concrete);
 
     /**
      * Récupération d'une instance formulaire déclaré.

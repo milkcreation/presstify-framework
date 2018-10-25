@@ -45,64 +45,64 @@ class SignUpController extends ParamsBagController implements SignUpControllerCo
     {
         return [
             'fields' => [
-                'login' => [
-                    'label'        => __('Identifiant', 'tify'),
-                    'type'         => 'input',
-                    'required'     => true,
-                    'addons'       => [
-                        'user'  => [
+                'login'    => [
+                    'label'    => __('Identifiant', 'tify'),
+                    'type'     => 'text',
+                    'required' => true,
+                    'addons'   => [
+                        'user' => [
                             'userdata' => 'user_login'
                         ]
                     ]
                 ],
-                'email' => [
-                    'label'        => __('Adresse e-mail', 'tify'),
-                    'attrs'        => [
-                        'placeholder'  => __('Indiquez votre e-mail', 'tify'),
+                'email'    => [
+                    'label'       => __('Adresse e-mail', 'tify'),
+                    'attrs'       => [
+                        'placeholder' => __('Indiquez votre e-mail', 'tify'),
                     ],
-                    'type'         => 'input',
-                    'integrity_cb' => 'is_email',
-                    'required'     => true,
-                    'addons'       => [
-                        'user'  => [
+                    'type'        => 'text',
+                    'validations' => 'is-email',
+                    'required'    => true,
+                    'addons'      => [
+                        'user' => [
                             'userdata' => 'user_email'
                         ]
                     ]
                 ],
                 'password' => [
-                    'label'        => __('Mot de passe', 'tify'),
-                    'attrs'        => [
-                        'placeholder'  => __('Renseignez un mot de passe', 'tify'),
+                    'label'       => __('Mot de passe', 'tify'),
+                    'attrs'       => [
+                        'placeholder' => __('Renseignez un mot de passe', 'tify'),
                     ],
-                    'type'         => 'password',
-                    'integrity_cb' => 'is_valid_password',
-                    'required'     => true,
-                    'addons'       => [
-                        'user'  => [
+                    'type'        => 'password',
+                    'validations' => 'valid-password',
+                    'required'    => true,
+                    'addons'      => [
+                        'user' => [
                             'userdata' => 'user_pass'
                         ]
                     ]
                 ],
-                'confirm' => [
-                    'label'        => __('Confirmation de mot de passe', 'tify'),
-                    'attrs'        => [
-                        'placeholder'  => __('Confirmez votre mot de passe', 'tify'),
+                'confirm'  => [
+                    'label'       => __('Confirmation de mot de passe', 'tify'),
+                    'attrs'       => [
+                        'placeholder' => __('Confirmez votre mot de passe', 'tify'),
                     ],
-                    'type'         => 'password',
-                    'integrity_cb' => [
-                        'cb' => 'compare',
-                        'args'     => ['password'],
-                        'message'    => __(
-                            'Les champs "Mot de passe" et "Confirmation de mot de passe" doivent correspondre',
+                    'type'        => 'password',
+                    'validations' => [
+                        'call'    => 'compare',
+                        'args'    => ['password'],
+                        'message' => __(
+                            'Les champs "Mot de passe" et "Confirmation de mot de passe" doivent correspondre.',
                             'tify'
                         )
                     ],
-                    'required'     => true
+                    'required'    => true
                 ],
-                'captcha' => [
-                    'label'        => __('Code de sécurité', 'tify'),
-                    'type'         => 'captcha',
-                    'required'     => true
+                'captcha'  => [
+                    'label'    => __('Code de sécurité', 'tify'),
+                    'type'     => 'captcha',
+                    'required' => true
                 ]
             ],
             'addons' => ['user' => true]

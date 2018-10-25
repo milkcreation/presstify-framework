@@ -110,12 +110,13 @@ class Validation
      *
      * @param mixed $value Valeur du champ courant à comparer.
      * @param mixed $tags Variables de qualification de champs de comparaison.
+     * @param boolean $raw Récupération du format brut du champ de comparaison.
      *
      * @return boolean
      */
     public function compare($value, $tags, $raw = false)
     {
-        $value2 = $this->fieldTagValue($tags);
+        $value2 = $this->fieldTagValue($tags, $raw);
 
         if ($value !== $value2) :
             return false;

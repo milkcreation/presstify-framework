@@ -123,7 +123,7 @@ interface FactoryField extends FactoryResolver, ParamsBagInterface
     public function hasLabel();
 
     /**
-     * Vérification de l'encapsulation du champ.
+     * Vérification d'existance d'encapsuleur HTML.
      *
      * @return boolean
      */
