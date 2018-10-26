@@ -42,8 +42,15 @@ class RoleItemController extends AbstractParametersBag implements UserRoleItemCo
             function () {
                 $name = $this->getName();
 
-                if (!$role = get_role($name)) :
-                    $role = add_role($name, $this->get('display_name'));
+                /** @var \WP_Roles $wp_roles */
+                global $wp_roles;
+
+                /** @var \WP_Role $role */
+                if (!$role = $wp_roles->get_role($name)) :
+                    $role = $wp_roles->add_role($name, $this->get('display_name'));
+                elseif (($names = $wp_roles->get_names()) && ($names[$name] !== $this->get('display_name'))) :
+                    $wp_roles->remove_role($name);
+                    $role = $wp_roles->add_role($name, $this->get('display_name'));
                 endif;
 
                 foreach ($this->get('capabilities', []) as $cap => $grant) :
