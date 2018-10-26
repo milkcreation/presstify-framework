@@ -67,7 +67,6 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
      */
     public function __construct($name, $attrs = [])
     {
-
         $this->name = $name;
         $this->form = $this;
 
