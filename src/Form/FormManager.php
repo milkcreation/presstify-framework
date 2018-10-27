@@ -46,7 +46,6 @@ final class FormManager implements FormManagerContract
             function () {
                 foreach($this->all() as $form) :
                     $current = $this->current($form);
-                    $current->prepare();
                     $this->reset();
                 endforeach;
             },
