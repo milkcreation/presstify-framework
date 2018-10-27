@@ -104,16 +104,6 @@ class Field extends ParamsBagController implements FactoryField
 
         $this->events('field.init.' . $this->getSlug(), [&$this]);
         $this->events('field.init', [&$this]);
-
-        // Pré-affichage du formulaire.
-        $this->events()->listen(
-            'form.render',
-            function () {
-                if ($this->onError()) :
-                    $this->set('attrs.aria-error', 'true');
-                endif;
-            }
-        );
     }
 
     /**
@@ -121,7 +111,7 @@ class Field extends ParamsBagController implements FactoryField
      */
     public function __toString()
     {
-        return (string)$this->getController();
+        return $this->render();
     }
 
     /**
@@ -360,6 +350,90 @@ class Field extends ParamsBagController implements FactoryField
             $this->set('wrapper', true);
         endif;
 
+        // Attributs de champ requis (marqueur et fonction de traitement).
+        if ($required = $this->get('required', false)) :
+            $required = (is_array($required))
+                ? $required
+                : (is_string($required) ? ['message' => $required] : []);
+
+            $required = array_merge(
+                [
+                    'tagged'     => true,
+                    'check'      => true,
+                    'value_none' => '',
+                    'call'       => '',
+                    'args'       => [],
+                    'raw'        => false,
+                    'message'    => __('Le champ "%s" doit être renseigné.', 'tify'),
+                    'html5'      => false,
+                ],
+                $required
+            );
+
+            if ($tagged = $required['tagged']) :
+                $tagged = is_array($tagged)
+                    ? $tagged
+                    : (is_string($tagged)) ? ['content' => $tagged] : [];
+                $required['tagged'] = array_merge(
+                    [
+                        'tag'     => 'span',
+                        'attrs'   => [],
+                        'content' => '*'
+                    ],
+                    $tagged
+                );
+            endif;
+
+            $required['call'] = !empty($required['value_none']) && empty($required['call'])
+                ? 'is-equal'
+                : 'not-empty';
+            $required['args'] = !empty($required['value_none']) && empty($required['args'])
+                ? [] + [$required['value_none']]
+                : [];
+
+            $this->set('required', $required);
+        endif;
+
+        // Liste des tests de validation.
+        if ($validations = $this->get('validations')) :
+            $this->set('validations', $this->parseValidations($validations));
+        endif;
+
+        foreach($this->addons() as $name => $addon) :
+            $this->set(
+                "addons.{$name}",
+                array_merge(
+                    $addon->defaultsFieldOptions(),
+                    $this->get("addons.{$name}", [])
+                )
+            );
+        endforeach;
+
+        $this->events('field.prepared.' . $this->getType(), [&$this]);
+        $this->events('field.prepared', [&$this]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetValue()
+    {
+        $this->set('value', $this->default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render()
+    {
+        return (string)$this->getController();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function renderPrepare()
+    {
         // Attributs HTML du champ.
         if (!$this->has('attrs.id', '')) :
             $this->set('attrs.id', "Form{$this->form()->index()}-fieldInput--{$this->getSlug()}");
@@ -383,6 +457,10 @@ class Field extends ParamsBagController implements FactoryField
         endif;
         if ($this->get('attrs.tabindex') === false) :
             $this->pull('attrs.tabindex');
+        endif;
+
+        if ($this->onError()) :
+            $this->set('attrs.aria-error', 'true');
         endif;
 
         // Attributs HTML de l'encapsuleur de champ.
@@ -458,94 +536,24 @@ class Field extends ParamsBagController implements FactoryField
             endif;
         endif;
 
-        // Attributs de champ requis (marqueur et fonction de traitement).
-        if ($required = $this->get('required', false)) :
-            $required = (is_array($required))
-                ? $required
-                : (is_string($required) ? ['message' => $required] : []);
-
-            $required = array_merge(
-                [
-                    'tagged'     => true,
-                    'check'      => true,
-                    'value_none' => '',
-                    'call'       => '',
-                    'args'       => [],
-                    'raw'        => false,
-                    'message'    => __('Le champ "%s" doit être renseigné.', 'tify'),
-                    'html5'      => false,
-                ],
-                $required
-            );
-
-            if ($tagged = $required['tagged']) :
-                $tagged = is_array($tagged)
-                    ? $tagged
-                    : (is_string($tagged)) ? ['content' => $tagged] : [];
-                $required['tagged'] = array_merge(
-                    [
-                        'tag'     => 'span',
-                        'attrs'   => [],
-                        'content' => '*'
-                    ],
-                    $tagged
-                );
+        if ($this->get('required.tagged')) :
+            if (!$this->has('required.tagged.attrs.id', '')) :
+                $this->set('required.tagged.attrs.id', "Form{$this->form()->index()}-fieldTag--{$this->getSlug()}");
+            endif;
+            if (!$this->get('required.tagged.attrs.id')) :
+                $this->pull('required.tagged.attrs.id');
             endif;
 
-            $required['call'] = !empty($required['value_none']) && empty($required['call'])
-                ? 'is-equal'
-                : 'not-empty';
-            $required['args'] = !empty($required['value_none']) && empty($required['args'])
-                ? [] + [$required['value_none']]
-                : [];
-
-            $this->set('required', $required);
-
-            if ($this->get('required.tagged')) :
-                if (!$this->has('required.tagged.attrs.id', '')) :
-                    $this->set('required.tagged.attrs.id', "Form{$this->form()->index()}-fieldTag--{$this->getSlug()}");
-                endif;
-                if (!$this->get('required.tagged.attrs.id')) :
-                    $this->pull('required.tagged.attrs.id');
-                endif;
-
-                $default_class = "Form-fieldTag Form-fieldTag--{$this->getType()} Form-fieldTag--{$this->getSlug()}";
-                if (!$this->has('required.tagged.attrs.class')) :
-                    $this->set('required.tagged.attrs.class', $default_class);
-                else :
-                    $this->set('required.tagged.attrs.class', sprintf($this->get('required.tagged.attrs.class', ''), $default_class));
-                endif;
-                if (!$this->get('required.tagged.attrs.class')) :
-                    $this->pull('required.tagged.attrs.class');
-                endif;
+            $default_class = "Form-fieldTag Form-fieldTag--{$this->getType()} Form-fieldTag--{$this->getSlug()}";
+            if (!$this->has('required.tagged.attrs.class')) :
+                $this->set('required.tagged.attrs.class', $default_class);
+            else :
+                $this->set('required.tagged.attrs.class', sprintf($this->get('required.tagged.attrs.class', ''), $default_class));
+            endif;
+            if (!$this->get('required.tagged.attrs.class')) :
+                $this->pull('required.tagged.attrs.class');
             endif;
         endif;
-
-        // Liste des tests de validation.
-        if ($validations = $this->get('validations')) :
-            $this->set('validations', $this->parseValidations($validations));
-        endif;
-
-        foreach($this->addons() as $name => $addon) :
-            $this->set(
-                "addons.{$name}",
-                array_merge(
-                    $addon->defaultsFieldOptions(),
-                    $this->get("addons.{$name}", [])
-                )
-            );
-        endforeach;
-
-        $this->events('field.prepared.' . $this->getType(), [&$this]);
-        $this->events('field.prepared', [&$this]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resetValue()
-    {
-        $this->set('value', $this->default);
     }
 
     /**

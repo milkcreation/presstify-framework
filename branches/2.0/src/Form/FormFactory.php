@@ -58,6 +58,12 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
     ];
 
     /**
+     * Indicateur de préparation active.
+     * @var boolean
+     */
+    protected $prepared = false;
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param string $name Nom de qualification du formulaire.
@@ -257,6 +263,38 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
     {
         $this->events('form.prepare', [&$this]);
 
+        foreach($this->fields() as $field) :
+            $field->prepare();
+        endforeach;
+
+        $this->prepared = true;
+
+        $this->events('form.prepared', [&$this]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render()
+    {
+        if (!$this->prepared) :
+            $this->prepare();
+        endif;
+
+        $this->renderPrepare();
+
+        $fields = $this->fields();
+        $buttons = $this->buttons();
+        $notices = $this->notices()->getMessages();
+
+        return $this->form()->viewer('form', compact('buttons', 'fields', 'notices'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function renderPrepare()
+    {
         // Attributs HTML du champ.
         if (!$this->has('attrs.id', '')) :
             $this->set('attrs.id', "Form-content--{$this->name()}");
@@ -289,12 +327,6 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
             $this->set("attrs.data-grid_gutter", $grid['gutter']??0);
         endif;
 
-        foreach($this->fields() as $field) :
-            $field->prepare();
-        endforeach;
-
-        $this->events('request.handle');
-
         if ($this->onSuccess()) :
             $this->notices()->add(
                 'success',
@@ -309,21 +341,9 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
             );
         endif;
 
-        $this->events('form.prepared', [&$this]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function render()
-    {
-        $this->events('form.render', [&$this]);
-
-        $fields = $this->fields();
-        $buttons = $this->buttons();
-        $notices = $this->notices()->getMessages();
-
-        return $this->form()->viewer('form', compact('buttons', 'fields', 'notices'));
+        foreach($this->fields() as $field) :
+            $field->renderPrepare();
+        endforeach;
     }
 
     /**

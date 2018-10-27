@@ -23,7 +23,7 @@ class Request extends ParamsBagController implements FactoryRequest
     {
         $this->form = $form;
 
-        $this->events()->listen('request.handle', [$this, 'handle']);
+        $this->events()->listen('form.set.current', [$this, 'handle'], -999999);
     }
 
     /**
@@ -36,6 +36,10 @@ class Request extends ParamsBagController implements FactoryRequest
         if (!wp_verify_nonce($this->get('_token', ''), 'Form' . $this->form()->name())) :
             return false;
         endif;
+
+        $this->form()->prepare();
+
+        $this->events('request.handle');
 
         /**
          * Validations.
