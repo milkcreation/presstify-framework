@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 abstract class AbstractStore extends AppController implements StoreInterface
 {
@@ -341,9 +341,10 @@ abstract class AbstractStore extends AppController implements StoreInterface
     public function getDb()
     {
         try {
-            $Db = $this->appServiceGet(Session::class)->getDb();
+            /** @var Session $session */
+            $session = app('user.session');
 
-            return $Db;
+            return $session->getDb();
         } catch (\Exception $e) {
             wp_die($e->getMessage(), __('ERREUR SYSTEME', 'tify'), $e->getCode());
             exit;
