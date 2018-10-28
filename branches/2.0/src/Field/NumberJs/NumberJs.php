@@ -24,7 +24,7 @@ class NumberJs extends FieldController
     protected $attributes = [
         'before'          => '',
         'after'           => '',
-        'container'       => '',
+        'container'       => [],
         'attrs'           => [],
         'name'            => '',
         'value'           => 0,

@@ -114,7 +114,7 @@ class Validation
      *
      * @return boolean
      */
-    public function compare($value, $tags, $raw = false)
+    public function compare($value, $tags, $raw = true)
     {
         $value2 = $this->fieldTagValue($tags, $raw);
 

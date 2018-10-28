@@ -214,7 +214,7 @@ class Field extends ParamsBagController implements FactoryField
 
         $this->events('field.get.value', [&$value, $this]);
 
-        if ($raw) :
+        if (!$raw) :
             $value = is_array($value) ? array_map('esc_attr', $value) : esc_attr($value);
         endif;
 
@@ -226,7 +226,7 @@ class Field extends ParamsBagController implements FactoryField
      */
     public function getValues($raw = true, $glue = ', ')
     {
-        $value = Arr::wrap($this->getValue(false));
+        $value = Arr::wrap($this->getValue());
 
         if ($choices = $this->get('choices', [])) :
             foreach ($value as &$v) :
@@ -236,7 +236,7 @@ class Field extends ParamsBagController implements FactoryField
             endforeach;
         endif;
 
-        if ($raw) :
+        if (!$raw) :
             $value = is_array($value) ? array_map('esc_attr', $value) : esc_attr($value);
         endif;
 
@@ -363,7 +363,7 @@ class Field extends ParamsBagController implements FactoryField
                     'value_none' => '',
                     'call'       => '',
                     'args'       => [],
-                    'raw'        => false,
+                    'raw'        => true,
                     'message'    => __('Le champ "%s" doit être renseigné.', 'tify'),
                     'html5'      => false,
                 ],
