@@ -2,9 +2,9 @@
 
 namespace tiFy\Taxonomy\Metabox\Order;
 
-use tiFy\Metabox\AbstractMetaboxDisplayTermController;
+use tiFy\Metabox\MetaboxWpTermController;
 
-class Order extends AbstractMetaboxDisplayTermController
+class Order extends MetaboxWpTermController
 {
     /**
      * {@inheritdoc}

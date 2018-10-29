@@ -3,9 +3,9 @@
 namespace tiFy\Options\Metabox\Slideshow;
 
 use Illuminate\Support\Arr;
-use tiFy\Metabox\AbstractMetaboxDisplayOptionsController;
+use tiFy\Metabox\MetaboxWpOptionsController;
 
-class Slideshow extends AbstractMetaboxDisplayOptionsController
+class Slideshow extends MetaboxWpOptionsController
 {
     /**
      * Liste des attributs de configuration.

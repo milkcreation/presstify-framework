@@ -2,23 +2,21 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxDisplayTermInterface;
-use tiFy\Contracts\Metabox\MetaboxItemInterface;
+use tiFy\Contracts\Metabox\MetaboxWpTermController as MetaboxWpTermControllerContract;
+use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Taxonomy\Metadata\Term as TermMeta;
 
-abstract class AbstractMetaboxDisplayTermController
-    extends AbstractMetaboxDisplayController
-    implements MetaboxDisplayTermInterface
+abstract class MetaboxWpTermController extends MetaboxController implements MetaboxWpTermControllerContract
 {
     /**
      * CONSTRUCTEUR.
      *
-     * @param MetaboxItemInterface $item Instance de l'élément.
+     * @param MetaboxFactory $item Instance de l'élément.
      * @param array $attrs Liste des variables passées en arguments.
      *
      * @return void
      */
-    public function __construct(MetaboxItemInterface $item, $args = [])
+    public function __construct(MetaboxFactory $item, $args = [])
     {
         parent::__construct($item, $args);
 

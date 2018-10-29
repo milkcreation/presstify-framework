@@ -6,7 +6,7 @@ use tiFy\Contracts\Kernel\ParametersBagInterface;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 
-interface MetaboxDisplayInterface extends ParametersBagInterface
+interface MetaboxController extends ParametersBagInterface
 {
     /**
      * Initialisation du controleur.

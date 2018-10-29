@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Metabox;
 
-interface MetaboxDisplayOptionsInterface extends MetaboxDisplayInterface
+interface MetaboxWpOptionsController extends MetaboxController
 {
     /**
      * Affichage du contenu.

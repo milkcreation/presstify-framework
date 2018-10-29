@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\RelatedPosts;
 
-use tiFy\Metabox\AbstractMetaboxDisplayPostController;
+use tiFy\Metabox\MetaboxWpPostController;
 
-class RelatedPosts extends AbstractMetaboxDisplayPostController
+class RelatedPosts extends MetaboxWpPostController
 {
     /**
      * Numéro de l'intance courante.

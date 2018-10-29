@@ -10,11 +10,11 @@
 namespace tiFy\Options\Page;
 
 use Illuminate\Support\Arr;
+use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Options\OptionsPageInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
-use tiFy\Metabox\Metabox;
 
 class OptionsPageController extends AbstractParametersBag implements OptionsPageInterface
 {
@@ -142,9 +142,9 @@ class OptionsPageController extends AbstractParametersBag implements OptionsPage
     /**
      * {@inheritdoc}
      */
-    public function add($attrs = [])
+    public function add($name, $attrs = [])
     {
-        $this->items[] = $attrs;
+        $this->items[$name] = $attrs;
     }
 
     /**
@@ -280,13 +280,14 @@ class OptionsPageController extends AbstractParametersBag implements OptionsPage
      */
     public function parseItems()
     {
-        /** @var Metabox $metabox */
-        $metabox = app(Metabox::class);
+        /** @var MetaboxManager $metabox */
+        $metabox = app('metabox');
 
-        foreach($this->get('items', []) as $item) :
-            $this->items[] = $item;
+        foreach($this->get('items', []) as $name => $attrs) :
+            $this->items[$name] = $attrs;
 
             $metabox->add(
+                $name,
                 $this->getName() . '@options',
                 array_merge(
                     [

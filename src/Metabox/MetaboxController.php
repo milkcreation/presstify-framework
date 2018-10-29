@@ -3,17 +3,17 @@
 namespace tiFy\Metabox;
 
 use Illuminate\Support\Arr;
-use tiFy\Contracts\Metabox\MetaboxItemInterface;
-use tiFy\Contracts\Metabox\MetaboxDisplayInterface;
+use tiFy\Contracts\Metabox\MetaboxController as MetaboxControllerContract;
+use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 
-abstract class AbstractMetaboxDisplayController extends AbstractParametersBag implements MetaboxDisplayInterface
+abstract class MetaboxController extends AbstractParametersBag implements MetaboxControllerContract
 {
     /**
      * Instance de l'élément.
-     * @var MetaboxItemInterface
+     * @var MetaboxFactory
      */
     protected $item;
 
@@ -26,12 +26,12 @@ abstract class AbstractMetaboxDisplayController extends AbstractParametersBag im
     /**
      * CONSTRUCTEUR.
      *
-     * @param MetaboxItemInterface $item Instance de l'élément.
+     * @param MetaboxFactory $item Instance de l'élément.
      * @param array $attrs Liste des variables passées en arguments.
      *
      * @return void
      */
-    public function __construct(MetaboxItemInterface $item, $args = [])
+    public function __construct(MetaboxFactory $item, $args = [])
     {
         $this->item = $item;
 

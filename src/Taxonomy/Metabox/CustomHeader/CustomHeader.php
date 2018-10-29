@@ -2,9 +2,9 @@
 
 namespace tiFy\Taxonomy\Metabox\CustomHeader;
 
-use tiFy\Metabox\AbstractMetaboxDisplayTermController;
+use tiFy\Metabox\MetaboxWpTermController;
 
-class CustomHeader extends AbstractMetaboxDisplayTermController
+class CustomHeader extends MetaboxWpTermController
 {
     /**
      * {@inheritdoc}

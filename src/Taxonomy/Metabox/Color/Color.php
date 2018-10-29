@@ -2,9 +2,9 @@
 
 namespace tiFy\Taxonomy\Metabox\Color;
 
-use tiFy\Metabox\AbstractMetaboxDisplayTermController;
+use tiFy\Metabox\MetaboxWpTermController;
 
-class Color extends AbstractMetaboxDisplayTermController
+class Color extends MetaboxWpTermController
 {
     /**
      * {@inheritdoc}

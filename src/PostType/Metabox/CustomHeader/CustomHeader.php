@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\CustomHeader;
 
-use tiFy\Metabox\AbstractMetaboxDisplayPostController;
+use tiFy\Metabox\MetaboxWpPostController;
 
-class CustomHeader extends AbstractMetaboxDisplayPostController
+class CustomHeader extends MetaboxWpPostController
 {
     /**
      * {@inheritdoc}

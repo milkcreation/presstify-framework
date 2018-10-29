@@ -10,17 +10,17 @@
 namespace tiFy\Metabox;
 
 use Illuminate\Support\Collection;
-use tiFy\Contracts\Metabox\MetaboxInterface;
+use tiFy\Contracts\Metabox\MetaboxFactory;
+use tiFy\Contracts\Metabox\MetaboxManager as MetaboxManagerContract;
 use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\Metabox\MetaboxItemController;
 use tiFy\Metabox\Tab\MetaboxTabDisplay;
 use tiFy\Wp\WpScreen;
 
-class Metabox implements MetaboxInterface
+class MetaboxManager implements MetaboxManagerContract
 {
     /**
      * Liste des éléments.
-     * @var MetaboxItemController[]
+     * @var MetaboxFactory[]
      */
     protected $items = [];
 
@@ -40,21 +40,13 @@ class Metabox implements MetaboxInterface
         add_action(
             'wp_loaded',
             function () {
-                foreach (config('metabox.add', []) as $screen => $items) :
-                    foreach ($items as $attrs) :
-                        if (is_numeric($screen)) :
-                            $_screen = isset($attrs['screen']) ? $attrs['screen'] : null;
-                        else :
-                            $_screen = $screen;
-                        endif;
+                foreach (config('metabox', []) as $screen => $items) :
+                    if(!is_null($screen) && preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
+                        $screen = 'edit::' . $screen;
+                    endif;
 
-                        if(!is_null($_screen)) :
-                            if (preg_match('#(.*)@(post_type|taxonomy|user)#', $_screen)) :
-                                $_screen = 'edit::' . $_screen;
-                            endif;
-
-                            $this->items[] = app()->resolve(MetaboxItemController::class, [$_screen, $attrs]);
-                        endif;
+                    foreach ($items as $name => $attrs) :
+                        $this->items[] = app()->resolve('metabox.factory', [$name, $screen, $attrs]);
                     endforeach;
                 endforeach;
             },
@@ -125,9 +117,16 @@ class Metabox implements MetaboxInterface
     /**
      * {@inheritdoc}
      */
-    public function add($screen, $attrs = [])
+    public function add($name, $screen = null, $attrs = [])
     {
-        config()->push("metabox.add.{$screen}", $attrs);
+        if (empty($screen)) :
+            $screen = 0;
+        endif;
+
+        config()->set(
+            "metabox.{$screen}.{$name}",
+            $attrs
+        );
 
         return $this;
     }
@@ -145,7 +144,7 @@ class Metabox implements MetaboxInterface
      */
     public function remove($screen, $id, $context = 'normal')
     {
-        config()->push("metabox.remove.{$screen}.{$id}", $context);
+        //config()->push("metabox.remove.{$screen}.{$id}", $context);
 
         return $this;
     }
