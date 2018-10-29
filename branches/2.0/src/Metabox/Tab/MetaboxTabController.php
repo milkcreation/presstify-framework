@@ -2,13 +2,14 @@
 
 namespace tiFy\Metabox\Tab;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Contracts\Wp\WpScreenInterface;
+use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Tools;
 
-class MetaboxTabDisplay
+class MetaboxTabController extends ParamsBagController
 {
     /**
      * Liste des éléments à afficher.
@@ -26,12 +27,18 @@ class MetaboxTabDisplay
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des attributs de configuration.
+     * @param WpScreenInterface $screen Liste des attributs de configuration.
      *
      * @return void
      */
-    public function __construct(WpScreenInterface $screen, MetaboxManager $metabox)
+    public function __construct($attrs = [], WpScreenInterface $screen)
     {
         $this->screen = $screen;
+
+        parent::__construct($attrs);
+
+        /** @var MetaboxManager $metabox */
+        $metabox = app('metabox');
 
         $this->items = $metabox->getItems();
 
@@ -107,11 +114,9 @@ class MetaboxTabDisplay
     /**
      * {@inheritdoc}
      */
-    public function byPosition()
+    public function isCallable($var)
     {
-        return (new Collection($this->items))->sortBy(function (ButtonController $button) {
-            return $button->getPosition();
-        })->all();
+        return Tools::Functions()->isCallable($var);
     }
 
     /**
@@ -159,12 +164,14 @@ class MetaboxTabDisplay
             ? func_get_args()
             : [];
 
+        $title = $this->get('title', __('Réglages', 'tify'));
+
         echo view()
             ->setDirectory(__DIR__ . '/views')
             ->render(
                 'display',
                 [
-                    'title' => __('Réglages', 'tify'),
+                    'title' => $this->isCallable($title) ? call_user_func_array($title, $args) : $title,
                     'items' => call_user_func_array([$this, 'parseItems'], $args)
                 ]
             );

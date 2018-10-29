@@ -5,17 +5,10 @@ namespace tiFy\Metabox;
 use tiFy\App\Container\AppServiceProvider;
 use tiFy\Metabox\MetaboxManager;
 use tiFy\Metabox\MetaboxFactory;
-use tiFy\Metabox\Tab\MetaboxTabDisplay;
+use tiFy\Metabox\Tab\MetaboxTabController;
 
 class MetaboxServiceProvider extends AppServiceProvider
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $bindings = [
-        MetaboxTabDisplay::class
-    ];
-
     /**
      * {@inheritdoc}
      */
@@ -25,8 +18,15 @@ class MetaboxServiceProvider extends AppServiceProvider
 
         $this->app->bind(
             'metabox.factory',
-            function ($name, $screen = null, $attrs = []) {
-                return new MetaboxFactory($name, $screen, $attrs);
+            function ($name, $attrs = [], $screen = null) {
+                return new MetaboxFactory($name, $attrs, $screen);
+            }
+        );
+
+        $this->app->bind(
+            'metabox.tab',
+            function ($attrs = [], $screen = null) {
+                return new MetaboxTabController($attrs, $screen);
             }
         );
     }

@@ -32,6 +32,10 @@ final class Options
                 foreach(config('options', []) as $name => $attrs) :
                     $this->items[$name] = app(OptionsPageInterface::class, [$name, $attrs]);
                 endforeach;
+
+                if (!isset($this->items['tify_options'])) :
+                    $this->items['tify_options'] = app(OptionsPageInterface::class, ['tify_options', []]);
+                endif;
             }
         );
     }

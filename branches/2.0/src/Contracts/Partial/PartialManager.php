@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface Manager
+interface PartialManager
 {
     /**
      * Récupération statique d'un élément.
