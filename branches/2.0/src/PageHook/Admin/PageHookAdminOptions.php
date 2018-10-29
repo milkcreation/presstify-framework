@@ -2,10 +2,10 @@
 
 namespace tiFy\PageHook\Admin;
 
-use tiFy\Metabox\AbstractMetaboxDisplayOptionsController;
+use tiFy\Metabox\MetaboxWpOptionsController;
 use tiFy\PageHook\PageHook;
 
-class PageHookAdminOptions extends AbstractMetaboxDisplayOptionsController
+class PageHookAdminOptions extends MetaboxWpOptionsController
 {
     /**
      * {@inheritdoc}

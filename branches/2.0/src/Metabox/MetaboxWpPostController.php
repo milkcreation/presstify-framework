@@ -2,23 +2,21 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxDisplayPostInterface;
-use tiFy\Contracts\Metabox\MetaboxItemInterface;
+use tiFy\Contracts\Metabox\MetaboxWpPostController as MetaboxWpPostControllerContract;
+use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\PostType\Metadata\Post as PostMeta;
 
-abstract class AbstractMetaboxDisplayPostController
-    extends AbstractMetaboxDisplayController
-    implements MetaboxDisplayPostInterface
+abstract class MetaboxWpPostController extends MetaboxController implements MetaboxWpPostControllerContract
 {
     /**
      * CONSTRUCTEUR.
      *
-     * @param MetaboxItemInterface $item Instance de l'élément.
+     * @param MetaboxFactory $item Instance de l'élément.
      * @param array $attrs Liste des variables passées en arguments.
      *
      * @return void
      */
-    public function __construct(MetaboxItemInterface $item, $args = [])
+    public function __construct(MetaboxFactory $item, $args = [])
     {
         parent::__construct($item, $args);
 

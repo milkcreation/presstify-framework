@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType\Metabox\Subtitle;
 
-use tiFy\Metabox\AbstractMetaboxDisplayPostController;
+use tiFy\Metabox\MetaboxWpPostController;
 
-class Subtitle extends AbstractMetaboxDisplayPostController
+class Subtitle extends MetaboxWpPostController
 {
     /**
      * {@inheritdoc}

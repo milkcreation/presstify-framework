@@ -2,10 +2,10 @@
 
 namespace tiFy\PostType\Metabox\Fileshare;
 
-use tiFy\Metabox\AbstractMetaboxDisplayPostController;
+use tiFy\Metabox\MetaboxWpPostController;
 use tiFy\PostType\Metadata\Post as PostMeta;
 
-class Fileshare extends AbstractMetaboxDisplayPostController
+class Fileshare extends MetaboxWpPostController
 {
     /**
      * {@inheritdoc}

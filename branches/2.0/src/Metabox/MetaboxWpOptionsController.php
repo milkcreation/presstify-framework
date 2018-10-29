@@ -2,22 +2,20 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxDisplayOptionsInterface;
-use tiFy\Contracts\Metabox\MetaboxItemInterface;
+use tiFy\Contracts\Metabox\MetaboxWpOptionsController as MetaboxWpOptionsControllerContract;
+use tiFy\Contracts\Metabox\MetaboxFactory;
 
-abstract class AbstractMetaboxDisplayOptionsController
-    extends AbstractMetaboxDisplayController
-    implements MetaboxDisplayOptionsInterface
+abstract class MetaboxWpOptionsController extends MetaboxController implements MetaboxWpOptionsControllerContract
 {
     /**
      * CONSTRUCTEUR.
      *
-     * @param MetaboxItemInterface $item Instance de l'élément.
+     * @param MetaboxFactory $item Instance de l'élément.
      * @param array $attrs Liste des variables passées en arguments.
      *
      * @return void
      */
-    public function __construct(MetaboxItemInterface $item, $args = [])
+    public function __construct(MetaboxFactory $item, $args = [])
     {
         parent::__construct($item, $args);
 

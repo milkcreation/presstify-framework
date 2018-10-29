@@ -2,11 +2,9 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxDisplayUserInterface;
+use tiFy\Contracts\Metabox\MetaboxWpUserController as MetaboxWpUserControllerContract;
 
-abstract class AbstractMetaboxDisplayUserController
-    extends AbstractMetaboxDisplayController
-    implements MetaboxDisplayUserInterface
+abstract class MetaboxWpUserController extends MetaboxController implements MetaboxWpUserControllerContract
 {
     /**
      * {@inheritdoc}

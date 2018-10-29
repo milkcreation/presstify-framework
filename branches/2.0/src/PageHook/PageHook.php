@@ -3,7 +3,7 @@
 namespace tiFy\PageHook;
 
 use tiFy\App\AppController;
-use tiFy\Metabox\Metabox;
+use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Options\Options;
 use tiFy\PageHook\Admin\PageHookAdminOptions;
 
@@ -33,12 +33,12 @@ class PageHook extends AppController
                     return;
                 endif;
 
-                /** @var Metabox $metabox */
-                $metabox = app(Metabox::class);
+                /** @var MetaboxManager $metabox */
+                $metabox = app('metabox');
                 $metabox->add(
+                    'tiFyPageHook-optionsNode',
                     'tify_options@options',
                     [
-                        'name'      => 'tiFyPageHook-optionsNode',
                         'title'     => __('Pages d\'accroche', 'tify'),
                         'content'   => PageHookAdminOptions::class
                     ]

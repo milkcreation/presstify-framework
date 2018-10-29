@@ -5,7 +5,7 @@ namespace tiFy\Contracts\Metabox;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Contracts\Kernel\ParametersBagInterface;
 
-interface MetaboxItemInterface extends ParametersBagInterface
+interface MetaboxFactory extends ParametersBagInterface
 {
     /**
      * Récupération de la liste des variables passées en argument.
