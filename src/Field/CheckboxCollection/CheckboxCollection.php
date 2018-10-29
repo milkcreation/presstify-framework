@@ -2,6 +2,7 @@
 
 namespace tiFy\Field\CheckboxCollection;
 
+use Illuminate\Support\Arr;
 use tiFy\Field\FieldController;
 use tiFy\Field\Checkbox\Checkbox;
 
@@ -40,7 +41,9 @@ class CheckboxCollection extends FieldController
         foreach ($this->get('items', []) as $name => $attrs) :
             if ($attrs instanceof Checkbox) :
                 $item = $attrs;
-                $item->set('checked', $this->get('checked'));
+                if (($checked = Arr::wrap($this->get('checked', []))) && in_array($item->getValue(), $checked)) :
+                    $item->push('attrs', 'checked');
+                endif;
                 $item->set('name', $this->get('name'));
             else :
                 $item = new CheckboxItem($name, $attrs, $this);

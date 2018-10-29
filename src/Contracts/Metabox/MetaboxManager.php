@@ -25,11 +25,21 @@ interface MetaboxManager
     /**
      * Déclaration d'une boîte de saisie à supprimer
      *
-     * @param string $screen Ecran d'affichage de l'élément.
-     * @param string $id Identifiant de qualification de la metaboxe
-     * @param string $context normal|side|advanced
+     * @param string $id Identifiant de qualification HTML de la metaboxe.
+     * @param string $screen Ecran d'affichage de l'élément. Null pour l'écran courant.
+     * @param string $context normal|side|advanced.
      *
      * @return $this
      */
-    public function remove($screen, $id, $context = 'normal');
+    public function remove($id, $screen = null, $context = 'normal');
+
+    /**
+     * Personnalisation des attributs de configuration d'une boîte à onglets.
+     *
+     * @param string $attrs Liste des attributs de personnalisation.
+     * @param string $screen Ecran d'affichage de l'élément. Null pour l'écran courant.
+     *
+     * @return $this
+     */
+    public function tab($attrs = [], $screen = null);
 }

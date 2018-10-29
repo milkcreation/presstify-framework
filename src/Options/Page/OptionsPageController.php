@@ -77,7 +77,6 @@ class OptionsPageController extends AbstractParametersBag implements OptionsPage
         add_action(
             'admin_menu',
             function () {
-
                 if ($attrs = $this->get('admin_menu', [])) :
                     if ($attrs['parent_slug']) :
                         add_submenu_page(

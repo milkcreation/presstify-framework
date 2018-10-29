@@ -13,13 +13,12 @@ use Illuminate\Support\Collection;
 use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Contracts\Metabox\MetaboxManager as MetaboxManagerContract;
 use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\Metabox\Tab\MetaboxTabDisplay;
 use tiFy\Wp\WpScreen;
 
 class MetaboxManager implements MetaboxManagerContract
 {
     /**
-     * Liste des éléments.
+     * Liste des éléments déclarés.
      * @var MetaboxFactory[]
      */
     protected $items = [];
@@ -29,6 +28,18 @@ class MetaboxManager implements MetaboxManagerContract
      * @var WpScreenInterface
      */
     protected $screen;
+
+    /**
+     * Liste des éléments à supprimer.
+     * @var array
+     */
+    protected $removes = [];
+
+    /**
+     * Liste des boîtes à onglets à personnaliser.
+     * @var array
+     */
+    protected $tabs = [];
 
     /**
      * CONSTRUCTEUR.
@@ -46,7 +57,7 @@ class MetaboxManager implements MetaboxManagerContract
                     endif;
 
                     foreach ($items as $name => $attrs) :
-                        $this->items[] = app()->resolve('metabox.factory', [$name, $screen, $attrs]);
+                        $this->items[] = app()->resolve('metabox.factory', [$name, $attrs, $screen]);
                     endforeach;
                 endforeach;
             },
@@ -58,12 +69,25 @@ class MetaboxManager implements MetaboxManagerContract
             function ($wp_current_screen) {
                 $this->screen = app('wp.screen', [$wp_current_screen]);
 
+                $attrs = [];
+                foreach($this->tabs as $screen => $_attrs) :
+                    if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
+                        $screen = 'edit::' . $screen;
+                    endif;
+                    $WpScreen = WpScreen::get($screen);
+
+                    if ($WpScreen->getHookname() === $this->screen->getHookname()) :
+                        $attrs = $_attrs;
+                        break;
+                    endif;
+                endforeach;
+
                 /** @var \WP_Screen  $wp_current_screen */
                 foreach($this->items as $item) :
                     $item->load($this->screen);
                 endforeach;
 
-                app(MetaboxTabDisplay::class, [$this->screen, $this]);
+                app('metabox.tab', [$attrs, $this->screen]);
             },
             999999
         );
@@ -71,7 +95,7 @@ class MetaboxManager implements MetaboxManagerContract
         add_action(
             'add_meta_boxes',
             function () {
-                foreach (config('metabox.remove', []) as $screen => $items) :
+                foreach ($this->removes as $screen => $items) :
                     if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
                         $screen = 'edit::' . $screen;
                     endif;
@@ -120,7 +144,7 @@ class MetaboxManager implements MetaboxManagerContract
     public function add($name, $screen = null, $attrs = [])
     {
         if (empty($screen)) :
-            $screen = 0;
+            $screen = '';
         endif;
 
         config()->set(
@@ -142,9 +166,35 @@ class MetaboxManager implements MetaboxManagerContract
     /**
      * {@inheritdoc}
      */
-    public function remove($screen, $id, $context = 'normal')
+    public function remove($id, $screen = null, $context = 'normal')
     {
-        //config()->push("metabox.remove.{$screen}.{$id}", $context);
+        if (!$screen) :
+            $screen = '';
+        endif;
+
+        if (!isset($this->removes[$screen])) :
+            $this->removes[$screen] = [];
+        endif;
+
+        if (!isset($this->removes[$screen][$id])) :
+            $this->removes[$screen][$id] = [];
+        endif;
+
+        array_push($this->removes[$screen][$id], $context);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function tab($attrs = [], $screen = null)
+    {
+        if (!$screen) :
+            $screen = '';
+        endif;
+
+        $this->tabs[$screen] = $attrs;
 
         return $this;
     }

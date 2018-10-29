@@ -3,7 +3,6 @@
 namespace tiFy\Partial;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Partial\Manager;
 
 class PartialServiceProvider extends AppServiceProvider
 {
@@ -12,6 +11,6 @@ class PartialServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton('partial', function() { return new Manager(); })->build();
+        $this->app->singleton('partial', function() { return new PartialManager(); })->build();
     }
 }

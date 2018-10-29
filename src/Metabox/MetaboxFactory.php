@@ -74,12 +74,12 @@ class MetaboxFactory extends AbstractParametersBag implements MetaboxFactoryCont
      * CONSTRUCTEUR.
      *
      * @param string $name Nom de qualification.
-     * @param null|string|\WP_Screen|WpScreenInterface $screen Qualification de la page d'affichage.
      * @param array $attrs Liste des attributs de configuration.
+     * @param null|string|\WP_Screen|WpScreenInterface $screen Qualification de la page d'affichage.
      *
      * @return void
      */
-    public function __construct($name, $screen = null, $attrs = [])
+    public function __construct($name, $attrs = [], $screen = null)
     {
         $this->name = $name;
         $this->index = self::$_index++;
@@ -89,7 +89,7 @@ class MetaboxFactory extends AbstractParametersBag implements MetaboxFactoryCont
         else :
             add_action(
                 'admin_init',
-                function () use ($screen){
+                function () use ($screen) {
                     $this->screen = WpScreen::get($screen);
 
                     $content = $this->getContent();

@@ -12,7 +12,7 @@ namespace tiFy\Partial;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialController;
-use tiFy\Contracts\Partial\Manager as ManagerInterface;
+use tiFy\Contracts\Partial\PartialManager as PartialManagerContract;
 use tiFy\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Partial\CookieNotice\CookieNotice;
 use tiFy\Partial\HolderImage\HolderImage;
@@ -41,7 +41,7 @@ use tiFy\Partial\Tag\Tag;
  * @method static Table Table(string $id = null,array $attrs = [])
  * @method static Tag Tag(string $id = null,array $attrs = [])
  */
-final class Manager implements ManagerInterface
+final class PartialManager implements PartialManagerContract
 {
     /**
      * Liste des instances des éléments déclarés.
