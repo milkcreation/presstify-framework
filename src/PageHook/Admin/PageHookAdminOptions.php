@@ -2,17 +2,11 @@
 
 namespace tiFy\PageHook\Admin;
 
-use tiFy\TabMetabox\ContentOptionsController;
+use tiFy\Metabox\MetaboxWpOptionsController;
 use tiFy\PageHook\PageHook;
 
-class PageHookAdminOptions extends ContentOptionsController
+class PageHookAdminOptions extends MetaboxWpOptionsController
 {
-    /**
-     * Classe de rappel du controleur des pages d'accroche.
-     * @var PageHook
-     */
-    protected $pageHook;
-
     /**
      * {@inheritdoc}
      */
@@ -20,9 +14,25 @@ class PageHookAdminOptions extends ContentOptionsController
     {
         parent::parse($attrs);
 
-        $this->pageHook = $this->appServiceGet(PageHook::class);
+        /** @var  PageHook $pageHook */
+        $pageHook = app(PageHook::class);
+        $this->set('items', $pageHook->all());
+    }
 
-        $this->set('items', $this->pageHook->all());
+    /**
+     * {@inheritdoc}
+     */
+    public function content($var1 = null, $var2 = null, $var3 = null)
+    {
+        return $this->viewer('content', $this->all());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function header($var1 = null, $var2 = null, $var3 = null)
+    {
+        return $this->item->getTitle() ? : __('Page d\'accroche', 'tify');
     }
 
     /**
@@ -31,11 +41,9 @@ class PageHookAdminOptions extends ContentOptionsController
     public function settings()
     {
         $settings = [];
-        if ($items = $this->pageHook->all()) :
-            foreach($items as $item) :
-                array_push($settings, $item->getOptionName());
-            endforeach;
-        endif;
+        foreach($this->get('items', []) as $item) :
+            array_push($settings, $item->getOptionName());
+        endforeach;
 
         return $settings;
     }

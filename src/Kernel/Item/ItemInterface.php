@@ -54,16 +54,6 @@ interface ItemInterface
     public function parse($attrs = []);
 
     /**
-     * Ajout d'un attribut au début de la liste des attributs.
-     *
-     * @param  mixed $value Valeur à ajouter
-     * @param  string $key $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     *
-     * @return array
-     */
-    public function unshift($value, $key);
-
-    /**
      * Récupére la valeur d'un attribut avant de le supprimer.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
@@ -74,6 +64,16 @@ interface ItemInterface
     public function pull($key, $default = null);
 
     /**
+     * Insertion d'un attribut à la fin d'une liste d'attributs.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $value Valeur de l'attribut.
+     *
+     * @return mixed
+     */
+    public function push($key, $value);
+
+    /**
      * Définition d'un attribut.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
@@ -81,7 +81,17 @@ interface ItemInterface
      *
      * @return void
      */
-    public function set($key, $value);
+    public function set($key, $value = null);
+
+    /**
+     * Insertion d'un attribut au début d'une liste d'attributs.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $value Valeur de l'attribut.
+     *
+     * @return mixed
+     */
+    public function unshift($value, $key);
 
     /**
      * Récupération de la liste des valeurs des attributs de configuration.
