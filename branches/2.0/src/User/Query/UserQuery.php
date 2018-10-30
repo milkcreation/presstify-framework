@@ -2,9 +2,11 @@
 
 namespace tiFy\User\Query;
 
+use Illuminate\Support\Arr;
 use tiFy\Contracts\User\UserQuery as UserQueryContract;
 use tiFy\User\Query\UserQueryCollection;
 use tiFy\User\Query\UserQueryItem;
+use WP_User;
 use WP_User_Query;
 
 class UserQuery implements UserQueryContract
@@ -35,6 +37,10 @@ class UserQuery implements UserQueryContract
         if ($query_args instanceof WP_User_Query) :
             $user_query = $query_args;
         elseif (is_array($query_args)) :
+            if ($this->getObjectName() && !isset($query_args['role__in'])) :
+                $query_args['role__in'] = Arr::wrap($this->getObjectName());
+            endif;
+
             $user_query = new WP_User_Query($query_args);
         else :
             $user_query = new WP_User_Query(null);
@@ -60,11 +66,11 @@ class UserQuery implements UserQueryContract
             $user = $id;
         endif;
 
-        if (!$user instanceof \WP_User) :
+        if (!$user instanceof WP_User) :
             return null;
         endif;
 
-        if ($this->getObjectName() && !array_intersect($user->roles, (array) $this->getObjectName())) :
+        if ($this->getObjectName() && !array_intersect($user->roles, Arr::wrap($this->getObjectName()))) :
             return null;
         endif;
 

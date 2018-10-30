@@ -2,10 +2,12 @@
 
 namespace tiFy\Taxonomy\Query;
 
+use Illuminate\Support\Arr;
 use tiFy\Contracts\Taxonomy\TermQuery as TermQueryContract;
 use tiFy\Taxonomy\Query\TermQueryCollection;
 use tiFy\Taxonomy\Query\TermQueryItem;
 use WP_Term;
+use WP_Term_Query;
 
 class TermQuery implements TermQueryContract
 {
@@ -30,19 +32,18 @@ class TermQuery implements TermQueryContract
     /**
      * {@inheritdoc}
      */
-    public function getCollection($query_args = [])
+    public function getCollection($query_args = null)
     {
-        if (!$query_args['taxonomy'] = $this->getObjectName()) :
-            return [];
-        endif;
-
-        $terms = get_terms($query_args);
-
-        if ($terms && !is_wp_error($terms)) :
-            $items = array_map([$this, 'getItem'], $terms);
+        if ($query_args instanceof WP_Term_Query) :
+            $term_query = $query_args;
+        elseif (is_array($query_args)) :
+            $query_args['taxonomy'] = Arr::wrap($query_args['taxonomy'] ?? $this->getObjectName());
+            $term_query = new WP_Term_Query($query_args);
         else :
-            $items = [];
+            $term_query = new WP_Term_Query(null);
         endif;
+
+        $items = $term_query->terms ? array_map([$this, 'getItem'], $term_query->terms) : [];
 
         return $this->resolveCollection($items);
     }
@@ -68,7 +69,7 @@ class TermQuery implements TermQueryContract
             return null;
         endif;
 
-        if ($term->taxonomy !== $this->getObjectName()) :
+        if (!in_array($term->taxonomy, Arr::wrap($this->getObjectName()))) :
             return null;
         endif;
 
