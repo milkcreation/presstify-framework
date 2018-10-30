@@ -4,11 +4,11 @@ namespace tiFy\Kernel\Templates;
 
 use Illuminate\Support\Arr;
 use League\Plates\Engine as LeaguePlatesEngine;
+use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Kernel;
-use tiFy\Kernel\TemplateController;
-use tiFy\Kernel\TemplateInterface;
 
-class Engine extends LeaguePlatesEngine
+class Engine extends LeaguePlatesEngine implements ViewsInterface
 {
     /**
      * Liste des attributs de configuration.
@@ -27,12 +27,17 @@ class Engine extends LeaguePlatesEngine
     /**
      * CONSTRUCTEUR.
      *
-     * @param array $attrs Liste des attributs de configuration
+     * @param string|array $attrs Liste des attributs de configuration
      *
      * @return void
      */
     public function __construct($attrs = [])
     {
+        if (is_string($attrs)) :
+            $directory = $attrs;
+            $attrs = compact('directory');
+        endif;
+
         $this->parse($attrs);
 
         $directory = $this->get('directory');
@@ -41,9 +46,7 @@ class Engine extends LeaguePlatesEngine
     }
 
     /**
-     * Récupération de la liste complète des attributs de configuration.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function all()
     {
@@ -51,12 +54,7 @@ class Engine extends LeaguePlatesEngine
     }
 
     /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function get($key, $default = '')
     {
@@ -64,9 +62,7 @@ class Engine extends LeaguePlatesEngine
     }
 
     /**
-     * Récupération du controleur de template.
-     *
-     * @return TemplateInterface
+     * {@inheritdoc}
      */
     public function getController()
     {
@@ -74,35 +70,58 @@ class Engine extends LeaguePlatesEngine
     }
 
     /**
-     * Vérification d'existance d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     *
-     * @return bool
+     * {@inheritdoc}
+     */
+    public function getOverrideDir($path = '')
+    {
+        if ($this->folders->exists('_override')) :
+            return $this->folders->get('_override')->getPath() . ($path ? trim($path, '/') : '');
+        else :
+            return '';
+        endif;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function has($key)
     {
         return Arr::has($this->attributes, $key);
     }
-    
+
     /**
      * {@inheritdoc}
-     *
-     * @return TemplateInterface
      */
     public function make($name, $args = [])
     {
         $controller = $this->getController();
 
-        return new $controller($this, $name);
+        /** @var ViewInterface $template */
+        $view = new $controller($this, $name);
+        $view->data($args);
+
+        return $view;
     }
 
     /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return void
+     * {@inheritdoc}
+     */
+    public function modifyFolder($name, $directory, $fallback = null)
+    {
+        if ($folder = $this->getFolders()->get($name)) :
+            if (is_null($folder)) :
+                $fallback = $folder->getFallback();
+            endif;
+            $this
+                ->removeFolder($name)
+                ->addFolder($name, $directory, $fallback);
+        endif;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function parse($attrs = [])
     {
@@ -113,16 +132,69 @@ class Engine extends LeaguePlatesEngine
     }
 
     /**
-     * Définition d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $value Valeur de l'attribut.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function set($key, $value)
     {
-        Arr::set($this->attributes, $key, $value);
+        switch($key) :
+            case 'controller' :
+                $this->setController($value);
+                break;
+            case 'directory' :
+                $this->setDirectory($value);
+                break;
+            case 'ext' :
+                $this->setFileExtension($value);
+                break;
+            case 'override_dir' :
+                $this->setOverrideDir($value);
+                break;
+            default :
+                Arr::set($this->attributes, $key, $value);
+                break;
+        endswitch;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setController($controller)
+    {
+        Arr::set($this->attributes, 'controller', $controller);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDirectory($directory)
+    {
+        Arr::set($this->attributes, 'directory', $directory);
+
+        return parent::setDirectory($directory);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFileExtension($fileExtension)
+    {
+        Arr::set($this->attributes, 'ext', $fileExtension);
+
+        return parent::setFileExtension($fileExtension);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOverrideDir($override_dir)
+    {
+        Arr::set($this->attributes, 'override_dir', $override_dir);
+
+        $this->addFolder('_override', $override_dir, true);
 
         return $this;
     }

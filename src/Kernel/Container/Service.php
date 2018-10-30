@@ -3,6 +3,8 @@
 namespace tiFy\Kernel\Container;
 
 use League\Container\Definition\DefinitionInterface;
+use League\Container\Argument\RawArgument;
+use tiFy\Contracts\Container\ServiceInterface;
 use tiFy\Kernel\Container\Container;
 use tiFy\Kernel\Item\AbstractItemIterator;
 
@@ -56,7 +58,7 @@ class Service extends AbstractItemIterator implements ServiceInterface
      */
     public function bind()
     {
-        return $this->definition = $this->getContainer()->add($this->getAbstract(), $this->getConcrete(), $this->isSingleton());
+        return $this->definition = $this->getContainer()->add($this->getAlias(), $this->getConcrete(), $this->isSingleton());
     }
 
     /**
@@ -72,7 +74,13 @@ class Service extends AbstractItemIterator implements ServiceInterface
             $this->bind();
         endif;
 
-        return $this->instance = $this->definition->build($args);
+        foreach($args as &$arg) :
+            $arg = new RawArgument($arg);
+        endforeach;
+
+        return $this->instance =  ($this->definition instanceof DefinitionInterface)
+            ? $this->definition->build($args)
+            : $this->definition;
     }
 
     /**
