@@ -2,10 +2,6 @@
 
 namespace tiFy\Components\Addons\Mailer;
 
-use tiFy\Form\Forms;
-use tiFy\Field\Field;
-use tiFy\Control\Control;
-use tiFy\Taboox\Options\Admin;
 
 class AdminMailerOptions extends Admin
 {

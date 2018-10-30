@@ -2,23 +2,23 @@
 
 namespace tiFy\Contracts\User;
 
-interface UserQueryInterface
+interface UserQuery
 {
     /**
      * Récupération des données d'une liste d'élément selon des critères de requête
      *
-     * @param array $query_args Liste des arguments de requête
+     * @param WP_User_Query|array $query_args Requête de récupération utilisateur|Liste des arguments de requête.
      *
-     * @return array|UserQueryCollectionInterface|UserQueryItemInterface[]
+     * @return array|UserQueryCollection|UserQueryItem[]
      */
-    public function getCollection($query_args = []);
+    public function getCollection($query_args = null);
 
     /**
      * Récupération d'un élément
      *
      * @param string|int|\WP_User|null $id Login utilisateur Wordpress|Identifiant de qualification Wordpress|Objet utilisateur Wordpress|Utilisateur Wordpress courant
      *
-     * @return null|UserQueryItemInterface
+     * @return null|UserQueryItem
      */
     public function getItem($id = null);
 
@@ -28,7 +28,7 @@ interface UserQueryInterface
      * @param string $key Identifiant de qualification de l'attribut. défaut name.
      * @param string $value Valeur de l'attribut
      *
-     * @return null|UserQueryItemInterface
+     * @return null|UserQueryItem
      */
     public function getItemBy($key = 'login', $value);
 

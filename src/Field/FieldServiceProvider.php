@@ -3,7 +3,7 @@
 namespace tiFy\Field;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Field\Manager;
+use tiFy\Field\FieldManager;
 
 class FieldServiceProvider extends AppServiceProvider
 {
@@ -12,6 +12,6 @@ class FieldServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton('field', function () { return new Manager(); })->build();
+        $this->app->singleton('field', function () { return new FieldManager(); })->build();
     }
 }

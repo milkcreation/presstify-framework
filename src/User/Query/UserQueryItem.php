@@ -2,10 +2,10 @@
 
 namespace tiFy\User\Query;
 
-use Illuminate\Support\Fluent;
-use tiFy\Contracts\User\UserQueryItemInterface;
+use tiFy\Contracts\User\UserQueryItem as UserQueryItemContract;
+use tiFy\Kernel\Parameters\ParamsBagController;
 
-class UserQueryItem extends Fluent implements UserQueryItemInterface
+class UserQueryItem extends ParamsBagController implements UserQueryItemContract
 {
     /**
      * Objet User Wordpress

@@ -2,14 +2,14 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
-interface TermQueryInterface
+interface TermQuery
 {
     /**
      * Récupération d'une liste d'élément selon des critères de requête
      *
      * @param array $query_args Liste des arguments de requête
      *
-     * @return array|TermQueryCollectionInterface|TermQueryItemInterface[]
+     * @return array|TermQueryCollection|TermQueryItem[]
      */
     public function getCollection($query_args = []);
 
@@ -18,7 +18,7 @@ interface TermQueryInterface
      *
      * @param string|int|\WP_Term|null $id Nom de qualification (slug)|Identifiant de term Wordpress|Objet terme Wordpress|Terme de ma page courante
      *
-     * @return null|object|TermQueryItemInterface
+     * @return null|object|TermQueryItem
      */
     public function getItem($id = null);
 
@@ -28,7 +28,7 @@ interface TermQueryInterface
      * @param string $key Identifiant de qualification de l'attribut. défaut name.
      * @param string $value Valeur de l'attribut
      *
-     * @return null|object|TermQueryItemInterface
+     * @return null|object|TermQueryItem
      */
     public function getItemBy($key = 'slug', $value);
 
@@ -42,7 +42,7 @@ interface TermQueryInterface
     /**
      * Récupération d'une instance du controleur de liste d'éléments.
      *
-     * @param TermQueryItemInterface[] $items Liste des éléments.
+     * @param TermQueryItem[] $items Liste des éléments.
      *
      * @return string
      */

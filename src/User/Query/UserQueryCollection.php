@@ -3,15 +3,15 @@
 namespace tiFy\User\Query;
 
 use Illuminate\Support\Collection;
-use tiFy\Contracts\User\UserQueryCollectionInterface;
-use tiFy\Contracts\User\UserQueryItemInterface;
+use tiFy\Contracts\User\UserQueryCollection as UserQueryCollectionContract;
+use tiFy\Contracts\User\UserQueryItem;
 
-class UserQueryCollection extends Collection implements UserQueryCollectionInterface
+class UserQueryCollection extends Collection implements UserQueryCollectionContract
 {
     /**
      * CONSTRUCTEUR
      *
-     * @param UserQueryItemInterface[] $items
+     * @param UserQueryItem[] $items
      *
      * @return void
      */

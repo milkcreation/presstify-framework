@@ -12,7 +12,7 @@ namespace tiFy\Field;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Field\FieldController;
-use tiFy\Contracts\Field\Manager as ManagerInterface;
+use tiFy\Contracts\Field\FieldManager as FieldManagerContract;
 use tiFy\Field\Button\Button;
 use tiFy\Field\Checkbox\Checkbox;
 use tiFy\Field\CheckboxCollection\CheckboxCollection;
@@ -71,7 +71,7 @@ use tiFy\Field\ToggleSwitch\ToggleSwitch;
  * @method static TextRemaining(string $id = null, array $attrs = [])
  * @method static ToggleSwitch(string $id = null, array $attrs = [])
  */
-final class Manager implements ManagerInterface
+final class FieldManager implements FieldManagerContract
 {
     /**
      * Liste des instances des éléments déclarés.

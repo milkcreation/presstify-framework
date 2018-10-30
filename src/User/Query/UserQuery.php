@@ -2,11 +2,12 @@
 
 namespace tiFy\User\Query;
 
-use tiFy\Contracts\User\UserQueryInterface;
+use tiFy\Contracts\User\UserQuery as UserQueryContract;
 use tiFy\User\Query\UserQueryCollection;
 use tiFy\User\Query\UserQueryItem;
+use WP_User_Query;
 
-class UserQuery implements UserQueryInterface
+class UserQuery implements UserQueryContract
 {
     /**
      * Role(s) utilisateur Wordpress.
@@ -29,15 +30,17 @@ class UserQuery implements UserQueryInterface
     /**
      * {@inheritdoc}
      */
-    public function getCollection($query_args = [])
+    public function getCollection($query_args = null)
     {
-        $user_query = new \WP_User_Query($query_args);
-
-        if ($user_query->get_total()) :
-            $items = array_map([$this, 'getItem'], $user_query->get_results());
+        if ($query_args instanceof WP_User_Query) :
+            $user_query = $query_args;
+        elseif (is_array($query_args)) :
+            $user_query = new WP_User_Query($query_args);
         else :
-            $items = [];
+            $user_query = new WP_User_Query(null);
         endif;
+
+        $items = $user_query->get_total() ? array_map([$this, 'getItem'], $user_query->get_results()) : [];
 
         return $this->resolveCollection($items);
     }
@@ -48,7 +51,7 @@ class UserQuery implements UserQueryInterface
     public function getItem($id = null)
     {
         if (!$id) :
-            $user = \wp_get_current_user();
+            $user = wp_get_current_user();
         elseif (is_numeric($id) && $id > 0) :
             $user = get_userdata($id);
         elseif (is_string($id)) :
@@ -65,17 +68,7 @@ class UserQuery implements UserQueryInterface
             return null;
         endif;
 
-        $alias = 'user.query.user.' . $user->ID;
-        if (!app()->has($alias)) :
-            app()->singleton(
-                $alias,
-                function() use ($user) {
-                    return $this->resolveItem($user);
-                }
-            );
-        endif;
-
-        return app()->resolve($alias);
+        return $this->resolveItem($user);
     }
 
     /**
@@ -100,7 +93,7 @@ class UserQuery implements UserQueryInterface
                 break;
         endswitch;
 
-        $user_query = new \WP_User_Query($args);
+        $user_query = new WP_User_Query($args);
         if ($users = $user_query->get_results()) :
             return $this->getItem(reset($users));
         endif;

@@ -2,7 +2,9 @@
 
 namespace tiFy\Contracts\PostType;
 
-interface PostQueryItemInterface
+use tiFy\Contracts\Kernel\ParamsBagInterface;
+
+interface PostQueryItem extends ParamsBagInterface
 {
     /**
      * Récupération de l'identifiant de qualification de l'auteur original.

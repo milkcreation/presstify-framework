@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Field\FieldController as FieldControllerInterface;
-use tiFy\Contracts\Field\Manager;
+use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Field\FieldOptionsCollectionController;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
@@ -54,9 +54,9 @@ abstract class FieldController extends AbstractParametersBag implements FieldCon
 
         $this->id = $id;
 
-        /** @var Manager $manager */
-        $manager = app('field');
-        $this->index = $manager->index($this);
+        /** @var FieldManager $field */
+        $field = app('field');
+        $this->index = $field->index($this);
         $this->index ? $this->parse($attrs) : $this->boot();
     }
 

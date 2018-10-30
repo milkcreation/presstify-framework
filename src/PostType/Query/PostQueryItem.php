@@ -2,10 +2,10 @@
 
 namespace tiFy\PostType\Query;
 
-use Illuminate\Support\Fluent;
-use tiFy\Contracts\PostType\PostQueryItemInterface;
+use tiFy\Contracts\PostType\PostQueryItem as PostQueryItemContract;
+use tiFy\Kernel\Parameters\ParamsBagController;
 
-class PostQueryItem extends Fluent implements PostQueryItemInterface
+class PostQueryItem extends ParamsBagController implements PostQueryItemContract
 {
     /**
      * Objet Post Wordpress.

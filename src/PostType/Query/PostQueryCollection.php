@@ -3,15 +3,15 @@
 namespace tiFy\PostType\Query;
 
 use Illuminate\Support\Collection;
-use tiFy\Contracts\PostType\PostQueryItemInterface;
-use tiFy\Contracts\PostType\PostQueryCollectionInterface;
+use tiFy\Contracts\PostType\PostQueryItem;
+use tiFy\Contracts\PostType\PostQueryCollection as PostQueryCollectionContract;
 
-class PostQueryCollection extends Collection implements PostQueryCollectionInterface
+class PostQueryCollection extends Collection implements PostQueryCollectionContract
 {
     /**
      * CONSTRUCTEUR.
      *
-     * @param PostQueryItemInterface[] $items
+     * @param PostQueryItem[] $items
      *
      * @return void
      */

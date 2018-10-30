@@ -5,7 +5,7 @@ namespace tiFy\Partial;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialController as PartialControllerInterface;
-use tiFy\Contracts\Partial\Manager;
+use tiFy\Contracts\Partial\PartialManager;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Parameters\AbstractParametersBag;
 use tiFy\Kernel\Tools;
@@ -52,9 +52,9 @@ abstract class PartialController extends AbstractParametersBag implements Partia
 
         $this->id = $id;
 
-        /** @var Manager $manager */
-        $manager = app('partial');
-        $this->index = $manager->index($this);
+        /** @var PartialManager $partial */
+        $partial = app('partial');
+        $this->index = $partial->index($this);
         $this->index ? $this->parse($attrs) : $this->boot();
     }
 

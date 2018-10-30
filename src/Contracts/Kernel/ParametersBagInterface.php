@@ -81,7 +81,7 @@ interface ParametersBagInterface
      *
      * @return $this
      */
-    public function set($key, $value = null);
+    public function set($key, $value);
 
     /**
      * Insertion d'un attribut au début d'une liste d'attributs.
