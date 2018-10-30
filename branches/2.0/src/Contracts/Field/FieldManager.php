@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Field;
 
-interface Manager
+interface FieldManager
 {
     /**
      * Récupération statique du champ.

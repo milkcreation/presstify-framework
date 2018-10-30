@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\User;
 
-interface UserQueryCollectionInterface
+interface UserQueryCollection
 {
 
 }

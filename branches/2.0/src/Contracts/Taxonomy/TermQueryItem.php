@@ -2,7 +2,9 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
-interface TermQueryItemInterface
+use tiFy\Contracts\Kernel\ParamsBagInterface;
+
+interface TermQueryItem extends ParamsBagInterface
 {
     /**
      * Récupération de la description.

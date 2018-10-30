@@ -2,10 +2,10 @@
 
 namespace tiFy\Taxonomy\Query;
 
-use Illuminate\Support\Fluent;
-use tiFy\Contracts\Taxonomy\TermQueryItemInterface;
+use tiFy\Contracts\Taxonomy\TermQueryItem as TermQueryItemContract;
+use tiFy\Kernel\Parameters\ParamsBagController;
 
-class TermQueryItem extends Fluent implements TermQueryItemInterface
+class TermQueryItem extends ParamsBagController implements TermQueryItemContract
 {
     /**
      * Objet Term Wordpress

@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\PostType;
 
-interface PostQueryCollectionInterface
+interface PostQueryCollection
 {
 
 }

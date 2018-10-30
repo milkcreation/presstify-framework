@@ -2,11 +2,12 @@
 
 namespace tiFy\Taxonomy\Query;
 
-use tiFy\Contracts\Taxonomy\TermQueryInterface;
+use tiFy\Contracts\Taxonomy\TermQuery as TermQueryContract;
 use tiFy\Taxonomy\Query\TermQueryCollection;
 use tiFy\Taxonomy\Query\TermQueryItem;
+use WP_Term;
 
-class TermQuery implements TermQueryInterface
+class TermQuery implements TermQueryContract
 {
     /**
      * Taxonomie Wordpress du controleur
@@ -35,7 +36,7 @@ class TermQuery implements TermQueryInterface
             return [];
         endif;
 
-        $terms = \get_terms($query_args);
+        $terms = get_terms($query_args);
 
         if ($terms && !is_wp_error($terms)) :
             $items = array_map([$this, 'getItem'], $terms);
@@ -54,7 +55,7 @@ class TermQuery implements TermQueryInterface
         if (!$id) :
             $term = get_queried_object();
         elseif (is_numeric($id) && $id > 0) :
-            if ((!$term = \get_term($id)) || is_wp_error($term)) :
+            if ((!$term = get_term($id)) || is_wp_error($term)) :
                 return null;
             endif;
         elseif (is_string($id)) :
@@ -63,7 +64,7 @@ class TermQuery implements TermQueryInterface
             $term = $id;
         endif;
 
-        if (!$term instanceof \WP_Term) :
+        if (!$term instanceof WP_Term) :
             return null;
         endif;
 
@@ -71,17 +72,7 @@ class TermQuery implements TermQueryInterface
             return null;
         endif;
 
-        $alias = 'taxonomy.query.term.' . $term->term_id;;
-        if (!app()->has($alias)) :
-            app()->singleton(
-                $alias,
-                function() use ($term) {
-                    return $this->resolveItem($term);
-                }
-            );
-        endif;
-
-        return app()->resolve($alias);
+        return $this->resolveItem($term);
     }
 
     /**
@@ -91,7 +82,7 @@ class TermQuery implements TermQueryInterface
     {
         switch ($key) :
             default :
-                if (($term = \get_term_by($key, $value, $this->getObjectName())) && !is_wp_error($term)) :
+                if (($term = get_term_by($key, $value, $this->getObjectName())) && !is_wp_error($term)) :
                     return $this->getItem($term);
                 endif;
                 break;
@@ -121,7 +112,7 @@ class TermQuery implements TermQueryInterface
     /**
      * {@inheritdoc}
      */
-    public function resolveItem($wp_term)
+    public function resolveItem(WP_Term $wp_term)
     {
         $concrete = $this->itemController;
 

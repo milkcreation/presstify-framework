@@ -2,11 +2,14 @@
 
 namespace tiFy\PostType\Query;
 
-use tiFy\Contracts\PostType\PostQueryInterface;
+use Illuminate\Support\Arr;
+use tiFy\Contracts\PostType\PostQuery as PostQueryContract;
 use tiFy\PostType\Query\PostQueryCollection;
 use tiFy\PostType\Query\PostQueryItem;
+use WP_Query;
+use WP_Post;
 
-class PostQuery implements PostQueryInterface
+class PostQuery implements PostQueryContract
 {
     /**
      * Type de post Wordpress du controleur.
@@ -29,24 +32,26 @@ class PostQuery implements PostQueryInterface
     /**
      * {@inheritdoc}
      */
-    public function getCollection($query_args = [])
+    public function getCollection($query_args = null)
     {
-        if (!$query_args['post_type'] = $this->objectName) :
+        if (is_null($query_args)) :
+            global $wp_query;
+
+            $posts = $wp_query->posts;
+        elseif($query_args instanceof WP_Query) :
+            $wp_query = $query_args;
+            $posts = $wp_query->posts;
+        elseif (is_array($query_args)) :
+            $query_args['post_type'] = $query_args['post_type'] ?? $this->getObjectName();
+            $query_args['posts_per_page'] = $query_args['posts_per_page']?? -1;
+
+            $wp_query = new WP_Query();
+            $posts = $wp_query->query($query_args);
+        else :
             return [];
         endif;
 
-        if (!isset($query_args['posts_per_page'])) :
-            $query_args['posts_per_page'] = -1;
-        endif;
-
-        $wp_query = new \WP_Query;
-        $posts = $wp_query->query($query_args);
-
-        if ($posts) :
-            $items =  array_map([$this, 'getItem'], $posts);
-        else :
-            $items = [];
-        endif;
+        $items = $posts ? array_map([$this, 'getItem'], $posts) : [];
 
         return $this->resolveCollection($items);
     }
@@ -66,29 +71,19 @@ class PostQuery implements PostQueryInterface
             $post = $id;
         endif;
 
-        if (!$post = \get_post($post)) :
+        if (!$post = get_post($post)) :
             return null;
         endif;
 
-        if (!$post instanceof \WP_Post) :
+        if (!$post instanceof WP_Post) :
             return null;
         endif;
 
-        if (($post->post_type !== 'any') && !in_array($post->post_type, (array) $this->getObjectName())) :
+        if (($post->post_type !== 'any') && !in_array($post->post_type, Arr::wrap($this->getObjectName()))) :
             return null;
         endif;
 
-        $alias = 'post_type.query.post.' . $post->ID;
-        if (!app()->has($alias)) :
-            app()->singleton(
-                $alias,
-                function() use ($post) {
-                    return $this->resolveItem($post);
-                }
-            );
-        endif;
-
-        return app()->resolve($alias);
+        return $this->resolveItem($post);
     }
 
     /**
@@ -109,7 +104,7 @@ class PostQuery implements PostQueryInterface
                 break;
         endswitch;
 
-        $wp_query = new \WP_Query;
+        $wp_query = new WP_Query();
         $posts = $wp_query->query($args);
         if ($wp_query->found_posts) :
             return $this->getItem(reset($posts));
@@ -139,7 +134,7 @@ class PostQuery implements PostQueryInterface
     /**
      * {@inheritdoc}
      */
-    public function resolveItem($wp_post)
+    public function resolveItem(WP_Post $wp_post)
     {
         $concrete = $this->itemController;
 

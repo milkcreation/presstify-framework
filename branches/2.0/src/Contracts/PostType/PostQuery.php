@@ -2,23 +2,23 @@
 
 namespace tiFy\Contracts\PostType;
 
-interface PostQueryInterface
+interface PostQuery
 {
     /**
      * Récupération des données d'une liste d'élément selon des critères de requête.
      *
-     * @param array $query_args Liste des arguments de requête.
+     * @param null|\WP_Query|array $query_args Requête Wordpress|Liste des arguments de requête. Si null utilise la requête globale de Wordpress.
      *
-     * @return array|PostQueryCollectionInterface|PostQueryItemInterface[]
+     * @return array|PostQueryCollection|PostQueryItem[]
      */
-    public function getCollection($query_args = []);
+    public function getCollection($query_args = null);
 
     /**
      * Récupération d'un élément.
      *
      * @param string|int|\WP_Post|null $id Nom de qualification du post WP (slug, post_name)|Identifiant de qualification du post WP|Object post WP|Post WP  de la page courante
      *
-     * @return null|PostQueryItemInterface
+     * @return null|PostQueryItem
      */
     public function getItem($id = null);
 
@@ -28,7 +28,7 @@ interface PostQueryInterface
      * @param string $key Identifiant de qualification de l'attribut. défaut name.
      * @param string $value Valeur de l'attribut.
      *
-     * @return null|PostQueryItemInterface
+     * @return null|PostQueryItem
      */
     public function getItemBy($key = 'name', $value);
 
@@ -42,7 +42,7 @@ interface PostQueryInterface
     /**
      * Récupération d'une instance du controleur de liste d'éléments.
      *
-     * @param PostQueryItemInterface[] $items Liste des éléments.
+     * @param PostQueryItem[] $items Liste des éléments.
      *
      * @return string
      */

@@ -96,7 +96,7 @@ trait ParametersBagTrait
     /**
      * {@inheritdoc}
      */
-    public function set($key, $value = null)
+    public function set($key, $value)
     {
         Arr::set($this->attributes, $key, $value);
 

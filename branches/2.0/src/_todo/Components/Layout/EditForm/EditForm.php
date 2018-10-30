@@ -2,8 +2,6 @@
 
 namespace tiFy\Core\Ui\Admin\Templates\EditForm;
 
-use tiFy\Core\Field\Field;
-
 class EditForm extends \tiFy\Core\Ui\Admin\Factory
 {
     // Paramètres

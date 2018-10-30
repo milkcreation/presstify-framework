@@ -3,12 +3,12 @@
 use tiFy\tiFy;
 use tiFy\Contracts\Kernel\Assets;
 use tiFy\Contracts\Field\FieldController;
-use tiFy\Contracts\Field\Manager as FieldManager;
+use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Partial\PartialController;
-use tiFy\Contracts\Partial\Manager as PartialManager;
+use tiFy\Contracts\Partial\PartialManager;
 use tiFy\Contracts\Views\ViewInterface;
 use tiFy\Contracts\Views\ViewsInterface;
 use tiFy\Kernel\Kernel;

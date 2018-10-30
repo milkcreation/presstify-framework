@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
-interface TermQueryCollectionInterface
+interface TermQueryCollection
 {
 
 }
