@@ -2,7 +2,7 @@
 
 namespace tiFy\Field;
 
-use tiFy\Kernel\Templates\TemplateController;
+use tiFy\View\ViewController;
 
 /**
  * Class FieldView
@@ -18,7 +18,7 @@ use tiFy\Kernel\Templates\TemplateController;
  * @method string getValue().
  * @method string options().
  */
-class FieldView extends TemplateController
+class FieldView extends ViewController
 {
     /**
      * Liste des méthodes héritées.

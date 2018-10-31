@@ -5,11 +5,11 @@ namespace tiFy\Metabox;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Metabox\MetaboxController as MetaboxControllerContract;
 use tiFy\Contracts\Metabox\MetaboxFactory;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewEngine;
 use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-abstract class MetaboxController extends AbstractParametersBag implements MetaboxControllerContract
+abstract class MetaboxController extends ParamsBag implements MetaboxControllerContract
 {
     /**
      * Instance de l'élément.
@@ -19,7 +19,7 @@ abstract class MetaboxController extends AbstractParametersBag implements Metabo
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewsInterface
+     * @return ViewEngine
      */
     protected $viewer;
 

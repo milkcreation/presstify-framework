@@ -3,9 +3,9 @@
 namespace tiFy\Field\CheckboxCollection;
 
 use tiFy\Contracts\Field\FieldController;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class CheckboxItem extends AbstractParametersBag
+class CheckboxItem extends ParamsBag
 {
     /**
      * Compteur d'indice.

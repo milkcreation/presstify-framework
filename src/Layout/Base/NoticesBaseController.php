@@ -4,9 +4,9 @@ namespace tiFy\Layout\Base;
 
 use tiFy\Contracts\Layout\LayoutDisplayNoticesInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class NoticesBaseController extends AbstractParametersBag implements LayoutDisplayNoticesInterface
+class NoticesBaseController extends ParamsBag implements LayoutDisplayNoticesInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.

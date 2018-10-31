@@ -2,21 +2,17 @@
 
 namespace tiFy\Kernel;
 
-use tiFy\Components\Tools\Cryptor\Cryptor;
 use tiFy\Components\Tools\File\File;
 use tiFy\Components\Tools\Functions\Functions;
 use tiFy\Components\Tools\Html\Html;
 use tiFy\Components\Tools\Str\Str;
-use tiFy\Components\Tools\User\User;
 use tiFy\tiFy;
 
 /**
- * @method static Cryptor Cryptor()
  * @method static File File()
  * @method static Functions Functions()
  * @method static Html Html()
  * @method static Str Str()
- * @method static User User()
  */
 class Tools
 {

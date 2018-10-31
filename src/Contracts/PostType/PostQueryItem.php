@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\PostType;
 
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface PostQueryItem extends ParamsBagInterface
+interface PostQueryItem extends ParamsBag
 {
     /**
      * Récupération de l'identifiant de qualification de l'auteur original.
@@ -64,15 +64,35 @@ interface PostQueryItem extends ParamsBagInterface
     public function getId();
 
     /**
-     * Récupération de metadonnées.
+     * Récupération d'une metadonnée.
      *
-     * @param string $meta_key Clé d'index de la metadonnée à récupérer
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
      * @param bool $single Type de metadonnés. single (true)|multiple (false). false par défaut.
      * @param mixed $default Valeur de retour par défaut.
      *
      * @return mixed
      */
     public function getMeta($meta_key, $single = false, $default = null);
+
+    /**
+     * Récupération d'une metadonnée de type multiple.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getMetaMulti($meta_key, $default = null);
+
+    /**
+     * Récupération d'une metadonnée de type simple.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getMetaSingle($meta_key, $default = null);
 
     /**
      * Récupération de la date de la dernière modification au format datetime.

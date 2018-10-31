@@ -22,6 +22,7 @@ final class Db
         add_action(
             'init',
             function () {
+                config('');
                 foreach(config('db', []) as $name => $attrs) :
                     $this->register($name, $attrs);
                 endforeach;
@@ -59,7 +60,7 @@ final class Db
      *
      * @return DbItemInterface
      */
-    protected function register($name, $attrs = [])
+    public function register($name, $attrs = [])
     {
         if ($item = $this->get($name)) :
             return $item;

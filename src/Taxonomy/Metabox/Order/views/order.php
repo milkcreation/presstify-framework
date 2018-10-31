@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\App\Templates\AppTemplateController $this
+ * @var tiFy\Contracts\View\ViewController $this
  * @var WP_Term $term
  */
 ?>

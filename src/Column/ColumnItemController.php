@@ -5,10 +5,10 @@ namespace tiFy\Column;
 use tiFy\Contracts\Column\ColumnDisplayInterface;
 use tiFy\Contracts\Column\ColumnItem as ColumnItemInterface;
 use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Wp\WpScreen;
 
-class ColumnItemController extends AbstractParametersBag implements ColumnItemInterface
+class ColumnItemController extends ParamsBag implements ColumnItemInterface
 {
     /**
      * Compteur d'indices de qualification.

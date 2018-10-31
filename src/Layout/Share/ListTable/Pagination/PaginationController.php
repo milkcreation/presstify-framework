@@ -2,11 +2,11 @@
 
 namespace tiFy\Layout\Share\ListTable\Pagination;
 
-use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 use tiFy\Layout\Share\ListTable\Contracts\PaginationInterface;
 
-class PaginationController extends AbstractParametersBagIterator implements PaginationInterface
+class PaginationController extends ParamsBag implements PaginationInterface
 {
     /**
      * Liste des attributs de configuration.

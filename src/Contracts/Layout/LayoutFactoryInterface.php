@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Layout;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface LayoutFactoryInterface extends ParametersBagInterface
+interface LayoutFactoryInterface extends ParamsBag
 {
     /**
      * Récupération de contenu d'affichage de la vue.

@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Kernel;
 
-use tiFy\Contracts\Kernel\ParametersBagIteratorInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface LabelsBagInterface extends ParametersBagIteratorInterface
+interface LabelsBagInterface extends ParamsBag
 {
     /**
      * Récupération du déterminant de qualification d'une chaîne de caractère.

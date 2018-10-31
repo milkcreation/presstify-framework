@@ -3,11 +3,11 @@
 namespace tiFy\Layout\Share\ListTable\Item;
 
 use Illuminate\Support\Arr;
-use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Layout\Share\ListTable\Contracts\ItemInterface;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 
-class ItemController extends AbstractParametersBagIterator implements ItemInterface
+class ItemController extends ParamsBag implements ItemInterface
 {
     /**
      * Instance de la disposition associée.

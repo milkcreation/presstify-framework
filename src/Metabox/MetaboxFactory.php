@@ -5,10 +5,10 @@ namespace tiFy\Metabox;
 use tiFy\Contracts\Metabox\MetaboxFactory as MetaboxFactoryContract;
 use tiFy\Contracts\Metabox\MetaboxController;
 use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Wp\WpScreen;
 
-class MetaboxFactory extends AbstractParametersBag implements MetaboxFactoryContract
+class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
 {
     /**
      * Compteur d'indices de qualification.

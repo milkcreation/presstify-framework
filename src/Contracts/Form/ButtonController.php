@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface ButtonController extends ParamsBagInterface
+interface ButtonController extends ParamsBag
 {
     /**
      * Résolution de sortie de l'affichage du contrôleur.

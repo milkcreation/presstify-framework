@@ -5,10 +5,10 @@ namespace tiFy\Form\Factory;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Form\Factory\ResolverTrait;
 
-class Request extends ParamsBagController implements FactoryRequest
+class Request extends ParamsBag implements FactoryRequest
 {
     use ResolverTrait;
 

@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\User;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface UserRoleItemController extends ParametersBagInterface
+interface UserRoleItemController extends ParamsBag
 {
     /**
      * Récupération du nom de qualification.

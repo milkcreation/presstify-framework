@@ -2,11 +2,11 @@
 
 namespace tiFy\Layout\Share\ListTable\ViewFilter;
 
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 use tiFy\Layout\Share\ListTable\Contracts\ViewFilterItemInterface;
 
-class ViewFilterItemController extends AbstractParametersBag implements ViewFilterItemInterface
+class ViewFilterItemController extends ParamsBag implements ViewFilterItemInterface
 {
     /**
      * Liste des attributs de configuration.

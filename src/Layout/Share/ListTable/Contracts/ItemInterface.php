@@ -2,9 +2,9 @@
 
 namespace tiFy\Layout\Share\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParametersBagIteratorInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface ItemInterface extends ParametersBagIteratorInterface
+interface ItemInterface extends ParamsBag
 {
     /**
      * Récupération de la valeur de l'attribut de qualification de l'élément.

@@ -2,8 +2,8 @@
 
 namespace tiFy\Contracts\Kernel;
 
-use tiFy\Contracts\Views\ViewInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\View\ViewEngine;
 
 interface Notices
 {
@@ -140,7 +140,7 @@ interface Notices
      * @param null|string view Nom de qualification du gabarit (optionnel).
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewInterface|ViewsInterface
+     * @return ViewController|ViewEngine
      */
     public function viewer($view = null, $data = []);
 }

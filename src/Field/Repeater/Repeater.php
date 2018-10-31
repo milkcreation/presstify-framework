@@ -15,7 +15,6 @@
 
 namespace tiFy\Field\Repeater;
 
-use tiFy\Field\Repeater\TemplateController;
 use tiFy\Field\FieldController;
 
 class Repeater extends FieldController

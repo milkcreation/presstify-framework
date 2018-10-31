@@ -4,10 +4,10 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryOptions;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Form\Factory\ResolverTrait;
 
-class Options extends ParamsBagController implements FactoryOptions
+class Options extends ParamsBag implements FactoryOptions
 {
     use ResolverTrait;
 

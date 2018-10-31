@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\PostType\Metabox\VideoGallery\TemplateController $this
+ * @var tiFy\PostType\Metabox\VideoGallery\ViewController $this
  */
 ?>
 

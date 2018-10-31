@@ -2,11 +2,11 @@
 
 namespace tiFy\Layout\Share\ListTable\BulkAction;
 
-use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Layout\Share\ListTable\Contracts\BulkActionItemInterface;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 
-class BulkActionItemController extends AbstractParametersBagIterator implements BulkActionItemInterface
+class BulkActionItemController extends ParamsBag implements BulkActionItemInterface
 {
     /**
      * Liste des attributs de configuration.

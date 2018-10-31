@@ -3,9 +3,9 @@
 namespace tiFy\Taxonomy\Query;
 
 use tiFy\Contracts\Taxonomy\TermQueryItem as TermQueryItemContract;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 
-class TermQueryItem extends ParamsBagController implements TermQueryItemContract
+class TermQueryItem extends ParamsBag implements TermQueryItemContract
 {
     /**
      * Objet Term Wordpress
@@ -43,6 +43,30 @@ class TermQueryItem extends ParamsBagController implements TermQueryItemContract
     public function getId()
     {
         return (int)$this->get('term_id', 0);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMeta($meta_key, $single = false, $default = null)
+    {
+        return get_term_meta($this->getId(), $meta_key, $single) ? : $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMetaMulti($meta_key, $default = null)
+    {
+        return $this->getMeta($meta_key, false, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMetaSingle($meta_key, $default = null)
+    {
+        return $this->getMeta($meta_key, true, $default);
     }
 
     /**

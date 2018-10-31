@@ -6,11 +6,11 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialController as PartialControllerInterface;
 use tiFy\Contracts\Partial\PartialManager;
-use tiFy\Contracts\Views\ViewsInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Contracts\View\ViewEngine;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-abstract class PartialController extends AbstractParametersBag implements PartialControllerInterface
+abstract class PartialController extends ParamsBag implements PartialControllerInterface
 {
     /**
      * Liste des attributs de configuration.
@@ -32,7 +32,7 @@ abstract class PartialController extends AbstractParametersBag implements Partia
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewsInterface
+     * @return ViewEngine
      */
     protected $viewer;
 

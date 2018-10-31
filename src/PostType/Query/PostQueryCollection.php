@@ -2,21 +2,31 @@
 
 namespace tiFy\PostType\Query;
 
-use Illuminate\Support\Collection;
 use tiFy\Contracts\PostType\PostQueryItem;
 use tiFy\Contracts\PostType\PostQueryCollection as PostQueryCollectionContract;
+use tiFy\Kernel\Query\QueryCollection;
 
-class PostQueryCollection extends Collection implements PostQueryCollectionContract
+class PostQueryCollection extends QueryCollection implements PostQueryCollectionContract
 {
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param PostQueryItem[] $items
-     *
-     * @return void
+     * Liste des éléments déclarés.
+     * @var PostQueryItem[] $items
      */
-    public function __construct($items = [])
+    protected $items = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIds()
     {
-        parent::__construct($items);
+        return $this->collect()->pluck('ID')->all();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTitles()
+    {
+        return $this->collect()->pluck('post_title')->all();
     }
 }

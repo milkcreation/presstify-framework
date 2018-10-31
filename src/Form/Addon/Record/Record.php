@@ -43,6 +43,7 @@
 namespace tiFy\Form\Addon\Record;
 
 use tiFy\Contracts\Form\FormFactory;
+use tiFy\Contracts\Wp\MediaDownload;
 use tiFy\Db\Db;
 use tiFy\Form\AddonController;
 use tiFy\Components\Addons\Record\ListTable;
@@ -138,7 +139,17 @@ class Record extends AddonController
 
             $this->appAddAction('tify_templates_register');
             $this->appAddAction('tify_db_register');
-            $this->appAddAction('tify_media_download_register');
+
+            events()->listen(
+                'wp.media.download.register',
+                function ($abspath, MediaDownload $mediaDownload, $event) {
+                    $authorize = request()->get('authorize');
+
+                    if (get_transient($_REQUEST['authorize'])) :
+                        $download->register($abspath);
+                    endif;
+                }
+            );
         endif;
     }
 
@@ -219,23 +230,6 @@ class Record extends AddonController
             'tify_forms_record',
             self::$dbAttrs
         );
-    }
-
-    /**
-     * Autorisation de téléchargement du fichier d'export
-     *
-     * @param string $abspath Chemin absolu vers la ressource à permettre de télécharger.
-     * @param Download $download Classe de rappel de traitement de téléchargement de média.
-     *
-     * @return void
-     */
-    public function tify_media_download_register($abspath, $download)
-    {
-        $authorize = $this->appRequest('GET')->get('authorize');
-
-        if (get_transient($_REQUEST['$authorize'])) :
-            $download->register($abspath);
-        endif;
     }
 
     /**

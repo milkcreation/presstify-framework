@@ -4,12 +4,12 @@ namespace tiFy\Layout\Share\ListTable\Column;
 
 use ArrayIterator;
 use Illuminate\Support\Arr;
-use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 use tiFy\Layout\Share\ListTable\Contracts\ColumnItemInterface;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 
-class ColumnItemController extends AbstractParametersBagIterator implements ColumnItemInterface
+class ColumnItemController extends ParamsBag implements ColumnItemInterface
 {
     /**
      * Instance de la disposition associée.

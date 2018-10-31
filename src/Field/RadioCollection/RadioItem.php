@@ -3,9 +3,9 @@
 namespace tiFy\Field\RadioCollection;
 
 use tiFy\Contracts\Field\FieldController;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class RadioItem extends AbstractParametersBag
+class RadioItem extends ParamsBag
 {
     /**
      * Compteur d'indice.

@@ -6,10 +6,10 @@ use Illuminate\Support\Arr;
 use Symfony\Component\Finder\Finder;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Filesystem\Paths;
-use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\tiFy;
 
-class Config extends AbstractParametersBagIterator
+class Config extends ParamsBag
 {
     /**
      * Classe de rappel du controleur des chemins.
@@ -22,7 +22,6 @@ class Config extends AbstractParametersBagIterator
      * @var array
      */
     protected $aliases = [
-        'media'       => \tiFy\Media\Media::class,
         'page-hook'   => \tiFy\PageHook\PageHook::class,
         'route'       => \tiFy\Route\Route::class
     ];

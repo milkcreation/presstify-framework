@@ -3,9 +3,9 @@
 namespace tiFy\User\Role;
 
 use tiFy\Contracts\User\UserRoleItemController;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class RoleItemController extends AbstractParametersBag implements UserRoleItemController
+class RoleItemController extends ParamsBag implements UserRoleItemController
 {
     /**
      * Nom de qualification du rôle.

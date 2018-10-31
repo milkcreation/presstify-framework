@@ -2,21 +2,39 @@
 
 namespace tiFy\Taxonomy\Query;
 
-use Illuminate\Support\Collection;
 use tiFy\Contracts\Taxonomy\TermQueryItem;
 use tiFy\Contracts\Taxonomy\TermQueryCollection as TermQueryCollectionContract;
+use tiFy\Kernel\Query\QueryCollection;
 
-class TermQueryCollection extends Collection implements TermQueryCollectionContract
+class TermQueryCollection extends QueryCollection implements TermQueryCollectionContract
 {
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param TermQueryItem[] $items
-     *
-     * @return void
+     * Liste des éléments déclarés.
+     * @var UserQueryItem[] $items
      */
-    public function __construct($items = [])
+    protected $items = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIds()
     {
-        parent::__construct($items);
+        return $this->collect()->pluck('term_id')->all();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNames()
+    {
+        return $this->collect()->pluck('name')->all();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSlugs()
+    {
+        return $this->collect()->pluck('slug')->all();
     }
 }

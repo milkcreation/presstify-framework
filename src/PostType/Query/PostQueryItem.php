@@ -3,9 +3,9 @@
 namespace tiFy\PostType\Query;
 
 use tiFy\Contracts\PostType\PostQueryItem as PostQueryItemContract;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 
-class PostQueryItem extends ParamsBagController implements PostQueryItemContract
+class PostQueryItem extends ParamsBag implements PostQueryItemContract
 {
     /**
      * Objet Post Wordpress.
@@ -106,6 +106,22 @@ class PostQueryItem extends ParamsBagController implements PostQueryItemContract
     public function getMeta($meta_key, $single = false, $default = null)
     {
         return get_post_meta($this->getId(), $meta_key, $single) ? : $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMetaMulti($meta_key, $default = null)
+    {
+        return $this->getMeta($meta_key, false, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMetaSingle($meta_key, $default = null)
+    {
+        return $this->getMeta($meta_key, true, $default);
     }
 
     /**

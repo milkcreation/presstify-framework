@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\Kernel\Notices;
 use tiFy\Contracts\Form\FactoryResolver;
 
@@ -14,7 +14,7 @@ interface FactoryNotices extends FactoryResolver, Notices
      * @param null|string $key Clé d'indexe du paramètres à récupérer. Syntaxe à points permise.
      * @param mixed $default Valeur de retour par défaut.
      *
-     * @return mixed|ParamsBagInterface
+     * @return mixed|ParamsBag
      */
     public function params($key = null, $default = null);
 }

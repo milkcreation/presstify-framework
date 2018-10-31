@@ -3,9 +3,9 @@
 namespace tiFy\User\SignUp;
 
 use tiFy\Contracts\User\SignUpController as SignUpControllerContract;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 
-class SignUpController extends ParamsBagController implements SignUpControllerContract
+class SignUpController extends ParamsBag implements SignUpControllerContract
 {
     /**
      * Nom de qualification.

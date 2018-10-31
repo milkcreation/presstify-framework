@@ -9,8 +9,8 @@ use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Partial\PartialController;
 use tiFy\Contracts\Partial\PartialManager;
-use tiFy\Contracts\Views\ViewInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Kernel;
 use tiFy\Route\Route;
 
@@ -281,11 +281,11 @@ if (!function_exists('view')) :
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewsInterface|ViewInterface
+     * @return ViewController|ViewEngine
      */
     function view($view = null, $data = [])
     {
-        $factory = Kernel::TemplatesEngine();
+        $factory = Kernel::ViewEngine();
 
         if (func_num_args() === 0) :
             return $factory;

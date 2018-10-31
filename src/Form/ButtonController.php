@@ -5,9 +5,9 @@ namespace tiFy\Form;
 use tiFy\Contracts\Form\ButtonController as ButtonControllerInterface;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\Factory\ResolverTrait;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 
-class ButtonController extends ParamsBagController implements ButtonControllerInterface
+class ButtonController extends ParamsBag implements ButtonControllerInterface
 {
     use ResolverTrait;
 

@@ -2,11 +2,11 @@
 
 namespace tiFy\Contracts\Partial;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
-use tiFy\Contracts\Views\ViewsInterface;
-use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\View\ViewEngine;
 
-interface PartialController extends ParametersBagInterface
+interface PartialController extends ParamsBag
 {
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
@@ -103,7 +103,7 @@ interface PartialController extends ParametersBagInterface
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewsInterface|ViewInterface
+     * @return ViewController|ViewEngine
      */
     public function viewer($view = null, $data = []);
 }

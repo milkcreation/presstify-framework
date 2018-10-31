@@ -2,10 +2,10 @@
 
 namespace tiFy\Layout\Share\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParametersBagIteratorInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Layout\Share\ListTable\Contracts\ItemInterface;
 
-interface ColumnItemInterface extends ParametersBagIteratorInterface
+interface ColumnItemInterface extends ParamsBag
 {
     /**
      * Affichage.

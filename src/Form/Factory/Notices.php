@@ -4,7 +4,7 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryNotices;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Form\Factory\ResolverTrait;
 use tiFy\Kernel\Notices\Notices as NoticesController;
 
@@ -91,7 +91,7 @@ class Notices extends NoticesController implements FactoryNotices
      */
     public function params($key = null, $default = null)
     {
-        /** @var ParamsBagInterface $factory */
+        /** @var ParamsBag $factory */
         $factory = app("form.factory.notices.{$this->form()->name()}.params");
 
         if (is_null($key)) :

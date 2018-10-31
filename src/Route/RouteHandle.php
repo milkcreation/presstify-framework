@@ -5,12 +5,18 @@ namespace tiFy\Route;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use tiFy\App\Item\AbstractAppItemController;
 use tiFy\Contracts\App\AppInterface;
-use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Kernel\Params\ParamsBag;
 
-class RouteHandle extends AbstractAppItemController
+class RouteHandle extends ParamsBag
 {
+    /**
+     * Classe de rappel du controleur de l'application associée.
+     * @var AppInterface
+     */
+    protected $app;
+
     /**
      * Nom de qualification de la route.
      * @var string
@@ -63,6 +69,7 @@ class RouteHandle extends AbstractAppItemController
     public function __construct($name, $attrs = [], AppInterface $app)
     {
         $this->name = $name;
+        $this->app = $app;
 
         parent::__construct($attrs, $app);
     }
@@ -122,7 +129,7 @@ class RouteHandle extends AbstractAppItemController
                 $resolved = call_user_func_array($resolved, $args);
             endif;
 
-            if ($resolved instanceof ViewInterface) :
+            if ($resolved instanceof ViewController) :
                 add_action(
                     'template_redirect',
                     function () use ($resolved, $response) {
@@ -139,7 +146,7 @@ class RouteHandle extends AbstractAppItemController
                 function () use ($cb, $args) {
                     $output = call_user_func_array($cb, $args);
 
-                    if ($output instanceof ViewInterface) :
+                    if ($output instanceof ViewController) :
                         $output = $output->render();
                     endif;
 

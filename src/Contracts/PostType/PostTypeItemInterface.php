@@ -2,10 +2,10 @@
 
 namespace tiFy\Contracts\PostType;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
-use \WP_Post_Type;
+use tiFy\Contracts\Kernel\ParamsBag;
+use WP_Post_Type;
 
-interface PostTypeItemInterface extends ParametersBagInterface
+interface PostTypeItemInterface extends ParamsBag
 {
     /**
      * Récupération du nom de qualification du type de post.

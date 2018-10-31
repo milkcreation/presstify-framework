@@ -2,9 +2,8 @@
 
 namespace tiFy\Contracts\Column;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
-use tiFy\Contracts\Views\ViewInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\View\ViewEngine;
 
 interface ColumnDisplayInterface
 {
@@ -50,7 +49,7 @@ interface ColumnDisplayInterface
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewsInterface|ViewInterface
+     * @return ViewEngine|ViewController
      */
     public function viewer($view = null, $data = []);
 }

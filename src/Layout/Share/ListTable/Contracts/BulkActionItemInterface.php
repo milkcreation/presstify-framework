@@ -2,9 +2,9 @@
 
 namespace tiFy\Layout\Share\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParametersBagIteratorInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface BulkActionItemInterface extends ParametersBagIteratorInterface
+interface BulkActionItemInterface extends ParamsBag
 {
     /**
      * Récupération du nom de qualification.

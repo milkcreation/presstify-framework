@@ -12,11 +12,10 @@ namespace tiFy\Options\Page;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Options\OptionsPageInterface;
-use tiFy\Contracts\Views\ViewsInterface;
-use tiFy\Contracts\Views\ViewInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Contracts\View\ViewEngine;
+use tiFy\Kernel\Params\ParamsBag;
 
-class OptionsPageController extends AbstractParametersBag implements OptionsPageInterface
+class OptionsPageController extends ParamsBag implements OptionsPageInterface
 {
     /**
      * Liste des attributs de configuration.
@@ -56,7 +55,7 @@ class OptionsPageController extends AbstractParametersBag implements OptionsPage
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewsInterface
+     * @return ViewEngine
      */
     protected $viewer;
 
@@ -292,7 +291,7 @@ class OptionsPageController extends AbstractParametersBag implements OptionsPage
                     [
                         'context' => 'tab'
                     ],
-                    $item
+                    $attrs
                 )
             );
         endforeach;

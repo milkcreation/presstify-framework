@@ -2,9 +2,9 @@
 
 namespace tiFy\Layout\Share\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface ViewFilterItemInterface extends ParametersBagInterface
+interface ViewFilterItemInterface extends ParamsBag
 {
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.

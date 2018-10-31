@@ -2,11 +2,11 @@
 
 namespace tiFy\Contracts\Metabox;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
-use tiFy\Contracts\Views\ViewInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\View\ViewEngine;
 
-interface MetaboxController extends ParametersBagInterface
+interface MetaboxController extends ParamsBag
 {
     /**
      * Initialisation du controleur.
@@ -68,7 +68,7 @@ interface MetaboxController extends ParametersBagInterface
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewsInterface|ViewInterface
+     * @return ViewController|ViewEngine
      */
     public function viewer($view = null, $data = []);
 }
