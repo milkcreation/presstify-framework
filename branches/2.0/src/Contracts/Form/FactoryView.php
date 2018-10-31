@@ -2,10 +2,10 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Views\ViewInterface;
+use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\Form\FormFactory;
 
-interface FactoryView extends ViewInterface
+interface FactoryView extends ViewController
 {
     /**
      * Translation d'appel des méthodes de l'application associée.

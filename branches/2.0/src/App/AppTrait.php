@@ -3,16 +3,16 @@
 namespace tiFy\App;
 
 use Illuminate\Support\Str;
-use tiFy\App\Templates\AppEngine;
+use tiFy\Kernel\Templates\Engine as TemplatesEngine;
 use tiFy\tiFy;
 
 trait AppTrait
 {
     /**
      * Classe de rappel de gestion des templates
-     * @var AppEngine
+     * @var TemplatesEngine
      */
-    protected $templatesAppEngine;
+    protected $templatesEngine;
 
     /**
      * {@inheritdoc}
@@ -245,11 +245,11 @@ trait AppTrait
      */
     public function appTemplates($options = [])
     {
-        if (!$this->templatesAppEngine) :
-            $this->templatesAppEngine = new AppEngine($options, $this);
+        if (!$this->templatesEngine) :
+            $this->templatesEngine = new Engine($options);
         endif;
 
-        return $this->templatesAppEngine;
+        return $this->templatesEngine;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace tiFy\Partial;
 
-use tiFy\Kernel\Templates\TemplateController;
+use tiFy\View\ViewController;
 
 /**
  * Class PartialView
@@ -15,7 +15,7 @@ use tiFy\Kernel\Templates\TemplateController;
  * @method string getId().
  * @method string getIndex().
  */
-class PartialView extends TemplateController
+class PartialView extends ViewController
 {
     /**
      * Liste des méthodes héritées.

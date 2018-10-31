@@ -4,9 +4,9 @@ namespace tiFy\Layout;
 
 use tiFy\Contracts\Layout\LayoutAdminFactoryInterface;
 use tiFy\Contracts\Layout\LayoutMenuAdminInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class LayoutAdminMenu extends AbstractParametersBag implements LayoutMenuAdminInterface
+class LayoutAdminMenu extends ParamsBag implements LayoutMenuAdminInterface
 {
     /**
      * Instance de la fabrique de disposition associée.

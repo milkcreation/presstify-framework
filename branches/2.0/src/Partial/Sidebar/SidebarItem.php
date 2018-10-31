@@ -2,10 +2,10 @@
 
 namespace tiFy\Partial\Sidebar;
 
-use tiFy\Kernel\Item\AbstractItemIterator;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-class SidebarItem extends AbstractItemIterator
+class SidebarItem extends ParamsBag
 {
     /**
      * {@inheritdoc}

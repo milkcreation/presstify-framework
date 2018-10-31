@@ -2,12 +2,12 @@
 
 namespace tiFy\Column;
 
-use tiFy\Kernel\Templates\TemplateController;
+use tiFy\View\ViewController;
 
 /**
  * Class ColumnView
  */
-class ColumnView extends TemplateController
+class ColumnView extends ViewController
 {
     /**
      * Liste des méthodes héritées.

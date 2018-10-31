@@ -2,11 +2,17 @@
 
 namespace tiFy\PageHook;
 
-use tiFy\App\Item\AbstractAppItemController;
 use tiFy\Contracts\App\AppInterface;
+use tiFy\Kernel\Params\ParamsBag;
 
-class PageHookItemController extends AbstractAppItemController implements PageHookItemInterface
+class PageHookItemController extends ParamsBag implements PageHookItemInterface
 {
+    /**
+     * Classe de rappel du controleur de l'application associée.
+     * @var AppInterface
+     */
+    protected $app;
+
     /**
      * Nom de qualification.
      * @var string
@@ -51,6 +57,7 @@ class PageHookItemController extends AbstractAppItemController implements PageHo
     public function __construct($name,  $attrs = [], $app)
     {
         $this->name = $name;
+        $this->app = $app;
 
         parent::__construct($attrs, $app);
     }

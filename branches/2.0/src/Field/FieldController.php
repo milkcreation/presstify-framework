@@ -7,12 +7,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Field\FieldController as FieldControllerInterface;
 use tiFy\Contracts\Field\FieldManager;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewEngine;
 use tiFy\Field\FieldOptionsCollectionController;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-abstract class FieldController extends AbstractParametersBag implements FieldControllerInterface
+abstract class FieldController extends ParamsBag implements FieldControllerInterface
 {
     /**
      * Liste des attributs de configuration.
@@ -34,7 +34,7 @@ abstract class FieldController extends AbstractParametersBag implements FieldCon
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewsInterface
+     * @return ViewEngine
      */
     protected $viewer;
 

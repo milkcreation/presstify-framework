@@ -3,10 +3,10 @@
 namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\Form\FieldController;
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\Form\FactoryResolver;
 
-interface FactoryField extends FactoryResolver, ParamsBagInterface
+interface FactoryField extends FactoryResolver, ParamsBag
 {
     /**
      * Résolution de sortie de l'affichage.

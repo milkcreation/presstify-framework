@@ -4,9 +4,9 @@ namespace tiFy\Contracts\Cron;
 
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
-use tiFy\Contracts\Kernel\ParametersBagIteratorInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface CronJobInterface extends ParametersBagIteratorInterface
+interface CronJobInterface extends ParamsBag
 {
     /**
      * Lancement de la commande à executer.

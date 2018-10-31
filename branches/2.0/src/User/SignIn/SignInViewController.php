@@ -2,10 +2,10 @@
 
 namespace tiFy\User\SignIn;
 
-use tiFy\Kernel\Templates\TemplateController;
+use tiFy\View\ViewController;
 
 /**
- * Class TemplateController
+ * Class SignInViewController
  *
  * @method SignInItemController formAfter()
  * @method SignInItemController formAdditionnalFields()
@@ -22,7 +22,7 @@ use tiFy\Kernel\Templates\TemplateController;
  * @method SignInItemController formInfos()
  * @method SignInItemController lostPasswordLink()
  */
-class SignInViewController extends TemplateController
+class SignInViewController extends ViewController
 {
     /**
      * Affichage de la linéarisation des attributs HTML de la balise form.

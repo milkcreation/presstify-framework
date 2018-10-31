@@ -4,10 +4,10 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactorySession;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Form\Factory\ResolverTrait;
 
-class Session extends ParamsBagController implements FactorySession
+class Session extends ParamsBag implements FactorySession
 {
     use ResolverTrait;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \tiFy\Contracts\Views\ViewInterface $this
+ * @var tiFy\Contracts\View\ViewController $this
  */
 ?>
 

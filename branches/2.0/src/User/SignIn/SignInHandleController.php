@@ -5,10 +5,11 @@ namespace tiFy\User\SignIn;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Kernel\Notices\NoticesTrait;
-use tiFy\Contracts\Views\ViewsInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\View\ViewEngine;
+use tiFy\Kernel\Params\ParamsBag;
 
-abstract class SignInHandleController extends AbstractParametersBag
+abstract class SignInHandleController extends ParamsBag
 {
     use NoticesTrait;
 
@@ -20,7 +21,7 @@ abstract class SignInHandleController extends AbstractParametersBag
 
     /**
      * Instance de la classe de gestion des gabarits d'affichage.
-     * @var ViewsInterface
+     * @var ViewEngine
      */
     protected $viewer;
 
@@ -587,7 +588,7 @@ abstract class SignInHandleController extends AbstractParametersBag
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewsInterface|ViewInterface
+     * @return ViewController|ViewEngine
      */
     public function viewer($view = null, $data = [])
     {

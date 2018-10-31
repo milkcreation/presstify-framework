@@ -4,12 +4,12 @@ namespace tiFy\Form;
 
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewEngine;
 use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
 use tiFy\Form\Factory\View;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 
-class FormFactory extends ParamsBagController implements FormFactoryContract
+class FormFactory extends ParamsBag implements FormFactoryContract
 {
     use FormFactoryResolver;
 
@@ -351,7 +351,7 @@ class FormFactory extends ParamsBagController implements FormFactoryContract
      */
     public function viewer($view = null, $data = [])
     {
-        /** @var ViewsInterface $viewer */
+        /** @var ViewEngine $viewer */
         $viewer = app()->resolve("form.factory.viewer.{$this->name()}");
 
         if (is_null($view)) :

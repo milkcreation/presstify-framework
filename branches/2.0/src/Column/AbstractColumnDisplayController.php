@@ -4,7 +4,7 @@ namespace tiFy\Column;
 
 use tiFy\Column\ColumnItemController;
 use tiFy\Contracts\Column\ColumnDisplayInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewEngine;
 
 abstract class AbstractColumnDisplayController implements ColumnDisplayInterface
 {
@@ -16,7 +16,7 @@ abstract class AbstractColumnDisplayController implements ColumnDisplayInterface
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewsInterface
+     * @return ViewEngine
      */
     protected $viewer;
 

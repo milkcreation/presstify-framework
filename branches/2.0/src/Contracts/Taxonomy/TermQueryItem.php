@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface TermQueryItem extends ParamsBagInterface
+interface TermQueryItem extends ParamsBag
 {
     /**
      * Récupération de la description.
@@ -19,6 +19,37 @@ interface TermQueryItem extends ParamsBagInterface
      * @return int
      */
     public function getId();
+
+    /**
+     * Récupération d'une metadonnée.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
+     * @param bool $single Type de metadonnés. single (true)|multiple (false). false par défaut.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getMeta($meta_key, $single = false, $default = null);
+
+    /**
+     * Récupération d'une metadonnée de type multiple.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getMetaMulti($meta_key, $default = null);
+
+    /**
+     * Récupération d'une metadonnée de type simple.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getMetaSingle($meta_key, $default = null);
 
     /**
      * Récupération de l'intitulé de qualification.

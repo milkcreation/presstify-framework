@@ -4,13 +4,13 @@ namespace tiFy\Layout\Base;
 
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
 use tiFy\Contracts\Layout\LayoutDisplayParamsInterface;
-use tiFy\Kernel\Templates\TemplateController;
+use tiFy\View\ViewController as tiFyViewController;
 
 /**
  * Class LayoutDisplayView
  *
  */
-class ViewController extends TemplateController
+class ViewController extends tiFyViewController
 {
     /**
      * Instance de la disposition.

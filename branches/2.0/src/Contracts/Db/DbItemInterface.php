@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Db;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface DbItemInterface extends ParametersBagInterface
+interface DbItemInterface extends ParamsBag
 {
     /**
      * Récupération du nom réél (prefixé) d'une colonne.

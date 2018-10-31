@@ -6,10 +6,10 @@ use Illuminate\Support\Collection;
 use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-class MetaboxTabController extends ParamsBagController
+class MetaboxTabController extends ParamsBag
 {
     /**
      * Liste des éléments à afficher.

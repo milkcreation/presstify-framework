@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface AddonController extends ParamsBagInterface
+interface AddonController extends ParamsBag
 {
     /**
      * Initialisation du controleur.

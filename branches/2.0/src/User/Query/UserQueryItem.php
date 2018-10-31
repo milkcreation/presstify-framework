@@ -3,9 +3,9 @@
 namespace tiFy\User\Query;
 
 use tiFy\Contracts\User\UserQueryItem as UserQueryItemContract;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 
-class UserQueryItem extends ParamsBagController implements UserQueryItemContract
+class UserQueryItem extends ParamsBag implements UserQueryItemContract
 {
     /**
      * Objet User Wordpress

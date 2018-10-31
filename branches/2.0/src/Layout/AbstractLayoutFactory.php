@@ -4,9 +4,9 @@ namespace tiFy\Layout;
 
 use tiFy\Contracts\Layout\LayoutFactoryInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-abstract class AbstractLayoutFactory extends AbstractParametersBag implements LayoutFactoryInterface
+abstract class AbstractLayoutFactory extends ParamsBag implements LayoutFactoryInterface
 {
     /**
      * Nom de qualification de la disposition associée.

@@ -2,7 +2,7 @@
 /**
  * Administration des tâches planifiées
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Views\ViewInterface $this
+ * @var tiFy\Contracts\View\ViewController $this
  * @var tiFy\Contracts\Cron\CronJobInterface[] $jobs
  */
 ?>

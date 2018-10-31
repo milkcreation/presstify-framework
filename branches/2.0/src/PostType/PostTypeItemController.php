@@ -3,9 +3,9 @@
 namespace tiFy\PostType;
 
 use tiFy\Contracts\PostType\PostTypeItemInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class PostTypeItemController extends AbstractParametersBag implements PostTypeItemInterface
+class PostTypeItemController extends ParamsBag implements PostTypeItemInterface
 {
     /**
      * Nom de qualification du type de post.

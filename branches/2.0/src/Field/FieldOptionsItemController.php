@@ -2,9 +2,9 @@
 
 namespace tiFy\Field;
 
-use tiFy\Kernel\Item\AbstractItemIterator;
+use tiFy\Kernel\Params\ParamsBag;
 
-class FieldOptionsItemController extends AbstractItemIterator
+class FieldOptionsItemController extends ParamsBag
 {
     /**
      * Indice de qualification.

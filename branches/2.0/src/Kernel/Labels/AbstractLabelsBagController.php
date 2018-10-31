@@ -5,9 +5,9 @@ namespace tiFy\Kernel\Labels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Kernel\LabelsBagInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
+use tiFy\Kernel\Params\ParamsBag;
 
-abstract class AbstractLabelsBagController extends AbstractParametersBagIterator implements LabelsBagInterface
+abstract class AbstractLabelsBagController extends ParamsBag implements LabelsBagInterface
 {
     /**
      * Nom de qualification.

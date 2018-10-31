@@ -6,10 +6,10 @@ use Illuminate\Support\Arr;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FieldController;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Kernel\Parameters\ParamsBagController;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Form\Factory\ResolverTrait;
 
-class Field extends ParamsBagController implements FactoryField
+class Field extends ParamsBag implements FactoryField
 {
     use ResolverTrait;
 

@@ -2,8 +2,8 @@
 
 namespace tiFy\Field\Crypted;
 
+use tiFy\Contracts\Kernel\Encrypter;
 use tiFy\Field\FieldController;
-use tiFy\Kernel\Tools;
 
 class Crypted extends FieldController
 {
@@ -30,6 +30,12 @@ class Crypted extends FieldController
         'length'      => 32,
         'hide'        => true
     ];
+
+    /**
+     * Instance du contrôleur d'encryptage.
+     * @var Encrypter
+     */
+    protected $encrypter;
 
     /**
      * {@inheritdoc}
@@ -88,6 +94,20 @@ class Crypted extends FieldController
     }
 
     /**
+     * Récupération du controleur d'encryptage.
+     *
+     * @return Encrypter
+     */
+    public function getEncrypter()
+    {
+        if (is_null($this->encrypter)) :
+            $this->encrypter = app('encrypter');
+        endif;
+
+        return $this->encrypter;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function enqueue_scripts()
@@ -125,7 +145,7 @@ class Crypted extends FieldController
     {
         check_ajax_referer('tiFyFieldCrypted');
 
-        \wp_send_json_success(Tools::Cryptor()->decrypt(request()->post('cypher')));
+        wp_send_json_success($this->getEncrypter()->decrypt(request()->post('cypher')));
     }
 
     /**
@@ -176,7 +196,7 @@ class Crypted extends FieldController
         $this->set('attrs.aria-control', 'input');
 
         $cypher = $this->getValue();
-        $this->set('attrs.aria-cypher', Tools::Cryptor()->encrypt($cypher));
+        $this->set('attrs.aria-cypher', $this->getEncrypter()->encrypt($cypher));
         $this->set('attrs.value', $this->get('hide') ? $cypher : $this->set('attrs.value'));
     }
 }

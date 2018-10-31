@@ -4,9 +4,9 @@ namespace tiFy\Layout\Base;
 
 use tiFy\Contracts\Layout\LayoutDisplayParamsInterface;
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class ParamsBaseController extends AbstractParametersBag implements LayoutDisplayParamsInterface
+class ParamsBaseController extends ParamsBag implements LayoutDisplayParamsInterface
 {
     /**
      * Classe de rappel du controleur de l'interface d'affichage associée.

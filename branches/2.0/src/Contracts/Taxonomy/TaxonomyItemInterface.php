@@ -2,10 +2,10 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
-use \WP_Taxonomy;
+use tiFy\Contracts\Kernel\ParamsBag;
+use WP_Taxonomy;
 
-interface TaxonomyItemInterface extends ParametersBagInterface
+interface TaxonomyItemInterface extends ParamsBag
 {
     /**
      * Récupération du nom de qualification du type de post.

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\User\SignIn\SignInTemplateController $this
+ * @var tiFy\User\SignIn\SignInViewController $this
  */
 ?>
 

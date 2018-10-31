@@ -5,7 +5,7 @@ namespace tiFy\Kernel\Notices;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Kernel\Notices as NoticesContract;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewEngine;
 
 class Notices implements NoticesContract
 {
@@ -205,7 +205,7 @@ class Notices implements NoticesContract
     {
         $alias = 'notices.viewer' . spl_object_hash ($this);
 
-        /** @var ViewsInterface $viewer */
+        /** @var ViewEngine $viewer */
         if (!app()->bound($alias)) :
             /** @var Notices $notices */
             $notices = app('notices');

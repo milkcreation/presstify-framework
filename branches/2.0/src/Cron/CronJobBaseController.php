@@ -7,9 +7,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 use tiFy\Contracts\Cron\CronJobInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBagIterator;
+use tiFy\Kernel\Params\ParamsBag;
 
-class CronJobBaseController extends AbstractParametersBagIterator implements CronJobInterface
+class CronJobBaseController extends ParamsBag implements CronJobInterface
 {
     /**
      * Liste des attributs de configuration.

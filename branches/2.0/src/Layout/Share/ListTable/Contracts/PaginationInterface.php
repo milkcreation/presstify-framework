@@ -2,9 +2,9 @@
 
 namespace tiFy\Layout\Share\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface PaginationInterface extends ParametersBagInterface
+interface PaginationInterface extends ParamsBag
 {
     /**
      * Récupération de la classe HTML du conteneur de l'interface de pagination.

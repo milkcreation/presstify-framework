@@ -4,7 +4,7 @@ namespace tiFy\Kernel;
 
 use tiFy\App\Container\AppContainer;
 use tiFy\Contracts\App\AppInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Config\Config;
@@ -24,8 +24,7 @@ use tiFy\tiFy;
  * @method static Logger Logger()
  * @method static Paths Paths()
  * @method static Request Request()
- * @method static ViewsInterface TemplatesEngine()
- * @method static ViewsInterface Views()
+ * @method static ViewEngine ViewEngine()
  */
 class Kernel
 {
@@ -70,9 +69,8 @@ class Kernel
             case 'Request' :
                 $alias = 'request';
                 break;
-            case 'TemplatesEngine' :
-            case 'Views' :
-                $alias = ViewsInterface::class;
+            case 'ViewEngine' :
+                $alias = 'view.engine';
                 break;
         endswitch;
 

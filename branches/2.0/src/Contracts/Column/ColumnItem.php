@@ -3,10 +3,10 @@
 namespace tiFy\Contracts\Column;
 
 use tiFy\Contracts\Column\ColumnDisplayInterface;
-use tiFy\Contracts\Kernel\ParametersBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\Wp\WpScreenInterface;
 
-interface ColumnItem extends ParametersBagInterface
+interface ColumnItem extends ParamsBag
 {
     /**
      * Récupération du contenu de l'affichage.

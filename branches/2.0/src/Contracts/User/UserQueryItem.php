@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\User;
 
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface UserQueryItem extends ParamsBagInterface
+interface UserQueryItem extends ParamsBag
 {
     /**
      * Vérification des habilitations.

@@ -3,11 +3,11 @@
 namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryView as FactoryViewContract;
-use tiFy\Kernel\Templates\TemplateController;
+use tiFy\View\ViewController;
 use tiFy\Kernel\Tools;
 use Closure;
 
-class View extends TemplateController implements FactoryViewContract
+class View extends ViewController implements FactoryViewContract
 {
     /**
      * Liste des méthodes héritées.

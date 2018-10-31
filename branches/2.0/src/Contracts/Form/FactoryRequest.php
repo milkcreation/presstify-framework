@@ -3,9 +3,9 @@
 namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\Form\FactoryResolver;
-use tiFy\Contracts\Kernel\ParamsBagInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface FactoryRequest extends FactoryResolver, ParamsBagInterface
+interface FactoryRequest extends FactoryResolver, ParamsBag
 {
     /**
      * Traitement de la requête de soumission du formulaire.

@@ -3,12 +3,12 @@
 namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\Form\FactoryResolver;
-use tiFy\Contracts\Form\FormView;
-use tiFy\Contracts\Kernel\ParamsBagInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\Form\FactoryView;
+use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\View\ViewEngine;
 
 
-interface FormFactory extends FactoryResolver, ParamsBagInterface
+interface FormFactory extends FactoryResolver, ParamsBag
 {
     /**
      * Résolution de sortie de l'affichage.
@@ -111,7 +111,7 @@ interface FormFactory extends FactoryResolver, ParamsBagInterface
      * @param null|string $view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewsInterface|FormView
+     * @return FactoryView|ViewEngine
      */
     public function viewer($view, $data = []);
 }

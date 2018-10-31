@@ -2,12 +2,12 @@
 
 namespace tiFy\Options\Page;
 
-use tiFy\Kernel\Templates\TemplateController;
+use tiFy\View\ViewController;
 
 /**
  * Class OptionsPageView
  */
-class OptionsPageView extends TemplateController
+class OptionsPageView extends ViewController
 {
     /**
      * Liste des méthodes héritées.

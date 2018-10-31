@@ -3,9 +3,9 @@
 namespace tiFy\Taxonomy;
 
 use tiFy\Contracts\Taxonomy\TaxonomyItemInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class TaxonomyItemController extends AbstractParametersBag implements TaxonomyItemInterface
+class TaxonomyItemController extends ParamsBag implements TaxonomyItemInterface
 {
     /**
      * Nom de qualification du type de post

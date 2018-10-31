@@ -4,7 +4,7 @@ namespace tiFy\Layout\Base;
 
 use tiFy\Contracts\Layout\LayoutDisplayInterface;
 use tiFy\Contracts\Layout\LayoutFactoryInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Container\Container;
 
 abstract class AbstractBaseController extends Container implements LayoutDisplayInterface
@@ -25,7 +25,7 @@ abstract class AbstractBaseController extends Container implements LayoutDisplay
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewsInterface
+     * @return ViewEngine
      */
     protected $viewer;
 

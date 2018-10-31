@@ -3,12 +3,12 @@
 namespace tiFy\Layout\Share\ListTable\RowAction;
 
 use Illuminate\Support\Arr;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Layout\Share\ListTable\Contracts\ItemInterface;
 use tiFy\Layout\Share\ListTable\Contracts\ListTableInterface;
 use tiFy\Layout\Share\ListTable\Contracts\RowActionItemInterface;
 
-class RowActionItemController extends AbstractParametersBag implements RowActionItemInterface
+class RowActionItemController extends ParamsBag implements RowActionItemInterface
 {
     /**
      * Liste des attributs de configuration.

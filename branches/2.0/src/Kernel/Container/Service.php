@@ -6,9 +6,9 @@ use League\Container\Definition\DefinitionInterface;
 use League\Container\Argument\RawArgument;
 use tiFy\Contracts\Container\ServiceInterface;
 use tiFy\Kernel\Container\Container;
-use tiFy\Kernel\Item\AbstractItemIterator;
+use tiFy\Kernel\Params\ParamsBag;
 
-class Service extends AbstractItemIterator implements ServiceInterface
+class Service extends ParamsBag implements ServiceInterface
 {
     /**
      * Classe de rappel du conteneur de services.

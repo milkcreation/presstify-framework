@@ -4,9 +4,9 @@ namespace tiFy\Db;
 
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Db\DbItemInterface;
-use tiFy\Kernel\Parameters\AbstractParametersBag;
+use tiFy\Kernel\Params\ParamsBag;
 
-class DbItemBaseController extends AbstractParametersBag implements DbItemInterface
+class DbItemBaseController extends ParamsBag implements DbItemInterface
 {
     /**
      * Nom de qualification du controleur de base de données

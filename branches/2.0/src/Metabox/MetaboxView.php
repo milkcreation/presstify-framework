@@ -2,12 +2,12 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Kernel\Templates\TemplateController;
+use tiFy\View\ViewController;
 
 /**
  * Class MetaboxView
  */
-class MetaboxView extends TemplateController
+class MetaboxView extends ViewController
 {
     /**
      * Liste des méthodes héritées.

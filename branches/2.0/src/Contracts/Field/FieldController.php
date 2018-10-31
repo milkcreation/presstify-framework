@@ -2,13 +2,13 @@
 
 namespace tiFy\Contracts\Field;
 
-use tiFy\Contracts\Kernel\ParametersBagInterface;
-use tiFy\Contracts\Views\ViewInterface;
-use tiFy\Contracts\Views\ViewsInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\View\ViewEngine;
 use tiFy\Field\FieldOptionsCollectionController;
 use tiFy\Field\FieldOptionsItemController;
 
-interface FieldController extends ParametersBagInterface
+interface FieldController extends ParamsBag
 {
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
@@ -140,7 +140,7 @@ interface FieldController extends ParametersBagInterface
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewsInterface|ViewInterface
+     * @return ViewController|ViewEngine
      */
     public function viewer($view = null, $data = []);
 }
