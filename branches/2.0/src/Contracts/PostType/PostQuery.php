@@ -44,7 +44,7 @@ interface PostQuery
      *
      * @param PostQueryItem[] $items Liste des éléments.
      *
-     * @return string
+     * @return array|PostQueryCollection
      */
     public function resolveCollection($items);
 
@@ -53,7 +53,7 @@ interface PostQuery
      *
      * @param \WP_Post $wp_post Instance de post Wordpress.
      *
-     * @return string
+     * @return array|PostQueryItem
      */
     public function resolveItem(\WP_Post $wp_post);
 }

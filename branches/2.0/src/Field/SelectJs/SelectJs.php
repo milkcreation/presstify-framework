@@ -121,10 +121,9 @@ class SelectJs extends FieldController
             return [];
         endif;
 
-        // Formatage de la liste des valeur
-        if (!is_array($value)) :
-            $value = array_map('trim', explode(',', $value));
-        endif;
+        $value = (is_string($value))
+            ? array_map('trim', explode(',', $value))
+            : (array)$value;
 
         // Suppression des doublons
         if (!$this->get('duplicate')) :
@@ -273,7 +272,7 @@ class SelectJs extends FieldController
 
         $this->set(
             'selected_items',
-            ! $this->getValue()
+            is_null($this->getValue())
               ? []
               : (
                   $source

@@ -9,7 +9,13 @@ use tiFy\Contracts\Wp\WpScreenInterface;
 final class Column implements ColumnInterface
 {
     /**
-     * Liste des éléments.
+     * Liste des éléments affichés sur la page courante.
+     * @var ColumnItemController[]
+     */
+    protected $currents = [];
+
+    /**
+     * Liste des éléments déclarés.
      * @var ColumnItemController[]
      */
     protected $items = [];
@@ -72,6 +78,12 @@ final class Column implements ColumnInterface
                 foreach ($this->items as $item) :
                     $item->load($this->screen);
                 endforeach;
+
+                $this->currents = (new Collection($this->items))->filter(
+                    function (ColumnItemController $item) {
+                        return $item->isActive();
+                    }
+                );
 
                 switch ($this->screen->getObjectType()) :
                     case 'post_type' :
@@ -150,28 +162,9 @@ final class Column implements ColumnInterface
     /**
      * {@inheritdoc}
      */
-    public function getItems()
+    public function getCurrentItems()
     {
-        return new Collection($this->items);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getActiveItems()
-    {
-        return $this->getItems()
-            ->filter(
-                function ($item) {
-                    /** @var ColumnItemController $item */
-                    return $item->isActive();
-                }
-            )
-            ->sortBy(function ($item) {
-                /** @var ColumnItemController $item */
-                return $item->getPosition();
-            })
-            ->all();
+        return $this->currents;
     }
 
     /**
@@ -179,6 +172,7 @@ final class Column implements ColumnInterface
      */
     final public function parseColumnHeaders($headers)
     {
+        // Traitement des colonnes système.
         $i = 0;
         foreach ($headers as $name => $title) :
             /** @var ColumnItemController $column */
@@ -189,16 +183,39 @@ final class Column implements ColumnInterface
                     $name,
                     [
                         'title'    => $title,
-                        'position' => $i++,
+                        'position' => 0.99+$i++,
                     ],
                 ]
             );
             $column->load($this->screen);
-            $this->items[] = $column;
+            $this->currents[] = $column;
         endforeach;
 
+        // Ordonnacement
+        $max = (new Collection($this->currents))->max(
+            function (ColumnItemController $item) {
+                return $item->getPosition();
+            }
+        );
+        if ($max) :
+            $pad = 0;
+            (new Collection($this->currents))->each(
+                function (ColumnItemController $item, $key) use (&$pad, $max) {
+                    $position = $item->getPosition() ? : ++$pad+$max;
+
+                    return $item->set('position', absint($position));
+                }
+            );
+        endif;
+        $this->currents = (new Collection($this->currents))->sortBy(
+            function (ColumnItemController $item) {
+                return $item->getPosition();
+            }
+        );
+
+        // Définition des entêtes.
         $headers = [];
-        foreach ($this->getActiveItems() as $c) :
+        foreach ($this->currents as $c) :
             $headers[$c->getName()] = $c->getHeader();
         endforeach;
 
@@ -212,7 +229,7 @@ final class Column implements ColumnInterface
      */
     final public function parseColumnContents()
     {
-        foreach ($this->getActiveItems() as $c) :
+        foreach ($this->currents as $c) :
             $echo = false;
 
             switch ($this->screen->getObjectType()) :

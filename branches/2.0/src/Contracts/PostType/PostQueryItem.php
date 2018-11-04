@@ -146,6 +146,35 @@ interface PostQueryItem extends ParamsBag
     public function getStatus();
 
     /**
+     * Récupération de la liste des termes de taxonomie.
+     *
+     * @param string|array $taxonomy Liste ou Nom de qualification de la taxonomie.
+     * @param array $args Liste des arguments de récupération
+     *
+     * @return array|\WP_Term[]
+     */
+    public function getTerms($taxonomy, $args = []);
+
+    /**
+     * Récupération de l'url de l'image représentative.
+     *
+     * @param string|array $size Taille d'image déclaré|Tableau indexé [hauteur, largeur].
+     * @param array $attrs Liste des attributs HTML de la balise img
+     *
+     * @return string
+     */
+    public function getThumbnail($size = 'post-thumbnail', $attrs = []);
+
+    /**
+     * Récupération de l'url de l'image représentative.
+     *
+     * @param string|array $size Taille d'image déclaré|Tableau indexé [hauteur, largeur].
+     *
+     * @return string
+     */
+    public function getThumbnailUrl($size = 'post-thumbnail');
+
+    /**
      * Récupération de la valeur brute ou formatée de l'intitulé de qualification.
      *
      * @param bool $raw Formatage de la valeur.

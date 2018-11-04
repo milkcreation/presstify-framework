@@ -55,7 +55,7 @@ class FieldOptionsItemController extends ParamsBag
      */
     public function getValue()
     {
-        return (string)$this->get('value');
+        return $this->get('value');
     }
 
     /**
