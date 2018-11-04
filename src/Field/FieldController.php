@@ -298,8 +298,9 @@ abstract class FieldController extends ParamsBag implements FieldControllerInter
         )->build();
 
         $resolved->init();
+        /** @var FieldOptionsItemController $item */
         foreach($resolved as $item) :
-            if (!$item->isGroup() && in_array($item->getValue(), (array)$this->getValue(), true)) :
+            if (!$item->isGroup() && in_array($item->getValue(), Arr::wrap($this->getValue()), true)) :
                 $item->push('attrs', 'selected');
             endif;
         endforeach;

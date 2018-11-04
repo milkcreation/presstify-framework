@@ -165,16 +165,19 @@
                 } else {
                     this.el.attr('aria-selection', false);
                 }
+
                 if (this.flags.isMultiple) {
                     this.el.attr('aria-multiple', true);
                 } else {
                     this.el.attr('aria-multiple', false);
                 }
+
                 if (this.flags.isSortable) {
                     this.el.attr('aria-sortable', true);
                 } else {
                     this.el.attr('aria-sortable', false);
                 }
+
                 if (this.flags.isDuplicable) {
                     this.el.attr('aria-duplicable', true);
                     this.picker.attr('aria-duplicable', true);
@@ -182,6 +185,7 @@
                     this.el.attr('aria-duplicable', false);
                     this.picker.attr('aria-duplicable', false);
                 }
+
                 this.flags.Disabled ? this._disable() : this._enable();
             },
 
@@ -318,8 +322,7 @@
                         self.options.sortable
                     );
 
-                    self.sortable = self.selectedList.sortable(
-                        self.options.sortable);
+                    self.sortable = self.selectedList.sortable(self.options.sortable);
                     self.selectedList.disableSelection();
                 } else {
                     self.sortable = undefined;

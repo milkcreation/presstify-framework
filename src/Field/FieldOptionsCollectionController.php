@@ -17,6 +17,16 @@ class FieldOptionsCollectionController extends Collection
     protected static $values = 0;
 
     /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->display();
+    }
+
+    /**
      * Affichage de la liste des éléments.
      *
      * @return void
@@ -89,15 +99,5 @@ class FieldOptionsCollectionController extends Collection
                 endforeach;
             endif;
         endif;
-    }
-
-    /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->display();
     }
 }

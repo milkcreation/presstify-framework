@@ -55,11 +55,9 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
      */
     public function getDate($gmt = false)
     {
-        if ($gmt == false) :
-            return (string)$this->get('post_date', '');
-        else :
-            return (string)$this->get('post_date_gmt', '');
-        endif;
+       return $gmt
+           ? (string)$this->get('post_date_gmt', '')
+           : (string)$this->get('post_date', '');
     }
 
     /**
@@ -67,7 +65,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
      */
     public function getEditLink()
     {
-        return \get_edit_post_link($this->getId());
+        return get_edit_post_link($this->getId());
     }
 
     /**
@@ -77,11 +75,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     {
         $excerpt = (string)$this->get('post_excerpt', '');
 
-        if ($raw) :
-            return $excerpt;
-        else :
-            return \apply_filters('get_the_excerpt', $excerpt, $this->getPost());
-        endif;
+        return $raw ? $excerpt : apply_filters('get_the_excerpt', $excerpt, $this->getPost());
     }
 
     /**
@@ -129,11 +123,9 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
      */
     public function getModified($gmt = false)
     {
-        if ($gmt) :
-            return (string)$this->get('post_modified', '');
-        else :
-            return (string)$this->get('post_modified_gmt', '');
-        endif;
+        return $gmt
+            ? (string)$this->get('post_modified_gmt', '')
+            : (string)$this->get('post_modified', '');
     }
 
     /**
@@ -157,7 +149,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
      */
     public function getPermalink()
     {
-        return \get_permalink($this->getId());
+        return get_permalink($this->getId());
     }
 
     /**
@@ -187,15 +179,38 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     /**
      * {@inheritdoc}
      */
+    public function getTerms($taxonomy, $args = [])
+    {
+        $args['taxonomy'] = $taxonomy;
+        $args['object_ids'] = $this->getId();
+
+        return (new \WP_Term_Query($args))->terms;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThumbnail($size = 'post-thumbnail', $attrs = [])
+    {
+        return get_the_post_thumbnail($this->getId(), $size, $attrs);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getThumbnailUrl($size = 'post-thumbnail')
+    {
+        return wp_get_post_thumbnail($this->getId(), $size);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getTitle($raw = false)
     {
         $title = (string)$this->get('post_title', '');
 
-        if ($raw) :
-            return $title;
-        else :
-            return \apply_filters('the_title', $title, $this->getId());
-        endif;
+        return $raw ? $title : apply_filters('the_title', $title, $this->getId());
     }
 
     /**
