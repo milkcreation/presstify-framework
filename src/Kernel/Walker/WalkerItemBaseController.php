@@ -2,10 +2,10 @@
 
 namespace tiFy\Kernel\Walker;
 
-use  tiFy\Kernel\Item\AbstractItemIterator;
+use  tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-class WalkerItemBaseController extends AbstractItemIterator
+class WalkerItemBaseController extends ParamsBag
 {
     /**
      * Classe de rappel du controleur principal
