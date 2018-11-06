@@ -252,7 +252,7 @@ if (! function_exists('resolve')) {
      *
      * @param string $name Nom de qualification du service
      *
-     * @return mixed
+     * @return null|object
      */
     function resolve($name)
     {
