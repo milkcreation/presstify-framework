@@ -73,9 +73,22 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
      */
     public function getExcerpt($raw = false)
     {
-        $excerpt = (string)$this->get('post_excerpt', '');
+        if (!$excerpt = (string)$this->get('post_excerpt', '')) :
+            $text = $this->get('post_content', '');
 
-        return $raw ? $excerpt : apply_filters('get_the_excerpt', $excerpt, $this->getPost());
+            // @see /wp-includes/post-template.php \get_the_excerpt()
+            $text = strip_shortcodes($text);
+            $text = apply_filters('the_content', $text);
+            $text = str_replace(']]>', ']]&gt;', $text);
+
+            $excerpt_length = apply_filters('excerpt_length', 55);
+            $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
+            $excerpt = wp_trim_words($text, $excerpt_length, $excerpt_more);
+        endif;
+
+        return $raw ? $excerpt : ($excerpt ? apply_filters('get_the_excerpt', $excerpt) : '');
+
+        return $raw ? $excerpt : ($excerpt ? apply_filters('get_the_excerpt', $excerpt, $this->getPost()) : '');
     }
 
     /**

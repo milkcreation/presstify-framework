@@ -83,7 +83,6 @@ class MediaImage extends FieldController
      */
     public function enqueue_scripts()
     {
-        @wp_enqueue_media();
         \wp_enqueue_style('FieldMediaImage');
         \wp_enqueue_script('FieldMediaImage');
     }
@@ -145,6 +144,8 @@ class MediaImage extends FieldController
         if (!is_admin()) :
             return;
         endif;
+
+        wp_enqueue_media();
 
         return parent::display();
     }
