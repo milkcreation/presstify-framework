@@ -57,9 +57,8 @@ class MediaFile extends FieldController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_media();
-        \wp_enqueue_style('FieldMediaFile');
-        \wp_enqueue_script('FieldMediaFile');
+        wp_enqueue_style('FieldMediaFile');
+        wp_enqueue_script('FieldMediaFile');
     }
 
     /**
@@ -90,6 +89,8 @@ class MediaFile extends FieldController
         if (!is_admin()) :
             return;
         endif;
+
+        wp_enqueue_media();
 
         return parent::display();
     }
