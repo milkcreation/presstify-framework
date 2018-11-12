@@ -1,0 +1,23 @@
+.tify_forum-topics_list{
+	
+}
+.tify_forum-topics_list .tr:before,
+.tify_forum-topics_list .tr:after{
+	display:table;
+	content:"";
+}
+.tify_forum-topics_list .tr:after{
+	clear:both;
+}
+.tify_forum-topics_list .th,
+.tify_forum-topics_list .td{
+	float:left;
+	width:33%;
+	padding:5px;
+}
+.tify_forum-topics_list > .thead > .tr > .th{
+	background-color:#E4E4E4;
+}
+.tify_forum-topics_list > .tbody > .tr:nth-child(2n) > .td{
+	background-color:#F4F4F4;
+}
