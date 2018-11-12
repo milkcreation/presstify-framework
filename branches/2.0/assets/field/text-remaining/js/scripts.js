@@ -6,7 +6,7 @@ jQuery(document).ready(function ($) {
 
         $infos
             .html(textRemainingInfosHtml(length))
-            .attr('aria-reached', length<0 ? 'true' : 'false');
+            .attr('aria-reached', length ? (length<0 ? 'more' : 'less') : 'exact');
 
     });
     $('[aria-control="text_remaining"] [aria-control="input"]').each(function(e) {
