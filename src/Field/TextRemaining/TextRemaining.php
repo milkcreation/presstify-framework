@@ -112,9 +112,9 @@ class TextRemaining extends FieldController
         assets()->setDataJs(
             'fieldTextRemaining',
             [
-                'plural'   => __('caractères restants', 'tify'),
-                'singular' => __('caractère restant', 'tify'),
-                'none'     => __('Aucun caractère restant', 'tify')
+                'plural'   => __('restants', 'tify'),
+                'singular' => __('restant', 'tify'),
+                'none'     => __('0 restant', 'tify')
             ],
             'both'
         );

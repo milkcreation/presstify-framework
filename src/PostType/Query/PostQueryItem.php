@@ -87,8 +87,6 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
         endif;
 
         return $raw ? $excerpt : ($excerpt ? apply_filters('get_the_excerpt', $excerpt) : '');
-
-        return $raw ? $excerpt : ($excerpt ? apply_filters('get_the_excerpt', $excerpt, $this->getPost()) : '');
     }
 
     /**

@@ -6,6 +6,7 @@
     display: block;
     padding: 0.4em;
     margin: 0;
+    width: 100%;
     box-shadow: none;
     border-color: #E4E4E4;
 }
@@ -23,7 +24,6 @@
 [aria-control="text_remaining"] [aria-control="infos"] {
     display: block;
     text-align: right;
-    color: #16A086;
     background-color: #F4F4F4;
     border-color: #E4E4E4;
     border-style: solid;
@@ -33,6 +33,14 @@
     font-size: 0.8em;
 }
 
-[aria-control="text_remaining"] [aria-control="infos"][aria-reached="true"] {
-    color: #C1392B;
+[aria-control="text_remaining"] [aria-control="infos"][aria-reached="less"] {
+    color: #27AE60;
+}
+
+[aria-control="text_remaining"] [aria-control="infos"][aria-reached="exact"] {
+    color: #2980B9;
+}
+
+[aria-control="text_remaining"] [aria-control="infos"][aria-reached="more"] {
+    color: #C0392B;
 }
