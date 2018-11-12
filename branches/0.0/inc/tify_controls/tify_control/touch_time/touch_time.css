@@ -1,0 +1,17 @@
+[data-tify_control="touch_time"] input[type="number"]{
+	width:3.6em;
+	vertical-align:middle;
+	padding:0.31em;
+	margin:0;
+	box-shadow:none;
+}
+[data-tify_control="touch_time"] input[type="number"].tify_control_touch_time-handler-yyyy{
+	width:5em;
+}
+[data-tify_control="touch_time"] [data-tify_control="dropdown"]{
+	vertical-align:middle;
+	min-width:6em;
+}
+[data-tify_control="touch_time"] i{
+	vertical-align:middle;
+}

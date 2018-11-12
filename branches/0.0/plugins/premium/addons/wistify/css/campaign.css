@@ -1,0 +1,326 @@
+#progress-infos{
+	position:fixed;
+	top:50%; left:50%;
+	width:350px; height:100px;
+	margin-top:-50px; margin-left:-175px;
+	background-color:#FFF;
+	border:solid 1px #E4E4E4;
+	border-radius:5px;	
+	z-index:100001;
+}
+#progress-infos .progress{
+	position:relative;
+	background-color: #f5f5f5;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+    height: 20px;
+    overflow: hidden;
+    margin-top:10px;
+}
+#progress-infos .progress .progress-bar{
+	background-color: #3498db;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15) inset;
+    color: #fff;
+    float: left;
+    font-size: 12px;
+    height: 100%;
+    line-height: 20px;
+    text-align: center;
+    transition: width 0.6s ease 0s;
+    width:0;    
+}
+#progress-infos .progress .indicator{
+	position:absolute;
+	top:0; right:0; bottom:0; left:0;
+	line-height:20px;
+	text-align:center;
+	color:#34495e;
+}
+
+#wistify_campaign-edit{}
+/** == FIL D'ARIANE DES ETAPES == **/
+#wistify_campaign-edit #step-breadcrumb{
+	background: none repeat scroll 0 0 #fff;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    color: #555;
+    display: inline-block;
+    font-size: 13px;
+    margin: 12px 0 25px;
+    padding: 0;
+    position: relative;
+    width: 100%;
+}
+#wistify_campaign-edit #step-breadcrumb > li:after{
+	position:absolute;
+	right:0; top:50%;
+	width: 28px; height: 28px;
+	margin-top:-14px;
+	border-style: solid;
+	border-width: 1px 1px 0 0;
+	border-color:#e5e5e5;
+	content: '';
+	display: inline-block;	
+	transform: rotate(45deg);
+	vertical-align: middle;	
+}
+#wistify_campaign-edit #step-breadcrumb > li:last-child:after{
+	display:none;
+}
+#wistify_campaign-edit #step-breadcrumb > li{
+	position:relative;
+	float:left;
+	width:20%;
+	margin:0; padding:0;
+}
+#wistify_campaign-edit #step-breadcrumb > li > a,
+#wistify_campaign-edit #step-breadcrumb > li > span{
+	display:block;
+	padding:5px 10px;
+	text-align:center;
+	text-decoration:none;
+	font-weight:600;
+	font-size:16px;
+	color:#E5E5E5;
+}
+#wistify_campaign-edit #step-breadcrumb > li > a{
+	color:#555;
+}
+#wistify_campaign-edit #step-breadcrumb > li.current > span{
+	color:#45BBE6;
+}
+/** == INTERFACE DE SAISIE == **/
+/*** === GLOBAL === ***/	
+/**** ==== BOÎTE DE SOUMISSION ==== ****/
+#wistify_campaign-edit #submitdiv .minor_actions .nav:before,
+#wistify_campaign-edit #submitdiv .minor_actions .nav:after{
+	display: table;
+	content: "";
+}
+#wistify_campaign-edit #submitdiv .minor_actions .nav{
+	padding:10px 0;
+}
+#wistify_campaign-edit #submitdiv .minor_actions .nav:after{
+	clear:both;
+}
+#wistify_campaign-edit #submitdiv .minor_actions .nav > .prev{
+	float:left;
+}
+#wistify_campaign-edit #submitdiv .minor_actions .nav > .next{
+	float:right;
+}
+/*** === ETAPE #1 === ***/
+/**** ==== TITRE ==== ****/
+#wistify_campaign-edit #step-edit-1 #title{
+	background-color: #fff;
+    font-size: 1.7em;
+    height: 1.7em;
+    line-height: 100%;
+    margin: 0;
+    margin-bottom:20px;
+    outline: 0 none;
+    padding: 3px 8px;
+    width: 100%;
+}
+#wistify_campaign-edit #step-edit-1 #content textarea{
+	height:10em;
+	font-size:16px;
+}
+#wistify_campaign-edit #step-edit-1 [data-tify_control="dropdown"]{
+	display:block;
+}
+/*** === ETAPE #3 === ***/
+/**** ==== TITRE ==== ****/
+#wistify_campaign-edit #step-edit-3 #recipient-search{
+	background-color: #fff;
+    font-size: 1.7em;
+    height: 1.7em;
+    line-height: 100%;
+    margin: 0;
+    outline: 0 none;
+    padding: 3px 8px;
+    width: 100%;
+}
+#wistify_campaign-edit #step-edit-3 input#recipient-search.ui-autocomplete-loading[type="text"] {
+    color:#AAA;
+}
+/**** === RECHERCHE PAR AUTOCOMPLETION === ****/
+#recipient-search-results{
+	position:relative;
+}
+#recipient-search-results .ui-autocomplete{
+	max-height:250px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	margin:0; padding:0;
+	list-style-type: none;
+}
+#recipient-search-results .ui-autocomplete li{	
+	border-bottom:solid 1px #DDD;
+	margin:0; padding:0;
+}
+#recipient-search-results .ui-autocomplete li > a{
+	position:relative;
+	height:50px;
+	display:block;
+	overflow:hidden;
+	background-color:#FAFAFA;
+	text-decoration:none;
+	padding:0;	
+}
+#recipient-search-results .ui-autocomplete li > a:hover{
+	background-color:#F4F4F4;
+}
+#recipient-search-results .ui-autocomplete li > a > .ico{
+	position:relative;
+	float:left;
+	display:block;
+	width:50px; height:50px;
+	font-size:24px;
+	line-height:50px;
+	text-align:center;
+}
+#recipient-search-results .ui-autocomplete li > a > .ico > .badge{
+	position:absolute;
+	bottom:0px; right:0px;
+	font-size:24px;
+	line-height:1;
+	color:#999;
+}
+#recipient-search-results .ui-autocomplete li > a > .ico > .badge.dashicons{
+	font-size:16px;
+}
+#recipient-search-results .ui-autocomplete li > a > .label{
+	display:block;
+	font-weight:600;
+	margin-top:5px;
+}
+#recipient-search-results .ui-autocomplete li > a > .numbers{
+	position:absolute;
+	display:block;
+	top: 50%; right:15px;
+	width:30px; height:30px;
+	margin-top:-15px;
+	color:#FFF;
+	background-color:#45BBE6;
+	font-size:10px;
+	text-align:center;
+	font-weight:600;
+	border-radius:30px;
+	line-height:30px;
+}
+/**** === LISTE DES DESTINATAIRES === ****/
+#recipients-list {}
+#recipients-list > li{	
+	border:solid 1px #DDD;
+	margin:0; padding:0;
+	margin-bottom:5px;
+	position:relative;
+	height:50px;
+	display:block;
+	background-color:#FFF;
+}
+#recipients-list > li > .ico{
+	position:relative;
+	float:left;
+	display:block;
+	width:50px; height:50px;
+	font-size:24px;
+	line-height:50px;
+	text-align:center;
+	margin-right:5px;
+}
+#recipients-list > li > .ico > .badge{
+	position:absolute;
+	bottom:0px; right:0px;
+	font-size:24px;
+	line-height:1;
+	color:#999;
+}
+#recipients-list > li > .ico > .badge.dashicons{
+	font-size:16px;
+}
+#recipients-list > li > .label{
+	display:block;
+	font-weight:600;
+	margin-top:5px;
+}
+#recipients-list > li > .numbers{
+	position:absolute;
+	display:block;
+	top: 50%; right:50px;
+	width:30px; height:30px;
+	margin-top:-15px;
+	color:#FFF;
+	background-color:#45BBE6;
+	font-size:10px;
+	text-align:center;
+	font-weight:600;
+	border-radius:30px;
+	line-height:30px;
+}
+/**** === TOTAL DES DESTINATAIRES === ****/
+#recipients-total{
+	border-top: solid 1px #CCC;
+	margin-top:5px;
+	padding-top:10px;
+	text-align:right;
+	font-size:18px;	
+}
+#recipients-total .label{
+	text-transform:uppercase;
+}
+/*** === ETAPE #5 === ***/
+#wistify_campaign-overlay{
+	position:fixed;
+	top:0; right:0; bottom:0; left:0;
+	background-color: rgba( 125, 125, 125, 0.5 );
+	z-index:100000;
+}
+#wistify_campaign-edit #step-edit-5 #send-test-submit{
+	position:relative;
+}
+#wistify_campaign-edit #step-edit-5 #send-test-submit > input{
+	background-color: #fff;
+    font-size: 1.7em;
+    height: 1.7em;
+    line-height: 100%;
+    margin: 0;
+    outline: 0 none;
+    padding: 3px 8px;
+    width: 100%;
+}
+#wistify_campaign-edit #step-edit-5 #send-test-submit > button{
+	position:absolute; 
+	right:0; top:0; bottom:0;
+	border-radius:0 3px 3px 0;
+	font-size: 1.2em;
+	height:auto;
+}
+#wistify_campaign-edit #step-edit-5 #send-test-resp span{
+	display:block;
+}
+#wistify_campaign-edit #step-edit-5 #issue .inside:before,
+#wistify_campaign-edit #step-edit-5 #issue .inside:after{
+	display: table;
+	content: "";
+}
+#wistify_campaign-edit #step-edit-5 #issue .inside:after{
+	clear:both;
+}
+#wistify_campaign-edit #step-edit-5 .button-primary.button-wistify-action{
+	height:auto;
+	font-size:20px;
+	padding:10px 20px;
+	box-shadow: none;
+}
+#wistify_campaign-edit #step-edit-5 .button-primary.button-wistify-action#campaign-send{
+	background: none repeat scroll 0 0 #2ecc71;
+	border-color: #27ae60;
+}
+#wistify_campaign-edit #step-edit-5 .button-primary.button-wistify-action#campaign-send:hover,
+#wistify_campaign-edit #step-edit-5 .button-primary.button-wistify-action#campaign-send:focus{
+	background: none repeat scroll 0 0 #27ae60;
+
+}

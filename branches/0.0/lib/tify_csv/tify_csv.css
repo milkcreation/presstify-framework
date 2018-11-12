@@ -1,0 +1,19 @@
+#tify_csv-uploadfile .spinner{
+	float:none;
+}
+
+#tify_csv-list_table_container .tablenav.top{
+	display:none;
+}
+#tify_csv-list_table_container .wp-list-table #row{
+	width:2em;
+}
+#tify_csv-list_table_container .wp-list-table tr.imported td{
+	color:#AAA;
+}
+#tify_csv-import{
+	display:none;
+}
+#tify_csv-import.active{
+	display:inline-block;
+}

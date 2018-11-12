@@ -1,0 +1,3 @@
+150512; assets/tify_controls/tify_control/dropdown_colors; Création d'un contrôleur de liste déroulante couleur dropdown_colors
+150511; plugins/forms/field-type/simple-captcha-image/image.php; Ajout d'un filtre pour gérer la couleur du texte du captcha image
+150511; inc/milk_form_class/inc/class-fields.php; Encapsulation des champs choix des formulaires avec la classe choices-wrapper
