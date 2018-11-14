@@ -2,14 +2,15 @@
 
 namespace tiFy\Form\Forms;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
+use tiFy\Contracts\Form\FormItemInterface;
 use tiFy\Form\Form;
 use tiFy\Form\Buttons\ButtonControllerInterface;
 use tiFy\Form\Fields\FieldItemController;
 use tiFy\Form\Forms\FormCallbacksController;
 use tiFy\Form\Forms\FormItemController;
 
-class FormBaseController extends AppController
+class FormBaseController extends AppController implements FormItemInterface
 {
     /**
      * Classe de rappel du formulaire.
@@ -36,7 +37,24 @@ class FormBaseController extends AppController
         $this->form = new FormItemController($name, $attrs, $this);
 
         // Déclenchement des événements
-        $this->appAddAction('tify_form_loaded');
+        add_action(
+            'tify_form_loaded',
+            function () {
+                $this->appServiceGet(Form::class)->setCurrent($this);
+                $this->getForm()->handle()->proceed();
+                $this->appServiceGet(Form::class)->resetCurrent();
+            }
+        );
+    }
+
+    /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->display();
     }
 
     /**
@@ -47,18 +65,6 @@ class FormBaseController extends AppController
     public function boot()
     {
 
-    }
-
-    /**
-     * A l'issue du chargement complet de la liste des formulaires déclarés.
-     *
-     * @return void
-     */
-    final public function tify_form_loaded()
-    {
-        $this->appServiceGet(Form::class)->setCurrent($this);
-        $this->getForm()->handle()->proceed();
-        $this->appServiceGet(Form::class)->resetCurrent();
     }
 
     /**
