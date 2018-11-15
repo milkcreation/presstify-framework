@@ -9,12 +9,12 @@ class Findposts extends FieldController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string $before Contenu placé avant le champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var array $attrs Liste des propriétés de la balise HTML.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
-     *      @var array $viewer Liste des attributs de configuration de la classe des gabarits d'affichage.
+     * @var string $before Contenu placé avant le champ.
+     * @var string $after Contenu placé après le champ.
+     * @var array $attrs Liste des propriétés de la balise HTML.
+     * @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     * @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     * @var array $viewer Liste des attributs de configuration de la classe des gabarits d'affichage.
      * }
      * @var array
      */
@@ -39,12 +39,22 @@ class Findposts extends FieldController
             function () {
                 add_action(
                     'wp_ajax_field_findposts',
-                    'wp_ajax'
+                    [$this, 'wp_ajax']
                 );
 
                 add_action(
                     'wp_ajax_nopriv_field_findposts',
-                    'wp_ajax'
+                    [$this, 'wp_ajax']
+                );
+
+                add_action(
+                    'wp_ajax_field_findposts_post_permalink',
+                    [$this, 'getPostPermalink']
+                );
+
+                add_action(
+                    'wp_ajax_nopriv_field_findposts_post_permalink',
+                    [$this, 'getPostPermalink']
                 );
 
                 wp_register_style(
@@ -55,7 +65,7 @@ class Findposts extends FieldController
 
                 wp_register_script(
                     'FieldFindposts',
-                    assets()->url('field/findposts/js/scripts.css'),
+                    assets()->url('field/findposts/js/scripts.js'),
                     ['media'],
                     181006,
                     true
@@ -74,12 +84,18 @@ class Findposts extends FieldController
     }
 
     /**
-     * Affichage de la fenêtre modale
+     * Affichage de la fenêtre modale.
+     *
+     * @param string $found_action Action Ajax de récupération des éléments.
+     * @param array $query_args Arguments de la requête de récupération des éléments.
+     *
      * @todo pagination + gestion instance multiple
+     *
+     * @return string
      */
-    public static function modal($found_action = '', $query_args = [])
+    public function modal($found_action = '', $query_args = [])
     {
-        // Définition des types de post         
+        // Définition des types de post
         if (!empty($query_args['post_type'])) :
             $post_types = (array)$query_args['post_type'];
             unset($query_args['post_type']);
@@ -88,6 +104,30 @@ class Findposts extends FieldController
             unset($post_types['attachment']);
             $post_types = array_keys($post_types);
         endif;
+
+        return $this->viewer('modal', compact('found_action', 'query_args', 'post_types'));
+    }
+
+    /**
+     * Récupération d'un permalien de post selon son ID.
+     *
+     * @return string
+     */
+    public function getPostPermalink()
+    {
+        // Traitement des arguments de requête
+        $post_id = intval(request()->post('post_id', 0));
+        $relative = request()->post('relative', false);
+        $default = request()->post('default', site_url('/'));
+
+        // Traitement du permalien
+        $permalink = ($_permalink = get_permalink($post_id)) ? $_permalink : $default;
+        if ($relative) :
+            $url_path = parse_url(site_url('/'), PHP_URL_PATH);
+            $permalink = $url_path . preg_replace('/' . preg_quote(site_url('/'), '/') . '/', '', $permalink);
+        endif;
+
+        wp_die($permalink);
     }
 
     /**
@@ -102,14 +142,13 @@ class Findposts extends FieldController
         $post_types = get_post_types(['public' => true], 'objects');
         unset($args['post_type']['attachment']);
 
-
-        $s = \wp_unslash($_POST['ps']);
+        $s = \wp_unslash(request()->post('ps'));
         $args = [
             'post_type'      => array_keys($post_types),
             'post_status'    => 'any',
             'posts_per_page' => 50,
         ];
-        $args = wp_parse_args($_POST['query_args'], $args);
+        $args = wp_parse_args(request()->post('query_args', []), $args);
 
         if ('' !== $s) :
             $args['s'] = $s;
@@ -122,41 +161,53 @@ class Findposts extends FieldController
             wp_send_json_error(__('No items found.'));
         endif;
 
-        $html = '<table class="widefat"><thead><tr><th class="found-radio"><br /></th><th>' . __('Title') . '</th><th class="no-break">' . __('Type') . '</th><th class="no-break">' . __('Date') . '</th><th class="no-break">' . __('Status') . '</th></tr></thead><tbody>';
-        $alt = '';
-        foreach ($posts as $post) :
-            $title = trim($post->post_title) ? $post->post_title : __('(no title)');
-            $alt = ('alternate' == $alt) ? '' : 'alternate';
+        $alt = 'alternate';
+        
+        /**
+         * @var \WP_Post $post
+         */
+        foreach ($posts as &$post) :
+            $post = $post->to_array();
+            $post['_post_title'] = trim($post['post_title']) ? $post['post_title'] : __('(no title)');
 
-            switch ($post->post_status) :
+            switch ($post['post_status']) :
                 case 'publish' :
                 case 'private' :
-                    $stat = __('Published');
+                    $post['_post_status'] = __('Published');
                     break;
                 case 'future' :
-                    $stat = __('Scheduled');
+                    $post['_post_status'] = __('Scheduled');
                     break;
                 case 'pending' :
-                    $stat = __('Pending Review');
+                    $post['_post_status'] = __('Pending Review');
                     break;
                 case 'draft' :
-                    $stat = __('Draft');
+                    $post['_post_status'] = __('Draft');
+                    break;
+                default:
+                    $post['_post_status'] = '';
                     break;
             endswitch;
 
-            if ('0000-00-00 00:00:00' == $post->post_date) :
-                $time = '';
-            else :
-                /* translators: date format in table columns, see https://secure.php.net/date */
-                $time = mysql2date(__('Y/m/d'), $post->post_date);
-            endif;
-
-            $html .= '<tr class="' . trim('found-posts ' . $alt) . '"><td class="found-radio"><input type="radio" id="found-' . $post->ID . '" name="found_post_id" value="' . esc_attr($post->ID) . '"></td>';
-            $html .= '<td><label for="found-' . $post->ID . '">' . \esc_html($title) . '</label></td><td class="no-break">' . \esc_html($post_types[$post->post_type]->labels->singular_name) . '</td><td class="no-break">' . esc_html($time) . '</td><td class="no-break">' . \esc_html($stat) . ' </td></tr>' . "\n\n";
+            $post['_post_date'] = ('0000-00-00 00:00:00' == $post['post_date']) ? '' : mysql2date(__('Y/m/d'), $post['post_date']);
         endforeach;
 
-        $html .= '</tbody></table>';
+        \wp_send_json_success($this->viewer('response', compact('post_types', 'posts', 'alt'))->render());
+    }
 
-        \wp_send_json_success($html);
+    /**
+     * {@inheritdoc}
+     */
+    public function display()
+    {
+        static $init;
+
+        if (!$init++) :
+            add_action('admin_footer', function () {
+                echo $this->modal($this->get('ajax_action'), $this->get('query_args'));
+            });
+        endif;
+
+        return parent::display();
     }
 }

@@ -345,19 +345,4 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             $field->renderPrepare();
         endforeach;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function viewer($view = null, $data = [])
-    {
-        /** @var ViewEngine $viewer */
-        $viewer = app()->resolve("form.factory.viewer.{$this->name()}");
-
-        if (is_null($view)) :
-            return $viewer;
-        endif;
-
-        return $viewer->make("_override::{$view}", $data);
-    }
 }

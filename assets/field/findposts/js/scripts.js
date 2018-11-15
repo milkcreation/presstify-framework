@@ -26,7 +26,6 @@
         });
     });
  */
-
 var scripts;
 (function ($) {
     scripts = {
@@ -134,9 +133,8 @@ jQuery(document).ready(function ($) {
     $('#find-posts-submit').click(function (e) {
         e.preventDefault();
         var $checked = $('#find-posts-response .found-posts .found-radio > input:checked');
-
         if ($checked.length) {
-            $.post(tify_ajaxurl, {action: 'tify_get_post_permalink', post_id: $checked.val()}, function (resp) {
+            $.post(tify_ajaxurl, {action: 'field_findposts_post_permalink', post_id: $checked.val()}, function (resp) {
                 $($('#affected').val()).val(resp);
                 scripts.close();
             });
@@ -144,5 +142,8 @@ jQuery(document).ready(function ($) {
             scripts.close();
         }
         return false;
+    });
+    $(document).on('click', '[aria-control="findposts"] > button', function() {
+        scripts.open('target', '#' + $('.tiFyField-Findposts', $(this).closest('[aria-control="findposts"]')).attr('id'));
     });
 });

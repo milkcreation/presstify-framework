@@ -95,11 +95,16 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
                     $content = $this->getContent();
 
                     if (is_string($content) && class_exists($content)) :
-                        $resolved = new $content($this, $this->getArgs());
+                        $controller = new $content($this, $this->getArgs());
+                    elseif(is_object($content)) :
+                        $controller = $content;
+                        call_user_func_array($controller, [$this, $this->getArgs()]);
+                    else :
+                        $controller = null;
+                    endif;
 
-                        if ($resolved instanceof MetaboxController) :
-                            $this->set('content', $resolved);
-                        endif;
+                    if ($controller instanceof MetaboxController) :
+                        $this->set('controller', $controller);
                     endif;
                 },
                 999999
@@ -130,7 +135,11 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
      */
     public function getContent()
     {
-        return $this->get('content', '');
+        if ($this->get('controller') instanceof MetaboxController) :
+            return call_user_func_array([$this->get('controller'), 'content'], func_get_args());
+        else :
+            return $this->get('content', '');
+        endif;
     }
 
     /**
@@ -146,8 +155,8 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
      */
     public function getHeader()
     {
-        if ($this->getContent() instanceof MetaboxController) :
-            return call_user_func_array([$this->getContent(), 'header'], func_get_args());
+        if ($this->get('controller') instanceof MetaboxController) :
+            return call_user_func_array([$this->get('controller'), 'header'], func_get_args());
         else :
             return $this->getTitle();
         endif;

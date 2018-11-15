@@ -64,7 +64,7 @@ class Fields extends AbstractItemsIterator implements FactoryFields
      */
     public function byGroup()
     {
-        return (new Collection($this->items))->groupBy(function (FactoryField $field) {
+        return $this->collect()->groupBy(function (FactoryField $field) {
             return $field->getGroup();
         })->all();
     }
@@ -74,7 +74,7 @@ class Fields extends AbstractItemsIterator implements FactoryFields
      */
     public function byPosition()
     {
-        return (new Collection($this->items))->sortBy(function (FactoryField $field) {
+        return $this->collect()->sortBy(function (FactoryField $field) {
             return $field->getPosition();
         })->all();
     }
@@ -82,10 +82,20 @@ class Fields extends AbstractItemsIterator implements FactoryFields
     /**
      * {@inheritdoc}
      */
+    public function collect()
+    {
+        return new Collection($this->items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasGroup()
     {
-        return !empty((new Collection($this->items))->max(function (FactoryField $field) {
-            return $field->getGroup();
-        }));
+        return !empty(
+            $this->collect()->max(function (FactoryField $field) {
+                return $field->getGroup();
+            })
+        );
     }
 }

@@ -2,6 +2,8 @@
 
 namespace tiFy\Contracts\Form;
 
+use tiFy\Contracts\View\ViewEngine;
+
 interface FactoryResolver
 {
     /**
@@ -9,7 +11,7 @@ interface FactoryResolver
      *
      * @param string $name Nom de qualification de l'addon.
      *
-     * @return AddonFactory
+     * @return AddonController
      */
     public function addon($name);
 
@@ -96,4 +98,18 @@ interface FactoryResolver
      * @return FactorySession
      */
     public function session();
+
+    /**
+     * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
+     * {@internal
+     *  - cas 1 : Aucun argument n'est passé à la méthode, retourne l'instance du controleur de gabarit d'affichage.
+     *  - cas 2 : Rétourne le gabarit d'affichage en passant les variables en argument.
+     * }
+     *
+     * @param null|string $view Nom de qualification du gabarit.
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return FactoryView|ViewEngine
+     */
+    public function viewer($view = null, $data = []);
 }

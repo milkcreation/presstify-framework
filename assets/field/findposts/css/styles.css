@@ -1,3 +1,7 @@
+.tiFyFindPosts-box .spinner {
+    top: 0;
+}
+
 [aria-control="findposts"] {
     position: relative;
 }

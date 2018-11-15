@@ -142,7 +142,7 @@ class CookieNotice extends PartialController
 
         $cookie_name = request()->post('cookie_name', '');
         $cookie_hash = request()->post('cookie_hash', '');
-        $cookie_expire = request()->post('cookie_expire', '');
+        $cookie_expire = request()->post('cookie_expire', 0);
 
         if (!$cookie_hash) :
             $cookie_hash = '';
@@ -173,11 +173,11 @@ class CookieNotice extends PartialController
      * Définition d'un cookie.
      *
      * @var string $name Nom de qualification du cookie.
-     * @var int $expire Temps avant l'expiration du cookie. Exprimé en secondes.
+     * @var int $cookie_expire Temps avant l'expiration du cookie. Exprimé en secondes.
      *
      * @return void
      */
-    protected function setCookie($cookie_name, $cookie_expire)
+    protected function setCookie($cookie_name, $cookie_expire = 0)
     {
         $secure = ('https' === parse_url(home_url(), PHP_URL_SCHEME));
 
@@ -187,7 +187,7 @@ class CookieNotice extends PartialController
             new Cookie(
                 $cookie_name,
                 $time,
-                $time + $cookie_expire,
+                $cookie_expire ? $time + $cookie_expire : 0,
                 COOKIEPATH,
                 COOKIE_DOMAIN,
                 $secure
@@ -199,7 +199,7 @@ class CookieNotice extends PartialController
                 new Cookie(
                     $cookie_name,
                     $time,
-                    $time + $cookie_expire,
+                    $cookie_expire ? $time + $cookie_expire : 0,
                     SITECOOKIEPATH,
                     COOKIE_DOMAIN,
                     $secure

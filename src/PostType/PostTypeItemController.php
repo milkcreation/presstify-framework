@@ -22,7 +22,7 @@ class PostTypeItemController extends ParamsBag implements PostTypeItemInterface
         //'labels'             => '',
         'description'           => '',
         'public'                => true,
-        // @todo 'exclude_from_search'   => false,
+        //'exclude_from_search'   => false,
         //'publicly_queryable'    => true,
         //'show_ui'               => true,
         //'show_in_nav_menus'     => true,
@@ -144,6 +144,13 @@ class PostTypeItemController extends ParamsBag implements PostTypeItemInterface
                     ]
                 )
                 ->all()
+        );
+
+        $this->set(
+            'exclude_from_search',
+            $this->has('exclude_from_search')
+                ? $this->get('exclude_from_search')
+                : !$this->get('public')
         );
 
         $this->set(

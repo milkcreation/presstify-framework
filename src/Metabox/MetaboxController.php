@@ -50,16 +50,6 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     }
 
     /**
-     * Récupération de l'affichage depuis l'instance.
-     *
-     * @return string
-     */
-    public function __invoke()
-    {
-        return call_user_func_array([$this, 'content'], func_get_args());
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function boot()

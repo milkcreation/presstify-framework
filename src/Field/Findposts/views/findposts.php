@@ -6,13 +6,14 @@
  */
 ?>
 
-<div class="tiFy-Input--search">
-<?php
-echo field(
-    'text',
-    [
-        'attrs' => $this->get('attrs', [])
-    ]
-);
-?>
+<div aria-control="findposts">
+    <?php
+    echo field(
+        'text',
+        [
+            'attrs' => $this->get('attrs', [])
+        ]
+    );
+    echo field('button');
+    ?>
 </div>
