@@ -5,11 +5,18 @@ namespace tiFy\Route;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use tiFy\Apps\AppInterface;
-use tiFy\Apps\Item\AbstractAppItemController;
+use tiFy\Contracts\App\AppInterface;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Kernel\Params\ParamsBag;
 
-class RouteHandle extends AbstractAppItemController
+class RouteHandle extends ParamsBag
 {
+    /**
+     * Classe de rappel du controleur de l'application associée.
+     * @var AppInterface
+     */
+    protected $app;
+
     /**
      * Nom de qualification de la route.
      * @var string
@@ -62,6 +69,7 @@ class RouteHandle extends AbstractAppItemController
     public function __construct($name, $attrs = [], AppInterface $app)
     {
         $this->name = $name;
+        $this->app = $app;
 
         parent::__construct($attrs, $app);
     }
@@ -116,12 +124,32 @@ class RouteHandle extends AbstractAppItemController
         array_push($args, $request, $response);
 
         if ($this->isClosure($cb)) :
-            call_user_func_array($cb, $args);
+            $resolved = call_user_func_array($cb, $args);
+            if (is_callable($resolved)) :
+                $resolved = call_user_func_array($resolved, $args);
+            endif;
+
+            if ($resolved instanceof ViewController) :
+                add_action(
+                    'template_redirect',
+                    function () use ($resolved, $response) {
+                        $response->getBody()->write($resolved->render());
+                        $this->app->appServiceGet('tfy.route.emitter')->emit($response);
+                        exit;
+                    },
+                    0
+                );
+            endif;
         else :
-            $this->app->appAddAction(
+            add_action(
                 'template_redirect',
                 function () use ($cb, $args) {
                     $output = call_user_func_array($cb, $args);
+
+                    if ($output instanceof ViewController) :
+                        $output = $output->render();
+                    endif;
+
                     if (is_string($output)) :
                         $response = end($args);
                         $response->getBody()->write($output);
