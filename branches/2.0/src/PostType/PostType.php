@@ -54,11 +54,8 @@ final class PostType
      */
     public function register($name, $attrs = [])
     {
-        if(!isset($this->items[$name])) :
-            return app()->resolve(PostTypeItemController::class, [$name, $attrs]);
-        else :
-            return $this->items[$name];
-        endif;
+        return $this->items[$name] = $this->items[$name]
+            ?? app()->resolve(PostTypeItemController::class, [$name, $attrs]);
     }
 
     /**
@@ -70,6 +67,6 @@ final class PostType
      */
     public function get($name)
     {
-        return isset($this->items['name']) ? $this->items['name'] : null;
+        return $this->items[$name] ?? null;
     }
 }

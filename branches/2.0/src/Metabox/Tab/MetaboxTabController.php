@@ -40,7 +40,7 @@ class MetaboxTabController extends ParamsBag
         /** @var MetaboxManager $metabox */
         $metabox = app('metabox');
 
-        $this->items = $metabox->getItems();
+        $this->items = $metabox->collect();
 
         // Ordonnacement
         $max = $this->items->max(

@@ -1,18 +1,5 @@
 <?php
 
-/**
- * @name Repeater
- * @desc Controleur d'affichage de jeux de champs de formulaire pouvant être ajoutés dynamiquement.
- * @package presstiFy
- * @namespace tiFy\Control\Repeater
- * @version 1.1
- * @subpackage Core
- * @since 1.2.502
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Field\Repeater;
 
 use tiFy\Field\FieldController;
@@ -30,7 +17,7 @@ class Repeater extends FieldController
      *      @var array $attrs Liste des attributs HTML de la balise HTML.
      *      @var array $button Liste des attributs de configuration du bouton d'ajout d'un élément.
      *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
-     *      @var bool $order Activation de l'ordonnacemment des éléments.
+     *      @var bool|array $sortable Activation de l'ordonnacemment des éléments|Liste des attributs de configuration. @see http://api.jqueryui.com/sortable/
      *      @var array $templates Attributs de configuration des templates.
      * }
      */
@@ -43,7 +30,7 @@ class Repeater extends FieldController
         'attrs'            => [],
         'button'           => [],
         'max'              => -1,
-        'order'            => true,
+        'sortable'         => true,
         'viewer'           => []
     ];
 
@@ -88,8 +75,8 @@ class Repeater extends FieldController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('FieldRepeater');
-        \wp_enqueue_script('FieldRepeater');
+        wp_enqueue_style('FieldRepeater');
+        wp_enqueue_script('FieldRepeater');
     }
 
     /**
@@ -112,7 +99,8 @@ class Repeater extends FieldController
         parent::parse($attrs);
 
         $this->set('attrs.aria-control', 'repeater');
-        $this->set('attrs.aria-sortable', $this->get('order') ? 'true' : 'false');
+        $this->set('attrs.aria-id', $this->getId());
+        $this->set('attrs.aria-sortable', $this->get('sortable') ? 'true' : 'false');
 
         if (!$this->get('button.tag')) :
             $this->set('button.tag', 'a');
@@ -125,7 +113,21 @@ class Repeater extends FieldController
         endif;
         $this->set('button.attrs.aria-control', 'add');
 
-        if ($this->get('order')) :
+        if ($sortable = $this->get('sortable')) :
+            if (!is_array($sortable)) :
+                $sortable = [];
+            endif;
+            $this->set(
+                'sortable',
+                array_merge(
+                    [
+                        'placeholder' => 'tiFyField-RepeaterItemPlaceholder',
+                        'axis'        => 'y'
+                    ],
+                    $sortable
+                )
+            );
+
             $this->set('order', '__order_' . $this->getName());
         endif;
 
@@ -137,6 +139,7 @@ class Repeater extends FieldController
                 'name'        => $this->getName(),
                 'max'         => $this->get('max'),
                 'order'       => $this->get('order'),
+                'sortable'    => $this->get('sortable', []),
                 'viewer'      => $this->get('viewer')
             ]
         );

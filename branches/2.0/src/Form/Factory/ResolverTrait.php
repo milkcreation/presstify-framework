@@ -13,7 +13,9 @@ use tiFy\Contracts\Form\FactoryNotices;
 use tiFy\Contracts\Form\FactoryOptions;
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Contracts\Form\FactorySession;
+use tiFy\Contracts\Form\FactoryView;
 use tiFy\Contracts\Form\FormFactory;
+use tiFy\Contracts\View\ViewEngine;
 
 trait ResolverTrait
 {
@@ -34,7 +36,7 @@ trait ResolverTrait
      *
      * @param string $name Nom de qualification de l'addon.
      *
-     * @return AddonFactory
+     * @return AddonController
      */
     public function addon($name)
     {
@@ -127,7 +129,7 @@ trait ResolverTrait
             endif;
         elseif (is_array($tags)) :
             foreach ($tags as $k => &$i) :
-                $i = $this->parseFieldTag($i);
+                $i = $this->fieldTagValue($i, $raw);
             endforeach;
         endif;
 
@@ -196,5 +198,29 @@ trait ResolverTrait
     public function session()
     {
         return app()->resolve("form.factory.session.{$this->form()->name()}");
+    }
+
+    /**
+     * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
+     * {@internal
+     *  - cas 1 : Aucun argument n'est passé à la méthode, retourne l'instance du controleur de gabarit d'affichage.
+     *  - cas 2 : Rétourne le gabarit d'affichage en passant les variables en argument.
+     * }
+     *
+     * @param null|string $view Nom de qualification du gabarit.
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return FactoryView|ViewEngine
+     */
+    public function viewer($view = null, $data = [])
+    {
+        /** @var ViewEngine $viewer */
+        $viewer = app()->resolve("form.factory.viewer.{$this->form()->name()}");
+
+        if (is_null($view)) :
+            return $viewer;
+        endif;
+
+        return $viewer->make("_override::{$view}", $data);
     }
 }

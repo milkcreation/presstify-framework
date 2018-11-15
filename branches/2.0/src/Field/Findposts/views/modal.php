@@ -8,7 +8,7 @@
 
 <div id="ajax-response"></div>
 
-<div id="find-posts" class="find-box" style="display: none;">
+<div id="find-posts" class="find-box tiFyFindPosts-box" style="display: none;">
     <div id="find-posts-head" class="find-box-head">
         <?php _e('Attach to existing content'); ?>
         <button type="button" id="find-posts-close">
@@ -26,7 +26,7 @@
                        value="<?php echo urlencode(json_encode($query_args)); ?>"/>
             <?php endif; ?>
             <input type="hidden" name="affected" id="affected" value=""/>
-            <?php wp_nonce_field('find-posts', '_ajax_nonce', false); ?>
+            <?php wp_nonce_field('FieldFindposts', '_ajax_nonce', false); ?>
             <label class="screen-reader-text" for="find-posts-input"><?php _e('Search'); ?></label>
             <input type="text" id="find-posts-input" name="ps" value=""/>
 

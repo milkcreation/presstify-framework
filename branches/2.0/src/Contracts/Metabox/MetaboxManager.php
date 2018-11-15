@@ -16,11 +16,11 @@ interface MetaboxManager
     public function add($name, $screen = null, $attrs = []);
 
     /**
-     * Récupération de la liste des éléments.
+     * Récupération de la collection d'éléments déclarés.
      *
      * @return Collection|MetaboxFactory[]
      */
-    public function getItems();
+    public function collect();
 
     /**
      * Déclaration d'une boîte de saisie à supprimer

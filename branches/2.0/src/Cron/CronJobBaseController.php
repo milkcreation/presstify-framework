@@ -18,6 +18,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
      *      @var string $description Description.
      *      @var int|string|Carbon $date Date de déclenchement de la première itération.
      *      @var string $freq Fréquence d'exécution des itérations.
+     *      @var callable $command
      *      @var array $args Liste des variables complémentaires passées en arguments.
      *      @var boolean|array $log Liste des attributs de configuration de la journalisation.
      * }
@@ -295,8 +296,8 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
         $freq = $this->get('freq');
         $recurrences = wp_get_schedules();
         if (is_array($freq)) :
-            if (!$freq = $this->get('freq.id')) :
-                $freq = 'daily';
+            if (!$freq_id = $this->get('freq.id')) :
+                $freq_id = 'daily';
             else :
                 add_filter(
                     'cron_schedules',
@@ -318,12 +319,12 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
                     });
             endif;
         else :
-            if (is_string($freq)) :
-                $freq = isset($recurrences[$freq]) ? $freq : 'daily';
+            if (is_string($freq_id)) :
+                $freq_id = isset($recurrences[$freq]) ? $freq : 'daily';
             else :
-                $freq = 'daily';
+                $freq_id = 'daily';
             endif;
         endif;
-        $this->set('freq', $freq);
+        $this->set('freq', $freq_id);
     }
 }

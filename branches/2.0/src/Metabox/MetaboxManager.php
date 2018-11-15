@@ -148,8 +148,11 @@ class MetaboxManager implements MetaboxManagerContract
         endif;
 
         config()->set(
-            "metabox.{$screen}.{$name}",
-            $attrs
+            "metabox.{$screen}",
+            array_merge(
+                [$name => $attrs],
+                config("metabox.{$screen}", [])
+            )
         );
 
         return $this;
@@ -158,7 +161,7 @@ class MetaboxManager implements MetaboxManagerContract
     /**
      * {@inheritdoc}
      */
-    public function getItems()
+    public function collect()
     {
         return new Collection($this->items);
     }

@@ -44,7 +44,7 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function registerQuery()
     {
-        $this->app->bind('wp.query.post', function (\WP_Post $wp_post) { return new Post($wp_post);});
+        $this->app->bind('wp.query.post', function (\WP_Post $wp_post) { return new Post($wp_post); });
         $this->app->bind('wp.query.posts', function (\WP_Query $wp_query) { return new Posts($wp_query); });
     }
 }

@@ -100,4 +100,12 @@ class Notices extends NoticesController implements FactoryNotices
 
         return $factory->get($key, $default);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function viewer($view = null, $data = [])
+    {
+        return parent::viewer($view, $data);
+    }
 }

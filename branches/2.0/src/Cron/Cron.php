@@ -3,8 +3,8 @@
 namespace tiFy\Cron;
 
 use Illuminate\Support\Collection;
+use tiFy\Contracts\Cron\Cron as CronContract;
 use tiFy\Contracts\Cron\CronJobInterface;
-use tiFy\Cron\ScheduleBaseController;
 use tiFy\Layout\Layout;
 
 /**
@@ -23,7 +23,7 @@ use tiFy\Layout\Layout;
  * > http(s)://%site_url%/?job=%task%
  */
 
-final class Cron
+final class Cron implements CronContract
 {
     /**
      * Listes des tâches planifiées déclarées.
