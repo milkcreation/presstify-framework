@@ -257,8 +257,7 @@ final class Column
                     break;
             endswitch;
 
-            $content = $c->getContent();
-            $output = call_user_func_array($content, func_get_args());
+            $output = ($content = $c->getContent()) ? call_user_func_array($content, func_get_args()) : '';
 
             if ($echo) :
                 echo $output;
