@@ -2,7 +2,7 @@
 
 namespace tiFy\Media;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 class Media extends AppController
 {

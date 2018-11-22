@@ -2,7 +2,7 @@
 
 namespace tiFy\PageHook;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Options\Options;
 use tiFy\PageHook\Admin\PageHookAdminOptions;
 
@@ -25,7 +25,7 @@ class PageHook extends AppController
             endforeach;
         endif;
 
-        do_action('tify_page_hook_register');
+        do_action('tify_page_hook_register', $this);
 
         $this->appAddAction('tify_options_register');
     }

@@ -8,6 +8,12 @@ return [
             '1.10.19',
             'screen'
         ],
+        'ionicons' => [
+            '//unpkg.com/ionicons@4.2.2/dist/css/ionicons.min.css',
+            [],
+            '4.2.2',
+            'screen'
+        ],
         'spectrum' => [
             '//cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css',
             [],
@@ -20,6 +26,12 @@ return [
             '//cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js',
             ['jquery'],
             '1.10.19',
+            true
+        ],
+        'ionicons' => [
+            '//unpkg.com/ionicons@4.2.2/dist/ionicons.js',
+            [],
+            '4.2.2',
             true
         ],
         'moment' => [

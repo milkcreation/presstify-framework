@@ -3,7 +3,7 @@
 namespace tiFy\Media;
 
 use Symfony\Component\HttpFoundation\Request;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Kernel\Tools;
 
 class Download extends AppController

@@ -3,7 +3,7 @@
 namespace tiFy\Form\Fields;
 
 use Illuminate\Support\Collection;
-use tiFy\Apps\AppTrait;
+use tiFy\App\AppTrait;
 use tiFy\Form\CommonDependencyAwareTrait;
 use tiFy\Form\Fields\FieldItemController;
 
