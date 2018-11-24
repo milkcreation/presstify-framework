@@ -319,7 +319,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
                     });
             endif;
         else :
-            if (is_string($freq_id)) :
+            if (is_string($freq)) :
                 $freq_id = isset($recurrences[$freq]) ? $freq : 'daily';
             else :
                 $freq_id = 'daily';
