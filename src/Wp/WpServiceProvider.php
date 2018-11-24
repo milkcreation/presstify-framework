@@ -3,10 +3,13 @@
 namespace tiFy\Wp;
 
 use tiFy\App\Container\AppServiceProvider;
+use tiFy\Contracts\Routing\RouteHandler as RouteHandlerContract;
 use tiFy\Wp\Media\MediaDownload;
 use tiFy\Wp\Media\MediaManager;
 use tiFy\Wp\Query\Post;
 use tiFy\Wp\Query\Posts;
+use tiFy\Wp\Routing\RouteHandler;
+use tiFy\Wp\Routing\Router;
 use tiFy\Wp\WpCtags;
 use tiFy\Wp\WpQuery;
 use tiFy\Wp\WpScreen;
@@ -15,6 +18,14 @@ use tiFy\Wp\WpUser;
 
 class WpServiceProvider extends AppServiceProvider
 {
+    /**
+     * Liste des services fournis.
+     * @var array
+     */
+    protected $provides = [
+        'wp.routing.router',
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -34,8 +45,25 @@ class WpServiceProvider extends AppServiceProvider
         $this->app->bind('wp.taxonomy', function () { return new WpTaxonomy(); });
 
         $this->app->bind('wp.user', function () { return new WpUser(); });
+
+        add_action(
+            'after_setup_tify',
+            function () {
+                $router = $this->app->get('wp.routing.router');
+                $this->app->add(RouteHandlerContract::class, function ($name, $attrs, $router) {
+                    return new RouteHandler($name, $attrs, $router);
+                });
+            }
+        );
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function register()
+    {
+        $this->registerRouting();
+    }
 
     /**
      * Déclaration des controleurs de requête de récupération des éléments Wordpress.
@@ -46,5 +74,15 @@ class WpServiceProvider extends AppServiceProvider
     {
         $this->app->bind('wp.query.post', function (\WP_Post $wp_post) { return new Post($wp_post); });
         $this->app->bind('wp.query.posts', function (\WP_Query $wp_query) { return new Posts($wp_query); });
+    }
+
+    /**
+     * Déclaration des controleurs de routage.
+     *
+     * @return void
+     */
+    public function registerRouting()
+    {
+        $this->app->share('wp.routing.router', function () { return new Router(); });
     }
 }

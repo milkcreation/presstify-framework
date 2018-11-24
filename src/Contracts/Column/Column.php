@@ -18,13 +18,6 @@ interface Column
     public function add($screen, $name, $attrs = []);
 
     /**
-     * Récupération de la liste des éléments affichés sur la page courante.
-     *
-     * @return Collection|ColumnItem[]
-     */
-    public function getCurrentItems();
-
-    /**
      * Traitement de la liste des entêtes de colonnes.
      *
      * @param array $headers Liste des entêtes de colonnes.

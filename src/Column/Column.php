@@ -3,10 +3,10 @@
 namespace tiFy\Column;
 
 use Illuminate\Support\Collection;
-use tiFy\Contracts\Column\Column as ColumnInterface;
+use tiFy\Contracts\Column\Column as ColumnContract;
 use tiFy\Contracts\Wp\WpScreenInterface;
 
-final class Column implements ColumnInterface
+final class Column implements ColumnContract
 {
     /**
      * Liste des éléments affichés sur la page courante.
@@ -79,70 +79,40 @@ final class Column implements ColumnInterface
                     $item->load($this->screen);
                 endforeach;
 
-                $this->currents = (new Collection($this->items))->filter(
-                    function (ColumnItemController $item) {
-                        return $item->isActive();
-                    }
-                );
-
-                switch ($this->screen->getObjectType()) :
-                    case 'post_type' :
-                        add_filter(
-                            'manage_edit-' . $this->screen->getObjectName() . '_columns',
-                            [$this, 'parseColumnHeaders']
-                        );
-
-                        add_action(
-                            'manage_' . $this->screen->getObjectName() . '_posts_custom_column',
-                            [$this, 'parseColumnContents'],
-                            25,
-                            2
-                        );
-                        break;
-
-                    case 'taxonomy' :
-                        add_filter(
-                            'manage_edit-' . $this->screen->getObjectName() . '_columns',
-                            [$this, 'parseColumnHeaders']
-                        );
-
-                        add_filter(
-                            'manage_' . $this->screen->getObjectName() . '_custom_column',
-                            [$this, 'parseColumnContents'],
-                            25,
-                            3
-                        );
-                        break;
-
-                    case 'user' :
-                        add_filter(
-                            'manage_edit-' . $this->screen->getObjectName() . '_columns',
-                            [$this, 'parseColumnHeaders']
-                        );
-
-                        add_filter(
-                            'manage_' . $this->screen->getObjectName() . '_custom_column',
-                            [$this, 'parseColumnContents'],
-                            25,
-                            3
-                        );
-                        break;
-
-                    default :
-                        add_filter(
-                            'manage_columns',
-                            [$this, 'parseColumnHeaders']
-                        );
-
-                        add_filter(
-                            'manage_custom_column',
-                            [$this, 'parseColumnContents'],
-                            25,
-                            3
-                        );
-                        break;
-                endswitch;
+                $this->parseColumn($this->screen->getObjectType(), $this->screen->getObjectName());
             }
+        );
+
+        add_action(
+            'admin_init',
+            function () {
+                if (!defined('DOING_AJAX') || DOING_AJAX !== true) :
+                    return;
+                endif;
+                if (!in_array(request()->get('action'), ['inline-save', 'inline-save-tax'])) :
+                    return;
+                endif;
+
+                $screens = [];
+                (new Collection($this->items))->each(function (ColumnItemController $item) use (&$screens) {
+                    if ($wpScreen = $item->getScreen()) :
+                        $type = $wpScreen->getObjectType();
+                        $name = $wpScreen->getObjectName();
+
+                        $screens[$type] = $screens[$type] ?? [];
+                        if (!in_array($name, $screens[$type])) :
+                            array_push($screens[$type], $name);
+                        endif;
+                    endif;
+                });
+
+                foreach($screens as $object_type => $object_names) :
+                    foreach($object_names as $object_name) :
+                        $this->parseColumn($object_type, $object_name);
+                    endforeach;
+                endforeach;
+            },
+            1000000
         );
     }
 
@@ -162,9 +132,65 @@ final class Column implements ColumnInterface
     /**
      * {@inheritdoc}
      */
-    public function getCurrentItems()
+    public function parseColumn($object_type, $object_name)
     {
-        return $this->currents;
+        switch ($object_type) :
+            case 'post_type' :
+                add_filter(
+                    "manage_edit-{$object_name}_columns",
+                    [$this, 'parseColumnHeaders']
+                );
+
+                add_action(
+                    "manage_{$object_name}_posts_custom_column",
+                    [$this, 'parseColumnContents'],
+                    25,
+                    2
+                );
+                break;
+
+            case 'taxonomy' :
+                add_filter(
+                    "manage_edit-{$object_name}_columns",
+                    [$this, 'parseColumnHeaders']
+                );
+
+                add_filter(
+                    "manage_{$object_name}_custom_column",
+                    [$this, 'parseColumnContents'],
+                    25,
+                    3
+                );
+                break;
+
+            case 'user' :
+                add_filter(
+                    "manage_edit-{$object_name}_columns",
+                    [$this, 'parseColumnHeaders']
+                );
+
+                add_filter(
+                    "manage_{$object_name}_custom_column",
+                    [$this, 'parseColumnContents'],
+                    25,
+                    3
+                );
+                break;
+
+            default :
+                add_filter(
+                    'manage_columns',
+                    [$this, 'parseColumnHeaders']
+                );
+
+                add_filter(
+                    'manage_custom_column',
+                    [$this, 'parseColumnContents'],
+                    25,
+                    3
+                );
+                break;
+        endswitch;
     }
 
     /**
@@ -172,6 +198,12 @@ final class Column implements ColumnInterface
      */
     final public function parseColumnHeaders($headers)
     {
+        $this->currents = (new Collection($this->items))->filter(
+            function (ColumnItemController $item) {
+                return $item->isActive();
+            }
+        );
+
         // Traitement des colonnes système.
         $i = 0;
         foreach ($headers as $name => $title) :
@@ -262,7 +294,7 @@ final class Column implements ColumnInterface
             endswitch;
 
             $content = $c->getContent();
-            $output = call_user_func_array($content, func_get_args());
+            $output = is_callable($content) ? call_user_func_array($content, func_get_args()) : $content;
 
             if ($echo) :
                 echo $output;

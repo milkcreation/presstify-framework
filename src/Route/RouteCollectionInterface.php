@@ -1,6 +1,7 @@
 <?php
 
 namespace tiFy\Route;
+
 use ArrayAccess;
 use Countable;
 use IteratorAggregate;

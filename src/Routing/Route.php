@@ -1,10 +1,11 @@
 <?php
 
-namespace tiFy\Route;
+namespace tiFy\Routing;
 
 use League\Route\Route as LeagueRoute;
+use tiFy\Contracts\Routing\Route as RouteContract;
 
-class RouteController extends LeagueRoute implements RouteInterface
+class Route extends LeagueRoute implements RouteContract
 {
     /**
      * Indicateur de route en réponse à la requête HTTP courante.

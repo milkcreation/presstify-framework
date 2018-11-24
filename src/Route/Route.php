@@ -37,12 +37,6 @@ use Zend\Diactoros\Response\SapiEmitter;
 class Route extends AppController
 {
     /**
-     * Classe de rappel de la reponse de la requête globale.
-     * @var ResponseInterface
-     */
-    private $response;
-
-    /**
      * {@inheritdoc}
      */
     public function appBoot()
@@ -117,7 +111,7 @@ class Route extends AppController
 
         // Traitement des routes
         try {
-            $this->response = $this->collection()->dispatch(
+            $this->collection()->dispatch(
                 $this->appServiceGet('tfy.route.request'),
                 $this->appServiceGet('tfy.route.response')
             );
@@ -128,14 +122,6 @@ class Route extends AppController
         }
 
         return;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getResponse()
-    {
-        return $this->response;
     }
 
     /**

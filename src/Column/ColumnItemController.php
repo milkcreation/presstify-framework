@@ -91,7 +91,7 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
                         endif;
                     endif;
                 },
-                9999999
+                999999
             );
         endif;
 
