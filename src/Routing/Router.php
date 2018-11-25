@@ -6,7 +6,11 @@ use ArrayIterator;
 use Illuminate\Support\Arr;
 use League\Route\RouteCollection;
 use League\Route\Strategy\ApplicationStrategy;
+use League\Route\Strategy\JsonStrategy;
+use League\Route\Strategy\StrategyInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\Routing\RouteHandler as RouteHandlerContract;
 use tiFy\Contracts\Routing\Router as RouterContract;
@@ -19,6 +23,20 @@ class Router extends RouteCollection implements RouterContract
      * @var null|RouteContract
      */
     protected $current;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @return void
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $container->add(RouteHandlerContract::class, function ($name, $attrs = [], $router) {
+            return new RouteHandler($name, $attrs, $this);
+        });
+
+        parent::__construct($container);
+    }
 
     /**
      * {@inheritdoc}
@@ -34,6 +52,22 @@ class Router extends RouteCollection implements RouterContract
     public function count()
     {
         return count($this->routes);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function current()
+    {
+        return $this->hasCurrent() ? $this->current : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function currentRouteName()
+    {
+        return $this->hasCurrent() ? $this->current->getName() : '';
     }
 
     /**
@@ -57,8 +91,6 @@ class Router extends RouteCollection implements RouterContract
 
     /**
      * {@inheritdoc}
-     *
-     * @return Route
      */
     public function getNamedRoute($name)
     {
@@ -68,14 +100,100 @@ class Router extends RouteCollection implements RouterContract
     /**
      * {@inheritdoc}
      */
+    public function getPatternMatchers()
+    {
+        return $this->patternMatchers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasCurrent()
+    {
+        return $this->current instanceof RouteContract;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isCurrentNamed($name)
+    {
+        return $this->hasCurrent() && ($this->current->getName() === $name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function map($method, $path, $handler)
     {
         $path = sprintf('/%s', ltrim(request()->getBaseUrl() . $path, '/'));
-        $route = (new Route())->setMethods((array)$method)->setPath($path)->setCallable($handler);
+
+        $route = (new Route($this))->setMethods((array)$method)->setPath($path)->setCallable($handler);
 
         $this->routes[] = $route;
 
         return $route;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function register($name, $attrs = [])
+    {
+        $attrs = array_merge(
+            [
+                'method' => 'any',
+                'path' => '/',
+                'cb' => '',
+                // @todo 'group'    => '',
+                // 'scheme' => '',
+                // 'host' => '',
+                // 'strategy' => ''
+            ],
+            $attrs
+        );
+        extract($attrs);
+
+        $method = ($method === 'any')
+            ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']
+            : array_map('strtoupper', Arr::wrap($method));
+        $scheme = $scheme ?? request()->getScheme();
+        $host = $host ?? request()->getHost();
+        $strategy = $strategy ?? 'html';
+
+        if (!$strategy instanceof StrategyInterface) :
+            switch($strategy) :
+                default :
+                case 'html' :
+                    $strategy = new ApplicationStrategy();
+                    break;
+                case 'json':
+                    $strategy = new JsonStrategy();
+                    break;
+            endswitch;
+        endif;
+
+        return $this->map(
+            $method,
+            $path,
+            app()->get(RouteHandlerContract::class, [$name, $attrs, $this])
+        )
+            ->setName($name)
+            ->setScheme($scheme)
+            ->setHost($host)
+            ->setStrategy($strategy);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function redirect($name, $parameters = [], $status = 302)
+    {
+        if ($to = $this->url($name, $parameters)) :
+            $response = (new DiactorosFactory())->createResponse(redirect($to, $status));
+
+            $this->emit($response);
+        endif;
     }
 
     /**
@@ -97,38 +215,35 @@ class Router extends RouteCollection implements RouterContract
     /**
      * {@inheritdoc}
      */
-    public function register($name, $attrs = [])
+    public function url($name, $parameters = [], $absolute = true)
     {
-        $attrs = array_merge(
-            [
-                'method' => 'any',
-                'path' => '/',
-                'cb' => '',
-                // @todo 'group'    => '',
-                // 'scheme' => '',
-                // 'host' => '',
-                //'strategy' => ''
-            ],
-            $attrs
-        );
-        extract($attrs);
+        try {
+            $route = $this->getNamedRoute($name);
 
-        $method = ($method === 'any')
-            ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']
-            : array_map('strtoupper', Arr::wrap($method));
-        $scheme = $scheme ?? request()->getScheme();
-        $host = $host ?? request()->getHost();
-        $strategy = $strategy ?? new ApplicationStrategy();
-
-        return $this->map(
-            $method,
-            $path,
-            app()->get(RouteHandlerContract::class, [$name, $attrs, $this])
-        )
-            ->setName($name)
-            ->setScheme($scheme)
-            ->setHost($host)
-            ->setStrategy($strategy);
+            try {
+                return $route->getUrl($parameters, $absolute);
+            } catch (\Exception $e) {
+                return wp_die(
+                    sprintf(
+                        __('<h1>Récupération d\'url de routage : %s</h1><p>%s</p>', 'tify'),
+                        $name,
+                        $e->getMessage()
+                    ),
+                    "routerUrl > route : {$name}",
+                    500
+                );
+            }
+        } catch (\Exception $e) {
+            return wp_die(
+                sprintf(
+                    __('<h1>Récupération d\'url de routage : %s</h1><p>%s</p>', 'tify'),
+                    $name,
+                    $e->getMessage()
+                ),
+                "routerUrl > route : {$name}",
+                500
+            );
+        }
     }
 
     /**

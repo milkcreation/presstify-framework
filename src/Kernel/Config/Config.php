@@ -22,8 +22,7 @@ class Config extends ParamsBag
      * @var array
      */
     protected $aliases = [
-        'page-hook'   => \tiFy\PageHook\PageHook::class,
-        'route'       => \tiFy\Route\Route::class
+        'page-hook'   => \tiFy\PageHook\PageHook::class
     ];
 
     /**

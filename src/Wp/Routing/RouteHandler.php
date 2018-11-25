@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Routing\RouteHandler as tiFyRouteHandler;
+use tiFy\Kernel\Http\RedirectResponse;
 
 class RouteHandler extends tiFyRouteHandler
 {
@@ -53,7 +54,7 @@ class RouteHandler extends tiFyRouteHandler
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
         $this->router->setCurrent($this->name, $args);
-        exit;
+
         add_action(
             'pre_get_posts',
             function (\WP_Query &$wp_query) {
@@ -87,13 +88,13 @@ class RouteHandler extends tiFyRouteHandler
                         $this->router->emit($response);
                         exit;
                     },
-                    -10
+                    1
                 );
             else :
                 $response->getBody()->write((string)$resolved);
-
-                return $response;
             endif;
         endif;
+
+        return $response;
     }
 }

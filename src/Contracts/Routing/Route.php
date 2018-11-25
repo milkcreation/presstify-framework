@@ -16,6 +16,53 @@ interface Route extends ContainerAwareInterface, MiddlewareAwareInterface, Strat
     public function getArgs();
 
     /**
+     * Récupération de l'hôte HTTP.
+     *
+     * @return string
+     */
+    public function getHost();
+
+    /**
+     * Récupération du nom de qualification.
+     *
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * Récupération du schéma HTTP.
+     *
+     * @return string
+     */
+    public function getScheme();
+
+    /**
+     * Récupération du motif de traitement des arguments de l'url.
+     *
+     * @return string
+     */
+    public function getPattern();
+
+    /**
+     * Récupération du numéro de port HTTP.
+     *
+     * @return int
+     */
+    public function getPort();
+
+    /**
+     * Récupération de l'url associée.
+     *
+     * @param array $params Liste des variables passée en argument. Tableau indexé.
+     * @param boolean $absolute Activation de la récupération de l'url absolue.
+     * 
+     * @return string
+     *
+     * @throws \LogicException
+     */
+    public function getUrl($params = [], $absolute = true);
+
+    /**
      * Vérifie si la route répond à la requête HTTP courante.
      *
      * @return boolean
@@ -37,4 +84,40 @@ interface Route extends ContainerAwareInterface, MiddlewareAwareInterface, Strat
      * @return void
      */
     public function setCurrent();
+
+    /**
+     * Définition de l'hôte HTTP.
+     *
+     * @param string $host Hôte HTTP.
+     *
+     * @return $this
+     */
+    public function setHost($host);
+
+    /**
+     * Définition du nom de qualification.
+     *
+     * @param string $name Nom de qualification
+     *
+     * @return $this
+     */
+    public function setName($name);
+
+    /**
+     * Définition du schéma HTTP.
+     *
+     * @param string $scheme Schéma HTTP.
+     *
+     * @return $this
+     */
+    public function setScheme($scheme);
+
+    /**
+     * Définition du numéro de port HTTP.
+     *
+     * @param int $port Numéro du port HTTP.
+     *
+     * @return $this
+     */
+    public function setPort($port);
 }

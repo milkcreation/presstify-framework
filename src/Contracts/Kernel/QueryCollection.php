@@ -32,6 +32,13 @@ interface QueryCollection extends ArrayAccess, Countable, IteratorAggregate
     public function count();
 
     /**
+     * Vérification d'existance d'éléments.
+     *
+     * @return boolean
+     */
+    public function exists();
+
+    /**
      * Récupération d'une intance de l'itérateur.
      *
      * @return callable

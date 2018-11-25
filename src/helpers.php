@@ -9,10 +9,13 @@ use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Partial\PartialController;
 use tiFy\Contracts\Partial\PartialManager;
+use tiFy\Contracts\Routing\Router;
+use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Kernel;
-use tiFy\Route\Route;
+use tiFy\Kernel\Http\RedirectResponse as HttpRedirect;
+use tiFy\Kernel\Http\Request as HttpRequest;
 
 /**
  * KERNEL
@@ -234,11 +237,32 @@ if (!function_exists('paths')) :
     }
 endif;
 
+if (! function_exists('redirect')) {
+    /**
+     * HTTP - Récupération d'une instance du contrôleur de redirection ou redirection vers une url.
+     *
+     * @param string|null $to Url de redirection.
+     * @param int $status Code de la redirection.
+     * @param array $headers Liste des entête HTTP
+     * @param bool $secure Activation de la sécurisation
+     *
+     * @return HttpRedirect
+     */
+    function redirect($to = null, $status = 302, $headers = [], $secure = null)
+    {
+        if (is_null($to)) :
+            return app('redirect');
+        endif;
+
+        return app('redirect', [$to, $status, $headers, $secure]);
+    }
+}
+
 if (!function_exists('request')) :
     /**
-     * Request - Controleur de traitement de la requête principal
+     * HTTP - Controleur de traitement de la requête principale.
      *
-     * @return \tiFy\Kernel\Http\Request
+     * @return HttpRequest
      */
     function request()
     {
@@ -257,6 +281,56 @@ if (! function_exists('resolve')) {
     function resolve($name)
     {
         return container($name);
+    }
+}
+
+if (! function_exists('route')) {
+    /**
+     * Routing - Récupération de l'url vers une route.
+     *
+     * @param string $name Nom de qualification de la route.
+     * @param array $parameters Liste des variables passées en argument dans l'url.
+     * @param boolean $absolute Activation de sortie de l'url absolue.
+     *
+     * @return string
+     */
+    function route($name, $parameters = [], $absolute = true)
+    {
+        return router()->url($name, $parameters, $absolute);
+    }
+}
+
+if (!function_exists('route_exists')) :
+    /**
+     * Vérification si la requête courante répond à une route déclarée.
+     *
+     * @return bool
+     */
+    function route_exists()
+    {
+        return router()->hasCurrent();
+    }
+endif;
+
+if (! function_exists('router')) {
+    /**
+     * Routing - Récupération de l'instance du controleur de routage ou déclaration d'une nouvelle route.
+     *
+     * @param string $name Nom de qualification de la route.
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return Router|Route
+     */
+    function router($name = null, $attrs = [])
+    {
+        /** @var Router $factory */
+        $factory = app()->get('router');
+
+        if (is_null($name)) :
+            return $factory;
+        endif;
+
+        return $factory->register($name, $attrs);
     }
 }
 
@@ -292,116 +366,5 @@ if (!function_exists('view')) :
         endif;
 
         return $factory->make($view, $data);
-    }
-endif;
-
-/**
- * ROUTE
- * ---------------------------------------------------------------------------------------------------------------------
- */
-if (!function_exists('is_route')) :
-    /**
-     * Indicateur de contexte de la requête principale.
-     *
-     * @return bool
-     */
-    function is_route()
-    {
-        return tiFy::instance()->get(Route::class)->is();
-    }
-endif;
-
-if (!function_exists('tify_route_current_name')) :
-    /**
-     * Récupération du nom de qualification de la route courante à afficher.
-     *
-     * @return string
-     */
-    function tify_route_current_name()
-    {
-        return tiFy::instance()->get(Route::class)->currentName();
-    }
-endif;
-
-if (!function_exists('tify_route_current_args')) :
-    /**
-     * Récupération des arguments de requête passés dans la route courante.
-     *
-     * @return array
-     */
-    function tify_route_current_args()
-    {
-        return tiFy::instance()->get(Route::class)->currentArgs();
-    }
-endif;
-
-if (!function_exists('tify_route_exists')) :
-    /**
-     * Vérifie la correspondance du nom de qualification d'une route existante avec la valeur soumise.
-     *
-     * @param string $name Identifiant de qualification de la route à vérifier
-     *
-     * @return bool
-     */
-    function tify_route_exists($name)
-    {
-        return tiFy::instance()->get(Route::class)->exists($name);
-    }
-endif;
-
-if (!function_exists('tify_route_has_current')) :
-    /**
-     * Vérifie si la page d'affichage courante correspond à une route déclarée
-     *
-     * @return bool
-     */
-    function tify_route_has_current()
-    {
-        return tiFy::instance()->get(Route::class)->hasCurrent();
-    }
-endif;
-
-if (!function_exists('tify_route_is_current')) :
-    /**
-     * Vérifie de correspondance du nom de qualification la route courante avec la valeur soumise.
-     *
-     * @param string $name Identifiant de qualification de la route à vérifier
-     *
-     * @return bool
-     */
-    function tify_route_is_current($name)
-    {
-        return tiFy::instance()->get(Route::class)->isCurrent($name);
-    }
-endif;
-
-if (!function_exists('tify_route_redirect')) :
-    /**
-     * Redirection de page vers une route déclarée.
-     *
-     * @param string $name Identifiant de qualification de la route
-     * @param array $args Liste arguments passés en variable de requête dans l'url
-     * @param int $status_code Code de redirection. @see https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
-     *
-     * @return void
-     */
-    function tify_route_redirect($name, array $args = [], $status_code = 301)
-    {
-        return tiFy::instance()->get(Route::class)->redirect($name, $args, $status_code);
-    }
-endif;
-
-if (!function_exists('tify_route_url')) :
-    /**
-     * Récupération de l'url d'une route déclarée
-     *
-     * @param string $name Identifiant de qualification de la route
-     * @param array $replacements Arguments de remplacement
-     *
-     * @return string
-     */
-    function tify_route_url($name, array $replacements = [])
-    {
-        return tiFy::instance()->get(Route::class)->url($name, $replacements);
     }
 endif;
