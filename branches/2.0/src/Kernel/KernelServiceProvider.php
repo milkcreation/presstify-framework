@@ -13,7 +13,6 @@ use App\App;
  */
 
 use tiFy\PageHook\PageHook;
-use tiFy\Route\Route;
 use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
@@ -21,6 +20,7 @@ use tiFy\Kernel\Container\ServiceProvider;
 use tiFy\Kernel\Encryption\Encrypter;
 use tiFy\Kernel\Events\Manager as EventsManager;
 use tiFy\Kernel\Events\Listener;
+use tiFy\Kernel\Http\RedirectResponse;
 use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Notices\Notices;
@@ -46,7 +46,6 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $components = [
         PageHook::class,
-        Route::class
     ];
 
     /**
@@ -60,7 +59,9 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->getContainer()->singleton('events', function () { return new EventsManager(); });
+        $this->getContainer()->singleton('events', function () {
+            return new EventsManager();
+        });
 
         $this->getContainer()->bind(
             'events.listener',
@@ -69,19 +70,35 @@ class KernelServiceProvider extends ServiceProvider
             }
         );
 
-        $this->getContainer()->bind('notices', function () { return new Notices(); });
+        $this->getContainer()->bind('notices', function () {
+            return new Notices();
+        });
 
-        $this->getContainer()->bind('params.bag', function ($attrs = []) { return new ParamsBag($attrs); });
+        $this->getContainer()->bind('params.bag', function ($attrs = []) {
+            return new ParamsBag($attrs);
+        });
 
-        $this->getContainer()->singleton('request', function () { return Request::capture(); });
+        $this->getContainer()->singleton('request', function () {
+            return Request::capture();
+        });
 
-        $this->getContainer()->bind('validator', function () { return new Validator(); });
+        $this->getContainer()->bind('redirect', function (?string $url, int $status = 302, array $headers = []) {
+            return new RedirectResponse($url, $status, $headers);
+        });
 
-        $this->getContainer()->bind('view.engine', function () { return new ViewEngine(); });
+        $this->getContainer()->bind('validator', function () {
+            return new Validator();
+        });
+
+        $this->getContainer()->bind('view.engine', function () {
+            return new ViewEngine();
+        });
 
         $app = $this->getContainer()->singleton(App::class)->build();
 
-        $this->getContainer()->singleton('assets', function () { return new Assets(); })->build();
+        $this->getContainer()->singleton('assets', function () {
+            return new Assets();
+        })->build();
 
         $this->getContainer()->bind(
             'encrypter',

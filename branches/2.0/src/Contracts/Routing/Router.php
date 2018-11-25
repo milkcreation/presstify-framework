@@ -66,6 +66,20 @@ interface Router extends
     public function count();
 
     /**
+     * Récupération de la route courante associée à la requête HTTP.
+     *
+     * @return null|Route
+     */
+    public function current();
+
+    /**
+     * Récupération du nom de qualification de la route courante associée à la requête HTTP.
+     *
+     * @return string
+     */
+    public function currentRouteName();
+
+    /**
      * Adds a DELETE route to the collection
      *
      * This is simply an alias of $this->addRoute('DELETE', $route, $handler)
@@ -130,13 +144,20 @@ interface Router extends
     public function getDispatcher(ServerRequestInterface $request);
 
     /**
-     * Get named route.
+     * Récupération d'une route déclarée selon son nom de qualification.
      *
-     * @param string $name
+     * @param string $name Nom de qualification.
      *
-     * @return \League\Route\Route
+     * @return Route
      */
     public function getNamedRoute($name);
+
+    /**
+     * Récupération des motifs de traitement des arguments des routes déclarées.
+     *
+     * @return array
+     */
+    public function getPatternMatchers();
 
     /**
      * Add a group of routes to the collection.
@@ -157,6 +178,13 @@ interface Router extends
      * @param mixed  $handler
      */
     public function head($route, $handler);
+
+    /**
+     * Vérification d'existance d'une route associé à la requête HTTP courante.
+     *
+     * @return boolean
+     */
+    public function hasCurrent();
 
     /**
      * Adds a PATCH route to the collection
@@ -189,6 +217,15 @@ interface Router extends
     public function put($route, $handler);
 
     /**
+     * Vérification de correspondance avec le nom de qualification de la route associé à la requête HTTP courante.
+     *
+     * @param string $name Nom de qualification à contrôler.
+     * 
+     * @return boolean
+     */
+    public function isCurrentNamed($name);
+
+    /**
      * Déclaration d'une route.
      *
      * @param string $name Identifiant de qualification de la route.
@@ -199,6 +236,18 @@ interface Router extends
     public function register($name, $attrs = []);
 
     /**
+     * Redirection vers une route déclarée.
+     *
+     * @param string $name Identifiant de qualification de la route
+     * @param array $parameters Liste des variables passées en argument.
+     * @param int $status Code de redirection.
+     * @see https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
+     *
+     * @return void
+     */
+    public function redirect($name, $parameters = [], $status = 302);
+    
+    /**
      * Définition de la route courante.
      *
      * @param string $name Nom de qualification.
@@ -207,4 +256,15 @@ interface Router extends
      * @return void
      */
     public function setCurrent($name, $args = []);
+
+    /**
+     * Récupération de l'url d'une route.
+     *
+     * @param  string $name Nom de qualification.
+     * @param  array $parameters Liste des variables passées en argument.
+     * @param  boolean $absolute Activation de l'url absolue.
+     *
+     * @return string
+     */
+    public function url($name, $parameters = [], $absolute = true);
 }

@@ -3,7 +3,6 @@
 namespace tiFy\Wp;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Contracts\Routing\RouteHandler as RouteHandlerContract;
 use tiFy\Wp\Media\MediaDownload;
 use tiFy\Wp\Media\MediaManager;
 use tiFy\Wp\Query\Post;
@@ -46,15 +45,7 @@ class WpServiceProvider extends AppServiceProvider
 
         $this->app->bind('wp.user', function () { return new WpUser(); });
 
-        add_action(
-            'after_setup_tify',
-            function () {
-                $router = $this->app->get('wp.routing.router');
-                $this->app->add(RouteHandlerContract::class, function ($name, $attrs, $router) {
-                    return new RouteHandler($name, $attrs, $router);
-                });
-            }
-        );
+        add_action('after_setup_tify', function () { $this->app->get('wp.routing.router'); });
     }
 
     /**

@@ -32,7 +32,7 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-
+        add_action('after_setup_tify', function () { router(); });
     }
 
     /**
@@ -83,10 +83,6 @@ class RoutingServiceProvider extends AppServiceProvider
     {
         $this->app->add('route', function () {
             return new Route();
-        });
-
-        $this->app->add(RouteHandlerContract::class, function ($name, $attrs = [], RouterContract $router) {
-            return new RouteHandler($name, $attrs, $router);
         });
     }
 

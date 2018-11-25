@@ -4,7 +4,7 @@ namespace tiFy\Kernel\Query;
 
 use Illuminate\Support\Collection;
 use ArrayIterator;
-use tiFy\Contracts\Kernel\QueryCollection as QueryCOllectionContract;
+use tiFy\Contracts\Kernel\QueryCollection as QueryCollectionContract;
 
 class QueryCollection implements QueryCollectionContract
 {
@@ -48,6 +48,14 @@ class QueryCollection implements QueryCollectionContract
     public function count()
     {
         return count($this->items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function exists()
+    {
+        return !empty($this->items);
     }
 
     /**
@@ -103,7 +111,7 @@ class QueryCollection implements QueryCollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritdoc}return app($name);
      */
     public function __get($key)
     {
