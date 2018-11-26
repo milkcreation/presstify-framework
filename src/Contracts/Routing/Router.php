@@ -6,8 +6,10 @@ use ArrayAccess;
 use Countable;
 use IteratorAggregate;
 use League\Route\Dispatcher;
-use League\Route\Middleware\StackAwareInterface as MiddlewareAwareInterface;
+use League\Route\Middleware\MiddlewareAwareInterface;
+use League\Route\Strategy\StrategyInterface;
 use League\Route\Strategy\StrategyAwareInterface;
+use League\Route\Route;
 use League\Route\RouteCollectionInterface;
 use Psr\Http\Message\ResponseInterface;
 use \Psr\Http\Message\ServerRequestInterface;
@@ -29,16 +31,6 @@ interface Router extends
      * @param callable $callback
      */
     public function addGroup($prefix, callable $callback);
-
-    /**
-     * Add a convenient pattern matcher to the internal array for use with all routes.
-     *
-     * @param string $alias
-     * @param string $regex
-     *
-     * @return void
-     */
-    public function addPatternMatcher($alias, $regex);
 
     /**
      * Adds a route to the collection.
@@ -80,24 +72,13 @@ interface Router extends
     public function currentRouteName();
 
     /**
-     * Adds a DELETE route to the collection
-     *
-     * This is simply an alias of $this->addRoute('DELETE', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
-     */
-    public function delete($route, $handler);
-
-    /**
      * Dispatch the route based on the request.
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
-    public function dispatch(ServerRequestInterface $request, ResponseInterface $response);
+    public function dispatch(ServerRequestInterface $request);
 
     /**
      * Emission de la réponse.
@@ -118,30 +99,11 @@ interface Router extends
     public function exists();
 
     /**
-     * Adds a GET route to the collection
-     *
-     * This is simply an alias of $this->addRoute('GET', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
-     */
-    public function get($route, $handler);
-
-    /**
      * Returns the collected route data, as provided by the data generator.
      *
      * @return array
      */
     public function getData();
-
-    /**
-     * Return a fully configured dispatcher.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return Dispatcher
-     */
-    public function getDispatcher(ServerRequestInterface $request);
 
     /**
      * Récupération d'une route déclarée selon son nom de qualification.
@@ -150,14 +112,7 @@ interface Router extends
      *
      * @return Route
      */
-    public function getNamedRoute($name);
-
-    /**
-     * Récupération des motifs de traitement des arguments des routes déclarées.
-     *
-     * @return array
-     */
-    public function getPatternMatchers();
+    public function getNamedRoute(string $name) : Route;
 
     /**
      * Add a group of routes to the collection.
@@ -167,17 +122,7 @@ interface Router extends
      *
      * @return \League\Route\RouteGroup
      */
-    public function group($prefix, callable $group);
-
-    /**
-     * Adds a HEAD route to the collection
-     *
-     * This is simply an alias of $this->addRoute('HEAD', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
-     */
-    public function head($route, $handler);
+    public function group(string $prefix, callable $group);
 
     /**
      * Vérification d'existance d'une route associé à la requête HTTP courante.
@@ -185,36 +130,6 @@ interface Router extends
      * @return boolean
      */
     public function hasCurrent();
-
-    /**
-     * Adds a PATCH route to the collection
-     *
-     * This is simply an alias of $this->addRoute('PATCH', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
-     */
-    public function patch($route, $handler);
-
-    /**
-     * Adds a POST route to the collection
-     *
-     * This is simply an alias of $this->addRoute('POST', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
-     */
-    public function post($route, $handler);
-
-    /**
-     * Adds a PUT route to the collection
-     *
-     * This is simply an alias of $this->addRoute('PUT', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
-     */
-    public function put($route, $handler);
 
     /**
      * Vérification de correspondance avec le nom de qualification de la route associé à la requête HTTP courante.
@@ -229,9 +144,19 @@ interface Router extends
      * Déclaration d'une route.
      *
      * @param string $name Identifiant de qualification de la route.
-     * @param array $attrs Attributs de configuration.
+     * @param array $attrs {
+     *  Attributs de configuration.
      *
-     * @return null|array
+     *  @var string $method Méthode de traitement de la requête. GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS.
+     *  @var string $path Chemin relatif.
+     *  @var callable $cb
+     *  @var string $scheme Condition de traitement du schema de l'url. http|https.
+     *  @var string $host Condition de traitement relative au domaine. ex. example.com.
+     *  @var string|StrategyInterface $strategy Controleur de traitement de la route répondant à la requête HTTP courante. html|json|StrategyInterface.
+     *  @todo string $group
+     * }
+     *
+     * @return void
      */
     public function register($name, $attrs = []);
 
@@ -246,16 +171,6 @@ interface Router extends
      * @return void
      */
     public function redirect($name, $parameters = [], $status = 302);
-    
-    /**
-     * Définition de la route courante.
-     *
-     * @param string $name Nom de qualification.
-     * @param array $args Liste des variables passés en arguments.
-     *
-     * @return void
-     */
-    public function setCurrent($name, $args = []);
 
     /**
      * Récupération de l'url d'une route.

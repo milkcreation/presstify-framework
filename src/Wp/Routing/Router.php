@@ -44,11 +44,8 @@ class Router
                 endif;
 
                 try {
-                    $response = router()->dispatch(
-                        app()->get(ServerRequestInterface::class),
-                        app()->get(ResponseInterface::class)
-                    );
-                    
+                    $response = router()->dispatch(app()->get(ServerRequestInterface::class));
+
                     if ($response->getBody()->getSize()) :
                         router()->emit($response);
                         exit;

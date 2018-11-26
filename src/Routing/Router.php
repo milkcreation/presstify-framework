@@ -3,26 +3,38 @@
 namespace tiFy\Routing;
 
 use ArrayIterator;
-use Illuminate\Support\Arr;
-use League\Route\RouteCollection;
-use League\Route\Strategy\ApplicationStrategy;
-use League\Route\Strategy\JsonStrategy;
+use Illuminate\Support\Collection;
+use League\Route\Router as LeagueRouter;
 use League\Route\Strategy\StrategyInterface;
+use League\Route\Route as LeagueRoute;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\Routing\RouteHandler as RouteHandlerContract;
 use tiFy\Contracts\Routing\Router as RouterContract;
 use Zend\Diactoros\Response\SapiEmitter;
 
-class Router extends RouteCollection implements RouterContract
+class Router extends LeagueRouter implements RouterContract
 {
     /**
-     * Attributs de la route courante.
-     * @var null|RouteContract
+     * Instance du conteneur d'injection.
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * Instance de la route associé à la requête HTTP courante.
+     * @var RouteContract
      */
     protected $current;
+
+    /**
+     * Liste des routes déclarées.
+     * @var RouteContract[]
+     */
+    protected $items;
 
     /**
      * CONSTRUCTEUR.
@@ -31,11 +43,13 @@ class Router extends RouteCollection implements RouterContract
      */
     public function __construct(ContainerInterface $container)
     {
-        $container->add(RouteHandlerContract::class, function ($name, $attrs = [], $router) {
+        $this->container = $container;
+
+        $this->getContainer()->add(RouteHandlerContract::class, function ($name, $attrs = [], $router) {
             return new RouteHandler($name, $attrs, $this);
         });
 
-        parent::__construct($container);
+        parent::__construct();
     }
 
     /**
@@ -43,7 +57,15 @@ class Router extends RouteCollection implements RouterContract
      */
     public function all()
     {
-        return $this->routes;
+        return $this->items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function collect()
+    {
+        return new Collection($this->items);
     }
 
     /**
@@ -51,7 +73,7 @@ class Router extends RouteCollection implements RouterContract
      */
     public function count()
     {
-        return count($this->routes);
+        return count($this->items);
     }
 
     /**
@@ -59,7 +81,11 @@ class Router extends RouteCollection implements RouterContract
      */
     public function current()
     {
-        return $this->hasCurrent() ? $this->current : null;
+        return $this->current = !is_null($this->current)
+            ? $this->current
+            : $this->collect()->first(function (RouteContract $item) {
+                return $item->isCurrent();
+            });
     }
 
     /**
@@ -67,7 +93,7 @@ class Router extends RouteCollection implements RouterContract
      */
     public function currentRouteName()
     {
-        return $this->hasCurrent() ? $this->current->getName() : '';
+        return $this->hasCurrent() ? $this->current()->getName() : '';
     }
 
     /**
@@ -86,13 +112,21 @@ class Router extends RouteCollection implements RouterContract
      */
     public function exists()
     {
-        return !empty($this->routes);
+        return !empty($this->items);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getNamedRoute($name)
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNamedRoute(string $name): LeagueRoute
     {
         return parent::getNamedRoute($name);
     }
@@ -100,17 +134,9 @@ class Router extends RouteCollection implements RouterContract
     /**
      * {@inheritdoc}
      */
-    public function getPatternMatchers()
-    {
-        return $this->patternMatchers;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function hasCurrent()
     {
-        return $this->current instanceof RouteContract;
+        return $this->current() instanceof RouteContract;
     }
 
     /**
@@ -118,17 +144,17 @@ class Router extends RouteCollection implements RouterContract
      */
     public function isCurrentNamed($name)
     {
-        return $this->hasCurrent() && ($this->current->getName() === $name);
+        return $this->currentRouteName() === $name;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function map($method, $path, $handler)
+    public function map(string $method, string $path, $handler): LeagueRoute
     {
         $path = sprintf('/%s', ltrim(request()->getBaseUrl() . $path, '/'));
 
-        $route = (new Route($this))->setMethods((array)$method)->setPath($path)->setCallable($handler);
+        $route = new Route($method, $path, $handler, $this);
 
         $this->routes[] = $route;
 
@@ -138,13 +164,31 @@ class Router extends RouteCollection implements RouterContract
     /**
      * {@inheritdoc}
      */
+    public function parseRoutePath(string $path) : string
+    {
+        return preg_replace(array_keys($this->patternMatchers), array_values($this->patternMatchers), $path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepRoutes(ServerRequestInterface $request) : void
+    {
+        $this->items = array_merge(array_values($this->routes), array_values($this->namedRoutes));
+
+        parent::prepRoutes($request);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function register($name, $attrs = [])
     {
         $attrs = array_merge(
             [
-                'method' => 'any',
-                'path' => '/',
-                'cb' => '',
+                'method' => 'GET',
+                'path'   => '/',
+                'cb'     => '',
                 // @todo 'group'    => '',
                 // 'scheme' => '',
                 // 'host' => '',
@@ -154,23 +198,16 @@ class Router extends RouteCollection implements RouterContract
         );
         extract($attrs);
 
-        $method = ($method === 'any')
-            ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']
-            : array_map('strtoupper', Arr::wrap($method));
         $scheme = $scheme ?? request()->getScheme();
         $host = $host ?? request()->getHost();
-        $strategy = $strategy ?? 'html';
+        $strategy = $strategy ?? 'app';
 
         if (!$strategy instanceof StrategyInterface) :
-            switch($strategy) :
-                default :
-                case 'html' :
-                    $strategy = new ApplicationStrategy();
-                    break;
-                case 'json':
-                    $strategy = new JsonStrategy();
-                    break;
-            endswitch;
+            $strategy = $this->getContainer()->has("router.strategy.{$strategy}")
+                ? $this->getContainer()->get("router.strategy.{$strategy}")
+                : $this->getContainer()->get('router.strategy.app');
+
+            $strategy->setContainer($this->getContainer());
         endif;
 
         return $this->map(
@@ -194,22 +231,6 @@ class Router extends RouteCollection implements RouterContract
 
             $this->emit($response);
         endif;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCurrent($name, $args = [])
-    {
-        try {
-            $route = $this->getNamedRoute($name);
-            $route->setCurrent(true);
-            $route->setArgs($args);
-
-            $this->current = $route;
-        } catch (\Exception $e) {
-
-        }
     }
 
     /**
@@ -253,7 +274,7 @@ class Router extends RouteCollection implements RouterContract
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->routes);
+        return new ArrayIterator($this->items);
     }
 
     /**
@@ -265,7 +286,7 @@ class Router extends RouteCollection implements RouterContract
      */
     public function offsetExists($key)
     {
-        return array_key_exists($key, $this->routes);
+        return array_key_exists($key, $this->items);
     }
 
     /**
@@ -277,7 +298,7 @@ class Router extends RouteCollection implements RouterContract
      */
     public function offsetGet($key)
     {
-        return $this->routes[$key];
+        return $this->items[$key];
     }
 
     /**
@@ -291,9 +312,9 @@ class Router extends RouteCollection implements RouterContract
     public function offsetSet($key, $value)
     {
         if (is_null($key)) :
-            $this->routes[] = $value;
+            $this->items[] = $value;
         else :
-            $this->routes[$key] = $value;
+            $this->items[$key] = $value;
         endif;
     }
 
@@ -306,6 +327,6 @@ class Router extends RouteCollection implements RouterContract
      */
     public function offsetUnset($key)
     {
-        unset($this->routes[$key]);
+        unset($this->items[$key]);
     }
 }

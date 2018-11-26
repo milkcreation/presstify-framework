@@ -3,12 +3,14 @@
 namespace tiFy\Routing;
 
 use App\Views\ViewController;
+use Http\Factory\Diactoros\ResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-use tiFy\Contracts\Routing\RouteHandler as RouteHandlerContract;
-use tiFy\Contracts\Routing\Router as RouterContract;
 use tiFy\App\Container\AppServiceProvider;
+use tiFy\Contracts\Routing\Router as RouterContract;
+use tiFy\Routing\Strategy\App;
+use tiFy\Routing\Strategy\Json;
 use Zend\Diactoros\Response as PsrResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 
@@ -22,8 +24,8 @@ class RoutingServiceProvider extends AppServiceProvider
         'route',
         'router',
         'router.emitter',
-        RouteHandlerContract::class,
-        ResponseInterface::class,
+        'router.strategy.app',
+        'router.strategy.json',
         ServerRequestInterface::class
     ];
 
@@ -41,9 +43,10 @@ class RoutingServiceProvider extends AppServiceProvider
     public function register()
     {
         $this->registerRouter();
-        $this->registerPsrHttp();
+        $this->registerPsrRequest();
         $this->registerEmitter();
         $this->registerRoute();
+        $this->registerStrategies();
     }
 
     /**
@@ -63,12 +66,8 @@ class RoutingServiceProvider extends AppServiceProvider
      *
      * @return void
      */
-    public function registerPsrHttp()
+    public function registerPsrRequest()
     {
-        $this->app->share(ResponseInterface::class, function () {
-            return new PsrResponse();
-        });
-
         $this->app->share(ServerRequestInterface::class, function () {
             return (new DiactorosFactory())->createRequest(request());
         });
@@ -95,6 +94,22 @@ class RoutingServiceProvider extends AppServiceProvider
     {
         $this->app->share('router', function () {
             return new Router($this->app);
+        });
+    }
+
+    /**
+     * Déclaration des controleurs de strategies.
+     *
+     * @return void
+     */
+    public function registerStrategies()
+    {
+        $this->app->add('router.strategy.app', function () {
+            return new App();
+        });
+
+        $this->app->add('router.strategy.json', function () {
+            return new Json(new ResponseFactory());
         });
     }
 }

@@ -41,15 +41,16 @@ class RouteHandler extends ParamsBag implements RouteHandlerContract
     }
 
     /**
+     * Traitement de la route en correspondance avec la requête HTTP courante.
+     *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    public function __invoke(ServerRequestInterface $request, array $args)
     {
-        $this->router->setCurrent($this->name, $args);
+        $response = new Response();
 
         $callback = $this->get('cb');
         if (is_callable($callback)) :

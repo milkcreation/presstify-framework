@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Routing\RouteHandler as tiFyRouteHandler;
 use tiFy\Kernel\Http\RedirectResponse;
+use Zend\Diactoros\Response;
 
 class RouteHandler extends tiFyRouteHandler
 {
@@ -45,15 +46,16 @@ class RouteHandler extends tiFyRouteHandler
     ];
 
     /**
+     * Traitement de la route en correspondance avec la requête HTTP courante.
+     *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @param array $args
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    public function __invoke(ServerRequestInterface $request, array $args)
     {
-        $this->router->setCurrent($this->name, $args);
+        $response = new Response();
 
         add_action(
             'pre_get_posts',
