@@ -30,31 +30,18 @@ class Route extends LeagueRoute implements RouteContract
     /**
      * CONSTRUCTEUR.
      *
+     * @param string $method
+     * @param string $path
+     * @param callable $handler
      * @param Router $router Instance du controleur de route.
      *
      * @return void
      */
-    public function __construct($router)
+    public function __construct(string $method, string $path, $handler, $router)
     {
         $this->router = $router;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getArgs()
-    {
-        return $this->args;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPattern()
-    {
-        $matchers = $this->router->getPatternMatchers();
-
-        return preg_replace(array_keys($matchers), array_values($matchers), $this->getPath());
+        parent::__construct($method, $path, $handler);
     }
 
     /**
@@ -62,7 +49,7 @@ class Route extends LeagueRoute implements RouteContract
      */
     public function getUrl($params = [], $absolute = true)
     {
-        $routes = (new RouteParser())->parse($this->getPattern());
+        $routes = (new RouteParser())->parse($this->router->parseRoutePath($this->getPath()));
 
         foreach ($routes as $route) :
             $url = '';
@@ -103,15 +90,7 @@ class Route extends LeagueRoute implements RouteContract
      */
     public function isCurrent()
     {
-        return $this->current();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setArgs($args = [])
-    {
-        $this->args = $args;
+        return $this->current;
     }
 
     /**
