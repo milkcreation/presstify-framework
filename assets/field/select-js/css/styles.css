@@ -127,17 +127,13 @@
     bottom: 0;
 }
 
-.tiFyField-SelectJs[aria-multiple="false"] .tiFyField-SelectJsTrigger[aria-arrow="true"] .tiFyField-SelectJsSelectedItems {
-    right: 20px;
-}
-
 .tiFyField-SelectJsSelectedItems > li {
     position: relative;
     cursor: default;
     margin: 2px 0;
     margin-left: 2px;
     margin-right: 2px;
-    padding: 0 15px 0 5px;
+    padding: 0 40px 0 5px;
     line-height: 1.4;
     white-space: nowrap;
     background-color: #FFF;
