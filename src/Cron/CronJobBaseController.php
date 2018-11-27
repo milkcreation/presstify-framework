@@ -5,8 +5,8 @@ namespace tiFy\Cron;
 use \DateTimeZone;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use Psr\Log\LoggerInterface;
 use tiFy\Contracts\Cron\CronJobInterface;
+use tiFy\Contracts\Kernel\Logger;
 use tiFy\Kernel\Params\ParamsBag;
 
 class CronJobBaseController extends ParamsBag implements CronJobInterface
@@ -279,7 +279,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
         endif;
 
         $logger = $this->get('logger');
-        if (!$logger instanceof LoggerInterface) :
+        if (!$logger instanceof Logger) :
             $defaults = [
                 'name'    => 'cron'
             ];

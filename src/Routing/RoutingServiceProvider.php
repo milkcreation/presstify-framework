@@ -24,7 +24,7 @@ class RoutingServiceProvider extends AppServiceProvider
         'route',
         'router',
         'router.emitter',
-        'router.strategy.app',
+	    'router.strategy.default',
         'router.strategy.json',
         ServerRequestInterface::class
     ];
@@ -56,7 +56,7 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function registerEmitter()
     {
-        $this->app->share('router.emitter', function () {
+        $this->getContainer()->share('router.emitter', function () {
             return new SapiEmitter();
         });
     }
@@ -68,7 +68,7 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function registerPsrRequest()
     {
-        $this->app->share(ServerRequestInterface::class, function () {
+        $this->getContainer()->share(ServerRequestInterface::class, function () {
             return (new DiactorosFactory())->createRequest(request());
         });
     }
@@ -80,7 +80,7 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function registerRoute()
     {
-        $this->app->add('route', function () {
+        $this->getContainer()->add('route', function () {
             return new Route();
         });
     }
@@ -92,7 +92,7 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function registerRouter()
     {
-        $this->app->share('router', function () {
+        $this->getContainer()->share('router', function () {
             return new Router($this->app);
         });
     }
@@ -104,12 +104,8 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function registerStrategies()
     {
-        $this->app->add('router.strategy.app', function () {
-            return new App();
-        });
+	    $this->getContainer()->add('router.strategy.default', new App());
 
-        $this->app->add('router.strategy.json', function () {
-            return new Json(new ResponseFactory());
-        });
+        $this->getContainer()->add('router.strategy.json', new Json(new ResponseFactory()));
     }
 }

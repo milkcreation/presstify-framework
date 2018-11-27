@@ -7,6 +7,7 @@ use League\Route\Route;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Routing\Route as RouteContract;
+use Zend\Diactoros\Response;
 
 class App extends ApplicationStrategy
 {
@@ -18,6 +19,21 @@ class App extends ApplicationStrategy
         /** @var RouteContract $route */
         $route->setCurrent();
 
-        return parent::invokeRouteCallable($route, $request);
+	    $controller = $route->getCallable($this->getContainer());
+
+	    $resolved = call_user_func_array($controller, $route->getVars());
+
+	    $response = new Response();
+	    if ($resolved instanceof ViewController) :
+		    $response->getBody()->write($resolved->render());
+	    elseif($resolved instanceof ResponseInterface) :
+		    $response = $resolved;
+	    else :
+		    $response->getBody()->write((string)$resolved);
+	    endif;
+
+	    $response = $this->applyDefaultResponseHeaders($response);
+
+	    return $response;
     }
 }

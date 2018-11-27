@@ -2,10 +2,11 @@
 
 namespace tiFy\Contracts\Kernel;
 
+use Monolog\ResettableInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use tiFy\Contracts\App\AppInterface;
 
-interface LoggerInterface extends PsrLoggerInterface
+interface Logger extends PsrLoggerInterface, ResettableInterface
 {
     /**
      * Alias de création d'un message de notification.

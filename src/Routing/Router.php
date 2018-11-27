@@ -12,7 +12,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Contracts\Routing\Route as RouteContract;
-use tiFy\Contracts\Routing\RouteHandler as RouteHandlerContract;
 use tiFy\Contracts\Routing\Router as RouterContract;
 use Zend\Diactoros\Response\SapiEmitter;
 
@@ -44,10 +43,6 @@ class Router extends LeagueRouter implements RouterContract
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-
-        $this->getContainer()->add(RouteHandlerContract::class, function ($name, $attrs = [], $router) {
-            return new RouteHandler($name, $attrs, $this);
-        });
 
         parent::__construct();
     }
@@ -81,7 +76,7 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function current()
     {
-        return $this->current = !is_null($this->current)
+        return $this->current = ! is_null($this->current)
             ? $this->current
             : $this->collect()->first(function (RouteContract $item) {
                 return $item->isCurrent();
@@ -99,6 +94,19 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * {@inheritdoc}
      */
+    public function dispatch(ServerRequestInterface $request): ResponseInterface
+    {
+        if (is_null($this->getStrategy())) :
+            $this->setStrategy($this->getContainer()->get('router.strategy.default'));
+        endif;
+
+        return parent::dispatch($request);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function emit(ResponseInterface $response)
     {
         /** @var SapiEmitter $emitter */
@@ -112,7 +120,7 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function exists()
     {
-        return !empty($this->items);
+        return ! empty($this->items);
     }
 
     /**
@@ -121,14 +129,6 @@ class Router extends LeagueRouter implements RouterContract
     public function getContainer()
     {
         return $this->container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getNamedRoute(string $name): LeagueRoute
-    {
-        return parent::getNamedRoute($name);
     }
 
     /**
@@ -164,7 +164,7 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * {@inheritdoc}
      */
-    public function parseRoutePath(string $path) : string
+    public function parseRoutePath(string $path): string
     {
         return preg_replace(array_keys($this->patternMatchers), array_values($this->patternMatchers), $path);
     }
@@ -172,7 +172,7 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * {@inheritdoc}
      */
-    protected function prepRoutes(ServerRequestInterface $request) : void
+    protected function prepRoutes(ServerRequestInterface $request): void
     {
         $this->items = array_merge(array_values($this->routes), array_values($this->namedRoutes));
 
@@ -188,37 +188,30 @@ class Router extends LeagueRouter implements RouterContract
             [
                 'method' => 'GET',
                 'path'   => '/',
-                'cb'     => '',
-                // @todo 'group'    => '',
-                // 'scheme' => '',
-                // 'host' => '',
-                // 'strategy' => ''
+                'cb'     => ''
             ],
             $attrs
         );
         extract($attrs);
 
-        $scheme = $scheme ?? request()->getScheme();
-        $host = $host ?? request()->getHost();
-        $strategy = $strategy ?? 'app';
+        $scheme   = $scheme ?? request()->getScheme();
+        $host     = $host ?? request()->getHost();
+        $strategy = $strategy ?? 'default';
 
-        if (!$strategy instanceof StrategyInterface) :
-            $strategy = $this->getContainer()->has("router.strategy.{$strategy}")
-                ? $this->getContainer()->get("router.strategy.{$strategy}")
-                : $this->getContainer()->get('router.strategy.app');
-
+        if ( ! $strategy instanceof StrategyInterface) :
+            try {
+                $strategy = $this->getContainer()->get("router.strategy.{$strategy}");
+            } catch (\Exception $e) {
+                $strategy = $this->getContainer()->get("router.strategy.default");
+            }
             $strategy->setContainer($this->getContainer());
         endif;
 
-        return $this->map(
-            $method,
-            $path,
-            app()->get(RouteHandlerContract::class, [$name, $attrs, $this])
-        )
-            ->setName($name)
-            ->setScheme($scheme)
-            ->setHost($host)
-            ->setStrategy($strategy);
+        return $this->map($method, $path, $cb)
+                    ->setName($name)
+                    ->setScheme($scheme)
+                    ->setHost($host)
+                    ->setStrategy($strategy);
     }
 
     /**

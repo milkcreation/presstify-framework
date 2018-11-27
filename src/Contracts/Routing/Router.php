@@ -4,6 +4,7 @@ namespace tiFy\Contracts\Routing;
 
 use ArrayAccess;
 use Countable;
+use Illuminate\Support\Collection;
 use IteratorAggregate;
 use League\Route\Dispatcher;
 use League\Route\Middleware\MiddlewareAwareInterface;
@@ -11,8 +12,9 @@ use League\Route\Strategy\StrategyInterface;
 use League\Route\Strategy\StrategyAwareInterface;
 use League\Route\Route;
 use League\Route\RouteCollectionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use \Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface Router extends
     ArrayAccess,
@@ -51,7 +53,14 @@ interface Router extends
     public function all();
 
     /**
-     * Compte de le nombre de routes déclarés.
+     * Récupération de la collection des routes déclarées.
+     *
+     * @return Collection
+     */
+    public function collect();
+
+    /**
+     * Compte de le nombre de routes déclarées.
      *
      * @return int
      */
@@ -97,6 +106,13 @@ interface Router extends
      * @return boolean
      */
     public function exists();
+
+    /**
+     * Récupération du conteneur d'injection associé
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer();
 
     /**
      * Returns the collected route data, as provided by the data generator.
