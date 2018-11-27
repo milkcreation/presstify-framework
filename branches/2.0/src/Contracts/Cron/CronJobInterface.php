@@ -3,7 +3,7 @@
 namespace tiFy\Contracts\Cron;
 
 use Carbon\Carbon;
-use Psr\Log\LoggerInterface;
+use tiFy\Contracts\Kernel\Logger;
 use tiFy\Contracts\Kernel\ParamsBag;
 
 interface CronJobInterface extends ParamsBag
@@ -115,7 +115,7 @@ interface CronJobInterface extends ParamsBag
     /**
      * Récupération de l'instance du controleur de journalisation.
      *
-     * @return LoggerInterface
+     * @return Logger
      */
     public function log();
 

@@ -2,9 +2,12 @@
 
 namespace tiFy\Contracts\Routing;
 
+use League\Route\Route as LeagueRoute;
+use League\Route\RouteGroup;
 use League\Route\Middleware\MiddlewareAwareInterface;
 use League\Route\Strategy\StrategyAwareInterface;
 use League\Route\RouteConditionHandlerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
 interface Route extends
@@ -14,11 +17,43 @@ interface Route extends
     StrategyAwareInterface
 {
     /**
+     * Récupération du controleur de traitement.
+     *
+     * @param ContainerInterface|null $container
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return callable
+     */
+    public function getCallable(?ContainerInterface $container = null) : callable;
+
+    /**
+     * Récupération de la méthode de traitement de la requête HTTP associée.
+     *
+     * @return string
+     */
+    public function getMethod(): string;
+
+    /**
+     * Récupération du chemin relatif associé à la route.
+     *
+     * @return string
+     */
+    public function getPath(): string;
+
+    /**
+     * Récupération du groupe parent.
+     *
+     * @return RouteGroup
+     */
+    public function getParentGroup(): ?RouteGroup;
+
+    /**
      * Récupération de l'url associée.
      *
      * @param array $params Liste des variables passée en argument. Tableau indexé.
      * @param boolean $absolute Activation de la récupération de l'url absolue.
-     * 
+     *
      * @return string
      *
      * @throws \LogicException
@@ -45,6 +80,15 @@ interface Route extends
      * @return void
      */
     public function setCurrent();
+
+    /**
+     * Définition du groupe parent.
+     *
+     * @param RouteGroup $group
+     *
+     * @return $this
+     */
+    public function setParentGroup(RouteGroup $group): LeagueRoute;
 
     /**
      * Définition de la liste des variables passées en argument dans la requête HTTP courante.

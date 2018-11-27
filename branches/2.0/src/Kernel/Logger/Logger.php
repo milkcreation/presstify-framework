@@ -7,9 +7,9 @@ use Monolog\Logger as MonologLogger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use tiFy\Contracts\App\AppInterface;
-use tiFy\Contracts\Kernel\LoggerInterface;
+use tiFy\Contracts\Kernel\Logger as LoggerContract;
 
-class Logger extends MonologLogger implements LoggerInterface
+class Logger extends MonologLogger implements LoggerContract
 {
     /**
      * {@inheritdoc}
