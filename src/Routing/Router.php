@@ -5,18 +5,21 @@ namespace tiFy\Routing;
 use ArrayIterator;
 use Illuminate\Support\Collection;
 use League\Route\Router as LeagueRouter;
-use League\Route\Strategy\StrategyInterface;
 use League\Route\Route as LeagueRoute;
+use League\Route\RouteGroup as LeagueRouteGroup;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Contracts\Routing\Route as RouteContract;
+use tiFy\Contracts\Routing\RouteGroup as RouteGroupContract;
 use tiFy\Contracts\Routing\Router as RouterContract;
 use Zend\Diactoros\Response\SapiEmitter;
 
 class Router extends LeagueRouter implements RouterContract
 {
+    use RouteRegisterMapTrait;
+
     /**
      * Instance du conteneur d'injection.
      * @var ContainerInterface
@@ -125,6 +128,19 @@ class Router extends LeagueRouter implements RouterContract
 
     /**
      * {@inheritdoc}
+     *
+     * @return RouteGroupContract
+     */
+    public function group(string $prefix, callable $group) : LeagueRouteGroup
+    {
+        $group = new RouteGroup($prefix, $group, $this);
+        $this->groups[] = $group;
+
+        return $group;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getContainer()
     {
@@ -149,6 +165,8 @@ class Router extends LeagueRouter implements RouterContract
 
     /**
      * {@inheritdoc}
+     *
+     * @return RouteContract
      */
     public function map(string $method, string $path, $handler): LeagueRoute
     {
@@ -177,41 +195,6 @@ class Router extends LeagueRouter implements RouterContract
         $this->items = array_merge(array_values($this->routes), array_values($this->namedRoutes));
 
         parent::prepRoutes($request);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function register($name, $attrs = [])
-    {
-        $attrs = array_merge(
-            [
-                'method' => 'GET',
-                'path'   => '/',
-                'cb'     => ''
-            ],
-            $attrs
-        );
-        extract($attrs);
-
-        $scheme   = $scheme ?? request()->getScheme();
-        $host     = $host ?? request()->getHost();
-        $strategy = $strategy ?? 'default';
-
-        if ( ! $strategy instanceof StrategyInterface) :
-            try {
-                $strategy = $this->getContainer()->get("router.strategy.{$strategy}");
-            } catch (\Exception $e) {
-                $strategy = $this->getContainer()->get("router.strategy.default");
-            }
-            $strategy->setContainer($this->getContainer());
-        endif;
-
-        return $this->map($method, $path, $cb)
-                    ->setName($name)
-                    ->setScheme($scheme)
-                    ->setHost($host)
-                    ->setStrategy($strategy);
     }
 
     /**
