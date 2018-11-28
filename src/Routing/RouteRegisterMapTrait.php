@@ -41,7 +41,6 @@ trait RouteRegisterMapTrait
 
         if ($strategy instanceof StrategyInterface) :
             $strategy->setContainer($this->getContainer());
-
             $route->setStrategy($strategy);
         endif;
 

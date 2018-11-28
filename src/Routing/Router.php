@@ -192,9 +192,38 @@ class Router extends LeagueRouter implements RouterContract
      */
     protected function prepRoutes(ServerRequestInterface $request): void
     {
-        $this->items = array_merge(array_values($this->routes), array_values($this->namedRoutes));
+        $this->processGroups($request);
+        $this->buildNameIndex();
 
-        parent::prepRoutes($request);
+        /** @var RouteContract[] $routes */
+        $this->items = $routes = array_merge(array_values($this->routes), array_values($this->namedRoutes));
+
+        foreach ($routes as $key => $route) {
+            // check for scheme condition
+            if (! is_null($route->getScheme()) && $route->getScheme() !== $request->getUri()->getScheme()) :
+                continue;
+            endif;
+
+            // check for domain condition
+            if (! is_null($route->getHost()) && $route->getHost() !== $request->getUri()->getHost()) :
+                continue;
+            endif;
+
+            // check for port condition
+            if (! is_null($route->getPort()) && $route->getPort() !== $request->getUri()->getPort()) :
+                continue;
+            endif;
+
+            if (is_null($route->getStrategy())) :
+                if (($group = $route->getParentGroup()) && ! is_null($group->getStrategy())) :
+                    $route->setStrategy($group->getStrategy());
+                else :
+                    $route->setStrategy($this->getStrategy());
+                endif;
+            endif;
+
+            $this->addRoute($route->getMethod(), $this->parseRoutePath($route->getPath()), $route);
+        }
     }
 
     /**
