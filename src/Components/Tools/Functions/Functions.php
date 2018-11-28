@@ -12,7 +12,7 @@ class Functions
     public function isCallable($var)
     {
         return is_string($var)
-            ? preg_match('#\\\#', $var) && is_callable($var, true)
+            ? (preg_match('#\\\#', $var) && is_callable($var, true))
             : is_callable($var, true);
     }
 }
