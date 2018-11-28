@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Routing;
 
-use League\Route\Middleware\MiddlewareAwareInterface;
 use League\Route\RouteCollectionInterface;
 use League\Route\RouteConditionHandlerInterface;
+use League\Route\Middleware\MiddlewareAwareInterface;
 use League\Route\Strategy\StrategyInterface;
 use League\Route\Strategy\StrategyAwareInterface;
 use Psr\Container\ContainerInterface;
