@@ -21,7 +21,7 @@ interface RouteRegisterMapTrait
      *      @var string|StrategyInterface $strategy Controleur de traitement de la route répondant à la requête HTTP courante. html|json|StrategyInterface.
      * }
      *
-     * @return void
+     * @return Route
      */
     public function register($name, $attrs = []);
 }
