@@ -4,7 +4,7 @@
  */
 ?>
 
-<div class="MetaboxOptions-slideshowItemInput MetaboxOptions-slideshowItemInput--caption">
+<div class="MetaboxOptions-slideshowListItemInput MetaboxOptions-slideshowListItemInput--caption">
     <h3><?php _e('Légende', 'tify'); ?></h3>
 
     <div id="<?php echo "{$this->get('name')}[caption]"; ?>" class="tinymce-editor">

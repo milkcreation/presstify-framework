@@ -4,7 +4,7 @@
  */
 ?>
 
-<div class="MetaboxOptions-slideshowItemInput MetaboxOptions-slideshowItemInput--url">
+<div class="MetaboxOptions-slideshowListItemInput MetaboxOptions-slideshowListItemInput--url">
     <h3><?php _e('Titre', 'tify'); ?></h3>
 
     <?php

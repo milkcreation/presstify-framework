@@ -4,7 +4,7 @@
  */
 ?>
 
-<div class="MetaboxOptions-slideshowItemInput MetaboxOptions-slideshowItemInput--image">
+<div class="MetaboxOptions-slideshowListItemInput MetaboxOptions-slideshowListItemInput--image">
     <?php
     echo field(
         'media-image',
