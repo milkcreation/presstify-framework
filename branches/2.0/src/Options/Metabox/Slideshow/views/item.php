@@ -4,8 +4,8 @@
  */
 ?>
 
-<li class="MetaboxOptions-slideshowItem">
-    <div class="MetaboxOptions-slideshowItemInputs">
+<li class="MetaboxOptions-slideshowListItem">
+    <div class="MetaboxOptions-slideshowListItemInputs">
         <div class="col col-left">
             <?php $this->insert('item-image', $this->all()); ?>
         </div>

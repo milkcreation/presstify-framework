@@ -4,11 +4,26 @@
  */
 ?>
 
-<div class="MetaboxOptions-slideshow">
+<div class="MetaboxOptions-slideshow" data-action="<?php echo $this->get('ajax_action'); ?>"
+     data-max="<?php echo $this->get('max'); ?>">
     <div class="MetaboxOptions-slideshowSelectors">
         <?php
         if ($this->get('suggest')) :
-            echo field('select-js');
+            echo field(
+                'select-js',
+                [
+                    'max'          => 1,
+                    'removable'    => false,
+                    'sortable'     => false,
+                    'autocomplete' => true,
+                    'source'       => [
+                        'query_args' => [
+                            'post_type'      => 'post',
+                            'posts_per_page' => 2
+                        ]
+                    ]
+                ]
+            );
         endif;
         /* if ($this->args['suggest']) : ?>
             <div class="suggest tiFyTabooxSlideshowSelector-suggest">
@@ -42,7 +57,7 @@
                     'before'  => '<div>',
                     'after'   => '</div>',
                     'attrs'   => [
-                        'class' => 'button-secondary'
+                        'class' => 'MetaboxOptions-slideshowSelector MetaboxOptions-slideshowSelector--custom button-secondary'
                     ],
                     'content' => __('Vignette personnalisée', 'tify')
                 ]
@@ -51,8 +66,8 @@
         ?>
     </div>
 
-    <div class="items tiFyTabooxSlideshowList">
-        <div class="tiFyTabooxSlideshowList-overlay">
+    <div class="MetaboxOptions-slideshowList">
+        <div class="MetaboxOptions-slideshowListOverlay">
             <?php _e('Chargement ...', 'tify'); ?>
         </div>
 
@@ -68,7 +83,7 @@
         endforeach;
         ?>
 
-        <ul class="MetaboxOptions-slideshowItems">
+        <ul class="MetaboxOptions-slideshowListItems">
             <?php
             foreach ($this->get('items', []) as $index => $attrs) :
                 $this->insert('item', $attrs);

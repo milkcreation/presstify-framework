@@ -5,18 +5,21 @@ namespace tiFy\Options\Metabox\Slideshow;
 use Illuminate\Support\Arr;
 use tiFy\Metabox\MetaboxWpOptionsController;
 
+/**
+ * @todo Gestion SelectJs
+ */
 class Slideshow extends MetaboxWpOptionsController
 {
     /**
      * Liste des attributs de configuration.
      * @var array {
-     *  @var string $name Nom de qualification d'enregistrement.
-     *  @var boolean|array $suggest Liste de selection de contenu.
-     *  @var boolean $custom Activation de l'ajout de vignettes personnalisées.
-     *  @var integer $max Nombre maximum de vignette.
-     *  @var array $editors Liste des interfaces d'édition des vignettes actives.
-     *  @var string $driver Moteur d'affichage. slick par défaut.
-     *  @var array $options Liste des options d'affichage.
+     * @var string $name Nom de qualification d'enregistrement.
+     * @var boolean|array $suggest Liste de selection de contenu.
+     * @var boolean $custom Activation de l'ajout de vignettes personnalisées.
+     * @var integer $max Nombre maximum de vignette.
+     * @var array $editors Liste des interfaces d'édition des vignettes actives.
+     * @var string $driver Moteur d'affichage. slick par défaut.
+     * @var array $options Liste des options d'affichage.
      * }
      */
     protected $attributes = [
@@ -44,9 +47,12 @@ class Slideshow extends MetaboxWpOptionsController
      */
     public function content($args = null, $null1 = null, $null2 = null)
     {
-        $custom = true;
+        $custom = $this->get('custom');
         $name = $this->get('name');
-        $suggest = true;
+        //$suggest = $this->get('suggest');
+        $suggest = false;
+        $ajax_action = $this->get('ajax_action');
+        $max = $this->get('max');
 
         $values = get_option($this->get('name'));
 
@@ -59,7 +65,7 @@ class Slideshow extends MetaboxWpOptionsController
         );
         $options = Arr::get($values, 'options', []);
 
-        return $this->viewer('content', compact('custom', 'items', 'name', 'options', 'suggest'));
+        return $this->viewer('content', compact('ajax_action', 'custom', 'items', 'max', 'name', 'options', 'suggest'));
     }
 
     /**
@@ -122,7 +128,7 @@ class Slideshow extends MetaboxWpOptionsController
                 );
                 wp_localize_script(
                     'MetaboxOptionsSlideshow',
-                    'tiFyTabooxOptionSlideshowAdmin',
+                    'MetaboxOptionsSlideshowAdmin',
                     [
                         'l10nMax' => __('Nombre maximum de vignettes atteint', 'tify')
                     ]
@@ -226,26 +232,46 @@ class Slideshow extends MetaboxWpOptionsController
      */
     public function wp_ajax()
     {
+        $post_id = request()->post('post_id');
+
         $args = [
-            'post_id'   => $_POST['post_id'],
-            'title'     => get_the_title($_POST['post_id']),
-            'caption'   => apply_filters('the_excerpt', get_post_field('post_excerpt', $_POST['post_id'])),
-            'clickable' => $_POST['post_id'] ? 1 : 0,
-            'order'     => $_POST['order']
+            'post_id'   => $post_id,
+            'clickable' => $post_id ? 1 : 0,
+            'order'     => request()->post('order')
         ];
 
         global $tify_events;
-        if (($tify_events instanceof \tiFy_Events) && in_array(get_post_type($_POST['post_id']),
-                $tify_events->get_post_types()) && ($range = tify_events_get_range($_POST['post_id']))) {
+        if (($tify_events instanceof \tiFy_Events) && in_array(get_post_type($post_id),
+                $tify_events->get_post_types()) && ($range = tify_events_get_range($post_id))) :
             $args['planning'] = [
                 'from'  => 1,
                 'start' => $range->start_datetime,
                 'to'    => 1,
                 'end'   => $range->end_datetime,
             ];
-        }
-
-        echo $this->item_render($args);
+        endif;
+        
+        echo $this->viewer('item', $this->parseItem(null, $args));
         exit;
+        /* $args = [
+             'post_id'   => $_POST['post_id'],
+             'title'     => get_the_title($_POST['post_id']),
+             'caption'   => apply_filters('the_excerpt', get_post_field('post_excerpt', $_POST['post_id'])),
+             'clickable' => $_POST['post_id'] ? 1 : 0,
+             'order'     => $_POST['order']
+         ];
+ 
+         global $tify_events;
+         if (($tify_events instanceof \tiFy_Events) && in_array(get_post_type($_POST['post_id']),
+                 $tify_events->get_post_types()) && ($range = tify_events_get_range($_POST['post_id']))) {
+             $args['planning'] = [
+                 'from'  => 1,
+                 'start' => $range->start_datetime,
+                 'to'    => 1,
+                 'end'   => $range->end_datetime,
+             ];
+         }
+ 
+         echo $this->item_render($args);*/
     }
 }

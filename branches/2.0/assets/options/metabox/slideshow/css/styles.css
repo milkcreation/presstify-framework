@@ -3,22 +3,22 @@
     padding-bottom: 15px;
 }
 
-.MetaboxOptions-slideshowItems{
+.MetaboxOptions-slideshowListItems{
     position: relative;
     width: 700px;
 }
 
-.MetaboxOptions-slideshowItem::before,
-.MetaboxOptions-slideshowItem::after {
+.MetaboxOptions-slideshowListItem::before,
+.MetaboxOptions-slideshowListItem::after {
     display: table;
     content: "";
 }
 
-.MetaboxOptions-slideshowItem::after {
+.MetaboxOptions-slideshowListItem::after {
     clear: both;
 }
 
-.MetaboxOptions-slideshowItem {
+.MetaboxOptions-slideshowListItem {
     position: relative;
     border: solid 1px #E4E4E4;
     margin-bottom: 10px;
@@ -27,31 +27,31 @@
     min-height: 175px;
 }
 
-.MetaboxOptions-slideshowItemInputs > .col-left,
-.MetaboxOptions-slideshowItemInputs > .col-right {
+.MetaboxOptions-slideshowListItemInputs > .col-left,
+.MetaboxOptions-slideshowListItemInputs > .col-right {
     box-sizing: border-box;
     float: left;
 }
 
-.MetaboxOptions-slideshowItemInputs > .col-left {
+.MetaboxOptions-slideshowListItemInputs > .col-left {
     width: 170px;
 }
 
-.MetaboxOptions-slideshowItemInputs > .col-right {
+.MetaboxOptions-slideshowListItemInputs > .col-right {
     width: 470px;
 }
 
-.MetaboxOptions-slideshowItemInput {
+.MetaboxOptions-slideshowListItemInput {
     margin-bottom: 10px;
 }
 
-.MetaboxOptions-slideshowItemInput label {
+.MetaboxOptions-slideshowListItemInput label {
     margin-bottom: 8px;
     display: block;
     font-weight: bold;
 }
 
-.MetaboxOptions-slideshowItemInput h3 {
+.MetaboxOptions-slideshowListItemInput h3 {
     margin: 0 0 6px;
     font-weight: 100;
     font-size: 12px;
@@ -59,7 +59,7 @@
     color: #666;
 }
 
-.MetaboxOptions-slideshowItemInput input[type="text"] {
+.MetaboxOptions-slideshowListItemInput input[type="text"] {
     margin-bottom: 5px;
     padding: 0.4em;
     width: 100%;
@@ -69,7 +69,7 @@
     border: solid 1px #E4E4E4;
 }
 
-.MetaboxOptions-slideshowItemInput--caption > div {
+.MetaboxOptions-slideshowListItemInput--caption > div {
     position: relative;
     left: 0;
     right: 0;
@@ -80,23 +80,23 @@
     overflow: auto;
 }
 
-.MetaboxOptions-slideshowItemInput--caption > div > p {
+.MetaboxOptions-slideshowListItemInput--caption > div > p {
     margin: 0;
     margin-bottom: 0.5em;
 }
 
-.MetaboxOptions-slideshowItemHelper--order {
+.MetaboxOptions-slideshowListItemHelper--order {
     position: absolute;
     right: -2px;
     bottom: -2px;
 }
 
-.MetaboxOptions-slideshowItemHelper--order > input {
+.MetaboxOptions-slideshowListItemHelper--order > input {
     font-size: 10px;
     width: 20px;
 }
 
-.MetaboxOptions-slideshowItemHelper--sort {
+.MetaboxOptions-slideshowListItemHelper--sort {
     position: absolute;
     top: 50%;
     right: 0px;
@@ -108,8 +108,8 @@
     cursor: move;
 }
 
-.MetaboxOptions-slideshowItemHelper--sort,
-.MetaboxOptions-slideshowItemHelper--sort::before {
+.MetaboxOptions-slideshowListItemHelper--sort,
+.MetaboxOptions-slideshowListItemHelper--sort::before {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -126,11 +126,11 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.MetaboxOptions-slideshowItemHelper--sort::before {
+.MetaboxOptions-slideshowListItemHelper--sort::before {
     content: "\f156";
 }
 
-.MetaboxOptions-slideshowItemHelper--infos {
+.MetaboxOptions-slideshowListItemHelper--infos {
     position: absolute;
     bottom:-1px; left:-1px;
     padding:0px 10px;
@@ -144,7 +144,8 @@
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-.tiFyTabooxSlideshowList-inputFields input[type="text"][readonly], .tiFyTabooxSlideshowList-inputFields input[type="text"][readonly="readonly"] {
+.tiFyTabooxSlideshowList-inputFields input[type="text"][readonly],
+.tiFyTabooxSlideshowList-inputFields input[type="text"][readonly="readonly"] {
     background: #DDD;
 }
 
@@ -179,7 +180,7 @@
 /**
  * OVERLAY
  */
-.tiFyTabooxSlideshowList-overlay {
+.MetaboxOptions-slideshowListOverlay {
     position: absolute;
     left: 0;
     right: 0;
@@ -197,11 +198,11 @@
 }
 
 
-.tiFyTabooxSlideshowList-item.ui-sortable-helper {
+.MetaboxOptions-slideshowListItem.ui-sortable-helper {
     background-color: #F6F6F6;
 }
 
-.tiFyTabooxSlideshowList-item.ui-sortable-placeholder {
+.MetaboxOptions-slideshowListItem.ui-sortable-placeholder {
     background-color: rgba(0, 116, 162, 0.1);
     visibility: visible !important;
     border: dashed 1px #CCC;

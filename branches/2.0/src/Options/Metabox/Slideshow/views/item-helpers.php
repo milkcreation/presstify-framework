@@ -4,8 +4,8 @@
  */
 ?>
 
-<div class="MetaboxOptions-slideshowItemHelpers">
-    <div class="MetaboxOptions-slideshowItemHelper MetaboxOptions-slideshowItemHelper--order">
+<div class="MetaboxOptions-slideshowListItemHelpers">
+    <div class="MetaboxOptions-slideshowListItemHelper MetaboxOptions-slideshowListItemHelper--order">
         <?php
         echo field(
             'text',
@@ -20,11 +20,11 @@
         ?>
     </div>
 
-    <a href="#sort" class="MetaboxOptions-slideshowItemHelper MetaboxOptions-slideshowItemHelper--sort"></a>
+    <a href="#sort" class="MetaboxOptions-slideshowListItemHelper MetaboxOptions-slideshowListItemHelper--sort"></a>
 
-    <a href="#order" class="MetaboxOptions-slideshowItemHelper MetaboxOptions-slideshowItemHelper--remove"></a>
+    <a href="#order" class="MetaboxOptions-slideshowListItemHelper MetaboxOptions-slideshowListItemHelper--remove tiFy-Button--remove"></a>
 
-    <span class="MetaboxOptions-slideshowItemHelper MetaboxOptions-slideshowItemHelper--infos">
+    <span class="MetaboxOptions-slideshowListItemHelper MetaboxOptions-slideshowListItemHelper--infos">
         <?php echo $this->get('post_id') ? __('Contenu du site', 'tify') : __('Vignette personnalisée', 'tify'); ?>
     </span>
 </div>

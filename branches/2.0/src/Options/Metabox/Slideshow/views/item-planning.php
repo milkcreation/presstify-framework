@@ -4,7 +4,7 @@
  */
 ?>
 
-<div class="MetaboxOptions-slideshowItemInput MetaboxOptions-slideshowItemInput--title">
+<div class="MetaboxOptions-slideshowListItemInput MetaboxOptions-slideshowListItemInput--title">
     <h3><?php _e('Programmation', 'tify'); ?></h3>
     $output .= "\n\t\t\t<div class=\"start_datetime\">";
         $output .= "\n\t\t\t\t<label>";
