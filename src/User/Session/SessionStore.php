@@ -72,6 +72,8 @@ class SessionStore extends ParamsBag implements SessionStoreContract
         $this->name = $name;
         $this->cookieName = $this->getName() . "-" . COOKIEHASH;
 
+        parent::__construct([]);
+
         add_action(
             'init',
             function () {
@@ -93,7 +95,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
                         $this->updateDbExpiration($session_key, $session_expiration);
                     endif;
 
-                    $this->attributes = $this->getDbDatas($session_key);
+                    $this->attributes = $this->getDbDatas($session_key) ? : [];
                 else :
                     $session_key = $this->getKey();
                     $session_expiration = $this->nextSessionExpiration();

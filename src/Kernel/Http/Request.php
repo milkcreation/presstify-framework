@@ -3,6 +3,10 @@
 namespace tiFy\Kernel\Http;
 
 use Illuminate\Http\Request as IlluminateHttpRequest;
+use Symfony\Component\HttpFoundation\HeaderBag;
+use Symfony\Component\HttpFoundation\FileBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\ServerBag;
 
 class Request extends IlluminateHttpRequest
 {
@@ -12,7 +16,9 @@ class Request extends IlluminateHttpRequest
      * @see https://symfony.com/doc/current/components/http_foundation.html
      * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
      *
-     * @param string $property Propriété de la requête à traiter. $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes|$_FILES (alias files)|SERVER (alias server)|headers.
+     * @param string $property Propriété de la requête à traiter.
+     * $_POST (alias post, request)|$_GET (alias get, query)|$_COOKIE (alias cookie, cookies)|attributes
+     * |$_FILES (alias files)|SERVER (alias server)|headers.
      *
      * @return Request|FileBag|HeaderBag|ParameterBag|ServerBag
      */

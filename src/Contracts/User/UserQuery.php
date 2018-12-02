@@ -7,7 +7,7 @@ interface UserQuery
     /**
      * Récupération des données d'une liste d'élément selon des critères de requête
      *
-     * @param WP_User_Query|array $query_args Requête de récupération utilisateur|Liste des arguments de requête.
+     * @param \WP_User_Query|array $query_args Requête de récupération utilisateur|Liste des arguments de requête.
      *
      * @return array|UserQueryCollection|UserQueryItem[]
      */
@@ -16,7 +16,8 @@ interface UserQuery
     /**
      * Récupération d'un élément
      *
-     * @param string|int|\WP_User|null $id Login utilisateur Wordpress|Identifiant de qualification Wordpress|Objet utilisateur Wordpress|Utilisateur Wordpress courant
+     * @param string|int|\WP_User|null $id Login utilisateur Wordpress|Identifiant de qualification Wordpress
+     * |Objet utilisateur Wordpress|Utilisateur Wordpress courant
      *
      * @return null|UserQueryItem
      */
@@ -43,7 +44,7 @@ interface UserQuery
     /**
      * Récupération d'une instance du controleur de liste d'éléments.
      *
-     * @param UserItemInterface[] $items Liste des éléments.
+     * @param UserQueryItem[] $items Liste des éléments.
      *
      * @return string
      */
