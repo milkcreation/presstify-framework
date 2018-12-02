@@ -14,8 +14,10 @@ class Modal extends PartialController
      *
      * @var array $container Attributs HTML du conteneur.
      * @var array $options {
-     *              Liste des options d'affichage.
-     *      }
+     *      Liste des options d'affichage.
+     *
+     *      @var
+     * }
      * @var bool $animation Activation de l'animation.
      * @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full.
      * @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de caractère à
@@ -198,12 +200,13 @@ class Modal extends PartialController
     {
         if ($this->get('in_footer')) :
             add_action(
-                (!is_admin() ? 'wp_footer' : 'admin_footer'),
+                (! is_admin() ? 'wp_footer' : 'admin_footer'),
                 function () {
                     echo parent::display();
                 },
                 999999
             );
+
             return '';
         else :
             return parent::display();
@@ -228,7 +231,7 @@ class Modal extends PartialController
             $attrs
         );
 
-        if ((Arr::get($attrs, 'tag') === 'a') && !Arr::has($attrs, 'attrs.href')) :
+        if ((Arr::get($attrs, 'tag') === 'a') && ! Arr::has($attrs, 'attrs.href')) :
             Arr::set($attrs, 'attrs.href', "#{$this->get('attrs.id')}");
         endif;
 

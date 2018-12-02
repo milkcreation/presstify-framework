@@ -170,7 +170,7 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function map(string $method, string $path, $handler): LeagueRoute
     {
-        $path = sprintf('/%s', ltrim(request()->getBaseUrl() . $path, '/'));
+        $path = sprintf('/%s', ltrim(request()->getBaseUrl() . sprintf('/%s', ltrim($path, '/')), '/'));
 
         $route = new Route($method, $path, $handler, $this);
 

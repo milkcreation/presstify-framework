@@ -5,7 +5,7 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Milkcreation
- * @version 2.0.20
+ * @version 2.0.21
  */
 
 namespace tiFy;

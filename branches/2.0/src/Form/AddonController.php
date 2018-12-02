@@ -20,7 +20,7 @@ class AddonController extends ParamsBag implements AddonControllerInterface
     /**
      * CONSTRUCTEUR.
      *
-     * @param $name Nom de qualification.
+     * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
      * @param FormFactory $form Formulaire associé.
      *

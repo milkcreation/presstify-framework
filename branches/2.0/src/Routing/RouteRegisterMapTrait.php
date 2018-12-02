@@ -19,6 +19,12 @@ trait RouteRegisterMapTrait
             ],
             $attrs
         );
+
+        /**
+         * @var string $method. GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS
+         * @var string $path
+         * @var callable $cb
+         */
         extract($attrs);
 
         $scheme   = $scheme ?? request()->getScheme();

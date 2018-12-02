@@ -128,7 +128,7 @@ class UserQuery implements UserQueryContract
     /**
      * {@inheritdoc}
      */
-    public function resolveItem($wp_user)
+    public function resolveItem(\WP_User $wp_user)
     {
         $concrete = $this->itemController;
 
