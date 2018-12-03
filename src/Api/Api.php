@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @name Api.
+ * @name Api
  * @desc Gestion d'Api des service tiers.
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation

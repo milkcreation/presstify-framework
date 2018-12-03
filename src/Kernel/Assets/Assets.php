@@ -170,7 +170,7 @@ final class Assets implements AssetsContract
      */
     public function setAjaxResponse($key, $value, $context = ['admin', 'user'])
     {
-        return $this->setDataJs("ajax_response.{$key}", $value, $context, true);
+        $this->setDataJs("ajax_response.{$key}", $value, $context, true);
     }
 
     /**

@@ -21,7 +21,6 @@ use tiFy\tiFy;
  * @method static Container Container()
  * @method static Config Config()
  * @method static Events Events()
- * @method static Logger Logger()
  * @method static Paths Paths()
  * @method static Request Request()
  * @method static ViewEngine ViewEngine()
