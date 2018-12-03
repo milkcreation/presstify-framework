@@ -4,7 +4,6 @@ namespace tiFy\App;
 
 use Illuminate\Support\Str;
 use tiFy\Kernel\Templates\Engine as TemplatesEngine;
-use tiFy\tiFy;
 
 trait AppTrait
 {

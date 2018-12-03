@@ -2,13 +2,8 @@
 
 namespace tiFy\App\Container;
 
-use Illuminate\Support\Collection;
-use tiFy\App\AppController;
 use tiFy\App\AppTrait;
 use tiFy\Contracts\App\AppInterface;
-use tiFy\Contracts\Container\ContainerInterface;
-use tiFy\Contracts\Container\ServiceInterface;
-use tiFy\Contracts\Container\ServiceProviderInterface;
 use tiFy\Kernel\Container\Container as Container;
 
 class AppContainer extends Container implements AppInterface

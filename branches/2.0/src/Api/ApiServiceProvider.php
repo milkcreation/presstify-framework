@@ -2,14 +2,11 @@
 
 namespace tiFy\Api;
 
-use tiFy\Api\Api;
 use tiFy\Api\Facebook\Facebook;
 use tiFy\Api\Facebook\FacebookProfileController;
 use tiFy\Api\Facebook\FacebookSigninController;
 use tiFy\Api\Facebook\FacebookSignupController;
-use tiFy\Api\GoogleMap\GoogleMap;
 use tiFy\Api\Recaptcha\Recaptcha;
-use tiFy\Api\Vimeo\Vimeo;
 use tiFy\Api\Youtube\Youtube;
 use tiFy\App\Container\AppServiceProvider;
 
