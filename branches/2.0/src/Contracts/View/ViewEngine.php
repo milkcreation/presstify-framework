@@ -237,7 +237,7 @@ interface ViewEngine
     /**
      * Définition du repertoire de surcharge des gabarits d'affichages.
      *
-     * @param resource $dir Chemin absolu vers le répertoire de surcharge.
+     * @param string $dir Chemin absolu vers le répertoire de surcharge.
      *
      * @return self
      */
