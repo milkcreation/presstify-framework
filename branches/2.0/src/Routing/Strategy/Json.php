@@ -28,7 +28,7 @@ class Json extends JsonStrategy
 	    if ($resolved instanceof ViewController) :
 		    $response->getBody()->write($resolved->render());
 	    elseif ($this->isJsonEncodable($resolved)) :
-		    $body     = json_encode($resolved);
+		    $body = json_encode($resolved);
 		    $response = $this->responseFactory->createResponse(200);
 		    $response->getBody()->write($body);
 	    endif;

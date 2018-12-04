@@ -21,13 +21,13 @@ class Router extends LeagueRouter implements RouterContract
     use RouteRegisterMapTrait;
 
     /**
-     * Instance du conteneur d'injection.
+     * Instance du conteneur d'injection de dépendances.
      * @var ContainerInterface
      */
     protected $container;
 
     /**
-     * Instance de la route associé à la requête HTTP courante.
+     * Instance de la route associée à la requête HTTP courante.
      * @var RouteContract
      */
     protected $current;
@@ -115,7 +115,7 @@ class Router extends LeagueRouter implements RouterContract
         /** @var SapiEmitter $emitter */
         $emitter = app()->get('router.emitter');
 
-        return $emitter->emit($response);
+        $emitter->emit($response);
     }
 
     /**

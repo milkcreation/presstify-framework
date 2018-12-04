@@ -39,6 +39,30 @@ interface QueryCollection extends ArrayAccess, Countable, IteratorAggregate
     public function exists();
 
     /**
+     * Récupération d'un élément selon sa clé d'indice
+     *
+     * @param mixed $key Clé d'indice.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function get($key, $default = null);
+
+    /**
+     * Récupération du nombre total d'éléments trouvés.
+     *
+     * @return int
+     */
+    public function getFounds();
+
+    /**
+     * Définition du nombre total d'éléments trouvés.
+     *
+     * @return $this
+     */
+    public function setFounds($founds);
+
+    /**
      * Récupération d'une intance de l'itérateur.
      *
      * @return callable

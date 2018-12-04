@@ -68,9 +68,9 @@ class Route extends LeagueRoute implements RouteContract
 
             if ($paramIdx === count($params)) :
                 if ($absolute) :
-                    $host = $this->getHost();
-                    $port = $this->getPort();
-                    $scheme = $this->getScheme();
+                    $host = $this->getHost() ? : request()->getHost();
+                    $port = $this->getPort() ? : request()->getPort();
+                    $scheme = $this->getScheme() ? : request()->getScheme();
                     if ((($port === 80) && ($scheme = 'http')) || (($port === 443) && ($scheme = 'https'))) :
                         $port = '';
                     endif;

@@ -3,10 +3,12 @@
 namespace tiFy\Kernel\Http;
 
 use Illuminate\Http\Request as IlluminateHttpRequest;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Request extends IlluminateHttpRequest
 {
@@ -53,5 +55,19 @@ class Request extends IlluminateHttpRequest
                 return $this->headers;
                 break;
         endswitch;
+    }
+
+    /**
+     * Création d'une instance depuis une requête PSR-7.
+     *
+     * @param ServerRequestInterface $psrRequest Requête PSR
+     *
+     * @return self|IlluminateHttpRequest
+     */
+    public function createFromPsr(ServerRequestInterface $psrRequest)
+    {
+        $request = (new HttpFoundationFactory())->createRequest($psrRequest);
+
+        return self::createFromBase($request);
     }
 }
