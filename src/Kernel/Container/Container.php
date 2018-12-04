@@ -71,7 +71,7 @@ class Container extends LeagueContainer implements ContainerInterface
      */
     public function bound($abstract)
     {
-        return isset(self::$items[$this->getAbstract($abstract)]);
+        return isset(self::$items[$this->getAbstract($abstract)]) || $this->has($abstract);
     }
 
     /**
@@ -162,11 +162,11 @@ class Container extends LeagueContainer implements ContainerInterface
     {
         try {
             $service = $this->getService($abstract);
-        } catch (\InvalidArgumentException $e) {
-            return;
-        }
 
-        return $service->build($args);
+            return $service->build($args);
+        } catch (\InvalidArgumentException $e) {
+            return null;
+        }
     }
 
     /**

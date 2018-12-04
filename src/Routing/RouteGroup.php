@@ -30,9 +30,7 @@ class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
      */
     public function __construct(string $prefix, callable $callback, RouteCollectionInterface $collection)
     {
-        $this->callback   = $callback;
-        $this->collection = $collection;
-        $this->prefix     = sprintf('/%s', ltrim($prefix, '/'));
+        parent::__construct($prefix, $callback, $collection);
 
         call_user_func($this->callback, $this);
     }

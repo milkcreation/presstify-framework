@@ -9,7 +9,8 @@ final class Posts extends PostQueryCollection
     /**
      * CONSTRUCTEUR.
      *
-     * @param null|\WP_Query $wp_query Requête Wordpress de récupération de post. Par défaut, utilise la requête globale de Wordpress.
+     * @param null|\WP_Query $wp_query Requête Wordpress de récupération de post.
+     * Par défaut, utilise la requête globale de Wordpress.
      *
      * @return void
      */

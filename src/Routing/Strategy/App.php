@@ -7,6 +7,7 @@ use League\Route\Route;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Routing\Route as RouteContract;
+use tiFy\Contracts\View\ViewController;
 use Zend\Diactoros\Response;
 
 class App extends ApplicationStrategy

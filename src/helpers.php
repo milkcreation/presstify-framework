@@ -7,6 +7,7 @@ use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\EventsManager;
+use tiFy\Contracts\Kernel\Logger;
 use tiFy\Contracts\Partial\PartialController;
 use tiFy\Contracts\Partial\PartialManager;
 use tiFy\Contracts\Routing\Router;
@@ -90,14 +91,15 @@ if (!function_exists('config')) :
     /**
      * Config - Controleur de configuration.
      * {@internal Si $key est null > Retourne la classe de rappel du controleur.}
-     * {@internal Si $key est un tableau > Utilise le tableau en tant que liste des attributs de configuration à définir.}
+     * {@internal Si $key est un tableau > Utilise le tableau en tant que liste des attributs de configuration.}
      *
      * @param null|array|string Clé d'indice|Liste des attributs de configuration à définir.
      *
-     * @return mixed|\tiFy\Kernel\Config\Config
+     * @return null|mixed|\tiFy\Kernel\Config\Config
      */
     function config($key = null, $default = null)
     {
+        /** @var \tiFy\Kernel\Config\Config $factory */
         $factory = Kernel::Config();
 
         if (is_null($key)) :
@@ -105,7 +107,8 @@ if (!function_exists('config')) :
         endif;
 
         if (is_array($key)) :
-            return $factory->set($key);
+            $factory->set($key);
+            return null;
         endif;
 
         return $factory->get($key, $default);
@@ -194,11 +197,11 @@ if (!function_exists('logger')) :
     /**
      * Logger - Controleur de journalisation des actions.
      *
-     * @return \tiFy\Kernel\Logger\Logger
+     * @return Logger
      */
     function logger()
     {
-        return Kernel::Logger();
+        return app('logger');
     }
 endif;
 

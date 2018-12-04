@@ -15,6 +15,12 @@ class QueryCollection implements QueryCollectionContract
     protected $items = [];
 
     /**
+     * Nombre d'éléments trouvés.
+     * @var int
+     */
+    protected $founds = 0;
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param array $items Liste des éléments à déclarer.
@@ -61,9 +67,27 @@ class QueryCollection implements QueryCollectionContract
     /**
      * {@inheritdoc}
      */
-    public function get($key, $default)
+    public function get($key, $default = null)
     {
         return $this->items[$key] ?? $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFounds()
+    {
+        return $this->founds;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFounds($founds)
+    {
+        $this->founds = (int)$founds;
+
+        return $this;
     }
 
     /**

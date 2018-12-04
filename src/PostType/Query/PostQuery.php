@@ -53,7 +53,10 @@ class PostQuery implements PostQueryContract
 
         $items = $posts ? array_map([$this, 'getItem'], $posts) : [];
 
-        return $this->resolveCollection($items);
+        $results = $this->resolveCollection($items);
+        $results->setFounds($wp_query->found_posts ?? count($items));
+
+        return $results;
     }
 
     /**

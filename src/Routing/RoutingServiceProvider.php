@@ -2,16 +2,12 @@
 
 namespace tiFy\Routing;
 
-use App\Views\ViewController;
 use Http\Factory\Diactoros\ResponseFactory;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Contracts\Routing\Router as RouterContract;
 use tiFy\Routing\Strategy\App;
 use tiFy\Routing\Strategy\Json;
-use Zend\Diactoros\Response as PsrResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 
 class RoutingServiceProvider extends AppServiceProvider
