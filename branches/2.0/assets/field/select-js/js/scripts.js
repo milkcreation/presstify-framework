@@ -1,13 +1,8 @@
-/**
- * @see https://learn.jquery.com/plugins/stateful-plugins-with-widget-factory/
- * @see https://api.jqueryui.com/jquery.widget
- * @see https://blog.rodneyrehm.de/archives/11-jQuery-Hooks.html
- *
- *
- */
+"use strict";
+
 !(function ($, doc, win) {
-    // Attribution de la valeur à l'élément
-    var _hook = $.valHooks.div;
+    // Attribution de la valeur à l'élément.
+    let _hook = $.valHooks.div;
     $.valHooks.div = {
         get: function (elem) {
             if (typeof $(elem).tifyselect('instance') === 'undefined') {
@@ -17,240 +12,41 @@
         },
         set: function (elem, value) {
             if (typeof $(elem).tifyselect('instance') === 'undefined') {
-                return _hook && _hook.set && _hook.set(elem, value) ||
-                    undefined;
+                return _hook && _hook.set && _hook.set(elem, value) || undefined;
             }
             $(elem).data('value', value);
         }
     };
-
     $.widget(
         'tify.tifyselect', {
-            // Définition des options par défaut
+            // Compatibilité v1 des classes.
+            compat: {
+                autocompleteInput: 'FieldSelectJs-autocomplete',
+                handler: 'FieldSelectJs-handler',
+                picker: 'FieldSelectJs-picker',
+                pickerFilter: 'FieldSelectJs-pickerFilter',
+                pickerLoader: 'FieldSelectJs-pickerLoader',
+                pickerItem: 'FieldSelectJs-pickerItem',
+                pickerItems: 'FieldSelectJs-pickerItems',
+                pickerMore: 'FieldSelectJs-pickerMore',
+                selection: 'FieldSelectJs-selection',
+                selectionItem: 'FieldSelectJs-selectionItem',
+                trigger: 'FieldSelectJs-trigger',
+                triggerHandler: 'FieldSelectJs-triggerHandler'
+            },
+
+            // Liste des attributs de configuration.
             options: {
+                autocomplete: false,
                 disabled: false,
-                removable: true,
-                multiple: false,
                 duplicate: false,
+                id: '',
                 max: -1,
-                trigger: {},
-                picker: {},
-                sortable: {},
-                source: false,
-                autocomplete: false
-            },
-
-            // Liste des agents de controle
-            controllers: {
-                handler: 'tiFyField-SelectJsHandler',
-                trigger: 'tiFyField-SelectJsTrigger',
-                triggerHandler: 'tiFyField-SelectJsTriggerHandler',
-                autocompleteInput: 'tiFyField-SelectJsAutocomplete',
-                selectedList: 'tiFyField-SelectJsSelectedItems',
-                picker: 'tiFyField-SelectJsPicker',
-                pickerList: 'tiFyField-SelectJsPickerItems',
-                pickerFilter: 'tiFyField-SelectJsPickerFilter',
-                pickerLoader: 'tiFyField-SelectJsPickerLoader'
-            },
-
-            // Instanciation de l'élément
-            _create: function () {
-                // Définition de l'instance
-                this.instance = this;
-
-                // Définition de l'alias court du controleur d'affichage
-                this.el = this.element;
-
-                // Initialisation de la liste des éléments
-                this.items = {};
-
-                // Initialisation des attributs de configuration du controleur
-                this._initOptions();
-
-                // Définition des agents de controle
-                this._initControllers();
-
-                // Initialisation des indicateurs d'état
-                this._initStatusFlags();
-
-                // Initialisation des événements globaux
-                this._initEvents();
-            },
-
-            // Privée - Initialisation des attributs de configuration du controleur
-            _initOptions: function () {
-                this.options.disabled = this.el.data('disabled');
-                this.options.removable = this.el.data('removable');
-                this.options.multiple = this.el.data('multiple');
-                this.options.duplicate = this.el.data('duplicate');
-                this.options.autocomplete = this.el.data('autocomplete');
-                this.options.max = this.el.data('max');
-                this.options.sortable = $.parseJSON(
-                    decodeURIComponent(
-                        this.el.data('sortable')
-                    )
-                );
-                this.options.trigger = $.parseJSON(
-                    decodeURIComponent(
-                        this.el.data('trigger')
-                    )
-                );
-                this.options.picker = $.parseJSON(
-                    decodeURIComponent(
-                        this.el.data('picker')
-                    )
-                );
-                this.options.source = $.parseJSON(
-                    decodeURIComponent(
-                        this.el.data('source')
-                    )
-                );
-            },
-
-            // Privée - Initialisation des indicateurs d'état
-            _initStatusFlags: function () {
-                // Liste des indicateurs d'état par défaut
-                this.flags = {
-                    hasSelection: false,
-                    isDisabled: true,
-                    isMultiple: false,
-                    isDuplicable: false,
-                    isRemovable: true,
-                    isSortable: false,
-                    isOpen: false,
-                    isComplete: true,
-                    page: 1,
-                    hasArrow: true,
-                    hasFilter: false,
-                    hasSource: false,
-                    hasAutocomplete: false
-                };
-                this.flags.hasSelection = this._count() ? true : false;
-                this.flags.Disabled = this.options.disabled;
-                this.flags.isMultiple = this.options.multiple;
-                this.flags.isDuplicable = (this.options.duplicate && this.flags.isMultiple);
-                this.flags.isRemovable = !this.flags.Disabled && this.options.removable;
-                this.flags.isSortable = ((this.options.sortable !== false) && this.flags.isMultiple && !this.flags.Disabled);
-                this.flags.isOpen = false;
-                this.flags.isComplete = false;
-                this.flags.page = 1;
-                this.flags.hasSource = (this.options.source !== false);
-            },
-
-            // Privée - Définition des agents de controle
-            _initControllers: function () {
-                var self = this;
-
-                $.each(this.controllers, function (u, v) {
-                    self[u] = $('.' + v, self.el);
-                });
-            },
-
-            // Privée - Initialisation des événements globaux
-            _initEvents: function () {
-                var self = this;
-
-                // Initialisation du déclencheur de selection
-                self._initTrigger();
-
-                // Initialisation de la liste de sélection
-                self._initPicker();
-
-                // Initialisation de la liste des éléments selectionnés
-                self._initSelected();
-
-                // Initialisation des agents de controle selon les indicateurs de status
-                if (this.flags.hasSelection) {
-                    this.el.attr('aria-selection', true);
-                } else {
-                    this.el.attr('aria-selection', false);
-                }
-
-                if (this.flags.isMultiple) {
-                    this.el.attr('aria-multiple', true);
-                } else {
-                    this.el.attr('aria-multiple', false);
-                }
-
-                if (this.flags.isSortable) {
-                    this.el.attr('aria-sortable', true);
-                } else {
-                    this.el.attr('aria-sortable', false);
-                }
-
-                if (this.flags.isDuplicable) {
-                    this.el.attr('aria-duplicable', true);
-                    this.picker.attr('aria-duplicable', true);
-                } else {
-                    this.el.attr('aria-duplicable', false);
-                    this.picker.attr('aria-duplicable', false);
-                }
-
-                this.flags.Disabled ? this._disable() : this._enable();
-            },
-
-            /**
-             * Initialisation du déclencheur de selection
-             *
-             * @private
-             */
-            _initTrigger: function () {
-                var self = this;
-
-                // Traitement des options
-                var o = {
-                    class: '',
-                    arrow: true
-                };
-                self.options.trigger = $.extend(o, self.options.trigger);
-
-                self.picker.addClass(self.options.trigger.class);
-
-                if (self.options.trigger.arrow) {
-                    self.flags.hasArrow = true;
-                    self.trigger.attr('aria-arrow', true);
-                } else {
-                    self.flags.hasArrow = false;
-                    self.trigger.attr('aria-arrow', false);
-                }
-
-                self.triggerHandler = $('<a href="#" class="tiFyField-SelectJsTriggerHandler" />')
-                    .prependTo(self.trigger);
-
-                // Activation de l'autocomplétion
-                if (self.options.autocomplete) {
-                    if (typeof self.options.autocomplete !== 'object') {
-                        self.options.autocomplete = {};
-                    }
-
-                    // Définition de l'indicateur d'état
-                    self.flags.hasAutocomplete = true;
-                    self.el.attr('aria-autocomplete', true);
-
-                    // Positionnement de la liste de selection
-                    if (self.flags.isMultiple) {
-                        self.selectedList.insertAfter(self.trigger);
-                    }
-
-                    // Récupération d'élément dans la liste de selection
-                    self.autocompleteInput = $('<input class="tiFyField-SelectJsAutocomplete" autocomplete="off"/>')
-                        .prependTo(self.trigger);
-                }
-            },
-
-            /**
-             * Initialisation de la liste de selection.
-             *
-             * @private
-             */
-            _initPicker: function () {
-                var self = this;
-
-                // Traitement des options
-                var o = {
+                multiple: false,
+                picker: {
                     class: '',
                     placement: 'clever',
-                    appendTo: 'body',
+                    appendTo: '',
                     delta: {
                         top: 0,
                         left: 0,
@@ -260,159 +56,655 @@
                     filter: false,
                     loader: '',
                     more: '+'
+                },
+                removable: true,
+                sortable: {},
+                source: {},
+                trigger: {
+                    class: '',
+                    arrow: true
+                }
+            },
+
+            // Instanciation de l'élément.
+            _create: function () {
+                this.instance = this;
+                this.el = this.element;
+
+                this.flags = {
+                    hasSelection: false,
+                        isDisabled: true,
+                        isMultiple: false,
+                        isDuplicable: false,
+                        isRemovable: true,
+                        isSortable: false,
+                        isOpen: false,
+                        isComplete: true,
+                        page: 1,
+                        hasArrow: true,
+                        hasFilter: false,
+                        hasSource: false,
+                        hasAutocomplete: false
                 };
-                self.options.picker = $.extend(o, self.options.picker);
 
-                // Positionnement de la liste de sélection dans le DOM
-                var $appendTo = $(this.options.picker.appendTo);
-                if (!$appendTo.length) {
-                    $appendTo = $('body');
+                this.init = {
+                    autocomplete: false,
+                    el: false,
+                    flags: false,
+                    handler: false,
+                    items:false,
+                    options: false,
+                    picker: false,
+                    selection: false,
+                    trigger: false
+                };
+                this.items = [];
+                this.selected = [];
+
+                this._initOptions();
+                this._initFlags();
+                this._initControls();
+                this._initItems();
+
+                if (this.flags.isDisabled) {
+                    this._onDisable();
+                } else {
+                    this._onEnable();
                 }
-                self.picker
-                    .appendTo($appendTo)
-                    .addClass(self.options.picker.class);
+            },
 
-                // Traitement du filtre de liste de selection
-                if (self.options.picker.filter) {
-                    self.flags.hasFilter = true;
-                    self.picker.attr('aria-filter', true);
+            // INIT
+            // ---------------------------------------------------------------------------------------------------------
+            // Initialisation des attributs de configuration.
+            _initOptions: function () {
+                if (!this.init.options) {
+                    this.options = $.extend(
+                        true,
+                        this.options,
+                        $.parseJSON(decodeURIComponent(this.el.data('options')))
+                    );
 
-                    self.pickerFilter = $(
-                        '<input class="tiFyField-SelectJsPickerFilter" autocomplete="off"/>').prependTo(self.picker);
+                    this.init.options = true;
                 }
+            },
 
-                // Définition de l'indicateur de chargement
-                self.pickerLoader = $('<div class="tiFyField-SelectJsPickerLoader" />')
-                    .html(o.loader)
-                    .prependTo(self.picker);
+            // Initialisation des indicateurs d'état.
+            _initFlags: function () {
+                if (!this.init.flags) {
+                    this.flags.isDisabled = !!this.options.disabled;
+                    this.flags.isMultiple = !!this.options.multiple;
+                    this.flags.isDuplicable = !!(this.options.duplicate && this.flags.isMultiple);
+                    this.flags.isRemovable = !!(!this.flags.isDisabled && this.options.removable);
+                    this.flags.isSortable = (this.options.sortable !== false) &&
+                        this.flags.isMultiple && !this.flags.isDisabled;
+                    this.flags.isOpen = false;
+                    this.flags.isComplete = false;
+                    this.flags.page = 1;
+                    this.flags.hasSource = (this.options.source !== false);
+                    this.flags.hasArrow = this.options.trigger.arrow;
 
-                // Définition de l'indicateur de chargement
-                if (this.flags.hasSource) {
-                    self.pickerMore = $('<a href="#" class="tiFyField-SelectJsPickerMore" />')
-                        .html(o.more)
-                        .prependTo(self.picker);
-
-                    self.picker.attr('aria-complete', false);
+                    this.init.flags = true;
                 }
+            },
 
-                $('> li', this.pickerList).each(function() {
-                    var item = self._getAttrs($(this));
-                    self._setItem(item);
+            // Initialisation des agents de contrôle.
+            _initControls: function () {
+                this._initControlElement();
+                this._initControlHandler();
+                this._initControlTrigger();
+                this._initControlPicker();
+                this._initControlSelection();
+                if (this.options.autocomplete) {
+                    this._initControlAutocomplete();
+                }
+            },
+
+            // Initialisation du controleur d'autocompletion.
+            _initControlAutocomplete: function () {
+                if (!this.init.autocomplete) {
+                    this.autocompleteInput = $('<input data-control="select-js.autocomplete" autocomplete="off"/>')
+                        .prependTo(this.trigger)
+                        .addClass(this.compat.autocompleteInput);
+
+                    if (typeof this.options.autocomplete !== 'object') {
+                        this.options.autocomplete = {};
+                    }
+
+                    this.flags.hasAutocomplete = true;
+                    this.el.attr('aria-autocomplete', true);
+
+                    if (this.flags.isMultiple) {
+                        this.selection.insertAfter(this.trigger);
+                    }
+
+                    this.init.autocomplete = true;
+                }
+            },
+
+            // Initialisation du controleur principal.
+            _initControlElement: function () {
+                if (!this.init.el) {
+                    this.el.attr('aria-selection', this.flags.hasSelection);
+                    this.el.attr('aria-multiple', this.flags.isMultiple);
+                    this.el.attr('aria-sortable', this.flags.isSortable);
+                    this.el.attr('aria-duplicable', this.flags.isDuplicable);
+                    this.el.attr('aria-arrow', this.flags.hasArrow);
+
+                    this.init.el = true;
+                }
+            },
+
+            // Initialisation du controleur de traitement.
+            _initControlHandler: function () {
+                if (!this.init.handler) {
+                    this.handler = $('[data-control="select-js.handler"]', this.el)
+                        .addClass(this.compat.handler);
+
+                    this.init.handler = true;
+                }
+            },
+
+            // Initialisation des éléments de listes.
+            _initItems: function () {
+                let self = this;
+
+                this._setSelected(this.handler.val());
+
+                $('option', this.handler).each(function (i, el) {
+                    let value = $(el).val(),
+                        attrs = {index: i, value: value, content: $(el).text()};
+                    attrs.picker = self._setControlPickerItem(null, attrs);
+                    attrs.selection = self._setControlSelectionItem(null, attrs);
+
+                    self.items[i] = attrs;
+
+                    if (self._isSelected(value)) {
+                        self._selectionAddSelected(i);
+                        self._pickerAddSelected(i);
+                    }
                 });
             },
 
-            /**
-             * Initialisation de la liste des éléments selectionnés.
-             *
-             * @private
-             */
-            _initSelected: function () {
-                var self = this;
+            // Initialisation du controleur de la liste de selection.
+            _initControlPicker: function () {
+                if (!this.init.picker) {
+                    this.picker = $('<div data-control="select-js.picker"/>')
+                        .appendTo(this.el)
+                        .addClass(this.compat.picker)
+                        .attr('aria-multiple', this.flags.isMultiple)
+                        .attr('aria-duplicable', this.flags.isDuplicable);
 
-                if (self.flags.isSortable) {
-                    // Définition des options du widget
-                    self.options.sortable = $.extend(
-                        {
-                            handle: '[aria-handle="sort"]',
-                            containment: 'parent',
-                            update: function () {
-                                self._reset();
-                            }
-                        },
-                        self.options.sortable
+                    this.pickerItems = $('<ul data-control="select-js.picker.items"/>')
+                        .appendTo(this.picker)
+                        .addClass(this.compat.pickerItems);
+
+                    let $appendTo = $(this.options.picker.appendTo);
+                    if (!$(this.options.picker.appendTo).length) {
+                        $appendTo = $('body');
+                    }
+                    this.picker
+                        .appendTo($appendTo)
+                        .addClass(this.options.picker.class);
+
+                    if (this.options.picker.filter) {
+                        this.flags.hasFilter = true;
+                        this.picker.attr('aria-filter', true);
+
+                        this.pickerFilter = $('<input data-control="select-js.picker.filter" autocomplete="off"/>')
+                            .prependTo(this.picker)
+                            .addClass(this.compat.pickerFilter);
+                    }
+
+                    this.pickerLoader = $('<div data-control="select-js.picker.loader"/>')
+                        .html(this.options.picker.loader)
+                        .prependTo(this.picker)
+                        .addClass(this.compat.pickerLoader);
+
+                    if (this.flags.hasSource) {
+                        this.pickerMore = $('<a href="#" data-control="select-js.picker.more"/>')
+                            .html(this.options.picker.more)
+                            .prependTo(this.picker)
+                            .addClass(this.compat.pickerMore);
+
+                        this.picker.attr('aria-complete', false);
+                    }
+
+                    this.init.picker = true;
+                }
+            },
+
+            // Initialisation du controleur de liste des éléments sélectionnés.
+            _initControlSelection: function () {
+                if (!this.init.selection) {
+                    this.selection = $('<ul data-control="select-js.selection"/>')
+                        .appendTo(this.trigger)
+                        .addClass(this.compat.selection);
+
+                    if (this.flags.isSortable) {
+                        this.options.sortable = $.extend(
+                            {
+                                handle: '[aria-handle="sort"]',
+                                containment: 'parent',
+                                update: function () {
+                                    this._reset();
+                                }
+                            },
+                            this.options.sortable
+                        );
+
+                        this.sortable = this.selection.sortable(this.options.sortable);
+                        this.selection.disableSelection();
+                    } else {
+                        this.sortable = undefined;
+                    }
+
+                    this.init.selection = true;
+                }
+            },
+
+            // Initialisation du controleur de déclenchement d'affichage de la liste selection.
+            _initControlTrigger: function () {
+                if (!this.init.trigger) {
+                    this.trigger = $('<div data-control="select-js.trigger"/>')
+                        .appendTo(this.el)
+                        .addClass(this.compat.trigger);
+
+                    this.triggerHandler = $('<a href="#" data-control="select-js.trigger.handler"/>')
+                        .appendTo(this.trigger)
+                        .addClass(this.compat.triggerHandler);
+
+                    this.init.trigger = true;
+                }
+            },
+
+            // SETTER
+            // ---------------------------------------------------------------------------------------------------------
+            // Définition d'un élément du controleur de traitement.
+            _setControlHandlerItem: function (content, attrs) {
+                return $('<option/>')
+                    .appendTo(this.handler)
+                    .attr('value', attrs.value)
+                    .text(content);
+            },
+
+            // Définition d'un élément du controleur de la liste de selection.
+            _setControlPickerItem: function (content, attrs) {
+                let pickerItem = $('<li data-control="select-js.picker.item"/>')
+                    .appendTo(this.pickerItems)
+                    .addClass(this.compat.pickerItem)
+                    .html(content ? content : attrs.content);
+
+                this._onPickerItemClick(pickerItem);
+
+                return pickerItem;
+            },
+
+            // Définition d'un élément du controleur de la liste des éléments sélectionnés.
+            _setControlSelectionItem: function (content, attrs) {
+                return $('<li data-control="select-js.selection-item"/>')
+                    .attr('data-index', attrs.index)
+                    .addClass(this.compat.selectionItem)
+                    .html(content ? content : attrs.content);
+            },
+
+            // GETTER
+            // ---------------------------------------------------------------------------------------------------------
+            // Récupération d'un élément.
+            _getItem: function (i) {
+                return this.items[i];
+            },
+
+            // Arguments de requête Ajax de récupération des éléments.
+            _getQueryArgs: function () {
+                return {
+                    page: this.flags.page,
+                    term: this.flags.hasAutocomplete ? this.autocompleteInput.val().toString() : ''
+                };
+            },
+
+            // SELECTED
+            // ---------------------------------------------------------------------------------------------------------
+            // Vérification si un élément est selectionné.
+            _isSelected: function (v) {
+                return this.selected.indexOf(v.toString()) !== -1;
+            },
+
+            // Définition de la liste des éléments selectionnés.
+            _setSelected: function (v) {
+                this.selected = v.toString().split(',');
+            },
+
+            // Mise à jour de la sélection d'un élement.
+            _updateSelected: function (v) {
+                let index = this.selected.indexOf(v.toString());
+
+                if (index === -1) {
+                    this.selected.push(v.toString());
+                    return 1;
+                } else {
+                    this.selected.splice(index, 1);
+                    return 0;
+                }
+            },
+
+            // SELECTION
+            // ---------------------------------------------------------------------------------------------------------
+            // Ajout d'une selection à la liste des éléments sélectionnés.
+            _selectionAddSelected(i) {
+                this.items[i].selection.appendTo(this.selection);
+            },
+
+            // Suppression d'une selection de la liste des éléments sélectionnés.
+            _selectionRemoveSelected(i) {
+                this.items[i].selection.remove();
+            },
+
+            // Vidage des sélections de la liste des éléments sélectionnés.
+            _selectionFlushSelected() {
+                this.selection.empty();
+            },
+
+            // PICKER
+            // ---------------------------------------------------------------------------------------------------------
+            // Ajout d'une selection à la liste de sélection.
+            _pickerAddSelected(i) {
+                this.items[i].picker.attr('aria-selected', true);
+            },
+
+            // Suppression d'une selection à la liste de sélection.
+            _pickerRemoveSelected(i) {
+                this.items[i].picker.attr('aria-selected', false);
+            },
+
+            // Vidage des sélections de la liste de sélection.
+            _pickerFlushSelected() {
+                $.each(this.items, function (u, v) {
+                    v.picker.attr('aria-selected', false);
+                });
+            },
+
+            // ACTIONS
+            // ---------------------------------------------------------------------------------------------------------
+            // Ajout d'un élément dans la liste de selection.
+            _doChange: function (item) {
+                if (this.flags.isMultiple) {
+                    if (this._updateSelected(item.value)) {
+                        this._selectionAddSelected(item.index);
+                        this._pickerAddSelected(item.index);
+                    } else {
+                        this._selectionRemoveSelected(item.index);
+                        this._pickerRemoveSelected(item.index);
+                    }
+                } else {
+                    this._setSelected(item.value);
+                    this._selectionFlushSelected();
+                    this._selectionAddSelected(item.index);
+                    this._pickerFlushSelected();
+                    this._pickerAddSelected(item.index);
+                    this._doClose();
+                }
+
+                this.handler.val(this.selected);
+
+                //self._onChange(item);
+            },
+
+            // Ouverture de la liste de selection.
+            _doOpen: function () {
+                this._onOutsideClick();
+
+                this.flags.isOpen = true;
+                this.el.attr('aria-open', true);
+                this.picker.attr('aria-open', true);
+
+                this._doPickerPosition();
+
+                this._doQueryItems();
+
+                //self._onOpen();
+            },
+
+            // Fermeture de la liste de selection.
+            _doClose: function () {
+                this._offOutsideClick();
+
+                this.flags.isOpen = false;
+                this.el.attr('aria-open', false);
+                this.picker.attr('aria-open', false);
+
+                //self._onClose();
+            },
+
+            // Positionnement de la liste de selection dans le DOM.
+            _doPickerPosition: function () {
+                let offset = $.extend(
+                    {},
+                    this.trigger.offset(),
+                    {width: this.trigger.outerWidth()}
+                    ),
+                    placement = this.options.picker.placement;
+
+                if (this.options.picker.delta.top) {
+                    offset.top += this.options.picker.delta.top;
+                }
+                if (this.options.picker.delta.left) {
+                    offset.left += this.options.picker.delta.left;
+                }
+                if (this.options.picker.delta.width) {
+                    offset.width += this.options.picker.delta.width;
+                }
+
+                if (placement === 'clever') {
+                    if ($(win).outerHeight() + $(win).scrollTop() < offset.top + this.picker.outerHeight()) {
+                        placement = 'top';
+                    } else {
+                        placement = 'bottom';
+                    }
+                }
+
+                switch (placement) {
+                    case 'top' :
+                        offset.top -= this.picker.outerHeight() - 1;
+                        break;
+                    case 'bottom' :
+                        offset.top += this.trigger.outerHeight() - 1;
+                        break;
+                }
+
+                this.picker.css(offset);
+            },
+
+            // Récupération de la liste des éléments.
+            _doQueryItems: function () {
+                let self = this;
+
+                if (this.flags.hasSource && !this.flags.isComplete) {
+                    if (this.xhr !== undefined) {
+                        this.xhr.abort();
+                    }
+
+                    //this.pickerLoader.show();
+                    this.options.source.query_args = $.extend(
+                        this.options.source.query_args,
+                        this._getQueryArgs()
                     );
 
-                    self.sortable = self.selectedList.sortable(self.options.sortable);
-                    self.selectedList.disableSelection();
-                } else {
-                    self.sortable = undefined;
+                    this.xhr = $.ajax({
+                        url: tify.ajax_url,
+                        data: this.options.source,
+                        method: 'post'
+                    }).done(function (data) {
+                        if (data.length) {
+                            $.each(data, function (u, attrs) {
+                                attrs = $.extend({index: self.items.length}, attrs, {value: attrs.value.toString()});
+                                self._setControlHandlerItem(attrs.content, attrs);
+                                attrs.picker = self._setControlPickerItem(attrs.picker, attrs);
+                                attrs.selection = self._setControlSelectionItem(attrs.selection, attrs);
+                                self.items[attrs.index] = attrs;
+                            });
+                            self.flags.page++;
+                        } else {
+                            self.flags.isComplete = true;
+                            self.picker.attr('aria-complete', true);
+                            self.flags.page = 1;
+                        }
+                    }).always(function () {
+                        //self.pickerLoader.hide();
+                        self.xhr = undefined;
+                    });
+                }
+            },
+
+            //EVENTS
+            // ---------------------------------------------------------------------------------------------------------
+            // Définition de la liste des événements à l'activation.
+            _onEnable: function () {
+                this.flags.isDisabled = false;
+                this.el.attr('aria-disabled', false);
+                this.handler.prop('disabled', false);
+
+                this._onTriggerHandlerClick();
+
+                /*
+                // Activation de la suppression d'élément dans la liste des éléments selectionnés
+                if (self.flags.isRemovable) {
+                    $('> li > [aria-handle="remove"]', self.selection).on('click.tify_select.selected_remove.' +
+                        self.instance.uuid,
+                        function () {
+                            let item = self._getAttrs($(this).closest('li'));
+                            self._remove(item);
+                        });
                 }
 
-                self._reset();
-            },
-
-            /**
-             * Ouverture de la liste de selection.
-             *
-             * @private
-             */
-            _open: function () {
-                var self = this;
-
-                if (self.flags.isOpen) {
-                    return;
+                // Masque la liste des éléments selectionnés si elle est vide
+                if (!this._count()) {
+                    this.flags.hasSelection = false;
+                    this.el.attr('aria-selection', false);
+                    if (!self.flags.isMultiple && self.flags.hasAutocomplete) {
+                        this.autocompleteInput.show();
+                    }
+                    this.selection.hide();
                 }
 
-                // Redéfinition des indicateurs d'état
-                self.flags.isOpen = true;
-                self.el.attr('aria-open', true);
-                self.picker.attr('aria-open', true);
+                // Activation du champs de saisie par autocomplétion
+                if (self.flags.hasAutocomplete) {
+                    self.autocompleteInput.on('keyup.tify_select.autocomplete.' +
+                        self.instance.uuid, function () {
+                        // Fermeture de la liste de selection
+                        self._close();
 
-                // Positionnement de la liste de selection dans le DOM
-                var offset = self._getPickerOffset();
-                self.picker.css(offset);
+                        // Interruption si la condition de valeur n'est pas remplie
+                        if (!$(this).val()) {
+                            return;
+                        }
 
-                // Récupération des éléments dans la liste de selection
-                self._getPickerItems();
+                        // Suppression des éléments de la liste de selection
+                        self.pickerItems.empty();
 
-                // Définition de la liste des événements à l'ouverture de la liste de selection
-                self._onOpen();
+                        // Initialisation des indicateur d'état
+                        self.flags.isComplete = false;
+                        self.flags.page = 1;
+
+                        // Réinitialisation de la requête de récupération des éléments de la liste de selection
+                        if (self.timeout !== undefined) {
+                            clearTimeout(self.timeout);
+                        }
+                        if (self.xhr !== undefined) {
+                            self.xhr.abort();
+                        }
+
+                        // Lancement de la requête de récupération des éléments de la liste de selection
+                        self.timeout = setTimeout(function () {
+                            self._getPickerItems();
+                            self.xhr.done(function (data) {
+                                if (data.length) {
+                                    self._open();
+                                }
+                            });
+                        }, 1000);
+                    });
+                }
+                */
             },
 
-            /**
-             * Fermeture de la liste de selection.
-             *
-             * @private
-             */
-            _close: function () {
-                var self = this;
+            // Evénements à la désactivation du controleur.
+            _onDisable: function () {
+                this.flags.isDisabled = true;
+                this.el.attr('aria-disabled', true);
+                this.handler.prop('disabled', true);
 
-                if (!self.flags.isOpen) {
-                    return;
+                this.triggerHandler.off('click.select-js.trigger.handler.' + this.instance.uuid);
+
+                $('[data-control="select-js.picker.item"]')
+                    .off('click.select-js.picker.item.' + this.instance.uuid);
+
+                /*
+                if (this.flags.isRemovable) {
+                    $('> li > [aria-handle="remove"]', self.selection)
+                        .off('click.tify_select.selected_remove.' + self.instance.uuid);
                 }
 
-                // Redéfinition des indicateurs d'état
-                self.flags.isOpen = false;
-                self.el.attr('aria-open', false);
-                self.picker.attr('aria-open', false);
-
-                // Définition de la liste des événements à la fermeture de la liste de selection
-                self._onClose();
+                // Désactivation du champs de saisie par autocomplétion
+                if (self.flags.hasAutocomplete) {
+                    self.autocompleteInput
+                        .off('keyup.tify_select.autocomplete.' + self.instance.uuid);
+                }*/
             },
 
-            /**
-             * Activation du controleur.
-             *
-             * @private
-             */
-            _enable: function () {
-                var self = this;
+            // Activation du clic sur les élements de la liste de sélection.
+            _onPickerItemClick: function ($pickerItem) {
+                let self = this;
 
-                // Redéfinition des indicateurs d'état
-                self.flags.Disabled = false;
-                self.el.attr('aria-disabled', false);
-                self.handler.prop('disabled', false);
+                $pickerItem.on(
+                    'click.select-js.picker.item.' + this.instance.uuid,
+                    function (e) {
+                        if ($(this).is(':not([aria-disabled="true"])')) {
+                            e.preventDefault();
 
-                // Définition de la liste des événements à l'activation du controleur
-                self._onEnable();
+                            let item = self._getItem($(this).index());
+
+                            self._doChange(item);
+                        }
+                    }
+                );
             },
 
-            /**
-             * Désactivation du controleur.
-             *
-             * @private
-             */
-            _disable: function () {
-                var self = this;
+            // Activation du clic sur le controleur d'affichage de la liste de sélection.
+            _onTriggerHandlerClick: function () {
+                let self = this;
 
-                // Mise à jour de l'indicateur
-                self.flags.Disabled = true;
-                self.el.attr('aria-disabled', true);
-                self.handler.prop('disabled', true);
+                this.triggerHandler.on('click.select-js.trigger.handler.' + this.instance.uuid, function (e) {
+                    e.preventDefault();
 
-                // Définition de la liste des événements à la désactivation du controleur
-                self._onDisable();
+                    if (self.flags.isOpen) {
+                        self._doClose();
+                    } else {
+                        self._doOpen();
+                    }
+                });
             },
+
+            // Activation du clic en dehors de la liste de sélection.
+            _onOutsideClick: function () {
+                let self = this;
+
+                this.document.on('click.select-js.outside.' + this.instance.uuid, function (e) {
+                    if (!$(e.target).closest(self.el).length && !$(e.target).closest(self.picker).length) {
+                        self._doClose();
+                    }
+                });
+            },
+
+            // Désactivation du clic en dehors de la liste de sélection.
+            _offOutsideClick: function () {
+                this.document.off('click.select-js.outside.' + this.instance.uuid);
+            },
+
+
+
+
+            // OLD
+            // ---------------------------------------------------------------------------------------------------------
 
             /**
              * Suppression d'un élément de la liste des éléments selectionnés.
@@ -427,7 +719,7 @@
              * @private
              */
             _remove: function (item) {
-                var self = this;
+                let self = this;
 
                 // Mise à jour de la liste d'élement sélectionné
                 self._get(item.index).remove();
@@ -436,8 +728,8 @@
                 $('> [data-index="' + item.index + '"]', self.handler).remove();
 
                 // Mise à jour de l'élément dans la liste de selection
-                if (!$('> [data-value="' + item.value + '"]', self.selectedList).length) {
-                    $('> [data-value="' + item.value + '"]', self.pickerList).attr('aria-selected', false);
+                if (!$('> [data-value="' + item.value + '"]', self.selection).length) {
+                    $('> [data-value="' + item.value + '"]', self.pickerItems).attr('aria-selected', false);
                 }
 
                 // Définition de la liste des événements suite à la suppression d'un élément dans la liste de selection
@@ -453,7 +745,7 @@
              * @private
              */
             _get: function (index) {
-                return $('> li[data-index="' + index + '"]', this.selectedList);
+                return $('> li[data-index="' + index + '"]', this.selection);
             },
 
             /**
@@ -462,10 +754,10 @@
              * @private
              */
             _removeAll: function () {
-                var self = this;
+                let self = this;
 
                 self._all().each(function () {
-                    var item = self._getAttrs($(this));
+                    let item = self._getAttrs($(this));
 
                     // Mise à jour de la liste d'élement sélectionné
                     self._get(item.index).remove();
@@ -475,8 +767,8 @@
 
                     // Mise à jour de l'élément dans la liste de selection
                     if (!$('> [data-value="' + item.value + '"]',
-                        self.selectedList).length) {
-                        $('> [data-value="' + item.value + '"]', self.pickerList).attr('aria-selected', false);
+                        self.selection).length) {
+                        $('> [data-value="' + item.value + '"]', self.pickerItems).attr('aria-selected', false);
                     }
                 });
 
@@ -490,14 +782,14 @@
              * @private
              */
             _reset: function () {
-                var self = this;
+                let self = this;
 
                 // Nettoyage des entrées du selecteur de gestion de traitement
                 $('option', self.handler).remove();
 
                 // Traitement des éléments selectionnés
                 self._all().each(function () {
-                    var item = self._getAttrs($(this));
+                    let item = self._getAttrs($(this));
 
                     self._setRemovable(item);
                     self._setSortable(item);
@@ -515,7 +807,7 @@
              * @private
              */
             _all: function () {
-                return $('> li', this.selectedList);
+                return $('> li', this.selection);
             },
 
             /**
@@ -535,9 +827,9 @@
              * @private
              */
             _highlight: function (item) {
-                var self = this;
+                let self = this;
 
-                $('> [data-value="' + item.value + '"]', self.selectedList).attr('aria-highlight', true).one(
+                $('> [data-value="' + item.value + '"]', self.selection).attr('aria-highlight', true).one(
                     'webkitAnimationEnd oanimationend msAnimationEnd animationend',
                     function () {
                         $(this).attr('aria-highlight', false);
@@ -558,7 +850,7 @@
              * @private
              */
             _setRemovable: function (item) {
-                var self = this;
+                let self = this;
 
                 if (self.flags.isRemovable) {
                     $('<span aria-handle="remove">×</span>')
@@ -566,7 +858,7 @@
                         .on(
                             'click.tify_select.selected_remove.' + self.instance.uuid,
                             function () {
-                                var item = self._getAttrs($(this).closest('li'));
+                                let item = self._getAttrs($(this).closest('li'));
                                 self._remove(item);
                             });
                 }
@@ -599,41 +891,23 @@
              * @private
              */
             _onOpen: function () {
-                var self = this;
-
-                // Activation du clic en dehors du declencheurs
-                $(doc).on('click.tify_select.outside' + self.instance.uuid,
-                    function (e) {
-                        var close = true;
-
-                        $.each(self.controllers, function (u, v) {
-                            if ($(e.target).is($('.' + v, self.el))) {
-                                close = false;
-                                return true;
-                            }
-                        });
-
-                        if (close) {
-                            self._close();
-                        }
-                    });
+                let self = this;
 
                 // Activation du positionnement de la liste de selection au scroll dans la fenêtre du navigateur
                 $(win).on('scroll.tify_select.picker_position.' + self.instance.uuid,
                     function () {
-                        var offset = self._getPickerOffset();
+                        let offset = self._getPickerOffset();
 
                         self.picker.css(offset);
                     });
 
                 // Activation de la récupération de la liste des éléments au scroll dans la liste de selection
-                self.pickerList.on(
+                self.pickerItems.on(
                     'scroll.tify_select.picker_list.' + self.instance.uuid,
                     function () {
                         if (self.xhr !== undefined) {
                             return;
-                        }
-                        else if (($(this).prop('scrollHeight') - $(this).innerHeight()) -
+                        } else if (($(this).prop('scrollHeight') - $(this).innerHeight()) -
                             $(this).scrollTop() < 20) {
                             self._getPickerItems();
                         }
@@ -661,10 +935,10 @@
                     self.pickerFilter
                         .on('keyup.tify_select.picker_filter.' + self.instance.uuid,
                             function () {
-                                var term = $(this).val();
+                                let term = $(this).val();
 
-                                $('> li', self.pickerList).each(function () {
-                                    var regex = new RegExp(term, 'i');
+                                $('> li', self.pickerItems).each(function () {
+                                    let regex = new RegExp(term, 'i');
 
                                     if ($(this).data('label').match(regex)) {
                                         $(this).show();
@@ -678,7 +952,7 @@
                             function (e) {
                                 e.stopPropagation();
                             }
-                        )
+                        );
                 }
             },
 
@@ -688,7 +962,7 @@
              * @private
              */
             _onClose: function () {
-                var self = this;
+                let self = this;
 
                 // Désactivation du clic en dehors du declencheurs
                 $(doc).off('click.tify_select.outside' + self.instance.uuid);
@@ -697,128 +971,12 @@
                 $(win).off('scroll.tify_select.picker_position.' + self.instance.uuid);
 
                 // Désactivation de la récupération de la liste des éléments au scroll dans la liste de selection
-                self.pickerList.off('scroll.tify_select.picker_list.' +
+                self.pickerItems.off('scroll.tify_select.picker_list.' +
                     self.instance.uuid);
 
                 // Désactivation du champs de saisie de filtrage de la liste de selection
                 if (self.flags.hasFilter) {
                     self.pickerFilter.off('keyup.tify_select.picker_filter.' +
-                        self.instance.uuid);
-                }
-            },
-
-            /**
-             * Définition de la liste des événements à l'activation du controleur
-             *
-             * @private
-             */
-            _onEnable: function () {
-                var self = this;
-
-                // Action au clic sur le déclencheur de selection
-                self.triggerHandler.on('click.tify_select.open.' + self.instance.uuid,
-                    function (e) {
-                        e.preventDefault();
-
-                        if (self.flags.isOpen) {
-                            self._close();
-                        } else {
-                            self._open();
-                        }
-                    });
-
-                // Activation de la selection d'un élément dans la liste de selection
-                $('> li:not([aria-disabled="true"])', self.pickerList).on('click.tify_select.picker_item_select.' + self.instance.uuid,
-                    function () {
-                        var item = self._getAttrs($(this));
-
-                        self._addSelectedItem(item);
-                    });
-
-                // Activation de la suppression d'élément dans la liste des éléments selectionnés
-                if (self.flags.isRemovable) {
-                    $('> li > [aria-handle="remove"]', self.selectedList).on('click.tify_select.selected_remove.' +
-                        self.instance.uuid,
-                        function () {
-                            var item = self._getAttrs($(this).closest('li'));
-                            self._remove(item);
-                        });
-                }
-
-                // Masque la liste des éléments selectionnés si elle est vide
-                if (!this._count()) {
-                    this.flags.hasSelection = false;
-                    this.el.attr('aria-selection', false);
-                    if (!self.flags.isMultiple) {
-                        this.autocompleteInput.show();
-                    }
-                    this.selectedList.hide();
-                }
-
-                // Activation du champs de saisie par autocomplétion
-                if (self.flags.hasAutocomplete) {
-                    self.autocompleteInput.on('keyup.tify_select.autocomplete.' +
-                        self.instance.uuid, function () {
-                        // Fermeture de la liste de selection
-                        self._close();
-
-                        // Interruption si la condition de valeur n'est pas remplie
-                        if (!$(this).val()) {
-                            return;
-                        }
-
-                        // Suppression des éléments de la liste de selection
-                        self.pickerList.empty();
-
-                        // Initialisation des indicateur d'état
-                        self.flags.isComplete = false;
-                        self.flags.page = 1;
-
-                        // Réinitialisation de la requête de récupération des éléments de la liste de selection
-                        if (self.timeout !== undefined) {
-                            clearTimeout(self.timeout);
-                        }
-                        if (self.xhr !== undefined) {
-                            self.xhr.abort();
-                        }
-
-                        // Lancement de la requête de récupération des éléments de la liste de selection
-                        self.timeout = setTimeout(function () {
-                            self._getPickerItems();
-                            self.xhr.done(function (data) {
-                                if (data.length) {
-                                    self._open();
-                                }
-                            });
-                        }, 1000);
-                    });
-                }
-            },
-
-            /**
-             * Définition de la liste des événements à la désactivation du controleur
-             *
-             * @private
-             */
-            _onDisable: function () {
-                var self = this;
-
-                // Désactivation de l'action au clic sur le controleur de selection
-                self.triggerHandler.off('click.tify_select.open.' + self.instance.uuid);
-
-                // Désactivation de la selection d'un élément dans la liste de selection
-                $('> li', self.pickerList).on('click.tify_select.picker_item_select.' +
-                    self.instance.uuid);
-
-                // Activation de la suppression d'élément dans la liste des éléments selectionnés
-                if (self.flags.isRemovable) {
-                    $('> li > [aria-handle="remove"]', self.selectedList).off('click.tify_select.selected_remove.' +
-                        self.instance.uuid);
-                }
-
-                // Désactivation du champs de saisie par autocomplétion
-                if (self.flags.hasAutocomplete) {
-                    self.autocompleteInput.off('keyup.tify_select.autocomplete.' +
                         self.instance.uuid);
                 }
             },
@@ -836,7 +994,7 @@
              * @private
              */
             _onAdd: function (item) {
-                var self = this;
+                let self = this;
 
                 if (item.new) {
                     // Activation du controle de suppression de l'élément
@@ -857,12 +1015,12 @@
                 self.el.attr('aria-selection', true);
 
                 // Masque le champ de saisie d'autocompletion
-                if (!self.flags.isMultiple) {
+                if (!self.flags.isMultiple && self.flags.hasAutocomplete) {
                     self.autocompleteInput.hide();
                 }
 
                 // Affiche la liste des éléments selectionnés
-                self.selectedList.show();
+                self.selection.show();
 
                 // Fermeture de la liste de selection
                 self._close();
@@ -897,7 +1055,7 @@
                     if (!this.flags.isMultiple) {
                         this.autocompleteInput.show();
                     }
-                    this.selectedList.hide();
+                    this.selection.hide();
                 }
 
                 // Mise à jour de la valeur du controleur
@@ -905,21 +1063,6 @@
 
                 // Déclenchement des événements
                 this._trigger('remove');
-            },
-
-            /**
-             * Récupération des attributs d'un élément de la liste de selection ou de la liste des éléments sélectionnés
-             *
-             * @param $item Element dans le DOM
-             *
-             * @private
-             */
-            _getAttrs: function ($item) {
-                return {
-                    label: $item.data('label'),
-                    value: $item.data('value'),
-                    index: $item.data('index')
-                };
             },
 
             /**
@@ -935,73 +1078,35 @@
              * @private
              */
             _setItem: function (item) {
-                var self = this;
+                let self = this;
 
                 self.items[item.index] = item;
 
                 if (typeof self.items[item.index].picker_render === 'undefined') {
                     self.items[item.index].picker_render =
-                        $('> [data-index="' + item.index + '"]', self.pickerList).length
-                            ? $('> [data-index="' + item.index + '"]', self.pickerList)[0]
+                        $('> [data-index="' + item.index + '"]', self.pickerItems).length
+                            ? $('> [data-index="' + item.index + '"]', self.pickerItems)[0]
                             : '<li ' +
-                                'data-label="' + $('<div>').text(item.label).html() + '" ' +
-                                'data-value="' + item.value + '" ' +
-                                'data-index="' + item.index + '" ' +
-                                '>' +
-                                item.label +
-                                '</li>';
+                            'data-label="' + $('<div>').text(item.label).html() + '" ' +
+                            'data-value="' + item.value + '" ' +
+                            'data-index="' + item.index + '" ' +
+                            '>' +
+                            item.label +
+                            '</li>';
                 }
 
                 if (typeof self.items[item.index].selected_render === 'undefined') {
                     self.items[item.index].selected_render =
-                        $('> [data-index="' + item.index + '"]', self.selectedList).length
-                            ? $('> [data-index="' + item.index + '"]', self.selectedList)[0]
+                        $('> [data-index="' + item.index + '"]', self.selection).length
+                            ? $('> [data-index="' + item.index + '"]', self.selection)[0]
                             : '<li ' +
-                                'data-label="' + $('<div>').text(item.label).html() + '" ' +
-                                'data-value="' + item.value + '" ' +
-                                'data-index="' + item.index + '" ' +
-                                '>' +
-                                item.label +
-                                '</li>';
+                            'data-label="' + $('<div>').text(item.label).html() + '" ' +
+                            'data-value="' + item.value + '" ' +
+                            'data-index="' + item.index + '" ' +
+                            '>' +
+                            item.label +
+                            '</li>';
                 }
-            },
-
-            /**
-             * Ajout d'un élément dans la liste des éléments sélectionnés
-             *
-             * @param item Attributs de l'élément {
-             *      @var mixed value Valeur de retour
-             *      @var string label Intitulé de qualification
-             *      @var string select Rendu dans la liste des éléments selectionnés
-             *      @var string picker Rendu dans la liste de selection
-             * }
-             *
-             * @private
-             */
-            _addSelectedItem: function (item) {
-                var self = this;
-
-                // Bypass - L'élément doit être unique et existe déja
-                if (!this.flags.isDuplicable &&
-                    $('> [data-value="' + item.value + '"]',
-                        self.selectedList).length) {
-                    item.new = false;
-
-                    // Création du nouvel élément dans la liste de selection
-                } else {
-                    item.new = true;
-
-                    // Vérification d'habititation d'ajout multiple
-                    if (!self.flags.isMultiple) {
-                        self._removeAll();
-                    }
-
-                    // Ajout de l'élément dans la liste des éléments sélectionnés
-                    $(self.items[item.index].selected_render).appendTo(self.selectedList);
-                }
-
-                // Définition de la liste des événements suite à l'ajout d'un élément dans la liste de selection
-                self._onAdd(item);
             },
 
             /**
@@ -1017,21 +1122,21 @@
              * @private
              */
             _addPickerItem: function (item) {
-                var self = this;
+                let self = this;
 
                 // Bypass - l'élément est déjà  présent
                 if ($('> [data-value="' + item.value + '"]',
-                    self.pickerList).length) {
+                    self.pickerItems).length) {
                     return;
                 }
 
                 // Ajout de l'élément dans la liste des éléments sélectionnés
                 $(self.items[item.index].picker_render)
-                    .appendTo(self.pickerList).on(
-                        'click.tify_select.picker_item_select.' + self.instance.uuid,
-                        function () {
-                            self._addSelectedItem(item);
-                        }
+                    .appendTo(self.pickerItems).on(
+                    'click.select-js.picker_item_select.' + self.instance.uuid,
+                    function () {
+                        self._addSelectedItem(item);
+                    }
                 );
 
                 // Mise à jour du statut de selection de l'élément dans la liste de selection
@@ -1051,114 +1156,13 @@
              * @private
              */
             _setPicker: function (item) {
-                var self = this;
+                let self = this;
 
-                if ($('> [data-value="' + item.value + '"]',
-                    self.selectedList).length) {
-                    $('> [data-value="' + item.value + '"]', self.pickerList).attr('aria-selected', true);
+                if ($('> [data-value="' + item.value + '"]', self.selection).length) {
+                    $('> [data-value="' + item.value + '"]', self.pickerItems).attr('aria-selected', true);
                 } else {
-                    $('> [data-value="' + item.value + '"]', self.pickerList).attr('aria-selected', false);
+                    $('> [data-value="' + item.value + '"]', self.pickerItems).attr('aria-selected', false);
                 }
-            },
-
-            /**
-             * Arguments de requête de récupération des éléments
-             *
-             * @private
-             */
-            _pickerQueryArgs: function () {
-                return {
-                    page: this.flags.page,
-                    term: this.flags.hasAutocomplete ? this.autocompleteInput.val() : ''
-                };
-            },
-
-            /**
-             * Récupération d'élément dans la liste de selection
-             *
-             * @private
-             */
-            _getPickerItems: function () {
-                var self = this;
-
-                if (self.flags.isComplete) {
-                    return;
-                }
-
-                if (this.flags.hasSource) {
-                    self.pickerLoader.show();
-                    self.options.source.query_args = $.extend(self.options.source.query_args, self._pickerQueryArgs());
-
-                    self.xhr = $.ajax({
-                        url: tify_ajaxurl,
-                        data: self.options.source,
-                        method: 'POST'
-                    }).done(function (data) {
-                        if (data.length) {
-                            $.each(data, function (u, item) {
-                                self._setItem(item);
-                                self._addPickerItem(item);
-                            });
-                            self.flags.page++;
-                        } else {
-                            self.flags.isComplete = true;
-                            self.picker.attr('aria-complete', true);
-                            self.flags.page = 1;
-                        }
-                    }).always(function () {
-                        self.pickerLoader.hide();
-                        self.xhr = undefined;
-                    });
-                }
-            },
-
-            /**
-             * Récupération du positionnement de la liste de selection
-             *
-             * @private
-             */
-            _getPickerOffset: function () {
-                var self = this;
-
-                var offset = $.extend({}, self.trigger.offset(),
-                    {width: self.trigger.outerWidth()}),
-                    placement = self.options.picker.placement;
-
-                // Prise en compte du pas d'ajustement
-                if (self.options.picker.delta.top) {
-                    offset.top += self.options.picker.delta.top;
-                }
-                if (self.options.picker.delta.left) {
-                    offset.left += self.options.picker.delta.left;
-                }
-                if (self.options.picker.delta.width) {
-                    offset.width += self.options.picker.delta.width;
-                }
-
-                // Prise en compte de la barre d'admin Wordpress
-                if (self.options.picker.adminbar) {
-                    offset.top += $('body').hasClass('admin-bar')
-                        ? -$('#wpadminbar').outerHeight()
-                        : 0;
-                }
-
-                // Placement intelligent
-                if (placement === 'clever') {
-                    placement = ($(win).outerHeight() + $(win).scrollTop() < offset.top + self.picker.outerHeight())
-                        ? 'top'
-                        : 'bottom';
-                }
-
-                switch (placement) {
-                    case 'top' :
-                        offset.top -= self.picker.outerHeight() - 1;
-                        break;
-                    case 'bottom' :
-                        offset.top += self.trigger.outerHeight() - 1;
-                        break;
-                }
-
-                return offset;
             },
 
             /**
@@ -1180,57 +1184,79 @@
                 }
             },
 
-            // Méthodes publiques
-            // Récupération de l'instance du widget d'ordonnancement des éléments
-            // @uses $(selector).tifyselect('sortable');
+            /**
+             * Récupération de l'instance du widget d'ordonnancement des éléments.
+             *
+             * @uses $(selector).tifyselect('sortable');
+             */
             sortable: function () {
                 if (this.flags.isSortable) {
                     return this.sortable;
                 }
             },
 
-            // Ouverture de la liste de selection
-            // @uses $(selector).tifyselect('open');
+            /**
+             * Ouverture de la liste de selection.
+             *
+             * @uses $(selector).tifyselect('open');
+             */
             open: function () {
-                if (!this.flags.Disabled) {
+                if (!this.flags.isDisabled) {
                     this._open();
                 }
             },
 
-            // Ajout d'une valeur à la liste de selection
-            // @uses $(selector).tifyselect('add', {value});
+            /**
+             * Ajout d'une valeur à la liste de selection.
+             *
+             * @param value
+             *
+             * @uses $(selector).tifyselect('add', {value});
+             */
             add: function (value) {
-                var self = this;
-                $('> [data-value="' + value + '"]', self.pickerList).trigger('click');
+                let self = this;
+                $('> [data-value="' + value + '"]', self.pickerItems).trigger('click');
 
             },
 
-            // Fermeture de la liste de selection
-            // @uses $(selector).tifyselect('close');
+            /**
+             * Fermeture de la liste de selection.
+             *
+             * @uses $(selector).tifyselect('close');
+             */
             close: function () {
-                if (!this.flags.Disabled) {
+                if (!this.flags.isDisabled) {
                     this._close();
                 }
             },
 
-            // Activation du controleur
-            // @uses $(selector).tifyselect('enable');
+            /**
+             * Activation du controleur.
+             *
+             * @uses $(selector).tifyselect('enable');
+             */
             enable: function () {
-                if (this.flags.Disabled) {
+                if (this.flags.isDisabled) {
                     this._enable();
                 }
             },
 
-            // Désactivation du controleur
-            // @uses $(selector).tifyselect('disable');
+            /**
+             * Désactivation du controleur.
+             *
+             * @uses $(selector).tifyselect('disable');
+             */
             disable: function () {
-                if (!this.flags.Disabled) {
+                if (!this.flags.isDisabled) {
                     this._disable();
                 }
             },
 
-            // Destruction du controleur
-            // @uses $(selector).tifyselect('destroy');
+            /**
+             * Destruction du controleur.
+             *
+             * @uses $(selector).tifyselect('destroy');
+             */
             destroy: function () {
                 this.el.remove();
                 this.picker.remove();
@@ -1239,9 +1265,9 @@
 })(jQuery, document, window);
 
 jQuery(document).ready(function ($) {
-    $('[aria-control="select_js"]').tifyselect();
+    $('[data-control="select-js"]').tifyselect();
 
-    $(document).on('mouseenter.tify_field.ajax_select', '[aria-control="select_js"]', function (e) {
+    $(document).on('mouseenter.field.select-js', '[data-control="select-js"]', function () {
         $(this).each(function () {
             $(this).tifyselect();
         });

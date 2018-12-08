@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
  * Trait ParamsBagTrait
  * @package tiFy\Kernel\Params
  *
- * @mixin \tiFy\Contracts\Kernel\ParamsBagInterface
+ * @mixin \tiFy\Contracts\Kernel\ParamsBag
  */
 trait ParamsBagTrait
 {
@@ -24,6 +24,14 @@ trait ParamsBagTrait
     public function all()
     {
         return $this->attributes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        return count($this->attributes);
     }
 
     /**

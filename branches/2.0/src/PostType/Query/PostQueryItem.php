@@ -4,23 +4,25 @@ namespace tiFy\PostType\Query;
 
 use tiFy\Contracts\PostType\PostQueryItem as PostQueryItemContract;
 use tiFy\Kernel\Params\ParamsBag;
+use WP_Post;
+use WP_Term_Query;
 
 class PostQueryItem extends ParamsBag implements PostQueryItemContract
 {
     /**
      * Objet Post Wordpress.
-     * @var \WP_Post
+     * @var WP_Post
      */
     protected $object;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param \WP_Post $wp_post Objet Post Wordpress.
+     * @param WP_Post $wp_post Objet Post Wordpress.
      *
      * @return void
      */
-    public function __construct(\WP_Post $wp_post)
+    public function __construct(WP_Post $wp_post)
     {
         $this->object = $wp_post;
 
@@ -43,7 +45,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
         $content = (string)$this->get('post_content', '');
 
         if (!$raw) :
-            $content = \apply_filters('the_content', $content);
+            $content = apply_filters('the_content', $content);
             $content = str_replace(']]>', ']]&gt;', $content);
         endif;
 
@@ -195,7 +197,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
         $args['taxonomy'] = $taxonomy;
         $args['object_ids'] = $this->getId();
 
-        return (new \WP_Term_Query($args))->terms;
+        return (new WP_Term_Query($args))->terms;
     }
 
     /**
@@ -211,7 +213,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
      */
     public function getThumbnailUrl($size = 'post-thumbnail')
     {
-        return wp_get_post_thumbnail($this->getId(), $size);
+        return get_the_post_thumbnail_url($this->getId(), $size);
     }
 
     /**
