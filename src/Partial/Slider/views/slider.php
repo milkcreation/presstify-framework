@@ -3,9 +3,12 @@
  * @var tiFy\Partial\PartialView $this
  */
 ?>
+<?php $this->before(); ?>
 
 <div <?php $this->attrs(); ?>>
     <?php foreach($this->get('items', []) as $item) : ?>
-        <?php echo partial('tag', $item); ?>
+        <?php $this->insert('slider-item', compact('item')); ?>
     <?php endforeach; ?>
 </div>
+
+<?php $this->after(); ?>

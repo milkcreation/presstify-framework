@@ -1,26 +1,27 @@
-[data-control="select-js"],
-[data-control="select-js"] > *,
-[data-control="select-js.picker"],
-[data-control="select-js.picker"] > * {
+.tiFyField-SelectJs,
+.tiFyField-SelectJs > *,
+.tiFyField-SelectJsPicker,
+.tiFyField-SelectJsPicker > * {
     box-sizing: border-box;
 }
 
-[data-control="select-js.handler"] {
+.tiFyField-SelectJs {
+    position: relative;
+}
+
+.tiFyField-SelectJsHandler {
     display: none;
 }
 
-.FieldSelectJs {
+.tiFyField-SelectJsTrigger {
     position: relative;
-}
-
-.FieldSelectJs-trigger {
-    position: relative;
-    min-height: 1.92em;
+    min-height: 1.8em;
     cursor: pointer;
+
     border: 1px solid #E4E4E4;
 }
 
-.FieldSelectJs-triggerHandler {
+.tiFyField-SelectJsTriggerHandler {
     position:absolute;
     top:0;
     right:0;
@@ -29,11 +30,15 @@
     z-index:2;
 }
 
-.FieldSelectJs[aria-arrow="true"] .FieldSelectJs-trigger {
+.tiFyField-SelectJsTrigger[aria-arrow="true"] {
     padding-right: 20px;
 }
 
-.FieldSelectJs[aria-arrow="true"] .FieldSelectJs-trigger::before {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger {
+    cursor: inherit;
+}
+
+.tiFyField-SelectJsTrigger[aria-arrow="true"]::before {
     position: absolute;
     top: 0;
     right: 0;
@@ -46,7 +51,7 @@
     background-color: #F4F4F4;
 }
 
-.FieldSelectJs[aria-arrow="true"] .FieldSelectJs-trigger::after {
+.tiFyField-SelectJsTrigger[aria-arrow="true"]::after {
     position: absolute;
     top: 50%;
     right: 5px;
@@ -65,52 +70,56 @@
     border-left-width: 4px;
 }
 
-.FieldSelectJs[aria-arrow="true"][aria-open="true"] .FieldSelectJs-trigger::after {
+.tiFyField-SelectJs[aria-open="true"] .tiFyField-SelectJsTrigger[aria-arrow="true"]::after {
     border-top-width: 0;
     border-right-width: 4px;
     border-bottom-width: 4px;
     border-left-width: 4px;
 }
 
-.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-trigger {
-    cursor: inherit;
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger {
     background-color: #F4F4F4;
     color: #BBB;
 }
 
-.FieldSelectJs[aria-disabled="true"][aria-arrow="true"] .FieldSelectJs-trigger::before,
-.FieldSelectJs[aria-disabled="true"][aria-arrow="true"] .FieldSelectJs-trigger::after {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger[aria-arrow="true"]::before,
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger[aria-arrow="true"]::after {
     opacity: 0.5;
 }
 
-.FieldSelectJs-autocomplete {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsTrigger {
+    background-color: #F4F4F4;
+    color: #BBB;
+}
+
+.tiFyField-SelectJsAutocomplete {
     margin: 0;
     border: none;
     width: 100%;
 }
 
-.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-autocomplete {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsAutocomplete {
     display: none;
 }
 
-.FieldSelectJs-selection {
+.tiFyField-SelectJsSelectedItems::before,
+.tiFyField-SelectJsSelectedItems:after {
+    display: table;
+    content: "";
+}
+
+.tiFyField-SelectJsSelectedItems:after {
+    clear: both;
+}
+
+.tiFyField-SelectJsSelectedItems {
     position: relative;
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
 
-.FieldSelectJs-selection::before,
-.FieldSelectJs-selection::after {
-    display: table;
-    content: "";
-}
-
-.FieldSelectJs-selection::after {
-    clear: both;
-}
-
-.FieldSelectJs[aria-multiple="false"] .FieldSelectJs-selection {
+.tiFyField-SelectJs[aria-multiple="false"] .tiFyField-SelectJsSelectedItems {
     position: relative;
     top: 0;
     right: 0;
@@ -118,51 +127,51 @@
     bottom: 0;
 }
 
-.FieldSelectJs-selectionItem {
+.tiFyField-SelectJsSelectedItems > li {
     position: relative;
     cursor: default;
     margin: 2px 0;
     margin-left: 2px;
     margin-right: 2px;
-    padding: 0 5px;
+    padding: 0 40px 0 5px;
     line-height: 1.4;
     white-space: nowrap;
     background-color: #FFF;
 }
 
-.FieldSelectJs[aria-multiple="true"] .FieldSelectJs-selectionItem {
+.tiFyField-SelectJs[aria-multiple="true"] .tiFyField-SelectJsSelectedItems > li {
     float: left;
     background-color: #E4E4E4;
     border: 1px solid #BBB;
     border-radius: 2px;
 }
 
-.FieldSelectJs[aria-sortable="true"] .FieldSelectJs-selectionItem {
+.tiFyField-SelectJs[aria-sortable="true"] .tiFyField-SelectJsSelectedItems > li {
     padding-left: 15px;
 }
 
-.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-selectionItem {
+.tiFyField-SelectJs[aria-disabled="true"] .tiFyField-SelectJsSelectedItems > li {
     padding-right: 5px;
     color: #BBB;
     background-color: #F4F4F4;
 }
 
-.FieldSelectJs[aria-disabled="true"][aria-multiple="true"] .FieldSelectJs-selectionItem {
+.tiFyField-SelectJs[aria-disabled="true"][aria-multiple="true"] .tiFyField-SelectJsSelectedItems > li {
     border: 1px solid #DDD;
 }
 
-.FieldSelectJs-selectionItem[aria-highlight="true"] {
-    animation: 1s FieldSelectJsHighlight;
+.tiFyField-SelectJsSelectedItems > li[aria-highlight="true"] {
+    animation: 1s tiFySelectHighlightItem;
 }
 
-@-webkit-keyframes FieldSelectJsHighlight {
+@-webkit-keyframes tiFySelectHighlightItem {
     25% {
         background-color: #FFFA90;
         border-color: #DAD55E;
     }
 }
 
-@keyframes FieldSelectJsHighlight {
+@keyframes tiFySelectHighlightItem {
     25% {
         background-color: #FFFA90;
         border-color: #DAD55E;
@@ -193,39 +202,37 @@
     top: 50%;
     right: 2px;
     z-index: 2;
-    color: #999;
-    cursor: pointer;
-    display: inline-block;
-    font-weight: 700;
-    margin-right: 2px;
+
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     -o-transform: translateY(-50%);
     transform: translateY(-50%);
+
+    color: #999;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 700;
+    margin-right: 2px;
 }
 
-.FieldSelectJs-picker {
+.tiFyField-SelectJsPicker {
     position: absolute;
     display: none;
     margin: 0;
     padding: 0 4px;
     overflow: hidden;
     z-index: 99998;
+
     background-color: #FFF;
     border: 1px solid #E4E4E4;
 }
 
-.FieldSelectJs-picker[aria-open="true"] {
+.tiFyField-SelectJsPicker[aria-open="true"] {
     display: inherit;
 }
 
-.FieldSelectJs-pickerFilter {
-    margin: 4px 0;
-    width: 100%;
-}
-
-.FieldSelectJs-pickerItems {
+.tiFyField-SelectJsPickerItems {
     margin: 0 -4px;
     max-height: 10em;
     list-style-type: none;
@@ -233,51 +240,58 @@
     overflow-y: auto;
 }
 
-.FieldSelectJs-picker[aria-complete="false"] .FieldSelectJs-pickerItems {
+.tiFyField-SelectJsPicker[aria-complete="false"] .tiFyField-SelectJsPickerItems {
     padding-bottom: 20px;
 }
 
-.FieldSelectJs-pickerItem {
+.tiFyField-SelectJsPickerFilter {
+    margin: 4px 0;
+    width: 100%;
+}
+
+.tiFyField-SelectJsPickerItems > li {
     position: relative;
     margin: 0;
     padding: 5px;
     display: block;
     line-height: 1;
     min-height: 1.2em;
+    display: block;
     cursor: pointer;
+
     color: #444;
 }
 
-.FieldSelectJs-pickerItem[aria-selected="true"] {
+.tiFyField-SelectJsPickerItems > li[aria-selected="true"] {
     background-color: DodgerBlue;
     color: #FFF;
 }
 
-.FieldSelectJs-pickerItem:not([aria-selected="true"])[aria-disabled="true"] {
+.tiFyField-SelectJsPickerItems > li:not([aria-selected="true"])[aria-disabled="true"] {
     color: #AAA;
 }
 
-.FieldSelectJs-picker[aria-multiple="false"] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem{
-    background-color:inherit;
+.tiFyField-SelectJsPicker[aria-duplicable="true"] .tiFyField-SelectJsPickerItems > li[aria-selected="true"] {
+    background-color: #DDD;
     color: inherit;
 }
 
-.FieldSelectJs-picker[aria-multiple] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem:hover,
-.FieldSelectJs-picker[aria-multiple] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem[aria-selected="true"]:hover {
+.tiFyField-SelectJsPickerItems > li:hover,
+.tiFyField-SelectJsPicker[aria-duplicable="true"] .tiFyField-SelectJsPickerItems > li[aria-selected="true"]:hover {
     background-color: DodgerBlue;
     color: #FFF;
 }
 
-.FieldSelectJs-picker[aria-multiple] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem:not([aria-selected="true"])[aria-disabled="true"]:hover {
+.tiFyField-SelectJsPickerItems > li:not([aria-selected="true"])[aria-disabled="true"]:hover {
     background-color: #FFF;
     color: #AAA;
 }
 
-.FieldSelectJs-picker[aria-multiple] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem[aria-disabled="true"]:hover {
+.tiFyField-SelectJsPickerItems > li[aria-disabled="true"]:hover {
     cursor: inherit;
 }
 
-.FieldSelectJs-pickerMore {
+.tiFyField-SelectJsPickerMore {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -294,21 +308,21 @@
     background: #F4F4F4;
 }
 
-.FieldSelectJs-pickerMore:hover,
-.FieldSelectJs-pickerMore:active,
-.FieldSelectJs-pickerMore:focus {
+.tiFyField-SelectJsPickerMore:hover,
+.tiFyField-SelectJsPickerMore:active,
+.tiFyField-SelectJsPickerMore:focus {
     color: #444;
 }
 
-.FieldSelectJs-pickerMore:focus {
+.tiFyField-SelectJsPickerMore:focus {
     outline: none;
 }
 
-.FieldSelectJs-picker[aria-complete="true"] .FieldSelectJs-pickerMore {
+.tiFyField-SelectJsPicker[aria-complete="true"] .tiFyField-SelectJsPickerMore {
     display: none;
 }
 
-.FieldSelectJs-pickerLoader {
+.tiFyField-SelectJsPickerLoader {
     position: absolute;
     left: 0;
     right: 0;
@@ -323,6 +337,7 @@
 
 .tiFyField-SelectJsPickerSpinkit {
     margin: 0 auto;
+
     -webkit-transform: scale(0.3);
     -moz-transform: scale(0.3);
     -ms-transform: scale(0.3);

@@ -66,14 +66,6 @@ class ParamsBag implements ParamsBagContract
     /**
      * {@inheritdoc}
      */
-    public function count()
-    {
-        return count($this->attributes);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator()
     {
         return new ArrayIterator($this->attributes);

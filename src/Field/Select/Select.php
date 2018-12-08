@@ -49,7 +49,7 @@ class Select extends FieldController
         $value = $this->get('value', null);
 
         if (is_null($value)) :
-            return [];
+            return null;
         endif;
 
         if (!is_array($value)) :
@@ -71,6 +71,7 @@ class Select extends FieldController
     public function parse($attrs = [])
     {
         parent::parse($attrs);
+
         $this->parseOptions();
 
         if ($this->get('multiple')) :

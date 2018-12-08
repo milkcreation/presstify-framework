@@ -2,6 +2,7 @@
 
 namespace tiFy\Partial\Slider;
 
+use tiFy\Contracts\Kernel\Validator;
 use tiFy\Partial\PartialController;
 
 class Slider extends PartialController
@@ -9,16 +10,19 @@ class Slider extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *
+     *      @var string[]|callable[] $items Liste des éléments.
+     *                                      Liste de sources d'image|Liste de contenu HTML|Liste de fonction
      * }
      */
     protected $attributes = [
+        'before'  => '',
+        'after'   => '',
         'attrs'   => [],
         'items'   => [],
         // Options
         // @see http://kenwheeler.github.io/slick/#settings
         'options' => [],
-
+        'viewer'  => []
     ];
 
     /**
@@ -50,10 +54,26 @@ class Slider extends PartialController
     /**
      * {@inheritdoc}
      */
+    public function defaults()
+    {
+        return [
+            /** @see https://picsum.photos/images */
+            'items' => [
+                'https://picsum.photos/800/800/?image=768',
+                'https://picsum.photos/800/800/?image=669',
+                'https://picsum.photos/800/800/?image=646',
+                'https://picsum.photos/800/800/?image=883'
+            ]
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('PartialSlider');
-        \wp_enqueue_script('PartialSlider');
+        wp_enqueue_style('PartialSlider');
+        wp_enqueue_script('PartialSlider');
     }
 
     /**
@@ -61,25 +81,18 @@ class Slider extends PartialController
      */
     public function parse($attrs = [])
     {
-        $this->set(
-            'items',
-            [
-                /** @see https://picsum.photos/images */
-                "<img src=\"https://picsum.photos/800/800/?image=768\"/>",
-                "<img src=\"https://picsum.photos/800/800/?image=669\"/>",
-                "<img src=\"https://picsum.photos/800/800/?image=646\"/>",
-                "<img src=\"https://picsum.photos/800/800/?image=883\"/>"
-            ]
-        );
-
         parent::parse($attrs);
 
         $items = $this->get('items', []);
+
+        /** @var Validator $validator */
+        $validator = app('validator');
         foreach($items as &$item) :
-            if (is_string($item)) :
-                $item = ['content' => $item];
+            if (is_callable($item)) :
+                $item = call_user_func($item);
+            elseif ($validator->isUrl($item)) :
+                $item = "<img src=\"{$item}\"/>";
             endif;
-            $item['tag'] = 'div';
         endforeach;
         $this->set('items', $items);
 

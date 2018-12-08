@@ -2,14 +2,17 @@
 
 namespace tiFy\Field;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use tiFy\Contracts\Field\FieldController as FieldControllerContract;
+use tiFy\Contracts\Field\FieldController as FieldControllerInterface;
 use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\View\ViewEngine;
+use tiFy\Field\FieldOptionsCollectionController;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-abstract class FieldController extends ParamsBag implements FieldControllerContract
+abstract class FieldController extends ParamsBag implements FieldControllerInterface
 {
     /**
      * Liste des attributs de configuration.
@@ -28,11 +31,6 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      * @var int
      */
     protected $index = 0;
-
-    /**
-     * @todo
-     */
-    protected $options;
 
     /**
      * Instance du moteur de gabarits d'affichage.
@@ -59,7 +57,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
         /** @var FieldManager $field */
         $field = app('field');
         $this->index = $field->index($this);
-        $this->index ? parent::__construct($attrs) : $this->boot();
+        $this->index ? $this->parse($attrs) : $this->boot();
     }
 
     /**
@@ -172,7 +170,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     public function getOptions()
     {
-        return $this->options;
+        return app()->resolve('field.item.field_options.collection.' . $this->getId());
     }
 
     /**
@@ -212,7 +210,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     public function options()
     {
-        echo $this->options;
+        echo $this->getOptions();
     }
 
     /**
@@ -276,7 +274,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     /**
      * Traitement de l'attribut de configuration de la valeur de soumission du champ "value".
      *
-     * @return void
+     * @return array
      */
     protected function parseValue()
     {
@@ -292,14 +290,20 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     protected function parseOptions()
     {
-        $options = $this->get('options', []);
+        $resolved = app()->singleton(
+            'field.item.field_options.collection.' . $this->getId(),
+            function() {
+                return new FieldOptionsCollectionController($this->get('options', []));
+            }
+        )->build();
 
-        if (!$options instanceof SelectOptions) :
-            $options = new SelectOptions($options);
-            $options->setSelected($this->getValue());
-        endif;
-
-        $this->options = $options;
+        $resolved->init();
+        /** @var FieldOptionsItemController $item */
+        foreach($resolved as $item) :
+            if (!$item->isGroup() && in_array($item->getValue(), Arr::wrap($this->getValue()), true)) :
+                $item->push('attrs', 'selected');
+            endif;
+        endforeach;
     }
 
     /**

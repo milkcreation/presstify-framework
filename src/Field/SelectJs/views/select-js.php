@@ -7,9 +7,7 @@
 <?php $this->before(); ?>
 
 <div <?php $this->attrs(); ?>>
-    <?php $this->insert('handler', $this->all()); ?>
-    <?php $this->insert('selected', $this->all()); ?>
-    <?php $this->insert('picker', $this->all()); ?>
+    <?php echo field('select', $this->get('handler', [])); ?>
 </div>
 
 <?php $this->after(); ?>
