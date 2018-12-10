@@ -16,7 +16,6 @@
 .FieldSelectJs-trigger {
     position: relative;
     min-height: 1.92em;
-    cursor: pointer;
     border: 1px solid #E4E4E4;
 }
 
@@ -27,6 +26,7 @@
     bottom:0;
     left:0;
     z-index:2;
+    cursor:inherit;
 }
 
 .FieldSelectJs[aria-arrow="true"] .FieldSelectJs-trigger {
@@ -84,9 +84,12 @@
 }
 
 .FieldSelectJs-autocomplete {
+    position:relative;
     margin: 0;
+    padding:2px 7px;
     border: none;
     width: 100%;
+    z-index:3;
 }
 
 .FieldSelectJs[aria-disabled="true"] .FieldSelectJs-autocomplete {
@@ -110,24 +113,22 @@
     clear: both;
 }
 
-.FieldSelectJs[aria-multiple="false"] .FieldSelectJs-selection {
-    position: relative;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-}
-
 .FieldSelectJs-selectionItem {
     position: relative;
     cursor: default;
-    margin: 2px 0;
-    margin-left: 2px;
-    margin-right: 2px;
+    margin: 2px;
     padding: 0 5px;
     line-height: 1.4;
     white-space: nowrap;
     background-color: #FFF;
+}
+
+.FieldSelectJs[aria-multiple="false"][aria-autocomplete="true"] .FieldSelectJs-selection{
+    position: absolute;
+    top:0;
+    right:20px;
+    bottom:0;
+    left:0;
 }
 
 .FieldSelectJs[aria-multiple="true"] .FieldSelectJs-selectionItem {
@@ -135,10 +136,6 @@
     background-color: #E4E4E4;
     border: 1px solid #BBB;
     border-radius: 2px;
-}
-
-.FieldSelectJs[aria-sortable="true"] .FieldSelectJs-selectionItem {
-    padding-left: 15px;
 }
 
 .FieldSelectJs[aria-disabled="true"] .FieldSelectJs-selectionItem {
@@ -169,30 +166,43 @@
     }
 }
 
-.tiFyField-SelectJsSelectedItems > li > [aria-handle="sort"] {
+.FieldSelectJs-selectionItem[aria-sortable="true"]  {
+    padding-left: 15px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.FieldSelectJs-selectionItemSort {
     position: absolute;
     top: 50%;
     left: 4px;
-
-    -webkit-transform: translateY(-50%) rotate(90deg);
-    -moz-transform: translateY(-50%) rotate(90deg);
-    -ms-transform: translateY(-50%) rotate(90deg);
-    -o-transform: translateY(-50%) rotate(90deg);
-    transform: translateY(-50%) rotate(90deg);
-
+    z-index:3;
     color: #999;
     cursor: move;
     display: block;
     font-weight: 700;
     padding: 2px 0;
-    margin-right: 2px;
+    margin: 0;
+    -webkit-transform: translateY(-50%) rotate(90deg);
+    -moz-transform: translateY(-50%) rotate(90deg);
+    -ms-transform: translateY(-50%) rotate(90deg);
+    -o-transform: translateY(-50%) rotate(90deg);
+    transform: translateY(-50%) rotate(90deg);
 }
 
-.tiFyField-SelectJsSelectedItems > li > [aria-handle="remove"] {
+.FieldSelectJs-selectionItem[aria-removable="true"] {
+    padding-right: 20px;
+}
+
+.FieldSelectJs-selectionItemRemove {
     position: absolute;
     top: 50%;
     right: 2px;
-    z-index: 2;
+    z-index: 3;
     color: #999;
     cursor: pointer;
     display: inline-block;
@@ -246,6 +256,12 @@
     min-height: 1.2em;
     cursor: pointer;
     color: #444;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .FieldSelectJs-pickerItem[aria-selected="true"] {
@@ -282,12 +298,12 @@
     right: 0;
     bottom: 0;
     left: 0;
-    padding: 1px 0;
+    padding: 0;
     z-index: 1;
-
+    height:20px;
     text-decoration: none;
     color: #2B2B2B;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     text-align: center;
     border-top: solid 1px #E4E4E4;
@@ -312,17 +328,25 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 20px;
+    bottom: 0;
     padding: 0;
-    display: none;
+    height:20px;
+    display:none;
     z-index: 2;
-
     background: #FFF;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
 }
 
+.FieldSelectJs-picker[aria-loader="true"] {
+    min-height: 20px;
+}
+
+.FieldSelectJs-picker[aria-loader="true"] .FieldSelectJs-pickerLoader{
+    display:inherit;
+}
+
 .tiFyField-SelectJsPickerSpinkit {
-    margin: 0 auto;
+    margin: 0 auto !important;
     -webkit-transform: scale(0.3);
     -moz-transform: scale(0.3);
     -ms-transform: scale(0.3);
