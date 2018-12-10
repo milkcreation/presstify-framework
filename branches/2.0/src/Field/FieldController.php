@@ -232,10 +232,6 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     protected function parseDefaults()
     {
-        if (!$this->has('attrs.id')) :
-            $this->set('attrs.id', 'tiFyField-' . class_info($this)->getShortName() . '-' . $this->getId());
-        endif;
-
         $default_class = 'tiFyField-' . class_info($this)->getShortName() .
             ' tiFyField-' . class_info($this)->getShortName() . '--' . $this->getIndex();
         if (!$this->has('attrs.class')) :

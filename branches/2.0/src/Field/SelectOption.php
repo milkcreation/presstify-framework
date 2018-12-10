@@ -156,7 +156,7 @@ class SelectOption extends ParamsBag
      */
     public function tagClose()
     {
-        return "\n" . str_repeat("\t", $this->depth) . ($this->isGroup() ? "</optgroup>" : "</option>");
+        return $this->isGroup() ? "</optgroup>" : "</option>";
     }
 
     /**
@@ -164,7 +164,7 @@ class SelectOption extends ParamsBag
      */
     public function tagContent()
     {
-        return $this->getContent() ? "\n" . str_repeat("\t", $this->depth+1) . $this->getContent() : '';
+        return $this->getContent() ? $this->getContent() : '';
     }
 
     /**
