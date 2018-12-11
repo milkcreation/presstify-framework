@@ -26,6 +26,7 @@
 
     $.widget(
         'tify.tifyselect', {
+            id: undefined,
             // Liste des attributs de configuration par défaut.
             options: {
                 autocomplete: false,
@@ -47,12 +48,11 @@
                 },
                 disabled: false,
                 duplicate: false,
-                id: '',
                 max: -1,
                 multiple: false,
                 picker: {
                     appendTo: '',
-                    class: '',
+                    attrs: [],
                     delta: {
                         top: 0,
                         left: 0,
@@ -66,10 +66,7 @@
                 removable: true,
                 sortable: {},
                 source: {},
-                trigger: {
-                    arrow: true,
-                    class: ''
-                }
+                trigger: true
             },
 
             // Instanciation de l'élément.
@@ -78,12 +75,14 @@
 
                 this.el = this.element;
 
+                this.id = $(this.el).data('id');
+
                 this.flags = {
-                    hasArrow: true,
                     hasAutocomplete: false,
                     hasFilter: false,
                     hasSelection: false,
                     hasSource: false,
+                    hasTrigger: true,
                     isComplete: false,
                     isDisabled: true,
                     isDuplicable: false,
@@ -91,6 +90,8 @@
                     isOpen: false,
                     isRemovable: true,
                     isSortable: false,
+                    max:-1,
+                    mustEnabled: true,
                     onAutocomplete:false,
                     page: 1,
                     cache: undefined
@@ -119,7 +120,8 @@
                 $.extend(
                     true,
                     this.options,
-                    $.parseJSON(decodeURIComponent(this.el.data('options')))
+                    tify[this.id].options || {},
+                    this.el.data('options') && $.parseJSON(decodeURIComponent(this.el.data('options'))) || {}
                 );
             },
 
@@ -127,12 +129,13 @@
             _initFlags: function () {
                 this.flags.hasAutocomplete = !!this.option('autocomplete');
                 this.flags.hasSource = (this.option('source') !== false);
-                this.flags.hasArrow = this.option('trigger.arrow');
+                this.flags.hasTrigger = !!this.option('trigger');
                 this.flags.isDisabled = !!this.option('disabled');
                 this.flags.isMultiple = !!this.option('multiple');
                 this.flags.isDuplicable = !!(this.option('duplicate') && this.flags.isMultiple);
                 this.flags.isRemovable = !!(this.option('removable') && this.flags.isMultiple);
                 this.flags.isSortable = (this.option('sortable') !== false) && this.flags.isMultiple;
+                this.flags.max = this.flags.isMultiple ? parseInt(this.option('max')) : -1;
             },
 
             // Initialisation des agents de contrôle.
@@ -171,7 +174,7 @@
                 this.el.attr('aria-multiple', this.flags.isMultiple);
                 this.el.attr('aria-sortable', this.flags.isSortable);
                 this.el.attr('aria-duplicable', this.flags.isDuplicable);
-                this.el.attr('aria-arrow', this.flags.hasArrow);
+                this.el.attr('aria-arrow', this.flags.hasTrigger);
             },
 
             // Initialisation du controleur de traitement.
@@ -184,19 +187,36 @@
             _initItems: function () {
                 let self = this;
 
-                if ($('option', this.handler).length) {
-                    self._selectedSet(this.handler.val());
+                if (this.flags.hasSource) {
+                    let items = tify[this.id].items || [];
 
-                    $('option', this.handler).each(function (i, el) {
-                        let $el = $(el);
+                    items.forEach(function (item, index) {
+                        let value = item.value.toString();
 
-                        self._setItem(i, $el.val(), $el.text());
+                        if (self.flags.isMultiple) {
+                            self._selectedAdd(value);
+                        } else {
+                            self._selectedSet(value);
+                        }
 
-                        $el.remove();
+                        self._setItem(index, value, item.content, item.selection, item.picker);
                     });
+                } else {
+                    if ($('option', this.handler).length) {
+                        self._selectedSet(this.handler.val());
+
+                        $('option', this.handler).each(function () {
+                            let value = $(this).val(),
+                                index = self._getItemIndex(value);
+
+                            self._setItem(index, value, $(this).text());
+
+                            $(this).remove();
+                        });
+                    }
                 }
 
-                this.items.forEach(function(item, index) {
+                this.items.forEach(function (item, index) {
                     self._pickerAddItem(index);
 
                     if (self._selectedHas(item.value)) {
@@ -205,6 +225,8 @@
                         self._pickerAddSelected(index);
                     }
                 });
+
+                this.flags.mustEnabled = false;
 
                 this.handler.val(this.selected);
             },
@@ -248,8 +270,6 @@
                         .html(this.option('picker.more'))
                         .prependTo(this.picker)
                         .addClass(this.option('classes.pickerMore'));
-
-                    this.picker.attr('aria-complete', false);
                 }
             },
 
@@ -294,7 +314,7 @@
             // SETTER
             // ---------------------------------------------------------------------------------------------------------
             // Définition d'un élément du controleur de traitement.
-            _setItem: function (index, value, content) {
+            _setItem: function (index, value, content, selection, picker) {
                 let item = {
                     content: content,
                     handler:undefined,
@@ -303,9 +323,9 @@
                     selection: undefined,
                     value: value
                 };
-                item.handler = this._setItemHandler(null, item);
-                item.picker = this._setItemPicker(null, item);
-                item.selection = this._setItemSelection(null, item);
+                item.handler = this._setItemHandler(undefined, item);
+                item.picker = this._setItemPicker(picker, item);
+                item.selection = this._setItemSelection(selection, item);
 
                 this.items[index] = item;
             },
@@ -362,16 +382,18 @@
             _setQueryItemsComplete: function () {
                 this.flags.isComplete = true;
                 this.picker.attr('aria-complete', true);
-                this.flags.page = 1;
-
-                this._offPickerMoreQueryItems();
             },
 
             // GETTER
             // ---------------------------------------------------------------------------------------------------------
+            // Récupération de la liste des éléments.
+            _getItems: function () {
+                return this.items;
+            },
+
             // Récupération d'un élément.
-            _getItem: function (i) {
-                return this.items[i];
+            _getItem: function (index) {
+                return this.items[index];
             },
 
             // Récupération de l'indice d'un élément selon sa valeur
@@ -400,7 +422,9 @@
             // ---------------------------------------------------------------------------------------------------------
             // Ajout d'un élément au controleur de traitement.
             _handlerAddItem(index) {
-                this.items[index].handler.appendTo(this.handler);
+                if (!this.handler.find(this.items[index].handler).length) {
+                    this.items[index].handler.appendTo(this.handler);
+                }
             },
 
             // Suppression d'un élément du controleur de traitement.
@@ -413,16 +437,25 @@
                 this.items[index].handler.remove();
             },
 
-            // Ajout d'une selection à la liste de sélection.
+            // Ajout d'un élement à la liste de sélection.
             _pickerAddItem(index) {
-                let $item = this.items[index].picker.appendTo(this.pickerItems);
+                if (!this.pickerItems.find(this.items[index].picker).length) {
+                    let $item = this.items[index].picker.appendTo(this.pickerItems);
 
-                this._onPickerItemClick($item);
+                    this._onPickerItemClick($item);
+                }
             },
 
             // Ajout d'une selection à la liste de sélection.
             _pickerAddSelected(index) {
                 this.items[index].picker.attr('aria-selected', true);
+            },
+
+            // Désactivation d'un élément de la liste de sélection.
+            _pickerDisableItem(index) {
+                if (this.pickerItems.find(this.items[index].picker).length) {
+                    this._offPickerItemClick(this.items[index].picker);
+                }
             },
 
             // Suppression d'une selection à la liste de sélection.
@@ -446,9 +479,19 @@
                 }
             },
 
+            // Vidage de la liste des éléments selectionnés.
+            _selectedFlush: function () {
+                this.selected = [];
+            },
+
             // Vérification si un élément est selectionné.
             _selectedHas: function (value) {
                 return this.selected.indexOf(value.toString()) !== -1;
+            },
+
+            // Vérification si le nombre maximum de valeur est atteint
+            _selectedMaxAttempt: function () {
+                return ((this.flags.max > 0) && (this.flags.max < this.selected.length));
             },
 
             // Définition de la liste des éléments selectionnés.
@@ -480,12 +523,25 @@
 
             // Ajout d'une selection à la liste des éléments sélectionnés.
             _selectionAddItem(index) {
-                let $item = this.items[index].selection;
+                if (!this.selection.find(this.items[index].selection).length) {
+                    let $item = this.items[index].selection.appendTo(this.selection);
 
-                $item.appendTo(this.selection);
+                    if (this.flags.isRemovable) {
+                        this._onSelectionItemRemoveClick($item);
+                    }
 
-                if (this.flags.isRemovable) {
-                    this._onSelectionItemRemoveClick($item);
+                    if (!this.flags.isMultiple && this.flags.hasAutocomplete) {
+                        this.autocompleteInput.val($('<span/>').html(this.items[index].content).text());
+                    }
+                }
+            },
+
+            // Désactivation d'une selection à la liste des éléments sélectionnés.
+            _selectionDisableItem(index) {
+                if (this.selection.find(this.items[index].selection).length) {
+                    if (this.flags.isRemovable) {
+                        this._offSelectionItemRemoveClick(this.items[index].selection);
+                    }
                 }
             },
 
@@ -501,16 +557,21 @@
 
             // ACTIONS
             // ---------------------------------------------------------------------------------------------------------
+            // Abandon de la requête de récupération Ajax.
+            _doAjaxAbort: function () {
+                if (this.xhr !== undefined) {
+                    this.xhr.abort();
+                }
+            },
+
             // Récupération de la liste des éléments via Ajax.
             _doAjaxQuery: function () {
                 let self = this;
 
-                if (this.flags.hasSource) {
-                    if (this.xhr !== undefined) {
-                        this.xhr.abort();
-                    }
+                if (this.flags.hasSource && !this.flags.isComplete) {
+                    this._doAjaxAbort();
 
-                    self._doPickerLoaderShow();
+                    this._doPickerLoaderShow();
 
                     let query_args = $.extend(
                         this.option('source.query_args'),
@@ -529,22 +590,31 @@
                                     index = self._getItemIndex(value);
 
                                 if(self.items.length === index){
-                                    self._setItem(index, attrs.value.toString(), attrs.content);
+                                    self._setItem(
+                                        index,
+                                        attrs.value.toString(),
+                                        attrs.content,
+                                        attrs.selection,
+                                        attrs.picker
+                                    );
                                 }
                                 self._pickerAddItem(index);
                             });
 
                             if (data.length < self.option('source.query_args.per_page')) {
                                 self._setQueryItemsComplete();
+                                self._offPickerMoreQueryItems();
                             } else {
+                                self._onPickerMoreQueryItems();
                                 self._doPageIncrease();
                             }
                         } else {
                             self._setQueryItemsComplete();
+                            self._offPickerMoreQueryItems();
                         }
                     }).always(function () {
                         self._doPickerLoaderHide();
-                        self.xhr = undefined;
+                        self._doAjaxAbort();
                     });
                 }
             },
@@ -552,8 +622,9 @@
             // Récupération des données en cache
             _doCacheRestore: function () {
                 if (this.flags.cache !== undefined) {
-                    this.flags.isComplete = this.flags.cache.complete || false;
-                    this.flags.page = this.flags.cache.page || 1;
+                    this.flags.isComplete = this.flags.cache.complete;
+                    this.flags.page = this.flags.cache.page;
+                    this.picker.attr('aria-complete', this.flags.isComplete);
                 }
             },
 
@@ -563,17 +634,18 @@
 
                 if (this.flags.isMultiple) {
                     if (this._selectedUpdate(item.value)) {
-                        this._handlerAddItem(item.index);
-                        this._selectionAddItem(item.index);
-                        this._pickerAddSelected(item.index);
+                        if (this._selectedMaxAttempt()) {
+                            this._selectedRemove(item.value);
+                            return alert(this.option('errors.max_attempt') || 'value max attempt.');
+                        } else {
+                            this._handlerAddItem(item.index);
+                            this._selectionAddItem(item.index);
+                            this._pickerAddSelected(item.index);
+                        }
                     } else {
                         this._handlerRemoveItem(item.index);
                         this._selectionRemoveItem(item.index);
                         this._pickerRemoveSelected(item.index);
-                    }
-
-                    if (this.flags.onAutocomplete) {
-                        this._doClose();
                     }
                 } else {
                     this._selectedSet(item.value);
@@ -603,20 +675,49 @@
 
             // Désactivation du controleur.
             _doDisable: function () {
-                this._offTriggerHandlerClick();
+                let self = this;
 
                 this.flags.isDisabled = true;
                 this.el.attr('aria-disabled', true);
                 this.handler.prop('disabled', true);
+
+                this._offTriggerHandlerClick();
+
+                this.items.forEach(function(item, index) {
+                    self._pickerDisableItem(index);
+                    self._selectionDisableItem(index);
+                });
+
+                if (this.flags.isSortable) {
+                    this.selection.sortable('disable');
+                }
             },
 
             // Activation du controleur.
             _doEnable: function () {
+                let self = this;
+
                 this.flags.isDisabled = false;
                 this.el.attr('aria-disabled', false);
                 this.handler.prop('disabled', false);
 
                 this._onTriggerHandlerClick();
+
+                if (this.flags.mustEnabled) {
+                    this.items.forEach(function (item, index) {
+                        self._pickerAddItem(index);
+
+                        if (self._selectedHas(item.value)) {
+                            self._handlerAddItem(index);
+                            self._selectionAddItem(index);
+                            self._pickerAddSelected(index);
+                        }
+                    });
+
+                    if (this.flags.isSortable) {
+                        this.selection.sortable('enable');
+                    }
+                }
 
                 if (this.flags.hasFilter) {
                     this._onPickerFilterKeyup();
@@ -676,8 +777,9 @@
                 }
 
                 if (placement === 'clever') {
-                    placement = ((this.window.outerHeight() + this.window.scrollTop()) < offset.top + this.picker.outerHeight()) ?
-                        'top' : 'bottom';
+                    placement = (
+                        (this.window.outerHeight() + this.window.scrollTop()) < offset.top + this.picker.outerHeight()
+                    ) ? 'top' : 'bottom';
                 }
 
                 switch (placement) {
@@ -694,19 +796,15 @@
 
             // Ouverture de la liste de selection.
             _doOpen: function () {
-                this._onOutsideClick();
-
-                if (!this.flags.isComplete) {
-                    this._onPickerMoreQueryItems();
-                }
-
                 this.flags.isOpen = true;
                 this.el.attr('aria-open', true);
                 this.picker.attr('aria-open', true);
 
+                this._onOutsideClick();
+
                 this._doPickerPosition();
 
-                if (!this.flags.isComplete && !this.flags.onAutocomplete) {
+                if (this.flags.hasSource && !this.flags.onAutocomplete) {
                     this._doAjaxQuery();
                 }
 
@@ -745,13 +843,12 @@
 
                 this.autocompleteInput
                     .focus(function() {
-                        if(self.flags.onAutocomplete && !self.pickerItems.is(':empty')) {
-                            self._doOpen();
-                        } else {
-                            self._doClose();
-                        }
+                        $(this).on('keyup.select-js.autocomplete.' + self.instance.uuid, function () {
+                            if (!self.flags.isMultiple) {
+                                self._handlerFlushItems();
+                                self._selectedFlush();
+                            }
 
-                        $(this).on('keypress.select-js.autocomplete.' + self.instance.uuid, function () {
                             if ($(this).val()) {
                                 if (self.flags.cache === undefined) {
                                     self.flags.cache = { complete: self.flags.isComplete, page: self.flags.page };
@@ -762,17 +859,14 @@
 
                                 self.pickerItems.empty();
 
-                                self._doPickerLoaderShow();
-                                self._doOpen();
-
                                 if (self.timeout !== undefined) {
                                     clearTimeout(self.timeout);
                                 }
-                                if (self.xhr !== undefined) {
-                                    self.xhr.abort();
-                                }
+
+                                self._doAjaxAbort();
 
                                 self.timeout = setTimeout(function () {
+                                    self._doOpen();
                                     self._doAjaxQuery();
                                     self.xhr.done(function (data) {
                                         if (!data.length) {
@@ -781,8 +875,10 @@
                                     });
                                 }, 1000);
                             } else {
+                                self._doClose();
+                                self._doAjaxAbort();
+                                self._doPickerLoaderHide();
                                 self.flags.onAutocomplete = false;
-
                                 self._doCacheRestore();
 
                                 self.items.forEach(function (item) {
@@ -792,6 +888,7 @@
                         });
                     })
                     .focusout(function() {
+                        self._doPickerLoaderHide();
                         self._doCacheRestore();
 
                         $(this).off('keyup.select-js.autocomplete.' + self.instance.uuid);
@@ -828,10 +925,22 @@
                         if ($(this).is(':not([aria-disabled="true"])')) {
                             e.preventDefault();
 
+                            $(this).attr('aria-highlight', true)
+                                .one(
+                                    'webkitAnimationEnd oanimationend msAnimationEnd animationend',
+                                    function () {
+                                        $(this).attr('aria-highlight', false);
+                                    }
+                                );
                             self._doChange($(this).data('index'));
                         }
                     }
                 );
+            },
+
+            // Désactivation du clic sur les élements de la liste de sélection.
+            _offPickerItemClick: function ($pickerItem) {
+                $pickerItem.off('click.select-js.picker.item.' + this.instance.uuid);
             },
 
             // Activation de la récupération d'éléments supplémentaires dans la liste de selection.
@@ -839,19 +948,15 @@
                 let self = this;
 
                 this.pickerItems.on('scroll.select-js.picker.items.' + this.instance.uuid, function () {
-                    if (self.xhr === undefined) {
-                        if (($(this).prop('scrollHeight') - $(this).innerHeight() - $(this).scrollTop()) < 20) {
-                            self._doAjaxQuery();
-                        }
+                    if (($(this).prop('scrollHeight') - $(this).innerHeight() - $(this).scrollTop()) < 20) {
+                        self._doAjaxQuery();
                     }
                 });
 
                 this.pickerMore.on('click.select-js.picker.more.' + this.instance.uuid, function (e) {
                     e.preventDefault();
 
-                    if (self.xhr === undefined) {
-                        self._doAjaxQuery();
-                    }
+                    self._doAjaxQuery();
                 });
             },
 
@@ -871,6 +976,13 @@
 
                         self._doRemove($(this).closest('[data-control="select-js.selection.item"]').data('index'));
                     });
+            },
+
+            // Désactivation de la suppression d'un éléments séléctionnés.
+            _offSelectionItemRemoveClick: function ($selectionItem) {
+                $selectionItem.find('[data-control="select-js.selection.item.remove"]').off(
+                    'click.select-js.selection.item.remove.' + this.instance.uuid
+                );
             },
 
             // Activation du clic sur le controleur d'affichage de la liste de sélection.

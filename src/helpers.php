@@ -53,7 +53,7 @@ if (!function_exists('assets')) :
      */
     function assets()
     {
-        /** @var Assets assets */
+        /** @var Assets $factory */
         $factory = app('assets');
 
         return $factory;
