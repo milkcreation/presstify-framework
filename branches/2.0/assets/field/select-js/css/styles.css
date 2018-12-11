@@ -72,17 +72,6 @@
     border-left-width: 4px;
 }
 
-.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-trigger {
-    cursor: inherit;
-    background-color: #F4F4F4;
-    color: #BBB;
-}
-
-.FieldSelectJs[aria-disabled="true"][aria-arrow="true"] .FieldSelectJs-trigger::before,
-.FieldSelectJs[aria-disabled="true"][aria-arrow="true"] .FieldSelectJs-trigger::after {
-    opacity: 0.5;
-}
-
 .FieldSelectJs-autocomplete {
     position:relative;
     margin: 0;
@@ -90,10 +79,6 @@
     border: none;
     width: 100%;
     z-index:3;
-}
-
-.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-autocomplete {
-    display: none;
 }
 
 .FieldSelectJs-selection {
@@ -138,28 +123,18 @@
     border-radius: 2px;
 }
 
-.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-selectionItem {
-    padding-right: 5px;
-    color: #BBB;
-    background-color: #F4F4F4;
-}
-
-.FieldSelectJs[aria-disabled="true"][aria-multiple="true"] .FieldSelectJs-selectionItem {
-    border: 1px solid #DDD;
-}
-
 .FieldSelectJs-selectionItem[aria-highlight="true"] {
-    animation: 1s FieldSelectJsHighlight;
+    animation: 1s FieldSelectJs-selectionItemHighlight;
 }
 
-@-webkit-keyframes FieldSelectJsHighlight {
+@-webkit-keyframes FieldSelectJs-selectionItemHighlight {
     25% {
         background-color: #FFFA90;
         border-color: #DAD55E;
     }
 }
 
-@keyframes FieldSelectJsHighlight {
+@keyframes FieldSelectJs-selectionItemHighlight {
     25% {
         background-color: #FFFA90;
         border-color: #DAD55E;
@@ -170,7 +145,6 @@
     padding-left: 15px;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -258,7 +232,6 @@
     color: #444;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -278,9 +251,12 @@
     color: inherit;
 }
 
-.FieldSelectJs-picker[aria-multiple] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem:hover,
+.FieldSelectJs-picker[aria-multiple] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem:hover {
+    background-color: #66b3ff;
+    color: #FFF;
+}
 .FieldSelectJs-picker[aria-multiple] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem[aria-selected="true"]:hover {
-    background-color: DodgerBlue;
+    background-color: #0073e6;
     color: #FFF;
 }
 
@@ -291,6 +267,22 @@
 
 .FieldSelectJs-picker[aria-multiple] .FieldSelectJs-pickerItems:hover .FieldSelectJs-pickerItem[aria-disabled="true"]:hover {
     cursor: inherit;
+}
+
+.FieldSelectJs-pickerItem[aria-highlight="true"] {
+    animation: 0.1s FieldSelectJs-pickerItemHightlight;
+}
+
+@-webkit-keyframes FieldSelectJs-pickerItemHightlight {
+    50% {
+        opacity:1;
+    }
+}
+
+@keyframes FieldSelectJs-pickerItemHightlight {
+    50% {
+        opacity:1;
+    }
 }
 
 .FieldSelectJs-pickerMore {
@@ -352,4 +344,42 @@
     -ms-transform: scale(0.3);
     -o-transform: scale(0.3);
     transform: scale(0.3);
+}
+
+.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-trigger {
+    cursor: inherit;
+    background-color: #F4F4F4;
+    color: #BBB;
+}
+
+.FieldSelectJs[aria-disabled="true"][aria-arrow="true"] .FieldSelectJs-trigger::before,
+.FieldSelectJs[aria-disabled="true"][aria-arrow="true"] .FieldSelectJs-trigger::after {
+    opacity: 0.5;
+}
+
+.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-selectionItem {
+    color: #BBB;
+    background-color: #F4F4F4;
+}
+
+.FieldSelectJs[aria-disabled="true"][aria-multiple="true"] .FieldSelectJs-selectionItem {
+    border: 1px solid #DDD;
+}
+
+.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-selectionItemRemove {
+    color: #BBB;
+    cursor:inherit;
+}
+
+.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-selectionItemRemove:hover {
+    color: #BBB;
+}
+
+.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-selectionItemSort {
+    color: #BBB;
+    cursor:inherit;
+}
+
+.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-autocomplete {
+    display: none;
 }

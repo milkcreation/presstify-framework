@@ -2,65 +2,53 @@
 
 namespace tiFy\Field\SelectJs;
 
+use tiFy\Field\SelectOptions;
+use tiFy\Field\SelectOption;
 use tiFy\Field\FieldController;
-use tiFy\Field\FieldOptionsItemController;
 use WP_Query;
 
 class SelectJs extends FieldController
 {
+    static $ajaxInit = false;
+
     /**
      * Liste des attributs de configuration.
      *
      * @var array $attributes {
-     * @var string $before Contenu placé avant le champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $name Attribut de configuration de la qualification de
-     *                                                            soumission du champ "name".
-     * @var string|array $value Attribut de configuration de la valeur initiale de
-     *      soumission du champ "value".
-     * @var array|FieldOptionsItemController[] $options Liste des choix de selection disponibles.
-     * @var array $source Liste des attributs de requête de récupération des
-     *      élèments.
-     * @var bool $disabled Activation/Désactivation du controleur de champ.
-     * @var bool $removable Activation/Désactivation de la suppression d'un élément
-     *      dans la liste des éléments sélectionné.
-     * @var bool $multiple Autorise la selection multiple d'éléments.
-     * @var bool $duplicate Autorise les doublons dans la liste de selection (multiple
-     *      actif doit être actif).
-     * @var bool $autocomplete Active le champs de selection par autocomplétion.
-     * @var int $max Nombre d'élément maximum @todo.
-     * @var array $sortable {
-     *          Liste des options du contrôleur ajax d'ordonnancement.
-     * @see http://jqueryui.com/sortable/
-     *      }
-     * @var array trigger {
-     *          Liste des attributs de configuration de l'interface d'action.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var array $attrs Liste des attrbuts de balise HTML.
+     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
+     *      @var string|array $value Valeur initiale de soumission du champ.
+     *      @var array|SelectOptions|SelectOption[] $options Liste des choix de selection disponibles. Si source inactif.
+     *      @var boolean|array $source Activation ou liste des attributs de requête de récupération Ajax des élèments.
+     *      @todo boolean $autocomplete Activation le champs de selection par autocomplétion.
+     *      @var boolean $disabled Activation/Désactivation du controleur de champ.
+     *      @var boolean $multiple Activation la selection multiple d'éléments.
+     *      @var int $max Nombre d'éléments maximum (multiple uniquement). défaut -1 pas de limite.
+     *      @var boolean removable Activation de la suppression des éléments depuis la liste des éléments sélectionnés.
+     *                             (multiple uniquement).
+     *      @var boolean|array $sortable Activation|Liste des options du contrôleur ajax d'ordonnancement.
+     *                                   (multiple uniquement). @see http://jqueryui.com/sortable/
+     *      @var boolean trigger Activation de l'affichage de l'interface d'ouverture et de fermeture du selecteur.
+     *      @var array picker {
+     *          Liste des attributs de configuration de l'interface du selecteur d'éléments.
      *
-     * @var string $class Classes HTML de l'élément.
-     * @var bool $arrow Affichage de la fléche de selection.
-     *      }
-     * @var array picker {
-     *          Liste des attributs de configuration de l'interface de selection des éléments.
+     *          @todo array $attrs Liste des attributs HTML.
+     *          @var string $appendTo Selecteur jQuery de positionnement dans le DOM. défaut body.
+     *          @var string $placement Comportement de la liste déroulante. top|bottom|clever. défaut clever (adaptatif).
+     *          @var array $delta {
+     *              Liste des valeurs d'ajustements de positionnement. Exprimée en px.
      *
-     * @var string $class Classes HTML de l'élément.
-     * @var string $appendTo Selecteur jQuery de positionnement dans le DOM. défaut
-     *      body.
-     * @var string $placement Comportement de la liste déroulante. top|bottom|clever.
-     *      défaut clever adaptatif.
-     * @var array $delta {
-     *
-     * @var int $top
-     * @var int $left
-     * @var int $width
+     *              @var int $top
+     *              @var int $left
+     *              @var int $width
      *          }
-     * @var bool $adminbar Gestion de la barre d'administration Wordpress. défaut
-     *      true.
-     * @var bool $filter Champ de filtrage des éléments de la liste de selection.
-     * @var string $loader Rendu de l'indicateur de préchargement.
-     * @var string $more Rendu de '+'.
+     *          @var boolean $filter Activation du champ de filtrage des éléments.
+     *          @var string $loader Rendu de l'indicateur de préchargement.
+     *          @var string $more Rendu de '+'.
      *      }
-     * @var array $viewer Liste des attributs de configuration de la classe des
-     *      gabarits d'affichage.
+     * @var array $viewer Liste des attributs de configuration de la classe des gabarits d'affichage.
      * }
      */
     protected $attributes = [
@@ -71,17 +59,15 @@ class SelectJs extends FieldController
         'value'        => null,
         'options'      => [],
         'source'       => false,
-        'disabled'     => false,
-        'removable'    => true,
+        //@todo 'autocomplete' => false,
+        //@todo 'disabled'     => false,
         'multiple'     => false,
-        'duplicate'    => false,
-        'sortable'     => true,
-        'autocomplete' => false,
+        'removable'    => true,
         'max'          => -1,
-        'trigger'      => [],
+        'sortable'     => false,
+        'trigger'      => true,
         'picker'       => [],
-        'viewer'       => [],
-        'controller'   => [],
+        'viewer'       => []
     ];
 
     /**
@@ -123,6 +109,16 @@ class SelectJs extends FieldController
     /**
      * {@inheritdoc}
      */
+    public function display()
+    {
+        assets()->setDataJs($this->getId(), $this->get('datas', []));
+
+        return $this->viewer('select-js', $this->all());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function enqueue_scripts()
     {
         partial('spinner')->enqueue_scripts('three-bounce');
@@ -157,58 +153,74 @@ class SelectJs extends FieldController
             ]
         );
 
+        $this->set('attrs.data-id', $this->getId());
+
         $this->set(
-            'attrs.data-options',
-            rawurlencode(
-                json_encode(
+            'datas.options',
+            [
+                'autocomplete' => (bool)$this->get('autocomplete'),
+                'disabled'     => (bool)$this->get('disabled'),
+                'duplicate'    => (bool)$this->get('duplicate'),
+                'max'          => (int)$this->get('max'),
+                'multiple'     => (bool)$this->get('multiple'),
+                'picker'       => array_merge(
                     [
-                        'autocomplete' => (bool)$this->get('autocomplete'),
-                        'disabled'     => (bool)$this->get('disabled'),
-                        'duplicate'    => (bool)$this->get('duplicate'),
-                        'id'           => $this->getId(),
-                        'max'          => (int)$this->get('max'),
-                        'multiple'     => (bool)$this->get('multiple'),
-                        'picker'       => array_merge(
+                        'filter' => false,
+                        'loader' => (string)partial(
+                            'spinner',
                             [
-                                'filter' => false,
-                                'loader' => (string)partial(
-                                    'spinner',
-                                    [
-                                        'attrs'   => [
-                                            'id'    => '',
-                                            'class' => 'tiFyField-SelectJsPickerSpinkit',
-                                        ],
-                                        'spinner' => 'three-bounce',
-                                    ]
-                                ),
-                                'more'   => '+',
-                            ],
-                            $this->get('picker', [])
-                        ),
-                        'removable'    => (bool)$this->get('removable'),
-                        'selected'     => $this->getValue(),
-                        'sortable'     => $this->get('sortable'),
-                        'source'       => array_merge(
-                            [
-                                'action'      => 'field_select_js',
-                                '_ajax_nonce' => wp_create_nonce('FieldSelectJs' . $this->getId()),
-                                'id'          => $this->getId(),
-                                'query_args'  => [
-                                    'page'     => 1,
-                                    'per_page' => 10,
-                                    'in'       => [],
-                                    'not_in'   => [],
+                                'attrs'   => [
+                                    'id'    => '',
+                                    'class' => 'tiFyField-SelectJsPickerSpinkit',
                                 ],
-                                'viewer'      => $this->get('viewer', []),
-                            ],
-                            is_array($this->get('source')) ? $this->get('source') : []
+                                'spinner' => 'three-bounce',
+                            ]
                         ),
-                        'trigger'      => $this->get('trigger', []),
+                        'more'   => '+',
                     ],
-                    JSON_FORCE_OBJECT
+                    $this->get('picker', [])
+                ),
+                'removable'    => (bool)$this->get('removable'),
+                'selected'     => $this->getValue(),
+                'sortable'     => $this->get('sortable'),
+                'source'       => ($this->get('source') === false)
+                    ? false
+                    : array_merge(
+                        [
+                            'action'      => 'field_select_js',
+                            'query_args'  => [
+                                'page'     => 1,
+                                'per_page' => 10,
+                                'in'       => [],
+                                'not_in'   => []
+                            ]
+                        ],
+                        is_array($this->get('source')) ? $this->get('source') : [],
+                        [
+                            '_ajax_nonce' => wp_create_nonce('FieldSelectJs' . $this->getId()),
+                            '_id' => $this->getId(),
+                            '_viewer' => $this->get('viewer', []),
+                        ]
+                    ),
+                'trigger'      => $this->get('trigger', []),
+                'errors'       => [
+                    'max_attempt' => __('Le nombre maximum de valeurs autorisées est atteint.', 'tify')
+                ]
+            ]
+        );
+
+        $this->set(
+            'datas.items',
+            !$this->get('datas.options.source')
+                ? []
+                : $this->queryItems(
+                array_merge(
+                    $this->get('datas.options.source.query_args', []),
+                    ['in' => $this->getValue(), 'per_page' => -1]
                 )
             )
         );
+
         $this->set('attrs.class', $this->get('attrs.class') . ' FieldSelectJs');
         $this->pull('attrs.name');
         $this->pull('attrs.value');
@@ -229,7 +241,7 @@ class SelectJs extends FieldController
             ? array_map('trim', explode(',', $value))
             : (array)$value;
         $value = $this->get('duplicate') ? $value : array_unique($value);
-        $value = $this->get('multiple') ? $value : reset($value);
+        $value = $this->get('multiple') ? $value : [reset($value)];
 
         return $value;
     }
@@ -241,9 +253,9 @@ class SelectJs extends FieldController
      */
     public function wp_ajax()
     {
-        check_ajax_referer('FieldSelectJs' . request()->post('id'));
+        check_ajax_referer('FieldSelectJs' . request()->post('_id'));
 
-        $this->set('viewer', request()->post('viewer', []));
+        $this->set('viewer', request()->post('_viewer', []));
 
         wp_send_json($this->queryItems(request()->post('query_args', [])));
     }
@@ -259,7 +271,7 @@ class SelectJs extends FieldController
     {
         $args['post__in'] = $args['post__in'] ?? ($args['in'] ?? []);
         $args['post__not_in'] = $args['post__not_in'] ?? ($args['not_in'] ?? []);
-        $args['posts_per_page'] = $args['posts_per_page'] ?? ($args['per_page'] ?? 20);
+        $args['posts_per_page'] = $args['posts_per_page'] ?? ($args['per_page'] ?? 2);
         $args['paged'] = $args['page'] ?? 1;
         if (!empty($args['term'])) :
             $args['s'] = $args['term'];

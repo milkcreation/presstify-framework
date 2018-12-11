@@ -16,7 +16,7 @@ jQuery(document).ready(function ($) {
             if (o.ajax) {
                 if (tify[o.id].content === undefined) {
                     tify[o.id].content = resp;
-                    $.post(tify.ajax_url, o.ajax, function(resp) {$('.modal-content', $modal).$modal.html(resp);})
+                    $.post(tify.ajax_url, o.ajax, function(resp) {$('.modal-content', $modal).$modal.html(resp);});
                 } else {
                     $('.modal-content', $modal).html(tify[o.id].content);
                 }

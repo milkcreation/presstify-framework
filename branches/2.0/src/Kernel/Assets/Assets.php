@@ -64,9 +64,7 @@ final class Assets implements AssetsContract
                 $js = Arr::get($this->inlineJs, 'admin.header', '')
 
                 ?>
-                <script type="text/javascript">/* <![CDATA[ */
-                    var tify_ajaxurl = '<?php echo admin_url('admin-ajax.php',
-                        'relative');?>';<?php echo 'var tify={};'; if ($datas) : foreach ($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
+                <script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl = '<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify={};'; if ($datas) : foreach ($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
             }
         );
 
@@ -114,8 +112,7 @@ final class Assets implements AssetsContract
                 $js = Arr::get($this->inlineJs, 'user.footer', '');
 
                 if ($datas || $js) :
-                    ?>
-                    <script type="text/javascript">/* <![CDATA[ */<?php if ($datas) : foreach ($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
+                    ?><script type="text/javascript">/* <![CDATA[ */<?php if ($datas) : foreach ($datas as $k => $v) : echo "tify['{$k}']=" . wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
                 endif;
             }
         );
@@ -136,9 +133,7 @@ final class Assets implements AssetsContract
                 $js = Arr::get($this->inlineJs, 'user.header', '');
 
                 ?>
-                <script type="text/javascript">/* <![CDATA[ */
-                    var tify_ajaxurl = '<?php echo admin_url('admin-ajax.php',
-                        'relative');?>';<?php echo 'var tify={};'; if ($datas) : foreach ($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
+                <script type="text/javascript">/* <![CDATA[ */var tify_ajaxurl = '<?php echo admin_url('admin-ajax.php', 'relative');?>';<?php echo 'var tify={};'; if ($datas) : foreach ($datas as $k => $v) : echo "tify['{$k}']=" . \wp_json_encode($v) . ";"; endforeach; endif; echo $js; ?>/* ]]> */</script><?php
             }
         );
     }
