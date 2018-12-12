@@ -2,8 +2,8 @@
 
 namespace tiFy\Field\SelectJs;
 
-use tiFy\Field\SelectOptions;
-use tiFy\Field\SelectOption;
+use tiFy\Field\Select\SelectOptions;
+use tiFy\Field\Select\SelectOption;
 use tiFy\Field\FieldController;
 use WP_Query;
 
@@ -133,8 +133,6 @@ class SelectJs extends FieldController
     {
         parent::parse($attrs);
 
-        $this->parseOptions();
-
         $this->set('attrs.data-control', 'select-js');
 
         $this->set(
@@ -149,7 +147,7 @@ class SelectJs extends FieldController
                     'class'        => '',
                     'data-control' => 'select-js.handler',
                 ],
-                'options'   => $this->getOptions(),
+                'options'   => $this->get('options'),
             ]
         );
 

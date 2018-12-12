@@ -1,6 +1,9 @@
 <?php
 /**
+ * Sidebar
+ * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\Sidebar\SidebarItem[] $items
  */
 ?>
 
@@ -10,13 +13,13 @@
 
     <?php !$this->get('toggle') ? : $this->insert('toggle', $this->all()); ?>
 
-    <div class="tiFyPartial-SidebarPanel">
+    <div class="Sidebar-panel">
 
         <?php !$this->get('header') ? : $this->insert('header', $this->all()); ?>
 
-        <div class="tiFyPartial-SidebarBody">
+        <div class="Sidebar-body" data-control="sidebar.body">
             <?php if ($items = $this->get('items', [])) : ?>
-                <ul class="tiFyPartial-SidebarItems">
+                <ul class="Sidebar-items">
                 <?php foreach($items as $item) : ?>
                     <li <?php echo $this->htmlAttrs($item->get('attrs')); ?>><?php echo $item; ?></li>
                 <?php endforeach;?>

@@ -758,12 +758,13 @@
             // Positionnement de la liste de selection dans le DOM.
             _doPickerPosition: function () {
                 let offset = {},
+                    $base = this.el, // this.el || this.trigger
                     placement = this.option('picker.placement');
 
                 $.extend(
                     offset,
-                    this.trigger.offset(),
-                    {width: this.trigger.outerWidth()}
+                    $base.offset(),
+                    {width: $base.outerWidth()}
                 );
 
                 if (this.option('picker.delta.top')) {
@@ -776,18 +777,24 @@
                     offset.width += this.option('picker.delta.width');
                 }
 
+                // @todo Adminbar test
+                // let $html = $('html');
+                //offset.top += $html.outerHeight(true) - $html.height();
+
                 if (placement === 'clever') {
                     placement = (
                         (this.window.outerHeight() + this.window.scrollTop()) < offset.top + this.picker.outerHeight()
                     ) ? 'top' : 'bottom';
                 }
 
+                let borderDelta = ($base.outerHeight() - $base.innerHeight()) / 2;
+
                 switch (placement) {
                     case 'top' :
-                        offset.top -= this.picker.outerHeight() - 1;
+                        offset.top -= this.picker.outerHeight() - borderDelta;
                         break;
                     case 'bottom' :
-                        offset.top += this.trigger.outerHeight() - 1;
+                        offset.top += $base.outerHeight() - borderDelta;
                         break;
                 }
 

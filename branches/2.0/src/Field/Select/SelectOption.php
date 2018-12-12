@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\Field;
+namespace tiFy\Field\Select;
 
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
@@ -30,12 +30,6 @@ class SelectOption extends ParamsBag
     public function __construct($name, $attrs = [])
     {
         $this->name = $name;
-
-        if (is_string($attrs)) :
-            $attrs = [
-                'content' => $attrs
-            ];
-        endif;
 
         parent::__construct($attrs);
     }

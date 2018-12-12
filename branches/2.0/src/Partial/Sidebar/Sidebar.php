@@ -3,7 +3,6 @@
 namespace tiFy\Partial\Sidebar;
 
 use Illuminate\Support\Collection;
-use tiFy\Kernel\Tools;
 use tiFy\Partial\PartialController;
 
 /**
@@ -31,14 +30,14 @@ class Sidebar extends PartialController
      * @var array $attributes {
      *      @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
      *      @var int $z -index Profondeur de champs.
-     *      @var attrs $attrs Liste des attributs HTML.
+     *      @var array $attrs Liste des attributs HTML.
      *      @var string $pos Position de l'interface left (default)|right.
      *      @var bool $closed Etat de fermeture initial de l'interface.
      *      @var bool $outside_close Fermeture au clic en dehors de l'interface.
      *      @var bool $animate Activation de l'animation à l'ouverture et la fermeture.
      *      @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou desactive le bouton; la valeur chaîne de caractère active et affiche la chaîne ex : <span>X</span>.
      *      @var string|int $min-width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
-     *      @var SidebarItemController[]|array $items {
+     *      @var SidebarItem[]|array $items {
      *          Liste des élements.
      *          @var string $name Nom de qualification
      *          @var string|callable $content Contenu
@@ -74,13 +73,13 @@ class Sidebar extends PartialController
         add_action(
             'init',
             function () {
-                \wp_register_style(
+                wp_register_style(
                     'PartialSidebar',
                     assets()->url('partial/sidebar/css/styles.css'),
                     [],
                     180511
                 );
-                \wp_register_script(
+                wp_register_script(
                     'PartialSidebar',
                     assets()->url('partial/sidebar/css/scripts.js'),
                     ['jquery'],
@@ -111,7 +110,7 @@ class Sidebar extends PartialController
             'attrs.style',
             'width:' . $this->get('width') . ';z-index:' . $this->get('z-index') . $this->get('attrs.style', '')
         )
-            ->set('attrs.aria-control', 'sidebar')
+            ->set('attrs.data-control', 'sidebar')
             ->set('attrs.aria-animate', $this->get('animate') ? 'true' : 'false')
             ->set('attrs.aria-closed', $this->get('closed') ? 'true' : 'false')
             ->set('attrs.aria-outside_close', $this->get('outside_close') ? 'true' : 'false')
@@ -150,5 +149,37 @@ class Sidebar extends PartialController
             'items',
             (new Collection($items))->sortBy('position')->all()
         );
+    }
+
+    /**
+     * Traitement de la liste des attributs par défaut.
+     *
+     * @return void
+     */
+    protected function parseDefaults()
+    {
+        $default_class = class_info($this)->getShortName() . ' ' .
+            class_info($this)->getShortName() . '--' . $this->getIndex();
+        if (!$this->has('attrs.class')) :
+            $this->set(
+                'attrs.class',
+                $default_class
+            );
+        else :
+            $this->set(
+                'attrs.class',
+                sprintf(
+                    $this->get('attrs.class', ''),
+                    $default_class
+                )
+            );
+        endif;
+        if (!$this->get('attrs.class')) :
+            $this->pull('attrs.class');
+        endif;
+
+        foreach($this->get('view', []) as $key => $value) :
+            $this->viewer()->set($key, $value);
+        endforeach;
     }
 }

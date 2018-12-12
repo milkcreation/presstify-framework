@@ -1,5 +1,7 @@
 <?php
 /**
+ * Bouton de bascule
+ * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Partial\PartialView $this
  */
 ?>
@@ -11,8 +13,8 @@ echo partial(
         'tag'     => 'a',
         'attrs'   => [
             'href'         => '#' . $this->get('attrs.id'),
-            'class'        => 'tiFyPartial-SidebarToggleButton',
-            'aria-control' => 'toggle_sidebar',
+            'class'        => 'Sidebar-toggle',
+            'data-control' => 'sidebar.toggle',
             'data-toggle'  => '#' . $this->get('attrs.id')
         ],
         'content' =>

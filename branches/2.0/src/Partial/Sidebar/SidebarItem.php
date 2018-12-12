@@ -31,7 +31,7 @@ class SidebarItem extends ParamsBag
             'attrs.class',
             trim(
                 sprintf(
-                    'tiFyPartial-SidebarItem %s',
+                    'Sidebar-item %s',
                     $this->get('attrs.class', '')
                         ?
                         : ''
