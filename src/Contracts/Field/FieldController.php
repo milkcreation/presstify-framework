@@ -5,8 +5,6 @@ namespace tiFy\Contracts\Field;
 use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Field\FieldOptionsCollectionController;
-use tiFy\Field\FieldOptionsItemController;
 
 interface FieldController extends ParamsBag
 {
@@ -98,13 +96,6 @@ interface FieldController extends ParamsBag
     public function getName();
 
     /**
-     * Récupération des attributs des options de liste de sélection
-     *
-     * @return FieldOptionsCollectionController|FieldOptionsItemController[]
-     */
-    public function getOptions();
-
-    /**
      * Récupération de l'attribut de configuration de la valeur initiale de soumission du champ "value".
      *
      * @return mixed
@@ -124,13 +115,6 @@ interface FieldController extends ParamsBag
      * @return bool
      */
     public function isChecked();
-
-    /**
-     * Affichage du contenu de la liste de selection
-     *
-     * @return void
-     */
-    public function options();
 
     /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.

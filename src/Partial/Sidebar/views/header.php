@@ -1,9 +1,10 @@
 <?php
 /**
+ * Entête.
+ * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Partial\PartialView $this
  */
 ?>
-
-<div class="tiFyPartial-SidebarHeader">
+<div class="Sidebar-header" data-control="sidebar.header">
     <?php echo $this->get('header'); ?>
 </div>

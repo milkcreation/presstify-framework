@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-12-11",
+  "time": "2018-12-12",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -82,9 +82,7 @@
     "codeitnowin/barcode": "Bibliothèque de création de code barre dynamique",
     "dompdf/dompdf": "Convertion de HTML en PDf",
     "endroid/qr-code": "Bibliothèque de création de QR Code",
-    "FortAwesome/Font-Awesome": "Ancienne gestion intégré de FontAwesome, presstiFy utilise maintenant Bower",
     "guzzlehttp/guzzle": "Client PHP Http",
-    "league/booboo": "Traitement des erreurs PHP",
     "league/commonmark": "Markdown parser conforme à la specification CommonMark",
     "mpratt/embera": "Bibliothèque client d'encapsulation de vidéo",
     "mustache/mustache": "Gestionnaire de templates PHP",

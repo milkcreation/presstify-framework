@@ -55,7 +55,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerI
         /** @var PartialManager $partial */
         $partial = app('partial');
         $this->index = $partial->index($this);
-        $this->index ? $this->parse($attrs) : $this->boot();
+        $this->index ? parent::__construct($attrs) : $this->boot();
     }
 
     /**
@@ -180,13 +180,6 @@ abstract class PartialController extends ParamsBag implements PartialControllerI
      */
     protected function parseDefaults()
     {
-        if (!$this->has('attrs.id', '')) :
-            $this->set('attrs.id', 'tiFyPartial-' . class_info($this)->getShortName() . '-' . $this->getId());
-        endif;
-        if (!$this->get('attrs.id')) :
-            $this->pull('attrs.id');
-        endif;
-
         $default_class = 'tiFyPartial-' . class_info($this)->getShortName() .
             ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex();
         if (!$this->has('attrs.class')) :

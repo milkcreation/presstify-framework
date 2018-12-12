@@ -30,11 +30,6 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     protected $index = 0;
 
     /**
-     * @todo
-     */
-    protected $options;
-
-    /**
      * Instance du moteur de gabarits d'affichage.
      * @return ViewEngine
      */
@@ -170,14 +165,6 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     /**
      * {@inheritdoc}
      */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getValue()
     {
         return $this->get('value', null);
@@ -205,14 +192,6 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
         endif;
 
         return $this->get('checked') === $this->getValue();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function options()
-    {
-        echo $this->options;
     }
 
     /**
@@ -279,23 +258,6 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
         if ($value = $this->get('value')) :
             $this->set('attrs.value', $value);
         endif;
-    }
-
-    /**
-     * Traitement de l'attribut de configuration de liste de selection "options".
-     *
-     * @return void
-     */
-    protected function parseOptions()
-    {
-        $options = $this->get('options', []);
-
-        if (!$options instanceof SelectOptions) :
-            $options = new SelectOptions($options);
-            $options->setSelected($this->getValue());
-        endif;
-
-        $this->options = $options;
     }
 
     /**

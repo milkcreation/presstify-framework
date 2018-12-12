@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\Field;
+namespace tiFy\Field\Select;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -9,7 +9,7 @@ class SelectOptions
 {
     /**
      * Liste des éléments.
-     * @var FieldOptionsItemController[]
+     * @var SelectOption[]
      */
     protected $items = [];
 
@@ -21,21 +21,36 @@ class SelectOptions
      */
     public function __construct($items = [])
     {
-        foreach($items as $name => &$attrs) :
-            if (!$attrs instanceof SelectOption) :
-                $attrs = new SelectOption($name, $attrs);
-            endif;
+        foreach($items as $name => $attrs) :
+            $this->_parseItem($name, $attrs);
         endforeach;
+    }
 
-        $this->items = $items;
+    /**
+     * Résolution de sortie de la classe sous la forme d'une chaîne de caractères.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
     }
 
     /**
      *
      */
-    public function __toString()
+    private function _parseItem($name, $attrs, $parent = '')
     {
-        return $this->render();
+        if ($attrs instanceof SelectOption) :
+            $this->items[$name] = $attrs;
+        elseif (!is_array($attrs)) :
+            $this->items[$name] =  new SelectOption($name, ['content' => $attrs, 'parent' => $parent]);
+        else :
+            $this->items[$name] = new SelectOption($name, ['content' => $name, 'group' => true, 'parent' => $parent]);
+            foreach($attrs as $_name => $_attrs) :
+                $this->_parseItem($_name, $_attrs, $name);
+            endforeach;
+        endif;
     }
 
     /**
