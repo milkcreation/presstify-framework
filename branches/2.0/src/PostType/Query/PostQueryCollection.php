@@ -4,7 +4,7 @@ namespace tiFy\PostType\Query;
 
 use tiFy\Contracts\PostType\PostQueryItem;
 use tiFy\Contracts\PostType\PostQueryCollection as PostQueryCollectionContract;
-use tiFy\Kernel\Query\QueryCollection;
+use tiFy\Kernel\Collection\QueryCollection;
 
 class PostQueryCollection extends QueryCollection implements PostQueryCollectionContract
 {

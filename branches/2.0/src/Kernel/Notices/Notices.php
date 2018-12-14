@@ -203,7 +203,7 @@ class Notices implements NoticesContract
      */
     public function viewer($view = null, $data = [])
     {
-        $alias = 'notices.viewer' . spl_object_hash ($this);
+        $alias = 'notices.viewer' . spl_object_hash($this);
 
         /** @var ViewEngine $viewer */
         if (!app()->bound($alias)) :

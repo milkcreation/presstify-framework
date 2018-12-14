@@ -3,12 +3,12 @@
 namespace tiFy\Taxonomy;
 
 use Illuminate\Support\Str;
-use tiFy\Kernel\Labels\AbstractLabelsBagController;
+use tiFy\Kernel\Labels\LabelsBag;
 
 /**
  * @see https://codex.wordpress.org/Function_Reference/register_taxonomy
  */
-class TaxonomyItemLabelsController extends AbstractLabelsBagController
+class TaxonomyItemLabelsController extends LabelsBag
 {
     /**
      * {@inheritdoc}

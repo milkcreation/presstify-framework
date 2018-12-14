@@ -25,7 +25,7 @@
     color: #666;
 }
 
-.fileshare-list .ui-sortable-placeholder {
+.fileshare-list .ui-sortable-handle {
     border: dashed 3px #E4E4E4;
     background: #F4F4F4;
 }

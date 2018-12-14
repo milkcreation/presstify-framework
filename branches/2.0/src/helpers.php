@@ -2,21 +2,26 @@
 
 use tiFy\tiFy;
 use tiFy\Contracts\Kernel\Assets;
+use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\Field\FieldController;
 use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Logger;
+use tiFy\Contracts\Kernel\Request;
+use tiFy\Contracts\Kernel\Validator;
 use tiFy\Contracts\Partial\PartialController;
 use tiFy\Contracts\Partial\PartialManager;
+use tiFy\Contracts\PostType\PostType;
+use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Kernel;
 use tiFy\Kernel\Http\RedirectResponse as HttpRedirect;
-use tiFy\Kernel\Http\Request as HttpRequest;
+
 
 /**
  * KERNEL
@@ -205,6 +210,20 @@ if (!function_exists('logger')) :
     }
 endif;
 
+if (!function_exists('params')) :
+    /**
+     * Instance de contrôleur de paramètres.
+     *
+     * @param mixed $params Liste des paramètres.
+     *
+     * @return ParamsBag
+     */
+    function params($params = [])
+    {
+        return app('params.bag', [$params]);
+    }
+endif;
+
 if (!function_exists('partial')) :
     /**
      * Partial - Contrôleurs d'affichage.
@@ -240,6 +259,43 @@ if (!function_exists('paths')) :
     }
 endif;
 
+if (!function_exists('pattern')) :
+    /**
+     *
+     */
+    function pattern($name = null)
+    {
+        $factory = app()->get('view.pattern');
+
+        if (is_null($name)) :
+            return $factory;
+        endif;
+
+        return null;
+    }
+endif;
+
+if (!function_exists('post_type')) :
+    /**
+     * Récupération de l'intance du controleur des types de contenu ou de l'instance d'un type de contenu.
+     *
+     * @param null|string $name Nom de qualification du type de contenu.
+     *
+     * @return PostType|PostTypeFactory
+     */
+    function post_type($name = null)
+    {
+        /** @var PostType $manager */
+        $manager = app()->get('post_type');
+
+        if (is_null($name)) :
+            return $manager;
+        endif;
+
+        return $manager->get($name);
+    }
+endif;
+
 if (! function_exists('redirect')) {
     /**
      * HTTP - Récupération d'une instance du contrôleur de redirection ou redirection vers une url.
@@ -265,7 +321,7 @@ if (!function_exists('request')) :
     /**
      * HTTP - Controleur de traitement de la requête principale.
      *
-     * @return HttpRequest
+     * @return Request
      */
     function request()
     {
@@ -341,7 +397,7 @@ if (! function_exists('validator')) {
     /**
      * Récupération d'un instance du contrôleur de validation.
      *
-     * @return \tiFy\Contracts\Kernel\Validator
+     * @return Validator
      */
     function validator()
     {

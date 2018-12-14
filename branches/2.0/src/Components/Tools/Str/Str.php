@@ -7,7 +7,7 @@ use Illuminate\Support\Str as IlluminateStr;
 /**
  * Class Str
  * @package tiFy\Components\Tools\Str
- * @see Illuminate\Support\Str
+ * @see \Illuminate\Support\Str
  *
  * @method string after(string $subject, string $search)
  * @method string ascii(string $value, string $language = 'en')
@@ -57,6 +57,8 @@ class Str
         if (method_exists(IlluminateStr::class, $name)) :
             return call_user_func_array([IlluminateStr::class, $name], $args);
         endif;
+
+        return null;
     }
 
     /**
@@ -72,6 +74,8 @@ class Str
         if (method_exists(IlluminateStr::class, $name)) :
             return call_user_func_array([IlluminateStr::class, $name], $args);
         endif;
+
+        return null;
     }
 
     /**

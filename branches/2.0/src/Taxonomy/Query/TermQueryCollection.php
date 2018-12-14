@@ -4,13 +4,13 @@ namespace tiFy\Taxonomy\Query;
 
 use tiFy\Contracts\Taxonomy\TermQueryItem;
 use tiFy\Contracts\Taxonomy\TermQueryCollection as TermQueryCollectionContract;
-use tiFy\Kernel\Query\QueryCollection;
+use tiFy\Kernel\Collection\QueryCollection;
 
 class TermQueryCollection extends QueryCollection implements TermQueryCollectionContract
 {
     /**
      * Liste des éléments déclarés.
-     * @var UserQueryItem[] $items
+     * @var TermQueryItem[] $items
      */
     protected $items = [];
 

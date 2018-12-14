@@ -7,13 +7,7 @@ use tiFy\Wp\Media\MediaDownload;
 use tiFy\Wp\Media\MediaManager;
 use tiFy\Wp\Query\Post;
 use tiFy\Wp\Query\Posts;
-use tiFy\Wp\Routing\RouteHandler;
 use tiFy\Wp\Routing\Router;
-use tiFy\Wp\WpCtags;
-use tiFy\Wp\WpQuery;
-use tiFy\Wp\WpScreen;
-use tiFy\Wp\WpTaxonomy;
-use tiFy\Wp\WpUser;
 
 class WpServiceProvider extends AppServiceProvider
 {
@@ -45,7 +39,13 @@ class WpServiceProvider extends AppServiceProvider
 
         $this->app->bind('wp.user', function () { return new WpUser(); });
 
-        add_action('after_setup_tify', function () { $this->app->get('wp.routing.router'); });
+        add_action(
+            'after_setup_tify', function () {
+
+            $this->app->get('post_type');
+
+            $this->app->get('wp.routing.router');
+        });
     }
 
     /**

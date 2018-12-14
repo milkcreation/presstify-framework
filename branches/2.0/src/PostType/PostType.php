@@ -2,13 +2,14 @@
 
 namespace tiFy\PostType;
 
-use tiFy\Contracts\PostType\PostTypeItemInterface;
+use tiFy\Contracts\PostType\PostType as PostTypeContract;
+use tiFy\Contracts\PostType\PostTypeFactory;
 
-final class PostType
+final class PostType implements PostTypeContract
 {
     /**
      * Liste des types de post déclarés.
-     * @var PostTypeItemInterface[]
+     * @var PostTypeFactory[]
      */
     protected $items = [];
 
@@ -45,25 +46,16 @@ final class PostType
     }
 
     /**
-     * Création d'un type de post personnalisé.
-     *
-     * @param string $name Nom de qualification du type de post.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return PostTypeItemInterface
+     * {@inheritdoc}
      */
     public function register($name, $attrs = [])
     {
         return $this->items[$name] = $this->items[$name]
-            ?? app()->resolve(PostTypeItemController::class, [$name, $attrs]);
+            ?? app()->get('post_type.factory', [$name, $attrs]);
     }
 
     /**
-     * Récupération d'une instance de controleur de type de post.
-     *
-     * @param $name Nom de qualification du controleur.
-     *
-     * @return null|PostTypeItemInterface
+     * {@inheritdoc}
      */
     public function get($name)
     {
