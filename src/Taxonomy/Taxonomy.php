@@ -50,7 +50,7 @@ final class Taxonomy
     /**
      * Récupération d'une instance de controleur de taxonomie.
      *
-     * @param $name Nom de qualification du controleur.
+     * @param string $name Nom de qualification du controleur.
      *
      * @return null|TaxonomyItemInterface
      */

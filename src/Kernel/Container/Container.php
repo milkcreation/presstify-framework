@@ -12,7 +12,7 @@ class Container extends LeagueContainer implements ContainerInterface
 {
     /**
      * Liste des services déclarés.
-     * @var ServiceInterface[]
+     * @var Service[]
      */
     protected static $items = [];
 
@@ -122,7 +122,7 @@ class Container extends LeagueContainer implements ContainerInterface
         $items = self::$items;
 
         return (
-            $exists = (new Collection($items))->first(function ($item) use ($alias) {
+            $exists = (new Collection($items))->first(function (Service $item) use ($alias) {
                 return $item->getAlias() === $alias;
             })
         )
@@ -158,12 +158,12 @@ class Container extends LeagueContainer implements ContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve($abstract, $args = [])
+    public function resolve($alias, $args = [])
     {
         try {
-            $service = $this->getService($abstract);
+            $resolved = $this->getService($alias);
 
-            return $service->build($args);
+            return $resolved->build($args);
         } catch (\InvalidArgumentException $e) {
             return null;
         }

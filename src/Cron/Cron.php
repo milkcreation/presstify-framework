@@ -5,7 +5,6 @@ namespace tiFy\Cron;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Cron\Cron as CronContract;
 use tiFy\Contracts\Cron\CronJobInterface;
-use tiFy\Layout\Layout;
 
 /**
  * USAGE
@@ -19,7 +18,8 @@ use tiFy\Layout\Layout;
  * > $ * * * * * curl -I http(s)://%site_url%/wp-cron.php?doing_wp_cron > /dev/null 2>&1
  *
  * Tester une tâche planifiée depuis le navigateur ou en console. Le mode test de la tâche doit être actif.
- * IMPORTANT : N'utiliser cette fonctionnalité qu'en développement uniquement. Désactiver absolutment le mode test en production.
+ * IMPORTANT : N'utiliser cette fonctionnalité qu'en développement uniquement.
+ * Désactiver absolument le mode test en production.
  * > http(s)://%site_url%/?job=%task%
  */
 
@@ -38,33 +38,6 @@ final class Cron implements CronContract
      */
     public function __construct()
     {
-        add_action(
-            'init',
-            function () {
-                /** @var Layout $layout */
-                $layout = app('layout');
-                $layout->add(
-                    'admin',
-                    'cron.layout.list',
-                    [
-                        'admin_menu' => [
-                            'menu_slug'   => 'CronLayoutList',
-                            'parent_slug' => 'tools.php',
-                            'page_title'  => __('Gestion des tâches planifiées', 'tify'),
-                            'menu_title'  => __('Tâches planifiées', 'tify')
-                        ],
-                        'content' => function () {
-                            $jobs = $this->all();
-
-                            return view()
-                                ->setDirectory(__DIR__ . '/views')
-                                ->make('job-list', compact('jobs'));
-                        }
-                    ]
-                );
-            }
-        );
-
         add_action(
             'init',
             function () {
@@ -89,6 +62,27 @@ final class Cron implements CronContract
                     false
                 );
 
+                if ($jobs = $this->all()) :
+                    pattern()->admin(
+                        'cron.layout.list',
+                        [
+                            'admin_menu' => [
+                                'menu_slug'   => 'CronLayoutList',
+                                'parent_slug' => 'tools.php',
+                                'page_title'  => __('Gestion des tâches planifiées', 'tify'),
+                                'menu_title'  => __('Tâches planifiées', 'tify')
+                            ],
+                            'content' => function () {
+                                $jobs = $this->all();
+
+                                return view()
+                                    ->setDirectory(__DIR__ . '/views')
+                                    ->make('job-list', compact('jobs'));
+                            }
+                        ]
+                    );
+                endif;
+
                 if (($job = request()->get('job', '')) && ($item = $this->get($job))) :
                     do_action($item->getHook());
                     exit;
@@ -104,7 +98,7 @@ final class Cron implements CronContract
      * @param string $name Identifiant de qualification.
      * @param array $attrs Liste des attribut de configuration.
      *
-     * @return CronJobInterface
+     * @return null|CronJobInterface
      */
     private function _register($name, $attrs = [])
     {
@@ -118,7 +112,7 @@ final class Cron implements CronContract
         endif;
 
         if (!$item instanceof CronJobInterface) :
-            return;
+            return null;
         endif;
 
         if (($freq = wp_get_schedule($item->getHook())) && ($freq !== $item->getFrequency())) :
@@ -182,6 +176,8 @@ final class Cron implements CronContract
             unset($jobs[$hook]);
             update_option('cron_job_infos', $jobs, false);
         endif;
+
+        return $this;
     }
 
     /**

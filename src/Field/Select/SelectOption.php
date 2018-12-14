@@ -43,7 +43,7 @@ class SelectOption extends ParamsBag
             'name'      => $this->name,
             'group'     => false,
             'attrs'     => [],
-            'parent'    => '',
+            'parent'    => null,
             'value'     => $this->name,
             'content'   => ''
         ];
@@ -87,7 +87,7 @@ class SelectOption extends ParamsBag
      */
     public function getParent()
     {
-        return $this->get('parent', '');
+        return $this->get('parent', null);
     }
 
     /**
@@ -95,7 +95,7 @@ class SelectOption extends ParamsBag
      */
     public function hasParent()
     {
-        return !empty($this->get('parent'));
+        return !is_null($this->get('parent'));
     }
 
     /**

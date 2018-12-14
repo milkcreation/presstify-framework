@@ -4,7 +4,7 @@ namespace tiFy\User\Query;
 
 use tiFy\Contracts\User\UserQueryCollection as UserQueryCollectionContract;
 use tiFy\Contracts\User\UserQueryItem;
-use tiFy\Kernel\Query\QueryCollection;
+use tiFy\Kernel\Collection\QueryCollection;
 
 class UserQueryCollection extends QueryCollection implements UserQueryCollectionContract
 {

@@ -39,7 +39,7 @@ class SelectOptions
     /**
      *
      */
-    private function _parseItem($name, $attrs, $parent = '')
+    private function _parseItem($name, $attrs, $parent = null)
     {
         if ($attrs instanceof SelectOption) :
             $this->items[$name] = $attrs;
@@ -62,7 +62,7 @@ class SelectOptions
      *
      * @return string
      */
-    private function _walk($items = [], $depth = 0, $parent = '')
+    private function _walk($items = [], $depth = 0, $parent = null)
     {
         $output = "";
         foreach ($items as $item) :

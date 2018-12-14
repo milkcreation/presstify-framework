@@ -39,16 +39,10 @@ class Kernel
      * @param $name
      * @param $arguments
      *
-     * @return callable
+     * @return object|callable
      */
     public static function __callStatic($name, $args)
     {
-        if(!self::$instance instanceof self) :
-            $self = self::$instance = new static();
-        else :
-            $self = self::$instance;
-        endif;
-
         switch($name) :
             default :
                 $alias = "tiFy\\Kernel\\{$name}\\{$name}";

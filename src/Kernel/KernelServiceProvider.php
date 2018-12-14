@@ -112,7 +112,7 @@ class KernelServiceProvider extends ServiceProvider
         );
 
         foreach ($this->getBootables() as $bootable) :
-            $class = $this->getContainer()->resolve($bootable, [$app]);
+            $this->getContainer()->resolve($bootable, [$app]);
         endforeach;
 
         do_action('after_setup_tify');

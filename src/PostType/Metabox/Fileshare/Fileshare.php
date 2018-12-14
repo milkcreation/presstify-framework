@@ -135,7 +135,7 @@ class Fileshare extends MetaboxWpPostController
                     wp_enqueue_style(
                         'MetaboxPostTypeFileshare',
                         assets()->url('post-type/metabox/fileshare/css/styles.css'),
-                        [],
+                        ['tiFyAdmin'],
                         151216
                     );
 
