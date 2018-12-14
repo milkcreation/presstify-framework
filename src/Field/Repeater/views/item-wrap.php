@@ -12,7 +12,8 @@
             [
                 'index' => $this->get('index'),
                 'name'  => $this->getName(),
-                'value' => $this->get('value')
+                'value' => $this->get('value'),
+                'args'  => $this->get('args', [])
             ]
         );
     ?>

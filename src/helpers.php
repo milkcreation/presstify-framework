@@ -220,7 +220,10 @@ if (!function_exists('params')) :
      */
     function params($params = [])
     {
-        return app('params.bag', [$params]);
+        /** @var ParamsBag $factory */
+        $factory = app('params.bag', [$params]);
+
+        return $factory;
     }
 endif;
 

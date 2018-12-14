@@ -36,27 +36,18 @@ class PostQuery implements PostQueryContract
     {
         if (is_null($query_args)) :
             global $wp_query;
-
-            $posts = $wp_query->posts;
         elseif($query_args instanceof WP_Query) :
             $wp_query = $query_args;
-            $posts = $wp_query->posts;
         elseif (is_array($query_args)) :
             $query_args['post_type'] = $query_args['post_type'] ?? $this->getObjectName();
             $query_args['posts_per_page'] = $query_args['posts_per_page']?? -1;
 
-            $wp_query = new WP_Query();
-            $posts = $wp_query->query($query_args);
+            $wp_query = new WP_Query($query_args);
         else :
             return [];
         endif;
 
-        $items = $posts ? array_map([$this, 'getItem'], $posts) : [];
-
-        $results = $this->resolveCollection($items);
-        $results->setFounds($wp_query->found_posts ?? count($items));
-
-        return $results;
+        return $this->resolveCollection($wp_query);
     }
 
     /**
