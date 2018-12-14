@@ -19,7 +19,7 @@ jQuery(document).ready(function ($) {
                 index = $('[aria-control="item"]', $items).length;
 
             jqxhr = $.post(
-                tify_ajaxurl,
+                tify.ajax_url,
                 {
                     action: o.ajax_action,
                     _ajax_nonce: o.ajax_nonce,

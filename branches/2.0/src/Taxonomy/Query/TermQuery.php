@@ -43,9 +43,7 @@ class TermQuery implements TermQueryContract
             $term_query = new WP_Term_Query(null);
         endif;
 
-        $items = $term_query->terms ? array_map([$this, 'getItem'], $term_query->terms) : [];
-
-        return $this->resolveCollection($items);
+        return $this->resolveCollection($term_query);
     }
 
     /**

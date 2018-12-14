@@ -17,6 +17,7 @@
                     'name'  => $this->get('name'),
                     'order' => $this->get('order'),
                     'value' => $value,
+                    'args'  => $this->get('args', []),
                 ]
             );
             ?>

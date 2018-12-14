@@ -13,11 +13,11 @@ class Repeater extends FieldController
      *      @var array $value Liste de valeurs existantes.
      *      @var string $ajax_action Action Ajax lancée pour récupérer le formulaire d'un élément.
      *      @var string $ajax_nonce Agent de sécurisation de la requête de récupération Ajax.
-     *      @var callable $item_cb Fonction ou méthode de rappel d'affichage d'un élément (doit être une méthode statique ou une fonction).
      *      @var array $attrs Liste des attributs HTML de la balise HTML.
      *      @var array $button Liste des attributs de configuration du bouton d'ajout d'un élément.
      *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
      *      @var bool|array $sortable Activation de l'ordonnacemment des éléments|Liste des attributs de configuration. @see http://api.jqueryui.com/sortable/
+     *      @var array $args Arguments complémentaires porté par la requête Ajax.
      *      @var array $templates Attributs de configuration des templates.
      * }
      */
@@ -26,11 +26,11 @@ class Repeater extends FieldController
         'value'            => [],
         'ajax_action'      => 'field_repeater',
         'ajax_nonce'       => '',
-        'item_cb'          => '',
         'attrs'            => [],
         'button'           => [],
         'max'              => -1,
         'sortable'         => true,
+        'args'             => [],
         'viewer'           => []
     ];
 
@@ -140,6 +140,7 @@ class Repeater extends FieldController
                 'max'         => $this->get('max'),
                 'order'       => $this->get('order'),
                 'sortable'    => $this->get('sortable', []),
+                'args'        => $this->get('args'),
                 'viewer'      => $this->get('viewer')
             ]
         );
@@ -170,8 +171,8 @@ class Repeater extends FieldController
     {
         check_ajax_referer('FieldRepeater');
 
-        $options = \wp_unslash(request()->getProperty('POST')->get('options'));
-        $index = request()->getProperty('POST')->getInt('index');
+        $options = wp_unslash(request()->post('options'));
+        $index = absint(request()->post('index'));
 
         if (($options['max'] > 0) && ($index >= $options['max'])) :
             wp_send_json_error(__('Nombre de valeur maximum atteinte', 'tify'));
