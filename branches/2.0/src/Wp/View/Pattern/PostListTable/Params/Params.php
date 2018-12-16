@@ -17,7 +17,7 @@ class Params extends BaseListTableParams
                 'columns'      => [
                     'cb',
                     'post_title',
-                    'post_type' => __('Type de post', 'tify'),
+                    'post_type',
                     'post_date' => __('Date', 'tify'),
                 ],
                 'view_filters' => [

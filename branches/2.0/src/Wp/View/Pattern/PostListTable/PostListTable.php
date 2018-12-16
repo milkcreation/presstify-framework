@@ -7,11 +7,11 @@ use tiFy\Wp\View\Pattern\PostListTable\Contracts\PostListTable as PostListTableC
 
 class PostListTable extends BaseListTable implements PostListTableContract
 {
-	/**
-	 * Liste des fournisseurs de service.
-	 * @var string[]
-	 */
-	protected $serviceProviders = [
-		PostListTableServiceProvider::class
-	];
+    /**
+     * Liste des fournisseurs de service.
+     * @var string[]
+     */
+    protected $serviceProviders = [
+        PostListTableServiceProvider::class,
+    ];
 }

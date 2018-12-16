@@ -5,7 +5,6 @@ namespace tiFy\View\Pattern\ListTable\Columns;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 use tiFy\View\Pattern\ListTable\Contracts\ColumnsItem as ColumnsItemContract;
-use tiFy\View\Pattern\ListTable\Contracts\Item;
 use tiFy\View\Pattern\ListTable\Contracts\ListTable;
 
 class ColumnsItem extends ParamsBag implements ColumnsItemContract
@@ -16,11 +15,11 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
      */
     protected $attributes = [
         'content'  => '',
-        'name'     => '',
         'title'    => '',
         'sortable' => false,
         'hidden'   => false,
-        'primary'  => false
+        'primary'  => false,
+        'attrs'    => [],
     ];
 
     /**
@@ -55,37 +54,49 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
     /**
      * {@inheritdoc}
      */
+    public function __toString()
+    {
+        return (string)$this->render();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function defaults()
     {
         return [
-            'title' => $this->getName()
+            'title' => $this->getName(),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function display(Item $item)
+    public function content()
     {
-        if ($value = $item->get($this->name)) :
-            $type = (($db = $this->pattern->db()) && $db->existsCol($this->name))
-                ? strtoupper($db->getColAttr($this->name, 'type'))
-                : '';
+        if ($item = $this->pattern->item()) :
+            if ($value = $item->get($this->getName())) :
+                $type = (($db = $this->pattern->db()) && $db->existsCol($this->getName()))
+                    ? strtoupper($db->getColAttr($this->getName(), 'type'))
+                    : '';
 
-            switch ($type) :
-                default:
-                    if (is_array($value)) :
-                        return join(', ', $value);
-                    else :
-                        return $value;
-                    endif;
-                    break;
-                case 'DATETIME' :
-                    return \mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
-                    break;
-            endswitch;
-        elseif (Tools::Functions()->isCallable($this->get('content'))) :
-            return call_user_func($this->get('content'), $item);
+                switch ($type) :
+                    default:
+                        if (is_array($value)) :
+                            return join(', ', $value);
+                        else :
+                            return $value;
+                        endif;
+                        break;
+                    case 'DATETIME' :
+                        return mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
+                        break;
+                endswitch;
+            elseif (Tools::Functions()->isCallable($this->get('content'))) :
+                return call_user_func($this->get('content'), $item);
+            else :
+                return $this->get('content');
+            endif;
         else :
             return $this->get('content');
         endif;
@@ -102,6 +113,15 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
     /**
      * {@inheritdoc}
      */
+    public function getTemplate($default = 'tbody-col')
+    {
+        return $this->pattern->viewer()->exists('tbody-col_' . $this->getName())
+            ? 'tbody-col_' . $this->getName() : $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getTitle()
     {
         return $this->get('title');
@@ -110,39 +130,27 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
     /**
      * {@inheritdoc}
      */
-    public function getHeader($with_id = true)
+    public function header($with_id = true)
     {
-        $class = ['manage-column', "column-{$this->getName()}"];
+        $classes = ['manage-column', "column-{$this->getName()}"];
 
         if ($this->isHidden()) :
-            $class[] = 'hidden';
+            $classes[] = 'hidden';
         endif;
 
         if ($this->isPrimary()) :
-            $class[] = 'column-primary';
+            $classes[] = 'column-primary';
         endif;
 
-        $attrs = [
-            'tag' => 'th',
-            'attrs'  => [
-                'class' => join(' ', $class),
-                'scope' => 'col'
-            ],
-            'content' => $this->getHeaderContent()
-        ];
-
+        $attrs = [];
         if ($with_id) :
-            $attrs['attrs']['id'] = $this->getName();
+            $attrs['id'] = $this->getName();
         endif;
 
-        return (string)partial('tag', $attrs);
-    }
+        $attrs['class'] = join(' ', $classes);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeaderContent()
-    {
+        $attrs['scope'] = 'col';
+
         $content = $this->getTitle();
 
         if ($this->isSortable()) :
@@ -153,7 +161,7 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
 
             list($orderby, $desc_first) = $this->get('sortable');
 
-            if ( $current_orderby === $orderby ) :
+            if ($current_orderby === $orderby) :
                 $order = 'asc' === $current_order ? 'desc' : 'asc';
                 $class[] = 'sorted';
                 $class[] = $current_order;
@@ -166,16 +174,25 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
             $content = (string)partial(
                 'tag',
                 [
-                    'tag' => 'a',
-                    'attrs' => [
-                        'href' => esc_url(add_query_arg(compact('orderby', 'order'), $current_url))
+                    'tag'     => 'a',
+                    'attrs'   => [
+                        'href' => esc_url(add_query_arg(compact('orderby', 'order'), $current_url)),
                     ],
-                    'content' => "<span>{$content}</span><span class=\"sorting-indicator\"></span></a>"
+                    'content' => "<span>{$content}</span><span class=\"sorting-indicator\"></span></a>",
                 ]
             );
         endif;
 
-        return $content;
+        $template = $this->pattern->viewer()->exists('thead-col_' . $this->getName())
+            ? 'thead-col_' . $this->getName() : 'thead-col';
+
+        return $this->pattern->viewer(
+            $template,
+            [
+                'attrs' => Tools::Html()->parseAttrs($attrs),
+                'content' => $content
+            ]
+        );
     }
 
     /**
@@ -191,7 +208,7 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
      */
     public function isPrimary()
     {
-        return $this->pattern->columns()->isPrimary($this->getName());
+        return $this->pattern->columns()->getPrimary() === $this->getName();
     }
 
     /**
@@ -209,6 +226,8 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
     {
         parent::parse($attrs);
 
+        $this->set('name', $this->getName());
+
         if ($sortable = $this->get('sortable')) :
             $this->set(
                 'sortable',
@@ -218,6 +237,41 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
             );
         endif;
 
-        $this->set('name', $this->getName());
+        $this->set(
+            'attrs.class', trim($this->get('attrs.class') . "{$this->getName()} column-{$this->getName()}")
+        );
+
+        $this->set('attrs.data-colname', wp_strip_all_tags($this->getTitle()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render()
+    {
+        if ($item = $this->pattern->item()) :
+
+            $classes = '';
+            if ($this->isPrimary()) :
+                $classes .= 'has-row-actions column-primary';
+            endif;
+            if ($this->isHidden()) :
+                $classes .= 'hidden';
+            endif;
+            if ($classes) :
+                $this->set('attrs.class', trim($this->get('attrs.class', '') . " {$classes}"));
+            endif;
+
+            return $this->pattern->viewer(
+                $this->getTemplate(),
+                [
+                    'item'    => $item,
+                    'content' => $this->content(). ($this->isPrimary() ? $this->pattern->rowActions() : ''),
+                    'attrs'   => Tools::Html()->parseAttrs($this->get('attrs', [])),
+                ]
+            );
+        else :
+            return '';
+        endif;
     }
 }

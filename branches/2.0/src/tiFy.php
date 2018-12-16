@@ -5,7 +5,7 @@
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Milkcreation
- * @version 2.0.25
+ * @version 2.0.26
  */
 
 namespace tiFy;
@@ -44,7 +44,6 @@ final class tiFy extends Container
      */
     public function __construct()
     {
-        // Bypass
         if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) :
             return;
         endif;

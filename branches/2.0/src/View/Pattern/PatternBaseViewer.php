@@ -2,31 +2,35 @@
 
 namespace tiFy\View\Pattern;
 
-use tiFy\Contracts\View\PatternController;
+use tiFy\View\ViewPatternController;
 use tiFy\View\ViewController;
 
 /**
- * Class PatternViewController
+ * Class PatternBaseViewer
  * @package tiFy\View\Pattern
  *
- * @mixin \tiFy\View\Pattern\PatternController
+ * @mixin ViewPatternController
  */
-class PatternViewController extends ViewController
+class PatternBaseViewer extends ViewController
 {
     /**
      * Instance de la disposition.
-     * @var PatternController
+     * @var ViewPatternController
      */
     protected $pattern;
 
     /**
-     * Liste des méthodes héritées.
+     * Liste des méthodes heritées.
      * @var array
      */
-    protected $mixins = [];
+    protected $mixins = [
+        'label',
+        'name',
+        'param'
+    ];
 
     /**
-     * Translation d'appel des méthodes de l'application associée.
+     * Appel des méthodes héritées du motif d'affichage associée.
      *
      * @param string $name Nom de la méthode à appeler.
      * @param array $arguments Liste des variables passées en argument.
@@ -51,25 +55,5 @@ class PatternViewController extends ViewController
     public function boot()
     {
         $this->pattern = $this->engine->get('pattern');
-    }
-
-    /**
-     * Récupération du nom de qualification de la vue.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->pattern->name();
-    }
-
-    /**
-     * Récupération de la classe de rappel de gestion des paramètres.
-     *
-     * @return mixed
-     */
-    public function param($key, $default = null)
-    {
-        return $this->pattern->param($key, $default);
     }
 }

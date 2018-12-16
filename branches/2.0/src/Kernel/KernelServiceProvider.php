@@ -79,7 +79,7 @@ class KernelServiceProvider extends ServiceProvider
             return Request::capture();
         });
 
-        $this->getContainer()->bind('redirect', function (?string $url, int $status = 302, array $headers = []) {
+        $this->getContainer()->bind('redirect', function (?string $url, int $status = null, array $headers = []) {
             return new RedirectResponse($url, $status, $headers);
         });
 
@@ -134,7 +134,7 @@ class KernelServiceProvider extends ServiceProvider
     /**
      * {@inheritdoc}
      *
-     * @return tiFy
+     * @return tiFy|\League\Container\ContainerInterface
      */
     public function getContainer()
     {

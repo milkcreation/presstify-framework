@@ -3,7 +3,6 @@
 namespace tiFy\View\Pattern\ListTable\RowActions;
 
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\View\Pattern\ListTable\Contracts\Item;
 use tiFy\View\Pattern\ListTable\Contracts\ListTable;
 use tiFy\View\Pattern\ListTable\Contracts\RowActionsItem as RowActionsItemContract;
 
@@ -31,12 +30,6 @@ class RowActionsItem extends ParamsBag implements RowActionsItemContract
     ];
 
     /**
-     * Instance de l'élément associé.
-     * @var Item
-     */
-    protected $item = [];
-
-    /**
      * Nom de qualification.
      * @var string
      */
@@ -53,15 +46,13 @@ class RowActionsItem extends ParamsBag implements RowActionsItemContract
      *
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration personnalisés.
-     * @param Item $item Données de l'élément courant.
      * @param ListTable $pattern Instance du motif d'affichage associé.
      *
      * @return void
      */
-    public function __construct($name, $attrs, Item $item, ListTable $pattern)
+    public function __construct($name, $attrs, ListTable $pattern)
     {
         $this->name = $name;
-        $this->item = $item;
         $this->pattern = $pattern;
 
         parent::__construct($attrs);
@@ -72,26 +63,7 @@ class RowActionsItem extends ParamsBag implements RowActionsItemContract
      */
     public function __toString()
     {
-        return (string) $this->display();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display()
-    {
-        if ($this->get('hide_empty') && !$this->get('count_items', 0)) :
-            return '';
-        endif;
-
-        return partial(
-            'tag',
-            [
-                'tag'       => 'a',
-                'attrs'     => $this->get('attrs', []),
-                'content'   => $this->get('content')
-            ]
-        );
+        return (string) $this->render();
     }
 
     /**
@@ -99,11 +71,11 @@ class RowActionsItem extends ParamsBag implements RowActionsItemContract
      */
     public function getNonce()
     {
-        if (($item_index_name = $this->pattern->param('item_index_name')) && isset($this->item->{$item_index_name})) :
+        /*if (($item_index_name = $this->pattern->param('item_index_name')) && isset($this->item->{$item_index_name})) :
             $item_index = $this->item->{$item_index_name};
-        else :
+        else :*/
             $item_index = '';
-        endif;
+        //endif;
 
         if(!$item_index) :
         elseif(!is_array($item_index)) :
@@ -187,5 +159,24 @@ class RowActionsItem extends ParamsBag implements RowActionsItemContract
         if (!$this->get('content')) :
             $this->set('content', $this->name);
         endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render()
+    {
+        if ($this->get('hide_empty') && !$this->get('count_items', 0)) :
+            return '';
+        endif;
+
+        return partial(
+            'tag',
+            [
+                'tag'       => 'a',
+                'attrs'     => $this->get('attrs', []),
+                'content'   => $this->get('content')
+            ]
+        );
     }
 }

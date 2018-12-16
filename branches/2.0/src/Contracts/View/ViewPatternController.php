@@ -8,15 +8,19 @@ use tiFy\Contracts\Kernel\LabelsBag;
 use tiFy\Contracts\Kernel\Notices;
 use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\Kernel\Request;
+use tiFy\View\Pattern\PatternBaseUrl;
+use League\Container\Definition\DefinitionInterface;
 
-interface PatternController extends ContainerInterface
+interface ViewPatternController
 {
     /**
      * Résolution de sortie de la classe en tant qu'instance.
      *
+     * @param string $name Nom de qualification.
+     *
      * @return string
      */
-    public function __invoke();
+    public function __invoke($name);
 
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
@@ -26,11 +30,38 @@ interface PatternController extends ContainerInterface
     public function __toString();
 
     /**
+     * Instance du controleur de gestion des assets.
+     *
+     * @return object
+     */
+    public function assets();
+
+    /**
      * Initialisation du controleur.
      *
      * @return void
      */
     public function boot();
+
+    /**
+     * Vérification d'existance d'un service fourni.
+     *
+     * @param string $alias Alias de qualification du service.
+     *
+     * @return mixed.
+     */
+    public function bound($alias);
+
+    /**
+     * Récupération de l'instance de gestion de la configuration ou Définition d'attributs de configuration ou
+     * récupération d'un attribut de configuration.
+     *
+     * @param null|string|array $key Clé d'indice de l'attribut de configuration. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return $this|ParamsBag|mixed
+     */
+    public function config($key, $default = null);
 
     /**
      * Récupération de l'instance du controleur de base de données
@@ -40,21 +71,34 @@ interface PatternController extends ContainerInterface
     public function db();
 
     /**
-     * Récupération de l'instance de la fabrique de disposition associée.
+     * Affichage du rendu.
      *
-     * @return PatternFactory
+     * @return void
      */
-    public function factory();
+    public function display();
 
     /**
-     * {@inheritdoc}
+     * Récupération de l'instance d'un service fournis en vue de sa redéfinition.
      *
-     * @param string $id
-     * @param array $args
+     * @param string $alias Alias de qualification du service.
      *
-     * @return mixed.
+     * @return DefinitionInterface
      */
-    public function get($id, array $args = []);
+    public function extend($alias);
+
+    /**
+     * Récupération du conteneur d'injection de dépendances.
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer();
+
+    /**
+     * Récupération de la liste des fournisseurs de services.
+     *
+     * @return string[]
+     */
+    public function getServiceProviders();
 
     /**
      * Récupération de l'instance du controleur des intitulés ou récupération d'un intitulé.
@@ -90,10 +134,10 @@ interface PatternController extends ContainerInterface
     /**
      * Récupération de l'instance du controleur de paramètre ou récupération d'un paramètre.
      *
-     * @param null|string $key Clé d'indice du paramètres. Syntaxe à point permise.
+     * @param null|array|string $key Clé d'indice du paramètres. Syntaxe à point permise.
      * @param mixed $default Valeur de retour par défaut.
      *
-     * @return ParamsBag|mixed
+     * @return $this|ParamsBag|mixed
      */
     public function param($key = null, $default = null);
 
@@ -124,6 +168,23 @@ interface PatternController extends ContainerInterface
      * @return string
      */
     public function render();
+
+    /**
+     * Récupération d'une instance de service fourni.
+     *
+     * @param string $id
+     * @param array $args
+     *
+     * @return mixed.
+     */
+    public function resolve($id, array $args = []);
+
+    /**
+     * Instance du controleur de gestion des urls.
+     *
+     * @return PatternBaseUrl
+     */
+    public function url();
 
     /**
      * Récupération de l'instance du controleur de gabarit d'affichage ou du gabarit qualifié.

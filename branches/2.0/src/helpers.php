@@ -266,7 +266,7 @@ if (!function_exists('pattern')) :
     /**
      *
      */
-    function pattern($name = null)
+    function pattern($name = null, $params = [])
     {
         $factory = app()->get('view.pattern');
 

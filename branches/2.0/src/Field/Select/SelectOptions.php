@@ -3,9 +3,10 @@
 namespace tiFy\Field\Select;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use tiFy\Contracts\Field\SelectOptions as SelectOptionsContract;
+use tiFy\Kernel\Collection\Collection;
 
-class SelectOptions
+class SelectOptions extends Collection implements SelectOptionsContract
 {
     /**
      * Liste des éléments.
@@ -17,19 +18,19 @@ class SelectOptions
      * CONSTRUCTEUR.
      *
      * @param array $items
-     * @param null|boolean $associative
+     * @param mixed $selected Liste des éléments selectionnés
      */
-    public function __construct($items = [])
+    public function __construct($items = [], $selected = null)
     {
         foreach($items as $name => $attrs) :
-            $this->_parseItem($name, $attrs);
+            $this->recursiveWrap($name, $attrs);
         endforeach;
+
+        $this->setSelected($selected);
     }
 
     /**
-     * Résolution de sortie de la classe sous la forme d'une chaîne de caractères.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function __toString()
     {
@@ -37,64 +38,32 @@ class SelectOptions
     }
 
     /**
-     *
+     * {@inheritdoc}
      */
-    private function _parseItem($name, $attrs, $parent = null)
+    public function recursiveWrap($name, $attrs, $parent = null)
     {
         if ($attrs instanceof SelectOption) :
             $this->items[$name] = $attrs;
         elseif (!is_array($attrs)) :
-            $this->items[$name] =  new SelectOption($name, ['content' => $attrs, 'parent' => $parent]);
+            $this->items[$name] = new SelectOption($name, ['content' => $attrs, 'parent' => $parent]);
         else :
             $this->items[$name] = new SelectOption($name, ['content' => $name, 'group' => true, 'parent' => $parent]);
             foreach($attrs as $_name => $_attrs) :
-                $this->_parseItem($_name, $_attrs, $name);
+                $this->recursiveWrap($_name, $_attrs, $name);
             endforeach;
         endif;
     }
 
     /**
-     * Itérateur d'affichage.
-     *
-     * @param SelectOption[] $items Liste des éléments à ordonner.
-     * @param int $depth Niveau de profondeur.
-     * @param string $parent Nom de qualification de l'élément parent.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    private function _walk($items = [], $depth = 0, $parent = null)
+    public function render()
     {
-        $output = "";
-        foreach ($items as $item) :
-            if ($item->getParent() !== $parent) :
-                continue;
-            endif;
-
-            $item->setDepth($depth);
-
-            $output .= $item->tagOpen();
-            $output .= $item->tagContent();
-            $output .= $this->_walk($items, ($depth + 1), $item->getName());
-            $output .= $item->tagClose();
-        endforeach;
-
-        return $output;
+        return $this->walk($this->items);
     }
 
     /**
-     * @return Collection
-     */
-    public function collect()
-    {
-        return new Collection($this->items);
-    }
-
-    /**
-     * Définition de liste des éléments selectionnés.
-     *
-     * @param mixed $selected
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setSelected($selected = null)
     {
@@ -118,12 +87,24 @@ class SelectOptions
     }
 
     /**
-     * Affichage de la liste des éléments.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function render()
+    public function walk($items = [], $depth = 0, $parent = null)
     {
-        return $this->_walk($this->items);
+        $output = "";
+        foreach ($items as $item) :
+            if ($item->getParent() !== $parent) :
+                continue;
+            endif;
+
+            $item->setDepth($depth);
+
+            $output .= $item->tagOpen();
+            $output .= $item->tagContent();
+            $output .= $this->walk($items, ($depth + 1), $item->getName());
+            $output .= $item->tagClose();
+        endforeach;
+
+        return $output;
     }
 }

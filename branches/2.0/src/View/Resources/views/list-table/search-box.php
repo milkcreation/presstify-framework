@@ -2,7 +2,7 @@
 /**
  * Champ de recherche.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\View\Pattern\ListTable\ListTableViewController $this
+ * @var tiFy\View\Pattern\ListTable\Viewer\Viewer $this
  */
 ?>
 <?php if ($this->items()->exists() || !$this->request()->searchExists()) : ?>
@@ -13,7 +13,7 @@
             [
                 'attrs'   => [
                     'class' => 'screen-reader-text',
-                    'for'   => $this->getName(),
+                    'for'   => $this->name(),
                 ],
                 'content' => $this->label('search_items'),
             ]
@@ -25,7 +25,7 @@
             'text',
             [
                 'attrs' => [
-                    'id'   => $this->getName(),
+                    'id'   => $this->name(),
                     'type' => 'search',
                 ],
                 'name'  => 's',

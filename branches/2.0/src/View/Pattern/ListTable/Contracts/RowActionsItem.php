@@ -14,13 +14,6 @@ interface RowActionsItem extends ParamsBag
     public function __toString();
 
     /**
-     * Affichage.
-     *
-     * @return string
-     */
-    public function display();
-
-    /**
      * Récupération de l'identifiant de qualification de la clef de sécurisation d'une action sur un élément.
      *
      * @return string
@@ -33,4 +26,11 @@ interface RowActionsItem extends ParamsBag
      * @return boolean
      */
     public function isActive();
+
+    /**
+     * Récupération du rendu de l'affichage.
+     *
+     * @return string
+     */
+    public function render();
 }

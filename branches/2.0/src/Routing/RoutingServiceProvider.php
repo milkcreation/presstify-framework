@@ -17,12 +17,11 @@ class RoutingServiceProvider extends AppServiceProvider
      * @var array
      */
     protected $provides = [
-        'route',
         'router',
         'router.emitter',
-	    'router.strategy.default',
+        'router.strategy.default',
         'router.strategy.json',
-        ServerRequestInterface::class
+        ServerRequestInterface::class,
     ];
 
     /**
@@ -30,7 +29,9 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        add_action('after_setup_tify', function () { router(); });
+        add_action('after_setup_tify', function () {
+            $this->getContainer()->get('router');
+        });
     }
 
     /**
@@ -39,9 +40,9 @@ class RoutingServiceProvider extends AppServiceProvider
     public function register()
     {
         $this->registerRouter();
+        $this->registerUrl();
         $this->registerPsrRequest();
         $this->registerEmitter();
-        $this->registerRoute();
         $this->registerStrategies();
     }
 
@@ -70,18 +71,6 @@ class RoutingServiceProvider extends AppServiceProvider
     }
 
     /**
-     * Déclaration des controleurs de route.
-     *
-     * @return void
-     */
-    public function registerRoute()
-    {
-        $this->getContainer()->add('route', function () {
-            return new Route();
-        });
-    }
-
-    /**
      * Déclaration du controleur de routage.
      *
      * @return void
@@ -100,8 +89,20 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function registerStrategies()
     {
-	    $this->getContainer()->add('router.strategy.default', new App());
+        $this->getContainer()->add('router.strategy.default', new App());
 
         $this->getContainer()->add('router.strategy.json', new Json(new ResponseFactory()));
+    }
+
+    /**
+     * Déclaration du controleur d'urls.
+     *
+     * @return void
+     */
+    public function registerUrl()
+    {
+        $this->getContainer()->share('url', function () {
+            return new Url($this->getContainer()->get('router'), request());
+        });
     }
 }

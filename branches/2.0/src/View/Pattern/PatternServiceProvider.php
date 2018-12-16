@@ -2,40 +2,47 @@
 
 namespace tiFy\View\Pattern;
 
-use tiFy\Db\DbItemBaseController;
-use tiFy\Contracts\Container\ContainerInterface;
-use tiFy\Contracts\View\PatternController;
+use tiFy\Contracts\View\ViewPatternController;
 use tiFy\Kernel\Container\Container;
 use tiFy\Kernel\Container\ServiceProvider;
-use tiFy\Kernel\Http\Request;
-use tiFy\Kernel\Labels\LabelsBag;
-use tiFy\Kernel\Notices\Notices;
-use tiFy\Kernel\Params\ParamsBag;
 use tiFy\View\ViewEngine;
 
 class PatternServiceProvider extends ServiceProvider
 {
+    /**
+     * Instance du controleur du motif d'affichage associé.
+     * @var ViewPatternController
+     */
+    protected $pattern;
+
     /**
      * Liste des noms de qualification des services fournis.
      * @internal requis. Tous les noms de qualification de services à traiter doivent être renseignés.
      * @var string[]
      */
     protected $provides = [
+        'assets',
         'db',
         'labels',
-        'params',
         'notices',
+        'params',
         'request',
+        'url',
         'viewer'
     ];
 
     /**
      * CONSTRUCTEUR.
      *
+     * @param Container $container
+     * @param ViewPatternController $pattern Instance du motif d'affichage associé.
+     *
      * @return void
      */
-    public function __construct(Container $container)
+    public function __construct(Container $container, ViewPatternController $pattern)
     {
+        $this->pattern = $pattern;
+
         parent::__construct($container);
     }
 
@@ -48,19 +55,6 @@ class PatternServiceProvider extends ServiceProvider
     }
 
     /**
-     * Récupération d'un attribut de configuration.
-     *
-     * @param string $key Clé d'indice du paramètre à récupérer. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed
-     */
-    public function config($key, $default = null)
-    {
-        return $this->getContainer()->factory()->get($key, $default);
-    }
-
-    /**
      * Récupération de l'alias de qualification complet d'un service fournis.
      *
      * @param $alias
@@ -69,17 +63,7 @@ class PatternServiceProvider extends ServiceProvider
      */
     public function getFullAlias($alias)
     {
-        return "view.pattern.{$this->getContainer()->name()}.{$alias}";
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return PatternController|ContainerInterface
-     */
-    public function getContainer()
-    {
-        return parent::getContainer();
+        return "view.pattern.{$this->pattern->name()}.{$alias}";
     }
 
     /**
@@ -101,12 +85,26 @@ class PatternServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerAssets();
         $this->registerDb();
         $this->registerLabels();
         $this->registerParams();
         $this->registerNotices();
         $this->registerRequest();
+        $this->registerUrl();
         $this->registerViewer();
+    }
+
+    /**
+     * Déclaration du controleur des assets.
+     *
+     * @return void
+     */
+    public function registerAssets()
+    {
+        $this->getContainer()->share($this->getFullAlias('assets'), function(ViewPatternController $pattern) {
+            return new PatternBaseAssets($pattern);
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -116,13 +114,13 @@ class PatternServiceProvider extends ServiceProvider
      */
     public function registerDb()
     {
-        $this->getContainer()->share($this->getFullAlias('db'), function(PatternController $pattern) {
-            if ($this->config('db')) :
-                return new DbItemBaseController($pattern->name());
+        $this->getContainer()->share($this->getFullAlias('db'), function(ViewPatternController $pattern) {
+            if ($attrs = $pattern->config('db')) :
+                return new PatternBaseDb($pattern->name(), $attrs, $pattern);
             else :
                 return null;
             endif;
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -132,21 +130,9 @@ class PatternServiceProvider extends ServiceProvider
      */
     public function registerLabels()
     {
-        $this->getContainer()->share($this->getFullAlias('labels'), function(PatternController $pattern) {
-            return new LabelsBag($pattern->name(), $this->config('labels', []));
-        })->withArgument($this->getContainer());
-    }
-
-    /**
-     * Déclaration du controleur de paramètres.
-     *
-     * @return void
-     */
-    public function registerParams()
-    {
-        $this->getContainer()->share($this->getFullAlias('params'), function() {
-            return new ParamsBag($this->config('params', []));
-        });
+        $this->getContainer()->share($this->getFullAlias('labels'), function(ViewPatternController $pattern) {
+            return new PatternBaseLabels($pattern->name(), $pattern->config('labels', []), $pattern);
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -156,9 +142,21 @@ class PatternServiceProvider extends ServiceProvider
      */
     public function registerNotices()
     {
-        $this->getContainer()->share($this->getFullAlias('notices'), function() {
-            return new Notices();
-        });
+        $this->getContainer()->share($this->getFullAlias('notices'), function(ViewPatternController $pattern) {
+            return new PatternBaseNotices($pattern);
+        })->withArgument($this->pattern);
+    }
+
+    /**
+     * Déclaration du controleur de paramètres.
+     *
+     * @return void
+     */
+    public function registerParams()
+    {
+        $this->getContainer()->share($this->getFullAlias('params'), function(ViewPatternController $pattern) {
+            return new PatternBaseParams($pattern->config('params', []), $pattern);
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -168,9 +166,21 @@ class PatternServiceProvider extends ServiceProvider
      */
     public function registerRequest()
     {
-        $this->getContainer()->share($this->getFullAlias('request'), function() {
-            return Request::capture();
-        });
+        $this->getContainer()->share($this->getFullAlias('request'), function(ViewPatternController $pattern) {
+            return PatternBaseRequest::capture()->setPattern($pattern);
+        })->withArgument($this->pattern);
+    }
+
+    /**
+     * Déclaration du controleur des urls.
+     *
+     * @return void
+     */
+    public function registerUrl()
+    {
+        $this->getContainer()->share($this->getFullAlias('url'), function(ViewPatternController $pattern) {
+            return new PatternBaseUrl(router(), request(), $pattern);
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -180,8 +190,8 @@ class PatternServiceProvider extends ServiceProvider
      */
     public function registerViewer()
     {
-        $this->getContainer()->share($this->getFullAlias('viewer'), function(PatternController $pattern) {
-            $params = $this->config('viewer', []);
+        $this->getContainer()->share($this->getFullAlias('viewer'), function(ViewPatternController $pattern) {
+            $params = $this->pattern->config('viewer', []);
 
             if (!$params instanceof ViewEngine) :
                 $viewer = new ViewEngine(
@@ -192,15 +202,18 @@ class PatternServiceProvider extends ServiceProvider
                         $params
                     )
                 );
-                $viewer->setController(PatternViewController::class);
+                $viewer->setController(PatternBaseViewer::class);
+
                 if (!$viewer->getOverrideDir()) :
                     $viewer->setOverrideDir(pattern()->resourcesDir('/views'));
                 endif;
+            else :
+                $viewer = $params;
             endif;
 
             $viewer->set('pattern', $pattern);
 
             return $viewer;
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
     }
 }

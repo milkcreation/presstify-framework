@@ -15,6 +15,12 @@ class Collection implements CollectionContract
     protected $items = [];
 
     /**
+     * Récupération de l'iteration courante.
+     * @var ArrayIterator
+     */
+    protected $_iteration;
+
+    /**
      * {@inheritdoc}
      */
     public function collect($items = null)
@@ -41,6 +47,14 @@ class Collection implements CollectionContract
     /**
      * {@inheritdoc}
      */
+    public function current()
+    {
+        return $this->getIteration()->current();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function exists()
     {
         return !empty($this->items);
@@ -57,6 +71,22 @@ class Collection implements CollectionContract
     /**
      * {@inheritdoc}
      */
+    public function has($key)
+    {
+        return isset($this->items[$key]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function key()
+    {
+        return $this->getIteration()->key();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function wrap($item)
     {
         return $item;
@@ -67,7 +97,15 @@ class Collection implements CollectionContract
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->items);
+        return $this->_iteration = new ArrayIterator($this->items);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIteration()
+    {
+        return ($this->_iteration instanceof ArrayIterator) ? $this->_iteration : $this->getIterator();
     }
 
     /**

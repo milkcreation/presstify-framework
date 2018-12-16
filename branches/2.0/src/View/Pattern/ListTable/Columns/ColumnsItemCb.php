@@ -2,77 +2,58 @@
 
 namespace tiFy\View\Pattern\ListTable\Columns;
 
-use tiFy\View\Pattern\ListTable\Contracts\Item;
+use tiFy\Kernel\Tools;
 
 class ColumnsItemCb extends ColumnsItem
 {
-    static $counter = 1;
+    static $headerIndex = 0;
 
     /**
      * {@inheritdoc}
      */
-    public function display(Item $item)
+    public function header($with_id = true)
     {
-        if ($db = $this->pattern->db()) :
-            if (($primary = $db->getPrimary()) && isset($item->{$primary})) :
-                return sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />', $primary, $item->{$primary});
-            endif;
-        elseif(($primary = $this->pattern->columns()->getPrimary()) && isset($item->{$primary})) :
-            return sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />', $primary, $item->{$primary});
+        $classes = ['manage-column', "column-{$this->getName()}", 'check-column'];
+
+        if ($this->isHidden()) :
+            $classes[] = 'hidden';
         endif;
 
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeader($with_id = true)
-    {
-        $class = ['manage-column', "column-{$this->getName()}", 'check-column'];
-
-        $attrs = [
-            'tag' => 'td',
-            'attrs'  => [
-                'class' => join(' ', $class),
-                'scope' => 'col'
-            ],
-            'content' => $this->getHeaderContent()
-        ];
-
-        self::$counter++;
-
+        $attrs = [];
         if ($with_id) :
-            $attrs['attrs']['id'] = $this->getName();
+            $attrs['id'] = $this->getName();
         endif;
 
-        return (string)partial('tag', $attrs);
+        $attrs['class'] = join(' ', $classes);
+
+        return $this->pattern->viewer(
+            'thead-col_cb',
+            [
+                'attrs' => Tools::Html()->parseAttrs($attrs),
+                'index' => ++self::$headerIndex
+            ]
+        );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getHeaderContent()
+    public function isPrimary()
     {
-        $content = (string)field(
-            'label',
-            [
-                'attrs' => [
-                    'class' => 'screen-reader-text',
-                    'for'   => 'cb-select-all-' . self::$counter
-                ],
-                'content' => __( 'Select All' )
-            ]
-        );
-        $content .= (string)field(
-            'checkbox',
-            [
-                'attrs' => [
-                    'id' => 'cb-select-all-' . self::$counter
-                ]
-            ]
-        );
+        return false;
+    }
 
-        return $content;
+    /**
+     * {@inheritdoc}
+     */
+    public function parse($attrs = [])
+    {
+        parent::parse($attrs);
+
+        $this->pull('attrs.data-colname');
+
+        $this->set('attrs.class', 'check-column');
+
+        $this->set('attrs.scope', 'row');
     }
 }

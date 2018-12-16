@@ -68,29 +68,7 @@ class ViewFiltersItem extends ParamsBag implements ViewFiltersItemContract
      */
     public function __toString()
     {
-        return (string)$this->display();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display()
-    {
-        if ($this->get('hide_empty') && !$this->get('count_items', 0)) :
-            return '';
-        endif;
-
-        return partial(
-            'tag',
-            [
-                'tag'     => 'a',
-                'attrs'   => $this->get('attrs', []),
-                'content' => $this->get('content'),
-                'after'   => $this->get('show_count')
-                    ? " <span class=\"count\">(" . $this->get('count_items') . ")</span>"
-                    : ''
-            ]
-        );
+        return (string)$this->render();
     }
 
     /**
@@ -119,5 +97,28 @@ class ViewFiltersItem extends ParamsBag implements ViewFiltersItemContract
         if (!$this->get('content')) :
             $this->set('content', $this->name);
         endif;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render()
+    {
+        if ($this->get('hide_empty') && !$this->get('count_items', 0)) :
+            return '';
+        endif;
+
+        return partial(
+            'tag',
+            [
+                'tag'     => 'a',
+                'attrs'   => $this->get('attrs', []),
+                'content' => $this->get('content'),
+                'after'   => $this->get('show_count')
+                    ? " <span class=\"count\">(" . $this->get('count_items') . ")</span>"
+                    : ''
+            ]
+        );
     }
 }

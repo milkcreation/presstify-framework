@@ -42,21 +42,6 @@ class Select extends FieldController
     ];
 
     /**
-     * @todo
-     */
-    protected $options;
-
-    /**
-     * Récupération des attributs des options de liste de sélection
-     *
-     * @return SelectOptions|SelectOption[]
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getValue()
@@ -78,16 +63,6 @@ class Select extends FieldController
         endif;
 
         return $value;
-    }
-
-    /**
-     * Affichage du contenu de la liste de selection
-     *
-     * @return void
-     */
-    public function options()
-    {
-        echo (string)$this->options;
     }
 
     /**
@@ -114,11 +89,8 @@ class Select extends FieldController
         $options = $this->get('options', []);
 
         if (!$options instanceof SelectOptions) :
-            $options = new SelectOptions($options);
-            $options->setSelected($this->getValue());
+            $this->set('options', new SelectOptions($options, $this->getValue()));
         endif;
-
-        $this->options = $options;
     }
 
     /**
