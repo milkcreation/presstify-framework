@@ -7,18 +7,18 @@ use tiFy\Contracts\Kernel\ParamsBag;
 interface Pagination extends ParamsBag
 {
     /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     * Rendu d'affichage de la page courante.
      *
      * @return string
      */
-    public function __toString();
+    public function currentPage();
 
     /**
-     * Affichage.
+     * Rendu d'affichage de l'accès à la première page.
      *
-     * @return array
+     * @return string
      */
-    public function display();
+    public function firstPage();
 
     /**
      * Récupération de la classe HTML du conteneur de l'interface de pagination.
@@ -82,6 +82,50 @@ interface Pagination extends ParamsBag
      * @return boolean
      */
     public function isInfiniteScroll();
+
+    /**
+     * Rendu d'affichage de l'accès à la dernière page.
+     *
+     * @return string
+     */
+    public function lastPage();
+
+    /**
+     * Rendu d'affichage de l'accès à la page suivante.
+     *
+     * @return string
+     */
+    public function nextPage();
+
+    /**
+     * Récupération du numéro de la page courante.
+     *
+     * @return int
+     */
+    public function pageNum();
+
+    /**
+     * Récupération de l'url vers une page.
+     *
+     * @param int $page Numéro de la page.
+     *
+     * @return string
+     */
+    public function pagedUrl($page);
+
+    /**
+     * Rendu d'affichage de l'accès à la page précédente.
+     *
+     * @return string
+     */
+    public function prevPage();
+
+    /**
+     * Récupération de l'url de la page courante sans l'argument de pagination.
+     *
+     * @return string
+     */
+    public function unpagedUrl();
 
     /**
      * Définition de l'emplacement d'affichage.

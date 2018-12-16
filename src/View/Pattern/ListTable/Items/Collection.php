@@ -68,6 +68,6 @@ class Collection extends QueryCollection implements CollectionContract
      */
     public function wrap($item)
     {
-        return $this->pattern->get('item', [$item, $this->pattern]);
+        return $this->pattern->resolve('item', [$item, $this->pattern]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace tiFy\Contracts\Kernel;
 
+use Iterator;
 use ArrayAccess;
 use Countable;
 use IteratorAggregate;
@@ -32,6 +33,13 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function count();
 
     /**
+     * Récupération de l'élément d'itération courante.
+     *
+     * @return mixed
+     */
+    public function current();
+
+    /**
      * Vérification d'existance d'éléments.
      *
      * @return boolean
@@ -39,7 +47,7 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function exists();
 
     /**
-     * Récupération d'un élément selon sa clé d'indice
+     * Récupération d'un élément selon sa clé d'indice.
      *
      * @param mixed $key Clé d'indice.
      * @param mixed $default Valeur de retour par défaut.
@@ -47,6 +55,22 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
      * @return mixed
      */
     public function get($key, $default = null);
+
+    /**
+     * Vérification d'existance d'un élément selon sa clé d'indice.
+     *
+     * @param mixed $key Clé d'indice.
+     *
+     * @return boolean
+     */
+    public function has($key);
+
+    /**
+     * Récupération de l'indice de l'élément d'itération courante.
+     *
+     * @return mixed
+     */
+    public function key();
 
     /**
      * Encapsulation d'un élément.
@@ -58,9 +82,16 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function wrap($item);
 
     /**
-     * Récupération d'une intance de l'itérateur.
+     * Récupération de l'instance de l'itération.
      *
-     * @return callable
+     * @return Iterator
+     */
+    public function getIteration();
+
+    /**
+     * Récupération d'une instance de l'itérateur.
+     *
+     * @return Iterator
      */
     public function getIterator();
 

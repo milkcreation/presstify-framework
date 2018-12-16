@@ -5,7 +5,13 @@ namespace tiFy\Contracts\View;
 use League\Plates\Extension\ExtensionInterface;
 use League\Plates\Template\Folders;
 use League\Plates\Template\Func;
-
+use League\Plates\Engine;
+/**
+ * Interface ViewEngine
+ * @package tiFy\Contracts\View
+ *
+ * @mixin Engine
+ */
 interface ViewEngine
 {
     /**

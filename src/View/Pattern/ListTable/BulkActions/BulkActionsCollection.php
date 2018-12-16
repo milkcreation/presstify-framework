@@ -2,7 +2,6 @@
 
 namespace tiFy\View\Pattern\ListTable\BulkActions;
 
-use tiFy\Field\Select\SelectOption;
 use tiFy\Kernel\Collection\Collection;
 use tiFy\View\Pattern\ListTable\Contracts\BulkActionsCollection as BulkActionsCollectionContract;
 use tiFy\View\Pattern\ListTable\Contracts\BulkActionsItem;
@@ -54,7 +53,7 @@ class BulkActionsCollection extends Collection implements BulkActionsCollectionC
      */
     public function __toString()
     {
-        return (string)$this->display();
+        return (string)$this->render();
     }
 
     /**
@@ -70,64 +69,15 @@ class BulkActionsCollection extends Collection implements BulkActionsCollectionC
     /**
      * {@inheritdoc}
      */
-    public function display()
-    {
-        if (!$bulk_actions = $this->all()) :
-            return '';
-        endif;
-
-        $options = [
-            -1 => __('Actions groupées', 'theme')
-        ];
-        foreach ($bulk_actions as $bulk_action) :
-            $options[] = new SelectOption($bulk_action->getName(), $bulk_action->all());
-        endforeach;
-
-        $displayed = !self::$displayed++ ? '' : 2;
-
-        $output = '';
-        $output .= field(
-            'label',
-            [
-                'attrs'   => [
-                    'for'   => 'bulk-action-selector-' . esc_attr($this->which),
-                    'class' => 'screen-reader-text'
-                ],
-                'content' => __('Choix de l\'action', 'tify')
-            ]
-        );
-
-        $output .= field(
-            'select',
-            [
-                'name'    => "action{$displayed}",
-                'attrs'   => [
-                    'id' => 'bulk-action-selector-' . esc_attr($this->which)
-                ],
-                'options' => $options
-            ]
-        );
-
-        $output .= field(
-            'submit',
-            [
-                'attrs' => [
-                    'id'    => "doaction{$displayed}",
-                    'value' => __('Apply'),
-                    'class' => 'button action'
-                ]
-            ]
-        );
-
-        return $output;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function parse($bulk_actions = [])
     {
         if ($bulk_actions) :
+            $this->items[-1] = $this->pattern->resolve(
+                'bulk-actions.item',
+                [-1, ['content' =>  __('Actions groupées', 'tify')],
+                 $this->pattern]
+            );
+
             foreach ($bulk_actions as $name => $attrs) :
                 if (is_numeric($name)) :
                     $name = (string)$attrs;
@@ -139,13 +89,60 @@ class BulkActionsCollection extends Collection implements BulkActionsCollectionC
                     ];
                 endif;
 
-                $alias = $this->pattern->has("bulk-actions.item.{$name}")
+                $alias = $this->pattern->bound("bulk-actions.item.{$name}")
                     ? "bulk-actions.item.{$name}"
                     : 'bulk-actions.item';
 
-                $this->items[$name] = $this->pattern->get($alias, [$name, $attrs, $this->pattern]);
+                $this->items[$name] = $this->pattern->resolve($alias, [$name, $attrs, $this->pattern]);
             endforeach;
         endif;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render()
+    {
+        $output = '';
+
+        if ($options = $this->all()) :
+            $displayed = !self::$displayed++ ? '' : 2;
+
+            $output .= field(
+                'label',
+                [
+                    'attrs'   => [
+                        'for'   => 'bulk-action-selector-' . esc_attr($this->which),
+                        'class' => 'screen-reader-text'
+                    ],
+                    'content' => __('Choix de l\'action', 'tify')
+                ]
+            );
+
+            $output .= field(
+                'select',
+                [
+                    'name'    => "action{$displayed}",
+                    'attrs'   => [
+                        'id' => 'bulk-action-selector-' . esc_attr($this->which)
+                    ],
+                    'options' => $options
+                ]
+            );
+
+            $output .= field(
+                'submit',
+                [
+                    'attrs' => [
+                        'id'    => "doaction{$displayed}",
+                        'value' => __('Apply'),
+                        'class' => 'button action'
+                    ]
+                ]
+            );
+        endif;
+
+        return $output;
     }
 
     /**

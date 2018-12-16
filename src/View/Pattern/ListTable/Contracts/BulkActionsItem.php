@@ -2,14 +2,9 @@
 
 namespace tiFy\View\Pattern\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Field\SelectOption;
 
-interface BulkActionsItem extends ParamsBag
+interface BulkActionsItem extends SelectOption
 {
-    /**
-     * Récupération du nom de qualification.
-     *
-     * @return string
-     */
-    public function getName();
+
 }

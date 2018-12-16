@@ -2,6 +2,8 @@
 
 namespace tiFy\View;
 
+use tiFy\Contracts\View\ViewPatternController;
+
 class ViewPattern
 {
     /**
@@ -28,11 +30,24 @@ class ViewPattern
      * @param string $name Nom de qualification de la disposition.
      * @param array $attrs Liste des attributs de configuration de la disposition.
      *
-     * @return object
+     * @return ViewPatternController
      */
     public function register($name, $attrs = [])
     {
-        return $this->items[$name] = $this->items[$name] ?? app()->get('view.pattern.factory', [$name, $attrs]);
+        return $this->set($name, $this->items[$name] ?? app()->get('view.pattern.controller', [$name, $attrs]));
+    }
+
+    /**
+     * Définition d'un motif d'affichage.
+     *
+     * @param string $name Nom de qualification de la disposition.
+     * @param ViewPatternController $pattern Motif d'affichage.
+     *
+     * @return ViewPatternController
+     */
+    public function set($name, ViewPatternController $pattern)
+    {
+        return $this->items[$name] = $pattern;
     }
 
     /**

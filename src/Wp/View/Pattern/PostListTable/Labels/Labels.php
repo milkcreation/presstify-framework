@@ -3,9 +3,32 @@
 namespace tiFy\Wp\View\Pattern\PostListTable\Labels;
 
 use tiFy\PostType\PostTypeLabels;
+use tiFy\Wp\View\Pattern\PostListTable\Contracts\PostListTable;
 
 class Labels extends PostTypeLabels
 {
+    /**
+     * Instance de la disposition.
+     * @var PostListTable
+     */
+    protected $pattern;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param string Nom de qualification.
+     * @param array $attrs Liste des attributs de configuration.
+     * @param PostListTable $pattern Instance du motif d'affichage associé.
+     *
+     * @return void
+     */
+    public function __construct($name, $attrs, PostListTable $pattern)
+    {
+        $this->pattern = $pattern;
+
+        parent::__construct($name, $attrs);
+    }
+
     /**
      * {@inheritdoc}
      */

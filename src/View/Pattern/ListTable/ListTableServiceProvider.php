@@ -2,7 +2,6 @@
 
 namespace tiFy\View\Pattern\ListTable;
 
-use tiFy\Kernel\Labels\LabelsBag;
 use tiFy\View\Pattern\ListTable\BulkActions\BulkActionsCollection;
 use tiFy\View\Pattern\ListTable\BulkActions\BulkActionsItem;
 use tiFy\View\Pattern\ListTable\BulkActions\BulkActionsItemTrash;
@@ -28,6 +27,7 @@ use tiFy\View\Pattern\ListTable\RowActions\RowActionsItemTrash;
 use tiFy\View\Pattern\ListTable\RowActions\RowActionsItemUntrash;
 use tiFy\View\Pattern\ListTable\ViewFilters\ViewFiltersCollection;
 use tiFy\View\Pattern\ListTable\ViewFilters\ViewFiltersItem;
+use tiFy\View\Pattern\ListTable\Viewer\Viewer;
 use tiFy\View\Pattern\PatternServiceProvider;
 use tiFy\View\ViewEngine;
 
@@ -90,7 +90,7 @@ class ListTableServiceProvider extends PatternServiceProvider
     {
         $this->getContainer()->share($this->getFullAlias('bulk-actions'), function (ListTable $pattern) {
             return new BulkActionsCollection($pattern->param('bulk_actions', []), $pattern);
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
 
         $this->getContainer()->add($this->getFullAlias('bulk-actions.item'), BulkActionsItem::class);
 
@@ -106,7 +106,7 @@ class ListTableServiceProvider extends PatternServiceProvider
     {
         $this->getContainer()->share($this->getFullAlias('columns'), function (ListTable $pattern) {
             return new ColumnsCollection($pattern->param('columns', []), $pattern);
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
 
         $this->getContainer()->add($this->getFullAlias('columns.item'), ColumnsItem::class);
 
@@ -124,8 +124,8 @@ class ListTableServiceProvider extends PatternServiceProvider
             return new Collection($items, $pattern);
         })->withArguments(
             [
-                $this->config('items', []),
-                $this->getContainer()
+                $this->pattern->config('items', []),
+                $this->pattern
             ]
         );
 
@@ -138,8 +138,8 @@ class ListTableServiceProvider extends PatternServiceProvider
     public function registerLabels()
     {
         $this->getContainer()->share($this->getFullAlias('labels'), function (ListTable $pattern) {
-            return new Labels($pattern->name(), $this->config('labels', []));
-        })->withArgument($this->getContainer());
+            return new Labels($pattern->name(), $pattern->config('labels', []), $pattern);
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -151,7 +151,7 @@ class ListTableServiceProvider extends PatternServiceProvider
     {
         $this->getContainer()->share($this->getFullAlias('pagination'), function ($attrs, ListTable $pattern) {
             return new Pagination($attrs, $pattern);
-        })->withArguments([[], $this->getContainer()]);
+        })->withArguments([[], $this->pattern]);
     }
 
     /**
@@ -160,8 +160,8 @@ class ListTableServiceProvider extends PatternServiceProvider
     public function registerParams()
     {
         $this->getContainer()->share($this->getFullAlias('params'), function (ListTable $pattern) {
-            return new Params($this->config('params', []), $pattern);
-        })->withArgument($this->getContainer());
+            return new Params($pattern->config('params', []), $pattern);
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -171,7 +171,7 @@ class ListTableServiceProvider extends PatternServiceProvider
     {
         $this->getContainer()->share($this->getFullAlias('request'), function (ListTable $pattern) {
             return (Request::capture())->setPattern($pattern);
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -181,10 +181,10 @@ class ListTableServiceProvider extends PatternServiceProvider
      */
     public function registerRowActions()
     {
-        $this->getContainer()->add($this->getFullAlias('row-actions'),
-            function ($row_actions, Item $item, ListTable $pattern) {
-                return new RowActionsCollection($row_actions, $item, $pattern);
-            });
+        $this->getContainer()->share($this->getFullAlias('row-actions'), function (ListTable $pattern) {
+                return new RowActionsCollection($pattern->param('row_actions', []), $pattern);
+            }
+        )->withArgument($this->pattern);
 
         $this->getContainer()->add($this->getFullAlias('row-actions.item'), RowActionsItem::class);
 
@@ -226,16 +226,18 @@ class ListTableServiceProvider extends PatternServiceProvider
                         $params
                     )
                 );
-                $viewer->setController(ListTableViewController::class);
+                $viewer->setController(Viewer::class);
                 if (!$viewer->getOverrideDir()) :
                     $viewer->setOverrideDir(pattern()->resourcesDir('/views/list-table'));
                 endif;
+            else :
+                $viewer = $params;
             endif;
 
             $viewer->set('pattern', $pattern);
 
             return $viewer;
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -247,7 +249,7 @@ class ListTableServiceProvider extends PatternServiceProvider
     {
         $this->getContainer()->share($this->getFullAlias('view-filters'), function (ListTable $pattern) {
             return new ViewFiltersCollection($pattern->param('view_filters', []), $pattern);
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
 
         $this->getContainer()->add($this->getFullAlias('view-filters.item'), ViewFiltersItem::class);
     }

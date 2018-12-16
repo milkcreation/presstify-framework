@@ -100,7 +100,7 @@ interface ViewController
     /**
      * Ouverture de déclaration de contenu de section ajouté.
      *
-     * param string $name Nom de qualification de la section.
+     * @param string $name Nom de qualification de la section.
      *
      * @return null
      */

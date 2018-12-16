@@ -2,9 +2,9 @@
 
 namespace tiFy\View\Pattern\ListTable\Labels;
 
-use tiFy\Kernel\Labels\LabelsBag;
+use tiFy\View\Pattern\PatternBaseLabels;
 
-class Labels extends LabelsBag
+class Labels extends PatternBaseLabels
 {
     /**
      * {@inheritdoc}

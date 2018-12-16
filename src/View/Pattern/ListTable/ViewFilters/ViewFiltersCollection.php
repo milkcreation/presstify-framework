@@ -50,11 +50,11 @@ class ViewFiltersCollection extends Collection implements ViewFiltersCollectionC
                     $attrs = ['content' => $attrs];
                 endif;
 
-                $alias = $this->pattern->has("view-filters.item.{$name}")
+                $alias = $this->pattern->bound("view-filters.item.{$name}")
                     ? "view-filters.item.{$name}"
                     : 'view-filters.item';
 
-                $this->items[$name] = $this->pattern->get($alias, [$name, $attrs, $this->pattern]);
+                $this->items[$name] = $this->pattern->resolve($alias, [$name, $attrs, $this->pattern]);
             endforeach;
 
             $this->items = array_filter($this->items, function ($value) {

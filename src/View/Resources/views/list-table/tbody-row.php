@@ -2,8 +2,9 @@
 /**
  * Ligne de données de la table.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\View\Pattern\ListTable\ListTableViewController $this
+ * @var tiFy\View\Pattern\ListTable\Viewer\Viewer $this
  * @var tiFy\View\Pattern\ListTable\Contracts\Item $item
+ * @var tiFy\View\Pattern\ListTable\Contracts\ColumnsItem $column
  */
 ?>
-<tr><?php echo $this->row($item); ?></tr>
+<tr><?php foreach ($this->columns() as $column) : echo $column; endforeach; ?></tr>

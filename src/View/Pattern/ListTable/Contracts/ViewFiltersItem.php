@@ -14,9 +14,9 @@ interface ViewFiltersItem extends ParamsBag
     public function __toString();
 
     /**
-     * Affichage.
+     * Récupération du rendu de l'affichage.
      *
      * @return string
      */
-    public function display();
+    public function render();
 }

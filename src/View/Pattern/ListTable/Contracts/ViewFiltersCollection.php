@@ -2,7 +2,9 @@
 
 namespace tiFy\View\Pattern\ListTable\Contracts;
 
-interface ViewFiltersCollection
+use tiFy\Contracts\Kernel\Collection;
+
+interface ViewFiltersCollection extends Collection
 {
     /**
      * Récupération de la liste des filtres.

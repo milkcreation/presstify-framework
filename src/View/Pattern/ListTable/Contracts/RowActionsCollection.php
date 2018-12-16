@@ -19,13 +19,6 @@ interface RowActionsCollection
     public function all();
 
     /**
-     * Affichage.
-     *
-     * @return string
-     */
-    public function display();
-
-    /**
      * Traitement de la liste des actions par ligne.
      *
      * @param array $row_actions Liste des actions par ligne.
@@ -33,4 +26,11 @@ interface RowActionsCollection
      * @return void
      */
     public function parse($row_actions = []);
+
+    /**
+     * Récupération du rendu de l'affichage.
+     *
+     * @return string
+     */
+    public function render();
 }

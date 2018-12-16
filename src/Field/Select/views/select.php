@@ -7,7 +7,7 @@
 <?php $this->before(); ?>
 
     <select <?php $this->attrs(); ?>>
-        <?php $this->options(); ?>
+        <?php echo $this->get('options', ''); ?>
     </select>
 
 <?php $this->after();

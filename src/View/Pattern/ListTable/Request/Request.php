@@ -2,11 +2,11 @@
 
 namespace tiFy\View\Pattern\ListTable\Request;
 
-use tiFy\Kernel\Http\Request as tiFyRequest;
+use tiFy\View\Pattern\PatternBaseRequest;
 use tiFy\View\Pattern\ListTable\Contracts\ListTable;
 use tiFy\View\Pattern\ListTable\Contracts\Request as RequestContract;
 
-class Request extends tiFyRequest implements RequestContract
+class Request extends PatternBaseRequest implements RequestContract
 {
     /**
      * Instance de la disposition associée.
@@ -105,27 +105,5 @@ class Request extends tiFyRequest implements RequestContract
     public function searchTerm()
     {
         return $this->searchExists() ? esc_attr(wp_unslash($this->get('s'))) : '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPattern(ListTable $pattern)
-    {
-        $this->pattern = $pattern;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sanitizeUrl($remove_query_args = [], $url = '')
-    {
-        if(empty($remove_query_args)) :
-            $remove_query_args = wp_removable_query_args();
-        endif;
-
-        return remove_query_arg($remove_query_args, $url ? : $this->fullUrl());
     }
 }

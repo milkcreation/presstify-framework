@@ -12,13 +12,6 @@ interface BulkActionsCollection
     public function __toString();
 
     /**
-     * Affichage.
-     *
-     * @return string
-     */
-    public function display();
-
-    /**
      * Traitement de la liste des actions groupées.
      *
      * @param array $bulk_actions Liste des actions groupées.
@@ -26,6 +19,13 @@ interface BulkActionsCollection
      * @return void
      */
     public function parse($bulk_actions = []);
+
+    /**
+     * Récupération du rendu de l'affichage.
+     *
+     * @return string
+     */
+    public function render();
 
     /**
      * Définition de l'emplacement d'affichage.

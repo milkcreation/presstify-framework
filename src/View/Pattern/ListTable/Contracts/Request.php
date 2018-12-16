@@ -2,13 +2,11 @@
 
 namespace tiFy\View\Pattern\ListTable\Contracts;
 
-use tiFy\Kernel\Http\Request as tiFyRequest;
-
 /**
  * Interface Request
  * @package tiFy\View\Pattern\ListTable\Request
  *
- * @mixin tiFyRequest
+ * @mixin \tiFy\View\Pattern\PatternBaseRequest
  */
 interface Request
 {
@@ -46,18 +44,4 @@ interface Request
      * @return string
      */
     public function searchTerm();
-
-    /**
-     * Définition de l'instance du controleur de motif d'affichage.
-     *
-     * @param ListTable $pattern Instance du controleur de motif d'affichage.
-     *
-     * @return $this
-     */
-    public function setPattern(ListTable $pattern);
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sanitizeUrl($remove_query_args = [], $url = '');
 }

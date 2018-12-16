@@ -2,7 +2,6 @@
 
 namespace tiFy\View\Pattern\ListTable\Items;
 
-use Illuminate\Support\Arr;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\View\Pattern\ListTable\Contracts\Item as ItemContract;
 use tiFy\View\Pattern\ListTable\Contracts\ListTable;
@@ -37,12 +36,22 @@ class Item extends ParamsBag implements ItemContract
     /**
      * {@inheritdoc}
      */
-    public function getPrimary()
+    public function getPrimary($default = null)
     {
-         if (($db = $this->pattern->db()) && ($primary = $db->getPrimary()) && $this->has($primary)) :
-            return $this->get($primary);
-         else :
-            return Arr::first($this->attributes);
-         endif;
+        return $this->get($this->getPrimaryKey(), $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPrimaryKey()
+    {
+        if (($primary_key = $this->pattern->param('item_primary_key')) && $this->has($primary_key)) :
+            return $primary_key;
+        elseif ($db = $this->pattern->db()) :
+            return $db->getPrimary();
+        else :
+            return current($this->keys());
+        endif;
     }
 }

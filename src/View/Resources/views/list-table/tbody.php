@@ -2,7 +2,7 @@
 /**
  * Corps de la table.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\View\Pattern\ListTable\ListTableViewController $this
+ * @var tiFy\View\Pattern\ListTable\Viewer\Viewer $this
  */
 ?>
 <tbody id="the-list"<?php echo ($singular = $this->param('singular', '')) ? " data-wp-lists=\"list:{$singular}\"" : ''; ?>>

@@ -2,31 +2,16 @@
 
 namespace tiFy\View\Pattern\ListTable\Params;
 
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\View\Pattern\PatternBaseParams;
 use tiFy\View\Pattern\ListTable\Contracts\ListTable;
-use tiFy\View\Pattern\ListTable\Contracts\Params as ParamsContract;
 
-class Params extends ParamsBag implements ParamsContract
+class Params extends PatternBaseParams
 {
     /**
      * Instance de la disposition associée.
      * @var ListTable
      */
     protected $pattern;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param array $attrs Liste des paramètres personnalisés.
-     *
-     * @return void
-     */
-    public function __construct($attrs, ListTable $pattern)
-    {
-        $this->pattern = $pattern;
-
-        parent::__construct($attrs);
-    }
 
     /**
      * {@inheritdoc}
@@ -37,6 +22,8 @@ class Params extends ParamsBag implements ParamsContract
             'edit_base_uri'              => '',
             'bulk_actions'               => [],
             'columns'                    => [],
+            'colum_primary'              => '',
+            'item_primary_key'           => '',
             'per_page'                   => 20,
             'per_page_option_name'       => '',
             'preview_item_mode'          => [],

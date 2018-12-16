@@ -7,13 +7,18 @@ use tiFy\Contracts\Kernel\ParamsBag;
 interface ColumnsItem extends ParamsBag
 {
     /**
-     * Affichage.
-     *
-     * @param Item $item Données de l'élément courant à afficher.
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
      * @return string
      */
-    public function display(Item $item);
+    public function __toString();
+
+    /**
+     * Récupération du contenu d'affichage.
+     *
+     * @return string
+     */
+    public function content();
 
     /**
      * Récupération du nom de qualification.
@@ -30,20 +35,22 @@ interface ColumnsItem extends ParamsBag
     public function getTitle();
 
     /**
+     * Récupération du gabarit d'affichage du contenu de la colonne.
+     *
+     * @param string $default Valeur de retour par défaut.
+     *
+     * @return string
+     */
+    public function getTemplate($default = 'tbody-col');
+
+    /**
      * Récupération de l'entête au format HTML.
      *
      * @param bool $with_id Activation de l'id de la balise HTML.
      *
      * @return string
      */
-    public function getHeader($with_id = true);
-
-    /**
-     * Récupération du texte contenu dans l'entête.
-     *
-     * @return string
-     */
-    public function getHeaderContent();
+    public function header($with_id = true);
 
     /**
      * Vérification de maquage de la colonne.
@@ -65,4 +72,11 @@ interface ColumnsItem extends ParamsBag
      * @return bool
      */
     public function isSortable();
+
+    /**
+     * Affichage
+     *
+     * @return string
+     */
+    public function render();
 }

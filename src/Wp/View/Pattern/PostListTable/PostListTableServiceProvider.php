@@ -51,7 +51,7 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     {
         $this->getContainer()->share($this->getFullAlias('db'), function(PostListTable $pattern) {
             return new DbPostsController($pattern->name());
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -60,8 +60,8 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     public function registerLabels()
     {
         $this->getContainer()->share($this->getFullAlias('labels'), function (PostListTable $pattern) {
-            return new Labels($pattern->name(), $this->config('labels', []));
-        })->withArgument($this->getContainer());
+            return new Labels($pattern->name(), $pattern->config('labels', []), $pattern);
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -70,8 +70,8 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     public function registerParams()
     {
         $this->getContainer()->share($this->getFullAlias('params'), function (PostListTable $pattern) {
-            return new Params($this->config('params', []), $pattern);
-        })->withArgument($this->getContainer());
+            return new Params($pattern->config('params', []), $pattern);
+        })->withArgument($this->pattern);
     }
 
     /**
@@ -81,7 +81,7 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     {
         $this->getContainer()->share($this->getFullAlias('request'), function (PostListTable $pattern) {
             return (Request::capture())->setPattern($pattern);
-        })->withArgument($this->getContainer());
+        })->withArgument($this->pattern);
     }
 
     /**

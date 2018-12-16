@@ -2,14 +2,14 @@
 
 namespace tiFy\View\Pattern\ListTable\Contracts;
 
-use Illuminate\Support\Collection;
+use tiFy\Contracts\Kernel\Collection as CollectionContract;
 
-interface ColumnsCollection
+interface ColumnsCollection extends CollectionContract
 {
     /**
      * Récupération de la liste des colonnes.
      *
-     * @return Collection|ColumnsItem[]
+     * @return ColumnsItem[]
      */
     public function all();
 
@@ -20,16 +20,7 @@ interface ColumnsCollection
      *
      * @return ColumnsItem
      */
-    public function get($name);
-
-    /**
-     * Récupération de la liste des entêtes HTML.
-     *
-     * @param bool $with_id Action de l'id HTML.
-     *
-     * @return array
-     */
-    public function getHeaders($with_id = true);
+    public function get($name, $default = null);
 
     /**
      * Récupération de la liste des noms de qualification des colonnes masquées.
@@ -37,21 +28,6 @@ interface ColumnsCollection
      * @return string[]
      */
     public function getHidden();
-
-    /**
-     * Récupération de la liste des informations complètes concernant les colonnes.
-     *
-     * @return array
-     */
-    public function getInfos();
-
-    /**
-     * Récupération de la liste de définition des colonnes.
-     * @internal Couple nom de qualification => intitulé.
-     *
-     * @return array
-     */
-    public function getList();
 
     /**
      * Récupération du nom de qualification de la colonne principale.
@@ -80,15 +56,6 @@ interface ColumnsCollection
      * @return int
      */
     public function countVisible();
-
-    /**
-     * Vérifie si le nom de qualification d'une colonne correspond à la colonne principale.
-     *
-     * @param string $name Nom de qualification de la colonne à vérifier.
-     *
-     * @return bool
-     */
-    public function isPrimary($name);
 
     /**
      * Traitement de la liste des colonnes.

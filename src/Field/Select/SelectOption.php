@@ -2,10 +2,11 @@
 
 namespace tiFy\Field\Select;
 
+use tiFy\Contracts\Field\SelectOption as SelectOptionContract;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-class SelectOption extends ParamsBag
+class SelectOption extends ParamsBag implements SelectOptionContract
 {
     /**
      * Nom de qualification.
@@ -55,15 +56,6 @@ class SelectOption extends ParamsBag
     public function getContent()
     {
         return (string)$this->get('content');
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel()
-    {
-        return (string)htmlentities($this->get('label'));
     }
 
     /**
@@ -127,7 +119,9 @@ class SelectOption extends ParamsBag
      */
     public function setDepth($depth = 0)
     {
-        return $this->depth = $depth;
+        $this->depth = $depth;
+
+        return $this;
     }
 
     /**
@@ -139,7 +133,7 @@ class SelectOption extends ParamsBag
 
         if ($this->get('group')) :
             $this->pull('value');
-            $this->set('attrs.label', $this->pull('content'));
+            $this->set('attrs.label', htmlentities($this->pull('content')));
         else :
             $this->set('attrs.value', $this->getValue());
         endif;
