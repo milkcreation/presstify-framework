@@ -3,8 +3,11 @@
 namespace tiFy\Kernel\Http;
 
 use Illuminate\Http\Request as IlluminateHttpRequest;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Psr\Http\Message\ServerRequestInterface;
+use tiFy\Contracts\Kernel\Request as RequestContract;
 
-class Request extends IlluminateHttpRequest
+class Request extends IlluminateHttpRequest implements RequestContract
 {
     /**
      * {@inheritdoc}
@@ -40,5 +43,15 @@ class Request extends IlluminateHttpRequest
                 return $this->headers;
                 break;
         endswitch;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createFromPsr(ServerRequestInterface $psrRequest)
+    {
+        $request = (new HttpFoundationFactory())->createRequest($psrRequest);
+
+        return self::createFromBase($request);
     }
 }
