@@ -22,13 +22,6 @@ interface ListTable extends ViewPatternController
     public function columns();
 
     /**
-     * Récupération de la liste des classes CSS de la balise table.
-     *
-     * @return array
-     */
-    public function getTableClasses();
-
-    /**
      * Récupération d'une instance d'élément à afficher dans une boucle d'itération.
      *
      * @return null|Item

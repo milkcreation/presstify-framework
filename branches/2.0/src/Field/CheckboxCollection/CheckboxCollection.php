@@ -44,7 +44,7 @@ class CheckboxCollection extends FieldController
                 if (($checked = Arr::wrap($this->get('checked', []))) && in_array($item->getValue(), $checked)) :
                     $item->push('attrs', 'checked');
                 endif;
-                $item->set('name', $this->get('name'));
+                $item->set('attrs.name', $this->getName());
             else :
                 $item = new CheckboxItem($name, $attrs, $this);
             endif;
@@ -53,5 +53,17 @@ class CheckboxCollection extends FieldController
         endforeach;
 
         $this->set('items', $items);
+    }
+
+    /**
+     * Traitement de l'attribut de configuration de la clé d'indexe de soumission du champ "name".
+     *
+     * @return void
+     */
+    protected function parseName()
+    {
+        if ($name = $this->get('name')) :
+            $this->set('attrs.name', "{$name}[]");
+        endif;
     }
 }

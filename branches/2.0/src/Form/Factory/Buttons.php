@@ -2,14 +2,12 @@
 
 namespace tiFy\Form\Factory;
 
-use Illuminate\Support\Collection;
 use tiFy\Contracts\Form\ButtonController;
 use tiFy\Contracts\Form\FactoryButtons;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Form\Factory\AbstractItemsIterator;
-use tiFy\Form\Factory\ResolverTrait;
+use tiFy\Kernel\Collection\Collection;
 
-class Buttons extends AbstractItemsIterator implements FactoryButtons
+class Buttons extends Collection implements FactoryButtons
 {
     use ResolverTrait;
 
@@ -27,7 +25,7 @@ class Buttons extends AbstractItemsIterator implements FactoryButtons
      *
      * @return void
      */
-    public function __construct($buttons = [], FormFactory $form)
+    public function __construct($buttons, FormFactory $form)
     {
         $this->form = $form;
 
@@ -59,15 +57,15 @@ class Buttons extends AbstractItemsIterator implements FactoryButtons
         endforeach;
 
         // ré-ordonnacement des boutons.
-        $max = (new Collection($this->items))->max(
+        $max = $this->collect()->max(
             function (ButtonController $button) {
                 return $button->getPosition();
             }
         );
         if ($max) :
             $pad = 0;
-            (new Collection($this->items))->each(
-                function (ButtonController $button, $key) use (&$pad, $max) {
+            $this->collect()->each(
+                function (ButtonController $button) use (&$pad, $max) {
                     $position = $button->getPosition() ? : ++$pad+$max;
 
                     return $button->set('position', absint($position));
@@ -85,7 +83,7 @@ class Buttons extends AbstractItemsIterator implements FactoryButtons
      */
     public function byPosition()
     {
-        return (new Collection($this->items))->sortBy(function (ButtonController $button) {
+        return $this->collect()->sortBy(function (ButtonController $button) {
             return $button->getPosition();
         })->all();
     }

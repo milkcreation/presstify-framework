@@ -41,7 +41,7 @@ class ButtonController extends ParamsBag implements ButtonControllerInterface
      *
      * @void
      */
-    public function __construct($name, $attrs = [], FormFactory $form)
+    public function __construct($name, $attrs, FormFactory $form)
     {
         $this->name = $name;
         $this->form = $form;
@@ -103,7 +103,7 @@ class ButtonController extends ParamsBag implements ButtonControllerInterface
             $wrapper = (is_array($wrapper)) ? $wrapper : [];
             $this->set('wrapper', array_merge(['tag' => 'div', 'attrs' => []], $wrapper));
 
-            if (!$this->has('wrapper.attrs.id', '')) :
+            if (!$this->has('wrapper.attrs.id')) :
                 $this->set('wrapper.attrs.id', "Form{$this->form()->index()}-button--{$this->getName()}");
             endif;
             if (!$this->get('wrapper.attrs.id')) :

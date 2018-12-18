@@ -4,23 +4,19 @@ namespace tiFy\Form;
 
 use Closure;
 use tiFy\Contracts\Form\FormManager as FormManagerContract;
-use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
-use tiFy\Form\Addons\AddonsController;
-use tiFy\Form\Buttons\ButtonsController;
-use tiFy\Form\Fields\FieldTypesController;
-use tiFy\Form\Forms\FormBaseController;
+use tiFy\Contracts\Form\FormFactory;
 
 final class FormManager implements FormManagerContract
 {
     /**
      * Liste des formulaires déclarés.
-     * @var FormFactoryContract[]
+     * @var FormFactory[]
      */
     protected $items = [];
 
     /**
      * Formulaire courant.
-     * @var FormFactoryContract
+     * @var FormFactory
      */
     protected $current;
 
@@ -35,7 +31,7 @@ final class FormManager implements FormManagerContract
             'init',
             function () {
                 foreach (config('form', []) as $name => $attrs) :
-                    $this->_register($name, $attrs);
+                    $this->register($name, $attrs);
                 endforeach;
             },
             999999
@@ -45,45 +41,12 @@ final class FormManager implements FormManagerContract
             'wp',
             function () {
                 foreach($this->all() as $form) :
-                    $current = $this->current($form);
+                    $this->current($form);
                     $this->reset();
                 endforeach;
             },
             999999
         );
-    }
-
-    /**
-     * Déclaration d'un formulaire.
-     *
-     * @param string $name Nom de qualification.
-     * @param array $attrs Attributs de configuration.
-     *
-     * @return void
-     */
-    private function _register($name, $attrs = [])
-    {
-        $controller = $attrs['controller'] ?? null;
-
-        return $this->items[$name] = $controller
-            ? new $controller($name, $attrs)
-            : app('form.factory', [$name, $attrs]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function add($name, $attrs = [])
-    {
-        config()->set(
-            'form',
-            array_merge(
-                [$name => $attrs],
-                config('form', [])
-            )
-        );
-
-        return $this;
     }
 
     /**
@@ -93,7 +56,7 @@ final class FormManager implements FormManagerContract
     {
         app()->bind(
             "form.addon.{$name}",
-            function ($name, $attrs = [], FormFactoryContract $form) use ($controller) {
+            function ($name, $attrs, FormFactory $form) use ($controller) {
                 if (is_object($controller) || $controller instanceof Closure) :
                     return call_user_func_array($controller, [$name, $attrs, $form]);
                 elseif(class_exists($controller)) :
@@ -122,7 +85,7 @@ final class FormManager implements FormManagerContract
     {
         app()->bind(
             "form.button.{$name}",
-            function ($name, $attrs = [], FormFactoryContract $form) use ($controller) {
+            function ($name, $attrs, FormFactory $form) use ($controller) {
                 if (is_object($controller) || $controller instanceof Closure) :
                     return call_user_func_array($controller, [$name, $attrs, $form]);
                 elseif(class_exists($controller)) :
@@ -150,7 +113,7 @@ final class FormManager implements FormManagerContract
         endif;
 
         if (!$form instanceof FormFactory) :
-            return;
+            return null;
         endif;
 
         $this->current = $form;
@@ -166,7 +129,7 @@ final class FormManager implements FormManagerContract
     {
         app()->bind(
             "form.field.{$name}",
-            function ($name, $attrs = [], FormFactoryContract $form) use ($controller) {
+            function ($name, $attrs, FormFactory $form) use ($controller) {
                 if (is_object($controller) || $controller instanceof Closure) :
                     return call_user_func_array($controller, [$name, $attrs, $form]);
                 elseif(class_exists($controller)) :
@@ -196,6 +159,19 @@ final class FormManager implements FormManagerContract
         $index = array_search($name, array_keys($this->items));
 
         return ($index !== false) ? $index : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function register($name, $attrs = [])
+    {
+        $controller = $attrs['controller'] ?? null;
+
+        return $this->set(
+            $name,
+            ($controller ? new $controller($name, $attrs) : app('form.factory', [$name, $attrs]))
+        );
     }
 
     /**
@@ -233,5 +209,13 @@ final class FormManager implements FormManagerContract
         return (file_exists($cinfo->getDirname() . "/Resources{$path}"))
             ? $cinfo->getUrl() . "/Resources{$path}"
             : '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set($name, FormFactory $form)
+    {
+        return $this->items[$name] = $form;
     }
 }

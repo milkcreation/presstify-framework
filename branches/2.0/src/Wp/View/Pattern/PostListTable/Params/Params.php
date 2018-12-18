@@ -11,7 +11,7 @@ class Params extends BaseListTableParams
      */
     public function defaults()
     {
-        return array_merge(
+        $defaults = array_merge(
             parent::defaults(),
             [
                 'columns'      => [
@@ -42,21 +42,15 @@ class Params extends BaseListTableParams
                 ],
             ]
         );
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function parse($attrs = [])
-    {
         if ($this->pattern->request()->query('status') !== 'trash') :
-            $attrs['bulk_actions'] = ['trash' => __('Déplacer dans la corbeille', 'tify')];
-            $attrs['row_actions'] = ['edit', 'trash'];
+            $defaults['bulk_actions'] = ['trash' => __('Déplacer dans la corbeille', 'tify')];
+            $defaults['row_actions'] = ['edit', 'trash'];
         else :
-            $attrs['bulk_actions'] = ['untrash', 'delete'];
-            $attrs['row_actions'] = ['untrash', 'delete'];
+            $defaults['bulk_actions'] = ['untrash', 'delete'];
+            $defaults['row_actions'] = ['untrash', 'delete'];
         endif;
 
-        parent::parse($attrs);
+        return $defaults;
     }
 }

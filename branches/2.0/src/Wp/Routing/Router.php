@@ -3,14 +3,8 @@
 namespace tiFy\Wp\Routing;
 
 use FastRoute\Dispatcher as FastRoute;
-use Illuminate\Support\Collection;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use League\Route\Dispatcher;
-use tiFy\Contracts\Routing\Route;
-use tiFy\Contracts\Routing\Router as RouterContract;
-use tiFy\Wp\Routing\TemplateStrategy;
-use Zend\Diactoros\Response\RedirectResponse;
 
 class Router
 {

@@ -25,9 +25,13 @@
 
     <span class="pagination-links<?php echo $pagination->isInfiniteScroll() ? ' hide-if-js': ''; ?>">
         <?php echo $pagination->firstPage(); ?>
+
         <?php echo $pagination->prevPage(); ?>
+
         <?php echo $pagination->currentPage(); ?>
+
         <?php echo $pagination->nextPage(); ?>
+
         <?php echo $pagination->lastPage(); ?>
     </span>
 </div>

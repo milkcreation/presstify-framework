@@ -5,16 +5,6 @@ namespace tiFy\Contracts\Form;
 interface FormManager
 {
     /**
-     * Déclaration d'un formulaire.
-     *
-     * @param string $name Nom de qualification.
-     * @param array $attrs Attributs de configuration.
-     *
-     * @return $this
-     */
-    public function add($name, $attrs = []);
-
-    /**
      * Déclaration d'un addon.
      *
      * @param string $name Nom de qualification.
@@ -79,6 +69,16 @@ interface FormManager
     public function index($name);
 
     /**
+     * Déclaration d'un formulaire.
+     *
+     * @param string $name Nom de qualification.
+     * @param array $attrs Attributs de configuration.
+     *
+     * @return FormFactory
+     */
+    public function register($name, $attrs = []);
+
+    /**
      * Réinitialisation du formulaire courant.
      *
      * @return void
@@ -102,4 +102,14 @@ interface FormManager
      * @return string
      */
     public function resourcesUrl($path = '');
+
+    /**
+     * Définition d'un formulaire.
+     *
+     * @param string $name Nom de qualification.
+     * @param FormFactory $form Instance de controleur de formulaire.
+     *
+     * @return FormFactory
+     */
+    public function set($name, FormFactory $form);
 }

@@ -6,7 +6,7 @@
 
 <?php $this->before(); ?>
 
-    <div <?php echo $this->getHtmlAttrs($this->get('container.attrs', [])); ?>>
+    <div <?php echo $this->htmlAttrs($this->get('container.attrs', [])); ?>>
         <?php $this->insert('input', $this->all()); ?>
 
         <?php $this->insert('infos', $this->all()); ?>

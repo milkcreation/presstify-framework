@@ -35,17 +35,6 @@ class ListTable extends ViewPatternController implements ListTableContract
     /**
      * {@inheritdoc}
      */
-    public function getTableClasses()
-    {
-        return sprintf(
-            $this->param('table_classes', '%s'),
-            'widefat fixed striped ' . $this->param('plural')
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function item()
     {
         return $this->items()->current();

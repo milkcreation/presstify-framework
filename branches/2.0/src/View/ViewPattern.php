@@ -2,9 +2,10 @@
 
 namespace tiFy\View;
 
+use tiFy\Contracts\View\ViewPattern as ViewPatternContract;
 use tiFy\Contracts\View\ViewPatternController;
 
-class ViewPattern
+class ViewPattern implements ViewPatternContract
 {
     /**
      * Liste des éléments déclarés.
@@ -25,12 +26,15 @@ class ViewPattern
     }
 
     /**
-     * Déclaration d'un motif d'affichage.
-     *
-     * @param string $name Nom de qualification de la disposition.
-     * @param array $attrs Liste des attributs de configuration de la disposition.
-     *
-     * @return ViewPatternController
+     * {@inheritdoc}
+     */
+    public function get($name)
+    {
+        return $this->items[$name] ?? null;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function register($name, $attrs = [])
     {
@@ -38,24 +42,7 @@ class ViewPattern
     }
 
     /**
-     * Définition d'un motif d'affichage.
-     *
-     * @param string $name Nom de qualification de la disposition.
-     * @param ViewPatternController $pattern Motif d'affichage.
-     *
-     * @return ViewPatternController
-     */
-    public function set($name, ViewPatternController $pattern)
-    {
-        return $this->items[$name] = $pattern;
-    }
-
-    /**
-     * Récupération du chemin absolu vers le répertoire de stockage des ressources.
-     *
-     * @param string $path Chemin relatif vers une ressource du répertoire (fichier ou dossier).
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function resourcesDir($path = '')
     {
@@ -65,11 +52,7 @@ class ViewPattern
     }
 
     /**
-     * Récupération de l'url absolue vers le répertoire de stockage des ressources.
-     *
-     * @param string $path Chemin relatif vers une ressource du répertoire (fichier ou dossier).
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function resourcesUrl($path = '')
     {
@@ -77,5 +60,13 @@ class ViewPattern
         $path = '/Resources/' . ltrim($path, '/');
 
         return file_exists($cinfo->getDirname() . $path) ? class_info($this)->getUrl() . $path : '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set($name, ViewPatternController $pattern)
+    {
+        return $this->items[$name] = $pattern;
     }
 }

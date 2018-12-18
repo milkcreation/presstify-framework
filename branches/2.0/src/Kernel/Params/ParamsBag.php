@@ -12,13 +12,15 @@ class ParamsBag implements ParamsBagContract
     /**
      * CONSTRUCTEUR.
      *
-     * @param array $attrs Liste des paramètres personnalisés.
+     * @param null|array $attrs Liste des paramètres personnalisés.
      *
      * @return void
      */
-    public function __construct($attrs = [])
+    public function __construct($attrs = null)
     {
-        $this->parse($attrs);
+        if (!is_null($attrs)) :
+            $this->parse($attrs);
+        endif;
     }
 
     /**

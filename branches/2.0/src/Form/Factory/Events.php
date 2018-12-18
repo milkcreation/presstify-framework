@@ -4,7 +4,6 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryEvents;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Form\Factory\ResolverTrait;
 
 class Events implements FactoryEvents
 {
@@ -18,7 +17,7 @@ class Events implements FactoryEvents
      *
      * @return void
      */
-    public function __construct($events = [], FormFactory $form)
+    public function __construct($events, FormFactory $form)
     {
         $this->form = $form;
 

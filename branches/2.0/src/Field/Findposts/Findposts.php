@@ -84,6 +84,16 @@ class Findposts extends FieldController
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function parse($attrs = [])
+    {
+        parent::parse($attrs);
+
+        $this->set('attrs.id', 'tiFyField-Findposts--' . $this->getId());
+    }
+
+    /**
      * Affichage de la fenêtre modale.
      *
      * @param string $found_action Action Ajax de récupération des éléments.
@@ -162,7 +172,7 @@ class Findposts extends FieldController
         endif;
 
         $alt = 'alternate';
-        
+
         /**
          * @var \WP_Post $post
          */

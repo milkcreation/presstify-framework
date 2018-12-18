@@ -2,7 +2,6 @@
 
 namespace tiFy\Form\Button\Submit;
 
-use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\ButtonController;
 
 class Submit extends ButtonController

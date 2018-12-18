@@ -58,6 +58,16 @@ class CheckboxItem extends ParamsBag
     }
 
     /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->field->viewer('item', $this->all());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function defaults()
@@ -93,7 +103,7 @@ class CheckboxItem extends ParamsBag
             $this->set('attrs.id', 'tiFyField-CheckboxCollectionItem--'. $this->index);
         endif;
         if (!$this->get('checkbox.name')) :
-            $this->set('checkbox.name', $this->field->get('name'));
+            $this->set('checkbox.name', $this->field->getName());
         endif;
         if (!$this->get('checkbox.checked')) :
             $this->set('checkbox.checked', $this->field->get('checked'));
@@ -114,15 +124,5 @@ class CheckboxItem extends ParamsBag
         if (!$this->get('label.attrs.for')) :
             $this->set('label.attrs.for', 'tiFyField-CheckboxCollectionItemInput--'. $this->index);
         endif;
-    }
-
-    /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->field->viewer('item', $this->all())->render();
     }
 }

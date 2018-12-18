@@ -4,7 +4,6 @@ namespace tiFy\Form;
 
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FieldController as FieldControllerInterface;
-use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\Factory\ResolverTrait;
 
 class FieldController implements FieldControllerInterface
@@ -17,15 +16,15 @@ class FieldController implements FieldControllerInterface
      */
     protected $fieldSupports = [
         'button'              => ['request', 'wrapper'],
-        'checkbox-collection' => ['label', 'request', 'tabindexes', 'wrapper'],
-        'datetime-js'         => ['label', 'request', 'tabindexes', 'wrapper'],
+        'checkbox-collection' => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
+        'datetime-js'         => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'hidden'              => ['request'],
         'label'               => ['wrapper'],
         'password'            => ['label', 'request', 'tabindex', 'wrapper'],
-        'radio-collection'    => ['label', 'request', 'tabindexes', 'wrapper'],
-        'repeater'            => ['label', 'request', 'tabindexes', 'wrapper'],
+        'radio-collection'    => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
+        'repeater'            => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'submit'              => ['request', 'tabindex', 'wrapper'],
-        'toggle-switch'       => ['request', 'tabindex', 'wrapper'],
+        'toggle-switch'       => ['request', 'tabindex', 'transport', 'wrapper'],
     ];
 
     /**
@@ -94,13 +93,15 @@ class FieldController implements FieldControllerInterface
             $this->field()->getExtras(),
             [
                 'name'  => $this->field()->getName(),
-                'value' => $this->field()->getValue(),
                 'attrs' => $this->field()->get('attrs', [])
             ]
         );
 
-        if (in_array($this->field()->getType(), ['checkbox', 'radio'])) :
+        if (in_array($this->field()->getType(), ['checkbox', 'checkbox-collection', 'radio', 'radio-collection'])) :
+            $args['value'] = $this->field()->get('value');
             $args['checked'] = $this->field()->getValue();
+        else :
+            $args['value'] = $this->field()->getValue();
         endif;
 
         return field($this->field()->getType(), $args);

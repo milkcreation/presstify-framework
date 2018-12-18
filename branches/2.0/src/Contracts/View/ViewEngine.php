@@ -16,7 +16,8 @@ interface ViewEngine
 {
     /**
      * Déclaration de données associées aux gabarits d'affichage.
-     * {@internal Permet de définir des données associées à un gabarit spécifique|à une liste de gabarits|à l'ensemble des gabarits}
+     * {@internal Permet de définir des données associées à un gabarit spécifique|à une liste de gabarits|
+     * à l'ensemble des gabarits}
      *
      * @param array $data Liste des données à associer.
      * @param null|string|array $templates Nom de qualification des gabarits en relation.
@@ -180,20 +181,12 @@ interface ViewEngine
      *
      * @param string $name Nom de qualification du répertoire de stockage personnalisé.
      * @param string  $directory Chemin vers le répertoire de stockage du groupe.
-     * @param null|boolean $fallback Activation du parcours du répertoire principal si le un gabarit appelé est manquant. si null prend la valeur d'activation du répertoire supprimé.
+     * @param null|boolean $fallback Activation du parcours du répertoire principal si le un gabarit appelé est
+     * manquant. si null prend la valeur d'activation du répertoire supprimé.
      *
      * @return self
      */
     public function modifyFolder($name, $directory, $fallback = null);
-
-    /**
-     * Traitement des attributs de configuration.
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return void
-     */
-    public function parse($attrs = []);
 
     /**
      * Récupération du chemin absolu vers un gabarit d'affichage.
@@ -225,7 +218,8 @@ interface ViewEngine
 
     /**
      * Définition du chemin vers le répertoire principal de stockage des gabarits d'affichage.
-     * @param  string|null $directory Chemin vers le répertoire principal de stockage des gabarits d'affichage. Mettre à null pour désactiver.
+     * @param  string|null $directory Chemin vers le répertoire principal de stockage des gabarits d'affichage.
+     *                                Mettre à null pour désactiver.
      *
      * @return self
      */
@@ -234,7 +228,8 @@ interface ViewEngine
     /**
      * Définition de l'extension des fichiers de gabarit d'affichage.
      *
-     * @param  string|null $fileExtension Extension des fichiers de gabarit d'affichage. Mettre à null pour personnaliser.
+     * @param  string|null $fileExtension Extension des fichiers de gabarit d'affichage. Mettre à null pour
+     *                                    personnaliser.
      *
      * @return self
      */

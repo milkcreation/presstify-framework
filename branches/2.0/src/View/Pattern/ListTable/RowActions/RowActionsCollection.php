@@ -80,27 +80,27 @@ class RowActionsCollection extends Collection implements RowActionsCollectionCon
             return $item->isActive();
         });
 
-        if (!$action_count = count($actions)) :
+        if ($action_count = count($actions)) :
+            $i = 0;
+            $always_visible = $this->pattern->param('row_actions_always_visible');
+
+            $output = '';
+            $output .= "<div class=\"" . ($always_visible ? 'row-actions visible' : 'row-actions') . "\">";
+            foreach ($actions as $action => $link) :
+                ++$i;
+                ($i == $action_count) ? $sep = '' : $sep = ' | ';
+                $output .= "<span class=\"{$action}\">{$link}{$sep}</span>";
+            endforeach;
+
+            $output .= "</div>";
+
+            $output .= "<button type=\"button\" class=\"toggle-row\"><span class=\"screen-reader-text\">" .
+                __('Voir plus de détails', 'tify') .
+                "</span></button>";
+
+            return $output;
+        else :
             return '';
         endif;
-
-        $i = 0;
-        $always_visible = $this->pattern->param('row_actions_always_visible');
-
-        $output = '';
-        $output .= "<div class=\"" . ($always_visible ? 'row-actions visible' : 'row-actions') . "\">";
-        foreach ($actions as $action => $link) :
-            ++$i;
-            ($i == $action_count) ? $sep = '' : $sep = ' | ';
-            $output .= "<span class=\"{$action}\">{$link}{$sep}</span>";
-        endforeach;
-
-        $output .= "</div>";
-
-        $output .= "<button type=\"button\" class=\"toggle-row\"><span class=\"screen-reader-text\">" .
-            __('Show more details') .
-            "</span></button>";
-
-        return $output;
     }
 }

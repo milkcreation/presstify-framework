@@ -5,7 +5,6 @@ namespace tiFy\Form\Factory;
 use tiFy\Contracts\Form\FactoryNotices;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Kernel\ParamsBag;
-use tiFy\Form\Factory\ResolverTrait;
 use tiFy\Kernel\Notices\Notices as NoticesController;
 
 class Notices extends NoticesController implements FactoryNotices
@@ -26,7 +25,7 @@ class Notices extends NoticesController implements FactoryNotices
      *
      * @return void
      */
-    public function __construct($params = [], FormFactory $form)
+    public function __construct($params, FormFactory $form)
     {
         $this->form = $form;
 
@@ -40,9 +39,12 @@ class Notices extends NoticesController implements FactoryNotices
                  *          Liste des attributs de configuration des messages d'erreurs
                  *
                  *          @var string $title Titre de l'intitulés d'affichage la liste princial des erreurs.
-                 *          @var int $show Affichage de la liste principale des erreurs. -1(toutes, par défaut)|0(masquer)|n(nombre maximum).
-                 *          @var string $teaser Indicateur d'affichage de la liste de message incomplète. '...' par défaut.
-                 *          @var bool $field Affichage des erreurs au niveau des champs de formulaire. Force le masquage de l'affichage principal si vrai.
+                 *          @var int $show Affichage de la liste principale des erreurs. -1(toutes, par défaut)|
+                 *                         0(masquer)|n(nombre maximum).
+                 *          @var string $teaser Indicateur d'affichage de la liste de message incomplète.
+                 *                              '...' par défaut.
+                 *          @var bool $field Affichage des erreurs au niveau des champs de formulaire.
+                 *                           Force le masquage de l'affichage principal si vrai.
                  *          @var bool $dismissible Affichage d'un bouton de masquage.
                  *      }
                  *      @var array $success {

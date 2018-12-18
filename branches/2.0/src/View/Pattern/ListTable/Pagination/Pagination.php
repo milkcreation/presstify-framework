@@ -64,7 +64,7 @@ class Pagination extends ParamsBag implements PaginationContract
 
         return $total_pages_before .
             sprintf(
-                _x('%1$s of %2$s', 'paging'),
+                _x('%1$s sur %2$s', 'paging', 'tify'),
                 $html_current_page,
                 $this->getTotalPages()
             ) .
@@ -106,7 +106,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function getPerPage()
     {
-        return $this->get('per_page', 0);
+        return intval($this->get('per_page', 0));
     }
 
     /**
@@ -114,7 +114,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function getTotalItems()
     {
-        return $this->get('total_items', 0);
+        return intval($this->get('total_items', 0));
     }
 
     /**
@@ -122,7 +122,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function getTotalPages()
     {
-        return $this->get('total_pages', 0);
+        return intval($this->get('total_pages', 0));
     }
 
     /**
@@ -130,7 +130,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableFirst()
     {
-        return ($this->pattern->request()->getPagenum() === 1 || $this->pattern->request()->getPagenum() === 2);
+        return ($this->pageNum() === 1 || $this->pattern->request()->getPagenum() === 2);
     }
 
     /**
@@ -138,7 +138,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableLast()
     {
-        return ($this->pattern->request()->getPagenum() >= $this->getTotalPages() - 1);
+        return ($this->pageNum() >= $this->getTotalPages() - 1);
     }
 
     /**
@@ -146,7 +146,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableNext()
     {
-        return ($this->pattern->request()->getPagenum() === $this->getTotalPages());
+        return ($this->pageNum() === $this->getTotalPages());
     }
 
     /**
@@ -154,7 +154,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisablePrev()
     {
-        return ($this->pattern->request()->getPagenum() === 1);
+        return ($this->pageNum() === 1);
     }
 
     /**
@@ -200,7 +200,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function pageNum()
     {
-        return $this->pattern->request()->getPageNum();
+        return intval($this->pattern->request()->getPageNum());
     }
 
     /**

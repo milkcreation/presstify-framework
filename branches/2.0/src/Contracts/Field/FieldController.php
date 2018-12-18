@@ -65,16 +65,6 @@ interface FieldController extends ParamsBag
     public function enqueue_scripts();
 
     /**
-     * Traitement et récupération d'une liste d'attributs HTML.
-     *
-     * @param array $attrs Liste des attributs HTML.
-     * @param bool $linearized Activation de la linéarisation.
-     *
-     * @return string
-     */
-    public function getHtmlAttrs($attrs = [], $linearized = true);
-
-    /**
      * Récupération de l'identifiant de qualification du controleur.
      *
      * @return string
@@ -104,6 +94,8 @@ interface FieldController extends ParamsBag
 
     /**
      * Vérifie si une variable peut être appelée en tant que fonction.
+     *
+     * @param mixed $var
      *
      * @return bool
      */

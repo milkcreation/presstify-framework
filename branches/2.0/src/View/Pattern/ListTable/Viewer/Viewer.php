@@ -38,14 +38,4 @@ class Viewer extends PatternBaseViewer
             'viewFilters'
         );
     }
-
-    /**
-     * Récupération de la liste des classes CSS de la balise table.
-     *
-     * @return array
-     */
-    public function getTableClasses()
-    {
-        return $this->pattern->getTableClasses();
-    }
 }

@@ -2,7 +2,6 @@
 
 namespace tiFy\Form\Field\Html;
 
-use tiFy\Contracts\Form\FactoryField;
 use tiFy\Form\FieldController;
 
 class Html extends FieldController

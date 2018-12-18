@@ -2,6 +2,7 @@
 
 namespace tiFy\Field;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Field\FieldController as FieldControllerContract;
 use tiFy\Contracts\Field\FieldManager;
@@ -80,7 +81,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     public function attrs()
     {
-        echo $this->getHtmlAttrs($this->get('attrs', []));
+        echo Tools::Html()->parseAttrs($this->get('attrs', []));
     }
 
     /**
@@ -133,14 +134,6 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     /**
      * {@inheritdoc}
      */
-    public function getHtmlAttrs($attrs = [], $linearized = true)
-    {
-        return Tools::Html()->parseAttrs($attrs, $linearized);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
@@ -159,7 +152,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     public function getName()
     {
-        return $this->get('name', '');
+        return $this->get('attrs.name', '') ? : $this->getName();
     }
 
     /**
@@ -191,7 +184,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
             return false;
         endif;
 
-        return $this->get('checked') === $this->getValue();
+        return in_array($this->get('checked'), Arr::wrap($this->getValue()));
     }
 
     /**

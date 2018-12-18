@@ -19,6 +19,8 @@ use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\View\ViewPattern;
+use tiFy\Contracts\View\ViewPatternController;
 use tiFy\Kernel\Kernel;
 use tiFy\Kernel\Http\RedirectResponse as HttpRedirect;
 
@@ -264,17 +266,25 @@ endif;
 
 if (!function_exists('pattern')) :
     /**
+     * Instance de controleur de motifs d'affichage ou Instance d'un motif.
      *
+     * @param null|string Nom de qualification du motif.
+     * @param array $params Liste des paramètres appliqués au motif.
+     *
+     * @return null|ViewPattern|ViewPatternController
      */
-    function pattern($name = null, $params = [])
+    function pattern($name = null, array $params = [])
     {
-        $factory = app()->get('view.pattern');
+        /** @var ViewPattern $manager */
+        $manager = app()->get('view.pattern');
 
         if (is_null($name)) :
-            return $factory;
+            return $manager;
+        elseif ($pattern = $manager->get($name)) :
+            return $pattern->param($params);
+        else :
+            return null;
         endif;
-
-        return null;
     }
 endif;
 

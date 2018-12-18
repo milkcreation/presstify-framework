@@ -4,7 +4,6 @@ namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\Kernel\Notices;
-use tiFy\Contracts\Form\FactoryResolver;
 
 interface FactoryNotices extends FactoryResolver, Notices
 {

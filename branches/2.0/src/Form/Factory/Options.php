@@ -5,7 +5,6 @@ namespace tiFy\Form\Factory;
 use tiFy\Contracts\Form\FactoryOptions;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Form\Factory\ResolverTrait;
 
 class Options extends ParamsBag implements FactoryOptions
 {
@@ -15,7 +14,8 @@ class Options extends ParamsBag implements FactoryOptions
      * Liste des attributs de configuration.
      * @var array {
      *      @var string|bool $anchor Ancre de défilement verticale de la page web à la soumission du formulaire.
-     *      @var string|callable $success_cb Méthode de rappel à l'issue d'un formulaire soumis avec succès. 'form' affichera un nouveau formulaire.
+     *      @var string|callable $success_cb Méthode de rappel à l'issue d'un formulaire soumis avec succès.
+     *                                       'form' affichera un nouveau formulaire.
      * }
      */
     protected $attributes = [
@@ -31,7 +31,7 @@ class Options extends ParamsBag implements FactoryOptions
      *
      * @return void
      */
-    public function __construct($options = [], FormFactory $form)
+    public function __construct($options, FormFactory $form)
     {
         $this->form = $form;
 

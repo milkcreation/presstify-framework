@@ -2,19 +2,19 @@
 
 namespace tiFy\Form\Factory;
 
-use tiFy\Contracts\Form\AddonFactory;
+use tiFy\Contracts\Form\AddonController;
 use tiFy\Contracts\Form\FactoryAddons;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Form\Factory\AbstractItemsIterator;
 use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
+use tiFy\Kernel\Collection\Collection;
 
-class Addons extends AbstractItemsIterator implements FactoryAddons
+class Addons extends Collection implements FactoryAddons
 {
     use FormFactoryResolver;
 
     /**
      * Liste des éléments associés au formulaire.
-     * @var AddonFactory[]
+     * @var AddonController[]
      */
     protected $items = [];
 
@@ -26,7 +26,7 @@ class Addons extends AbstractItemsIterator implements FactoryAddons
      *
      * @return void
      */
-    public function __construct($addons = [], FormFactory $form)
+    public function __construct($addons, FormFactory $form)
     {
         $this->form = $form;
 
@@ -57,13 +57,5 @@ class Addons extends AbstractItemsIterator implements FactoryAddons
         endforeach;
 
         $this->events('addons.init', [&$this]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function get($name)
-    {
-        return isset($this->items[$name]) ? $this->items[$name] : null;
     }
 }

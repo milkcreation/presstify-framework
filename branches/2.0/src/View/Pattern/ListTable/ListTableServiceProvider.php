@@ -182,9 +182,8 @@ class ListTableServiceProvider extends PatternServiceProvider
     public function registerRowActions()
     {
         $this->getContainer()->share($this->getFullAlias('row-actions'), function (ListTable $pattern) {
-                return new RowActionsCollection($pattern->param('row_actions', []), $pattern);
-            }
-        )->withArgument($this->pattern);
+            return new RowActionsCollection($pattern->param('row_actions', []), $pattern);
+        })->withArgument($this->pattern);
 
         $this->getContainer()->add($this->getFullAlias('row-actions.item'), RowActionsItem::class);
 
@@ -215,7 +214,7 @@ class ListTableServiceProvider extends PatternServiceProvider
     public function registerViewer()
     {
         $this->getContainer()->share($this->getFullAlias('viewer'), function (ListTable $pattern) {
-            $params = $pattern->param('viewer', []);
+            $params = $pattern->config('viewer', []);
 
             if (!$params instanceof ViewEngine) :
                 $viewer = new ViewEngine(
@@ -227,6 +226,7 @@ class ListTableServiceProvider extends PatternServiceProvider
                     )
                 );
                 $viewer->setController(Viewer::class);
+
                 if (!$viewer->getOverrideDir()) :
                     $viewer->setOverrideDir(pattern()->resourcesDir('/views/list-table'));
                 endif;

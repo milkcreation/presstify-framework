@@ -28,8 +28,7 @@ class Recaptcha extends FieldController
     /**
      * Contrôle d'intégrité des champs.
      *
-     * @param array $errors Liste des erreurs de soumission de formulaire.
-     * @param FieldItemController $field Instance du controleur de champ associé.
+     * @param FactoryField $field Instance du controleur de champ associé.
      *
      * @return void
      */

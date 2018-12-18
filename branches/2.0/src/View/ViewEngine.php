@@ -2,25 +2,33 @@
 
 namespace tiFy\View;
 
-use Illuminate\Support\Arr;
 use League\Plates\Engine as LeaguePlatesEngine;
 use tiFy\Contracts\View\ViewEngine as ViewEngineContract;
+use tiFy\Kernel\Params\ParamsBag;
 
 class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
 {
     /**
      * Liste des attributs de configuration.
      * @var array {
-     *      @var string $directory Chemin absolu vers le répertoire par défaut des templates.
-     *      @var string $ext Extension des fichiers de template.
-     *      @var string $controller Controleur de template.
+     *      @var string $directory Chemin absolu vers le répertoire par défaut des gabarits.
+     *      @var string $ext Extension des fichiers de gabarit.
+     *      @var string $controller Controleur de gabarit.
+     *      @var string $override_dir Chemin absolu vers le répertoire de surchage des gabarits.
      * }
      */
     protected $attributes = [
         'directory'     => null,
         'ext'           => 'php',
-        'controller'    => ViewController::class
+        'controller'    => ViewController::class,
+        'override_dir'  => ''
     ];
+
+    /**
+     * Instance du controleur de gestion des paramètres
+     * @var ParamsBag
+     */
+    protected $params;
 
     /**
      * CONSTRUCTEUR.
@@ -36,11 +44,15 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
             $attrs = compact('directory');
         endif;
 
-        $this->parse($attrs);
+        $this->params = new ParamsBag(array_merge($this->attributes, $attrs));
 
         $directory = $this->get('directory');
 
         parent::__construct(is_dir($directory) ? $directory : null, $this->get('ext'));
+
+        if ($override_dir = $this->get('override_dir')) :
+            $this->setOverrideDir($override_dir);
+        endif;
     }
 
     /**
@@ -48,7 +60,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
      */
     public function all()
     {
-        return $this->attributes;
+        return $this->params->all();
     }
 
     /**
@@ -56,7 +68,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
      */
     public function get($key, $default = '')
     {
-        return Arr::get($this->attributes, $key, $default);
+        return $this->params->get($key, $default);
     }
 
     /**
@@ -86,7 +98,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
      */
     public function has($key)
     {
-        return Arr::has($this->attributes, $key);
+        return $this->params->has($key);
     }
 
     /**
@@ -120,17 +132,6 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     /**
      * {@inheritdoc}
      */
-    public function parse($attrs = [])
-    {
-        $this->attributes = array_merge(
-            $this->attributes,
-            $attrs
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function set($key, $value)
     {
         switch($key) :
@@ -147,7 +148,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
                 $this->setOverrideDir($value);
                 break;
             default :
-                Arr::set($this->attributes, $key, $value);
+                $this->params->set($key, $value);
                 break;
         endswitch;
 
@@ -159,7 +160,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
      */
     public function setController($controller)
     {
-        Arr::set($this->attributes, 'controller', $controller);
+        $this->params->set('controller', $controller);
 
         return $this;
     }
@@ -169,7 +170,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
      */
     public function setDirectory($directory)
     {
-        Arr::set($this->attributes, 'directory', $directory);
+        $this->params->set('directory', $directory);
 
         return parent::setDirectory($directory);
     }
@@ -179,7 +180,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
      */
     public function setFileExtension($fileExtension)
     {
-        Arr::set($this->attributes, 'ext', $fileExtension);
+        $this->params->set('ext', $fileExtension);
 
         return parent::setFileExtension($fileExtension);
     }
@@ -189,7 +190,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
      */
     public function setOverrideDir($override_dir)
     {
-        Arr::set($this->attributes, 'override_dir', $override_dir);
+        $this->params->set('override_dir', $override_dir);
 
         $this->addFolder('_override', $override_dir, true);
 
