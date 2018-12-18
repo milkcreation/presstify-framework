@@ -7,7 +7,6 @@ use League\Container\Argument\RawArgument;
 use tiFy\Kernel\Container\Service;
 use tiFy\Contracts\App\AppInterface;
 use tiFy\tiFy;
-use tiFy\Taxonomy\TaxonomyItemController;
 
 class AppService extends Service
 {

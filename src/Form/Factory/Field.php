@@ -7,7 +7,6 @@ use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FieldController;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Form\Factory\ResolverTrait;
 
 class Field extends ParamsBag implements FactoryField
 {
@@ -20,8 +19,10 @@ class Field extends ParamsBag implements FactoryField
      * @var string $title Intitulé de qualification. Valeur par défaut. ex. label.
      * @var string $before Contenu HTML affiché avant le champ.
      * @var string $after Contenu HTML affiché après le champ.
-     * @var bool|string|array $wrapper Affichage de l'encapuleur de champ. false si masqué|true charge les attributs par défaut|array permet de définir des attributs personnalisés.
-     * @var bool|string|array $label Affichage de l'intitulé de champ. false si masqué|true charge les attributs par défaut|array permet de définir des attributs personnalisés.
+     * @var bool|string|array $wrapper Affichage de l'encapuleur de champ. false si masqué|true charge les attributs par
+     *                                 défaut|array permet de définir des attributs personnalisés.
+     * @var bool|string|array $label Affichage de l'intitulé de champ. false si masqué|true charge les attributs par
+     *                               défaut|array permet de définir des attributs personnalisés.
      * @var int $group Indice du groupe d'appartenance.
      * @var int $position Ordre d'affichage général ou dans le groupe s'il est défini.
      * @var string $type Type de champ.
@@ -32,8 +33,12 @@ class Field extends ParamsBag implements FactoryField
      * @var array $grid Attributs d'agencement du champ. La propriété doit être active au niveau du formulaire.
      * @var array $extras Liste des attributs complémentaires de configuration.
      * @var array $supports Définition des propriétés de support. label|wrapper|request|tabindex|transport.
-     * @var boolean|string|array $required Configuration de champs requis. false si désactivé|true charge les attributs par défaut|array {
-     *      @var boolean|string|array $tagged Affichage de l'indicateur de champ requis. false si masqué|true charge les attributs par défaut|string valeur de l'indicateur|array permet de définir des attributs personnalisés.
+     * @var boolean|string|array $required Configuration de champs requis. false si désactivé|true charge les attributs
+     *                                     par défaut|array
+     * {
+     *      @var boolean|string|array $tagged Affichage de l'indicateur de champ requis. false si masqué|true charge
+     *                                        les attributs par défaut|string valeur de l'indicateur|array permet de
+     *                                        définir des attributs personnalisés.
      *      @var boolean $check Activation du test d'existance natif.
      *      @var mixed $value_none Valeur à comparer pour le test d'existance.
      *      @var string|callable $call Fonction de validation ou alias de qualification.
@@ -41,7 +46,8 @@ class Field extends ParamsBag implements FactoryField
      *      @var boolean $raw Activation du format brut de la valeur.
      *      @var string $message Message de notification de retour en cas d'erreur.
      * }
-     * @var null|boolean $transport Court-circuitage (forçage) de la propriété de support du transport des données à l'issue de la soumission.
+     * @var null|boolean $transport Court-circuitage (forçage) de la propriété de support du transport des données à
+     *                              l'issue de la soumission.
      * @var array $validations {
      *      Liste des fonctions de validation d'intégrité du champ lors de la soumission.
      *
@@ -89,13 +95,13 @@ class Field extends ParamsBag implements FactoryField
     /**
      * CONSTRUCTEUR.
      *
-     * @param string $Nom de qualification.
+     * @param string $slug Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
      * @param FormFactory $form Instance du contrôleur de formulaire.
      *
      * @return void
      */
-    public function __construct($slug, $attrs = [], FormFactory $form)
+    public function __construct($slug, $attrs, FormFactory $form)
     {
         $this->slug = $slug;
         $this->form = $form;
@@ -178,15 +184,17 @@ class Field extends ParamsBag implements FactoryField
     /**
      * {@inheritdoc}
      */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-
     public function getRequired($key = null, $default = null)
     {
         return $this->get('required' . ($key ? ".{$key}" : ''), $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 
     /**
@@ -418,7 +426,7 @@ class Field extends ParamsBag implements FactoryField
      */
     public function resetValue()
     {
-        $this->set('value', $this->default);
+        return $this->set('value', $this->default);
     }
 
     /**
@@ -435,7 +443,7 @@ class Field extends ParamsBag implements FactoryField
     public function renderPrepare()
     {
         // Attributs HTML du champ.
-        if (!$this->has('attrs.id', '')) :
+        if (!$this->has('attrs.id')) :
             $this->set('attrs.id', "Form{$this->form()->index()}-fieldInput--{$this->getSlug()}");
         endif;
         if (!$this->get('attrs.id')) :
@@ -452,7 +460,7 @@ class Field extends ParamsBag implements FactoryField
             $this->pull('attrs.class');
         endif;
 
-        if (!$this->has('attrs.tabindex', 0)) :
+        if (!$this->has('attrs.tabindex')) :
             $this->set('attrs.tabindex', $this->getPosition());
         endif;
         if ($this->get('attrs.tabindex') === false) :
@@ -468,7 +476,7 @@ class Field extends ParamsBag implements FactoryField
             $wrapper = (is_array($wrapper)) ? $wrapper : [];
             $this->set('wrapper', array_merge(['tag' => 'div', 'attrs' => []], $wrapper));
 
-            if (!$this->has('wrapper.attrs.id', '')) :
+            if (!$this->has('wrapper.attrs.id')) :
                 $this->set('wrapper.attrs.id', "Form{$this->form()->index()}-field--{$this->getSlug()}");
             endif;
             if (!$this->get('wrapper.attrs.id')) :
@@ -507,7 +515,7 @@ class Field extends ParamsBag implements FactoryField
             $label = (is_array($label)) ? $label : [];
             $this->set('label', array_merge(['tag' => 'label', 'attrs' => []], $label));
 
-            if (!$this->has('label.attrs.id', '')) :
+            if (!$this->has('label.attrs.id')) :
                 $this->set('label.attrs.id', "Form{$this->form()->index()}-fieldLabel--{$this->getSlug()}");
             endif;
             if (!$this->get('label.attrs.id')) :
@@ -528,7 +536,7 @@ class Field extends ParamsBag implements FactoryField
                 $this->set('label.attrs.for', $for);
             endif;
 
-            if (!$this->has('label.content', '')) :
+            if (!$this->has('label.content')) :
                 $this->set('label.content', $this->getTitle());
             endif;
             if (!$this->get('label.content')) :
@@ -537,7 +545,7 @@ class Field extends ParamsBag implements FactoryField
         endif;
 
         if ($this->get('required.tagged')) :
-            if (!$this->has('required.tagged.attrs.id', '')) :
+            if (!$this->has('required.tagged.attrs.id')) :
                 $this->set('required.tagged.attrs.id', "Form{$this->form()->index()}-fieldTag--{$this->getSlug()}");
             endif;
             if (!$this->get('required.tagged.attrs.id')) :
@@ -548,7 +556,10 @@ class Field extends ParamsBag implements FactoryField
             if (!$this->has('required.tagged.attrs.class')) :
                 $this->set('required.tagged.attrs.class', $default_class);
             else :
-                $this->set('required.tagged.attrs.class', sprintf($this->get('required.tagged.attrs.class', ''), $default_class));
+                $this->set(
+                    'required.tagged.attrs.class',
+                    sprintf($this->get('required.tagged.attrs.class', ''), $default_class)
+                );
             endif;
             if (!$this->get('required.tagged.attrs.class')) :
                 $this->pull('required.tagged.attrs.class');

@@ -2,7 +2,6 @@
 
 namespace tiFy\Form\Field\Tag;
 
-use tiFy\Contracts\Form\FactoryField;
 use tiFy\Form\FieldController;
 
 class Tag extends FieldController

@@ -27,4 +27,15 @@ class PatternBaseParams extends ParamsBag
 
         parent::__construct($attrs);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults()
+    {
+        return [
+            'singular' => $this->pattern->label('singular') ? : $this->pattern->name(),
+            'plural'   => $this->pattern->label('plural') ? : $this->pattern->name(),
+        ];
+    }
 }

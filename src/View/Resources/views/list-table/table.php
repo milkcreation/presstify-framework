@@ -7,14 +7,12 @@
 ?>
 <?php $this->insert('tablenav', ['which' => 'top']); ?>
 
-<table class="wp-list-table <?php echo $this->getTableClasses(); ?>">
-
+<table <?php echo $this->htmlAttrs($this->param('attrs')); ?>>
     <?php $this->insert('thead'); ?>
 
     <?php $this->insert('tbody'); ?>
 
     <?php $this->insert('tfoot'); ?>
-
 </table>
 
 <?php $this->insert('tablenav', ['which' => 'bottom']); ?>

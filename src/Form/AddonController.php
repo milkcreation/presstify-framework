@@ -26,7 +26,7 @@ class AddonController extends ParamsBag implements AddonControllerInterface
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], FormFactory $form)
+    public function __construct($name, $attrs, FormFactory $form)
     {
         $this->name = $name;
         $this->form = $form;

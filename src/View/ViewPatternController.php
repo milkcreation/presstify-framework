@@ -23,6 +23,12 @@ class ViewPatternController implements ViewPatternControllerContract
     protected $config;
 
     /**
+     * Indicateur de chargement des ressources.
+     * @var boolean
+     */
+    protected $loaded;
+
+    /**
      * Liste des fournisseurs de service.
      * @var string[]
      */
@@ -55,6 +61,8 @@ class ViewPatternController implements ViewPatternControllerContract
      */
     public function __toString()
     {
+        $this->load();
+
         return (string)$this->render();
     }
 
@@ -130,7 +138,7 @@ class ViewPatternController implements ViewPatternControllerContract
                                     ]
                                 );
 
-                                $this->load();
+                                $this->_preload();
                             endif;
                         }
                     );
@@ -147,6 +155,15 @@ class ViewPatternController implements ViewPatternControllerContract
     /**
      * {@inheritdoc}
      */
+    private function _preload()
+    {
+        $this->load();
+        $this->loaded = true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function assets()
     {
         return $this->resolve('assets');
@@ -157,7 +174,7 @@ class ViewPatternController implements ViewPatternControllerContract
      */
     public function boot()
     {
-        //var_dump($this->url()->without(['paged'])); exit;
+        //var_dump($this->label()->all()); exit;
     }
 
     /**
@@ -245,8 +262,10 @@ class ViewPatternController implements ViewPatternControllerContract
      */
     public function load()
     {
-        $this->process();
-        $this->prepare();
+        if (!$this->loaded) :
+            $this->process();
+            $this->prepare();
+        endif;
     }
 
     /**

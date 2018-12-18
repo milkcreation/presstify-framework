@@ -2,10 +2,6 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Form\FactoryResolver;
-use tiFy\Contracts\Form\FactoryField;
-use tiFy\Contracts\Form\FactoryForm;
-
 interface FieldController extends FactoryResolver
 {
     /**

@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-12-16",
+  "time": "2018-12-18",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -75,7 +75,8 @@
     "symfony/psr-http-message-bridge": "^1.0",
     "symfony/serializer": "^4.0",
     "swiftmailer/swiftmailer": "^6.0",
-    "zendframework/zend-diactoros": "^1.7"
+    "zendframework/zend-diactoros": "^1.7",
+    "zendframework/zend-httphandlerrunner": "^1.0"
   },
   "suggest": {
     "bshaffer/oauth2-server-php": "Serveur OAuth 2.0",

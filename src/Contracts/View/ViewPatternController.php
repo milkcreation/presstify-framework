@@ -59,7 +59,7 @@ interface ViewPatternController
      * @param null|string|array $key Clé d'indice de l'attribut de configuration. Syntaxe à point permise.
      * @param mixed $default Valeur de retour par défaut.
      *
-     * @return $this|ParamsBag|mixed
+     * @return self|ParamsBag|mixed
      */
     public function config($key, $default = null);
 
@@ -137,7 +137,7 @@ interface ViewPatternController
      * @param null|array|string $key Clé d'indice du paramètres. Syntaxe à point permise.
      * @param mixed $default Valeur de retour par défaut.
      *
-     * @return $this|ParamsBag|mixed
+     * @return self|ParamsBag|mixed
      */
     public function param($key = null, $default = null);
 

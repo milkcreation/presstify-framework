@@ -4,7 +4,6 @@ namespace tiFy\Form;
 
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
-use tiFy\Contracts\View\ViewEngine;
 use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
 use tiFy\Form\Factory\View;
 use tiFy\Kernel\Params\ParamsBag;
@@ -296,7 +295,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function renderPrepare()
     {
         // Attributs HTML du champ.
-        if (!$this->has('attrs.id', '')) :
+        if (!$this->has('attrs.id')) :
             $this->set('attrs.id', "Form-content--{$this->name()}");
         endif;
         if (!$this->get('attrs.id')) :

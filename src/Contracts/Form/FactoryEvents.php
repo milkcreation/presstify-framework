@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Form\FactoryResolver;
+use tiFy\Contracts\Kernel\EventsListener;
 
 interface FactoryEvents extends FactoryResolver
 {
@@ -10,7 +10,7 @@ interface FactoryEvents extends FactoryResolver
      * Déclaration d'un événement.
      *
      * @param string $name Identifiant de qualification de l'événement.
-     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe de traitement de l'événement.
+     * @param callable|EventsListener $listener Fonction anonyme ou Classe de traitement de l'événement.
      * @param int $priority Priorité de traitement.
      *
      * @return $this

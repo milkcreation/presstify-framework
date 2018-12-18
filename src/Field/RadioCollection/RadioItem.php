@@ -58,6 +58,16 @@ class RadioItem extends ParamsBag
     }
 
     /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->field->viewer('item', $this->all());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function defaults()
@@ -93,10 +103,10 @@ class RadioItem extends ParamsBag
             $this->set('attrs.id', 'tiFyField-RadioCollectionItem--'. $this->index);
         endif;
         if (!$this->get('radio.name')) :
-            $this->set('checkbox.name', $this->field->get('name'));
+            $this->set('radio.name', $this->field->getName());
         endif;
         if (!$this->get('radio.checked')) :
-            $this->set('checkbox.checked', $this->field->get('checked'));
+            $this->set('radio.checked', $this->field->get('checked'));
         endif;
         if (!$this->get('radio.attrs.id')) :
             $this->set('radio.attrs.id', 'tiFyField-RadioCollectionItemInput--'. $this->index);
@@ -114,15 +124,5 @@ class RadioItem extends ParamsBag
         if (!$this->get('label.attrs.for')) :
             $this->set('label.attrs.for', 'tiFyField-RadioCollectionItemInput--'. $this->index);
         endif;
-    }
-
-    /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->field->viewer('item', $this->all())->render();
     }
 }

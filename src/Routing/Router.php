@@ -14,7 +14,7 @@ use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\Routing\RouteGroup as RouteGroupContract;
 use tiFy\Contracts\Routing\Router as RouterContract;
-use Zend\Diactoros\Response\SapiEmitter;
+use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
 class Router extends LeagueRouter implements RouterContract
 {
@@ -40,6 +40,8 @@ class Router extends LeagueRouter implements RouterContract
 
     /**
      * CONSTRUCTEUR.
+     *
+     * @param ContainerInterface $container Instance du conteneur d'injection de dépendances.
      *
      * @return void
      */
@@ -112,7 +114,7 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function emit(ResponseInterface $response)
     {
-        /** @var SapiEmitter $emitter */
+        /** @var EmitterInterface $emitter */
         $emitter = app()->get('router.emitter');
 
         $emitter->emit($response);
@@ -145,6 +147,16 @@ class Router extends LeagueRouter implements RouterContract
     public function getContainer()
     {
         return $this->container;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return Route
+     */
+    public function getNamedRoute(string $name) : LeagueRoute
+    {
+        return parent::getNamedRoute($name);
     }
 
     /**

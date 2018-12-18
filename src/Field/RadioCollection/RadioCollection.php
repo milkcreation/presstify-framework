@@ -2,6 +2,7 @@
 
 namespace tiFy\Field\RadioCollection;
 
+use Illuminate\Support\Arr;
 use tiFy\Field\FieldController;
 use tiFy\Field\Radio\Radio;
 
@@ -36,8 +37,10 @@ class RadioCollection extends FieldController
         foreach ($this->get('items', []) as $name => $attrs) :
             if ($attrs instanceof Radio) :
                 $item = $attrs;
-                $item->set('checked', $this->get('checked'));
-                $item->set('name', $this->get('name'));
+                if (($checked = Arr::wrap($this->get('checked', []))) && in_array($item->getValue(), $checked)) :
+                    $item->push('attrs', 'checked');
+                endif;
+                $item->set('attrs.name', $this->getName());
             else :
                 $item = new RadioItem($name, $attrs, $this);
             endif;

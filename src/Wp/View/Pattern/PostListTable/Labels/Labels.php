@@ -35,13 +35,13 @@ class Labels extends PostTypeLabels
     public function defaults()
     {
         return array_merge(
-            parent::defaults(),
             [
                 'all_items'    => __('Tous les éléments', 'tify'),
                 'search_items' => __('Rechercher un élément', 'tify'),
-                'no_items'     => __('No items found.'),
+                'no_items'     => __('Aucun élément trouvé.', 'tify'),
                 'page_title'   => __('Tous les éléments', 'tify')
-            ]
+            ],
+            parent::defaults()
         );
     }
 }

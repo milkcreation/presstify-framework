@@ -2,14 +2,12 @@
 
 namespace tiFy\Form\Factory;
 
-use Illuminate\Support\Collection;
 use tiFy\Contracts\Form\FactoryFields;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Form\Factory\AbstractItemsIterator;
-use tiFy\Form\Factory\ResolverTrait;
+use tiFy\Kernel\Collection\Collection;
 
-class Fields extends AbstractItemsIterator implements FactoryFields
+class Fields extends Collection implements FactoryFields
 {
     use ResolverTrait;
 
@@ -27,7 +25,7 @@ class Fields extends AbstractItemsIterator implements FactoryFields
      *
      * @return void
      */
-    public function __construct($fields = [], FormFactory $form)
+    public function __construct($fields, FormFactory $form)
     {
         $this->form = $form;
 
@@ -48,7 +46,7 @@ class Fields extends AbstractItemsIterator implements FactoryFields
             $max = $group->max(function (FactoryField $field) { return $field->getPosition(); });
             $pad = 0;
 
-            $group->each(function (FactoryField $field, $key) use (&$pad, $max) {
+            $group->each(function (FactoryField $field) use (&$pad, $max) {
                 $number = 10000 * ($field->getGroup()+1);
                 $position = $field->getPosition() ? : ++$pad+$max;
 
@@ -77,14 +75,6 @@ class Fields extends AbstractItemsIterator implements FactoryFields
         return $this->collect()->sortBy(function (FactoryField $field) {
             return $field->getPosition();
         })->all();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function collect()
-    {
-        return new Collection($this->items);
     }
 
     /**

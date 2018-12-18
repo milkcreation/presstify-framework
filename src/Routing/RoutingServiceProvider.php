@@ -8,7 +8,7 @@ use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\App\Container\AppServiceProvider;
 use tiFy\Routing\Strategy\App;
 use tiFy\Routing\Strategy\Json;
-use Zend\Diactoros\Response\SapiEmitter;
+use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 
 class RoutingServiceProvider extends AppServiceProvider
 {

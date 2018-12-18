@@ -3,7 +3,6 @@
 namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\View\ViewController;
-use tiFy\Contracts\Form\FormFactory;
 
 interface FactoryView extends ViewController
 {

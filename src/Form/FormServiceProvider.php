@@ -11,9 +11,7 @@ use tiFy\Form\Addon\Mailer\Mailer as AddonMailer;
 use tiFy\Form\Addon\Preview\Preview as AddonPreview;
 use tiFy\Form\Addon\Record\Record as AddonRecord;
 use tiFy\Form\Addon\User\User as AddonUser;
-use tiFy\Form\AddonController;
 use tiFy\Form\Button\Submit\Submit as ButtonSubmit;
-use tiFy\Form\ButtonController;
 use tiFy\Form\Factory\Addons as FactoryAddons;
 use tiFy\Form\Factory\Buttons as FactoryButtons;
 use tiFy\Form\Factory\Events as FactoryEvents;
@@ -24,13 +22,9 @@ use tiFy\Form\Factory\Options as FactoryOptions;
 use tiFy\Form\Factory\Request as FactoryRequest;
 use tiFy\Form\Factory\Session as FactorySession;
 use tiFy\Form\Factory\Validation as FactoryValidation;
-use tiFy\Form\Field\Captcha\Captcha as FieldCaptcha;
 use tiFy\Form\Field\Html\Html as FieldHtml;
 use tiFy\Form\Field\Recaptcha\Recaptcha as FieldRecaptcha;
 use tiFy\Form\Field\Tag\Tag as FieldTag;
-use tiFy\Form\FieldController;
-use tiFy\Form\FormFactory;
-use tiFy\Form\FormManager;
 
 class FormServiceProvider extends AppServiceProvider
 {
@@ -48,43 +42,43 @@ class FormServiceProvider extends AppServiceProvider
         );
         $this->app->bind(
             'form.factory.addons',
-            function ($addons = [], FormFactoryContract $form) {
+            function ($addons, FormFactoryContract $form) {
                 return new FactoryAddons($addons, $form);
             }
         );
         $this->app->bind(
             'form.factory.buttons',
-            function ($buttons = [], FormFactoryContract $form) {
+            function ($buttons, FormFactoryContract $form) {
                 return new FactoryButtons($buttons, $form);
             }
         );
         $this->app->bind(
             'form.factory.events',
-            function ($events = [], FormFactoryContract $form) {
+            function ($events, FormFactoryContract $form) {
                 return new FactoryEvents($events, $form);
             }
         );
         $this->app->bind(
             'form.factory.field',
-            function ($name, $attrs = [], FormFactoryContract $form) {
+            function ($name, $attrs, FormFactoryContract $form) {
                 return new FactoryField($name, $attrs, $form);
             }
         );
         $this->app->bind(
             'form.factory.fields',
-            function ($fields = [], FormFactoryContract $form) {
+            function ($fields, FormFactoryContract $form) {
                 return new FactoryFields($fields, $form);
             }
         );
         $this->app->bind(
             'form.factory.notices',
-            function ($notices = [], FormFactoryContract $form) {
+            function ($notices, FormFactoryContract $form) {
                 return new FactoryNotices($notices, $form);
             }
         );
         $this->app->bind(
             'form.factory.options',
-            function ($options = [], FormFactoryContract $form) {
+            function ($options, FormFactoryContract $form) {
                 return new FactoryOptions($options, $form);
             }
         );
@@ -109,7 +103,7 @@ class FormServiceProvider extends AppServiceProvider
 
         $this->app->bind(
             'form.addon',
-            function ($name, $attrs = [], FormFactoryContract $form) {
+            function ($name, $attrs, FormFactoryContract $form) {
                 return new AddonController($name, $attrs, $form);
             }
         );
@@ -152,7 +146,7 @@ class FormServiceProvider extends AppServiceProvider
 
         $this->app->bind(
             'form.button',
-            function ($name, $attrs = [], FormFactoryContract $form) {
+            function ($name, $attrs, FormFactoryContract $form) {
                 return new ButtonController($name, $attrs, $form);
             }
         );

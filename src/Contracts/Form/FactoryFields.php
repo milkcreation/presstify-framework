@@ -2,17 +2,15 @@
 
 namespace tiFy\Contracts\Form;
 
-use Illuminate\Support\Collection;
-use tiFy\Contracts\Form\FactoryField;
-use tiFy\Contracts\Form\FactoryItemsIterator;
-use tiFy\Contracts\Form\FactoryResolver;
+use Illuminate\Support\Collection as IlluminateCollection;
+use tiFy\Contracts\Kernel\Collection;
 
-interface FactoryFields extends FactoryResolver, FactoryItemsIterator
+interface FactoryFields extends FactoryResolver, Collection
 {
     /**
      * Récupération de la liste des champs par ordre d'affichage.
      *
-     * @return FactoryField[]
+     * @return IlluminateCollection|FactoryField[]
      */
     public function byGroup();
 
@@ -22,22 +20,6 @@ interface FactoryFields extends FactoryResolver, FactoryItemsIterator
      * @return FactoryField[]
      */
     public function byPosition();
-
-    /**
-     * Récupération de la liste des champs.
-     *
-     * @return Collection
-     */
-    public function collect();
-
-    /**
-     * Récupération d'un champ selon son identifiant de qualification.
-     *
-     * @param string $slug Identifiant de qualification.
-     *
-     * @return null|FactoryField
-     */
-    public function get($slug);
 
     /**
      * Vérification d'existance de groupe.

@@ -2,18 +2,9 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Form\AddonFactory;
-use tiFy\Contracts\Form\FactoryItemsIterator;
-use tiFy\Contracts\Form\FactoryResolver;
+use tiFy\Contracts\Kernel\Collection;
 
-interface FactoryAddons extends FactoryResolver, FactoryItemsIterator
+interface FactoryAddons extends FactoryResolver, Collection
 {
-    /**
-     * Récupération de l'instance du contrôleur d'un addon.
-     *
-     * @param string $name Nom de qualification.
-     *
-     * @return null|AddonFactory
-     */
-    public function get($name);
+
 }

@@ -2,9 +2,7 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Form\FieldController;
 use tiFy\Contracts\Kernel\ParamsBag;
-use tiFy\Contracts\Form\FactoryResolver;
 
 interface FactoryField extends FactoryResolver, ParamsBag
 {
@@ -37,7 +35,8 @@ interface FactoryField extends FactoryResolver, ParamsBag
     /**
      * Récupération d'un ou de la liste des attributs de configuration complémentaires.
      *
-     * @param null|string $key Clé d'indexe de l'attribut. Syntaxe à point permise. Laisser à null (défaut) pour récupérer la liste complète.
+     * @param null|string $key Clé d'indexe de l'attribut. Syntaxe à point permise. Laisser à null (défaut) pour
+     *                         récupérer la liste complète.
      * @param mixed $default Valeur de retour par défaut.
      *
      * @return mixed
@@ -68,7 +67,8 @@ interface FactoryField extends FactoryResolver, ParamsBag
     /**
      * Récupération d'attribut de champ requis.
      *
-     * @param null|string $key Clé d'indexe d'attributs. Syntaxe à point permise. Retour la liste complète si null (défaut).
+     * @param null|string $key Clé d'indexe d'attributs. Syntaxe à point permise.
+     *                         Retour la liste complète si null (défaut).
      * @param mixed $default Valeur de retour par défaut.
      *
      * @return mixed
@@ -154,6 +154,27 @@ interface FactoryField extends FactoryResolver, ParamsBag
     public function prepare();
 
     /**
+     * Réinitionalisation  de la valeur.
+     *
+     * @return self
+     */
+    public function resetValue();
+
+    /**
+     * Rendu de l'affichage.
+     *
+     * @return string
+     */
+    public function render();
+
+    /**
+     * Préparation du rendu de l'affichage.
+     *
+     * @return void
+     */
+    public function renderPrepare();
+
+    /**
      * Définition d'une attributs de configuration complémentaire.
      *
      * @param string $key Clé d'indexe de l'attribut.
@@ -189,4 +210,6 @@ interface FactoryField extends FactoryResolver, ParamsBag
      * @return array|boolean
      */
     public function supports($support = null);
+
+
 }

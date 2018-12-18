@@ -60,7 +60,7 @@ class Fileshare extends MetaboxWpPostController
                                     <?php echo \get_post_mime_type($meta_value); ?>
                                 </span>
 
-                                <a href="#" class="remove tify_button_remove"></a>
+                                <a href="#" class="remove tiFy-Button--remove"></a>
 
                                 <?php
                                 echo field(
