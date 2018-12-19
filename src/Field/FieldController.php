@@ -152,7 +152,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     public function getName()
     {
-        return $this->get('attrs.name', '') ? : $this->getName();
+        return $this->get('attrs.name', '') ? : $this->get('name');
     }
 
     /**

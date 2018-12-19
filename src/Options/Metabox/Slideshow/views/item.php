@@ -6,28 +6,20 @@
 
 <li class="MetaboxOptions-slideshowListItem">
     <div class="MetaboxOptions-slideshowListItemInputs">
-        <div class="col col-left">
-            <?php $this->insert('item-image', $this->all()); ?>
-        </div>
-
-        <div class="col col-right">
-            <?php
-            echo field(
-                'hidden',
-                [
-                    'name'      => "{$this->get('name')}[post_id]",
-                    'value'     => $this->get('post_id')
-                ]
-            );
-            ?>
-
-            <?php $this->insert('item-title', $this->all()); ?>
-
-            <?php $this->insert('item-url', $this->all()); ?>
-
-            <?php $this->insert('item-caption', $this->all()); ?>
-
-        </div>
+        <?php
+        echo field(
+            'hidden',
+            [
+                'name'      => "{$this->get('name')}[post_id]",
+                'value'     => $this->get('post_id')
+            ]
+        );
+        ?>
+        <?php
+            foreach($this->get('editable', []) as $edit) :
+                $this->insert("item-{$edit}", $this->all());
+            endforeach;
+        ?>
     </div>
 
     <?php $this->insert('item-helpers', $this->all()); ?>
