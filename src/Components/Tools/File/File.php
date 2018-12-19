@@ -18,7 +18,7 @@ class File
         $contents = '';
 
         // Vérifie si le chemin du fichier est une url
-        if (Tools::Checker()->isUrl($filename)) :
+        if (validator()->isUrl($filename)) :
             if (preg_match('/^' . preg_quote(site_url('/'), '/') . '/', $filename)) :
                 $filename = preg_replace('/^' . preg_quote(site_url('/'), '/') . '/', \paths()->getPublicPath('/'), $filename);
 
@@ -50,7 +50,7 @@ class File
     {
         $root_path = wp_normalize_path($root_path);
 
-        if (Tools::Checker()->isUrl($filename)) :
+        if (validator()->isUrl($filename)) :
             $root_subdir = preg_replace('#^'. ABSPATH .'#', '', $root_path);
             $root_subdir = trim($root_subdir, '/');
 
