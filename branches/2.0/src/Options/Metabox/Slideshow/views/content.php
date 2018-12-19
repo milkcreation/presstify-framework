@@ -4,10 +4,12 @@
  */
 ?>
 
-<div class="MetaboxOptions-slideshow" data-action="<?php echo $this->get('ajax_action'); ?>"
-     data-max="<?php echo $this->get('max'); ?>">
+<div <?php echo $this->htmlAttrs($this->get('attrs', [])); ?>>
     <div class="MetaboxOptions-slideshowSelectors">
         <?php
+        /**
+         * @todo
+
         if ($this->get('suggest')) :
             echo field(
                 'select-js',
@@ -25,29 +27,11 @@
                 ]
             );
         endif;
-        /* if ($this->args['suggest']) : ?>
-            <div class="suggest tiFyTabooxSlideshowSelector-suggest">
-                <?php
-                $suggest_args = (is_array($this->args['suggest'])) ? $this->args['suggest'] : [];
-                $suggest_args = wp_parse_args(
-                    $suggest_args,
-                    [
-                        'class'       => 'tify_taboox_slideshow-suggest',
-                        'placeholder' => __('Rechercher parmi les contenus du site', 'tify'),
-                        'elements'    => ['ico', 'title', 'type', 'status', 'id'],
-                        'query_args'  => ['post_type' => 'any', 'posts_per_page' => -1],
-                        'attrs'       => ['data-duplicate' => $this->args['duplicate']]
-                    ]
-                );
-                Control::Suggest($suggest_args, true);
-                ?>
-            </div>
-        <?php endif; */
         ?>
 
         <?php if ($this->get('suggest') && $this->get('custom')) : ?>
-            <p><?php _e('ou', 'tify'); ?></p>
-        <?php endif; ?>
+                <p><?php _e('ou', 'tify'); ?></p>
+        <?php endif; */ ?>
 
         <?php
         if ($this->get('custom')) :
@@ -85,8 +69,8 @@
 
         <ul class="MetaboxOptions-slideshowListItems">
             <?php
-            foreach ($this->get('items', []) as $index => $attrs) :
-                $this->insert('item', $attrs);
+            foreach ($this->get('items', []) as $item) :
+                echo $item;
             endforeach;
             ?>
         </ul>

@@ -2,36 +2,37 @@
 
 namespace tiFy\Options\Metabox\Slideshow;
 
-use Illuminate\Support\Arr;
 use tiFy\Metabox\MetaboxWpOptionsController;
 
-/**
- * @todo Gestion SelectJs
- */
 class Slideshow extends MetaboxWpOptionsController
 {
     /**
      * Liste des attributs de configuration.
      * @var array {
      * @var string $name Nom de qualification d'enregistrement.
-     * @var boolean|array $suggest Liste de selection de contenu.
-     * @var boolean $custom Activation de l'ajout de vignettes personnalisées.
+     * @var array $attrs Liste des attributs de balisae HTML du conteneur.
+     * @var string $ajax_action Action Ajax de récupération des éléments.
+     * @var array $editable Liste des interfaces d'édition des vignettes actives.
      * @var integer $max Nombre maximum de vignette.
-     * @var array $editors Liste des interfaces d'édition des vignettes actives.
-     * @var string $driver Moteur d'affichage. slick par défaut.
+     * @var array $args Liste des attribut de requête Ajax complémentaires.
+     * @todo boolean|array $suggest Liste de selection de contenu.
+     * @var boolean $custom Activation de l'ajout de vignettes personnalisées.
      * @var array $options Liste des options d'affichage.
+     * @var array $viewer Liste des attributs de configuration du gestionnaire de gabarit.
+     * @var string $item_class Traitement de l'affichage d'un élément
      * }
      */
     protected $attributes = [
         'name'        => 'tify_taboox_slideshow',
-        'suggest'     => true,
-        'duplicate'   => false,
+        'attrs'       => [],
+        'ajax_action' => 'metabox_options_slideshow',
+        'editable'    => ['image', 'title', 'url', 'caption'],
+        'max'         => - 1,
+        'args'        => [],
         'custom'      => true,
-        'max'         => -1,
-        'editors'     => ['image', 'title', 'link', 'caption'],
-        'driver'      => 'slick',
         'options'     => [],
-        'ajax_action' => 'metabox_options_slideshow'
+        'viewer'      => [],
+        'item_class'  => SlideshowItem::class
     ];
 
     /**
@@ -47,25 +48,7 @@ class Slideshow extends MetaboxWpOptionsController
      */
     public function content($args = null, $null1 = null, $null2 = null)
     {
-        $custom = $this->get('custom');
-        $name = $this->get('name');
-        //$suggest = $this->get('suggest');
-        $suggest = false;
-        $ajax_action = $this->get('ajax_action');
-        $max = $this->get('max');
-
-        $values = get_option($this->get('name'));
-
-        $items = Arr::get($values, 'slide', []);
-        array_walk(
-            $items,
-            function (&$attrs, $index) {
-                $attrs = $this->parseItem($index, $attrs);
-            }
-        );
-        $options = Arr::get($values, 'options', []);
-
-        return $this->viewer('content', compact('ajax_action', 'custom', 'items', 'max', 'name', 'options', 'suggest'));
+        return $this->viewer('content', $this->all());
     }
 
     /**
@@ -93,16 +76,17 @@ class Slideshow extends MetaboxWpOptionsController
             'admin_enqueue_scripts',
             function () {
                 wp_register_script(
-                    'tinyMCE-editor',
+                    'jquery.tinymce',
                     includes_url('js/tinymce') . '/tinymce.min.js',
                     [],
-                    '4.1.4',
+                    '4.9.2',
                     true
                 );
+
                 wp_register_script(
-                    'jQuery-tinyMCE',
-                    '//cdnjs.cloudflare.com/ajax/libs/tinymce/4.1.4/jquery.tinymce.min.js',
-                    ['jquery', 'tinyMCE-editor'],
+                    'tinymce',
+                    '//cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/jquery.tinymce.min.js',
+                    ['jquery', 'jquery.tinymce'],
                     true
                 );
 
@@ -116,16 +100,18 @@ class Slideshow extends MetaboxWpOptionsController
                     [],
                     181015
                 );
+
                 wp_enqueue_script(
                     'MetaboxOptionsSlideshow',
                     assets()->url('options/metabox/slideshow/js/scripts.js'),
                     [
-                        'jQuery-tinyMCE',
+                        'tinymce',
                         'jquery-ui-sortable'
                     ],
                     181015,
                     true
                 );
+
                 wp_localize_script(
                     'MetaboxOptionsSlideshow',
                     'MetaboxOptionsSlideshowAdmin',
@@ -144,79 +130,55 @@ class Slideshow extends MetaboxWpOptionsController
     {
         parent::parse($attrs);
 
+        $exists = array_merge(
+            ['options' => [], 'items' => []],
+            get_option($this->get('name')) ?: []
+        );
+
+        $items = $exists['items'] ?? [];
+        array_walk(
+            $items,
+            function (&$attrs, $index) {
+                $attrs['name']     = $this->get('name');
+                $attrs['editable'] = $this->get('editable', []);
+                $itemClass         = $this->get('item_class', SlideshowItem::class);
+
+                $attrs = new $itemClass($index, $attrs, $this->viewer());
+            }
+        );
+        $this->set('items', $items);
+
         $this->set(
             'options',
             array_merge(
                 [
-                    // Résolution du slideshow
                     'ratio'       => '16:9',
-                    // Taille des images
                     'size'        => 'full',
-                    // Navigation suivant/précédent
                     'nav'         => true,
-                    // Vignette de navigation
                     'tab'         => true,
-                    // Barre de progression
                     'progressbar' => false
                 ],
-                $this->get('options', [])
+                $exists['options'] ?? []
             )
         );
-    }
 
-    /**
-     * Traitement des attributs d'un élément.
-     *
-     * @param mixed $index Indice de qualification de l'élément.
-     * @param array $attrs Liste des attributs de configuration
-     *
-     * @return array
-     */
-    public function parseItem($index = null, $attrs = [])
-    {
-        if (!$index) :
-            $index = uniqid();
-        endif;
+        $this->set('attrs.class', 'MetaboxOptions-slideshow');
 
-        $attrs = array_merge(
-            [
-                'post_id'       => 0,
-                'attachment_id' => 0,
-                'clickable'     => 0,
-                'planning'      => [
-                    'from'  => 0,
-                    'start' => '',
-                    'to'    => 0,
-                    'end'   => '',
+        $this->set(
+            'attrs.data-options',
+            array_merge(
+                $this->get('args', []),
+                [
+                    'action'      => $this->get('ajax_action'),
+                    '_ajax_nonce' => wp_create_nonce('MetaboxOptionsSlideshow'),
+                    'editable'    => $this->get('editable'),
+                    'name'        => $this->get('name'),
+                    'max'         => $this->get('max'),
+                    'viewer'      => $this->get('viewer'),
+                    'item_class'  => $this->get('item_class')
                 ]
-            ],
-            $attrs
+            )
         );
-        $attrs['name'] = "{$this->get('name')}[slide][{$index}]";
-        $attrs['editors'] = $this->get('editors');
-
-        $attrs['title'] = isset($attrs['title'])
-            ? $attrs['title']
-            : ($attrs['post_id']
-                ? get_the_title($attrs['post_id'])
-                : ''
-            );
-
-        $attrs['caption'] = isset($attrs['caption'])
-            ? $attrs['caption']
-            : ($attrs['post_id']
-                ? apply_filters('the_excerpt', get_post_field('post_excerpt', $attrs['post_id']))
-                : ''
-            );
-
-        $attrs['url'] = isset($attrs['url'])
-            ? $attrs['url']
-            : ($attrs['post_id']
-                ? get_permalink($attrs['post_id'])
-                : ''
-            );
-
-        return $attrs;
     }
 
     /**
@@ -228,50 +190,21 @@ class Slideshow extends MetaboxWpOptionsController
     }
 
     /**
-     * Action de récupération Ajax
+     * Action de récupération Ajax d'un élément.
+     *
+     * @return string
      */
     public function wp_ajax()
     {
-        $post_id = request()->post('post_id');
-
-        $args = [
-            'post_id'   => $post_id,
-            'clickable' => $post_id ? 1 : 0,
-            'order'     => request()->post('order')
+        $attrs = [
+            'post_id'   => request()->post('post_id'),
+            'clickable' => request()->post('post_id') ? 1 : 0,
+            'name'      => request()->post('name'),
+            'editable'  => request()->post('editable', [])
         ];
+        $itemClass = wp_unslash(request()->post('item_class', SlideshowItem::class));
 
-        global $tify_events;
-        if (($tify_events instanceof \tiFy_Events) && in_array(get_post_type($post_id),
-                $tify_events->get_post_types()) && ($range = tify_events_get_range($post_id))) :
-            $args['planning'] = [
-                'from'  => 1,
-                'start' => $range->start_datetime,
-                'to'    => 1,
-                'end'   => $range->end_datetime,
-            ];
-        endif;
-        
-        echo $this->viewer('item', $this->parseItem(null, $args));
+        echo new $itemClass(null, $attrs, $this->viewer());
         exit;
-        /* $args = [
-             'post_id'   => $_POST['post_id'],
-             'title'     => get_the_title($_POST['post_id']),
-             'caption'   => apply_filters('the_excerpt', get_post_field('post_excerpt', $_POST['post_id'])),
-             'clickable' => $_POST['post_id'] ? 1 : 0,
-             'order'     => $_POST['order']
-         ];
- 
-         global $tify_events;
-         if (($tify_events instanceof \tiFy_Events) && in_array(get_post_type($_POST['post_id']),
-                 $tify_events->get_post_types()) && ($range = tify_events_get_range($_POST['post_id']))) {
-             $args['planning'] = [
-                 'from'  => 1,
-                 'start' => $range->start_datetime,
-                 'to'    => 1,
-                 'end'   => $range->end_datetime,
-             ];
-         }
- 
-         echo $this->item_render($args);*/
     }
 }

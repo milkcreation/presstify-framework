@@ -4,15 +4,13 @@ namespace tiFy\Routing;
 
 use ArrayIterator;
 use Illuminate\Support\Collection;
-use League\Route\Router as LeagueRouter;
 use League\Route\Route as LeagueRoute;
 use League\Route\RouteGroup as LeagueRouteGroup;
+use League\Route\Router as LeagueRouter;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-use tiFy\Contracts\Routing\Route as RouteContract;
-use tiFy\Contracts\Routing\RouteGroup as RouteGroupContract;
 use tiFy\Contracts\Routing\Router as RouterContract;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
@@ -28,13 +26,13 @@ class Router extends LeagueRouter implements RouterContract
 
     /**
      * Instance de la route associée à la requête HTTP courante.
-     * @var RouteContract
+     * @var Route
      */
     protected $current;
 
     /**
      * Liste des routes déclarées.
-     * @var RouteContract[]
+     * @var Route[]
      */
     protected $items;
 
@@ -83,7 +81,7 @@ class Router extends LeagueRouter implements RouterContract
     {
         return $this->current = ! is_null($this->current)
             ? $this->current
-            : $this->collect()->first(function (RouteContract $item) {
+            : $this->collect()->first(function (Route $item) {
                 return $item->isCurrent();
             });
     }
@@ -131,7 +129,7 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * {@inheritdoc}
      *
-     * @return RouteGroupContract
+     * @return RouteGroup
      */
     public function group(string $prefix, callable $group) : LeagueRouteGroup
     {
@@ -164,7 +162,17 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function hasCurrent()
     {
-        return $this->current() instanceof RouteContract;
+        return $this->current() instanceof Route;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasNamedRoute($name)
+    {
+        return $this->collect()->first(function (Route $item) use ($name) {
+            return ($item->getName() === $name);
+        });
     }
 
     /**
@@ -178,7 +186,7 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * {@inheritdoc}
      *
-     * @return RouteContract
+     * @return Route
      */
     public function map(string $method, string $path, $handler): LeagueRoute
     {
@@ -207,7 +215,7 @@ class Router extends LeagueRouter implements RouterContract
         $this->processGroups($request);
         $this->buildNameIndex();
 
-        /** @var RouteContract[] $routes */
+        /** @var Route[] $routes */
         $this->items = $routes = array_merge(array_values($this->routes), array_values($this->namedRoutes));
 
         foreach ($routes as $key => $route) {
