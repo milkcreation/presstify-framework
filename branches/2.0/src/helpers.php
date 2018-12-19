@@ -17,6 +17,7 @@ use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Route;
+use tiFy\Contracts\Routing\Url;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Contracts\View\ViewPattern;
@@ -403,6 +404,18 @@ if (! function_exists('router')) {
         endif;
 
         return $factory->register($name, $attrs);
+    }
+}
+
+if (! function_exists('url')) {
+    /**
+     * Récupération de l'instance du contrôleur d'url.
+     *
+     * @return Url
+     */
+    function url()
+    {
+        return app()->get('url');
     }
 }
 

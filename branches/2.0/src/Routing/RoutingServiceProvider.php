@@ -78,7 +78,7 @@ class RoutingServiceProvider extends AppServiceProvider
     public function registerRouter()
     {
         $this->getContainer()->share('router', function () {
-            return new Router($this->app);
+            return new Router($this->getContainer());
         });
     }
 
