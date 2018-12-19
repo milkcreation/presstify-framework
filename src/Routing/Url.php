@@ -19,6 +19,12 @@ class Url implements UrlContract
     protected $request;
 
     /**
+     * Sous arborescence du chemin de l'url.
+     * @var string
+     */
+    protected $rewriteBase;
+
+    /**
      * Instance du controleur de routage.
      * @var Router
      */
@@ -36,9 +42,7 @@ class Url implements UrlContract
     }
 
     /**
-     * Récupération de l'url propre. Nettoyée de la liste des arguments à exclure par défaut.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function clean()
     {
@@ -46,9 +50,7 @@ class Url implements UrlContract
     }
 
     /**
-     * Liste des arguments à exclure de l'url propre.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function cleanArgs()
     {
@@ -56,9 +58,7 @@ class Url implements UrlContract
     }
 
     /**
-     * Récupération de l'url courante. Sans les arguments de requête.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -66,9 +66,7 @@ class Url implements UrlContract
     }
 
     /**
-     * Récupération de l'url courante complète. Arguments de requête inclus.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function full()
     {
@@ -76,12 +74,21 @@ class Url implements UrlContract
     }
 
     /**
-     * Récupération d'une url agrémentée d'une liste d'arguments de requête.
-     *
-     * @param string[] $args Liste des arguments de requête à inclure.
-     * @param string $url Url à nettoyer. Url propre par défaut.
-     *
-     * @return string
+     * {@inheritdoc}
+     */
+    public function rewriteBase()
+    {
+        if( is_null($this->rewriteBase)) :
+            $this->rewriteBase = preg_replace(
+                '#^' .preg_quote(request()->getSchemeAndHttpHost()) . '#', '', env('SITE_URL')
+            );
+        endif;
+
+        return $this->rewriteBase;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function with(array $args, string $url = '')
     {
@@ -91,12 +98,7 @@ class Url implements UrlContract
     }
 
     /**
-     * Récupération d'une url nettoyée d'une liste d'arguments de requête.
-     *
-     * @param string[] $args Liste des arguments de requête à exclure.
-     * @param string $url Url à nettoyer. Url propre par défaut.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function without(array $args, string $url = '')
     {

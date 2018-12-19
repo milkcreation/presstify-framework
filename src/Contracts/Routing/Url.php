@@ -33,6 +33,13 @@ interface Url
     public function full();
 
     /**
+     * Récupération de la sous arborescence du chemin de l'url.
+     *
+     * @return string
+     */
+    public function rewriteBase();
+
+    /**
      * Récupération d'une url agrémentée d'une liste d'arguments de requête.
      *
      * @param string[] $args Liste des arguments de requête à inclure.

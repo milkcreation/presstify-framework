@@ -106,7 +106,6 @@ class Router extends LeagueRouter implements RouterContract
         return parent::dispatch($request);
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -190,7 +189,7 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function map(string $method, string $path, $handler): LeagueRoute
     {
-        $path = sprintf('/%s', ltrim(request()->getBaseUrl() . sprintf('/%s', ltrim($path, '/')), '/'));
+        $path = sprintf('/%s', ltrim(url()->rewriteBase() . sprintf('/%s', ltrim($path, '/')), '/'));
 
         $route = new Route($method, $path, $handler, $this);
 
@@ -219,17 +218,14 @@ class Router extends LeagueRouter implements RouterContract
         $this->items = $routes = array_merge(array_values($this->routes), array_values($this->namedRoutes));
 
         foreach ($routes as $key => $route) {
-            // check for scheme condition
             if (! is_null($route->getScheme()) && $route->getScheme() !== $request->getUri()->getScheme()) :
                 continue;
             endif;
 
-            // check for domain condition
             if (! is_null($route->getHost()) && $route->getHost() !== $request->getUri()->getHost()) :
                 continue;
             endif;
 
-            // check for port condition
             if (! is_null($route->getPort()) && $route->getPort() !== $request->getUri()->getPort()) :
                 continue;
             endif;
