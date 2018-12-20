@@ -3,16 +3,21 @@
 namespace tiFy\Wp\Routing;
 
 use FastRoute\Dispatcher as FastRoute;
-use Psr\Http\Message\ServerRequestInterface;
 use League\Route\Dispatcher;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Router
 {
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @return void
+     */
     public function __construct()
     {
-	    app()->add('router.strategy.default', function () {
-		    return new TemplateStrategy();
-	    });
+        app()->add('router.strategy.default', function () {
+            return new TemplateStrategy();
+        });
 
         add_action(
             'wp',
@@ -35,7 +40,7 @@ class Router
                         $path = request()->getBaseUrl() . request()->getPathInfo();
                         $method = request()->getMethod();
 
-                        if(($path != '/') && (substr($path, -1) == '/') && ($method === 'GET')) :
+                        if (($path != '/') && (substr($path, -1) == '/') && ($method === 'GET')) :
                             $match = (new Dispatcher(router()->getData()))->dispatch($method, rtrim($path, '/'));
 
                             if ($match[0] === FastRoute::FOUND) :
