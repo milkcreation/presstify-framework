@@ -2,11 +2,11 @@
 
 namespace tiFy\View\Pattern\ListTable\BulkActions;
 
-use tiFy\Field\Select\SelectOption;
+use tiFy\Field\Select\SelectChoice;
 use tiFy\View\Pattern\ListTable\Contracts\BulkActionsItem as BulkActionsItemContract;
 use tiFy\View\Pattern\ListTable\Contracts\ListTable;
 
-class BulkActionsItem extends SelectOption implements BulkActionsItemContract
+class BulkActionsItem extends SelectChoice implements BulkActionsItemContract
 {
     /**
      * Instance du motif d'affichage associé.

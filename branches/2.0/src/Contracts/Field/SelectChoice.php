@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Field;
 
 use tiFy\Contracts\Kernel\ParamsBag;
 
-interface SelectOption extends ParamsBag
+interface SelectChoice extends ParamsBag
 {
     /**
      * Récupération du contenu de la balise.

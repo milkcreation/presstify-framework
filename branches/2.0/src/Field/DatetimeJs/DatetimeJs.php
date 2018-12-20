@@ -157,12 +157,12 @@ class DatetimeJs extends FieldController
                 case 'month' :
                     global $wp_locale;
 
-                    $field_options = [];
+                    $choices = [];
                     if ($this->get('none_allowed')) :
-                        $field_options[0] = __('Aucun', 'tify');
+                        $choices[0] = __('Aucun', 'tify');
                     endif;
                     for ($n = 1; $n <= 12; $n++) :
-                        $field_options[zeroise($n, 2)] = $wp_locale->get_month_abbrev($wp_locale->get_month($n));
+                        $choices[zeroise($n, 2)] = $wp_locale->get_month_abbrev($wp_locale->get_month($n));
                     endfor;
 
                     $field_attrs = array_merge(
@@ -172,7 +172,7 @@ class DatetimeJs extends FieldController
                                 'class' => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--month',
                                 'autocomplete' => 'off'
                             ],
-                            'options'         => $field_options,
+                            'choices'         => $choices,
                             'value'           => zeroise($m, 2)
                         ],
                         $field_attrs

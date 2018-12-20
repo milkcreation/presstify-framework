@@ -34,7 +34,7 @@ class MailerOptions extends MetaboxWpOptionsController
      * @param MetaboxFactory $item Instance de l'élément.
      * @param array $attrs Liste des variables passées en arguments.
      *
-     * @return void
+     * @return object
      */
     public function __invoke(MetaboxFactory $item, $args = [])
     {

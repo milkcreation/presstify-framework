@@ -25,8 +25,8 @@ class PostQueryCollection extends QueryCollection implements PostQueryCollection
     {
         if ($items instanceof WP_Query) :
             if ($items->posts) :
-                foreach($items->posts as $post) :
-                    $this->items[] = $this->wrap($post);
+                foreach($items->posts as $k => $post) :
+                    $this->wrap($post);
                 endforeach;
             endif;
         else :
@@ -53,12 +53,13 @@ class PostQueryCollection extends QueryCollection implements PostQueryCollection
     /**
      * {@inheritdoc}
      *
+     * @param int $key Clé d'indice de l'élément.
      * @param \WP_Post $post
      *
      * @return PostQueryItem
      */
-    public function wrap($post)
+    public function wrap($key, $post)
     {
-        return new PostQueryItem($post);
+        return $this->items[$key] = new PostQueryItem($post);
     }
 }

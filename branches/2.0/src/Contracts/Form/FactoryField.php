@@ -210,6 +210,4 @@ interface FactoryField extends FactoryResolver, ParamsBag
      * @return array|boolean
      */
     public function supports($support = null);
-
-
 }

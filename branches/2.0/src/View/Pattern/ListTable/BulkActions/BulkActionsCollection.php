@@ -105,7 +105,7 @@ class BulkActionsCollection extends Collection implements BulkActionsCollectionC
     {
         $output = '';
 
-        if ($options = $this->all()) :
+        if ($choices = $this->all()) :
             $displayed = !self::$displayed++ ? '' : 2;
 
             $output .= field(
@@ -126,7 +126,7 @@ class BulkActionsCollection extends Collection implements BulkActionsCollectionC
                     'attrs'   => [
                         'id' => 'bulk-action-selector-' . esc_attr($this->which)
                     ],
-                    'options' => $options
+                    'choices' => $choices
                 ]
             );
 

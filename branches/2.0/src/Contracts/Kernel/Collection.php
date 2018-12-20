@@ -75,11 +75,12 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     /**
      * Encapsulation d'un élément.
      *
-     * @param mixed $item
+     * @param mixed $key Clé d'indice de l'élément.
+     * @param mixed $item Définition de l'élément
      *
      * @return mixed
      */
-    public function wrap($item);
+    public function wrap($key, $item);
 
     /**
      * Récupération de l'instance de l'itération.

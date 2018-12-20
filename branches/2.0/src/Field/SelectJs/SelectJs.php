@@ -2,8 +2,8 @@
 
 namespace tiFy\Field\SelectJs;
 
-use tiFy\Field\Select\SelectOptions;
-use tiFy\Field\Select\SelectOption;
+use tiFy\Field\Select\SelectChoices;
+use tiFy\Field\Select\SelectChoice;
 use tiFy\Field\FieldController;
 use WP_Query;
 
@@ -20,7 +20,7 @@ class SelectJs extends FieldController
      *      @var array $attrs Liste des attrbuts de balise HTML.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string|array $value Valeur initiale de soumission du champ.
-     *      @var array|SelectOptions|SelectOption[] $options Liste des choix de selection disponibles. Si source inactif.
+     *      @var array|SelectChoices|SelectChoice[] $choices Liste des choix de selection disponibles. Si source inactif.
      *      @var boolean|array $source Activation ou liste des attributs de requête de récupération Ajax des élèments.
      *      @todo boolean $autocomplete Activation le champs de selection par autocomplétion.
      *      @var boolean $disabled Activation/Désactivation du controleur de champ.
@@ -57,7 +57,7 @@ class SelectJs extends FieldController
         'attrs'        => [],
         'name'         => '',
         'value'        => null,
-        'options'      => [],
+        'choices'      => [],
         'source'       => false,
         //@todo 'autocomplete' => false,
         //@todo 'disabled'     => false,
@@ -147,7 +147,7 @@ class SelectJs extends FieldController
                     'class'        => '',
                     'data-control' => 'select-js.handler',
                 ],
-                'options'   => $this->get('options'),
+                'choices'   => $this->get('choices'),
             ]
         );
 

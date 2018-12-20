@@ -16,13 +16,17 @@ class FieldController implements FieldControllerInterface
      */
     protected $fieldSupports = [
         'button'              => ['request', 'wrapper'],
-        'checkbox-collection' => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
+        'checkbox'            => ['checking', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
+        'checkbox-collection' => ['choices', 'label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'datetime-js'         => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'hidden'              => ['request'],
         'label'               => ['wrapper'],
         'password'            => ['label', 'request', 'tabindex', 'wrapper'],
-        'radio-collection'    => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
+        'radio'               => ['checking', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
+        'radio-collection'    => ['choices', 'label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'repeater'            => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
+        'select'              => ['choices', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
+        'select-js'           => ['choices', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
         'submit'              => ['request', 'tabindex', 'wrapper'],
         'toggle-switch'       => ['request', 'tabindex', 'transport', 'wrapper'],
     ];
@@ -97,7 +101,11 @@ class FieldController implements FieldControllerInterface
             ]
         );
 
-        if (in_array($this->field()->getType(), ['checkbox', 'checkbox-collection', 'radio', 'radio-collection'])) :
+        if($this->field()->supports('choices')) :
+            $args['choices'] = $this->field()->get('choices', []);
+        endif;
+
+        if ($this->field()->supports('checking')) :
             $args['value'] = $this->field()->get('value');
             $args['checked'] = $this->field()->getValue();
         else :

@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Field;
 
 use tiFy\Contracts\Kernel\Collection;
 
-interface SelectOptions extends Collection
+interface SelectChoices extends Collection
 {
     /**
      * Résolution de sortie de la classe sous la forme d'une chaîne de caractères.
@@ -39,7 +39,7 @@ interface SelectOptions extends Collection
     /**
      * Itérateur d'affichage.
      *
-     * @param SelectOption[] $items Liste des éléments à ordonner.
+     * @param SelectChoice[] $items Liste des éléments à ordonner.
      * @param int $depth Niveau de profondeur.
      * @param string $parent Nom de qualification de l'élément parent.
      *
