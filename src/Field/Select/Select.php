@@ -28,7 +28,7 @@ class Select extends FieldController
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value".
      *      @var bool $multiple Activation de la liste de selection multiple.
-     *      @var array|SelectOptions|SelectOption $options Liste de selection d'éléments.
+     *      @var array|SelectChoices|SelectChoice $choices Liste de selection d'éléments.
      * }
      */
     protected $attributes = [
@@ -38,7 +38,7 @@ class Select extends FieldController
         'name'     => '',
         'value'    => null,
         'multiple' => false,
-        'options'  => []
+        'choices'  => []
     ];
 
     /**
@@ -72,24 +72,13 @@ class Select extends FieldController
     {
         parent::parse($attrs);
 
-        $this->parseOptions();
+        $choices = $this->get('choices', []);
+        if (!$choices instanceof SelectChoices) :
+            $this->set('choices', new SelectChoices($choices, $this->getValue()));
+        endif;
 
         if ($this->get('multiple')) :
             $this->push('attrs', 'multiple');
-        endif;
-    }
-
-    /**
-     * Traitement de l'attribut de configuration de liste de selection "options".
-     *
-     * @return void
-     */
-    protected function parseOptions()
-    {
-        $options = $this->get('options', []);
-
-        if (!$options instanceof SelectOptions) :
-            $this->set('options', new SelectOptions($options, $this->getValue()));
         endif;
     }
 

@@ -2,7 +2,6 @@
 
 namespace tiFy\Field\CheckboxCollection;
 
-use Illuminate\Support\Arr;
 use tiFy\Field\FieldController;
 use tiFy\Field\Checkbox\Checkbox;
 
@@ -14,11 +13,8 @@ class CheckboxCollection extends FieldController
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var array|Checkbox $items {
-     *          Liste des attributs de configuration
-     *          @see CheckboxItem
-     *      }
-     *      @var null|string $checked Valeur de la selection.
+     *      @var array|Checkbox|CheckboxChoice $choices
+     *      @var null|string $value Valeur de la selection.
      * }
      */
     protected $attributes = [
@@ -26,8 +22,8 @@ class CheckboxCollection extends FieldController
         'after'   => '',
         'attrs'   => [],
         'name'    => '',
-        'items'   => [],
-        'checked' => null
+        'choices' => [],
+        'value'   => null
     ];
 
     /**
@@ -37,22 +33,10 @@ class CheckboxCollection extends FieldController
     {
         parent::parse($attrs);
 
-        $items = [];
-        foreach ($this->get('items', []) as $name => $attrs) :
-            if ($attrs instanceof Checkbox) :
-                $item = $attrs;
-                if (($checked = Arr::wrap($this->get('checked', []))) && in_array($item->getValue(), $checked)) :
-                    $item->push('attrs', 'checked');
-                endif;
-                $item->set('attrs.name', $this->getName());
-            else :
-                $item = new CheckboxItem($name, $attrs, $this);
-            endif;
-
-            $items[] = $item;
-        endforeach;
-
-        $this->set('items', $items);
+        $choices = $this->get('choices', []);
+        if (!$choices instanceof CheckboxChoices) :
+            $this->set('choices', new CheckboxChoices($choices, $this->getName(), $this->viewer(), $this->getValue()));
+        endif;
     }
 
     /**

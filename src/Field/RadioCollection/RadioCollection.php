@@ -2,7 +2,6 @@
 
 namespace tiFy\Field\RadioCollection;
 
-use Illuminate\Support\Arr;
 use tiFy\Field\FieldController;
 use tiFy\Field\Radio\Radio;
 
@@ -14,7 +13,8 @@ class RadioCollection extends FieldController
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var null|string $checked Valeur de la selection.
+     *      @var array|Radio|RadioChoice $choices
+     *      @var null|string $value Valeur de la selection.
      * }
      */
     protected $attributes = [
@@ -22,8 +22,8 @@ class RadioCollection extends FieldController
         'after'   => '',
         'attrs'   => [],
         'name'    => '',
-        'items'   => [],
-        'checked' => null
+        'choices' => [],
+        'value'   => null
     ];
 
     /**
@@ -33,21 +33,9 @@ class RadioCollection extends FieldController
     {
         parent::parse($attrs);
 
-        $items = [];
-        foreach ($this->get('items', []) as $name => $attrs) :
-            if ($attrs instanceof Radio) :
-                $item = $attrs;
-                if (($checked = Arr::wrap($this->get('checked', []))) && in_array($item->getValue(), $checked)) :
-                    $item->push('attrs', 'checked');
-                endif;
-                $item->set('attrs.name', $this->getName());
-            else :
-                $item = new RadioItem($name, $attrs, $this);
-            endif;
-
-            $items[] = $item;
-        endforeach;
-
-        $this->set('items', $items);
+        $choices = $this->get('choices', []);
+        if (!$choices instanceof RadioChoices) :
+            $this->set('choices', new RadioChoices($choices, $this->getName(), $this->viewer(), $this->getValue()));
+        endif;
     }
 }

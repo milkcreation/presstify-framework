@@ -2,11 +2,11 @@
 
 namespace tiFy\Field\Select;
 
-use tiFy\Contracts\Field\SelectOption as SelectOptionContract;
+use tiFy\Contracts\Field\SelectChoice as SelectChoiceContract;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-class SelectOption extends ParamsBag implements SelectOptionContract
+class SelectChoice extends ParamsBag implements SelectChoiceContract
 {
     /**
      * Nom de qualification.

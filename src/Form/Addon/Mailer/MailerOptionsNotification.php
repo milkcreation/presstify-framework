@@ -2,11 +2,6 @@
 
 namespace tiFy\Form\Addon\Mailer;
 
-use tiFy\Contracts\Form\FormFactory;
-use tiFy\Contracts\Metabox\MetaboxFactory;
-use tiFy\Form\Addon\Mailer\MailerOptions;
-use tiFy\Form\Factory\ResolverTrait;
-
 class MailerOptionsNotification extends MailerOptions
 {
     /**

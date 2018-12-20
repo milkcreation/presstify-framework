@@ -3,14 +3,14 @@
 namespace tiFy\Field\Select;
 
 use Illuminate\Support\Arr;
-use tiFy\Contracts\Field\SelectOptions as SelectOptionsContract;
+use tiFy\Contracts\Field\SelectChoices as SelectChoicesContract;
 use tiFy\Kernel\Collection\Collection;
 
-class SelectOptions extends Collection implements SelectOptionsContract
+class SelectChoices extends Collection implements SelectChoicesContract
 {
     /**
      * Liste des éléments.
-     * @var SelectOption[]
+     * @var SelectChoice[]
      */
     protected $items = [];
 
@@ -42,12 +42,12 @@ class SelectOptions extends Collection implements SelectOptionsContract
      */
     public function recursiveWrap($name, $attrs, $parent = null)
     {
-        if ($attrs instanceof SelectOption) :
+        if ($attrs instanceof SelectChoice) :
             $this->items[$name] = $attrs;
         elseif (!is_array($attrs)) :
-            $this->items[$name] = new SelectOption($name, ['content' => $attrs, 'parent' => $parent]);
+            $this->items[$name] = new SelectChoice($name, ['content' => $attrs, 'parent' => $parent]);
         else :
-            $this->items[$name] = new SelectOption($name, ['content' => $name, 'group' => true, 'parent' => $parent]);
+            $this->items[$name] = new SelectChoice($name, ['content' => $name, 'group' => true, 'parent' => $parent]);
             foreach($attrs as $_name => $_attrs) :
                 $this->recursiveWrap($_name, $_attrs, $name);
             endforeach;
@@ -70,14 +70,14 @@ class SelectOptions extends Collection implements SelectOptionsContract
         if (!is_null($selected)) :
             $selected = Arr::wrap($selected);
 
-            $this->collect()->each(function (SelectOption $item) use ($selected) {
+            $this->collect()->each(function (SelectChoice $item) use ($selected) {
                 if (!$item->isGroup() && in_array($item->getValue(), $selected)) :
                     $item->push('attrs', 'selected');
                 endif;
             });
         endif;
 
-        if (!$this->collect()->first(function(SelectOption $item) { return $item->isSelected(); })) :
+        if (!$this->collect()->first(function(SelectChoice $item) { return $item->isSelected(); })) :
             if ($first = $this->collect()->first()) :
                 $first->push('attrs', 'selected');
             endif;
