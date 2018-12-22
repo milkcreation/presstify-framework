@@ -2,9 +2,9 @@
 
 namespace tiFy\PageHook;
 
-use tiFy\Kernel\Item\ItemInterface;
+use tiFy\Contracts\Kernel\ParamsBag;
 
-interface PageHookItemInterface extends ItemInterface
+interface PageHookItemInterface extends ParamsBag
 {
     /**
      * Récupération de l'identifiant de qualification de la page d'accroche associée.
