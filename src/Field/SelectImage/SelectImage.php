@@ -2,9 +2,7 @@
 
 namespace tiFy\Field\SelectImage;
 
-use Symfony\Component\Finder\Finder;
 use tiFy\Field\FieldController;
-use tiFy\Kernel\Tools;
 
 class SelectImage extends FieldController
 {
@@ -19,7 +17,7 @@ class SelectImage extends FieldController
         'attrs'     => [],
         'name'      => '',
         'value'     => null,
-        'directory' => ''
+        'choices'   => []
     ];
 
     /**
@@ -29,8 +27,8 @@ class SelectImage extends FieldController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('FieldSelectImage');
-        \wp_enqueue_script('FieldSelectJs');
+        wp_enqueue_style('FieldSelectImage');
+        wp_enqueue_script('FieldSelectJs');
     }
 
     /**
@@ -40,7 +38,7 @@ class SelectImage extends FieldController
      */
     public function init()
     {
-        \wp_register_style(
+        wp_register_style(
             'FieldSelectImage',
             assets()->url('field/select-image/css/styles.css'),
             ['FieldSelectJs'],
@@ -55,20 +53,9 @@ class SelectImage extends FieldController
     {
         parent::parse($attrs);
 
-        $options = [];
-        $finder = (new Finder())->in($this->get('directory'))->depth('== 0')->name('(.ico|.gif|jpe?g|.png|.svg)');
-        foreach ($finder as $file) :
-            $options[$file->getRelativePathname()] = (string)partial(
-                'tag',
-                [
-                    'tag'   => 'img',
-                    'attrs' => [
-                        'src'   => Tools::File()->imgBase64Src($file->getRealPath()),
-                        'title' => $file->getRelativePathname(),
-                    ],
-                ]
-            );
-        endforeach;
-        $this->set('options', $options);
+        $choices = $this->get('choices', []);
+        if (!$choices instanceof SelectImageChoices) :
+            $this->set('choices', new SelectImageChoices($choices, $this->viewer(), $this->getValue()));
+        endif;
     }
 }

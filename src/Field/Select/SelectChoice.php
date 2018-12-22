@@ -131,7 +131,7 @@ class SelectChoice extends ParamsBag implements SelectChoiceContract
     {
         parent::parse($attrs);
 
-        if ($this->get('group')) :
+        if ($this->isGroup()) :
             $this->pull('value');
             $this->set('attrs.label', htmlentities($this->pull('content')));
         else :

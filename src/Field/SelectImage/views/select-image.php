@@ -13,7 +13,7 @@ echo field(
         'name'      => $this->getName(),
         'value'     => $this->getValue(),
         'attrs'     => $this->get('attrs', []),
-        'options'   => $this->get('options', []),
+        'choices'   => $this->get('choices', []),
         'removable' => false,
     ]
 );

@@ -13,7 +13,7 @@ class CheckboxCollection extends FieldController
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var array|Checkbox|CheckboxChoice $choices
+     *      @var array|Checkbox[]|CheckboxChoice[]|CheckboxChoices $choices
      *      @var null|string $value Valeur de la selection.
      * }
      */

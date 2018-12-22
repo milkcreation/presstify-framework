@@ -103,6 +103,7 @@ final class FieldManager implements FieldManagerContract
         'radio-collection'    => RadioCollection::class,
         'repeater'            => Repeater::class,
         'select'              => Select::class,
+        'select-image'        => SelectImage::class,
         'select-js'           => SelectJs::class,
         'submit'              => Submit::class,
         'text'                => Text::class,

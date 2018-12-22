@@ -28,7 +28,7 @@ class Select extends FieldController
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string|array $value Attribut de configuration de la valeur initiale de soumission du champ "value".
      *      @var bool $multiple Activation de la liste de selection multiple.
-     *      @var array|SelectChoices|SelectChoice $choices Liste de selection d'éléments.
+     *      @var string[]|array|SelectChoice[]|SelectChoices[] $choices Liste de selection d'éléments.
      * }
      */
     protected $attributes = [

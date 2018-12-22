@@ -13,7 +13,7 @@ class RadioCollection extends FieldController
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var array|Radio|RadioChoice $choices
+     *      @var array|Radio[]|RadioChoice[]|RadioChoices $choices
      *      @var null|string $value Valeur de la selection.
      * }
      */

@@ -2,8 +2,6 @@
 
 namespace tiFy\Components\Tools\File;
 
-use tiFy\Kernel\Tools;
-
 class File
 {
     /**

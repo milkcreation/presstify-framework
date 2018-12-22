@@ -15,7 +15,6 @@
 
 .FieldSelectJs-trigger {
     position: relative;
-    min-height: 1.92em;
     border: 1px solid #E4E4E4;
 }
 
@@ -101,9 +100,8 @@
 .FieldSelectJs-selectionItem {
     position: relative;
     cursor: default;
-    margin: 2px;
-    padding: 0 5px;
-    line-height: 1.4;
+    padding: 5px;
+    line-height: 1;
     white-space: nowrap;
     background-color: #FFF;
 }

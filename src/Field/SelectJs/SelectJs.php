@@ -2,10 +2,7 @@
 
 namespace tiFy\Field\SelectJs;
 
-use tiFy\Field\Select\SelectChoices;
-use tiFy\Field\Select\SelectChoice;
 use tiFy\Field\FieldController;
-use WP_Query;
 
 class SelectJs extends FieldController
 {
@@ -20,8 +17,10 @@ class SelectJs extends FieldController
      *      @var array $attrs Liste des attrbuts de balise HTML.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string|array $value Valeur initiale de soumission du champ.
-     *      @var array|SelectChoices|SelectChoice[] $choices Liste des choix de selection disponibles. Si source inactif.
-     *      @var boolean|array $source Activation ou liste des attributs de requête de récupération Ajax des élèments.
+     *      @var array|SelectJsChoices|SelectJsChoice[] $choices Liste des choix de selection disponibles.
+     *                                                       La récupération Ajax doit être inactive.
+     *      @var string $choices_cb Classe de traitement de la liste des choix.
+     *      @var boolean|array $ajax Activation ou liste des attributs de requête de récupération Ajax des élèments.
      *      @todo boolean $autocomplete Activation le champs de selection par autocomplétion.
      *      @var boolean $disabled Activation/Désactivation du controleur de champ.
      *      @var boolean $multiple Activation la selection multiple d'éléments.
@@ -58,7 +57,8 @@ class SelectJs extends FieldController
         'name'         => '',
         'value'        => null,
         'choices'      => [],
-        'source'       => false,
+        'choices_cb'   => SelectJsChoices::class,
+        'ajax'         => false,
         //@todo 'autocomplete' => false,
         //@todo 'disabled'     => false,
         'multiple'     => false,
@@ -147,11 +147,13 @@ class SelectJs extends FieldController
                     'class'        => '',
                     'data-control' => 'select-js.handler',
                 ],
-                'choices'   => $this->get('choices'),
+                'choices'   => [],
             ]
         );
 
         $this->set('attrs.data-id', $this->getId());
+
+        $choices_cb = $this->get('choices_cb', SelectJsChoices::class);
 
         $this->set(
             'datas.options',
@@ -181,23 +183,24 @@ class SelectJs extends FieldController
                 'removable'    => (bool)$this->get('removable'),
                 'selected'     => $this->getValue(),
                 'sortable'     => $this->get('sortable'),
-                'source'       => ($this->get('source') === false)
+                'source'       => ($this->get('ajax') === false)
                     ? false
                     : array_merge(
                         [
-                            'action'      => 'field_select_js',
-                            'query_args'  => [
+                            'action' => 'field_select_js',
+                            'args'   => [
                                 'page'     => 1,
-                                'per_page' => 10,
+                                'per_page' => 20,
                                 'in'       => [],
                                 'not_in'   => []
                             ]
                         ],
-                        is_array($this->get('source')) ? $this->get('source') : [],
+                        is_array($this->get('ajax')) ? $this->get('ajax') : [],
                         [
                             '_ajax_nonce' => wp_create_nonce('FieldSelectJs' . $this->getId()),
-                            '_id' => $this->getId(),
-                            '_viewer' => $this->get('viewer', []),
+                            '_id'         => $this->getId(),
+                            '_viewer'     => $this->get('viewer', []),
+                            '_choices_cb' => $choices_cb
                         ]
                     ),
                 'trigger'      => $this->get('trigger', []),
@@ -207,17 +210,22 @@ class SelectJs extends FieldController
             ]
         );
 
-        $this->set(
-            'datas.items',
-            !$this->get('datas.options.source')
-                ? []
-                : $this->queryItems(
-                array_merge(
-                    $this->get('datas.options.source.query_args', []),
-                    ['in' => $this->getValue(), 'per_page' => -1]
-                )
-            )
-        );
+        if ($this->get('datas.options.source')) :
+            $items = new $choices_cb(
+                params($this->get('datas.options.source.args', [])),
+                $this->viewer(),
+                $this->getValue()
+            );
+        else :
+            $choices = $this->get('choices', []);
+            if (!$choices instanceof SelectJsChoices) :
+                $items = new $choices_cb($choices, $this->viewer(), $this->getValue());
+            else :
+                $items = $choices;
+            endif;
+        endif;
+        /** @var SelectJsChoices $items */
+        $this->set('datas.items', (array)$items->all());
 
         $this->set('attrs.class', $this->get('attrs.class') . ' FieldSelectJs');
         $this->pull('attrs.name');
@@ -255,44 +263,13 @@ class SelectJs extends FieldController
 
         $this->set('viewer', request()->post('_viewer', []));
 
-        wp_send_json($this->queryItems(request()->post('query_args', [])));
-    }
+        $choices_cb = request()->post('_choices_cb', SelectJsChoices::class);
+        /** @var SelectJsChoices $items */
+        $items = new $choices_cb(
+            params(request()->post('args', [])),
+            $this->viewer()
+        );
 
-    /**
-     * Requête de récupération des éléments.
-     *
-     * @param array $args Arguments de requête de récupération des éléments.
-     *
-     * @return array
-     */
-    public function queryItems($args = [])
-    {
-        $args['post__in'] = $args['post__in'] ?? ($args['in'] ?? []);
-        $args['post__not_in'] = $args['post__not_in'] ?? ($args['not_in'] ?? []);
-        $args['posts_per_page'] = $args['posts_per_page'] ?? ($args['per_page'] ?? 2);
-        $args['paged'] = $args['page'] ?? 1;
-        if (!empty($args['term'])) :
-            $args['s'] = $args['term'];
-        endif;
-        $args['post_type'] = $args['post_type'] ?? 'any';
-
-        unset($args['in'], $args['not_in'], $args['per_page'], $args['page'], $args['term']);
-
-        $items = [];
-        $wp_query = new WP_Query($args);
-        if ($wp_query->have_posts()) :
-            while ($wp_query->have_posts()) : $wp_query->the_post();
-                global $post;
-
-                $item = ['value' => get_the_ID(), 'content' => get_the_title()];
-                $item['picker'] = (string)$this->viewer('picker', compact('item', 'post'));
-                $item['selection'] = (string)$this->viewer('selected', compact('item', 'post'));
-
-                $items[] = $item;
-            endwhile;
-        endif;
-        wp_reset_query();
-
-        return $items;
+        wp_send_json($items->all());
     }
 }
