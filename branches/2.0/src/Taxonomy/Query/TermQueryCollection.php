@@ -25,9 +25,7 @@ class TermQueryCollection extends QueryCollection implements TermQueryCollection
     {
         if ($items instanceof WP_Term_Query) :
             if ($items->terms) :
-                foreach($items->terms as $k => $term) :
-                    $this->wrap($k, $term);
-                endforeach;
+                array_walk($items->terms, [$this, 'wrap']);
             endif;
         else :
             $this->items = $items;
@@ -61,12 +59,12 @@ class TermQueryCollection extends QueryCollection implements TermQueryCollection
     /**
      * {@inheritdoc}
      *
-     * @param int $key Clé d'indice de l'élément
      * @param \WP_Term $term
+     * @param int $key Clé d'indice de l'élément
      *
      * @return TermQueryItem
      */
-    public function wrap($key, $term)
+    public function wrap($term, $key = null)
     {
         return $this->items[$key] = new TermQueryItem($term);
     }

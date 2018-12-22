@@ -4,9 +4,9 @@ namespace tiFy\Field\Select;
 
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Field\SelectChoices as SelectChoicesContract;
-use tiFy\Kernel\Collection\Collection;
+use tiFy\Kernel\Collection\QueryCollection;
 
-class SelectChoices extends Collection implements SelectChoicesContract
+class SelectChoices extends QueryCollection implements SelectChoicesContract
 {
     /**
      * Liste des éléments.
@@ -43,14 +43,14 @@ class SelectChoices extends Collection implements SelectChoicesContract
     public function recursiveWrap($name, $attrs, $parent = null)
     {
         if (is_string($attrs)) :
-            $this->wrap($name, ['content' => $attrs, 'parent' => $parent]);
+            $this->wrap(['content' => $attrs, 'parent' => $parent], $name);
         elseif (is_array($attrs)) :
-            $this->wrap($name, ['content' => $name, 'group' => true, 'parent' => $parent]);
+            $this->wrap(['content' => $name, 'group' => true, 'parent' => $parent], $name);
             foreach($attrs as $_name => $_attrs) :
                 $this->recursiveWrap($_name, $_attrs, $name);
             endforeach;
         else :
-            $this->wrap($name, $attrs);
+            $this->wrap($attrs, $name);
         endif;
     }
 
@@ -111,7 +111,7 @@ class SelectChoices extends Collection implements SelectChoicesContract
     /**
      * {@inheritdoc}
      */
-    public function wrap($name, $item)
+    public function wrap($item, $name = null)
     {
         if (!$item instanceof SelectChoice) :
             $item = new SelectChoice($name, $item);

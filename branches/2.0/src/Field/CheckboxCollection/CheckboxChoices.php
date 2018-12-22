@@ -33,10 +33,9 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
     {
         $this->viewer = $viewer;
 
-        foreach($items as $key => $item) :
-            $item = $this->wrap($key, $item);
-            $item->setName($name);
-        endforeach;
+        array_walk($items, function($item, $key) use ($name) {
+            $this->wrap($item, $key)->setName($name);
+        });
 
         $this->setChecked($checked);
     }
@@ -78,7 +77,7 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
     /**
      * {@inheritdoc}
      */
-    public function wrap($key, $item)
+    public function wrap($item, $key = null)
     {
         if (!$item instanceof CheckboxChoice) :
             $item = new CheckboxChoice($key, $item);

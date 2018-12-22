@@ -2,20 +2,14 @@
 
 namespace tiFy\Field\SelectJs;
 
-use tiFy\Contracts\Field\SelectJsChoices as SelectJsChoicesContract;
+use tiFy\Field\Select\SelectChoice;
 use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Field\Select\SelectChoices;
 use WP_Query;
 
-class SelectJsChoices extends SelectChoices implements SelectJsChoicesContract
+class SelectJsChoices extends SelectChoices
 {
-    /**
-     * Liste des éléments.
-     * @var SelectJsChoice[]
-     */
-    protected $items = [];
-
     /**
      * Instance du controleur de gestion des gabarits d'affichage.
      * @var ViewEngine
@@ -43,7 +37,7 @@ class SelectJsChoices extends SelectChoices implements SelectJsChoicesContract
 
             $items = $this->query($args);
 
-            array_walk($items, function($item, $key){ $this->wrap($key, $item);});
+            array_walk($items, [$this, 'wrap']);
             $this->setSelected($selected);
         else :
             parent::__construct($items, $selected);
@@ -88,10 +82,14 @@ class SelectJsChoices extends SelectChoices implements SelectJsChoicesContract
     /**
      * {@inheritdoc}
      */
-    public function wrap($name, $item)
+    public function wrap($item, $name = null)
     {
-        if (!$item instanceof SelectJsChoice) :
-            $item = new SelectJsChoice($name, $item, $this->viewer);
+        if (!$item instanceof SelectChoice) :
+            $item = new SelectChoice($name, $item);
+            $args = $item->all();
+
+            $item->set('picker',  (string)$this->viewer->make('picker-item', $args));
+            $item->set('selection', (string)$this->viewer->make('selection-item', $args));
         endif;
 
         return $this->items[] = $item;

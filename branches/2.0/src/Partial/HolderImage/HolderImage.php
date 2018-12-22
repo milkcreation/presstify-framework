@@ -3,14 +3,12 @@
 namespace tiFy\Partial\HolderImage;
 
 use tiFy\Partial\PartialController;
-use tiFy\Kernel\Tools;
 
 class HolderImage extends PartialController
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attributes {
-     * }
+     * @var array $attributes
      */
     protected $attributes = [
         'attrs'            => [],
@@ -30,7 +28,7 @@ class HolderImage extends PartialController
         add_action(
             'init',
             function () {
-                \wp_register_style(
+                wp_register_style(
                     'PartialHolderImage',
                     assets()->url('partial/holder-image/css/styles.css'),
                     [],
@@ -45,7 +43,7 @@ class HolderImage extends PartialController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('PartialHolderImage');
+        wp_enqueue_style('PartialHolderImage');
     }
 
     /**

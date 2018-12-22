@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @name Partial.
+ * @name PartialManager
  * @desc Gestion des controleurs d'affichage.
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
@@ -9,10 +9,10 @@
 
 namespace tiFy\Partial;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialController;
 use tiFy\Contracts\Partial\PartialManager as PartialManagerContract;
+use tiFy\Partial\Accordion\Accordion;
 use tiFy\Partial\Breadcrumb\Breadcrumb;
 use tiFy\Partial\CookieNotice\CookieNotice;
 use tiFy\Partial\HolderImage\HolderImage;
@@ -20,7 +20,6 @@ use tiFy\Partial\Modal\Modal;
 use tiFy\Partial\Navtabs\Navtabs;
 use tiFy\Partial\Notice\Notice;
 use tiFy\Partial\Pagination\Pagination;
-use tiFy\Partial\PartialServiceProvider;
 use tiFy\Partial\Sidebar\Sidebar;
 use tiFy\Partial\Slider\Slider;
 use tiFy\Partial\Spinner\Spinner;
@@ -28,6 +27,7 @@ use tiFy\Partial\Table\Table;
 use tiFy\Partial\Tag\Tag;
 
 /**
+ * @method static Accordion Accordion(string $id = null, array $attrs = [])
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
  * @method static CookieNotice CookieNotice(string $id = null, array $attrs = [])
  * @method static HolderImage HolderImage(string $id = null,array $attrs = [])
@@ -54,6 +54,7 @@ final class PartialManager implements PartialManagerContract
      * @var array
      */
     protected $items = [
+        'accordion'     => Accordion::class,
         'breadcrumb'    => Breadcrumb::class,
         'cookie-notice' => CookieNotice::class,
         'holder-image'  => HolderImage::class,
@@ -87,12 +88,7 @@ final class PartialManager implements PartialManagerContract
     }
 
     /**
-     * Récupération statique d'un élément.
-     *
-     * @param string $name Nom de qualification.
-     * @param array $args Liste des variables passées en arguments.
-     *
-     * @return null|PartialController
+     * {@inheritdoc}
      */
     public static function __callStatic($name, $args)
     {
@@ -102,13 +98,7 @@ final class PartialManager implements PartialManagerContract
     }
 
     /**
-     * Récupération de l'instance d'un élément déclaré.
-     *
-     * @param string $name Nom de qualification de l'élément.
-     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
-     * @param mixed $attrs Liste des attributs de configuration.
-     *
-     * @return null|PartialController
+     * {@inheritdoc}
      */
     public function get($name, $id = null, $attrs = null)
     {
@@ -125,11 +115,7 @@ final class PartialManager implements PartialManagerContract
     }
 
     /**
-     * Récupération de l'index d'un contrôleur d'affichage déclaré.
-     *
-     * @param PartialController $partial Instance du contrôleur de champ.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function index(PartialController $partial)
     {
@@ -148,12 +134,7 @@ final class PartialManager implements PartialManagerContract
     }
 
     /**
-     * Déclaration d'un contrôleur d'affichage.
-     *
-     * @param string $name Nom de qualification d"appel de l'élément.
-     * @param string $concrete Nom de qualification du controleur.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function register($name, $concrete)
     {

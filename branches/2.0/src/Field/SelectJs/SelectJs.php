@@ -17,8 +17,7 @@ class SelectJs extends FieldController
      *      @var array $attrs Liste des attrbuts de balise HTML.
      *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
      *      @var string|array $value Valeur initiale de soumission du champ.
-     *      @var array|SelectJsChoices|SelectJsChoice[] $choices Liste des choix de selection disponibles.
-     *                                                       La récupération Ajax doit être inactive.
+     *      @var array $choices Liste des choix de selection disponibles. La récupération Ajax doit être inactive.
      *      @var string $choices_cb Classe de traitement de la liste des choix.
      *      @var boolean|array $ajax Activation ou liste des attributs de requête de récupération Ajax des élèments.
      *      @todo boolean $autocomplete Activation le champs de selection par autocomplétion.
@@ -67,7 +66,8 @@ class SelectJs extends FieldController
         'sortable'     => false,
         'trigger'      => true,
         'picker'       => [],
-        'viewer'       => []
+        'viewer'       => [],
+        'classes'      => []
     ];
 
     /**
@@ -129,11 +129,33 @@ class SelectJs extends FieldController
     /**
      * {@inheritdoc}
      */
+    public function getValue()
+    {
+        $value = $this->get('value', null);
+
+        if (is_null($value)) :
+            return null;
+        endif;
+
+        $value = is_string($value)
+            ? array_map('trim', explode(',', $value))
+            : (array)$value;
+        $value = $this->get('duplicate') ? $value : array_unique($value);
+        $value = $this->get('multiple') ? $value : [reset($value)];
+
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function parse($attrs = [])
     {
         parent::parse($attrs);
 
         $this->set('attrs.data-control', 'select-js');
+
+        $this->set('attrs.data-id', $this->getId());
 
         $this->set(
             'handler',
@@ -151,14 +173,34 @@ class SelectJs extends FieldController
             ]
         );
 
-        $this->set('attrs.data-id', $this->getId());
+        $classes = [
+            'autocompleteInput'   => 'FieldSelectJs-autocomplete',
+            'handler'             => 'FieldSelectJs-handler',
+            'picker'              => 'FieldSelectJs-picker',
+            'pickerFilter'        => 'FieldSelectJs-pickerFilter',
+            'pickerLoader'        => 'FieldSelectJs-pickerLoader',
+            'pickerItem'          => 'FieldSelectJs-pickerItem',
+            'pickerItems'         => 'FieldSelectJs-pickerItems',
+            'pickerMore'          => 'FieldSelectJs-pickerMore',
+            'selection'           => 'FieldSelectJs-selection',
+            'selectionItem'       => 'FieldSelectJs-selectionItem',
+            'selectionItemRemove' => 'FieldSelectJs-selectionItemRemove',
+            'selectionItemSort'   => 'FieldSelectJs-selectionItemSort',
+            'trigger'             => 'FieldSelectJs-trigger',
+            'triggerHandler'      => 'FieldSelectJs-triggerHandler',
+        ];
+        foreach($classes as $key => &$class) :
+            $class = sprintf($this->get("classes.{$key}", '%s'), $class);
+        endforeach;
+        $this->set('classes', $classes);
 
-        $choices_cb = $this->get('choices_cb', SelectJsChoices::class);
+        $choices_cb = $this->get('choices_cb');
 
         $this->set(
             'datas.options',
             [
                 'autocomplete' => (bool)$this->get('autocomplete'),
+                'classes'      => $this->get('classes', []),
                 'disabled'     => (bool)$this->get('disabled'),
                 'duplicate'    => (bool)$this->get('duplicate'),
                 'max'          => (int)$this->get('max'),
@@ -217,17 +259,12 @@ class SelectJs extends FieldController
                 $this->getValue()
             );
         else :
-            $choices = $this->get('choices', []);
-            if (!$choices instanceof SelectJsChoices) :
-                $items = new $choices_cb($choices, $this->viewer(), $this->getValue());
-            else :
-                $items = $choices;
-            endif;
+            $items = new $choices_cb($this->get('choices', []), $this->viewer(), $this->getValue());
         endif;
         /** @var SelectJsChoices $items */
         $this->set('datas.items', (array)$items->all());
 
-        $this->set('attrs.class', $this->get('attrs.class') . ' FieldSelectJs');
+        $this->set('attrs.class', trim($this->get('attrs.class') . ' FieldSelectJs'));
         $this->pull('attrs.name');
         $this->pull('attrs.value');
     }
@@ -235,21 +272,14 @@ class SelectJs extends FieldController
     /**
      * {@inheritdoc}
      */
-    public function getValue()
+    protected function parseDefaults()
     {
-        $value = $this->get('value', null);
+        $this->parseName();
+        $this->parseValue();
 
-        if (is_null($value)) :
-            return null;
-        endif;
-
-        $value = is_string($value)
-            ? array_map('trim', explode(',', $value))
-            : (array)$value;
-        $value = $this->get('duplicate') ? $value : array_unique($value);
-        $value = $this->get('multiple') ? $value : [reset($value)];
-
-        return $value;
+        foreach($this->get('view', []) as $key => $value) :
+            $this->viewer()->set($key, $value);
+        endforeach;
     }
 
     /**
@@ -263,12 +293,9 @@ class SelectJs extends FieldController
 
         $this->set('viewer', request()->post('_viewer', []));
 
-        $choices_cb = request()->post('_choices_cb', SelectJsChoices::class);
+        $choices_cb = request()->post('_choices_cb');
         /** @var SelectJsChoices $items */
-        $items = new $choices_cb(
-            params(request()->post('args', [])),
-            $this->viewer()
-        );
+        $items = new $choices_cb(params(request()->post('args', [])), $this->viewer());
 
         wp_send_json($items->all());
     }

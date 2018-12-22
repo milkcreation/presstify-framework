@@ -87,7 +87,7 @@ class Collection implements CollectionContract
     /**
      * {@inheritdoc}
      */
-    public function wrap($key, $item)
+    public function wrap($item, $key = null)
     {
         return $item;
     }

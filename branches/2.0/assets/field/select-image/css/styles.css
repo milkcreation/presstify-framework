@@ -1,18 +1,19 @@
-.tiFyField-SelectImage {
+.FieldSelectImage {
     display: inline-block;
     overflow: hidden;
-    width: 121px;
     height: auto;
 }
 
-.tiFyField-SelectImage .FieldSelectJs-selectionItem {
+.FieldSelectImage-selectionItem,
+.FieldSelectImage-pickerItem {
     margin:0;
     padding: 0;
     width: 100px;
     height: 100px;
 }
 
-.tiFyField-SelectImage .FieldSelectJs-selectionItem > img {
+.FieldSelectImage-selectionItem > img,
+.FieldSelectImage-pickerItem > img {
     position: absolute;
     top: 50%;
     max-width: 100px;

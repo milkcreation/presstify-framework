@@ -11,7 +11,6 @@ use tiFy\Partial\PartialView;
  * @method string attrs().
  * @method string before().
  * @method string content().
- * @method string getHtmlAttrs().
  * @method string getId().
  * @method string getIndex().
  * @method string getPagenumLink(int $num).
@@ -27,7 +26,6 @@ class PaginationView extends PartialView
         'attrs',
         'before',
         'content',
-        'getHtmlAttrs',
         'getId',
         'getIndex',
         'getPagenumLink'

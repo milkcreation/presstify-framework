@@ -65,16 +65,6 @@ interface PartialController extends ParamsBag
     public function enqueue_scripts();
 
     /**
-     * Traitement et récupération d'une liste d'attributs HTML.
-     *
-     * @param array $attrs Liste des attributs HTML.
-     * @param bool $linearized Activation de la linéarisation.
-     *
-     * @return string
-     */
-    public function getHtmlAttrs($attrs = [], $linearized = true);
-
-    /**
      * Récupération de l'identifiant de qualification du controleur.
      *
      * @return string
@@ -94,6 +84,13 @@ interface PartialController extends ParamsBag
      * @return bool
      */
     public function isCallable($var);
+
+    /**
+     * Traitement de la liste des attributs par défaut.
+     *
+     * @return void
+     */
+    public function parseDefaults();
 
     /**
      * Récupération de la vue.

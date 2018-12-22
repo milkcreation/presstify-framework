@@ -2,15 +2,14 @@
 
 namespace tiFy\Partial;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use tiFy\Contracts\Partial\PartialController as PartialControllerInterface;
+use tiFy\Contracts\Partial\PartialController as PartialControllerContract;
 use tiFy\Contracts\Partial\PartialManager;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
 
-abstract class PartialController extends ParamsBag implements PartialControllerInterface
+abstract class PartialController extends ParamsBag implements PartialControllerContract
 {
     /**
      * Liste des attributs de configuration.
@@ -81,7 +80,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerI
      */
     public function attrs()
     {
-        echo $this->getHtmlAttrs($this->get('attrs', []));
+        echo Tools::Html()->parseAttrs($this->get('attrs', []));
     }
 
     /**
@@ -134,14 +133,6 @@ abstract class PartialController extends ParamsBag implements PartialControllerI
     /**
      * {@inheritdoc}
      */
-    public function getHtmlAttrs($attrs = [], $linearized = true)
-    {
-        return Tools::Html()->parseAttrs($attrs, $linearized);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getId()
     {
         return $this->id;
@@ -174,11 +165,9 @@ abstract class PartialController extends ParamsBag implements PartialControllerI
     }
 
     /**
-     * Traitement de la liste des attributs par défaut.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    protected function parseDefaults()
+    public function parseDefaults()
     {
         $default_class = 'tiFyPartial-' . class_info($this)->getShortName() .
             ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex();

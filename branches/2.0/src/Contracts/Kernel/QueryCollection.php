@@ -14,9 +14,11 @@ interface QueryCollection extends Collection
     /**
      * Traitement de la requête de récupération des éléments.
      *
+     * @param array $args Liste des arguments de requête.
+     *
      * @return void
      */
-    public function query();
+    public function query($args);
 
     /**
      * Définition du nombre total d'éléments trouvés.

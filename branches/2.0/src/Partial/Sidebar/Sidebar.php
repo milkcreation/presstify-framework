@@ -156,7 +156,7 @@ class Sidebar extends PartialController
      *
      * @return void
      */
-    protected function parseDefaults()
+    public function parseDefaults()
     {
         $default_class = class_info($this)->getShortName() . ' ' .
             class_info($this)->getShortName() . '--' . $this->getIndex();
