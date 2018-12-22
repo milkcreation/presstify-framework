@@ -328,7 +328,6 @@
             // Définition d'un élément du controleur de la liste de selection.
             _setItemPicker: function (content, item) {
                 return $('<li data-control="select-js.picker.item"/>')
-                    .attr('data-content', item.content)
                     .attr('data-index', item.index)
                     .attr('data-value', item.value)
                     .addClass(this.option('classes.pickerItem'))
@@ -338,7 +337,6 @@
             // Définition d'un élément du controleur de la liste des éléments sélectionnés.
             _setItemSelection: function (content, item) {
                 let $selectionItem = $('<li data-control="select-js.selection.item"/>')
-                    .attr('data-content', item.content)
                     .attr('data-index', item.index)
                     .attr('data-value', item.value)
                     .attr('aria-removable', this.flags.isRemovable)
@@ -899,7 +897,7 @@
                     $('[data-control="select-js.picker.item"]', self.pickerItems).each(function () {
                         let regex = new RegExp(term, 'i');
 
-                        if ($(this).data('content').match(regex)) {
+                        if ($(this).data('value').match(regex)) {
                             $(this).show();
                         } else {
                             $(this).hide();

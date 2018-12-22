@@ -33,9 +33,7 @@ class Collection extends QueryCollection implements CollectionContract
     {
         $this->pattern = $pattern;
 
-        foreach ($items as $k => $item) :
-            $this->wrap($k, $item);
-        endforeach;
+        array_walk($items, [$this, 'wrap']);
     }
 
     /**
@@ -54,9 +52,7 @@ class Collection extends QueryCollection implements CollectionContract
             );
 
             if ($items = $query->getItems()) :
-                foreach ($items as $k => $item) :
-                    $this->wrap($k, $item);
-                endforeach;
+                array_walk($items, [$this, 'wrap']);
             endif;
 
             $this->setFounds($query->getFoundItems());
@@ -66,7 +62,7 @@ class Collection extends QueryCollection implements CollectionContract
     /**
      * {@inheritdoc}
      */
-    public function wrap($key, $item)
+    public function wrap($item, $key = null)
     {
         return $this->items[$key] = $this->pattern->resolve('item', [$item, $this->pattern]);
     }

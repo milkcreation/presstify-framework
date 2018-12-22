@@ -17,7 +17,8 @@ class SelectImage extends FieldController
         'attrs'     => [],
         'name'      => '',
         'value'     => null,
-        'choices'   => []
+        'choices'   => [],
+        'choices_cb'   => SelectImageChoices::class,
     ];
 
     /**
@@ -53,9 +54,22 @@ class SelectImage extends FieldController
     {
         parent::parse($attrs);
 
-        $choices = $this->get('choices', []);
-        if (!$choices instanceof SelectImageChoices) :
-            $this->set('choices', new SelectImageChoices($choices, $this->viewer(), $this->getValue()));
-        endif;
+        $this->set('attrs.class', trim($this->get('attrs.class') . ' FieldSelectImage'));
+
+        $choices_cb = $this->get('choices_cb');
+        $this->set('choices', new $choices_cb($this->get('choices', []), $this->viewer(), $this->getValue()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function parseDefaults()
+    {
+        $this->parseName();
+        $this->parseValue();
+
+        foreach($this->get('view', []) as $key => $value) :
+            $this->viewer()->set($key, $value);
+        endforeach;
     }
 }

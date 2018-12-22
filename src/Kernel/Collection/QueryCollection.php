@@ -23,7 +23,7 @@ class QueryCollection extends Collection implements QueryCollectionContract
     /**
      * {@inheritdoc}
      */
-    public function query($args = [])
+    public function query($args)
     {
 
     }

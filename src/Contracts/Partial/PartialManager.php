@@ -40,7 +40,7 @@ interface PartialManager
      * @param string $name Nom de qualification d"appel de l'élément.
      * @param string $concrete Nom de qualification du controleur.
      *
-     * @return $this
+     * @return boolean
      */
     public function register($name, $concrete);
 }

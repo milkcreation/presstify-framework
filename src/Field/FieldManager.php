@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @name Field.
+ * @name FieldManager
  * @desc Gestion de champs de formulaire.
  * @author Jordy Manner <jordy@tigreblanc.fr>
  * @copyright Milkcreation
@@ -10,7 +10,6 @@
 namespace tiFy\Field;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Arr;
 use tiFy\Contracts\Field\FieldController;
 use tiFy\Contracts\Field\FieldManager as FieldManagerContract;
 use tiFy\Field\Button\Button;

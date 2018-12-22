@@ -10,11 +10,15 @@
 echo field(
     'select-js',
     [
-        'name'      => $this->getName(),
-        'value'     => $this->getValue(),
-        'attrs'     => $this->get('attrs', []),
-        'choices'   => $this->get('choices', []),
-        'removable' => false,
+        'name'    => $this->getName(),
+        'value'   => $this->getValue(),
+        'attrs'   => $this->get('attrs', []),
+        'choices' => $this->get('choices', []),
+        'classes' => [
+            'picker'     => '%s FieldSelectImage-picker',
+            'pickerItem' => '%s FieldSelectImage-pickerItem',
+            'selectionItem'       => '%s FieldSelectImage-selectionItem',
+        ],
     ]
 );
 ?>

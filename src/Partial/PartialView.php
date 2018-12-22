@@ -11,7 +11,6 @@ use tiFy\View\ViewController;
  * @method string attrs().
  * @method string before().
  * @method string content().
- * @method string getHtmlAttrs().
  * @method string getId().
  * @method string getIndex().
  */
@@ -26,7 +25,6 @@ class PartialView extends ViewController
         'attrs',
         'before',
         'content',
-        'getHtmlAttrs',
         'getId',
         'getIndex'
     ];
