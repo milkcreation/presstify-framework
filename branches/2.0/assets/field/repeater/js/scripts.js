@@ -1,5 +1,12 @@
+/* global tify */
+
+"use strict";
+
+/**
+ * @param {{ajax_url:string}} tify
+ */
 jQuery(document).ready(function ($) {
-    var jqxhr;
+    let jqxhr;
 
     // Ajout d'un élément.
     $('[aria-control="repeater"]').each(function() {
@@ -10,6 +17,8 @@ jQuery(document).ready(function ($) {
         $(document).on('click.tify.field.repeater.add', '[aria-id="' + id + '"] [aria-control="add"]', function (e) {
             e.stopPropagation();
             e.preventDefault();
+
+            let $self = $(this).closest('[aria-control="repeater"]');
 
             if (jqxhr !== undefined) {
                 return;
@@ -31,7 +40,8 @@ jQuery(document).ready(function ($) {
                     if (!resp.success) {
                         alert(resp.data);
                     } else {
-                        $items.append(resp.data);
+                        let $item = $(resp.data).appendTo($items);
+                        $self.trigger('create.tify.field.repeater.item', $item);
                     }
                 })
                 .always(function () {
@@ -41,7 +51,15 @@ jQuery(document).ready(function ($) {
 
         // Ordonnacement des images de la galerie.
         $('[aria-id="' + id + '"][aria-sortable="true"] [aria-control="items"]')
-            .sortable(o.sortable)
+            .sortable(
+                $.extend({
+                    handle: '.tiFyField-RepeaterItemSort',
+                    containment: 'parent',
+                    axis: 'Y'
+                    },
+                    o.sortable
+                )
+            )
             .disableSelection();
 
         // Suppression d'un élément.

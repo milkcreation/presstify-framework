@@ -1,18 +1,18 @@
-.tiFyField-SelectImage .tiFyField-SelectJsTrigger {
+.tiFyField-SelectImage {
     display: inline-block;
     overflow: hidden;
-    width: 100px;
-    height: 100px;
+    width: 121px;
+    height: auto;
 }
 
-.tiFyField-SelectImage .tiFyField-SelectJsSelectedItems > li {
+.tiFyField-SelectImage .FieldSelectJs-selectionItem {
     margin:0;
     padding: 0;
     width: 100px;
     height: 100px;
 }
 
-.tiFyField-SelectImage .tiFyField-SelectJsSelectedItems > li > img {
+.tiFyField-SelectImage .FieldSelectJs-selectionItem > img {
     position: absolute;
     top: 50%;
     max-width: 100px;

@@ -42,15 +42,15 @@ class SelectChoices extends Collection implements SelectChoicesContract
      */
     public function recursiveWrap($name, $attrs, $parent = null)
     {
-        if ($attrs instanceof SelectChoice) :
-            $this->items[$name] = $attrs;
-        elseif (!is_array($attrs)) :
-            $this->items[$name] = new SelectChoice($name, ['content' => $attrs, 'parent' => $parent]);
-        else :
-            $this->items[$name] = new SelectChoice($name, ['content' => $name, 'group' => true, 'parent' => $parent]);
+        if (is_string($attrs)) :
+            $this->wrap($name, ['content' => $attrs, 'parent' => $parent]);
+        elseif (is_array($attrs)) :
+            $this->wrap($name, ['content' => $name, 'group' => true, 'parent' => $parent]);
             foreach($attrs as $_name => $_attrs) :
                 $this->recursiveWrap($_name, $_attrs, $name);
             endforeach;
+        else :
+            $this->wrap($name, $attrs);
         endif;
     }
 
@@ -106,5 +106,17 @@ class SelectChoices extends Collection implements SelectChoicesContract
         endforeach;
 
         return $output;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function wrap($name, $item)
+    {
+        if (!$item instanceof SelectChoice) :
+            $item = new SelectChoice($name, $item);
+        endif;
+
+        return $this->items[] = $item;
     }
 }

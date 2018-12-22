@@ -187,34 +187,21 @@
             _initItems: function () {
                 let self = this;
 
-                if (this.flags.hasSource) {
-                    let items = tify[this.id].items || [];
+                let items = tify[this.id].items || [],
+                    selected = false;
 
-                    items.forEach(function (item, index) {
-                        let value = item.value.toString();
+                items.forEach(function (item, index) {
+                    let value = item.value.toString();
 
-                        if (self.flags.isMultiple) {
-                            self._selectedAdd(value);
-                        } else {
-                            self._selectedSet(value);
-                        }
-
-                        self._setItem(index, value, item.content, item.selection, item.picker);
-                    });
-                } else {
-                    if ($('option', this.handler).length) {
-                        self._selectedSet(this.handler.val());
-
-                        $('option', this.handler).each(function () {
-                            let value = $(this).val(),
-                                index = self._getItemIndex(value);
-
-                            self._setItem(index, value, $(this).text());
-
-                            $(this).remove();
-                        });
+                    if (self.flags.isMultiple) {
+                        self._selectedAdd(value);
+                    } else if(!selected) {
+                        selected = true;
+                        self._selectedSet(value);
                     }
-                }
+
+                    self._setItem(index, value, item.content, item.selection, item.picker);
+                });
 
                 this.items.forEach(function (item, index) {
                     self._pickerAddItem(index);
@@ -413,7 +400,7 @@
             _getQueryArgs: function () {
                 return {
                     page: this.flags.page,
-                    per_page: this.option('source.query_args.per_page') || 20,
+                    per_page: this.option('source.args.per_page') || 20,
                     term: this.flags.hasAutocomplete ? this.autocompleteInput.val().toString() : ''
                 };
             },
@@ -573,11 +560,11 @@
 
                     this._doPickerLoaderShow();
 
-                    let query_args = $.extend(
-                        this.option('source.query_args'),
+                    let args = $.extend(
+                        this.option('source.args'),
                         this._getQueryArgs()
                     );
-                    this.option('source.query_args', query_args);
+                    this.option('source.args', args);
 
                     this.xhr = $.ajax({
                         url: tify.ajax_url,
@@ -601,7 +588,7 @@
                                 self._pickerAddItem(index);
                             });
 
-                            if (data.length < self.option('source.query_args.per_page')) {
+                            if (data.length < self.option('source.args.per_page')) {
                                 self._setQueryItemsComplete();
                                 self._offPickerMoreQueryItems();
                             } else {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Affichage d'un élément dans la liste de sélection.
+ * Affichage d'un élément dans la liste des éléments sélectionnés.
  * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Field\FieldView $this
  */

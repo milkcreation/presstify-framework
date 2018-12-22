@@ -19,6 +19,7 @@
     ?>
     </div>
 
+    <span class="tiFyField-RepeaterItemSort">...</span>
     <a href="#<?php echo $this->get('container.attrs.id'); ?>"
        class="tiFyPartial-RepeaterItemRemove tiFy-Button--remove" aria-control="remove"
     ></a>
