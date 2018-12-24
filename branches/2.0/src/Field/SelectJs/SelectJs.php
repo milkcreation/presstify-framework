@@ -161,7 +161,6 @@ class SelectJs extends FieldController
             'handler',
             [
                 'name'      => $this->getName(),
-                'value'     => $this->getValue(),
                 'disabled'  => $this->get('disabled'),
                 'removable' => $this->get('removable'),
                 'multiple'  => $this->get('multiple'),
@@ -259,7 +258,10 @@ class SelectJs extends FieldController
                 $this->getValue()
             );
         else :
-            $items = new $choices_cb($this->get('choices', []), $this->viewer(), $this->getValue());
+            $choices = $this->get('choices', []);
+            $items = ($choices instanceof SelectJsChoices)
+                ? $choices
+                : new $choices_cb($this->get('choices', []), $this->viewer(), $this->getValue());
         endif;
         /** @var SelectJsChoices $items */
         $this->set('datas.items', (array)$items->all());

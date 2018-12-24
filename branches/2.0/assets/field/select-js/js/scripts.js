@@ -188,16 +188,18 @@
                 let self = this;
 
                 let items = tify[this.id].items || [],
-                    selected = false;
+                    isSelected = false;
 
                 items.forEach(function (item, index) {
                     let value = item.value.toString();
 
-                    if (self.flags.isMultiple) {
-                        self._selectedAdd(value);
-                    } else if(!selected) {
-                        selected = true;
-                        self._selectedSet(value);
+                    if (Object.values(item.attrs).indexOf('selected') >=0) {
+                        if (self.flags.isMultiple) {
+                            self._selectedAdd(value);
+                        } else if (!isSelected) {
+                            isSelected = true;
+                            self._selectedSet(value);
+                        }
                     }
 
                     self._setItem(index, value, item.content, item.selection, item.picker);
@@ -235,8 +237,7 @@
                     $appendTo = $('body');
                 }
                 this.picker
-                    .appendTo($appendTo)
-                    .addClass(this.option('picker.class'));
+                    .appendTo($appendTo);
 
                 if (this.option('picker.filter')) {
                     this.flags.hasFilter = true;
