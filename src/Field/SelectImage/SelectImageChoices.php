@@ -22,7 +22,11 @@ class SelectImageChoices extends SelectJsChoices
 
         if (is_string($items)) :
             $finder = new Finder();
-            $finder->in($items)->depth('== 0')->name('(.ico|.gif|jpe?g|.png|.svg)');
+            $finder
+                ->in($items)
+                ->depth('== 0')
+                ->files()
+                ->name('#(\.ico$|\.gif$|\.jpe?g$|\.png$|\.svg$)#');
             $items = [];
             foreach ($finder as $file) :
                 $items[$file->getRelativePathname()] = Tools::File()->imgBase64Src($file->getRealPath());

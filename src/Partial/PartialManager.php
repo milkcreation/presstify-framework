@@ -12,19 +12,19 @@ namespace tiFy\Partial;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialController;
 use tiFy\Contracts\Partial\PartialManager as PartialManagerContract;
-use tiFy\Partial\Accordion\Accordion;
-use tiFy\Partial\Breadcrumb\Breadcrumb;
-use tiFy\Partial\CookieNotice\CookieNotice;
-use tiFy\Partial\HolderImage\HolderImage;
-use tiFy\Partial\Modal\Modal;
-use tiFy\Partial\Navtabs\Navtabs;
-use tiFy\Partial\Notice\Notice;
-use tiFy\Partial\Pagination\Pagination;
-use tiFy\Partial\Sidebar\Sidebar;
-use tiFy\Partial\Slider\Slider;
-use tiFy\Partial\Spinner\Spinner;
-use tiFy\Partial\Table\Table;
-use tiFy\Partial\Tag\Tag;
+use tiFy\Partial\Partials\Accordion\Accordion;
+use tiFy\Partial\Partials\Breadcrumb\Breadcrumb;
+use tiFy\Partial\Partials\CookieNotice\CookieNotice;
+use tiFy\Partial\Partials\HolderImage\HolderImage;
+use tiFy\Partial\Partials\Modal\Modal;
+use tiFy\Partial\Partials\Navtabs\Navtabs;
+use tiFy\Partial\Partials\Notice\Notice;
+use tiFy\Partial\Partials\Pagination\Pagination;
+use tiFy\Partial\Partials\Sidebar\Sidebar;
+use tiFy\Partial\Partials\Slider\Slider;
+use tiFy\Partial\Partials\Spinner\Spinner;
+use tiFy\Partial\Partials\Table\Table;
+use tiFy\Partial\Partials\Tag\Tag;
 
 /**
  * @method static Accordion Accordion(string $id = null, array $attrs = [])
@@ -145,5 +145,30 @@ final class PartialManager implements PartialManagerContract
         $this->items[$name] = $concrete;
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resourcesDir($path = '')
+    {
+        $path = $path ? '/' . ltrim($path, '/') : '';
+
+        return (file_exists(__DIR__ . "/Resources{$path}"))
+            ? __DIR__ . "/Resources{$path}"
+            : '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resourcesUrl($path = '')
+    {
+        $cinfo = class_info($this);
+        $path = $path ? '/' . ltrim($path, '/') : '';
+
+        return (file_exists($cinfo->getDirname() . "/Resources{$path}"))
+            ? $cinfo->getUrl() . "/Resources{$path}"
+            : '';
     }
 }

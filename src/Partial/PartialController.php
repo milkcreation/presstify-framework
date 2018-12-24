@@ -201,7 +201,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     {
         if (!$this->viewer) :
             $cinfo = class_info($this);
-            $default_dir = $cinfo->getDirname() . '/views';
+            $default_dir = partial()->resourcesDir('/views/'. $cinfo->getKebabName());
             $this->viewer = view()
                 ->setDirectory(is_dir($default_dir) ? $default_dir : null)
                 ->setController(PartialView::class)
