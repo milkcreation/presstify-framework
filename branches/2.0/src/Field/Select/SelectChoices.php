@@ -40,6 +40,16 @@ class SelectChoices extends QueryCollection implements SelectChoicesContract
     /**
      * {@inheritdoc}
      */
+    public function getSelectionChoices()
+    {
+        return $this->collect()->filter(function (SelectChoice $item) {
+            return $item->isSelected();
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function recursiveWrap($name, $attrs, $parent = null)
     {
         if (is_string($attrs)) :
