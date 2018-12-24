@@ -157,21 +157,6 @@ class SelectJs extends FieldController
 
         $this->set('attrs.data-id', $this->getId());
 
-        $this->set(
-            'handler',
-            [
-                'name'      => $this->getName(),
-                'disabled'  => $this->get('disabled'),
-                'removable' => $this->get('removable'),
-                'multiple'  => $this->get('multiple'),
-                'attrs'     => [
-                    'class'        => '',
-                    'data-control' => 'select-js.handler',
-                ],
-                'choices'   => [],
-            ]
-        );
-
         $classes = [
             'autocompleteInput'   => 'FieldSelectJs-autocomplete',
             'handler'             => 'FieldSelectJs-handler',
@@ -265,6 +250,21 @@ class SelectJs extends FieldController
         endif;
         /** @var SelectJsChoices $items */
         $this->set('datas.items', (array)$items->all());
+
+        $this->set(
+            'handler',
+            [
+                'name'      => $this->getName(),
+                'disabled'  => $this->get('disabled'),
+                'removable' => $this->get('removable'),
+                'multiple'  => $this->get('multiple'),
+                'attrs'     => [
+                    'class'        => '',
+                    'data-control' => 'select-js.handler',
+                ],
+                'choices'   => $items,
+            ]
+        );
 
         $this->set('attrs.class', trim($this->get('attrs.class') . ' FieldSelectJs'));
         $this->pull('attrs.name');

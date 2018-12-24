@@ -14,6 +14,13 @@ interface SelectChoices extends Collection
     public function __toString();
 
     /**
+     * Récupération de la liste des éléments de la liste des éléments sélectionnés.
+     *
+     * @return array|SelectChoice[]
+     */
+    public function getSelectionChoices();
+
+    /**
      * Traitement récursif d'encapuslation d'un élément de la liste.
      *
      * @return void
