@@ -2,9 +2,7 @@
 
 namespace tiFy\Partial\Partials\Navtabs;
 
-use tiFy\Kernel\Tools;
 use tiFy\Partial\PartialController;
-use tiFy\Partial\Navtabs\Walker;
 
 class Navtabs extends PartialController
 {
@@ -78,8 +76,8 @@ class Navtabs extends PartialController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('PartialNavtabs');
-        \wp_enqueue_script('PartialNavtabs');
+        wp_enqueue_style('PartialNavtabs');
+        wp_enqueue_script('PartialNavtabs');
     }
 
     /**

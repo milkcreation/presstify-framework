@@ -75,7 +75,7 @@
 
           this.el = this.element;
 
-          this.id = $(this.el).data('id');
+          this.id = this.el.data('id');
 
           this.flags = {
             hasAutocomplete: false,
@@ -361,7 +361,7 @@
 
         // Définition d'un élément du controleur de la liste de selection.
         _setItemPicker: function (content, item) {
-          let $itemPicker = $('[data-control="select-js.picker.item"][data-value="' + item.value + '"]');
+          let $itemPicker = $('[data-control="select-js.picker.item"][data-value="' + item.value + '"]', this.picker);
 
           if (!$itemPicker.length) {
             $itemPicker = $('<li data-control="select-js.picker.item"/>')
@@ -376,7 +376,10 @@
 
         // Définition d'un élément du controleur de la liste des éléments sélectionnés.
         _setItemSelection: function (content, item) {
-          let $selectionItem = $('[data-control="select-js.selection.item"][data-value="' + item.value + '"]');
+          let $selectionItem = $(
+              '[data-control="select-js.selection.item"][data-value="' + item.value + '"]',
+              this.selection
+          );
 
           if (!$selectionItem.length) {
             $selectionItem = $('<li data-control="select-js.selection.item"/>')
