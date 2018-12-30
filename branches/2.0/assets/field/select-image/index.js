@@ -1,4 +1,5 @@
-/** Dépendances */
+/** DEPS */
+/** tiFy - SelectJs */
 import '../select-js/index';
 
 /** CSS */

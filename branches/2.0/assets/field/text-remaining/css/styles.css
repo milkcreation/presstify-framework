@@ -1,46 +1,60 @@
-[aria-control="text_remaining"] {
+/** STYLES DE CONTROLES (ne pas modifier) */
+[data-control="text-remaining.wrapper"],
+[data-control="text-remaining.wrapper"] > * {
+    box-sizing: border-box;
+}
+
+[data-control="text-remaining.wrapper"] {
     position: relative;
 }
 
-[aria-control="text_remaining"] [aria-control="input"] {
-    display: block;
-    padding: 0.4em;
-    margin: 0;
-    width: 100%;
-    box-shadow: none;
-    border-color: #E4E4E4;
+[data-control="text-remaining.infos"] {
+    display: none;
 }
 
-[aria-control="text_remaining"] textarea[aria-control="input"] {
+[data-control="text-remaining.wrapper"] [data-control="text-remaining"]:focus + [data-control="text-remaining.infos"],
+[data-control="text-remaining.wrapper"] [data-control="text-remaining"]:hover + [data-control="text-remaining.infos"] {
+    display: inline-block;
+}
+
+/** STYLES GENERAUX */
+.FieldTextRemaining {
+    width: 100%;
+    padding-bottom: 8px;
+}
+
+.FieldTextRemaining--textarea {
     min-height: 5.6em;
-    width: 100%;
     resize: none;
+    padding-bottom: 0;
+    padding-top: 8px;
 }
 
-[aria-control="text_remaining"] input[aria-control="input"] {
-    border: #E4E4E4 solid 1px;
+.FieldTextRemaining-wrapper .FieldTextRemaining--input + .FieldTextRemaining-infos {
+    bottom: 2px;
 }
 
-[aria-control="text_remaining"] [aria-control="infos"] {
-    display: block;
-    text-align: right;
-    background-color: #F4F4F4;
-    border-color: #E4E4E4;
-    border-style: solid;
-    border-width: 1px;
-    border-top: none;
-    padding: 0.4em;
-    font-size: 0.8em;
+.FieldTextRemaining-wrapper .FieldTextRemaining--textarea + .FieldTextRemaining-infos {
+    top: 2px;
 }
 
-[aria-control="text_remaining"] [aria-control="infos"][aria-reached="less"] {
+.FieldTextRemaining-infos {
+    position: absolute;
+    right: 0;
+    display: none;
+    font-size: 9px;
+    padding: 0 5px;
+    line-height: 1;
+}
+
+.FieldTextRemaining-infos[aria-reached='less'] {
     color: #27AE60;
 }
 
-[aria-control="text_remaining"] [aria-control="infos"][aria-reached="exact"] {
+.FieldTextRemaining-infos[aria-reached='exact'] {
     color: #2980B9;
 }
 
-[aria-control="text_remaining"] [aria-control="infos"][aria-reached="more"] {
+.FieldTextRemaining-infos[aria-reached='more'] {
     color: #C0392B;
 }

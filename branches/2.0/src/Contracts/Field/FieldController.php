@@ -109,6 +109,27 @@ interface FieldController extends ParamsBag
     public function isChecked();
 
     /**
+     * Traitement de la liste des attributs par défaut.
+     *
+     * @return void
+     */
+    public function parseDefaults();
+
+    /**
+     * Traitement de l'attribut de configuration de la clé d'indexe de soumission du champ "name".
+     *
+     * @return void
+     */
+    public function parseName();
+
+    /**
+     * Traitement de l'attribut de configuration de la valeur de soumission du champ "value".
+     *
+     * @return void
+     */
+    public function parseValue();
+
+    /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
      * {@internal Si aucun argument n'est passé à la méthode, retourne l'instance du controleur de liste.}
      * {@internal Sinon récupére l'instance du gabarit d'affichage et passe les variables en argument.}

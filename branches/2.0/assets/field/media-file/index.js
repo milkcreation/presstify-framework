@@ -1,3 +1,9 @@
+/** DEPS */
+/** Dashicons */
 import 'wp-css/dashicons.css';
+
+/** CSS */
 import './css/styles.css';
-import './js/script';
+
+/** JS */
+import './js/scripts';

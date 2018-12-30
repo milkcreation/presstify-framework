@@ -198,11 +198,9 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     }
 
     /**
-     * Traitement de la liste des attributs par défaut.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    protected function parseDefaults()
+    public function parseDefaults()
     {
         $default_class = 'tiFyField-' . class_info($this)->getShortName() .
             ' tiFyField-' . class_info($this)->getShortName() . '--' . $this->getIndex();
@@ -230,11 +228,9 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     }
 
     /**
-     * Traitement de l'attribut de configuration de la clé d'indexe de soumission du champ "name".
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    protected function parseName()
+    public function parseName()
     {
         if ($name = $this->get('name')) :
             $this->set('attrs.name', $name);
@@ -242,11 +238,9 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     }
 
     /**
-     * Traitement de l'attribut de configuration de la valeur de soumission du champ "value".
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    protected function parseValue()
+    public function parseValue()
     {
         if ($value = $this->get('value')) :
             $this->set('attrs.value', $value);
@@ -260,7 +254,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     {
         if (!$this->viewer) :
             $cinfo = class_info($this);
-            $default_dir = $cinfo->getDirname() . '/views';
+            $default_dir = field()->resourcesDir('/views/'. $cinfo->getKebabName());
             $this->viewer = view()
                 ->setDirectory(is_dir($default_dir) ? $default_dir : null)
                 ->setController(FieldView::class)

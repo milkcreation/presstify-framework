@@ -1,8 +1,9 @@
-/** Libraries tierces */
+/** DEPS */
+/** Bootstrap - Modal */
 import 'bootstrap/js/dist/modal';
 
-/** Css */
+/** SASS */
 import './scss/styles.scss';
 
-/** Scripts */
+/** JS */
 import './js/scripts';
