@@ -1,2 +1,2 @@
-/** Css */
+/** CSS */
 import './css/styles.css';

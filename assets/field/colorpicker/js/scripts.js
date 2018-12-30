@@ -1,3 +1,5 @@
+"use strict";
+
 jQuery(document).ready(function ($) {
     $(document).on('tify_field.colorpicker.init', function (event, obj) {
         var options = $.parseJSON(

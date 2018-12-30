@@ -1,3 +1,4 @@
+/** STYLES DE CONTROLES (ne pas modifier) */
 [data-control="select-js"],
 [data-control="select-js"] > *,
 [data-control="select-js.picker"],
@@ -9,6 +10,7 @@
     display: none;
 }
 
+/** STYLES GENERAUX */
 .FieldSelectJs {
     position: relative;
 }
