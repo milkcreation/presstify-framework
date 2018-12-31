@@ -11,17 +11,19 @@ class Number extends FieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var array $attrs Liste des propriétés de la balise HTML.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var int $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var int $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      * }
      */
     protected $attributes = [
-        'before' => '',
-        'after'  => '',
-        'attrs'  => [],
-        'name'    => '',
-        'value'   => 0
+        'before'        => '',
+        'after'         => '',
+        'name'          => '',
+        'value'         => 0,
+        'attrs'         => [],
+        'viewer'        => [],
     ];
 
     /**

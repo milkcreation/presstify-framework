@@ -40,6 +40,16 @@ interface Url
     public function rewriteBase();
 
     /**
+     * Récupération de l'url vers la racine.
+     *
+     * @param string $path Chemin relatif vers une ressource du site.
+     *
+     * @return string
+     */
+    public function root($path = '');
+
+
+    /**
      * Récupération d'une url agrémentée d'une liste d'arguments de requête.
      *
      * @param string[] $args Liste des arguments de requête à inclure.

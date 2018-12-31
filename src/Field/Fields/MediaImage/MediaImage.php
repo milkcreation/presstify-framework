@@ -10,24 +10,31 @@ class MediaImage extends FieldController
      * Liste des attributs de configuration.
      * @var array $attributes {
      *
-     * @var string $name Nom du champ d'enregistrement
-     * @var int $value ID de l'attachment.
-     * @var int|string $default ID de l'attachment ou url de l'image initial.
-     * @var string $default_color Valeur Hexadécimal de la couleur de fond. "#F4F4F4" par défaut.
-     * @var int $width Largeur de l'image en pixel. 1920 par défaut.
-     * @var int $height Hauteur de l'image en pixel. 360 par defaut.
-     * @var string $size Taille de l'attachment utilisé pour la prévisualisation de l'image. 'large' par défaut.
-     * @var string $content Contenu HTML d'enrichissement de l'affichage de l'interface de saisie.
-     * @var string $media_library_title ' Titre de la Médiathèque. "Personnalisation de l'image" par défaut.
-     * @var string $media_library_button ' Texte d'ajout de l'image dans la Médiathèque. "Utiliser cette image" par défaut.
-     * @var bool $editable Activation de l'administrabilité de l'image.
-     * @var bool $removable Activation de la suppression de l'image active.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var int|string $default ID de l'attachment ou url de l'image initial.
+     *      @var string $default_color Valeur Hexadécimal de la couleur de fond. "#F4F4F4" par défaut.
+     *      @var int $width Largeur de l'image en pixel. 1920 par défaut.
+     *      @var int $height Hauteur de l'image en pixel. 360 par defaut.
+     *      @var string $size Taille de l'attachment utilisé pour la prévisualisation de l'image. 'large' par défaut.
+     *      @var string $content Contenu HTML d'enrichissement de l'affichage de l'interface de saisie.
+     *      @var string $media_library_title ' Titre de la Médiathèque. "Personnalisation de l'image" par défaut.
+     *      @var string $media_library_button ' Texte d'ajout de l'image dans la Médiathèque. "Utiliser cette image" par défaut.
+     *      @var bool $editable Activation de l'administrabilité de l'image.
+     *      @var bool $removable Activation de la suppression de l'image active.
      *  }
      */
     protected $attributes = [
+        'before'               => '',
+        'after'                => '',
         'name'                 => '',
-        'value'                => 0,
+        'value'                => '',
         'attrs'                => [],
+        'viewer'               => [],
         'default'              => '',
         'default_color'        => "#F4F4F4",
         'width'                => 1920,
@@ -130,7 +137,7 @@ class MediaImage extends FieldController
         if ($this->get('value_img')) :
             $this->set(
                 'attrs.class',
-                $this->get('attrs.class') . ' tiFyField-MediaImage--selected'
+                trim($this->get('attrs.class') . ' tiFyField-MediaImage--selected')
             );
         endif;
     }

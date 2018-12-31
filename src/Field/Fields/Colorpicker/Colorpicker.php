@@ -11,23 +11,24 @@ class Colorpicker extends FieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var string $container Liste des attribut de configuration du conteneur de champ
-     *      @var array $attrs Liste des propriétés de la balise HTML.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var int $value Attribut de configuration de la valeur initiale de soumission du champ "value".
-     *      @var array $spectrum-options {
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $options {
      *          Liste des options du contrôleur ajax.
      *          @see https://bgrins.github.io/spectrum/
      *      }
      * }
      */
     protected $attributes = [
-        'before'           => '',
-        'after'            => '',
-        'attrs'            => [],
-        'name'             => '',
-        'value'            => '',
-        'spectrum-options' => [],
+        'before'  => '',
+        'after'   => '',
+        'name'    => '',
+        'value'   => '',
+        'attrs'   => [],
+        'viewer'  => [],
+        'options' => [],
     ];
 
     /**
@@ -77,6 +78,6 @@ class Colorpicker extends FieldController
     {
         parent::parse($attrs);
 
-        $this->set('attrs.data-options', $this->get('spectrum-options', []));
+        $this->set('attrs.data-options', $this->get('options', []));
     }
 }

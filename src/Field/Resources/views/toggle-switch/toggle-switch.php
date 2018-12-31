@@ -3,8 +3,8 @@
  * @var tiFy\Field\FieldView $this
  */
 ?>
-
 <?php $this->before(); ?>
+
     <div <?php $this->attrs(); ?>>
         <div class="tiFyField-ToggleSwitchWrapper">
             <?php

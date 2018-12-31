@@ -9,4 +9,4 @@
     <?php echo $this->get('choices'); ?>
 </nav>
 
-<?php $this->after(); ?>
+<?php $this->after();

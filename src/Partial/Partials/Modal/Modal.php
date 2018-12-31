@@ -4,37 +4,40 @@ namespace tiFy\Partial\Partials\Modal;
 
 use Illuminate\Support\Arr;
 use tiFy\Partial\PartialController;
-use tiFy\Kernel\Tools;
 
 class Modal extends PartialController
 {
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *
-     * @var array $container Attributs HTML du conteneur.
-     * @var array $options {
-     *      Liste des options d'affichage.
-     *
-     *      @var
-     * }
-     * @var bool $animation Activation de l'animation.
-     * @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full.
-     * @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de caractère à
-     *     afficher ou booléen pour activer désactiver ou fonction/méthode d'affichage.
-     * @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou booléen
-     *     pour activer désactiver ou fonction/méthode d'affichage.
-     * @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen pour
-     *     activer désactiver ou fonction/méthode d'affichage.
-     * @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
-     *     booléen pour activer désactiver ou fonction/méthode d'affichage.
-     * @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
-     * @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
-     *     attributs de récupération Ajax
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $options {
+     *          Liste des options d'affichage.
+     *      }
+     *      @var bool $animation Activation de l'animation.
+     *      @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full.
+     *      @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de
+     *                                                      caractère à afficher ou booléen pour activer désactiver ou
+     *                                                      fonction/méthode d'affichage.
+     *      @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou
+     *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
+     *      @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen
+     *                                      pour activer désactiver ou fonction/méthode d'affichage.
+     *      @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
+     *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
+     *      @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
+     *      @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
+     *                                   attributs de récupération Ajax
      * }
      */
     protected $attributes = [
+        'before'         => '',
+        'after'          => '',
         'attrs'          => [],
+        'viewer'         => [],
         'options'        => [],
         'animation'      => true,
         'size'           => '',
@@ -43,7 +46,7 @@ class Modal extends PartialController
         'body'           => true,
         'footer'         => true,
         'in_footer'      => true,
-        'ajax'           => false
+        'ajax'           => false,
     ];
 
     /**
@@ -54,13 +57,13 @@ class Modal extends PartialController
         add_action(
             'init',
             function () {
-                \wp_register_style(
+                wp_register_style(
                     'PartialModal',
                     assets()->url('partial/modal/css/styles.css'),
                     [],
                     171206
                 );
-                \wp_register_script(
+                wp_register_script(
                     'PartialModal',
                     assets()->url('partial/modal/js/scripts.js'),
                     ['jquery'],
@@ -78,8 +81,8 @@ class Modal extends PartialController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('PartialModal');
-        \wp_enqueue_script('PartialModal');
+        wp_enqueue_style('PartialModal');
+        wp_enqueue_script('PartialModal');
     }
 
     /**

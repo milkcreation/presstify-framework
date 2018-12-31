@@ -8,19 +8,27 @@ class Accordion extends PartialController
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attributes
+     * @var array $attributes {
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string $theme Theme d'affichage. light|dark.
+     *      @var array|AccordionItem[]|AccordionItems Liste des éléments.
+     *      @var mixed $opened Définition de la liste des éléments ouverts à l'initialisation.
+     *      @var boolean $multiple Activation de l'ouverture multiple d'éléments.
+     *      @var boolean $triggered Activation de la limite d'ouverture et de fermeture par le déclencheur de l'élement.
+     * }
      */
     protected $attributes = [
         'before'    => '',
         'after'     => '',
         'attrs'     => [],
-        'items'     => [],
+        'viewer'    => [],
         'theme'     => 'light',
-        // Définition de la liste des éléments ouvert à l'initialisation.
+        'items'     => [],
         'opened'    => null,
-        // Activation de l'ouverture multiple d'élément frères
         'multiple'  => false,
-        // Limite l'action d'ouverture et fermeture au déclencheur
         'triggered' => false,
     ];
 

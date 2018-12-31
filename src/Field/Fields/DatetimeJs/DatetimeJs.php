@@ -11,9 +11,10 @@ class DatetimeJs extends FieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var array $attrs Liste des propriétés de la balise HTML.
-     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var string $format Format d'enregistrement de la valeur 'datetime': Y-m-d H:i:s|'date': Y-m-d|'time': H:i:s.
      *      @var bool $none_allowed Activation de permission d'utilisation de valeur de nulle liée au format de la valeur (ex: datetime 0000-00-00 00:00:00).
      *      @var array $fields {
@@ -25,14 +26,15 @@ class DatetimeJs extends FieldController
      * }
      */
     protected $attributes = [
-        'before'          => '',
-        'after'           => '',
-        'name'            => '',
-        'attrs'           => [],
-        'value'           => '',
-        'format'          => 'datetime',
-        'none_allowed'    => false,
-        'fields'          => [],
+        'before'       => '',
+        'after'        => '',
+        'name'         => '',
+        'value'        => '',
+        'attrs'        => [],
+        'viewer'       => [],
+        'format'       => 'datetime',
+        'none_allowed' => false,
+        'fields'       => [],
     ];
 
     /**

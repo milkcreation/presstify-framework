@@ -10,25 +10,31 @@ class Crypted extends FieldController
     /**
      * Liste des attributs de configuration.
      * @var array $attrs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var array $container Liste des attributs de configuration du conteneur de champ.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var string $value Attribut de configuration de la valeur de soumission du champ "value" si l'élément est selectionné.
-     *      @var array $attrs Liste des propriétés de la balise HTML.
      *      @var bool $readonly Controleur en lecture seule (désactive aussi l'enregistrement et le générateur).
      *      @var int $length.
      *      @var bool hide Masquage de la valeur true (masquée)|false (visible en clair)
      * }
      */
     protected $attributes = [
-        'container'     => [
-            'attrs' => []
+        'before'    => '',
+        'after'     => '',
+        'name'      => '',
+        'value'     => '',
+        'attrs'     => [],
+        'viewer'    => [],
+        'container' => [
+            'attrs' => [],
         ],
-        'name'        => '',
-        'value'       => '',
-        'attrs'       => [],
-        'readonly'    => false,
-        'length'      => 32,
-        'hide'        => true
+        'readonly'  => false,
+        'length'    => 32,
+        'hide'      => true,
     ];
 
     /**

@@ -11,19 +11,21 @@ class MediaFile extends FieldController
      * @var array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var array $attrs Liste des attributs HTML.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var int $value Identifiant de qualification du médias selectionné.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var string filetype Type de fichier permis ou MimeType. ex. image|image/png|video|video/mp4|application/pdf
      * }
      */
     protected $attributes = [
         'before'   => '',
         'after'    => '',
-        'attrs'    => [],
         'name'     => '',
-        'value'    => 295,
-        'filetype' => ''
+        'value'    => '',
+        'attrs'    => [],
+        'viewer'   => [],
+        'filetype' => '',
     ];
 
     /**

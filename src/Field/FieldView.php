@@ -15,7 +15,6 @@ use tiFy\View\ViewController;
  * @method string getIndex().
  * @method string getName().
  * @method string getValue().
- * @method string options().
  */
 class FieldView extends ViewController
 {
@@ -31,8 +30,7 @@ class FieldView extends ViewController
         'getId',
         'getIndex',
         'getName',
-        'getValue',
-        'options'
+        'getValue'
     ];
 
     /**

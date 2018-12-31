@@ -12,18 +12,21 @@ class CheckboxCollection extends FieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var array|Checkbox[]|CheckboxChoice[]|CheckboxChoices $choices
-     *      @var null|string $value Valeur de la selection.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du conteneur de champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array|Checkbox[]|CheckboxChoice[]|CheckboxChoices $choices Liste de choix.
      * }
      */
     protected $attributes = [
         'before'  => '',
         'after'   => '',
-        'attrs'   => [],
         'name'    => '',
-        'choices' => [],
-        'value'   => null
+        'value'   => null,
+        'attrs'   => [],
+        'viewer'  => [],
+        'choices' => []
     ];
 
     /**
@@ -40,9 +43,7 @@ class CheckboxCollection extends FieldController
     }
 
     /**
-     * Traitement de l'attribut de configuration de la clé d'indexe de soumission du champ "name".
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function parseName()
     {

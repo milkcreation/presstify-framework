@@ -10,7 +10,11 @@ class Pagination extends PartialController
 {
     /**
      * Liste des attributs de configuration.
-     * @var array {
+     * @var array $attributes {
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      *      @var boolean|string $first Activation du lien vers la première page ou intitulé du lien.
      *      @var boolean|string $last Activation du lien vers la dernière page ou intitulé du lien.
      *      @var boolean|string $previous Activation du lien vers la page précédente ou intitulé du lien.
@@ -28,6 +32,10 @@ class Pagination extends PartialController
      * }
      */
     protected $attributes = [
+        'before'   => '',
+        'after'    => '',
+        'attrs'    => [],
+        'viewer'   => [],
         'first'    => '&laquo;',
         'last'     => '&raquo;',
         'previous' => '&lsaquo;',

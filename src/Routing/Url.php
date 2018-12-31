@@ -44,9 +44,33 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
+    public function clean()
+    {
+        return $this->without($this->cleanArgs(), $this->full());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function cleanArgs()
+    {
+        return wp_removable_query_args();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function current()
     {
         return $this->request->getUriForPath('');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function full()
+    {
+        return $this->request->fullUrl();
     }
 
     /**
@@ -58,11 +82,21 @@ class Url implements UrlContract
             $this->rewriteBase = $this->request->server->has('CONTEXT_PREFIX')
                 ? $this->request->server->get('CONTEXT_PREFIX')
                 : preg_replace(
-                    '#^' . preg_quote($this->request->getSchemeAndHttpHost()) . '#', '', env('SITE_URL')
+                    '#^' . preg_quote($this->request->getSchemeAndHttpHost()) . '#', '', $this->root()
                 );
         endif;
 
         return $this->rewriteBase;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function root($path = '')
+    {
+        $path = $path ? '/' . ltrim($path, '/') : '';
+
+        return env('SITE_URL') . $path;
     }
 
     /**
@@ -78,34 +112,10 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function clean()
-    {
-        return $this->without($this->cleanArgs(), $this->full());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function without(array $args, string $url = '')
     {
         $url = $url ?: $this->clean();
 
         return (string)(new RemoveQueryParams($args))->process(Http::createFromString($url));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function cleanArgs()
-    {
-        return wp_removable_query_args();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function full()
-    {
-        return $this->request->fullUrl();
     }
 }

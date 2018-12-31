@@ -15,9 +15,10 @@ class SelectJs extends FieldController
      * @var array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var array $attrs Liste des attrbuts de balise HTML.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var string|array $value Valeur initiale de soumission du champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var array $choices Liste des choix de selection disponibles. La récupération Ajax doit être inactive.
      *      @var string $choices_cb Classe de traitement de la liste des choix.
      *      @var boolean|array $ajax Activation ou liste des attributs de requête de récupération Ajax des élèments.
@@ -47,28 +48,27 @@ class SelectJs extends FieldController
      *          @var string $loader Rendu de l'indicateur de préchargement.
      *          @var string $more Rendu de '+'.
      *      }
-     * @var array $viewer Liste des attributs de configuration de la classe des gabarits d'affichage.
      * }
      */
     protected $attributes = [
-        'before'       => '',
-        'after'        => '',
-        'attrs'        => [],
-        'name'         => '',
-        'value'        => null,
-        'choices'      => [],
-        'choices_cb'   => SelectJsChoices::class,
-        'ajax'         => false,
+        'before'     => '',
+        'after'      => '',
+        'name'       => '',
+        'value'      => null,
+        'attrs'      => [],
+        'viewer'     => [],
+        'choices'    => [],
+        'choices_cb' => SelectJsChoices::class,
+        'ajax'       => false,
         //@todo 'autocomplete' => false,
         //@todo 'disabled'     => false,
-        'multiple'     => false,
-        'removable'    => true,
-        'max'          => -1,
-        'sortable'     => false,
-        'trigger'      => true,
-        'picker'       => [],
-        'viewer'       => [],
-        'classes'      => []
+        'multiple'   => false,
+        'removable'  => true,
+        'max'        => -1,
+        'sortable'   => false,
+        'trigger'    => true,
+        'picker'     => [],
+        'classes'    => [],
     ];
 
     /**

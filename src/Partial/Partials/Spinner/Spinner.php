@@ -4,19 +4,25 @@ namespace tiFy\Partial\Partials\Spinner;
 
 use tiFy\Partial\PartialController;
 
-/**
- * @see http://tobiasahlin.com/spinkit/
- */
 class Spinner extends PartialController
 {
     /**
      * Liste des attributs de configuration
      * @var $attributes {
-     *
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string $spinner Choix de l'indicateur de préchargement. 'rotating-plane|fading-circle|folding-cube|
+     *                           double-bounce|wave|wandering-cubes|spinner-pulse|chasing-dots|three-bounce|circle|
+     *                           cube-grid. @see http://tobiasahlin.com/spinkit/
      * }
      */
     protected $attributes = [
-        'attrs'    => [],
+        'before'  => '',
+        'after'   => '',
+        'attrs'   => [],
+        'viewer'  => [],
         'spinner'  => 'spinner-pulse',
     ];
 
@@ -71,9 +77,9 @@ class Spinner extends PartialController
     public function enqueue_scripts($spinner = null)
     {
         if (!$spinner || !in_array($spinner, $this->spinners)) :
-            \wp_enqueue_style('PartialSpinner');
+            wp_enqueue_style('PartialSpinner');
         else :
-            \wp_enqueue_style("PartialSpinner-{$spinner}");
+            wp_enqueue_style("PartialSpinner-{$spinner}");
         endif;
     }
 

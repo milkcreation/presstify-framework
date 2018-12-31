@@ -9,8 +9,10 @@ class Table extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string $before Contenu placé avant le controleur d'affichage.
-     *      @var string $after Contenu placé après le controleur d'affichage.
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      *      @var bool $header Activation de l'entête de table.
      *      @var bool $footer Activation du pied de table.
      *      @var string[] $columns Intitulé des colonnes.
@@ -19,6 +21,10 @@ class Table extends PartialController
      * }
      */
     protected $attributes = [
+        'before'  => '',
+        'after'   => '',
+        'attrs'   => [],
+        'viewer'  => [],
         'header'  => true,
         'footer'  => true,
         'columns' => [
@@ -68,7 +74,7 @@ class Table extends PartialController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('PartialTable');
+        wp_enqueue_style('PartialTable');
     }
 
     /**

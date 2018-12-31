@@ -11,8 +11,10 @@ class CookieNotice extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *
-     *      @var array $attrs Attributs HTML du conteneur de l'élément.
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      *      @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
      *      @var bool $dismiss Affichage du bouton de masquage de la notification.
      *      @var string $type Type de notification info|warning|success|error. défaut info.
@@ -25,7 +27,10 @@ class CookieNotice extends PartialController
      * }
      */
     protected $attributes = [
+        'before'        => '',
+        'after'         => '',
         'attrs'         => [],
+        'viewer'        => [],
         'content'       => '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>',
         'dismiss'       => false,
         'type'          => 'info',
@@ -34,7 +39,7 @@ class CookieNotice extends PartialController
         'cookie_hash'   => true,
         'cookie_expire' => HOUR_IN_SECONDS,
         'ajax_action'   => 'tify_partial_cookie_notice',
-        'ajax_nonce'    => ''
+        'ajax_nonce'    => '',
     ];
 
     /**

@@ -9,15 +9,20 @@ class Notice extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *
-     *      @var array $attrs Attributs HTML du conteneur de l'élément.
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      *      @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
      *      @var bool $dismiss Affichage du bouton de masquage de la notification.
      *      @var string $type Type de notification info|warning|success|error. défaut info.
      * }
      */
     protected $attributes = [
-        'attrs'     => [],
+        'before'  => '',
+        'after'   => '',
+        'attrs'   => [],
+        'viewer'  => [],
         'content'   => 'Lorem ipsum dolor site amet',
         'dismiss'   => false,
         'type'      => 'info'

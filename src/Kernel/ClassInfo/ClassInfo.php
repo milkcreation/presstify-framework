@@ -105,6 +105,6 @@ class ClassInfo
      */
     public function getUrl()
     {
-        return rtrim(\home_url($this->getRelPath()), '/');
+        return rtrim(url()->root($this->getRelPath()), '/');
     }
 }

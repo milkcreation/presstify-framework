@@ -3,7 +3,6 @@
  * @var tiFy\Field\FieldView $this
  */
 ?>
-
 <?php $this->before(); ?>
 
     <div <?php $this->attrs(); ?>>
