@@ -14,4 +14,4 @@
     <?php if ($this->get('footer')) $this->insert('footer', $this->all()); ?>
 </div>
 
-<?php $this->after(); ?>
+<?php $this->after();

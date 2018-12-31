@@ -11,10 +11,10 @@ class ToggleSwitch extends FieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var string $container_id Id HTML du conteneur du champ.
-     *      @var string $container_class Classe HTML du conteneur du champ.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var string $label_on
      *      @var string $label_off
      *      @var bool|int|string $value_on
@@ -22,15 +22,16 @@ class ToggleSwitch extends FieldController
      * }
      */
     protected $attributes = [
-        'before'          => '',
-        'after'           => '',
-        'attrs'           => [],
-        'name'            => '',
-        'value'           => 'on',
-        'label_on'        => '',
-        'label_off'       => '',
-        'value_on'        => 'on',
-        'value_off'       => 'off',
+        'before'    => '',
+        'after'     => '',
+        'name'      => '',
+        'value'     => 'on',
+        'attrs'     => [],
+        'viewer'    => [],
+        'label_on'  => '',
+        'label_off' => '',
+        'value_on'  => 'on',
+        'value_off' => 'off',
     ];
 
     /**
@@ -63,8 +64,8 @@ class ToggleSwitch extends FieldController
     public function defaults()
     {
         return [
-            'label_on'  => _x('Oui', 'tiFyFieldToggleSwitch', 'tify'),
-            'label_off' => _x('Non', 'tiFyFieldToggleSwitch', 'tify'),
+            'label_on'  => _x('Oui', 'FieldToggleSwitch', 'tify'),
+            'label_off' => _x('Non', 'FieldToggleSwitch', 'tify'),
         ];
     }
 

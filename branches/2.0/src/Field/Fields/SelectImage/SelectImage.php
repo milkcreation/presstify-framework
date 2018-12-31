@@ -2,6 +2,7 @@
 
 namespace tiFy\Field\Fields\SelectImage;
 
+use tiFy\Contracts\Field\SelectChoice;
 use tiFy\Field\FieldController;
 
 class SelectImage extends FieldController
@@ -9,16 +10,25 @@ class SelectImage extends FieldController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string|string[]|array|SelectChoice[]|SelectImageChoices $choices Chemin absolu vers les éléments de la
+     *                                                                            liste de selection|Liste de selection
+     *                                                                            d'éléments.
      * }
      */
     protected $attributes = [
-        'before'    => '',
-        'after'     => '',
-        'attrs'     => [],
-        'name'      => '',
-        'value'     => null,
-        'choices'   => [],
-        'choices_cb'   => SelectImageChoices::class,
+        'before'     => '',
+        'after'      => '',
+        'name'       => '',
+        'value'      => null,
+        'attrs'      => [],
+        'viewer'     => [],
+        'choices'    => []
     ];
 
     /**
@@ -54,8 +64,11 @@ class SelectImage extends FieldController
 
         $this->set('attrs.class', trim($this->get('attrs.class', '%s') . ' FieldSelectJs FieldSelectImage'));
 
-        $choices_cb = $this->get('choices_cb');
-        $choices = new $choices_cb($this->get('choices', []), $this->viewer(), $this->getValue());
+        $choices = $this->get('choices');
+        if (!$choices instanceof SelectImageChoices) :
+            $choices = new SelectImageChoices($choices, $this->viewer(), $this->getValue());
+        endif;
+
         $this->set('choices', $choices);
     }
 

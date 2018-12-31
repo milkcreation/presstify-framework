@@ -9,8 +9,11 @@ class Navtabs extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var array $attrs Liste des attributs de balise HTML du conteneur.
-     *      @var array $nodes {
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $items {
      *          Liste des onglets de navigation.
      *
      *              @var string $name Nom de qualification.
@@ -22,11 +25,14 @@ class Navtabs extends PartialController
      * }
      */
     protected $attributes = [
-        'attrs' => [],
-        'items' => [],
+        'before'  => '',
+        'after'   => '',
+        'attrs'   => [],
+        'viewer'  => [],
+        'items'   => [],
         'options' => [
-            'prefix' => 'tiFyPartial-Navtabs'
-        ]
+            'prefix' => 'tiFyPartial-Navtabs',
+        ],
     ];
 
     /**

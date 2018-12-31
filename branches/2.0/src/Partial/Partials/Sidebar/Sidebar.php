@@ -28,15 +28,24 @@ class Sidebar extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée
+     *                             l'unité par défault est le px.
      *      @var int $z -index Profondeur de champs.
      *      @var array $attrs Liste des attributs HTML.
      *      @var string $pos Position de l'interface left (default)|right.
      *      @var bool $closed Etat de fermeture initial de l'interface.
      *      @var bool $outside_close Fermeture au clic en dehors de l'interface.
      *      @var bool $animate Activation de l'animation à l'ouverture et la fermeture.
-     *      @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou desactive le bouton; la valeur chaîne de caractère active et affiche la chaîne ex : <span>X</span>.
-     *      @var string|int $min-width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
+     *      @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou
+     *                               désactive le bouton; la valeur chaîne de caractère active et affiche la chaîne.
+     *                               ex : <span>X</span>.
+     *      @var string|int $min-width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface
+     *                                 est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le
+     *                                 px.
      *      @var SidebarItem[]|array $items {
      *          Liste des élements.
      *          @var string $name Nom de qualification
@@ -50,9 +59,12 @@ class Sidebar extends PartialController
      * }
      */
     protected $attributes = [
+        'before'        => '',
+        'after'         => '',
+        'attrs'         => [],
+        'viewer'        => [],
         'width'         => '300px',
         'z-index'       => 99990,
-        'attrs'         => [],
         'pos'           => 'left',
         'closed'        => true,
         'outside_close' => true,
@@ -62,7 +74,7 @@ class Sidebar extends PartialController
         'header'        => true,
         'footer'        => true,
         'toggle'        => true,
-        'theme'         => 'light'
+        'theme'         => 'light',
     ];
 
     /**

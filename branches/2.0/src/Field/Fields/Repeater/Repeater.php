@@ -9,31 +9,36 @@ class Repeater extends FieldController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string $name Clé d'indice de la valeur à enregistrer.
-     *      @var array $value Liste de valeurs existantes.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var string $ajax_action Action Ajax lancée pour récupérer le formulaire d'un élément.
      *      @var string $ajax_nonce Agent de sécurisation de la requête de récupération Ajax.
-     *      @var array $attrs Liste des attributs HTML de la balise HTML.
      *      @var array $button Liste des attributs de configuration du bouton d'ajout d'un élément.
      *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
+     *      @var boolean $removable Activation du déclencheur de suppression des éléments.
      *      @var bool|array $sortable Activation de l'ordonnacemment des éléments|Liste des attributs de configuration.
      *                                @see http://api.jqueryui.com/sortable/
      *      @var array $args Arguments complémentaires porté par la requête Ajax.
-     *      @var array $templates Attributs de configuration des templates.
      * }
      */
     protected $attributes = [
-        'name'             => '',
-        'value'            => [],
-        'ajax_action'      => 'field_repeater',
-        'ajax_nonce'       => '',
-        'attrs'            => [],
-        'button'           => [],
-        'max'              => -1,
-        'removable'        => true,
-        'sortable'         => true,
-        'args'             => [],
-        'viewer'           => []
+        'before'      => '',
+        'after'       => '',
+        'name'        => '',
+        'value'       => '',
+        'attrs'       => [],
+        'viewer'      => [],
+        'ajax_action' => 'field_repeater',
+        'ajax_nonce'  => '',
+        'button'      => [],
+        'max'         => -1,
+        'removable'   => true,
+        'sortable'    => true,
+        'args'        => [],
     ];
 
     /**
@@ -160,9 +165,9 @@ class Repeater extends FieldController
     }
 
     /**
-     * Génération d'un indice aléatoire
+     * Génération d'un indice aléatoire.
      *
-     * @param
+     * @param int $index Clé d'indice de la valeur de soumission.
      *
      * @return string
      */
@@ -178,7 +183,7 @@ class Repeater extends FieldController
     /**
      * Récupération des champs via Ajax.
      *
-     * @return string
+     * @return void
      */
     public function wp_ajax()
     {

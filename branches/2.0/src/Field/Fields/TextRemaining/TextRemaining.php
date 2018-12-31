@@ -11,20 +11,23 @@ class TextRemaining extends FieldController
      * @param array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var string $name Nom du champ d'enregistrement
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var string $selector Type de selecteur. textarea (défaut)|input.
-     *      @var string $value Valeur du champ de saisie.
-     *      @var array $attrs Attributs HTML du champ de saisie.
      *      @var int $max Nombre maximum de caractères attendus. 150 par défaut.
+     *      @var boolean $limit Activation de la limite de saisie selon le nombre maximum de caractères.
      *  }
      */
     protected $attributes = [
-        'container'     => [],
-        'infos_area'    => [],
+        'before'        => '',
+        'after'         => '',
         'name'          => '',
-        'selector'      => 'textarea',
         'value'         => '',
         'attrs'         => [],
+        'viewer'        => [],
+        'selector'      => 'textarea',
         'max'           => 150,
         'limit'         => false
     ];

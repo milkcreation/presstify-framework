@@ -9,19 +9,24 @@ class Tag extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string $before Contenu placé avant le controleur d'affichage.
-     *      @var string $after Contenu placé après le controleur d'affichage.
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      *      @var string $tag Balise HTML div|span|a|... défaut div.
-     *      @var array $attrs Liste des attributs de balise HTML.
      *      @var string|callable $content Contenu de la balise HTML.
-     *      @var bool $singleton
+     *      @var boolean $singleton Activation de balise de type singleton. ex <{tag}/>. Usage avancé, cet attributon
+     *                              se fait automatiquement pour les balises connues.
      * }
      */
     protected $attributes = [
-        'tag'       => 'div',
+        'before'    => '',
+        'after'     => '',
         'attrs'     => [],
+        'viewer'    => [],
+        'tag'       => 'div',
         'content'   => '',
-        'singleton' => false
+        'singleton' => false,
     ];
 
     /**

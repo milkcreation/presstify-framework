@@ -11,21 +11,23 @@ class Button extends FieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
-     *      @var array $attrs Liste des propriétés de la balise HTML.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var string $value Attribut de configuration de la valeur initiale de soumission du champ "value".
-     *      @var string $type Type de bouton. button par défaut.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var string $content Contenu de la balise HTML.
+     *      @var string $type Type de bouton. button par défaut.
      * }
      */
     protected $attributes = [
         'before'  => '',
         'after'   => '',
-        'attrs'   => [],
         'name'    => '',
         'value'   => '',
+        'attrs'   => [],
+        'viewer'  => [],
+        'content' => '',
         'type'    => 'button',
-        'content' => ''
     ];
 
     /**

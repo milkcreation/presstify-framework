@@ -11,24 +11,26 @@ class NumberJs extends FieldController
      * @var array $attrs {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var int $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var string $container Liste des attribut de configuration du conteneur de champ
-     *      @var array $attrs Liste des propriétés de la balise HTML.
-     *      @var string $name Attribut de configuration de la qualification de soumission du champ "name".
-     *      @var int $value Attribut de configuration de la valeur initiale de soumission du champ "value".
-     *      @var array $data-options {
+     *      @var array $options {
      *          Liste des options du contrôleur ajax.
      *          @see http://api.jqueryui.com/spinner/
      *      }
      * }
      */
     protected $attributes = [
-        'before'          => '',
-        'after'           => '',
-        'container'       => [],
-        'attrs'           => [],
-        'name'            => '',
-        'value'           => 0,
-        'data-options'    => []
+        'before'    => '',
+        'after'     => '',
+        'name'      => '',
+        'value'     => 0,
+        'attrs'     => [],
+        'viewer'    => [],
+        'container' => [],
+        'options'   => [],
     ];
 
     /**
@@ -93,7 +95,7 @@ class NumberJs extends FieldController
                         'up'   => 'dashicons dashicons-arrow-up-alt2',
                     ]
                 ],
-                $this->get('data-options', [])
+                $this->get('options', [])
             )
         );
         $this->set('attrs.aria-control', 'number_js');

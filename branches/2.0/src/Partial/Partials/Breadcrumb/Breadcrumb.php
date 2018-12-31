@@ -9,13 +9,19 @@ class Breadcrumb extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string $attrs Liste des attributs HTML de la balise HTML du conteneur de l'élément.
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      *      @var string[]|array[]|object[]|callable[] $parts Liste des élements du fil d'ariane.
      * }
      */
     protected $attributes = [
-        'attrs'           => [],
-        'parts'           => []
+        'before' => '',
+        'after'  => '',
+        'attrs'  => [],
+        'viewer' => [],
+        'parts'  => [],
     ];
 
     /**
@@ -53,7 +59,7 @@ class Breadcrumb extends PartialController
      */
     public function enqueue_scripts()
     {
-        \wp_enqueue_style('PartialBreadcrumb');
+        wp_enqueue_style('PartialBreadcrumb');
     }
 
     /**

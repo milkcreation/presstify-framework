@@ -176,15 +176,15 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     public function isChecked()
     {
-        if ($this->get('checked') === true) :
-            return true;
+        $checked = $this->get('checked', false);
+
+        if (is_bool($checked)) :
+            return $checked;
+        elseif ($this->has('attrs.value')) :
+            return in_array($checked, Arr::wrap($this->getValue()));
         endif;
 
-        if (!$this->has('attrs.value')) :
-            return false;
-        endif;
-
-        return in_array($this->get('checked'), Arr::wrap($this->getValue()));
+        return false;
     }
 
     /**

@@ -171,7 +171,7 @@ final class Assets implements AssetsContract
      */
     public function url($path = '')
     {
-        return home_url('vendor/presstify/framework/assets' . ($path ? '/' . ltrim($path, '/') : $path));
+        return url()->root('/vendor/presstify/framework/assets' . ($path ? '/' . ltrim($path, '/') : $path));
     }
 
     /**

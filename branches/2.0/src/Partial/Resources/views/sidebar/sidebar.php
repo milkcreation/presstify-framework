@@ -31,4 +31,4 @@
     </div>
 </div>
 
-<?php $this->after(); ?>
+<?php $this->after();

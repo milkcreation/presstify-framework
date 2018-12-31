@@ -552,7 +552,7 @@ class WpQueryPart
                         [
                             'tag'     => 'a',
                             'attrs'   => [
-                                'href'  => \home_url('/'),
+                                'href'  => home_url('/'),
                                 'title' => __('Revenir à la liste des actualités', 'tify'),
                                 'class' => $this->getItemContentClass()
                             ],
@@ -590,7 +590,7 @@ class WpQueryPart
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
-                                    'href'  => \home_url('/'),
+                                    'href'  => home_url('/'),
                                     'title' => __('Revenir à la liste des actualités', 'tify'),
                                     'class' => $this->getItemContentClass()
                                 ],

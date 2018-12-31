@@ -3,7 +3,6 @@
  * @var tiFy\Partial\PartialView $this
  */
 ?>
-
 <?php $this->before(); ?>
 
 <div <?php $this->attrs(); ?>>
@@ -18,4 +17,4 @@
     </div>
 </div>
 
-<?php $this->after(); ?>
+<?php $this->after();

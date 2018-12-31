@@ -5,7 +5,6 @@
  * @var tiFy\Field\Fields\Select\SelectChoice $choice
  */
 ?>
-
 <?php $this->before(); ?>
 
 <div <?php $this->attrs(); ?>>
@@ -30,4 +29,4 @@
     </div>
 </div>
 
-<?php $this->after(); ?>
+<?php $this->after();

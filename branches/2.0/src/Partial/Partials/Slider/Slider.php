@@ -10,19 +10,23 @@ class Slider extends PartialController
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string[]|callable[] $items Liste des éléments.
-     *                                      Liste de sources d'image|Liste de contenu HTML|Liste de fonction
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string[]|callable[] $items Liste des éléments. Liste de sources d'image|Liste de contenu HTML|Liste de
+     *                                      fonctions. défaut : @see https://picsum.photos/images
+     *      @var array $options Liste des attributs de configuration du pilote d'affichage.
+     *                          @see http://kenwheeler.github.io/slick/#settings
      * }
      */
     protected $attributes = [
         'before'  => '',
         'after'   => '',
         'attrs'   => [],
+        'viewer'  => [],
         'items'   => [],
-        // Options
-        // @see http://kenwheeler.github.io/slick/#settings
         'options' => [],
-        'viewer'  => []
     ];
 
     /**
@@ -57,7 +61,6 @@ class Slider extends PartialController
     public function defaults()
     {
         return [
-            /** @see https://picsum.photos/images */
             'items' => [
                 'https://picsum.photos/800/800/?image=768',
                 'https://picsum.photos/800/800/?image=669',
