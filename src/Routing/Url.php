@@ -2,10 +2,6 @@
 
 namespace tiFy\Routing;
 
-use League\Uri\Components\Query;
-use League\Uri\Http;
-use League\Uri\Modifiers\AppendQuery;
-use League\Uri\Modifiers\RemoveQueryParams;
 use tiFy\Contracts\Kernel\Request;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Url as UrlContract;
@@ -68,6 +64,14 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
+    public function format($format = 'RFC3986', $url = '')
+    {
+        return url_factory($url ?: $this->clean())->format($format)->get();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function full()
     {
         return $this->request->fullUrl();
@@ -104,9 +108,7 @@ class Url implements UrlContract
      */
     public function with(array $args, string $url = '')
     {
-        $url = $url ?: $this->clean();
-
-        return (string)(new AppendQuery(Query::createFromPairs($args)))->process(Http::createFromString($url));
+        return url_factory($url ?: $this->clean())->with($args)->get();
     }
 
     /**
@@ -114,8 +116,6 @@ class Url implements UrlContract
      */
     public function without(array $args, string $url = '')
     {
-        $url = $url ?: $this->clean();
-
-        return (string)(new RemoveQueryParams($args))->process(Http::createFromString($url));
+        return url_factory($url ?: $this->clean())->without($args)->get();
     }
 }
