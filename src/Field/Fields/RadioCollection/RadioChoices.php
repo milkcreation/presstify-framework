@@ -4,11 +4,17 @@ namespace tiFy\Field\Fields\RadioCollection;
 
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Field\RadioChoices as RadioChoicesContract;
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\Field\RadioCollection;
 use tiFy\Kernel\Collection\Collection;
 
 class RadioChoices extends Collection implements RadioChoicesContract
 {
+    /**
+     * Instance du champ associé.
+     * @var RadioCollection
+     */
+    protected $field;
+
     /**
      * Liste des éléments.
      * @var RadioChoice[]
@@ -16,23 +22,14 @@ class RadioChoices extends Collection implements RadioChoicesContract
     protected $items = [];
 
     /**
-     * Instance du controleur d'affichage des gabarits.
-     * @var ViewEngine
-     */
-    protected $viewer;
-
-    /**
      * CONSTRUCTEUR.
      *
      * @param array $items Liste des éléments
      * @param string $name Nom de soumission de l'élément dans la requête de traitement.
-     * @param ViewEngine $viewer Instance du controleur d'affichage des gabarits.
      * @param mixed $checked Liste des éléments selectionnés.
      */
-    public function __construct($items, $name, ViewEngine $viewer, $checked = null)
+    public function __construct($items, $name, $checked = null)
     {
-        $this->viewer = $viewer;
-
         array_walk($items, function($item, $key) use ($name) {
             $this->wrap($item, $key)->setName($name);
         });
@@ -53,7 +50,7 @@ class RadioChoices extends Collection implements RadioChoicesContract
      */
     public function render()
     {
-        return $this->viewer->make('choices', ['items' => $this->items]);
+        return $this->field->viewer()->make('choices', ['items' => $this->items]);
     }
 
     /**
@@ -75,6 +72,18 @@ class RadioChoices extends Collection implements RadioChoicesContract
             if ($first = $this->collect()->first()) :
                 $first->setChecked();
             endif;
+        endif;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setField(RadioCollection $field)
+    {
+        if (!$this->field instanceof RadioCollection) :
+            $this->field = $field;
         endif;
 
         return $this;

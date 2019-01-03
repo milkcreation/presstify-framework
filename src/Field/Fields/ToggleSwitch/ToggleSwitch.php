@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\ToggleSwitch;
 
+use tiFy\Contracts\Field\ToggleSwitch as ToggleSwitchContract;
 use tiFy\Field\FieldController;
 
-class ToggleSwitch extends FieldController
+class ToggleSwitch extends FieldController implements ToggleSwitchContract
 {
     /**
      * Liste des attributs de configuration.

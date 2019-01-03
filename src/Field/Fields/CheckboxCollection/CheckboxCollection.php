@@ -2,10 +2,11 @@
 
 namespace tiFy\Field\Fields\CheckboxCollection;
 
+use tiFy\Contracts\Field\CheckboxCollection as CheckboxCollectionContract;
 use tiFy\Field\FieldController;
 use tiFy\Field\Fields\Checkbox\Checkbox;
 
-class CheckboxCollection extends FieldController
+class CheckboxCollection extends FieldController implements CheckboxCollectionContract
 {
     /**
      * Liste des attributs de configuration.
@@ -38,8 +39,9 @@ class CheckboxCollection extends FieldController
 
         $choices = $this->get('choices', []);
         if (!$choices instanceof CheckboxChoices) :
-            $this->set('choices', new CheckboxChoices($choices, $this->getName(), $this->viewer(), $this->getValue()));
+            $choices = new CheckboxChoices($choices, $this->getName(), $this->getValue());
         endif;
+        $this->set('choices', $choices->setField($this));
     }
 
     /**

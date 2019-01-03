@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Label;
 
+use tiFy\Contracts\Field\Label as LabelContract;
 use tiFy\Field\FieldController;
 
-class Label extends FieldController
+class Label extends FieldController implements LabelContract
 {
     /**
      * Liste des attributs de configuration.

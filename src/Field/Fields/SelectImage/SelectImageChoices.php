@@ -3,7 +3,6 @@
 namespace tiFy\Field\Fields\SelectImage;
 
 use Symfony\Component\Finder\Finder;
-use tiFy\Contracts\View\ViewEngine;
 use tiFy\Field\Fields\SelectJs\SelectJsChoices;
 use tiFy\Kernel\Tools;
 
@@ -13,13 +12,10 @@ class SelectImageChoices extends SelectJsChoices
      * CONSTRUCTEUR.
      *
      * @param array|string $items
-     * @param ViewEngine $viewer
      * @param mixed $selected Liste des éléments selectionnés
      */
-    public function __construct($items, ViewEngine $viewer, $selected = null)
+    public function __construct($items, $selected = null)
     {
-        $this->viewer = $viewer;
-
         if (is_string($items)) :
             $finder = new Finder();
             $finder
@@ -33,6 +29,6 @@ class SelectImageChoices extends SelectJsChoices
             endforeach;
         endif;
 
-        parent::__construct($items, $viewer, $selected);
+        parent::__construct($items, $selected);
     }
 }

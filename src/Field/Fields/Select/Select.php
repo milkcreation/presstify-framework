@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Select;
 
+use tiFy\Contracts\Field\Select as SelectContract;
 use tiFy\Field\FieldController;
 
-class Select extends FieldController
+class Select extends FieldController implements SelectContract
 {
     /**
      * Liste des attributs de configuration.

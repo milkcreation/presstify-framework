@@ -1,15 +1,15 @@
-.tiFyPartial-HolderImage {
+.PartialHolder {
     position: relative;
     overflow: hidden;
     margin:0 auto;
 }
 
-.tiFyPartial-HolderImageSizer {
+.PartialHolder-pad {
     display: block;
     content: '';
 }
 
-.tiFyPartial-HolderImageContent{
+.PartialHolder-content{
     position: absolute;
     top: 50%;
     right: 0;

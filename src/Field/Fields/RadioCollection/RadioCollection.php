@@ -2,10 +2,11 @@
 
 namespace tiFy\Field\Fields\RadioCollection;
 
+use tiFy\Contracts\Field\RadioCollection as RadioCollectionContract;
 use tiFy\Field\FieldController;
 use tiFy\Field\Fields\Radio\Radio;
 
-class RadioCollection extends FieldController
+class RadioCollection extends FieldController implements RadioCollectionContract
 {
     /**
      * Liste des attributs de configuration.
@@ -38,7 +39,8 @@ class RadioCollection extends FieldController
 
         $choices = $this->get('choices', []);
         if (!$choices instanceof RadioChoices) :
-            $this->set('choices', new RadioChoices($choices, $this->getName(), $this->viewer(), $this->getValue()));
+            $choices = new RadioChoices($choices, $this->getName(), $this->getValue());
         endif;
+        $this->set('choices', $choices->setField($this));
     }
 }

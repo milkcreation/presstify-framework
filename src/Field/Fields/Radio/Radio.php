@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Radio;
 
+use tiFy\Contracts\Field\Radio as RadioContract;
 use tiFy\Field\FieldController;
 
-class Radio extends FieldController
+class Radio extends FieldController implements RadioContract
 {
     /**
      * Liste des attributs de configuration.

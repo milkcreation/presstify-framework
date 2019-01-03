@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Textarea;
 
+use tiFy\Contracts\Field\Textarea as TextareaContract;
 use tiFy\Field\FieldController;
 
-class Textarea extends FieldController
+class Textarea extends FieldController implements TextareaContract
 {
     /**
      * Liste des attributs de configuration.

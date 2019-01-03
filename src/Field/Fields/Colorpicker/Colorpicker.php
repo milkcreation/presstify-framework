@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Colorpicker;
 
+use tiFy\Contracts\Field\Colorpicker as ColorpickerContract;
 use tiFy\Field\FieldController;
 
-class Colorpicker extends FieldController
+class Colorpicker extends FieldController implements ColorpickerContract
 {
     /**
      * Liste des attributs de configuration.

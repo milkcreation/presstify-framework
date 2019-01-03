@@ -2,13 +2,11 @@
 
 namespace tiFy\Field\Fields\SelectJs;
 
-use tiFy\Contracts\Field\SelectChoices as SelectChoicesContract;
+use tiFy\Contracts\Field\SelectJs as SelectJsContract;
 use tiFy\Field\FieldController;
 
-class SelectJs extends FieldController
+class SelectJs extends FieldController implements SelectJsContract
 {
-    static $ajaxInit = false;
-
     /**
      * Liste des attributs de configuration.
      *
@@ -20,7 +18,6 @@ class SelectJs extends FieldController
      *      @var array $attrs Attributs HTML du champ.
      *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
      *      @var array $choices Liste des choix de selection disponibles. La récupération Ajax doit être inactive.
-     *      @var string $choices_cb Classe de traitement de la liste des choix.
      *      @var boolean|array $ajax Activation ou liste des attributs de requête de récupération Ajax des élèments.
      *      @todo boolean $autocomplete Activation le champs de selection par autocomplétion.
      *      @var boolean $disabled Activation/Désactivation du controleur de champ.
@@ -58,7 +55,6 @@ class SelectJs extends FieldController
         'attrs'      => [],
         'viewer'     => [],
         'choices'    => [],
-        'choices_cb' => SelectJsChoices::class,
         'ajax'       => false,
         //@todo 'autocomplete' => false,
         //@todo 'disabled'     => false,
@@ -169,11 +165,36 @@ class SelectJs extends FieldController
         endforeach;
         $this->set('classes', $classes);
 
-        $choices_cb = $this->get('choices_cb');
+        $choices = $this->get('choices', []);
+        if (!$choices instanceof SelectJsChoices) :
+            if ($args = $this->get('ajax.args', [])) :
+                $choices = params($args);
+            endif;
+
+            $choices = new SelectJsChoices($choices, $this->getValue());
+        endif;
+        $this->set('choices', $choices->setField($this));
 
         $this->set(
             'datas.options',
             [
+                'ajax'       => ($this->get('ajax') === false)
+                    ? false
+                    : array_merge(
+                        [
+                            'url'    => admin_url('admin-ajax.php', 'relative'),
+                            'data'   => [
+                                'action' => 'field_select_js',
+                                '_ajax_nonce' => wp_create_nonce('FieldSelectJs' . $this->getId()),
+                                '_id'         => $this->getId(),
+                                '_viewer'     => $this->get('viewer', []),
+                                '_choices_cb' => class_info($choices)->getName(),
+                                'args'   => []
+                            ],
+                            'method' => 'post',
+                        ],
+                        is_array($this->get('ajax')) ? $this->get('ajax') : []
+                    ),
                 'autocomplete' => (bool)$this->get('autocomplete'),
                 'classes'      => $this->get('classes', []),
                 'disabled'     => (bool)$this->get('disabled'),
@@ -200,26 +221,6 @@ class SelectJs extends FieldController
                 'removable'    => (bool)$this->get('removable'),
                 'selected'     => $this->getValue(),
                 'sortable'     => $this->get('sortable'),
-                'source'       => ($this->get('ajax') === false)
-                    ? false
-                    : array_merge(
-                        [
-                            'action' => 'field_select_js',
-                            'args'   => [
-                                'page'     => 1,
-                                'per_page' => 20,
-                                'in'       => [],
-                                'not_in'   => []
-                            ]
-                        ],
-                        is_array($this->get('ajax')) ? $this->get('ajax') : [],
-                        [
-                            '_ajax_nonce' => wp_create_nonce('FieldSelectJs' . $this->getId()),
-                            '_id'         => $this->getId(),
-                            '_viewer'     => $this->get('viewer', []),
-                            '_choices_cb' => $choices_cb
-                        ]
-                    ),
                 'trigger'      => $this->get('trigger', []),
                 'errors'       => [
                     'max_attempt' => __('Le nombre maximum de valeurs autorisées est atteint.', 'tify')
@@ -227,21 +228,6 @@ class SelectJs extends FieldController
             ]
         );
         $this->set('attrs.data-options', $this->get('datas.options', []));
-
-        if ($this->get('datas.options.source')) :
-            $items = new $choices_cb(
-                params($this->get('datas.options.source.args', [])),
-                $this->viewer(),
-                $this->getValue()
-            );
-        else :
-            $choices = $this->get('choices', []);
-            $items = ($choices instanceof SelectChoicesContract)
-                ? $choices
-                : new $choices_cb($this->get('choices', []), $this->viewer(), $this->getValue());
-        endif;
-        /** @var SelectChoicesContract $items */
-        $this->set('datas.items', (array)$items->all());
 
         $this->set(
             'handler',
@@ -254,7 +240,7 @@ class SelectJs extends FieldController
                     'class'        => '',
                     'data-control' => 'select-js.handler',
                 ],
-                'choices'   => $items,
+                'choices'   => $choices,
             ]
         );
     }
@@ -264,7 +250,7 @@ class SelectJs extends FieldController
      */
     public function parseDefaults()
     {
-        foreach($this->get('view', []) as $key => $value) :
+        foreach($this->get('viewer', []) as $key => $value) :
             $this->viewer()->set($key, $value);
         endforeach;
     }
@@ -280,10 +266,14 @@ class SelectJs extends FieldController
 
         $this->set('viewer', request()->post('_viewer', []));
 
-        $choices_cb = request()->post('_choices_cb');
-        /** @var SelectChoicesContract $items */
-        $items = new $choices_cb(params(request()->post('args', [])), $this->viewer());
+        /** @var SelectJsChoices $choices */
+        $choices_cb = wp_unslash(request()->post('_choices_cb'));
+        $choices = new $choices_cb(params(request()->post('args', [])));
+        $choices->setField($this);
 
-        wp_send_json($items->all());
+        $items = $choices->all();
+        array_walk($items, [$choices, 'setItem']);
+
+        wp_send_json($items);
     }
 }

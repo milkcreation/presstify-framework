@@ -14,7 +14,7 @@ interface QueryCollection extends Collection
     /**
      * Traitement de la requête de récupération des éléments.
      *
-     * @param array $args Liste des arguments de requête.
+     * @param mixed $args Liste des arguments de requête|Objet, de récupération d'éléments.
      *
      * @return void
      */

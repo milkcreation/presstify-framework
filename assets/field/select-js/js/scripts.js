@@ -1,10 +1,5 @@
-/* global tify */
-
 "use strict";
 
-/**
- * @param {{ajax_url:string}} tify
- */
 jQuery(function ($) {
     // Attribution de la valeur à l'élément.
     let _hook = $.valHooks.div;
@@ -29,6 +24,7 @@ jQuery(function ($) {
         id: undefined,
         options: {
             autocomplete: false,
+            ajax: {},
             classes: {
                 autocompleteInput: 'FieldSelectJs-autocomplete',
                 handler: 'FieldSelectJs-handler',
@@ -64,7 +60,6 @@ jQuery(function ($) {
             },
             removable: true,
             sortable: {},
-            source: {},
             trigger: true
         },
 
@@ -80,7 +75,7 @@ jQuery(function ($) {
                 hasAutocomplete: false,
                 hasFilter: false,
                 hasSelection: false,
-                hasSource: false,
+                ajaxQuery: false,
                 hasTrigger: true,
                 isComplete: false,
                 isDisabled: true,
@@ -119,7 +114,6 @@ jQuery(function ($) {
             $.extend(
                 true,
                 this.options,
-                (tify[this.id] && tify[this.id].options) || {},
                 this.el.data('options') && $.parseJSON(decodeURIComponent(this.el.data('options'))) || {}
             );
         },
@@ -127,7 +121,7 @@ jQuery(function ($) {
         // Initialisation des indicateurs d'état.
         _initFlags: function () {
             this.flags.hasAutocomplete = !!this.option('autocomplete');
-            this.flags.hasSource = (this.option('source') !== false);
+            this.flags.ajaxQuery = (this.option('ajax') !== false);
             this.flags.hasTrigger = !!this.option('trigger');
             this.flags.isDisabled = !!this.option('disabled');
             this.flags.isMultiple = !!this.option('multiple');
@@ -225,7 +219,7 @@ jQuery(function ($) {
                 .prependTo(this.picker)
                 .addClass(this.option('classes.pickerLoader'));
 
-            if (this.flags.hasSource) {
+            if (this.flags.ajaxQuery) {
                 this.pickerMore = $('<a href="#" data-control="select-js.picker.more"/>')
                     .html(this.option('picker.more'))
                     .prependTo(this.picker)
@@ -446,7 +440,7 @@ jQuery(function ($) {
         _getQueryArgs: function () {
             return {
                 page: this.flags.page,
-                per_page: this.option('source.args.per_page') || 20,
+                per_page: this.option('ajax.data.args.per_page') || 20,
                 term: this.flags.hasAutocomplete ? this.autocompleteInput.val().toString() : ''
             };
         },
@@ -604,54 +598,53 @@ jQuery(function ($) {
         _doAjaxQuery: function () {
             let self = this;
 
-            if (this.flags.hasSource && !this.flags.isComplete) {
+            if (this.flags.ajaxQuery && !this.flags.isComplete) {
                 this._doAjaxAbort();
 
                 this._doPickerLoaderShow();
 
-                let args = $.extend(
-                    this.option('source.args'),
-                    this._getQueryArgs()
+                this.option(
+                    'ajax.data.args',
+                    $.extend(
+                        this.option('ajax.data.args') || {},
+                        this._getQueryArgs()
+                    )
                 );
-                this.option('source.args', args);
 
-                this.xhr = $.ajax({
-                    url: tify.ajax_url,
-                    data: self.option('source'),
-                    method: 'post'
-                }).done(function (data) {
-                    if (data.length) {
-                        $.each(data, function (u, attrs) {
-                            let value = attrs.value.toString(),
-                                index = self._getItemIndex(value);
+                this.xhr = $.ajax(this.option('ajax'))
+                    .done(function (data) {
+                        if (data.length) {
+                            $.each(data, function (u, attrs) {
+                                let value = attrs.value.toString(),
+                                    index = self._getItemIndex(value);
 
-                            if (self.items.length === index) {
-                                self._setItem(
-                                    index,
-                                    attrs.value.toString(),
-                                    attrs.content,
-                                    attrs.selection,
-                                    attrs.picker
-                                );
+                                if (self.items.length === index) {
+                                    self._setItem(
+                                        index,
+                                        attrs.value.toString(),
+                                        attrs.content,
+                                        attrs.selection,
+                                        attrs.picker
+                                    );
+                                }
+                                self._pickerAddItem(index);
+                            });
+
+                            if (data.length < self.option('ajax.data.args.per_page')) {
+                                self._setQueryItemsComplete();
+                                self._offPickerMoreQueryItems();
+                            } else {
+                                self._onPickerMoreQueryItems();
+                                self._doPageIncrease();
                             }
-                            self._pickerAddItem(index);
-                        });
-
-                        if (data.length < self.option('source.args.per_page')) {
+                        } else {
                             self._setQueryItemsComplete();
                             self._offPickerMoreQueryItems();
-                        } else {
-                            self._onPickerMoreQueryItems();
-                            self._doPageIncrease();
                         }
-                    } else {
-                        self._setQueryItemsComplete();
-                        self._offPickerMoreQueryItems();
-                    }
-                }).always(function () {
-                    self._doPickerLoaderHide();
-                    self._doAjaxAbort();
-                });
+                    }).always(function () {
+                        self._doPickerLoaderHide();
+                        self._doAjaxAbort();
+                    });
             }
         },
 
@@ -847,7 +840,7 @@ jQuery(function ($) {
 
             this._doPickerPosition();
 
-            if (this.flags.hasSource && !this.flags.onAutocomplete) {
+            if (this.flags.ajaxQuery && !this.flags.onAutocomplete) {
                 this._doAjaxQuery();
             }
 

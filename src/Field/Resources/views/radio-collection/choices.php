@@ -1,6 +1,7 @@
 <?php
 /**
  * @var tiFy\Field\FieldView $this
+ * @var tiFy\Contracts\Field\RadioChoice $item
  */
 ?>
 <ul class="FieldRadioCollection-choices">

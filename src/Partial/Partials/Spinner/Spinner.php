@@ -2,9 +2,10 @@
 
 namespace tiFy\Partial\Partials\Spinner;
 
+use tiFy\Contracts\Partial\Spinner as SpinnerContract;
 use tiFy\Partial\PartialController;
 
-class Spinner extends PartialController
+class Spinner extends PartialController implements SpinnerContract
 {
     /**
      * Liste des attributs de configuration

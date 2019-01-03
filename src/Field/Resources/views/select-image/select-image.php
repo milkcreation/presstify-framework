@@ -17,7 +17,7 @@ echo field(
             'picker'     => '%s FieldSelectImage-picker',
             'pickerItem' => '%s FieldSelectImage-pickerItem',
             'selectionItem'       => '%s FieldSelectImage-selectionItem',
-        ],
+        ]
     ]
 );
 ?>

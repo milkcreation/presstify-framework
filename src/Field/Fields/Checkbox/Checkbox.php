@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Checkbox;
 
+use tiFy\Contracts\Field\Checkbox as CheckboxContract;
 use tiFy\Field\FieldController;
 
-class Checkbox extends FieldController
+class Checkbox extends FieldController implements CheckboxContract
 {
     /**
      * Liste des attributs de configuration.

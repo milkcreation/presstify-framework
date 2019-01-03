@@ -2,10 +2,11 @@
 
 namespace tiFy\Field\Fields\Crypted;
 
+use tiFy\Contracts\Field\Crypted as CryptedContract;
 use tiFy\Contracts\Kernel\Encrypter;
 use tiFy\Field\FieldController;
 
-class Crypted extends FieldController
+class Crypted extends FieldController implements CryptedContract
 {
     /**
      * Liste des attributs de configuration.
@@ -52,16 +53,6 @@ class Crypted extends FieldController
             'init',
             function () {
                 add_action(
-                    'wp_ajax_tify_field_crypted_encrypt',
-                    [$this, 'wp_ajax_encrypt']
-                );
-
-                add_action(
-                    'wp_ajax_nopriv_tify_field_crypted_encrypt',
-                    [$this, 'wp_ajax_encrypt']
-                );
-
-                add_action(
                     'wp_ajax_tify_field_crypted_decrypt',
                     [$this, 'wp_ajax_decrypt']
                 );
@@ -69,16 +60,6 @@ class Crypted extends FieldController
                 add_action(
                     'wp_ajax_nopriv_tify_field_crypted_decrypt',
                     [$this, 'wp_ajax_decrypt']
-                );
-
-                add_action(
-                    'wp_ajax_tify_field_crypted_generate',
-                    [$this, 'wp_ajax_generate']
-                );
-
-                add_action(
-                    'wp_ajax_nopriv_tify_field_crypted_generate',
-                    [$this, 'wp_ajax_generate']
                 );
 
                 wp_register_style(
@@ -125,51 +106,13 @@ class Crypted extends FieldController
     /**
      * Récupération Ajax de la valeur décryptée.
      *
-     * @return string
-     */
-    public function wp_ajax_encrypt()
-    {
-        $callback = !empty($_REQUEST['encrypt_cb'])
-            ? wp_unslash($_REQUEST['encrypt_cb']) :
-            "tiFy\\Core\\Control\\CryptedData\\CryptedData::encrypt";
-
-        $response = call_user_func($callback, $_REQUEST['value'], $_REQUEST['data']);
-
-        if (is_wp_error($response)) :
-            wp_send_json_error($response->get_error_message());
-        else :
-            wp_send_json_success($response);
-        endif;
-    }
-
-    /**
-     * Récupération Ajax de la valeur décryptée.
-     *
-     * @return string
+     * @return void
      */
     public function wp_ajax_decrypt()
     {
         check_ajax_referer('tiFyFieldCrypted');
 
         wp_send_json_success($this->getEncrypter()->decrypt(request()->post('cypher')));
-    }
-
-    /**
-     * Génération Ajax d'une valeur décryptée
-     */
-    public function wp_ajax_generate()
-    {
-        $callback = !empty($_REQUEST['generate_cb'])
-            ? wp_unslash($_REQUEST['generate_cb'])
-            : "tiFy\\Core\\Control\\CryptedData\\CryptedData::generate";
-
-        $response = call_user_func($callback, $_REQUEST['data']);
-
-        if (is_wp_error($response)) :
-            wp_send_json_error($response->get_error_message());
-        else :
-            wp_send_json_success($response);
-        endif;
     }
 
     /**
@@ -203,6 +146,6 @@ class Crypted extends FieldController
 
         $cypher = $this->getValue();
         $this->set('attrs.aria-cypher', $this->getEncrypter()->encrypt($cypher));
-        $this->set('attrs.value', $this->get('hide') ? $cypher : $this->set('attrs.value'));
+        $this->set('attrs.value', $this->get('hide') ? $cypher : $this->get('attrs.value'));
     }
 }

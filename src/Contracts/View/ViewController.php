@@ -36,6 +36,13 @@ interface ViewController
     public function get($key, $default = '');
 
     /**
+     * Récupération de l'instance du controleur de gestion des gabarits.
+     *
+     * @return ViewEngine
+     */
+    public function getEngine();
+
+    /**
      * Vérification d'existance d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.

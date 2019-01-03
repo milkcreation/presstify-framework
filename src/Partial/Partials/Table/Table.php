@@ -2,9 +2,10 @@
 
 namespace tiFy\Partial\Partials\Table;
 
+use tiFy\Contracts\Partial\Table as TableContract;
 use tiFy\Partial\PartialController;
 
-class Table extends PartialController
+class Table extends PartialController implements  TableContract
 {
     /**
      * Liste des attributs de configuration.

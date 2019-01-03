@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Password;
 
+use tiFy\Contracts\Field\Password as PasswordContract;
 use tiFy\Field\FieldController;
 
-class Password extends FieldController
+class Password extends FieldController implements PasswordContract
 {
     /**
      * Liste des attributs de configuration.

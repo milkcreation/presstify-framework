@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Text;
 
+use tiFy\Contracts\Field\Text as TextContract;
 use tiFy\Field\FieldController;
 
-class Text extends FieldController
+class Text extends FieldController implements TextContract
 {
     /**
      * Liste des attributs de configuration.

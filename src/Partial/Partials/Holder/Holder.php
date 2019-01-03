@@ -1,11 +1,11 @@
 <?php
 
-namespace tiFy\Partial\Partials\HolderImage;
+namespace tiFy\Partial\Partials\Holder;
 
+use tiFy\Contracts\Partial\Holder as HolderContract;
 use tiFy\Partial\PartialController;
 
-// @todo Renommer en Holder tout court
-class HolderImage extends PartialController
+class Holder extends PartialController implements HolderContract
 {
     /**
      * Liste des attributs de configuration.
@@ -45,8 +45,8 @@ class HolderImage extends PartialController
             'init',
             function () {
                 wp_register_style(
-                    'PartialHolderImage',
-                    assets()->url('partial/holder-image/css/styles.css'),
+                    'PartialHolder',
+                    assets()->url('partial/holder/css/styles.css'),
                     [],
                     160714
                 );
@@ -59,7 +59,7 @@ class HolderImage extends PartialController
      */
     public function enqueue_scripts()
     {
-        wp_enqueue_style('PartialHolderImage');
+        wp_enqueue_style('PartialHolder');
     }
 
     /**
@@ -69,7 +69,17 @@ class HolderImage extends PartialController
     {
         parent::parse($attrs);
 
-        $this->set('attrs.aria-control', 'holder_image');
+        $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialHolder'));
         $this->set('attrs.style', "background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};font-size:{$this->get('font-size')}\"");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseDefaults()
+    {
+        foreach($this->get('view', []) as $key => $value) :
+            $this->viewer()->set($key, $value);
+        endforeach;
     }
 }

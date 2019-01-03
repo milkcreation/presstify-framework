@@ -3,27 +3,18 @@
 namespace tiFy\Partial\Partials\Sidebar;
 
 use Illuminate\Support\Collection;
+use tiFy\Contracts\Partial\Sidebar as SidebarContract;
 use tiFy\Partial\PartialController;
 
 /**
+ * RESSOURCES POUR EVOLUTION :
  * @see http://mango.github.io/slideout/
  * @see http://webdesignledger.com/web-design-2/best-practices-for-hamburger-menus
- *
- * USAGE :
- * -------
- * # ETAPE 1 - MISE EN FILE DES SCRIPTS
- * dependance css : 'tiFySidebar' +  dependance js et css ('tiFySidebar')
- *
- * # ETAPE 2 - AFFICHAGE :
- * ## AUTOLOAD -> false
- * <?php tify_sidebar_display();?>
- *
- * RESSOURCES POUR EVOLUTION :
  * http://tympanus.net/Blueprints/SlidePushMenus/
  * http://tympanus.net/Development/OffCanvasMenuEffects/
  * http://tympanus.net/Development/MultiLevelPushMenu/
  */
-class Sidebar extends PartialController
+class Sidebar extends PartialController implements SidebarContract
 {
     /**
      * Liste des attributs de configuration.

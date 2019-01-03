@@ -44,7 +44,7 @@
     right: 12px;
     content: " ";
     width: 16px;
-    height: 0.5px;
+    height: 0;
     transform: translateY(-50%);
 }
 
@@ -70,7 +70,7 @@
 
 .PartialAccordion--light .PartialAccordion-itemTrigger::before,
 .PartialAccordion--light .PartialAccordion-itemTrigger::after {
-    background-color: #333;
+    border-bottom: solid 1px #333;
 }
 
 .PartialAccordion--light .PartialAccordion-item.active > .PartialAccordion-itemContent {

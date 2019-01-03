@@ -26,4 +26,13 @@ interface RadioChoices extends Collection
      * @return self
      */
     public function setChecked($checked = null);
+
+    /**
+     * Définition du controleur de champ associé.
+     *
+     * @param RadioCollection $field
+     *
+     * @return static
+     */
+    public function setField(RadioCollection $field);
 }

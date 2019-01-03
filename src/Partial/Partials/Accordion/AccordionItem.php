@@ -2,9 +2,10 @@
 
 namespace tiFy\Partial\Partials\Accordion;
 
+use tiFy\Contracts\Partial\AccordionItem as AccordionItemContract;
 use tiFy\Kernel\Params\ParamsBag;
 
-class AccordionItem extends ParamsBag
+class AccordionItem extends ParamsBag implements AccordionItemContract
 {
     /**
      * Nom de qualification de l'élément.
@@ -42,6 +43,14 @@ class AccordionItem extends ParamsBag
             'attrs'      => [],
             'depth'      => 0
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContent()
+    {
+        return $this->get('content', '');
     }
 
     /**

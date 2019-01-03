@@ -2,9 +2,10 @@
 
 namespace tiFy\Partial\Partials\Tag;
 
+use tiFy\Contracts\Partial\Tag as TagContract;
 use tiFy\Partial\PartialController;
 
-class Tag extends PartialController
+class Tag extends PartialController implements TagContract
 {
     /**
      * Liste des attributs de configuration.

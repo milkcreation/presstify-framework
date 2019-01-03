@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Findposts;
 
+use tiFy\Contracts\Field\Findposts as FindpostsContract;
 use tiFy\Field\FieldController;
 
-class Findposts extends FieldController
+class Findposts extends FieldController implements FindpostsContract
 {
     /**
      * Liste des attributs de configuration.

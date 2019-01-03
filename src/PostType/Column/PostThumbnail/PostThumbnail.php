@@ -22,7 +22,7 @@ class PostThumbnail extends AbstractColumnDisplayPostTypeController
      */
     public function admin_enqueue_scripts()
     {
-        partial('holder-image')->enqueue_scripts();
+        partial('holder')->enqueue_scripts();
 
         $column_name = "column-{$this->item->getName()}";
         assets()->addInlineCss(
@@ -44,7 +44,7 @@ class PostThumbnail extends AbstractColumnDisplayPostTypeController
             $thumb = wp_get_attachment_image($attachment_id, [60, 60], true);
         else :
             $thumb = partial(
-                'holder-image',
+                'holder',
                 [
                     'width'            => 60,
                     'height'           => 60,

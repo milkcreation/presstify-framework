@@ -2,9 +2,10 @@
 
 namespace tiFy\Partial\Partials\Notice;
 
+use tiFy\Contracts\Partial\Notice as NoticeContract;
 use tiFy\Partial\PartialController;
 
-class Notice extends PartialController
+class Notice extends PartialController implements NoticeContract
 {
     /**
      * Liste des attributs de configuration.

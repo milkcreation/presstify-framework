@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Number;
 
+use tiFy\Contracts\Field\Number as NumberContract;
 use tiFy\Field\FieldController;
 
-class Number extends FieldController
+class Number extends FieldController implements NumberContract
 {
     /**
      * Liste des attributs de configuration.
