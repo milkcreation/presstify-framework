@@ -6,20 +6,8 @@
  */
 ?>
 
-<?php if ($this->get('page') < $this->get('total')) : ?>
-<li class="Pagination-item Pagination-item--last">
-    <?php
-    echo partial(
-        'tag',
-        [
-            'tag' => 'a',
-            'attrs' => [
-                'class' => 'Pagination-itemPage Pagination-itemPage--link',
-                'href' => $this->get('last_url')
-            ],
-            'content' => $this->get('last')
-        ]
-    );
-    ?>
-</li>
+<?php if ($this->getPage() < $this->getTotalPage()) : ?>
+    <li class="PartialPagination-item PartialPagination-item--last">
+        <?php echo partial('tag', $this->get('links.last')); ?>
+    </li>
 <?php endif;

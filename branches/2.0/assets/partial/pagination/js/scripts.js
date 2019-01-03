@@ -104,6 +104,7 @@
             }
     });
 })(jQuery, document, window);
+
 jQuery(document).ready(function($){
-    $('[aria-control="scroll_paginate"]').tifypaginate();
+    $('[aria-control="scroll_paginate"]').tifyPagination();
 });

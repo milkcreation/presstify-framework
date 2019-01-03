@@ -18,6 +18,7 @@ use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\Routing\Url;
+use tiFy\Contracts\Routing\UrlFactory;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Contracts\View\ViewPattern;
@@ -416,6 +417,20 @@ if (! function_exists('url')) {
     function url()
     {
         return app()->get('url');
+    }
+}
+
+if (! function_exists('url_factory')) {
+    /**
+     * Récupération de l'instance du contrôleur de traitement d'url.
+     *
+     * @param string $url Url à traiter.
+     *
+     * @return UrlFactory
+     */
+    function url_factory($url)
+    {
+        return app()->get('url.factory', [$url]);
     }
 }
 

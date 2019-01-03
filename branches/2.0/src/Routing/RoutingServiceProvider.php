@@ -104,5 +104,7 @@ class RoutingServiceProvider extends AppServiceProvider
         $this->getContainer()->share('url', function () {
             return new Url($this->getContainer()->get('router'), request());
         });
+
+        $this->getContainer()->add('url.factory', UrlFactory::class);
     }
 }

@@ -2,10 +2,8 @@
 
 namespace tiFy\Partial\Partials\Pagination;
 
-use tiFy\Contracts\Db\DbItemQueryInterface;
 use tiFy\Contracts\Partial\Pagination as PaginationContract;
 use tiFy\Partial\PartialController;
-use WP_Query;
 
 class Pagination extends PartialController implements PaginationContract
 {
@@ -16,20 +14,20 @@ class Pagination extends PartialController implements PaginationContract
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.
      *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
-     *      @var boolean|string $first Activation du lien vers la première page ou intitulé du lien.
-     *      @var boolean|string $last Activation du lien vers la dernière page ou intitulé du lien.
-     *      @var boolean|string $previous Activation du lien vers la page précédente ou intitulé du lien.
-     *      @var boolean|string $next Activation du lien vers la page suivante ou intitulé du lien.
-     *      @var boolean|array $numbers Activation de l'affichage de la numérotation des pages ou attributs d'affichage {
-     *          Liste des attributs d'affichage.
-     *
-     *          @var int $range
-     *          @var int $anchor
-     *          @var int $gap
-     * }
-     *      @var object|false $query Instance de la classe de traitement des requêtes. \WP_Query par défaut
-     *      @var int $per_page Nombre d'élément affiché par page.
-     *      @var int page Numéro de la page courante.
+     *      @var array $links {
+     *          @var boolean|array $first Activation du lien vers la première page|Liste d'attributs.
+     *          @var boolean|array $last Activation du lien vers la dernière page|Liste d'attributs.
+     *          @var boolean|array $previous Activation du lien vers la page précédente|Liste d'attributs.
+     *          @var boolean|array $next Activation du lien vers la page suivante|Liste d'attributs.
+     *          @var boolean|array $numbers Activation de l'affichage de la numérotation des pages|Liste d'attributs {
+     *              @var int $range
+     *              @var int $anchor
+     *              @var int $gap
+     *          }
+     *      }
+     *      @var array|PaginationQuery|object $query Arguments de requête|Instance du controleur de traitement
+     *                                               des requêtes.
+     *      @var string $base_url Url de lien vers les pages. %d correspond au numéro de page.
      * }
      */
     protected $attributes = [
@@ -37,19 +35,21 @@ class Pagination extends PartialController implements PaginationContract
         'after'    => '',
         'attrs'    => [],
         'viewer'   => [],
-        'first'    => '&laquo;',
-        'last'     => '&raquo;',
-        'previous' => '&lsaquo;',
-        'next'     => '&rsaquo;',
-        'numbers'  => [
-            'range'  => 2,
-            'anchor' => 3,
-            'gap'    => 1,
+        'links'    => [
+            'first'    => true,
+            'last'     => true,
+            'previous' => true,
+            'next'     => true,
+            'numbers'  => true
         ],
-        'query'    => false,
-        'per_page' => 0,
-        'page'     => 0,
+        'query'    => [],
+        'base_url' => ''
     ];
+
+    /**
+     * @var PaginationQuery
+     */
+    protected $query;
 
     /**
      * {@inheritdoc}
@@ -74,11 +74,11 @@ class Pagination extends PartialController implements PaginationContract
      */
     public function defaults()
     {
-        /** @var WP_Query $wp_query */
-        global $wp_query;
-
         return [
-            'query' => $wp_query,
+            'base_url'  => (string) url_factory(url()->full())
+                ->without(['page'])
+                ->with(['page' => '%d'])
+                ->format()
         ];
     }
 
@@ -97,94 +97,125 @@ class Pagination extends PartialController implements PaginationContract
     {
         parent::parse($attrs);
 
-        $query = $this->get('query');
+        $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialPagination'));
 
-        if (!$this->get('page')) :
-            $this->set(
-                'page',
-                intval(
-                    $query instanceof WP_Query
-                        ? ($query->get('paged') ?: 1)
-                        : 1
-                )
-            );
+        $this->query = $this->get('query', []);
+        if (!$this->query instanceof PaginationQuery) :
+            $this->query = new PaginationQuery($this->query);
         endif;
+        $this->set('query', $this->query);
 
-        if (!$this->get('per_page')) :
-            $this->set(
-                'per_page',
-                intval(
-                    $query instanceof WP_Query
-                        ? $query->get('posts_per_page', get_option('posts_per_page'))
-                        : ($query instanceof DbItemQueryInterface ? $query->get('per_page', 10) : 10)
-                )
-            );
-        endif;
+        $this->parseLinks();
 
-        $offset = intval(
-            $query instanceof WP_Query || $query instanceof DbItemQueryInterface
-                ? $query->get('offset', 0) : 0
-        );
-
-        $found = intval(
-            $query instanceof WP_Query
-                ? $query->found_posts
-                : ($query instanceof DbItemQueryInterface ? $query->found_items : 0)
-        );
-
-        if ($found) :
-            $total = $offset
-                ? ceil(
-                    ($found + (($this->get('per_page') * ($this->get('page') - 1)) - $offset))
-                    / $this->get('per_page')
-                )
-                : ceil($found / $this->get('per_page'));
-        else :
-            $total = 0;
-        endif;
-        $this->set('total', intval($total));
-
-        if ($this->get('first')) :
-            $this->set('first_url', $this->getPagenumLink(1));
-        endif;
-
-        if ($this->get('last')) :
-            $this->set('last_url', $this->getPagenumLink($this->get('total')));
-        endif;
-
-        if ($this->get('previous')) :
-            $this->set('previous_url', $this->getPagenumLink($this->get('page') - 1));
-        endif;
-
-        if ($this->get('next')) :
-            $this->set('next_url', $this->getPagenumLink($this->get('page') + 1));
-        endif;
-
-        if ($this->get('numbers')) :
-            $range = intval($this->get('numbers.range'));
-            $anchor = intval($this->get('numbers.anchor'));
-            $gap = intval($this->get('numbers.gap'));
-
-            $min_links = ($range * 2) + 1;
-            $block_min = min($this->get('page') - $range, $this->get('total') - $min_links);
-            $block_high = max($this->get('page') + $range, $min_links);
-
-            $this->set('numbers.block_min', $block_min);
-            $this->set('numbers.block_high', $block_high);
-
-            $this->set(
-                'numbers.left_gap',
-                (($block_min - $anchor - $gap) > 0)
-                    ? true : false
-            );
-            $this->set(
-                'numbers.right_gap',
-                (($block_high + $anchor + $gap) < $this->get('total'))
-                    ? true : false
-            );
+        if ($this->get('links.numbers')) :
+            $this->parseNumbers();
         endif;
 
         $this->viewer()->setController(PaginationView::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseDefaults()
+    {
+        foreach($this->get('view', []) as $key => $value) :
+            $this->viewer()->set($key, $value);
+        endforeach;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseLinks()
+    {
+        $defaults = [
+            'first'    => [
+                'tag'     => 'a',
+                'content' => '&laquo;',
+                'attrs'   => [
+                    'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
+                    'href'  => $this->getPagenumLink(1),
+                ]
+            ],
+            'last'     => [
+                'tag'     => 'a',
+                'content' => '&raquo;',
+                'attrs'   => [
+                    'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
+                    'href'  => $this->getPagenumLink($this->query->getTotalPage()),
+                ]
+            ],
+            'previous' => [
+                'tag'     => 'a',
+                'content' => '&lsaquo;',
+                'attrs'   => [
+                    'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
+                    'href'  => $this->getPagenumLink($this->query->getPage() - 1),
+                ]
+            ],
+            'next'     => [
+                'tag'     => 'a',
+                'content' => '&rsaquo;',
+                'attrs'   => [
+                    'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
+                    'href'  => $this->getPagenumLink($this->query->getPage() + 1),
+                ]
+            ]
+        ];
+
+        foreach($defaults as $link => $default) :
+            $attrs = $this->get("links.{$link}", []);
+
+            if ($attrs === false) :
+            elseif ($attrs === true) :
+                $attrs = $default;
+            else :
+                $attrs = array_merge($this->get("links.{$link}", []), $default);
+            endif;
+
+            $this->set("links.{$link}", $attrs);
+        endforeach;
+    }
+
+    /**
+     * Traitement de la liste des numéros de page.
+     *
+     * @return void
+     */
+    public function parseNumbers()
+    {
+        $range = intval($this->get('links.numbers.range', 2));
+        $anchor = intval($this->get('links.numbers.anchor', 3));
+        $gap = intval($this->get('links.numbers.gap', 1));
+
+        $min_links = ($range * 2) + 1;
+        $block_min = min($this->query->getPage() - $range, $this->query->getTotalPage() - $min_links);
+        $block_high = max($this->query->getPage() + $range, $min_links);
+
+        $left_gap = (($block_min - $anchor - $gap) > 0) ? true : false;
+        $right_gap = (($block_high + $anchor + $gap) < $this->query->getTotalPage()) ? true : false;
+
+        $numbers = [];
+        if ($left_gap && !$right_gap) :
+            $this->numLoop($numbers, 1, $anchor);
+            $this->ellipsis($numbers);
+            $this->numLoop($numbers, $block_min, $this->query->getTotalPage());
+        elseif ($left_gap && $right_gap) :
+            $this->numLoop($numbers, 1, $anchor);
+            $this->ellipsis($numbers);
+            $this->numLoop($numbers, $block_min, $block_high);
+            $this->ellipsis($numbers);
+            $this->numLoop($numbers, ($this->query->getTotalPage()-$anchor+1), $this->query->getTotalPage());
+        elseif (!$left_gap && $right_gap) :
+            $this->numLoop($numbers, 1, $block_high);
+            $this->ellipsis($numbers);
+            $this->numLoop($numbers, ($this->query->getTotalPage()-$anchor+1), $this->query->getTotalPage());
+        else :
+            $this->numLoop($numbers, 1, $this->query->getTotalPage());
+        endif;
+
+        $this->set('numbers', $numbers);
     }
 
     /**
@@ -196,14 +227,46 @@ class Pagination extends PartialController implements PaginationContract
      */
     public function getPagenumLink($num)
     {
-        $query = $this->get('query');
-        if ($query instanceof WP_Query) :
-            return get_pagenum_link($num);
-        elseif ($query instanceof DbItemQueryInterface) :
-            /** @todo */
-            return '';
-        endif;
+        return sprintf($this->get('base_url'), $num);
+    }
 
-        return '';
+    /**
+     * Boucle de récupération des numéros de page.
+     *
+     * @param array $numbers Liste des numéros de page existants.
+     * @param int $start Démarrage de la boucle de récupération.
+     * @param int $end Fin de la boucle de récupération.
+     *
+     * @return void
+     */
+    public function numLoop(&$numbers, $start, $end)
+    {
+        for ($num = $start; $num <= $end; $num++) :
+            $numbers[] = [
+                'tag'     => 'a',
+                'content' => $num,
+                'attrs'   => [
+                    'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
+                    'href'  => $this->getPagenumLink($num),
+                    'aria-current' => ($this->query->getPage() == $num) ? 'true' : 'false'
+                ]
+            ];
+        endfor;
+    }
+
+    /**
+     * Récupération d'un séparateur de nombre.
+     *
+     * @param array $numbers Liste des numéros de page existants.
+     *
+     * @return void
+     */
+    public function ellipsis(&$numbers)
+    {
+        $numbers[] = [
+            'tag' => 'span',
+            'content' => '...',
+            'attrs' => 'PartialPagination-itemEllipsis'
+        ];
     }
 }

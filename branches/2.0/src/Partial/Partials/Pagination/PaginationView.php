@@ -7,13 +7,7 @@ use tiFy\Partial\PartialView;
 /**
  * Class PartialView
  *
- * @method string after().
- * @method string attrs().
- * @method string before().
- * @method string content().
- * @method string getId().
- * @method string getIndex().
- * @method string getPagenumLink(int $num).
+ * @method string getPagenumLink(int $num)
  */
 class PaginationView extends PartialView
 {
@@ -32,20 +26,22 @@ class PaginationView extends PartialView
     ];
 
     /**
-     * Boucle d'affichage des numéros de page.
+     * Récupération de la page courante.
      *
-     * @return string
+     * @return mixed
      */
-    public function numLoop($start, $end)
+    public function getPage()
     {
-        for ($num = $start; $num <= $end; $num++) :
-            $this->insert(
-                'num',
-                array_merge(
-                    $this->all(),
-                    ['num' => $num]
-                )
-            );
-        endfor;
+        return $this->get('query')->getPage();
+    }
+
+    /**
+     * Récupération du nombre total de page.
+     *
+     * @return mixed
+     */
+    public function getTotalPage()
+    {
+        return $this->get('query')->getTotalPage();
     }
 }
