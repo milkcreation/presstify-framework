@@ -9,7 +9,7 @@ class Holder extends PartialController implements HolderContract
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attributes
+     * @var array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.

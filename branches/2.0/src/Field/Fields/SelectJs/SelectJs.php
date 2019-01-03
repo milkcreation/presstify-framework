@@ -9,7 +9,6 @@ class SelectJs extends FieldController implements SelectJsContract
 {
     /**
      * Liste des attributs de configuration.
-     *
      * @var array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.

@@ -37,14 +37,14 @@ class ClassInfo
     {
         if (is_object($class)) :
             $this->classname = get_class($class);
-        elseif (class_exists($app)) :
+        elseif (class_exists($class)) :
             $this->classname = $class;
         endif;
 
         if (!isset(self::$classes[$this->classname])) :
             try {
                 self::$classes[$this->classname] = new ReflectionClass($this->classname);
-            } catch (ReflectionException $e) {
+            } catch (\ReflectionException $e) {
                 wp_die($e->getMessage(), __('Classe indisponible', 'tify'), $e->getCode());
             }
         endif;
@@ -61,7 +61,7 @@ class ClassInfo
         if (isset(self::$classes[$this->classname])) :
             try {
                 return call_user_func_array([self::$classes[$this->classname], $name], $arguments);
-            } catch (ReflectionException $e) {
+            } catch (\ReflectionException $e) {
                 wp_die($e->getMessage(), __('La méthode appelée n\'est pas disponible', 'tify'), $e->getCode());
             }
         endif;
@@ -95,7 +95,7 @@ class ClassInfo
      */
     public function getRelPath()
     {
-        return \paths()->makeRelativePath($this->getDirname());
+        return paths()->makeRelativePath($this->getDirname());
     }
 
     /**

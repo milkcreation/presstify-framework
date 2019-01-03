@@ -9,7 +9,7 @@ class Spinner extends PartialController implements SpinnerContract
 {
     /**
      * Liste des attributs de configuration
-     * @var $attributes {
+     * @var array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.

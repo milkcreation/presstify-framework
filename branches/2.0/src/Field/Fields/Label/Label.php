@@ -9,7 +9,7 @@ class Label extends FieldController implements LabelContract
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attrs {
+     * @var array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var string $content Contenu de la balise champ.

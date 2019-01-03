@@ -2,25 +2,38 @@
 
 namespace tiFy\Api\Recaptcha\Field;
 
-use tiFy\Contracts\Api\Recaptcha as RecaptchaInterface;
+use tiFy\Contracts\Api\Recaptcha as RecaptchaContract;
 use tiFy\Field\FieldController;
+use tiFy\Field\FieldView;
 
-/**
- * Class Recaptcha
- * @package tiFy\Api\Recaptcha\Field
- *
- * @see https://developers.google.com/recaptcha/docs/display
- */
 class Recaptcha extends FieldController
 {
     /**
      * Liste des attributs de configuration.
-     * @var array
+     * @see https://developers.google.com/recaptcha/docs/display
+     * @var array $attributs {
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string $theme Couleur d'affichage du captcha. light|dark.
+     *      @var string $sitekey Clé publique. Optionnel si l'API $recaptcha est active.
+     *      @var string $secretkey Clé publique. Optionnel si l'API $recaptcha est active.
+     * }
      */
     protected $attributes = [
-        'sitekey'  => '',
-        'theme'    => 'light',
-        'tabindex' => 0
+        'before'    => '',
+        'after'     => '',
+        'name'      => '',
+        'value'     => '',
+        'attrs'     => [],
+        'viewer'    => [],
+        'theme'     => 'light',
+        'tabindex'  => 0,
+        'sitekey'   => '',
+        'secretkey' => ''
     ];
 
     /**
@@ -30,11 +43,11 @@ class Recaptcha extends FieldController
     {
         parent::parse($attrs);
 
-        /** @var RecaptchaInterface $recaptcha */
+        /** @var RecaptchaContract $recaptcha */
         $recaptcha = app('api.recaptcha');
 
         if (!$this->get('attrs.id')) :
-            $this->set('attrs.id', 'tiFyField-recapcha--' . $this->getIndex());
+            $this->set('attrs.id', 'Field-recapcha--' . $this->getIndex());
         endif;
 
         $this->set('attrs.data-tabindex', $this->get('tabindex'));
@@ -50,5 +63,31 @@ class Recaptcha extends FieldController
                 'theme'   => $this->get('theme')
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function viewer($view = null, $data = [])
+    {
+        if (!$this->viewer) :
+            $cinfo = class_info(Recaptcha::class);
+            $default_dir = $cinfo->getDirname() . '/views/';
+            $this->viewer = view()
+                ->setDirectory(is_dir($default_dir) ? $default_dir : null)
+                ->setController(FieldView::class)
+                ->setOverrideDir(
+                    (($override_dir = $this->get('viewer.override_dir')) && is_dir($override_dir))
+                        ? $override_dir
+                        : (is_dir($default_dir) ? $default_dir : $cinfo->getDirname())
+                )
+                ->set('field', $this);
+        endif;
+
+        if (func_num_args() === 0) :
+            return $this->viewer;
+        endif;
+
+        return $this->viewer->make("_override::{$view}", $data);
     }
 }
