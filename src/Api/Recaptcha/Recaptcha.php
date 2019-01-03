@@ -7,11 +7,10 @@
 namespace tiFy\Api\Recaptcha;
 
 use ReCaptcha\ReCaptcha as ReCaptchaSdk;
-use ReCaptcha\RequestMethod;
 use ReCaptcha\RequestMethod\SocketPost;
 use tiFy\Api\Recaptcha\Field\Recaptcha as RecaptchaField;
 use tiFy\Contracts\Api\Recaptcha as RecaptchaInterface;
-use tiFy\Field\Manager as FieldManager;
+use tiFy\Field\FieldManager;
 
 class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
 {
@@ -180,9 +179,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
      */
     public function getSiteKey()
     {
-        if (isset($this->attributes['sitekey'])) :
-            return $this->attributes['sitekey'];
-        endif;
+        return $this->attributes['sitekey'] ?? null;
     }
 
     /**

@@ -9,7 +9,7 @@ class Checkbox extends FieldController implements CheckboxContract
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attrs {
+     * @var array $attributes {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Clé d'indice de la valeur de soumission du champ.

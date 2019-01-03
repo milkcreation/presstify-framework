@@ -5,7 +5,6 @@ namespace tiFy\Field\Fields\SelectImage;
 use tiFy\Contracts\Field\SelectImage as SelectImageContract;
 use tiFy\Contracts\Field\SelectChoice;
 use tiFy\Field\FieldController;
-use tiFy\View\ViewEngine;
 
 class SelectImage extends FieldController implements SelectImageContract
 {
