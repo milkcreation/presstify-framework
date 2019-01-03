@@ -2,9 +2,10 @@
 
 namespace tiFy\Partial\Partials\Accordion;
 
+use tiFy\Contracts\Partial\Accordion as AccordionContract;
 use tiFy\Partial\PartialController;
 
-class Accordion extends PartialController
+class Accordion extends PartialController implements AccordionContract
 {
     /**
      * Liste des attributs de configuration.
@@ -94,8 +95,12 @@ class Accordion extends PartialController
 
         $items = $this->get('items', []);
         if (!$items instanceof AccordionItems) :
-            $this->set('items', new AccordionItems($items, $this->viewer(), $this->get('selected')));
+            $items = new AccordionItems($items, $this->get('selected'));
         endif;
+
+        $items->setPartial($this);
+
+        $this->set('items', $items);
     }
 
     /**

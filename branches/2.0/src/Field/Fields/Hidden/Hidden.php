@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Hidden;
 
+use tiFy\Contracts\Field\Hidden as HiddenContract;
 use tiFy\Field\FieldController;
 
-class Hidden extends FieldController
+class Hidden extends FieldController implements HiddenContract
 {
     /**
      * Liste des attributs de configuration.

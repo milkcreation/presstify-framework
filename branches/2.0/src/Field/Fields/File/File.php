@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\File;
 
+use tiFy\Contracts\Field\File as FileContract;
 use tiFy\Field\FieldController;
 
-class File extends FieldController
+class File extends FieldController implements FileContract
 {
     /**
      * Liste des attributs de configuration.

@@ -192,7 +192,13 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     {
         $this->params->set('override_dir', $override_dir);
 
-        $this->addFolder('_override', $override_dir, true);
+        try {
+            $this->addFolder('_override', $override_dir, true);
+        } catch(\LogicException $e) {
+            if($this->getFolders()->get('_override')->getPath() !== $override_dir) :
+                $this->modifyFolder('_override', $override_dir);
+            endif;
+        }
 
         return $this;
     }

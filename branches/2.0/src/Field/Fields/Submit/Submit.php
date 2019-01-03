@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Submit;
 
+use tiFy\Contracts\Field\Submit as SubmitContract;
 use tiFy\Field\FieldController;
 
-class Submit extends FieldController
+class Submit extends FieldController implements SubmitContract
 {
     /**
      * Liste des attributs de configuration.

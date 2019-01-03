@@ -6,11 +6,11 @@
 <?php $this->before(); ?>
 
 <div <?php $this->attrs(); ?>>
-    <span class="tiFyPartial-HolderImageSizer"
+    <span class="PartialHolder-pad"
           style="padding-top:<?php echo ceil((100/$this->get('width'))* $this->get('height')); ?>%"
     ></span>
 
-    <div class="tiFyPartial-HolderImageContent">
+    <div class="PartialHolder-content">
         <?php
         if ($content = $this->get('content')) :
             echo $this->get('content');

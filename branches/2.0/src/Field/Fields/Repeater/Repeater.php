@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Repeater;
 
+use tiFy\Contracts\Field\Repeater as RepeaterContract;
 use tiFy\Field\FieldController;
 
-class Repeater extends FieldController
+class Repeater extends FieldController implements RepeaterContract
 {
     /**
      * Liste des attributs de configuration.
@@ -15,8 +16,7 @@ class Repeater extends FieldController
      *      @var string $value Valeur courante de soumission du champ.
      *      @var array $attrs Attributs HTML du champ.
      *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
-     *      @var string $ajax_action Action Ajax lancée pour récupérer le formulaire d'un élément.
-     *      @var string $ajax_nonce Agent de sécurisation de la requête de récupération Ajax.
+     *      @var array $ajax Liste des arguments de requête de récupération des éléments via Ajax.
      *      @var array $button Liste des attributs de configuration du bouton d'ajout d'un élément.
      *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
      *      @var boolean $removable Activation du déclencheur de suppression des éléments.
@@ -32,8 +32,7 @@ class Repeater extends FieldController
         'value'       => '',
         'attrs'       => [],
         'viewer'      => [],
-        'ajax_action' => 'field_repeater',
-        'ajax_nonce'  => '',
+        'ajax'        => [],
         'button'      => [],
         'max'         => -1,
         'removable'   => true,
@@ -133,21 +132,23 @@ class Repeater extends FieldController
         $this->set(
             'attrs.data-options',
             [
-                'ajax'      => [
-                    'url'    => admin_url('admin-ajax.php', 'relative'),
-                    'data'   => [
-                        'action'      => $this->get('ajax_action'),
-                        '_ajax_nonce' => $this->get('ajax_nonce')
-                            ?: wp_create_nonce('FieldRepeater' . $this->getId()),
-                        '_id'         => $this->getId(),
-                        '_viewer'     => $this->get('viewer'),
-                        'args'        => $this->get('args', []),
-                        'max'         => $this->get('max'),
-                        'name'        => $this->getName(),
-                        'order'       => $this->get('order'),
+                'ajax'      => array_merge(
+                    [
+                        'url'    => admin_url('admin-ajax.php', 'relative'),
+                        'data'   => [
+                            'action'      => 'field_repeater',
+                            '_ajax_nonce' => wp_create_nonce('FieldRepeater' . $this->getId()),
+                            '_id'         => $this->getId(),
+                            '_viewer'     => $this->get('viewer'),
+                            'args'        => $this->get('args', []),
+                            'max'         => $this->get('max'),
+                            'name'        => $this->getName(),
+                            'order'       => $this->get('order'),
+                        ],
+                        'method' => 'post',
                     ],
-                    'method' => 'post',
-                ],
+                    $this->get('ajax', [])
+                ),
                 'removable' => $this->get('removable'),
                 'sortable'  => $this->get('sortable'),
             ]
@@ -159,7 +160,7 @@ class Repeater extends FieldController
      */
     public function parseDefaults()
     {
-        foreach($this->get('view', []) as $key => $value) :
+        foreach($this->get('viewer', []) as $key => $value) :
             $this->viewer()->set($key, $value);
         endforeach;
     }

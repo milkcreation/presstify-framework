@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\DatetimeJs;
 
+use tiFy\Contracts\Field\DatetimeJs as DatetimeJsContract;
 use tiFy\Field\FieldController;
 
-class DatetimeJs extends FieldController
+class DatetimeJs extends FieldController implements DatetimeJsContract
 {
     /**
      * Liste des attributs de configuration.

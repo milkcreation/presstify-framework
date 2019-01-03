@@ -2,10 +2,12 @@
 
 namespace tiFy\Field\Fields\SelectImage;
 
+use tiFy\Contracts\Field\SelectImage as SelectImageContract;
 use tiFy\Contracts\Field\SelectChoice;
 use tiFy\Field\FieldController;
+use tiFy\View\ViewEngine;
 
-class SelectImage extends FieldController
+class SelectImage extends FieldController implements SelectImageContract
 {
     /**
      * Liste des attributs de configuration.
@@ -64,12 +66,11 @@ class SelectImage extends FieldController
 
         $this->set('attrs.class', trim($this->get('attrs.class', '%s') . ' FieldSelectJs FieldSelectImage'));
 
-        $choices = $this->get('choices');
+        $choices = $this->get('choices', []);
         if (!$choices instanceof SelectImageChoices) :
-            $choices = new SelectImageChoices($choices, $this->viewer(), $this->getValue());
+            $choices = new SelectImageChoices($choices,$this->getValue());
         endif;
-
-        $this->set('choices', $choices);
+        $this->set('choices', $choices->setField($this));
     }
 
     /**
@@ -77,7 +78,7 @@ class SelectImage extends FieldController
      */
     public function parseDefaults()
     {
-        foreach($this->get('view', []) as $key => $value) :
+        foreach($this->get('viewer', []) as $key => $value) :
             $this->viewer()->set($key, $value);
         endforeach;
     }

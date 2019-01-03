@@ -2,9 +2,10 @@
 
 namespace tiFy\Partial\Partials\Breadcrumb;
 
+use tiFy\Contracts\Partial\Breadcrumb as BreadcrumbContract;
 use tiFy\Partial\PartialController;
 
-class Breadcrumb extends PartialController
+class Breadcrumb extends PartialController implements BreadcrumbContract
 {
     /**
      * Liste des attributs de configuration.
@@ -57,17 +58,59 @@ class Breadcrumb extends PartialController
     /**
      * {@inheritdoc}
      */
+    public function addPart($part)
+    {
+        array_push($this->parts, $part);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disable()
+    {
+        $this->disabled = true;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function display()
+    {
+        if ($this->disabled) :
+            return '';
+        endif;
+
+        $this->set('items', $this->parsePartList());
+
+        return parent::display();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function enable()
+    {
+        $this->disabled = false;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function enqueue_scripts()
     {
         wp_enqueue_style('PartialBreadcrumb');
     }
 
     /**
-     * Récupération de la liste des éléments contenus dans le fil d'ariane.
-     *
-     * @return string[]
+     * {@inheritdoc}
      */
-    private function parsePartList()
+    public function parsePartList()
     {
         if (!$this->parts) :
             $this->parts = (new WpQueryPart())->getList();
@@ -82,13 +125,9 @@ class Breadcrumb extends PartialController
     }
 
     /**
-     * Traitement d'un élément de contenu du fil d'arianne.
-     *
-     * @param string|array|object|callable $part Element du fil d'ariane.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    private function parsePart($part)
+    public function parsePart($part)
     {
         if (is_string($part)) :
             return $part;
@@ -110,27 +149,9 @@ class Breadcrumb extends PartialController
     }
 
     /**
-     * Ajout d'un élément de contenu au fil d'arianne.
-     *
-     * @param string|array|object|callable $part Element du fil d'ariane.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    final public function addPart($part)
-    {
-        array_push($this->parts, $part);
-
-        return $this;
-    }
-
-    /**
-     * Ajout d'un élément de contenu en début de chaîne du fil d'arianne.
-     *
-     * @param string|array|object|callable $part Element du fil d'ariane.
-     *
-     * @return $this
-     */
-    final public function prependPart($part)
+    public function prependPart($part)
     {
         array_unshift($this->parts, $part);
 
@@ -138,52 +159,12 @@ class Breadcrumb extends PartialController
     }
 
     /**
-     * Supprime l'ensemble des éléments de contenu prédéfinis.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function resetParts()
+    public function reset()
     {
         $this->parts = [];
 
         return $this;
-    }
-
-    /**
-     * Désactivation de l'affichage.
-     *
-     * @return $this
-     */
-    public function disable()
-    {
-        $this->disabled = true;
-
-        return $this;
-    }
-
-    /**
-     * Activation de l'affichage.
-     *
-     * @return $this
-     */
-    public function enable()
-    {
-        $this->disabled = false;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display()
-    {
-        if ($this->disabled) :
-            return '';
-        endif;
-
-        $this->set('items', $this->parsePartList());
-
-        return parent::display();
     }
 }

@@ -3,10 +3,11 @@
 namespace tiFy\Partial\Partials\Pagination;
 
 use tiFy\Contracts\Db\DbItemQueryInterface;
+use tiFy\Contracts\Partial\Pagination as PaginationContract;
 use tiFy\Partial\PartialController;
 use WP_Query;
 
-class Pagination extends PartialController
+class Pagination extends PartialController implements PaginationContract
 {
     /**
      * Liste des attributs de configuration.

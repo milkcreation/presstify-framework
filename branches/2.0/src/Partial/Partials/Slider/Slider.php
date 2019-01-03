@@ -3,9 +3,10 @@
 namespace tiFy\Partial\Partials\Slider;
 
 use tiFy\Contracts\Kernel\Validator;
+use tiFy\Contracts\Partial\Slider as SliderContract;
 use tiFy\Partial\PartialController;
 
-class Slider extends PartialController
+class Slider extends PartialController implements SliderContract
 {
     /**
      * Liste des attributs de configuration.

@@ -2,11 +2,12 @@
 
 namespace tiFy\Partial\Partials\CookieNotice;
 
+use tiFy\Contracts\Partial\CookieNotice as CookieNoticeContract;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 use tiFy\Partial\PartialController;
 
-class CookieNotice extends PartialController
+class CookieNotice extends PartialController implements CookieNoticeContract
 {
     /**
      * Liste des attributs de configuration.
@@ -136,33 +137,7 @@ class CookieNotice extends PartialController
     }
 
     /**
-     * Génération du cookie de notification via Ajax.
-     *
-     * @return void
-     */
-    public function wp_ajax()
-    {
-        check_ajax_referer('tiFyPartial-CookieNotice');
-
-        $cookie_name = request()->post('cookie_name', '');
-        $cookie_hash = request()->post('cookie_hash', '');
-        $cookie_expire = request()->post('cookie_expire', 0);
-
-        if (!$cookie_hash) :
-            $cookie_hash = '';
-        elseif ($cookie_hash == 'true') :
-            $cookie_hash = '_' . COOKIEHASH;
-        endif;
-
-        $this->setCookie($cookie_name . $cookie_hash, $cookie_expire);
-
-        wp_die(1);
-    }
-
-    /**
-     * Récupération d'un cookie.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getCookie()
     {
@@ -174,14 +149,9 @@ class CookieNotice extends PartialController
     }
 
     /**
-     * Définition d'un cookie.
-     *
-     * @var string $name Nom de qualification du cookie.
-     * @var int $cookie_expire Temps avant l'expiration du cookie. Exprimé en secondes.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    protected function setCookie($cookie_name, $cookie_expire = 0)
+    public function setCookie($cookie_name, $cookie_expire = 0)
     {
         $secure = ('https' === parse_url(home_url(), PHP_URL_SCHEME));
 
@@ -212,5 +182,27 @@ class CookieNotice extends PartialController
         endif;
 
         $response->send();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function wp_ajax()
+    {
+        check_ajax_referer('tiFyPartial-CookieNotice');
+
+        $cookie_name = request()->post('cookie_name', '');
+        $cookie_hash = request()->post('cookie_hash', '');
+        $cookie_expire = request()->post('cookie_expire', 0);
+
+        if (!$cookie_hash) :
+            $cookie_hash = '';
+        elseif ($cookie_hash == 'true') :
+            $cookie_hash = '_' . COOKIEHASH;
+        endif;
+
+        $this->setCookie($cookie_name . $cookie_hash, $cookie_expire);
+
+        wp_die(1);
     }
 }

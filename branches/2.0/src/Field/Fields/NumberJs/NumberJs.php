@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\NumberJs;
 
+use tiFy\Contracts\Field\NumberJs as NumberJsContract;
 use tiFy\Field\FieldController;
 
-class NumberJs extends FieldController
+class NumberJs extends FieldController implements NumberJsContract
 {
     /**
      * Liste des attributs de configuration.

@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\TextRemaining;
 
+use tiFy\Contracts\Field\TextRemaining as TextRemainingContract;
 use tiFy\Field\FieldController;
 
-class TextRemaining extends FieldController
+class TextRemaining extends FieldController implements TextRemainingContract
 {
     /**
      * Liste des attributs de configuration.
@@ -119,7 +120,7 @@ class TextRemaining extends FieldController
     {
         $this->parseName();
 
-        foreach($this->get('view', []) as $key => $value) :
+        foreach($this->get('viewer', []) as $key => $value) :
             $this->viewer()->set($key, $value);
         endforeach;
     }

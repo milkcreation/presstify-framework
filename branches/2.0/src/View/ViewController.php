@@ -11,7 +11,7 @@ use tiFy\Kernel\Tools;
 class ViewController extends Template implements ViewControllerContract
 {
     /**
-     * Instance du moteur de gestion des gabarits.
+     * Instance du controleur de gestion des gabarits.
      * @var ViewEngine
      */
     protected $engine;
@@ -67,6 +67,14 @@ class ViewController extends Template implements ViewControllerContract
     public function get($key, $default = '')
     {
         return Arr::get($this->data, $key, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEngine()
+    {
+        return $this->engine;
     }
 
     /**

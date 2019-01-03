@@ -4,11 +4,17 @@ namespace tiFy\Field\Fields\CheckboxCollection;
 
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Field\CheckboxChoices as CheckboxChoicesContract;
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\Field\CheckboxCollection;
 use tiFy\Kernel\Collection\Collection;
 
 class CheckboxChoices extends Collection implements CheckboxChoicesContract
 {
+    /**
+     * Instance du champ associé.
+     * @var CheckboxCollection
+     */
+    protected $field;
+
     /**
      * Liste des éléments.
      * @var CheckboxChoice[]
@@ -16,23 +22,14 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
     protected $items = [];
 
     /**
-     * Instance du controleur d'affichage des gabarits.
-     * @var ViewEngine
-     */
-    protected $viewer;
-
-    /**
      * CONSTRUCTEUR.
      *
      * @param array $items Liste des éléments
      * @param string $name Nom de soumission de l'élément dans la requête de traitement.
-     * @param ViewEngine $viewer Instance du controleur d'affichage des gabarits.
      * @param mixed $checked Liste des éléments selectionnés.
      */
-    public function __construct($items, $name, ViewEngine $viewer, $checked = null)
+    public function __construct($items, $name, $checked = null)
     {
-        $this->viewer = $viewer;
-
         array_walk($items, function($item, $key) use ($name) {
             $this->wrap($item, $key)->setName($name);
         });
@@ -53,7 +50,7 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
      */
     public function render()
     {
-        return $this->viewer->make('choices', ['items' => $this->items]);
+        return $this->field->viewer()->make('choices', ['items' => $this->items]);
     }
 
     /**
@@ -69,6 +66,18 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
                     $item->setChecked();
                 endif;
             });
+        endif;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setField(CheckboxCollection $field)
+    {
+        if (!$this->field instanceof CheckboxCollection) :
+            $this->field = $field;
         endif;
 
         return $this;

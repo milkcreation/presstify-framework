@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\Button;
 
+use tiFy\Contracts\Field\Button as ButtonContract;
 use tiFy\Field\FieldController;
 
-class Button extends FieldController
+class Button extends FieldController implements ButtonContract
 {
     /**
      * Liste des attributs de configuration.

@@ -2,8 +2,8 @@
 
 namespace tiFy\Field\Fields\SelectJs;
 
+use tiFy\Contracts\Field\Select;
 use tiFy\Contracts\Kernel\ParamsBag;
-use tiFy\Contracts\View\ViewEngine;
 use tiFy\Field\Fields\Select\SelectChoice;
 use tiFy\Field\Fields\Select\SelectChoices;
 use WP_Query;
@@ -11,22 +11,19 @@ use WP_Query;
 class SelectJsChoices extends SelectChoices
 {
     /**
-     * Instance du controleur de gestion des gabarits d'affichage.
-     * @var ViewEngine
+     * Instance du champ associé.
+     * @var SelectJs
      */
-    protected $viewer;
+    protected $field;
 
     /**
      * CONSTRUCTEUR.
      *
      * @param array|ParamsBag $items
-     * @param ViewEngine $viewer
      * @param mixed $selected Liste des éléments selectionnés
      */
-    public function __construct($items, ViewEngine $viewer, $selected = null)
+    public function __construct($items, $selected = null)
     {
-        $this->viewer = $viewer;
-
         if ($items instanceof ParamsBag) :
             $args = is_null($selected)
                 ? $items->all()
@@ -35,9 +32,8 @@ class SelectJsChoices extends SelectChoices
                     $items->all()
                 );
 
-            $items = $this->query($args);
+            $this->query($args);
 
-            array_walk($items, [$this, 'wrap']);
             $this->setSelected($selected);
         else :
             parent::__construct($items, $selected);
@@ -45,11 +41,7 @@ class SelectJsChoices extends SelectChoices
     }
 
     /**
-     * Requête de récupération des éléments.
-     *
-     * @param array $args Arguments de requête de récupération des éléments.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function query($args)
     {
@@ -76,7 +68,62 @@ class SelectJsChoices extends SelectChoices
 
         wp_reset_query();
 
-        return $items;
+        array_walk($items, [$this, 'wrap']);
+    }
+
+    /**
+     * Définition du controleur de champ associé.
+     *
+     * @param Select $field
+     *
+     * @return static
+     */
+    public function setField(Select $field)
+    {
+        if (!$this->field instanceof Select) :
+            $this->field = $field;
+        endif;
+
+        return $this;
+    }
+
+    /**
+     * Définition du controleur d'élement.
+     *
+     * @param SelectChoice $items
+     *
+     * @return static
+     */
+    public function setItem(SelectChoice $item)
+    {
+        $item->set('picker',  (string)$this->field->viewer()->make('picker-item', compact('item')));
+        $item->set('selection', (string)$this->field->viewer()->make('selection-item', compact('item')));
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function walk($items = [], $depth = 0, $parent = null)
+    {
+        $output = "";
+        foreach ($items as $item) :
+            if ($item->getParent() !== $parent) :
+                continue;
+            endif;
+
+            $item->setDepth($depth);
+
+            $this->setItem($item);
+
+            $output .= $item->tagOpen();
+            $output .= $item->tagContent();
+            $output .= $this->walk($items, ($depth + 1), $item->getName());
+            $output .= $item->tagClose();
+        endforeach;
+
+        return $output;
     }
 
     /**
@@ -86,10 +133,6 @@ class SelectJsChoices extends SelectChoices
     {
         if (!$item instanceof SelectChoice) :
             $item = new SelectChoice($name, $item);
-            $args = $item->all();
-
-            $item->set('picker',  (string)$this->viewer->make('picker-item', $args));
-            $item->set('selection', (string)$this->viewer->make('selection-item', $args));
         endif;
 
         return $this->items[] = $item;

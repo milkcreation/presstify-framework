@@ -26,4 +26,13 @@ interface CheckboxChoices extends Collection
      * @return self
      */
     public function setChecked($checked = null);
+
+    /**
+     * Définition du controleur de champ associé.
+     *
+     * @param CheckboxCollection $field
+     *
+     * @return static
+     */
+    public function setField(CheckboxCollection $field);
 }

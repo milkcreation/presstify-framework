@@ -15,7 +15,7 @@ use tiFy\Contracts\Partial\PartialManager as PartialManagerContract;
 use tiFy\Partial\Partials\Accordion\Accordion;
 use tiFy\Partial\Partials\Breadcrumb\Breadcrumb;
 use tiFy\Partial\Partials\CookieNotice\CookieNotice;
-use tiFy\Partial\Partials\HolderImage\HolderImage;
+use tiFy\Partial\Partials\Holder\Holder;
 use tiFy\Partial\Partials\Modal\Modal;
 use tiFy\Partial\Partials\Navtabs\Navtabs;
 use tiFy\Partial\Partials\Notice\Notice;
@@ -30,7 +30,7 @@ use tiFy\Partial\Partials\Tag\Tag;
  * @method static Accordion Accordion(string $id = null, array $attrs = [])
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
  * @method static CookieNotice CookieNotice(string $id = null, array $attrs = [])
- * @method static HolderImage HolderImage(string $id = null,array $attrs = [])
+ * @method static Holder Holder(string $id = null,array $attrs = [])
  * @method static Modal Modal(string $id = null,array $attrs = [])
  * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
  * @method static Notice Notice(string $id = null,array $attrs = [])
@@ -57,7 +57,7 @@ final class PartialManager implements PartialManagerContract
         'accordion'     => Accordion::class,
         'breadcrumb'    => Breadcrumb::class,
         'cookie-notice' => CookieNotice::class,
-        'holder-image'  => HolderImage::class,
+        'holder'        => Holder::class,
         'modal'         => Modal::class,
         'navtabs'       => Navtabs::class,
         'notice'        => Notice::class,

@@ -2,9 +2,10 @@
 
 namespace tiFy\Field\Fields\MediaFile;
 
+use tiFy\Contracts\Field\MediaFile as MediaFileContract;
 use tiFy\Field\FieldController;
 
-class MediaFile extends FieldController
+class MediaFile extends FieldController implements MediaFileContract
 {
     /**
      * Liste des attributs de configuration.

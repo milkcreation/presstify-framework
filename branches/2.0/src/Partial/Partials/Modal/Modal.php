@@ -3,9 +3,10 @@
 namespace tiFy\Partial\Partials\Modal;
 
 use Illuminate\Support\Arr;
+use tiFy\Contracts\Partial\Modal as ModalContract;
 use tiFy\Partial\PartialController;
 
-class Modal extends PartialController
+class Modal extends PartialController implements ModalContract
 {
     /**
      * Liste des attributs de configuration.
@@ -217,11 +218,7 @@ class Modal extends PartialController
     }
 
     /**
-     * Affichage d'un lien de déclenchement de la modale.
-     *
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function trigger($attrs = [])
     {
@@ -245,9 +242,7 @@ class Modal extends PartialController
     }
 
     /**
-     * Chargement du contenu de la modale via Ajax.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function wp_ajax()
     {
