@@ -17,8 +17,8 @@ class File
 
         // Vérifie si le chemin du fichier est une url
         if (validator()->isUrl($filename)) :
-            if (preg_match('/^' . preg_quote(site_url('/'), '/') . '/', $filename)) :
-                $filename = preg_replace('/^' . preg_quote(site_url('/'), '/') . '/', \paths()->getPublicPath('/'), $filename);
+            if (preg_match('/^' . preg_quote(url()->root(), '/') . '/', $filename)) :
+                $filename = preg_replace('/^' . preg_quote(url()->root(), '/') . '/', \paths()->getPublicPath('/'), $filename);
 
                 if (file_exists($filename)) :
                     $contents = file_get_contents($filename);

@@ -138,7 +138,6 @@ class MediaDownload implements MediaDownloadContract
         else :
             $baseurl = home_url('/');
             $token = $this->encrypter->encrypt($file);
-
             if (is_numeric($file)) :
                 if ($token !== get_post_meta($file, '_tify_media_download_token', true)) :
                     update_post_meta($file, '_tify_media_download_token', $token);
