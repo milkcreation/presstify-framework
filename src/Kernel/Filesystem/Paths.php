@@ -21,7 +21,7 @@ class Paths extends Filesystem
     protected $basePath;
 
     /**
-     * Chemin absolu vers le repertoire de stockage des fichiers de configuration.
+     * Chemin absolu vers le répertoire de stockage des fichiers de configuration.
      * @var string
      */
     protected $configPath;
@@ -31,6 +31,12 @@ class Paths extends Filesystem
      * @var string
      */
     protected $publicPath;
+
+    /**
+     * Chemin absolu vers le répertoire de stockage des fichiers de journalisation.
+     * @var string
+     */
+    protected $logPath;
 
     /**
      * Chemin absolu vers le répertoire du thème courant.
@@ -94,11 +100,29 @@ class Paths extends Filesystem
         if(!$this->configPath) :
             $this->configPath = !$this->isWpClassic()
                 ? $this->getBasePath('config')
-                : \get_template_directory() . '/config';
+                : get_template_directory() . '/config';
         endif;
 
         return $this->getPath($this->configPath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);
     }
+
+    /**
+     * Récupération du chemin vers un répertoire ou un fichier du répertoire de stockage des rapports de journalisation.
+     *
+     * @param string $path Chemin relatif vers un fichier ou un dossier du répertoire.
+     * @param bool $rel Activation de la sortie du chemin au format relatif.
+     *
+     * @return string
+     */
+    public function getLogPath($path = '', $rel = false)
+    {
+        if(!$this->logPath) :
+            $this->logPath = WP_CONTENT_DIR . '/uploads/log';
+        endif;
+
+        return $this->getPath($this->logPath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);
+    }
+
 
     /**
      * Récupération du chemin vers un répertoire ou un fichier au format absolu ou relatif.
@@ -189,7 +213,7 @@ class Paths extends Filesystem
      */
     public function makeRelativePath($target_path, $base_path = null)
     {
-        $base_path = $base_path ?? $this->getBasePath();
+        $base_path = $base_path ? : $this->getBasePath();
 
         $path = (new SfFilesystem())->makePathRelative($target_path, $base_path);
 
