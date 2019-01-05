@@ -64,7 +64,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function format($format = 'RFC3986', $url = '')
+    public function format(string $format = 'RFC3986', string $url = '')
     {
         return url_factory($url ?: $this->clean())->format($format)->get();
     }
@@ -96,11 +96,11 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function root($path = '')
+    public function root(string $path = '')
     {
         $path = $path ? '/' . ltrim($path, '/') : '';
 
-        return env('SITE_URL') . $path;
+        return config('site_url') . $path;
     }
 
     /**
