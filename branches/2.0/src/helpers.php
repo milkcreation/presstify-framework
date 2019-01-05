@@ -448,7 +448,7 @@ if (! function_exists('validator')) {
 
 if (!function_exists('view')) :
     /**
-     * View - Récupération d'un instance du controleur des vues ou l'affichage d'un gabarit.
+     * View - Récupération d'une instance du controleur des vues ou l'affichage d'un gabarit.
      * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
      * {@internal Sinon récupére le gabarit d'affichage et passe les variables en argument.}
      *
@@ -466,5 +466,17 @@ if (!function_exists('view')) :
         endif;
 
         return $factory->make($view, $data);
+    }
+endif;
+
+if (!function_exists('wp_env')) :
+    /**
+     * Instance du controleur d'environnement Wordpress.
+     *
+     * @return ViewController|ViewEngine
+     */
+    function wp_env()
+    {
+        return app()->get('wp');
     }
 endif;

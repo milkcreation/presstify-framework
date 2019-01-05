@@ -56,12 +56,12 @@ interface Url
      *
      * @return string
      */
-    public function root($path = '');
+    public function root(string $path = '');
 
     /**
      * Récupération d'une url agrémentée d'une liste d'arguments de requête.
      *
-     * @param string[] $args Liste des arguments de requête à inclure.
+     * @param array $args Liste des arguments de requête à inclure.
      * @param string $url Url à agrémenter. Url propre par défaut.
      *
      * @return string

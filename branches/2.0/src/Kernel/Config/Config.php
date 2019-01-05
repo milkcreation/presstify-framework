@@ -66,6 +66,8 @@ class Config extends ParamsBag
                 endswitch;
             endforeach;
         endif;
+
+        $this->set('site_url', env('SITE_URL'));
     }
 
     /**

@@ -16,6 +16,7 @@ class WpServiceProvider extends AppServiceProvider
      * @var array
      */
     protected $provides = [
+        'wp',
         'wp.routing.router',
     ];
 
@@ -24,6 +25,8 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
+        $this->registerManager();
+
         $this->app->bind('wp.ctags', function () { return new WpCtags(); });
 
         $this->app->singleton('wp.media.download', function () { return new MediaDownload(); })->build();
@@ -39,12 +42,10 @@ class WpServiceProvider extends AppServiceProvider
 
         $this->app->bind('wp.user', function () { return new WpUser(); });
 
-        add_action(
-            'after_setup_tify', function () {
-
-            $this->app->get('post_type');
-
-            $this->app->get('wp.routing.router');
+        add_action('after_setup_tify', function () {
+            $this->getContainer()->get('wp');
+            $this->getContainer()->get('wp.routing.router');
+            $this->getContainer()->get('post_type');
         });
     }
 
@@ -54,6 +55,16 @@ class WpServiceProvider extends AppServiceProvider
     public function register()
     {
         $this->registerRouting();
+    }
+
+    /**
+     * Déclaration du controleur de gestion de Wordpress.
+     *
+     * @return void
+     */
+    public function registerManager()
+    {
+        $this->app->share('wp', WpManager::class);
     }
 
     /**
