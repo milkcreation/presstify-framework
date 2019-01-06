@@ -45,7 +45,7 @@ class AppContainer extends Container implements AppInterface
     {
         return array_merge(
             $this->serviceProviders,
-            $this->appConfig('providers', [])
+            config('app.providers', [])
         );
     }
 

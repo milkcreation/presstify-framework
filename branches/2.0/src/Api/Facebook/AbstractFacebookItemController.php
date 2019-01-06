@@ -3,7 +3,6 @@
 namespace tiFy\Api\Facebook;
 
 use tiFy\Contracts\Api\FacebookItemInterface;
-use tiFy\Api\Facebook\FacebookResolverTrait;
 
 abstract class AbstractFacebookItemController implements FacebookItemInterface
 {

@@ -3,8 +3,6 @@
 namespace tiFy\Cron;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Cron\Cron;
-use tiFy\Cron\CronJobBaseController;
 
 class CronServiceProvider extends AppServiceProvider
 {

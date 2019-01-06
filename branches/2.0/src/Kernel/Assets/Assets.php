@@ -43,10 +43,11 @@ final class Assets implements AssetsContract
      */
     public function __construct()
     {
+        if (!app()) { return; }
+
         $this->thirdParty = require_once(__DIR__ . '/Resources/config/third-party.php');
 
         $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
-        $this->setDataJs('ajax_response', [], 'both', false);
 
         add_action(
             'admin_head',
@@ -209,13 +210,5 @@ final class Assets implements AssetsContract
                 Arr::set($this->inlineJs, "user{$place}", Arr::get($this->inlineJs, "user{$place}", '') . (string)$js);
                 break;
         endswitch;
-    }
-
-    /**
-     * @todo
-     */
-    public function setAjaxResponse($key, $value, $context = ['admin', 'user'])
-    {
-        $this->setDataJs("ajaxResponse.{$key}", $value, $context, true);
     }
 }

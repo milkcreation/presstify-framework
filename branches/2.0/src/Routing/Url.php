@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Routing;
 
@@ -48,7 +48,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function cleanArgs()
+    public function cleanArgs() :array
     {
         return wp_removable_query_args();
     }
@@ -56,7 +56,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function current()
+    public function current() : string
     {
         return $this->request->getUriForPath('');
     }
@@ -64,7 +64,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function format(string $format = 'RFC3986', string $url = '')
+    public function format(string $format = 'RFC3986', string $url = '') : string
     {
         return url_factory($url ?: $this->clean())->format($format)->get();
     }
@@ -72,7 +72,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function full()
+    public function full() : string
     {
         return $this->request->fullUrl();
     }
@@ -80,7 +80,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function rewriteBase()
+    public function rewriteBase() : string
     {
         if (is_null($this->rewriteBase)) :
             $this->rewriteBase = $this->request->server->has('CONTEXT_PREFIX')
@@ -96,7 +96,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function root(string $path = '')
+    public function root(string $path = '') : string
     {
         $path = $path ? '/' . ltrim($path, '/') : '';
 
@@ -106,7 +106,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function with(array $args, string $url = '')
+    public function with(array $args, string $url = '') : string
     {
         return url_factory($url ?: $this->clean())->with($args)->get();
     }
@@ -114,7 +114,7 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function without(array $args, string $url = '')
+    public function without(array $args, string $url = '') : string
     {
         return url_factory($url ?: $this->clean())->without($args)->get();
     }

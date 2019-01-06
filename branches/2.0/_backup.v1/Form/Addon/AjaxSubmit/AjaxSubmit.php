@@ -2,7 +2,6 @@
 
 namespace tiFy\Form\Addon\AjaxSubmit;
 
-use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\AddonController;
 
 class AjaxSubmit extends AddonController

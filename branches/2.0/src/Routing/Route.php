@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Routing;
 
@@ -47,7 +47,7 @@ class Route extends LeagueRoute implements RouteContract
     /**
      * {@inheritdoc}
      */
-    public function getUrl($params = [], $absolute = true)
+    public function getUrl(array $params = [], bool $absolute = true): string
     {
         $routes = (new RouteParser())->parse($this->router->parseRoutePath($this->getPath()));
 
@@ -88,7 +88,7 @@ class Route extends LeagueRoute implements RouteContract
     /**
      * {@inheritdoc}
      */
-    public function isCurrent()
+    public function isCurrent(): bool
     {
         return $this->current;
     }

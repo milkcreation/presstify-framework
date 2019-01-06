@@ -3,7 +3,6 @@
 namespace tiFy\Form\Addon\User;
 
 use Illuminate\Support\Arr;
-use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Form\AddonController;
