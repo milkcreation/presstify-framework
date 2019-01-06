@@ -4,9 +4,6 @@ namespace tiFy\Column;
 
 use tiFy\View\ViewController;
 
-/**
- * Class ColumnView
- */
 class ColumnView extends ViewController
 {
     /**

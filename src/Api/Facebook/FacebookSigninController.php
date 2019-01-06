@@ -14,8 +14,6 @@ namespace tiFy\Api\Facebook;
 
 use Facebook\Authentication\AccessToken;
 use Facebook\Authentication\AccessTokenMetadata;
-use tiFy\Api\Facebook\AbstractFacebookItemController;
-use tiFy\Api\Facebook\FacebookResolverTrait;
 
 class FacebookSigninController extends AbstractFacebookItemController
 {

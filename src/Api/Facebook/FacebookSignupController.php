@@ -11,9 +11,6 @@
 
 namespace tiFy\Api\Facebook;
 
-use tiFy\Api\Facebook\AbstractFacebookItemController;
-use tiFy\Api\Facebook\FacebookResolverTrait;
-
 class FacebookSignupController extends AbstractFacebookItemController
 {
     use FacebookResolverTrait;

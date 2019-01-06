@@ -4,7 +4,6 @@ namespace tiFy\Cron;
 
 use \DateTimeZone;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use tiFy\Contracts\Cron\CronJobInterface;
 use tiFy\Contracts\Kernel\Logger;
 use tiFy\Kernel\Params\ParamsBag;

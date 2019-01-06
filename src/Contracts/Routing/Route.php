@@ -7,6 +7,7 @@ use League\Route\RouteGroup;
 use League\Route\Middleware\MiddlewareAwareInterface;
 use League\Route\Strategy\StrategyAwareInterface;
 use League\Route\RouteConditionHandlerInterface;
+use phpDocumentor\Reflection\Types\Boolean;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
@@ -25,7 +26,7 @@ interface Route extends
      *
      * @return callable
      */
-    public function getCallable(?ContainerInterface $container = null) : callable;
+    public function getCallable(?ContainerInterface $container = null): callable;
 
     /**
      * Récupération de la méthode de traitement de la requête HTTP associée.
@@ -58,7 +59,7 @@ interface Route extends
      *
      * @throws \LogicException
      */
-    public function getUrl($params = [], $absolute = true);
+    public function getUrl(array $params = [], bool $absolute = true): string;
 
     /**
      * Récupération de la liste des arguments passée dans la requête HTTP courante.
@@ -72,7 +73,7 @@ interface Route extends
      *
      * @return boolean
      */
-    public function isCurrent();
+    public function isCurrent(): bool;
 
     /**
      * Définition de l'indicateur de route en réponse à la requête courante.
@@ -86,7 +87,7 @@ interface Route extends
      *
      * @param RouteGroup $group
      *
-     * @return $this
+     * @return static
      */
     public function setParentGroup(RouteGroup $group): LeagueRoute;
 

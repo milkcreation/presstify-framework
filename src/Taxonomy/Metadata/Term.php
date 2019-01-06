@@ -139,11 +139,9 @@ final class Term extends AppController
 
         // Récupération des metadonnés en $_POST
         foreach ($this->metaKeys[$taxonomy] as $key) :
-            if (! $this->appRequest('POST')->has($key)) :
-                continue;
+            if ($value = request()->post($key)) :
+                $request[$key] = $value;
             endif;
-
-            $request[$key] = $this->appRequest('POST')->get($key, '');
         endforeach;
 
         foreach ($meta_keys as $meta_key) :

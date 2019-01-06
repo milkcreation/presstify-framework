@@ -14,7 +14,7 @@ class Assets extends PatternBaseAssets
         if ($preview_item_mode = $this->pattern->param('preview_item_mode')) :
             wp_enqueue_script(
                 'ViewPattern-listTable',
-                '', //$this->appAssetUrl('/AdminView/ListTable/js/scripts.js'),
+                '',
                 ['jquery', 'url'],
                 171118,
                 true

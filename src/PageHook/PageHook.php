@@ -4,7 +4,6 @@ namespace tiFy\PageHook;
 
 use tiFy\App\AppController;
 use tiFy\Contracts\Metabox\MetaboxManager;
-use tiFy\Options\Options;
 use tiFy\PageHook\Admin\PageHookAdminOptions;
 
 class PageHook extends AppController
@@ -20,7 +19,7 @@ class PageHook extends AppController
      */
     public function appBoot()
     {
-        if ($config = $this->appConfig()) :
+        if ($config = config('page-hook', [])) :
             foreach ($config as $name => $attrs) :
                 $this->register($name, $attrs);
             endforeach;

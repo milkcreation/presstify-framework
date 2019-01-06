@@ -2,7 +2,6 @@
 
 namespace tiFy\Column;
 
-use tiFy\Column\ColumnItemController;
 use tiFy\Contracts\Column\ColumnDisplayInterface;
 use tiFy\Contracts\View\ViewEngine;
 

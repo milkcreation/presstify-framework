@@ -110,9 +110,13 @@ trait ParamsBagTrait
     /**
      * {@inheritdoc}
      */
-    public function set($key, $value)
+    public function set($key, $value = null)
     {
-        Arr::set($this->attributes, $key, $value);
+        $keys = is_array($key) ? $key : [$key => $value];
+
+        foreach ($keys as $k => $v) :
+            Arr::set($this->attributes, $k, $v);
+        endforeach;
 
         return $this;
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Routing;
 
@@ -16,14 +16,14 @@ interface Url
      *
      * @return array
      */
-    public function cleanArgs();
+    public function cleanArgs() : array;
 
     /**
      * Récupération de l'url courante. Sans les arguments de requête.
      *
      * @return string
      */
-    public function current();
+    public function current() : string;
 
     /**
      * Formatage d'une url au format RFC3986|RFC3987.
@@ -33,21 +33,21 @@ interface Url
      *
      * @return string
      */
-    public function format(string $format = 'RFC3986', string $url = '');
+    public function format(string $format = 'RFC3986', string $url = '') : string;
 
     /**
      * Récupération de l'url courante complète. Arguments de requête inclus.
      *
      * @return string
      */
-    public function full();
+    public function full() : string;
 
     /**
      * Récupération de la sous arborescence du chemin de l'url.
      *
      * @return string
      */
-    public function rewriteBase();
+    public function rewriteBase() : string;
 
     /**
      * Récupération de l'url vers la racine.
@@ -56,7 +56,7 @@ interface Url
      *
      * @return string
      */
-    public function root(string $path = '');
+    public function root(string $path = '') : string;
 
     /**
      * Récupération d'une url agrémentée d'une liste d'arguments de requête.
@@ -66,7 +66,7 @@ interface Url
      *
      * @return string
      */
-    public function with(array $args, string $url = '');
+    public function with(array $args, string $url = '') : string;
 
     /**
      * Récupération d'une url nettoyée d'une liste d'arguments de requête.
@@ -76,5 +76,5 @@ interface Url
      *
      * @return string
      */
-    public function without(array $args, string $url = '');
+    public function without(array $args, string $url = '') : string;
 }

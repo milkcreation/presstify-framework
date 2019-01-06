@@ -147,7 +147,7 @@ final class Post extends AppController
         endif;
 
         // Bypass - Si l'argument de requête renseignant l'indication de type de post est manquant.
-        if (! $post_type = $this->appRequest('POST')->get('post_type', '')) :
+        if (! $post_type = request()->post('post_type', '')) :
             return;
         endif;
 
@@ -184,11 +184,9 @@ final class Post extends AppController
 
         // Récupération des metadonnés en requête $_POST
         foreach ($this->metaKeys[$post_type] as $key) :
-            if (! $this->appRequest('POST')->has($key)) :
-                continue;
+            if ($value = request()->post($key)) :
+                $request[$key] = $value;
             endif;
-
-            $request[$key] = $this->appRequest('POST')->get($key, '');
         endforeach;
 
         foreach ($meta_keys as $meta_key) :

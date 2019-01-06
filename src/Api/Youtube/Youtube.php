@@ -59,7 +59,7 @@ class Youtube extends MadcodaYoutube
      *
      * @param array $attrs
      *
-     * @return void
+     * @return static
      */
     public static function make($attrs = [])
     {

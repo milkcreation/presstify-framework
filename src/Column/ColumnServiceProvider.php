@@ -3,8 +3,6 @@
 namespace tiFy\Column;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Column\Column;
-use tiFy\Column\ColumnItemController;
 
 class ColumnServiceProvider extends AppServiceProvider
 {

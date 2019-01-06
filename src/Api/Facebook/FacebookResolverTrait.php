@@ -7,8 +7,6 @@
 
 namespace tiFy\Api\Facebook;
 
-use tiFy\Api\Facebook\Facebook;
-
 trait FacebookResolverTrait
 {
     /**

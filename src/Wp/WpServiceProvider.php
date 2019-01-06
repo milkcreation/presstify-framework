@@ -45,7 +45,10 @@ class WpServiceProvider extends AppServiceProvider
         add_action('after_setup_tify', function () {
             $this->getContainer()->get('wp');
             $this->getContainer()->get('wp.routing.router');
-            $this->getContainer()->get('post_type');
+
+            if ($this->getContainer()->has('post_type')) :
+                $this->getContainer()->get('post_type');
+            endif;
         });
     }
 
