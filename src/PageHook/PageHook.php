@@ -2,8 +2,8 @@
 
 namespace tiFy\PageHook;
 
-use tiFy\Apps\AppController;
-use tiFy\Options\Options;
+use tiFy\App\AppController;
+use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\PageHook\Admin\PageHookAdminOptions;
 
 class PageHook extends AppController
@@ -19,15 +19,33 @@ class PageHook extends AppController
      */
     public function appBoot()
     {
-        if ($config = $this->appConfig()) :
+        if ($config = config('page-hook', [])) :
             foreach ($config as $name => $attrs) :
                 $this->register($name, $attrs);
             endforeach;
         endif;
 
-        do_action('tify_page_hook_register');
+        add_action(
+            'init',
+            function () {
+                if (!$this->items) :
+                    return;
+                endif;
 
-        $this->appAddAction('tify_options_register');
+                /** @var MetaboxManager $metabox */
+                $metabox = app('metabox');
+                $metabox->add(
+                    'tiFyPageHook-optionsNode',
+                    'tify_options@options',
+                    [
+                        'title'     => __('Pages d\'accroche', 'tify'),
+                        'content'   => PageHookAdminOptions::class
+                    ]
+                );
+            }
+        );
+
+        do_action('tify_page_hook_register', $this);
     }
 
     /**
@@ -115,27 +133,5 @@ class PageHook extends AppController
     public function register($name, $attrs = [])
     {
         return $this->items[$name] = new PageHookItemController($name, $attrs, $this);
-    }
-
-    /**
-     * Déclaration de sections de boîte à onglet de l'interface d'administration des options de presstiFy.
-     *
-     * @param Options $options Classe de rappel du controleur des options de presstiFy.
-     *
-     * @return void
-     */
-    public function tify_options_register($options)
-    {
-        if (!$this->items) :
-            return;
-        endif;
-
-        $options->register(
-            [
-                'name'      => 'tiFyPageHook-optionsNode',
-                'title'     => __('Pages d\'accroche', 'tify'),
-                'content'   => PageHookAdminOptions::class
-            ]
-        );
     }
 }
