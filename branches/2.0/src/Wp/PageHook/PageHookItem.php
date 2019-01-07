@@ -1,18 +1,12 @@
 <?php
 
-namespace tiFy\PageHook;
+namespace tiFy\Wp\PageHook;
 
-use tiFy\Contracts\App\AppInterface;
+use tiFy\Contracts\Wp\PageHookItem as PageHookItemContract;
 use tiFy\Kernel\Params\ParamsBag;
 
-class PageHookItemController extends ParamsBag implements PageHookItemInterface
+class PageHookItem extends ParamsBag implements PageHookItemContract
 {
-    /**
-     * Classe de rappel du controleur de l'application associée.
-     * @var AppInterface
-     */
-    protected $app;
-
     /**
      * Nom de qualification.
      * @var string
@@ -50,16 +44,14 @@ class PageHookItemController extends ParamsBag implements PageHookItemInterface
      *
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
-     * @param AppInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return void
      */
-    public function __construct($name,  $attrs = [], $app)
+    public function __construct($name,  $attrs = [])
     {
         $this->name = $name;
-        $this->app = $app;
 
-        parent::__construct($attrs, $app);
+        parent::__construct($attrs);
     }
 
     /**
@@ -68,7 +60,7 @@ class PageHookItemController extends ParamsBag implements PageHookItemInterface
     public function defaults()
     {
         return [
-            'option_name'      => 'tFyPageHook_' . $this->name,
+            'option_name'      => 'page_hook_' . $this->name,
             'title'            => $this->name,
             'desc'             => '',
             'object_type'      => 'post',
@@ -125,7 +117,7 @@ class PageHookItemController extends ParamsBag implements PageHookItemInterface
     public function getPermalink()
     {
         return ($id = $this->getId())
-            ? \get_permalink($id)
+            ? get_permalink($id)
             : '';
     }
 
@@ -142,7 +134,7 @@ class PageHookItemController extends ParamsBag implements PageHookItemInterface
      */
     public function isCurrent($post = null)
     {
-        if (!$post = \get_post($post)) :
+        if (!$post = get_post($post)) :
             return false;
         endif;
 

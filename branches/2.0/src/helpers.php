@@ -23,9 +23,10 @@ use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Contracts\View\ViewPattern;
 use tiFy\Contracts\View\ViewPatternController;
+use tiFy\Contracts\Wp\PageHook;
+use tiFy\Contracts\Wp\PageHookItem;
 use tiFy\Kernel\Kernel;
 use tiFy\Kernel\Http\RedirectResponse as HttpRedirect;
-
 
 /**
  * KERNEL
@@ -98,13 +99,17 @@ endif;
 
 if (!function_exists('config')) :
     /**
-     * Config - Controleur de configuration.
-     * {@internal Si $key est null > Retourne la classe de rappel du controleur.}
-     * {@internal Si $key est un tableau > Utilise le tableau en tant que liste des attributs de configuration.}
+     * Controleur de configuration.
+     * {@internal
+     * - null $key Retourne l'instance du controleur de configuration.
+     * - array $key Définition d'attributs de configuration.
+     * - string $key Récupération de la valeur d'un attribut de configuration.
+     * }
      *
-     * @param null|array|string Clé d'indice|Liste des attributs de configuration à définir.
+     * @param null|array|string Clé d'indice (Syntaxte à point permise)|Liste des attributs de configuration à définir.
+     * @param mixed $default Valeur de retour par défaut lors de la récupération d'un attribut.
      *
-     * @return null|mixed|\tiFy\Kernel\Config\Config
+     * @return mixed|\tiFy\Kernel\Config\Config
      */
     function config($key = null, $default = null)
     {
@@ -113,14 +118,11 @@ if (!function_exists('config')) :
 
         if (is_null($key)) :
             return $factory;
+        elseif (is_array($key)) :
+            return $factory->set($key);
+        else :
+            return $factory->get($key, $default);
         endif;
-
-        if (is_array($key)) :
-            $factory->set($key);
-            return null;
-        endif;
-
-        return $factory->get($key, $default);
     }
 endif;
 
@@ -211,6 +213,34 @@ if (!function_exists('logger')) :
     function logger()
     {
         return app('logger');
+    }
+endif;
+
+if (!function_exists('page_hook')) :
+    /**
+     * Instance de controleur de page d'accroche
+     * {@internal
+     * - null $name Récupére l'instance du controleur.
+     * - string $name Récupére l'instance du controleur de l'élément déclaré.
+     * - array $name Déclaration des éléments
+     * }
+     *
+     * @param null|string $name Nom de qualification de l'élément à récupérer.
+     *
+     * @return PageHook|PageHookItem
+     */
+    function page_hook($name = null)
+    {
+        /** @var PageHook $factory */
+        $factory = app()->get('wp.page-hook');
+
+        if (is_null($name)) :
+            return $factory;
+        elseif (is_array($name)) :
+            return $factory->set($name);
+        else :
+            return $factory->get($name);
+        endif;
     }
 endif;
 
@@ -311,7 +341,7 @@ if (!function_exists('post_type')) :
     }
 endif;
 
-if (! function_exists('redirect')) {
+if (!function_exists('redirect')) {
     /**
      * HTTP - Récupération d'une instance du contrôleur de redirection ou redirection vers une url.
      *

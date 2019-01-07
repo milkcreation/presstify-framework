@@ -150,7 +150,7 @@ jQuery(function ($) {
 
             let $items = $('[data-control="repeater.items"]', this.el),
                 index = $('[data-control="repeater.item"]', this.el).length,
-                ajax = $.extend(this.option('ajax'), {index: index});
+                ajax = $.extend(true, this.option('ajax'), {data: {index: index}});
 
             this.xhr = $.ajax(ajax)
                 .done(function (resp) {

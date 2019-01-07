@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\PageHook;
+namespace tiFy\Contracts\Wp;
 
 use tiFy\Contracts\Kernel\ParamsBag;
 
-interface PageHookItemInterface extends ParamsBag
+interface PageHookItem extends ParamsBag
 {
     /**
      * Récupération de l'identifiant de qualification de la page d'accroche associée.

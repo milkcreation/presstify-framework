@@ -43,12 +43,9 @@ class ApiServiceProvider extends AppServiceProvider
         endif;
 
         if (config('api.recaptcha', [])) :
-            $this->app->singleton(
-                'api.recaptcha',
-                function ($args = []) {
-                    return Recaptcha::create($args);
-                }
-            )->build([config('api.recaptcha', [])]);
+            $this->app->singleton('api.recaptcha', function ($args = []) {
+                return Recaptcha::create($args);
+            })->build([config('api.recaptcha', [])]);
         endif;
 
         if (config('api.youtube', [])) :

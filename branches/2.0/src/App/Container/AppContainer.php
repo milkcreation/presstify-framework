@@ -48,12 +48,4 @@ class AppContainer extends Container implements AppInterface
             config('app.providers', [])
         );
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function has($alias)
-    {
-        return container()->has($alias);
-    }
 }

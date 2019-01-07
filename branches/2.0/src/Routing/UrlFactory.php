@@ -38,7 +38,7 @@ class UrlFactory implements UrlFactoryContract
      */
     public function __toString()
     {
-        return $this->get();
+        return (string) $this->get();
     }
 
     /**
@@ -72,7 +72,7 @@ class UrlFactory implements UrlFactoryContract
      */
     public function with(array $args)
     {
-        $this->url = (new AppendQuery(Query::createFromPairs($args)))->process($this->url);
+        $this->url = (new AppendQuery((string) Query::createFromPairs($args)))->process($this->url);
 
         return $this;
     }

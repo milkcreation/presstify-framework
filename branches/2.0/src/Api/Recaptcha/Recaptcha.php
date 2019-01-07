@@ -54,25 +54,19 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
                 'wp_footer',
                 function () {
                     if ($this->widgets) :
+                        $js = "var onloadCallback=function(){";
+                        foreach($this->widgets as $id => $params) :
+                            $js .= "let el=document.getElementById('{$id}');";
+                            $js .= "if(typeof(el)!='undefined' && el!=null){";
+                            $js .= "grecaptcha.render('{$id}', " . json_encode($params) . ");";
+                            $js .= "}";
+                        endforeach;
+                        $js .= "};";
+
+                        assets()->addInlineJs($js, 'user', true);
                     ?><script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=<?php echo $this->getLanguage(); ?>&onload=onloadCallback&render=explicit" async defer></script><?php
                     endif;
                 }
-            );
-
-            add_action(
-                'wp_footer',
-                function () {
-                    if ($this->widgets) :
-                        $js = "var onloadCallback=function(){";
-                        foreach($this->widgets as $id => $params) :
-                            $js .= "grecaptcha.render('{$id}', " . json_encode($params) . ");";
-                        endforeach;
-                        $js .= '};';
-
-                        assets()->addInlineJs($js, 'user', true);
-                    endif;
-                },
-                1
             );
         } catch (\RuntimeException $e) {
             wp_die($e->getMessage(), __('Api reCaptcha : Erreur de configuration', 'tify'), $e->getCode());
