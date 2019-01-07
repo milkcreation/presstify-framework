@@ -3,21 +3,36 @@
 namespace tiFy\PostType\Metabox\Fileshare;
 
 use tiFy\Metabox\MetaboxWpPostController;
-use tiFy\PostType\Metadata\Post as PostMeta;
 
 class Fileshare extends MetaboxWpPostController
 {
     /**
      * {@inheritdoc}
      */
+    public function boot()
+    {
+        add_action(
+            'wp_ajax_metabox_fileshare',
+            [$this, 'wp_ajax']
+        );
+
+        add_action(
+            'wp_ajax_nopriv_metabox_fileshare',
+            [$this, 'wp_ajax']
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function defaults()
     {
         return [
-            'name'     => '_tify_taboox_fileshare',
-            'filetype' => '', // video || application/pdf || video/flv, video/mp4,
-            'max'      => -1,
-            // Gestion des métadonnées en mode single
-            'single'   => false,
+            'name'      => '_fileshare',
+            'filetype'  => '', // video || application/pdf || video/flv, video/mp4,
+            'max'       => - 1,
+            'removable' => true,
+            'sortable'  => true
         ];
     }
 
@@ -26,91 +41,13 @@ class Fileshare extends MetaboxWpPostController
      */
     public function content($post = null, $args = null, $null = null)
     {
-        $metadatas = $this->get('single')
-            ? get_post_meta($post->ID, $this->get('name'), true)
-            : app(PostMeta::class)->get($post->ID, $this->get('name'));
-
-        ob_start();
-        if ($this->get('max', -1) !== 1) :
-            ?>
-            <div id="fileshare-postbox">
-                <?php
-                echo field(
-                    'hidden',
-                    [
-                        'name'  => '_taboox_fileshare_names[]',
-                        'value' => esc_attr($this->get('name')),
-                    ]
-                );
-                ?>
-
-                <ul id="fileshare-<?php echo sanitize_title($this->get('name')); ?>-list" class="fileshare-list">
-                    <?php if (!empty($metadatas)) : ?>
-                        <?php foreach ((array)$metadatas as $meta_id => $meta_value) : ?>
-                            <li>
-                                <span class="icon">
-                                    <?php echo \wp_get_attachment_image($meta_value, [46, 60], true); ?>
-                                </span>
-
-                                <span class="title">
-                                    <?php echo \get_the_title($meta_value); ?>
-                                </span>
-
-                                <span class="mime">
-                                    <?php echo \get_post_mime_type($meta_value); ?>
-                                </span>
-
-                                <a href="#" class="remove tiFy-Button--remove"></a>
-
-                                <?php
-                                echo field(
-                                    'hidden',
-                                    [
-                                        'name'  => $this->get('single', false)
-                                            ? $this->get('name') . '[]'
-                                            : "{$this->get('name')}[{$meta_id}]",
-                                        'value' => esc_attr($meta_value),
-                                    ]
-                                );
-                                ?>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </ul>
-
-                <a href="#" class="add-fileshare button-secondary"
-                    <?php
-                    if ($filetype = $this->get('filetype')) :
-                        echo "data-type=\"{$filetype}\"";
-                    endif;
-                    ?>
-                   data-item_name="<?php echo $this->get('name'); ?>"
-                   data-target="#fileshare-<?php echo sanitize_title($this->get('name')); ?>-list"
-                   data-max="<?php echo $this->get('max', -1); ?>"
-                   data-uploader_title="<?php _e('Sélectionner les fichiers à associer', 'tify'); ?>"
-                >
-                    <span class="dashicons dashicons-media-text" style="vertical-align:middle;"></span>&nbsp;
-                    <?php echo _n(__('Ajouter le fichier', 'tify'), __('Ajouter des fichiers', 'tify'),
-                        (($this->get('max', -1) === 1) ? 1 : 2), 'tify'); ?>
-                </a>
-            </div>
-        <?php
-        else :
-            $name = $this->get('single')
-                ? $this->get('name') . '[]'
-                : "{$this->get('name')}[" . ($metadatas ? key($metadatas) : '') . "]";
-
-            echo field(
-                'media-file',
-                [
-                    'name'     => $name,
-                    'filetype' => $this->get('filetype'),
-                    'value'    => $metadatas ? current($metadatas) : 0,
-                ]
-            );
+        if ($items = get_post_meta($post->ID, $this->get('name'), true) ? : []) :
+            $items = array_wrap($items);
+            array_walk($items, [$this, 'itemWrap']);
         endif;
+        $this->set('items', $items);
 
-        return ob_get_clean();
+        return $this->viewer('content', $this->all());
     }
 
     /**
@@ -119,6 +56,29 @@ class Fileshare extends MetaboxWpPostController
     public function header($post = null, $args = null, $null = null)
     {
         return $this->item->getTitle() ? : __('Partage de fichiers', 'tify');
+    }
+
+    /**
+     * Définition d'un élément.
+     *
+     * @param int $value Identifiant de qualification du média.
+     * @param int|string $index Indice de l'élément.
+     *
+     * @return array
+     */
+    public function itemWrap(&$value, $index)
+    {
+        $name = $this->get('name');
+        $index = !is_numeric($index) ? $index : uniqid();
+
+        return $value = [
+            'name'  => $this->get('single', false) ? "{$name}[]" : "{$name}[{$index}]",
+            'value' => $value,
+            'index' => $index,
+            'icon'  => wp_get_attachment_image($value, [46, 60], true),
+            'title' => get_the_title($value),
+            'mime'  => get_post_mime_type($value)
+        ];
     }
 
     /**
@@ -158,9 +118,80 @@ class Fileshare extends MetaboxWpPostController
      */
     public function metadatas()
     {
-        return [
-            $this->get('name')        => $this->get('single', false),
-            '_taboox_fileshare_names' => true,
-        ];
+        return [$this->get('name')];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parse($attrs = [])
+    {
+        parent::parse($attrs);
+
+        $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'MetaboxFileshare'));
+
+        if ($sortable = $this->get('sortable')) :
+            if (!is_array($sortable)) :
+                $sortable = [];
+            endif;
+            $this->set('sortable', array_merge(
+                    [
+                        'placeholder' => 'MetaboxFileshare-itemPlaceholder',
+                        'axis'        => 'y'
+                    ],
+                    $sortable
+                )
+            );
+        endif;
+
+        $this->set('attrs.data-options', [
+            'ajax'      => array_merge(
+                [
+                    'url'    => admin_url('admin-ajax.php', 'relative'),
+                    'data'   => [
+                        'action'      => 'metabox_fileshare',
+                        '_ajax_nonce' => wp_create_nonce('MetaboxFileshare' . $this->item->getIndex()),
+                        '_id'         => $this->item->getIndex(),
+                        '_viewer'     => $this->get('viewer', []),
+                        'max'         => $this->get('max', - 1),
+                    ],
+                    'method' => 'post',
+                ],
+                $this->get('ajax', [])
+            ),
+            'wp_media'       => [
+                'title' =>  __('Sélectionner les fichiers à associer', 'tify'),
+                'editing' => true,
+                'multiple' => true,
+                'library' => [
+                    'type' => $this->get('filetype')
+                ]
+            ],
+            'name'           => $this->get('name'),
+            'removable'      => $this->get('removable'),
+            'sortable'       => $this->get('sortable'),
+        ]);
+    }
+
+    /**
+     * Récupération des champs via Ajax.
+     *
+     * @return void
+     */
+    public function wp_ajax()
+    {
+        $params = params(request()->request->all());
+
+        check_ajax_referer('MetaboxFileshare' . $params->get('_id'));
+
+        if (($params->get('max') > 0) && ($params->get('index') >= $params->get('max'))) :
+            wp_send_json_error(__('Nombre maximum de fichiers partagés atteint.', 'tify'));
+        else :
+            $this->set('viewer', $params->get('_viewer', []));
+
+            wp_send_json_success(
+                (string)$this->viewer('item-wrap', $this->itemWrap($params->get('value'), $params->get('index')))
+            );
+        endif;
     }
 }

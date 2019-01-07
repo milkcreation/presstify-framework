@@ -9,6 +9,12 @@ use tiFy\Field\FieldView;
 class Recaptcha extends FieldController
 {
     /**
+     * Instance du controleur de champ reCaptcha
+     * @var RecaptchaContract
+     */
+    protected $recaptcha;
+
+    /**
      * Liste des attributs de configuration.
      * @see https://developers.google.com/recaptcha/docs/display
      * @var array $attributs {
@@ -43,8 +49,7 @@ class Recaptcha extends FieldController
     {
         parent::parse($attrs);
 
-        /** @var RecaptchaContract $recaptcha */
-        $recaptcha = app('api.recaptcha');
+        $this->recaptcha = app('api.recaptcha');
 
         if (!$this->get('attrs.id')) :
             $this->set('attrs.id', 'Field-recapcha--' . $this->getIndex());
@@ -53,16 +58,24 @@ class Recaptcha extends FieldController
         $this->set('attrs.data-tabindex', $this->get('tabindex'));
 
         if (!$this->get('sitekey')) :
-            $this->set('sitekey', $recaptcha->getSiteKey());
+            $this->set('sitekey', $this->recaptcha->getSiteKey());
         endif;
+    }
 
-        $recaptcha->addWidgetRender(
+    /**
+     * {@inheritdoc}
+     */
+    public function display()
+    {
+        $this->recaptcha->addWidgetRender(
             $this->get('attrs.id'),
             [
                 'sitekey' => $this->get('sitekey'),
                 'theme'   => $this->get('theme')
             ]
         );
+
+        return parent::display();
     }
 
     /**

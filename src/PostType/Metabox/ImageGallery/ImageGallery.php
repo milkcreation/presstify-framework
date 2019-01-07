@@ -55,7 +55,7 @@ class ImageGallery extends MetaboxWpPostController
     {
         // Bypass
         if (!$image = wp_get_attachment_image_src($id, 'thumbnail')) :
-            return;
+            return '';
         endif;
 
         $item['id'] = $id;

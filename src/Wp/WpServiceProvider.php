@@ -5,6 +5,7 @@ namespace tiFy\Wp;
 use tiFy\App\Container\AppServiceProvider;
 use tiFy\Wp\Media\MediaDownload;
 use tiFy\Wp\Media\MediaManager;
+use tiFy\Wp\PageHook\PageHook;
 use tiFy\Wp\Query\Post;
 use tiFy\Wp\Query\Posts;
 use tiFy\Wp\Routing\Router;
@@ -17,7 +18,8 @@ class WpServiceProvider extends AppServiceProvider
      */
     protected $provides = [
         'wp',
-        'wp.routing.router',
+        'wp.page-hook',
+        'wp.routing.router'
     ];
 
     /**
@@ -44,6 +46,7 @@ class WpServiceProvider extends AppServiceProvider
 
         add_action('after_setup_tify', function () {
             $this->getContainer()->get('wp');
+            $this->getContainer()->get('wp.page-hook');
             $this->getContainer()->get('wp.routing.router');
 
             if ($this->getContainer()->has('post_type')) :
@@ -57,7 +60,18 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function register()
     {
+        $this->registerPageHook();
         $this->registerRouting();
+    }
+
+    /**
+     * Déclaration du controleur des pages d'accroche.
+     *
+     * @return void
+     */
+    public function registerPageHook()
+    {
+        $this->getContainer()->share('wp.page-hook', PageHook::class);
     }
 
     /**
@@ -67,7 +81,7 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function registerManager()
     {
-        $this->app->share('wp', WpManager::class);
+        $this->getContainer()->share('wp', WpManager::class);
     }
 
     /**
@@ -88,6 +102,6 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function registerRouting()
     {
-        $this->app->share('wp.routing.router', function () { return new Router(); });
+        $this->getContainer()->share('wp.routing.router', function () { return new Router(); });
     }
 }

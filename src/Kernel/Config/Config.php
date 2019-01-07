@@ -2,7 +2,6 @@
 
 namespace tiFy\Kernel\Config;
 
-use Illuminate\Support\Arr;
 use Symfony\Component\Finder\Finder;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Filesystem\Paths;
@@ -16,14 +15,6 @@ class Config extends ParamsBag
      * @var Paths
      */
     protected $paths;
-
-    /**
-     * Liste des alias.
-     * @var array
-     */
-    protected $aliases = [
-        'page-hook'   => \tiFy\PageHook\PageHook::class
-    ];
 
     /**
      * CONSTRUCTEUR.
@@ -44,6 +35,7 @@ class Config extends ParamsBag
             endforeach;
         endif;
 
+        $attrs = [];
         if (is_dir(paths()->getConfigPath())) :
             $finder = (new Finder())->files()->name('/\.php$/')->in(paths()->getConfigPath());
             foreach ($finder as $file) :
@@ -52,60 +44,12 @@ class Config extends ParamsBag
                     continue;
                 endif;
 
-                $value = include($file->getRealPath());
-
-                switch($key) :
-                    default :
-                        $this->set($this->getAlias($key), $value);
-                        break;
-                    case 'plugins' :
-                        foreach((array)$value as $plugin => $attrs) :
-                            $this->set($plugin, $attrs);
-                        endforeach;
-                        break;
-                endswitch;
+                $attrs[$key] = include($file->getRealPath());
             endforeach;
         endif;
 
+        parent::__construct($attrs);
+
         $this->set('site_url', env('SITE_URL'));
-    }
-
-    /**
-     * Définition d'un attribut.
-     *
-     * @param string|array $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param null|mixed $value Valeur de l'attribut.
-     *
-     * @return void
-     */
-    public function set($key, $value = null)
-    {
-        $keys = is_array($key) ? $key : [$key => $value];
-
-        foreach ($keys as $key => $value) :
-            parent::set($key, $value);
-        endforeach;
-    }
-
-    /**
-     * Récupération de l'alias de qualification d'un attribut de configuration.
-     *
-     * @param string $key Nom de qualification original.
-     *
-     * @return string
-     */
-    public function getAlias($key)
-    {
-        return Arr::get($this->getAliases(), $key, $key);
-    }
-
-    /**
-     * Récupération de la liste des alias.
-     *
-     * @return array
-     */
-    public function getAliases()
-    {
-        return $this->aliases;
     }
 }

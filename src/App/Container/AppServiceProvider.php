@@ -2,6 +2,7 @@
 
 namespace tiFy\App\Container;
 
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 use tiFy\Contracts\App\AppInterface;
 use tiFy\Contracts\Container\ContainerInterface;
 use tiFy\Contracts\Container\ServiceProviderInterface;
@@ -32,6 +33,8 @@ class AppServiceProvider extends ServiceProvider implements ServiceProviderInter
 
     /**
      * {@inheritdoc}
+     *
+     * @return AppInterface|ContainerInterface|PsrContainerInterface
      */
     public function getContainer()
     {

@@ -3,7 +3,6 @@
 namespace tiFy\Contracts\Container;
 
 use League\Container\ContainerInterface as LeagueContainerInterface;
-use tiFy\Contracts\Container\ServiceInterface;
 
 interface ContainerInterface extends LeagueContainerInterface
 {

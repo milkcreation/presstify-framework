@@ -12,7 +12,6 @@ use App\App;
  * Composants
  */
 
-use tiFy\PageHook\PageHook;
 use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Container\ServiceProvider;
@@ -38,20 +37,6 @@ class KernelServiceProvider extends ServiceProvider
     ];
 
     /**
-     * Liste des packages natifs (composants)
-     * @return array
-     */
-    protected $components = [
-        PageHook::class,
-    ];
-
-    /**
-     * Liste des packages additionnels (extensions)
-     * @return array
-     */
-    protected $plugins = [];
-
-    /**
      * {@inheritdoc}
      */
     public function boot()
@@ -60,12 +45,9 @@ class KernelServiceProvider extends ServiceProvider
             return new EventsManager();
         });
 
-        $this->getContainer()->bind(
-            'events.listener',
-            function (callable $callback) {
-                return new Listener($callback);
-            }
-        );
+        $this->getContainer()->bind('events.listener', function (callable $callback) {
+            return new Listener($callback);
+        });
 
         $this->getContainer()->bind('notices', function () {
             return new Notices();
@@ -97,38 +79,15 @@ class KernelServiceProvider extends ServiceProvider
             return new Assets();
         })->build();
 
-        $this->getContainer()->bind(
-            'encrypter',
-            function ($secret = null, $private = null) {
-                return new Encrypter($secret, $private);
-            }
-        );
+        $this->getContainer()->bind('encrypter', function ($secret = null, $private = null) {
+            return new Encrypter($secret, $private);
+        });
 
-        $this->getContainer()->bind(
-            'logger',
-            function ($name = null, $attrs = []) use ($app) {
-                return Logger::create($name, $attrs, $app);
-            }
-        );
-
-        foreach ($this->getBootables() as $bootable) :
-            $this->getContainer()->resolve($bootable, [$app]);
-        endforeach;
+        $this->getContainer()->bind('logger', function ($name = null, $attrs = []) use ($app) {
+            return Logger::create($name, $attrs, $app);
+        });
 
         do_action('after_setup_tify');
-    }
-
-    /**
-     * Récupération de la liste des services lancés au démarrage.
-     *
-     * @return array
-     */
-    public function getBootables()
-    {
-        return array_merge(
-            $this->components,
-            $this->plugins
-        );
     }
 
     /**
@@ -146,22 +105,9 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function parse()
     {
-        foreach ($this->components as $component) :
-            array_push($this->singletons, $component);
-        endforeach;
-
         /** @todo Modifier le chargement des plugins */
         if (!defined('TIFY_CONFIG_DIR')) :
             define('TIFY_CONFIG_DIR', get_template_directory() . '/config');
-        endif;
-
-        if (file_exists(TIFY_CONFIG_DIR . '/plugins.php')) :
-            $plugins = include TIFY_CONFIG_DIR . '/plugins.php';
-
-            foreach (array_keys($plugins) as $plugin) :
-                array_push($this->plugins, $plugin);
-                array_push($this->singletons, $plugin);
-            endforeach;
         endif;
 
         parent::parse();
