@@ -2,34 +2,32 @@
 
 namespace tiFy\Taxonomy;
 
-use tiFy\Apps\AppController;
+use tiFy\Contracts\Taxonomy\TaxonomyItemInterface;
 
-final class Taxonomy extends AppController
+final class Taxonomy
 {
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * Liste des types de post déclarés.
+     * @var TaxonomyItemInterface[]
      */
-    public function appBoot()
-    {
-        $this->appAddAction('init', null, 0);
-    }
+    protected $items = [];
 
     /**
-     * Initialisation globale de Wordpress.
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function init()
+    public function __construct()
     {
-        if ($taxonomies = $this->appConfig(null, [])) :
-            foreach ($taxonomies as $name => $attrs) :
-                $this->register($name, $attrs);
-            endforeach;
-        endif;
-
-        do_action('tify_taxonomy_register', $this);
+        add_action(
+            'init',
+            function () {
+                foreach (config('taxonomy', []) as $name => $attrs) :
+                    $this->register($name, $attrs);
+                endforeach;
+            },
+            0
+        );
     }
 
     /**
@@ -38,32 +36,26 @@ final class Taxonomy extends AppController
      * @param string $name Nom de qualification de la taxonomie.
      * @param array $attrs Liste des attributs de configuration.
      *
-     * @return null|TaxonomyController
+     * @return TaxonomyItemInterface
      */
     public function register($name, $attrs = [])
     {
-        $alias = "tfy.taxonomy.{$name}";
-        if($this->appServiceHas($alias)) :
-            return;
+        if(!isset($this->items[$name])) :
+            return app()->resolve(TaxonomyItemController::class, [$name, $attrs]);
+        else :
+            return $this->items[$name];
         endif;
-
-        $this->appServiceShare($alias, new TaxonomyController($name, $attrs, $this));
-
-        return $this->appServiceGet($alias);
     }
 
     /**
-     * Récupération d'un controleur de taxonomie.
+     * Récupération d'une instance de controleur de taxonomie.
      *
-     * @param $name Nom de qualification du controleur.
+     * @param string $name Nom de qualification du controleur.
      *
-     * @return null|TaxonomyController
+     * @return null|TaxonomyItemInterface
      */
     public function get($name)
     {
-        $alias = "tfy.taxonomy.{$name}";
-        if($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
+        return isset($this->items['name']) ? $this->items['name'] : null;
     }
 }
