@@ -1,0 +1,89 @@
+{
+    "name": "presstify/framework",
+    "description": "Framework PresstiFy",
+    "keywords": [
+        "framework",
+        "presstify",
+        "wordpress"
+    ],
+    "homepage": "https://svn.tigreblanc.fr/presstify-framework",
+    "time": "2019-01-08",
+    "authors": [
+        {
+            "name": "Jordy Manner",
+            "email": "jordy.manner@milkcreation.fr",
+            "role": "Lead Developper"
+        },
+        {
+            "name": "Julien Picard",
+            "email": "julien@tigreblanc.fr",
+            "role": "Contributing Developper"
+        },
+        {
+            "name": "Louis Dherent",
+            "email": "louis@tigreblanc.fr",
+            "role": "Contributing Developper"
+        },
+        {
+            "name": "Gaetan Thery",
+            "email": "gaetan@tigreblanc.fr",
+            "role": "Contributing Developper"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://composer.tigreblanc.fr/presstify/"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "composer/composer": "^1.6",
+        "composer/installers": "~1.0",
+        "bacon/bacon-qr-code": "^1.0",
+        "bshaffer/oauth2-server-php": "^1.9",
+        "codeitnowin/barcode": "^2.1",
+        "defuse/php-encryption": "^2.0",
+        "dompdf/dompdf": "^0.8.0",
+        "egeloen/google-map": "^1.0",
+        "facebook/graph-sdk": "^5.5",
+        "FortAwesome/Font-Awesome": "^4.7",
+        "google/apiclient": "^2.2",
+        "google/recaptcha": "^1.1",
+        "guzzlehttp/guzzle": "^6.2",
+        "html2text/html2text": "^4.0",
+        "kenwheeler/slick": "^1.6",
+        "league/commonmark": "^0.11",
+        "league/csv": "^8.2",
+        "madcoda/php-youtube-api": "^1.2",
+        "mexitek/phpcolors": "^0.4.0",
+        "mobiledetect/mobiledetectlib": "^2.8",
+        "monolog/monolog": "^1.22",
+        "mpratt/embera": "^1.9",
+        "mrclay/minify": "^3.0",
+        "neitanod/forceutf8": "^2.0",
+        "pear/http2": "^1.1",
+        "pelago/emogrifier": "^1.2",
+        "phpdocumentor/reflection-docblock": "^3.2.2",
+        "phpmailer/phpmailer": "^5.2",
+        "redeyeventures/geopattern": "^1.1",
+        "symfony/http-foundation": "^3.3",
+        "symfony/yaml": "^3.3",
+        "twbs/bootstrap": "^3.3",
+        "vimeo/vimeo-api": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "tiFy\\": ""
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}
