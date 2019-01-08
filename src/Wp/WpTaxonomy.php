@@ -17,6 +17,7 @@ class WpTaxonomy
     {
         return get_terms(
             wp_parse_args(
+                $attrs,
                 [
                     'taxonomy'   => $taxonomy,
                     'meta_query' => [
@@ -36,8 +37,7 @@ class WpTaxonomy
                     ],
                     'orderby'    => 'meta_value_num',
                     'order'      => 'ASC',
-                ],
-                $attrs
+                ]
             )
         );
     }
