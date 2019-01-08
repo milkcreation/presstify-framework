@@ -74,7 +74,10 @@
         "twbs/bootstrap": "^3.3",
         "vimeo/vimeo-api": "^1.2"
     },
-    "suggest": {
+    "autoload": {
+        "psr-4": {
+            "tiFy\\": ""
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -82,7 +85,5 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
-    },
-    "scripts": {
     }
 }
