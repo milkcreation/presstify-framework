@@ -4,7 +4,6 @@ namespace tiFy\Partial;
 
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialController as PartialControllerContract;
-use tiFy\Contracts\Partial\PartialManager;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
@@ -36,6 +35,12 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     protected $viewer;
 
     /**
+     * Répertoire de stockage par défaut des gabarits d'affichage.
+     * @var resource
+     */
+    protected $viewer_dir;
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param string $id Nom de qualification.
@@ -46,14 +51,13 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     public function __construct($id = null, $attrs = [])
     {
         if (is_null($id)) :
-            $id = isset($attrs['id']) ? $attrs['id'] : Str::random(32);
+            $id = $attrs['id'] ?? Str::random(32);
         endif;
 
         $this->id = $id;
+        $this->viewer_dir = partial()->resourcesDir('/views/'. class_info($this)->getKebabName());
 
-        /** @var PartialManager $partial */
-        $partial = app('partial');
-        $this->index = $partial->index($this);
+        $this->index = partial()->index($this);
         $this->index ? parent::__construct($attrs) : $this->boot();
     }
 
@@ -200,15 +204,13 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     public function viewer($view = null, $data = [])
     {
         if (!$this->viewer) :
-            $cinfo = class_info($this);
-            $default_dir = partial()->resourcesDir('/views/'. $cinfo->getKebabName());
             $this->viewer = view()
-                ->setDirectory(is_dir($default_dir) ? $default_dir : null)
+                ->setDirectory(is_dir($this->viewer_dir) ? $this->viewer_dir : null)
                 ->setController(PartialView::class)
                 ->setOverrideDir(
                     (($override_dir = $this->get('viewer.override_dir')) && is_dir($override_dir))
                         ? $override_dir
-                        : (is_dir($default_dir) ? $default_dir : $cinfo->getDirname())
+                        : (is_dir($this->viewer_dir) ? $this->viewer_dir : __DIR__)
                 )
                 ->set('partial', $this);
         endif;

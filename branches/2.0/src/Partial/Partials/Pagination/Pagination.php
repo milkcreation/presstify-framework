@@ -169,7 +169,7 @@ class Pagination extends PartialController implements PaginationContract
             elseif ($attrs === true) :
                 $attrs = $default;
             else :
-                $attrs = array_merge($this->get("links.{$link}", []), $default);
+                $attrs = array_merge($default, $this->get("links.{$link}", []));
             endif;
 
             $this->set("links.{$link}", $attrs);

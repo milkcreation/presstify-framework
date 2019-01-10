@@ -20,6 +20,14 @@ class Manager extends Emitter implements EventsManager
     /**
      * {@inheritdoc}
      */
+    public function on($name, $listener, $priority = 0)
+    {
+        return $this->listen($name, $listener, $priority);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function trigger($event, $args = [])
     {
         return call_user_func_array([$this, 'emit'], func_get_args());
