@@ -14,9 +14,21 @@ interface EventsManager extends EmitterInterface
      * @param callable|ListenerInterface $listener Fonction anonyme ou Classe d'écoute de l'événement.
      * @param int $priority Priorité de traitement.
      *
-     * @return $this
+     * @return static
      */
     public function listen($name, $listener, $priority = 0);
+
+    /**
+     * Alias de déclaration d'un événement.
+     * @see self::listen
+     *
+     * @param string $name Identifiant de qualification de l'événement.
+     * @param callable|ListenerInterface $listener Fonction anonyme ou Classe d'écoute de l'événement.
+     * @param int $priority Priorité de traitement.
+     *
+     * @return static
+     */
+    public function on($name, $listener, $priority = 0);
 
     /**
      * Déclenchement d'un événement.

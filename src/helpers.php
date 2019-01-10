@@ -106,7 +106,7 @@ if (!function_exists('config')) :
      * - string $key Récupération de la valeur d'un attribut de configuration.
      * }
      *
-     * @param null|array|string Clé d'indice (Syntaxte à point permise)|Liste des attributs de configuration à définir.
+     * @param null|array|string Clé d'indice (Syntaxe à point permise)|Liste des attributs de configuration à définir.
      * @param mixed $default Valeur de retour par défaut lors de la récupération d'un attribut.
      *
      * @return mixed|\tiFy\Kernel\Config\Config

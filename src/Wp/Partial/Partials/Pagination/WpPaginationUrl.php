@@ -14,7 +14,7 @@ class WpPaginationUrl extends PaginationUrl
     public function __construct($baseurl = null)
     {
         $baseurl = $baseurl
-            ?: url_factory(url()->full())->deleteSegments('/page/\d')->appendSegment('page/%d')->getDecode();
+            ?: url_factory(url()->full())->deleteSegments('/page/\d')->appendSegment('/page/%d')->getDecode();
 
         parent::__construct($baseurl);
     }
