@@ -2,9 +2,11 @@
 
 namespace tiFy\Partial\Partials\Accordion;
 
+use Illuminate\Support\Arr;
 use tiFy\Contracts\Partial\Accordion;
 use tiFy\Contracts\Partial\AccordionItems as AccordionItemsContract;
 use tiFy\Kernel\Collection\QueryCollection;
+use tiFy\Kernel\Tools;
 
 class AccordionItems extends QueryCollection implements AccordionItemsContract
 {
@@ -18,13 +20,14 @@ class AccordionItems extends QueryCollection implements AccordionItemsContract
      * CONSTRUCTEUR.
      *
      * @param mixed $items Liste des éléments.
-     * @param null $selected Liste des éléments sélectionné.
+     * @param null $opened Liste des éléments ouverts.
      *
      * @return void
      */
-    public function __construct($items, $selected = null)
+    public function __construct($items, $opened = null)
     {
         $this->query($items);
+        $this->setOpened($opened);
     }
 
     /**
@@ -49,6 +52,24 @@ class AccordionItems extends QueryCollection implements AccordionItemsContract
     public function render()
     {
         return $this->walk($this->items, 0, null);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOpened($opened = null)
+    {
+        if (!is_null($opened)) :
+            $opened = Arr::wrap($opened);
+
+            $this->collect()->each(function (AccordionItem $item) use ($opened) {
+                if (in_array($item->getName(), $opened)) :
+                    $item->set('open', true);
+                endif;
+            });
+        endif;
+
+        return $this;
     }
 
     /**
@@ -81,7 +102,13 @@ class AccordionItems extends QueryCollection implements AccordionItemsContract
 
             $item->setDepth($depth);
 
-            $output .= "<li class=\"PartialAccordion-item PartialAccordion-item--{$item->getName()}\" data-control=\"accordion.item\">";
+            $attrs = [
+                'class'        => "PartialAccordion-item PartialAccordion-item--{$item->getName()}",
+                'data-control' => 'accordion.item',
+                'aria-open'    => $item->isOpen() ? 'true' : 'false'
+            ];
+
+            $output .= "<li ". Tools::Html()->parseAttrs($attrs) .">";
             $output .= (string) $this->partial->viewer('item', compact('item'));
             $output .= $this->walk($items, ($depth + 1), $item->getName());
             $output .= "</li>";

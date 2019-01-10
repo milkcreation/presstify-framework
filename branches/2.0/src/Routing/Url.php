@@ -42,7 +42,7 @@ class Url implements UrlContract
      */
     public function clean()
     {
-        return $this->without($this->cleanArgs(), $this->full());
+        return $this->without($this->cleanArgs());
     }
 
     /**
@@ -64,9 +64,9 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function format(string $format = 'RFC3986', string $url = '') : string
+    public function decode() : string
     {
-        return url_factory($url ?: $this->clean())->format($format)->get();
+        return url_factory($this->full())->getDecode();
     }
 
     /**
@@ -106,16 +106,16 @@ class Url implements UrlContract
     /**
      * {@inheritdoc}
      */
-    public function with(array $args, string $url = '') : string
+    public function with(array $args) : string
     {
-        return url_factory($url ?: $this->clean())->with($args)->get();
+        return url_factory($this->full())->with($args)->get();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function without(array $args, string $url = '') : string
+    public function without(array $args) : string
     {
-        return url_factory($url ?: $this->clean())->without($args)->get();
+        return url_factory($this->full())->without($args)->get();
     }
 }

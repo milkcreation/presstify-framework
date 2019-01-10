@@ -41,7 +41,8 @@ class AccordionItem extends ParamsBag implements AccordionItemContract
             'parent'     => null,
             'content'    => '',
             'attrs'      => [],
-            'depth'      => 0
+            'depth'      => 0,
+            'open'       => false
         ];
     }
 
@@ -69,6 +70,13 @@ class AccordionItem extends ParamsBag implements AccordionItemContract
         return $this->get('parent');
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function isOpen()
+    {
+        return (bool)$this->get('open');
+    }
 
     /**
      * {@inheritdoc}

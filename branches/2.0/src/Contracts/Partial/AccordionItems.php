@@ -40,4 +40,13 @@ interface AccordionItems extends QueryCollection
      * @return static
      */
     public function setPartial(Accordion $partial);
+
+    /**
+     * Définition de la liste des éléments ouverts à l'initialisation.
+     *
+     * @param mixed $opened Liste des éléments ouverts à l'initialisation.
+     *
+     * @return static
+     */
+    public function setOpened($opened = null);
 }
