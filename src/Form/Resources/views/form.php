@@ -18,7 +18,6 @@
             'name' => '_token',
             'value' => $this->form()->csrf(),
             'attrs' => [
-                'id' => '',
                 'class' => ''
             ]
         ]

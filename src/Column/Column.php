@@ -138,7 +138,8 @@ final class Column implements ColumnContract
             case 'post_type' :
                 add_filter(
                     "manage_edit-{$object_name}_columns",
-                    [$this, 'parseColumnHeaders']
+                    [$this, 'parseColumnHeaders'],
+                    1
                 );
 
                 add_action(
@@ -232,13 +233,14 @@ final class Column implements ColumnContract
         if ($max) :
             $pad = 0;
             (new Collection($this->currents))->each(
-                function (ColumnItemController $item, $key) use (&$pad, $max) {
+                function (ColumnItemController $item) use (&$pad, $max) {
                     $position = $item->getPosition() ? : ++$pad+$max;
 
                     return $item->set('position', absint($position));
                 }
             );
         endif;
+
         $this->currents = (new Collection($this->currents))->sortBy(
             function (ColumnItemController $item) {
                 return $item->getPosition();
@@ -251,7 +253,7 @@ final class Column implements ColumnContract
             $headers[$c->getName()] = $c->getHeader();
         endforeach;
 
-        remove_filter(current_filter(), [$this, 'parseDisplayedHeaders']);
+        remove_filter(current_filter(), [$this, 'parseColumnHeaders']);
 
         return $headers;
     }

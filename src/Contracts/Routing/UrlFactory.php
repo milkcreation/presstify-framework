@@ -12,20 +12,36 @@ interface UrlFactory
     public function __toString();
 
     /**
-     * Formatage d'une url au format RFC3986|RFC3987.
+     * Ajout d'une portion de chemin à la fin de l'url.
      *
-     * @param string $format RFC3986|RFC3987.
+     * @param string $segment Portion de chemin à ajouter.
      *
      * @return static
      */
-    public function format($format = 'RFC3986');
+    public function appendSegment($segment);
 
     /**
-     * Récupération de l'url traitée.
+     * Suppression d'une portion de chemin de l'url.
+     *
+     * @param string $segment Portion de chemin à supprimer.
+     *
+     * @return static
+     */
+    public function deleteSegments($segment);
+
+    /**
+     * Récupération de la chaîne encodée de l'url.
      *
      * @return string
      */
     public function get();
+
+    /**
+     * Retourne la chaîne décodée de l'url.
+     *
+     * @return string
+     */
+    public function getDecode();
 
     /**
      * Ajout d'arguments à l'url.

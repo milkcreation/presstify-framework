@@ -95,7 +95,7 @@ class Accordion extends PartialController implements AccordionContract
 
         $items = $this->get('items', []);
         if (!$items instanceof AccordionItems) :
-            $items = new AccordionItems($items, $this->get('selected'));
+            $items = new AccordionItems($items, $this->get('opened'));
         endif;
 
         $items->setPartial($this);

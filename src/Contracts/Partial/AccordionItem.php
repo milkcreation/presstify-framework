@@ -27,6 +27,12 @@ interface AccordionItem extends ParamsBag
      */
     public function getParent();
 
+    /**
+     * Vérification d'ouverture de l'élément.
+     *
+     * @return boolean
+     */
+    public function isOpen();
 
     /**
      * Définition du niveau de profondeur de l'élément.

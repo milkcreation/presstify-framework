@@ -26,14 +26,11 @@ interface Url
     public function current() : string;
 
     /**
-     * Formatage d'une url au format RFC3986|RFC3987.
-     *
-     * @param string $format RFC3986|RFC3987.
-     * @param string $url Url à formater. Url propre par défaut.
+     * Récupération de l'url courante au format décodée.
      *
      * @return string
      */
-    public function format(string $format = 'RFC3986', string $url = '') : string;
+    public function decode() : string;
 
     /**
      * Récupération de l'url courante complète. Arguments de requête inclus.
@@ -62,19 +59,17 @@ interface Url
      * Récupération d'une url agrémentée d'une liste d'arguments de requête.
      *
      * @param array $args Liste des arguments de requête à inclure.
-     * @param string $url Url à agrémenter. Url propre par défaut.
      *
      * @return string
      */
-    public function with(array $args, string $url = '') : string;
+    public function with(array $args) : string;
 
     /**
      * Récupération d'une url nettoyée d'une liste d'arguments de requête.
      *
      * @param string[] $args Liste des arguments de requête à exclure.
-     * @param string $url Url à nettoyer. Url propre par défaut.
      *
      * @return string
      */
-    public function without(array $args, string $url = '') : string;
+    public function without(array $args) : string;
 }

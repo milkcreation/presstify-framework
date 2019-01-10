@@ -27,7 +27,7 @@ class Pagination extends PartialController implements PaginationContract
      *      }
      *      @var array|PaginationQuery|object $query Arguments de requête|Instance du controleur de traitement
      *                                               des requêtes.
-     *      @var string $base_url Url de lien vers les pages. %d correspond au numéro de page.
+     *      @var PaginationUrl|string $url Url de lien vers les pages. %d correspond au numéro de page.
      * }
      */
     protected $attributes = [
@@ -43,13 +43,18 @@ class Pagination extends PartialController implements PaginationContract
             'numbers'  => true
         ],
         'query'    => [],
-        'base_url' => ''
+        'url'      => ''
     ];
 
     /**
      * @var PaginationQuery
      */
     protected $query;
+
+    /**
+     * @var PaginationUrl
+     */
+    protected $url;
 
     /**
      * {@inheritdoc}
@@ -72,19 +77,6 @@ class Pagination extends PartialController implements PaginationContract
     /**
      * {@inheritdoc}
      */
-    public function defaults()
-    {
-        return [
-            'base_url'  => (string) url_factory(url()->full())
-                ->without(['page'])
-                ->with(['page' => '%d'])
-                ->format()
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function enqueue_scripts()
     {
         wp_enqueue_style('PartialPagination');
@@ -98,6 +90,12 @@ class Pagination extends PartialController implements PaginationContract
         parent::parse($attrs);
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialPagination'));
+
+        $this->url = $this->get('url', []);
+        if (!$this->url instanceof PaginationUrl) :
+            $this->url = new PaginationUrl($this->url);
+        endif;
+        $this->set('url', $this->url);
 
         $this->query = $this->get('query', []);
         if (!$this->query instanceof PaginationQuery) :
@@ -135,7 +133,7 @@ class Pagination extends PartialController implements PaginationContract
                 'content' => '&laquo;',
                 'attrs'   => [
                     'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
-                    'href'  => $this->getPagenumLink(1),
+                    'href'  => $this->url->page(1),
                 ]
             ],
             'last'     => [
@@ -143,7 +141,7 @@ class Pagination extends PartialController implements PaginationContract
                 'content' => '&raquo;',
                 'attrs'   => [
                     'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
-                    'href'  => $this->getPagenumLink($this->query->getTotalPage()),
+                    'href'  => $this->url->page($this->query->getTotalPage()),
                 ]
             ],
             'previous' => [
@@ -151,7 +149,7 @@ class Pagination extends PartialController implements PaginationContract
                 'content' => '&lsaquo;',
                 'attrs'   => [
                     'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
-                    'href'  => $this->getPagenumLink($this->query->getPage() - 1),
+                    'href'  => $this->url->page($this->query->getPage() - 1),
                 ]
             ],
             'next'     => [
@@ -159,7 +157,7 @@ class Pagination extends PartialController implements PaginationContract
                 'content' => '&rsaquo;',
                 'attrs'   => [
                     'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
-                    'href'  => $this->getPagenumLink($this->query->getPage() + 1),
+                    'href'  => $this->url->page($this->query->getPage() + 1),
                 ]
             ]
         ];
@@ -219,18 +217,6 @@ class Pagination extends PartialController implements PaginationContract
     }
 
     /**
-     * Récupération du lien vers une page via son numéro.
-     *
-     * @param int $num Numéro de la page.
-     *
-     * @return string
-     */
-    public function getPagenumLink($num)
-    {
-        return sprintf($this->get('base_url'), $num);
-    }
-
-    /**
      * Boucle de récupération des numéros de page.
      *
      * @param array $numbers Liste des numéros de page existants.
@@ -242,13 +228,21 @@ class Pagination extends PartialController implements PaginationContract
     public function numLoop(&$numbers, $start, $end)
     {
         for ($num = $start; $num <= $end; $num++) :
+            if ($num == 1 && !$this->query->getPage()) :
+                $current = 'true';
+            elseif ($this->query->getPage() == $num) :
+                $current = 'true';
+            else :
+                $current = 'false';
+            endif;
+
             $numbers[] = [
                 'tag'     => 'a',
                 'content' => $num,
                 'attrs'   => [
-                    'class' => 'PartialPagination-itemPage PartialPagination-itemPage--link',
-                    'href'  => $this->getPagenumLink($num),
-                    'aria-current' => ($this->query->getPage() == $num) ? 'true' : 'false'
+                    'class'        => 'PartialPagination-itemPage PartialPagination-itemPage--link',
+                    'href'         => $this->url->page($num),
+                    'aria-current' => $current
                 ]
             ];
         endfor;

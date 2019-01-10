@@ -4,10 +4,10 @@ namespace tiFy\Routing;
 
 use League\Uri\Components\Query;
 use League\Uri\Http;
+use League\Uri\Components\HierarchicalPath;
+use League\Uri\Modifiers\AppendSegment;
 use League\Uri\Modifiers\AppendQuery;
 use League\Uri\Modifiers\RemoveQueryParams;
-use function League\Uri\uri_to_rfc3986;
-use function League\Uri\uri_to_rfc3987;
 use League\Uri\UriInterface;
 use tiFy\Contracts\Routing\UrlFactory as UrlFactoryContract;
 
@@ -21,6 +21,8 @@ class UrlFactory implements UrlFactoryContract
 
     /**
      * CONSTRUCTEUR
+     *
+     * @param string|UriInterface Url à traiter.
      *
      * @return void
      */
@@ -44,17 +46,21 @@ class UrlFactory implements UrlFactoryContract
     /**
      * {@inheritdoc}
      */
-    public function format($format = 'RFC3986')
+    public function appendSegment($segment)
     {
-        switch(strtoupper($format)) :
-            default:
-            case 'RFC3986' :
-                $this->url = uri_to_rfc3986($this->url);
-                break;
-            case 'RFC3987' :
-                $this->url = uri_to_rfc3987($this->url);
-                break;
-        endswitch;
+        $this->url = (new AppendSegment($segment))->process($this->url);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteSegments($segment)
+    {
+        if (preg_match("#{$segment}#", $this->url->getPath(), $matches)) :
+            $this->url = $this->url->withPath(preg_replace("#{$matches[0]}#", '', $this->url->getPath()));
+        endif;
 
         return $this;
     }
@@ -65,6 +71,14 @@ class UrlFactory implements UrlFactoryContract
     public function get()
     {
         return $this->url;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDecode()
+    {
+        return urldecode((string) $this->url);
     }
 
     /**
