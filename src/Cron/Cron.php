@@ -1,275 +1,194 @@
 <?php
 
-/**
- * @name Cron
- * @package PresstiFy
- * @subpackage Core
- * @namespace tiFy\Cron
- * @desc Gestion de tâches planifiées
- * @author Jordy Manner
- * @copyright Tigre Blanc Digital
- * @version 1.2.369
- * @see https://developer.wordpress.org/plugins/cron/hooking-into-the-system-task-scheduler/
- */
-
 namespace tiFy\Cron;
 
-use tiFy\Apps\AppController;
-use tiFy\Cron\Admin\ViewList;
-use tiFy\Cron\Schedule;
-use tiFy\Templates\Templates;
+use Illuminate\Support\Collection;
+use tiFy\Contracts\Cron\Cron as CronContract;
+use tiFy\Contracts\Cron\CronJobInterface;
 
 /**
  * USAGE
  *
  * Configurer une tâche planifiée
- * 1. Dans le fichier wp-config.php, désactiver l'appel navigateur des tâches cron
+ * 1. Dans le fichier wp-config.php, désactiver l'appel navigateur des tâches cron (recommandé).
  * > define('DISABLE_WP_CRON', true);
  *
- * 2. Sur le serveur (linux) configurer l'appel cli des tâches planifiées
+ * 2. Sur le serveur (MacOS ou Linux), configurer l'exécution cli des tâches planifiées.
  * > $ crontab -e
  * > $ * * * * * curl -I http(s)://%site_url%/wp-cron.php?doing_wp_cron > /dev/null 2>&1
  *
- * Tester une tâche planifiée de puis le navigateur ou en ligne de commande
- * > http(s)://%site_url%/?tFyCronDoing=%task_id%
+ * Tester une tâche planifiée depuis le navigateur ou en console. Le mode test de la tâche doit être actif.
+ * IMPORTANT : N'utiliser cette fonctionnalité qu'en développement uniquement.
+ * Désactiver absolument le mode test en production.
+ * > http(s)://%site_url%/?job=%task%
  */
 
-final class Cron extends AppController
+final class Cron implements CronContract
 {
     /**
-     * Listes des attributs de configuration des tâches planifiées
-     * @var \tiFy\Cron\Schedule[]
+     * Listes des tâches planifiées déclarées.
+     * @var CronJobInterface[]
      */
-    protected $schedules = [];
+    protected $items = [];
 
     /**
-     * Initialisation du controleur
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        return;
-        $this->appAddAction('init');
-        $this->appAddAction('tify_templates_register');
-    }
+        add_action(
+            'init',
+            function () {
+                foreach (config('cron', []) as $name => $attrs) :
+                    $this->_register($name, $attrs);
+                endforeach;
 
-    /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    public function init()
-    {
-        // Déclaration des tâches planifiées configurées.
-        foreach ($this->appConfig() as $schedule_id => $schedules_attrs) :
-            $this->register($schedule_id, $schedules_attrs);
-        endforeach;
+                $collect = new Collection($this->items);
+                foreach(get_option('cron_job_infos', []) as $hook => $attrs) :
+                    if (!$collect->firstWhere('hook', $hook)) :
+                        $this->clear($hook);
+                    endif;
+                endforeach;
 
-        // Déclaration des tâches planifiées annexes
-        do_action('tify_cron_register');
+                $jobs = $collect->mapWithKeys(function ($item) {
+                    return [$item['hook'] => []];
+                })->all();
 
-        // Exécution d'une tâche à la volée (test)
-        if (!$doing = $this->appRequest('get')->get('tFyCronDoing', '')) :
-            return;
-        endif;
+                update_option(
+                    'cron_job_infos',
+                    array_merge($jobs, get_option('cron_job_infos', [])),
+                    false
+                );
 
-        if ($schedule = $this->get($doing)) :
-            do_action_ref_array($schedule['hook'], [$schedule]);
-            exit;
-        endif;
-    }
+                if ($jobs = $this->all()) :
+                    pattern()->register(
+                        'cron.layout.list',
+                        [
+                            'admin_menu' => [
+                                'menu_slug'   => 'CronLayoutList',
+                                'parent_slug' => 'tools.php',
+                                'page_title'  => __('Gestion des tâches planifiées', 'tify'),
+                                'menu_title'  => __('Tâches planifiées', 'tify')
+                            ],
+                            'content' => function () {
+                                $jobs = $this->all();
 
-    /**
-     * Déclaration de templates.
-     *
-     * @return void
-     */
-    public function tify_templates_register()
-    {
-        Templates::register(
-            'tFyCoreCronList',
-            [
-                'cb'         => ViewList::class,
-                'admin_menu' => [
-                    'menu_slug'   => 'tFyCoreCronList',
-                    'parent_slug' => 'tools.php',
-                    'page_title'  => __('Gestion des tâches planifiées', 'tify'),
-                    'menu_title'  => __('Tâches planifiées', 'tify'),
-                ],
-            ],
-            'admin'
+                                return view()
+                                    ->setDirectory(__DIR__ . '/views')
+                                    ->make('job-list', compact('jobs'));
+                            }
+                        ]
+                    );
+                endif;
+
+                if (($job = request()->get('job', '')) && ($item = $this->get($job))) :
+                    do_action($item->getHook());
+                    exit;
+                endif;
+            },
+            999999
         );
     }
 
     /**
-     * Déclaration d'un tâche planifiée.
+     * Enregistrement d'une tâche planifiée.
      *
      * @param string $name Identifiant de qualification.
-     * @param array $attrs {
-     *      Liste des attribut de configuration.
+     * @param array $attrs Liste des attribut de configuration.
      *
-     *      @var string $title Intitulé de la tâche planifiée.
-     *      @var string $desc Description de la tâche planifiée.
-     *      @var int $timestamp Date de lancement de la tâche planifiée.
-     *      @var string $recurrence Fréquence de répétition de la tâche planifiée.
-     *      @var string|callable|object $handle Execution du traitement de la tâche planifiée.
-     *      @var array $args Variables passées en argument lors du traitement de la tâche planifiée.
-     *      @var bool|array $log Attributs de journalisation des données.
-     *      @var bool $unregister Activation du désenregistrement d'une tâche planifiée.
-     * }
-     * @return array
+     * @return null|CronJobInterface
      */
-    public function register($name, $attrs = [])
+    private function _register($name, $attrs = [])
     {
-        return;
-        if (isset($this->schedules[$name])) :
-            return;
+        /** @var CronJobInterface $item */
+        if ($item = $this->get($name)) :
+            return $item;
+        else :
+            $item = (isset($attrs['controller']) && ($controller = $attrs['controller']))
+                ? new $controller($name, $attrs)
+                : app('cron.job', [$name, $attrs]);
         endif;
 
-        $defaults = [
-            'title'      => $name,
-            'desc'       => '',
-            'timestamp'  => date('U', mktime(2, 0, 0, 5, 27, 2003)),
-            'recurrence' => 'daily',
-            'handle'     => '',
-            'log'        => true,
-            'args'       => [],
-            'unregister' => false,
-        ];
-
-        // Traitement des attributs de configuration
-        $attrs = array_merge($defaults, $attrs);
-
-        // Activaction/Désactivation du désenregistrement
-        $unregister = $attrs['unregister'] ? true : false;
-        unset($attrs['unregister']);
-
-        // Identifiant unique
-        $attrs['id'] = $name;
-
-        // Identifiant unique d'accorche de la tâche planifiée
-        $attrs['hook'] = 'tFyCron_' . $name;
-
-        // Date GMT d'exécution de la tâche
-        $attrs['timestamp'] = get_gmt_from_date(date('Y-m-d H:i:s', $attrs['timestamp']), 'U');
-
-        // Traitement de la récurrence
-        $recurrences = \wp_get_schedules();
-        if (is_string($attrs['recurrence']) && !isset($recurrences[$attrs['recurrence']])) :
-            $attrs['recurrence'] = 'daily';
-        elseif (is_array($attrs['recurrence'])) :
-            if (!isset($attrs['recurrence']['id'])) :
-                $attrs['recurrence'] = 'daily';
-            else :
-                $r = \wp_parse_args(
-                    $attrs['recurrence'],
-                    [
-                        'interval' => DAY_IN_SECONDS,
-                        'display'  => __('Once Daily'),
-                    ]
-                );
-                add_filter(
-                    'cron_schedules',
-                    function () use ($r) {
-                        return [
-                            $r['id'] => [
-                                'interval' => $r['interval'],
-                                'display'  => $r['display'],
-                            ],
-                        ];
-                    });
-
-                $attrs['recurrence'] = $r['id'];
-            endif;
+        if (!$item instanceof CronJobInterface) :
+            return null;
         endif;
 
-        // Traitement de la classe de surcharge
-        if (!$attrs['handle']) :
-            $classname = Schedule::class;
-            $attrs['handle'] = $classname . '::_handle';
+        if (($freq = wp_get_schedule($item->getHook())) && ($freq !== $item->getFrequency())) :
+            $this->clear($item->getHook());
         endif;
 
-        // Traitement de la journalisation
-        if ($attrs['log']) :
-            $logdef = [
-                'format'  => "%datetime% %level_name% \"%message%\" %context% %extra%\n",
-                'rotate'  => 10,
-                'name'    => $name,
-                'basedir' => WP_CONTENT_DIR . '/uploads/log',
-            ];
-            $attrs['log'] = !is_array($attrs['log']) ? $logdef : \wp_parse_args($attrs['log'], $logdef);
+        if (!wp_next_scheduled ($item->getHook())) :
+            wp_schedule_event(
+                $item->getTimestamp(),
+                $item->getFrequency(),
+                $item->getHook()
+            );
         endif;
 
-        // Définition des attributs de configuration
-        $this->schedules[$name] = $attrs;
-
-        // Ajustement de la récurrence
-        if (($schedule = \wp_get_schedule($attrs['hook'], [$attrs])) && ($schedule !== $attrs['recurrence'])) :
-            $this->unregister($name);
-        elseif ($unregister) :
-            $this->unregister($name);
-        endif;
-
-        if (!\wp_get_schedule($attrs['hook'], [$attrs])) :
-            \wp_schedule_event($attrs['timestamp'], $attrs['recurrence'], $attrs['hook'], [$attrs]);
-            $this->schedules[$name] = $attrs;
-        endif;
-
-        \add_action($attrs['hook'], $attrs['handle']);
-
-        return $this->schedules[$name];
+        return $this->items[$name] = $item;
     }
 
     /**
-     * Désenregistrement d'un tâche planifiée
+     * Déclaration d'une tâche planifiée.
      *
-     * @param string $name Identifiant de qualification d'une tâche planifiée déclarée.
+     * @param string $name Identifiant de qualification.
+     * @param array $attrs Liste des attribut de configuration.
      *
-     * @return void
+     * @return $this
      */
-    public function unregister($name)
+    public function add($name, $attrs)
     {
-        if (! $crons = _get_cron_array()) :
-            return;
-        endif;
-        if (! $schedule = $this->get($name)) :
-            return;
-        endif;
+        config()->set(
+            "cron",
+            array_merge(
+                [$name => $attrs],
+                config('cron', [])
+            )
+        );
 
-        foreach ($crons as $timestamp => $cron) :
-            if (!isset($cron[$schedule['hook']])) :
-                continue;
-            endif;
-            foreach ($cron[$schedule['hook']] as $key => $attrs) :
-                \wp_unschedule_event($timestamp, $schedule['hook'], $attrs['args']);
-            endforeach;
-        endforeach;
-
-        unset($this->schedules[$name]);
+        return $this;
     }
 
     /**
-     * Récupération de la liste des tâches planifiées déclarées
+     * Récupération de la liste des tâches planifiées déclarées.
      *
-     * @return array
+     * @return CronJobInterface[]
      */
-    public function getList()
+    public function all()
     {
-        return $this->schedules;
+        return $this->items;
     }
 
     /**
-     * Récupération d'une tâche planifiée déclarée
+     * Suppression d'une tâche planifiée selon son identifiant d'action.
      *
-     * @param string $name Identifiant unique de qualification de la tâche planifiée
+     * @param string $hook Identifiant de qualification de l'action.
      *
-     * @return array
+     * @return $this
+     */
+    public function clear($hook)
+    {
+        wp_clear_scheduled_hook($hook);
+
+        if (($jobs = get_option('cron_job_infos', [])) && isset($jobs[$hook])) :
+            unset($jobs[$hook]);
+            update_option('cron_job_infos', $jobs, false);
+        endif;
+
+        return $this;
+    }
+
+    /**
+     * Récupération d'une tâche planifiée déclarée.
+     *
+     * @param string $name Nom de qualification de l'élément.
+     *
+     * @return null|CronJobInterface
      */
     public function get($name)
     {
-        if (isset($this->schedules[$name])) :
-            return $this->schedules[$name];
-        endif;
+        return isset($this->items[$name]) ? $this->items[$name] : null;
     }
 }
