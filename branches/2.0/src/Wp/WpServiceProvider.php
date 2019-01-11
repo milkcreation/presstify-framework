@@ -5,6 +5,7 @@ namespace tiFy\Wp;
 use tiFy\App\Container\AppServiceProvider;
 use tiFy\Wp\Media\MediaDownload;
 use tiFy\Wp\Media\MediaManager;
+use tiFy\Wp\Media\MediaUpload;
 use tiFy\Wp\PageHook\PageHook;
 use tiFy\Wp\Query\Post;
 use tiFy\Wp\Query\Posts;
@@ -33,6 +34,7 @@ class WpServiceProvider extends AppServiceProvider
 
         $this->app->singleton('wp.media.download', function () { return new MediaDownload(); })->build();
         $this->app->singleton('wp.media.manager', function () { return new MediaManager(); })->build();
+        $this->app->singleton('wp.media.upload', function () { return new MediaUpload(); })->build();
 
         $this->app->singleton('wp.query', function () { return new WpQuery(); })->build();
 
