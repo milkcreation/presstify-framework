@@ -49,7 +49,7 @@ class Accordion extends PartialController implements AccordionContract
                 );
                 wp_register_script(
                     'PartialAccordion',
-                    assets()->url('partial/accordion/js/scripts.css'),
+                    assets()->url('partial/accordion/js/scripts.js'),
                     ['jquery-ui-widget'],
                     181221,
                     true

@@ -50,9 +50,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
      */
     public function __construct($id = null, $attrs = [])
     {
-        if (is_null($id)) :
-            $id = $attrs['id'] ?? Str::random(32);
-        endif;
+        $id = $id ?? Str::random(32);
 
         $this->id = $id;
         $this->viewer_dir = partial()->resourcesDir('/views/'. class_info($this)->getKebabName());
@@ -120,10 +118,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
      */
     public function display()
     {
-        return $this->viewer(
-            class_info($this)->getKebabName(),
-            $this->all()
-        );
+        return $this->viewer(class_info($this)->getKebabName(), $this->all());
     }
 
     /**
