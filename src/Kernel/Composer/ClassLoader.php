@@ -23,15 +23,6 @@ class ClassLoader extends ComposerClassLoader
     {
         /** @var Paths $paths */
         $this->paths = tiFy::instance()->resolve(Paths::class);
-
-        if (file_exists($this->paths->getConfigPath('autoload.php'))) :
-            $autoloads = include $this->paths->getConfigPath('autoload.php');
-            foreach ($autoloads as $type => $autoload) :
-                foreach ($autoload as $namespace => $path) :
-                    $this->load($namespace, $path, $type);
-                endforeach;
-            endforeach;
-        endif;
     }
 
     /**
