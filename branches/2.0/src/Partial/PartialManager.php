@@ -15,6 +15,7 @@ use tiFy\Contracts\Partial\PartialManager as PartialManagerContract;
 use tiFy\Partial\Partials\Accordion\Accordion;
 use tiFy\Partial\Partials\Breadcrumb\Breadcrumb;
 use tiFy\Partial\Partials\CookieNotice\CookieNotice;
+use tiFy\Partial\Partials\Dropdown\Dropdown;
 use tiFy\Partial\Partials\Holder\Holder;
 use tiFy\Partial\Partials\Modal\Modal;
 use tiFy\Partial\Partials\Navtabs\Navtabs;
@@ -30,6 +31,7 @@ use tiFy\Partial\Partials\Tag\Tag;
  * @method static Accordion Accordion(string $id = null, array $attrs = [])
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
  * @method static CookieNotice CookieNotice(string $id = null, array $attrs = [])
+ * @method static Dropdown Dropdown(string $id = null,array $attrs = [])
  * @method static Holder Holder(string $id = null,array $attrs = [])
  * @method static Modal Modal(string $id = null,array $attrs = [])
  * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
@@ -47,7 +49,7 @@ final class PartialManager implements PartialManagerContract
      * Liste des instances des éléments déclarés.
      * @var array
      */
-    protected static $indexes = [];
+    protected $instances = [];
 
     /**
      * Liste des alias de qualification des éléments.
@@ -57,6 +59,7 @@ final class PartialManager implements PartialManagerContract
         'accordion'     => Accordion::class,
         'breadcrumb'    => Breadcrumb::class,
         'cookie-notice' => CookieNotice::class,
+        'dropdown'      => Dropdown::class,
         'holder'        => Holder::class,
         'modal'         => Modal::class,
         'navtabs'       => Navtabs::class,
@@ -80,7 +83,7 @@ final class PartialManager implements PartialManagerContract
             'after_setup_theme',
             function () {
                 foreach ($this->items as $alias => $concrete) :
-                    app()->bind("partial.{$alias}", $concrete)->build([null, []]);
+                    app()->bind("partial.{$alias}", $concrete)->build([null, null]);
                 endforeach;
             },
             999999
@@ -94,7 +97,7 @@ final class PartialManager implements PartialManagerContract
     {
         array_unshift($args, $name);
 
-        return call_user_func_array([app('partial'), 'get'], $args);
+        return call_user_func_array([partial(), 'get'], $args);
     }
 
     /**
@@ -126,9 +129,9 @@ final class PartialManager implements PartialManagerContract
             return 0;
         endif;
 
-        $count = empty(self::$indexes[$alias]) ? 0 : count(self::$indexes[$alias]);
+        $count = empty($this->instances[$alias]) ? 0 : count($this->instances[$alias]);
 
-        self::$indexes[$alias][$partial->getId()] = $partial;
+        $this->instances[$alias][$partial->getId()] = $partial;
 
         return $count;
     }
