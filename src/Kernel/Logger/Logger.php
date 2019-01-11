@@ -2,41 +2,69 @@
 
 namespace tiFy\Kernel\Logger;
 
+use Illuminate\Support\Arr;
 use Monolog\Logger as MonologLogger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
+use tiFy\Contracts\App\AppInterface;
+use tiFy\Contracts\Kernel\Logger as LoggerContract;
 
-class Logger extends MonologLogger
+class Logger extends MonologLogger implements LoggerContract
 {
     /**
-     * Classe de rappel du controleur de journalisation global.
-     * @return self
+     * {@inheritdoc}
      */
-    protected static $globalLogger;
+    public function addSuccess($message, array $context = [])
+    {
+        return $this->addNotice($message, $context);
+    }
 
     /**
-     * Définition du controleur de journalisation global.
-     * @return self
+     * {@inheritdoc}
      */
-    public static function globalReport()
+    public static function create($name = 'system', $attrs = [], AppInterface $app)
     {
-        if ($logger = self::$globalLogger) :
-            return $logger;
+        if ($app->bound("logger.item.{$name}")) :
+            return $app->resolve("logger.item.{$name}");
         endif;
 
-        $filename = WP_CONTENT_DIR . '/uploads/tiFy.log';
+        $resolved = $app->singleton(
+            "logger.item.{$name}",
+            function($name) {
+                return new static($name);
+            })
+            ->build([$name]);
 
-        $formatter = new LineFormatter();
-        $stream = new RotatingFileHandler($filename, 7);
+        $resolved->parse($attrs);
+
+        return $resolved;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parse($attrs = [])
+    {
+        $filename = Arr::get($attrs, 'filename')
+            ? : paths()->getLogPath($this->getName() . '.log');
+
+        $formatter = new LineFormatter(Arr::get($attrs, 'format', null));
+
+        $stream = new RotatingFileHandler($filename, Arr::get($attrs, 'rotate', 10));
         $stream->setFormatter($formatter);
 
-        $logger = new self('tiFy');
-
         if ($timezone = get_option('timezone_string')) :
-            $logger->setTimezone(new \DateTimeZone($timezone));
+            $this->setTimezone(new \DateTimeZone($timezone));
         endif;
-        $logger->pushHandler($stream);
 
-        return self::$globalLogger = $logger;
+        $this->pushHandler($stream);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function success($message, array $context = [])
+    {
+        return $this->addSuccess($message, $context);
     }
 }
