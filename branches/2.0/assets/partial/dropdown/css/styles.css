@@ -1,10 +1,28 @@
 /** STYLES DE CONTROLES (ne pas modifier) */
+[data-control="dropdown"] {
+    position: relative;
+}
+
 [data-control="dropdown.items"] {
+    position: absolute;
+    top: auto;
+    left: 0;
+    right:0;
     display: none;
 }
 
 [data-control="dropdown"][aria-open="true"] [data-control="dropdown.items"] {
     display: inherit;
+}
+
+[data-control="dropdown.button"] {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+[data-control="dropdown.button"]:focus {
+    outline: none;
 }
 
 [data-toggle="dropdown"] {
