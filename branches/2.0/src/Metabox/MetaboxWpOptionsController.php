@@ -25,7 +25,7 @@ abstract class MetaboxWpOptionsController extends MetaboxController implements M
                 $attrs = [];
             endif;
 
-            \register_setting($this->getOptionsPage(), $setting, $attrs);
+            register_setting($this->getOptionsPage(), $setting, $attrs);
         endforeach;
     }
 

@@ -55,9 +55,9 @@ class WpQuery
                             endif;
                         endif;
                     endforeach;
-
-                    events()->trigger('wp.query', [&$wp_query]);
                 endif;
+
+                events()->trigger('wp.query', [&$wp_query]);
             }
         );
     }

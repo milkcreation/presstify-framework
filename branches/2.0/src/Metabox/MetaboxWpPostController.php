@@ -4,7 +4,6 @@ namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxWpPostController as MetaboxWpPostControllerContract;
 use tiFy\Contracts\Metabox\MetaboxFactory;
-use tiFy\PostType\Metadata\Post as PostMeta;
 
 abstract class MetaboxWpPostController extends MetaboxController implements MetaboxWpPostControllerContract
 {
@@ -20,15 +19,13 @@ abstract class MetaboxWpPostController extends MetaboxController implements Meta
     {
         parent::__construct($item, $args);
 
-        /** @var PostMeta $postMeta */
-        $postMeta = app(PostMeta::class);
         foreach ($this->metadatas() as $meta => $single) :
             if (is_numeric($meta)) :
                 $meta = (string) $single;
                 $single = true;
             endif;
 
-            $postMeta->register($this->getPostType(), $meta, $single);
+            post_type()->post_meta()->register($this->getPostType(), $meta, $single);
         endforeach;
     }
 

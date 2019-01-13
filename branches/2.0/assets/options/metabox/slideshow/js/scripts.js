@@ -60,7 +60,7 @@ jQuery(document).ready(function ($) {
         initItem($(this));
     });
 
-    $(document).on('change', '.MetaboxOptions-slideshowListItemInputs [data-hide_unchecked]', function (e) {
+    $(document).on('change', '.MetaboxOptions-slideshowListItemInputs [data-hide_unchecked]', function () {
         var target = $(this).data('hide_unchecked');
         if ($(this).is(':checked')) {
             $(this).closest('.MetaboxOptions-slideshowListItemInputs').find(target).each(function () {

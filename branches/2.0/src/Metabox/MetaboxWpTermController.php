@@ -4,7 +4,6 @@ namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxWpTermController as MetaboxWpTermControllerContract;
 use tiFy\Contracts\Metabox\MetaboxFactory;
-use tiFy\Taxonomy\Metadata\Term as TermMeta;
 
 abstract class MetaboxWpTermController extends MetaboxController implements MetaboxWpTermControllerContract
 {
@@ -20,15 +19,13 @@ abstract class MetaboxWpTermController extends MetaboxController implements Meta
     {
         parent::__construct($item, $args);
 
-        /** @var TermMeta $termMeta */
-        $termMeta = app(TermMeta::class);
         foreach ($this->metadatas() as $meta => $single) :
             if (is_numeric($meta)) :
                 $meta = (string) $single;
                 $single = true;
             endif;
 
-            $termMeta->register($this->getTaxonomy(), $meta, $single);
+            taxonomy()->term_meta()->register($this->getTaxonomy(), $meta, $single);
         endforeach;
     }
 

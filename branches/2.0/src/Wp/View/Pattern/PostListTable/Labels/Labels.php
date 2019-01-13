@@ -2,10 +2,10 @@
 
 namespace tiFy\Wp\View\Pattern\PostListTable\Labels;
 
-use tiFy\PostType\PostTypeLabels;
+use tiFy\PostType\PostTypeLabelsBag;
 use tiFy\Wp\View\Pattern\PostListTable\Contracts\PostListTable;
 
-class Labels extends PostTypeLabels
+class Labels extends PostTypeLabelsBag
 {
     /**
      * Instance de la disposition.

@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\Taxonomy\Metadata;
+namespace tiFy\Taxonomy;
 
-use tiFy\App\AppController;
+use tiFy\Contracts\Taxonomy\TaxonomyTermMeta as TaxonomyTermMetaContract;
 
-final class Term extends AppController
+class TaxonomyTermMeta implements TaxonomyTermMetaContract
 {
     /**
      * Liste des clés d'identifications de metadonnées.
@@ -23,22 +23,7 @@ final class Term extends AppController
     protected $single = [];
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    public function appBoot()
-    {
-        $this->appAddAction('edited_term', 'save', 10, 3);
-    }
-
-    /**
-     * Récupération d'une métadonné de taxonomie.
-     *
-     * @param int $term_id Identifiant de qualification du terme de taxonomie.
-     * @param string $meta_key Clé d'identification de la métadonnée enregistrées en base de données.
-     *
-     * @return mixed[]
+     * @inheritdoc
      */
     public function get($term_id, $meta_key)
     {
@@ -67,12 +52,7 @@ final class Term extends AppController
     }
 
     /**
-     * Vérification si l'enregistrement de la métadonnée en base est de type unique.
-     *
-     * @param string $taxonomy Identifiant de qualification de la taxonomie associée.
-     * @param string $meta_key Clé d'identification de la métadonnée enregistrées en base de données.
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function isSingle($taxonomy, $meta_key)
     {
@@ -80,14 +60,7 @@ final class Term extends AppController
     }
 
     /**
-     * Déclaration d'une métadonné.
-     *
-     * @param string $taxonomy Identifiant de qualification de la taxonomie associée.
-     * @param string $meta_key Clé d'identification de la métadonnée enregistrées en base de données.
-     * @param bool $single Type d'enregistrement de la metadonnées en base. true (unique)|false (multiple).
-     * @param callable $sanitize_callback Fonction ou Méthode de rappel appelé avant la sauvegarde en base de données. wp_unslash par défaut.
-     *
-     * @return void
+     * @inheritdoc
      */
     public function register($taxonomy, $meta_key, $single = false, $sanitize_callback = 'wp_unslash')
     {
@@ -105,26 +78,10 @@ final class Term extends AppController
     }
 
     /**
-     * Enregistrement de metadonnées de taxonomie.
-     *
-     * @param int $term_id Identifiant de qualification du terme de taxonomie.
-     * @param int $tt_id
-     * @param string $taxonomy Identifiant de qualification de la taxonomie associée.
-     *
-     * @return void
+     * @inheritdoc
      */
     public function save($term_id, $tt_id, $taxonomy)
     {
-        // Bypass
-        /// Contrôle s'il s'agit d'une routine de sauvegarde automatique.
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) :
-            return;
-        endif;
-        /// Contrôle si le script est executé via Ajax.
-        if (defined('DOING_AJAX') && DOING_AJAX) :
-            return;
-        endif;
-
         // Vérification d'existance de metadonnées déclarées pour la taxonomy
         if (empty($this->metaKeys[$taxonomy])) :
             return;

@@ -1,10 +1,10 @@
 <?php
 
-namespace tiFy\PostType\Metadata;
+namespace tiFy\PostType;
 
-use tiFy\App\AppController;
+use tiFy\Contracts\PostType\PostTypePostMeta as PostTypePostMetaContract;
 
-final class Post extends AppController
+class PostTypePostMeta implements PostTypePostMetaContract
 {
     /**
      * Liste des clés d'identifications de metadonnées.
@@ -23,17 +23,21 @@ final class Post extends AppController
     protected $single = [];
 
     /**
-     * Ajout d'une metadonnée.
+     * CONSTRUCTEUR.
      *
-     * @param int $post_id Identifiant de qualification du post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     * @param mixed $meta_value Valeur de la métadonnée à ajouter.
-     *
-     * @return bool|int
+     * @return void
+     */
+    public function __construct()
+    {
+        add_action('save_post', [$this, 'save'], 10, 2);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function add($post_id, $meta_key, $meta_value)
     {
-        if (!$post_type = \get_post_type($post_id)) :
+        if (!$post_type = get_post_type($post_id)) :
             return false;
         endif;
 
@@ -43,26 +47,11 @@ final class Post extends AppController
             return false;
         endif;
 
-        return \add_post_meta($post_id, $meta_key, $meta_value, $unique);
+        return add_post_meta($post_id, $meta_key, $meta_value, $unique);
     }
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
-     */
-    public function appBoot()
-    {
-        $this->appAddAction('save_post', 'save', 10, 2);
-    }
-
-    /**
-     * Récupération d'une métadonnée.
-     *
-     * @param int $post_id Identifiant de qualification du post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     *
-     * @return mixed[]
+     * @inheritdoc
      */
     public function get($post_id, $meta_key)
     {
@@ -87,12 +76,7 @@ final class Post extends AppController
     }
 
     /**
-     * Vérifie si une métadonnées déclarée est de type single ou multi.
-     *
-     * @param string $post_type Type de post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function isSingle($post_type, $meta_key)
     {
@@ -100,20 +84,13 @@ final class Post extends AppController
     }
 
     /**
-     * Déclaration d'une métadonnée.
-     *
-     * @param string $post_type Type de post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     * @param bool $single Indicateur d'enregistrement de la métadonnée unique (true)|multiple (false).
-     * @param string $sanitize_callback Méthode ou fonction de rappel avant l'enregistrement.
-     *
-     * @return $this
+     * @inheritdoc
      */
     public function register($post_type, $meta_key, $single = false, $sanitize_callback = 'wp_unslash')
     {
         // Bypass
         if (! empty($this->metaKeys[$post_type]) && in_array($meta_key, $this->metaKeys[$post_type])) :
-            return;
+            return $this;
         endif;
 
         $this->metaKeys[$post_type][] = $meta_key;
@@ -127,12 +104,7 @@ final class Post extends AppController
     }
 
     /**
-     * Enregistrement de metadonnées de post.
-     *
-     * @param int $post_id Identifiant de qualification du post.
-     * @param \WP_Post $post Objet Post Wordpress.
-     *
-     * @return void
+     * @inheritdoc
      */
     public function save($post_id, $post)
     {
@@ -243,7 +215,7 @@ final class Post extends AppController
 
             // Sauvegarde de l'ordre
             if (! empty($order)) :
-                \update_post_meta($post_id, '_order_' . $meta_key, $order);
+                update_post_meta($post_id, '_order_' . $meta_key, $order);
             endif;
         endforeach;
 
@@ -251,13 +223,7 @@ final class Post extends AppController
     }
 
     /**
-     * Mise à jour d'une metadonnée.
-     *
-     * @param int $post_id Identifiant de qualification du post.
-     * @param string $meta_key Clé d'index de la metadonnée.
-     * @param mixed $meta_value Valeur de la métadonnée à mettre à jour.
-     *
-     * @return bool|int
+     * @inheritdoc
      */
     public function update($post_id, $meta_key, $meta_value)
     {
@@ -271,6 +237,6 @@ final class Post extends AppController
             return false;
         endif;
 
-        return \update_post_meta($post_id, $meta_key, $meta_value, $unique);
+        return update_post_meta($post_id, $meta_key, $meta_value, $unique);
     }
 }
