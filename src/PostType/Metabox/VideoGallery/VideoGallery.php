@@ -2,7 +2,6 @@
 
 namespace tiFy\PostType\Metabox\VideoGallery;
 
-use tiFy\PostType\Metadata\Post as MetadataPost;
 use tiFy\Metabox\MetaboxWpPostController;
 
 class VideoGallery extends MetaboxWpPostController
@@ -27,9 +26,7 @@ class VideoGallery extends MetaboxWpPostController
      */
     public function content($post = null, $args = null, $null = null)
     {
-        /** @var MetadataPost $metadataPost */
-        $metadataPost = app(MetadataPost::class);
-        $this->set('items', $metadataPost->get($post->ID, $this->get('name')) ? : []);
+        $this->set('items', post_type()->post_meta()->get($post->ID, $this->get('name')) ? : []);
 
         return $this->viewer('content', $this->all());
     }

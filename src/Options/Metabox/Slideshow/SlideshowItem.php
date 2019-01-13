@@ -22,6 +22,7 @@ class SlideshowItem extends ParamsBag
     /**
      * CONSTRUCTEUR.
      *
+     * @param string $index
      * @param array $attrs Liste des attributs de l'éléments
      * @param ViewEngine $viewer Instance du controleur d'affichage de gabarit.
      *

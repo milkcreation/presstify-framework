@@ -3,7 +3,6 @@
 namespace tiFy\Contracts\PostType;
 
 use tiFy\Contracts\Kernel\ParamsBag;
-use WP_Post_Type;
 
 interface PostTypeFactory extends ParamsBag
 {
@@ -28,11 +27,4 @@ interface PostTypeFactory extends ParamsBag
      * @return string
      */
     public function label(string $key, string $default = '') : string;
-
-    /**
-     * Déclaration du type de post.
-     *
-     * @return WP_Post_Type
-     */
-    public function register();
 }

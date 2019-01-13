@@ -3,7 +3,6 @@
 namespace tiFy\PostType;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\PostType\Metadata\Post as MetadataPost;
 
 class PostTypeServiceProvider extends AppServiceProvider
 {
@@ -13,20 +12,10 @@ class PostTypeServiceProvider extends AppServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'post_type',
-        'post_type.factory',
-        'post_type.labels'
+        'post-type',
+        'post-type.factory',
+        'post-type.post.meta'
     ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
-    {
-        $this->app->singleton(
-            MetadataPost::class
-        )->build();
-    }
 
     /**
      * {@inheritdoc}
@@ -35,7 +24,7 @@ class PostTypeServiceProvider extends AppServiceProvider
     {
         $this->registerManager();
         $this->registerFactory();
-        $this->registerLabels();
+        $this->registerPostMeta();
     }
 
     /**
@@ -45,7 +34,7 @@ class PostTypeServiceProvider extends AppServiceProvider
      */
     public function registerManager()
     {
-        $this->app->share('post_type', PostType::class);
+        $this->getContainer()->share('post-type', PostTypeManager::class);
     }
 
     /**
@@ -55,16 +44,16 @@ class PostTypeServiceProvider extends AppServiceProvider
      */
     public function registerFactory()
     {
-        $this->app->add('post_type.factory', PostTypeFactory::class);
+        $this->getContainer()->add('post-type.factory', PostTypeFactory::class);
     }
 
     /**
-     * Déclaration du controleur de déclaration des intitulés de type de contenu.
+     * Déclaration du controleur de gestion des metadonnées de post.
      *
      * @return void
      */
-    public function registerLabels()
+    public function registerPostMeta()
     {
-        $this->app->add('post_type.labels', PostTypeLabels::class);
+        $this->getContainer()->share('post-type.post.meta', PostTypePostMeta::class);
     }
 }

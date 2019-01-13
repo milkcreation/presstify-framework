@@ -3,35 +3,57 @@
 namespace tiFy\Taxonomy;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Taxonomy\Metadata\Term as MetadataTerm;
-use tiFy\Taxonomy\Taxonomy;
-use tiFy\Taxonomy\TaxonomyItemController;
-use tiFy\Taxonomy\TaxonomyItemLabelsController;
 
 class TaxonomyServiceProvider extends AppServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * Liste des noms de qualification des services fournis.
+     * @internal requis. Tous les noms de qualification de services à traiter doivent être renseignés.
+     * @var string[]
      */
-    protected $bindings = [
-        TaxonomyItemController::class,
-        TaxonomyItemLabelsController::class
+    protected $provides = [
+        'taxonomy',
+        'taxonomy.factory',
+        'taxonomy.term.meta'
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function boot()
+    public function register()
     {
-        $this->app->singleton(
-            Taxonomy::class,
-            function () {
-                return new Taxonomy();
-            }
-        )->build();
+        $this->registerManager();
+        $this->registerFactory();
+        $this->registerTermMeta();
+    }
 
-        $this->app->singleton(
-            MetadataTerm::class
-        )->build();
+    /**
+     * Déclaration du controleur principal.
+     *
+     * @return void
+     */
+    public function registerManager()
+    {
+        $this->getContainer()->share('taxonomy', TaxonomyManager::class);
+    }
+
+    /**
+     * Déclaration du controleur de gestion d'une taxonomie.
+     *
+     * @return void
+     */
+    public function registerFactory()
+    {
+        $this->getContainer()->add('taxonomy.factory', TaxonomyFactory::class);
+    }
+
+    /**
+     * Déclaration du controleur de gestion des metadonnées de terme d'une taxonomie.
+     *
+     * @return void
+     */
+    public function registerTermMeta()
+    {
+        $this->getContainer()->share('taxonomy.term.meta', TaxonomyTermMeta::class);
     }
 }

@@ -13,16 +13,19 @@ use tiFy\Contracts\Kernel\Request;
 use tiFy\Contracts\Kernel\Validator;
 use tiFy\Contracts\Partial\PartialController;
 use tiFy\Contracts\Partial\PartialManager;
-use tiFy\Contracts\PostType\PostType;
+use tiFy\Contracts\PostType\PostTypeManager;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\Routing\Url;
 use tiFy\Contracts\Routing\UrlFactory;
+use tiFy\Contracts\Taxonomy\TaxonomyManager;
+use tiFy\Contracts\Taxonomy\TaxonomyFactory;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Contracts\View\ViewPattern;
 use tiFy\Contracts\View\ViewPatternController;
+use tiFy\Contracts\Wp\WpManager;
 use tiFy\Contracts\Wp\PageHook;
 use tiFy\Contracts\Wp\PageHookItem;
 use tiFy\Kernel\Kernel;
@@ -322,16 +325,16 @@ endif;
 
 if (!function_exists('post_type')) :
     /**
-     * Récupération de l'intance du controleur des types de contenu ou de l'instance d'un type de contenu.
+     * Récupération de l'intance du controleur des types de contenu ou instance d'un type de contenu déclaré.
      *
      * @param null|string $name Nom de qualification du type de contenu.
      *
-     * @return PostType|PostTypeFactory
+     * @return PostTypeManager|PostTypeFactory
      */
     function post_type($name = null)
     {
-        /** @var PostType $manager */
-        $manager = app()->get('post_type');
+        /** @var PostTypeManager $manager */
+        $manager = app()->get('post-type');
 
         if (is_null($name)) :
             return $manager;
@@ -438,6 +441,27 @@ if (! function_exists('router')) {
     }
 }
 
+if (! function_exists('taxonomy')) {
+    /**
+     * Récupération de l'instance du contrôleur de taxonomies ou instance d'une taxonomie déclarée.
+     *
+     * @param null|string $name Nom de qualification de la taxonomie déclarée.
+     *
+     * @return TaxonomyManager|TaxonomyFactory
+     */
+    function taxonomy($name = null)
+    {
+        /** @var TaxonomyManager $manager */
+        $manager = app()->get('taxonomy');
+
+        if (is_null($name)) :
+            return $manager;
+        endif;
+
+        return $manager->get($name);
+    }
+}
+
 if (! function_exists('url')) {
     /**
      * Récupération de l'instance du contrôleur d'url.
@@ -503,10 +527,13 @@ if (!function_exists('wp_env')) :
     /**
      * Instance du controleur d'environnement Wordpress.
      *
-     * @return ViewController|ViewEngine
+     * @return WpManager
      */
     function wp_env()
     {
-        return app()->get('wp');
+        /** @var WpManager $factory */
+        $factory = app()->get('wp');
+
+        return $factory;
     }
 endif;

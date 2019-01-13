@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @name Metabox
- * @desc Personnalisation des boîtes de saisie.
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Metabox;
 
 use Illuminate\Support\Collection;
@@ -15,6 +8,14 @@ use tiFy\Contracts\Metabox\MetaboxManager as MetaboxManagerContract;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Wp\WpScreen;
 
+/**
+ * Class MetaboxManager
+ *
+ * @package tiFy\Metabox
+ * @desc Personnalisation des boîtes de saisie.
+ * @author Jordy Manner <jordy@tigreblanc.fr>
+ * @copyright Milkcreation
+ */
 class MetaboxManager implements MetaboxManagerContract
 {
     /**

@@ -7,9 +7,12 @@ use tiFy\Wp\Media\MediaDownload;
 use tiFy\Wp\Media\MediaManager;
 use tiFy\Wp\Media\MediaUpload;
 use tiFy\Wp\PageHook\PageHook;
+use tiFy\Wp\PostType\WpPostTypeManager;
 use tiFy\Wp\Query\Post;
 use tiFy\Wp\Query\Posts;
 use tiFy\Wp\Routing\Router;
+use tiFy\Wp\Taxonomy\WpTaxonomyManager;
+use tiFy\Wp\User\User;
 
 class WpServiceProvider extends AppServiceProvider
 {
@@ -20,11 +23,14 @@ class WpServiceProvider extends AppServiceProvider
     protected $provides = [
         'wp',
         'wp.page-hook',
-        'wp.routing.router'
+        'wp.post-type',
+        'wp.routing.router',
+        'wp.taxonomy',
+        'wp.user'
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -42,28 +48,42 @@ class WpServiceProvider extends AppServiceProvider
 
         $this->app->bind('wp.screen', function (\WP_Screen $wp_screen) { return new WpScreen($wp_screen); });
 
-        $this->app->bind('wp.taxonomy', function () { return new WpTaxonomy(); });
-
-        $this->app->bind('wp.user', function () { return new WpUser(); });
-
         add_action('after_setup_tify', function () {
             $this->getContainer()->get('wp');
+
             $this->getContainer()->get('wp.page-hook');
             $this->getContainer()->get('wp.routing.router');
 
-            if ($this->getContainer()->has('post_type')) :
-                $this->getContainer()->get('post_type');
+            if ($this->getContainer()->has('post-type')) :
+                $this->getContainer()->get('wp.post-type');
+            endif;
+
+            if ($this->getContainer()->has('taxonomy')) :
+                $this->getContainer()->get('wp.taxonomy');
             endif;
         });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function register()
     {
         $this->registerPageHook();
+        $this->registerPostType();
         $this->registerRouting();
+        $this->registerTaxonomy();
+        $this->registerUser();
+    }
+
+    /**
+     * Déclaration du controleur de gestion de Wordpress.
+     *
+     * @return void
+     */
+    public function registerManager()
+    {
+        $this->getContainer()->share('wp', WpManager::class);
     }
 
     /**
@@ -77,13 +97,15 @@ class WpServiceProvider extends AppServiceProvider
     }
 
     /**
-     * Déclaration du controleur de gestion de Wordpress.
+     * Déclaration du controleur des type de contenu.
      *
      * @return void
      */
-    public function registerManager()
+    public function registerPostType()
     {
-        $this->getContainer()->share('wp', WpManager::class);
+        $this->getContainer()->share('wp.post-type',  function () {
+            return new WpPostTypeManager($this->getContainer()->get('post-type'));
+        });
     }
 
     /**
@@ -105,5 +127,27 @@ class WpServiceProvider extends AppServiceProvider
     public function registerRouting()
     {
         $this->getContainer()->share('wp.routing.router', function () { return new Router(); });
+    }
+
+    /**
+     * Déclaration du controleur des taxonomies.
+     *
+     * @return void
+     */
+    public function registerTaxonomy()
+    {
+        $this->getContainer()->share('wp.taxonomy',  function () {
+            return new WpTaxonomyManager($this->getContainer()->get('taxonomy'));
+        });
+    }
+
+    /**
+     * Déclaration du controleur des pages d'accroche.
+     *
+     * @return void
+     */
+    public function registerUser()
+    {
+        $this->getContainer()->add('wp.user', User::class);
     }
 }

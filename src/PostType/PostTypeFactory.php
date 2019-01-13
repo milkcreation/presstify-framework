@@ -8,7 +8,7 @@ use tiFy\Kernel\Params\ParamsBag;
 class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
 {
     /**
-     * Nom de qualification du type de post.
+     * Nom de qualification.
      * @var string
      */
     protected $name = '';
@@ -51,8 +51,8 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
     /**
      * CONSTRUCTEUR.
      *
-     * @param string $name Nom de qualification du type de post.
-     * @param array $attrs Attribut de configuration.
+     * @param string $name Nom de qualification.
+     * @param array $attrs Liste des attributs de configuration.
      *
      * @return void
      */
@@ -62,23 +62,11 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
 
         parent::__construct($attrs);
 
-        add_action(
-            'init',
-            function () {
-                if ($taxonomies = $this->get('taxonomies', [])) :
-                    foreach ($taxonomies as $taxonomy) :
-                        register_taxonomy_for_object_type($taxonomy, $this->getName());
-                    endforeach;
-                endif;
-            },
-            25
-        );
-
-        $this->register();
+        events()->trigger('post-type.factory.boot', [&$this]);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
@@ -95,7 +83,7 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -103,7 +91,7 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function label(string $key, string $default = '') : string
     {
@@ -111,7 +99,7 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
@@ -122,35 +110,21 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
             $this->get('label', _x($this->getName(), 'post type general name', 'tify'))
         );
 
-        $this->set(
-            'plural',
-            $this->get('plural', $this->get('label'))
-        );
+        $this->set('plural', $this->get('plural', $this->get('label')));
 
-        $this->set(
-            'singular',
-            $this->get('singular', $this->get('label'))
-        );
+        $this->set('singular', $this->get('singular', $this->get('label')));
 
         $this->set('gender', $this->get('gender', false));
 
-        $this->set(
-            'labels',
-            app()->get(
-                'post_type.labels',
-                [
-                    $this->get('label'),
-                    array_merge(
-                        [
-                            'singular' => $this->get('singular'),
-                            'plural'   => $this->get('plural'),
-                            'gender'   => $this->get('gender'),
-                        ],
-                        (array)$this->get('labels', [])
-                    )
-                ]
-            )->all()
-        );
+        $labels = new PostTypeLabelsBag($this->get('label'), array_merge(
+            [
+                'singular' => $this->get('singular'),
+                'plural'   => $this->get('plural'),
+                'gender'   => $this->get('gender'),
+            ],
+            (array)$this->get('labels', [])
+        ));
+        $this->set('labels', $labels->all());
 
         $this->set(
             'exclude_from_search',
@@ -193,19 +167,5 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
                 ? $this->get('show_in_admin_bar')
                 : $this->get('show_in_menu')
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function register()
-    {
-        global $wp_post_types;
-
-        if (!isset($wp_post_types[$this->getName()])) :
-            return register_post_type($this->getName(), $this->all());
-        else :
-            return $wp_post_types[$this->getName()];
-        endif;
     }
 }

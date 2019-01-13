@@ -8,7 +8,7 @@ use tiFy\Kernel\Labels\LabelsBag;
 /**
  * @see https://codex.wordpress.org/Function_Reference/register_post_type
  */
-class PostTypeLabels extends LabelsBag
+class PostTypeLabelsBag extends LabelsBag
 {
     /**
      * {@inheritdoc}

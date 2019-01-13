@@ -17,7 +17,7 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewEngine
+     * @var ViewEngine
      */
     protected $viewer;
 
