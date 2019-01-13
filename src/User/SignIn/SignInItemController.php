@@ -3,11 +3,18 @@
 namespace tiFy\User\SignIn;
 
 use Illuminate\Support\Str;
-use tiFy\Field\Field;
-use tiFy\Partial\Partial;
+use tiFy\Contracts\User\UserSignInItemInterface;
 
-class SignInItemController extends SignInHandleController implements SignInItemInterface
+class SignInItemController extends SignInHandleController implements UserSignInItemInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return (string)$this->form();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -66,7 +73,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function form()
     {
-        return $this->app->appTemplateRender('form', $this->all());
+        return $this->viewer('form', $this->all());
     }
 
     /**
@@ -74,7 +81,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formAdditionnalFields()
     {
-        return $this->app->appTemplateRender('form-additionnal_fields', $this->all());
+        return $this->viewer('form-additionnal_fields', $this->all());
     }
 
     /**
@@ -82,7 +89,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formAfter()
     {
-        return $this->app->appTemplateRender('form-after', $this->all());
+        return $this->viewer('form-after', $this->all());
     }
 
     /**
@@ -90,7 +97,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formBefore()
     {
-        return $this->app->appTemplateRender('form-before', $this->all());
+        return $this->viewer('form-before', $this->all());
     }
 
     /**
@@ -98,7 +105,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formBody()
     {
-        return $this->app->appTemplateRender('form-body', $this->all());
+        return $this->viewer('form-body', $this->all());
     }
 
     /**
@@ -120,15 +127,15 @@ class SignInItemController extends SignInHandleController implements SignInItemI
             $content = reset($errors);
         endif;
 
-        return Partial::Notice(
+        return partial(
+            'notice',
             [
                 'attrs' => [
-                    'class' => 'tiFySignIn-FormPart tiFySignIn-FormErrors'
+                    'class' => '%s tiFySignIn-FormPart tiFySignIn-FormErrors'
                 ],
                 'content'  => $content,
                 'type'  => 'error'
-            ],
-            false
+            ]
         );
     }
 
@@ -137,7 +144,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formFieldPassword()
     {
-        return $this->app->appTemplateRender('form-field_password', $this->all());
+        return $this->viewer('form-field_password', $this->all());
     }
 
     /**
@@ -145,7 +152,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formFieldRemember()
     {
-        return $this->app->appTemplateRender('form-field_remember', $this->all());
+        return $this->viewer('form-field_remember', $this->all());
     }
 
     /**
@@ -153,7 +160,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formFieldSubmit()
     {
-        return $this->app->appTemplateRender('form-field_submit', $this->all());
+        return $this->viewer('form-field_submit', $this->all());
     }
 
     /**
@@ -161,7 +168,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formFieldUsername()
     {
-        return $this->app->appTemplateRender('form-field_username', $this->all());
+        return $this->viewer('form-field_username', $this->all());
     }
 
     /**
@@ -169,7 +176,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formFooter()
     {
-        return $this->app->appTemplateRender('form-footer', $this->all());
+        return $this->viewer('form-footer', $this->all());
     }
 
     /**
@@ -177,7 +184,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formHeader()
     {
-        return $this->app->appTemplateRender('form-header', $this->all());
+        return $this->viewer('form-header', $this->all());
     }
 
     /**
@@ -185,7 +192,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function formHiddenFields()
     {
-        return $this->app->appTemplateRender('form-hidden_fields', $this->all());
+        return $this->viewer('form-hidden_fields', $this->all());
     }
 
     /**
@@ -207,15 +214,15 @@ class SignInItemController extends SignInHandleController implements SignInItemI
             $content = reset($infos);
         endif;
 
-        return Partial::Notice(
+        return partial(
+            'notice',
             [
                 'attrs' => [
                     'class' => 'tiFySignIn-FormPart tiFySignIn-FormInfos'
                 ],
                 'content'  => $content,
                 'type'  => 'info'
-            ],
-            false
+            ]
         );
     }
 
@@ -238,7 +245,7 @@ class SignInItemController extends SignInHandleController implements SignInItemI
      */
     public function lostpasswordLink()
     {
-        return $this->app->appTemplateRender('lost-password-link', $this->all());
+        return $this->viewer('lost-password-link', $this->all());
     }
 
     /**
@@ -255,15 +262,5 @@ class SignInItemController extends SignInHandleController implements SignInItemI
     public function onLogoutSuccess()
     {
         return;
-    }
-
-    /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->form();
     }
 }

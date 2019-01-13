@@ -5,50 +5,71 @@
  * @see https://github.com/oscarotero/Embed
  * @see https://oscarotero.com/embed3/demo/index.php
  */
+
 namespace tiFy\Api\Youtube;
 
 use Illuminate\Support\Arr;
 use Embed\Embed;
-use tiFy\Apps\AppTrait;
+use Madcoda\Youtube\Youtube as MadcodaYoutube;
+use tiFy\Contracts\Kernel\Validator;
 
-class Youtube extends \Madcoda\Youtube\Youtube
+class Youtube extends MadcodaYoutube
 {
-    use AppTrait;
-
     /**
-     * Instance de la classe
-     * @var tiFy\Api\Youtube\Youtube
+     * Instance de la classe.
+     * @var self
      */
-    static $Inst        = null;
+    static $instance;
 
     /**
-     * CONSTRUCTEUR
+     * CONSTRUCTEUR.
      *
-     * @param array $param
-     * @param $sslPath
+     * @param array $params Liste des paramètres.
+     * @param string $sslPath
      *
      * @return void
      */
-    public function __construct($params = [], $sslPath = null)
+    protected function __construct($params = [], $sslPath = null)
     {
         parent::__construct($params, $sslPath);
     }
-    
+
     /**
-     * CONTROLEURS
-     */
-    /**
-     * Initialisation
-     *
-     * @param array $attrs
+     * Court-circuitage de l'instanciation.
      *
      * @return void
      */
-    public static function create($attrs = [])
+    private function __clone()
     {
-        return self::$Inst = new static($attrs, is_ssl());
+
     }
-    
+
+    /**
+     * Court-circuitage de l'instanciation.
+     *
+     * @return void
+     */
+    private function __wakeup()
+    {
+
+    }
+
+    /**
+     * Instanciation.
+     *
+     * @param array $attrs
+     *
+     * @return static
+     */
+    public static function make($attrs = [])
+    {
+        if (!self::$instance) :
+            self::$instance = new static($attrs, is_ssl());
+        endif;
+
+        return self::$instance;
+    }
+
     /**
      * Vérification de correspondance d'url.
      *
@@ -62,89 +83,167 @@ class Youtube extends \Madcoda\Youtube\Youtube
     }
 
     /**
-     * Récupération de miniature.
-     *
-     * @param string $url Url de la vidéo.
-     * @param string $formats Format de l'image, par ordre de préférence.
-     *
-     * @return array
-     */
-    public static function getThumbnailSrc($url, $formats = ['maxres','standard', 'height', 'medium', 'default'])
-    {
-        if (!$inst = self::$Inst) :
-            return;
-        endif;
-
-        // Vérification de l'url de la vidéo
-        if (! self::isUrl($url)) :
-            return new \WP_Error('tFyComponentsApiYtInvalidSrc', __('Url YouTube invalide', 'tify'));
-        endif;
-
-        // Récupération de l'ID de la vidéo
-        if (! $ytid = self::parseVIdFromURL($url)) :
-            return new \WP_Error('tFyComponentsApiYtParseVIdFailed', __('Récupération de l\ID de la vidéo depuis l\'url en échec', 'tify'));
-        endif;
-
-        // Récupération de infos de la vidéo
-        if (! $infos = $inst->getVideoInfo($ytid)) :
-            return new \WP_Error('tFyComponentsApiYtGetVideoInfos', __('Impossible de récupérer les informations de la vidéo', 'tify'));
-        endif;
-
-        // Récupération de la liste des miniatures
-        if (empty($infos->snippet->thumbnails)) :
-            return new \WP_Error('tFyComponentsApiYtAnyThumbnailAvailable', __('Aucune miniature disponible', 'tify'));
-        endif;
-
-        foreach ($formats as $format) :
-            if(empty($infos->snippet->thumbnails->{$format})) :
-                continue;
-            endif;
-            $attrs = $infos->snippet->thumbnails->{$format};
-            if(empty($attrs->url) || empty($attrs->width) || empty($attrs->height) ) :
-                continue;
-            endif;
-
-            $src = array_values((array) $attrs);
-            $src[] = $format;
-
-            return $src;
-        endforeach;
-    }
-
-    /**
      * Récupération du code d'intégration d'une vidéo.
      *
-     * @param string $url Url de la video.
+     * @param string $video Identifiant ou url de la vidéo.
      * @param array $params {
      *      Liste des paramètres.
      *      @see https://developers.google.com/youtube/player_parameters?hl=fr#Parameters
      * }
      *
-     * @return string|void
+     * @return string
      */
-    public function getVideoEmbed($url, $params = [])
+    public function getEmbed($video, $params = [])
     {
-        try{
-            $id = self::parseVIdFromURL($url);
-        } catch (\Exception $e) {
-            return;
-        }
+        if(validator()->isUrl($video)) :
+            try {
+                $video_id = self::parseVIdFromURL($video);
+                $video_url = $video;
+            } catch (\Exception $e) {
+                return '';
+            }
+        else :
+            try {
+                $video_id = $video;
+                $video_url = $this->getUrlFromId($video);
+            } catch (\Exception $e) {
+                return '';
+            }
+        endif;
 
-        try{
-            $info = Embed::create($url);
+        try {
+            $info = Embed::create($video_url);
 
             if (Arr::get($params, 'loop')) :
-                Arr::set($params, 'playlist', $id);
+                Arr::set($params, 'playlist', $video_id);
             endif;
 
             $height = $info->getHeight();
             $ratio = $info->getAspectRatio();
-            $src = esc_url("//www.youtube.com/embed/{$id}". ($params ? '?' . http_build_query($params) : ''));
+            $src = esc_url("//www.youtube.com/embed/{$video_id}" . ($params ? '?' . http_build_query($params) : ''));
             $width = $info->getWidth();
 
-            return $this->appTemplateRender('iframe', compact('height', 'ratio', 'src', 'width'));
+            return view()->setDirectory(__DIR__ . '/views')
+                ->render(
+                    'iframe',
+                    compact('height', 'ratio', 'src', 'width', 'params')
+                );
         } catch (\Exception $e) {
-            return;
+            return '';
+        }
+    }
+
+    /**
+     * Récupération des données de miniature.
+     *
+     * @param string $video Identifiant ou url de la vidéo.
+     * @param array $formats Format de l'image, par ordre de préférence. maxres|standard|height|medium|default.
+     *
+     * @return array
+     */
+    public function getThumbnailSrc($video, $formats = [])
+    {
+        if(validator()->isUrl($video)) :
+            if (!self::isUrl($video)) :
+                return new \WP_Error(
+                    'tFyComponentsApiYtInvalidSrc',
+                    __('Url YouTube invalide', 'tify')
+                );
+            endif;
+
+            if (!$video = self::parseVIdFromURL($video)) :
+                return new \WP_Error(
+                    'tFyComponentsApiYtParseVIdFailed',
+                    __('Récupération de l\ID de la vidéo depuis l\'url en échec', 'tify')
+                );
+            endif;
+        endif;
+
+        if (!$infos = $this->getVideoInfo($video)) :
+            return new \WP_Error(
+                'tFyComponentsApiYtGetVideoInfos',
+                __('Impossible de récupérer les informations de la vidéo', 'tify')
+            );
+        endif;
+
+        if (empty($infos->snippet->thumbnails)) :
+            return new \WP_Error(
+                'tFyComponentsApiYtAnyThumbnailAvailable',
+                __('Aucune miniature disponible', 'tify')
+            );
+        endif;
+
+        if (empty($formats)) :
+            $formats = array_keys(get_object_vars($infos->snippet->thumbnails));
+        endif;
+
+        foreach ($formats as $format) :
+            if (empty($infos->snippet->thumbnails->{$format})) :
+                continue;
+            endif;
+
+            $attrs = get_object_vars($infos->snippet->thumbnails->{$format});
+            if (empty($attrs['url']) || empty($attrs['width']) || empty($attrs['height'])) :
+                continue;
+            endif;
+
+            $attrs['src'] = $attrs['url'];
+            unset($attrs['url']);
+
+            $attrs['title'] = $infos->snippet->title;
+
+            $src[$format] = $attrs;
+        endforeach;
+
+        return !empty($src) ? $src : [];
+    }
+
+    /**
+     * Récupération des données de miniature.
+     *
+     * @param string $video Identifiant ou url de la vidéo.
+     * @param string $size Taille de l'image.
+     *
+     * @return array
+     */
+    public function getThumbnailImg($video, $size = 'default')
+    {
+        $attrs = $this->getThumbnailSrc($video, [$size]);
+
+        if ($attrs && !is_wp_error($attrs))  :
+            $attrs = reset($attrs);
+
+            return (string) partial(
+                'tag',
+                [
+                    'tag' => 'img',
+                    'attrs' => $attrs
+                ]
+            );
+        else :
+            return '';
+        endif;
+    }
+
+    /**
+     * Récupération de l'url à partir de l'Id de la video.
+     *
+     * @param string $id Identifiant de la video.
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function getUrlFromId($id)
+    {
+        $url = "https://www.youtube.com/watch?v={$id}";
+
+        try {
+            self::parseVIdFromURL($url);
+
+            return $url;
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
     }
 }
