@@ -57,6 +57,6 @@ class WpPostTypeManager implements WpPostTypeManagerContract
             }, 25);
         });
 
-        add_action('save_post', [$this, 'save'], 10, 2);
+        add_action('save_post', [$this->manager->post_meta(), 'save'], 10, 2);
     }
 }
