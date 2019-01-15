@@ -75,7 +75,7 @@ class User extends AddonController
      */
     public function canRole($name)
     {
-        return get_role($this->roles) && in_array($name, $this->roles);
+        return get_role($name) && in_array($name, $this->get('roles', []));
     }
 
     /**
@@ -111,7 +111,7 @@ class User extends AddonController
     /**
      * Vérifie si l'utilisateur courant édite son profile.
      *
-     * @var boolean
+     * @return boolean
      */
     public function isProfile()
     {

@@ -36,7 +36,7 @@ interface Request
      *
      * @param ServerRequestInterface $psrRequest Requête PSR
      *
-     * @return self|IlluminateHttpRequest
+     * @return static|IlluminateHttpRequest
      */
     public function createFromPsr(ServerRequestInterface $psrRequest);
 }

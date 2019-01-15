@@ -4,8 +4,6 @@ namespace tiFy\User\Query;
 
 use Illuminate\Support\Arr;
 use tiFy\Contracts\User\UserQuery as UserQueryContract;
-use tiFy\User\Query\UserQueryCollection;
-use tiFy\User\Query\UserQueryItem;
 use WP_User;
 use WP_User_Query;
 
