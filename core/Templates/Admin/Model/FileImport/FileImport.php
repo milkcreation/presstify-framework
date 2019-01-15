@@ -209,7 +209,7 @@ class FileImport extends Import
         endif;
 
         parent::_current_screen($current_screen);
-
+        
         // DEBUG - Tester la fonctionnalité d'import > Décommenter $_REQUEST['_import_row_index'] et commenter le return (ligne suivante)
         if (!isset($row_import)) :
             return;

@@ -2,7 +2,7 @@ jQuery(document).ready( function($){
     $( '.tiFyTabooxRelatedPosts-suggest' ).each( function(){
         $( this ).on( 'autocompleteselect', function( event, ui ) {
             event.preventDefault();
-                        
+
             var $this        = $(this),
                 $closest     = $(this).closest( '.tiFyTabooxRelatedPosts' );
     

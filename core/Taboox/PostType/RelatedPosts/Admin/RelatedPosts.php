@@ -93,7 +93,7 @@ class RelatedPosts extends \tiFy\Core\Taboox\PostType\Admin
      * @return string
      */
     public function form( $post )
-    {    
+    {
         // Récupération des éléments
         $items = get_post_meta( $post->ID, $this->args['name'], true );
         $this->Items = ! empty( $items ) ? array_map( 'intval', (array) $items  ) : array();
