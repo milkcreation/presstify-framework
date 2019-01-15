@@ -25,7 +25,7 @@ interface PostQueryItem extends ParamsBag
     /**
      * Récupération de la date de création au format datetime.
      *
-     * @return bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
+     * @param bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
      *
      * @return string
      */
@@ -97,7 +97,7 @@ interface PostQueryItem extends ParamsBag
     /**
      * Récupération de la date de la dernière modification au format datetime.
      *
-     * @return bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
+     * @param bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
      *
      * @return string
      */

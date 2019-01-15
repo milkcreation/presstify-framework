@@ -27,7 +27,7 @@ class SignUpController extends ParamsBag implements SignUpControllerContract
 
         parent::__construct($attrs);
 
-        return form()->add($this->getName(), $this->all());
+        form()->register($this->getName(), $this->all());
     }
 
     /**

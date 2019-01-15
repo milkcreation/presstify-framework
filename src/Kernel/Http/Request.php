@@ -10,7 +10,7 @@ use tiFy\Contracts\Kernel\Request as RequestContract;
 class Request extends IlluminateHttpRequest implements RequestContract
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getProperty($property = '')
     {
@@ -46,7 +46,7 @@ class Request extends IlluminateHttpRequest implements RequestContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function createFromPsr(ServerRequestInterface $psrRequest)
     {
