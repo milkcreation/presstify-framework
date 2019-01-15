@@ -55,7 +55,7 @@
 					self.PdfViewerContainer.find('.tiFyPdfViewer-nav').hide();
 				}
 				self._renderPage(self.PdfViewer.pageNum);
-				self._trigger('load', null, {ui: self});
+				self._trigger('load', event, {ui: self});
 			});
     	},
         /**
@@ -76,7 +76,7 @@
 		_renderPage: function(num) {
 			this.PdfViewer.pageRendering = true;
 			var self = this;
-			this._trigger('beforeRenderPage', null, {ui: this});
+			this._trigger('beforeRenderPage', event, {ui: this});
 			self.pdfDoc.getPage(num).then(function(page) {
 				var viewport;
 				if (self.PdfViewer.width) {
@@ -106,7 +106,7 @@
 					}
 				});
 			});
-			this._trigger('afterRenderPage', null, {ui: this});
+			this._trigger('afterRenderPage', event, {ui: this});
 			this.PdfViewerContainer.find('.tiFyPdfViewer-pageNum').text(self.PdfViewer.pageNum);
 		},
         /**

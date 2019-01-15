@@ -1,7 +1,6 @@
 jQuery(document).ready(function($) {
     $(document).on('click', '[data-cookie_notice][data-handle]', function(e){
         e.preventDefault();
-        var $handler = $(this);
 
         // Définition du conteneur
         if (!$($(this).data('cookie_notice')).length)
@@ -29,7 +28,7 @@ jQuery(document).ready(function($) {
                     }
                 )
                     .done(function(resp) {
-                        $handler.trigger('tify_control.cookie_notice.validated');
+
                     })
                     .always(function () {
                         $closest.fadeOut(function () {
@@ -38,7 +37,6 @@ jQuery(document).ready(function($) {
                     });
                 break;
             case 'close' :
-                $handler.trigger('tify_control.cookie_notice.closed');
                 $closest.fadeOut(function () {
                     $(this).remove();
                 });

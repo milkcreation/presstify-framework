@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-10-16",
+  "time": "2018-01-15",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -46,20 +46,13 @@
     "google/recaptcha": "^1.1",
     "guzzlehttp/guzzle": "^6.2",
     "html2text/html2text": "^4.0",
-    "illuminate/http": "^5.6",
-    "illuminate/support": "^5.6",
     "kenwheeler/slick": "^1.6",
     "league/booboo": "^2.0",
     "league/commonmark": "^0.11",
-    "league/container": "^2.4",
     "league/csv": "^9.0",
-    "league/event": "^2.1",
     "league/flysystem": "^1.0",
     "league/glide": "^1.3",
     "league/period": "^3.4",
-    "league/plates": "^3.3",
-    "league/route": "^3.0",
-    "league/uri": "^5.2",
     "madcoda/php-youtube-api": "^1.2",
     "mexitek/phpcolors": "^0.4.0",
     "mobiledetect/mobiledetectlib": "^2.8",
@@ -71,13 +64,10 @@
     "redeyeventures/geopattern": "^1.1",
     "symfony/filesystem": "^3.3",
     "symfony/finder": "^4.0",
-    "symfony/http-foundation": "^4.0",
-    "symfony/psr-http-message-bridge": "^1.0",
     "symfony/serializer": "^4.0",
     "symfony/yaml": "^4.0",
     "twbs/bootstrap": "^3.3",
-    "vimeo/vimeo-api": "^1.2",
-    "zendframework/zend-diactoros": "^1.7"
+    "vimeo/vimeo-api": "^1.2"
   },
   "suggest": {
     "beelab/bowerphp": "Utilisation de bower via PHP",
