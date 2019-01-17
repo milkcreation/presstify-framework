@@ -26,6 +26,8 @@ class View extends ViewController implements FactoryViewContract
                 $arguments
             );
         endif;
+
+        return null;
     }
 
     /**

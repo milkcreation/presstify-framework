@@ -3,8 +3,6 @@
 namespace tiFy\Metabox;
 
 use tiFy\App\Container\AppServiceProvider;
-use tiFy\Metabox\MetaboxManager;
-use tiFy\Metabox\MetaboxFactory;
 use tiFy\Metabox\Tab\MetaboxTabController;
 
 class MetaboxServiceProvider extends AppServiceProvider

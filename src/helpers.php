@@ -23,8 +23,8 @@ use tiFy\Contracts\Taxonomy\TaxonomyManager;
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Contracts\View\ViewPattern;
-use tiFy\Contracts\View\ViewPatternController;
+use tiFy\Contracts\Template\TemplateFactory;
+use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\Wp\WpManager;
 use tiFy\Contracts\Wp\PageHook;
 use tiFy\Contracts\Wp\PageHookItem;
@@ -299,30 +299,6 @@ if (!function_exists('paths')) :
     }
 endif;
 
-if (!function_exists('pattern')) :
-    /**
-     * Instance de controleur de motifs d'affichage ou Instance d'un motif.
-     *
-     * @param null|string Nom de qualification du motif.
-     * @param array $params Liste des paramètres appliqués au motif.
-     *
-     * @return null|ViewPattern|ViewPatternController
-     */
-    function pattern($name = null, array $params = [])
-    {
-        /** @var ViewPattern $manager */
-        $manager = app()->get('view.pattern');
-
-        if (is_null($name)) :
-            return $manager;
-        elseif ($pattern = $manager->get($name)) :
-            return $pattern->param($params);
-        else :
-            return null;
-        endif;
-    }
-endif;
-
 if (!function_exists('post_type')) :
     /**
      * Récupération de l'intance du controleur des types de contenu ou instance d'un type de contenu déclaré.
@@ -461,6 +437,30 @@ if (! function_exists('taxonomy')) {
         return $manager->get($name);
     }
 }
+
+if (!function_exists('template')) :
+    /**
+     * Instance de controleur de gabarits d'affichage ou Instance d'un gabarit.
+     *
+     * @param null|string Nom de qualification du motif.
+     * @param array $params Liste des paramètres appliqués au motif.
+     *
+     * @return null|TemplateFactory|TemplateManager
+     */
+    function template($name = null, array $params = [])
+    {
+        /** @var TemplateManager $manager */
+        $manager = app()->get('template');
+
+        if (is_null($name)) :
+            return $manager;
+        elseif ($template = $manager->get($name)) :
+            return $template->param($params);
+        else :
+            return null;
+        endif;
+    }
+endif;
 
 if (! function_exists('url')) {
     /**
