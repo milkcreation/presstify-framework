@@ -125,6 +125,7 @@ class Request extends ParamsBag implements FactoryRequest
                 request()->server('HTTP_REFERER')
             )
         );
+        $redirect .= $this->option('anchor') && ($id = $this->form()->get('attrs.id')) ? "#{$id}" : '';
 
         $this->events('request.redirect', [&$redirect]);
 

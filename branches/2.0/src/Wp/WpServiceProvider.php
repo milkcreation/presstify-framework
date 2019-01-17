@@ -61,6 +61,10 @@ class WpServiceProvider extends AppServiceProvider
             if ($this->getContainer()->has('taxonomy')) :
                 $this->getContainer()->get('wp.taxonomy');
             endif;
+
+            if ($this->getContainer()->has('template')) :
+                $this->getContainer()->get('template');
+            endif;
         });
     }
 

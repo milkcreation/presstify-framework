@@ -63,7 +63,7 @@ final class Cron implements CronContract
                 );
 
                 if ($jobs = $this->all()) :
-                    pattern()->register(
+                    template()->register(
                         'cron.layout.list',
                         [
                             'admin_menu' => [

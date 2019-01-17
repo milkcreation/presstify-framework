@@ -312,7 +312,10 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             $this->pull('attrs.class');
         endif;
 
-        $this->set('attrs.action', $this->getAction());
+        $this->set('attrs.action', $this->getAction() .
+            ($this->option('anchor') && ($id = $this->get('attrs.id'))
+                ? "#{$id}" : '')
+        );
         $this->set('attrs.method', $this->getMethod());
         if ($enctype = $this->get('enctype')) :
             $this->set('attrs.enctype', $enctype);
@@ -333,7 +336,8 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             );
             assets()->addInlineJs(
                 'if (window.history && window.history.replaceState){'.
-                'let location=window.location.href.split("#")[0].split("?")[0];'.
+                'let anchor=window.location.href.split("#")[1],' .
+                'location=window.location.href.split("?")[0] + (anchor ? "#" + anchor : "");' .
                 'window.history.pushState("", document.title, location);};',
                 'both',
                 true

@@ -4,7 +4,6 @@ namespace tiFy\Routing;
 
 use League\Uri\Components\Query;
 use League\Uri\Http;
-use League\Uri\Components\HierarchicalPath;
 use League\Uri\Modifiers\AppendSegment;
 use League\Uri\Modifiers\AppendQuery;
 use League\Uri\Modifiers\RemoveQueryParams;
@@ -70,7 +69,7 @@ class UrlFactory implements UrlFactoryContract
      */
     public function get()
     {
-        return $this->url;
+        return (string) $this->url;
     }
 
     /**
