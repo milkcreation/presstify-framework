@@ -24,7 +24,7 @@ class Api extends \tiFy\App\Component
         //'google-map',
         'recaptcha',
         'youtube',
-        'vimeo',
+        //'vimeo',
         'facebook'
     ];
 
