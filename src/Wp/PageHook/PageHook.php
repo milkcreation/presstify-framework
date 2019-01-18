@@ -61,18 +61,6 @@ class PageHook implements PageHookContract
     /**
      * {@inheritdoc}
      */
-    public function is($name, $post = null)
-    {
-        if (!$item = $this->get($name)) :
-            return false;
-        endif;
-
-        return $item->isCurrent($post);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function set($name, $attrs = null)
     {
         $keys = is_array($name) ? $name : [$name => $attrs];

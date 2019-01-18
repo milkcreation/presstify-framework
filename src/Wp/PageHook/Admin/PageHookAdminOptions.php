@@ -2,6 +2,7 @@
 
 namespace tiFy\Wp\PageHook\Admin;
 
+use tiFy\Contracts\Wp\PageHookItem;
 use tiFy\Metabox\MetaboxWpOptionsController;
 use tiFy\Wp\PageHook\PageHook;
 
@@ -42,6 +43,7 @@ class PageHookAdminOptions extends MetaboxWpOptionsController
     {
         $settings = [];
         foreach($this->get('items', []) as $item) :
+            /** @var PageHookItem $item */
             array_push($settings, $item->getOptionName());
         endforeach;
 
