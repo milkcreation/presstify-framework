@@ -4,6 +4,7 @@ namespace tiFy\Wp\PageHook;
 
 use tiFy\Contracts\Wp\PageHookItem as PageHookItemContract;
 use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Wp\Query\Post;
 
 class PageHookItem extends ParamsBag implements PageHookItemContract
 {
@@ -40,6 +41,12 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     ];
 
     /**
+     * Instance du post associé.
+     * @var Post
+     */
+    protected $post;
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param string $name Nom de qualification.
@@ -55,7 +62,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
@@ -72,15 +79,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getId()
-    {
-        return (int)$this->get('id', 0);
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -88,7 +87,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getObjectType()
     {
@@ -96,7 +95,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getObjectName()
     {
@@ -104,7 +103,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getOptionName()
     {
@@ -112,17 +111,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getPermalink()
-    {
-        return ($id = $this->getId())
-            ? get_permalink($id)
-            : '';
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -130,28 +119,39 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isCurrent($post = null)
+    public function exists()
+    {
+        return $this->post() instanceof Post;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function is($post = null)
     {
         if (!$post = get_post($post)) :
             return false;
         endif;
 
-        return $this->getId() === $post->ID;
+        return $this->post()->getId() === $post->ID;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function post()
     {
-        parent::parse($attrs);
+        if (!$this->post instanceof Post) :
+            if (!$post_id = $this->get('id')) :
+                $post_id = (int)get_option($this->get('option_name'), 0);
+                $this->set('id', $post_id);
+            endif;
 
-        if (!$this->getId()) :
-            $this->set('id', (int)get_option($attrs['option_name'], 0));
+            $this->post = new Post(get_post($this->get('id', 0)));
         endif;
 
-        return $attrs;
+        return $this->post;
     }
 }

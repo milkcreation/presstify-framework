@@ -2,9 +2,10 @@
 
 namespace tiFy\Wp\Query;
 
+use tiFy\Contracts\Wp\Post as PostContract;
 use tiFy\PostType\Query\PostQueryItem;
 
-final class Post extends PostQueryItem
+class Post extends PostQueryItem implements PostContract
 {
     /**
      * CONSTRUCTEUR.

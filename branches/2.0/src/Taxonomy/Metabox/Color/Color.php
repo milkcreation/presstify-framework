@@ -11,14 +11,12 @@ class Color extends MetaboxWpTermController
      */
     public function content($term = null, $taxonomy = null, $args = null)
     {
+        /** @var \WP_Term $term */
         return field(
             'colorpicker',
             [
                 'name'    => '_color',
-                'value'   => get_term_meta($term->term_id, '_color', true),
-                'options' => [
-                    'showInput' => true
-                ]
+                'value'   => get_term_meta($term->term_id, '_color', true)
             ]
         );
     }

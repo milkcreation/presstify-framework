@@ -2,6 +2,7 @@
 
 namespace tiFy\Column;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Column\Column as ColumnContract;
 use tiFy\Contracts\Wp\WpScreenInterface;
@@ -50,38 +51,27 @@ final class Column implements ColumnContract
             function () {
                 foreach (config('column', []) as $screen => $items) :
                     foreach ($items as $name => $attrs) :
-                        if (is_numeric($screen)) :
-                            $_screen = isset($attrs['screen']) ? $attrs['screen'] : null;
-                        else :
-                            $_screen = $screen;
-                        endif;
+                        $name = (is_numeric($name)) ? Str::random() : $name;
 
-                        if (!is_null($_screen)) :
-                            if (preg_match('#(.*)@(post_type|taxonomy|user)#', $_screen)) :
-                                $_screen = 'list::' . $_screen;
-                            endif;
+                        $_screen = (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen))
+                            ? "list::{$screen}": $screen;
 
-                            $this->items[] = app()->resolve('column.item', [$_screen, $name, $attrs]);
-                        endif;
+                        $this->items[] = app()->resolve('column.item', [$name, $attrs, $_screen]);
                     endforeach;
                 endforeach;
             },
             0
         );
 
-        add_action(
-            'current_screen',
-            function ($wp_current_screen) {
-                $this->screen = app('wp.screen', [$wp_current_screen]);
+        add_action('current_screen', function (\WP_Screen $wp_current_screen) {
+            $this->screen = app('wp.screen', [$wp_current_screen]);
 
-                /** @var \WP_Screen $wp_current_screen */
-                foreach ($this->items as $item) :
-                    $item->load($this->screen);
-                endforeach;
+            foreach ($this->items as $item) :
+                $item->load($this->screen);
+            endforeach;
 
-                $this->parseColumn($this->screen->getObjectType(), $this->screen->getObjectName());
-            }
-        );
+            $this->parseColumn($this->screen->getObjectType(), $this->screen->getObjectName());
+        });
 
         add_action(
             'admin_init',
@@ -93,117 +83,68 @@ final class Column implements ColumnContract
                     return;
                 endif;
 
-                $screens = [];
-                (new Collection($this->items))->each(function (ColumnItemController $item) use (&$screens) {
-                    if ($wpScreen = $item->getScreen()) :
-                        $type = $wpScreen->getObjectType();
-                        $name = $wpScreen->getObjectName();
+                switch(request()->get('action')) :
+                    case 'inline-save' :
+                        $this->screen = \tiFy\Wp\WpScreen::get('list::' . request()->post('post_type') . '@post_type');
+                        break;
+                    case 'inline-save-tax' :
+                        $this->screen = \tiFy\Wp\WpScreen::get('list::' . request()->post('taxonomy') . '@taxonomy');
+                        break;
+                endswitch;
 
-                        $screens[$type] = $screens[$type] ?? [];
-                        if (!in_array($name, $screens[$type])) :
-                            array_push($screens[$type], $name);
-                        endif;
-                    endif;
-                });
-
-                foreach($screens as $object_type => $object_names) :
-                    foreach($object_names as $object_name) :
-                        $this->parseColumn($object_type, $object_name);
-                    endforeach;
+                foreach ($this->items as $item) :
+                    $item->load($this->screen);
                 endforeach;
+
+                $this->parseColumn($this->screen->getObjectType(), $this->screen->getObjectName());
             },
             1000000
         );
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function add($screen, $name, $attrs = [])
     {
-        config()->set(
-            "column.{$screen}.{$name}",
-            $attrs
-        );
+        config()->set("column.{$screen}.{$name}", $attrs);
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parseColumn($object_type, $object_name)
     {
         switch ($object_type) :
             case 'post_type' :
-                add_filter(
-                    "manage_edit-{$object_name}_columns",
-                    [$this, 'parseColumnHeaders'],
-                    1
-                );
-
-                add_action(
-                    "manage_{$object_name}_posts_custom_column",
-                    [$this, 'parseColumnContents'],
-                    25,
-                    2
-                );
+                add_filter("manage_edit-{$object_name}_columns", [$this, 'parseColumnHeaders'], 1);
+                add_action("manage_{$object_name}_posts_custom_column", [$this, 'parseColumnContents'], 25, 2);
                 break;
-
             case 'taxonomy' :
-                add_filter(
-                    "manage_edit-{$object_name}_columns",
-                    [$this, 'parseColumnHeaders']
-                );
-
-                add_filter(
-                    "manage_{$object_name}_custom_column",
-                    [$this, 'parseColumnContents'],
-                    25,
-                    3
-                );
+                add_filter("manage_edit-{$object_name}_columns", [$this, 'parseColumnHeaders']);
+                add_filter("manage_{$object_name}_custom_column", [$this, 'parseColumnContents'], 25, 3);
                 break;
-
             case 'user' :
-                add_filter(
-                    "manage_edit-{$object_name}_columns",
-                    [$this, 'parseColumnHeaders']
-                );
-
-                add_filter(
-                    "manage_{$object_name}_custom_column",
-                    [$this, 'parseColumnContents'],
-                    25,
-                    3
-                );
+                add_filter("manage_edit-{$object_name}_columns", [$this, 'parseColumnHeaders']);
+                add_filter("manage_{$object_name}_custom_column", [$this, 'parseColumnContents'], 25, 3);
                 break;
-
             default :
-                add_filter(
-                    'manage_columns',
-                    [$this, 'parseColumnHeaders']
-                );
-
-                add_filter(
-                    'manage_custom_column',
-                    [$this, 'parseColumnContents'],
-                    25,
-                    3
-                );
+                add_filter('manage_columns', [$this, 'parseColumnHeaders']);
+                add_filter('manage_custom_column', [$this, 'parseColumnContents'], 25, 3);
                 break;
         endswitch;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     final public function parseColumnHeaders($headers)
     {
-        $this->currents = (new Collection($this->items))->filter(
-            function (ColumnItemController $item) {
-                return $item->isActive();
-            }
-        );
+        $this->currents = (new Collection($this->items))->filter(function (ColumnItemController $item) {
+            return $item->isActive();
+        });
 
         // Traitement des colonnes système.
         $i = 0;
@@ -212,12 +153,12 @@ final class Column implements ColumnContract
             $column = app(
                 'column.item',
                 [
-                    $this->screen,
                     $name,
                     [
                         'title'    => $title,
                         'position' => 0.99+$i++,
                     ],
+                    $this->screen
                 ]
             );
             $column->load($this->screen);
@@ -259,13 +200,14 @@ final class Column implements ColumnContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     final public function parseColumnContents()
     {
         foreach ($this->currents as $c) :
             $echo = false;
 
+            $output = '';
             switch ($this->screen->getObjectType()) :
                 case 'post_type' :
                     $column_name = func_get_arg(0);
@@ -284,7 +226,7 @@ final class Column implements ColumnContract
                         continue 2;
                     endif;
                     break;
-
+                default:
                 case 'custom' :
                     $output = func_get_arg(0);
                     $column_name = func_get_arg(1);
@@ -295,7 +237,7 @@ final class Column implements ColumnContract
                     break;
             endswitch;
 
-            $content = $c->getContent();
+            $content = $c->getContent() ?: $output;
             $output = is_callable($content) ? call_user_func_array($content, func_get_args()) : $content;
 
             if ($echo) :
@@ -305,6 +247,8 @@ final class Column implements ColumnContract
                 return $output;
             endif;
         endforeach;
+
+        return '';
     }
 
 }

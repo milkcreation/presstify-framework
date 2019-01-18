@@ -7,11 +7,11 @@ use tiFy\Contracts\Kernel\ParamsBag;
 interface PageHookItem extends ParamsBag
 {
     /**
-     * Récupération de l'identifiant de qualification de la page d'accroche associée.
+     * Vérification d'existance du post associé.
      *
-     * @return int
+     * @return boolean
      */
-    public function getId();
+    public function exists();
 
     /**
      * Récupération du nom de qualification.
@@ -42,25 +42,18 @@ interface PageHookItem extends ParamsBag
     public function getOptionName();
 
     /**
-     * Récupération du permalien de la page d'accroche associée.
-     *
-     * @return string
-     */
-    public function getPermalink();
-
-    /**
-     * Récupération de l'intitulé de qualification.
-     *
-     * @return string
-     */
-    public function getTitle();
-
-    /**
      * Vérifie si la page d'affichage courante correspond à la page d'accroche associée.
      *
      * @param null|int|\WP_Post Page d'affichage courante|Identifiant de qualification|Objet post Wordpress à vérifier.
      *
      * @return bool
      */
-    public function isCurrent($post = null);
+    public function is($post = null);
+
+    /**
+     * Récupération de l'instance du post associé.
+     *
+     * @return Post
+     */
+    public function post();
 }

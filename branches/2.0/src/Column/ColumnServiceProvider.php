@@ -7,11 +7,13 @@ use tiFy\App\Container\AppServiceProvider;
 class ColumnServiceProvider extends AppServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
         $this->app->singleton('column', function () { return new Column(); })->build();
-        $this->app->bind('column.item', function ($screen, $name, $attrs = []) { return new ColumnItemController($screen, $name, $attrs); });
+        $this->app->bind('column.item', function ($name, $attrs = [], $screen = null) {
+            return new ColumnItemController($name, $attrs, $screen);
+        });
     }
 }

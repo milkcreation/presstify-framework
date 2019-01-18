@@ -79,6 +79,14 @@ class Colorpicker extends FieldController implements ColorpickerContract
     {
         parent::parse($attrs);
 
-        $this->set('attrs.data-options', $this->get('options', []));
+        $options = array_merge(
+            [
+                'preferredFormat' => 'hex',
+                'showInput' => true
+            ],
+            $this->get('options', [])
+        );
+
+        $this->set('attrs.data-options', $options);
     }
 }
