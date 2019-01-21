@@ -93,7 +93,7 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
                         break;
                 endswitch;
             elseif (Tools::Functions()->isCallable($this->get('content'))) :
-                return call_user_func($this->get('content'), $item);
+                return call_user_func_array($this->get('content'), [$item]);
             else :
                 return $this->get('content');
             endif;

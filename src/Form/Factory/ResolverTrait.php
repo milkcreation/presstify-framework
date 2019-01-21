@@ -13,10 +13,19 @@ use tiFy\Contracts\Form\FactoryNotices;
 use tiFy\Contracts\Form\FactoryOptions;
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Contracts\Form\FactorySession;
+use tiFy\Contracts\Form\FactoryValidation;
 use tiFy\Contracts\Form\FactoryView;
 use tiFy\Contracts\Form\FormFactory;
+use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\Form\FactoryResolver;
 
+/**
+ * Trait ResolverTrait
+ * @package tiFy\Form\Factory
+ *
+ * @mixin FactoryResolver
+ */
 trait ResolverTrait
 {
     /**
@@ -32,9 +41,7 @@ trait ResolverTrait
     protected $form;
 
     /**
-     * Récupération de l'instance du contrôleur d'un addon associé au formulaire.
-     *
-     * @param string $name Nom de qualification de l'addon.
+     * {@inheritdoc}
      *
      * @return AddonController
      */
@@ -44,36 +51,34 @@ trait ResolverTrait
     }
 
     /**
-     * Récupération de l'instance du contrôleur des addons associés au formulaire.
+     * {@inheritdoc}
      *
      * @return FactoryAddons|AddonController[]
      */
     public function addons()
     {
-        return app()->resolve("form.factory.addons.{$this->form()->name()}");
+        return $this->resolve("factory.addons.{$this->form()->name()}");
     }
 
     /**
-     * Récupération de l'instance du contrôleur des boutons associés au formulaire.
+     * {@inheritdoc}
      *
      * @return FactoryButtons|ButtonController[]
      */
     public function buttons()
     {
-        return app()->resolve("form.factory.buttons.{$this->form()->name()}");
+        return $this->resolve("factory.buttons.{$this->form()->name()}");
     }
 
     /**
-     * Récupération de l'instance du contrôleur des événements associés au formulaire ou déclenchement d'un événement.
-     *
-     * @param string $name Nom de qualification de l'événement.
+     * {@inheritdoc}
      *
      * @return mixed|FactoryEvents
      */
     public function events($name = null)
     {
         /** @var FactoryEvents $factory */
-        $factory = app()->resolve("form.factory.events.{$this->form()->name()}");
+        $factory = $this->resolve("factory.events.{$this->form()->name()}");
 
         if (is_null($name)) :
             return $factory;
@@ -83,9 +88,7 @@ trait ResolverTrait
     }
 
     /**
-     * Récupération de l'instance du contrôleur d'un champ associé au formulaire.
-     *
-     * @param null|string $name Nom de qualification de l'addon.
+     * {@inheritdoc}
      *
      * @return FactoryField
      */
@@ -99,22 +102,17 @@ trait ResolverTrait
     }
 
     /**
-     * Récupération de l'instance du contrôleur des champs associés au formulaire.
+     * {@inheritdoc}
      *
      * @return FactoryFields|FactoryField[]
      */
     public function fields()
     {
-        return app()->resolve("form.factory.fields.{$this->form()->name()}");
+        return $this->resolve("factory.fields.{$this->form()->name()}");
     }
 
     /**
-     * Récupération de valeur(s) de champ(s) basée(s) sur leurs variables d'identifiant de qualification.
-     *
-     * @param mixed $tags Variables de qualification de champs.
-     * string ex. "%%{{slug#1}}%% %%{{slug#2}}%%"
-     * array ex ["%%{{slug#1}}%%", "%%{{slug#2}}%%"]
-     * @param boolean $raw Activation de la valeur de retour au format brut.
+     * {@inheritdoc}
      *
      * @return string
      */
@@ -137,7 +135,7 @@ trait ResolverTrait
     }
 
     /**
-     * Récupération de l'instance du formulaire.
+     * {@inheritdoc}
      *
      * @return FormFactory
      */
@@ -147,17 +145,17 @@ trait ResolverTrait
     }
 
     /**
-     * Récupération de l'instance du contrôleur des messages de notification associés au formulaire.
+     * {@inheritdoc}
      *
      * @return FactoryNotices
      */
     public function notices()
     {
-        return app()->resolve("form.factory.notices.{$this->form()->name()}");
+        return $this->resolve("factory.notices.{$this->form()->name()}");
     }
 
     /**
-     * Récupération d'une option ou de la liste complète des options du formulaire.
+     * {@inheritdoc}
      *
      * @return mixed
      */
@@ -171,51 +169,64 @@ trait ResolverTrait
     }
 
     /**
-     * Récupération de l'instance du contrôleur des options associées au formulaire.
+     * {@inheritdoc}
      *
      * @return FactoryOptions
      */
     public function options()
     {
-        return app()->resolve("form.factory.options.{$this->form()->name()}");
+        return $this->resolve("factory.options.{$this->form()->name()}");
     }
 
     /**
-     * Récupération de l'instance du contrôleur de traitement associé au formulaire.
+     * {@inheritdoc}
      *
      * @return FactoryRequest
      */
     public function request()
     {
-        return app()->resolve("form.factory.request.{$this->form()->name()}");
+        return $this->resolve("factory.request.{$this->form()->name()}");
     }
 
     /**
-     * Récupération de l'instance du contrôleur de session associé au formulaire.
+     * {@inheritdoc}
+     *
+     * @return mixed
+     */
+    public function resolve($alias, $args = [])
+    {
+        return app()->get("form.{$alias}", $args);
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * @return FactorySession
      */
     public function session()
     {
-        return app()->resolve("form.factory.session.{$this->form()->name()}");
+        return $this->resolve("factory.session.{$this->form()->name()}");
     }
 
     /**
-     * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
-     * {@internal
-     *  - cas 1 : Aucun argument n'est passé à la méthode, retourne l'instance du controleur de gabarit d'affichage.
-     *  - cas 2 : Rétourne le gabarit d'affichage en passant les variables en argument.
-     * }
+     * {@inheritdoc}
      *
-     * @param null|string $view Nom de qualification du gabarit.
-     * @param array $data Liste des variables passées en argument.
+     * @return FactoryValidation
+     */
+    public function validation()
+    {
+        return $this->resolve("factory.validation.{$this->form()->name()}");
+    }
+
+    /**
+     * {@inheritdoc}
      *
-     * @return FactoryView|ViewEngine
+     * @return FactoryView|ViewController|ViewEngine
      */
     public function viewer($view = null, $data = [])
     {
         /** @var ViewEngine $viewer */
-        $viewer = app()->resolve("form.factory.viewer.{$this->form()->name()}");
+        $viewer = $this->resolve("factory.viewer.{$this->form()->name()}");
 
         if (is_null($view)) :
             return $viewer;

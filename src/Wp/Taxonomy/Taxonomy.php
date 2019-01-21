@@ -4,10 +4,10 @@ namespace tiFy\Wp\Taxonomy;
 
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;
 use tiFy\Contracts\Taxonomy\TaxonomyManager;
-use tiFy\Contracts\Wp\WpTaxonomyManager as WpTaxonomyManagerContract;
+use tiFy\Contracts\Wp\Taxonomy as TaxonomyContract;
 use WP_Term_Query;
 
-class WpTaxonomyManager implements WpTaxonomyManagerContract
+class Taxonomy implements TaxonomyContract
 {
     /**
      * Instance du controleur de gestion des taxonomies.

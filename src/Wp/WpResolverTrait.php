@@ -13,6 +13,14 @@ trait WpResolverTrait
     /**
      * @inheritdoc
      */
+    public function post_type()
+    {
+        return $this->manager->resolve('post_type');
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function taxonomy()
     {
         return $this->manager->resolve('taxonomy');

@@ -24,4 +24,3 @@ elseif ($success = $this->get('notices.success', [])) :
         ]
     );
 endif;
-?>

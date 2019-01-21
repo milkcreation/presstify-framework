@@ -3,10 +3,10 @@
 namespace tiFy\Form;
 
 use tiFy\Contracts\Form\FactoryField;
-use tiFy\Contracts\Form\FieldController as FieldControllerInterface;
+use tiFy\Contracts\Form\FieldController as FieldControllerContract;
 use tiFy\Form\Factory\ResolverTrait;
 
-class FieldController implements FieldControllerInterface
+class FieldController implements FieldControllerContract
 {
     use ResolverTrait;
 

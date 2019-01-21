@@ -34,7 +34,7 @@ use tiFy\View\ViewEngine;
 class ListTableServiceProvider extends BaseServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -67,7 +67,7 @@ class ListTableServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function register()
     {
@@ -98,14 +98,19 @@ class ListTableServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * Déclaration des controleurs de colonnes.
+     * Déclaration des controleurs de colonnes de la table.
      *
      * @return void
      */
     public function registerColumns()
     {
         $this->getContainer()->share($this->getFullAlias('columns'), function (ListTable $template) {
-            return new ColumnsCollection($template->param('columns', []), $template);
+            if (!$columns = $template->param('columns', [])) :
+                $columns = ($this->getContainer()->has($this->getFullAlias('db')))
+                    ? $this->getContainer()->get($this->getFullAlias('db'))->getColNames() : [];
+            endif;
+
+            return new ColumnsCollection($columns, $template);
         })->withArgument($this->template);
 
         $this->getContainer()->add($this->getFullAlias('columns.item'), ColumnsItem::class);
@@ -133,7 +138,7 @@ class ListTableServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerLabels()
     {
@@ -155,7 +160,7 @@ class ListTableServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerParams()
     {
@@ -165,7 +170,7 @@ class ListTableServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerRequest()
     {

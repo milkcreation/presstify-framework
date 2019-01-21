@@ -6,10 +6,9 @@
 
 namespace tiFy\User\Session;
 
-use tiFy\Contracts\Db\DbItemInterface;
+use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\User\SessionManager as SessionManagerContract;
 use tiFy\Contracts\User\SessionStore;
-use tiFy\Db\Db;
 use tiFy\Cron\Cron;
 
 final class SessionManager implements SessionManagerContract
@@ -22,7 +21,7 @@ final class SessionManager implements SessionManagerContract
 
     /**
      * Classe de rappel de la base de données
-     * @var DbItemInterface
+     * @var DbFactory
      */
     private $db;
 
@@ -96,10 +95,8 @@ final class SessionManager implements SessionManagerContract
     public function getDb()
     {
         if (is_null($this->db)) :
-            /** @var Db $db */
-            $db = app('db');
-            if (!$this->db = $db->get('session')) :
-                $this->db = $db->register(
+            if (!$this->db = db('session')) :
+                $this->db = db()->register(
                     'session',
                     [
                         'install'    => true,
@@ -141,7 +138,7 @@ final class SessionManager implements SessionManagerContract
             endif;
         endif;
 
-        if (!$this->db instanceof DbItemInterface) :
+        if (!$this->db instanceof DbFactory) :
             throw new \Exception(__('La table de base de données de stockage des sessions est indisponible.', 'tify'), 500);
         endif;
 

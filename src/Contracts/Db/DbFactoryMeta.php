@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Db;
 
-interface DbItemMetaInterface
+interface DbFactoryMeta extends DbFactoryResolverTrait
 {
     /**
      * Ajout d'une metadonnée pour un élément.

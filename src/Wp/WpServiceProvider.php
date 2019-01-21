@@ -3,15 +3,17 @@
 namespace tiFy\Wp;
 
 use tiFy\App\Container\AppServiceProvider;
+use tiFy\Wp\Db\Db;
+use tiFy\Wp\Form\Form;
 use tiFy\Wp\Media\MediaDownload;
 use tiFy\Wp\Media\MediaManager;
 use tiFy\Wp\Media\MediaUpload;
 use tiFy\Wp\PageHook\PageHook;
-use tiFy\Wp\PostType\WpPostTypeManager;
+use tiFy\Wp\PostType\PostType;
 use tiFy\Wp\Query\Post;
 use tiFy\Wp\Query\Posts;
 use tiFy\Wp\Routing\Router;
-use tiFy\Wp\Taxonomy\WpTaxonomyManager;
+use tiFy\Wp\Taxonomy\Taxonomy;
 use tiFy\Wp\User\User;
 
 class WpServiceProvider extends AppServiceProvider
@@ -22,8 +24,12 @@ class WpServiceProvider extends AppServiceProvider
      */
     protected $provides = [
         'wp',
+        'wp.db',
+        'wp.form',
         'wp.page-hook',
         'wp.post-type',
+        'wp.query.post',
+        'wp.query.posts',
         'wp.routing.router',
         'wp.taxonomy',
         'wp.user'
@@ -34,8 +40,6 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function boot()
     {
-        $this->registerManager();
-
         $this->app->bind('wp.ctags', function () { return new WpCtags(); });
 
         $this->app->singleton('wp.media.download', function () { return new MediaDownload(); })->build();
@@ -44,26 +48,35 @@ class WpServiceProvider extends AppServiceProvider
 
         $this->app->singleton('wp.query', function () { return new WpQuery(); })->build();
 
-        $this->registerQuery();
-
         $this->app->bind('wp.screen', function (\WP_Screen $wp_screen) { return new WpScreen($wp_screen); });
 
         add_action('after_setup_tify', function () {
-            $this->getContainer()->get('wp');
+            /** @var WpManager $wp */
+            $wp = $this->getContainer()->get('wp');
 
-            $this->getContainer()->get('wp.page-hook');
-            $this->getContainer()->get('wp.routing.router');
+            if ($wp->is()) :
+                $this->getContainer()->get('wp.page-hook');
+                $this->getContainer()->get('wp.routing.router');
 
-            if ($this->getContainer()->has('post-type')) :
-                $this->getContainer()->get('wp.post-type');
-            endif;
+                if ($this->getContainer()->has('db')) :
+                    $this->getContainer()->get('wp.db');
+                endif;
 
-            if ($this->getContainer()->has('taxonomy')) :
-                $this->getContainer()->get('wp.taxonomy');
-            endif;
+                if ($this->getContainer()->has('form')) :
+                    $this->getContainer()->get('wp.form');
+                endif;
 
-            if ($this->getContainer()->has('template')) :
-                $this->getContainer()->get('template');
+                if ($this->getContainer()->has('post-type')) :
+                    $this->getContainer()->get('wp.post-type');
+                endif;
+
+                if ($this->getContainer()->has('taxonomy')) :
+                    $this->getContainer()->get('wp.taxonomy');
+                endif;
+
+                if ($this->getContainer()->has('template')) :
+                    $this->getContainer()->get('template');
+                endif;
             endif;
         });
     }
@@ -73,11 +86,39 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function register()
     {
+        $this->registerManager();
+        $this->registerDb();
+        $this->registerForm();
         $this->registerPageHook();
         $this->registerPostType();
+        $this->registerQuery();
         $this->registerRouting();
         $this->registerTaxonomy();
         $this->registerUser();
+    }
+
+    /**
+     * Déclaration du controleur de base de données.
+     *
+     * @return void
+     */
+    public function registerDb()
+    {
+        $this->getContainer()->share('wp.db',  function () {
+            return new Db($this->getContainer()->get('db'));
+        });
+    }
+
+    /**
+     * Déclaration du controleur des formulaires.
+     *
+     * @return void
+     */
+    public function registerForm()
+    {
+        $this->getContainer()->share('wp.form',  function () {
+            return new Form($this->getContainer()->get('form'));
+        });
     }
 
     /**
@@ -101,14 +142,14 @@ class WpServiceProvider extends AppServiceProvider
     }
 
     /**
-     * Déclaration du controleur des type de contenu.
+     * Déclaration du controleur des types de contenu.
      *
      * @return void
      */
     public function registerPostType()
     {
         $this->getContainer()->share('wp.post-type',  function () {
-            return new WpPostTypeManager($this->getContainer()->get('post-type'));
+            return new PostType($this->getContainer()->get('post-type'));
         });
     }
 
@@ -119,8 +160,8 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function registerQuery()
     {
-        $this->app->bind('wp.query.post', function (\WP_Post $wp_post) { return new Post($wp_post); });
-        $this->app->bind('wp.query.posts', function (\WP_Query $wp_query) { return new Posts($wp_query); });
+        $this->getContainer()->add('wp.query.post', Post::class);
+        $this->getContainer()->add('wp.query.posts', Posts::class);
     }
 
     /**
@@ -130,7 +171,7 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function registerRouting()
     {
-        $this->getContainer()->share('wp.routing.router', function () { return new Router(); });
+        $this->getContainer()->share('wp.routing.router', Router::class);
     }
 
     /**
@@ -141,7 +182,7 @@ class WpServiceProvider extends AppServiceProvider
     public function registerTaxonomy()
     {
         $this->getContainer()->share('wp.taxonomy',  function () {
-            return new WpTaxonomyManager($this->getContainer()->get('taxonomy'));
+            return new Taxonomy($this->getContainer()->get('taxonomy'));
         });
     }
 

@@ -38,21 +38,11 @@ class Addons extends Collection implements FactoryAddons
             if (!is_null($name) && ($attrs !== false)) :
                 $attrs = is_array($attrs) ? $attrs : [$attrs];
 
-                if (app()->bound("form.addon.{$name}")) :
-                    $this->items[$name] = app()->singleton(
-                        "form.factory.addon.{$name}.{$this->form()->name()}",
-                        function ($name, $attrs, FormFactory $form) {
-                            return app()->resolve("form.addon.{$name}", [$name, $attrs, $form]);
-                        }
-                    )->build([$name, $attrs, $this->form()]);
-                else :
-                    $this->items[$name] = app()->singleton(
-                        "form.factory.addon.{$name}.{$this->form()->name()}",
-                        function ($name, $attrs, FormFactory $form) {
-                            return app()->resolve("form.addon", [$name, $attrs, $form]);
-                        }
-                    )->build([$name, $attrs, $this->form()]);
-                endif;
+                $this->items[$name] = (app()->has("form.addon.{$name}"))
+                    ? $this->resolve("addon.{$name}", [$name, $attrs, $this->form()])
+                    : $this->resolve("addon", [$name, $attrs, $this->form()]);
+
+                app()->share("form.factory.addon.{$name}.{$this->form()->name()}", $this->items[$name]);
             endif;
         endforeach;
 

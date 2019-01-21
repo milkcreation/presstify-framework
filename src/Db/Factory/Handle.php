@@ -1,32 +1,28 @@
 <?php
 
-namespace tiFy\Db;
+namespace tiFy\Db\Factory;
 
-use tiFy\Contracts\Db\DbItemHandleInterface;
-use tiFy\Contracts\Db\DbItemInterface;
+use tiFy\Contracts\Db\DbFactory;
+use tiFy\Contracts\Db\DbFactoryHandle;
 
-class DbItemHandleController implements DbItemHandleInterface
+class Handle implements DbFactoryHandle
 {
-    /**
-     * Instance du controleur de base de données associé.
-     * @var DbItemInterface
-     */
-    protected $db;
+    use ResolverTrait;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param DbItemInterface $db Instance du controleur de base de données associé.
+     * @param DbFactory $db Instance du controleur de base de données associé.
      *
      * @return void
      */
-    public function __construct(DbItemInterface $db)
+    public function __construct(DbFactory $db)
     {
         $this->db = $db;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function create($data = [])
     {
@@ -39,7 +35,7 @@ class DbItemHandleController implements DbItemHandleInterface
         endif;
 
         // Formatage des données
-        $data = $this->db->parser()->validate($data);
+        $data = $this->parser()->validate($data);
         $data = array_map('maybe_serialize', $data);
 
         // Enregistrement de l'élément en base de données
@@ -49,7 +45,7 @@ class DbItemHandleController implements DbItemHandleInterface
         // Enregistrement des metadonnées de l'élément en base
         if (is_array($metas) && $this->db->hasMeta()) :
             foreach ($metas as $meta_key => $meta_value) :
-                $this->db->meta()->update($id, $meta_key, $meta_value);
+                $this->meta()->update($id, $meta_key, $meta_value);
             endforeach;
         endif;
 
@@ -57,7 +53,7 @@ class DbItemHandleController implements DbItemHandleInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function delete($where, $where_format = null)
     {
@@ -65,7 +61,7 @@ class DbItemHandleController implements DbItemHandleInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function delete_by_id($id)
     {
@@ -73,17 +69,19 @@ class DbItemHandleController implements DbItemHandleInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function next()
     {
-        if ($last_insert_id = $this->db->sql()->query("SELECT LAST_INSERT_ID() FROM {$this->wpdb_table}")) :
+        if ($last_insert_id = $this->db->sql()->query("SELECT LAST_INSERT_ID() FROM {$this->db->getTableName()}")) :
             return ++$last_insert_id;
         endif;
+
+        return 0;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prepare($query, $args)
     {
@@ -91,7 +89,7 @@ class DbItemHandleController implements DbItemHandleInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function query($query)
     {
@@ -99,13 +97,13 @@ class DbItemHandleController implements DbItemHandleInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function record($data = [])
     {
         $primary = $this->db->getPrimary();
 
-        if (!empty($data[$primary]) && $this->db->select()->count([$primary => $data[$primary]])) :
+        if (!empty($data[$primary]) && $this->select()->count([$primary => $data[$primary]])) :
             return $this->update($data[$primary], $data);
         else :
             return $this->create($data);
@@ -113,7 +111,7 @@ class DbItemHandleController implements DbItemHandleInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function replace($data = [], $format = null)
     {
@@ -121,7 +119,7 @@ class DbItemHandleController implements DbItemHandleInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function update($id, $data = [])
     {
@@ -134,7 +132,7 @@ class DbItemHandleController implements DbItemHandleInterface
         endif;
 
         // Formatage des données
-        $data = $this->db->parser()->validate($data);
+        $data = $this->parser()->validate($data);
         $data = array_map('maybe_serialize', $data);
 
         $this->db->sql()->update($this->db->getTableName(), $data, [$this->db->getPrimary() => $id]);
@@ -142,7 +140,7 @@ class DbItemHandleController implements DbItemHandleInterface
         // Enregistrement des metadonnées de l'élément en base
         if (is_array($metas) && $this->db->hasMeta()) :
             foreach ((array)$metas as $meta_key => $meta_value) :
-                $this->db->meta()->update($id, $meta_key, $meta_value);
+                $this->meta()->update($id, $meta_key, $meta_value);
             endforeach;
         endif;
 

@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Wp;
 
 use WP_Term;
 
-interface WpTaxonomyManager
+interface Taxonomy
 {
     /**
      * Récupération de la liste des termes selon l'ordre.

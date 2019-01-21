@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Db;
 
-interface DbItemMakeInterface
+interface DbFactoryMake extends DbFactoryResolverTrait
 {
     /**
      * Installation.

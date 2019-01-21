@@ -32,12 +32,9 @@ class Fields extends Collection implements FactoryFields
         // Déclaration des champs.
         foreach ($fields as $slug => $attrs) :
             if (!is_null($slug)) :
-                $this->items[$slug] = app()->singleton(
-                    "form.factory.field.{$this->form->name()}.{$slug}",
-                    function ($slug, $attrs = []) {
-                        return app()->resolve('form.factory.field', [$slug, $attrs, $this->form]);
-                    }
-                )->build([$slug, $attrs]);
+                $this->items[$slug] = $this->resolve("factory.field", [$slug, $attrs, $this->form()]);
+
+                app()->share("form.factory.field.{$this->form()->name()}.{$slug}", $this->items[$slug]);
             endif;
         endforeach;
 
@@ -58,7 +55,7 @@ class Fields extends Collection implements FactoryFields
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function byGroup()
     {
@@ -68,7 +65,7 @@ class Fields extends Collection implements FactoryFields
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function byPosition()
     {
@@ -78,7 +75,7 @@ class Fields extends Collection implements FactoryFields
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasGroup()
     {

@@ -2,12 +2,12 @@
 
 namespace tiFy\PostType\Db;
 
-use tiFy\Db\DbItemBaseController;
+use tiFy\Db\DbFactory;
 
-class DbPostsController extends DbItemBaseController
+class DbPostsController extends DbFactory
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {

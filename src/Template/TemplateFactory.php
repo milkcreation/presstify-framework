@@ -49,7 +49,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __invoke($name)
     {
@@ -57,7 +57,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __toString()
     {
@@ -67,7 +67,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     private function _boot($name)
     {
@@ -153,7 +153,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     private function _preload()
     {
@@ -162,7 +162,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function assets()
     {
@@ -170,7 +170,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -178,7 +178,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function config($key = null, $default = null)
     {
@@ -196,7 +196,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function db()
     {
@@ -204,7 +204,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function display()
     {
@@ -212,7 +212,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function extend($alias)
     {
@@ -220,7 +220,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContainer()
     {
@@ -228,7 +228,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getServiceProviders()
     {
@@ -236,7 +236,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function bound($abstract)
     {
@@ -244,7 +244,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function label($key = null, $default = '')
     {
@@ -258,7 +258,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function load()
     {
@@ -269,7 +269,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function name()
     {
@@ -277,7 +277,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function notices()
     {
@@ -285,7 +285,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function param($key = null, $default = null)
     {
@@ -305,7 +305,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prepare()
     {
@@ -313,7 +313,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function process()
     {
@@ -321,15 +321,17 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function render()
     {
-        return __('Aucun contenu à afficher', 'tify');
+        return ($this->config()->has('content'))
+            ? call_user_func_array($this->config('content'), [&$this])
+            : __('Aucun contenu à afficher', 'tify');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function request()
     {
@@ -337,7 +339,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resolve($abstract, array $args = [])
     {
@@ -345,7 +347,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function url()
     {
@@ -353,7 +355,7 @@ class TemplateFactory implements TemplateFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function viewer($view = null, $data = [])
     {

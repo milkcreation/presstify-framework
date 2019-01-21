@@ -2,12 +2,12 @@
 
 namespace tiFy\User\Db;
 
-use tiFy\Db\DbItemBaseController;
+use tiFy\Db\DbFactory;
 
-class DbUsersController extends DbItemBaseController
+class DbUsersController extends DbFactory
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {

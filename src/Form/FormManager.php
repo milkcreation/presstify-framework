@@ -21,57 +21,25 @@ final class FormManager implements FormManagerContract
     protected $current;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        add_action(
-            'init',
-            function () {
-                foreach (config('form', []) as $name => $attrs) :
-                    $this->register($name, $attrs);
-                endforeach;
-            },
-            999999
-        );
-
-        add_action(
-            'wp',
-            function () {
-                foreach($this->all() as $form) :
-                    $this->current($form);
-                    $this->reset();
-                endforeach;
-            },
-            999999
-        );
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addonRegister($name, $controller)
     {
-        app()->bind(
-            "form.addon.{$name}",
-            function ($name, $attrs, FormFactory $form) use ($controller) {
-                if (is_object($controller) || $controller instanceof Closure) :
-                    return call_user_func_array($controller, [$name, $attrs, $form]);
-                elseif(class_exists($controller)) :
-                    return new $controller($name, $attrs, $form);
-                else :
-                    return app('form.addon', [$name, $attrs, $form]);
-                endif;
-            }
-        );
+        app()->add("form.addon.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
+            if (is_object($controller) || $controller instanceof Closure) :
+                return call_user_func_array($controller, [$name, $attrs, $form]);
+            elseif (class_exists($controller)) :
+                return new $controller($name, $attrs, $form);
+            else :
+                return app()->get('form.addon', [$name, $attrs, $form]);
+            endif;
+        });
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all()
     {
@@ -79,28 +47,25 @@ final class FormManager implements FormManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function buttonRegister($name, $controller)
     {
-        app()->bind(
-            "form.button.{$name}",
-            function ($name, $attrs, FormFactory $form) use ($controller) {
-                if (is_object($controller) || $controller instanceof Closure) :
-                    return call_user_func_array($controller, [$name, $attrs, $form]);
-                elseif(class_exists($controller)) :
-                    return new $controller($name, $attrs, $form);
-                else :
-                    return app('form.button', [$name, $attrs, $form]);
-                endif;
-            }
-        );
+        app()->add("form.button.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
+            if (is_object($controller) || $controller instanceof Closure) :
+                return call_user_func_array($controller, [$name, $attrs, $form]);
+            elseif (class_exists($controller)) :
+                return new $controller($name, $attrs, $form);
+            else :
+                return app()->get('form.button', [$name, $attrs, $form]);
+            endif;
+        });
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function current($form = null)
     {
@@ -123,28 +88,25 @@ final class FormManager implements FormManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function fieldRegister($name, $controller)
     {
-        app()->bind(
-            "form.field.{$name}",
-            function ($name, $attrs, FormFactory $form) use ($controller) {
-                if (is_object($controller) || $controller instanceof Closure) :
-                    return call_user_func_array($controller, [$name, $attrs, $form]);
-                elseif(class_exists($controller)) :
-                    return new $controller($name, $attrs, $form);
-                else :
-                    return app('form.field', [$name, $attrs, $form]);
-                endif;
-            }
-        );
+        app()->add("form.field.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
+            if (is_object($controller) || $controller instanceof Closure) :
+                return call_user_func_array($controller, [$name, $attrs, $form]);
+            elseif (class_exists($controller)) :
+                return new $controller($name, $attrs, $form);
+            else :
+                return app()->get('form.field', [$name, $attrs, $form]);
+            endif;
+        });
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get($name)
     {
@@ -152,7 +114,7 @@ final class FormManager implements FormManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function index($name)
     {
@@ -162,7 +124,7 @@ final class FormManager implements FormManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function register($name, $attrs = [])
     {
@@ -170,12 +132,12 @@ final class FormManager implements FormManagerContract
 
         return $this->set(
             $name,
-            ($controller ? new $controller($name, $attrs) : app('form.factory', [$name, $attrs]))
+            ($controller ? new $controller($name, $attrs) : app()->get('form.factory', [$name, $attrs]))
         );
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function reset()
     {
@@ -187,7 +149,7 @@ final class FormManager implements FormManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resourcesDir($path = '')
     {
@@ -199,7 +161,7 @@ final class FormManager implements FormManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resourcesUrl($path = '')
     {
@@ -212,7 +174,7 @@ final class FormManager implements FormManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function set($name, FormFactory $form)
     {

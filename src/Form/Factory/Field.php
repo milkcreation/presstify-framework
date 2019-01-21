@@ -113,7 +113,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __toString()
     {
@@ -121,7 +121,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
@@ -132,7 +132,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAddonOption($name, $key = null, $default = null)
     {
@@ -142,15 +142,15 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getController()
     {
-        return app("form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}");
+        return $this->resolve("field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}");
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getExtras($key = null, $default = null)
     {
@@ -158,7 +158,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getGroup()
     {
@@ -166,7 +166,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -174,7 +174,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPosition()
     {
@@ -182,7 +182,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRequired($key = null, $default = null)
     {
@@ -190,7 +190,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSlug()
     {
@@ -198,7 +198,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -206,7 +206,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getType()
     {
@@ -214,7 +214,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getValue($raw = true)
     {
@@ -230,7 +230,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getValues($raw = true, $glue = ', ')
     {
@@ -256,7 +256,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasLabel()
     {
@@ -264,7 +264,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasWrapper()
     {
@@ -272,7 +272,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function onError()
     {
@@ -280,7 +280,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parseValidations($validations, $results = [])
     {
@@ -312,7 +312,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prepare()
     {
@@ -332,16 +332,11 @@ class Field extends ParamsBag implements FactoryField
          * Initialisation du controleur de champ.
          * @var FieldController $control
          */
-        $control = app()->singleton(
-            "form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}",
-            function ($name, FactoryField $field) {
-                if (app()->bound("form.field.{$this->getType()}")) :
-                    return app("form.field.{$this->getType()}", [$name, $field]);
-                else :
-                    return app("form.field", [$name, $field]);
-                endif;
-            }
-        )->build([$this->getType(), $this]);
+        $control = (app()->has("form.field.{$this->getType()}"))
+            ? $this->resolve("field.{$this->getType()}", [$name, $this])
+            : $this->resolve("field", [$name, $this]);
+
+        app()->share("form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}", $control);
 
         // Propriétés de support.
         if (!$this->get('supports')) :
@@ -422,7 +417,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resetValue()
     {
@@ -430,7 +425,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function render()
     {
@@ -438,7 +433,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function renderPrepare()
     {
@@ -568,7 +563,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setExtra($key, $value)
     {
@@ -576,7 +571,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setPosition($position = 0)
     {
@@ -586,7 +581,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setValue($value)
     {
@@ -594,7 +589,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function supports($support = null)
     {

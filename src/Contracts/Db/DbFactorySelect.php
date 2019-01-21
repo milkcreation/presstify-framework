@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Db;
 
-interface DbItemSelectInterface
+interface DbFactorySelect extends DbFactoryResolverTrait
 {
     /**
      * Récupération de la liste des résultats.

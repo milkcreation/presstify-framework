@@ -64,7 +64,7 @@ class Validation implements FactoryValidation
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function call($callback, $value, $args = [])
     {
@@ -87,7 +87,7 @@ class Validation implements FactoryValidation
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __return_true($value)
     {
@@ -95,7 +95,7 @@ class Validation implements FactoryValidation
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function compare($value, $tags, $raw = true)
     {

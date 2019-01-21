@@ -50,7 +50,7 @@ class Mailer extends AddonController
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -122,7 +122,7 @@ class Mailer extends AddonController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
@@ -144,7 +144,7 @@ class Mailer extends AddonController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaultsFieldOptions()
     {

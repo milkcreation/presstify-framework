@@ -6,7 +6,7 @@
 
 namespace tiFy\Contracts\User;
 
-use tiFy\Contracts\Db\DbItemInterface;
+use tiFy\Contracts\Db\DbFactory;
 
 interface SessionManager
 {
@@ -22,7 +22,7 @@ interface SessionManager
     /**
      * Récupération de la base de données
      *
-     * @return DbItemInterface
+     * @return DbFactory
      *
      * @throws \Exception
      */

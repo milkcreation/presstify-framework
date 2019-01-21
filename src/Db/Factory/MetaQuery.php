@@ -1,31 +1,28 @@
 <?php
 
-namespace tiFy\Db;
+namespace tiFy\Db\Factory;
 
-use tiFy\Contracts\Db\DbItemInterface;
-use tiFy\Contracts\Db\DbItemMetaQueryInterface;
+use tiFy\Contracts\Db\DbFactory;
+use tiFy\Contracts\Db\DbFactoryMetaQuery;
+use WP_Meta_Query;
 
 /**
- * Class DbItemMetaQueryController
+ * Class MetaQuery
  * @package tiFy\Db
  */
-class DbItemMetaQueryController extends \WP_Meta_Query implements DbItemMetaQueryInterface
+class MetaQuery extends WP_Meta_Query implements DbFactoryMetaQuery
 {
-    /**
-     * Classe de rappel du controleur de base de données associé.
-     * @var DbControllerInterface
-     */
-    protected $db;
+    use ResolverTrait;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param DbItemInterface $db Instance du controleur de base de données associé.
+     * @param DbFactory $db Instance du controleur de base de données associé.
      * @param array $meta_query Paramètres de requête des metadonnées.
      *
      * @return void
      */
-    public function __construct(DbItemInterface $db, $meta_query)
+    public function __construct(DbFactory $db, $meta_query)
     {
         $this->db = $db;
 
@@ -33,18 +30,18 @@ class DbItemMetaQueryController extends \WP_Meta_Query implements DbItemMetaQuer
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get_sql($type, $primary_table, $primary_id_column, $context = null)
     {
-        if (!$meta_table = $this->db->meta()->getTableName()) {
+        if (!$meta_table = $this->meta()->getTableName()) {
             return false;
         }
 
         $this->table_aliases = [];
 
         $this->meta_table = $meta_table;
-        $this->meta_id_column = $this->db->meta()->getJoinCol();
+        $this->meta_id_column = $this->meta()->getJoinCol();
 
         $this->primary_table = $primary_table;
         $this->primary_id_column = $primary_id_column;
@@ -76,7 +73,7 @@ class DbItemMetaQueryController extends \WP_Meta_Query implements DbItemMetaQuer
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get_sql_for_clause(&$clause, $parent_query, $clause_key = '')
     {

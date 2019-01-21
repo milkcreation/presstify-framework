@@ -44,7 +44,7 @@ class Collection extends QueryCollection implements CollectionContract
         if ($db = $this->template->db()) :
             $this->items = [];
 
-            $query = $db->query(
+            $query = $db->query_loop(
                 array_merge(
                     $this->template->request()->getQueryArgs(),
                     $args

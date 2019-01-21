@@ -2,15 +2,13 @@
 
 namespace tiFy\Form;
 
-use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
-use tiFy\Form\Factory\ResolverTrait as FormFactoryResolver;
-use tiFy\Form\Factory\View;
+use tiFy\Form\Factory\ResolverTrait;
 use tiFy\Kernel\Params\ParamsBag;
 
 class FormFactory extends ParamsBag implements FormFactoryContract
 {
-    use FormFactoryResolver;
+    use ResolverTrait;
 
     /**
      * Nom de qualification du formulaire.
@@ -21,39 +19,39 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     /**
      * Listes des attributs de configuration.
      * @var array {
-     *      @var string $title Intitulé de qualification du formulaire.
-     *      @var string $before Pré-affichage, avant la balise <form/>.
-     *      @var string $after Post-affichage, après la balise <form/>.
-     *      @var string $method Propriété 'method' de la balise <form/>.
-     *      @var string $action Propriété 'action' de la balise <form/>.
-     *      @var string $enctype Propriété 'enctype' de la balise <form/>.
-     *      @var array $attrs Liste des attributs complémentaires de la balise <form/>.
-     *      @var boolean|array $grid Activation de l'agencement des éléments.
-     *      @var array $addons Liste des attributs des addons actifs.
-     *      @var array $buttons Liste des attributs des boutons actifs.
-     *      @var array $events Liste des événements de court-circuitage.
-     *      @var array $fields Liste des attributs de champs.
-     *      @var array $notices Liste des attributs des messages de notification.
-     *      @var array $options Liste des options du formulaire.
-     *      @var array $viewer Attributs de configuration du gestionnaire de gabarits d'affichage.
+     * @var string $title Intitulé de qualification du formulaire.
+     * @var string $before Pré-affichage, avant la balise <form/>.
+     * @var string $after Post-affichage, après la balise <form/>.
+     * @var string $method Propriété 'method' de la balise <form/>.
+     * @var string $action Propriété 'action' de la balise <form/>.
+     * @var string $enctype Propriété 'enctype' de la balise <form/>.
+     * @var array $attrs Liste des attributs complémentaires de la balise <form/>.
+     * @var boolean|array $grid Activation de l'agencement des éléments.
+     * @var array $addons Liste des attributs des addons actifs.
+     * @var array $buttons Liste des attributs des boutons actifs.
+     * @var array $events Liste des événements de court-circuitage.
+     * @var array $fields Liste des attributs de champs.
+     * @var array $notices Liste des attributs des messages de notification.
+     * @var array $options Liste des options du formulaire.
+     * @var array $viewer Attributs de configuration du gestionnaire de gabarits d'affichage.
      * }
      */
     protected $attributes = [
-        'title'           => '',
-        'before'          => '',
-        'after'           => '',
-        'method'          => 'post',
-        'action'          => '',
-        'enctype'         => '',
-        'attrs'           => [],
-        'grid'            => false,
-        'addons'          => [],
-        'buttons'         => [],
-        'events'          => [],
-        'fields'          => [],
-        'notices'         => [],
-        'options'         => [],
-        'viewer'          => []
+        'title'   => '',
+        'before'  => '',
+        'after'   => '',
+        'method'  => 'post',
+        'action'  => '',
+        'enctype' => '',
+        'attrs'   => [],
+        'grid'    => false,
+        'addons'  => [],
+        'buttons' => [],
+        'events'  => [],
+        'fields'  => [],
+        'notices' => [],
+        'options' => [],
+        'viewer'  => [],
     ];
 
     /**
@@ -77,82 +75,55 @@ class FormFactory extends ParamsBag implements FormFactoryContract
 
         parent::__construct($attrs);
 
-        app()->singleton(
+        app()->share(
             "form.factory.events.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.events', [$this->get('events', []), $this]);
-            }
-        )->build();
+            $this->resolve('factory.events', [$this->get('events', []), $this])
+        );
 
-        app()->singleton(
+        app()->share(
             "form.factory.addons.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.addons', [$this->get('addons', []), $this]);
-            }
-        )->build();
+            $this->resolve('factory.addons', [$this->get('addons', []), $this])
+        );
 
-        app()->singleton(
+        app()->share(
             "form.factory.buttons.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.buttons', [$this->get('buttons', []), $this]);
-            }
-        )->build();
+            $this->resolve('factory.buttons', [$this->get('buttons', []), $this])
+        );
 
-        app()->singleton(
+        app()->share(
             "form.factory.fields.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.fields', [$this->get('fields', []), $this]);
-            }
-        )->build();
+            $this->resolve('factory.fields', [$this->get('fields', []), $this])
+        );
 
-        app()->singleton(
+        app()->share(
             "form.factory.notices.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.notices', [$this->get('notices', []), $this]);
-            }
-        )->build();
+            $this->resolve('factory.notices', [$this->get('notices', []), $this])
+        );
 
-        app()->singleton(
+        app()->share(
             "form.factory.options.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.options', [$this->get('options', []), $this]);
-            }
-        )->build();
+            $this->resolve('factory.options', [$this->get('options', []), $this])
+        );
 
-        app()->singleton(
+        app()->share(
             "form.factory.request.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.request', [$this]);
-            }
-        )->build();
+            $this->resolve('factory.request', [$this])
+        );
 
-        app()->singleton(
+        app()->share(
             "form.factory.session.{$this->name()}",
-            function () {
-                return app()->resolve('form.factory.session', [$this]);
-            }
-        )->build();
+            $this->resolve('factory.session', [$this])
+        );
 
-        app()->singleton(
+        app()->share(
+            "form.factory.validation.{$this->name()}",
+            $this->resolve('factory.validation', [$this])
+        );
+
+        app()->share(
             "form.factory.viewer.{$this->name()}",
-            function () {
-                /** @var FormManager $formManager */
-                $formManager = app('form');
-
-                $directory = $formManager->resourcesDir('/views');
-                $override_dir = (($override_dir = $this->get('viewer.override_dir')) && is_dir($override_dir))
-                    ? $override_dir
-                    : $directory;
-
-                $view = view()
-                    ->setDirectory($directory)
-                    ->setController(View::class)
-                    ->setOverrideDir($override_dir)
-                    ->set('form', $this);
-
-                return $view;
-            }
-        )->build();
+            $this->resolve('factory.viewer', [$this])
+        );
 
         $this->events('form.init', [&$this]);
 
@@ -204,7 +175,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function getTitle()
     {
-        return $this->get('title') ? : $this->name();
+        return $this->get('title') ?: $this->name();
     }
 
     /**
@@ -220,7 +191,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function index()
     {
-        return app('form')->index($this->name());
+        return form()->index($this->name());
     }
 
     /**
@@ -262,7 +233,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     {
         $this->events('form.prepare', [&$this]);
 
-        foreach($this->fields() as $field) :
+        foreach ($this->fields() as $field) :
             $field->prepare();
         endforeach;
 
@@ -286,7 +257,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         $buttons = $this->buttons();
         $notices = $this->notices()->getMessages();
 
-        return $this->form()->viewer('form', compact('buttons', 'fields', 'notices'));
+        return $this->viewer('form', compact('buttons', 'fields', 'notices'));
     }
 
     /**
@@ -326,7 +297,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             $grid = is_array($grid) ? $grid : [];
 
             $this->set("attrs.data-grid", 'true');
-            $this->set("attrs.data-grid_gutter", $grid['gutter']??0);
+            $this->set("attrs.data-grid_gutter", $grid['gutter'] ?? 0);
         endif;
 
         if ($this->onSuccess()) :
@@ -335,7 +306,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
                 $this->notices()->params('success.message')
             );
             assets()->addInlineJs(
-                'if (window.history && window.history.replaceState){'.
+                'if (window.history && window.history.replaceState){' .
                 'let anchor=window.location.href.split("#")[1],' .
                 'location=window.location.href.split("?")[0] + (anchor ? "#" + anchor : "");' .
                 'window.history.pushState("", document.title, location);};',
@@ -344,7 +315,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             );
         endif;
 
-        foreach($this->fields() as $field) :
+        foreach ($this->fields() as $field) :
             $field->renderPrepare();
         endforeach;
     }

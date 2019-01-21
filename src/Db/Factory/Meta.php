@@ -1,31 +1,32 @@
 <?php
 
-namespace tiFy\Db;
+namespace tiFy\Db\Factory;
 
-use tiFy\Contracts\Db\DbItemInterface;
-use tiFy\Contracts\Db\DbItemMetaInterface;
+use tiFy\Contracts\Db\DbFactory;
+use tiFy\Contracts\Db\DbFactoryMeta;
 
-class DbItemMetaController implements DbItemMetaInterface
+class Meta implements DbFactoryMeta
 {
-    /**
-     * Instance du controleur de base de données associé.
-     * @var DbItemInterface
-     */
-    protected $db;
+    use ResolverTrait;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param DbItemInterface $db Instance du controleur de base de données associé.
+     * @param DbFactory $db Instance du controleur de base de données associé.
      *
      * @return void
      */
-    public function __construct(DbItemInterface $db)
+    public function __construct(DbFactory $db)
     {
         $this->db = $db;
     }
 
     /**
+     *
+     * @param string $type
+     *
+     * @return string
+     *
      * @todo
      */
     private function _get_meta_table($type)
@@ -36,21 +37,26 @@ class DbItemMetaController implements DbItemMetaInterface
             return $this->db->sql()->{$table_name};
         endif;
 
-        return ;
+        return '';
     }
 
     /**
+     *
+     * @param array $object_ids
+     *
+     * @return array
+     *
      * @todo
      */
     private function _update_meta_cache($object_ids)
     {
         if (!($meta_type = $this->db->getMetaType())|| !$object_ids) :
-            return false;
+            return [];
         endif;
 
         $table = $this->getTableName();
         if (!$table) :
-            return false;
+            return [];
         endif;
 
         $column = $this->getJoinCol();
@@ -116,7 +122,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function add($object_id, $meta_key, $meta_value, $unique = true)
     {
@@ -186,7 +192,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all($object_id)
     {
@@ -194,7 +200,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function delete($object_id, $meta_key, $meta_value = '', $delete_all = false)
     {
@@ -248,6 +254,8 @@ class DbItemMetaController implements DbItemMetaInterface
             return false;
         endif;
 
+        $object_ids = [];
+
         if ($delete_all) :
             $value_clause = '';
             if ('' !== $meta_value && null !== $meta_value && false !== $meta_value) :
@@ -277,9 +285,11 @@ class DbItemMetaController implements DbItemMetaInterface
         endif;
 
         if ($delete_all) :
-            foreach ((array)$object_ids as $o_id) :
-                wp_cache_delete($o_id, "{$meta_type}_meta");
-            endforeach;
+            if ($object_ids) :
+                foreach ((array)$object_ids as $o_id) :
+                    wp_cache_delete($o_id, "{$meta_type}_meta");
+                endforeach;
+            endif;
         else :
             wp_cache_delete($object_id, "{$meta_type}_meta");
         endif;
@@ -294,13 +304,13 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function deleteAll($id)
     {
         $table = $this->getTableName();
         if (!$table) :
-            return false;
+            return null;
         endif;
         $column = $this->getJoinCol();
 
@@ -308,7 +318,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get($object_id, $meta_key = '', $single = true)
     {
@@ -355,7 +365,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getByMid($meta_id)
     {
@@ -394,7 +404,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getJoinCol()
     {
@@ -402,7 +412,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPrimary()
     {
@@ -410,7 +420,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTableName()
     {
@@ -418,7 +428,7 @@ class DbItemMetaController implements DbItemMetaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function update($object_id, $meta_key, $meta_value, $prev_value = '')
     {

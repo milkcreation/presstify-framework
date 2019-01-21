@@ -1,17 +1,13 @@
 <?php
 
-namespace tiFy\Db;
+namespace tiFy\Db\Factory;
 
-use tiFy\Contracts\Db\DbItemInterface;
-use tiFy\Contracts\Db\DbItemSelectInterface;
+use tiFy\Contracts\Db\DbFactory;
+use tiFy\Contracts\Db\DbFactorySelect;
 
-class DbItemSelectController implements DbItemSelectInterface
+class Select implements DbFactorySelect
 {
-    /**
-     * Instance du controleur de base de données associé.
-     * @var DbItemInterface
-     */
-    protected $db;
+    use ResolverTrait;
 
     /**
      * Liste des résultats trouvés.
@@ -23,11 +19,11 @@ class DbItemSelectController implements DbItemSelectInterface
      * CONSTRUCTEUR.
      *
      * @param array $query Liste des arguments de récupération des éléments.
-     * @param DbItemInterface $db Instance du controleur de base de données associé.
+     * @param DbFactory $db Instance du controleur de base de données associé.
      *
      * @return void
      */
-    public function __construct($query = [], DbItemInterface $db)
+    public function __construct($query = [], DbFactory $db)
     {
         $this->db = $db;
 
@@ -66,7 +62,7 @@ class DbItemSelectController implements DbItemSelectInterface
         ];
 
         // Traitement des arguments
-        $parse = $this->db->parser();
+        $parse = $this->parser();
         $query_args = $parse->query_vars($query_args, $defaults);
 
         // Traitement de la requête
@@ -74,7 +70,7 @@ class DbItemSelectController implements DbItemSelectInterface
         $query = "SELECT COUNT( {$name}.{$primary} ) FROM {$name}";
 
         // Conditions de jointure
-        $query .= $parse->clause_join($query_args);
+        $query .= $parse->clause_join();
 
         /// Conditions définies par les arguments de requête
         if ($clause_where = $parse->clause_where($query_args)) :
@@ -107,13 +103,14 @@ class DbItemSelectController implements DbItemSelectInterface
     /**
      * Vérification de l'existance de la valeur d'une données correspondants aux critère de requête.
      *
+     * @param null|string $col_name
+     * @param string $value
      * @param array $query_args Critère de requêtede récupération de données en base.
      *
      * @return int
      */
     public function has($col_name = null, $value = '', $query_args = [])
     {
-        $name = $this->db->getTableName();
         $primary = $this->db->getPrimary();
 
         // Traitement de l'intitulé de la colonne
@@ -128,13 +125,25 @@ class DbItemSelectController implements DbItemSelectInterface
         return $this->count($query_args);
     }
 
-    /** == Récupération de l'id d'un élément selon des critères == **/
+    /**
+     * Récupération de l'id d'un élément selon des critères
+     *
+     * @param array $query_args
+     *
+     * @return array
+     */
     public function id($query_args = [])
     {
         return $this->cell(null, $query_args);
     }
 
-    /** == Récupération de la valeur d'un cellule selon des critères == **/
+    /**
+     * Récupération de la valeur d'un cellule selon des critères.
+     *
+     * @param null|string $col_name
+     *
+     * @return array
+     */
     public function cell($col_name = null, $query_args = [])
     {
         $name = $this->db->getTableName();
@@ -157,7 +166,7 @@ class DbItemSelectController implements DbItemSelectInterface
         ];
 
         // Traitement des arguments
-        $parse = $this->db->parser();
+        $parse = $this->parser();
         $query_args = $parse->query_vars($query_args, $defaults);
 
         // Traitement de la requête
@@ -165,7 +174,7 @@ class DbItemSelectController implements DbItemSelectInterface
         $query = "SELECT {$name}.{$col_name} FROM {$name}";
 
         /// Conditions de jointure
-        $query .= $parse->clause_join($query_args);
+        $query .= $parse->clause_join();
 
         /// Conditions des arguments de requête
         if ($clause_where = $parse->clause_where($query_args)) :
@@ -203,6 +212,8 @@ class DbItemSelectController implements DbItemSelectInterface
         if ($var = $this->db->sql()->get_var($query)) :
             return $this->results = maybe_unserialize($var);
         endif;
+
+        return [];
     }
 
     /** == Récupération de la valeur d'un cellule selon son l'id de l'élément == **/
@@ -234,7 +245,7 @@ class DbItemSelectController implements DbItemSelectInterface
         endif;
 
         // Traitement des arguments
-        $parse = $this->db->parser();
+        $parse = $this->parser();
         $query_args = $parse->query_vars($query_args);
 
         // Traitement de la requête
@@ -242,7 +253,7 @@ class DbItemSelectController implements DbItemSelectInterface
         $query = "SELECT {$name}.{$col_name} FROM {$name}";
 
         // Condition de jointure
-        $query .= $parse->clause_join($query_args);
+        $query .= $parse->clause_join();
 
         /// Conditions des arguments de requête
         if ($clause_where = $parse->clause_where($query_args)) :
@@ -319,18 +330,18 @@ class DbItemSelectController implements DbItemSelectInterface
         $query_args['fields'] = [$key_col, $value_col];
 
         // Traitement de la requête
-        if (!$query = $this->db->parser()->query($query_args)) :
-            return;
+        if (!$query = $this->parser()->query($query_args)) :
+            return [];
         endif;
 
         // Récupération des resultats de requête
         if (!$items = $this->db->sql()->get_results($query)) :
-            return;
+            return [];
         endif;
 
         // Tratiement du resultat
-        if (!$results = $this->db->parser()->parse_output($items, OBJECT)) :
-            return;
+        if (!$results = $this->parser()->parse_output($items, OBJECT)) :
+            return [];
         endif;
 
         $pairs = [];
@@ -341,8 +352,14 @@ class DbItemSelectController implements DbItemSelectInterface
         return $pairs;
     }
 
-    /* = LIGNE = */
-    /** == Récupération des arguments d'un élément selon des critères == **/
+    /**
+     * Récupération des arguments d'un élément selon des critères
+     *
+     * @param array $query_args
+     * @param string $output
+     *
+     * @return array
+     */
     public function row($query_args = [], $output = OBJECT)
     {
         // Traitement des arguments
@@ -357,7 +374,15 @@ class DbItemSelectController implements DbItemSelectInterface
         return $this->row_by_id($id, $output);
     }
 
-    /** == Récupération d'un élément selon un champ et sa valeur == **/
+    /**
+     * Récupération d'un élément selon un champ et sa valeur.
+     *
+     * @param null|string $col_name
+     * @param mixed $value
+     * @param string $output
+     *
+     * @return array
+     */
     public function row_by($col_name = null, $value, $output = OBJECT)
     {
         $name = $this->db->getTableName();
@@ -389,13 +414,15 @@ class DbItemSelectController implements DbItemSelectInterface
         wp_cache_add($item->{$primary}, $item, $name);
 
         if ($output == OBJECT) :
-            return $this->results = !empty($item) ? $item : null;
+            return $this->results = !empty($item) ? $item : [];
         elseif ($output == ARRAY_A) :
-            return $this->results = !empty($item) ? get_object_vars($item) : null;
+            return $this->results = !empty($item) ? get_object_vars($item) : [];
         elseif ($output == ARRAY_N) :
-            return $this->results = !empty($item) ? array_values(get_object_vars($item)) : null;
+            return $this->results = !empty($item) ? array_values(get_object_vars($item)) : [];
         elseif (strtoupper($output) === OBJECT) :
-            return $this->results = !empty($item) ? $item : null;
+            return $this->results = !empty($item) ? $item : [];
+        else :
+            return $this->results = [];
         endif;
     }
 
@@ -439,7 +466,7 @@ class DbItemSelectController implements DbItemSelectInterface
         ];
 
         // Traitement des arguments
-        $parse = $this->db->parser();
+        $parse = $this->parser();
         $query_args = $parse->query_vars($query_args, $defaults);
         unset($query_args[$primary]);
 
@@ -452,7 +479,7 @@ class DbItemSelectController implements DbItemSelectInterface
         $query = "SELECT * FROM {$name}";
 
         // Condition de jointure
-        $query .= $parse->clause_join($query_args);
+        $query .= $parse->clause_join();
 
         /// Conditions definies par les arguments de requête
         if ($clause_where = $parse->clause_where($query_args)) :

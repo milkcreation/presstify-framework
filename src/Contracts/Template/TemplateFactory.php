@@ -3,7 +3,7 @@
 namespace tiFy\Contracts\Template;
 
 use tiFy\Contracts\Container\ContainerInterface;
-use tiFy\Contracts\Db\DbItemInterface;
+use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Kernel\LabelsBag;
 use tiFy\Contracts\Kernel\Notices;
 use tiFy\Contracts\Kernel\ParamsBag;
@@ -68,7 +68,7 @@ interface TemplateFactory
     /**
      * Récupération de l'instance du controleur de base de données
      *
-     * @return null|DbItemInterface
+     * @return null|DbFactory
      */
     public function db();
 
