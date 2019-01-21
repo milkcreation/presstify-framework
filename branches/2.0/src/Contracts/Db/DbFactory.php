@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Db;
 
 use tiFy\Contracts\Kernel\ParamsBag;
 
-interface DbItemInterface extends ParamsBag
+interface DbFactory extends DbFactoryResolverTrait, ParamsBag
 {
     /**
      * Récupération du nom réél (prefixé) d'une colonne.
@@ -88,7 +88,7 @@ interface DbItemInterface extends ParamsBag
     /**
      * Récupération de la liste des colonnes ouvertes à la recherche de termes.
      *
-     * @return boolean
+     * @return array
      */
     public function getSearchColumns();
 
@@ -98,13 +98,6 @@ interface DbItemInterface extends ParamsBag
      * @return string
      */
     public function getTableName();
-
-    /**
-     * Instance du controleur de traitement des données en base (création/édition/mise à jour ...).
-     *
-     * @return DbItemHandleInterface
-     */
-    public function handle();
 
     /**
      * Vérification d'existance de gestion des metadonnée par le controleur.
@@ -144,45 +137,6 @@ interface DbItemInterface extends ParamsBag
      * @return boolean
      */
     public function isPrivateQueryVar($var);
-
-    /**
-     * Instance du controleur de création de base de données.
-     *
-     * @return DbItemMakeInterface
-     */
-    public function make();
-
-    /**
-     * Classe de rappel de traitement des metadonnées en base (création/édition/mise à jour ...).
-     *
-     * @return DbItemMetaInterface
-     */
-    public function meta();
-
-    /**
-     * Instance du controleur de traitement des arguments de requête.
-     *
-     * @return DbItemParserInterface
-     */
-    public function parser();
-
-    /**
-     * Instance du controleur de boucles de requêtes de récupération des données en base.
-     *
-     * @param array $query Liste des arguments de récupération des éléments.
-     *
-     * @return DbItemQueryInterface
-     */
-    public function query($query = null);
-
-    /**
-     * Instance du controleur de requêtes de récupération de données en base.
-     *
-     * @param array $query Liste des arguments de récupération des éléments.
-     *
-     * @return DbItemSelectInterface
-     */
-    public function select($query = null);
 
     /**
      * Moteur de requête SQL

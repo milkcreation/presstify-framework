@@ -5,13 +5,12 @@
  * @var tiFy\Contracts\Form\FactoryView $this
  */
 ?>
-
 <?php echo $this->before(); ?>
 
 <div class="Form">
     <?php $this->insert('notices', $this->all()); ?>
 
-    <form <?php echo $this->attrs(); ?>>
+    <form <?php echo $this->htmlAttrs($this->form()->get('attrs', [])); ?>>
         <?php
         echo field(
             'hidden',
@@ -39,5 +38,5 @@
     </form>
 </div>
 
-<?php echo $this->after(); ?>
+<?php echo $this->after();
 

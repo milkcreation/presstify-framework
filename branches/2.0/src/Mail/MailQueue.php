@@ -4,10 +4,8 @@ namespace tiFy\Mail;
 
 use tiFy\Contracts\Cron\Cron;
 use tiFy\Contracts\Cron\CronJobInterface;
-use tiFy\Contracts\Db\DbItemInterface;
 use tiFy\Contracts\Mail\Mailer;
 use tiFy\Contracts\Mail\MailQueue as MailQueueContract;
-use tiFy\Db\Db;
 
 class MailQueue implements MailQueueContract
 {
@@ -21,9 +19,7 @@ class MailQueue implements MailQueueContract
         add_action(
             'after_setup_theme',
             function () {
-                /** @var Db $db */
-                $db = app('db');
-                $db->add(
+                db()->register(
                     'mail.queue',
                     [
                         'name'          => 'mail_queue',
@@ -74,10 +70,7 @@ class MailQueue implements MailQueueContract
                             'display'       => __('Chaque minute', 'tify')
                         ],
                         'command'        => function ($args, CronJobInterface $job) {
-                            /** @var Db $db */
-                            $db = app('db');
-
-                            if ($queue = $db->get('mail.queue')) :
+                            if ($queue = db('mail.queue')) :
                                 if (
                                     $emails = $queue->select()->rows(
                                         [
@@ -120,10 +113,7 @@ class MailQueue implements MailQueueContract
      */
     public function add($params, $date = 'now', $item_meta = [])
     {
-        /** @var Db $db */
-        $db = app('db');
-
-        if ($queue = $db->get('mail.queue')) :
+        if ($queue = db('mail.queue')) :
             $id = 0;
             $session_id = uniqid('tFymq_', true);
             $date_created = (new \DateTime(null, new \DateTimeZone(get_option('timezone_string'))))->format('Y-m-d H:i:s');

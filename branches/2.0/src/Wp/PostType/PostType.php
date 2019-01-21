@@ -4,9 +4,9 @@ namespace tiFy\Wp\PostType;
 
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostTypeManager;
-use tiFy\Contracts\Wp\WpPostTypeManager as WpPostTypeManagerContract;
+use tiFy\Contracts\Wp\PostType as PostTypeContract;
 
-class WpPostTypeManager implements WpPostTypeManagerContract
+class PostType implements PostTypeContract
 {
     /**
      * Instance du controleur de gestion des types de contenu.

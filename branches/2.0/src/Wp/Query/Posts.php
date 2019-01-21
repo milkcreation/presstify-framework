@@ -24,7 +24,7 @@ final class Posts extends PostQueryCollection
 
         if ($wp_query instanceof \WP_Query) :
             foreach($wp_query->posts as $post) :
-                $posts[] = app('wp.query.post', [$post]);
+                $posts[] = app()->get('wp.query.post', [$post]);
             endforeach;
         endif;
 

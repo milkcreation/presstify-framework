@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Db;
 
-interface DbItemQueryInterface
+interface DbFactoryQueryLoop extends DbFactoryResolverTrait
 {
     /**
      * @todo

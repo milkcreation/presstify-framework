@@ -2,12 +2,12 @@
 
 namespace tiFy\Form;
 
-use tiFy\Contracts\Form\AddonController as AddonControllerInterface;
+use tiFy\Contracts\Form\AddonController as AddonControllerContract;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\Factory\ResolverTrait;
 use tiFy\Kernel\Params\ParamsBag;
 
-class AddonController extends ParamsBag implements AddonControllerInterface
+class AddonController extends ParamsBag implements AddonControllerContract
 {
     use ResolverTrait;
 

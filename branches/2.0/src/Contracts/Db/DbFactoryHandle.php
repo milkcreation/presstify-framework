@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Db;
 
-interface DbItemHandleInterface
+interface DbFactoryHandle extends DbFactoryResolverTrait
 {
     /**
      * Création d'un nouvel élément en base de données.
@@ -43,6 +43,7 @@ interface DbItemHandleInterface
      * @todo
      */
     public function query($query);
+
     /**
      * Enregistrement d'un élément en base de données.
      *

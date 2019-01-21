@@ -24,13 +24,6 @@ interface FactoryView extends ViewController
     public function after();
 
     /**
-     * Récupération des attributs de formulaires linéarisés.
-     *
-     * @return string
-     */
-    public function attrs();
-
-    /**
      * Pré-affichage.
      *
      * @return string
@@ -43,14 +36,4 @@ interface FactoryView extends ViewController
      * @return FormFactory
      */
     public function form();
-
-    /**
-     * Traitement et récupération d'une liste d'attributs HTML.
-     *
-     * @param array $attrs Liste des attributs HTML.
-     * @param bool $linearized Activation de la linéarisation.
-     *
-     * @return string
-     */
-    public function getHtmlAttrs($attrs = [], $linearized = true);
 }

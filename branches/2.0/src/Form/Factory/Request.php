@@ -2,10 +2,8 @@
 
 namespace tiFy\Form\Factory;
 
-use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Contracts\Form\FactoryValidation;
 use tiFy\Kernel\Params\ParamsBag;
 
 class Request extends ParamsBag implements FactoryRequest
@@ -29,7 +27,7 @@ class Request extends ParamsBag implements FactoryRequest
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function handle()
     {
@@ -43,10 +41,6 @@ class Request extends ParamsBag implements FactoryRequest
 
         $this->events('request.handle');
 
-        /**
-         * Validations.
-         * @var FactoryField $field
-         */
         foreach($this->fields() as $name => $field) :
             $check = true;
 
@@ -56,10 +50,7 @@ class Request extends ParamsBag implements FactoryRequest
             if ($field->getRequired('check')) :
                 $value = $field->getValue($field->getRequired('raw', true));
 
-                /** @var FactoryValidation $valid */
-                $valid = app('form.factory.validation', [$this->form()]);
-
-                if (!$check = $valid->call($field->getRequired('call'), $value, $field->getRequired('args', []))) :
+                if (!$check = $this->validation()->call($field->getRequired('call'), $value, $field->getRequired('args', []))) :
                     $this->notices()->add(
                         'error',
                         sprintf($field->getRequired('message'), $field->getTitle()),
@@ -77,11 +68,8 @@ class Request extends ParamsBag implements FactoryRequest
                 if ($validations = $field->get('validations', [])) :
                     $value = $field->getValue($field->getRequired('raw', true));
 
-                    /** @var FactoryValidation $valid */
-                    $valid = app('form.factory.validation', [$this->form()]);
-
                     foreach ($validations as $validation) :
-                        if (!$valid->call($validation['call'], $value, $validation['args'])) :
+                        if (!$this->validation()->call($validation['call'], $value, $validation['args'])) :
                             $this->notices()->add(
                                 'error',
                                 sprintf($validation['message'], $field->getTitle()),
@@ -138,7 +126,7 @@ class Request extends ParamsBag implements FactoryRequest
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prepare()
     {
@@ -146,7 +134,7 @@ class Request extends ParamsBag implements FactoryRequest
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resetFields()
     {

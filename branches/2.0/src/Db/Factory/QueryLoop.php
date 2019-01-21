@@ -1,54 +1,20 @@
 <?php
 
-namespace tiFy\Db;
+namespace tiFy\Db\Factory;
 
 use Illuminate\Support\Arr;
-use tiFy\Contracts\Db\DbItemInterface;
-use tiFy\Contracts\Db\DbItemQueryInterface;
+use tiFy\Contracts\Db\DbFactory;
+use tiFy\Contracts\Db\DbFactoryQueryLoop;
 
-class DbItemQueryController implements DbItemQueryInterface
+class QueryLoop implements DbFactoryQueryLoop
 {
-    /**
-     * Instance du controleur de base de données associé.
-     * @var DbItemInterface
-     */
-    protected $db;
+    use ResolverTrait;
 
     /**
-     * Variables de requête brutes, passées en arguments.
-     * @var array
-     */
-    protected $query = [];
-
-    /**
-     * Variables de requête après traitement.
-     * @var array
-     */
-    protected $query_vars = [];
-
-    /**
-     * Conservation de données de l'objet courant récupéré.
-     * @var object
-     */
-    protected $queried_object;
-
-    /**
-     * Valeur de la clé primaire de l'objet récupéré
-     * @var int|string
-     */
-    protected $queried_object_id;
-
-    /**
-     * Liste des éléments.
-     * @var array
-     */
-    protected $items = [];
-
-    /**
-     * Nombre d'élément trouvés
+     * Nombre total d'élément correspondant à la requête
      * @var int
      */
-    protected $item_count = 0;
+    protected $found_items = 0;
 
     /**
      * Indice de l'élément courant dans la boucle
@@ -69,33 +35,74 @@ class DbItemQueryController implements DbItemQueryInterface
     protected $item;
 
     /**
-     * Nombre total d'élément correspondant à la requête
+     * Nombre d'élément trouvés
      * @var int
      */
-    protected $found_items = 0;
+    protected $item_count = 0;
 
+    /**
+     * Liste des éléments.
+     * @var array
+     */
+    protected $items = [];
 
+    /**
+     * @var int
+     */
+    protected $max_num_pages = 0;
+
+    /**
+     * Conservation de données de l'objet courant récupéré.
+     * @var object
+     */
+    protected $queried_object;
+
+    /**
+     * Valeur de la clé primaire de l'objet récupéré
+     * @var int|string
+     */
+    protected $queried_object_id;
+
+    /**
+     * Variables de requête brutes, passées en arguments.
+     * @var array
+     */
+    protected $query = [];
+
+    /**
+     * Variables de requête après traitement.
+     * @var array
+     */
+    protected $query_vars = [];
+
+    /**
+     * @var string
+     */
     public $request;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param array $query Liste des arguments de récupération des éléments.
-     * @param DbItemInterface $db Instance du controleur de base de données associé.
+     * @param array $query_args Liste des arguments de récupération des éléments.
+     * @param DbFactory $db Instance du controleur de base de données associé.
      *
      * @return void
      */
-    public function __construct($query = [], DbItemInterface $db)
+    public function __construct($query_args = [], DbFactory $db)
     {
         $this->db = $db;
 
-        if (!empty($query)) :
-            $this->query($query);
+        if (!empty($query_args)) :
+            $this->query($query_args);
         endif;
     }
 
     /**
-     * @todo
+     * Définition du nombre d'éléments trouvés.
+     *
+     * @param int $limits
+     *
+     * @return void
      */
     private function _setFoundItems($limits)
     {
@@ -115,7 +122,11 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * @todo
+     * Récupération de la liste des éléments.
+     *
+     * @param array $clauses Liste des conditions.
+     *
+     * @return array
      */
     protected function query_items($clauses = [])
     {
@@ -126,7 +137,7 @@ class DbItemQueryController implements DbItemQueryInterface
         $join = isset($clauses['join']) ? $clauses['join'] : '';
         $orderby = isset($clauses['orderby']) ? $clauses['orderby'] : '';
         $distinct = isset($clauses['distinct']) ? $clauses['distinct'] : '';
-        $fields = isset($clauses['fields']) ? $clauses['fields'] : "{$this->db->Name}.*";;
+        $fields = isset($clauses['fields']) ? $clauses['fields'] : "{$this->db->getTableName()}.*";;
         $limits = isset($clauses['limits']) ? $clauses['limits'] : '';
 
         if (!empty($groupby)) {
@@ -141,7 +152,9 @@ class DbItemQueryController implements DbItemQueryInterface
             $found_rows = 'SQL_CALC_FOUND_ROWS';
         }
 
-        $this->request = "SELECT $found_rows $distinct $fields FROM {$this->db->Name} $join WHERE 1=1 $where $groupby $orderby $limits";
+        $this->request =    "SELECT $found_rows $distinct $fields".
+                            " FROM {$this->db->getTableName()} $join" .
+                            " WHERE 1=1 $where $groupby $orderby $limits";
 
         if ($this->items = $this->db->sql()->get_results($this->request)) :
             $this->item_count = count($this->items);
@@ -157,7 +170,7 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get($key, $default = '')
     {
@@ -165,16 +178,16 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAdjacent($previous = true, $args = [])
     {
         $args = wp_parse_args($args, $this->query);
-        return $this->db->select()->adjacent($this->item->{$this->db->getPrimary()}, $previous, $args);
+        return $this->select()->adjacent($this->item->{$this->db->getPrimary()}, $previous, $args);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCount()
     {
@@ -182,7 +195,7 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getField($key, $default = '')
     {
@@ -194,7 +207,7 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFoundItems()
     {
@@ -202,7 +215,7 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getItems()
     {
@@ -210,7 +223,7 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMeta($meta_key, $default = '', $single = true)
     {
@@ -218,11 +231,11 @@ class DbItemQueryController implements DbItemQueryInterface
             return $default;
         endif;
 
-        return $this->db->meta()->get($this->item->{$this->db->getPrimary()}, $meta_key, $single);
+        return $this->meta()->get($this->item->{$this->db->getPrimary()}, $meta_key, $single);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function haveItems()
     {
@@ -239,7 +252,7 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function nextItem()
     {
@@ -250,22 +263,22 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function query($query = [])
+    public function query($query_args = [])
     {
         $this->reset();
-        $this->query = $this->query_vars = $query;
+        $this->query = $this->query_vars = $query_args;
 
         return $this->queryItems();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function queryItems()
     {
-        if ($this->items = $this->db->select()->rows($this->query_vars)) :
+        if ($this->items = $this->select()->rows($this->query_vars)) :
             $this->item_count = count($this->items);
             $this->item = reset($this->items);
         else :
@@ -273,13 +286,13 @@ class DbItemQueryController implements DbItemQueryInterface
             $this->items = [];
         endif;
 
-        $this->found_items = $this->db->select()->count($this->query_vars);
+        $this->found_items = $this->select()->count($this->query_vars);
 
         return $this->items;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function reset()
     {
@@ -297,7 +310,7 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rewindItems()
     {
@@ -308,7 +321,7 @@ class DbItemQueryController implements DbItemQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function theItem()
     {
@@ -318,6 +331,6 @@ class DbItemQueryController implements DbItemQueryInterface
             do_action_ref_array('tify_db_query_loop_start', [&$this]);
         endif;
 
-        $item = $this->nextItem();
+        $this->nextItem();
     }
 }

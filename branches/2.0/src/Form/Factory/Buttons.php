@@ -38,21 +38,11 @@ class Buttons extends Collection implements FactoryButtons
             if (!is_null($name) && ($attrs !== false)) :
                 $attrs = is_array($attrs) ? $attrs : [$attrs];
 
-                if (app()->bound("form.button.{$name}")) :
-                    $this->items[$name] = app()->singleton(
-                        "form.factory.button.{$name}.{$this->form()->name()}",
-                        function ($name, $attrs, FormFactory $form) {
-                            return app()->resolve("form.button.{$name}", [$name, $attrs, $form]);
-                        }
-                    )->build([$name, $attrs, $this->form()]);
-                else :
-                    $this->items[$name] = app()->singleton(
-                        "form.factory.button.{$name}.{$this->form()->name()}",
-                        function ($name, $attrs, FormFactory $form) {
-                            return app()->resolve("form.button", [$name, $attrs, $form]);
-                        }
-                    )->build([$name, $attrs, $this->form()]);
-                endif;
+                $this->items[$name] = (app()->has("form.button.{$name}"))
+                    ? $this->resolve("button.{$name}", [$name, $attrs, $this->form()])
+                    : $this->resolve("button", [$name, $attrs, $this->form()]);
+
+                app()->share("form.factory.button.{$name}.{$this->form()->name()}", $this->items[$name]);
             endif;
         endforeach;
 
@@ -79,7 +69,7 @@ class Buttons extends Collection implements FactoryButtons
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function byPosition()
     {

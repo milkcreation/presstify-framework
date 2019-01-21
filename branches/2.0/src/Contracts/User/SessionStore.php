@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\User;
 
-use tiFy\Contracts\Db\DbItemInterface;
+use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Kernel\ParamsBag;
 
 interface SessionStore extends ParamsBag
@@ -48,7 +48,7 @@ interface SessionStore extends ParamsBag
     /**
      * Récupération de la classe de rappel de la table de base de données
      *
-     * @return DbItemInterface
+     * @return DbFactory
      */
     public function getDb();
 

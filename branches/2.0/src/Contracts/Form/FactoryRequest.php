@@ -19,4 +19,11 @@ interface FactoryRequest extends FactoryResolver, ParamsBag
      * @return void
      */
     public function prepare();
+
+    /**
+     * Réinitialisation des champs.
+     *
+     * @return void
+     */
+    public function resetFields();
 }

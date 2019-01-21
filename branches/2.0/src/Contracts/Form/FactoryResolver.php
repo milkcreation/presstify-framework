@@ -41,11 +41,11 @@ interface FactoryResolver
     /**
      * Récupération de l'instance du contrôleur d'un champ associé au formulaire.
      *
-     * @param string $slug Identifiant de qualification du champ.
+     * @param null|string $slug Identifiant de qualification du champ.
      *
      * @return FactoryField
      */
-    public function field($slug);
+    public function field($slug = null);
 
     /**
      * Récupération de l'instance du contrôleur des champs associés au formulaire.
@@ -53,6 +53,18 @@ interface FactoryResolver
      * @return FactoryFields|FactoryField[]
      */
     public function fields();
+
+    /**
+     * Récupération de valeur(s) de champ(s) basée(s) sur leurs variables d'identifiant de qualification.
+     *
+     * @param mixed $tags Variables de qualification de champs.
+     * string ex. "%%{{slug#1}}%% %%{{slug#2}}%%"
+     * array ex ["%%{{slug#1}}%%", "%%{{slug#2}}%%"]
+     * @param boolean $raw Activation de la valeur de retour au format brut.
+     *
+     * @return string
+     */
+    public function fieldTagValue($tags, $raw = true);
 
     /**
      * Récupération de l'instance du contrôleur de formulaire associé.
@@ -93,11 +105,28 @@ interface FactoryResolver
     public function request();
 
     /**
+     * Résolution de service fournis par le contructeur de formulaire.
+     *
+     * @param string $alias Nom de qualification du service.
+     * @param array $args Liste des variables passées en argument au service.
+     *
+     * @return mixed
+     */
+    public function resolve($alias, $args = []);
+
+    /**
      * Récupération de l'instance du contrôleur de session associé au formulaire.
      *
      * @return FactorySession
      */
     public function session();
+
+    /**
+     * Récupération de l'instance du contrôleur de validation associé au formulaire.
+     *
+     * @return FactoryValidation
+     */
+    public function validation();
 
     /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.

@@ -37,7 +37,7 @@ class Events implements FactoryEvents
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function listen($name, $listener, $priority = 0)
     {
@@ -51,7 +51,7 @@ class Events implements FactoryEvents
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function trigger($name, $args = [])
     {

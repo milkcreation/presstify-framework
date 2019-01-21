@@ -1,17 +1,13 @@
 <?php
 
-namespace tiFy\Db;
+namespace tiFy\Db\Factory;
 
-use tiFy\Contracts\Db\DbItemInterface;
-use tiFy\Contracts\Db\DbItemMakeInterface;
+use tiFy\Contracts\Db\DbFactory;
+use tiFy\Contracts\Db\DbFactoryMake;
 
-class DbItemMakeController implements DbItemMakeInterface
+class Make implements DbFactoryMake
 {
-    /**
-     * Instance du controleur de base de données associé.
-     * @var DbItemInterface
-     */
-    protected $db;
+    use ResolverTrait;
 
     /**
      * Indicateur d'initialisation.
@@ -22,11 +18,11 @@ class DbItemMakeController implements DbItemMakeInterface
     /**
      * CONSTRUCTEUR.
      *
-     * @param DbItemInterface $db Instance du controleur de base de données associé.
+     * @param DbFactory $db Instance du controleur de base de données associé.
      *
      * @return void
      */
-    public function __construct(DbItemInterface $db)
+    public function __construct(DbFactory $db)
     {
         $this->db = $db;
 
@@ -61,7 +57,7 @@ class DbItemMakeController implements DbItemMakeInterface
      *
      * @since 1.0.0
      *
-     * @global wpdb $wpdb WordPress database abstraction object.
+     * @global \wpdb $wpdb WordPress database abstraction object.
      *
      * @param string $table_name Table name
      * @param string $col_name Column name
@@ -72,6 +68,8 @@ class DbItemMakeController implements DbItemMakeInterface
      * @param mixed $extra Optional. Extra value.
      *
      * @return bool True, if matches. False, if not matching.
+     *
+     * @todo
      */
     private function _checkColumn(
         $table_name,
@@ -119,7 +117,7 @@ class DbItemMakeController implements DbItemMakeInterface
     /**
      * Requête de création d'une colone
      *
-     * @param $col_name
+     * @param $name
      *
      * @return string
      */
@@ -297,16 +295,17 @@ class DbItemMakeController implements DbItemMakeInterface
 
     /**
      * Add column to database table, if column doesn't already exist in table.
-     *
      * @since 1.0.0
      *
-     * @global wpdb $wpdb WordPress database abstraction object.
+     * @global \wpdb $wpdb WordPress database abstraction object.
      *
      * @param string $table_name Database table name
      * @param string $column_name Table column name
      * @param string $create_ddl SQL to add column to table.
      *
      * @return bool False on failure. True, if already exists or was successful.
+     *
+     * @todo
      */
     private function _maybeAddColumn($table_name, $column_name, $create_ddl)
     {
@@ -363,13 +362,15 @@ class DbItemMakeController implements DbItemMakeInterface
      *
      * @since 1.0.0
      *
-     * @global wpdb $wpdb WordPress database abstraction object.
+     * @global \wpdb $wpdb WordPress database abstraction object.
      *
      * @param string $table_name Table name
      * @param string $column_name Column name
      * @param string $drop_ddl SQL statement to drop column.
      *
      * @return bool False on failure, true on success or doesn't exist.
+     *
+     * @todo
      */
     private function maybeDropColumn($table_name, $column_name, $drop_ddl)
     {
@@ -380,8 +381,8 @@ class DbItemMakeController implements DbItemMakeInterface
                 $this->db->sql()->query($drop_ddl);
 
                 // We cannot directly tell that whether this succeeded!
-                foreach ($this->db->sql()->get_col("DESC $table_name", 0) as $column) {
-                    if ($column == $column_name) {
+                foreach ($this->db->sql()->get_col("DESC $table_name", 0) as $col) {
+                    if ($col == $column_name) {
                         return false;
                     }
                 }
@@ -393,7 +394,7 @@ class DbItemMakeController implements DbItemMakeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function install()
     {
@@ -446,9 +447,9 @@ class DbItemMakeController implements DbItemMakeInterface
 
         // Création de la table des metadonnées
         if ($this->db->hasMeta()) :
-            $table_name = $this->db->meta()->getTableName();
+            $table_name = $this->meta()->getTableName();
             if (!get_option('tFyDb_' . $table_name, 0)) :
-                $join_col = $this->db->meta()->getJoinCol();
+                $join_col = $this->meta()->getJoinCol();
 
                 $create_ddl = "CREATE TABLE {$table_name} ( ";
                 $create_ddl .= "meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, ";

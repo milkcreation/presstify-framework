@@ -5,7 +5,6 @@ namespace tiFy\Form\Factory;
 use tiFy\Contracts\Form\FactorySession;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Form\Factory\ResolverTrait;
 
 class Session extends ParamsBag implements FactorySession
 {
@@ -34,17 +33,8 @@ class Session extends ParamsBag implements FactorySession
     public function __construct(FormFactory $form)
     {
         $this->form = $form;
-    }
 
-    /**
-     * Nettoyage du cache arrivé à expiration.
-     * @todo
-     *
-     * @return bool
-     */
-    public function clean()
-    {
-        //return tify_purge_transient($this->getTransientPrefix(), $this->transientExpiration);
+        parent::__construct();
     }
 
     /**
@@ -64,7 +54,7 @@ class Session extends ParamsBag implements FactorySession
      */
     public function create()
     {
-        return \wp_hash(uniqid() . $this->form()->name());
+        return wp_hash(uniqid() . $this->form()->name());
     }
 
     /**

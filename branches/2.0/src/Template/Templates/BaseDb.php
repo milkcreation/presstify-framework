@@ -2,10 +2,10 @@
 
 namespace tiFy\Template\Templates;
 
-use tiFy\Db\DbItemBaseController;
+use tiFy\Db\DbFactory;
 use tiFy\Contracts\Template\TemplateFactory;
 
-class BaseDb extends DbItemBaseController
+class BaseDb extends DbFactory
 {
     /**
      * Instance du gabarit d'affichage.

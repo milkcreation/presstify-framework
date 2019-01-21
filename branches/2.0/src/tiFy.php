@@ -1,12 +1,4 @@
-<?php
-
-/**
- * @name tiFy
- * @namespace tiFy
- * @author Jordy Manner
- * @copyright Milkcreation
- * @version 2.0.49
- */
+<?php declare(strict_types=1);
 
 namespace tiFy;
 
@@ -16,6 +8,15 @@ use tiFy\Kernel\Config\Config;
 use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\KernelServiceProvider;
 
+/**
+ * Class tiFy
+ *
+ * @desc PresstiFy -- Framework Milkcreation.
+ * @author Jordy Manner <jordy@milkcreation.fr>
+ * @package tiFy
+ * @version 2.0.50
+ * @copyright Milkcreation
+ */
 final class tiFy extends Container
 {
     /**
@@ -54,22 +55,14 @@ final class tiFy extends Container
             return;
         endif;
 
-        add_action(
-            'plugins_loaded',
-            function() {
-                load_muplugin_textdomain('tify', '/presstify/languages/');
-                do_action('tify_load_textdomain');
-            },
-            10
-        );
+        add_action('plugins_loaded', function() {
+            load_muplugin_textdomain('tify', '/presstify/languages/');
+            do_action('tify_load_textdomain');
+        });
 
-        add_action(
-            'after_setup_tify',
-            function () {
-                do_action('tify_app_boot');
-            },
-            0
-        );
+        add_action('after_setup_tify', function () {
+            do_action('tify_app_boot');
+        }, 0);
 
         parent::__construct();
     }
@@ -77,12 +70,14 @@ final class tiFy extends Container
     /**
      * Récupération de l'instance courante.
      *
-     * @return $this
+     * @return null|static
      */
-    final public static function instance()
+    final public static function instance(): ?tiFy
     {
         if (self::$instance instanceof static) :
             return self::$instance;
         endif;
+
+        return null;
     }
 }

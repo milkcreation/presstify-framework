@@ -3,11 +3,14 @@
 namespace tiFy\Db;
 
 use Illuminate\Support\Arr;
-use tiFy\Contracts\Db\DbItemInterface;
+use tiFy\Contracts\Db\DbFactory as DbFactoryContract;
+use tiFy\Db\Factory\ResolverTrait;
 use tiFy\Kernel\Params\ParamsBag;
 
-class DbItemBaseController extends ParamsBag implements DbItemInterface
+class DbFactory extends ParamsBag implements DbFactoryContract
 {
+    use ResolverTrait;
+
     /**
      * Nom de qualification du controleur de base de données
      * @var string
@@ -16,7 +19,26 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
 
     /**
      * Liste des attributs de configuration.
-     * @var array
+     * @var array {
+     *      Attributs de la table de base de données
+     *
+     *      @var bool $install Activation de l'installation de la table de base de données
+     *      @var int $version Numéro de version de la table
+     *      @var string $name Nom de la base de données (hors préfixe)
+     *      @var string $primary Colonne de clé primaire
+     *      @var string $col_prefix Prefixe des colonnes de la table
+     *      @var array $columns {
+     *          Liste des attributs de configuration des colonnes
+     *      }
+     *      @var array $keys {
+     *          Liste des attributs de configuration des clefs d'index
+     *      }
+     *      @var string[] $seach {
+     *          Liste des colonnes ouvertes à la recherche
+     *      }
+     *      @var bool|string|array $meta Activation ou nom de la table de stockage des metadonnées
+     *      @var \wpdb|object $sql_engine Moteur (ORM) de requête en base de données
+     * }
      */
     protected $attributes = [
         'install'    => false,
@@ -136,37 +158,15 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     /**
      * CONSTRUCTEUR.
      *
-     * @param string $id Nom de qualification du controleur de base de donnée
-     * @param array $attrs {
-     *      Attributs de la table de base de données
-     *
-     * @var bool $install Activation de l'installation de la table de base de données
-     * @var int $version Numéro de version de la table
-     * @var string $name Nom de la base de données (hors préfixe)
-     * @var string $primary Colonne de clé primaire
-     * @var string $col_prefix Prefixe des colonnes de la table
-     * @var array $columns {
-     *          Liste des attributs de configuration des colonnes
-     *
-     *
-     *      }
-     * @var array $keys {
-     *          Liste des attributs de configuration des clefs d'index
-     *
-     *      }
-     * @var string[] $seach {
-     *          Liste des colonnes ouvertes à la recherche
-     *
-     *      }
-     * @var bool|string|array $meta Activation ou nom de la table de stockage des metadonnées
-     * @var \wpdb|object $sql_engine Moteur (ORM) de requête en base de données
-     * }
+     * @param string $name Nom de qualification du controleur de base de donnée.
+     * @param array $attrs Liste des attributs de configuration.
      *
      * @return void
      */
     public function __construct($name, $attrs = [])
     {
         $this->name = $name;
+        $this->db = $this;
 
         parent::__construct($attrs);
 
@@ -180,7 +180,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
      *
      * @param array $columns Liste des colonnes.
      *
-     * @return array
+     * @return void
      */
     private function _parseColumns($columns)
     {
@@ -201,32 +201,32 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * Définition des attributs de la table de gestion des métadonnées
+     * Définition des attributs de la table de gestion des métadonnées.
      *
-     * @return string
+     * @param string|boolean|array $meta_type
+     *
+     * @return void
      */
     private function _parseMeta($meta_type = null)
     {
-        if (!$meta_type) :
-            return '';
+        if ($meta_type) :
+            if (is_string($meta_type)) :
+            elseif (is_bool($meta_type)) :
+                $meta_type = $this->tableShortName;
+            elseif (is_array($meta_type)) :
+                $this->metaJoinCol = Arr::get($meta_type, 'join_col', '');
+                $meta_type = Arr::get($meta_type, 'meta_type', $this->tableShortName);
+            endif;
+
+            $table = $meta_type . 'meta';
+
+            if (!in_array($table, $this->sql()->tables)) :
+                array_push($this->sql()->tables, $table);
+                $this->sql()->set_prefix($this->sql()->base_prefix);
+            endif;
+
+            $this->metaType = $meta_type;
         endif;
-
-        if (is_string($meta_type)) :
-        elseif (is_bool($meta_type)) :
-            $meta_type = $this->tableShortName;
-        elseif (is_array($meta_type)) :
-            $this->metaJoinCol = Arr::get($meta_type, 'join_col', '');
-            $meta_type = Arr::get($meta_type, 'meta_type', $this->tableShortName);
-        endif;
-
-        $table = $meta_type . 'meta';
-
-        if (!in_array($table, $this->sql()->tables)) :
-            array_push($this->sql()->tables, $table);
-            $this->sql()->set_prefix($this->sql()->base_prefix);
-        endif;
-
-        $this->metaType = $meta_type;
     }
 
     /**
@@ -234,17 +234,13 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
      *
      * @param string $primary Nom de la colonne de clé primaire.
      *
-     * @return string
+     * @return void
      */
     private function _parsePrimary($primary = '')
     {
-        if (empty($this->colNames)) :
-            return '';
+        if (!empty($this->colNames)) :
+            $this->primary = ($primary && in_array($primary, $this->colNames)) ? $primary : reset($this->colNames);
         endif;
-
-        $this->primary = ($primary && in_array($primary, $this->colNames))
-            ? $primary
-            : reset($this->colNames);
     }
 
     /**
@@ -305,7 +301,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function existsCol($name)
     {
@@ -321,7 +317,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getColAttr($name, $key, $default = '')
     {
@@ -337,7 +333,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getColAttrs($name)
     {
@@ -353,7 +349,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getColMap($alias)
     {
@@ -365,7 +361,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getColNames()
     {
@@ -373,7 +369,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getColPrefix()
     {
@@ -381,7 +377,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIndexKeys()
     {
@@ -389,7 +385,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMetaJoinCol()
     {
@@ -397,7 +393,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMetaType()
     {
@@ -405,7 +401,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPrimary()
     {
@@ -413,15 +409,15 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSearchColumns()
     {
-        return !empty($this->searchColumns);
+        return $this->searchColumns ?: [];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTableName()
     {
@@ -429,15 +425,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function handle()
-    {
-        return app('db.item.handle', [$this]);
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasMeta()
     {
@@ -445,7 +433,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasSearch()
     {
@@ -453,15 +441,15 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function install()
     {
-        return $this->make()->install();
+        $this->make()->install();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isPrimary($name)
     {
@@ -473,7 +461,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isPrivateQueryVar($var)
     {
@@ -481,23 +469,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function make()
-    {
-        return app('db.item.make', [$this]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function meta()
-    {
-        return app('db.item.meta', [$this]);
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
@@ -532,31 +504,7 @@ class DbItemBaseController extends ParamsBag implements DbItemInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function parser()
-    {
-        return app('db.item.parser', [$this]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function query($query = [])
-    {
-        return app('db.item.query', [$query, $this]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function select($query = null)
-    {
-        return app('db.item.select', [$query, $this]);
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function sql()
     {

@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Db;
 
-interface DbItemMetaQueryInterface
+interface DbFactoryMetaQuery extends DbFactoryResolverTrait
 {
     /**
      * Generates SQL clauses to be appended to a main query.

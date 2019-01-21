@@ -2,6 +2,7 @@
 
 namespace tiFy\Template\Templates;
 
+use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Kernel\Container\Container;
 use tiFy\Kernel\Container\ServiceProvider;
@@ -115,8 +116,12 @@ class BaseServiceProvider extends ServiceProvider
     public function registerDb()
     {
         $this->getContainer()->share($this->getFullAlias('db'), function(TemplateFactory $template) {
-            if ($attrs = $template->config('db')) :
-                return new BaseDb($template->name(), $attrs, $template);
+            if ($attrs = $template->config('providers.db', [])) :
+                if ($attrs instanceof DbFactory) :
+                    return $attrs;
+                else :
+                    return new BaseDb($template->name(), $attrs, $template);
+                endif;
             else :
                 return null;
             endif;

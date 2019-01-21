@@ -1,20 +1,17 @@
 <?php
 
-namespace tiFy\Db;
+namespace tiFy\Db\Factory;
 
-use tiFy\Contracts\Db\DbItemInterface;
-use tiFy\Contracts\Db\DbItemParserInterface;
+use tiFy\Contracts\Db\DbFactory;
+use tiFy\Contracts\Db\DbFactoryMetaQuery;
+use tiFy\Contracts\Db\DbFactoryParser;
 
-class DbItemParserController implements DbItemParserInterface
+class Parser implements DbFactoryParser
 {
-    /**
-     * Instance du controleur de base de données associé.
-     * @var DbItemInterface
-     */
-    protected $db;
+    use ResolverTrait;
 
     /**
-     * @var null
+     * @var DbFactoryMetaQuery
      */
     protected $metaQuery;
 
@@ -26,11 +23,11 @@ class DbItemParserController implements DbItemParserInterface
     /**
      * CONSTRUCTEUR.
      *
-     * @param DbItemInterface $db Instance du controleur de base de données associé.
+     * @param DbFactory $db Instance du controleur de base de données associé.
      *
      * @return void
      */
-    public function __construct(DbItemInterface $db)
+    public function __construct(DbFactory $db)
     {
         $this->db = $db;
     }
@@ -40,7 +37,7 @@ class DbItemParserController implements DbItemParserInterface
      *
      * @param array $query_vars Liste des arguments de requête
      *
-     * @return null|string
+     * @return string
      */
     public function query($query_vars = [])
     {
@@ -49,7 +46,7 @@ class DbItemParserController implements DbItemParserInterface
 
         // SELECT
         if (! $Select = $this->clause_select($query_vars['fields'])) :
-            return;
+            return '';
         endif;
 
         // FROM
@@ -95,7 +92,12 @@ class DbItemParserController implements DbItemParserInterface
     }
 
     /**
-     * Traitements des arguments de requête
+     * Traitements des arguments de requête.
+     *
+     * @param array $vars
+     * @param mixed $defaults
+     *
+     * @return array
      */
     public function query_vars($vars, $defaults = null)
     {
@@ -116,7 +118,7 @@ class DbItemParserController implements DbItemParserInterface
         
         // Gestion des requêtes de métadonnées
         if (!empty($vars['meta_query']) && $this->db->hasMeta()) :
-            $this->metaQuery = app('db.item.meta_query', [$this->db, $vars['meta_query']]);
+            $this->metaQuery = $this->meta_query($vars['meta_query']);
 
             $this->metaClauses = $this->metaQuery->get_sql(
                 $this->db->getMetaType(),
@@ -145,7 +147,7 @@ class DbItemParserController implements DbItemParserInterface
      *
      * @param string[] $fields
      *
-     * @return null|string
+     * @return string
      */
     public function clause_select($fields = null)
     {
@@ -163,7 +165,7 @@ class DbItemParserController implements DbItemParserInterface
             $_fields = [];
             foreach ($fields as $field) :
                 if (!$col_name = $this->db->existsCol($field)) :
-                    return;
+                    return '';
                 endif;
                 $_fields[] = "{$table_name}.{$col_name}";
             endforeach;
@@ -186,7 +188,7 @@ class DbItemParserController implements DbItemParserInterface
     /**
      * Traitement de la condition JOIN
      *
-     * @return null|string
+     * @return string
      */
     public function clause_join()
     {
@@ -200,12 +202,14 @@ class DbItemParserController implements DbItemParserInterface
         if (!empty( $join )) :
             return " " . implode(' ', $join);
         endif;
+
+        return '';
     }
 
     /**
      * Traitement de la condition WHERE
      *
-     * @param string $vars
+     * @param array $vars
      *
      * @return string
      */
@@ -250,7 +254,7 @@ class DbItemParserController implements DbItemParserInterface
     /**
      * Traitement des comparaison de valeur la condition WHERE
      *
-     * @param string $col_value
+     * @param array $col_value
      *
      * @return string
      */
@@ -313,12 +317,12 @@ class DbItemParserController implements DbItemParserInterface
      *
      * @param string $terms
      *
-     * @return null|string
+     * @return string
      */
     public function clause_search($terms = '')
     {
         if (empty($terms) || ! $this->db->hasSearch()) :
-            return;
+            return null;
         endif;
 
         $like = '%' . $this->db->sql()->esc_like($terms) . '%';
@@ -331,6 +335,8 @@ class DbItemParserController implements DbItemParserInterface
         if ($search_query) :
             return " AND (" . join(" OR ", $search_query) . ")";
         endif;
+
+        return '';
     }
 
     /**
@@ -338,13 +344,13 @@ class DbItemParserController implements DbItemParserInterface
      *
      * @param int[] $ids
      *
-     * @return null|string
+     * @return string
      */
     public function clause__in($ids)
     {
         // Bypass
         if (!$ids) :
-            return;
+            return '';
         endif;
 
         if (!is_array($ids)) :
@@ -360,13 +366,13 @@ class DbItemParserController implements DbItemParserInterface
      *
      * @param int[] $ids
      *
-     * @return null|string
+     * @return string
      */
     public function clause__not_in($ids)
     {
         // Bypass
         if (!$ids) :
-            return;
+            return '';
         endif;
 
         if (!is_array($ids)) :
@@ -381,17 +387,24 @@ class DbItemParserController implements DbItemParserInterface
     /**
      * Traitement de la condition GROUPBY
      *
-     * @return null|string
+     * @return string
      */
     public function clause_group_by()
     {
         if ($this->metaClauses) :
             return " GROUP BY " . $this->db->getTableName() . "." . $this->db->getPrimary();
         endif;
+
+        return '';
     }
 
     /**
-     * Traitement de la condition ORDER
+     * Traitement de la condition ORDER.
+     *
+     * @param string|array $orderby
+     * @param string $order
+     *
+     * @return string
      */
     public function clause_order($orderby, $order = 'DESC')
     {
@@ -483,12 +496,12 @@ class DbItemParserController implements DbItemParserInterface
      * @param int $per_page Nombre d'éléments par page de résultat
      * @param int $paged Page courante
      *
-     * @return null|string
+     * @return string
      */
     public function clause_limit($per_page = 0, $paged = 1)
     {
         if ($per_page <= 0) :
-            return;
+            return '';
         endif;
 
         $offset = ($paged - 1) * $per_page;
@@ -499,7 +512,7 @@ class DbItemParserController implements DbItemParserInterface
     /**
      * Traitement des resultats de requête
      *
-     * @param obj $results Resultats de requête brut
+     * @param object $results Resultats de requête brut
      * @param string $output Format de sortie
      *
      * @return mixed

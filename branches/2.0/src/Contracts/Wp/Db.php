@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Wp;
 
-interface WpPostTypeManager
+interface Db
 {
 
 }

@@ -4,7 +4,6 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryView as FactoryViewContract;
 use tiFy\View\ViewController;
-use tiFy\Kernel\Tools;
 use Closure;
 
 class View extends ViewController implements FactoryViewContract
@@ -49,14 +48,6 @@ class View extends ViewController implements FactoryViewContract
     /**
      * {@inheritdoc}
      */
-    public function attrs()
-    {
-        return $this->getHtmlAttrs($this->form()->get('attrs', []));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function before()
     {
         if ($content = $this->form()->get('before')) :
@@ -76,13 +67,5 @@ class View extends ViewController implements FactoryViewContract
     public function form()
     {
         return $this->engine->get('form');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHtmlAttrs($attrs = [], $linearized = true)
-    {
-        return Tools::Html()->parseAttrs($attrs, $linearized);
     }
 }

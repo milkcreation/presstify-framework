@@ -3,6 +3,8 @@
 use tiFy\tiFy;
 use tiFy\Contracts\Kernel\Assets;
 use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Db\DbFactory;
+use tiFy\Contracts\Db\DbManager;
 use tiFy\Contracts\Field\FieldController;
 use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\Form\FormFactory;
@@ -151,6 +153,27 @@ if (!function_exists('container')) :
     }
 endif;
 
+if (!function_exists('db')) :
+    /**
+     * Récupération du getionnaire de base de données ou d'une instance de controleur de base de données.
+     *
+     * @param null|string $name Nom de qualification du controleur de base de données.
+     *
+     * @return null|DbManager|DbFactory
+     */
+    function db($name = null)
+    {
+        /** @var DbManager $manager */
+        $manager = app()->get('db');
+
+        if (is_null($name)) :
+            return $manager;
+        endif;
+
+        return $manager->get($name);
+    }
+endif;
+
 if (!function_exists('events')) :
     /**
      * Events - Controleur d'événements.
@@ -197,7 +220,7 @@ if (!function_exists('form')) :
     function form($name = null)
     {
         /** @var FormManager $factory */
-        $factory = app('form');
+        $factory = app()->get('form');
 
         if (is_null($name)) :
             return $factory;

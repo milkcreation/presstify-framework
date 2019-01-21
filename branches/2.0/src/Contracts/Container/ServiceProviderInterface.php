@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Container;
 
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
 use League\Container\ServiceProvider\ServiceProviderInterface as LeagueServiceProviderInterface;
-use tiFy\Contracts\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 interface ServiceProviderInterface extends LeagueServiceProviderInterface, BootableServiceProviderInterface
 {
@@ -18,7 +18,7 @@ interface ServiceProviderInterface extends LeagueServiceProviderInterface, Boota
     /**
      * Récupération de la classe de rappel du conteneur d'injection utilisé par le fournisseur de service.
      *
-     * @return ContainerInterface
+     * @return ContainerInterface|PsrContainerInterface
      */
     public function getContainer();
 
