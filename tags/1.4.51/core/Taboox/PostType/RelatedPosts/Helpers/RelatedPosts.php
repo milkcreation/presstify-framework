@@ -88,6 +88,8 @@ class RelatedPosts extends \tiFy\App
             return;
         endif;
 
+        $output = '';
+
         // Traitement des attributs de récupération
         $args = \wp_parse_args($args, static::$DefaultAttrs);
 
