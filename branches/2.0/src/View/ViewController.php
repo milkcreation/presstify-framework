@@ -32,7 +32,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all()
     {
@@ -40,7 +40,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -48,7 +48,17 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
+     */
+    public function dirname()
+    {
+        return (is_null($this->name->getFolder()))
+            ? $this->engine->getDirectory()
+            : $this->name->getFolder()->getPath();
+    }
+
+    /**
+     * @inheritdoc
      */
     public function fetch($name, array $data = [])
     {
@@ -62,7 +72,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get($key, $default = '')
     {
@@ -70,7 +80,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getEngine()
     {
@@ -78,7 +88,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function has($key)
     {
@@ -86,7 +96,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function htmlAttrs($attrs, $linearized = true)
     {
@@ -94,7 +104,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function insert($name, array $data = [])
     {
@@ -102,7 +112,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function reset($name)
     {
@@ -112,7 +122,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function share($datas)
     {
@@ -120,7 +130,7 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function set($key, $value)
     {
