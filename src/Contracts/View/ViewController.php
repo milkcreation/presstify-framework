@@ -26,6 +26,13 @@ interface ViewController
     public function boot();
 
     /**
+     * Récupération du répertoire du gabarit d'affichage courant.
+     *
+     * @return string
+     */
+    public function dirname();
+
+    /**
      * Récupération d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
