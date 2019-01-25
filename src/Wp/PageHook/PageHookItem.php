@@ -148,8 +148,9 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                 $post_id = (int)get_option($this->get('option_name'), 0);
                 $this->set('id', $post_id);
             endif;
-
-            $this->post = new Post(get_post($this->get('id', 0)));
+            if ($post = get_post($this->get('id', 0))) :
+                $this->post = new Post($post);
+            endif;
         endif;
 
         return $this->post;
