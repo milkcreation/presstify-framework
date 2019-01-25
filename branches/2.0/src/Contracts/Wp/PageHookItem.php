@@ -42,6 +42,13 @@ interface PageHookItem extends ParamsBag
     public function getOptionName();
 
     /**
+     * Récupération de l'intitulé de qualification.
+     *
+     * @return string
+     */
+    public function getTitle();
+
+    /**
      * Vérifie si la page d'affichage courante correspond à la page d'accroche associée.
      *
      * @param null|int|\WP_Post Page d'affichage courante|Identifiant de qualification|Objet post Wordpress à vérifier.
