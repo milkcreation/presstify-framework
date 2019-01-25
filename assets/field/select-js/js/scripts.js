@@ -20,7 +20,7 @@ jQuery(function ($) {
     };
 
     $.widget('tify.tifySelectJs', {
-        widgetEventPrefix: 'selectJs:',
+        widgetEventPrefix: 'select-js:',
         id: undefined,
         options: {
             autocomplete: false,
@@ -323,6 +323,7 @@ jQuery(function ($) {
             this.flags.mustEnabled = false;
 
             this.handler.val(this.selected);
+            this.el.data('value', this.selected);
         },
 
         // SETTER
@@ -691,6 +692,9 @@ jQuery(function ($) {
             this._doHighlight(item.value);
 
             this.handler.val(this.selected);
+            this.el.data('value', this.selected);
+
+            this._trigger('change', null, item);
         },
 
         // Fermeture de la liste de selection.
@@ -859,6 +863,7 @@ jQuery(function ($) {
             this._pickerRemoveSelected(item.index);
 
             this.handler.val(this.selected);
+            this.el.data('value', this.selected);
         },
 
         // Réordonnancement d'un élément de la liste de selection.
