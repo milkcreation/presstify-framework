@@ -21,7 +21,7 @@ class Collection implements CollectionContract
     protected $_iteration;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function collect($items = null)
     {
@@ -29,7 +29,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all()
     {
@@ -37,7 +37,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function count()
     {
@@ -45,7 +45,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function current()
     {
@@ -53,7 +53,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function exists()
     {
@@ -61,7 +61,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get($key, $default = null)
     {
@@ -69,7 +69,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function has($key)
     {
@@ -77,7 +77,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function key()
     {
@@ -85,7 +85,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function wrap($item, $key = null)
     {
@@ -93,7 +93,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIterator()
     {
@@ -101,7 +101,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIteration()
     {
@@ -109,7 +109,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function offsetExists($key)
     {
@@ -117,7 +117,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function offsetGet($key)
     {
@@ -125,7 +125,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function offsetSet($key, $value)
     {
@@ -137,7 +137,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function offsetUnset($key)
     {
@@ -145,7 +145,15 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}return app($name);
+     * @inheritdoc
+     */
+    public function pluck($value, $key = null)
+    {
+        return $this->collect()->pluck($value, $key)->all();
+    }
+
+    /**
+     * @inheritdoc
      */
     public function __get($key)
     {
@@ -153,7 +161,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __set($key, $value)
     {
@@ -161,7 +169,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __isset($key)
     {
@@ -169,7 +177,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __unset($key)
     {

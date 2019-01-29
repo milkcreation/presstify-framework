@@ -134,6 +134,16 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function offsetUnset($key);
 
     /**
+     * Récupération d'un tableau indéxé ou dimensionné basé sur le couple key/value.
+     *
+     * @param string $value Clé d'indice de l'attribut utilisé comme valeur du tableau.
+     * @param string $key Clé d'indice de l'attribut utilisé comme clé du tableau. Si null, clé d'indexe incrémentée.
+     *
+     * @return array
+     */
+    public function pluck($value, $key = null);
+
+    /**
      * Récupération d'un élément depuis l'itération.
      *
      * @param mixed $key Clé d'indexe.
