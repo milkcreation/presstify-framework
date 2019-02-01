@@ -48,6 +48,7 @@ final class Assets implements AssetsContract
         $this->thirdParty = require_once(__DIR__ . '/Resources/config/third-party.php');
 
         $this->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'), 'both', false);
+        $this->setDataJs('base_url', request()->getBaseUrl(), 'both', false);
 
         add_action(
             'admin_head',
