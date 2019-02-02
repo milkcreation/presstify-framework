@@ -140,14 +140,23 @@ interface Router extends
     public function group(string $prefix, callable $group);
 
     /**
-     * Vérification d'existance d'une route associé à la requête HTTP courante.
+     * Vérification d'existance d'une route associée à la requête HTTP courante.
      *
      * @return boolean
      */
     public function hasCurrent();
 
     /**
-     * Vérification de correspondance avec le nom de qualification de la route associé à la requête HTTP courante.
+     * Vérification si le nom de qualification correspond à la route déclarée.
+     *
+     * @param string $name Nom de qualification de la route.
+     *
+     * @return boolean
+     */
+    public function hasNamedRoute($name);
+
+    /**
+     * Vérification si le nom de qualification correspond à la route associée à la requête HTTP courante.
      *
      * @param string $name Nom de qualification à contrôler.
      * 
