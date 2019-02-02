@@ -4,8 +4,6 @@ namespace tiFy\PostType\Query;
 
 use Illuminate\Support\Arr;
 use tiFy\Contracts\PostType\PostQuery as PostQueryContract;
-use tiFy\PostType\Query\PostQueryCollection;
-use tiFy\PostType\Query\PostQueryItem;
 use WP_Query;
 use WP_Post;
 

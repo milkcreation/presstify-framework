@@ -165,7 +165,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasNamedRoute($name)
     {
