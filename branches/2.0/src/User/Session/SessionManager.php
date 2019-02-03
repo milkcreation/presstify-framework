@@ -9,7 +9,6 @@ namespace tiFy\User\Session;
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\User\SessionManager as SessionManagerContract;
 use tiFy\Contracts\User\SessionStore;
-use tiFy\Cron\Cron;
 
 final class SessionManager implements SessionManagerContract
 {
@@ -39,9 +38,7 @@ final class SessionManager implements SessionManagerContract
 
                 // Initialisation de la base de données
                 if (!empty($this->items)) :
-                    /** @var Cron $cron */
-                    $cron = app('cron');
-                    $cron->add(
+                    cron()->register(
                         'session.cleanup',
                         [
                             'title'         => __('Nettoyage de sessions', 'tiFy'),
@@ -51,7 +48,9 @@ final class SessionManager implements SessionManagerContract
                                 if (! defined('WP_SETUP_CONFIG') && ! defined('WP_INSTALLING')) :
                                     $this->getDb()->handle()->query(
                                         $this->getDb()->handle()->prepare(
-                                            "DELETE FROM " . $this->getDb()->getTableName() . " WHERE session_expiry < %d", time()
+                                            "DELETE FROM " .
+                                            $this->getDb()->getTableName() .
+                                            " WHERE session_expiry < %d", time()
                                         )
                                     );
                                 endif;

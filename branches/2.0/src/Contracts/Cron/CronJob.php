@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use tiFy\Contracts\Kernel\Logger;
 use tiFy\Contracts\Kernel\ParamsBag;
 
-interface CronJobInterface extends ParamsBag
+interface CronJob extends ParamsBag
 {
     /**
      * Lancement de la commande à executer.

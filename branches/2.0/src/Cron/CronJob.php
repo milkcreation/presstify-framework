@@ -2,13 +2,14 @@
 
 namespace tiFy\Cron;
 
+use \DateTime;
 use \DateTimeZone;
 use Carbon\Carbon;
-use tiFy\Contracts\Cron\CronJobInterface;
+use tiFy\Contracts\Cron\CronJob as CronJobContract;
 use tiFy\Contracts\Kernel\Logger;
 use tiFy\Kernel\Params\ParamsBag;
 
-class CronJobBaseController extends ParamsBag implements CronJobInterface
+class CronJob extends ParamsBag implements CronJobContract
 {
     /**
      * Liste des attributs de configuration.
@@ -98,7 +99,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
@@ -116,7 +117,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function exec()
     {
@@ -124,7 +125,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getArgs()
     {
@@ -132,7 +133,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCommand()
     {
@@ -140,7 +141,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDate()
     {
@@ -148,7 +149,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDatetime($time = 'now')
     {
@@ -156,7 +157,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDescription()
     {
@@ -164,7 +165,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFrequency()
     {
@@ -172,7 +173,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getHook()
     {
@@ -180,7 +181,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getInfo($key, $default = null)
     {
@@ -191,7 +192,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getLastDate()
     {
@@ -201,7 +202,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -209,7 +210,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getNextDate()
     {
@@ -219,7 +220,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTimestamp()
     {
@@ -227,7 +228,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -235,7 +236,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function log()
     {
@@ -243,7 +244,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function onTest()
     {
@@ -251,7 +252,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function updateInfo($key, $value)
     {
@@ -263,7 +264,7 @@ class CronJobBaseController extends ParamsBag implements CronJobInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
