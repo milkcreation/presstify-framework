@@ -105,6 +105,7 @@ jQuery(function ($) {
             } else {
                 this._doEnable();
             }
+            this._trigger('loaded');
         },
 
         // INITIALISATION
@@ -555,7 +556,7 @@ jQuery(function ($) {
         // Ajout d'une selection à la liste des éléments sélectionnés.
         _selectionAddItem(index) {
             if (!this.selection.find(this.items[index].selection).length) {
-                let $item = this.items[index].selection.appendTo(this.selection);
+                let $item = this.items[index].selection.appendTo(this.selection).attr('aria-selected', true);
 
                 if (this.flags.isRemovable) {
                     this._onSelectionItemRemoveClick($item);
