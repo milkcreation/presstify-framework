@@ -10,6 +10,10 @@
     display: none;
 }
 
+[data-control="select-js.selection.item"][aria-selected="true"] {
+    display:inherit;
+}
+
 /** STYLES GENERAUX */
 .FieldSelectJs {
     position: relative;
@@ -106,6 +110,7 @@
     line-height: 1;
     white-space: nowrap;
     background-color: #FFF;
+    display:none;
 }
 
 .FieldSelectJs[aria-multiple="false"][aria-autocomplete="true"] .FieldSelectJs-selection{

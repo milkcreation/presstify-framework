@@ -11,7 +11,7 @@
     <?php echo field('select', $this->get('handler', [])); ?>
 
     <ul class="<?php echo $this->get('classes.selection'); ?>" data-control="select-js.selection">
-        <?php foreach($choices->getSelectionChoices() as $choice) : ?>
+        <?php foreach($choices as $choice) : ?>
         <li
                 class="<?php echo $this->get('classes.selectionItem'); ?>"
                 data-control="select-js.selection.item"
