@@ -2,8 +2,7 @@
 
 namespace tiFy\Mail;
 
-use tiFy\Contracts\Cron\Cron;
-use tiFy\Contracts\Cron\CronJobInterface;
+use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Mail\Mailer;
 use tiFy\Contracts\Mail\MailQueue as MailQueueContract;
 
@@ -57,9 +56,7 @@ class MailQueue implements MailQueueContract
                     ]
                 );
 
-                /** @var Cron $cron */
-                $cron = app('cron');
-                $cron->add(
+                cron()->register(
                     'mail.queue',
                     [
                         'title'         => __('File d\'expédition des emails', 'tify'),
@@ -69,7 +66,7 @@ class MailQueue implements MailQueueContract
                             'interval'      => 60,
                             'display'       => __('Chaque minute', 'tify')
                         ],
-                        'command'        => function ($args, CronJobInterface $job) {
+                        'command'        => function ($args, CronJob $job) {
                             if ($queue = db('mail.queue')) :
                                 if (
                                     $emails = $queue->select()->rows(

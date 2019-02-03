@@ -3,6 +3,8 @@
 use tiFy\tiFy;
 use tiFy\Contracts\Kernel\Assets;
 use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Cron\CronManager;
+use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Db\DbManager;
 use tiFy\Contracts\Field\FieldController;
@@ -153,9 +155,30 @@ if (!function_exists('container')) :
     }
 endif;
 
+if (!function_exists('cron')) :
+    /**
+     * Récupération du gestionnaire de tâches planifiées ou d'une instance d'un tâche déclarée.
+     *
+     * @param null|string $name Nom de qualification de la tâche déclarée.
+     *
+     * @return null|CronManager|CronJob
+     */
+    function cron($name = null)
+    {
+        /** @var CronManager $manager */
+        $manager = app()->get('cron');
+
+        if (is_null($name)) :
+            return $manager;
+        endif;
+
+        return $manager->getItem($name);
+    }
+endif;
+
 if (!function_exists('db')) :
     /**
-     * Récupération du getionnaire de base de données ou d'une instance de controleur de base de données.
+     * Récupération du gestionnaire de base de données ou d'une instance de controleur de base de données.
      *
      * @param null|string $name Nom de qualification du controleur de base de données.
      *
