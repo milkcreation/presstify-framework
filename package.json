@@ -5,6 +5,7 @@
   "dependencies": {
     "animate-sass": "^0.8.2",
     "bootstrap": "^4.0.0",
+    "collect.js": "^4.6.1",
     "datatables": "^1.10.18",
     "datatables.net-plugins": "^1.10.18",
     "font-awesome": "^4.7.0",
@@ -15,6 +16,7 @@
     "jquery-bridget": "^2.0.1",
     "mobile-detect": "^1.4.3",
     "moment": "^2.22.2",
+    "mustache": "^3.0.1",
     "spectrum": "^1.0.1",
     "slick-carousel": "^1.8.1",
     "spinkit": "^1.2.5"
