@@ -57,25 +57,22 @@ class Pagination extends PartialController implements PaginationContract
     protected $url;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
-        add_action(
-            'init',
-            function () {
-                wp_register_style(
-                    'PartialPagination',
-                    assets()->url('partial/pagination/css/styles.css'),
-                    [],
-                    181005
-                );
-            }
-        );
+        add_action('init', function () {
+            wp_register_style(
+                'PartialPagination',
+                assets()->url('partial/pagination/css/styles.css'),
+                [],
+                181005
+            );
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -83,7 +80,7 @@ class Pagination extends PartialController implements PaginationContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
@@ -113,7 +110,7 @@ class Pagination extends PartialController implements PaginationContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parseDefaults()
     {
@@ -123,7 +120,7 @@ class Pagination extends PartialController implements PaginationContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parseLinks()
     {
