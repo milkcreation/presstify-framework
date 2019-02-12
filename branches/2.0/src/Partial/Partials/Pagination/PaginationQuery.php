@@ -44,7 +44,7 @@ class PaginationQuery extends QueryCollection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function query($args)
     {
@@ -77,15 +77,15 @@ class PaginationQuery extends QueryCollection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPage()
     {
-        return $this->page;
+        return $this->page ? : 1;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTotalPage()
     {

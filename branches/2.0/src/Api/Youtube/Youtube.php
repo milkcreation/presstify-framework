@@ -11,7 +11,6 @@ namespace tiFy\Api\Youtube;
 use Illuminate\Support\Arr;
 use Embed\Embed;
 use Madcoda\Youtube\Youtube as MadcodaYoutube;
-use tiFy\Contracts\Kernel\Validator;
 
 class Youtube extends MadcodaYoutube
 {
