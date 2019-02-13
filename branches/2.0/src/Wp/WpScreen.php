@@ -38,7 +38,7 @@ class WpScreen implements WpScreenInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function get($screen = '')
     {
@@ -110,7 +110,7 @@ class WpScreen implements WpScreenInterface
                     endswitch;
                 endif;
 
-                $screen = clone WP_Screen::get();
+                $screen = clone WP_Screen::get($attrs['id']?? '');
                 foreach ($attrs as $key => $value) :
                     $screen->{$key} = $value;
                 endforeach;
@@ -127,13 +127,13 @@ class WpScreen implements WpScreenInterface
             if ($screen instanceof WP_Screen) :
                 return new static($screen);
             endif;
-        else :
-            return null;
         endif;
+
+        return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getHookname()
     {
@@ -141,7 +141,7 @@ class WpScreen implements WpScreenInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getObjectName()
     {
@@ -149,7 +149,7 @@ class WpScreen implements WpScreenInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getObjectType()
     {
@@ -157,7 +157,7 @@ class WpScreen implements WpScreenInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getScreen()
     {
@@ -165,7 +165,7 @@ class WpScreen implements WpScreenInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isCurrent()
     {
@@ -173,7 +173,7 @@ class WpScreen implements WpScreenInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse()
     {
