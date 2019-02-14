@@ -1,11 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+// Debogguage.
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+// Récupération des vendors.
 $paths = [
     __DIR__.'/../autoload.php',
     __DIR__.'/../../../autoload.php'
 ];
-
 foreach ($paths as $path) :
     if (file_exists($path)) :
         require_once $path;
@@ -14,14 +18,34 @@ foreach ($paths as $path) :
 endforeach;
 
 use tiFy\Console\Application;
-use tiFy\Console\Commands\Sample;
+use Symfony\Component\Console\Input\InputOption;
 
-/** Deboggage. */
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
+$app = (new Application('bee', '1.0.0'))->setDefaultHeaders($argv);
 
-$app = new Application();
+// Chargement de Wordpress
+$wp_paths = [
+    __DIR__ . '/../../wp-load.php',
+    __DIR__ . '/../../../../wp-load.php'
+];
+foreach ($wp_paths as $wp_path) :
+    if (file_exists($wp_path)) :
+        require_once $wp_path;
+        break;
+    endif;
+endforeach;
 
-$app->add(new Sample());
+// Déclaration des commandes.
+foreach (config('console.commands', []) as $k => $command) :
+    if (is_numeric($k) && class_exists($command)) :
+        $command = $app->add(new $command());
+    elseif (class_exists($command)) :
+        $command = $app->add(new $command($k));
+    endif;
 
+    if (!$command->getDefinition()->hasOption('url')) :
+        $command->addOption('url', null, InputOption::VALUE_OPTIONAL, 'site url', 'http://localhost');
+    endif;
+endforeach;
+
+// Exécution.
 $app->run();
