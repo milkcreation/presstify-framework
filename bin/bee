@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+$paths = [
+    __DIR__.'/../autoload.php',
+    __DIR__.'/../../../autoload.php'
+];
+
+foreach ($paths as $path) :
+    if (file_exists($path)) :
+        require_once $path;
+        break;
+    endif;
+endforeach;
+
+use tiFy\Console\Application;
+use tiFy\Console\Commands\Sample;
+
+/** Deboggage. */
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+$app = new Application();
+
+$app->add(new Sample());
+
+$app->run();
