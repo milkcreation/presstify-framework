@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2019-02-13",
+  "time": "2019-02-14",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -71,6 +71,7 @@
     "phpmailer/phpmailer": "^5.2",
     "redeyeventures/geopattern": "^1.1",
     "spatie/image": "^1.5",
+    "symfony/console": "^4.2",
     "symfony/filesystem": "^3.3",
     "symfony/finder": "^4.0",
     "symfony/http-foundation": "^4.0",
@@ -114,5 +115,8 @@
     "post-update-cmd": [
       "bower install --allow-root --save"
     ]
-  }
+  },
+  "bin": [
+    "bin/bee"
+  ]
 }
