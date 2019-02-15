@@ -20,6 +20,8 @@ class Application extends SfApplication
         $_SERVER['HTTP_USER_AGENT'] = '';
         $_SERVER['REQUEST_METHOD']  = 'GET';
         $_SERVER['REMOTE_ADDR']     = '127.0.0.1';
+        /** @see php -i | grep php.ini */
+        $_SERVER['TZ']              = ini_get('date.timezone') ? : 'UTC';
 
         // Entêtes associées à l'url
         if ($url = preg_grep('/^\-\-url\=(.*)/', $argv)) :

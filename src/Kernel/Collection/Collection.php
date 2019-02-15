@@ -89,7 +89,7 @@ class Collection implements CollectionContract
      */
     public function wrap($item, $key = null)
     {
-        return $item;
+        return $this->items[$key] = $item;
     }
 
     /**
