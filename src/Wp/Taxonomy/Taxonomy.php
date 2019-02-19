@@ -67,19 +67,10 @@ class Taxonomy implements TaxonomyContract
                     return;
                 endif;
 
-                $initial_terms = is_array($initial_terms)
-                    ? $initial_terms
-                    : array_map(
-                        'trim',
-                        explode(',', $initial_terms)
-                    );
-
-                foreach ($initial_terms as $terms) :
-                    foreach ($terms as $slug => $name) :
-                        if (!$term = get_term_by('slug', $slug, $factory->getName())) :
-                            wp_insert_term($name, $factory->getName(), ['slug' => $slug]);
-                        endif;
-                    endforeach;
+                foreach ($initial_terms as $slug => $name) :
+                    if (!$term = get_term_by('slug', $slug, $factory->getName())) :
+                        wp_insert_term($name, $factory->getName(), ['slug' => $slug]);
+                    endif;
                 endforeach;
             });
         });

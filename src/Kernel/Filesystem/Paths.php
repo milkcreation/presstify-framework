@@ -3,8 +3,9 @@
 namespace tiFy\Kernel\Filesystem;
 
 use League\Flysystem\Adapter\Local;
+use League\Flysystem\AdapterInterface;
 use Symfony\Component\Filesystem\Filesystem as SfFilesystem;
-use tiFy\Kernel\Filesystem\Filesystem;
+use tiFy\Filesystem\Filesystem;
 
 class Paths extends Filesystem
 {
@@ -63,7 +64,7 @@ class Paths extends Filesystem
     /**
      * {@inheritdoc}
      *
-     * @return Local
+     * @return Local|AdapterInterface
      */
     public function getAdapter()
     {
