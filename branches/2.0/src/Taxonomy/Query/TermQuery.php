@@ -4,8 +4,6 @@ namespace tiFy\Taxonomy\Query;
 
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Taxonomy\TermQuery as TermQueryContract;
-use tiFy\Taxonomy\Query\TermQueryCollection;
-use tiFy\Taxonomy\Query\TermQueryItem;
 use WP_Term;
 use WP_Term_Query;
 

@@ -43,7 +43,12 @@ foreach (config('console.commands', []) as $k => $command) :
     endif;
 
     if (!$command->getDefinition()->hasOption('url')) :
-        $command->addOption('url', null, InputOption::VALUE_OPTIONAL, 'site url', 'http://localhost');
+        $command->addOption(
+                'url',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'site url'
+        );
     endif;
 endforeach;
 

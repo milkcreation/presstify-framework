@@ -3,6 +3,7 @@
 namespace tiFy\Console;
 
 use Symfony\Component\Console\Application as SfApplication;
+use Dotenv\Dotenv;
 
 class Application extends SfApplication
 {
@@ -31,27 +32,37 @@ class Application extends SfApplication
 
             $url = current($url);
             $url = preg_replace('/^\-\-url\=/', '', $url);
+        else :
+            // Récupération des vendors.
+            $vendor_path = __DIR__ . '/../../../../autoload.php';
+            $root_path = __DIR__ . '/../../../../../';
+            if (file_exists($vendor_path)) :
+                require_once $vendor_path;
+                $env = Dotenv::create($root_path);
+                $env->load();
+                $url = getenv('SITE_URL') ? : '';
+            endif;
+        endif;
 
-            $parts = parse_url($url);
-            if (isset($parts['host'])) :
-                if (isset($parts['scheme']) && 'https' === strtolower($parts['scheme'])) :
-                    $_SERVER['HTTPS'] = 'on';
-                endif;
-
-                $_SERVER['HTTP_HOST'] = $parts['host'];
-                if (isset($parts['port'])) :
-                    $_SERVER['HTTP_HOST'] .= ':' . $parts['port'];
-                endif;
-
-                $_SERVER['SERVER_NAME'] = $parts['host'];
+        // Entêtes associées à l'url
+        $url = $url ? : 'http://localhost';
+        $parts = parse_url($url);
+        if (isset($parts['host'])) :
+            if (isset($parts['scheme']) && 'https' === strtolower($parts['scheme'])) :
+                $_SERVER['HTTPS'] = 'on';
             endif;
 
-            $_SERVER['REQUEST_URI']  = ($parts['path'] ?? '') . (isset($parts['query']) ? '?' . $parts['query'] : '');
-            $_SERVER['SERVER_PORT']  = $parts['port'] ?? '80';
-            $_SERVER['QUERY_STRING'] = $parts['query'] ?? '';
-        else :
-            define('MULTISITE', false);
+            $_SERVER['HTTP_HOST'] = $parts['host'];
+            if (isset($parts['port'])) :
+                $_SERVER['HTTP_HOST'] .= ':' . $parts['port'];
+            endif;
+
+            $_SERVER['SERVER_NAME'] = $parts['host'];
         endif;
+
+        $_SERVER['REQUEST_URI']  = ($parts['path'] ?? '') . (isset($parts['query']) ? '?' . $parts['query'] : '');
+        $_SERVER['SERVER_PORT']  = $parts['port'] ?? '80';
+        $_SERVER['QUERY_STRING'] = $parts['query'] ?? '';
 
         return $this;
     }

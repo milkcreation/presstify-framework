@@ -4,17 +4,24 @@ namespace tiFy\Wp;
 
 use tiFy\App\Container\AppServiceProvider;
 use tiFy\Wp\Db\Db;
+use tiFy\Wp\Filesystem\Filesystem;
 use tiFy\Wp\Form\Form;
 use tiFy\Wp\Media\MediaDownload;
 use tiFy\Wp\Media\MediaManager;
 use tiFy\Wp\Media\MediaUpload;
 use tiFy\Wp\PageHook\PageHook;
 use tiFy\Wp\PostType\PostType;
-use tiFy\Wp\Query\Post;
-use tiFy\Wp\Query\Posts;
+use tiFy\Wp\Query\Post as QueryPost;
+use tiFy\Wp\Query\Posts as QueryPosts;
+use tiFy\Wp\Query\Term as QueryTerm;
+use tiFy\Wp\Query\Terms as QueryTerms;
 use tiFy\Wp\Routing\Router;
 use tiFy\Wp\Taxonomy\Taxonomy;
 use tiFy\Wp\User\User;
+use WP_Query;
+use WP_Post;
+use WP_Term;
+use WP_Term_Query;
 
 class WpServiceProvider extends AppServiceProvider
 {
@@ -25,11 +32,14 @@ class WpServiceProvider extends AppServiceProvider
     protected $provides = [
         'wp',
         'wp.db',
+        'wp.filesystem',
         'wp.form',
         'wp.page-hook',
         'wp.post-type',
         'wp.query.post',
         'wp.query.posts',
+        'wp.query.term',
+        'wp.query.terms',
         'wp.routing.router',
         'wp.taxonomy',
         'wp.user'
@@ -62,6 +72,10 @@ class WpServiceProvider extends AppServiceProvider
                     $this->getContainer()->get('wp.db');
                 endif;
 
+                if ($this->getContainer()->has('storage')) :
+                    $this->getContainer()->get('wp.filesystem');
+                endif;
+
                 if ($this->getContainer()->has('form')) :
                     $this->getContainer()->get('wp.form');
                 endif;
@@ -88,6 +102,7 @@ class WpServiceProvider extends AppServiceProvider
     {
         $this->registerManager();
         $this->registerDb();
+        $this->registerFilesystem();
         $this->registerForm();
         $this->registerPageHook();
         $this->registerPostType();
@@ -106,6 +121,18 @@ class WpServiceProvider extends AppServiceProvider
     {
         $this->getContainer()->share('wp.db',  function () {
             return new Db($this->getContainer()->get('db'));
+        });
+    }
+
+    /**
+     * Déclaration du controleur de système de fichiers.
+     *
+     * @return void
+     */
+    public function registerFilesystem()
+    {
+        $this->getContainer()->share('wp.filesystem',  function () {
+            return new Filesystem($this->getContainer()->get('storage'));
         });
     }
 
@@ -160,8 +187,21 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function registerQuery()
     {
-        $this->getContainer()->add('wp.query.post', Post::class);
-        $this->getContainer()->add('wp.query.posts', Posts::class);
+        $this->getContainer()->add('wp.query.posts', function(WP_Query $wp_query) {
+            return new QueryPosts($wp_query);
+        });
+
+        $this->getContainer()->add('wp.query.post', function (WP_Post $wp_post) {
+            return new QueryPost($wp_post);
+        });
+
+        $this->getContainer()->add('wp.query.terms', function(WP_Term_Query $wp_term_query) {
+            return new QueryTerms($wp_term_query);
+        });
+
+        $this->getContainer()->add('wp.query.term', function (WP_Term $wp_term) {
+            return new QueryTerm($wp_term);
+        });
     }
 
     /**

@@ -9,6 +9,8 @@ use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Db\DbManager;
 use tiFy\Contracts\Field\FieldController;
 use tiFy\Contracts\Field\FieldManager;
+use tiFy\Contracts\Filesystem\Filesystem;
+use tiFy\Contracts\Filesystem\StorageManager;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\EventsManager;
@@ -462,6 +464,27 @@ if (! function_exists('router')) {
         return $factory->register($name, $attrs);
     }
 }
+
+if (!function_exists('storage')) :
+    /**
+     * Récupération du gestionnaire de point de montage ou instance d'un point de montage.
+     *
+     * @param string|array Nom de qualification du point de montage à récupéré.
+     *
+     * @return StorageManager|Filesystem
+     */
+    function storage($name = null)
+    {
+        /** @var StorageManager $manager */
+        $manager = app()->get('storage');
+
+        if (is_null($name)) :
+            return $manager;
+        endif;
+
+        return $manager->disk($name);
+    }
+endif;
 
 if (! function_exists('taxonomy')) {
     /**

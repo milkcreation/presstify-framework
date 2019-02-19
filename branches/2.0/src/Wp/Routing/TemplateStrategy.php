@@ -6,6 +6,8 @@ use League\Route\Route;
 use League\Route\Strategy\ApplicationStrategy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\Response as SfResponse;
+use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
 use WP_Query;
@@ -83,6 +85,8 @@ class TemplateStrategy extends ApplicationStrategy
             }, 1);
         elseif ($resolved instanceof ResponseInterface) :
             $response = $resolved;
+        elseif ($resolved instanceof SfResponse) :
+            $response = (new DiactorosFactory())->createResponse($resolved);
         else :
             $response->getBody()->write((string) $resolved);
         endif;

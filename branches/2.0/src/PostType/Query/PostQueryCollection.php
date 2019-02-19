@@ -37,7 +37,7 @@ class PostQueryCollection extends QueryCollection implements PostQueryCollection
      */
     public function getIds()
     {
-        return $this->collect()->pluck('ID')->all();
+        return $this->pluck('ID');
     }
 
     /**
@@ -45,7 +45,7 @@ class PostQueryCollection extends QueryCollection implements PostQueryCollection
      */
     public function getTitles()
     {
-        return $this->collect()->pluck('post_title')->all();
+        return $this->pluck('post_title');
     }
 
     /**

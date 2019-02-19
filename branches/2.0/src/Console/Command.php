@@ -18,6 +18,8 @@ class Command extends SfCommand
 
     /**
      * @inheritdoc
+     *
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
