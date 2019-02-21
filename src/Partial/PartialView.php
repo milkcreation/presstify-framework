@@ -4,16 +4,6 @@ namespace tiFy\Partial;
 
 use tiFy\View\ViewController;
 
-/**
- * Class PartialView
- *
- * @method string after().
- * @method string attrs().
- * @method string before().
- * @method string content().
- * @method string getId().
- * @method string getIndex().
- */
 class PartialView extends ViewController
 {
     /**
@@ -45,7 +35,9 @@ class PartialView extends ViewController
                 $arguments
             );
         elseif (method_exists($this, $name)) :
-            return call_user_func_array([$this, $name], $args);
+            return call_user_func_array([$this, $name], $arguments);
         endif;
+
+        return null;
     }
 }
