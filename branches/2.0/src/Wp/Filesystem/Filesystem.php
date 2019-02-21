@@ -23,7 +23,7 @@ class Filesystem
     {
         $this->manager = $manager;
 
-        foreach(config('filesystem') as $name => $attrs) :
+        foreach(config('filesystem', []) as $name => $attrs) :
             $this->manager->register($name, $attrs);
         endforeach;
     }

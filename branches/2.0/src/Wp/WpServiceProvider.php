@@ -233,6 +233,8 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function registerUser()
     {
-        $this->getContainer()->add('wp.user', User::class);
+        $this->getContainer()->add('wp.user', function() {
+            return new User();
+        });
     }
 }
