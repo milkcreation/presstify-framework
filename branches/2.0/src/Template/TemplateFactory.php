@@ -174,7 +174,7 @@ class TemplateFactory implements TemplateFactoryContract
      */
     public function boot()
     {
-        //var_dump($this->label()->all()); exit;
+
     }
 
     /**

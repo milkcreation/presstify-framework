@@ -3,6 +3,7 @@
 namespace tiFy\Contracts\Kernel;
 
 use League\Event\EmitterInterface;
+use League\Event\ListenerInterface;
 
 interface EventsManager extends EmitterInterface
 {

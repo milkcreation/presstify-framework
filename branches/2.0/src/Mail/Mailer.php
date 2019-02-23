@@ -32,12 +32,9 @@ final class Mailer extends ParamsBag implements MailerContract
      */
     public function __construct()
     {
-        add_action(
-            'after_setup_theme',
-            function () {
-                parent::__construct(config('mail', []));
-            }
-        );
+        add_action('after_setup_theme', function () {
+            parent::__construct(config('mail', []));
+        });
     }
 
     /**
@@ -174,7 +171,7 @@ final class Mailer extends ParamsBag implements MailerContract
      * @param string|string[] $header {header}|[{html_header},{plain_header}]
      * @param string|string[] $footer {footer}|[{html_footer},{plain_footer}]
      *
-     * @return string
+     * @return array
      */
     private function _parseMessage($body, $header = '', $footer = '')
     {
@@ -194,7 +191,7 @@ final class Mailer extends ParamsBag implements MailerContract
      *
      * @param string|array $part
      *
-     * @return string
+     * @return array
      */
     private function _parseTextParts($part)
     {
@@ -306,7 +303,7 @@ final class Mailer extends ParamsBag implements MailerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function debug($params = [])
     {
@@ -314,12 +311,12 @@ final class Mailer extends ParamsBag implements MailerContract
 
         echo ($this->getLib()->prepare())
             ? $this->viewer('debug', array_merge($params, ['headers' => $this->getLib()->getHeaders()]))
-            : '';
+            : $this->getLib()->error();
         exit;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
@@ -346,7 +343,7 @@ final class Mailer extends ParamsBag implements MailerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getLib()
     {
@@ -358,7 +355,7 @@ final class Mailer extends ParamsBag implements MailerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function queue($params = [], $date = 'now', $extras = [])
     {
@@ -376,7 +373,7 @@ final class Mailer extends ParamsBag implements MailerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function send($params = [])
     {
@@ -390,7 +387,7 @@ final class Mailer extends ParamsBag implements MailerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function viewer($view = null, $data = [])
     {

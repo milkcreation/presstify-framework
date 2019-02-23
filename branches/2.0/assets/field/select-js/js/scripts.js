@@ -431,11 +431,7 @@ jQuery(function ($) {
                 return item.value === value;
             });
 
-            if (index > -1) {
-                return index;
-            } else {
-                return this.items.length;
-            }
+            return (index > -1) ? index : undefined;
         },
 
         // Arguments de requête Ajax de récupération des éléments.
@@ -618,7 +614,7 @@ jQuery(function ($) {
                         if (data.length) {
                             $.each(data, function (u, attrs) {
                                 let value = attrs.value.toString(),
-                                    index = self._getItemIndex(value);
+                                    index = self._getItemIndex(value) || self.items.length;
 
                                 if (self.items.length === index) {
                                     self._setItem(
@@ -1071,10 +1067,14 @@ jQuery(function ($) {
          *
          * @param value
          *
-         * @uses $(selector).tifySelectJs('add', {value});
+         * @uses $(selector).tifySelectJs('change', {value});
          */
-        add: function (value) {
-            $('[data-control=""][data-value="' + value + '"]', self.pickerItems).trigger('click');
+        change: function (value) {
+            let index = this._getItemIndex(value);
+
+            if (index !== undefined) {
+                this._doChange(index);
+            }
         },
 
         /**

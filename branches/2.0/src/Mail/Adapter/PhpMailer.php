@@ -4,6 +4,7 @@ namespace tiFy\Mail\Adapter;
 
 use PHPMailer as LibPhpMailer;
 use tiFy\Contracts\Mail\LibraryAdapter;
+use phpmailerException;
 
 class PhpMailer implements LibraryAdapter
 {
@@ -24,7 +25,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addAttachment($path)
     {
@@ -34,7 +35,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addBcc($email, $name = '')
     {
@@ -44,7 +45,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addCc($email, $name = '')
     {
@@ -54,7 +55,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addReplyTo($email, $name = '')
     {
@@ -64,7 +65,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addTo($email, $name = '')
     {
@@ -74,7 +75,15 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
+     */
+    public function error()
+    {
+        return $this->lib->ErrorInfo;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getBcc()
     {
@@ -82,7 +91,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCc()
     {
@@ -90,7 +99,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getHeaders()
     {
@@ -98,7 +107,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getReplyTo()
     {
@@ -106,7 +115,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTo()
     {
@@ -114,31 +123,31 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prepare()
     {
         try {
             return $this->lib->preSend();
-        } catch (\phpmailerException $e) {
+        } catch (phpmailerException $e) {
             return false;
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function send()
     {
         try {
             return $this->lib->Send();
-        } catch (\phpmailerException $e) {
+        } catch (phpmailerException $e) {
             return false;
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setAlt($text)
     {
@@ -148,7 +157,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setBody($message)
     {
@@ -158,7 +167,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setCharset($charset = 'utf-8')
     {
@@ -168,7 +177,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setContentType($content_type = 'multipart/alternative')
     {
@@ -180,7 +189,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setEncoding($encoding)
     {
@@ -192,7 +201,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setFrom($email, $name = '')
     {
@@ -202,7 +211,7 @@ class PhpMailer implements LibraryAdapter
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setSubject($subject = '')
     {

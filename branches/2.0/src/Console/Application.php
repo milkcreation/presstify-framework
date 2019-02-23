@@ -2,9 +2,23 @@
 
 namespace tiFy\Console;
 
-use Symfony\Component\Console\Application as SfApplication;
 use Dotenv\Dotenv;
+use Symfony\Component\Console\Application as SfApplication;
 
+/**
+ * Class Application
+ *
+ * @package tiFy\Console
+ *
+ * USAGE :
+ *          Liste des commandes disponibles
+ *          -------------------------------
+ *          vendor/bin/bee list
+ *
+ *          Arrêt complet des commandes CLI lancées
+ *          ---------------------------------------
+ *          pkill -9 php
+ */
 class Application extends SfApplication
 {
     /**
@@ -22,7 +36,7 @@ class Application extends SfApplication
         $_SERVER['REQUEST_METHOD']  = 'GET';
         $_SERVER['REMOTE_ADDR']     = '127.0.0.1';
         /** @see php -i | grep php.ini */
-        $_SERVER['TZ']              = ini_get('date.timezone') ? : 'UTC';
+        $_SERVER['TZ'] = ini_get('date.timezone') ?: 'UTC';
 
         // Entêtes associées à l'url
         if ($url = preg_grep('/^\-\-url\=(.*)/', $argv)) :
@@ -35,17 +49,17 @@ class Application extends SfApplication
         else :
             // Récupération des vendors.
             $vendor_path = __DIR__ . '/../../../../autoload.php';
-            $root_path = __DIR__ . '/../../../../../';
+            $root_path   = __DIR__ . '/../../../../../';
             if (file_exists($vendor_path)) :
                 require_once $vendor_path;
                 $env = Dotenv::create($root_path);
                 $env->load();
-                $url = getenv('SITE_URL') ? : '';
+                $url = getenv('SITE_URL') ?: '';
             endif;
         endif;
 
         // Entêtes associées à l'url
-        $url = $url ? : 'http://localhost';
+        $url   = $url ?: 'http://localhost';
         $parts = parse_url($url);
         if (isset($parts['host'])) :
             if (isset($parts['scheme']) && 'https' === strtolower($parts['scheme'])) :
