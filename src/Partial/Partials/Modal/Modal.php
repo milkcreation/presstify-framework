@@ -97,6 +97,10 @@ class Modal extends PartialController implements ModalContract
         if ($this->get('animation')) :
             $class .= ' fade';
         endif;
+        if (!$this->get('attrs.id')) :
+            $this->set('attrs.id', 'Modal-' . $this->getId());
+        endif;
+
         $this->set('attrs.class', $this->get('attrs.class', '') . " {$class}");
 
         $this->set('attrs.role', 'dialog');

@@ -45,10 +45,7 @@ class CronJob extends ParamsBag implements CronJobContract
 
         parent::__construct($attrs);
 
-        add_action(
-            $this->getHook(),
-            $this
-        );
+        add_action($this->getHook(), $this);
     }
 
     /**

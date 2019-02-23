@@ -54,6 +54,13 @@ interface LibraryAdapter
     public function addTo($email, $name = '');
 
     /**
+     * Message d'erreur de traitement.
+     *
+     * @return string
+     */
+    public function error();
+
+    /**
      * Récupération de la liste des destinataires en copie cachée.
      *
      * @return array

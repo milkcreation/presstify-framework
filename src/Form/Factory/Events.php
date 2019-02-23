@@ -41,11 +41,7 @@ class Events implements FactoryEvents
      */
     public function listen($name, $listener, $priority = 0)
     {
-        events()->listen(
-            "form.factory.events.{$this->form()->name()}.{$name}",
-            $listener,
-            $priority
-        );
+        events()->listen("form.factory.events.{$this->form()->name()}.{$name}", $listener, $priority);
 
         return $this;
     }
