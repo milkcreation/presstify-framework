@@ -83,8 +83,8 @@ class KernelServiceProvider extends ServiceProvider
             return new Encrypter($secret, $private);
         });
 
-        $this->getContainer()->bind('logger', function ($name = null, $attrs = []) use ($app) {
-            return Logger::create($name, $attrs, $app);
+        $this->getContainer()->bind('logger', function ($name = null, $attrs = []) {
+            return Logger::create($name, $attrs);
         });
 
         do_action('after_setup_tify');

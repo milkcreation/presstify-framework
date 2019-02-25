@@ -5,6 +5,7 @@ namespace tiFy\PostType\Query;
 use tiFy\Contracts\PostType\PostQueryCollection as PostQueryCollectionContract;
 use tiFy\Kernel\Collection\QueryCollection;
 use WP_Query;
+use WP_Post;
 
 class PostQueryCollection extends QueryCollection implements PostQueryCollectionContract
 {
@@ -51,7 +52,7 @@ class PostQueryCollection extends QueryCollection implements PostQueryCollection
     /**
      * {@inheritdoc}
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param int $key Clé d'indice de l'élément.
      *
      * @return PostQueryItem

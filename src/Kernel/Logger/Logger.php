@@ -3,16 +3,15 @@
 namespace tiFy\Kernel\Logger;
 
 use Illuminate\Support\Arr;
-use Monolog\Logger as MonologLogger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
-use tiFy\Contracts\App\AppInterface;
+use Monolog\Logger as MonologLogger;
 use tiFy\Contracts\Kernel\Logger as LoggerContract;
 
 class Logger extends MonologLogger implements LoggerContract
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addSuccess($message, array $context = [])
     {
@@ -20,33 +19,24 @@ class Logger extends MonologLogger implements LoggerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public static function create($name = 'system', $attrs = [], AppInterface $app)
+    public static function create($name = 'system', $attrs = [])
     {
-        if ($app->bound("logger.item.{$name}")) :
-            return $app->resolve("logger.item.{$name}");
+        if (!app()->has("logger.item.{$name}")) :
+            app()->share("logger.item.{$name}", (new static($name))->parse($attrs));
         endif;
 
-        $resolved = $app->singleton(
-            "logger.item.{$name}",
-            function($name) {
-                return new static($name);
-            })
-            ->build([$name]);
-
-        $resolved->parse($attrs);
-
-        return $resolved;
+        return app()->get("logger.item.{$name}");
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
         $filename = Arr::get($attrs, 'filename')
-            ? : paths()->getLogPath($this->getName() . '.log');
+            ?: paths()->getLogPath($this->getName() . '.log');
 
         $formatter = new LineFormatter(Arr::get($attrs, 'format', null));
 
@@ -58,10 +48,12 @@ class Logger extends MonologLogger implements LoggerContract
         endif;
 
         $this->pushHandler($stream);
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function success($message, array $context = [])
     {
