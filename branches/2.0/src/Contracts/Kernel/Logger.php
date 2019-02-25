@@ -4,8 +4,14 @@ namespace tiFy\Contracts\Kernel;
 
 use Monolog\ResettableInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
-use tiFy\Contracts\App\AppInterface;
 
+/**
+ * Interface Logger
+ *
+ * @package tiFy\Contracts\Kernel
+ *
+ * @mixin \Monolog\Logger
+ */
 interface Logger extends PsrLoggerInterface, ResettableInterface
 {
     /**
@@ -23,11 +29,10 @@ interface Logger extends PsrLoggerInterface, ResettableInterface
      *
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
-     * @param AppInterface $app Instance de l'application.
      *
      * @return self
      */
-    public static function create($name = 'system', $attrs = [], AppInterface $app);
+    public static function create($name = 'system', $attrs = []);
 
     /**
      * Traitement de la liste des attributs de configuration.

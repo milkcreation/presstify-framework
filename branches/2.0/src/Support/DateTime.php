@@ -11,7 +11,7 @@ class DateTime extends Carbon
      * DateTime constructor.
      *
      * @param string|null $time
-     * @param null $tz
+     * @param null|DateTimeZone $tz
      *
      * @return void
      */
