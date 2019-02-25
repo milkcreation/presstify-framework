@@ -34,25 +34,22 @@ class Notice extends PartialController implements NoticeContract
      */
     public function boot()
     {
-        add_action(
-            'init',
-            function () {
-                \wp_register_style(
-                    'PartialNotice',
-                    assets()->url('partial/notice/css/styles.css'),
-                    [],
-                    180214
-                );
+        add_action('init', function () {
+            wp_register_style(
+                'PartialNotice',
+                assets()->url('partial/notice/css/styles.css'),
+                [],
+                180214
+            );
 
-                \wp_register_script(
-                    'PartialNotice',
-                    assets()->url('partial/notice/js/scripts.js'),
-                    ['jquery'],
-                    180214,
-                    true
-                );
-            }
-        );
+            wp_register_script(
+                'PartialNotice',
+                assets()->url('partial/notice/js/scripts.js'),
+                ['jquery'],
+                180214,
+                true
+            );
+        });
     }
 
     /**
@@ -77,15 +74,9 @@ class Notice extends PartialController implements NoticeContract
             $this->set('attrs.class', 'tiFyPartial-Notice');
         endif;
 
-        $this->set(
-            'attrs.aria-control',
-            'notice'
-        );
+        $this->set('attrs.data-control', 'notice');
 
-        $this->set(
-            'attrs.aria-type',
-            $this->get('type')
-        );
+        $this->set('attrs.aria-type', $this->get('type'));
 
         $content = $this->get('content', '');
         $this->set('content', $this->isCallable($content) ? call_user_func($content) : $content);
@@ -95,22 +86,19 @@ class Notice extends PartialController implements NoticeContract
                 $dismiss= [];
             endif;
 
-            $this->set(
-                'dismiss',
-                partial(
-                    'tag',
-                    array_merge(
-                        [
-                            'tag' => 'button',
-                            'attrs' => [
-                                'aria-toggle' => 'dismiss'
-                            ],
-                            'content' => '&times;'
+            $this->set('dismiss', partial(
+                'tag',
+                array_merge(
+                    [
+                        'tag' => 'button',
+                        'attrs' => [
+                            'aria-toggle' => 'dismiss'
                         ],
-                        $dismiss
-                    )
+                        'content' => '&times;'
+                    ],
+                    $dismiss
                 )
-            );
+            ));
         else :
             $this->set('dismiss', '');
         endif;

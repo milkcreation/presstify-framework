@@ -48,28 +48,25 @@ class CookieNotice extends PartialController implements CookieNoticeContract
      */
     public function boot()
     {
-        add_action(
-            'init',
-            function () {
-                add_action(
-                    'wp_ajax_tify_partial_cookie_notice',
-                    [$this, 'wp_ajax']
-                );
-                
-                add_action(
-                    'wp_ajax_nopriv_tify_partial_cookie_notice',
-                    [$this, 'wp_ajax']
-                );
+        add_action('init', function () {
+            add_action(
+                'wp_ajax_tify_partial_cookie_notice',
+                [$this, 'wp_ajax']
+            );
 
-                \wp_register_script(
-                    'PartialCookieNotice',
-                    assets()->url('partial/cookie-notice/js/scripts.js'),
-                    ['PartialNotice'],
-                    170626,
-                    true
-                );
-            }
-        );
+            add_action(
+                'wp_ajax_nopriv_tify_partial_cookie_notice',
+                [$this, 'wp_ajax']
+            );
+
+            \wp_register_script(
+                'PartialCookieNotice',
+                assets()->url('partial/cookie-notice/js/scripts.js'),
+                ['PartialNotice'],
+                170626,
+                true
+            );
+        });
     }
 
     /**

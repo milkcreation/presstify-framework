@@ -1,4 +1,4 @@
-/** STYLES DE CONTROLES (ne pas modifier) */
+/** STYLES DE CONTROLE (recommandé) */
 [data-control="accordion"], [data-control="accordion.item"] {
     overflow: hidden;
 }
