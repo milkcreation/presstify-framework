@@ -1,4 +1,4 @@
-/** STYLES DE CONTROLES (ne pas modifier) */
+/** STYLES DE CONTROLE (recommandé) */
 [data-control="text-remaining.wrapper"],
 [data-control="text-remaining.wrapper"] > * {
     box-sizing: border-box;

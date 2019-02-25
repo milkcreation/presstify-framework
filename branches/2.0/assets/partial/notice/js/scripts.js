@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
-    $(document).on('click', '[aria-control="notice"] [aria-toggle="dismiss"]', function(e){
+    $(document).on('click', '[data-control="notice"] [aria-toggle="dismiss"]', function(e){
         e.preventDefault();
 
-        $(this).closest('[aria-control="notice"]').attr('aria-hide', 'true');
+        $(this).closest('[data-control="notice"]').attr('aria-hide', 'true');
     });
 });
