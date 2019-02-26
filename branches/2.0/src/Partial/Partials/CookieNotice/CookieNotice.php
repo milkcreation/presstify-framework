@@ -119,18 +119,9 @@ class CookieNotice extends PartialController implements CookieNoticeContract
             ]
         );
 
-        $this->set(
-            'accept.attrs.aria-toggle',
-            'accept'
-        );
+        $this->set('accept.attrs.data-toggle', 'notice.accept');
 
-        $this->set(
-            'accept',
-            partial(
-                'tag',
-                $this->get('accept')
-            )
-        );
+        $this->set('accept', partial('tag', $this->get('accept')));
     }
 
     /**
