@@ -7,14 +7,14 @@ use tiFy\View\ViewController;
 /**
  * Class FieldView
  *
- * @method string after().
- * @method string attrs().
- * @method string before().
- * @method string content().
- * @method string getId().
- * @method string getIndex().
- * @method string getName().
- * @method string getValue().
+ * @method string after()
+ * @method string attrs()
+ * @method string before()
+ * @method string content()
+ * @method string getId()
+ * @method string getIndex()
+ * @method string getName()
+ * @method string getValue()
  */
 class FieldView extends ViewController
 {

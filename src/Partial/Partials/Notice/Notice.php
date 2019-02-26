@@ -92,7 +92,7 @@ class Notice extends PartialController implements NoticeContract
                     [
                         'tag' => 'button',
                         'attrs' => [
-                            'aria-toggle' => 'dismiss'
+                            'data-toggle' => 'notice.dismiss'
                         ],
                         'content' => '&times;'
                     ],

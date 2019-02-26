@@ -4,6 +4,16 @@ namespace tiFy\Partial;
 
 use tiFy\View\ViewController;
 
+/**
+ * Class FieldView
+ *
+ * @method string after()
+ * @method string attrs()
+ * @method string before()
+ * @method string content()
+ * @method string getId()
+ * @method string getIndex()
+ */
 class PartialView extends ViewController
 {
     /**

@@ -3,11 +3,12 @@
 import jQuery from 'jquery';
 
 jQuery(document).ready(function($) {
-    $(document).on('click', '[data-control="notice"] [aria-toggle="accept"]', function(e){
+    $(document).on('click', '[data-control="notice"] [data-toggle="notice.accept"]', function(e){
         e.preventDefault();
         e.stopPropagation();
 
-        var $closest = $(this).closest('[data-control="notice"]');
+        var $self = $(this),
+            $closest = $self.closest('[data-control="notice"]');
 
         var o = JSON.parse(decodeURIComponent($closest.data('options')));
 
@@ -21,9 +22,11 @@ jQuery(document).ready(function($) {
         })
             .done(function () {
                 $closest.attr('aria-loading', 'false');
+                $self.trigger('cookie-notice:done');
             })
             .always(function () {
                 $closest.attr('aria-hide', 'true');
+                $self.trigger('cookie-notice:always');
             });
     });
 });
