@@ -4,6 +4,12 @@ namespace tiFy\Kernel\Collection;
 
 use tiFy\Contracts\Kernel\QueryCollection as QueryCollectionContract;
 
+/**
+ * Class QueryCollection
+ * @package tiFy\Kernel\Collection
+ *
+ * @deprecated
+ */
 class QueryCollection extends Collection implements QueryCollectionContract
 {
     /**

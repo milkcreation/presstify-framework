@@ -5,7 +5,7 @@ namespace tiFy\Wp\Query;
 use tiFy\Taxonomy\Query\TermQueryItem;
 use WP_Term;
 
-class Term extends TermQueryItem
+class QueryTerm extends TermQueryItem
 {
     /**
      * CONSTRUCTEUR.

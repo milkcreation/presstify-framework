@@ -7,6 +7,12 @@ use tiFy\Contracts\PostType\PostQuery as PostQueryContract;
 use WP_Query;
 use WP_Post;
 
+/**
+ * Class PostQuery
+ * @package tiFy\PostType\Query
+ *
+ * @deprecated Utiliser \tiFy\Wp\Query\QueryPosts
+ */
 class PostQuery implements PostQueryContract
 {
     /**

@@ -1,25 +1,19 @@
 <?php
 
-namespace tiFy\PostType\Query;
+namespace tiFy\Wp\Query;
 
-use tiFy\Contracts\PostType\PostQueryItem as PostQueryItemContract;
+use tiFy\Contracts\Wp\QueryPost as QueryPostContract;
 use tiFy\Kernel\Params\ParamsBag;
 use WP_Post;
 use WP_Term_Query;
 
-/**
- * Class PostQueryItem
- * @package tiFy\PostType\Query
- *
- * @deprecated Utiliser \tiFy\Wp\Query\QueryPost
- */
-class PostQueryItem extends ParamsBag implements PostQueryItemContract
+class QueryPost extends ParamsBag implements QueryPostContract
 {
     /**
      * Objet Post Wordpress.
      * @var WP_Post
      */
-    protected $object;
+    protected $wp_post;
 
     /**
      * CONSTRUCTEUR.
@@ -30,13 +24,13 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
      */
     public function __construct(WP_Post $wp_post)
     {
-        $this->object = $wp_post;
+        $this->wp_post = $wp_post;
 
-        parent::__construct($this->object->to_array());
+        parent::__construct($this->wp_post->to_array());
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAuthorId()
     {
@@ -44,7 +38,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContent($raw = false)
     {
@@ -59,17 +53,17 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDate($gmt = false)
     {
-       return $gmt
-           ? (string)$this->get('post_date_gmt', '')
-           : (string)$this->get('post_date', '');
+        return $gmt
+            ? (string)$this->get('post_date_gmt', '')
+            : (string)$this->get('post_date', '');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getEditLink()
     {
@@ -77,7 +71,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getExcerpt($raw = false)
     {
@@ -98,7 +92,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getGuid()
     {
@@ -106,7 +100,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -114,7 +108,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMeta($meta_key, $single = false, $default = null)
     {
@@ -122,7 +116,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMetaMulti($meta_key, $default = null)
     {
@@ -130,7 +124,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMetaSingle($meta_key, $default = null)
     {
@@ -138,7 +132,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getModified($gmt = false)
     {
@@ -148,7 +142,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -156,7 +150,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getParentId()
     {
@@ -164,7 +158,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPermalink()
     {
@@ -172,15 +166,15 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPost()
     {
-        return $this->object;
+        return $this->wp_post;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSlug()
     {
@@ -188,7 +182,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getStatus()
     {
@@ -196,7 +190,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTerms($taxonomy, $args = [])
     {
@@ -207,7 +201,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getThumbnail($size = 'post-thumbnail', $attrs = [])
     {
@@ -215,7 +209,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getThumbnailUrl($size = 'post-thumbnail')
     {
@@ -223,7 +217,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle($raw = false)
     {
@@ -233,7 +227,7 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getType()
     {

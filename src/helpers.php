@@ -1,5 +1,6 @@
 <?php
 
+use App\App;
 use tiFy\tiFy;
 use tiFy\Contracts\Kernel\Assets;
 use tiFy\Contracts\Kernel\ParamsBag;
@@ -50,10 +51,11 @@ if (!function_exists('app')) :
      * @param null|string $abstract Nom de qualification du service.
      * @param array $args Liste des variables passé en arguments lors de la résolution du service.
      *
-     * @return \tiFy\Contracts\App\AppInterface|\tiFy\App\Container\AppContainer
+     * @return object|App
      */
     function app($abstract = null, $args = [])
     {
+        /** @var App $factory */
         $factory = Kernel::App();
 
         if (is_null($abstract)) :

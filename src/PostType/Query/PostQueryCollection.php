@@ -7,6 +7,12 @@ use tiFy\Kernel\Collection\QueryCollection;
 use WP_Query;
 use WP_Post;
 
+/**
+ * Class PostQueryCollection
+ * @package tiFy\PostType\Query
+ *
+ * @deprecated Utiliser \tiFy\Wp\Query\QueryPosts
+ */
 class PostQueryCollection extends QueryCollection implements PostQueryCollectionContract
 {
     /**

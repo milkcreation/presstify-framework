@@ -23,23 +23,16 @@ class PageHook implements PageHookContract
     {
         $this->set(config('page-hook', []));
 
-        add_action(
-            'init',
-            function () {
-                if ($this->items) :
-                    /** @var MetaboxManager $metabox */
-                    $metabox = app('metabox');
-                    $metabox->add(
-                        'PageHook-optionsNode',
-                        'tify_options@options',
-                        [
-                            'title'     => __('Pages d\'accroche', 'tify'),
-                            'content'   => PageHookAdminOptions::class
-                        ]
-                    );
-                endif;
-            }
-        );
+        add_action('init', function () {
+            if ($this->items) :
+                /** @var MetaboxManager $metabox */
+                $metabox = app('metabox');
+                $metabox->add('PageHook-optionsNode', 'tify_options@options', [
+                    'title'     => __('Pages d\'accroche', 'tify'),
+                    'content'   => PageHookAdminOptions::class
+                ]);
+            endif;
+        });
     }
 
     /**

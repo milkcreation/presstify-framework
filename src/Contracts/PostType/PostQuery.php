@@ -2,6 +2,12 @@
 
 namespace tiFy\Contracts\PostType;
 
+/**
+ * Interface PostQuery
+ * @package tiFy\Contracts\PostType
+ *
+ * @deprecated
+ */
 interface PostQuery
 {
     /**

@@ -1,18 +1,12 @@
 <?php
 
-namespace tiFy\Contracts\Kernel;
+namespace tiFy\Contracts\Support;
 
 use Iterator;
 use ArrayAccess;
 use Countable;
 use IteratorAggregate;
 
-/**
- * Interface Collection
- * @package tiFy\Contracts\Kernel
- *
- * @deprecated
- */
 interface Collection extends ArrayAccess, Countable, IteratorAggregate
 {
     /**
@@ -79,14 +73,14 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function key();
 
     /**
-     * Encapsulation d'un élément.
+     * Traitement d'un élément.
      *
      * @param mixed $item Définition de l'élément.
      * @param mixed $key Clé d'indice de l'élément.
      *
      * @return mixed
      */
-    public function wrap($item, $key = null);
+    public function walk($item, $key = null);
 
     /**
      * Récupération de l'instance de l'itération.

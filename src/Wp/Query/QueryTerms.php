@@ -6,7 +6,7 @@ use tiFy\Taxonomy\Query\TermQueryCollection;
 use WP_Term;
 use WP_Term_Query;
 
-class Terms extends TermQueryCollection
+class QueryTerms extends TermQueryCollection
 {
     /**
      * CONSTRUCTEUR.
