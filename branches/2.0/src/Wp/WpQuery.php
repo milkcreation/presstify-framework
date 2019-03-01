@@ -2,6 +2,8 @@
 
 namespace tiFy\Wp;
 
+use WP_Query;
+
 class WpQuery
 {
     /**
@@ -41,24 +43,20 @@ class WpQuery
      */
     public function __construct()
     {
-        add_action(
-            'pre_get_posts',
-            function (&$wp_query) {
-                /** @var \WP_Query $wp_query */
-                if ($wp_query->is_main_query()) :
-                    foreach(config('wp.query', []) as $ctag => $query_args) :
-                        if (in_array($ctag, $this->ctags)) :
-                            if (call_user_func([$wp_query, $ctag])) :
-                                foreach($query_args as $query_arg => $value) :
-                                    $wp_query->set($query_arg, $value);
-                                endforeach;
-                            endif;
+        add_action('pre_get_posts', function (WP_Query &$wp_query) {
+            if ($wp_query->is_main_query()) :
+                foreach(config('wp.query', []) as $ctag => $query_args) :
+                    if (in_array($ctag, $this->ctags)) :
+                        if (call_user_func([$wp_query, $ctag])) :
+                            foreach($query_args as $query_arg => $value) :
+                                $wp_query->set($query_arg, $value);
+                            endforeach;
                         endif;
-                    endforeach;
-                endif;
+                    endif;
+                endforeach;
+            endif;
 
-                events()->trigger('wp.query', [&$wp_query]);
-            }
-        );
+            events()->trigger('wp.query', [&$wp_query]);
+        });
     }
 }

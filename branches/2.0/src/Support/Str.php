@@ -1,47 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace tiFy\Components\Tools\Str;
+namespace tiFy\Support;
 
 use Illuminate\Support\Str as IlluminateStr;
 
 /**
  * Class Str
- * @package tiFy\Components\Tools\Str
- * @see \Illuminate\Support\Str
+ * @package tiFy\Support
  *
- * @method string after(string $subject, string $search)
- * @method string ascii(string $value, string $language = 'en')
- * @method string before(string $subject, string $search)
- * @method string camel(string $value)
- * @method string contains(string $haystack, string|array $needles)
- * @method string endsWith(string $haystack, string|array $needles)
- * @method string finish(string $value, string $cap)
- * @method string is(string|array $pattern, string $value)
- * @method string kebab(string $value)
- * @method string length(string $value, string $encoding = null)
- * @method string limit(string $value, int $limit = 100, string $end = '...')
- * @method string lower(string $value)
- * @method string words(string $value, int $words = 100, string $end = '...')
- * @method string parseCallback(string $callback, string|null $default = null)
- * @method string plural(string $value, int $count = 2)
- * @method string random(int $length = 16)
- * @method string replaceArray(string $search, array $replace, string $subject)
- * @method string replaceFirst(string $search, string $replace, string $subject)
- * @method string replaceLast(string $search, string $replace, string $subject)
- * @method string start(string $value, string $prefix)
- * @method string upper(string $value)
- * @method string title(string $value)
- * @method string singular(string $value)
- * @method string slug(string $title, string $separator = '-', string $language = 'en')
- * @method string snake(string $value, string $delimiter = '_')
- * @method string startsWith(string $haystack, string|array $needles)
- * @method string studly(string $value)
- * @method string substr(string $string, int $start, int|null $length = null)
- * @method string ucfirst(string $string)
- * @method string uuid()
- * @method string orderedUuid()
- *
- * @deprecated Utiliser \tiFy\Support\Str
+ * @mixin IlluminateStr
  */
 class Str
 {
@@ -84,10 +51,14 @@ class Str
      * Création d'un extrait de texte basé sur les nombre de caractères.
      *
      * @param string $string Chaîne de caractère à traiter.
-     * @param int $length Nombre maximum de caractères de la chaîne.
-     * @param string $teaser Délimiteur de fin de chaîne réduite (ex : [...]).
-     * @param string $use_tag Détection d'une balise d'arrêt du type <!--more-->.
-     * @param bool $uncut Préservation de la découpe de mots en fin de chaîne.
+     * @param array $args {
+     *      Liste des arguments de configuration
+     *
+     *      @var int $length Nombre maximum de caractères de la chaîne.
+     *      @var string $teaser Délimiteur de fin de chaîne réduite (ex : [...]).
+     *      @var string $use_tag Détection d'une balise d'arrêt du type <!--more-->.
+     *      @var bool $uncut Préservation de la découpe de mots en fin de chaîne.
+     * }
      *
      * @return string
      */
@@ -99,6 +70,13 @@ class Str
             'use_tag' => true,
             'uncut' => true
         );
+
+        /**
+         * @var int $length Nombre maximum de caractères de la chaîne.
+         * @var string $teaser Délimiteur de fin de chaîne réduite (ex : [...]).
+         * @var string $use_tag Détection d'une balise d'arrêt du type <!--more-->.
+         * @var bool $uncut Préservation de la découpe de mots en fin de chaîne.
+         */
         $args = wp_parse_args($args, $defaults);
         extract($args);
 
@@ -145,19 +123,11 @@ class Str
      */
     public function br2nl($text)
     {
-        return preg_replace(
-            '/<br\s?\/?>/ius',
-            "\n",
-            str_replace(
-                "\n",
-                "",
-                str_replace(
-                    "\r",
-                    "",
-                    htmlspecialchars_decode($text)
-                )
-            )
-        );
+        return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n", "", str_replace(
+            "\r",
+            "",
+            htmlspecialchars_decode($text)
+        )));
     }
 
     /**

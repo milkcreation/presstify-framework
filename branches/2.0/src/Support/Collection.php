@@ -1,17 +1,11 @@
 <?php
 
-namespace tiFy\Kernel\Collection;
+namespace tiFy\Support;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 use ArrayIterator;
-use tiFy\Contracts\Kernel\Collection as CollectionContract;
+use tiFy\Contracts\Support\Collection as CollectionContract;
 
-/**
- * Class Collection
- * @package tiFy\Kernel\Collection
- *
- * @deprecated Utiliser \tiFy\Support\Collection
- */
 class Collection implements CollectionContract
 {
     /**
@@ -93,7 +87,7 @@ class Collection implements CollectionContract
     /**
      * @inheritdoc
      */
-    public function wrap($item, $key = null)
+    public function walk($item, $key = null)
     {
         return $this->items[$key] = $item;
     }

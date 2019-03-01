@@ -1,16 +1,12 @@
 <?php
 
-namespace tiFy\Contracts\PostType;
+namespace tiFy\Contracts\Wp;
 
 use tiFy\Contracts\Kernel\ParamsBag;
+use WP_Post;
+use WP_Term;
 
-/**
- * Interface PostQueryItem
- * @package tiFy\Contracts\PostType
- *
- * @deprecated
- */
-interface PostQueryItem extends ParamsBag
+interface QueryPost extends ParamsBag
 {
     /**
      * Récupération de l'identifiant de qualification de l'auteur original.
@@ -133,7 +129,7 @@ interface PostQueryItem extends ParamsBag
     /**
      * Récupération de l'object Post Wordpress associé.
      *
-     * @return \WP_Post
+     * @return WP_Post
      */
     public function getPost();
 
@@ -157,7 +153,7 @@ interface PostQueryItem extends ParamsBag
      * @param string|array $taxonomy Liste ou Nom de qualification de la taxonomie.
      * @param array $args Liste des arguments de récupération
      *
-     * @return array|\WP_Term[]
+     * @return array|WP_Term[]
      */
     public function getTerms($taxonomy, $args = []);
 

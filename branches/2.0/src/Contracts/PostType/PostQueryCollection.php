@@ -4,6 +4,12 @@ namespace tiFy\Contracts\PostType;
 
 use tiFy\Contracts\Kernel\QueryCollection;
 
+/**
+ * Interface PostQueryCollection
+ * @package tiFy\Contracts\PostType
+ *
+ * @deprecated
+ */
 interface PostQueryCollection extends QueryCollection
 {
     /**

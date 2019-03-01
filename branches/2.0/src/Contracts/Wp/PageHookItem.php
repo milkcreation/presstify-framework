@@ -60,7 +60,7 @@ interface PageHookItem extends ParamsBag
     /**
      * Récupération de l'instance du post associé.
      *
-     * @return Post
+     * @return QueryPost
      */
     public function post();
 }

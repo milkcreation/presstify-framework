@@ -4,6 +4,7 @@ namespace tiFy\Support;
 
 use Carbon\Carbon;
 use DateTimeZone;
+use Exception;
 
 class DateTime extends Carbon
 {
@@ -14,6 +15,8 @@ class DateTime extends Carbon
      * @param null|DateTimeZone $tz
      *
      * @return void
+     *
+     * @throws Exception
      */
     public function __construct(?string $time = null, $tz = null)
     {
