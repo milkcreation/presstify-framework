@@ -211,14 +211,13 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      */
     public function post()
     {
-        if (!$this->post instanceof QueryPost) :
+        if (is_null($this->post)) :
             if (!$post_id = $this->get('id')) :
-                $post_id = (int)get_option($this->get('option_name'), 0);
-                $this->set('id', $post_id);
+                $this->set('id', $post_id = (int)get_option($this->get('option_name'), 0));
             endif;
-            if ($post = get_post($this->get('id', 0))) :
-                $this->post = new QueryPost($post);
-            endif;
+
+            $this->post = ($post = get_post($post_id))
+                ? new QueryPost($post) : false;
         endif;
 
         return $this->post;
@@ -229,10 +228,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      */
     public function is($post = null)
     {
-        if (!$post = get_post($post)) :
-            return false;
-        endif;
-
-        return $this->post()->getId() === $post->ID;
+        return ($this->exists() && ($post = get_post($post)))
+             ? ($this->post()->getId() === $post->ID) : false;
     }
 }

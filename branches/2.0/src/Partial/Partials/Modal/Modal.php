@@ -19,7 +19,7 @@ class Modal extends PartialController implements ModalContract
      *          Liste des options d'affichage.
      *      }
      *      @var bool $animation Activation de l'animation.
-     *      @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full.
+     *      @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full|flex.
      *      @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de
      *                                                      caractère à afficher ou booléen pour activer désactiver ou
      *                                                      fonction/méthode d'affichage.
@@ -171,7 +171,7 @@ class Modal extends PartialController implements ModalContract
 
         $this->set(
             'size',
-            in_array($this->get('size'), ['lg', 'sm', 'full'])
+            in_array($this->get('size'), ['lg', 'sm', 'full', 'flex'])
                 ? 'modal-' . $this->get('size')
                 : ''
         );
