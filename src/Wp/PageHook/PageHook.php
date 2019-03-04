@@ -5,6 +5,7 @@ namespace tiFy\Wp\PageHook;
 use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Wp\PageHook as PageHookContract;
 use tiFy\Wp\PageHook\Admin\PageHookAdminOptions;
+use WP_Screen;
 
 class PageHook implements PageHookContract
 {
@@ -33,10 +34,16 @@ class PageHook implements PageHookContract
                 ]);
             endif;
         });
+
+        add_action('current_screen', function (WP_Screen $wp_screen) {
+            if ($wp_screen->id === 'settings_page_tify_options') :
+                flush_rewrite_rules();
+            endif;
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all()
     {
@@ -44,7 +51,7 @@ class PageHook implements PageHookContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get($name)
     {
@@ -52,7 +59,7 @@ class PageHook implements PageHookContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function set($name, $attrs = null)
     {
