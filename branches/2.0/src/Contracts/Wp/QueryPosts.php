@@ -29,17 +29,6 @@ interface QueryPosts extends Collection
     public static function createFromGlobals();
 
     /**
-     * Récupération d'une instance basée sur un élément.
-     * @see https://codex.wordpress.org/Class_Reference/WP_Query
-     * @see https://developer.wordpress.org/reference/classes/wp_query/
-     *
-     * @param null|int|WP_Post $post
-     *
-     * @return null|static
-     */
-    public static function createFromPost($post = null);
-
-    /**
      * Récupération de la liste des identifiants de qualification.
      *
      * @return array

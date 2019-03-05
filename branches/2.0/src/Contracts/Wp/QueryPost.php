@@ -9,6 +9,22 @@ use WP_Term;
 interface QueryPost extends ParamsBag
 {
     /**
+     * Récupération d'une instance basée sur le post global.
+     *
+     * @return static
+     */
+    public static function createFromGlobal();
+
+    /**
+     * Récupération d'une instance basée sur l'identifiant de qualification du post.
+     *
+     * @param int $post_id
+     *
+     * @return static
+     */
+    public static function createFromId($post_id);
+
+    /**
      * Récupération de l'identifiant de qualification de l'auteur original.
      *
      * @return int

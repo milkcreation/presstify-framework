@@ -79,15 +79,11 @@ final class PartialManager implements PartialManagerContract
      */
     public function __construct()
     {
-        add_action(
-            'after_setup_theme',
-            function () {
-                foreach ($this->items as $alias => $concrete) :
-                    app()->bind("partial.{$alias}", $concrete)->build([null, null]);
-                endforeach;
-            },
-            999999
-        );
+        add_action('after_setup_theme', function () {
+            foreach ($this->items as $alias => $concrete) :
+                app()->bind("partial.{$alias}", $concrete)->build([null, null]);
+            endforeach;
+        }, 999999);
     }
 
     /**

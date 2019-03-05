@@ -58,22 +58,6 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public static function createFromPost($post = null)
-    {
-        if ($post instanceof WP_Post) :
-            return new static(new WP_Query(['p' => $post->ID, 'post_type' => 'any']));
-        elseif (is_numeric($post)) :
-            return new static(new WP_Query(['p' => $post, 'post_type' => 'any']));
-        elseif (is_null($post) && is_singular()) :
-            return static::createFromGlobals();
-        endif;
-
-        return null;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getIds()
     {
         return $this->pluck('ID');
