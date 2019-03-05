@@ -32,6 +32,25 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritdoc
      */
+    public static function createFromGlobal()
+    {
+        global $post;
+
+        return new static($post);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function createFromId($post_id)
+    {
+        return ($post_id && is_numeric($post_id) && ($wp_post = get_post($post_id)) && $wp_post instanceof WP_Post)
+            ? new static($wp_post) : null;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getAuthorId()
     {
         return (int)$this->get('post_author', 0);
