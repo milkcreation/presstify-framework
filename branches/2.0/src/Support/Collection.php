@@ -23,9 +23,41 @@ class Collection implements CollectionContract
     /**
      * @inheritdoc
      */
-    public function collect($items = null)
+    public function __get($key)
     {
-        return is_null($items) ? new IlluminateCollection($this->items) : new IlluminateCollection($items);
+        return $this->offsetGet($key);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __set($key, $value)
+    {
+        $this->offsetSet($key, $value);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __isset($key)
+    {
+        return $this->offsetExists($key);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __unset($key)
+    {
+        $this->offsetUnset($key);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function createFromItems(array $items) : CollectionContract
+    {
+        return (new static())->setItems($items);
     }
 
     /**
@@ -34,6 +66,14 @@ class Collection implements CollectionContract
     public function all()
     {
         return $this->items;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function collect($items = null)
+    {
+        return is_null($items) ? new IlluminateCollection($this->items) : new IlluminateCollection($items);
     }
 
     /**
@@ -71,30 +111,6 @@ class Collection implements CollectionContract
     /**
      * @inheritdoc
      */
-    public function has($key)
-    {
-        return isset($this->items[$key]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function key()
-    {
-        return $this->getIteration()->key();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function walk($item, $key = null)
-    {
-        return $this->items[$key] = $item;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getIterator()
     {
         return $this->_iteration = new ArrayIterator($this->items);
@@ -106,6 +122,22 @@ class Collection implements CollectionContract
     public function getIteration()
     {
         return ($this->_iteration instanceof ArrayIterator) ? $this->_iteration : $this->getIterator();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function has($key)
+    {
+        return isset($this->items[$key]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function key()
+    {
+        return $this->getIteration()->key();
     }
 
     /**
@@ -155,32 +187,18 @@ class Collection implements CollectionContract
     /**
      * @inheritdoc
      */
-    public function __get($key)
+    public function setItems($items): CollectionContract
     {
-        return $this->offsetGet($key);
+        array_walk($items, [$this, 'walk']);
+
+        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function __set($key, $value)
+    public function walk($item, $key = null)
     {
-        $this->offsetSet($key, $value);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __isset($key)
-    {
-        return $this->offsetExists($key);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __unset($key)
-    {
-        $this->offsetUnset($key);
+        return $this->items[$key] = $item;
     }
 }

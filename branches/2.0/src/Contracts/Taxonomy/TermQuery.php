@@ -2,6 +2,12 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
+/**
+ * Interface TermQuery
+ * @package tiFy\Contracts\Taxonomy
+ *
+ * @deprecated
+ */
 interface TermQuery
 {
     /**

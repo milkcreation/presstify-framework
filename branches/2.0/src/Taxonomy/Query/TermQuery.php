@@ -7,6 +7,12 @@ use tiFy\Contracts\Taxonomy\TermQuery as TermQueryContract;
 use WP_Term;
 use WP_Term_Query;
 
+/**
+ * Class TermQuery
+ * @package tiFy\Taxonomy\Query
+ *
+ * @deprecated
+ */
 class TermQuery implements TermQueryContract
 {
     /**

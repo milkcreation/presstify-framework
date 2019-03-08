@@ -5,6 +5,12 @@ namespace tiFy\Kernel\Params;
 use ArrayIterator;
 use tiFy\Contracts\Kernel\ParamsBag as ParamsBagContract;
 
+/**
+ * Class ParamsBag
+ * @package tiFy\Kernel\Params
+ *
+ * @deprecated Utiliser tiFy\Support\ParamsBag en remplacement.
+ */
 class ParamsBag implements ParamsBagContract
 {
     use ParamsBagTrait;

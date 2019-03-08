@@ -6,6 +6,12 @@ use tiFy\Contracts\Taxonomy\TermQueryCollection as TermQueryCollectionContract;
 use tiFy\Kernel\Collection\QueryCollection;
 use WP_Term_Query;
 
+/**
+ * Class TermQueryCollection
+ * @package tiFy\Taxonomy\Query
+ *
+ * @deprecated
+ */
 class TermQueryCollection extends QueryCollection implements TermQueryCollectionContract
 {
     /**

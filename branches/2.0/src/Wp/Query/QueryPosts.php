@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wp\Query;
 
@@ -58,7 +58,19 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public function getIds()
+    public static function createFromIds(array $ids, $post_types = null)
+    {
+        if (is_null($post_types)) :
+            $post_types = array_keys(get_post_types());
+        endif;
+
+        return new static(new WP_Query(['post__in' => $ids, 'post_type' => $post_types, 'posts_per_page' => -1]));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIds() : array
     {
         return $this->pluck('ID');
     }
@@ -66,7 +78,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public function getTitles()
+    public function getTitles() : array
     {
         return $this->pluck('post_title');
     }
@@ -86,7 +98,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public function WpQuery()
+    public function WpQuery() : WP_Query
     {
         return $this->wp_query;
     }

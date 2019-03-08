@@ -2,12 +2,25 @@
 
 namespace tiFy\Wp\Query;
 
-use tiFy\Taxonomy\Query\TermQueryCollection;
+use tiFy\Contracts\Wp\QueryTerms as QueryTermsContract;
+use tiFy\Support\Collection;
 use WP_Term;
 use WP_Term_Query;
 
-class QueryTerms extends TermQueryCollection
+class QueryTerms extends Collection implements QueryTermsContract
 {
+    /**
+     * Classe de rappel de traitement d'un élément.
+     * @var QueryTerm
+     */
+    protected $itemClass = QueryTerm::class;
+
+    /**
+     * Instance de la requête de récupération des termes de Wordpress.
+     * @var WP_Term_Query
+     */
+    protected $wp_term_query;
+
     /**
      * CONSTRUCTEUR.
      *
@@ -17,20 +30,51 @@ class QueryTerms extends TermQueryCollection
      */
     public function __construct(WP_Term_Query $wp_term_query)
     {
-        parent::__construct($wp_term_query instanceof WP_Term_Query ? $wp_term_query->terms : []);
+        $this->wp_term_query = $wp_term_query;
+
+        $items = $wp_term_query->terms ? : [];
+
+        array_walk($items, [$this, 'walk']);
     }
 
     /**
-     * Récupération d'une instance basée sur la liste des arguments.
-     * @see https://developer.wordpress.org/reference/classes/wp_term_query/
-     *
-     * @param array $args Liste des arguments de la requête récupération des éléments
-     *
-     * @return static
+     * @inheritdoc
      */
     public static function createFromArgs($args = [])
     {
         return new static(new WP_Term_Query($args));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function createFromIds(array $ids)
+    {
+        return new static(new WP_Term_Query(['include' => $ids]));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIds()
+    {
+        return $this->collect()->pluck('term_id')->all();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getNames()
+    {
+        return $this->collect()->pluck('name')->all();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSlugs()
+    {
+        return $this->collect()->pluck('slug')->all();
     }
 
     /**
@@ -40,8 +84,16 @@ class QueryTerms extends TermQueryCollection
      *
      * @return void
      */
-    public function wrap($item, $key = null)
+    public function walk($item, $key = null)
     {
-        $this->items[$key] = app()->get('wp.query.term', [$item]);
+        $this->items[$key] = new $this->itemClass($item);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function WpTermQuery() : WP_Term_Query
+    {
+        return $this->wp_term_query;
     }
 }
