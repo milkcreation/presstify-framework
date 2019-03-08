@@ -1,17 +1,21 @@
 <?php
 
-namespace tiFy\Contracts\Taxonomy;
+namespace tiFy\Contracts\Wp;
 
 use tiFy\Contracts\Kernel\ParamsBag;
+use WP_Term;
 
-/**
- * Interface TermQueryItem
- * @package tiFy\Contracts\Taxonomy
- *
- * @deprecated
- */
-interface TermQueryItem extends ParamsBag
+interface QueryTerm extends ParamsBag
 {
+    /**
+     * Récupération d'une instance basée sur l'identifiant de qualification du terme.
+     *
+     * @param int $term_id
+     *
+     * @return static
+     */
+    public static function createFromId($term_id);
+
     /**
      * Récupération de la description.
      *
@@ -81,7 +85,7 @@ interface TermQueryItem extends ParamsBag
     /**
      * Récupération de l'object Terme Wordpress associé.
      *
-     * @return \WP_Term
+     * @return WP_Term
      */
     public function getTerm();
 }

@@ -38,7 +38,7 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function clean()
     {
@@ -46,7 +46,7 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function cleanArgs() :array
     {
@@ -54,7 +54,7 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function current() : string
     {
@@ -62,7 +62,7 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function decode() : string
     {
@@ -70,7 +70,15 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
+     */
+    public function domain() : string
+    {
+        return $this->request->url();
+    }
+
+    /**
+     * @inheritdoc
      */
     public function full() : string
     {
@@ -78,7 +86,7 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rewriteBase() : string
     {
@@ -94,7 +102,7 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function root(string $path = '') : string
     {
@@ -104,7 +112,7 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function with(array $args) : string
     {
@@ -112,7 +120,7 @@ class Url implements UrlContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function without(array $args) : string
     {

@@ -5,6 +5,12 @@ namespace tiFy\Taxonomy\Query;
 use tiFy\Contracts\Taxonomy\TermQueryItem as TermQueryItemContract;
 use tiFy\Kernel\Params\ParamsBag;
 
+/**
+ * Class TermQueryItem
+ * @package tiFy\Taxonomy\Query
+ *
+ * @deprecated
+ */
 class TermQueryItem extends ParamsBag implements TermQueryItemContract
 {
     /**

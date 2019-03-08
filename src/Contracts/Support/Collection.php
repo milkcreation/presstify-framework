@@ -1,22 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Support;
 
-use Iterator;
 use ArrayAccess;
 use Countable;
+use Illuminate\Support\Collection as LaraCollection;
 use IteratorAggregate;
 
 interface Collection extends ArrayAccess, Countable, IteratorAggregate
 {
     /**
-     * Instanciation du controleur de traitement d'une collection d'élément.
+     * Création d'un instance basée sur une liste d'éléments.
      *
-     * @param null|array $items Liste des éléments à traiter. Si null utilise la liste des éléments déclarés.
+     * @param array $items Liste des éléments.
      *
-     * @return \Illuminate\Support\Collection
+     * @return static
      */
-    public function collect($items = null);
+    public static function createFromItems(array $items): Collection;
 
     /**
      * Récupération de la liste des éléments.
@@ -24,6 +24,15 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
      * @return array
      */
     public function all();
+
+    /**
+     * Instanciation du controleur de traitement d'une collection d'élément.
+     *
+     * @param null|array $items Liste des éléments à traiter. Si null utilise la liste des éléments déclarés.
+     *
+     * @return LaraCollection
+     */
+    public function collect($items = null);
 
     /**
      * Compte le nombre d'éléments.
@@ -73,67 +82,6 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function key();
 
     /**
-     * Traitement d'un élément.
-     *
-     * @param mixed $item Définition de l'élément.
-     * @param mixed $key Clé d'indice de l'élément.
-     *
-     * @return mixed
-     */
-    public function walk($item, $key = null);
-
-    /**
-     * Récupération de l'instance de l'itération.
-     *
-     * @return Iterator
-     */
-    public function getIteration();
-
-    /**
-     * Récupération d'une instance de l'itérateur.
-     *
-     * @return Iterator
-     */
-    public function getIterator();
-
-    /**
-     * Vérification d'existance d'un élément depuis l'itération.
-     *
-     * @param mixed $key Clé d'indexe.
-     *
-     * @return boolean
-     */
-    public function offsetExists($key);
-
-    /**
-     * Récupération d'un élément depuis l'itération.
-     *
-     * @param mixed $key Clé d'indexe.
-     *
-     * @return boolean
-     */
-    public function offsetGet($key);
-
-    /**
-     * Définition d'un élément depuis l'itération.
-     *
-     * @param mixed $key Clé d'indexe.
-     * @param mixed $value Valeur.
-     *
-     * @return boolean
-     */
-    public function offsetSet($key, $value);
-
-    /**
-     * Suppression d'un élément depuis l'itération.
-     *
-     * @param mixed $key Clé d'indexe.
-     *
-     * @return boolean
-     */
-    public function offsetUnset($key);
-
-    /**
      * Récupération d'un tableau indéxé ou dimensionné basé sur le couple key/value.
      *
      * @param string $value Clé d'indice de l'attribut utilisé comme valeur du tableau.
@@ -144,39 +92,21 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function pluck($value, $key = null);
 
     /**
-     * Récupération d'un élément depuis l'itération.
+     * Définition de la liste des éléments.
      *
-     * @param mixed $key Clé d'indexe.
+     * @param mixed $items Liste des éléments.
+     *
+     * @return $this
+     */
+    public function setItems($items): Collection;
+
+    /**
+     * Traitement d'un élément.
+     *
+     * @param mixed $item Définition de l'élément.
+     * @param mixed $key Clé d'indice de l'élément.
      *
      * @return mixed
      */
-    public function __get($key);
-
-    /**
-     * Définition d'un élément depuis l'itération.
-     *
-     * @param mixed $key Clé d'indexe.
-     * @param mixed $value Valeur.
-     *
-     * @return void
-     */
-    public function __set($key, $value);
-
-    /**
-     * Vérification d'existance d'un élément depuis l'itération.
-     *
-     * @param mixed $key Clé d'indexe.
-     *
-     * @return boolean
-     */
-    public function __isset($key);
-
-    /**
-     * Suppression d'un élément depuis l'itération.
-     *
-     * @param mixed $key Clé d'indexe.
-     *
-     * @return void
-     */
-    public function __unset($key);
+    public function walk($item, $key = null);
 }

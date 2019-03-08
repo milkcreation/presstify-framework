@@ -9,6 +9,8 @@ use Illuminate\Support\Arr;
  * @package tiFy\Kernel\Params
  *
  * @mixin \tiFy\Contracts\Kernel\ParamsBag
+ *
+ * @deprecated Utiliser tiFy\Support\ParamsBag en remplacement.
  */
 trait ParamsBagTrait
 {

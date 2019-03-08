@@ -44,7 +44,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function createFromId($post_id)
     {
-        return ($post_id && is_numeric($post_id) && ($wp_post = get_post($post_id)) && $wp_post instanceof WP_Post)
+        return ($post_id && is_numeric($post_id) && ($wp_post = get_post($post_id)) && ($wp_post instanceof WP_Post))
             ? new static($wp_post) : null;
     }
 
