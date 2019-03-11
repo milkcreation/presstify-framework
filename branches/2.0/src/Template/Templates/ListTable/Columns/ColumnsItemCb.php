@@ -2,14 +2,18 @@
 
 namespace tiFy\Template\Templates\ListTable\Columns;
 
-use tiFy\Kernel\Tools;
+use tiFy\Support\HtmlAttrs;
 
 class ColumnsItemCb extends ColumnsItem
 {
-    static $headerIndex = 0;
+    /**
+     * Indice de l'entête courante.
+     * @var int
+     */
+    protected static $headerIndex = 0;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function header($with_id = true)
     {
@@ -26,17 +30,14 @@ class ColumnsItemCb extends ColumnsItem
 
         $attrs['class'] = join(' ', $classes);
 
-        return $this->template->viewer(
-            'thead-col_cb',
-            [
-                'attrs' => Tools::Html()->parseAttrs($attrs),
-                'index' => ++self::$headerIndex
-            ]
-        );
+        return $this->template->viewer('thead-col_cb', [
+            'attrs' => HtmlAttrs::createFromAttrs($attrs),
+            'index' => ++self::$headerIndex,
+        ]);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isPrimary()
     {
@@ -44,7 +45,7 @@ class ColumnsItemCb extends ColumnsItem
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {

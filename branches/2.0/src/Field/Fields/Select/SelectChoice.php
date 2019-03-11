@@ -4,7 +4,7 @@ namespace tiFy\Field\Fields\Select;
 
 use tiFy\Contracts\Field\SelectChoice as SelectChoiceContract;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Kernel\Tools;
+use tiFy\Support\HtmlAttrs;
 
 class SelectChoice extends ParamsBag implements SelectChoiceContract
 {
@@ -160,9 +160,7 @@ class SelectChoice extends ParamsBag implements SelectChoiceContract
      */
     public function tagOpen()
     {
-        $attrs = ($attrs = Tools::Html()->parseAttrs($this->get('attrs', []), true))
-            ? " {$attrs}"
-            : '';
+        $attrs = HtmlAttrs::createFromAttrs($this->get('attrs', []));
 
         return "\n" . str_repeat("\t", $this->depth) . ($this->isGroup() ? "<optgroup{$attrs}>" : "<option{$attrs}>");
     }

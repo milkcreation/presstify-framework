@@ -7,7 +7,7 @@ use ReflectionClass;
 
 /**
  * Class ClassInfo
- * @package tiFy\Components\Tools\Html
+ * @package tiFy\Kernel\ClassInfo\ClassInfo
  * @see http://php.net/manual/class.reflectionclass.php
  *
  * @mixin ReflectionClass

@@ -10,9 +10,6 @@ use tiFy\tiFy;
 
 /**
  * @method static File File()
- * @method static Functions Functions()
- * @method static Html Html()
- * @method static Str Str()
  */
 class Tools
 {
@@ -35,5 +32,35 @@ class Tools
         endif;
 
         return tiFy::instance()->get($alias, $args);
+    }
+
+    /**
+     * @deprecated Utiliser tiFy\Support\HtmlAttrs en remplacement.
+     *
+     * @return callable|Functions
+     */
+    public static function Functions()
+    {
+        return self::__callStatic('Functions', func_get_args());
+    }
+
+    /**
+     * @deprecated Utiliser tiFy\Support\HtmlAttrs en remplacement.
+     *
+     * @return callable|Html
+     */
+    public static function Html()
+    {
+        return self::__callStatic('Html', func_get_args());
+    }
+
+    /**
+     * @deprecated Utiliser tiFy\Support\Str en remplacement.
+     *
+     * @return callable|Str
+     */
+    public static function Str()
+    {
+        return self::__callStatic('Str', func_get_args());
     }
 }

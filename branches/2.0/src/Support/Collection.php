@@ -197,8 +197,8 @@ class Collection implements CollectionContract
     /**
      * @inheritdoc
      */
-    public function walk($item, $key = null)
+    public function walk($value, $key = null)
     {
-        return $this->items[$key] = $item;
+        return $this->items[$key] = $value;
     }
 }

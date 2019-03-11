@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use League\Plates\Template\Template;
 use tiFy\Contracts\View\ViewController as ViewControllerContract;
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Kernel\Tools;
+use tiFy\Support\HtmlAttrs;
 
 class ViewController extends Template implements ViewControllerContract
 {
@@ -100,7 +100,7 @@ class ViewController extends Template implements ViewControllerContract
      */
     public function htmlAttrs($attrs, $linearized = true)
     {
-        return Tools::Html()->parseAttrs($attrs, $linearized);
+        return HtmlAttrs::createFromAttrs($attrs, $linearized);
     }
 
     /**
