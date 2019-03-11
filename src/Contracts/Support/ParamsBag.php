@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Support;
 
@@ -9,6 +9,15 @@ use JsonSerializable;
 
 interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
+    /**
+     * Création d'un instance basée sur une liste d'attributs.
+     *
+     * @param array Liste des attributs.
+     *
+     * @return static
+     */
+    public static function createFromAttrs($attrs): ParamsBag;
+
     /**
      * Récupération de la liste des attributs.
      *
@@ -66,11 +75,9 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
     /**
      * Traitement de la liste des attributs.
      *
-     * @param array $attrs Liste des attribut à traiter.
-     *
-     * @return void
+     * @return static
      */
-    public function parse($attrs = []);
+    public function parse(): ParamsBag;
 
     /**
      * Récupére la valeur d'un attribut avant de le supprimer.
@@ -98,9 +105,18 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      * @param string|array $key Clé d'indexe de l'attribut. Syntaxe à point permise.
      * @param mixed $value Valeur de l'attribut.
      *
-     * @return $this
+     * @return static
      */
     public function set($key, $value = null);
+
+    /**
+     * Définition de la liste des attributs.
+     *
+     * @param array $attrs Liste des attributs.
+     *
+     * @return static
+     */
+    public function setAttrs($attrs): ParamsBag;
 
     /**
      * Insertion d'un attribut au début d'une liste d'attributs.
@@ -118,4 +134,14 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      * @return mixed[]
      */
     public function values();
+
+    /**
+     * Traitement d'un attributs.
+     *
+     * @param mixed $value Valeur de l'attribut.
+     * @param mixed $key Clé d'indice de l'élément.
+     *
+     * @return mixed
+     */
+    public function wrap($value, $key = null);
 }

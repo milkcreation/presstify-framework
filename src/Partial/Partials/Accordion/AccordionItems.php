@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use tiFy\Contracts\Partial\Accordion;
 use tiFy\Contracts\Partial\AccordionItems as AccordionItemsContract;
 use tiFy\Kernel\Collection\QueryCollection;
-use tiFy\Kernel\Tools;
+use tiFy\Support\HtmlAttrs;
 
 class AccordionItems extends QueryCollection implements AccordionItemsContract
 {
@@ -108,7 +108,7 @@ class AccordionItems extends QueryCollection implements AccordionItemsContract
                 'aria-open'    => $item->isOpen() ? 'true' : 'false'
             ];
 
-            $output .= "<li ". Tools::Html()->parseAttrs($attrs) .">";
+            $output .= "<li ". HtmlAttrs::createFromAttrs($attrs) .">";
             $output .= (string) $this->partial->viewer('item', compact('item'));
             $output .= $this->walk($items, ($depth + 1), $item->getName());
             $output .= "</li>";

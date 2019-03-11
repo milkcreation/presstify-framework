@@ -103,10 +103,10 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     /**
      * Traitement d'un élément.
      *
-     * @param mixed $item Définition de l'élément.
+     * @param mixed $value Valeur de l'élément.
      * @param mixed $key Clé d'indice de l'élément.
      *
      * @return mixed
      */
-    public function walk($item, $key = null);
+    public function walk($value, $key = null);
 }

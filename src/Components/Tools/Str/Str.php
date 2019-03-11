@@ -41,7 +41,7 @@ use Illuminate\Support\Str as IlluminateStr;
  * @method string uuid()
  * @method string orderedUuid()
  *
- * @deprecated Utiliser \tiFy\Support\Str
+ * @deprecated Utiliser \tiFy\Support\Str en remplacement.
  */
 class Str
 {

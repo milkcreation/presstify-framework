@@ -2,6 +2,12 @@
 
 namespace tiFy\Components\Tools\Functions;
 
+/**
+ * Class Functions
+ * @package tiFy\Components\Tools\Functions
+ *
+ * @deprecated Utiliser tiFy\Support\Callback en remplacement
+ */
 class Functions
 {
     /**

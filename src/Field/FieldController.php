@@ -9,6 +9,7 @@ use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
+use tiFy\Support\HtmlAttrs;
 
 abstract class FieldController extends ParamsBag implements FieldControllerContract
 {
@@ -81,7 +82,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
      */
     public function attrs()
     {
-        echo Tools::Html()->parseAttrs($this->get('attrs', []));
+        echo HtmlAttrs::createFromAttrs($this->get('attrs', []));
     }
 
     /**

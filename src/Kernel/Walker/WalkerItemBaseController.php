@@ -2,8 +2,8 @@
 
 namespace tiFy\Kernel\Walker;
 
-use  tiFy\Kernel\Params\ParamsBag;
-use tiFy\Kernel\Tools;
+use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\HtmlAttrs;
 
 class WalkerItemBaseController extends ParamsBag
 {
@@ -145,7 +145,7 @@ class WalkerItemBaseController extends ParamsBag
     {
         $this->parseHtmlAttrs();
 
-        return Tools::Html()->parseAttrs($this->get('attrs', []));
+        return HtmlAttrs::createFromAttrs($this->get('attrs', []));
     }
 
     /**

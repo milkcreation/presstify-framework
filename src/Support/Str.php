@@ -123,11 +123,10 @@ class Str
      */
     public function br2nl($text)
     {
-        return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n", "", str_replace(
-            "\r",
-            "",
-            htmlspecialchars_decode($text)
-        )));
+        return preg_replace(
+            '/<br\s?\/?>/ius', "\n",
+            str_replace("\n", "", str_replace("\r", "", htmlspecialchars_decode($text)))
+        );
     }
 
     /**

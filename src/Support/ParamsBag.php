@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Support;
 
@@ -14,27 +14,11 @@ class ParamsBag implements ParamsBagContract
     protected $attributes = [];
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param null|array $attrs Liste des paramètres personnalisés.
-     *
-     * @return void
-     */
-    public function __construct($attrs = null)
-    {
-        if (!is_null($attrs)) :
-            $this->parse($attrs);
-        endif;
-    }
-
-    /**
      * @inheritdoc
      */
-    public function __call($method, $parameters)
+    public static function createFromAttrs($attrs): ParamsBagContract
     {
-        $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
-
-        return $this;
+        return (new static())->setAttrs($attrs)->parse();
     }
 
     /**
@@ -161,13 +145,11 @@ class ParamsBag implements ParamsBagContract
     /**
      * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse(): ParamsBagContract
     {
-        $this->attributes = array_merge(
-            $this->attributes,
-            $this->defaults(),
-            $attrs
-        );
+        $this->attributes = array_merge($this->defaults(), $this->attributes);
+
+        return $this;
     }
 
     /**
@@ -248,6 +230,16 @@ class ParamsBag implements ParamsBagContract
     /**
      * @inheritdoc
      */
+    public function setAttrs($attrs): ParamsBagContract
+    {
+        array_walk($attrs, [$this, 'walk']);
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function unshift($value, $key)
     {
         if (!$this->has($key)) :
@@ -272,5 +264,13 @@ class ParamsBag implements ParamsBagContract
     public function values()
     {
         return array_values($this->attributes);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function wrap($value, $key = null)
+    {
+        return $this->attributes[$key] = $value;
     }
 }

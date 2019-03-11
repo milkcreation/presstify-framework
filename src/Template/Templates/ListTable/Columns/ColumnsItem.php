@@ -4,6 +4,7 @@ namespace tiFy\Template\Templates\ListTable\Columns;
 
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
+use tiFy\Support\HtmlAttrs;
 use tiFy\Template\Templates\ListTable\Contracts\ColumnsItem as ColumnsItemContract;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
 
@@ -189,7 +190,7 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
         return $this->template->viewer(
             $template,
             [
-                'attrs' => Tools::Html()->parseAttrs($attrs),
+                'attrs' => HtmlAttrs::createFromAttrs($attrs),
                 'content' => $content
             ]
         );
@@ -267,7 +268,7 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
                 [
                     'item'    => $item,
                     'content' => $this->content(). ($this->isPrimary() ? $this->template->rowActions() : ''),
-                    'attrs'   => Tools::Html()->parseAttrs($this->get('attrs', [])),
+                    'attrs'   => HtmlAttrs::createFromAttrs($this->get('attrs', [])),
                 ]
             );
         else :

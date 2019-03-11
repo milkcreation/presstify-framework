@@ -7,6 +7,7 @@ use tiFy\Contracts\Partial\PartialController as PartialControllerContract;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Kernel\Tools;
+use tiFy\Support\HtmlAttrs;
 
 abstract class PartialController extends ParamsBag implements PartialControllerContract
 {
@@ -82,7 +83,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
      */
     public function attrs()
     {
-        echo Tools::Html()->parseAttrs($this->get('attrs', []));
+        echo HtmlAttrs::createFromAttrs($this->get('attrs', []));
     }
 
     /**
