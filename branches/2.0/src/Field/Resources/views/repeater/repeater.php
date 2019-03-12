@@ -8,18 +8,13 @@
 <div <?php $this->attrs() ?>>
     <ul data-control="repeater.items">
         <?php foreach ($this->get('value', []) as $index => $value) : ?>
-            <?php
-            $this->insert(
-                'item-wrap',
-                [
-                    'index' => $index,
-                    'name'  => $this->get('name'),
-                    'order' => $this->get('order'),
-                    'value' => $value,
-                    'args'  => $this->get('args', []),
-                ]
-            );
-            ?>
+            <?php $this->insert('item-wrap', [
+                'index' => $index,
+                'name'  => $this->get('name'),
+                'order' => $this->get('order'),
+                'value' => $value,
+                'args'  => $this->get('args', []),
+            ]); ?>
         <?php endforeach; ?>
     </ul>
 
