@@ -109,6 +109,20 @@ jQuery(function ($) {
             this._onCreate();
         },
 
+        // GETTER
+        // -------------------------------------------------------------------------------------------------------------
+        _getCreateIndex: function () {
+            if (!$('[data-control="repeater.item"]', this.el).length) {
+                return 0;
+            } else {
+                let indexes = [];
+                $('[data-control="repeater.item"]', this.el).each(function(u, v) {
+                    indexes.push($(this).data('index'));
+                });
+                return (Math.max(...indexes) + 1);
+            }
+        },
+
         // SETTER
         // -------------------------------------------------------------------------------------------------------------
         // Définition d'un élément.
@@ -135,7 +149,6 @@ jQuery(function ($) {
                 }
                 $itemSorter.addClass(this.option('classes.listItemSort'));
             }
-
         },
 
         // ACTIONS
@@ -149,8 +162,7 @@ jQuery(function ($) {
             }
 
             let $items = $('[data-control="repeater.items"]', this.el),
-                index = $('[data-control="repeater.item"]', this.el).length,
-                ajax = $.extend(true, this.option('ajax'), {data: {index: index}});
+                ajax = $.extend(true, this.option('ajax'), {data: {index: this._getCreateIndex()}});
 
             this.xhr = $.ajax(ajax)
                 .done(function (resp) {
