@@ -16,7 +16,7 @@ interface QueryPosts extends Collection
      *
      * @return static
      */
-    public static function createFromArgs($args = []);
+    public static function createFromArgs($args = []): QueryPosts;
 
     /**
      * Récupération d'une instance basée sur la requête globale.
@@ -25,10 +25,10 @@ interface QueryPosts extends Collection
      *
      * @return static
      */
-    public static function createFromGlobals();
+    public static function createFromGlobals(): QueryPosts;
 
     /**
-     * Récupération d'une instance basée sur une liste d'identifiant de qualification de post.
+     * Récupération d'une instance basée sur une liste d'identifiant de qualification de posts.
      * @see https://codex.wordpress.org/Class_Reference/WP_Query
      * @see https://developer.wordpress.org/reference/classes/wp_query/
      *
@@ -36,26 +36,26 @@ interface QueryPosts extends Collection
      *
      * @return static
      */
-    public static function createFromIds(array $ids);
+    public static function createFromIds(array $ids): QueryPosts;
 
     /**
      * Récupération de la liste des identifiants de qualification.
      *
      * @return array
      */
-    public function getIds() : array;
+    public function getIds(): array;
 
     /**
      * Récupération de la liste des intitulés de qualification.
      *
      * @return array
      */
-    public function getTitles() : array;
+    public function getTitles(): array;
 
     /**
      * Récupération de l'instance de la requête Wordpress de récupération des posts.
      *
      * @return null|WP_Query
      */
-    public function WpQuery() : WP_Query;
+    public function WpQuery(): WP_Query;
 }

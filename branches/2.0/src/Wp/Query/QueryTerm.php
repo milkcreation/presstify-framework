@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wp\Query;
 
 use tiFy\Contracts\Wp\QueryTerm as QueryTermContract;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 use WP_Term;
 
 class QueryTerm extends ParamsBag implements QueryTermContract
@@ -25,13 +25,13 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     {
         $this->wp_term = $wp_term;
 
-        parent::__construct($this->wp_term->to_array());
+        $this->setAttrs($this->wp_term->to_array());
     }
 
     /**
      * @inheritdoc
      */
-    public static function createFromId($term_id)
+    public static function createFromId($term_id): ?QueryTermContract
     {
         return ($term_id && is_numeric($term_id) && ($wp_term = get_term($term_id)) && ($wp_term instanceof WP_Term))
             ? new static($wp_term) : null;

@@ -143,5 +143,5 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      *
      * @return mixed
      */
-    public function wrap($value, $key = null);
+    public function walk($value, $key = null);
 }

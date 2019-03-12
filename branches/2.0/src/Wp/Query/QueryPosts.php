@@ -40,7 +40,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public static function createFromArgs($args = [])
+    public static function createFromArgs($args = []): QueryPostsContract
     {
         return new static(new WP_Query($args));
     }
@@ -48,7 +48,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public static function createFromGlobals()
+    public static function createFromGlobals(): QueryPostsContract
     {
         global $wp_query;
 
@@ -58,7 +58,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public static function createFromIds(array $ids, $post_types = null)
+    public static function createFromIds(array $ids, $post_types = null): QueryPostsContract
     {
         if (is_null($post_types)) :
             $post_types = array_keys(get_post_types());
@@ -70,7 +70,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public function getIds() : array
+    public function getIds(): array
     {
         return $this->pluck('ID');
     }
@@ -78,7 +78,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public function getTitles() : array
+    public function getTitles(): array
     {
         return $this->pluck('post_title');
     }
@@ -98,7 +98,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritdoc
      */
-    public function WpQuery() : WP_Query
+    public function WpQuery(): WP_Query
     {
         return $this->wp_query;
     }

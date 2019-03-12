@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Wp;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 use WP_Term;
 
 interface QueryTerm extends ParamsBag
@@ -14,7 +14,7 @@ interface QueryTerm extends ParamsBag
      *
      * @return static
      */
-    public static function createFromId($term_id);
+    public static function createFromId($term_id): ?QueryTerm;
 
     /**
      * Récupération de la description.

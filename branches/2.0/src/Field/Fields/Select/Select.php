@@ -63,6 +63,7 @@ class Select extends FieldController implements SelectContract
         parent::parse($attrs);
 
         $choices = $this->get('choices', []);
+
         if (!$choices instanceof SelectChoices) :
             $this->set('choices', new SelectChoices($choices, $this->getValue()));
         endif;
