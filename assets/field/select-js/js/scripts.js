@@ -277,6 +277,7 @@ jQuery(function ($) {
                 $handlerItems = $('option', this.handler);
 
             if ($handlerItems.length) {
+
                 let selected = [];
                 $handlerItems.each(function (index) {
                     if ($(this).is(':selected')) {

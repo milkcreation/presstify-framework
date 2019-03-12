@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Wp;
 
@@ -15,7 +15,7 @@ interface QueryTerms extends Collection
      *
      * @return static
      */
-    public static function createFromArgs($args = []);
+    public static function createFromArgs($args = []): QueryTerms;
 
     /**
      * Récupération d'une instance basée sur la liste d'identifiant de qualification de termes.
@@ -25,33 +25,33 @@ interface QueryTerms extends Collection
      *
      * @return static
      */
-    public static function createFromIds(array $ids);
+    public static function createFromIds(array $ids): QueryTerms;
 
     /**
      * Récupération de la liste des identifiants de qualification.
      *
      * @return array
      */
-    public function getIds();
+    public function getIds(): array;
 
     /**
      * Récupération de la liste des identifiants de qualification.
      *
      * @return array
      */
-    public function getNames();
+    public function getNames(): array;
 
     /**
      * Récupération de la liste des identifiants de qualification.
      *
      * @return array
      */
-    public function getSlugs();
+    public function getSlugs(): array;
 
     /**
      * Récupération de l'instance de la requête Wordpress de récupération des termes.
      *
      * @return null|WP_Term_Query
      */
-    public function WpTermQuery() : WP_Term_Query;
+    public function WpTermQuery(): WP_Term_Query;
 }

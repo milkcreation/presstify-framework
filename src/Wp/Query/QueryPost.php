@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wp\Query;
 
 use tiFy\Contracts\Wp\QueryPost as QueryPostContract;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 use WP_Post;
 use WP_Term_Query;
 
@@ -26,23 +26,23 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         $this->wp_post = $wp_post;
 
-        parent::__construct($this->wp_post->to_array());
+        $this->setAttrs($this->wp_post->to_array());
     }
 
     /**
      * @inheritdoc
      */
-    public static function createFromGlobal()
+    public static function createFromGlobal(): ?QueryPostContract
     {
         global $post;
 
-        return new static($post);
+        return $post instanceof WP_Post ? new static($post) : null;
     }
 
     /**
      * @inheritdoc
      */
-    public static function createFromId($post_id)
+    public static function createFromId($post_id): ?QueryPostContract
     {
         return ($post_id && is_numeric($post_id) && ($wp_post = get_post($post_id)) && ($wp_post instanceof WP_Post))
             ? new static($wp_post) : null;
@@ -251,5 +251,13 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function getType()
     {
         return (string)$this->get('post_type', '');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hasTerm($term, string $taxonomy): bool
+    {
+        return has_term($term, $taxonomy, $this->getPost());
     }
 }

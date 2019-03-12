@@ -2,6 +2,7 @@
 
 namespace tiFy\Support;
 
+use Illuminate\Support\Arr;
 use ArrayIterator;
 use tiFy\Contracts\Support\ParamsBag as ParamsBagContract;
 
@@ -269,7 +270,7 @@ class ParamsBag implements ParamsBagContract
     /**
      * @inheritdoc
      */
-    public function wrap($value, $key = null)
+    public function walk($value, $key = null)
     {
         return $this->attributes[$key] = $value;
     }

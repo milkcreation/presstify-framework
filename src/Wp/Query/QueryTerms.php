@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wp\Query;
 
@@ -40,7 +40,7 @@ class QueryTerms extends Collection implements QueryTermsContract
     /**
      * @inheritdoc
      */
-    public static function createFromArgs($args = [])
+    public static function createFromArgs($args = []): QueryTermsContract
     {
         return new static(new WP_Term_Query($args));
     }
@@ -48,7 +48,7 @@ class QueryTerms extends Collection implements QueryTermsContract
     /**
      * @inheritdoc
      */
-    public static function createFromIds(array $ids)
+    public static function createFromIds(array $ids): QueryTermsContract
     {
         return new static(new WP_Term_Query(['include' => $ids]));
     }
@@ -56,7 +56,7 @@ class QueryTerms extends Collection implements QueryTermsContract
     /**
      * @inheritdoc
      */
-    public function getIds()
+    public function getIds(): array
     {
         return $this->collect()->pluck('term_id')->all();
     }
@@ -64,7 +64,7 @@ class QueryTerms extends Collection implements QueryTermsContract
     /**
      * @inheritdoc
      */
-    public function getNames()
+    public function getNames(): array
     {
         return $this->collect()->pluck('name')->all();
     }
@@ -72,7 +72,7 @@ class QueryTerms extends Collection implements QueryTermsContract
     /**
      * @inheritdoc
      */
-    public function getSlugs()
+    public function getSlugs(): array
     {
         return $this->collect()->pluck('slug')->all();
     }
@@ -92,7 +92,7 @@ class QueryTerms extends Collection implements QueryTermsContract
     /**
      * @inheritdoc
      */
-    public function WpTermQuery() : WP_Term_Query
+    public function WpTermQuery(): WP_Term_Query
     {
         return $this->wp_term_query;
     }

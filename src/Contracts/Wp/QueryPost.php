@@ -1,28 +1,28 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Wp;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 use WP_Post;
 use WP_Term;
 
 interface QueryPost extends ParamsBag
 {
     /**
-     * Récupération d'une instance basée sur le post global.
+     * Récupération d'une instance basée sur le post global courant.
      *
      * @return static
      */
-    public static function createFromGlobal();
+    public static function createFromGlobal(): ?QueryPost;
 
     /**
-     * Récupération d'une instance basée sur l'identifiant de qualification du post.
+     * Récupération d'une instance basée sur l'identifiant de qualification d'un post.
      *
      * @param int $post_id
      *
      * @return static
      */
-    public static function createFromId($post_id);
+    public static function createFromId($post_id): ?QueryPost;
 
     /**
      * Récupération de l'identifiant de qualification de l'auteur original.
@@ -207,4 +207,14 @@ interface QueryPost extends ParamsBag
      * @return string
      */
     public function getType();
+
+    /**
+     * Vérification d'existance de terme(s) de taxonomie pour le post associé.
+     *
+     * @param string|int|array Nom de qualification|Identifiant de qualification|Slug du terme ou liste de terme.
+     * @param string $taxonomy Nom de qualification de la taxonomie.
+     *
+     * @return boolean
+     */
+    public function hasTerm($term, string $taxonomy): bool;
 }

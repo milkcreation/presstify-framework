@@ -7,6 +7,12 @@ use Countable;
 use IteratorAggregate;
 use JsonSerializable;
 
+/**
+ * Interface ParamsBag
+ * @package tiFy\Contracts\Kernel
+ *
+ * @deprecated Utiliser tiFy\Contracts\Support\ParamsBag en remplacement
+ */
 interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
     /**

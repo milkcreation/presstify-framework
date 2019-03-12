@@ -162,6 +162,6 @@ class SelectChoice extends ParamsBag implements SelectChoiceContract
     {
         $attrs = HtmlAttrs::createFromAttrs($this->get('attrs', []));
 
-        return "\n" . str_repeat("\t", $this->depth) . ($this->isGroup() ? "<optgroup{$attrs}>" : "<option{$attrs}>");
+        return "\n" . str_repeat("\t", $this->depth) . ($this->isGroup() ? "<optgroup {$attrs}>" : "<option {$attrs}>");
     }
 }
