@@ -34,7 +34,7 @@ final class Lightbox extends \tiFy\App\Component
                 self::tFyAppUrl() . '/theme/' . basename($filename), ['tify-imagelightbox'], 170913);
         endforeach;
 
-        wp_register_script('tiFyComponentsLightbox', self::tFyAppAssetsUrl('/Lightbox.js', get_class()),
+        wp_register_script('tiFyComponentsLightbox', $this->appAbsUrl() . '/assets/EditorLightbox/js/scripts.js',
             ['tify-imagelightbox'], 170724, true);
     }
 
