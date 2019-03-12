@@ -162,7 +162,16 @@ jQuery(function ($) {
             }
 
             let $items = $('[data-control="repeater.items"]', this.el),
-                ajax = $.extend(true, this.option('ajax'), {data: {index: this._getCreateIndex()}});
+                ajax = $.extend(
+                    true,
+                    this.option('ajax'),
+                    {
+                        data: {
+                            index: this._getCreateIndex(),
+                            count: $('[data-control="repeater.item"]', this.el).length
+                        }
+                    }
+                );
 
             this.xhr = $.ajax(ajax)
                 .done(function (resp) {

@@ -160,22 +160,6 @@ class Repeater extends FieldController implements RepeaterContract
     }
 
     /**
-     * Génération d'un indice aléatoire.
-     *
-     * @param int $index Clé d'indice de la valeur de soumission.
-     *
-     * @return string
-     */
-    public function parseIndex($index = 0)
-    {
-        if (!is_numeric($index)) :
-            return $index;
-        endif;
-
-        return uniqid();
-    }
-
-    /**
      * Récupération des champs via Ajax.
      *
      * @return void
@@ -186,7 +170,9 @@ class Repeater extends FieldController implements RepeaterContract
 
         check_ajax_referer('FieldRepeater' . $params->get('_id'));
 
-        if (($params->get('max') > 0) && ($params->get('index') >= $params->get('max'))) :
+        $max = $params->get('max');
+
+        if (($max > 0) && ($params->get('count') >= $max)) :
             wp_send_json_error(__('Nombre de valeur maximum atteinte', 'tify'));
         else :
             $this->set('name', $params->get('name'));
