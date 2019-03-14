@@ -146,7 +146,7 @@ class ParamsBag implements ParamsBagContract
     /**
      * @inheritdoc
      */
-    public function parse(): ParamsBagContract
+    public function parse()
     {
         $this->attributes = array_merge($this->defaults(), $this->attributes);
 

@@ -939,12 +939,11 @@ jQuery(function ($) {
             let self = this;
 
             this.pickerFilter.on('keyup.select-js.picker.filter.' + this.instance.uuid, function () {
-                let term = $(this).val().toString();
+                let term = $(this).val().toString(),
+                    regex = new RegExp(term, 'i');
 
                 $('[data-control="select-js.picker.item"]', self.pickerItems).each(function () {
-                    let regex = new RegExp(term, 'i');
-
-                    if ($(this).data('value').match(regex)) {
+                    if ($(this).data('value').match(regex) || $(this).html().match(regex)) {
                         $(this).show();
                     } else {
                         $(this).hide();
