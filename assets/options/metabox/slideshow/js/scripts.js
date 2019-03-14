@@ -1,4 +1,4 @@
-/* global tify, tinymce, MetaboxOptionsSlideshowAdmin */
+/* globals tify, tinymce, MetaboxOptionsSlideshowAdmin */
 
 "use strict";
 

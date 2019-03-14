@@ -77,7 +77,7 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      *
      * @return static
      */
-    public function parse(): ParamsBag;
+    public function parse();
 
     /**
      * Récupére la valeur d'un attribut avant de le supprimer.
