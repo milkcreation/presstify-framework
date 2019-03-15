@@ -26,7 +26,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         $this->wp_post = $wp_post;
 
-        $this->setAttrs($this->wp_post->to_array());
+        $this->set($this->wp_post->to_array())->parse();
     }
 
     /**

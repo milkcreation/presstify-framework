@@ -25,7 +25,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     {
         $this->wp_term = $wp_term;
 
-        $this->setAttrs($this->wp_term->to_array());
+        $this->set($this->wp_term->to_array())->parse();
     }
 
     /**

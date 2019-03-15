@@ -93,15 +93,6 @@ interface FieldController extends ParamsBag
     public function getValue();
 
     /**
-     * Vérifie si une variable peut être appelée en tant que fonction.
-     *
-     * @param mixed $var
-     *
-     * @return bool
-     */
-    public function isCallable($var);
-
-    /**
      * Vérification de correspondance entre la valeur de coche et celle du champ.
      *
      * @return bool

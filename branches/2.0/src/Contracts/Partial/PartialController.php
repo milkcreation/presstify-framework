@@ -79,13 +79,6 @@ interface PartialController extends ParamsBag
     public function getIndex();
 
     /**
-     * Vérifie si une variable peut être appelée en tant que fonction.
-     *
-     * @return bool
-     */
-    public function isCallable($var);
-
-    /**
      * Traitement de la liste des attributs par défaut.
      *
      * @return void

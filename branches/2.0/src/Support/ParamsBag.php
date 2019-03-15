@@ -19,7 +19,7 @@ class ParamsBag implements ParamsBagContract
      */
     public static function createFromAttrs($attrs): ParamsBagContract
     {
-        return (new static())->setAttrs($attrs)->parse();
+        return (new static())->set($attrs)->parse();
     }
 
     /**
@@ -146,6 +146,14 @@ class ParamsBag implements ParamsBagContract
     /**
      * @inheritdoc
      */
+    public function map(&$value, $key)
+    {
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function parse()
     {
         $this->attributes = array_merge($this->defaults(), $this->attributes);
@@ -221,19 +229,11 @@ class ParamsBag implements ParamsBagContract
     {
         $keys = is_array($key) ? $key : [$key => $value];
 
+        array_walk($keys, [$this, 'map']);
+
         foreach ($keys as $k => $v) :
             Arr::set($this->attributes, $k, $v);
         endforeach;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setAttrs($attrs): ParamsBagContract
-    {
-        array_walk($attrs, [$this, 'walk']);
 
         return $this;
     }
@@ -265,13 +265,5 @@ class ParamsBag implements ParamsBagContract
     public function values()
     {
         return array_values($this->attributes);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function walk($value, $key = null)
-    {
-        return $this->attributes[$key] = $value;
     }
 }

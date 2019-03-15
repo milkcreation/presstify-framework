@@ -75,55 +75,45 @@ class FormFactory extends ParamsBag implements FormFactoryContract
 
         parent::__construct($attrs);
 
-        app()->share(
-            "form.factory.events.{$this->name()}",
-            $this->resolve('factory.events', [$this->get('events', []), $this])
-        );
+        app()->share("form.factory.events.{$this->name()}", function () {
+            return $this->resolve('factory.events', [$this->get('events', []), $this]);
+        });
 
-        app()->share(
-            "form.factory.addons.{$this->name()}",
-            $this->resolve('factory.addons', [$this->get('addons', []), $this])
-        );
+        app()->share("form.factory.addons.{$this->name()}", function () {
+            return $this->resolve('factory.addons', [$this->get('addons', []), $this]);
+        });
 
-        app()->share(
-            "form.factory.buttons.{$this->name()}",
-            $this->resolve('factory.buttons', [$this->get('buttons', []), $this])
-        );
+        app()->share("form.factory.buttons.{$this->name()}", function () {
+            return $this->resolve('factory.buttons', [$this->get('buttons', []), $this]);
+        });
 
-        app()->share(
-            "form.factory.fields.{$this->name()}",
-            $this->resolve('factory.fields', [$this->get('fields', []), $this])
-        );
+        app()->share("form.factory.fields.{$this->name()}", function () {
+            return $this->resolve('factory.fields', [$this->get('fields', []), $this]);
+        });
 
-        app()->share(
-            "form.factory.notices.{$this->name()}",
-            $this->resolve('factory.notices', [$this->get('notices', []), $this])
-        );
+        app()->share("form.factory.notices.{$this->name()}", function () {
+            return $this->resolve('factory.notices', [$this->get('notices', []), $this]);
+        });
 
-        app()->share(
-            "form.factory.options.{$this->name()}",
-            $this->resolve('factory.options', [$this->get('options', []), $this])
-        );
+        app()->share("form.factory.options.{$this->name()}", function () {
+            return $this->resolve('factory.options', [$this->get('options', []), $this]);
+        });
 
-        app()->share(
-            "form.factory.request.{$this->name()}",
-            $this->resolve('factory.request', [$this])
-        );
+        app()->share("form.factory.request.{$this->name()}", function () {
+            return $this->resolve('factory.request', [$this]);
+        });
 
-        app()->share(
-            "form.factory.session.{$this->name()}",
-            $this->resolve('factory.session', [$this])
-        );
+        app()->share("form.factory.session.{$this->name()}", function () {
+            return $this->resolve('factory.session', [$this]);
+        });
 
-        app()->share(
-            "form.factory.validation.{$this->name()}",
-            $this->resolve('factory.validation', [$this])
-        );
+        app()->share("form.factory.validation.{$this->name()}", function () {
+            return $this->resolve('factory.validation', [$this]);
+        });
 
-        app()->share(
-            "form.factory.viewer.{$this->name()}",
-            $this->resolve('factory.viewer', [$this])
-        );
+        app()->share("form.factory.viewer.{$this->name()}", function () {
+            return $this->resolve('factory.viewer', [$this]);
+        });
 
         $this->events('form.init', [&$this]);
 

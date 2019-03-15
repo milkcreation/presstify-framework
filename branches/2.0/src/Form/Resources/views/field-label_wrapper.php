@@ -1,11 +1,13 @@
 <?php
 /**
- * Marqueur de champ de formulaire requis.
+ * Encapsuleur de l'etiquette de champ de formulaire.
  * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Contracts\Form\FactoryView $this
  * @var tiFy\Contracts\Form\FactoryField $field
  */
 ?>
-<?php if ($tagged = $field->get('required.tagged')) : ?>
-    <?php echo partial('tag', $tagged); ?>
-<?php endif; ?>
+<?php
+echo partial('tag', array_merge(
+    $field->get('label.wrapper', []),
+    ['content' => $this->section('content')]
+));

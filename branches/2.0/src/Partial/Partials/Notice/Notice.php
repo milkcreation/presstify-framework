@@ -2,6 +2,7 @@
 
 namespace tiFy\Partial\Partials\Notice;
 
+use Closure;
 use tiFy\Contracts\Partial\Notice as NoticeContract;
 use tiFy\Partial\PartialController;
 
@@ -79,7 +80,7 @@ class Notice extends PartialController implements NoticeContract
         $this->set('attrs.aria-type', $this->get('type'));
 
         $content = $this->get('content', '');
-        $this->set('content', $this->isCallable($content) ? call_user_func($content) : $content);
+        $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);
 
         if($dismiss = $this->get('dismiss')) :
             if (!is_array($dismiss)) :

@@ -6,17 +6,8 @@
  * @var tiFy\Contracts\Form\FactoryField $field
  */
 ?>
-
 <?php if ($field->hasLabel()) : ?>
-    <?php
-    echo partial(
-        'tag',
-        array_merge(
-            [
-                'after' => $this->fetch('field-tag', compact('field'))
-            ],
-            $field->get('label', [])
-        )
-    );
-    ?>
-<?php endif; ?>
+    <?php if ($field->get('label.wrapper')) : $this->layout('field-label_wrapper', $this->all()); endif; ?>
+    <?php echo partial('tag', $field->get('label', [])); ?>
+    <?php $this->insert('field-tag', compact('field')); ?>
+<?php endif;

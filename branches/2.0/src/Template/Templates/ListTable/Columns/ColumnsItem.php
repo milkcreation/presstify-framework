@@ -2,8 +2,8 @@
 
 namespace tiFy\Template\Templates\ListTable\Columns;
 
+use Closure;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Kernel\Tools;
 use tiFy\Support\HtmlAttrs;
 use tiFy\Template\Templates\ListTable\Contracts\ColumnsItem as ColumnsItemContract;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
@@ -93,10 +93,10 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
                         return mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
                         break;
                 endswitch;
-            elseif (Tools::Functions()->isCallable($this->get('content'))) :
-                return call_user_func_array($this->get('content'), [$item]);
             else :
-                return $this->get('content');
+                $content = $this->get('content');
+
+                return $content instanceof Closure ? call_user_func_array($content, [$item]) : $content;
             endif;
         else :
             return $this->get('content');

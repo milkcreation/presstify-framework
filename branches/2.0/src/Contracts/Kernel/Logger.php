@@ -2,6 +2,7 @@
 
 namespace tiFy\Contracts\Kernel;
 
+use Monolog\Logger as MonologLogger;
 use Monolog\ResettableInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 
@@ -10,7 +11,7 @@ use Psr\Log\LoggerInterface as PsrLoggerInterface;
  *
  * @package tiFy\Contracts\Kernel
  *
- * @mixin \Monolog\Logger
+ * @mixin MonologLogger
  */
 interface Logger extends PsrLoggerInterface, ResettableInterface
 {
