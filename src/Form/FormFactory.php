@@ -75,7 +75,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
 
         parent::__construct($attrs);
 
-        app()->share("form.factory.events.{$this->name()}", function () {
+        app()->share("form.factory.events.{$this->name()}", function ($name = null) {
             return $this->resolve('factory.events', [$this->get('events', []), $this]);
         });
 
@@ -116,6 +116,8 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         });
 
         $this->events('form.init', [&$this]);
+
+        $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
 
         $this->boot();
     }

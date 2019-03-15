@@ -10,12 +10,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $this->get('charset'); ?>"/>
     <title><?php _e('Mail - Mode de déboguage') ?></title>
-    <script type="text/javascript">
-        function resizeIframe(obj){
-            obj.style.height = 0;
-            obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
-        }
-    </script>
 </head>
 
 <body style="width:100%;margin:0;padding:0;background:#FFF;color:#000;font-family:Arial, Helvetica, sans-serif;font-size:12px;"
@@ -102,7 +96,7 @@
 </table>
 
 <iframe
-    src ="data:text/html;charset=utf-8,<?php echo urldecode($this->e($this->get('html'))); ?>"
+    id="iframe"
     width="700"
     height="500"
     frameborder="0"
@@ -138,5 +132,18 @@
 <br>
 <br>
 
+<script type="text/javascript">
+    let iframe = document.getElementById('iframe'),
+        doc = iframe.contentWindow.document,
+        resizeIframe = function (obj){
+            obj.style.height = 0;
+            obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+        };
+
+    doc.open();
+    doc.write(decodeURIComponent("<?php echo rawurlencode($this->get("html")); ?>"));
+    doc.close();
+    resizeIframe(iframe);
+</script>
 </body>
 </html>

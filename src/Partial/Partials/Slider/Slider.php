@@ -2,7 +2,6 @@
 
 namespace tiFy\Partial\Partials\Slider;
 
-use tiFy\Contracts\Kernel\Validator;
 use tiFy\Contracts\Partial\Slider as SliderContract;
 use tiFy\Partial\PartialController;
 
@@ -35,25 +34,22 @@ class Slider extends PartialController implements SliderContract
      */
     public function boot()
     {
-        add_action(
-            'init',
-            function () {
-                \wp_register_style(
-                    'PartialSlider',
-                    assets()->url('partial/slider/css/styles.css'),
-                    ['slick', 'slick-theme'],
-                    170722
-                );
+        add_action('init', function () {
+            wp_register_style(
+                'PartialSlider',
+                assets()->url('partial/slider/css/styles.css'),
+                ['slick', 'slick-theme'],
+                170722
+            );
 
-                \wp_register_script(
-                    'PartialSlider',
-                    assets()->url('partial/slider/js/scripts.js'),
-                    ['slick'],
-                    170722,
-                    true
-                );
-            }
-        );
+            wp_register_script(
+                'PartialSlider',
+                assets()->url('partial/slider/js/scripts.js'),
+                ['slick'],
+                170722,
+                true
+            );
+        });
     }
 
     /**
@@ -89,11 +85,12 @@ class Slider extends PartialController implements SliderContract
 
         $items = $this->get('items', []);
 
-        /** @var Validator $validator */
-        $validator = app('validator');
+        $validator = validator();
+
         foreach($items as &$item) :
             if (is_callable($item)) :
                 $item = call_user_func($item);
+            elseif (is_array($item)) :
             elseif ($validator->isUrl($item)) :
                 $item = "<img src=\"{$item}\"/>";
             endif;

@@ -9,7 +9,6 @@ use tiFy\Contracts\Mail\Mailer as MailerContract;
 use tiFy\Contracts\Mail\MailQueue;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Mail\MessageViewController;
 
 final class Mailer extends ParamsBag implements MailerContract
 {

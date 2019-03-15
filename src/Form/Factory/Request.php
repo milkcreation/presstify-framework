@@ -21,8 +21,6 @@ class Request extends ParamsBag implements FactoryRequest
     {
         $this->form = $form;
 
-        $this->events()->listen('form.set.current', [$this, 'handle'], -999999);
-
         parent::__construct();
     }
 
