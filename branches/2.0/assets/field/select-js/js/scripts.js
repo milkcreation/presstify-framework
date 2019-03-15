@@ -943,7 +943,7 @@ jQuery(function ($) {
                     regex = new RegExp(term, 'i');
 
                 $('[data-control="select-js.picker.item"]', self.pickerItems).each(function () {
-                    if ($(this).data('value').match(regex) || $(this).html().match(regex)) {
+                    if ($(this).data('value').toString().match(regex) || $(this).html().match(regex)) {
                         $(this).show();
                     } else {
                         $(this).hide();
