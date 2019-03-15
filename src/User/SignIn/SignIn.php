@@ -15,68 +15,88 @@
 
 namespace tiFy\User\SignIn;
 
-use tiFy\Apps\AppController;
 use tiFy\User\User;
-use tiFy\User\SignIn\SignInControllerInterface;
+use tiFy\Contracts\User\UserSignInItemInterface;
 use tiFy\User\SignIn\SignInItemController;
 
-final class SignIn extends AppController
+final class SignIn
 {
     /**
-     * Initialisation du controleur.
+     * Liste des éléments déclarés.
+     * @var UserSignInItemInterface
+     */
+    protected $items = [];
+
+    /**
+     * CONSTRUCTEUR.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct()
     {
-        $this->appAddAction('init');
+        add_action(
+            'init',
+            function () {
+                if ($signins = config('user.signin', [])) :
+                    foreach ($signins as $name => $attrs) :
+                        $this->_register($name, $attrs);
+                    endforeach;
+                endif;
+            }
+        );
     }
 
     /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
-     */
-    final public function init()
-    {
-        // Déclaration des interfaces d'authentification configurées
-        if ($signins = $this->appConfig('signin', [], User::class)) :
-            foreach ($signins as $name => $attrs) :
-                $this->register($name, $attrs);
-            endforeach;
-        endif;
-
-        // Déclaration des interfaces d'authentification ponctuelles
-        do_action('tify_user_signin_register', $this);
-    }
-
-    /**
-     * Déclaration d'un formulaire d'authentification.
+     * Enregistement de la déclaration d'un formulaire d'authentification.
      *
      * @param string $name Nom de qualification du formulaire d'authentification.
-     * @param array $attrs {
-     *      Liste des attributs de configuration.
-     * }
-     * @return SignInControllerInterface
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return UserSignInItemInterface
      */
-    public function register($name, $attrs = [])
+    public function _register($name, $attrs = [])
     {
-        $alias = "tfy.user.signin.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return;
+        if (isset($this->items[$name])) :
+            return $this->items[$name];
         endif;
 
         $attrs = array_merge(['controller' => SignInItemController::class], $attrs);
         $controller = $attrs['controller'];
 
         try {
-            $concrete = new $controller($name, $attrs, $this);
-            $this->appServiceShare($alias, $concrete);
+            $resolved = new $controller($name, $attrs, $this);
+            app()->singleton(
+                "user.signin.{$name}",
+                function () use ($resolved) {
+                    return $resolved;
+                }
+            );
         } catch(\InvalidArgumentException $e) {
             wp_die($e->getMessage(), '', $e->getCode());
         }
 
-        return $concrete;
+        return $this->items[$name] = $resolved;
+    }
+
+    /**
+     * Déclaration d'un formulaire d'authentification.
+     *
+     * @param string $name Nom de qualification du formulaire d'authentification.
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return $this
+     */
+    public function add($name, $attrs = [])
+    {
+        config()->set(
+            'user.signin',
+            array_merge(
+                [$name => $attrs],
+                config('user.signin', [])
+            )
+        );
+
+        return $this;
     }
 
     /**
@@ -84,17 +104,15 @@ final class SignIn extends AppController
      *
      * @param string $name Nom de qualification du formulaire d'authentification.
      *
-     * @return null|SignInControllerInterface
+     * @return null|UserSignInItemInterface
      */
     public function get($name)
     {
-        $alias = "tfy.user.signin.{$name}";
-
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
+        if (isset($this->items[$name])) :
+            return $this->items[$name];
+        else :
+            return null;
         endif;
-
-        return null;
     }
 
     /**
