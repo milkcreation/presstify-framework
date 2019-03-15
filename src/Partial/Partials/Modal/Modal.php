@@ -2,6 +2,7 @@
 
 namespace tiFy\Partial\Partials\Modal;
 
+use Closure;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Partial\Modal as ModalContract;
 use tiFy\Partial\PartialController;
@@ -11,26 +12,26 @@ class Modal extends PartialController implements ModalContract
     /**
      * Liste des attributs de configuration.
      * @var array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
-     *      @var array $options {
+     * @var string $before Contenu placé avant.
+     * @var string $after Contenu placé après.
+     * @var array $attrs Attributs de balise HTML.
+     * @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @var array $options {
      *          Liste des options d'affichage.
      *      }
-     *      @var bool $animation Activation de l'animation.
-     *      @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full|flex.
-     *      @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de
+     * @var bool $animation Activation de l'animation.
+     * @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full|flex.
+     * @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de
      *                                                      caractère à afficher ou booléen pour activer désactiver ou
      *                                                      fonction/méthode d'affichage.
-     *      @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou
+     * @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou
      *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
-     *      @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen
+     * @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen
      *                                      pour activer désactiver ou fonction/méthode d'affichage.
-     *      @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
+     * @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
      *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
-     *      @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
-     *      @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
+     * @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
+     * @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
      *                                   attributs de récupération Ajax
      * }
      */
@@ -97,7 +98,7 @@ class Modal extends PartialController implements ModalContract
         if ($this->get('animation')) :
             $class .= ' fade';
         endif;
-        if (!$this->get('attrs.id')) :
+        if ( ! $this->get('attrs.id')) :
             $this->set('attrs.id', 'Modal-' . $this->getId());
         endif;
 
@@ -125,56 +126,35 @@ class Modal extends PartialController implements ModalContract
         endforeach;
 
         if ($backdrop_close = $this->get('backdrop_close')) :
-            $backdrop_close = $this->isCallable($backdrop_close)
-                ? call_user_func($this->get('backdrop_close'), $this->all())
-                : (
-                is_string($backdrop_close)
-                    ? $backdrop_close
-                    : $this->viewer('backdrop_close', $this->all())
-                );
+            $backdrop_close = $backdrop_close instanceof Closure
+                ? call_user_func($backdrop_close, $this->all())
+                : (is_string($backdrop_close) ? $backdrop_close : $this->viewer('backdrop_close', $this->all()));
             $this->set('backdrop_close', $backdrop_close);
         endif;
 
         if ($body = $this->get('body')) :
-            $body = $this->isCallable($body)
-                ? call_user_func($this->get('body'), $this->all())
-                : (
-                is_string($body)
-                    ? $body
-                    : $this->viewer('body', $this->all())
-                );
+            $body = $body instanceof Closure
+                ? call_user_func($body, $this->all())
+                : (is_string($body) ? $body : $this->viewer('body', $this->all()));
             $this->set('body', $body);
         endif;
 
         if ($footer = $this->get('footer')) :
-            $footer = $this->isCallable($footer)
-                ? call_user_func($this->get('footer'), $this->all())
-                : (
-                is_string($footer)
-                    ? $footer
-                    : $this->viewer('footer', $this->all())
-                );
+            $footer = $footer instanceof Closure
+                ? call_user_func($footer, $this->all())
+                : (is_string($footer) ? $footer : $this->viewer('footer', $this->all()));
             $this->set('footer', $footer);
         endif;
 
         if ($header = $this->get('header')) :
-            $header = $this->isCallable($header)
+            $header = $header instanceof Closure
                 ? call_user_func($this->get('header'), $this->all())
-                : (
-                is_string($header)
-                    ? $header
-                    : $this->viewer('header', $this->all())
-                );
-
+                : (is_string($header) ? $header : $this->viewer('header', $this->all()));
             $this->set('header', $header);
         endif;
 
-        $this->set(
-            'size',
-            in_array($this->get('size'), ['lg', 'sm', 'full', 'flex'])
-                ? 'modal-' . $this->get('size')
-                : ''
-        );
+        $this->set('size', in_array($this->get('size'), ['lg', 'sm', 'full', 'flex'])
+            ? 'modal-' . $this->get('size') : '');
 
         $this->set('attrs.data-options.id', $this->getId());
 
@@ -250,6 +230,6 @@ class Modal extends PartialController implements ModalContract
      */
     public function wp_ajax()
     {
-        wp_send_json((string)$this->viewer('ajax'));
+        wp_send_json((string) $this->viewer('ajax'));
     }
 }

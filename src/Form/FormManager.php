@@ -82,6 +82,7 @@ final class FormManager implements FormManagerContract
         endif;
 
         $this->current = $form;
+
         $this->current->onSetCurrent();
 
         return $this->current;

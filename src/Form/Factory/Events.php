@@ -51,7 +51,7 @@ class Events implements FactoryEvents
      */
     public function trigger($name, $args = [])
     {
-        $name = "form.factory.events.{$this->form->name()}.{$name}";
+        $name = "form.factory.events.{$this->form()->name()}.{$name}";
 
         return call_user_func_array([events(), 'trigger'], [$name, $args]);
     }

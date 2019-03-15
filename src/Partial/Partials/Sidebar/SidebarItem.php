@@ -3,7 +3,7 @@
 namespace tiFy\Partial\Partials\Sidebar;
 
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Kernel\Tools;
+use tiFy\Support\Callback;
 
 class SidebarItem extends ParamsBag
 {
@@ -27,17 +27,14 @@ class SidebarItem extends ParamsBag
     {
         parent::parse($attrs);
 
-        $this->set(
-            'attrs.class',
-            trim(
-                sprintf(
-                    'Sidebar-item %s',
-                    $this->get('attrs.class', '')
-                        ?
-                        : ''
-                )
+        $this->set('attrs.class', trim(
+            sprintf(
+                'Sidebar-item %s',
+                $this->get('attrs.class', '')
+                    ?
+                    : ''
             )
-        );
+        ));
     }
 
     /**
@@ -49,6 +46,6 @@ class SidebarItem extends ParamsBag
     {
         $content = $this->get('content', '');
 
-        return (Tools::Functions()->isCallable($content)) ? call_user_func($content) : $content;
+        return Callback::make($content) ? : $content;
     }
 }

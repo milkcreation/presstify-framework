@@ -60,10 +60,13 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
 
     /**
      * Récupération de la liste des paramètres au format json.
+     * @see http://php.net/manual/fr/function.json-encode.php
+     *
+     * @param int $options Options d'encodage.
      *
      * @return string
      */
-    public function json();
+    public function json($options = 0);
 
     /**
      * Récupération de la liste des clés d'indexes des attributs de configuration.
@@ -71,6 +74,13 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      * @return string[]
      */
     public function keys();
+
+    /**
+     * Cartographie de donnée.
+     *
+     * @return static
+     */
+    public function map(&$value, $key);
 
     /**
      * Traitement de la liste des attributs.
@@ -110,15 +120,6 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
     public function set($key, $value = null);
 
     /**
-     * Définition de la liste des attributs.
-     *
-     * @param array $attrs Liste des attributs.
-     *
-     * @return static
-     */
-    public function setAttrs($attrs): ParamsBag;
-
-    /**
      * Insertion d'un attribut au début d'une liste d'attributs.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
@@ -134,14 +135,4 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      * @return mixed[]
      */
     public function values();
-
-    /**
-     * Traitement d'un attributs.
-     *
-     * @param mixed $value Valeur de l'attribut.
-     * @param mixed $key Clé d'indice de l'élément.
-     *
-     * @return mixed
-     */
-    public function walk($value, $key = null);
 }

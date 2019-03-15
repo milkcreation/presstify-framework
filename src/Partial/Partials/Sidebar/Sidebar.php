@@ -2,6 +2,7 @@
 
 namespace tiFy\Partial\Partials\Sidebar;
 
+use Closure;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Partial\Sidebar as SidebarContract;
 use tiFy\Partial\PartialController;
@@ -133,25 +134,14 @@ class Sidebar extends PartialController implements SidebarContract
         endforeach;
 
         $header = $this->get('header');
-        $this->set(
-            'header',
-            $this->isCallable($header)
-                ? call_user_func($header)
-                : (is_string($header) ? $header : '&nbsp;')
-        );
+        $this->set('header', $header instanceof Closure
+            ? call_user_func($header) : (is_string($header) ? $header : '&nbsp;'));
 
         $footer = $this->get('footer');
-        $this->set(
-            'footer',
-            $this->isCallable($footer)
-                ? call_user_func($footer)
-                : (is_string($footer) ? $footer : '&nbsp;')
-        );
+        $this->set('footer', $footer instanceof Closure
+            ? call_user_func($footer) : (is_string($footer) ? $footer : '&nbsp;'));
 
-        $this->set(
-            'items',
-            (new Collection($items))->sortBy('position')->all()
-        );
+        $this->set('items', (new Collection($items))->sortBy('position')->all());
     }
 
     /**

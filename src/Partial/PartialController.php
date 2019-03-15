@@ -2,11 +2,11 @@
 
 namespace tiFy\Partial;
 
+use Closure;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Partial\PartialController as PartialControllerContract;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Kernel\Tools;
 use tiFy\Support\HtmlAttrs;
 
 abstract class PartialController extends ParamsBag implements PartialControllerContract
@@ -61,7 +61,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __toString()
     {
@@ -69,17 +69,17 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function after()
     {
         $after = $this->get('after', '');
 
-        echo $this->isCallable($after) ? call_user_func($after) : $after;
+        echo $after instanceof Closure ? call_user_func($after) : $after;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function attrs()
     {
@@ -87,17 +87,17 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function before()
     {
         $before = $this->get('before', '');
 
-        echo $this->isCallable($before) ? call_user_func($before) : $before;
+        echo $before instanceof Closure ? call_user_func($before) : $before;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -105,17 +105,17 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function content()
     {
         $content = $this->get('content', '');
 
-        echo $this->isCallable($content) ? call_user_func($content) : $content;
+        echo $content instanceof Closure ? call_user_func($content) : $content;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function display()
     {
@@ -123,7 +123,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -131,7 +131,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getId()
     {
@@ -139,7 +139,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIndex()
     {
@@ -147,15 +147,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function isCallable($var)
-    {
-        return Tools::Functions()->isCallable($var);
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
@@ -165,7 +157,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parseDefaults()
     {
@@ -195,7 +187,7 @@ abstract class PartialController extends ParamsBag implements PartialControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function viewer($view = null, $data = [])
     {

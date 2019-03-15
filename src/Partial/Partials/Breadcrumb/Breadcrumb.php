@@ -133,8 +133,6 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
             return $part;
         elseif (is_object($part) && is_string((string) $part)) :
             return (string)$part;
-        elseif ($this->isCallable($part)) :
-
         elseif (is_array($part)) :
             $defaults = [
                 'class'     => 'tiFyPartial-BreadcrumbItem',

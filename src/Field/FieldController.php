@@ -2,6 +2,7 @@
 
 namespace tiFy\Field;
 
+use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use tiFy\Contracts\Field\FieldController as FieldControllerContract;
@@ -74,7 +75,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     {
         $after = $this->get('after', '');
 
-        echo is_callable($after) ? call_user_func($after) : $after;
+        echo $after instanceof Closure ? call_user_func($after) : $after;
     }
 
     /**
@@ -92,7 +93,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     {
         $before = $this->get('before', '');
 
-        echo $this->isCallable($before) ? call_user_func($before) : $before;
+        echo $before instanceof Closure ? call_user_func($before) : $before;
     }
 
     /**
@@ -110,7 +111,7 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     {
         $content = $this->get('content', '');
 
-        echo $this->isCallable($content) ? call_user_func($content) : $content;
+        echo $content instanceof Closure ? call_user_func($content) : $content;
     }
 
     /**
@@ -162,14 +163,6 @@ abstract class FieldController extends ParamsBag implements FieldControllerContr
     public function getValue()
     {
         return $this->get('value', null);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isCallable($var)
-    {
-        return Tools::Functions()->isCallable($var);
     }
 
     /**

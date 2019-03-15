@@ -72,12 +72,9 @@ if (!function_exists('assets')) :
      *
      * @return Assets
      */
-    function assets()
+    function assets(): Assets
     {
-        /** @var Assets $factory */
-        $factory = app('assets');
-
-        return $factory;
+        return app('assets');
     }
 endif;
 
@@ -263,7 +260,7 @@ if (!function_exists('logger')) :
      *
      * @return Logger
      */
-    function logger()
+    function logger(): Logger
     {
         return app('logger');
     }
@@ -305,12 +302,9 @@ if (!function_exists('params')) :
      *
      * @return ParamsBag
      */
-    function params($params = [])
+    function params($params = []): ParamsBag
     {
-        /** @var ParamsBag $factory */
-        $factory = app('params.bag', [$params]);
-
-        return $factory;
+        return app('params.bag', [$params]);
     }
 endif;
 
@@ -539,7 +533,7 @@ if (! function_exists('url')) {
      *
      * @return Url
      */
-    function url()
+    function url(): Url
     {
         return app()->get('url');
     }
@@ -553,7 +547,7 @@ if (! function_exists('url_factory')) {
      *
      * @return UrlFactory
      */
-    function url_factory($url)
+    function url_factory($url): UrlFactory
     {
         return app()->get('url.factory', [$url]);
     }
@@ -565,7 +559,7 @@ if (! function_exists('validator')) {
      *
      * @return Validator
      */
-    function validator()
+    function validator(): Validator
     {
         return app('validator');
     }
@@ -594,11 +588,25 @@ if (!function_exists('view')) :
     }
 endif;
 
+if (!function_exists('wordpress')) :
+    /**
+     * Instance du controleur d'environnement Wordpress.
+     *
+     * @return WpManager
+     */
+    function wordpress(): WpManager
+    {
+        return app()->get('wp');
+    }
+endif;
+
 if (!function_exists('wp_env')) :
     /**
      * Instance du controleur d'environnement Wordpress.
      *
      * @return WpManager
+     *
+     * @deprecated
      */
     function wp_env()
     {

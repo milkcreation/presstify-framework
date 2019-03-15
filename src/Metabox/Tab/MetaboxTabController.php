@@ -2,12 +2,11 @@
 
 namespace tiFy\Metabox\Tab;
 
-use Illuminate\Support\Collection;
+use Closure;
 use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Kernel\Tools;
 
 class MetaboxTabController extends ParamsBag
 {
@@ -112,14 +111,6 @@ class MetaboxTabController extends ParamsBag
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function isCallable($var)
-    {
-        return Tools::Functions()->isCallable($var);
-    }
-
-    /**
      * Traitement de la liste des onglets de la boîte de saisie.
      *
      * @return array
@@ -171,7 +162,7 @@ class MetaboxTabController extends ParamsBag
             ->render(
                 'display',
                 [
-                    'title' => $this->isCallable($title) ? call_user_func_array($title, $args) : $title,
+                    'title' => $title instanceof Closure ? call_user_func_array($title, $args) : $title,
                     'items' => call_user_func_array([$this, 'parseItems'], $args)
                 ]
             );
