@@ -4,6 +4,8 @@
  */
 namespace tiFy\Core\Forms\Addons\AjaxSubmit;
 
+use tiFy\Core\Forms\Forms;
+
 class AjaxSubmit extends \tiFy\Core\Forms\Addons\Factory
 {
     /**
@@ -15,13 +17,13 @@ class AjaxSubmit extends \tiFy\Core\Forms\Addons\Factory
     {        
         // Définition de l'identifiant
         $this->ID = 'ajax_submit';
-        
+
         // Définition des fonctions de callback
         $this->callbacks = [
             'handle_redirect'           => ['function' => [$this, 'cb_handle_redirect'], 'order' => 99],
             'form_after_display'        => [$this, 'cb_form_after_display']
         ];
-        
+
         add_action('wp_ajax_tify_forms_ajax_submit', [$this, 'wp_ajax']);
         add_action('wp_ajax_nopriv_tify_forms_ajax_submit', [$this, 'wp_ajax']);
 
@@ -77,7 +79,7 @@ class AjaxSubmit extends \tiFy\Core\Forms\Addons\Factory
                 // Définition des variables
                 var ID          = '<?php echo $ID;?>',
                     $wrapper    = $( '#tiFyForm-'+ ID );
-                                
+
                 // Déclaration des événements
                 /// A l'intialisation des données de la requête Ajax
                 $( document ).on( 'tify_forms.ajax_submit.init', tify_forms_ajax_submit_init );
@@ -89,12 +91,13 @@ class AjaxSubmit extends \tiFy\Core\Forms\Addons\Factory
                 $( document ).on( 'tify_forms.ajax_submit.after', tify_forms_ajax_submit_after );    
 
                 // Requête Ajax
-                $( document ).on( 'submit', '<?php echo $html_id;?>', function(e){            
+                $( document ).on( 'submit', '<?php echo $html_id;?>', function(e){
             		e.stopPropagation();
                 	e.preventDefault();         
 
                     // Formatage des données
                     var data = new FormData(this);
+                    data.append( '_form_id', ID );
                     /// Action Ajax 
                     data.append( 'action', 'tify_forms_ajax_submit' );
                     /// Traitement des fichiers
@@ -118,8 +121,8 @@ class AjaxSubmit extends \tiFy\Core\Forms\Addons\Factory
                         beforeSend      : function(){
                             $wrapper.trigger( 'tify_forms.ajax_submit.before', ID );
                         },
-                        success         : function( resp ){                               
-                            $wrapper.trigger( 'tify_forms.ajax_submit.response', resp, ID );                                 
+                        success         : function( resp ){
+                            $wrapper.trigger( 'tify_forms.ajax_submit.response', resp, ID );
                         },
                         complete        : function(){
                             $wrapper.trigger( 'tify_forms.ajax_submit.after', ID );
@@ -139,10 +142,12 @@ class AjaxSubmit extends \tiFy\Core\Forms\Addons\Factory
     {
         remove_filter(current_filter(), __METHOD__);
         do_action( 'tify_form_loaded' );
-        
-        $data = array( 'html' => $this->form()->display() );
-        
-        if( $this->form()->handle()->hasError() ) :
+
+        $form = Forms::get($_REQUEST['_form_id']);
+
+        $data = array( 'html' => $form->display() );
+
+        if($form->getForm()->handle()->hasError()) :
             wp_send_json_error( $data );
         else :
             wp_send_json_success( $data );
