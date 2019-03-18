@@ -1,3 +1,5 @@
+"use strict";
+
 var tify_control_media_image_frame;
 
 jQuery(document).ready(function ($) {

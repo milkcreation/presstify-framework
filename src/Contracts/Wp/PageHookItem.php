@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Wp;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\Routing\Route;
 use WP_Post;
 
@@ -21,6 +21,13 @@ interface PageHookItem extends ParamsBag
      * @return string
      */
     public function getName();
+
+    /**
+     * Récupération du chemin relatif vers la page d'affichage du post associé.
+     *
+     * @return string
+     */
+    public function getPath();
 
     /**
      * Récupération du type d'objet Wordpress.

@@ -1,6 +1,5 @@
-/** DEPS */
-/** Moment */
-import 'moment/moment';
+import jQuery from "jquery";
+import moment from "moment/moment";
 
 /** CSS */
 import './css/styles.css';

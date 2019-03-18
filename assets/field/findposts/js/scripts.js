@@ -1,3 +1,9 @@
+/* globals tify, attachMediaBoxL10n */
+
+"use strict";
+
+let scripts;
+
 /**
  * @name : Findpost
  * @description : Pop-in de récupération de post
@@ -15,7 +21,7 @@
             var $checked = $( '#find-posts-response .found-posts .found-radio > input:checked' );
             
             if( $checked.length )
-                $.post( tify_ajaxurl, { action : 'tify_get_post_permalink', post_id : $checked.val() }, function( resp ){
+                $.post( tify.ajax_url, { action : 'tify_get_post_permalink', post_id : $checked.val() }, function( resp ){
                     $( $( '#affected' ).val() ).val( resp );
                     findPosts.close();
                 });
@@ -26,11 +32,10 @@
         });
     });
  */
-var scripts;
 (function ($) {
     scripts = {
         open: function (af_name, af_val) {
-            var overlay = $('.ui-find-overlay');
+            let overlay = $('.ui-find-overlay');
 
             if (overlay.length === 0) {
                 $('body').append('<div class="ui-find-overlay"></div>');
@@ -46,7 +51,7 @@ var scripts;
             $('#find-posts').show();
 
             $('#find-posts-input').focus().keyup(function (event) {
-                if (event.which == 27) {
+                if (event.which === 27) {
                     scripts.close();
                 } // close on Escape
             });
@@ -70,50 +75,55 @@ var scripts;
         },
 
         send: function () {
-            var post = {
+            let post = {
                     ps: $('#find-posts-input').val(),
                     action: $('[name="found_action"]', '#find-posts').length ? $('[name="found_action"]', '#find-posts').val() : 'find_posts',
                     query_args: $('[name="query_args"]', '#find-posts').length ? JSON.parse(decodeURIComponent($('[name="query_args"]', '#find-posts').val())) : {},
                     _ajax_nonce: $('#_ajax_nonce').val()
                 },
-                post_type = $('[name="post_type"]', '#find-posts').val() ? $('[name="post_type"]', '#find-posts').val() : 'any',
-                spinner = $('.find-box-search .spinner');
-            post.query_args = $.extend(post.query_args, {post_type: post_type});
-            spinner.show();
+                post_type = $('[name="post_type"]', '#find-posts').val() ?
+                    $('[name="post_type"]', '#find-posts').val() : 'any',
+                $response = $('#find-posts-response'),
+                $spinner = $('.find-box-search .spinner');
 
-            $.ajax(tify_ajaxurl, {
+
+            post.query_args = $.extend(post.query_args, {post_type: post_type});
+            $spinner.show();
+
+            $.ajax(tify.ajax_url, {
                 type: 'POST',
                 data: post,
                 dataType: 'json'
             }).always(function () {
-                spinner.hide();
+                $spinner.hide();
             }).done(function (x) {
                 if (!x.success) {
-                    $('#find-posts-response').text(attachMediaBoxL10n.error);
+                    $response.text(attachMediaBoxL10n.error);
                 }
 
-                $('#find-posts-response').html(x.data);
+                $response.html(x.data);
             }).fail(function () {
-                $('#find-posts-response').text(attachMediaBoxL10n.error);
+                $response.text(attachMediaBoxL10n.error);
             });
         }
     };
 
     $(document).ready(function () {
-        $('#find-posts-submit').click(function (event) {
-            if (!$('#find-posts-response input[type="radio"]:checked').length)
+        $('#find-posts-submit').on('click', function (event) {
+            if (!$('#find-posts-response input[type="radio"]:checked').length) {
                 event.preventDefault();
+            }
         });
         $('#find-posts .find-box-search :input').keypress(function (event) {
-            if (13 == event.which) {
+            if (13 === event.which) {
                 scripts.send();
                 return false;
             }
         });
-        $('#find-posts-search').click(scripts.send);
-        $('#find-posts-post_type').change(scripts.send);
-        $('#find-posts-close').click(scripts.close);
-        $('#doaction, #doaction2').click(function (event) {
+        $('#find-posts-search').on('click', scripts.send);
+        $('#find-posts-post_type').on('change', scripts.send);
+        $('#find-posts-close').on('click', scripts.close);
+        $('#doaction, #doaction2').on('click',function (event) {
             $('select[name^="action"]').each(function () {
                 if ($(this).val() === 'attach') {
                     event.preventDefault();
@@ -130,11 +140,13 @@ var scripts;
 })(jQuery);
 
 jQuery(document).ready(function ($) {
-    $('#find-posts-submit').click(function (e) {
+    $('#find-posts-submit').on('click', function (e) {
         e.preventDefault();
-        var $checked = $('#find-posts-response .found-posts .found-radio > input:checked');
+
+        let $checked = $('#find-posts-response .found-posts .found-radio > input:checked');
+
         if ($checked.length) {
-            $.post(tify_ajaxurl, {action: 'field_findposts_post_permalink', post_id: $checked.val()}, function (resp) {
+            $.post(tify.ajax_url, {action: 'field_findposts_post_permalink', post_id: $checked.val()}, function (resp) {
                 $($('#affected').val()).val(resp);
                 scripts.close();
             });
@@ -143,6 +155,7 @@ jQuery(document).ready(function ($) {
         }
         return false;
     });
+
     $(document).on('click', '[aria-control="findposts"] > button', function() {
         scripts.open('target', '#' + $('.tiFyField-Findposts', $(this).closest('[aria-control="findposts"]')).attr('id'));
     });

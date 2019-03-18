@@ -1,19 +1,23 @@
+"use strict";
+
 jQuery(document).ready(function ($) {
     /** Détection de l'élément dans la zone visible */
     function inViewport($ele) {
-        var offset = $ele.offset();
-        if (!offset)
-            return false;
+        let offset = $ele.offset();
 
-        var lBound = $(window).scrollTop(),
+        if (!offset) {
+            return false;
+        }
+
+        let lBound = $(window).scrollTop(),
             uBound = lBound + $(window).height(),
             top = $ele.offset().top,
             bottom = top + $ele.outerHeight(true);
 
-        return (top > lBound && top < uBound)
-            || (bottom > lBound && bottom < uBound)
-            || (lBound >= top && lBound <= bottom)
-            || (uBound >= top && uBound <= bottom);
+        return (top > lBound && top < uBound) ||
+            (bottom > lBound && bottom < uBound) ||
+            (lBound >= top && lBound <= bottom) ||
+            (uBound >= top && uBound <= bottom);
     }
 
     /** Récupération de la cible */
@@ -29,7 +33,8 @@ jQuery(document).ready(function ($) {
 
     /** Vérifie si la cible est atteinte au scroll */
     function isScrollTargetReached($ele) {
-        var value;
+        let value;
+
         switch (typeof $ele) {
             case 'object':
                 value = inViewport($ele);
@@ -47,14 +52,14 @@ jQuery(document).ready(function ($) {
     /** Lancement des animations au scroll */
     $(window).scroll(function () {
         // Animations tiFy
-        $('.tiFy-animate--scroll:not(.tiFy-isAnimated)').each(function (index) {
+        $('.tiFy-animate--scroll:not(.tiFy-isAnimated)').each(function () {
             var $target = getScrollTarget($(this));
             if (isScrollTargetReached($target)) {
                 $(this).addClass('tiFy-isAnimated');
             }
         });
         // Animations Animate.css
-        $('.animateCSS-scroll:not(.animated)').each(function (index) {
+        $('.animateCSS-scroll:not(.animated)').each(function () {
             var $target = getScrollTarget($(this)),
                 animation = (typeof $(this).data('scroll-animation') === 'string') ? $(this).data('scroll-animation') : '';
 

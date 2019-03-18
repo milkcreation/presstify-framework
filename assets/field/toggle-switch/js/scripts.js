@@ -1,3 +1,5 @@
+"use strict";
+
 jQuery(document).ready(function ($) {
     $(document).on('change', '.tiFyField-toggleSwitchRadio', function (e) {
         $(this)

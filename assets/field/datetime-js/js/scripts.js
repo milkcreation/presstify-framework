@@ -1,3 +1,5 @@
+"use strict";
+
 jQuery(document).ready(function ($) {
     $(document)
         .on('change.tify.fields.ajax_date', '[aria-control="datetime_js"]', function (e) {

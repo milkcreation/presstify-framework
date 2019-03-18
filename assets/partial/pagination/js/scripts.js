@@ -1,3 +1,7 @@
+/* globals tify */
+
+"use strict";
+
 /**
  * @see https://learn.jquery.com/plugins/stateful-plugins-with-widget-factory/
  * @see https://api.jqueryui.com/jquery.widget
@@ -40,7 +44,7 @@
                     self.target.trigger('tify_control.scroll_paginate.loading', $(this));
 
                     self.xhr = $.post(
-                        tify_ajaxurl,
+                        tify.ajax_url,
                         {
                             action: o.ajax_action,
                             _ajax_nonce: o.ajax_nonce,
@@ -48,7 +52,7 @@
                             offset: offset
                         }
                     )
-                        .done(function(data, textStatus, jqXHR){
+                        .done(function (data, textStatus, jqXHR) {
                             self.target.append(data.html);
                             self.target.trigger('tify_control.scroll_paginate.item_added', data.html);
 
@@ -57,7 +61,7 @@
                                 $(this).addClass('tiFyCoreControl-ScrollPaginateComplete tiFyCoreControl-ScrollPaginateComplete--handler');
                             }
                         })
-                        .then(function(data, textStatus, jqXHR ){
+                        .then(function (data, textStatus, jqXHR) {
                             self.target.removeClass('tiFyCoreControl-ScrollPaginateLoading tiFyCoreControl-ScrollPaginateLoading--target');
                             $(this).removeClass('tiFyCoreControl-ScrollPaginateLoading tiFyCoreControl-ScrollPaginateLoading--handler');
 
@@ -88,23 +92,23 @@
                     top = offset.top,
                     bottom = top + this.element.outerHeight(true);
 
-                return (top > lBound && top < uBound)
-                    || (bottom > lBound && bottom < uBound)
-                    || (lBound >= top && lBound <= bottom)
-                    || (uBound >= top && uBound <= bottom);
+                return (top > lBound && top < uBound) ||
+                    (bottom > lBound && bottom < uBound) ||
+                    (lBound >= top && lBound <= bottom) ||
+                    (uBound >= top && uBound <= bottom);
             },
-            _listenEvents: function() {
+            _listenEvents: function () {
                 this._on(this.document, {
-                    scroll: function(event) {
+                    scroll: function (event) {
                         if ((this.xhr === undefined) && !this.element.hasClass('tiFyCoreControl-ScrollPaginateComplete') && this._isScrolledIntoView()) {
                             this.element.trigger('click');
                         }
                     }
                 });
             }
-    });
+        });
 })(jQuery, document, window);
 
-jQuery(document).ready(function($){
+jQuery(document).ready(function ($) {
     $('[aria-control="scroll_paginate"]').tifyPagination();
 });

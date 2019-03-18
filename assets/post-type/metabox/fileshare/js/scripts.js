@@ -1,4 +1,4 @@
-/* globals wp*/
+/* globals wp */
 
 "use strict";
 

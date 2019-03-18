@@ -1,3 +1,7 @@
+/* globals tify */
+
+"use strict";
+
 jQuery(document).ready(function ($) {
     /**
      * Sauvegarde de l'onglet courant
@@ -6,7 +10,7 @@ jQuery(document).ready(function ($) {
         var key = $(this).data('key');
 
         $.ajax({
-            'url':      tify_ajaxurl,
+            'url':      tify.ajax_url,
             'type' :    'POST',
             'data' :    {
                 action :        'tify_partial_navtabs',

@@ -1,3 +1,7 @@
+/* globals tify */
+
+"use strict";
+
 jQuery(document).ready(function ($) {
     $('.tiFyTabooxRelatedPosts-suggest').each(function () {
         $(this).on('autocompleteselect', function (event, ui) {
@@ -24,7 +28,7 @@ jQuery(document).ready(function ($) {
             }
 
             $.ajax({
-                url: tify_ajaxurl,
+                url: tify.ajax_url,
                 data: {action: action, post_id: post_id, name: name, order: count},
                 success: function (resp) {
                     $('.tiFyTabooxRelatedPosts-list', $closest).append(resp);
