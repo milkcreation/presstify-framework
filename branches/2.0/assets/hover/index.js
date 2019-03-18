@@ -1,3 +1,3 @@
 /** DEPS */
 /** Hover Css */
-import '~/hover.css/scss/hover.scss';
+import 'hover.css/scss/hover.scss';

@@ -1,3 +1,5 @@
+"use strict";
+
 jQuery(document).ready(function ($) {
     // Désactivation des actions de masquage des colonnes natif de Wordpress
     $('.hide-column-tog').unbind();

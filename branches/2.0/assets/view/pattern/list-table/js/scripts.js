@@ -1,4 +1,9 @@
+/* globals tify, tiFyUiAdminListTablePreviewItem */
+
+"use strict";
+
 jQuery(document).ready(function($){
+
     var i18n = tiFyUiAdminListTablePreviewItem;
 
     $(document).on( 'click', '#the-list .row-actions .preview_item a', function(e){
@@ -60,7 +65,7 @@ jQuery(document).ready(function($){
 
             // Récupération et affichage de la prévisualisation de l'élément
             $.post(
-                tify_ajaxurl,
+                tify.ajax_url,
                 data,
                 function(resp){
                     $('.Item-previewContent', $preview).html(resp);

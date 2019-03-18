@@ -179,6 +179,14 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritdoc
      */
+    public function getPath()
+    {
+        return rtrim(str_replace(home_url(), '', $this->getPermalink()), '/');
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getPermalink()
     {
         return get_permalink($this->getId());

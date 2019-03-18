@@ -1,8 +1,10 @@
+"use strict";
+
 var taboox_video_gallery_src_frame, taboox_video_gallery_poster_frame;
 
 jQuery(document).ready(function ($) {
     $('.tiFyTabMetaboxPostTypeVideoGallery-add').click(function (e) {
-        e.preventDefault()
+        e.preventDefault();
 
         var $list = $(this).prev(),
             $spinner = $(this).next(),

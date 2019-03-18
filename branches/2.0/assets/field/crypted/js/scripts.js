@@ -1,5 +1,8 @@
-jQuery(document).ready(function ($) {
+/* globals tify */
 
+"use strict";
+
+jQuery(document).ready(function ($) {
     $(document).on('click', '[aria-control="crypted"] [aria-control="toggle"]', function (e) {
         e.preventDefault();
 
@@ -8,12 +11,12 @@ jQuery(document).ready(function ($) {
             $input = $('[aria-control="input"]', $closest),
             cypher = $input.attr('aria-cypher');
 
-        if ($closest.attr('aria-hide') == 'true') {
+        if ($closest.attr('aria-hide') === 'true') {
             $closest.addClass('loading');
             $input.prop('disabled', true);
 
             $.post(
-                tify_ajaxurl,
+                tify.ajax_url,
                 {
                     action: 'tify_field_crypted_decrypt',
                     _ajax_nonce : o._ajax_nonce,
@@ -62,7 +65,7 @@ jQuery(document).ready(function ($) {
         $closest.addClass('load');
         delay(function () {
             xhr = $.post(
-                tify_ajaxurl,
+                tify.ajax_url,
                 {
                     action: 'tiFyControlCryptedData_encrypt',
                     value: value,
@@ -91,7 +94,7 @@ jQuery(document).ready(function ($) {
         $input.prop('disabled', true);
 
         $.post(
-            tify_ajaxurl,
+            tify.ajax_url,
             {
                 action: 'tiFyControlCryptedData_generate',
                 generate_cb: $closest.data('generate_cb'),

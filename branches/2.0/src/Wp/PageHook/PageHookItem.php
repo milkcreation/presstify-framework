@@ -2,9 +2,10 @@
 
 namespace tiFy\Wp\PageHook;
 
+use Closure;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\Wp\PageHookItem as PageHookItemContract;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 use tiFy\Wp\Query\QueryPost;
 use WP_Post;
 
@@ -15,42 +16,6 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      * @var string
      */
     protected $name = '';
-
-    /**
-     * Liste des attributs de configuration.
-     * @var array {
-     *      Liste des attributs de configuration.
-     *
-     * @var string $option_name Nom de qualification d'enregistrement en base de donnée.
-     * @var string $title Intitulé de qualification.
-     * @var string $desc Texte de description.
-     * @var string $object_type Type d'objet Wordpress. post|taxonomy @todo
-     * @var string $object_name Nom de qualification de l'objet Wordpress. (ex. post|page|category|tag ...)
-     * @var int $id Identifiant de qualification de la page d'accroche associée.
-     * @var string list_order Ordre d'affichage de la liste de selection de l'interface d'administration
-     * @var string show_option_none Intitulé de la liste de selection de l'interface d'administration lorsqu'aucune
-     *                              relation n'a été établie.
-     * @var boolean|string $display_post_states Affichage du statut dans la page liste de l'interface d'administration.
-     * @var boolean|string $edit_form_notice Affichage d'un message de notification dans la page d'édition de l'élément
-     *                                       de l'interface d'administration.
-     * @var string $rewrite
-     * @var callable $route
-     * }
-     */
-    protected $attributes = [
-        'option_name'         => '',
-        'title'               => '',
-        'desc'                => '',
-        'object_type'         => 'post',
-        'object_name'         => 'page',
-        'id'                  => 0,
-        'listorder'           => 'menu_order, title',
-        'show_option_none'    => '',
-        'display_post_states' => true,
-        'edit_form_notice'    => true,
-        'rewrite'             => '',
-        'route'               => false
-    ];
 
     /**
      * Instance du post associé.
@@ -75,8 +40,6 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     public function __construct($name, $attrs = [])
     {
         $this->name = $name;
-
-        parent::__construct($attrs);
 
         add_filter('display_post_states', function (array $post_states, WP_Post $post) {
             if (($label = $this->get('display_post_states')) && $this->is($post)) :
@@ -105,6 +68,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
 
                     $post_type = $matches[1];
 
+                    $wp_post_types[$post_type]->has_archive = true;
                     $wp_post_types[$post_type]->rewrite = false;
 
                     add_rewrite_rule(
@@ -145,11 +109,12 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
         }, 999999);
 
         add_action('wp', function () {
-            if (($route = $this->get('route')) && is_callable($route) && $this->post()) :
-                $path = str_replace(home_url('/'), '', $this->post()->getPermalink());
-                $this->route = router()->get(rtrim($path, '/') . '[/page/{page:\d+}]', $route);
+            if (($route = $this->get('route')) && is_callable($route) && $this->exists()) :
+                $this->route = router()->get($this->getPath() . '[/page/{page:\d+}]', $route);
             endif;
         }, 0);
+
+        $this->set($attrs)->parse();
     }
 
     /**
@@ -158,9 +123,18 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     public function defaults()
     {
         return [
-            'option_name'      => "page_hook_{$this->name}",
-            'title'            => $this->name,
-            'show_option_none' => __('Aucune page choisie', 'tify'),
+            'id'                  => 0,
+            'desc'                => '',
+            'display_post_states' => true,
+            'edit_form_notice'    => true,
+            'listorder'           => 'menu_order, title',
+            'object_type'         => 'post',
+            'object_name'         => 'page',
+            'option_name'         => "page_hook_{$this->name}",
+            'rewrite'             => '',
+            'route'               => false,
+            'show_option_none'    => __('Aucune page choisie', 'tify'),
+            'title'               => $this->name
         ];
     }
 
@@ -175,9 +149,25 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     /**
      * @inheritdoc
      */
+    public function getDescription()
+    {
+        return $this->desc instanceof Closure ? call_user_func($this->desc) : $this->desc;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPath()
+    {
+        return $this->exists() ? $this->post()->getPath() : '';
     }
 
     /**
@@ -209,7 +199,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      */
     public function getTitle()
     {
-        return $this->get('title');
+        return $this->title instanceof Closure ? call_user_func($this->title) : $this->title;
     }
 
     /**

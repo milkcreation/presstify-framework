@@ -1,7 +1,5 @@
 "use strict";
 
-import jQuery from 'jquery';
-
 jQuery(document).ready(function($) {
     $(document).on('click', '[data-control="notice"] [data-toggle="notice.accept"]', function(e){
         e.preventDefault();

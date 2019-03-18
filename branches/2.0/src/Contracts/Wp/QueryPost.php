@@ -136,6 +136,13 @@ interface QueryPost extends ParamsBag
     public function getParentId();
 
     /**
+     * Récupération du chenmin relatif vers l'affichage du post dans l'interface utilisateur.
+     *
+     * @return string
+     */
+    public function getPath();
+
+    /**
      * Récupération du permalien d'affichage du post dans l'interface utilisateur.
      *
      * @return string

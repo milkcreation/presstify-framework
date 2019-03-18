@@ -1,3 +1,5 @@
+"use strict";
+
 var tiFyFieldMediaFileFrame;
 
 jQuery(document).ready(function ($) {

@@ -1,3 +1,5 @@
+"use strict";
+
 var tify_taboox_image_gallery_frame;
 
 jQuery(document).ready(function ($) {

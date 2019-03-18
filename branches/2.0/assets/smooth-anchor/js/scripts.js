@@ -1,15 +1,20 @@
+"use strict";
+
 jQuery(document).ready(function($) {
     $(document).on('click', "[data-smooth-anchor]", function(e) {
         e.preventDefault();
 
+        let target;
+
         if($($(this).data('smooth-anchor')).length){
-            var target = $(this).data('smooth-anchor');
+            target = $(this).data('smooth-anchor');
         } else {
-            var target = '#'+ $(this).attr('href').split("#")[1];
+            target = '#'+ $(this).attr('href').split("#")[1];
         }
 
-        if(!$(target).length)
+        if(!$(target).length) {
             return;
+        }
 
         var offset = $(target).offset();
 
