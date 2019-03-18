@@ -81,7 +81,7 @@ class ToggleSwitch extends AbstractFactory
     {
         // Pré-traitement des attributs de configuration
         $args = parent::parse($args);
-
+        
         // Traitement des attributs de configuration
         $defaults = [
             'before'          => '',
@@ -134,7 +134,7 @@ class ToggleSwitch extends AbstractFactory
                         ],
                         'name'    => $this->getName(),
                         'value'   => $this->get('value_on'),
-                        'checked' => $this->getValue()
+                        'checked' => $this->get('checked')
                     ],
                     true
                 );
@@ -158,7 +158,7 @@ class ToggleSwitch extends AbstractFactory
                         ],
                         'name'    => $this->getName(),
                         'value'   => $this->get('value_off'),
-                        'checked' => $this->getValue()
+                        'checked' => $this->get('checked')
                     ],
                     true
                 );

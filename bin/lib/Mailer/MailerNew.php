@@ -169,7 +169,7 @@ class MailerNew
         // Traitement des arguments de contact
         foreach( array( 'From', 'To', 'ReplyTo', 'Cc', 'Bcc' ) as $param ) :
             if( empty( self::${$param} ) )
-                continue; 
+                continue;
             self::${$param} = self::parseContact(self::${$param});
         endforeach;
 
@@ -238,10 +238,11 @@ class MailerNew
         /// Expéditeur  
         if( isset( self::$From ) ) :
             $phpmailer->setFrom( self::$From['email'], self::$From['name'] );
-        endif;    
-            
+        endif;
+
         /// Destinataires
         foreach( (array) self::$To as $contact ) :
+
             $phpmailer->addAddress( $contact['email'], $contact['name'] );
         endforeach;
 
@@ -365,14 +366,14 @@ class MailerNew
     public static function parseContact( $contact, $depth = 0 )
     {
         $output = "";
-        
+
         if( is_string( $contact ) && preg_match( '/,/', $contact ) ) :
             $contact  = array_map( 'trim', explode( ',', $contact ) );
-        endif;       
-        
-        if( is_string( $contact )  ) : 
+        endif;
+
+        if( is_string( $contact )  ) :
             $contact = self::parseContactString( $contact );
-        
+
             return ! $depth ? array( $contact ) : $contact;
         elseif( is_array( $contact ) ) :
             // Tableau indexé
@@ -381,28 +382,34 @@ class MailerNew
                 if( is_string( $contact[0] ) && is_email( $contact[0] ) ) :
                     if( count( $contact ) === 1 ) :
                         $contact = array( 'email' => $contact[0], 'name' => null );
-        
+
                         return ! $depth ? array( $contact ) : $contact;
                     elseif( ( count( $contact ) === 2 ) && is_string( $contact[1] ) && ! is_email( $contact[1] ) ) :
                         $contact = array( 'email' => $contact[0], 'name' => $contact[1] );
-                    
+
                         return ! $depth ? array( $contact ) : $contact;
                     endif;
                 endif;
                 if( $depth < 1 ) :
                     return array_map( function( $contact ){ return self::parseContact( $contact, 1 ); }, $contact );
-                endif;    
-                
+                endif;
             // Tableau Associatif
             /// Format array( 'email' => [email], 'name' => [name] );
             elseif( isset( $contact['email'] ) && is_email( $contact['email'] ) ) :
                 if( empty( $contact['name'] ) || ! is_string( $contact['name'] ) ) :
                     $contact['name'] = null;
                 endif;
-                
+
                 return ! $depth ? array( $contact ) : $contact;
+            else :
+                $result = [];
+                foreach($contact as $c) :
+                    $result[] = self::parseContact( $c, 1 );
+                endforeach;
+
+                return $result;
             endif;
-        endif;            
+        endif;
     }
 
     /** == Traitement d'une chaine de contact == **/
