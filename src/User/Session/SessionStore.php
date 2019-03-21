@@ -6,9 +6,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
-use tiFy\Contracts\User\SessionManager;
 use tiFy\Contracts\User\SessionStore as SessionStoreContract;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 
 class SessionStore extends ParamsBag implements SessionStoreContract
 {
@@ -70,69 +69,58 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     public function __construct($name, $attrs = [])
     {
         $this->name = $name;
-        $this->cookieName = $this->getName() . "-" . COOKIEHASH;
 
-        parent::__construct([]);
+        add_action('init', function () {
+            $this->cookieName = $this->getName() . "-" . COOKIEHASH;
 
-        add_action(
-            'init',
-            function () {
-                /**
-                 * @var array $cookie {
-                 *      Attribut de session contenu dans le cookie
-                 *
-                 *      @var string|int $session_key
-                 *      @var int $session_expiration
-                 *      @var int $session_expiring
-                 *      @var string $cookie_hash
-                 * }
-                 */
-                if ($cookie = $this->getCookie()) :
-                    extract($cookie);
+            /**
+             * @var array $cookie {
+             *      Attribut de session contenu dans le cookie
+             *
+             *      @var string|int $session_key
+             *      @var int $session_expiration
+             *      @var int $session_expiring
+             *      @var string $cookie_hash
+             * }
+             */
+            if ($cookie = $this->getCookie()) :
+                extract($cookie);
 
-                    if (time() > $session_expiring) :
-                        $session_expiration = $this->nextSessionExpiration();
-                        $this->updateDbExpiration($session_key, $session_expiration);
-                    endif;
-
-                    $this->attributes = $this->getDbDatas($session_key) ? : [];
-                else :
-                    $session_key = $this->getKey();
+                if (time() > $session_expiring) :
                     $session_expiration = $this->nextSessionExpiration();
+                    $this->updateDbExpiration($session_key, $session_expiration);
                 endif;
 
-                $session_expiring = $this->nextSessionExpiring();
-                $cookie_hash = $this->getCookieHash($session_key, $session_expiration);
+                $this->attributes = $this->getDbDatas($session_key) ? : [];
+            else :
+                $session_key = $this->getKey();
+                $session_expiration = $this->nextSessionExpiration();
+            endif;
 
-                $this->session = array_merge(
-                    ['session_name' => $this->getName()],
-                    compact($this->cookieKeys)
-                );
-            }
-        );
+            $session_expiring = $this->nextSessionExpiring();
+            $cookie_hash = $this->getCookieHash($session_key, $session_expiration);
 
-        add_action(
-            'wp_loaded',
-            function () {
-                // Récupération des attributs de qualification de la session
-                $session = $this->getSession($this->cookieKeys);
+            $this->session = array_merge(['session_name' => $this->getName()], compact($this->cookieKeys));
+        });
 
-                // Définition du cookie
-                $response = new Response();
-                $response->headers->setCookie(
-                    new Cookie(
-                        $this->getCookieName(),
-                        rawurlencode(json_encode($session)),
-                        time() + 3600,
-                        ((COOKIEPATH != SITECOOKIEPATH) ? SITECOOKIEPATH : COOKIEPATH),
-                        COOKIE_DOMAIN,
-                        ('https' === parse_url(home_url(), PHP_URL_SCHEME))
-                    )
-                );
-                $response->send();
-            },
-            0
-        );
+        add_action('wp_loaded', function () {
+            // Récupération des attributs de qualification de la session
+            $session = $this->getSession($this->cookieKeys);
+
+            // Définition du cookie
+            $response = new Response();
+            $response->headers->setCookie(
+                new Cookie(
+                    $this->getCookieName(),
+                    rawurlencode(json_encode($session)),
+                    time() + 3600,
+                    ((COOKIEPATH != SITECOOKIEPATH) ? SITECOOKIEPATH : COOKIEPATH),
+                    COOKIE_DOMAIN,
+                    ('https' === parse_url(home_url(), PHP_URL_SCHEME))
+                )
+            );
+            $response->send();
+        }, 0);
 
         add_action('wp_logout', [$this, 'destroy']);
 
@@ -140,7 +128,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function clearCookie()
     {
@@ -155,7 +143,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function destroy()
     {
@@ -176,7 +164,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCookie()
     {
@@ -206,7 +194,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCookieHash($session_key, $expiration)
     {
@@ -216,7 +204,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCookieName()
     {
@@ -224,15 +212,12 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDb()
     {
         try {
-            /** @var SessionManager $session */
-            $session = app('user.session');
-
-            return $session->getDb();
+            return user()->session()->getDb();
         } catch (\Exception $e) {
             wp_die($e->getMessage(), __('ERREUR SYSTEME', 'tify'), $e->getCode());
             exit;
@@ -240,7 +225,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDbDatas($session_key)
     {
@@ -264,7 +249,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getKey()
     {
@@ -272,7 +257,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -280,7 +265,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSession($session_args = [])
     {
@@ -307,7 +292,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function nextSessionExpiration()
     {
@@ -315,7 +300,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function nextSessionExpiring()
     {
@@ -323,7 +308,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function put($key, $value = null)
     {
@@ -343,7 +328,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function save()
     {
@@ -366,7 +351,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function updateDbExpiration($session_key, $expiration)
     {

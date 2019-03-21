@@ -1,13 +1,16 @@
 <?php
 
-/**
- * @see https://github.com/kloon/woocommerce-large-sessions
- */
-
 namespace tiFy\Contracts\User;
 
 use tiFy\Contracts\Db\DbFactory;
 
+/**
+ * Interface SessionManager
+ *
+ * @package tiFy\Contracts\User
+ *
+ * @see https://github.com/kloon/woocommerce-large-sessions
+ */
 interface SessionManager
 {
     /**
@@ -15,9 +18,9 @@ interface SessionManager
      *
      * @param string $name Nom de qualification de la session.
      *
-     * @return null|object|SessionStore
+     * @return SessionStore|null
      */
-    public function get($name);
+    public function get(string $name): ?SessionStore;
 
     /**
      * Récupération de la base de données
@@ -26,15 +29,25 @@ interface SessionManager
      *
      * @throws \Exception
      */
-    public function getDb();
+    public function getDb(): DbFactory;
 
     /**
-     * Déclaration d'une session.
+     * Déclaration d'une session de stockage des données.
      *
      * @param string $name Nom de qualification de la session.
      * @param array $attrs Attributs de configuration.
      *
-     * @return null|SessionStore
+     * @return static
      */
-    public function register($name, $attrs = []);
+    public function register(string $name, array $attrs = []): ?SessionManager;
+
+    /**
+     * Définition d'une session de stockage des données.
+     *
+     * @param string $name Nom de qualification de la session.
+     * @param array $attrs Attributs de configuration.
+     *
+     * @return static
+     */
+    public function set(SessionStore $factory, ?string $name = null): ?SessionManager;
 }

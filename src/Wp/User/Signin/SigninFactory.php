@@ -4,7 +4,6 @@ namespace tiFy\Wp\User\Signin;
 
 use tiFy\User\Signin\SigninFactory as tiFySigninFactory;
 use WP_Error;
-use WP_User;
 
 class SigninFactory extends tiFySigninFactory
 {

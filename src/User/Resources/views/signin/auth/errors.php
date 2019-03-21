@@ -6,8 +6,8 @@
  * @var array $errors
  */
 ?>
-<ol>
+<ol class="Signin-authNoticesItems Signin-authErrorsItems">
     <?php foreach ($errors as $error) : ?>
-        <li><?php echo $error; ?></li>
+        <li class="Signin-authNoticesItem Signin-authErrorsItem"><?php echo $error; ?></li>
     <?php endforeach; ?>
 </ol>

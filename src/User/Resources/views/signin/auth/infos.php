@@ -6,8 +6,8 @@
  * @var array $infos
  */
 ?>
-<ol>
+<ol class="Signin-authNoticesItems Signin-authInfosItems">
     <?php foreach($infos as $info) : ?>
-        <li><?php echo $info; ?></li>
+        <li class="Signin-authNoticesItem Signin-authInfosItem"><?php echo $info; ?></li>
     <?php endforeach; ?>
 </ol>
