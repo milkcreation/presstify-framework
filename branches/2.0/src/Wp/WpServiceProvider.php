@@ -91,6 +91,10 @@ class WpServiceProvider extends AppServiceProvider
                 if ($this->getContainer()->has('template')) :
                     $this->getContainer()->get('template');
                 endif;
+
+                if ($this->getContainer()->has('user')) :
+                    $this->getContainer()->get('wp.user');
+                endif;
             endif;
         });
     }
@@ -233,8 +237,8 @@ class WpServiceProvider extends AppServiceProvider
      */
     public function registerUser()
     {
-        $this->getContainer()->add('wp.user', function() {
-            return new User();
+        $this->getContainer()->share('wp.user', function() {
+            return new User($this->getContainer()->get('user'));
         });
     }
 }

@@ -32,6 +32,7 @@ use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
+use tiFy\Contracts\User\UserManager;
 use tiFy\Contracts\Wp\WpManager;
 use tiFy\Contracts\Wp\PageHook;
 use tiFy\Contracts\Wp\PageHookItem;
@@ -552,6 +553,18 @@ if (! function_exists('url_factory')) {
         return app()->get('url.factory', [$url]);
     }
 }
+
+if (!function_exists('user')) :
+    /**
+     * Instance du gestionnaire utilisateur.
+     *
+     * @return UserManager
+     */
+    function user(): UserManager
+    {
+        return app()->get('user');
+    }
+endif;
 
 if (! function_exists('validator')) {
     /**

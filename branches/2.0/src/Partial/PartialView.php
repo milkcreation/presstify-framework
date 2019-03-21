@@ -46,8 +46,6 @@ class PartialView extends ViewController
             );
         elseif (method_exists($this, $name)) :
             return call_user_func_array([$this, $name], $arguments);
-        else :
-            var_dump($name); exit;
         endif;
 
         return null;

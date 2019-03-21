@@ -6,6 +6,12 @@ use tiFy\Contracts\User\UserQueryCollection as UserQueryCollectionContract;
 use tiFy\Contracts\User\UserQueryItem;
 use tiFy\Kernel\Collection\QueryCollection;
 
+/**
+ * Class UserQueryCollection
+ * @package tiFy\User\Query
+ *
+ * @deprecated
+ */
 class UserQueryCollection extends QueryCollection implements UserQueryCollectionContract
 {
     /**

@@ -22,7 +22,7 @@ class Notices implements NoticesContract
     protected $items = [];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function add($type, $message = '', $datas = [])
     {
@@ -41,7 +41,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all()
     {
@@ -49,7 +49,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function clear($type = null)
     {
@@ -57,7 +57,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function count($type)
     {
@@ -67,7 +67,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get($type)
     {
@@ -75,7 +75,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function has($type)
     {
@@ -83,7 +83,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDatas($type = null)
     {
@@ -102,7 +102,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMessages($type = null)
     {
@@ -121,7 +121,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTypes()
     {
@@ -129,7 +129,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasType($type)
     {
@@ -137,7 +137,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function query($type, $query_args = [])
     {
@@ -160,38 +160,32 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function render($type)
     {
-        if($messages = $this->getMessages($type)) :
-            return (string) partial(
-                'notice',
-                [
-                    'type'      => $type,
-                    'content'   => (string)$this->viewer(
-                        'notices',
-                        compact('messages', 'type')
-                    )
-                ]
-            );
-        endif;
-
-        return '';
+        if($messages = $this->getMessages($type)) {
+            return (string)partial('notice', [
+                'type'    => $type,
+                'content' => (string)$this->viewer('notices', compact('messages', 'type'))
+            ]);
+        } else {
+            return '';
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setType($type)
     {
         if (!$this->hasType($type)) :
-            array_push($type, $this->types);
+            array_push($this->types, $type);
         endif;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setTypes($types = ['error', 'warning', 'info', 'success'])
     {
@@ -199,7 +193,7 @@ class Notices implements NoticesContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function viewer($view = null, $data = [])
     {

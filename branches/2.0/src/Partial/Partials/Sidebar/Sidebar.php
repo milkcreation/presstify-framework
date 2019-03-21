@@ -74,28 +74,25 @@ class Sidebar extends PartialController implements SidebarContract
      */
     public function boot()
     {
-        add_action(
-            'init',
-            function () {
-                wp_register_style(
-                    'PartialSidebar',
-                    assets()->url('partial/sidebar/css/styles.css'),
-                    [],
-                    180511
-                );
-                wp_register_script(
-                    'PartialSidebar',
-                    assets()->url('partial/sidebar/css/scripts.js'),
-                    ['jquery'],
-                    180511,
-                    true
-                );
-            }
-        );
+        add_action('init', function () {
+            wp_register_style(
+                'PartialSidebar',
+                assets()->url('partial/sidebar/css/styles.css'),
+                [],
+                180511
+            );
+            wp_register_script(
+                'PartialSidebar',
+                assets()->url('partial/sidebar/css/scripts.js'),
+                ['jquery'],
+                180511,
+                true
+            );
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -104,7 +101,7 @@ class Sidebar extends PartialController implements SidebarContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
@@ -154,18 +151,12 @@ class Sidebar extends PartialController implements SidebarContract
         $default_class = class_info($this)->getShortName() . ' ' .
             class_info($this)->getShortName() . '--' . $this->getIndex();
         if (!$this->has('attrs.class')) :
-            $this->set(
-                'attrs.class',
-                $default_class
-            );
+            $this->set('attrs.class', $default_class);
         else :
-            $this->set(
-                'attrs.class',
-                sprintf(
-                    $this->get('attrs.class', ''),
-                    $default_class
-                )
-            );
+            $this->set('attrs.class', sprintf(
+                $this->get('attrs.class', ''),
+                $default_class
+            ));
         endif;
         if (!$this->get('attrs.class')) :
             $this->pull('attrs.class');

@@ -97,8 +97,20 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
      * @param mixed $items Liste des éléments.
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function setItems($items): Collection;
+
+
+    /**
+     * Définition de la liste des éléments.
+     *
+     * @param mixed $items Liste des éléments.
+     *
+     * @return $this
+     */
+    public function set($items): Collection;
 
     /**
      * Traitement d'un élément.

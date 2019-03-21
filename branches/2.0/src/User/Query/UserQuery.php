@@ -7,6 +7,12 @@ use tiFy\Contracts\User\UserQuery as UserQueryContract;
 use WP_User;
 use WP_User_Query;
 
+/**
+ * Class UserQuery
+ * @package tiFy\User\Query
+ *
+ * @deprecated
+ */
 class UserQuery implements UserQueryContract
 {
     /**

@@ -5,6 +5,12 @@ namespace tiFy\User\Query;
 use tiFy\Contracts\User\UserQueryItem as UserQueryItemContract;
 use tiFy\Kernel\Params\ParamsBag;
 
+/**
+ * Class UserQueryItem
+ * @package tiFy\User\Query
+ *
+ * @deprecated
+ */
 class UserQueryItem extends ParamsBag implements UserQueryItemContract
 {
     /**

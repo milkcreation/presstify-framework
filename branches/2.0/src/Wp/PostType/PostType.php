@@ -41,7 +41,7 @@ class PostType implements PostTypeContract
             endforeach;
         }, 999999);
 
-        events()->listen('post-type.factory.boot', function (PostTypeFactory $factory) {
+        events()->on('post-type.factory.boot', function (PostTypeFactory $factory) {
             global $wp_post_types;
 
             if(!isset($wp_post_types[$factory->getName()])) :

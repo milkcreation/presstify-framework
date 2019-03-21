@@ -2,8 +2,6 @@
 
 namespace tiFy\Kernel\Notices;
 
-use tiFy\Kernel\Tools;
-
 /**
  * Trait NoticesTrait
  * @package tiFy\Kernel\Notices
