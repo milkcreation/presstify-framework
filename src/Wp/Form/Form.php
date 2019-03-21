@@ -3,7 +3,9 @@
 namespace tiFy\Wp\Form;
 
 use tiFy\Contracts\Form\FormManager;
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Wp\Form as FormContract;
+use tiFy\Wp\Form\Addon\Mailer\Mailer;
 
 class Form implements FormContract
 {
@@ -23,6 +25,10 @@ class Form implements FormContract
     public function __construct(FormManager $manager)
     {
         $this->manager = $manager;
+
+        app()->add('form.addon.mailer', function ($name, $attrs, FormFactory $form) {
+            return new Mailer($name, $attrs, $form);
+        });
 
         add_action('init', function () {
             foreach (config('form', []) as $name => $attrs) :

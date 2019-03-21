@@ -90,9 +90,11 @@ class Slideshow extends MetaboxWpOptionsController
                     true
                 );
 
+                /* @todo
                 field('datetime-js')->enqueue_scripts();
                 field('media-image')->enqueue_scripts();
                 field('select-js')->enqueue_scripts();
+                */
 
                 wp_enqueue_style(
                     'MetaboxOptionsSlideshow',

@@ -7,7 +7,7 @@ use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Metabox\MetaboxWpOptionsController;
 use tiFy\Form\Factory\ResolverTrait;
 
-class MailerOptions extends MetaboxWpOptionsController
+abstract class AbstractMailerOptions extends MetaboxWpOptionsController
 {
     use ResolverTrait;
 
@@ -47,19 +47,5 @@ class MailerOptions extends MetaboxWpOptionsController
     public function boot()
     {
         $this->optionNames = $this->form()->addon('mailer')->get('option_names', []);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load($wp_screen)
-    {
-        add_action(
-            'admin_enqueue_scripts',
-            function () {
-                field('repeater')->enqueue_scripts();
-                field('toggle-switch')->enqueue_scripts();
-            }
-        );
     }
 }

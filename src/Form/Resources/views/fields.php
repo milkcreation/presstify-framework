@@ -6,7 +6,6 @@
  * @var tiFy\Contracts\Form\FactoryFields|tiFy\Contracts\Form\FactoryField[] $fields
  */
 ?>
-
 <?php if ($fields) : ?>
     <div class="Form-fields">
         <?php if ($fields->hasGroup()) : ?>

@@ -101,7 +101,7 @@ class Mailer extends AddonController
                     'tify_options@options',
                     [
                         'parent'   => "FormAddonMailer-{$this->form()->name()}",
-                        'content'  => new MailerOptionsConfirmation($this->form()),
+                        'content'  => $this->resolve('addon.mailer.options-confirmation', [$this->form()]),
                         'position' => 1
                     ]
                 );
@@ -113,12 +113,13 @@ class Mailer extends AddonController
                     'tify_options@options',
                     [
                         'parent'   => "FormAddonMailer-{$this->form()->name()}",
-                        'content'  => new MailerOptionsNotification($this->form()),
+                        'content'  => $this->resolve('addon.mailer.options-notification', [$this->form()]),
                         'position' => 2
                     ]
                 );
             endif;
         endif;
+
     }
 
     /**

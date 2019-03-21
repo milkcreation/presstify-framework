@@ -4,7 +4,7 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 
 class Request extends ParamsBag implements FactoryRequest
 {
@@ -20,8 +20,6 @@ class Request extends ParamsBag implements FactoryRequest
     public function __construct(FormFactory $form)
     {
         $this->form = $form;
-
-        parent::__construct();
     }
 
     /**
@@ -29,20 +27,18 @@ class Request extends ParamsBag implements FactoryRequest
      */
     public function handle()
     {
-        $this->prepare();
-
-        if (!wp_verify_nonce($this->get('_token', ''), 'Form' . $this->form()->name())) :
+        if (!wp_verify_nonce(request()->input('_token', ''), 'Form' . $this->form()->name())) :
             return false;
         endif;
 
-        $this->form()->prepare();
+        $this->prepare();
 
         $this->events('request.handle');
 
         foreach($this->fields() as $name => $field) :
             $check = true;
 
-            $field->setValue($this->get($field->getName()));
+            $field->setValue($this->get($field->getSlug()));
 
             // Validation de champ requis.
             if ($field->getRequired('check')) :
@@ -102,8 +98,7 @@ class Request extends ParamsBag implements FactoryRequest
 
         $this->events('request.success', [&$this]);
 
-        $redirect = add_query_arg(
-            [
+        $redirect = add_query_arg([
                 'success' => $this->form()->name()
             ],
             $this->get(
@@ -128,7 +123,18 @@ class Request extends ParamsBag implements FactoryRequest
      */
     public function prepare()
     {
-        $this->parse(call_user_func([request(), $this->form()->getMethod()]));
+        $this->form()->prepare();
+
+        $attrs = call_user_func([request(), $this->form()->getMethod()]);
+
+        foreach($this->fields() as $field) :
+            if (isset($attrs[$field->getName()]) && ($field->getSlug() !== $field->getName())) :
+                $attrs[$field->getSlug()] = $attrs[$field->getName()];
+                unset($attrs[$field->getName()]);
+            endif;
+        endforeach;
+
+        $this->set($attrs)->parse();
     }
 
     /**

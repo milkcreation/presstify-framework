@@ -6,5 +6,4 @@
  * @var tiFy\Contracts\Form\FactoryField $field
  */
 ?>
-
 <?php echo $field; ?>
