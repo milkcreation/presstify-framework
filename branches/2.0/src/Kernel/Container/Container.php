@@ -3,6 +3,7 @@
 namespace tiFy\Kernel\Container;
 
 use Illuminate\Support\Collection;
+use League\Container\Argument\RawArgument;
 use League\Container\Container as LeagueContainer;
 use League\Container\ReflectionContainer;
 use League\Container\ServiceProvider\ServiceProviderInterface;
@@ -128,6 +129,18 @@ class Container extends LeagueContainer implements ContainerInterface
         )
             ? $exists->getAbstract()
             : $alias;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getFromThisContainer($alias, array $args = [])
+    {
+        array_walk($args, function (&$arg) {
+            $arg = new RawArgument($arg);
+        });
+
+        return parent::getFromThisContainer($alias, $args);
     }
 
     /**
