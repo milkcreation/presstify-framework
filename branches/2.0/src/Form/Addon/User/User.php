@@ -346,7 +346,7 @@ class User extends AddonController
                 $validate = wpmu_validate_user_signup($userdatas['user_login'], $userdatas['user_email']);
                 $wp_error = $validate['errors'] ?? null;
 
-                if (is_wp_error($wp_error)) :
+                if (is_wp_error($wp_error) && !empty($wp_error->errors)) :
                     $request->notices()->add('error', $wp_error->get_error_message());
                     return;
                 endif;
