@@ -61,7 +61,7 @@ class Notices extends NoticesController implements FactoryNotices
                         ],
                         'success' => [
                             'message' => __(
-                                'Votre demande a bien été prise en compte et sera traitée dès que possible',
+                                'Votre demande a bien été prise en compte et sera traitée dès que possible.',
                                 'tify'
                             ),
                         ],

@@ -135,8 +135,8 @@ jQuery(function ($) {
             return {html: html, reached: reached};
         }
     });
+});
 
-    $(document).ready(function ($) {
-        $('[data-control="text-remaining"]').tifyTextRemaining();
-    });
+jQuery(document).ready(function ($) {
+    $('[data-control="text-remaining"]').tifyTextRemaining();
 });

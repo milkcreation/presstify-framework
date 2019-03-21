@@ -8,6 +8,8 @@ use tiFy\Contracts\Form\FactoryField as FactoryFieldContract;
 use tiFy\Form\Addon\AjaxSubmit\AjaxSubmit as AddonAjaxSubmit;
 use tiFy\Form\Addon\CookieSession\CookieSession as AddonCookieSession;
 use tiFy\Form\Addon\Mailer\Mailer as AddonMailer;
+use tiFy\Form\Addon\Mailer\MailerOptionsConfirmation as AddonMailerOptionsConfirmation;
+use tiFy\Form\Addon\Mailer\MailerOptionsNotification as AddonMailerOptionsNotification;
 use tiFy\Form\Addon\Preview\Preview as AddonPreview;
 use tiFy\Form\Addon\Record\Record as AddonRecord;
 use tiFy\Form\Addon\User\User as AddonUser;
@@ -40,6 +42,8 @@ class FormServiceProvider extends AppServiceProvider
         'form.addon.ajax-submit',
         'form.addon.cookie-session',
         'form.addon.mailer',
+        'form.addon.mailer.options-confirmation',
+        'form.addon.mailer.options-notification',
         'form.addon.preview',
         'form.addon.record',
         'form.addon.user',
@@ -95,6 +99,14 @@ class FormServiceProvider extends AppServiceProvider
 
         $this->getContainer()->add('form.addon.mailer', function ($name, $attrs, FormFactoryContract $form) {
             return new AddonMailer($name, $attrs, $form);
+        });
+
+        $this->getContainer()->add('form.addon.mailer.options-confirmation', function (FormFactoryContract $form) {
+            return new AddonMailerOptionsConfirmation($form);
+        });
+
+        $this->getContainer()->add('form.addon.mailer.options-notification', function (FormFactoryContract $form) {
+            return new AddonMailerOptionsNotification($form);
         });
 
         $this->getContainer()->add('form.addon.preview', function ($name, $attrs, FormFactoryContract $form) {

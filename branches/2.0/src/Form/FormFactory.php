@@ -4,7 +4,7 @@ namespace tiFy\Form;
 
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Form\Factory\ResolverTrait;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 
 class FormFactory extends ParamsBag implements FormFactoryContract
 {
@@ -73,9 +73,9 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         $this->name = $name;
         $this->form = $this;
 
-        parent::__construct($attrs);
+        $this->set($attrs)->parse();
 
-        app()->share("form.factory.events.{$this->name()}", function ($name = null) {
+        app()->share("form.factory.events.{$this->name()}", function () {
             return $this->resolve('factory.events', [$this->get('events', []), $this]);
         });
 
@@ -115,15 +115,41 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             return $this->resolve('factory.viewer', [$this]);
         });
 
-        $this->events('form.init', [&$this]);
-
-        $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
-
         $this->boot();
+
+        $this->_init();
     }
 
     /**
-     * {@inheritdoc}
+     * Initialisation du formulaire.
+     *
+     * @return void
+     */
+    private function _init()
+    {
+        $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
+
+        $this->events('form.init', [&$this]);
+
+        foreach([
+            'events',
+            'addons',
+            'buttons',
+            'fields',
+            'notices',
+            'options',
+            'request',
+            'session',
+            'validation',
+            'viewer'
+        ] as $service) {
+            $this->resolve("factory.{$service}." . $this->name());
+        }
+    }
+
+
+    /**
+     * @inheritdoc
      */
     public function __toString()
     {
@@ -131,7 +157,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -139,7 +165,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function csrf()
     {
@@ -147,7 +173,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAction()
     {
@@ -155,7 +181,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMethod()
     {
@@ -163,7 +189,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -171,7 +197,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasGrid()
     {
@@ -179,7 +205,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function index()
     {
@@ -187,7 +213,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function name()
     {
@@ -195,7 +221,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function onSetCurrent()
     {
@@ -203,15 +229,15 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function onSuccess()
     {
-        return $this->request()->get('success') === $this->name();
+        return request()->get('success') === $this->name();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function onResetCurrent()
     {
@@ -219,7 +245,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prepare()
     {
@@ -235,7 +261,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function render()
     {
@@ -253,7 +279,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function renderPrepare()
     {
@@ -293,10 +319,8 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         endif;
 
         if ($this->onSuccess()) :
-            $this->notices()->add(
-                'success',
-                $this->notices()->params('success.message')
-            );
+            $this->notices()->add('success', $this->notices()->params('success.message'));
+
             assets()->addInlineJs(
                 'if (window.history && window.history.replaceState){' .
                 'let anchor=window.location.href.split("#")[1],' .

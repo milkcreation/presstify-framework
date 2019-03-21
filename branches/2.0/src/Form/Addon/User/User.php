@@ -7,6 +7,7 @@ use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Form\AddonController;
 use WP_User;
+use WP_Error;
 
 class User extends AddonController
 {
@@ -48,19 +49,20 @@ class User extends AddonController
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
-        $this->events()->listen(
-            'field.prepared',
-            function (FactoryField $field) {
-                if ($field->getAddonOption($this->getName(), 'userdata') === 'user_pass') :
+        $this->events()->listen('field.prepared', function (FactoryField $field) {
+            if ($field->getAddonOption($this->getName(), 'userdata') === 'user_pass') {
+                if ( ! $field->has('attrs.onpaste')) {
                     $field->set('attrs.onpaste', 'off');
-                    $field->set('attrs.autocomplete', 'off');
-                endif;
+                }
+                if ( ! $field->has('attrs.autocomplete')) {
+                    $field->set('attrs.autocomplete', 'new-password');
+                }
             }
-        );
+        });
 
         $this->events()->listen('request.validation.field', [$this, 'onRequestValidationFields']);
         $this->events()->listen('request.submit', [$this, 'onRequestSubmit']);
@@ -79,7 +81,7 @@ class User extends AddonController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaultsFieldOptions()
     {
@@ -131,7 +133,7 @@ class User extends AddonController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
@@ -323,19 +325,13 @@ class User extends AddonController
                 unset($userdatas['role']);
             endif;
 
-            add_filter(
-                'send_password_change_email',
-                function () {
-                    return $this->get('send_password_change_email', false);
-                }
-            );
+            add_filter('send_password_change_email', function () {
+                return $this->get('send_password_change_email', false);
+            });
 
-            add_filter(
-                'send_email_change_email',
-                function () {
-                    return $this->get('send_email_change_email', false);
-                }
-            );
+            add_filter('send_email_change_email', function () {
+                return $this->get('send_email_change_email', false);
+            });
 
             $result = wp_update_user($userdatas);
 
@@ -349,11 +345,10 @@ class User extends AddonController
 
             if (is_multisite()) :
                 $validate = wpmu_validate_user_signup($userdatas['user_login'], $userdatas['user_email']);
-                if (is_wp_error($validate['errors']) && !empty($validate['errors']->errors)) :
-                   $request->notices()->add(
-                        'error',
-                        $user_details['errors']->get_error_message()
-                    );
+                $wp_error = $validate['errors'] ?? null;
+
+                if (is_wp_error($wp_error)) :
+                    $request->notices()->add('error', $wp_error->get_error_message());
                     return;
                 endif;
             endif;
@@ -362,10 +357,7 @@ class User extends AddonController
         endif;
 
         if (is_wp_error($result)) :
-            $request->notices()->add(
-                'error',
-                $result->get_error_message()
-            );
+            $request->notices()->add('error', $result->get_error_message());
         else :
             $user = $this->setUser($result);
 
@@ -383,7 +375,7 @@ class User extends AddonController
                         break;
                 endswitch;
             endforeach;
-
+            
             $this->events('addon.user.success', [$user, $this]);
         endif;
     }

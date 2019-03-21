@@ -2,7 +2,7 @@
 
 namespace tiFy\Form\Addon\Mailer;
 
-class MailerOptionsConfirmation extends MailerOptions
+class MailerOptionsConfirmation extends AbstractMailerOptions
 {
     /**
      * {@inheritdoc}

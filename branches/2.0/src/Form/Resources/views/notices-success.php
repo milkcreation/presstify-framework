@@ -6,9 +6,8 @@
  * @var string[] $messages
  */
 ?>
-
 <ol class="Form-successItems">
-    <?php foreach($messages as $message) : ?>
-    <li class="Form-successItem"><?php echo $message; ?></li>
+    <?php foreach ($messages as $message) : ?>
+        <li class="Form-successItem"><?php echo $message; ?></li>
     <?php endforeach; ?>
 </ol>
