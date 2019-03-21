@@ -7,7 +7,6 @@ use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Form\AddonController;
 use WP_User;
-use WP_Error;
 
 class User extends AddonController
 {
