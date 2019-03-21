@@ -42,7 +42,7 @@ class Taxonomy implements TaxonomyContract
             endforeach;
         }, 999999);
 
-        events()->listen('taxonomy.factory.boot', function (TaxonomyFactory $factory) {
+        events()->on('taxonomy.factory.boot', function (TaxonomyFactory $factory) {
             global $wp_taxonomies;
 
             if(!isset($wp_taxonomies[$factory->getName()])) :
@@ -96,29 +96,25 @@ class Taxonomy implements TaxonomyContract
     {
         unset($args['taxonomy']);
 
-        $args = array_merge(
-            ['order' => 'ASC'],
-            $args,
-            [
-                'taxonomy'   => $taxonomy,
-                'meta_query' => [
+        $args = array_merge(['order' => 'ASC'], $args, [
+            'taxonomy'   => $taxonomy,
+            'meta_query' => [
+                [
+                    'relation' => 'OR',
                     [
-                        'relation' => 'OR',
-                        [
-                            'key'     => $order_meta_key,
-                            'value'   => 0,
-                            'compare' => '>=',
-                            'type'    => 'NUMERIC',
-                        ],
-                        [
-                            'key'     => $order_meta_key,
-                            'compare' => 'NOT EXISTS',
-                        ],
+                        'key'     => $order_meta_key,
+                        'value'   => 0,
+                        'compare' => '>=',
+                        'type'    => 'NUMERIC',
+                    ],
+                    [
+                        'key'     => $order_meta_key,
+                        'compare' => 'NOT EXISTS',
                     ],
                 ],
-                'orderby'    => 'meta_value_num',
-            ]
-        );
+            ],
+            'orderby'    => 'meta_value_num',
+        ]);
 
         return  (new WP_Term_Query())->query($args);
     }

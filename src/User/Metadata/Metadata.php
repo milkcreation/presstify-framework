@@ -4,6 +4,12 @@ namespace tiFy\User\Metadata;
 
 use tiFy\App\AppController;
 
+/**
+ * Class Metadata
+ * @package tiFy\User\Metadata
+ *
+ * @deprecated
+ */
 final class Metadata extends AppController
 {
     /* = ARGUMENTS = */
@@ -12,13 +18,6 @@ final class Metadata extends AppController
 
     // Status unique/multiples des meta_keys declarées
     private static $Single = [];
-
-    /* = CONSTRUCTEUR = */
-    public function __construct()
-    {
-        add_action('profile_update', [$this, 'Save']);
-        add_action('user_register', [$this, 'Save']);
-    }
 
     /* = DECLARATION = */
     final public static function Register($meta_key, $single = false, $sanitize_callback = 'wp_unslash')

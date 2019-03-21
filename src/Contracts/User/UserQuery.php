@@ -2,6 +2,12 @@
 
 namespace tiFy\Contracts\User;
 
+/**
+ * Interface UserQuery
+ * @package tiFy\Contracts\User
+ *
+ * @deprecated
+ */
 interface UserQuery
 {
     /**

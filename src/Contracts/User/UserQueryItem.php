@@ -4,6 +4,12 @@ namespace tiFy\Contracts\User;
 
 use tiFy\Contracts\Kernel\ParamsBag;
 
+/**
+ * Interface UserQueryItem
+ * @package tiFy\Contracts\User
+ *
+ * @deprecated
+ */
 interface UserQueryItem extends ParamsBag
 {
     /**

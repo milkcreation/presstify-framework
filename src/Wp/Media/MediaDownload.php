@@ -59,9 +59,7 @@ class MediaDownload implements MediaDownloadContract
             3
         );
 
-        events()->listen(
-            'wp.media.download.register',
-            function ($abspath, MediaDownload $mediaDownload, $event) {
+        events()->on('wp.media.download.register', function ($abspath, MediaDownload $mediaDownload, $event) {
                 if (in_array($abspath, self::$allowed)) :
                     return;
                 endif;

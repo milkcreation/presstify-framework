@@ -189,6 +189,16 @@ class Collection implements CollectionContract
      */
     public function setItems($items): CollectionContract
     {
+        $this->set($items);
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function set($items): CollectionContract
+    {
         array_walk($items, [$this, 'walk']);
 
         return $this;
