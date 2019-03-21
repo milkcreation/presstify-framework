@@ -352,6 +352,11 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
                             break;
                     }
                 }
+
+                $attrs['attrs']['class'] = sprintf(
+                    $attrs['attrs']['class'] ?? '%s', 'Signin-authFieldInput Signin-authFieldInput--' . $name
+                );
+
                 $this->set("auth.fields.{$name}", $attrs);
             }
         }

@@ -2,21 +2,28 @@
 /**
  * Formulaire d'authentification | Entête.
  * ---------------------------------------------------------------------------------------------------------------------
+ *
  * @var tiFy\User\Signin\SigninView $this
  */
 ?>
-<?php echo partial('notice', [
-    'attrs'   => [
-        'class' => '%s Signin-authInfos'
-    ],
-    'content' => $this->fetch('auth/infos', ['infos' => $this->getMessages('info')]),
-    'type'    => 'info'
-]);
+<?php
+if ($infos = $this->getMessages('info')) :
+    echo partial('notice', [
+        'attrs'   => [
+            'class' => '%s Signin-authNotices Signin-authInfos'
+        ],
+        'content' => $this->fetch('auth/infos', compact('infos')),
+        'type'    => 'info'
+    ]);
+endif;
 ?>
-<?php echo partial('notice', [
-    'attrs'   => [
-        'class' => '%s Signin-authErrors'
-    ],
-    'content' => $this->fetch('auth/errors', ['errors' => $this->getMessages('error')]),
-    'type'    => 'error'
-]);
+<?php
+if ($errors = $this->getMessages('error')) :
+    echo partial('notice', [
+        'attrs'   => [
+            'class' => '%s Signin-authNotices Signin-authErrors'
+        ],
+        'content' => $this->fetch('auth/errors', compact('errors')),
+        'type'    => 'error'
+    ]);
+endif;

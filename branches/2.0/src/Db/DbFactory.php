@@ -5,7 +5,7 @@ namespace tiFy\Db;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Db\DbFactory as DbFactoryContract;
 use tiFy\Db\Factory\ResolverTrait;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 
 class DbFactory extends ParamsBag implements DbFactoryContract
 {
@@ -168,7 +168,7 @@ class DbFactory extends ParamsBag implements DbFactoryContract
         $this->name = $name;
         $this->db = $this;
 
-        parent::__construct($attrs);
+        $this->set($attrs)->parse();
 
         if ($this->get('install', false)) :
             $this->install();
@@ -403,6 +403,14 @@ class DbFactory extends ParamsBag implements DbFactoryContract
     /**
      * @inheritdoc
      */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getPrimary()
     {
         return $this->primary;
@@ -471,9 +479,9 @@ class DbFactory extends ParamsBag implements DbFactoryContract
     /**
      * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         // Définition du numéro de version
         $this->version = $this->get('version');

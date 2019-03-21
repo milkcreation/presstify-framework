@@ -3,7 +3,7 @@
 namespace tiFy\Contracts\User;
 
 use tiFy\Contracts\Db\DbFactory;
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface SessionStore extends ParamsBag
 {
@@ -78,7 +78,8 @@ interface SessionStore extends ParamsBag
     /**
      * Récupération d'un ou plusieurs ou tous les attributs de qualification de la session.
      *
-     * @param array $session_args Liste des attributs de retour session_key|session_expiration|session_expiring|cookie_hash. Renvoi tous si vide.
+     * @param array $session_args Liste des attributs de retour.
+     * session_key|session_expiration|session_expiring|cookie_hash. Renvoi tout si vide.
      *
      * @return mixed
      */

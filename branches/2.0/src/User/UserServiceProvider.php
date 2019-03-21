@@ -64,7 +64,7 @@ class UserServiceProvider extends AppServiceProvider
             return new SessionManager();
         });
 
-        $this->getContainer()->share('user.session.store', function ($name, $attrs) {
+        $this->getContainer()->add('user.session.store', function ($name, $attrs = []) {
             return new SessionStore($name, $attrs);
         });
 
@@ -72,7 +72,7 @@ class UserServiceProvider extends AppServiceProvider
             return new SigninManager();
         });
 
-        $this->getContainer()->add('user.signin.factory', function ($name, $attrs) {
+        $this->getContainer()->add('user.signin.factory', function ($name, $attrs = []) {
             return new SigninFactory($name, $attrs);
         });
 

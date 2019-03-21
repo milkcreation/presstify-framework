@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Db;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface DbFactory extends DbFactoryResolverTrait, ParamsBag
 {
@@ -77,6 +77,13 @@ interface DbFactory extends DbFactoryResolverTrait, ParamsBag
      * @var string
      */
     public function getMetaType();
+
+    /**
+     * Récupération du nom de qualification.
+     *
+     * @return string
+     */
+    public function getName();
 
     /**
      * Récupération de la clé primaire
