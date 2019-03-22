@@ -102,7 +102,6 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
      */
     public function setItems($items): Collection;
 
-
     /**
      * Définition de la liste des éléments.
      *

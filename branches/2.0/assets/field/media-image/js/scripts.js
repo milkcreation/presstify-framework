@@ -1,15 +1,14 @@
 "use strict";
 
-var tify_control_media_image_frame;
+let tify_control_media_image_frame;
 
 jQuery(document).ready(function ($) {
     $(document).on('click', '.tiFyField-MediaImageAdd', function (e) {
         e.preventDefault();
 
-        var $this = $(this),
-            $closest = $this.closest('.tiFyField-MediaImage');
-
-        var title = $(this).data('media_library_title'),
+        let $this = $(this),
+            $closest = $this.closest('.tiFyField-MediaImage'),
+            title = $(this).data('media_library_title'),
             button = $(this).data('media_library_button');
 
         tify_control_media_image_frame = wp.media.frames.file_frame = wp.media({
@@ -25,7 +24,7 @@ jQuery(document).ready(function ($) {
         });
 
         tify_control_media_image_frame.on('select', function () {
-            attachment = tify_control_media_image_frame.state().get('selection').first().toJSON();
+            let attachment = tify_control_media_image_frame.state().get('selection').first().toJSON();
 
             $this.css('background-image', 'url(' + attachment.url + '');
             $('.tiFyField-MediaImageInput', $closest).val(attachment.id);
@@ -39,7 +38,7 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.tiFyField-MediaImageRemove', function (e) {
         e.preventDefault();
 
-        var $this = $(this),
+        let $this = $(this),
             $closest = $this.closest('.tiFyField-MediaImage');
 
         $closest.removeClass('tiFyField-MediaImage--selected');
