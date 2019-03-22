@@ -12,9 +12,7 @@ class SigninFactory extends tiFySigninFactory
      */
     public function boot()
     {
-        add_action('wp', function() {
-            $this->handle();
-        }, 0);
+        add_action('init', [$this, 'handle']);
 
         events()->on('user.signin.handle.login', [$this, 'handleLogin']);
 
@@ -39,7 +37,6 @@ class SigninFactory extends tiFySigninFactory
             ]
         ]);
     }
-
 
     /**
      * Traitement de l'authentification.
