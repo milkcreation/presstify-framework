@@ -175,7 +175,6 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
         if (!$signin = request()->get('signin', false)) {
             return null;
         }
-
         if ($signin !== $this->getName()) {
             return null;
         }
