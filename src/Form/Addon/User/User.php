@@ -18,7 +18,8 @@ class User extends AddonController
         'user_id'                    => 0,
         'roles'                      => ['subscriber'],
         'send_password_change_email' => false,
-        'send_email_change_email'    => false
+        'send_email_change_email'    => false,
+        'auto_auth'                  => false
     ];
 
     /**
@@ -374,8 +375,16 @@ class User extends AddonController
                         break;
                 endswitch;
             endforeach;
-            
+
             $this->events('addon.user.success', [$user, $this]);
+
+            // Authentification automatique.
+            if ($auto_auth = $this->get('auto_auth')) {
+                wp_clear_auth_cookie();
+                wp_set_auth_cookie((int) $user->ID);
+
+                wp_redirect(is_bool($auto_auth) ? home_url('/') : $auto_auth);
+            }
         endif;
     }
 }
