@@ -2,6 +2,12 @@
 
 namespace tiFy\Components\Tools\Html;
 
+/**
+ * Class Html
+ * @package tiFy\Components\Tools\Html
+ *
+ * @deprecated Utiliser \tiFy\Support\HtmlAttrs en remplacement.
+ */
 class Html
 {
     /**
@@ -10,7 +16,7 @@ class Html
      * @param array $attrs Liste des attributs HTML.
      * @param bool $linearized Activation de la linéarisation.
      *
-     * @return string
+     * @return string|array
      */
     public function parseAttrs($attrs = [], $linearized = true)
     {
