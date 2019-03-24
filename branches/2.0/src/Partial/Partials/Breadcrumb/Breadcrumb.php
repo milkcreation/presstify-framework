@@ -1,30 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Breadcrumb;
 
 use tiFy\Contracts\Partial\Breadcrumb as BreadcrumbContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Breadcrumb extends PartialController implements BreadcrumbContract
+class Breadcrumb extends PartialFactory implements BreadcrumbContract
 {
-    /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
-     *      @var string[]|array[]|object[]|callable[] $parts Liste des élements du fil d'ariane.
-     * }
-     */
-    protected $attributes = [
-        'before' => '',
-        'after'  => '',
-        'attrs'  => [],
-        'viewer' => [],
-        'parts'  => [],
-    ];
-
     /**
      * Liste des éléments contenus dans le fil d'ariane
      * @var array
@@ -38,25 +20,22 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     private $disabled = false;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
-        add_action(
-            'init',
-            function () {
-                wp_register_style(
-                    'PartialBreadcrumb',
-                    assets()->url('partial/breadcrumb/css/styles.css'),
-                    [],
-                    180122
-                );
-            }
-        );
+        add_action('init', function () {
+            wp_register_style(
+                'PartialBreadcrumb',
+                assets()->url('partial/breadcrumb/css/styles.css'),
+                [],
+                180122
+            );
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addPart($part)
     {
@@ -66,7 +45,29 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     }
 
     /**
-     * {@inheritdoc}
+     * Liste des attributs de configuration.
+     *
+     * @return array $attributes {
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string[]|array[]|object[]|callable[] $parts Liste des élements du fil d'ariane.
+     * }
+     */
+    public function defaults()
+    {
+        return [
+            'before' => '',
+            'after'  => '',
+            'attrs'  => [],
+            'viewer' => [],
+            'parts'  => [],
+        ];
+    }
+
+    /**
+     * @inheritdoc
      */
     public function disable()
     {
@@ -76,7 +77,7 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function display()
     {
@@ -90,7 +91,7 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enable()
     {
@@ -100,7 +101,7 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -108,7 +109,7 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parsePartList()
     {
@@ -125,7 +126,7 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parsePart($part)
     {
@@ -147,7 +148,7 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prependPart($part)
     {
@@ -157,7 +158,7 @@ class Breadcrumb extends PartialController implements BreadcrumbContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function reset()
     {

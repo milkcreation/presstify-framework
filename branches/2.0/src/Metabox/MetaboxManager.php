@@ -5,8 +5,8 @@ namespace tiFy\Metabox;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Contracts\Metabox\MetaboxManager as MetaboxManagerContract;
-use tiFy\Contracts\Wp\WpScreenInterface;
-use tiFy\Wp\WpScreen;
+use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
+use tiFy\Wordpress\Routing\WpScreen;
 
 /**
  * Class MetaboxManager
@@ -26,7 +26,7 @@ class MetaboxManager implements MetaboxManagerContract
 
     /**
      * Instance de l'écran d'affichage courant.
-     * @var WpScreenInterface
+     * @var WpScreenContract
      */
     protected $screen;
 
@@ -49,98 +49,85 @@ class MetaboxManager implements MetaboxManagerContract
      */
     public function __construct()
     {
-        add_action(
-            'wp_loaded',
-            function () {
-                foreach (config('metabox', []) as $screen => $items) :
-                    if(!is_null($screen) && preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
-                        $screen = 'edit::' . $screen;
-                    endif;
+        add_action('wp_loaded', function () {
+            foreach (config('metabox', []) as $screen => $items) :
+                if (!is_null($screen) && preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
+                    $screen = 'edit::' . $screen;
+                endif;
 
-                    foreach ($items as $name => $attrs) :
-                        $this->items[] = app()->resolve('metabox.factory', [$name, $attrs, $screen]);
+                foreach ($items as $name => $attrs) :
+                    $this->items[] = app()->get('metabox.factory', [$name, $attrs, $screen]);
+                endforeach;
+            endforeach;
+        }, 0);
+
+        add_action('current_screen', function ($wp_current_screen) {
+            $this->screen = wordpress()->wp_screen($wp_current_screen);
+
+            $attrs = [];
+            foreach ($this->tabs as $screen => $_attrs) :
+                if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
+                    $screen = 'edit::' . $screen;
+                endif;
+                $WpScreen = WpScreen::get($screen);
+
+                if ($WpScreen->getHookname() === $this->screen->getHookname()) :
+                    $attrs = $_attrs;
+                    break;
+                endif;
+            endforeach;
+
+            /** @var \WP_Screen $wp_current_screen */
+            foreach ($this->items as $item) :
+                $item->load($this->screen);
+            endforeach;
+
+            app()->get('metabox.tab', [$attrs, $this->screen]);
+        }, 999999);
+
+        add_action('add_meta_boxes', function () {
+            foreach ($this->removes as $screen => $items) :
+                if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
+                    $screen = 'edit::' . $screen;
+                endif;
+                $WpScreen = WpScreen::get($screen);
+
+                foreach ($items as $id => $contexts) :
+                    foreach ($contexts as $context) :
+                        remove_meta_box($id, $WpScreen->getObjectName(), $context);
                     endforeach;
-                endforeach;
-            },
-            0
-        );
 
-        add_action(
-            'current_screen',
-            function ($wp_current_screen) {
-                $this->screen = app('wp.screen', [$wp_current_screen]);
+                    // Hack Wordpress : Maintient du support de la modification du permalien.
+                    if ($id === 'slugdiv' && ($WpScreen->getObjectType() === 'post_type')) :
+                        $post_type = $WpScreen->getObjectName();
 
-                $attrs = [];
-                foreach($this->tabs as $screen => $_attrs) :
-                    if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
-                        $screen = 'edit::' . $screen;
-                    endif;
-                    $WpScreen = WpScreen::get($screen);
+                        add_action('edit_form_before_permalink', function ($post) use ($post_type) {
+                            if ($post->post_type !== $post_type) :
+                                return;
+                            endif;
 
-                    if ($WpScreen->getHookname() === $this->screen->getHookname()) :
-                        $attrs = $_attrs;
-                        break;
-                    endif;
-                endforeach;
+                            $editable_slug = apply_filters('editable_slug', $post->post_name, $post);
 
-                /** @var \WP_Screen  $wp_current_screen */
-                foreach($this->items as $item) :
-                    $item->load($this->screen);
-                endforeach;
-
-                app('metabox.tab', [$attrs, $this->screen]);
-            },
-            999999
-        );
-
-        add_action(
-            'add_meta_boxes',
-            function () {
-                foreach ($this->removes as $screen => $items) :
-                    if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) :
-                        $screen = 'edit::' . $screen;
-                    endif;
-                    $WpScreen = WpScreen::get($screen);
-
-                    foreach ($items as $id => $contexts) :
-                        foreach($contexts as $context) :
-                            remove_meta_box($id, $WpScreen->getObjectName(), $context);
-                        endforeach;
-
-                        // Hack Wordpress : Maintient du support de la modification du permalien.
-                        if ($id === 'slugdiv') :
-                            add_action(
-                                'edit_form_before_permalink',
-                                function($post) use ($post_type) {
-                                    if($post->post_type !== $post_type) :
-                                        return;
-                                    endif;
-
-                                    $editable_slug = apply_filters('editable_slug', $post->post_name, $post);
-
-                                    echo field(
-                                        'hidden',
-                                        [
-                                            'name'  => 'post_name',
-                                            'value' => esc_attr($editable_slug),
-                                            'attrs' => [
-                                                'id' => 'post_name',
-                                                'autocomplete' => 'off'
-                                            ]
-                                        ]
-                                    );
-                                }
+                            echo field(
+                                'hidden',
+                                [
+                                    'name'  => 'post_name',
+                                    'value' => esc_attr($editable_slug),
+                                    'attrs' => [
+                                        'id'           => 'post_name',
+                                        'autocomplete' => 'off',
+                                    ],
+                                ]
                             );
-                        endif;
-                    endforeach;
+                        });
+                    endif;
                 endforeach;
-            },
-            999999
-        );
+            endforeach;
+        }, 999999);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function add($name, $screen = null, $attrs = [])
     {
@@ -160,7 +147,7 @@ class MetaboxManager implements MetaboxManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function collect()
     {
@@ -168,7 +155,7 @@ class MetaboxManager implements MetaboxManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function remove($id, $screen = null, $context = 'normal')
     {
@@ -190,7 +177,7 @@ class MetaboxManager implements MetaboxManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function tab($attrs = [], $screen = null)
     {

@@ -7,10 +7,10 @@ use Pelago\Emogrifier;
 use tiFy\Contracts\Mail\LibraryAdapter;
 use tiFy\Contracts\Mail\Mailer as MailerContract;
 use tiFy\Contracts\Mail\MailQueue;
-use tiFy\Contracts\View\ViewEngine;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
+use tiFy\View\ViewEngine;
 
-final class Mailer extends ParamsBag implements MailerContract
+class Mailer extends ParamsBag implements MailerContract
 {
     /**
      * Instance du pilote de traitement de mail.
@@ -19,22 +19,16 @@ final class Mailer extends ParamsBag implements MailerContract
     protected $lib;
 
     /**
-     * Instance du controleur de gabarits d'affichage.
+     * Liste des paramètres d'expédition du mail.
+     * @var array
+     */
+    protected $params = [];
+
+    /**
+     * Instance du controleur de gabarit d'affichage.
      * @var ViewEngine
      */
     protected $viewer;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        add_action('after_setup_theme', function () {
-            parent::__construct(config('mail', []));
-        });
-    }
 
     /**
      * Traitement récursif d'une liste de pièces jointes.
@@ -47,23 +41,23 @@ final class Mailer extends ParamsBag implements MailerContract
     {
         $output = (func_num_args() === 2) ? func_get_arg(1) : [];
 
-        if (is_string($attachments)) :
-            if (is_file($attachments)) :
+        if (is_string($attachments)) {
+            if (is_file($attachments)) {
                 $output[] = [$attachments];
-            endif;
-        elseif (is_array($attachments)) :
-            foreach ($attachments as $a) :
-                if (is_string($a)) :
-                    $output = $this->_parseAttachments($c, $output);
-                elseif (is_array($a)) :
-                    $filename = $a[0] ?? null;
+            } elseif (is_array($attachments)) {
+                foreach ($attachments as $a) {
+                    if (is_string($a)) {
+                        $output = $this->_parseAttachments($a, $output);
+                    } elseif (is_array($a)) {
+                        $filename = $a[0] ?? null;
 
-                    if ($filename && is_file($filename)) :
-                        $output[] = $a;
-                    endif;
-                endif;
-            endforeach;
-        endif;
+                        if ($filename && is_file($filename)) {
+                            $output[] = $a;
+                        }
+                    }
+                }
+            }
+        }
 
         return $output;
     }
@@ -136,32 +130,30 @@ final class Mailer extends ParamsBag implements MailerContract
      * @param string $regex Format de détection des variables.
      *
      * @return string
+     *
+     * private function _parseMergeVars($output, $vars = [], $regex = '\*\|(.*?)\|\*')
+     * {
+     * $vars = array_merge([
+     * 'SITE:URL'         => site_url('/'),
+     * 'SITE:NAME'        => get_bloginfo('name'),
+     * 'SITE:DESCRIPTION' => get_bloginfo('description'),
+     * ], $vars);
+     *
+     * $callback = function ($matches) use ($vars) {
+     * if (!isset($matches[1])) :
+     * return $matches[0];
+     * elseif (isset($vars[$matches[1]])) :
+     * return $vars[$matches[1]];
+     * endif;
+     *
+     * return $matches[0];
+     * };
+     *
+     * $output = preg_replace_callback('/' . $regex . '/', $callback, $output);
+     *
+     * return $output;
+     * }
      */
-    private function _parseMergeVars($output, $vars = [], $regex = '\*\|(.*?)\|\*')
-    {
-        $vars = array_merge(
-            [
-                'SITE:URL'         => site_url('/'),
-                'SITE:NAME'        => get_bloginfo('name'),
-                'SITE:DESCRIPTION' => get_bloginfo('description'),
-            ],
-            $vars
-        );
-
-        $callback = function ($matches) use ($vars) {
-            if (!isset($matches[1])) :
-                return $matches[0];
-            elseif (isset($vars[$matches[1]])) :
-                return $vars[$matches[1]];
-            endif;
-
-            return $matches[0];
-        };
-
-        $output = preg_replace_callback('/' . $regex . '/', $callback, $output);
-
-        return $output;
-    }
 
     /**
      * Traitement des élements texte de composition du message.
@@ -194,14 +186,14 @@ final class Mailer extends ParamsBag implements MailerContract
      */
     private function _parseTextParts($part)
     {
-        if (is_string($part)) :
+        if (is_string($part)) {
             $part = [$part, (new Html2Text($part))->getText()];
-        elseif (is_array($part)) :
+        } elseif (is_array($part)) {
             $html = $part[0] ?? '';
             $text = $part[1] ?? (new Html2Text($html))->getText();
 
             $part = [$html, $text];
-        endif;
+        }
 
         return $part;
     }
@@ -211,81 +203,81 @@ final class Mailer extends ParamsBag implements MailerContract
      *
      * @param array $params Liste des paramètres de configuration.
      *
-     * @return array
+     * @return $this
      */
     private function _parseParams($params = [])
     {
+        $this->set($params)->parse();
+
         $lib = $this->getLib();
 
-        $pieces = [
-            'from', 'to', 'replyTo', 'bcc', 'cc', 'attachments',
-            'charset', 'encoding', 'content_type',
-            'subject', 'footer', 'header', 'body', 'css'
-        ];
+        foreach ($this->keys() as $key) {
+            switch ($key) {
+                default :
+                    break;
+                case 'from' :
+                case 'to' :
+                case 'reply-to' :
+                case 'bcc' :
+                case 'cc' :
+                    $this->set($key, $this->_parseContacts($this->get($key, [])));
+                    break;
+                case 'attachments' :
+                    $this->set($key, $this->_parseAttachments($this->get($key, [])));
+                    break;
+            }
+        }
 
-        $from = $this->_parseContacts($params['from'] ?? $this->get('from'));
-        $to = $this->_parseContacts($params['to'] ?? $this->get('to'));
-        $replyTo = $this->_parseContacts($params['reply-to'] ?? $this->get('reply-to', []));
-        $bcc = $this->_parseContacts($params['bcc'] ?? $this->get('bcc', []));
-        $cc = $this->_parseContacts($params['cc'] ?? $this->get('cc', []));
-        $attachments = $this->_parseAttachments($params['attachments'] ?? $this->get('attachments', []));
-        $charset = $params['charset'] ?? $this->get('charset');
-        $encoding = $params['encoding'] ?? $this->get('encoding');
-        $content_type = $params['content_type'] ?? $this->get('content_type');
-        $subject = $params['subject'] ?? $this->get('subject', '');
-        $css = $params['css'] ?? $this->get('css', '');
-        $header = $params['header'] ?? $this->get('header', '');
-        $footer = $params['footer'] ?? $this->get('footer', '');
-        $inline_css = $params['inline_css'] ?? $this->get('inline_css', '');
+        call_user_func_array([$lib, 'setFrom'], current($this->get('from', [])));
 
-        call_user_func_array([$lib, 'setFrom'], current($from));
-
-        foreach ($to as $contact) :
+        foreach ($this->get('to', []) as $contact) {
             call_user_func_array([$lib, 'addTo'], $contact);
-        endforeach;
+        }
 
-        foreach ($replyTo as $contact) :
+        foreach ($this->get('reply-to', []) as $contact) {
             call_user_func_array([$lib, 'addReplyTo'], $contact);
-        endforeach;
+        }
 
-        foreach ($bcc as $contact) :
+        foreach ($this->get('bcc', []) as $contact) {
             call_user_func_array([$lib, 'addBcc'], $contact);
-        endforeach;
+        }
 
-        foreach ($cc as $contact) :
+        foreach ($this->get('cc', []) as $contact) {
             call_user_func_array([$lib, 'addCc'], $contact);
-        endforeach;
+        }
 
-        foreach ($attachments as $attachment) :
+        foreach ($this->get('attachments', []) as $attachment) {
             call_user_func_array([$lib, 'addAttachment'], $attachment);
-        endforeach;
+        }
 
-        $lib->setCharset($charset);
+        $lib->setCharset($this->get('charset'));
 
-        $lib->setEncoding($encoding);
+        $lib->setEncoding($this->get('encoding'));
 
-        $lib->setContentType($content_type);
+        $lib->setContentType($this->get('content_type'));
 
-        $lib->setSubject($subject);
+        $lib->setSubject($this->get('subject'));
 
-        $body = $params['body'] ?? [
-            (string)$this->viewer('default', compact($pieces)),
-            sprintf(__('Ceci est un test d\'envoi de mail depuis le site %s', 'tify'), get_bloginfo('blogname')) . "\n\n" .
-            __('Si ce mail, vous est parvenu c\'est qu\'il vous a été expédié depuis le site : '). "\n" .
-            site_url('/'). "\n\n" .
-            __('Néanmoins, il pourrait s\'agir d\'une erreur. Si vous n\'êtes pas concerné par cet e-mail, ', 'tify'). "\n" .
-            __('vous pouvez prendre contact avec l\'administrateur du site à cette adresse : ', 'tify'). "\n" .
-            get_option('admin_email'). "\n\n" .
-            __('Merci de votre compréhension', 'tify')
-        ];
+        $body = $this->get('body') ?? [
+                (string)$this->viewer('default', $this->all()),
+                sprintf(__('Ceci est un test d\'envoi de mail depuis le site %s', 'tify'),
+                    get_bloginfo('blogname')) . "\n\n" .
+                __('Si ce mail, vous est parvenu c\'est qu\'il vous a été expédié depuis le site : ') . "\n" .
+                site_url('/') . "\n\n" .
+                __('Néanmoins, il pourrait s\'agir d\'une erreur. Si vous n\'êtes pas concerné par cet e-mail, ',
+                    'tify') . "\n" .
+                __('vous pouvez prendre contact avec l\'administrateur du site à cette adresse : ', 'tify') . "\n" .
+                get_option('admin_email') . "\n\n" .
+                __('Merci de votre compréhension', 'tify'),
+            ];
 
-        $message = $this->_parseMessage($body, $header, $footer);
+        $message = $this->_parseMessage($body, $this->get('header'), $this->get('footer'));
 
-        $html = (string)$this->viewer('message', array_merge(compact($pieces), ['message' => $message[0]]));
-        $html = $inline_css ? (new Emogrifier($html))->emogrify() : $html;
+        $html = (string)$this->viewer('message', array_merge($this->all(), ['message' => $message[0]]));
+        $html = $this->get('inline_css') ? (new Emogrifier($html))->emogrify() : $html;
         $plain = $message[1];
 
-        switch($content_type) :
+        switch ($this->get('content_type')) {
             case 'multipart/alternative' :
                 call_user_func([$lib, 'setBody'], $html);
                 call_user_func([$lib, 'setAlt'], $plain);
@@ -296,9 +288,11 @@ final class Mailer extends ParamsBag implements MailerContract
             case 'text/plain' :
                 call_user_func([$lib, 'setBody'], $plain);
                 break;
-        endswitch;
+        }
 
-        return compact($pieces, 'message', 'html', 'plain');
+        $this->params = $this->all() + compact('message', 'html', 'plain');
+
+        return $this;
     }
 
     /**
@@ -306,10 +300,10 @@ final class Mailer extends ParamsBag implements MailerContract
      */
     public function debug($params = [])
     {
-        $params = $this->_parseParams($params);
+        $this->_parseParams($params);
 
         echo ($this->getLib()->prepare())
-            ? $this->viewer('debug', array_merge($params, ['headers' => $this->getLib()->getHeaders()]))
+            ? $this->viewer('debug', array_merge($this->params, ['headers' => $this->getLib()->getHeaders()]))
             : $this->getLib()->error();
         exit;
     }
@@ -319,26 +313,24 @@ final class Mailer extends ParamsBag implements MailerContract
      */
     public function defaults()
     {
-        $admin_email = get_option('admin_email');
-        $admin_name = ($user = get_user_by('email', get_option('admin_email'))) ? $user->display_name : '';
-
-        return [
-            'to'           => [$admin_email, $admin_name],
-            'from'         => [$admin_email, $admin_name],
+        return array_merge(config('mail', []), [
+            'to'           => [],
+            'from'         => [],
             'reply-to'     => [],
             'bcc'          => [],
             'cc'           => [],
             'attachments'  => [],
             'header'       => '',
             'footer'       => '',
-            'subject'      => sprintf(__('Test d\'envoi de mail depuis le site %s', 'tify'), get_bloginfo('blogname')),
+            'subject'      => sprintf(__('Test d\'envoi de mail depuis le site %s', 'tify'),
+                get_bloginfo('blogname')),
             'charset'      => get_bloginfo('charset'),
             'encoding'     => '8bit',
             'content_type' => 'multipart/alternative',
             'inline_css'   => true,
             'vars'         => [],
-            'viewer'       => []
-        ];
+            'viewer'       => [],
+        ]);
     }
 
     /**
@@ -346,9 +338,9 @@ final class Mailer extends ParamsBag implements MailerContract
      */
     public function getLib()
     {
-        if (!$this->lib) :
-            $this->lib = app('mailer.library');
-        endif;
+        if (is_null($this->lib)) {
+            $this->lib = app()->get('mailer.library');
+        }
 
         return $this->lib;
     }
@@ -358,15 +350,15 @@ final class Mailer extends ParamsBag implements MailerContract
      */
     public function queue($params = [], $date = 'now', $extras = [])
     {
-        $params = $this->_parseParams($params);
+        $this->_parseParams($params);
 
-        if ($res = $this->getLib()->prepare()) :
+        if ($res = $this->getLib()->prepare()) {
             $this->lib = null;
 
             /** @var MailQueue $queue */
-            $queue = app('mail.queue');
-            return $queue->add($params, $date, $extras);
-        endif;
+            $queue = app()->get('mail.queue');
+            return $queue->add($this->params, $date, $extras);
+        }
 
         return 0;
     }
@@ -378,7 +370,7 @@ final class Mailer extends ParamsBag implements MailerContract
     {
         $this->_parseParams($params);
 
-        if($res = $this->getLib()->send()) :
+        if ($res = $this->getLib()->send()) :
             $this->lib = null;
         endif;
 
@@ -390,17 +382,10 @@ final class Mailer extends ParamsBag implements MailerContract
      */
     public function viewer($view = null, $data = [])
     {
-        if (!$this->viewer) :
-            $default_dir = __DIR__ . '/Resources/views';
-            $this->viewer = view()
-                ->setDirectory($default_dir)
-                ->setController(MessageViewController::class)
-                ->setOverrideDir(
-                    (($override_dir = $this->get('viewer.override_dir')) && is_dir($override_dir))
-                        ? $override_dir
-                        : $default_dir
-                );
-        endif;
+        if (is_null($this->viewer)) {
+            $this->viewer = app()->get('mailer.message.viewer', $this->get('viewer', []));
+            $this->pull('viewer');
+        }
 
         if (func_num_args() === 0) :
             return $this->viewer;

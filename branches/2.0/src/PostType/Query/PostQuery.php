@@ -11,7 +11,7 @@ use WP_Post;
  * Class PostQuery
  * @package tiFy\PostType\Query
  *
- * @deprecated Utiliser \tiFy\Wp\Query\QueryPosts
+ * @deprecated Utiliser \tiFy\Wordpress\Query\QueryPosts
  */
 class PostQuery implements PostQueryContract
 {

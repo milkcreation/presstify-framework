@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface Tag extends PartialController
+interface Tag extends PartialFactory
 {
 
 }

@@ -1,15 +1,38 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Accordion;
 
 use tiFy\Contracts\Partial\Accordion as AccordionContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Accordion extends PartialController implements AccordionContract
+class Accordion extends PartialFactory implements AccordionContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
+     * @inheritdoc
+     */
+    public function boot()
+    {
+        add_action('init', function () {
+            wp_register_style(
+                'PartialAccordion',
+                assets()->url('partial/accordion/css/styles.css'),
+                [],
+                181221
+            );
+            wp_register_script(
+                'PartialAccordion',
+                assets()->url('partial/accordion/js/scripts.js'),
+                ['jquery-ui-widget'],
+                181221,
+                true
+            );
+        });
+    }
+
+    /**
+     * Liste des attributs de configuration par defaut.
+     *
+     * @return array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.
@@ -21,45 +44,23 @@ class Accordion extends PartialController implements AccordionContract
      *      @var boolean $triggered Activation de la limite d'ouverture et de fermeture par le déclencheur de l'élement.
      * }
      */
-    protected $attributes = [
-        'before'    => '',
-        'after'     => '',
-        'attrs'     => [],
-        'viewer'    => [],
-        'theme'     => 'light',
-        'items'     => [],
-        'opened'    => null,
-        'multiple'  => false,
-        'triggered' => false,
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function defaults()
     {
-        add_action(
-            'init',
-            function () {
-                wp_register_style(
-                    'PartialAccordion',
-                    assets()->url('partial/accordion/css/styles.css'),
-                    [],
-                    181221
-                );
-                wp_register_script(
-                    'PartialAccordion',
-                    assets()->url('partial/accordion/js/scripts.js'),
-                    ['jquery-ui-widget'],
-                    181221,
-                    true
-                );
-            }
-        );
+        return [
+            'before'    => '',
+            'after'     => '',
+            'attrs'     => [],
+            'viewer'    => [],
+            'theme'     => 'light',
+            'items'     => [],
+            'opened'    => null,
+            'multiple'  => false,
+            'triggered' => false,
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -68,11 +69,11 @@ class Accordion extends PartialController implements AccordionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialAccordion'));
 
@@ -104,7 +105,7 @@ class Accordion extends PartialController implements AccordionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parseDefaults()
     {

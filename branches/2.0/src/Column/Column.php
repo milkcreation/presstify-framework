@@ -5,7 +5,9 @@ namespace tiFy\Column;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Column\Column as ColumnContract;
-use tiFy\Contracts\Wp\WpScreenInterface;
+use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
+use tiFy\Wordpress\Routing\WpScreen;
+use WP_Screen;
 
 final class Column implements ColumnContract
 {
@@ -35,7 +37,7 @@ final class Column implements ColumnContract
 
     /**
      * Instance de l'écran d'affichage courant.
-     * @var WpScreenInterface
+     * @var WpScreenContract
      */
     protected $screen;
 
@@ -46,25 +48,21 @@ final class Column implements ColumnContract
      */
     public function __construct()
     {
-        add_action(
-            'wp_loaded',
-            function () {
-                foreach (config('column', []) as $screen => $items) :
-                    foreach ($items as $name => $attrs) :
-                        $name = (is_numeric($name)) ? Str::random() : $name;
+        add_action('wp_loaded', function () {
+            foreach (config('column', []) as $screen => $items) :
+                foreach ($items as $name => $attrs) :
+                    $name = (is_numeric($name)) ? Str::random() : $name;
 
-                        $_screen = (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen))
-                            ? "list::{$screen}": $screen;
+                    $_screen = (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen))
+                        ? "list::{$screen}": $screen;
 
-                        $this->items[] = app()->resolve('column.item', [$name, $attrs, $_screen]);
-                    endforeach;
+                    $this->items[] = app()->resolve('column.item', [$name, $attrs, $_screen]);
                 endforeach;
-            },
-            0
-        );
+            endforeach;
+        }, 0);
 
-        add_action('current_screen', function (\WP_Screen $wp_current_screen) {
-            $this->screen = app('wp.screen', [$wp_current_screen]);
+        add_action('current_screen', function (WP_Screen $wp_current_screen) {
+            $this->screen = app('wp.wp_screen', [$wp_current_screen]);
 
             foreach ($this->items as $item) :
                 $item->load($this->screen);
@@ -73,33 +71,29 @@ final class Column implements ColumnContract
             $this->parseColumn($this->screen->getObjectType(), $this->screen->getObjectName());
         });
 
-        add_action(
-            'admin_init',
-            function () {
-                if (!defined('DOING_AJAX') || DOING_AJAX !== true) :
-                    return;
-                endif;
-                if (!in_array(request()->get('action'), ['inline-save', 'inline-save-tax'])) :
-                    return;
-                endif;
+        add_action('admin_init', function () {
+            if (!defined('DOING_AJAX') || DOING_AJAX !== true) :
+                return;
+            endif;
+            if (!in_array(request()->get('action'), ['inline-save', 'inline-save-tax'])) :
+                return;
+            endif;
 
-                switch(request()->get('action')) :
-                    case 'inline-save' :
-                        $this->screen = \tiFy\Wp\WpScreen::get('list::' . request()->post('post_type') . '@post_type');
-                        break;
-                    case 'inline-save-tax' :
-                        $this->screen = \tiFy\Wp\WpScreen::get('list::' . request()->post('taxonomy') . '@taxonomy');
-                        break;
-                endswitch;
+            switch(request()->get('action')) :
+                case 'inline-save' :
+                    $this->screen = WpScreen::get('list::' . request()->post('post_type') . '@post_type');
+                    break;
+                case 'inline-save-tax' :
+                    $this->screen = WpScreen::get('list::' . request()->post('taxonomy') . '@taxonomy');
+                    break;
+            endswitch;
 
-                foreach ($this->items as $item) :
-                    $item->load($this->screen);
-                endforeach;
+            foreach ($this->items as $item) :
+                $item->load($this->screen);
+            endforeach;
 
-                $this->parseColumn($this->screen->getObjectType(), $this->screen->getObjectName());
-            },
-            1000000
-        );
+            $this->parseColumn($this->screen->getObjectType(), $this->screen->getObjectName());
+        }, 1000000);
     }
 
     /**
@@ -250,5 +244,4 @@ final class Column implements ColumnContract
 
         return '';
     }
-
 }

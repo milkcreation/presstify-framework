@@ -9,31 +9,47 @@ use PHPMailer;
 class MailServiceProvider extends AppServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * Liste des noms de qualification des services fournis.
+     * @var string[]
      */
-    public function boot()
+    protected $provides = [
+        'mail.queue',
+        'mailer',
+        'mailer.library',
+        'mailer.message.viewer',
+    ];
+
+    /**
+     * @inheritdoc
+     */
+    public function register()
     {
-        $this->app->singleton('mailer', function () { return new Mailer(); })->build();
+        $this->getContainer()->add('mailer', function () {
+            return new Mailer();
+        });
 
-        $this->app->bind(
-            'mailer.library', function () {
-                switch(config('mail.library')) :
-                    default :
-                        $adapter = new AdapterPhpMailer(new PHPMailer(true));
-                        break;
-                endswitch;
+        $this->getContainer()->add('mailer.library', function () {
+            switch(config('mail.library')) :
+                default :
+                    $adapter = new AdapterPhpMailer(new PHPMailer(true));
+                    break;
+            endswitch;
 
-                return $adapter;
-            }
-        );
+            return $adapter;
+        });
 
-        $this->app->bind(
-            'mailer.message',
-            function ($mailer) {
-                return new Message($mailer);
-            }
-        );
+        $this->getContainer()->share('mail.queue', function () {
+            return new MailQueue();
+        });
 
-        $this->app->singleton('mail.queue', function () { return new MailQueue(); })->build();
+        $this->getContainer()->add('mailer.message.viewer', function($attrs = []) {
+            $default_dir = __DIR__ . '/Resources/views';
+            $override_dir = $attrs['override_dir'] ?? '';
+
+            return view()
+                ->setDirectory($default_dir)
+                ->setController(MailerMessageView::class)
+                ->setOverrideDir(($override_dir && is_dir($override_dir)) ? $override_dir : $default_dir);
+        });
     }
 }

@@ -11,7 +11,7 @@ use WP_Term_Query;
  * Class PostQueryItem
  * @package tiFy\PostType\Query
  *
- * @deprecated Utiliser \tiFy\Wp\Query\QueryPost
+ * @deprecated Utiliser \tiFy\Wordpress\Query\QueryPost
  */
 class PostQueryItem extends ParamsBag implements PostQueryItemContract
 {

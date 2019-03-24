@@ -8,7 +8,7 @@ use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Config\Config;
-use tiFy\Kernel\Container\Container;
+use tiFy\Container\Container;
 use tiFy\Kernel\Events\Manager as Events;
 use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\Http\Request;
@@ -48,7 +48,7 @@ class Kernel
                 $alias = "tiFy\\Kernel\\{$name}\\{$name}";
                 break;
             case 'App':
-                return tiFy::instance()->resolve(\App\App::class);
+                return tiFy::instance()->get(\App\App::class);
                 break;
             case 'Container' :
                 return tiFy::instance();
@@ -67,6 +67,8 @@ class Kernel
                 break;
         endswitch;
 
-        return tiFy::instance()->resolve($alias, $args);
+
+
+        return tiFy::instance()->get($alias, $args);
     }
 }

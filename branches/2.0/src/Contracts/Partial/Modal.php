@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface Modal extends PartialController
+interface Modal extends PartialFactory
 {
     /**
      * Affichage d'un lien de déclenchement de la modale.

@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Mail;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Contracts\View\ViewController;
 

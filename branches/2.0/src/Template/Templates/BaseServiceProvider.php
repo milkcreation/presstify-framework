@@ -4,8 +4,8 @@ namespace tiFy\Template\Templates;
 
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Template\TemplateFactory;
-use tiFy\Kernel\Container\Container;
-use tiFy\Kernel\Container\ServiceProvider;
+use tiFy\Container\Container;
+use tiFy\Container\ServiceProvider;
 use tiFy\View\ViewEngine;
 
 class BaseServiceProvider extends ServiceProvider
@@ -43,8 +43,6 @@ class BaseServiceProvider extends ServiceProvider
     public function __construct(Container $container, TemplateFactory $template)
     {
         $this->template = $template;
-
-        parent::__construct($container);
     }
 
     /**

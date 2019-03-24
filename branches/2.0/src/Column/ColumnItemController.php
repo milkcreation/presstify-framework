@@ -3,12 +3,13 @@
 namespace tiFy\Column;
 
 use tiFy\Contracts\Column\ColumnDisplayInterface;
-use tiFy\Contracts\Column\ColumnItem as ColumnItemInterface;
-use tiFy\Contracts\Wp\WpScreenInterface;
+use tiFy\Contracts\Column\ColumnItem as ColumnItemContract;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Wp\WpScreen;
+use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
+use tiFy\Wordpress\Routing\WpScreen;
+use WP_Screen;
 
-class ColumnItemController extends ParamsBag implements ColumnItemInterface
+class ColumnItemController extends ParamsBag implements ColumnItemContract
 {
     /**
      * Compteur d'indices de qualification.
@@ -56,7 +57,7 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
 
     /**
      * Instance de l'écran d'affichage associé.
-     * @var WpScreenInterface
+     * @var WpScreenContract
      */
     protected $screen;
 
@@ -65,7 +66,7 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
      *
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
-     * @param null|string|\WP_Screen|WpScreenInterface $screen Qualification de la page d'affichage.
+     * @param null|string|WP_Screen|WpScreenContract $screen Qualification de la page d'affichage.
      *
      * @return void
      */
@@ -74,25 +75,21 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
         $this->name = $name;
         $this->index = self::$_index++;
 
-        if ($screen instanceof WpScreenInterface) :
+        if ($screen instanceof WpScreenContract) :
             $this->screen = $screen;
         else :
-            add_action(
-                'admin_init',
-                function () use ($screen, $attrs) {
-                    $this->screen = WpScreen::get($screen);
+            add_action('admin_init', function () use ($screen, $attrs) {
+                $this->screen = WpScreen::get($screen);
 
-                    $content = $this->getContent();
-                    if (is_string($content) && class_exists($content)) :
-                        $resolved = new $content($this);
+                $content = $this->getContent();
+                if (is_string($content) && class_exists($content)) :
+                    $resolved = new $content($this);
 
-                        if ($resolved instanceof ColumnDisplayInterface) :
-                            $this->set('content', $resolved);
-                        endif;
+                    if ($resolved instanceof ColumnDisplayInterface) :
+                        $this->set('content', $resolved);
                     endif;
-                },
-                999999
-            );
+                endif;
+            }, 999999);
         endif;
 
         parent::__construct($attrs);
@@ -169,7 +166,7 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
     /**
      * {@inheritdoc}
      */
-    public function load(WpScreenInterface $current_screen)
+    public function load(WpScreenContract $current_screen)
     {
         if ($this->getScreen() && ($current_screen->getHookname() === $this->getScreen()->getHookname())) :
             $this->active = true;

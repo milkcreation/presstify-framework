@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface Notice extends PartialController
+interface Notice extends PartialFactory
 {
 
 }

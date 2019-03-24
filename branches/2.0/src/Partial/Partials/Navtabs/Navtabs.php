@@ -3,13 +3,49 @@
 namespace tiFy\Partial\Partials\Navtabs;
 
 use tiFy\Contracts\Partial\Navtabs as NavtabsContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Navtabs extends PartialController implements NavtabsContract
+class Navtabs extends PartialFactory implements NavtabsContract
 {
     /**
+     * @inheritdoc
+     */
+    public function boot()
+    {
+        add_action('init', function () {
+            add_action('wp_ajax_tify_partial_navtabs', [$this, 'wp_ajax']);
+
+            add_action('wp_ajax_nopriv_tify_partial_navtabs', [$this, 'wp_ajax']);
+
+            wp_register_style(
+                'PartialNavtabs',
+                assets()->url('partial/navtabs/css/styles.css'),
+                [],
+                170704
+            );
+
+            wp_register_script(
+                'PartialNavtabs',
+                assets()->url('partial/navtabs/js/scripts.js'),
+                ['jquery-ui-widget'],
+                170704,
+                true
+            );
+
+            wp_localize_script(
+                'PartialNavtabs',
+                'tiFyPartialNavtabs',
+                [
+                    '_ajax_nonce' => wp_create_nonce('tiFyPartialNavTabs')
+                ]
+            );
+        });
+    }
+
+    /**
      * Liste des attributs de configuration.
-     * @var array $attributes {
+     *
+     * @return array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.
@@ -25,61 +61,22 @@ class Navtabs extends PartialController implements NavtabsContract
      *      }
      * }
      */
-    protected $attributes = [
-        'before'  => '',
-        'after'   => '',
-        'attrs'   => [],
-        'viewer'  => [],
-        'items'   => [],
-        'options' => [
-            'prefix' => 'tiFyPartial-Navtabs',
-        ],
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function defaults()
     {
-        add_action(
-            'init',
-            function () {
-                add_action(
-                    'wp_ajax_tify_partial_navtabs',
-                    [$this, 'wp_ajax']
-                );
-                add_action(
-                    'wp_ajax_nopriv_tify_partial_navtabs',
-                    [$this, 'wp_ajax']
-                );
-
-                // Déclaration des scripts
-                \wp_register_style(
-                    'PartialNavtabs',
-                    assets()->url('partial/navtabs/css/styles.css'),
-                    [],
-                    170704
-                );
-                \wp_register_script(
-                    'PartialNavtabs',
-                    assets()->url('partial/navtabs/js/scripts.js'),
-                    ['jquery-ui-widget'],
-                    170704,
-                    true
-                );
-                \wp_localize_script(
-                    'PartialNavtabs',
-                    'tiFyPartialNavtabs',
-                    [
-                        '_ajax_nonce' => wp_create_nonce('tiFyPartialNavTabs')
-                    ]
-                );
-            }
-        );
+        return [
+            'before'  => '',
+            'after'   => '',
+            'attrs'   => [],
+            'viewer'  => [],
+            'items'   => [],
+            'options' => [
+                'prefix' => 'tiFyPartial-Navtabs',
+            ],
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function display()
     {
@@ -96,7 +93,7 @@ class Navtabs extends PartialController implements NavtabsContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -105,17 +102,17 @@ class Navtabs extends PartialController implements NavtabsContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.aria-control', 'navtabs');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function wp_ajax()
     {

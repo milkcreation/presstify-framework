@@ -25,17 +25,7 @@ class RoutingServiceProvider extends AppServiceProvider
     ];
 
     /**
-     * {@inheritdoc}
-     */
-    public function boot()
-    {
-        add_action('after_setup_tify', function () {
-            $this->getContainer()->get('router');
-        });
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function register()
     {

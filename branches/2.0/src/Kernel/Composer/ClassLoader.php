@@ -21,8 +21,7 @@ class ClassLoader extends ComposerClassLoader
      */
     public function __construct()
     {
-        /** @var Paths $paths */
-        $this->paths = tiFy::instance()->resolve(Paths::class);
+        $this->paths = tiFy::instance()->get(Paths::class);
     }
 
     /**

@@ -3,13 +3,29 @@
 namespace tiFy\Partial\Partials\Holder;
 
 use tiFy\Contracts\Partial\Holder as HolderContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Holder extends PartialController implements HolderContract
+class Holder extends PartialFactory implements HolderContract
 {
     /**
+     * @inheritdoc
+     */
+    public function boot()
+    {
+        add_action('init', function () {
+            wp_register_style(
+                'PartialHolder',
+                assets()->url('partial/holder/css/styles.css'),
+                [],
+                160714
+            );
+        });
+    }
+
+    /**
      * Liste des attributs de configuration.
-     * @var array $attributes {
+     *
+     * @return array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.
@@ -20,42 +36,27 @@ class Holder extends PartialController implements HolderContract
      *
      * }
      */
-    protected $attributes = [
-        'before'           => '',
-        'after'            => '',
-        'attrs'            => [],
-        'viewer'           => [],
-        'content'          => '',
-        'width'            => 100,
-        'height'           => 100,
-        // @todo supprimer gérer en CSS
-        'background-color' => '#E4E4E4',
-        // @todo supprimer gérer en CSS
-        'foreground-color' => '#AAA',
-        // @todo supprimer gérer en CSS
-        'font-size'        => '1em',
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function defaults()
     {
-        add_action(
-            'init',
-            function () {
-                wp_register_style(
-                    'PartialHolder',
-                    assets()->url('partial/holder/css/styles.css'),
-                    [],
-                    160714
-                );
-            }
-        );
+        return [
+            'before'           => '',
+            'after'            => '',
+            'attrs'            => [],
+            'viewer'           => [],
+            'content'          => '',
+            'width'            => 100,
+            'height'           => 100,
+            // @todo supprimer gérer en CSS
+            'background-color' => '#E4E4E4',
+            // @todo supprimer gérer en CSS
+            'foreground-color' => '#AAA',
+            // @todo supprimer gérer en CSS
+            'font-size'        => '1em',
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -63,18 +64,18 @@ class Holder extends PartialController implements HolderContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialHolder'));
         $this->set('attrs.style', "background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};font-size:{$this->get('font-size')}\"");
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parseDefaults()
     {

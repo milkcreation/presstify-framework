@@ -15,14 +15,11 @@ class Recaptcha extends FieldController
     protected $supports = ['label', 'request', 'wrapper'];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
-        $this->events()->listen(
-            'request.validation.field.recaptcha',
-            [$this, 'onRequestValidationField']
-        );
+        $this->events()->listen('request.validation.field.recaptcha', [$this, 'onRequestValidationField']);
     }
 
     /**
@@ -49,22 +46,16 @@ class Recaptcha extends FieldController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function render()
     {
-        return field(
-            'recaptcha',
-            array_merge(
-                $this->field()->getExtras(),
-                [
-                    'name'  => $this->field()->getName(),
-                    'attrs' => array_merge(
-                        ['id' => preg_replace('#-#', '_', sanitize_key($this->form()->name()))],
-                        $this->field()->get('attrs', [])
-                    )
-                ]
+        return field('recaptcha', array_merge($this->field()->getExtras(), [
+            'name'  => $this->field()->getName(),
+            'attrs' => array_merge(
+                ['id' => preg_replace('#-#', '_', sanitize_key($this->form()->name()))],
+                $this->field()->get('attrs', [])
             )
-        );
+        ]));
     }
 }

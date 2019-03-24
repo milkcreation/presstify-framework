@@ -4,53 +4,54 @@ namespace tiFy\Partial\Partials\Dropdown;
 
 use tiFy\Contracts\Partial\Dropdown as DropdownContract;
 use tiFy\Contracts\Partial\DropdownItems as DropdownItemsContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Dropdown extends PartialController implements DropdownContract
+class Dropdown extends PartialFactory implements DropdownContract
 {
     /**
+     * @inheritdoc
+     */
+    public function boot()
+    {
+        add_action('init', function () {
+            wp_register_style(
+                'PartialDropdown',
+                assets()->url('partial/dropdown/css/styles.css'),
+                [],
+                181221
+            );
+            wp_register_script(
+                'PartialDropdown',
+                assets()->url('partial/dropdown/js/scripts.js'),
+                ['jquery-ui-widget'],
+                181221,
+                true
+            );
+        });
+    }
+
+    /**
      * Liste des attributs de configuration.
-     * @var array $attributes {
+     *
+     * @return array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.
      *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      * }
      */
-    protected $attributes = [
-        'before'    => '',
-        'after'     => '',
-        'attrs'     => [],
-        'viewer'    => [],
-        'button'    => '',
-        'items'     => [],
-        'open'      => false,
-        'trigger'   => false
-    ];
-
-    /**
-     * @inheritdoc
-     */
-    public function boot()
+    public function defaults()
     {
-        add_action(
-            'init',
-            function () {
-                wp_register_style(
-                    'PartialDropdown',
-                    assets()->url('partial/dropdown/css/styles.css'),
-                    [],
-                    181221
-                );
-                wp_register_script(
-                    'PartialDropdown',
-                    assets()->url('partial/dropdown/js/scripts.js'),
-                    ['jquery-ui-widget'],
-                    181221,
-                    true
-                );
-            }
-        );
+        return [
+            'before'    => '',
+            'after'     => '',
+            'attrs'     => [],
+            'viewer'    => [],
+            'button'    => '',
+            'items'     => [],
+            'open'      => false,
+            'trigger'   => false
+        ];
     }
 
     /**
@@ -73,9 +74,9 @@ class Dropdown extends PartialController implements DropdownContract
     /**
      * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialDropdown'));
         $this->set('attrs.data-control', 'dropdown');

@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface Navtabs extends PartialController
+interface Navtabs extends PartialFactory
 {
     /**
      * Mise à jour de l'onglet courant via Ajax.

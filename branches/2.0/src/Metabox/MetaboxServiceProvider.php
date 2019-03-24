@@ -8,24 +8,31 @@ use tiFy\Metabox\Tab\MetaboxTabController;
 class MetaboxServiceProvider extends AppServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * Liste des noms de qualification des services fournis.
+     * {@internal Permet un chargement différé des services.}
+     * @var string[]
      */
-    public function boot()
+    protected $provides = [
+        'metabox',
+        'metabox.factory',
+        'metabox.tab'
+    ];
+
+    /**
+     * @inheritdoc
+     */
+    public function register()
     {
-        $this->app->singleton('metabox', function () { return new MetaboxManager(); })->build();
+        $this->getContainer()->share('metabox', function () {
+            return new MetaboxManager();
+        })->build();
 
-        $this->app->bind(
-            'metabox.factory',
-            function ($name, $attrs = [], $screen = null) {
-                return new MetaboxFactory($name, $attrs, $screen);
-            }
-        );
+        $this->getContainer()->add('metabox.factory', function ($name, $attrs = [], $screen = null) {
+            return new MetaboxFactory($name, $attrs, $screen);
+        });
 
-        $this->app->bind(
-            'metabox.tab',
-            function ($attrs = [], $screen = null) {
-                return new MetaboxTabController($attrs, $screen);
-            }
-        );
+        $this->getContainer()->add('metabox.tab', function ($attrs = [], $screen = null) {
+            return new MetaboxTabController($attrs, $screen);
+        });
     }
 }

@@ -5,7 +5,7 @@ namespace tiFy\Metabox\Tab;
 use Closure;
 use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Metabox\MetaboxFactory;
-use tiFy\Contracts\Wp\WpScreenInterface;
+use tiFy\Wordpress\Contracts\WpScreen;
 use tiFy\Kernel\Params\ParamsBag;
 
 class MetaboxTabController extends ParamsBag
@@ -18,7 +18,7 @@ class MetaboxTabController extends ParamsBag
 
     /**
      * Instance de l'écran d'affichage courant.
-     * @var WpScreenInterface
+     * @var WpScreen
      */
     protected $screen;
 
@@ -26,18 +26,18 @@ class MetaboxTabController extends ParamsBag
      * CONSTRUCTEUR.
      *
      * @param array $attrs Liste des attributs de configuration.
-     * @param WpScreenInterface $screen Liste des attributs de configuration.
+     * @param WpScreen $screen Liste des attributs de configuration.
      *
      * @return void
      */
-    public function __construct($attrs = [], WpScreenInterface $screen)
+    public function __construct($attrs = [], WpScreen $screen)
     {
         $this->screen = $screen;
 
         parent::__construct($attrs);
 
         /** @var MetaboxManager $metabox */
-        $metabox = app('metabox');
+        $metabox = app()->get('metabox');
 
         $this->items = $metabox->collect();
 
@@ -89,24 +89,21 @@ class MetaboxTabController extends ParamsBag
                     break;
             endswitch;
 
-            add_action(
-                'admin_enqueue_scripts',
-                function () {
-                    \wp_enqueue_style(
-                        'MetaboxTab',
-                        assets()->url('metabox/tab/css/styles.css'),
-                        ['PartialNavtabs'],
-                        150216
-                    );
-                    \wp_enqueue_script(
-                        'MetaboxTab',
-                        assets()->url('metabox/tab/js/scripts.js'),
-                        ['PartialNavtabs'],
-                        151019,
-                        true
-                    );
-                }
-            );
+            add_action('admin_enqueue_scripts', function () {
+                wp_enqueue_style(
+                    'MetaboxTab',
+                    assets()->url('metabox/tab/css/styles.css'),
+                    ['PartialNavtabs'],
+                    150216
+                );
+                wp_enqueue_script(
+                    'MetaboxTab',
+                    assets()->url('metabox/tab/js/scripts.js'),
+                    ['PartialNavtabs'],
+                    151019,
+                    true
+                );
+            });
         endif;
     }
 

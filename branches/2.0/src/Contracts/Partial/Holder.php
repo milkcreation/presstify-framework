@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface Holder extends PartialController
+interface Holder extends PartialFactory
 {
 
 }

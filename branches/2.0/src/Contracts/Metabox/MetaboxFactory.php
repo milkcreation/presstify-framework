@@ -2,8 +2,8 @@
 
 namespace tiFy\Contracts\Metabox;
 
-use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Wordpress\Contracts\WpScreen;
 
 interface MetaboxFactory extends ParamsBag
 {
@@ -66,7 +66,7 @@ interface MetaboxFactory extends ParamsBag
     /**
      * Récupération de l'instance de l'écran d'affichage.
      *
-     * @return WpScreenInterface
+     * @return WpScreen
      */
     public function getScreen();
 
@@ -87,9 +87,9 @@ interface MetaboxFactory extends ParamsBag
     /**
      * Chargement de l'écran courant Wordpress.
      *
-     * @param WpScreenInterface $screen Instance de l'écran courant.
+     * @param WpScreen $screen Instance de l'écran courant.
      *
      * @return void
      */
-    public function load(WpScreenInterface $current_screen);
+    public function load(WpScreen $screen);
 }

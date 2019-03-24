@@ -5,81 +5,82 @@ namespace tiFy\Partial\Partials\Modal;
 use Closure;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Partial\Modal as ModalContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Modal extends PartialController implements ModalContract
+class Modal extends PartialFactory implements ModalContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     * @var string $before Contenu placé avant.
-     * @var string $after Contenu placé après.
-     * @var array $attrs Attributs de balise HTML.
-     * @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
-     * @var array $options {
-     *          Liste des options d'affichage.
-     *      }
-     * @var bool $animation Activation de l'animation.
-     * @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full|flex.
-     * @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de
-     *                                                      caractère à afficher ou booléen pour activer désactiver ou
-     *                                                      fonction/méthode d'affichage.
-     * @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou
-     *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
-     * @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen
-     *                                      pour activer désactiver ou fonction/méthode d'affichage.
-     * @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
-     *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
-     * @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
-     * @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
-     *                                   attributs de récupération Ajax
-     * }
-     */
-    protected $attributes = [
-        'before'         => '',
-        'after'          => '',
-        'attrs'          => [],
-        'viewer'         => [],
-        'options'        => [],
-        'animation'      => true,
-        'size'           => '',
-        'backdrop_close' => true,
-        'header'         => true,
-        'body'           => true,
-        'footer'         => true,
-        'in_footer'      => true,
-        'ajax'           => false,
-    ];
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
-        add_action(
-            'init',
-            function () {
-                wp_register_style(
-                    'PartialModal',
-                    assets()->url('partial/modal/css/styles.css'),
-                    [],
-                    171206
-                );
-                wp_register_script(
-                    'PartialModal',
-                    assets()->url('partial/modal/js/scripts.js'),
-                    ['jquery'],
-                    171206,
-                    true
-                );
-                add_action('wp_ajax_partial_modal', [$this, 'wp_ajax']);
-                add_action('wp_ajax_nopriv_partial_modal', [$this, 'wp_ajax']);
-            }
-        );
+        add_action('init', function () {
+            wp_register_style(
+                'PartialModal',
+                assets()->url('partial/modal/css/styles.css'),
+                [],
+                171206
+            );
+            wp_register_script(
+                'PartialModal',
+                assets()->url('partial/modal/js/scripts.js'),
+                ['jquery'],
+                171206,
+                true
+            );
+            add_action('wp_ajax_partial_modal', [$this, 'wp_ajax']);
+            add_action('wp_ajax_nopriv_partial_modal', [$this, 'wp_ajax']);
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * Liste des attributs de configuration.
+     *
+     * @return array $attributes {
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $options {
+     *          Liste des options d'affichage.
+     *      }
+     *      @var bool $animation Activation de l'animation.
+     *      @var string $size Taille d'affichage de la fenêtre de dialogue lg|sm|full|flex.
+     *      @var bool|string|callable $backdrop_close_button Affichage d'un bouton fermeture externe. Chaine de
+     *                                                      caractère à afficher ou booléen pour activer désactiver ou
+     *                                                      fonction/méthode d'affichage.
+     *      @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou
+     *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
+     *      @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen
+     *                                      pour activer désactiver ou fonction/méthode d'affichage.
+     *      @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
+     *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
+     *      @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
+     *      @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
+     *                                   attributs de récupération Ajax
+     * }
+     */
+    public function defaults()
+    {
+        return [
+            'before'         => '',
+            'after'          => '',
+            'attrs'          => [],
+            'viewer'         => [],
+            'options'        => [],
+            'animation'      => true,
+            'size'           => '',
+            'backdrop_close' => true,
+            'header'         => true,
+            'body'           => true,
+            'footer'         => true,
+            'in_footer'      => true,
+            'ajax'           => false,
+        ];
+    }
+
+    /**
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -88,11 +89,11 @@ class Modal extends PartialController implements ModalContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $class = 'modal';
         if ($this->get('animation')) :
@@ -182,7 +183,7 @@ class Modal extends PartialController implements ModalContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function display()
     {
@@ -202,7 +203,7 @@ class Modal extends PartialController implements ModalContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function trigger($attrs = [])
     {
@@ -226,7 +227,7 @@ class Modal extends PartialController implements ModalContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function wp_ajax()
     {
