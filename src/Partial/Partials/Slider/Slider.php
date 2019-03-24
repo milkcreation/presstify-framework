@@ -3,34 +3,12 @@
 namespace tiFy\Partial\Partials\Slider;
 
 use tiFy\Contracts\Partial\Slider as SliderContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Slider extends PartialController implements SliderContract
+class Slider extends PartialFactory implements SliderContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
-     *      @var string[]|callable[] $items Liste des éléments. Liste de sources d'image|Liste de contenu HTML|Liste de
-     *                                      fonctions. défaut : @see https://picsum.photos/images
-     *      @var array $options Liste des attributs de configuration du pilote d'affichage.
-     *                          @see http://kenwheeler.github.io/slick/#settings
-     * }
-     */
-    protected $attributes = [
-        'before'  => '',
-        'after'   => '',
-        'attrs'   => [],
-        'viewer'  => [],
-        'items'   => [],
-        'options' => [],
-    ];
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -53,22 +31,38 @@ class Slider extends PartialController implements SliderContract
     }
 
     /**
-     * {@inheritdoc}
+     * Liste des attributs de configuration.
+     *
+     * @return array $attributes {
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string[]|callable[] $items Liste des éléments. Liste de sources d'image|Liste de contenu HTML|Liste de
+     *                                      fonctions. défaut : @see https://picsum.photos/images
+     *      @var array $options Liste des attributs de configuration du pilote d'affichage.
+     *                          @see http://kenwheeler.github.io/slick/#settings
+     * }
      */
     public function defaults()
     {
         return [
-            'items' => [
+            'before'  => '',
+            'after'   => '',
+            'attrs'   => [],
+            'viewer'  => [],
+            'items'   => [
                 'https://picsum.photos/800/800/?image=768',
                 'https://picsum.photos/800/800/?image=669',
                 'https://picsum.photos/800/800/?image=646',
-                'https://picsum.photos/800/800/?image=883'
-            ]
+                'https://picsum.photos/800/800/?image=883',
+            ],
+            'options' => [],
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -77,11 +71,11 @@ class Slider extends PartialController implements SliderContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $items = $this->get('items', []);
 
@@ -92,7 +86,7 @@ class Slider extends PartialController implements SliderContract
                 $item = call_user_func($item);
             elseif (is_array($item)) :
             elseif ($validator->isUrl($item)) :
-                $item = "<img src=\"{$item}\"/>";
+                $item = "<img src=\"{$item}\" alt=\"\"/>";
             endif;
         endforeach;
         $this->set('items', $items);

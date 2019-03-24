@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface Accordion extends PartialController
+interface Accordion extends PartialFactory
 {
 
 }

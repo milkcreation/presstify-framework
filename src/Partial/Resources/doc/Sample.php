@@ -2,9 +2,9 @@
 
 namespace tiFy\Partial\Partials\Sample;
 
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Sample extends PartialController
+class Sample extends PartialFactory
 {
     /**
      * Liste des attributs de configuration.

@@ -2,7 +2,7 @@
 /**
  * Message - Gabarit d'affichage.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Mail\MessageViewController $this
+ * @var tiFy\Mail\MailerMessageView $this
  */
 ?>
 

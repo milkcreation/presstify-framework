@@ -2,13 +2,44 @@
 
 namespace tiFy\App\Container;
 
-use tiFy\App\AppTrait;
-use tiFy\Contracts\App\AppInterface;
-use tiFy\Kernel\Container\Container as Container;
+use BadMethodCallException;
+use Exception;
+use Illuminate\Support\Collection;
+use League\Container\ServiceProvider\ServiceProviderInterface;
+use Psr\Container\ContainerInterface;
+use tiFy\tiFy;
 
-class AppContainer extends Container implements AppInterface
+/**
+ * Class AbstractApp
+ * @package tiFy\App
+ *
+ * @mixin tiFy
+ */
+class AppContainer implements ContainerInterface
 {
-    use AppTrait;
+    /**
+     * Liste des services déclarés.
+     * @var AppService[]
+     */
+    protected static $items = [];
+
+    /**
+     * Liste des alias de résolution de services.
+     * @var array
+     */
+    protected $aliases = [];
+
+    /**
+     * Activation de l'auto-wiring
+     * @see http://container.thephpleague.com/2.x/auto-wiring/
+     */
+    protected $autoWiring = false;
+
+    /**
+     * Liste des fournisseurs de service.
+     * @var string[]
+     */
+    protected $serviceProviders = [];
 
     /**
      * CONSTRUCTEUR.
@@ -17,21 +48,38 @@ class AppContainer extends Container implements AppInterface
      */
     public function __construct()
     {
-        parent::__construct();
+        foreach ($this->getServiceProviders() as $serviceProvider) :
+            $resolved = $this->share($serviceProvider)->build();
 
-        $this->appAddAction('tify_app_boot', [$this, 'appBoot']);
+            if ($resolved instanceof ServiceProviderInterface) :
+                $resolved->setApp($this);
+                $this->getContainer()->addServiceProvider($resolved);
+            endif;
+        endforeach;
     }
 
     /**
-     * {@inheritdoc}
+     * Délégation d'appel des méthodes du conteneur d'injection.
+     *
+     * @param string $name Nom de la méthode à appeler.
+     * @param array $arguments Liste des variables passées en argument.
+     *
+     * @return mixed
+     *
+     * @throws BadMethodCallException
      */
-    public function appBoot()
+    public function __call($name, $arguments)
     {
-
+        try {
+            return $this->getContainer()->$name(...$arguments);
+        } catch (Exception $e) {
+            throw new BadMethodCallException(sprintf(__('La méthode %s n\'est pas disponible.', 'tify'), $name));
+        }
     }
 
+
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addService($abstract, $attrs = [])
     {
@@ -39,13 +87,139 @@ class AppContainer extends Container implements AppInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
+     */
+    public function bound($abstract)
+    {
+        return isset(self::$items[$this->getAbstract($abstract)]) || $this->has($abstract);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function bind($abstract, $concrete = null, $singleton = false)
+    {
+        if (is_null($concrete)) :
+            $concrete = $abstract;
+        endif;
+
+        $alias = $this->getAlias($abstract);
+
+        return self::$items[$abstract] = $this->addService($abstract, compact('alias', 'concrete', 'singleton'));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function has($alias)
+    {
+        return $this->getContainer()->has($alias);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get($id, array $args = [])
+    {
+        return $this->resolve($id, $args) ? : $this->getContainer()->get($id, $args);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAbstract($alias)
+    {
+        $items = self::$items;
+
+        return (
+        $exists = (new Collection($items))->first(function (AppService $item) use ($alias) {
+            return $item->getAlias() === $alias;
+        })
+        )
+            ? $exists->getAbstract()
+            : $alias;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAlias($abstract)
+    {
+        $alias = array_search($abstract, $this->getAliases());
+
+        return $alias !== false ? $alias : $abstract;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getContainer()
+    {
+        return tiFy::instance();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getService($abstract)
+    {
+        $abstract = $this->getAbstract($abstract);
+
+        if (isset(self::$items[$abstract])) :
+            return self::$items[$abstract];
+        else :
+            throw new \InvalidArgumentException(
+                sprintf('(%s) n\'est pas distribué par le fournisseur de service.', $abstract),
+                501
+            );
+        endif;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getServiceProviders()
     {
-        return array_merge(
-            $this->serviceProviders,
-            config('app.providers', [])
-        );
+        return config('app.providers', []);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resolve($alias, $args = [])
+    {
+        try {
+            $resolved = $this->getService($alias);
+
+            return $resolved->build($args);
+        } catch (\InvalidArgumentException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setAlias($alias, $concrete)
+    {
+        $this->aliases[$alias] = $concrete;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function singleton($abstract, $concrete = null)
+    {
+        return $this->bind($abstract, $concrete, true);
     }
 }

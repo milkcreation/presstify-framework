@@ -1,7 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
 use App\App;
-use tiFy\tiFy;
 use tiFy\Contracts\Kernel\Assets;
 use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\Cron\CronManager;
@@ -18,7 +17,7 @@ use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Logger;
 use tiFy\Contracts\Kernel\Request;
 use tiFy\Contracts\Kernel\Validator;
-use tiFy\Contracts\Partial\PartialController;
+use tiFy\Contracts\Partial\PartialFactory;
 use tiFy\Contracts\Partial\PartialManager;
 use tiFy\Contracts\PostType\PostTypeManager;
 use tiFy\Contracts\PostType\PostTypeFactory;
@@ -33,9 +32,6 @@ use tiFy\Contracts\View\ViewEngine;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\UserManager;
-use tiFy\Contracts\Wp\WpManager;
-use tiFy\Contracts\Wp\PageHook;
-use tiFy\Contracts\Wp\PageHookItem;
 use tiFy\Kernel\Kernel;
 use tiFy\Kernel\Http\RedirectResponse as HttpRedirect;
 
@@ -63,7 +59,7 @@ if (!function_exists('app')) :
             return $factory;
         endif;
 
-        return tiFy::instance()->resolve($abstract, $args);
+        return $factory->get($abstract, $args);
     }
 endif;
 
@@ -75,7 +71,7 @@ if (!function_exists('assets')) :
      */
     function assets(): Assets
     {
-        return app('assets');
+        return app()->get('assets');
     }
 endif;
 
@@ -143,7 +139,7 @@ if (!function_exists('container')) :
      *
      * @param string $abstract Nom de qualification du service à récupérer.
      *
-     * @return \tiFy\Kernel\Container\Container
+     * @return \tiFy\Container\Container
      */
     function container($abstract = null)
     {
@@ -263,35 +259,7 @@ if (!function_exists('logger')) :
      */
     function logger(): Logger
     {
-        return app('logger');
-    }
-endif;
-
-if (!function_exists('page_hook')) :
-    /**
-     * Instance de controleur de page d'accroche
-     * {@internal
-     * - null $name Récupére l'instance du controleur.
-     * - string $name Récupére l'instance du controleur de l'élément déclaré.
-     * - array $name Déclaration des éléments
-     * }
-     *
-     * @param null|string $name Nom de qualification de l'élément à récupérer.
-     *
-     * @return PageHook|PageHookItem
-     */
-    function page_hook($name = null)
-    {
-        /** @var PageHook $factory */
-        $factory = app()->get('wp.page-hook');
-
-        if (is_null($name)) :
-            return $factory;
-        elseif (is_array($name)) :
-            return $factory->set($name);
-        else :
-            return $factory->get($name);
-        endif;
+        return app()->get('logger');
     }
 endif;
 
@@ -305,7 +273,7 @@ if (!function_exists('params')) :
      */
     function params($params = []): ParamsBag
     {
-        return app('params.bag', [$params]);
+        return app()->get('params.bag', [$params]);
     }
 endif;
 
@@ -317,12 +285,12 @@ if (!function_exists('partial')) :
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return null|PartialManager|PartialController
+     * @return null|PartialManager|PartialFactory
      */
-    function partial($name = null, $id = null, $attrs = null)
+    function partial(?string $name = null, $id = null, ?array $attrs = null)
     {
         /** @var PartialManager $manager */
-        $manager = app('partial');
+        $manager = app()->get('partial');
 
         if (is_null($name)) :
             return $manager;
@@ -379,10 +347,10 @@ if (!function_exists('redirect')) {
     function redirect($to = null, $status = 302, $headers = [], $secure = null)
     {
         if (is_null($to)) :
-            return app('redirect');
+            return app()->get('redirect');
         endif;
 
-        return app('redirect', [$to, $status, $headers, $secure]);
+        return app()->get('redirect', [$to, $status, $headers, $secure]);
     }
 }
 
@@ -420,9 +388,9 @@ if (! function_exists('route')) {
      * @param array $parameters Liste des variables passées en argument dans l'url.
      * @param boolean $absolute Activation de sortie de l'url absolue.
      *
-     * @return string
+     * @return string|null
      */
-    function route($name, $parameters = [], $absolute = true)
+    function route($name, $parameters = [], $absolute = true): ?string
     {
         return router()->url($name, $parameters, $absolute);
     }
@@ -434,7 +402,7 @@ if (!function_exists('route_exists')) :
      *
      * @return bool
      */
-    function route_exists()
+    function route_exists(): bool
     {
         return router()->hasCurrent();
     }
@@ -574,7 +542,7 @@ if (! function_exists('validator')) {
      */
     function validator(): Validator
     {
-        return app('validator');
+        return app()->get('validator');
     }
 }
 
@@ -598,34 +566,5 @@ if (!function_exists('view')) :
         endif;
 
         return $factory->make($view, $data);
-    }
-endif;
-
-if (!function_exists('wordpress')) :
-    /**
-     * Instance du controleur d'environnement Wordpress.
-     *
-     * @return WpManager
-     */
-    function wordpress(): WpManager
-    {
-        return app()->get('wp');
-    }
-endif;
-
-if (!function_exists('wp_env')) :
-    /**
-     * Instance du controleur d'environnement Wordpress.
-     *
-     * @return WpManager
-     *
-     * @deprecated
-     */
-    function wp_env()
-    {
-        /** @var WpManager $factory */
-        $factory = app()->get('wp');
-
-        return $factory;
     }
 endif;

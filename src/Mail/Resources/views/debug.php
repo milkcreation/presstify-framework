@@ -2,7 +2,7 @@
 /**
  * Affichage de l'email en mode déboguage.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Mail\MessageViewController $this
+ * @var tiFy\Mail\MailerMessageView $this
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

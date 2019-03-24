@@ -3,13 +3,29 @@
 namespace tiFy\Partial\Partials\Table;
 
 use tiFy\Contracts\Partial\Table as TableContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Table extends PartialController implements  TableContract
+class Table extends PartialFactory implements  TableContract
 {
     /**
+     * @inheritdoc
+     */
+    public function boot()
+    {
+        add_action('init', function () {
+            wp_register_style(
+                'PartialTable',
+                assets()->url('partial/table/css/styles.css'),
+                [],
+                160714
+            );
+        });
+    }
+
+    /**
      * Liste des attributs de configuration.
-     * @var array $attributes {
+     *
+     * @return array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.
@@ -21,57 +37,35 @@ class Table extends PartialController implements  TableContract
      *      @var string $none Intitulé de la table lorsque la table ne contient aucune donnée.
      * }
      */
-    protected $attributes = [
-        'before'  => '',
-        'after'   => '',
-        'attrs'   => [],
-        'viewer'  => [],
-        'header'  => true,
-        'footer'  => true,
-        'columns' => [
-            'Lorem', 'Ipsum'
-        ],
-        'datas'   => [
-            [
-                'lorem dolor', 'ipsum dolor'
-            ],
-            [
-                'lorem amet', 'ipsum amet'
-            ]
-        ],
-        'none'    => ''
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
-    {
-        add_action(
-            'init',
-            function () {
-                \wp_register_style(
-                    'PartialTable',
-                    assets()->url('partial/table/css/styles.css'),
-                    [],
-                    160714
-                );
-            }
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function defaults()
     {
         return [
-            'none' => __('Aucun élément à afficher dans le tableau', 'tify')
+            'before'  => '',
+            'after'   => '',
+            'attrs'   => [],
+            'viewer'  => [],
+            'header'  => true,
+            'footer'  => true,
+            'columns' => [
+                'Lorem',
+                'Ipsum',
+            ],
+            'datas'   => [
+                [
+                    'lorem dolor',
+                    'ipsum dolor',
+                ],
+                [
+                    'lorem amet',
+                    'ipsum amet',
+                ],
+            ],
+            'none'    => __('Aucun élément à afficher dans le tableau', 'tify'),
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -79,11 +73,11 @@ class Table extends PartialController implements  TableContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('count', count($this->get('columns', [])));
     }

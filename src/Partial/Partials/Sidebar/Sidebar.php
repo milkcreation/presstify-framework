@@ -5,7 +5,7 @@ namespace tiFy\Partial\Partials\Sidebar;
 use Closure;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Partial\Sidebar as SidebarContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
 /**
  * RESSOURCES POUR EVOLUTION :
@@ -15,11 +15,34 @@ use tiFy\Partial\PartialController;
  * http://tympanus.net/Development/OffCanvasMenuEffects/
  * http://tympanus.net/Development/MultiLevelPushMenu/
  */
-class Sidebar extends PartialController implements SidebarContract
+class Sidebar extends PartialFactory implements SidebarContract
 {
     /**
+     * @inheritdoc
+     */
+    public function boot()
+    {
+        add_action('init', function () {
+            wp_register_style(
+                'PartialSidebar',
+                assets()->url('partial/sidebar/css/styles.css'),
+                [],
+                180511
+            );
+            wp_register_script(
+                'PartialSidebar',
+                assets()->url('partial/sidebar/css/scripts.js'),
+                ['jquery'],
+                180511,
+                true
+            );
+        });
+    }
+
+    /**
      * Liste des attributs de configuration.
-     * @var array $attributes {
+     *
+     * @return array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.
@@ -50,45 +73,26 @@ class Sidebar extends PartialController implements SidebarContract
      *      @var string $theme Theme couleur de l'interface light|dark.
      * }
      */
-    protected $attributes = [
-        'before'        => '',
-        'after'         => '',
-        'attrs'         => [],
-        'viewer'        => [],
-        'width'         => '300px',
-        'z-index'       => 99990,
-        'pos'           => 'left',
-        'closed'        => true,
-        'outside_close' => true,
-        'animate'       => true,
-        'min-width'     => '991px',
-        'items'         => [],
-        'header'        => true,
-        'footer'        => true,
-        'toggle'        => true,
-        'theme'         => 'light',
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function defaults()
     {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialSidebar',
-                assets()->url('partial/sidebar/css/styles.css'),
-                [],
-                180511
-            );
-            wp_register_script(
-                'PartialSidebar',
-                assets()->url('partial/sidebar/css/scripts.js'),
-                ['jquery'],
-                180511,
-                true
-            );
-        });
+        return [
+            'before'        => '',
+            'after'         => '',
+            'attrs'         => [],
+            'viewer'        => [],
+            'width'         => '300px',
+            'z-index'       => 99990,
+            'pos'           => 'left',
+            'closed'        => true,
+            'outside_close' => true,
+            'animate'       => true,
+            'min-width'     => '991px',
+            'items'         => [],
+            'header'        => true,
+            'footer'        => true,
+            'toggle'        => true,
+            'theme'         => 'light',
+        ];
     }
 
     /**
@@ -103,9 +107,9 @@ class Sidebar extends PartialController implements SidebarContract
     /**
      * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set(
             'attrs.style',

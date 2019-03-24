@@ -17,6 +17,8 @@ class PhpMailer implements LibraryAdapter
     /**
      * CONSTRUCTEUR.
      *
+     * @param LibPhpMailer $phpmailer Instance du pilote de traitement des emails.
+     *
      * @return void
      */
     public function __construct(LibPhpMailer $phpmailer)

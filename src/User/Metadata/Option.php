@@ -2,15 +2,13 @@
 
 namespace tiFy\User\Metadata;
 
-use tiFy\App\AppController;
-
 /**
  * Class Metadata
  * @package tiFy\User\Metadata
  *
  * @deprecated
  */
-final class Option extends AppController
+final class Option
 {
     /* = ARGUMENTS = */
     // Liste des meta_keys declarées

@@ -2,7 +2,7 @@
 /**
  * Message Au format HTML.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Mail\MessageViewController $this
+ * @var tiFy\Mail\MailerMessageView $this
  */
 ?>
 <?php echo $this->layout('layout', $this->all()); ?>

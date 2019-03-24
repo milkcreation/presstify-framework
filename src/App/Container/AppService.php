@@ -4,36 +4,62 @@ namespace tiFy\App\Container;
 
 use League\Container\Definition\DefinitionInterface;
 use League\Container\Argument\RawArgument;
-use tiFy\Kernel\Container\Service;
-use tiFy\Contracts\App\AppInterface;
-use tiFy\tiFy;
+use Psr\Container\ContainerInterface;
+use tiFy\Support\ParamsBag;
 
-class AppService extends Service
+class AppService extends ParamsBag
 {
     /**
-     * Classe de rappel du controleur de l'interface associée.
-     * @var AppInterface
+     * Nom de qualification du service.
+     * @var string
      */
-    protected $app;
+    protected $abstract;
+
+    /**
+     * Liste des variables passées en argument.
+     * @var array
+     */
+    protected $args = [];
+
+    /**
+     * Classe de rappel du conteneur de services.
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * Définition du service déclaré.
+     * @var DefinitionInterface
+     */
+    protected $definition;
+
+    /**
+     * Instance courante du service.
+     * @var mixed
+     */
+    protected $instance;
 
     /**
      * CONSTRUCTEUR.
      *
      * @param string $abstract Nom de qualification du service.
      * @param array $attrs Attributs de configuration.
-     * @param AppInterface Classe de rappel du controleur de l'interface associée.
+     * @param AppContainer $container Classe de rappel du conteneur de services.
      *
      * @return void
      */
-    public function __construct($abstract, $attrs = [], AppInterface $app)
+    public function __construct($abstract, $attrs = [], $container)
     {
-        $this->app = $app;
+        $this->abstract = $abstract;
+        $this->container = $container;
 
-        parent::__construct($abstract, $attrs, tiFy::instance());
+        $this->set($attrs)->parse();
+
+        $this->bind();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function build($args = [])
     {
@@ -49,10 +75,127 @@ class AppService extends Service
             $arg = new RawArgument($arg);
         endforeach;
 
-        array_push($args, $this->app);
+        array_push($args, $this->container);
 
         return $this->instance =  ($this->definition instanceof DefinitionInterface)
             ? $this->definition->build($args)
             : $this->definition;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function bind()
+    {
+        return $this->definition = $this->getContainer()->add($this->getAlias(), $this->getConcrete(), $this->isSingleton());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function defaults()
+    {
+        return [
+            'alias'     => $this->abstract,
+            'args'      => [],
+            'bootable'  => false,
+            'concrete'  => null,
+            'singleton' => false,
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAbstract()
+    {
+        return $this->abstract;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAlias()
+    {
+        return $this->get('alias');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getArgs()
+    {
+        return $this->args;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConcrete()
+    {
+        return $this->get('concrete');
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isBootable()
+    {
+        return !empty($this->get('bootable'));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isClosure()
+    {
+        try {
+            $reflection = new \ReflectionFunction($this->getConcrete());
+            return $reflection->isClosure();
+        } catch (\ReflectionException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isDeferred()
+    {
+        return empty($this->get('bootable'));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isSingleton()
+    {
+        return !empty($this->get('singleton'));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setArgs($args = [])
+    {
+        return $this->set('args', $args);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resolved()
+    {
+        return !empty($this->instance) && $this->definition;
     }
 }

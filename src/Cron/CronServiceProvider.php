@@ -19,16 +19,6 @@ class CronServiceProvider extends AppServiceProvider
     /**
      * @inheritdoc
      */
-    public function boot()
-    {
-        add_action('after_setup_tify', function() {
-            $this->getContainer()->get('cron');
-        });
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function register()
     {
         $this->getContainer()->share('cron', function () {

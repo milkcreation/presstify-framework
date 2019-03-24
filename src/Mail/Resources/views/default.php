@@ -2,7 +2,7 @@
 /**
  * Message Par défaut - Au format HTML.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Mail\MessageViewController $this
+ * @var tiFy\Mail\MailerMessageView $this
  */
 ?>
 

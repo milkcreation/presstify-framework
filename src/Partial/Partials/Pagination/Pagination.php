@@ -3,49 +3,10 @@
 namespace tiFy\Partial\Partials\Pagination;
 
 use tiFy\Contracts\Partial\Pagination as PaginationContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Pagination extends PartialController implements PaginationContract
+class Pagination extends PartialFactory implements PaginationContract
 {
-    /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
-     *      @var array $links {
-     *          @var boolean|array $first Activation du lien vers la première page|Liste d'attributs.
-     *          @var boolean|array $last Activation du lien vers la dernière page|Liste d'attributs.
-     *          @var boolean|array $previous Activation du lien vers la page précédente|Liste d'attributs.
-     *          @var boolean|array $next Activation du lien vers la page suivante|Liste d'attributs.
-     *          @var boolean|array $numbers Activation de l'affichage de la numérotation des pages|Liste d'attributs {
-     *              @var int $range
-     *              @var int $anchor
-     *              @var int $gap
-     *          }
-     *      }
-     *      @var array|PaginationQuery|object $query Arguments de requête|Instance du controleur de traitement
-     *                                               des requêtes.
-     *      @var PaginationUrl|string $url Url de lien vers les pages. %d correspond au numéro de page.
-     * }
-     */
-    protected $attributes = [
-        'before'   => '',
-        'after'    => '',
-        'attrs'    => [],
-        'viewer'   => [],
-        'links'    => [
-            'first'    => true,
-            'last'     => true,
-            'previous' => true,
-            'next'     => true,
-            'numbers'  => true
-        ],
-        'query'    => [],
-        'url'      => ''
-    ];
-
     /**
      * @var PaginationQuery
      */
@@ -72,6 +33,49 @@ class Pagination extends PartialController implements PaginationContract
     }
 
     /**
+     * Liste des attributs de configuration.
+     *
+     * @return array $attributes {
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $links {
+     *          @var boolean|array $first Activation du lien vers la première page|Liste d'attributs.
+     *          @var boolean|array $last Activation du lien vers la dernière page|Liste d'attributs.
+     *          @var boolean|array $previous Activation du lien vers la page précédente|Liste d'attributs.
+     *          @var boolean|array $next Activation du lien vers la page suivante|Liste d'attributs.
+     *          @var boolean|array $numbers Activation de l'affichage de la numérotation des pages|Liste d'attributs {
+     *              @var int $range
+     *              @var int $anchor
+     *              @var int $gap
+     *          }
+     *      }
+     *      @var array|PaginationQuery|object $query Arguments de requête|Instance du controleur de traitement
+     *                                               des requêtes.
+     *      @var PaginationUrl|string $url Url de lien vers les pages. %d correspond au numéro de page.
+     * }
+     */
+    public function defaults()
+    {
+        return [
+            'before' => '',
+            'after'  => '',
+            'attrs'  => [],
+            'viewer' => [],
+            'links'  => [
+                'first'    => true,
+                'last'     => true,
+                'previous' => true,
+                'next'     => true,
+                'numbers'  => true,
+            ],
+            'query'  => [],
+            'url'    => '',
+        ];
+    }
+
+    /**
      * @inheritdoc
      */
     public function enqueue_scripts()
@@ -82,9 +86,9 @@ class Pagination extends PartialController implements PaginationContract
     /**
      * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialPagination'));
 

@@ -6,13 +6,40 @@ use Closure;
 use tiFy\Contracts\Partial\CookieNotice as CookieNoticeContract;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class CookieNotice extends PartialController implements CookieNoticeContract
+class CookieNotice extends PartialFactory implements CookieNoticeContract
 {
     /**
+     * @inheritdoc
+     */
+    public function boot()
+    {
+        add_action('init', function () {
+            add_action(
+                'wp_ajax_tify_partial_cookie_notice',
+                [$this, 'wp_ajax']
+            );
+
+            add_action(
+                'wp_ajax_nopriv_tify_partial_cookie_notice',
+                [$this, 'wp_ajax']
+            );
+
+            wp_register_script(
+                'PartialCookieNotice',
+                assets()->url('partial/cookie-notice/js/scripts.js'),
+                ['PartialNotice'],
+                170626,
+                true
+            );
+        });
+    }
+
+    /**
      * Liste des attributs de configuration.
-     * @var array $attributes {
+     *
+     * @return array $attributes {
      *      @var string $before Contenu placé avant.
      *      @var string $after Contenu placé après.
      *      @var array $attrs Attributs de balise HTML.
@@ -28,50 +55,27 @@ class CookieNotice extends PartialController implements CookieNoticeContract
      *      @var string $ajax_nonce Chaine de sécurisation CSRF.
      * }
      */
-    protected $attributes = [
-        'before'        => '',
-        'after'         => '',
-        'attrs'         => [],
-        'viewer'        => [],
-        'content'       => '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>',
-        'dismiss'       => false,
-        'type'          => 'info',
-        'accept'        => [],
-        'cookie_name'   => '',
-        'cookie_hash'   => true,
-        'cookie_expire' => HOUR_IN_SECONDS,
-        'ajax_action'   => 'tify_partial_cookie_notice',
-        'ajax_nonce'    => '',
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function defaults()
     {
-        add_action('init', function () {
-            add_action(
-                'wp_ajax_tify_partial_cookie_notice',
-                [$this, 'wp_ajax']
-            );
-
-            add_action(
-                'wp_ajax_nopriv_tify_partial_cookie_notice',
-                [$this, 'wp_ajax']
-            );
-
-            \wp_register_script(
-                'PartialCookieNotice',
-                assets()->url('partial/cookie-notice/js/scripts.js'),
-                ['PartialNotice'],
-                170626,
-                true
-            );
-        });
+        return [
+            'before'        => '',
+            'after'         => '',
+            'attrs'         => [],
+            'viewer'        => [],
+            'content'       => '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>',
+            'dismiss'       => false,
+            'type'          => 'info',
+            'accept'        => [],
+            'cookie_name'   => '',
+            'cookie_hash'   => true,
+            'cookie_expire' => HOUR_IN_SECONDS,
+            'ajax_action'   => 'tify_partial_cookie_notice',
+            'ajax_nonce'    => '',
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -80,13 +84,13 @@ class CookieNotice extends PartialController implements CookieNoticeContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
         $this->set('accept.content', __('Fermer', 'tify'));
 
-        parent::parse($attrs);
+        parent::parse();
 
         $content = $this->get('content', '');
         $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);
@@ -126,7 +130,7 @@ class CookieNotice extends PartialController implements CookieNoticeContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCookie()
     {
@@ -138,7 +142,7 @@ class CookieNotice extends PartialController implements CookieNoticeContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setCookie($cookie_name, $cookie_expire = 0)
     {
@@ -174,7 +178,7 @@ class CookieNotice extends PartialController implements CookieNoticeContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function wp_ajax()
     {

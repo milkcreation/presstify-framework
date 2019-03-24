@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface CookieNotice extends PartialController
+interface CookieNotice extends PartialFactory
 {
     /**
      * Récupération d'un cookie.

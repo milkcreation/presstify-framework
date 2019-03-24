@@ -1,16 +1,11 @@
-<?php
-
-/**
- * @name PartialManager
- * @desc Gestion des controleurs d'affichage.
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial;
 
-use Illuminate\Support\Str;
-use tiFy\Contracts\Partial\PartialController;
+use BadMethodCallException;
+use Exception;
+use tiFy\Support\Str;
+use tiFy\Contracts\Partial\PartialFactory;
 use tiFy\Contracts\Partial\PartialManager as PartialManagerContract;
 use tiFy\Partial\Partials\Accordion\Accordion;
 use tiFy\Partial\Partials\Breadcrumb\Breadcrumb;
@@ -28,49 +23,43 @@ use tiFy\Partial\Partials\Table\Table;
 use tiFy\Partial\Partials\Tag\Tag;
 
 /**
+ * Class PartialManager
+ * @package tiFy\Partial
+ *
  * @method static Accordion Accordion(string $id = null, array $attrs = [])
  * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
  * @method static CookieNotice CookieNotice(string $id = null, array $attrs = [])
- * @method static Dropdown Dropdown(string $id = null,array $attrs = [])
- * @method static Holder Holder(string $id = null,array $attrs = [])
- * @method static Modal Modal(string $id = null,array $attrs = [])
- * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
- * @method static Notice Notice(string $id = null,array $attrs = [])
- * @method static Pagination Pagination(string $id = null,array $attrs = [])
- * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
- * @method static Slider Slider(string $id = null,array $attrs = [])
- * @method static Spinner Spinner(string $id = null,array $attrs = [])
- * @method static Table Table(string $id = null,array $attrs = [])
- * @method static Tag Tag(string $id = null,array $attrs = [])
+ * @method static Dropdown Dropdown(string $id = null, array $attrs = [])
+ * @method static Holder Holder(string $id = null, array $attrs = [])
+ * @method static Modal Modal(string $id = null, array $attrs = [])
+ * @method static Navtabs Navtabs(string $id = null, array $attrs = [])
+ * @method static Notice Notice(string $id = null, array $attrs = [])
+ * @method static Pagination Pagination(string $id = null, array $attrs = [])
+ * @method static Sidebar Sidebar(string $id = null, array $attrs = [])
+ * @method static Slider Slider(string $id = null, array $attrs = [])
+ * @method static Spinner Spinner(string $id = null, array $attrs = [])
+ * @method static Table Table(string $id = null, array $attrs = [])
+ * @method static Tag Tag(string $id = null, array $attrs = [])
  */
-final class PartialManager implements PartialManagerContract
+class PartialManager implements PartialManagerContract
 {
     /**
-     * Liste des instances des éléments déclarés.
-     * @var array
+     * Instance du gestionnaire de gabarit d'affichage.
+     * @var PartialManagerContract
      */
-    protected $instances = [];
+    protected static $instance;
 
     /**
-     * Liste des alias de qualification des éléments.
+     * Liste des noms de qualification de classes des gabarits d'affichage.
      * @var array
      */
-    protected $items = [
-        'accordion'     => Accordion::class,
-        'breadcrumb'    => Breadcrumb::class,
-        'cookie-notice' => CookieNotice::class,
-        'dropdown'      => Dropdown::class,
-        'holder'        => Holder::class,
-        'modal'         => Modal::class,
-        'navtabs'       => Navtabs::class,
-        'notice'        => Notice::class,
-        'pagination'    => Pagination::class,
-        'sidebar'       => Sidebar::class,
-        'slider'        => Slider::class,
-        'spinner'       => Spinner::class,
-        'table'         => Table::class,
-        'tag'           => Tag::class
-    ];
+    protected $classnames = [];
+
+    /**
+     * Instances indexées des gabarits d'affichage.
+     * @var array
+     */
+    protected $indexes = [];
 
     /**
      * CONSTRUCTEUR.
@@ -79,77 +68,91 @@ final class PartialManager implements PartialManagerContract
      */
     public function __construct()
     {
-        add_action('after_setup_theme', function () {
-            foreach ($this->items as $alias => $concrete) :
-                app()->bind("partial.{$alias}", $concrete)->build([null, null]);
-            endforeach;
-        }, 999999);
+        if (is_null(static::$instance)) {
+            static::$instance = $this;
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public static function __callStatic($name, $args)
+    public static function __callStatic(string $name, ?array $arguments): ?PartialFactory
     {
-        array_unshift($args, $name);
-
-        return call_user_func_array([partial(), 'get'], $args);
+        try {
+            return static::$instance->get($name, ...$arguments);
+        } catch (Exception $e) {
+            throw new BadMethodCallException(
+                sprintf(__('La gabarit d\'affichage %s n\'est pas disponible.', 'tify'), $name)
+            );
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function get($name, $id = null, $attrs = null)
+    public function classname(PartialFactory $factory): ?string
     {
-        $alias = 'partial.' . Str::kebab($name);
+        return class_info($factory)->getName();
+    }
 
-        if (is_array($id)) :
+    /**
+     * @inheritdoc
+     */
+    public function get(string $alias, $id = null, ?array $attrs = null): ?PartialFactory
+    {
+        $alias = Str::kebab($alias);
+        $abstract = "partial.factory.{$alias}";
+        $classname = $this->classnames[$alias];
+
+        if (is_array($id)) {
             $attrs = $id;
             $id = null;
-        else :
-            $attrs = $attrs ? : [];
-        endif;
+        } else {
+            $attrs = $attrs ?: [];
+        }
 
-        return app()->resolve($alias, [$id, $attrs]);
+        if (!is_null($id) && isset($this->indexes[$classname][$id])) {
+            return $this->indexes[$classname][$id];
+        }
+
+        return app()->get($abstract, [$id, $attrs, $this]);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function index(PartialController $partial)
+    public function index(PartialFactory $factory): int
     {
-        $concrete = class_info($partial)->getName();
-        $alias = array_search($concrete, $this->items);
+        $classname = $this->classname($factory);
 
-        if ($alias === false) :
-            return 0;
-        endif;
+        $index = !isset($this->indexes[$classname]) ? 0 : count($this->indexes[$classname]);
+        $this->indexes[$classname][$factory->getId()] = $factory;
 
-        $count = empty($this->instances[$alias]) ? 0 : count($this->instances[$alias]);
-
-        $this->instances[$alias][$partial->getId()] = $partial;
-
-        return $count;
+        return $index;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function register($name, $concrete)
+    public function register(string $alias, PartialFactory $factory): ?PartialManagerContract
     {
-        if (in_array($concrete, $this->items) || isset($this->items["partial.{$name}"])) :
-            return false;
-        endif;
+        if(!isset($this->classnames[$alias])){
+            $this->classnames[$alias] = $this->classname($factory);
+        }
 
-        $this->items[$name] = $concrete;
+        if (!app()->has("partial.factory.{$alias}")) {
+            app()->add("partial.factory.{$alias}", function () use ($factory) {
+                return $factory;
+            });
+        }
 
-        return true;
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function resourcesDir($path = '')
+    public function resourcesDir(string $path = null): string
     {
         $path = $path ? '/' . ltrim($path, '/') : '';
 
@@ -159,9 +162,9 @@ final class PartialManager implements PartialManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function resourcesUrl($path = '')
+    public function resourcesUrl(string $path = null): string
     {
         $cinfo = class_info($this);
         $path = $path ? '/' . ltrim($path, '/') : '';

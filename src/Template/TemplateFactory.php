@@ -3,7 +3,7 @@
 namespace tiFy\Template;
 
 use tiFy\Contracts\Kernel\ParamsBag;
-use tiFy\Contracts\Container\ServiceProviderInterface;
+use tiFy\Contracts\Container\ServiceProvider;
 use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
 use tiFy\Template\Templates\BaseServiceProvider;
 use tiFy\tiFy;
@@ -76,7 +76,7 @@ class TemplateFactory implements TemplateFactoryContract
         foreach ($this->getServiceProviders() as $serviceProvider) :
             $resolved = new $serviceProvider($this->getContainer(), $this);
 
-            if ($resolved instanceof ServiceProviderInterface) :
+            if ($resolved instanceof ServiceProvider) :
                 $this->getContainer()->addServiceProvider($resolved);
             endif;
         endforeach;

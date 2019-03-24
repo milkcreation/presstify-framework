@@ -4,34 +4,12 @@ namespace tiFy\Partial\Partials\Notice;
 
 use Closure;
 use tiFy\Contracts\Partial\Notice as NoticeContract;
-use tiFy\Partial\PartialController;
+use tiFy\Partial\PartialFactory;
 
-class Notice extends PartialController implements NoticeContract
+class Notice extends PartialFactory implements NoticeContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
-     *      @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
-     *      @var bool $dismiss Affichage du bouton de masquage de la notification.
-     *      @var string $type Type de notification info|warning|success|error. défaut info.
-     * }
-     */
-    protected $attributes = [
-        'before'  => '',
-        'after'   => '',
-        'attrs'   => [],
-        'viewer'  => [],
-        'content'   => 'Lorem ipsum dolor site amet',
-        'dismiss'   => false,
-        'type'      => 'info'
-    ];
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -54,7 +32,33 @@ class Notice extends PartialController implements NoticeContract
     }
 
     /**
-     * {@inheritdoc}
+     * Liste des attributs de configuration.
+     *
+     * @return array $attributes {
+     *      @var string $before Contenu placé avant.
+     *      @var string $after Contenu placé après.
+     *      @var array $attrs Attributs de balise HTML.
+     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
+     *      @var bool $dismiss Affichage du bouton de masquage de la notification.
+     *      @var string $type Type de notification info|warning|success|error. défaut info.
+     * }
+     */
+    public function defaults()
+    {
+        return [
+            'before'  => '',
+            'after'   => '',
+            'attrs'   => [],
+            'viewer'  => [],
+            'content' => 'Lorem ipsum dolor site amet',
+            'dismiss' => false,
+            'type'    => 'info',
+        ];
+    }
+
+    /**
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -63,13 +67,13 @@ class Notice extends PartialController implements NoticeContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        $this->attributes['attrs']['id'] = 'tiFyPartial-Notice--' . $this->getIndex();
+        $this->set('attrs.id', 'tiFyPartial-Notice--' . $this->getIndex());
 
-        parent::parse($attrs);
+        parent::parse();
 
         if(!$this->get('attrs.class')) :
             $this->set('attrs.class', 'tiFyPartial-Notice');
@@ -87,19 +91,13 @@ class Notice extends PartialController implements NoticeContract
                 $dismiss= [];
             endif;
 
-            $this->set('dismiss', partial(
-                'tag',
-                array_merge(
-                    [
-                        'tag' => 'button',
-                        'attrs' => [
-                            'data-toggle' => 'notice.dismiss'
-                        ],
-                        'content' => '&times;'
-                    ],
-                    $dismiss
-                )
-            ));
+            $this->set('dismiss', partial('tag', array_merge([
+                'tag' => 'button',
+                'attrs' => [
+                    'data-toggle' => 'notice.dismiss'
+                ],
+                'content' => '&times;'
+            ], $dismiss)));
         else :
             $this->set('dismiss', '');
         endif;

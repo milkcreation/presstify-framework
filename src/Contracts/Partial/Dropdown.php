@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface Dropdown extends PartialController
+interface Dropdown extends PartialFactory
 {
 
 }

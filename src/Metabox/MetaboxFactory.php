@@ -4,9 +4,9 @@ namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxFactory as MetaboxFactoryContract;
 use tiFy\Contracts\Metabox\MetaboxController;
-use tiFy\Contracts\Wp\WpScreenInterface;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Wp\WpScreen;
+use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
+use tiFy\Wordpress\Routing\WpScreen;
 
 class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
 {
@@ -30,7 +30,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
      *
      *      @var string $name Nom de qualification. optionnel, généré automatiquement.
      *      @var string|callable $title Titre du greffon.
-     *      @var string|callable|TabContentControllerInterface $content Fonction ou méthode ou classe de rappel d'affichage du contenu de la section.
+     *      @var string|callable $content Fonction ou méthode ou classe de rappel d'affichage du contenu de la section.
      *      @var mixed $args Liste des variables passées en argument dans les fonction d'affichage du titre, du contenu et dans l'objet.
      *      @var string $parent Identifiant de la section parente.
      *      @var string|callable@todo $cap Habilitation d'accès.
@@ -66,7 +66,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
 
     /**
      * Instance de l'écran d'affichage associé.
-     * @var WpScreenInterface
+     * @var WpScreenContract
      */
     protected $screen;
 
@@ -75,7 +75,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
      *
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
-     * @param null|string|\WP_Screen|WpScreenInterface $screen Qualification de la page d'affichage.
+     * @param null|string|\WP_Screen|WpScreenContract $screen Qualification de la page d'affichage.
      *
      * @return void
      */
@@ -84,38 +84,34 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
         $this->name = $name;
         $this->index = self::$_index++;
 
-        if ($screen instanceof WpScreenInterface) :
+        if ($screen instanceof WpScreenContract) :
             $this->screen = $screen;
         else :
-            add_action(
-                'admin_init',
-                function () use ($screen) {
-                    $this->screen = WpScreen::get($screen);
+            add_action('admin_init', function () use ($screen) {
+                $this->screen = WpScreen::get($screen);
 
-                    $content = $this->getContent();
+                $content = $this->getContent();
 
-                    if (is_string($content) && class_exists($content)) :
-                        $controller = new $content($this, $this->getArgs());
-                    elseif(is_object($content)) :
-                        $controller = $content;
-                        call_user_func_array($controller, [$this, $this->getArgs()]);
-                    else :
-                        $controller = null;
-                    endif;
+                if (is_string($content) && class_exists($content)) :
+                    $controller = new $content($this, $this->getArgs());
+                elseif(is_object($content)) :
+                    $controller = $content;
+                    call_user_func_array($controller, [$this, $this->getArgs()]);
+                else :
+                    $controller = null;
+                endif;
 
-                    if ($controller instanceof MetaboxController) :
-                        $this->set('controller', $controller);
-                    endif;
-                },
-                999999
-            );
+                if ($controller instanceof MetaboxController) :
+                    $this->set('controller', $controller);
+                endif;
+            }, 999999);
         endif;
 
         parent::__construct($attrs);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getArgs()
     {
@@ -123,7 +119,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIndex()
     {
@@ -131,7 +127,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContent()
     {
@@ -143,7 +139,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContext()
     {
@@ -151,7 +147,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getHeader()
     {
@@ -163,7 +159,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName()
     {
@@ -171,7 +167,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getParent()
     {
@@ -179,7 +175,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPosition()
     {
@@ -187,7 +183,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getScreen()
     {
@@ -195,7 +191,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTitle()
     {
@@ -203,7 +199,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isActive()
     {
@@ -211,9 +207,9 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function load(WpScreenInterface $current_screen)
+    public function load(WpScreenContract $current_screen)
     {
         if ($this->getScreen() && ($current_screen->getHookname() === $this->getScreen()->getHookname())) :
             $this->active = true;

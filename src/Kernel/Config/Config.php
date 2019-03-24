@@ -23,14 +23,13 @@ class Config extends ParamsBag
      */
     public function __construct()
     {
-        /** @var Paths $paths */
-        $this->paths = tiFy::instance()->resolve(Paths::class);
+        $this->paths = tiFy::instance()->get(Paths::class);
 
         if (file_exists($this->paths->getConfigPath('autoload.php'))) :
             $autoloads = include $this->paths->getConfigPath('autoload.php');
             foreach ($autoloads as $type => $autoload) :
                 foreach ($autoload as $namespace => $path) :
-                    tiFy::instance()->resolve(ClassLoader::class)->load($namespace, $path, $type);
+                    tiFy::instance()->get(ClassLoader::class)->load($namespace, $path, $type);
                 endforeach;
             endforeach;
         endif;
