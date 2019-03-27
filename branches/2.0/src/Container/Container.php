@@ -25,7 +25,7 @@ class Container extends LeagueContainer implements ContainerContract
         parent::__construct();
 
         foreach ($this->getServiceProviders() as $serviceProvider) :
-            $resolved = $this->share($serviceProvider)->build();
+            $this->share($serviceProvider, $resolved = new $serviceProvider());
 
             if ($resolved instanceof ServiceProviderInterface) :
                 $resolved->setContainer($this);

@@ -1,12 +1,14 @@
+/* global tify, tify_taboox_video_gallery, wp */
+
 "use strict";
 
-var taboox_video_gallery_src_frame, taboox_video_gallery_poster_frame;
+let taboox_video_gallery_src_frame, taboox_video_gallery_poster_frame;
 
 jQuery(document).ready(function ($) {
-    $('.tiFyTabMetaboxPostTypeVideoGallery-add').click(function (e) {
+    $('.tiFyTabMetaboxPostTypeVideoGallery-add').on('click', function (e) {
         e.preventDefault();
 
-        var $list = $(this).prev(),
+        let $list = $(this).prev(),
             $spinner = $(this).next(),
             name = $(this).data('name'),
             max = $(this).data('max');
@@ -30,8 +32,9 @@ jQuery(document).ready(function ($) {
         });
     });
 
-    $(document).on('click', '.tiFyTabMetaboxPostTypeVideoGallery-itemRemove', function (e) {
-        $container = $(this).parent();
+    $(document).on('click', '.tiFyTabMetaboxPostTypeVideoGallery-itemRemove', function () {
+        let $container = $(this).parent();
+
         $container.fadeOut(function () {
             $container.remove();
         });
@@ -40,7 +43,7 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.tiFyTabMetaboxPostTypeVideoGallery-itemSrcAdd', function (e) {
         e.preventDefault();
 
-        var $target = $(this).prev();
+        let $target = $(this).prev();
 
         taboox_video_gallery_src_frame = wp.media.frames.file_frame = wp.media({
             title: $(this).data('media_title'),
@@ -55,7 +58,7 @@ jQuery(document).ready(function ($) {
         });
 
         taboox_video_gallery_src_frame.on('select', function () {
-            attachment = taboox_video_gallery_src_frame.state().get('selection').first().toJSON();
+            let attachment = taboox_video_gallery_src_frame.state().get('selection').first().toJSON();
             $target.html(attachment.url);
         });
 
@@ -66,7 +69,7 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.tiFyTabMetaboxPostTypeVideoGallery-itemPosterAdd', function (e) {
         e.preventDefault();
 
-        var $target = $(this);
+        let $target = $(this);
 
         taboox_video_gallery_poster_frame = wp.media.frames.file_frame = wp.media({
             title: $(this).data('media_title'),
@@ -79,7 +82,8 @@ jQuery(document).ready(function ($) {
         });
 
         taboox_video_gallery_poster_frame.on('select', function () {
-            attachment = taboox_video_gallery_poster_frame.state().get('selection').first().toJSON();
+            let attachment = taboox_video_gallery_poster_frame.state().get('selection').first().toJSON();
+
             $target.css('background-image', 'url(' + attachment.url + '');
             $target.next().val(attachment.id);
         });

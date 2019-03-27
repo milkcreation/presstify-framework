@@ -1,4 +1,3 @@
-import jQuery from "jquery";
 import moment from "moment/moment";
 
 /** CSS */
