@@ -1,15 +1,15 @@
-/* globals tify, tiFyUiAdminListTablePreviewItem */
+/* globals tify, tiFyUiAdminListTablePreviewItem, url */
 
 "use strict";
 
-jQuery(document).ready(function($){
+jQuery(document).ready(function ($) {
 
-    var i18n = tiFyUiAdminListTablePreviewItem;
+    let i18n = tiFyUiAdminListTablePreviewItem;
 
-    $(document).on( 'click', '#the-list .row-actions .preview_item a', function(e){
+    $(document).on('click', '#the-list .row-actions .preview_item a', function (e) {
         e.preventDefault();
 
-        var item_index = url('?' + i18n.item_index_name, $(this).attr('href')),
+        let item_index = url('?' + i18n.item_index_name, $(this).attr('href')),
             nonce = url('?' + i18n.nonce_action, $(this).attr('href')),
             $closest = $(this).closest('tr');
 
@@ -17,20 +17,23 @@ jQuery(document).ready(function($){
             return;
         }
 
-        if ($closest.next().attr('id') != 'Item-preview--' + item_index) {
+        let $preview;
+
+        if ($closest.next().attr('id') !== 'Item-preview--' + item_index) {
             // Création de la zone de prévisualisation
             $preview = $('#Item-previewContainer').clone(true);
-            var id      = 'Item-preview--' + item_index,
-                data    = $.extend(
+
+            let id = 'Item-preview--' + item_index,
+                data = $.extend(
                     {
-                        'action' : i18n.action,
-                        '_ajax_nonce' : nonce
+                        'action': i18n.action,
+                        '_ajax_nonce': nonce
                     },
                     JSON.parse(
                         decodeURIComponent($('#PreviewItemAjaxData').val())
                     )
                 );
-                data[i18n.item_index_name] = item_index;
+            data[i18n.item_index_name] = item_index;
 
             $preview
                 .attr('id', id)
@@ -67,11 +70,11 @@ jQuery(document).ready(function($){
             $.post(
                 tify.ajax_url,
                 data,
-                function(resp){
+                function (resp) {
                     $('.Item-previewContent', $preview).html(resp);
 
-                    if(i18n.mode === 'dialog') {
-                        $('#'+ id).dialog('open');
+                    if (i18n.mode === 'dialog') {
+                        $('#' + id).dialog('open');
                     }
                 }
             );

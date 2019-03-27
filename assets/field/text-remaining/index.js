@@ -1,6 +1,3 @@
-/** DEPS */
-import 'jquery';
-
 /** jQuery-ui - Widget */
 import 'jquery-ui/ui/widget';
 

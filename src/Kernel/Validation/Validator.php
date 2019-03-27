@@ -117,7 +117,7 @@ class Validator implements ValidatorContract
      */
     public function maxLength($value, $max = 0)
     {
-        return (strlen($value) < $max);
+        return (strlen($value) <= $max);
     }
 
     /**
@@ -125,7 +125,7 @@ class Validator implements ValidatorContract
      */
     public function minLength($value, $min = 0)
     {
-        return (strlen($value) > $min);
+        return (strlen($value) >= $min);
     }
 
     /**
@@ -141,17 +141,15 @@ class Validator implements ValidatorContract
      */
     public function validPassword($value, $args = [])
     {
-        $args = array_merge(
-            [
-                'digit'        => 1,
-                'letter'       => 1,
-                'maj'          => 1,
-                'special_char' => 0,
-                'min'          => 8,
-                'max'          => 16,
-            ],
-            $args
-        );
+        $args = array_merge([
+            'digit'        => 1,
+            'letter'       => 1,
+            'maj'          => 1,
+            'special_char' => 0,
+            'min'          => 8,
+            'max'          => 16,
+        ], $args);
+
         extract($args);
 
         if ($min && (strlen($value) < (int)$min)) :

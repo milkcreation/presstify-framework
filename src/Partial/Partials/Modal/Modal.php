@@ -207,14 +207,11 @@ class Modal extends PartialFactory implements ModalContract
      */
     public function trigger($attrs = [])
     {
-        $attrs = array_merge(
-            [
-                'tag'     => 'a',
-                'attrs'   => [],
-                'content' => ''
-            ],
-            $attrs
-        );
+        $attrs = array_merge([
+            'tag'     => 'a',
+            'attrs'   => [],
+            'content' => ''
+        ], $attrs);
 
         if ((Arr::get($attrs, 'tag') === 'a') && ! Arr::has($attrs, 'attrs.href')) :
             Arr::set($attrs, 'attrs.href', "#{$this->get('attrs.id')}");

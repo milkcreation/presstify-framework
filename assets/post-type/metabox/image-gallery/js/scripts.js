@@ -1,12 +1,14 @@
+/* global tify, tify_taboox_image_gallery, wp */
+
 "use strict";
 
-var tify_taboox_image_gallery_frame;
+let tify_taboox_image_gallery_frame;
 
 jQuery(document).ready(function ($) {
-    $('.tiFyTabMetaboxPostTypeImageGallery-add').click(function (e) {
+    $('.tiFyTabMetaboxPostTypeImageGallery-add').on('click', function (e) {
         e.preventDefault();
 
-        var $list = $(this).prev(),
+        let $list = $(this).prev(),
             name = $(this).data('name'),
             max = $(this).data('max');
 
@@ -28,9 +30,9 @@ jQuery(document).ready(function ($) {
         });
 
         tify_taboox_image_gallery_frame.on('select', function () {
-            var selection = tify_taboox_image_gallery_frame.state().get('selection');
+            let selection = tify_taboox_image_gallery_frame.state().get('selection');
             selection.map(function (attachment) {
-                var order = $('li', $list).length + 1;
+                let order = $('li', $list).length + 1;
 
                 $.post(
                     tify.ajax_url,
@@ -52,15 +54,16 @@ jQuery(document).ready(function ($) {
     $('.tiFyTabMetaboxPostTypeImageGallery-items').sortable({
         placeholder: "ui-sortable-placeholder",
         containment: "parent",
-        update: function (event, ui) {
+        update: function () {
             orderRefresh($(this));
         }
     });
     $('.taboox_image_gallery-list').disableSelection();
 
-    $(document).on('click', '.tiFyTabMetaboxPostTypeImageGallery-itemRemove', function (e) {
-        $container = $(this).parent();
-        $list = $container.parent();
+    $(document).on('click', '.tiFyTabMetaboxPostTypeImageGallery-itemRemove', function () {
+        let $container = $(this).parent(),
+            $list = $container.parent();
+
         $container.fadeOut(function () {
             $container.remove();
             orderRefresh($list);
@@ -68,7 +71,7 @@ jQuery(document).ready(function ($) {
     });
 
     function orderRefresh($list) {
-        $('.tiFyTabMetaboxPostTypeImageGallery-itemOrder', $list).each(function (u, v) {
+        $('.tiFyTabMetaboxPostTypeImageGallery-itemOrder', $list).each(function () {
             $(this).val($(this).closest('.tiFyTabMetaboxPostTypeImageGallery-item').index() + 1);
         });
     }

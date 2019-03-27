@@ -115,7 +115,7 @@ class PartialManager implements PartialManagerContract
             return $this->indexes[$classname][$id];
         }
 
-        return app()->get($abstract, [$id, $attrs, $this]);
+        return app()->get($abstract, [$id, $attrs]);
     }
 
     /**
@@ -140,11 +140,12 @@ class PartialManager implements PartialManagerContract
             $this->classnames[$alias] = $this->classname($factory);
         }
 
+        /** @todo
         if (!app()->has("partial.factory.{$alias}")) {
             app()->add("partial.factory.{$alias}", function () use ($factory) {
                 return $factory;
             });
-        }
+        }*/
 
         return $this;
     }

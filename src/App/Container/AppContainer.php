@@ -30,12 +30,6 @@ class AppContainer implements ContainerInterface
     protected $aliases = [];
 
     /**
-     * Activation de l'auto-wiring
-     * @see http://container.thephpleague.com/2.x/auto-wiring/
-     */
-    protected $autoWiring = false;
-
-    /**
      * Liste des fournisseurs de service.
      * @var string[]
      */
@@ -49,11 +43,11 @@ class AppContainer implements ContainerInterface
     public function __construct()
     {
         foreach ($this->getServiceProviders() as $serviceProvider) :
-            $resolved = $this->share($serviceProvider)->build();
+            $this->share($serviceProvider, $resolved = new $serviceProvider());
 
-            if ($resolved instanceof ServiceProviderInterface) :
+            if ($resolved instanceof AppServiceProvider) :
                 $resolved->setApp($this);
-                $this->getContainer()->addServiceProvider($resolved);
+                $this->addServiceProvider($resolved);
             endif;
         endforeach;
     }
