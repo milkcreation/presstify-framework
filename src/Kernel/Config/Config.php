@@ -2,40 +2,19 @@
 
 namespace tiFy\Kernel\Config;
 
-use Illuminate\Support\Arr;
 use Symfony\Component\Finder\Finder;
-use tiFy\Kernel\Item\AbstractItemController;
+use tiFy\Kernel\Composer\ClassLoader;
+use tiFy\Kernel\Filesystem\Paths;
+use tiFy\Kernel\Params\ParamsBag;
+use tiFy\tiFy;
 
-class Config extends AbstractItemController
+class Config extends ParamsBag
 {
     /**
-     * Liste des alias.
-     * @var array
+     * Classe de rappel du controleur des chemins.
+     * @var Paths
      */
-    protected $aliases = [
-        'app'         => \App\App::class,
-        'admin-view'  => \tiFy\AdminView\AdminView::class,
-        'ajax-action' => \tiFy\AjaxAction\AjaxAction::class,
-        'api'         => \tiFy\Api\Api::class,
-        'column'      => \tiFy\Column\Column::class,
-        'cron'        => \tiFy\Cron\Cron::class,
-        'db'          => \tiFy\Db\Db::class,
-        'field'       => \tiFy\Field\Field::class,
-        'form'        => \tiFy\Form\Form::class,
-        'media'       => \tiFy\Media\Media::class,
-        'metabox'     => \tiFy\Metabox\Metabox::class,
-        'metadata'    => \tiFy\Metadata\Metadata::class,
-        'meta-tag'    => \tiFy\MetaTag\MetaTag::class,
-        'options'     => \tiFy\Options\Options::class,
-        'page-hook'   => \tiFy\PageHook\PageHook::class,
-        'partial'     => \tiFy\Partial\Partial::class,
-        'post-type'   => \tiFy\PostType\PostType::class,
-        'route'       => \tiFy\Route\Route::class,
-        'tab-metabox' => \tiFy\TabMetabox\TabMetabox::class,
-        'taxonomy'    => \tiFy\Taxonomy\Taxonomy::class,
-        'user'        => \tiFy\User\User::class,
-        'view'        => \tiFy\View\View::class
-    ];
+    protected $paths;
 
     /**
      * CONSTRUCTEUR.
@@ -44,47 +23,32 @@ class Config extends AbstractItemController
      */
     public function __construct()
     {
-        $finder = (new Finder())->files()->name('/\.php$/')->in(\paths()->getConfigPath());
-        foreach ($finder as $file) :
-            $key = basename($file->getFilename(), ".{$file->getExtension()}");
-            if ($key === 'autoload') :
-                continue;
-            endif;
+        $this->paths = tiFy::instance()->get(Paths::class);
 
-            $value = include($file->getRealPath());
+        if (file_exists($this->paths->getConfigPath('autoload.php'))) :
+            $autoloads = include $this->paths->getConfigPath('autoload.php');
+            foreach ($autoloads as $type => $autoload) :
+                foreach ($autoload as $namespace => $path) :
+                    tiFy::instance()->get(ClassLoader::class)->load($namespace, $path, $type);
+                endforeach;
+            endforeach;
+        endif;
 
-            switch($key) :
-                default :
-                    $this->set($this->getAlias($key), $value);
-                    break;
-                case 'plugins' :
-                    foreach((array)$value as $plugin => $attrs) :
-                        $this->set($plugin, $attrs);
-                    endforeach;
-                    break;
-            endswitch;
-        endforeach;
-    }
+        $attrs = [];
+        if (is_dir(paths()->getConfigPath())) :
+            $finder = (new Finder())->files()->name('/\.php$/')->in(paths()->getConfigPath());
+            foreach ($finder as $file) :
+                $key = basename($file->getFilename(), ".{$file->getExtension()}");
+                if ($key === 'autoload') :
+                    continue;
+                endif;
 
-    /**
-     * Récupération de l'alias de qualification d'un attribut de configuration.
-     *
-     * @param string $key Nom de qualification original.
-     *
-     * @return string
-     */
-    public function getAlias($key)
-    {
-        return Arr::get($this->getAliases(), $key, $key);
-    }
+                $attrs[$key] = include($file->getRealPath());
+            endforeach;
+        endif;
 
-    /**
-     * Récupération de la liste des alias.
-     *
-     * @return array
-     */
-    public function getAliases()
-    {
-        return $this->aliases;
+        parent::__construct($attrs);
+
+        $this->set('site_url', env('SITE_URL'));
     }
 }
