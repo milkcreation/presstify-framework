@@ -2,12 +2,18 @@
 
 namespace tiFy\Kernel\Http;
 
-use Illuminate\Http\Request as IlluminateHttpRequest;
+use Illuminate\Http\Request as LaraRequest;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Component\HttpFoundation\Request as SfRequest;
+use Psr\Http\Message\ServerRequestInterface;
+use tiFy\Contracts\Kernel\Request as RequestContract;
 
-class Request extends IlluminateHttpRequest
+class Request extends LaraRequest implements RequestContract
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getProperty($property = '')
     {
@@ -40,5 +46,25 @@ class Request extends IlluminateHttpRequest
                 return $this->headers;
                 break;
         endswitch;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function createFromPsr(ServerRequestInterface $psrRequest)
+    {
+        $request = (new HttpFoundationFactory())->createRequest($psrRequest);
+
+        return self::createFromBase($request);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function convertToPsr(?SfRequest $sfRequest = null): ServerRequestInterface
+    {
+        $psr17Factory = new Psr17Factory();
+        $psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+        return $psrHttpFactory->createRequest($sfRequest ?: $this);
     }
 }
