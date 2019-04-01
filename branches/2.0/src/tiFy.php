@@ -15,7 +15,7 @@ use tiFy\Kernel\KernelServiceProvider;
  * @desc PresstiFy -- Framework Milkcreation.
  * @author Jordy Manner <jordy@milkcreation.fr>
  * @package tiFy
- * @version 2.0.97
+ * @version 2.0.98
  * @copyright Milkcreation
  */
 final class tiFy extends Container
@@ -46,15 +46,17 @@ final class tiFy extends Container
      */
     public function __construct()
     {
-        if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) :
+        if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) {
             return;
-        endif;
+	}
 
-        if (!self::$instance) :
-            self::$instance = $this;
-        else :
+	if (self::instance()) {
             return;
-        endif;
+	}
+	
+	self::$instance = $this;
+        
+	parent::__construct();
 
         add_action('plugins_loaded', function() {
             load_muplugin_textdomain('tify', '/presstify/languages/');
@@ -62,20 +64,16 @@ final class tiFy extends Container
         });
 
         add_action('after_setup_theme', function () {
-            $app = $this->share(App::class, new App());
-
-            //$this->get('assets');
+            $this->share(App::class, new App());
         }, 0);
-
-        parent::__construct();
     }
 
     /**
      * Récupération de l'instance courante.
      *
-     * @return null|static
+     * @return static|null
      */
-    final public static function instance(): ?tiFy
+    public static function instance(): ?tiFy
     {
         return self::$instance instanceof static ? self::$instance : null;
     }
