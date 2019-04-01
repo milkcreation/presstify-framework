@@ -88,9 +88,11 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
      */
     public function parse()
     {
-        $this->set('accept.content', __('Fermer', 'tify'));
-
         parent::parse();
+
+        if (!$this->has('accept.content')) :
+            $this->set('accept.content', __('Fermer', 'tify'));
+        endif;
 
         $content = $this->get('content', '');
         $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);

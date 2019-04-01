@@ -71,9 +71,11 @@ class Notice extends PartialFactory implements NoticeContract
      */
     public function parse()
     {
-        $this->set('attrs.id', 'tiFyPartial-Notice--' . $this->getIndex());
-
         parent::parse();
+
+        if (!$this->has('attrs.id')) {
+            $this->set('attrs.id', 'tiFyPartial-Notice--' . $this->getIndex());
+        }
 
         if(!$this->get('attrs.class')) :
             $this->set('attrs.class', 'tiFyPartial-Notice');
