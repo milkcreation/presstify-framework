@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Template;
 
@@ -9,9 +9,9 @@ interface TemplateManager
      *
      * @param string $name Nom de qualification du motif.
      *
-     * @return null|TemplateFactory
+     * @return TemplateFactory|null
      */
-    public function get($name);
+    public function get(string $name): ?TemplateFactory;
 
     /**
      * Déclaration d'un motif d'affichage.
@@ -19,9 +19,9 @@ interface TemplateManager
      * @param string $name Nom de qualification de la disposition.
      * @param array $attrs Liste des attributs de configuration de la disposition.
      *
-     * @return TemplateFactory
+     * @return static
      */
-    public function register($name, $attrs = []);
+    public function register(string $name, array $attrs = []): TemplateManager;
 
     /**
      * Récupération du chemin absolu vers le répertoire de stockage des ressources.
@@ -30,7 +30,7 @@ interface TemplateManager
      *
      * @return string
      */
-    public function resourcesDir($path = '');
+    public function resourcesDir(?string $path = ''): ?string;
 
     /**
      * Récupération de l'url absolue vers le répertoire de stockage des ressources.
@@ -39,7 +39,7 @@ interface TemplateManager
      *
      * @return string
      */
-    public function resourcesUrl($path = '');
+    public function resourcesUrl(?string $path = ''): ?string;
 
     /**
      * Définition d'un motif d'affichage.
@@ -47,7 +47,7 @@ interface TemplateManager
      * @param string $name Nom de qualification de la disposition.
      * @param TemplateFactory $pattern Motif d'affichage.
      *
-     * @return TemplateFactory
+     * @return static
      */
-    public function set($name, TemplateFactory $pattern);
+    public function set(string $name, TemplateFactory $pattern): TemplateManager;
 }

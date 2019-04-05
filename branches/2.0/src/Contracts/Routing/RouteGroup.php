@@ -1,33 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Routing;
 
 use League\Route\RouteCollectionInterface;
 use League\Route\RouteConditionHandlerInterface;
 use League\Route\Middleware\MiddlewareAwareInterface;
-use League\Route\Strategy\StrategyInterface;
 use League\Route\Strategy\StrategyAwareInterface;
-use Psr\Container\ContainerInterface;
 
 interface RouteGroup extends
+    ContainerAwareTrait,
     MiddlewareAwareInterface,
+    RegisterMapAwareTrait,
     RouteCollectionInterface,
     RouteConditionHandlerInterface,
-    RouteRegisterMapTrait,
-    StrategyAwareInterface
+    StrategyAwareInterface,
+    StrategyAwareTrait
 {
-
     /**
      * Récupération du préfixe du groupe
      *
      * @return string
      */
-    public function getPrefix() : string;
-
-    /**
-     * Instance du contrôleur d'injection de dépendances
-     *
-     * @return ContainerInterface
-     */
-    public function getContainer() : ContainerInterface;
+    public function getPrefix(): string;
 }

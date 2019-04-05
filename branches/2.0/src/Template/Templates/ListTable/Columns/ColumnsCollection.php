@@ -1,15 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Columns;
 
-use tiFy\Kernel\Collection\Collection;
+use tiFy\Support\Collection;
 use tiFy\Template\Templates\ListTable\Contracts\ColumnsCollection as ColumnsCollectionContract;
 use tiFy\Template\Templates\ListTable\Contracts\ColumnsItem;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
-use League\Container\Argument\RawArgument;
 
 class ColumnsCollection extends Collection implements ColumnsCollectionContract
 {
+    /**
+     * Instance du gabarit associé.
+     * @var ListTable
+     */
+    protected $factory;
+
     /**
      * Liste des colonnes.
      * @var ColumnsItem[]
@@ -17,33 +22,35 @@ class ColumnsCollection extends Collection implements ColumnsCollectionContract
     protected $items = [];
 
     /**
-     * Instance du motif d'affichage associé.
-     * @var ListTable
-     */
-    protected $template;
-
-    /**
      * CONSTRUCTEUR.
      *
      * @param array $items Liste des éléments
-     * @param ListTable $template Instance du motif d'affichage associé.
+     * @param ListTable $factory Instance du motif d'affichage associé.
      *
      * @return void
      */
-    public function __construct($items, ListTable $template)
+    public function __construct(array $items, ListTable $factory)
     {
-        $this->template = $template;
+        $this->factory = $factory;
 
         $this->parse($items);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getHidden()
+    public function countVisible(): int
+    {
+        return count($this->getVisible());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getHidden(): array
     {
         return $this->collect()
-            ->filter(function(ColumnsItem $item){
+            ->filter(function (ColumnsItem $item) {
                 return $item->isHidden();
             })
             ->pluck('name', null)
@@ -51,30 +58,30 @@ class ColumnsCollection extends Collection implements ColumnsCollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getPrimary()
+    public function getPrimary(): string
     {
         if (
-            ($column_primary = $this->template->param('column_primary')) &&
+            ($column_primary = $this->factory->param('column_primary', '')) &&
             ($column_primary !== 'cb') &&
             $this->has($column_primary)
-        ) :
-            return $column_primary;
-        else :
+        ) {
+            return (string)$column_primary;
+        } else {
             return $this->collect()->first(function (ColumnsItem $item) {
                 return $item->getName() !== 'cb';
             })->getName();
-        endif;
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getSortable()
+    public function getSortable(): array
     {
         return $this->collect()
-            ->filter(function(ColumnsItem $item){
+            ->filter(function (ColumnsItem $item) {
                 return $item->isSortable();
             })
             ->pluck('sortable', 'name')
@@ -82,12 +89,12 @@ class ColumnsCollection extends Collection implements ColumnsCollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getVisible()
+    public function getVisible(): array
     {
         return $this->collect()
-            ->filter(function(ColumnsItem $item){
+            ->filter(function (ColumnsItem $item) {
                 return !$item->isHidden();
             })
             ->pluck('name', null)
@@ -95,31 +102,25 @@ class ColumnsCollection extends Collection implements ColumnsCollectionContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function countVisible()
+    public function parse(array $columns = []): ColumnsCollectionContract
     {
-        return count($this->getVisible());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parse($columns = [])
-    {
-        foreach ($columns as $name => $attrs) :
-            if (is_numeric($name)) :
+        foreach ($columns as $name => $attrs) {
+            if (is_numeric($name)) {
                 $name = $attrs;
                 $attrs = [];
-            elseif (is_string($attrs)) :
+            } elseif (is_string($attrs)) {
                 $attrs = ['title' => $attrs];
-            endif;
+            }
 
-            $alias = $this->template->bound("columns.item.{$name}")
+            $alias = $this->factory->bound("columns.item.{$name}")
                 ? "columns.item.{$name}"
                 : 'columns.item';
 
-            $this->items[$name] = $this->template->resolve($alias, [new RawArgument($name), $attrs, $this->template]);
-        endforeach;
+            $this->items[$name] = $this->factory->resolve($alias, [$name, $attrs, $this->factory]);
+        }
+
+        return $this;
     }
 }

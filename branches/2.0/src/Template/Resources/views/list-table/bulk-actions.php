@@ -8,6 +8,6 @@
 ?>
 <?php if ($this->items()->exists()) : ?>
     <div class="alignleft actions bulkactions">
-        <?php echo $this->bulkActions()->which($which); ?>
+        <?php echo $this->bulkActions()->which($which??'top'); ?>
     </div>
 <?php endif;?>

@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\Collection as CollectionContract;
+use tiFy\Contracts\Support\Collection;
 
-interface ColumnsCollection extends CollectionContract
+interface ColumnsCollection extends Collection
 {
     /**
      * Récupération de la liste des colonnes.
@@ -14,55 +14,53 @@ interface ColumnsCollection extends CollectionContract
     public function all();
 
     /**
-     * Récupération d'une colonne.
+     * Récupération du nombre de colonne affichée.
      *
-     * @param string $name Nom de qualification.
-     *
-     * @return ColumnsItem
+     * @return int
      */
-    public function get($name, $default = null);
+    public function countVisible(): int;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return ColumnsItem|null
+     */
+    public function get($name);
 
     /**
      * Récupération de la liste des noms de qualification des colonnes masquées.
      *
      * @return string[]
      */
-    public function getHidden();
+    public function getHidden(): array;
 
     /**
      * Récupération du nom de qualification de la colonne principale.
      *
      * @return string
      */
-    public function getPrimary();
+    public function getPrimary(): string;
 
     /**
      * Récupération de la liste des noms de qualification des colonnes ouverte à l'ordonnacement.
      *
      * @return string[]
      */
-    public function getSortable();
+    public function getSortable(): array;
 
     /**
      * Récupération de la liste des noms de qualification des colonnes visibles.
      *
      * @return string[]
      */
-    public function getVisible();
-
-    /**
-     * Récupération du nombre de colonne affichée.
-     *
-     * @return int
-     */
-    public function countVisible();
+    public function getVisible(): array;
 
     /**
      * Traitement de la liste des colonnes.
      *
      * @param array $columns Liste des colonnes.
      *
-     * @return void
+     * @return static
      */
-    public function parse($columns = []);
+    public function parse(array $columns = []): ColumnsCollection;
 }

@@ -1,10 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Template\Templates\ListTable\Contracts\ListTable as ListTableContract;
-use tiFy\Template\Templates\ListTable\Contracts\Request;
+use tiFy\Contracts\Template\FactoryRequest;
 use tiFy\Template\TemplateFactory;
+use tiFy\Template\Templates\ListTable\Contracts\{Ajax,
+    BulkActionsCollection,
+    Collection,
+    ColumnsCollection,
+    Item,
+    ListTable as ListTableContract,
+    Pagination,
+    Request,
+    RowActionsCollection,
+    ViewFiltersCollection};
 
 class ListTable extends TemplateFactory implements ListTableContract
 {
@@ -17,59 +26,79 @@ class ListTable extends TemplateFactory implements ListTableContract
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function bulkActions()
+    public function ajax(): ?Ajax
+    {
+        return $this->resolve('ajax');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function bulkActions(): BulkActionsCollection
     {
         return $this->resolve('bulk-actions');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function columns()
+    public function columns(): ColumnsCollection
     {
         return $this->resolve('columns');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function item()
+    public function item(): ?Item
     {
         return $this->items()->current();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function items()
+    public function items(): Collection
     {
         return $this->resolve('items');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function pagination()
+    public function load()
+    {
+        parent::load();
+
+        if ($ajax = $this->ajax()) {
+            assets()->setDataJs('listTable', $ajax->parse()->all());
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function pagination(): Pagination
     {
         return $this->resolve('pagination');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prepare()
     {
         $this->items()->query();
 
-        if (!$this->items()->exists()) :
+        if (!$this->items()->exists()) {
             return;
-        endif;
+        }
 
-        $total_items = $this->items()->getFounds();
+        $total_items = $this->items()->total();
         $per_page = $this->request()->getPerPage();
-        $total_pages = ceil($total_items/$per_page);
+        $total_pages = ceil($total_items / $per_page);
 
         $this->pagination()
             ->set('per_page', $per_page)
@@ -78,7 +107,7 @@ class ListTable extends TemplateFactory implements ListTableContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function render()
     {
@@ -90,23 +119,23 @@ class ListTable extends TemplateFactory implements ListTableContract
      *
      * @return Request
      */
-    public function request()
+    public function request(): FactoryRequest
     {
         return parent::request();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function rowActions()
+    public function rowActions(): RowActionsCollection
     {
         return $this->resolve('row-actions');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function viewFilters()
+    public function viewFilters(): ViewFiltersCollection
     {
         return $this->resolve('view-filters');
     }

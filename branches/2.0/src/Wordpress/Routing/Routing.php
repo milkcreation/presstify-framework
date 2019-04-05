@@ -2,10 +2,11 @@
 
 namespace tiFy\Wordpress\Routing;
 
+use Exception;
 use FastRoute\Dispatcher as FastRoute;
 use League\Route\Dispatcher;
-use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Routing\Router as RouterManager;
+use tiFy\Http\Request;
 use tiFy\Wordpress\Contracts\Routing as RoutingContract;
 use tiFy\Wordpress\Routing\Strategy\Template as TemplateStrategy;
 
@@ -34,14 +35,14 @@ class Routing implements RoutingContract
 
         add_action('wp', function () {
             try {
-                $response = $this->manager->dispatch(app()->get(ServerRequestInterface::class));
+                $response = $this->manager->dispatch(Request::convertToPsr());
 
                 $this->manager->emit($response);
 
                 if ($response->getHeaders() || $response->getBody()->getSize()) {
                     exit;
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 /**
                  * Suppression du slash de fin dans l'url des routes déclarées.
                  * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html

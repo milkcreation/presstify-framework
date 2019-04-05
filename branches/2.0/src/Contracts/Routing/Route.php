@@ -1,30 +1,40 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Routing;
 
+use InvalidArgumentException;
 use League\Route\Route as LeagueRoute;
 use League\Route\RouteGroup;
 use League\Route\Middleware\MiddlewareAwareInterface;
 use League\Route\Strategy\StrategyAwareInterface;
 use League\Route\RouteConditionHandlerInterface;
+use LogicException;
 use phpDocumentor\Reflection\Types\Boolean;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
+/**
+ * Interface Route
+ * @package tiFy\Contracts\Routing
+ *
+ * @mixin LeagueRoute
+ */
 interface Route extends
+    ContainerAwareTrait,
     MiddlewareInterface,
     MiddlewareAwareInterface,
     RouteConditionHandlerInterface,
-    StrategyAwareInterface
+    StrategyAwareInterface,
+    StrategyAwareTrait
 {
     /**
      * Récupération du controleur de traitement.
      *
      * @param ContainerInterface|null $container
      *
-     * @throws \InvalidArgumentException
-     *
      * @return callable
+     *
+     * @throws InvalidArgumentException
      */
     public function getCallable(?ContainerInterface $container = null): callable;
 
@@ -57,7 +67,7 @@ interface Route extends
      *
      * @return string
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function getUrl(array $params = [], bool $absolute = true): string;
 

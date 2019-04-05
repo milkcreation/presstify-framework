@@ -2,9 +2,8 @@
 
 namespace tiFy\Routing;
 
-use tiFy\Contracts\Kernel\Request;
-use tiFy\Contracts\Routing\Router;
-use tiFy\Contracts\Routing\Url as UrlContract;
+use tiFy\Contracts\Http\Request;
+use tiFy\Contracts\Routing\{Router, Url as UrlContract};
 
 class Url implements UrlContract
 {
@@ -29,6 +28,9 @@ class Url implements UrlContract
     /**
      * CONSTRUCTEUR
      *
+     * @param Router $router
+     * @param Request $request
+     *
      * @return void
      */
     public function __construct(Router $router, Request $request)
@@ -40,7 +42,7 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function clean()
+    public function clean(): string
     {
         return $this->without($this->cleanArgs());
     }
@@ -48,7 +50,7 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function cleanArgs() :array
+    public function cleanArgs(): array
     {
         return wp_removable_query_args();
     }
@@ -56,7 +58,7 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function current() : string
+    public function current(): string
     {
         return $this->request->getUriForPath('');
     }
@@ -64,7 +66,7 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function decode() : string
+    public function decode(): string
     {
         return url_factory($this->full())->getDecode();
     }
@@ -72,7 +74,7 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function domain() : string
+    public function domain(): string
     {
         return $this->request->url();
     }
@@ -80,7 +82,7 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function full() : string
+    public function full(): string
     {
         return $this->request->fullUrl();
     }
@@ -88,14 +90,12 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function rewriteBase() : string
+    public function rewriteBase(): string
     {
         if (is_null($this->rewriteBase)) :
             $this->rewriteBase = $this->request->server->has('CONTEXT_PREFIX')
                 ? $this->request->server->get('CONTEXT_PREFIX')
-                : preg_replace(
-                    '#^' . preg_quote($this->request->getSchemeAndHttpHost()) . '#', '', $this->root()
-                );
+                : preg_replace('#^' . preg_quote($this->request->getSchemeAndHttpHost()) . '#', '', $this->root());
         endif;
 
         return $this->rewriteBase;
@@ -104,7 +104,7 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function root(string $path = '') : string
+    public function root(string $path = ''): string
     {
         $path = $path ? '/' . ltrim($path, '/') : '';
 
@@ -114,16 +114,16 @@ class Url implements UrlContract
     /**
      * @inheritdoc
      */
-    public function with(array $args) : string
+    public function with(array $args): string
     {
-        return url_factory($this->full())->with($args)->get();
+        return (string)url_factory($this->full())->with($args)->get();
     }
 
     /**
      * @inheritdoc
      */
-    public function without(array $args) : string
+    public function without(array $args): string
     {
-        return url_factory($this->full())->without($args)->get();
+        return (string)url_factory($this->full())->without($args)->get();
     }
 }

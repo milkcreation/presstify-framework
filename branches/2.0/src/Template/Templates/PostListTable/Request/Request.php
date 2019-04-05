@@ -7,15 +7,15 @@ use tiFy\Template\Templates\ListTable\Request\Request as BaseListTableRequest;
 class Request extends BaseListTableRequest
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getQueryArgs()
+    public function getQueryArgs(): array
     {
         $query_args = parent::getQueryArgs();
 
-        if ($post_status = $this->get('post_status')) :
+        if ($post_status = $this->get('post_status')) {
             $query_args['post_status'] = $post_status;
-        endif;
+        }
 
         return $query_args;
     }

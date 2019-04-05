@@ -1,18 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Request;
 
-use tiFy\Template\Templates\BaseRequest;
+use tiFy\Template\Factory\FactoryRequest;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
 use tiFy\Template\Templates\ListTable\Contracts\Request as RequestContract;
 
-class Request extends BaseRequest implements RequestContract
+class Request extends FactoryRequest implements RequestContract
 {
     /**
-     * Instance de la disposition associée.
+     * Instance du gabarit associé.
      * @var ListTable
      */
-    protected $template;
+    protected $factory;
 
     /**
      * Numero de la page d'affichage courant.
@@ -27,82 +27,102 @@ class Request extends BaseRequest implements RequestContract
     protected $perPage;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getPerPage()
+    public function getPerPage(): int
     {
-        if (is_null($this->perPage)) :
-            $option_name = $this->template->param('per_page_option_name');
-            $default = $this->template->param('per_page', 20);
+        if (is_null($this->perPage)) {
+            $option_name = $this->factory->param('per_page_option_name');
+            $default = $this->factory->param('per_page', 20);
 
             $per_page = (int)get_user_option($option_name);
-            if (empty($per_page) || $per_page < 1) :
+            if (empty($per_page) || $per_page < 1) {
                 $per_page = $default;
-            endif;
+            }
 
             $this->perPage = (int)apply_filters("{$option_name}", $per_page);
-        endif;
+        }
 
         return $this->perPage;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getPagenum()
+    public function getPagenum(): int
     {
-        if (is_null($this->pageNum)) :
-            $pagenum = (int)$this->get('paged', 0);
+        if (is_null($this->pageNum)) {
+            $pagenum = ($this->factory->ajax() && $this->get('draw'))
+                ? ceil(($this->get('start', 0)/$this->get('length', 0))+1)
+                : $this->get('paged', 0);
 
-            /*if ($pagenum > $this->getTotalPages()) :
+            /*if ($pagenum > $this->getTotalPages()) {
                 $pagenum = $this->getTotalPages();
-            endif;*/
+            }*/
 
             $this->pageNum = max(1, $pagenum);
-        endif;
-
-        return $this->pageNum;
+        }
+        return (int)$this->pageNum;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getQueryArgs()
+    public function getQueryArgs(): array
     {
-        $query_args = $this->template->param('query_args', []);
+        $query_args = $this->factory->param('query_args', []);
 
-        if (!$db = $this->template->db()) :
+        if (!$db = $this->factory->db()) {
             return $query_args;
-        endif;
+        }
 
         $per_page = $this->getPerPage();
         $paged = $this->getPagenum();
 
-        $query_args = array_merge(
-            [
-                'per_page' => $per_page,
-                'paged'    => $paged,
-                'order'    => 'DESC',
-                'orderby'  => $db->getPrimary()
-            ],
-            $query_args
-        );
+        $query_args = array_merge([
+            'per_page' => $per_page,
+            'paged'    => $paged,
+            'order'    => 'DESC',
+            'orderby'  => $db->getPrimary()
+        ], $query_args);
+
+        if ($this->factory->ajax()) {
+            if ($query_args['draw'] = $this->get('draw', 0)) {
+                if ($length = $this->get('length', 0)) {
+                    $query_args['per_page'] = $length;
+                }
+                /*
+                if (isset($_REQUEST['search']) && isset($_REQUEST['search']['value'])) {
+                    $query_args['search'] = $_REQUEST['search']['value'];
+                }
+
+                if (isset($_REQUEST['order'])) {
+                    $query_args['orderby'] = [];
+                }
+
+                foreach ((array)$_REQUEST['order'] as $k => $v) {
+                    $query_args['orderby'][$_REQUEST['columns'][$v['column']]['data']] = $v['dir'];
+                }
+                */
+            }
+        }
+
 
         return $query_args;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function searchExists()
+    public function searchExists(): bool
     {
         return !empty($this->get('s'));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function searchTerm()
+    public function searchTerm(): string
     {
         return $this->searchExists() ? esc_attr(wp_unslash($this->get('s'))) : '';
     }

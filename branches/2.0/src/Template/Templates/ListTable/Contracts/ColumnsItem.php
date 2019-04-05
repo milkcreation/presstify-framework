@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface ColumnsItem extends ParamsBag
 {
@@ -11,28 +11,28 @@ interface ColumnsItem extends ParamsBag
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
      * Récupération du contenu d'affichage.
      *
      * @return string
      */
-    public function content();
+    public function content(): string;
 
     /**
      * Récupération du nom de qualification.
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Récupération de l'intitulé de qualification.
      *
      * @return string
      */
-    public function getTitle();
+    public function getTitle(): string;
 
     /**
      * Récupération du gabarit d'affichage du contenu de la colonne.
@@ -41,42 +41,49 @@ interface ColumnsItem extends ParamsBag
      *
      * @return string
      */
-    public function getTemplate($default = 'tbody-col');
+    public function getTemplate(string $default = 'tbody-col'): string;
 
     /**
      * Récupération de l'entête au format HTML.
      *
-     * @param bool $with_id Activation de l'id de la balise HTML.
+     * @param boolean $with_id Activation de l'id de la balise HTML.
      *
      * @return string
      */
-    public function header($with_id = true);
+    public function header(bool $with_id = true): string;
 
     /**
      * Vérification de maquage de la colonne.
      *
-     * @return bool
+     * @return boolean
      */
-    public function isHidden();
+    public function isHidden(): bool;
 
     /**
      * Vérifie si la colonne est la colonne principale.
      *
-     * @return bool
+     * @return boolean
      */
-    public function isPrimary();
+    public function isPrimary(): bool;
 
     /**
      * Vérifie si la colonne peut être ordonnancée.
      *
-     * @return bool
+     * @return boolean
      */
-    public function isSortable();
+    public function isSortable(): bool;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return static
+     */
+    public function parse();
 
     /**
      * Affichage
      *
      * @return string
      */
-    public function render();
+    public function render(): string;
 }

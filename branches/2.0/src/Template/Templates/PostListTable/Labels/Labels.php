@@ -8,40 +8,35 @@ use tiFy\Template\Templates\PostListTable\Contracts\PostListTable;
 class Labels extends PostTypeLabelsBag
 {
     /**
-     * Instance de la disposition.
+     * Instance du gabarit d'affichage.
      * @var PostListTable
      */
-    protected $template;
+    protected $factory;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param string Nom de qualification.
-     * @param array $attrs Liste des attributs de configuration.
-     * @param PostListTable $template Instance du motif d'affichage associé.
+     * @param PostListTable $factory Instance du motif d'affichage associé.
      *
      * @return void
      */
-    public function __construct($name, $attrs, PostListTable $template)
+    public function __construct(PostListTable $factory)
     {
-        $this->template = $template;
+        $this->factory = $factory;
 
-        parent::__construct($name, $attrs);
+        parent::__construct($factory->name(), $factory->config('labels', []));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
-        return array_merge(
-            [
-                'all_items'    => __('Tous les éléments', 'tify'),
-                'search_items' => __('Rechercher un élément', 'tify'),
-                'no_items'     => __('Aucun élément trouvé.', 'tify'),
-                'page_title'   => __('Tous les éléments', 'tify')
-            ],
-            parent::defaults()
-        );
+        return array_merge(parent::defaults(), [
+            'all_items'    => __('Tous les éléments', 'tify'),
+            'search_items' => __('Rechercher un élément', 'tify'),
+            'no_items'     => __('Aucun élément trouvé.', 'tify'),
+            'page_title'   => __('Tous les éléments', 'tify')
+        ]);
     }
 }

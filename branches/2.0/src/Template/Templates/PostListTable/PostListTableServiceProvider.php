@@ -2,6 +2,7 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
+use tiFy\Template\Templates\ListTable\Contracts\ListTable;
 use tiFy\Template\Templates\ListTable\ListTableServiceProvider;
 use tiFy\PostType\Db\DbPostsController;
 use tiFy\Template\Templates\PostListTable\Columns\ColumnsItemPostTitle;
@@ -17,84 +18,94 @@ use tiFy\Template\Templates\PostListTable\ViewFilters\ViewFiltersItemTrash;
 class PostListTableServiceProvider extends ListTableServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * Instance du gabarit d'affichage.
+     * @var PostListTable
      */
-    public function boot()
-    {
-        array_push(
-            $this->provides,
-            'columns.item.post_title',
-            'view-filters.item.all',
-            'view-filters.item.publish',
-            'view-filters.item.trash'
-        );
-
-        parent::boot();
-    }
+    protected $factory;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerColumns()
     {
         parent::registerColumns();
 
-        $this->getContainer()->add($this->getFullAlias('columns.item.post_title'), ColumnsItemPostTitle::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('columns.item.post_title'),
+            function ($name, $attrs, ListTable $factory) {
+                return new ColumnsItemPostTitle($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('columns.item.post_type'), ColumnsItemPostType::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('columns.item.post_type'),
+            function ($name, $attrs, ListTable $factory) {
+                return new ColumnsItemPostType($name, $attrs, $factory);
+            });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerDb()
     {
-        $this->getContainer()->share($this->getFullAlias('db'), function(PostListTable $template) {
-            return new DbPostsController($template->name());
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('db'), function() {
+            return new DbPostsController($this->factory->name());
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerLabels()
     {
-        $this->getContainer()->share($this->getFullAlias('labels'), function (PostListTable $template) {
-            return new Labels($template->name(), $template->config('labels', []), $template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('labels'), function () {
+            return new Labels($this->factory);
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerParams()
     {
-        $this->getContainer()->share($this->getFullAlias('params'), function (PostListTable $template) {
-            return new Params($template->config('params', []), $template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('params'), function () {
+            return new Params($this->factory);
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerRequest()
     {
-        $this->getContainer()->share($this->getFullAlias('request'), function (PostListTable $template) {
-            return (Request::capture())->setTemplate($template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('request'), function () {
+            return (Request::capture())->setTemplateFactory($this->factory);
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function registerViewFilters()
     {
         parent::registerViewFilters();
 
-        $this->getContainer()->add($this->getFullAlias('view-filters.item.all'), ViewFiltersItemAll::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('view-filters.item.all'),
+            function ($name, $attrs, ListTable $factory) {
+                new ViewFiltersItemAll($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('view-filters.item.publish'), ViewFiltersItemPublish::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('view-filters.item.publish'),
+            function ($name, $attrs, ListTable $factory) {
+                new ViewFiltersItemPublish($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('view-filters.item.trash'), ViewFiltersItemTrash::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('view-filters.item.trash'),
+            function ($name, $attrs, ListTable $factory) {
+                new ViewFiltersItemTrash($name, $attrs, $factory);
+            });
     }
 }

@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface ViewFiltersItem extends ParamsBag
 {
@@ -11,12 +11,12 @@ interface ViewFiltersItem extends ParamsBag
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
      * Récupération du rendu de l'affichage.
      *
      * @return string
      */
-    public function render();
+    public function render(): string;
 }

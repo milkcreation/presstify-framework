@@ -13,7 +13,7 @@ use Zend\Diactoros\Response;
 class Json extends JsonStrategy
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function invokeRouteCallable(Route $route, ServerRequestInterface $request): ResponseInterface
     {
@@ -22,19 +22,19 @@ class Json extends JsonStrategy
 
         $controller = $route->getCallable($this->getContainer());
 
-        $resolved = call_user_func_array($controller, $route->getVars());
+        $args = $route->getVars();
+        array_push($args, $request);
+        $resolved = $controller(...$args);
 
-        $response = new Response();
-        if ($resolved instanceof ViewController) :
-            $response->getBody()->write((string)$resolved);
-        elseif ($this->isJsonEncodable($resolved)) :
+        $psrResponse = new Response();
+        if ($resolved instanceof ViewController) {
+            $psrResponse->getBody()->write((string)$resolved);
+        } elseif ($this->isJsonEncodable($resolved)){
             $body = json_encode($resolved);
-            $response = $this->responseFactory->createResponse(200);
-            $response->getBody()->write($body);
-        endif;
+            $psrResponse = $this->responseFactory->createResponse(200);
+            $psrResponse->getBody()->write($body);
+        }
 
-        $response = $this->applyDefaultResponseHeaders($response);
-
-        return $response;
+        return $this->applyDefaultResponseHeaders($psrResponse);
     }
 }

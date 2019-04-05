@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Columns;
 
@@ -15,22 +15,22 @@ class ColumnsItemCb extends ColumnsItem
     /**
      * @inheritdoc
      */
-    public function header($with_id = true)
+    public function header(bool $with_id = true): string
     {
         $classes = ['manage-column', "column-{$this->getName()}", 'check-column'];
 
-        if ($this->isHidden()) :
+        if ($this->isHidden()) {
             $classes[] = 'hidden';
-        endif;
+        }
 
         $attrs = [];
-        if ($with_id) :
+        if ($with_id) {
             $attrs['id'] = $this->getName();
-        endif;
+        }
 
         $attrs['class'] = join(' ', $classes);
 
-        return $this->template->viewer('thead-col_cb', [
+        return (string)$this->factory->viewer('thead-col_cb', [
             'attrs' => HtmlAttrs::createFromAttrs($attrs),
             'index' => ++self::$headerIndex,
         ]);
@@ -39,7 +39,7 @@ class ColumnsItemCb extends ColumnsItem
     /**
      * @inheritdoc
      */
-    public function isPrimary()
+    public function isPrimary(): bool
     {
         return false;
     }
@@ -47,14 +47,16 @@ class ColumnsItemCb extends ColumnsItem
     /**
      * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->pull('attrs.data-colname');
 
         $this->set('attrs.class', 'check-column');
 
         $this->set('attrs.scope', 'row');
+
+        return $this;
     }
 }

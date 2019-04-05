@@ -1,25 +1,42 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Viewer;
 
+use tiFy\Contracts\Template\{FactoryLabels, FactoryParams};
+use tiFy\Template\Factory\FactoryViewer;
+use tiFy\Template\Templates\ListTable\Contracts\{BulkActionsCollection,
+    Collection,
+    ColumnsCollection,
+    Pagination,
+    Request,
+    ViewFiltersCollection};
 use tiFy\Template\Templates\ListTable\ListTable;
-use tiFy\Template\Templates\BaseViewer;
+
 
 /**
- * Class ListTableViewController
- * @package tiFy\Template\Templates
+ * Class Viewer
+ * @package tiFy\Template\Templates\ListTable\Viewer
  *
+ * @method BulkActionsCollection bulkActions()
+ * @method ColumnsCollection columns()
+ * @method Collection items()
+ * @method FactoryLabels|string label(?string $key = null, string $default = '')
+ * @method string name()
+ * @method Pagination pagination()
+ * @method FactoryParams|mixed param($key = null, $default = null)
+ * @method Request request()
+ * @method ViewFiltersCollection viewFilters()
  */
-class Viewer extends BaseViewer
+class Viewer extends FactoryViewer
 {
     /**
-     * Instance de la disposition.
+     * Instance du gabarit associé.
      * @var ListTable
      */
-    protected $template;
+    protected $factory;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -29,7 +46,6 @@ class Viewer extends BaseViewer
             $this->mixins,
             'bulkActions',
             'columns',
-            'label',
             'items',
             'pagination',
             'request',

@@ -1,17 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Assets;
 
-use tiFy\Template\Templates\BaseAssets;
+use tiFy\Template\Factory\FactoryAssets;
 
-class Assets extends BaseAssets
+class Assets extends FactoryAssets
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function scripts()
     {
-        if ($preview_item_mode = $this->template->param('preview_item_mode')) :
+        if ($preview_item_mode = $this->factory->param('preview_item_mode')) {
             wp_enqueue_script(
                 'Template-listTable',
                 '',
@@ -24,17 +24,17 @@ class Assets extends BaseAssets
                 'Template-listTable',
                 'Template-listTable',
                 [
-                    'action'          => $this->template->name() . '_preview_item',
+                    'action'          => $this->factory->name() . '_preview_item',
                     'mode'            => $preview_item_mode,
                     'nonce_action'    => '_wpnonce',
-                    'item_index_name' => $this->template->param('item_index_name'),
+                    'item_index_name' => $this->factory->param('item_index_name'),
                 ]
             );
 
-            if ($preview_item_mode === 'dialog') :
+            if ($preview_item_mode === 'dialog') {
                 wp_enqueue_style('wp-jquery-ui-dialog');
                 wp_enqueue_script('jquery-ui-dialog');
-            endif;
-        endif;
+            }
+        }
     }
 }

@@ -9,7 +9,6 @@
 
 namespace tiFy\Options\Page;
 
-use Illuminate\Support\Arr;
 use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Options\OptionsPageInterface;
 use tiFy\Contracts\View\ViewEngine;

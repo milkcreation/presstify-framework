@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\BulkActions;
 
-use tiFy\Kernel\Collection\Collection;
+use tiFy\Support\Collection;
 use tiFy\Template\Templates\ListTable\Contracts\BulkActionsCollection as BulkActionsCollectionContract;
 use tiFy\Template\Templates\ListTable\Contracts\BulkActionsItem;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
@@ -16,16 +16,16 @@ class BulkActionsCollection extends Collection implements BulkActionsCollectionC
     protected static $displayed = 0;
 
     /**
+     * Instance du gabarit associé.
+     * @var ListTable
+     */
+    protected $factory;
+
+    /**
      * Liste des actions groupées.
      * @var array|BulkActionsItem[]
      */
     protected $items = [];
-
-    /**
-     * Instance du motif d'affichage associé.
-     * @var ListTable
-     */
-    protected $template;
 
     /**
      * Position de l'interface de navigation.
@@ -36,28 +36,29 @@ class BulkActionsCollection extends Collection implements BulkActionsCollectionC
     /**
      * CONSTRUCTEUR.
      *
-     * @param array $bulk_actions Liste des des éléments.
-     * @param ListTable $template Instance du motif d'affichage associé.
+     * @param ListTable $factory Instance du motif d'affichage associé.
      *
      * @return void
      */
-    public function __construct($bulk_actions, ListTable $template)
+    public function __construct(ListTable $factory)
     {
-        $this->template = $template;
+        $this->factory = $factory;
 
-        $this->parse($bulk_actions);
+        $attrs = $this->factory->param('bulk_actions', []);
+
+        $this->parse(is_array($attrs) ? $attrs : []);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->render();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @return array|BulkActionsItem[]
      */
@@ -67,88 +68,81 @@ class BulkActionsCollection extends Collection implements BulkActionsCollectionC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($bulk_actions = [])
+    public function parse(array $bulk_actions = []): BulkActionsCollectionContract
     {
-        if ($bulk_actions) :
-            $this->items[-1] = $this->template->resolve(
-                'bulk-actions.item',
-                [-1, ['content' =>  __('Actions groupées', 'tify')],
-                 $this->template]
-            );
+        if ($bulk_actions) {
+            $this->items[-1] = $this->factory->resolve('bulk-actions.item', [
+                -1,
+                ['content' => __('Actions groupées', 'tify')],
+                $this->factory
+            ]);
 
-            foreach ($bulk_actions as $name => $attrs) :
-                if (is_numeric($name)) :
+            foreach ($bulk_actions as $name => $attrs) {
+                if (is_numeric($name)) {
                     $name = (string)$attrs;
                     $attrs = [];
-                elseif (is_string($attrs)) :
+                } elseif (is_string($attrs)) {
                     $attrs = [
                         'value'   => $name,
                         'content' => $attrs
                     ];
-                endif;
+                }
 
-                $alias = $this->template->bound("bulk-actions.item.{$name}")
+                $alias = $this->factory->bound("bulk-actions.item.{$name}")
                     ? "bulk-actions.item.{$name}"
                     : 'bulk-actions.item';
 
-                $this->items[$name] = $this->template->resolve($alias, [$name, $attrs, $this->template]);
-            endforeach;
-        endif;
+                $this->items[$name] = $this->factory->resolve($alias, [$name, $attrs, $this->factory]);
+            }
+        }
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function render()
+    public function render(): string
     {
         $output = '';
 
-        if ($choices = $this->all()) :
+        if ($choices = $this->all()) {
             $displayed = !self::$displayed++ ? '' : 2;
 
-            $output .= field(
-                'label',
-                [
-                    'attrs'   => [
-                        'for'   => 'bulk-action-selector-' . esc_attr($this->which),
-                        'class' => 'screen-reader-text'
-                    ],
-                    'content' => __('Choix de l\'action', 'tify')
-                ]
-            );
+            $output .= field('label', [
+                'attrs'   => [
+                    'for'   => 'bulk-action-selector-' . esc_attr($this->which),
+                    'class' => 'screen-reader-text'
+                ],
+                'content' => __('Choix de l\'action', 'tify')
+            ]);
 
-            $output .= field(
-                'select',
-                [
-                    'name'    => "action{$displayed}",
-                    'attrs'   => [
-                        'id' => 'bulk-action-selector-' . esc_attr($this->which)
-                    ],
-                    'choices' => $choices
-                ]
-            );
+            $output .= field('select', [
+                'name'    => "action{$displayed}",
+                'attrs'   => [
+                    'id' => 'bulk-action-selector-' . esc_attr($this->which)
+                ],
+                'choices' => $choices
+            ]);
 
-            $output .= field(
-                'submit',
-                [
-                    'attrs' => [
-                        'id'    => "doaction{$displayed}",
-                        'value' => __('Apply'),
-                        'class' => 'button action'
-                    ]
+            $output .= field('submit', [
+                'attrs' => [
+                    'id'    => "doaction{$displayed}",
+                    'value' => __('Apply'),
+                    'class' => 'button action'
                 ]
-            );
-        endif;
+            ]);
+        }
 
         return $output;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function which($which)
+    public function which(string $which) : BulkActionsCollectionContract
     {
         $this->which = $which;
 

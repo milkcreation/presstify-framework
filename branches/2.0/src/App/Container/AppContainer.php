@@ -4,8 +4,8 @@ namespace tiFy\App\Container;
 
 use BadMethodCallException;
 use Exception;
+use InvalidArgumentException;
 use Illuminate\Support\Collection;
-use League\Container\ServiceProvider\ServiceProviderInterface;
 use Psr\Container\ContainerInterface;
 use tiFy\tiFy;
 
@@ -170,7 +170,7 @@ class AppContainer implements ContainerInterface
         if (isset(self::$items[$abstract])) :
             return self::$items[$abstract];
         else :
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('(%s) n\'est pas distribué par le fournisseur de service.', $abstract),
                 501
             );
@@ -194,7 +194,7 @@ class AppContainer implements ContainerInterface
             $resolved = $this->getService($alias);
 
             return $resolved->build($args);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             return null;
         }
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Routing;
 
@@ -7,20 +7,19 @@ use Countable;
 use Illuminate\Support\Collection;
 use IteratorAggregate;
 use League\Route\Middleware\MiddlewareAwareInterface;
-use League\Route\Strategy\StrategyAwareInterface;
-use League\Route\Route;
 use League\Route\RouteCollectionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use League\Route\Route as LeagueRoute;
+use League\Route\Strategy\StrategyAwareInterface;
+use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
 
 interface Router extends
     ArrayAccess,
     Countable,
+    ContainerAwareTrait,
     IteratorAggregate,
     MiddlewareAwareInterface,
+    RegisterMapAwareTrait,
     RouteCollectionInterface,
-    RouteRegisterMapTrait,
     StrategyAwareInterface
 {
     /**
@@ -40,44 +39,44 @@ interface Router extends
      *
      * @param string|string[] $httpMethod
      * @param string $route
-     * @param mixed  $handler
+     * @param mixed $handler
      */
     public function addRoute($httpMethod, $route, $handler);
 
     /**
      * Récupération de la liste des routes déclarés.
      *
-     * @return
+     * @return array
      */
-    public function all();
+    public function all(): array;
 
     /**
      * Récupération de la collection des routes déclarées.
      *
      * @return Collection
      */
-    public function collect();
+    public function collect(): Collection;
 
     /**
      * Compte de le nombre de routes déclarées.
      *
      * @return int
      */
-    public function count();
+    public function count(): int;
 
     /**
      * Récupération de la route courante associée à la requête HTTP.
      *
-     * @return null|Route
+     * @return Route|null
      */
-    public function current();
+    public function current(): ?Route;
 
     /**
      * Récupération du nom de qualification de la route courante associée à la requête HTTP.
      *
-     * @return string
+     * @return string|null
      */
-    public function currentRouteName();
+    public function currentRouteName(): ?string;
 
     /**
      * Dispatch the route based on the request.
@@ -86,16 +85,16 @@ interface Router extends
      *
      * @return ResponseInterface
      */
-    public function dispatch(ServerRequestInterface $request);
+    public function dispatch(ServerRequestInterface $request): ResponseInterface;
 
     /**
      * Emission de la réponse.
      *
      * @param ResponseInterface $response Réponse HTTP.
      *
-     * @return string
+     * @return void
      */
-    public function emit(ResponseInterface $response);
+    public function emit(ResponseInterface $response): void;
 
     /**
      * Vérification d'existance de routes déclarées.
@@ -104,14 +103,7 @@ interface Router extends
      *
      * @return boolean
      */
-    public function exists();
-
-    /**
-     * Récupération du conteneur d'injection associé
-     *
-     * @return ContainerInterface
-     */
-    public function getContainer();
+    public function exists(): bool;
 
     /**
      * Returns the collected route data, as provided by the data generator.
@@ -127,15 +119,15 @@ interface Router extends
      *
      * @return Route
      */
-    public function getNamedRoute(string $name) : Route;
+    public function getNamedRoute(string $name): LeagueRoute;
 
     /**
      * Add a group of routes to the collection.
      *
-     * @param string   $prefix
+     * @param string $prefix
      * @param callable $group
      *
-     * @return \League\Route\RouteGroup
+     * @return RouteGroup
      */
     public function group(string $prefix, callable $group);
 
@@ -153,37 +145,48 @@ interface Router extends
      *
      * @return boolean
      */
-    public function hasNamedRoute($name);
+    public function hasNamedRoute(string $name): bool;
 
     /**
      * Vérification si le nom de qualification correspond à la route associée à la requête HTTP courante.
      *
      * @param string $name Nom de qualification à contrôler.
-     * 
+     *
      * @return boolean
      */
-    public function isCurrentNamed($name);
+    public function isCurrentNamed(string $name): bool;
 
     /**
      * Redirection vers une route déclarée.
+     * @see https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
      *
      * @param string $name Identifiant de qualification de la route
      * @param array $parameters Liste des variables passées en argument.
      * @param int $status Code de redirection.
-     * @see https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
      *
      * @return void
      */
-    public function redirect($name, $parameters = [], $status = 302);
+    public function redirect(string $name, array $parameters = [], int $status = 302): void;
 
     /**
      * Récupération de l'url d'une route.
      *
-     * @param  string $name Nom de qualification.
-     * @param  array $parameters Liste des variables passées en argument.
-     * @param  boolean $absolute Activation de l'url absolue.
+     * @param string $name Nom de qualification.
+     * @param array $parameters Liste des variables passées en argument.
+     * @param boolean $absolute Activation de l'url absolue.
      *
      * @return string
      */
-    public function url($name, $parameters = [], $absolute = true);
+    public function url(string $name, array $parameters = [], bool $absolute = true);
+
+    /**
+     * Déclaration d'une route dédiée aux requêtes Ajax XmlHttpRequest (Xhr).
+     *
+     * @param string $path Chemin relatif vers la route.
+     * @param string|callable $handler Traitement de la route.
+     * @param string $method Méthode de la requête.
+     *
+     * @return Route
+     */
+    public function xhr(string $path, $handler, string $method = 'POST'): Route;
 }

@@ -16,35 +16,35 @@ interface Url
      *
      * @return array
      */
-    public function cleanArgs() : array;
+    public function cleanArgs(): array;
 
     /**
      * Récupération de l'url courante. Sans les arguments de requête.
      *
      * @return string
      */
-    public function current() : string;
+    public function current(): string;
 
     /**
      * Récupération de l'url courante au format décodée.
      *
      * @return string
      */
-    public function decode() : string;
+    public function decode(): string;
 
     /**
      * Récupération de l'url courante complète. Arguments de requête inclus.
      *
      * @return string
      */
-    public function full() : string;
+    public function full(): string;
 
     /**
      * Récupération de la sous arborescence du chemin de l'url.
      *
      * @return string
      */
-    public function rewriteBase() : string;
+    public function rewriteBase(): string;
 
     /**
      * Récupération de l'url vers la racine.
@@ -53,7 +53,7 @@ interface Url
      *
      * @return string
      */
-    public function root(string $path = '') : string;
+    public function root(string $path = ''): string;
 
     /**
      * Récupération d'une url agrémentée d'une liste d'arguments de requête.
@@ -62,7 +62,7 @@ interface Url
      *
      * @return string
      */
-    public function with(array $args) : string;
+    public function with(array $args): string;
 
     /**
      * Récupération d'une url nettoyée d'une liste d'arguments de requête.
@@ -71,5 +71,5 @@ interface Url
      *
      * @return string
      */
-    public function without(array $args) : string;
+    public function without(array $args): string;
 }

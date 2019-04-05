@@ -6,8 +6,7 @@
  * @var string $which top|bottom.
  */
 ?>
-<?php $pagination = $this->pagination()->which($which); ?>
-
+<?php $pagination = $this->pagination()->which($which??'top'); ?>
 <div class="<?php echo $pagination->getClass(); ?>">
     <span class="displaying-num">
         <?php
@@ -22,16 +21,11 @@
         );
         ?>
     </span>
-
-    <span class="pagination-links<?php echo $pagination->isInfiniteScroll() ? ' hide-if-js': ''; ?>">
+    <span class="pagination-links<?php echo $pagination->isInfiniteScroll() ? ' hide-if-js' : ''; ?>">
         <?php echo $pagination->firstPage(); ?>
-
         <?php echo $pagination->prevPage(); ?>
-
         <?php echo $pagination->currentPage(); ?>
-
         <?php echo $pagination->nextPage(); ?>
-
         <?php echo $pagination->lastPage(); ?>
     </span>
 </div>

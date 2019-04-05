@@ -128,9 +128,9 @@ class ImageGallery extends MetaboxWpPostController
     public function wp_ajax()
     {
         echo $this->displayItem(
-            request()->getProperty('POST')->get('id'),
-            request()->getProperty('POST')->get('order'),
-            request()->getProperty('POST')->get('name')
+            request()->post('id'),
+            request()->post('order'),
+            request()->post('name')
         );
 
         exit;

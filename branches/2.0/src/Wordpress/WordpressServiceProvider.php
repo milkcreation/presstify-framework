@@ -22,6 +22,7 @@ use tiFy\Wordpress\Routing\Routing;
 use tiFy\Wordpress\Routing\WpQuery;
 use tiFy\Wordpress\Routing\WpScreen;
 use tiFy\Wordpress\Taxonomy\Taxonomy;
+use tiFy\Wordpress\Template\Template;
 use tiFy\Wordpress\User\User;
 use WP_Query;
 use WP_Post;
@@ -54,6 +55,7 @@ class WordpressServiceProvider extends AppServiceProvider
         'wp.query.terms',
         'wp.routing',
         'wp.taxonomy',
+        'wp.template',
         'wp.user',
         'wp.wp_query',
         'wp.wp_screen',
@@ -116,7 +118,7 @@ class WordpressServiceProvider extends AppServiceProvider
                 }
 
                 if ($this->getContainer()->has('template')) {
-                    $this->getContainer()->get('template');
+                    $this->getContainer()->get('wp.template');
                 }
 
                 if ($this->getContainer()->has('user')) {
@@ -144,6 +146,7 @@ class WordpressServiceProvider extends AppServiceProvider
         $this->registerQuery();
         $this->registerRouting();
         $this->registerTaxonomy();
+        $this->registerTemplate();
         $this->registerUser();
     }
 
@@ -320,7 +323,7 @@ class WordpressServiceProvider extends AppServiceProvider
     }
 
     /**
-     * Déclaration du controleur des taxonomies.
+     * Déclaration du controleur de taxonomie.
      *
      * @return void
      */
@@ -332,7 +335,19 @@ class WordpressServiceProvider extends AppServiceProvider
     }
 
     /**
-     * Déclaration du controleur des pages d'accroche.
+     * Déclaration du controleur de gabarit.
+     *
+     * @return void
+     */
+    public function registerTemplate()
+    {
+        $this->getContainer()->share('wp.template',  function () {
+            return new Template($this->getContainer()->get('template'));
+        });
+    }
+
+    /**
+     * Déclaration du controleur utilisateur.
      *
      * @return void
      */

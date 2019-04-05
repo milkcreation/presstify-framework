@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface RowActionsItem extends ParamsBag
 {
@@ -11,26 +11,26 @@ interface RowActionsItem extends ParamsBag
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
      * Récupération de l'identifiant de qualification de la clef de sécurisation d'une action sur un élément.
      *
      * @return string
      */
-    public function getNonce();
+    public function getNonce(): string;
 
     /**
      * Vérification d'activation de l'action.
      *
      * @return boolean
      */
-    public function isActive();
+    public function isActive(): bool;
 
     /**
      * Récupération du rendu de l'affichage.
      *
      * @return string
      */
-    public function render();
+    public function render(): string;
 }

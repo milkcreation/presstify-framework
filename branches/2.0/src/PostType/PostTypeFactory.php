@@ -2,9 +2,7 @@
 
 namespace tiFy\PostType;
 
-use Illuminate\Support\Arr;
 use tiFy\Contracts\PostType\PostTypeFactory as PostTypeFactoryContract;
-use tiFy\Contracts\PostType\PostTypePostMeta;
 use tiFy\Kernel\Params\ParamsBag;
 
 class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract

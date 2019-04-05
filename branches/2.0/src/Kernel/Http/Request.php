@@ -10,10 +10,24 @@ use Symfony\Component\HttpFoundation\Request as SfRequest;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Kernel\Request as RequestContract;
 
+/**
+ * Class Request
+ * @package tiFy\Kernel\Http
+ *
+ * @deprecated Utiliser tiFy\Http\Request à la place
+ */
 class Request extends LaraRequest implements RequestContract
 {
     /**
-     * @inheritdoc
+     * Instance du controleur basée sur la requête globale.
+     * @var RequestContract
+     */
+    protected static $global;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated
      */
     public function getProperty($property = '')
     {

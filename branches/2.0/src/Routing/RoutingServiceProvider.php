@@ -3,9 +3,8 @@
 namespace tiFy\Routing;
 
 use Http\Factory\Diactoros\ResponseFactory;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\App\Container\AppServiceProvider;
+use tiFy\Routing\Middleware\Xhr;
 use tiFy\Routing\Strategy\App;
 use tiFy\Routing\Strategy\Json;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
@@ -19,9 +18,9 @@ class RoutingServiceProvider extends AppServiceProvider
     protected $provides = [
         'router',
         'router.emitter',
+        'router.middleware.xhr',
         'router.strategy.default',
-        'router.strategy.json',
-        ServerRequestInterface::class,
+        'router.strategy.json'
     ];
 
     /**
@@ -29,11 +28,11 @@ class RoutingServiceProvider extends AppServiceProvider
      */
     public function register()
     {
-        $this->registerRouter();
-        $this->registerUrl();
-        $this->registerPsrRequest();
         $this->registerEmitter();
+        $this->registerMiddleware();
+        $this->registerRouter();
         $this->registerStrategies();
+        $this->registerUrl();
     }
 
     /**
@@ -49,14 +48,14 @@ class RoutingServiceProvider extends AppServiceProvider
     }
 
     /**
-     * Déclaration des contrôleurs de réponse et de requête HTTP.
+     * Déclaration des Middlewares.
      *
      * @return void
      */
-    public function registerPsrRequest()
+    public function registerMiddleware()
     {
-        $this->getContainer()->share(ServerRequestInterface::class, function () {
-            return (new DiactorosFactory())->createRequest(request());
+        $this->getContainer()->add('router.middleware.xhr', function () {
+            return new Xhr();
         });
     }
 

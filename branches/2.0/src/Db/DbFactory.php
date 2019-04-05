@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use tiFy\Contracts\Db\DbFactory as DbFactoryContract;
 use tiFy\Db\Factory\ResolverTrait;
 use tiFy\Support\ParamsBag;
+use wpdb;
 
 class DbFactory extends ParamsBag implements DbFactoryContract
 {
@@ -16,43 +17,6 @@ class DbFactory extends ParamsBag implements DbFactoryContract
      * @var string
      */
     protected $name = '';
-
-    /**
-     * Liste des attributs de configuration.
-     * @var array {
-     *      Attributs de la table de base de données
-     *
-     *      @var bool $install Activation de l'installation de la table de base de données
-     *      @var int $version Numéro de version de la table
-     *      @var string $name Nom de la base de données (hors préfixe)
-     *      @var string $primary Colonne de clé primaire
-     *      @var string $col_prefix Prefixe des colonnes de la table
-     *      @var array $columns {
-     *          Liste des attributs de configuration des colonnes
-     *      }
-     *      @var array $keys {
-     *          Liste des attributs de configuration des clefs d'index
-     *      }
-     *      @var string[] $seach {
-     *          Liste des colonnes ouvertes à la recherche
-     *      }
-     *      @var bool|string|array $meta Activation ou nom de la table de stockage des metadonnées
-     *      @var \wpdb|object $sql_engine Moteur (ORM) de requête en base de données
-     * }
-     */
-    protected $attributes = [
-        'install'    => false,
-        'version'    => 1,
-        'name'       => '',
-        'primary'    => '',
-        'col_prefix' => '',
-        'columns'    => [],
-        'keys'       => [],
-        'search'     => [],
-        'meta'       => false,
-        // moteur de requete SQL global $wpdb par défaut | new \wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
-        'sql_engine' => null,
-    ];
 
     /**
      * Nom de qualification la table hors prefixe.
@@ -262,13 +226,13 @@ class DbFactory extends ParamsBag implements DbFactoryContract
     /**
      * Définition du moteur (ORM) de traitement des requête de base de données.
      *
-     * @param \wpdb|object $sql_engine Moteur de traitement des requêtes de base.
+     * @param wpdb|object $sql_engine Moteur de traitement des requêtes de base.
      *
-     * @return \wpdb|object
+     * @return wpdb|object
      */
     private function _parseSQLEngine($sql_engine = null)
     {
-        if (is_null($sql_engine) || !($sql_engine instanceof \wpdb)) :
+        if (is_null($sql_engine) || !($sql_engine instanceof wpdb)) :
             global $wpdb;
 
             return $this->sqlEngine = $wpdb;
@@ -298,6 +262,47 @@ class DbFactory extends ParamsBag implements DbFactoryContract
         endif;
 
         $this->tableName = $this->sql()->{$raw_name};
+    }
+
+    /**
+     * Liste des attributs de configuration par défaut.
+     *
+     * @return array {
+     *      Attributs de la table de base de données
+     *
+     *      @var bool $install Activation de l'installation de la table de base de données
+     *      @var int $version Numéro de version de la table
+     *      @var string $name Nom de la base de données (hors préfixe)
+     *      @var string $primary Colonne de clé primaire
+     *      @var string $col_prefix Prefixe des colonnes de la table
+     *      @var array $columns {
+     *          Liste des attributs de configuration des colonnes
+     *      }
+     *      @var array $keys {
+     *          Liste des attributs de configuration des clefs d'index
+     *      }
+     *      @var string[] $seach {
+     *          Liste des colonnes ouvertes à la recherche
+     *      }
+     *      @var bool|string|array $meta Activation ou nom de la table de stockage des metadonnées
+     *      @var \wpdb|object $sql_engine Moteur (ORM) de requête en base de données
+     * }
+     */
+    public function defaults()
+    {
+        return [
+            'install'    => false,
+            'version'    => 1,
+            'name'       => '',
+            'primary'    => '',
+            'col_prefix' => '',
+            'columns'    => [],
+            'keys'       => [],
+            'search'     => [],
+            'meta'       => false,
+            // moteur de requete SQL global $wpdb par défaut | new \wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
+            'sql_engine' => null,
+        ];
     }
 
     /**
