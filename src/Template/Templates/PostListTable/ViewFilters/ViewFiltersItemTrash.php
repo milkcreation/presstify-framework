@@ -7,11 +7,11 @@ use tiFy\Template\Templates\ListTable\ViewFilters\ViewFiltersItem;
 class ViewFiltersItemTrash extends ViewFiltersItem
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
-        $count = ($db = $this->template->db())
+        $count = ($db = $this->factory->db())
             ? $db->select()->count(['status' => 'trash'])
             : 0;
 
@@ -21,7 +21,7 @@ class ViewFiltersItemTrash extends ViewFiltersItem
             'hide_empty'  => true,
             'show_count'  => true,
             'query_args'  => ['post_status' => 'trash'],
-            'current'     => $this->template->request()->query('post_status') === 'trash'
+            'current'     => $this->factory->request()->query('post_status') === 'trash'
         ];
     }
 }

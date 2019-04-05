@@ -2,7 +2,7 @@
 
 namespace tiFy\Container;
 
-use League\Container\Argument\RawArgument;
+//use League\Container\Argument\RawArgument;
 use League\Container\Container as LeagueContainer;
 use League\Container\ServiceProvider\ServiceProviderInterface;
 use tiFy\Contracts\Container\Container as ContainerContract;
@@ -24,20 +24,18 @@ class Container extends LeagueContainer implements ContainerContract
     {
         parent::__construct();
 
-        foreach ($this->getServiceProviders() as $serviceProvider) :
+        foreach ($this->getServiceProviders() as $serviceProvider) {
             $this->share($serviceProvider, $resolved = new $serviceProvider());
 
-            if ($resolved instanceof ServiceProviderInterface) :
+            if ($resolved instanceof ServiceProviderInterface) {
                 $resolved->setContainer($this);
                 $this->addServiceProvider($resolved);
-            endif;
-        endforeach;
-
+            }
+        }
     }
 
     /**
      * @inheritdoc
-     */
     protected function getFromThisContainer($alias, array $args = [])
     {
         array_walk($args, function (&$arg) {
@@ -46,6 +44,7 @@ class Container extends LeagueContainer implements ContainerContract
 
         return parent::getFromThisContainer($alias, $args);
     }
+     */
 
     /**
      * @inheritdoc
@@ -53,14 +52,6 @@ class Container extends LeagueContainer implements ContainerContract
     public function getServiceProviders()
     {
         return $this->serviceProviders;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function make($alias, $args = [])
-    {
-        return $this->get($alias, $args);
     }
 
     /**

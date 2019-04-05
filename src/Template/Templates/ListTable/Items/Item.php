@@ -1,40 +1,40 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Items;
 
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 use tiFy\Template\Templates\ListTable\Contracts\Item as ItemContract;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
 
 class Item extends ParamsBag implements ItemContract
 {
     /**
-     * Instance du motif d'affichage associé.
+     * Instance du gabarit associé.
      * @var ListTable
      */
-    protected $template;
+    protected $factory;
 
     /**
      * CONSTRUCTEUR.
      *
      * @param mixed $attrs Liste des attributs de configuration.
-     * @param ListTable $template Instance du motif d'affichage associé.
+     * @param ListTable $factory Instance du motif d'affichage associé.
      *
      * @return void
      */
-    public function __construct($attrs, ListTable $template)
+    public function __construct($attrs, ListTable $factory)
     {
-        $this->template = $template;
+        $this->factory = $factory;
 
-        if (is_object($attrs)) :
+        if (is_object($attrs)) {
             $attrs = get_object_vars($attrs);
-        endif;
+        }
 
-        parent::__construct($attrs);
+        $this->set($attrs)->parse();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPrimary($default = null)
     {
@@ -42,16 +42,16 @@ class Item extends ParamsBag implements ItemContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPrimaryKey()
     {
-        if (($primary_key = $this->template->param('item_primary_key')) && $this->has($primary_key)) :
+        if (($primary_key = $this->factory->param('item_primary_key')) && $this->has($primary_key)) {
             return $primary_key;
-        elseif ($db = $this->template->db()) :
+        } elseif ($db = $this->factory->db()) {
             return $db->getPrimary();
-        else :
+        } else {
             return current($this->keys());
-        endif;
+        }
     }
 }

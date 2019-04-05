@@ -59,11 +59,10 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
      * Récupération d'un élément selon sa clé d'indice.
      *
      * @param mixed $key Clé d'indice.
-     * @param mixed $default Valeur de retour par défaut.
      *
      * @return mixed
      */
-    public function get($key, $default = null);
+    public function get($key);
 
     /**
      * Vérification d'existance d'un élément selon sa clé d'indice.
@@ -90,17 +89,6 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
      * @return array
      */
     public function pluck($value, $key = null);
-
-    /**
-     * Définition de la liste des éléments.
-     *
-     * @param mixed $items Liste des éléments.
-     *
-     * @return $this
-     *
-     * @deprecated
-     */
-    public function setItems($items): Collection;
 
     /**
      * Définition de la liste des éléments.

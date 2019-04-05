@@ -1,27 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Columns;
 
 use Closure;
-use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Support\HtmlAttrs;
+use tiFy\Support\ParamsBag;
 use tiFy\Template\Templates\ListTable\Contracts\ColumnsItem as ColumnsItemContract;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
 
 class ColumnsItem extends ParamsBag implements ColumnsItemContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @return array
+     * Instance du gabarit associé.
+     * @var ListTable
      */
-    protected $attributes = [
-        'content'  => '',
-        'title'    => '',
-        'sortable' => false,
-        'hidden'   => false,
-        'primary'  => false,
-        'attrs'    => [],
-    ];
+    protected $factory;
 
     /**
      * Nom de qualification.
@@ -30,123 +23,118 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
     protected $name = '';
 
     /**
-     * Instance du motif d'affichage associé.
-     * @var ListTable
-     */
-    protected $template;
-
-    /**
      * CONSTRUCTEUR.
      *
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration personnalisés.
-     * @param ListTable $template Instance du motif d'affichage associé.
+     * @param ListTable $factory Instance du motif d'affichage associé.
      *
      * @return void
      */
-    public function __construct($name, $attrs, ListTable $template)
+    public function __construct(string $name, $attrs, ListTable $factory)
     {
         $this->name = $name;
-        $this->template = $template;
+        $this->factory = $factory;
 
-        parent::__construct($attrs);
+        $this->set($attrs)->parse();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->render();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
         return [
-            'title' => $this->getName(),
+            'attrs'    => [],
+            'content'  => '',
+            'hidden'   => false,
+            'primary'  => false,
+            'sortable' => false,
+            'title'    => $this->getName()
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function content()
+    public function content(): string
     {
-        if ($item = $this->template->item()) :
-            if ($value = $item->get($this->getName())) :
-                $type = (($db = $this->template->db()) && $db->existsCol($this->getName()))
+        if ($item = $this->factory->item()) {
+            if ($value = $item->get($this->getName())) {
+                $type = (($db = $this->factory->db()) && $db->existsCol($this->getName()))
                     ? strtoupper($db->getColAttr($this->getName(), 'type'))
                     : '';
 
-                switch ($type) :
+                switch ($type) {
                     default:
-                        if (is_array($value)) :
-                            return join(', ', $value);
-                        else :
-                            return $value;
-                        endif;
+                        return is_array($value) ? join(', ', $value) : $value;
                         break;
                     case 'DATETIME' :
                         return mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
                         break;
-                endswitch;
-            else :
+                }
+            } else {
                 $content = $this->get('content');
 
                 return $content instanceof Closure ? call_user_func_array($content, [$item]) : $content;
-            endif;
-        else :
+            }
+        } else {
             return $this->get('content');
-        endif;
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getTemplate($default = 'tbody-col')
+    public function getTemplate(string $default = 'tbody-col'): string
     {
-        return $this->template->viewer()->exists('tbody-col_' . $this->getName())
+        return $this->factory->viewer()->exists('tbody-col_' . $this->getName())
             ? 'tbody-col_' . $this->getName() : $default;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->get('title');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function header($with_id = true)
+    public function header(bool $with_id = true): string
     {
         $classes = ['manage-column', "column-{$this->getName()}"];
 
-        if ($this->isHidden()) :
+        if ($this->isHidden()) {
             $classes[] = 'hidden';
-        endif;
+        }
 
-        if ($this->isPrimary()) :
+        if ($this->isPrimary()) {
             $classes[] = 'column-primary';
-        endif;
+        }
 
         $attrs = [];
-        if ($with_id) :
+        if ($with_id) {
             $attrs['id'] = $this->getName();
-        endif;
+        }
 
         $attrs['class'] = join(' ', $classes);
 
@@ -154,125 +142,117 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
 
         $content = $this->getTitle();
 
-        if ($this->isSortable()) :
-            $current_url = $this->template->request()->fullUrl();
+        if ($this->isSortable()) {
+            $current_url = $this->factory->request()->fullUrl();
             $current_url = remove_query_arg('paged', $current_url);
-            $current_orderby = $this->template->request()->query('orderby');
-            $current_order = $this->template->request()->query('order') === 'desc' ? 'desc' : 'asc';
+            $current_orderby = $this->factory->request()->query('orderby');
+            $current_order = $this->factory->request()->query('order') === 'desc' ? 'desc' : 'asc';
 
             list($orderby, $desc_first) = $this->get('sortable');
 
-            if ($current_orderby === $orderby) :
+            if ($current_orderby === $orderby) {
                 $order = 'asc' === $current_order ? 'desc' : 'asc';
                 $class[] = 'sorted';
                 $class[] = $current_order;
-            else :
+            } else {
                 $order = $desc_first ? 'desc' : 'asc';
                 $class[] = 'sortable';
                 $class[] = $desc_first ? 'asc' : 'desc';
-            endif;
+            }
 
-            $content = (string)partial(
-                'tag',
-                [
-                    'tag'     => 'a',
-                    'attrs'   => [
-                        'href' => esc_url(add_query_arg(compact('orderby', 'order'), $current_url)),
-                    ],
-                    'content' => "<span>{$content}</span><span class=\"sorting-indicator\"></span></a>",
-                ]
-            );
-        endif;
+            $content = (string)partial('tag', [
+                'tag'     => 'a',
+                'attrs'   => [
+                    'href' => esc_url(add_query_arg(compact('orderby', 'order'), $current_url)),
+                ],
+                'content' => "<span>{$content}</span><span class=\"sorting-indicator\"></span></a>",
+            ]);
+        }
 
-        $template = $this->template->viewer()->exists('thead-col_' . $this->getName())
+        $name = $this->factory->viewer()->exists('thead-col_' . $this->getName())
             ? 'thead-col_' . $this->getName() : 'thead-col';
 
-        return $this->template->viewer(
-            $template,
-            [
-                'attrs' => HtmlAttrs::createFromAttrs($attrs),
-                'content' => $content
-            ]
-        );
+        return (string)$this->factory->viewer($name, [
+            'attrs'   => HtmlAttrs::createFromAttrs($attrs),
+            'content' => $content
+        ]);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isHidden()
+    public function isHidden(): bool
     {
         return !empty($this->get('hidden'));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isPrimary()
+    public function isPrimary(): bool
     {
-        return $this->template->columns()->getPrimary() === $this->getName();
+        return $this->factory->columns()->getPrimary() === $this->getName();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isSortable()
+    public function isSortable(): bool
     {
         return !empty($this->get('sortable'));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('name', $this->getName());
 
-        if ($sortable = $this->get('sortable')) :
+        if ($sortable = $this->get('sortable')) {
             $this->set(
                 'sortable',
                 is_bool($sortable)
                     ? [$this->getName(), false]
                     : (is_string($sortable) ? [$sortable, false] : $sortable)
             );
-        endif;
+        }
 
-        $this->set(
-            'attrs.class', trim($this->get('attrs.class') . "{$this->getName()} column-{$this->getName()}")
-        );
+        $this->set('attrs.class', trim($this->get('attrs.class') . "{$this->getName()} column-{$this->getName()}"));
 
         $this->set('attrs.data-colname', wp_strip_all_tags($this->getTitle()));
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function render()
+    public function render(): string
     {
-        if ($item = $this->template->item()) :
-
+        if ($item = $this->factory->item()) {
             $classes = '';
-            if ($this->isPrimary()) :
+            if ($this->isPrimary()) {
                 $classes .= 'has-row-actions column-primary';
-            endif;
-            if ($this->isHidden()) :
-                $classes .= 'hidden';
-            endif;
-            if ($classes) :
-                $this->set('attrs.class', trim($this->get('attrs.class', '') . " {$classes}"));
-            endif;
+            }
 
-            return $this->template->viewer(
-                $this->getTemplate(),
-                [
-                    'item'    => $item,
-                    'content' => $this->content(). ($this->isPrimary() ? $this->template->rowActions() : ''),
-                    'attrs'   => HtmlAttrs::createFromAttrs($this->get('attrs', [])),
-                ]
-            );
-        else :
+            if ($this->isHidden()) {
+                $classes .= 'hidden';
+            }
+
+            if ($classes) {
+                $this->set('attrs.class', trim($this->get('attrs.class', '') . " {$classes}"));
+            }
+
+            return (string)$this->factory->viewer($this->getTemplate(), [
+                'item'    => $item,
+                'content' => $this->content() . ($this->isPrimary() ? $this->factory->rowActions() : ''),
+                'attrs'   => HtmlAttrs::createFromAttrs($this->get('attrs', [])),
+            ]);
+        } else {
             return '';
-        endif;
+        }
     }
 }

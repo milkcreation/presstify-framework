@@ -11,14 +11,17 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Interface Request
- * @package tiFy\Kernel\Http
+ * @package tiFy\Contracts\Kernel
  *
  * @mixin IlluminateHttpRequest
+ *
+ * @deprecated
  */
 interface Request
 {
     /**
      * Récupération de la classe de rappel de propriété de la requête globale.
+     *
      * @see https://laravel.com/api/5.6/Illuminate/Http/Request.html
      * @see https://symfony.com/doc/current/components/http_foundation.html
      * @see http://api.symfony.com/4.0/Symfony/Component/HttpFoundation/ParameterBag.html
@@ -28,6 +31,8 @@ interface Request
      * |$_FILES (alias files)|SERVER (alias server)|headers.
      *
      * @return Request|FileBag|HeaderBag|ParameterBag|ServerBag
+     *
+     * @deprecated
      */
     public function getProperty($property = '');
 

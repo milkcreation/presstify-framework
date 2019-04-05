@@ -7,10 +7,10 @@ use League\Route\Route;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
-use Zend\Diactoros\Response;
+use tiFy\Http\Response;
+use Zend\Diactoros\Response as PsrResponse;
 
 class App extends ApplicationStrategy
 {
@@ -24,21 +24,21 @@ class App extends ApplicationStrategy
 
         $controller = $route->getCallable($this->getContainer());
 
-        $resolved = call_user_func_array($controller, $route->getVars());
+        $args = $route->getVars();
+        array_push($args, $request);
+        $resolved = $controller(...$args);
 
-        $response = new Response();
-        if ($resolved instanceof ViewController) :
-            $response->getBody()->write((string)$resolved);
-        elseif ($resolved instanceof ResponseInterface) :
-            $response = $resolved;
-        elseif ($resolved instanceof SfResponse) :
-            $response = (new DiactorosFactory())->createResponse($resolved);
-        else :
-            $response->getBody()->write((string)$resolved);
-        endif;
+        $psrResponse = new PsrResponse();
+        if ($resolved instanceof ViewController) {
+            $psrResponse->getBody()->write((string)$resolved);
+        } elseif ($resolved instanceof ResponseInterface) {
+            $psrResponse = $resolved;
+        } elseif ($resolved instanceof SfResponse) {
+            $psrResponse = Response::convertToPsr($resolved);
+        } else {
+            $psrResponse->getBody()->write((string)$resolved);
+        }
 
-        $response = $this->applyDefaultResponseHeaders($response);
-
-        return $response;
+        return $this->applyDefaultResponseHeaders($psrResponse);
     }
 }

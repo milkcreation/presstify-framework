@@ -3,8 +3,8 @@
 namespace tiFy;
 
 use App\App;
-use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Container\Container;
+use tiFy\Kernel\Composer\ClassLoader;
 use tiFy\Kernel\Config\Config;
 use tiFy\Kernel\Filesystem\Paths;
 use tiFy\Kernel\KernelServiceProvider;
@@ -15,7 +15,7 @@ use tiFy\Kernel\KernelServiceProvider;
  * @desc PresstiFy -- Framework Milkcreation.
  * @author Jordy Manner <jordy@milkcreation.fr>
  * @package tiFy
- * @version 2.0.98
+ * @version 2.0.99
  * @copyright Milkcreation
  */
 final class tiFy extends Container
@@ -48,17 +48,17 @@ final class tiFy extends Container
     {
         if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) {
             return;
-	}
+        }
 
-	if (self::instance()) {
+        if (self::instance()) {
             return;
-	}
-	
-	self::$instance = $this;
-        
-	parent::__construct();
+        }
 
-        add_action('plugins_loaded', function() {
+        self::$instance = $this;
+
+        parent::__construct();
+
+        add_action('plugins_loaded', function () {
             load_muplugin_textdomain('tify', '/presstify/languages/');
             do_action('tify_load_textdomain');
         });

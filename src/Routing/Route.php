@@ -4,16 +4,19 @@ namespace tiFy\Routing;
 
 use FastRoute\RouteParser\Std as RouteParser;
 use League\Route\Route as LeagueRoute;
-use tiFy\Contracts\Routing\Route as RouteContract;
-use tiFy\Contracts\Routing\Router;
+use LogicException;
+use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterContract};
+use tiFy\Routing\Concerns\{ContainerAwareTrait, StrategyAwareTrait};
 
 class Route extends LeagueRoute implements RouteContract
 {
+    use ContainerAwareTrait, StrategyAwareTrait;
+
     /**
      * Instance du controleur de gestion des routes.
-     * @return Router
+     * @return RouterContract
      */
-    protected $router;
+    protected $collection;
 
     /**
      * Indicateur de route en réponse à la requête HTTP courante.
@@ -22,26 +25,22 @@ class Route extends LeagueRoute implements RouteContract
     protected $current = false;
 
     /**
-     * Liste des variables passées en arguments.
-     * @var array
-     */
-    protected $args = [];
-
-    /**
      * CONSTRUCTEUR.
      *
      * @param string $method
      * @param string $path
      * @param callable $handler
-     * @param Router $router Instance du controleur de route.
+     * @param Router $collection Instance du controleur de gestion des routes.
      *
      * @return void
      */
-    public function __construct(string $method, string $path, $handler, $router)
+    public function __construct(string $method, string $path, $handler, $collection)
     {
-        $this->router = $router;
+        $this->collection = $collection;
 
-        parent::__construct($method, $path, $handler);
+        parent::__construct(strtoupper($method), $path, $handler);
+
+        $this->setContainer($this->collection->getContainer());
     }
 
     /**
@@ -49,7 +48,7 @@ class Route extends LeagueRoute implements RouteContract
      */
     public function getUrl(array $params = [], bool $absolute = true): string
     {
-        $routes = (new RouteParser())->parse($this->router->parseRoutePath($this->getPath()));
+        $routes = (new RouteParser())->parse($this->collection->parseRoutePath($this->getPath()));
 
         foreach ($routes as $route) :
             $url = '';
@@ -61,7 +60,7 @@ class Route extends LeagueRoute implements RouteContract
                 endif;
 
                 if ($paramIdx === count($params)) :
-                    throw new \LogicException(__('Le nombre de paramètres fournis est insuffisant.', 'tify'));
+                    throw new LogicException(__('Le nombre de paramètres fournis est insuffisant.', 'tify'));
                 endif;
                 $url .= $params[$paramIdx++];
             endforeach;
@@ -82,11 +81,11 @@ class Route extends LeagueRoute implements RouteContract
             endif;
         endforeach;
 
-        throw new \LogicException(__('Le nombre de paramètres fournis est trop important.', 'tify'));
+        throw new LogicException(__('Le nombre de paramètres fournis est trop important.', 'tify'));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isCurrent(): bool
     {
@@ -94,7 +93,7 @@ class Route extends LeagueRoute implements RouteContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setCurrent()
     {

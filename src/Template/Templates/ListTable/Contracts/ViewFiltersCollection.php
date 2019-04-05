@@ -1,15 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
-use tiFy\Contracts\Kernel\Collection;
+use tiFy\Contracts\Support\Collection;
 
 interface ViewFiltersCollection extends Collection
 {
     /**
      * Récupération de la liste des filtres.
      *
-     * @return void|ViewFiltersItem[]
+     * @return array|ViewFiltersItem[]
      */
     public function all();
 
@@ -20,5 +20,5 @@ interface ViewFiltersCollection extends Collection
      *
      * @return void
      */
-    public function parse($filters = []);
+    public function parse(array $filters = []): ViewFiltersCollection;
 }

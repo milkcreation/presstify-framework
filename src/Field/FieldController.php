@@ -9,7 +9,6 @@ use tiFy\Contracts\Field\FieldController as FieldControllerContract;
 use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Kernel\Tools;
 use tiFy\Support\HtmlAttrs;
 
 abstract class FieldController extends ParamsBag implements FieldControllerContract

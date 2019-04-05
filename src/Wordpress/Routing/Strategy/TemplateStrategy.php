@@ -7,11 +7,10 @@ use League\Route\Strategy\ApplicationStrategy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
-use WP_Query;
-use Zend\Diactoros\Response;
+use tiFy\Http\Response;
+use Zend\Diactoros\Response as PsrResponse;
 
 class Template extends ApplicationStrategy
 {
@@ -57,42 +56,45 @@ class Template extends ApplicationStrategy
         /** @var RouteContract $route */
         $route->setCurrent();
 
-        add_action('pre_get_posts', function (WP_Query &$wp_query) {
-            if ($wp_query->is_main_query() && ! $wp_query->is_admin) :
-                foreach ($this->cTags as $ct) :
+        /**
+         * @todo
+         * add_action('pre_get_posts', function (WP_Query &$wp_query) {
+            if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
+                foreach ($this->cTags as $ct) {
                     $wp_query->{$ct} = false;
-                endforeach;
+                }
 
-                if ($query_args = $this->get('query_args', [])) :
+                if ($query_args = $this->get('query_args', [])) {
                     $wp_query->parse_query($query_args);
-                else :
+                } else {
                     $wp_query->query_vars = $wp_query->fill_query_vars([]);
-                endif;
+                }
 
                 $wp_query->is_route = true;
-            endif;
-        }, 0 );
+            }
+        }, 0);
+         */
 
         $controller = $route->getCallable($this->getContainer());
 
-        $resolved = call_user_func_array($controller, $route->getVars());
+        $args = $route->getVars();
+        array_push($args, $request);
+        $resolved = $controller(...$args);
 
-        $response = new Response();
-        if ($resolved instanceof ViewController) :
+        $psrResponse = new PsrResponse();
+        if ($resolved instanceof ViewController) {
             add_action('template_redirect', function () use ($resolved) {
                 echo $resolved->render();
                 exit;
             }, 1);
-        elseif ($resolved instanceof ResponseInterface) :
-            $response = $resolved;
-        elseif ($resolved instanceof SfResponse) :
-            $response = (new DiactorosFactory())->createResponse($resolved);
-        else :
-            $response->getBody()->write((string) $resolved);
-        endif;
+        } elseif ($resolved instanceof ResponseInterface) {
+            $psrResponse = $resolved;
+        } elseif ($resolved instanceof SfResponse) {
+            $psrResponse = Response::convertToPsr($resolved);
+        } else {
+            $psrResponse->getBody()->write((string)$resolved);
+        }
 
-        $response = $this->applyDefaultResponseHeaders($response);
-
-        return $response;
+        return $this->applyDefaultResponseHeaders($psrResponse);
     }
 }

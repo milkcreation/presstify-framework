@@ -2,14 +2,14 @@
 
 namespace tiFy\Kernel;
 
+use tiFy\Http\RedirectResponse;
+use tiFy\Http\Request;
 use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Container\ServiceProvider;
 use tiFy\Kernel\Encryption\Encrypter;
 use tiFy\Kernel\Events\Manager as EventsManager;
 use tiFy\Kernel\Events\Listener;
-use tiFy\Kernel\Http\RedirectResponse;
-use tiFy\Kernel\Http\Request;
 use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Notices\Notices;
 use tiFy\Kernel\Params\ParamsBag;
@@ -35,7 +35,6 @@ class KernelServiceProvider extends ServiceProvider
         'request',
         'redirect',
         'validator',
-        'view.engine',
         'view.engine'
     ];
 
@@ -49,14 +48,6 @@ class KernelServiceProvider extends ServiceProvider
         if (!defined('TIFY_CONFIG_DIR')) :
             define('TIFY_CONFIG_DIR', get_template_directory() . '/config');
         endif;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-
     }
 
     /**
@@ -95,7 +86,7 @@ class KernelServiceProvider extends ServiceProvider
         });
 
         $this->getContainer()->share('request', function () {
-            return Request::capture();
+            return Request::setFromGlobals();
         });
 
         $this->getContainer()->add('redirect', function (?string $url, int $status = null, array $headers = []) {

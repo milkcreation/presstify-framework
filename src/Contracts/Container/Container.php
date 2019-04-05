@@ -29,5 +29,5 @@ interface Container extends LeagueContainerInterface
      *
      * @return mixed
      */
-    public function make($alias, $args = []);
+    public function get($alias, array $args = []);
 }

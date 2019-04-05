@@ -7,6 +7,8 @@ use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Db\DbManager;
+use tiFy\Contracts\Http\Request;
+use tiFy\Http\RedirectResponse as HttpRedirect;
 use tiFy\Contracts\Field\FieldController;
 use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\Filesystem\Filesystem;
@@ -15,7 +17,6 @@ use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Logger;
-use tiFy\Contracts\Kernel\Request;
 use tiFy\Contracts\Kernel\Validator;
 use tiFy\Contracts\Partial\PartialFactory;
 use tiFy\Contracts\Partial\PartialManager;
@@ -33,37 +34,35 @@ use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\UserManager;
 use tiFy\Kernel\Kernel;
-use tiFy\Kernel\Http\RedirectResponse as HttpRedirect;
 
 /**
  * KERNEL
  * ---------------------------------------------------------------------------------------------------------------------
  */
-if (!function_exists('app')) :
+if (!function_exists('app')) {
     /**
      * App - Controleur de l'application.
      * {@internal Si $abstract est null > Retourne l'instance de l'appication.}
      * {@internal Si $abstract est qualifié > Retourne la résolution du service qualifié.}
      *
-     * @param null|string $abstract Nom de qualification du service.
+     * @param string|null $abstract Nom de qualification du service.
      * @param array $args Liste des variables passé en arguments lors de la résolution du service.
      *
-     * @return object|App
+     * @return App|mixed
      */
     function app($abstract = null, $args = [])
     {
         /** @var App $factory */
         $factory = Kernel::App();
 
-        if (is_null($abstract)) :
+        if (is_null($abstract)) {
             return $factory;
-        endif;
-
+        }
         return $factory->get($abstract, $args);
     }
-endif;
+}
 
-if (!function_exists('assets')) :
+if (!function_exists('assets')) {
     /**
      * Assets - Controleur des assets.
      *
@@ -71,26 +70,27 @@ if (!function_exists('assets')) :
      */
     function assets(): Assets
     {
-        return app()->get('assets');
+        return app('assets');
     }
-endif;
+}
 
-if (!function_exists('class_info')) :
+if (!function_exists('class_info')) {
     /**
      * ClassInfo - Controleur d'informations sur une classe.
-     * @see \tiFy\Kernel\ClassInfo\ClassInfo
      *
      * @param string|object Nom complet ou instance de la classe.
      *
      * @return string
+     * @see \tiFy\Kernel\ClassInfo\ClassInfo
+     *
      */
     function class_info($class)
     {
         return Kernel::ClassInfo($class);
     }
-endif;
+}
 
-if (!function_exists('class_loader')) :
+if (!function_exists('class_loader')) {
     /**
      * ClassLoader - Controleur de déclaration d'espaces de nom et d'inclusion de fichier automatique.
      *
@@ -100,9 +100,9 @@ if (!function_exists('class_loader')) :
     {
         return Kernel::ClassLoader();
     }
-endif;
+}
 
-if (!function_exists('config')) :
+if (!function_exists('config')) {
     /**
      * Controleur de configuration.
      * {@internal
@@ -121,81 +121,79 @@ if (!function_exists('config')) :
         /** @var \tiFy\Kernel\Config\Config $factory */
         $factory = Kernel::Config();
 
-        if (is_null($key)) :
+        if (is_null($key)) {
             return $factory;
-        elseif (is_array($key)) :
+        } elseif (is_array($key)){
             return $factory->set($key);
-        else :
+        } else {
             return $factory->get($key, $default);
-        endif;
+        }
     }
-endif;
+}
 
-if (!function_exists('container')) :
+if (!function_exists('container')) {
     /**
      * Container - Controleur d'injection de dépendances.
      * {@internal Si $alias est null > Retourne la classe de rappel du controleur.}
-     * @deprecated
      *
      * @param string $abstract Nom de qualification du service à récupérer.
      *
      * @return \tiFy\Container\Container
+     * @deprecated
+     *
      */
     function container($abstract = null)
     {
         $factory = Kernel::Container();
 
-        if (is_null($abstract)) :
+        if (is_null($abstract)) {
             return $factory;
-        endif;
-
+        }
         return $factory->get($abstract);
     }
-endif;
+}
 
-if (!function_exists('cron')) :
+if (!function_exists('cron')) {
     /**
      * Récupération du gestionnaire de tâches planifiées ou d'une instance d'un tâche déclarée.
      *
      * @param null|string $name Nom de qualification de la tâche déclarée.
      *
-     * @return null|CronManager|CronJob
+     * @return CronManager|CronJob|null
      */
-    function cron($name = null)
+    function cron(?string $name = null)
     {
         /** @var CronManager $manager */
-        $manager = app()->get('cron');
+        $manager = app('cron');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $manager;
-        endif;
-
+        }
         return $manager->getItem($name);
     }
-endif;
+}
 
-if (!function_exists('db')) :
+if (!function_exists('db')) {
     /**
      * Récupération du gestionnaire de base de données ou d'une instance de controleur de base de données.
      *
      * @param null|string $name Nom de qualification du controleur de base de données.
      *
-     * @return null|DbManager|DbFactory
+     * @return DbManager|DbFactory|null
      */
-    function db($name = null)
+    function db(?string $name = null)
     {
         /** @var DbManager $manager */
-        $manager = app()->get('db');
+        $manager = app('db');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $manager;
-        endif;
-
+        }
         return $manager->get($name);
     }
-endif;
+}
 
-if (!function_exists('events')) :
+if (!function_exists('events')) {
     /**
      * Events - Controleur d'événements.
      *
@@ -205,9 +203,9 @@ if (!function_exists('events')) :
     {
         return Kernel::Events();
     }
-endif;
+}
 
-if (!function_exists('field')) :
+if (!function_exists('field')) {
     /**
      * Field - Controleur de champs.
      *
@@ -222,15 +220,14 @@ if (!function_exists('field')) :
         /** @var FieldManager $manager */
         $manager = app('field');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $manager;
-        endif;
-
+        }
         return $manager->get($name, $id, $attrs);
     }
-endif;
+}
 
-if (!function_exists('form')) :
+if (!function_exists('form')) {
     /**
      * Formulaire - Controleur de champs.
      *
@@ -241,17 +238,16 @@ if (!function_exists('form')) :
     function form($name = null)
     {
         /** @var FormManager $factory */
-        $factory = app()->get('form');
+        $factory = app('form');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $factory;
-        endif;
-
+        }
         return $factory->get($name);
     }
-endif;
+}
 
-if (!function_exists('logger')) :
+if (!function_exists('logger')) {
     /**
      * Logger - Controleur de journalisation des actions.
      *
@@ -259,11 +255,11 @@ if (!function_exists('logger')) :
      */
     function logger(): Logger
     {
-        return app()->get('logger');
+        return app('logger');
     }
-endif;
+}
 
-if (!function_exists('params')) :
+if (!function_exists('params')) {
     /**
      * Instance de contrôleur de paramètres.
      *
@@ -273,15 +269,15 @@ if (!function_exists('params')) :
      */
     function params($params = []): ParamsBag
     {
-        return app()->get('params.bag', [$params]);
+        return app('params.bag', [$params]);
     }
-endif;
+}
 
-if (!function_exists('partial')) :
+if (!function_exists('partial')) {
     /**
      * Partial - Contrôleurs d'affichage.
      *
-     * @param null|string $name Nom de qualification.
+     * @param string|null $name Nom de qualification.
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
@@ -290,17 +286,16 @@ if (!function_exists('partial')) :
     function partial(?string $name = null, $id = null, ?array $attrs = null)
     {
         /** @var PartialManager $manager */
-        $manager = app()->get('partial');
+        $manager = app('partial');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $manager;
-        endif;
-
+        }
         return $manager->get($name, $id, $attrs);
     }
-endif;
+}
 
-if (!function_exists('paths')) :
+if (!function_exists('paths')) {
     /**
      * Paths - Controleur des chemins vers les répertoires de l'application.
      *
@@ -310,28 +305,27 @@ if (!function_exists('paths')) :
     {
         return Kernel::Paths();
     }
-endif;
+}
 
-if (!function_exists('post_type')) :
+if (!function_exists('post_type')) {
     /**
      * Récupération de l'intance du controleur des types de contenu ou instance d'un type de contenu déclaré.
      *
-     * @param null|string $name Nom de qualification du type de contenu.
+     * @param string|null $name Nom de qualification du type de contenu.
      *
      * @return PostTypeManager|PostTypeFactory
      */
     function post_type($name = null)
     {
         /** @var PostTypeManager $manager */
-        $manager = app()->get('post-type');
+        $manager = app('post-type');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $manager;
-        endif;
-
+        }
         return $manager->get($name);
     }
-endif;
+}
 
 if (!function_exists('redirect')) {
     /**
@@ -344,27 +338,26 @@ if (!function_exists('redirect')) {
      *
      * @return HttpRedirect
      */
-    function redirect($to = null, $status = 302, $headers = [], $secure = null)
+    function redirect(?string $to = null, ?int $status = 302, ?array $headers = [], ?bool $secure = null)
     {
-        if (is_null($to)) :
-            return app()->get('redirect');
-        endif;
-
-        return app()->get('redirect', [$to, $status, $headers, $secure]);
+        if (is_null($to)) {
+            return app('redirect');
+        }
+        return app('redirect', [$to, $status, $headers, $secure]);
     }
 }
 
-if (!function_exists('request')) :
+if (!function_exists('request')) {
     /**
      * HTTP - Controleur de traitement de la requête principale.
      *
      * @return Request
      */
-    function request()
+    function request(): Request
     {
-        return Kernel::Request();
+        return app('request');
     }
-endif;
+}
 
 if (! function_exists('resolve')) {
     /**
@@ -396,7 +389,7 @@ if (! function_exists('route')) {
     }
 }
 
-if (!function_exists('route_exists')) :
+if (!function_exists('route_exists')) {
     /**
      * Vérification si la requête courante répond à une route déclarée.
      *
@@ -406,95 +399,93 @@ if (!function_exists('route_exists')) :
     {
         return router()->hasCurrent();
     }
-endif;
+}
 
 if (! function_exists('router')) {
     /**
      * Routing - Récupération de l'instance du controleur de routage ou déclaration d'une nouvelle route.
      *
-     * @param string $name Nom de qualification de la route.
+     * @param string|null $name Nom de qualification de la route.
      * @param array $attrs Liste des attributs de configuration.
      *
      * @return Router|Route
      */
-    function router($name = null, $attrs = [])
+    function router(?string $name = null, ?array $attrs = [])
     {
         /** @var Router $factory */
-        $factory = app()->get('router');
+        $factory = app('router');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $factory;
-        endif;
-
+        }
         return $factory->register($name, $attrs);
     }
 }
 
-if (!function_exists('storage')) :
+if (!function_exists('storage')) {
     /**
      * Récupération du gestionnaire de point de montage ou instance d'un point de montage.
      *
-     * @param string|array Nom de qualification du point de montage à récupéré.
+     * @param string|null Nom de qualification du point de montage à récupéré.
      *
      * @return StorageManager|Filesystem
      */
-    function storage($name = null)
+    function storage(?string $name = null)
     {
         /** @var StorageManager $manager */
-        $manager = app()->get('storage');
+        $manager = app('storage');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $manager;
-        endif;
-
+        }
         return $manager->disk($name);
     }
-endif;
+}
 
 if (! function_exists('taxonomy')) {
     /**
      * Récupération de l'instance du contrôleur de taxonomies ou instance d'une taxonomie déclarée.
      *
-     * @param null|string $name Nom de qualification de la taxonomie déclarée.
+     * @param string|null $name Nom de qualification de la taxonomie déclarée.
      *
      * @return TaxonomyManager|TaxonomyFactory
      */
-    function taxonomy($name = null)
+    function taxonomy(?string $name = null)
     {
         /** @var TaxonomyManager $manager */
-        $manager = app()->get('taxonomy');
+        $manager = app('taxonomy');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $manager;
-        endif;
-
+        }
         return $manager->get($name);
     }
 }
 
-if (!function_exists('template')) :
+if (!function_exists('template')) {
     /**
      * Instance de controleur de gabarits d'affichage ou Instance d'un gabarit.
      *
-     * @param null|string Nom de qualification du motif.
-     * @param array $params Liste des paramètres appliqués au motif.
+     * @param string|null Nom de qualification du gabarit.
+     * @param array $params Liste des paramètres appliqués au gabarit.
      *
-     * @return null|TemplateFactory|TemplateManager
+     * @return TemplateFactory|TemplateManager|null
      */
-    function template($name = null, array $params = [])
+    function template(?string $name = null, array $params = [])
     {
         /** @var TemplateManager $manager */
-        $manager = app()->get('template');
+        $manager = app('template');
 
-        if (is_null($name)) :
+        if (is_null($name)) {
             return $manager;
-        elseif ($template = $manager->get($name)) :
-            return $template->param($params);
-        else :
+        } elseif ($template = $manager->get($name)) {
+            $template->param($params);
+            return $template;
+        } else {
             return null;
-        endif;
+        }
     }
-endif;
+}
 
 if (! function_exists('url')) {
     /**
@@ -504,7 +495,7 @@ if (! function_exists('url')) {
      */
     function url(): Url
     {
-        return app()->get('url');
+        return app('url');
     }
 }
 
@@ -522,7 +513,7 @@ if (! function_exists('url_factory')) {
     }
 }
 
-if (!function_exists('user')) :
+if (!function_exists('user')) {
     /**
      * Instance du gestionnaire utilisateur.
      *
@@ -530,9 +521,9 @@ if (!function_exists('user')) :
      */
     function user(): UserManager
     {
-        return app()->get('user');
+        return app('user');
     }
-endif;
+}
 
 if (! function_exists('validator')) {
     /**
@@ -542,11 +533,11 @@ if (! function_exists('validator')) {
      */
     function validator(): Validator
     {
-        return app()->get('validator');
+        return app('validator');
     }
 }
 
-if (!function_exists('view')) :
+if (!function_exists('view')) {
     /**
      * View - Récupération d'une instance du controleur des vues ou l'affichage d'un gabarit.
      * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
@@ -561,10 +552,9 @@ if (!function_exists('view')) :
     {
         $factory = Kernel::ViewEngine();
 
-        if (func_num_args() === 0) :
+        if (func_num_args() === 0) {
             return $factory;
-        endif;
-
+        }
         return $factory->make($view, $data);
     }
-endif;
+}

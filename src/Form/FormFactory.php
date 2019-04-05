@@ -17,44 +17,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     protected $name = '';
 
     /**
-     * Listes des attributs de configuration.
-     * @var array {
-     * @var string $title Intitulé de qualification du formulaire.
-     * @var string $before Pré-affichage, avant la balise <form/>.
-     * @var string $after Post-affichage, après la balise <form/>.
-     * @var string $method Propriété 'method' de la balise <form/>.
-     * @var string $action Propriété 'action' de la balise <form/>.
-     * @var string $enctype Propriété 'enctype' de la balise <form/>.
-     * @var array $attrs Liste des attributs complémentaires de la balise <form/>.
-     * @var boolean|array $grid Activation de l'agencement des éléments.
-     * @var array $addons Liste des attributs des addons actifs.
-     * @var array $buttons Liste des attributs des boutons actifs.
-     * @var array $events Liste des événements de court-circuitage.
-     * @var array $fields Liste des attributs de champs.
-     * @var array $notices Liste des attributs des messages de notification.
-     * @var array $options Liste des options du formulaire.
-     * @var array $viewer Attributs de configuration du gestionnaire de gabarits d'affichage.
-     * }
-     */
-    protected $attributes = [
-        'title'   => '',
-        'before'  => '',
-        'after'   => '',
-        'method'  => 'post',
-        'action'  => '',
-        'enctype' => '',
-        'attrs'   => [],
-        'grid'    => false,
-        'addons'  => [],
-        'buttons' => [],
-        'events'  => [],
-        'fields'  => [],
-        'notices' => [],
-        'options' => [],
-        'viewer'  => [],
-    ];
-
-    /**
      * Indicateur de préparation active.
      * @var boolean
      */
@@ -170,6 +132,47 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function csrf()
     {
         return wp_create_nonce('Form' . $this->name());
+    }
+
+    /**
+     * Listes des attributs de configuration par défaut.
+     * @return array {
+     *      @var string $title Intitulé de qualification du formulaire.
+     *      @var string $before Pré-affichage, avant la balise <form/>.
+     *      @var string $after Post-affichage, après la balise <form/>.
+     *      @var string $method Propriété 'method' de la balise <form/>.
+     *      @var string $action Propriété 'action' de la balise <form/>.
+     *      @var string $enctype Propriété 'enctype' de la balise <form/>.
+     *      @var array $attrs Liste des attributs complémentaires de la balise <form/>.
+     *      @var boolean|array $grid Activation de l'agencement des éléments.
+     *      @var array $addons Liste des attributs des addons actifs.
+     *      @var array $buttons Liste des attributs des boutons actifs.
+     *      @var array $events Liste des événements de court-circuitage.
+     *      @var array $fields Liste des attributs de champs.
+     *      @var array $notices Liste des attributs des messages de notification.
+     *      @var array $options Liste des options du formulaire.
+     *      @var array $viewer Attributs de configuration du gestionnaire de gabarits d'affichage.
+     * }
+     */
+    public function defaults()
+    {
+        return [
+            'title'   => '',
+            'before'  => '',
+            'after'   => '',
+            'method'  => 'post',
+            'action'  => '',
+            'enctype' => '',
+            'attrs'   => [],
+            'grid'    => false,
+            'addons'  => [],
+            'buttons' => [],
+            'events'  => [],
+            'fields'  => [],
+            'notices' => [],
+            'options' => [],
+            'viewer'  => [],
+        ];
     }
 
     /**

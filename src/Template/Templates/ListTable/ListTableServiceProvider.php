@@ -1,7 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable;
 
+use stdClass;
+use tiFy\Template\Factory\FactoryServiceProvider;
+use tiFy\Template\Templates\ListTable\Ajax\Ajax;
 use tiFy\Template\Templates\ListTable\BulkActions\BulkActionsCollection;
 use tiFy\Template\Templates\ListTable\BulkActions\BulkActionsItem;
 use tiFy\Template\Templates\ListTable\BulkActions\BulkActionsItemTrash;
@@ -25,45 +28,35 @@ use tiFy\Template\Templates\ListTable\RowActions\RowActionsItemEdit;
 use tiFy\Template\Templates\ListTable\RowActions\RowActionsItemPreview;
 use tiFy\Template\Templates\ListTable\RowActions\RowActionsItemTrash;
 use tiFy\Template\Templates\ListTable\RowActions\RowActionsItemUntrash;
+use tiFy\Template\Templates\ListTable\Viewer\Viewer;
 use tiFy\Template\Templates\ListTable\ViewFilters\ViewFiltersCollection;
 use tiFy\Template\Templates\ListTable\ViewFilters\ViewFiltersItem;
-use tiFy\Template\Templates\ListTable\Viewer\Viewer;
-use tiFy\Template\Templates\BaseServiceProvider;
 use tiFy\View\ViewEngine;
 
-class ListTableServiceProvider extends BaseServiceProvider
+class ListTableServiceProvider extends FactoryServiceProvider
 {
+    /**
+     * Instance du gabarit d'affichage.
+     * @var ListTable
+     */
+    protected $factory;
+
     /**
      * @inheritdoc
      */
     public function boot()
     {
-        array_push(
-            $this->provides,
-            'bulk-actions',
-            'bulk-actions.item',
-            'bulk-actions.item.trash',
-            'columns',
-            'columns.item',
-            'columns.item.cb',
-            'items',
-            'item',
-            'pagination',
-            'row-actions',
-            'row-actions.item',
-            'row-actions.item.activate',
-            'row-actions.item.deactivate',
-            'row-actions.item.delete',
-            'row-actions.item.duplicate',
-            'row-actions.item.edit',
-            'row-actions.item.preview',
-            'row-actions.item.trash',
-            'row-actions.item.untrash',
-            'view-filters',
-            'view-filters.item'
-        );
-
         parent::boot();
+
+        events()->on('template.factory.boot.'. $this->factory->name(), function (ListTable $factory) {
+            if ($ajax = $factory->ajax()) {
+                $ajax->setXhr(
+                    router()
+                        ->xhr('/template/list-table/' . $factory->slug(), [$ajax, 'xhrHandler'])
+                        ->strategy('json')
+                );
+            }
+        });
     }
 
     /**
@@ -73,6 +66,7 @@ class ListTableServiceProvider extends BaseServiceProvider
     {
         parent::register();
 
+        $this->registerAjax();
         $this->registerBulkActions();
         $this->registerColumns();
         $this->registerItems();
@@ -82,19 +76,39 @@ class ListTableServiceProvider extends BaseServiceProvider
     }
 
     /**
+     * Déclaration du controleurs de gestion de la table en ajax.
+     *
+     * @return void
+     */
+    public function registerAjax()
+    {
+        $this->getContainer()->share($this->getFullAlias('ajax'), function () {
+            return $this->factory->param('ajax') ? new Ajax($this->factory) : null;
+          });
+    }
+
+    /**
      * Déclaration des controleurs d'actions groupées.
      *
      * @return void
      */
     public function registerBulkActions()
     {
-        $this->getContainer()->share($this->getFullAlias('bulk-actions'), function (ListTable $template) {
-            return new BulkActionsCollection($template->param('bulk_actions', []), $template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('bulk-actions'), function () {
+            return new BulkActionsCollection($this->factory);
+        });
 
-        $this->getContainer()->add($this->getFullAlias('bulk-actions.item'), BulkActionsItem::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('bulk-actions.item'),
+            function (string $name, array $attrs, ListTable $factory) {
+                return new BulkActionsItem($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('bulk-actions.item.trash'), BulkActionsItemTrash::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('bulk-actions.item.trash'),
+            function (string $name, array $attrs, ListTable $factory) {
+                return new BulkActionsItemTrash($name, $attrs, $factory);
+            });
     }
 
     /**
@@ -104,18 +118,24 @@ class ListTableServiceProvider extends BaseServiceProvider
      */
     public function registerColumns()
     {
-        $this->getContainer()->share($this->getFullAlias('columns'), function (ListTable $template) {
-            if (!$columns = $template->param('columns', [])) :
+        $this->getContainer()->share($this->getFullAlias('columns'), function () {
+            if (!$columns = $this->factory->param('columns', [])) {
                 $columns = ($this->getContainer()->has($this->getFullAlias('db')))
                     ? $this->getContainer()->get($this->getFullAlias('db'))->getColNames() : [];
-            endif;
+            }
+            return new ColumnsCollection($columns, $this->factory);
+        });
 
-            return new ColumnsCollection($columns, $template);
-        })->withArgument($this->template);
+        $this->getContainer()->add(
+            $this->getFullAlias('columns.item'), function ($name, $attrs, ListTable $factory) {
+            return new ColumnsItem($name, $attrs, $factory);
+        });
 
-        $this->getContainer()->add($this->getFullAlias('columns.item'), ColumnsItem::class);
-
-        $this->getContainer()->add($this->getFullAlias('columns.item.cb'), ColumnsItemCb::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('columns.item.cb'),
+            function ($name, $attrs, ListTable $factory) {
+                return new ColumnsItemCb($name, $attrs, $factory);
+            });
     }
 
     /**
@@ -125,14 +145,9 @@ class ListTableServiceProvider extends BaseServiceProvider
      */
     public function registerItems()
     {
-        $this->getContainer()->share($this->getFullAlias('items'), function ($items, ListTable $template) {
-            return new Collection($items, $template);
-        })->withArguments(
-            [
-                $this->template->config('items', []),
-                $this->template
-            ]
-        );
+        $this->getContainer()->share($this->getFullAlias('items'), function () {
+            return new Collection($this->factory);
+        });
 
         $this->getContainer()->add($this->getFullAlias('item'), Item::class);
     }
@@ -142,9 +157,9 @@ class ListTableServiceProvider extends BaseServiceProvider
      */
     public function registerLabels()
     {
-        $this->getContainer()->share($this->getFullAlias('labels'), function (ListTable $template) {
-            return new Labels($template->name(), $template->config('labels', []), $template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('labels'), function () {
+            return new Labels($this->factory);
+        });
     }
 
     /**
@@ -154,9 +169,9 @@ class ListTableServiceProvider extends BaseServiceProvider
      */
     public function registerPagination()
     {
-        $this->getContainer()->share($this->getFullAlias('pagination'), function ($attrs, ListTable $template) {
-            return new Pagination($attrs, $template);
-        })->withArguments([[], $this->template]);
+        $this->getContainer()->share($this->getFullAlias('pagination'), function () {
+            return new Pagination($this->factory);
+        });
     }
 
     /**
@@ -164,9 +179,9 @@ class ListTableServiceProvider extends BaseServiceProvider
      */
     public function registerParams()
     {
-        $this->getContainer()->share($this->getFullAlias('params'), function (ListTable $template) {
-            return new Params($template->config('params', []), $template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('params'), function () {
+            return new Params($this->factory);
+        });
     }
 
     /**
@@ -174,9 +189,9 @@ class ListTableServiceProvider extends BaseServiceProvider
      */
     public function registerRequest()
     {
-        $this->getContainer()->share($this->getFullAlias('request'), function (ListTable $template) {
-            return (Request::capture())->setTemplate($template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('request'), function () {
+            return (Request::capture())->setTemplateFactory($this->factory);
+        });
     }
 
     /**
@@ -186,29 +201,63 @@ class ListTableServiceProvider extends BaseServiceProvider
      */
     public function registerRowActions()
     {
-        $this->getContainer()->share($this->getFullAlias('row-actions'), function (ListTable $template) {
-            return new RowActionsCollection($template->param('row_actions', []), $template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('row-actions'), function () {
+            return new RowActionsCollection($this->factory);
+        });
 
-        $this->getContainer()->add($this->getFullAlias('row-actions.item'), RowActionsItem::class);
-
-        $this->getContainer()->add($this->getFullAlias('row-actions.item.activate'), RowActionsItemActivate::class);
+        $this->getContainer()->add($this->getFullAlias('row-actions.item'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItem($name, $attrs, $factory);
+            });
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.deactivate'), RowActionsItemDeactivate::class
-        );
+            $this->getFullAlias('row-actions.item.activate'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItemActivate($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('row-actions.item.delete'), RowActionsItemDelete::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('row-actions.item.deactivate'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItemDeactivate($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('row-actions.item.duplicate'), RowActionsItemDuplicate::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('row-actions.item.delete'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItemDelete($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('row-actions.item.edit'), RowActionsItemEdit::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('row-actions.item.duplicate'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItemDuplicate($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('row-actions.item.preview'), RowActionsItemPreview::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('row-actions.item.edit'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItemEdit($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('row-actions.item.trash'), RowActionsItemTrash::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('row-actions.item.preview'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItemPreview($name, $attrs, $factory);
+            });
 
-        $this->getContainer()->add($this->getFullAlias('row-actions.item.untrash'), RowActionsItemUntrash::class);
+
+        $this->getContainer()->add(
+            $this->getFullAlias('row-actions.item.trash'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItemTrash($name, $attrs, $factory);
+            });
+
+        $this->getContainer()->add(
+            $this->getFullAlias('row-actions.item.untrash'),
+            function ($name, $attrs, ListTable $factory) {
+                new RowActionsItemUntrash($name, $attrs, $factory);
+            });
     }
 
     /**
@@ -218,44 +267,43 @@ class ListTableServiceProvider extends BaseServiceProvider
      */
     public function registerViewer()
     {
-        $this->getContainer()->share($this->getFullAlias('viewer'), function (ListTable $template) {
-            $params = $template->config('viewer', []);
+        $this->getContainer()->share($this->getFullAlias('viewer'), function () {
+            $params = $this->factory->config('viewer', []);
 
-            if (!$params instanceof ViewEngine) :
-                $viewer = new ViewEngine(
-                    array_merge(
-                        [
-                            'directory' => template()->resourcesDir('/views/list-table')
-                        ],
-                        $params
-                    )
-                );
+            if (!$params instanceof ViewEngine) {
+                $viewer = new ViewEngine(array_merge([
+                    'directory' => template()->resourcesDir('/views/list-table')
+                ], $params));
                 $viewer->setController(Viewer::class);
 
-                if (!$viewer->getOverrideDir()) :
+                if (!$viewer->getOverrideDir()) {
                     $viewer->setOverrideDir(template()->resourcesDir('/views/list-table'));
-                endif;
-            else :
+                }
+            } else {
                 $viewer = $params;
-            endif;
+            }
 
-            $viewer->set('template', $template);
+            $viewer->set('factory', $this->factory);
 
             return $viewer;
-        })->withArgument($this->template);
+        });
     }
 
     /**
-     * Déclaration des controleurs de filtre de la vue.
+     * Déclaration des controleurs de filtres de la vue.
      *
      * @return void
      */
     public function registerViewFilters()
     {
-        $this->getContainer()->share($this->getFullAlias('view-filters'), function (ListTable $template) {
-            return new ViewFiltersCollection($template->param('view_filters', []), $template);
-        })->withArgument($this->template);
+        $this->getContainer()->share($this->getFullAlias('view-filters'), function () {
+            return new ViewFiltersCollection($this->factory);
+        });
 
-        $this->getContainer()->add($this->getFullAlias('view-filters.item'), ViewFiltersItem::class);
+        $this->getContainer()->add(
+            $this->getFullAlias('view-filters.item'),
+            function ($name, $attrs, ListTable $factory) {
+                new ViewFiltersItem($name, $attrs, $factory);
+            });
     }
 }

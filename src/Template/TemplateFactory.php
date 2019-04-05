@@ -1,20 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Container\ServiceProvider;
+use tiFy\Contracts\Template\FactoryAssets;
+use tiFy\Contracts\Template\FactoryNotices;
+use tiFy\Contracts\Template\FactoryRequest;
+use tiFy\Contracts\Template\FactoryUrl;
 use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
-use tiFy\Template\Templates\BaseServiceProvider;
+use tiFy\Support\ParamsBag;
+use tiFy\Template\Factory\FactoryServiceProvider;
+use tiFy\Support\Str;
 use tiFy\tiFy;
 
 class TemplateFactory implements TemplateFactoryContract
 {
     /**
-     * Nom de qualification.
-     * @var string
+     * Indicateur de démarrage du controleur.
+     * @var boolean
      */
-    protected $name = '';
+    private $booted = false;
 
     /**
      * Instance du controleur de traitement des attributs de configuration.
@@ -26,14 +32,26 @@ class TemplateFactory implements TemplateFactoryContract
      * Indicateur de chargement des ressources.
      * @var boolean
      */
-    protected $loaded;
+    protected $loaded = false;
+
+    /**
+     * Nom de qualification.
+     * @var string
+     */
+    protected $name = '';
+
+    /**
+     * Identifiant de qualification compatible au formatage dans une url.
+     * @var string
+     */
+    protected $slug;
 
     /**
      * Liste des fournisseurs de service.
      * @var string[]
      */
     protected $serviceProviders = [
-        BaseServiceProvider::class
+        FactoryServiceProvider::class
     ];
 
     /**
@@ -43,23 +61,44 @@ class TemplateFactory implements TemplateFactoryContract
      *
      * @return void
      */
-    public function __construct($attrs = [])
+    public function __construct(?array $attrs = [])
     {
-        $this->config = params($attrs);
+        $this->config = (new ParamsBag())->set($attrs);
     }
 
     /**
      * @inheritdoc
      */
-    public function __invoke($name)
+    public function __invoke(string $name): TemplateFactoryContract
     {
-        return $this->_boot($name);
+        if (!$this->booted) {
+            $this->name = $name;
+            foreach ($this->getServiceProviders() as $serviceProvider) {
+                $this->getContainer()->share(
+                    "template.factory.service-provider.{$this->name}",
+                    $resolved = new $serviceProvider($this)
+                );
+
+                if ($resolved instanceof ServiceProvider) {
+                    $resolved->setContainer($this->getContainer());
+                    $this->getContainer()->addServiceProvider($resolved);
+                }
+            }
+
+            events()->trigger('template.factory.boot.' . $this->name, [&$this]);
+
+            $this->boot();
+
+            $this->booted = true;
+        }
+
+        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         $this->load();
 
@@ -69,102 +108,7 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    private function _boot($name)
-    {
-        $this->name = $name;
-
-        foreach ($this->getServiceProviders() as $serviceProvider) :
-            $resolved = new $serviceProvider($this->getContainer(), $this);
-
-            if ($resolved instanceof ServiceProvider) :
-                $this->getContainer()->addServiceProvider($resolved);
-            endif;
-        endforeach;
-
-        add_action(
-            'admin_menu',
-            function () {
-                if ($attrs = $this->config('admin_menu', [])) :
-                    $this->config(
-                        [
-                            'admin_menu' => array_merge(
-                                [
-                                    'menu_slug'   => $this->name(),
-                                    'parent_slug' => '',
-                                    'page_title'  => $this->name(),
-                                    'menu_title'  => $this->name(),
-                                    'capability'  => 'manage_options',
-                                    'icon_url'    => null,
-                                    'position'    => null,
-                                    'function'    => [$this, 'display']
-                                ],
-                                $attrs
-                            )
-                        ]
-                    );
-
-                    $hookname = !$this->config('admin_menu.parent_slug')
-                        ? add_menu_page(
-                            $this->config('admin_menu.page_title'),
-                            $this->config('admin_menu.menu_title'),
-                            $this->config('admin_menu.capability'),
-                            $this->config('admin_menu.menu_slug'),
-                            $this->config('admin_menu.function'),
-                            $this->config('admin_menu.icon_url'),
-                            $this->config('admin_menu.position')
-                        )
-                        : add_submenu_page(
-                            $this->config('admin_menu.parent_slug'),
-                            $this->config('admin_menu.page_title'),
-                            $this->config('admin_menu.menu_title'),
-                            $this->config('admin_menu.capability'),
-                            $this->config('admin_menu.menu_slug'),
-                            $this->config('admin_menu.function')
-                        );
-
-                    $this->config(['_hookname' => $hookname]);
-                    $this->config(['page_url' => menu_page_url($this->config('admin_menu.menu_slug'), false)]);
-
-                    add_action(
-                        'current_screen',
-                        function (\WP_Screen $wp_screen) {
-                            if ($wp_screen->id === $this->config('_hookname')) :
-                                $this->config(['_wp_screen',  $wp_screen]);
-
-                                $wp_screen->add_option(
-                                    'per_page',
-                                    [
-                                        'option' => $this->param('per_page_option_name')
-                                    ]
-                                );
-
-                                $this->_preload();
-                            endif;
-                        }
-                    );
-
-                endif;
-            }
-        );
-
-        $this->boot();
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    private function _preload()
-    {
-        $this->load();
-        $this->loaded = true;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function assets()
+    public function assets(): FactoryAssets
     {
         return $this->resolve('assets');
     }
@@ -182,17 +126,13 @@ class TemplateFactory implements TemplateFactoryContract
      */
     public function config($key = null, $default = null)
     {
-        if (is_null($key)) :
+        if (is_null($key)) {
             return $this->config;
-        elseif(is_array($key)) :
-            foreach($key as $k => $value) :
-                $this->config->set($k, $value);
-            endforeach;
-
-            return $this;
-        else :
+        } elseif(is_array($key)) {
+            return $this->config->set($key);
+        } else {
             return $this->config->get($key, $default);
-        endif;
+        }
     }
 
     /**
@@ -214,15 +154,7 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function extend($alias)
-    {
-        return $this->getContainer()->extend("template.factory.{$this->name()}.{$alias}");
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getContainer()
+    public function getContainer(): Container
     {
         return tiFy::instance();
     }
@@ -238,7 +170,7 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function bound($abstract)
+    public function bound(string $abstract)
     {
         return $this->getContainer()->has("template.factory.{$this->name()}.{$abstract}");
     }
@@ -246,15 +178,11 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function label($key = null, $default = '')
+    public function label(?string $key = null, string $default = '')
     {
         $labels = $this->resolve('labels');
 
-        if (is_null($key)) :
-            return $labels;
-        endif;
-
-        return $labels->get($key, $default);
+        return is_null($key) ? $labels : $labels->get($key, $default);
     }
 
     /**
@@ -262,16 +190,17 @@ class TemplateFactory implements TemplateFactoryContract
      */
     public function load()
     {
-        if (!$this->loaded) :
+        if (!$this->loaded) {
+            $this->loaded = true;
             $this->process();
             $this->prepare();
-        endif;
+        }
     }
 
     /**
      * @inheritdoc
      */
-    public function name()
+    public function name(): string
     {
         return $this->name;
     }
@@ -279,7 +208,7 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function notices()
+    public function notices(): FactoryNotices
     {
         return $this->resolve('notices');
     }
@@ -291,17 +220,13 @@ class TemplateFactory implements TemplateFactoryContract
     {
         $params = $this->resolve('params');
 
-        if (is_null($key)) :
+        if (is_null($key)) {
             return $params;
-        elseif (is_array($key)) :
-            foreach($key as $k => $value) :
-                $params->set($k, $value);
-            endforeach;
-
-            return $this;
-        else :
+        } elseif (is_array($key)) {
+            return $params->set($key);
+        } else {
             return $params->get($key, $default);
-        endif;
+        }
     }
 
     /**
@@ -333,7 +258,7 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function request()
+    public function request(): FactoryRequest
     {
         return $this->resolve('request');
     }
@@ -341,7 +266,7 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function resolve($abstract, array $args = [])
+    public function resolve(string $abstract, array $args = [])
     {
         return $this->getContainer()->get("template.factory.{$this->name()}.{$abstract}", $args);
     }
@@ -349,7 +274,18 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function url()
+    public function slug(): string
+    {
+        if (is_null($this->slug)) {
+            $this->slug = Str::slug($this->name);
+        }
+        return $this->slug;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function url(): FactoryUrl
     {
         return $this->resolve('url');
     }
@@ -357,13 +293,13 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function viewer($view = null, $data = [])
+    public function viewer(?string $view = null, array $data = [])
     {
         $viewer = $this->resolve('viewer');
 
-        if (func_num_args() === 0) :
+        if (func_num_args() === 0) {
             return $viewer;
-        endif;
+        }
 
         return $viewer->make("_override::{$view}", $data);
     }

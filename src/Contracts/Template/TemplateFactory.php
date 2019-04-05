@@ -1,17 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Template;
 
-use tiFy\Contracts\Container\ContainerInterface;
+use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Db\DbFactory;
-use tiFy\Contracts\Kernel\LabelsBag;
-use tiFy\Contracts\Kernel\Notices;
-use tiFy\Contracts\Kernel\ParamsBag;
-use tiFy\Contracts\Kernel\Request;
-use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Template\Templates\BaseUrl;
-use League\Container\Definition\DefinitionInterface;
 
 interface TemplateFactory
 {
@@ -20,23 +14,23 @@ interface TemplateFactory
      *
      * @param string $name Nom de qualification.
      *
-     * @return string
+     * @return static
      */
-    public function __invoke($name);
+    public function __invoke(string $name): TemplateFactory;
 
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
      * Instance du controleur de gestion des assets.
      *
-     * @return object
+     * @return FactoryAssets
      */
-    public function assets();
+    public function assets(): FactoryAssets;
 
     /**
      * Initialisation du controleur.
@@ -52,7 +46,7 @@ interface TemplateFactory
      *
      * @return mixed.
      */
-    public function bound($alias);
+    public function bound(string $alias);
 
     /**
      * Récupération de l'instance de gestion de la configuration ou Définition d'attributs de configuration ou
@@ -61,14 +55,14 @@ interface TemplateFactory
      * @param null|string|array $key Clé d'indice de l'attribut de configuration. Syntaxe à point permise.
      * @param mixed $default Valeur de retour par défaut.
      *
-     * @return self|ParamsBag|mixed
+     * @return ParamsBag|mixed
      */
-    public function config($key, $default = null);
+    public function config($key = null, $default = null);
 
     /**
      * Récupération de l'instance du controleur de base de données
      *
-     * @return null|DbFactory
+     * @return FactoryDb|DbFactory|null
      */
     public function db();
 
@@ -80,20 +74,11 @@ interface TemplateFactory
     public function display();
 
     /**
-     * Récupération de l'instance d'un service fournis en vue de sa redéfinition.
-     *
-     * @param string $alias Alias de qualification du service.
-     *
-     * @return DefinitionInterface
-     */
-    public function extend($alias);
-
-    /**
      * Récupération du conteneur d'injection de dépendances.
      *
-     * @return ContainerInterface
+     * @return Container
      */
-    public function getContainer();
+    public function getContainer(): Container;
 
     /**
      * Récupération de la liste des fournisseurs de services.
@@ -105,12 +90,12 @@ interface TemplateFactory
     /**
      * Récupération de l'instance du controleur des intitulés ou récupération d'un intitulé.
      *
-     * @param null|string $key Clé d'indexe de l'intitulé.
+     * @param string|null $key Clé d'indexe de l'intitulé.
      * @param string $default Valeur de retour par défaut.
      *
-     * @return LabelsBag|string
+     * @return FactoryLabels|string
      */
-    public function label($key = null, $default = '');
+    public function label(?string $key = null, string $default = '');
 
     /**
      * Intialisation de l'affichage de la disposition.
@@ -124,22 +109,22 @@ interface TemplateFactory
      *
      * @return string
      */
-    public function name();
+    public function name(): string;
 
     /**
      * Récupération de l'instance du controleur de message de notification.
      *
-     * @return Notices
+     * @return FactoryNotices
      */
-    public function notices();
+    public function notices(): FactoryNotices;
 
     /**
      * Récupération de l'instance du controleur de paramètre ou récupération d'un paramètre.
      *
-     * @param null|array|string $key Clé d'indice du paramètres. Syntaxe à point permise.
+     * @param string|array|null $key Clé d'indice du paramètres. Syntaxe à point permise.
      * @param mixed $default Valeur de retour par défaut.
      *
-     * @return self|ParamsBag|mixed
+     * @return FactoryParams|mixed
      */
     public function param($key = null, $default = null);
 
@@ -160,9 +145,9 @@ interface TemplateFactory
     /**
      * Récupération de l'instance du controleur de requête Http.
      *
-     * @return Request
+     * @return FactoryRequest
      */
-    public function request();
+    public function request(): FactoryRequest;
 
     /**
      * Affichage.
@@ -174,27 +159,34 @@ interface TemplateFactory
     /**
      * Récupération d'une instance de service fourni.
      *
-     * @param string $id
-     * @param array $args
+     * @param string $alias Nom de qualification du service.
+     * @param array $args Liste des variables passées en argument
      *
      * @return mixed.
      */
-    public function resolve($id, array $args = []);
+    public function resolve(string $alias, array $args = []);
+
+    /**
+     * Récupération de l'identifiant de qualification compatible à l'utilisation dans une url.
+     *
+     * @return string
+     */
+    public function slug(): string;
 
     /**
      * Instance du controleur de gestion des urls.
      *
-     * @return BaseUrl
+     * @return FactoryUrl
      */
-    public function url();
+    public function url(): FactoryUrl;
 
     /**
      * Récupération de l'instance du controleur de gabarit d'affichage ou du gabarit qualifié.
      *
-     * @param null|string $view Nom de qualification du ganarit d'affichage.
+     * @param string|null $view Nom de qualification du gabarit d'affichage.
      * @param array $data Liste des variables passées en argument au gabarit.
      *
-     * @return ViewController|ViewEngine
+     * @return FactoryViewer|ViewEngine
      */
-    public function viewer($view = null, $data = []);
+    public function viewer(?string $view = null, array $data = []);
 }

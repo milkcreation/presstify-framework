@@ -7,7 +7,7 @@ use tiFy\Template\Templates\ListTable\Columns\ColumnsItem;
 class ColumnsItemPostType extends ColumnsItem
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
@@ -17,11 +17,11 @@ class ColumnsItemPostType extends ColumnsItem
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function content()
+    public function content(): string
     {
-        if ($item = $this->template->item()) :
+        if ($item = $this->factory->item()) :
             return ($postType = post_type($item->post_type))
                 ? $postType->label('singular_name')
                 : "{$item->post_type}";

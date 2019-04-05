@@ -7,7 +7,7 @@ use tiFy\Template\Templates\ListTable\Columns\ColumnsItem;
 class ColumnsItemPostTitle extends ColumnsItem
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
@@ -17,11 +17,11 @@ class ColumnsItemPostTitle extends ColumnsItem
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function content()
+    public function content(): string
     {
-        return ($item = $this->template->item())
+        return ($item = $this->factory->item())
             ? "<strong>{$item->post_title}</strong>"
             : '';
     }

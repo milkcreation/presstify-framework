@@ -2,12 +2,12 @@
 
 namespace tiFy\Routing;
 
-use League\Uri\Components\Query;
-use League\Uri\Http;
-use League\Uri\Modifiers\AppendSegment;
-use League\Uri\Modifiers\AppendQuery;
-use League\Uri\Modifiers\RemoveQueryParams;
-use League\Uri\UriInterface;
+use League\Uri\{Components\Query,
+    Http,
+    Modifiers\AppendQuery,
+    Modifiers\AppendSegment,
+    Modifiers\RemoveQueryParams,
+    UriInterface};
 use tiFy\Contracts\Routing\UrlFactory as UrlFactoryContract;
 
 class UrlFactory implements UrlFactoryContract
@@ -35,17 +35,17 @@ class UrlFactory implements UrlFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return (string) $this->get();
+        return (string)$this->get();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function appendSegment($segment)
+    public function appendSegment($segment): UrlFactoryContract
     {
         $this->url = (new AppendSegment($segment))->process($this->url);
 
@@ -53,9 +53,9 @@ class UrlFactory implements UrlFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function deleteSegments($segment)
+    public function deleteSegments($segment): UrlFactoryContract
     {
         if (preg_match("#{$segment}#", $this->url->getPath(), $matches)) :
             $this->url = $this->url->withPath(preg_replace("#{$matches[0]}#", '', $this->url->getPath()));
@@ -65,33 +65,33 @@ class UrlFactory implements UrlFactoryContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function get()
+    public function get(): UriInterface
     {
-        return (string) $this->url;
+        return $this->url;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDecode()
     {
-        return urldecode((string) $this->url);
+        return urldecode((string)$this->url);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function with(array $args)
     {
-        $this->url = (new AppendQuery((string) Query::createFromPairs($args)))->process($this->url);
+        $this->url = (new AppendQuery((string)Query::createFromPairs($args)))->process($this->url);
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function without(array $args)
     {

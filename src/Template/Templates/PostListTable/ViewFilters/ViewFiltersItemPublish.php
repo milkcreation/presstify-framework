@@ -7,11 +7,11 @@ use tiFy\Template\Templates\ListTable\ViewFilters\ViewFiltersItem;
 class ViewFiltersItemPublish extends ViewFiltersItem
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
-        $count = ($db = $this->template->db())
+        $count = ($db = $this->factory->db())
             ? $db->select()->count(['status' => 'publish'])
             : 0;
 
@@ -20,7 +20,7 @@ class ViewFiltersItemPublish extends ViewFiltersItem
             'count_items' => $count,
             'show_count'  => true,
             'query_args'  => ['post_status' => 'publish'],
-            'current'     => $this->template->request()->query('post_status') === 'publish'
+            'current'     => $this->factory->request()->query('post_status') === 'publish'
         ];
     }
 }

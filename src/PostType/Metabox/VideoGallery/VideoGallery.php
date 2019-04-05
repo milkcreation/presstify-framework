@@ -131,7 +131,7 @@ class VideoGallery extends MetaboxWpPostController
      */
     public function wp_ajax()
     {
-        echo $this->displayItem(uniqid(), [], request()->getProperty('POST')->get('name'));
+        echo $this->displayItem(uniqid(), [], request()->post('name'));
         exit;
     }
 }

@@ -1,13 +1,50 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\RowActions;
 
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
 use tiFy\Template\Templates\ListTable\Contracts\RowActionsItem as RowActionsItemContract;
 
 class RowActionsItem extends ParamsBag implements RowActionsItemContract
 {
+    /**
+     * Instance du gabarit associé.
+     * @var ListTable
+     */
+    protected $factory;
+
+    /**
+     * Nom de qualification.
+     * @var string
+     */
+    protected $name = '';
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param string $name Nom de qualification.
+     * @param array $attrs Liste des attributs de configuration personnalisés.
+     * @param ListTable $factory Instance du motif d'affichage associé.
+     *
+     * @return void
+     */
+    public function __construct($name, $attrs, ListTable $factory)
+    {
+        $this->name = $name;
+        $this->factory = $factory;
+
+        $this->set($attrs)->parse();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString(): string
+    {
+        return (string) $this->render();
+    }
+
     /**
      * Liste des attributs de configuration.
      * @return array {
@@ -21,162 +58,117 @@ class RowActionsItem extends ParamsBag implements RowActionsItemContract
      *                                lien.
      * }
      */
-    protected $attributes = [
-        'content'    => '',
-        'attrs'      => [],
-        'query_args' => [],
-        'nonce'      => true,
-        'referer'    => true
-    ];
-
-    /**
-     * Nom de qualification.
-     * @var string
-     */
-    protected $name = '';
-
-    /**
-     * Instance du motif d'affichage associé.
-     * @var ListTable
-     */
-    protected $template;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param string $name Nom de qualification.
-     * @param array $attrs Liste des attributs de configuration personnalisés.
-     * @param ListTable $template Instance du motif d'affichage associé.
-     *
-     * @return void
-     */
-    public function __construct($name, $attrs, ListTable $template)
+    public function defaults()
     {
-        $this->name = $name;
-        $this->template = $template;
-
-        parent::__construct($attrs);
+        return [
+            'content'    => '',
+            'attrs'      => [],
+            'query_args' => [],
+            'nonce'      => true,
+            'referer'    => true
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function __toString()
+    public function getNonce(): string
     {
-        return (string) $this->render();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getNonce()
-    {
-        /*if (($item_index_name = $this->template->param('item_index_name')) && isset($this->item->{$item_index_name})) :
+        /*if (($item_index_name = $this->factory->param('item_index_name')) && isset($this->item->{$item_index_name})) {
             $item_index = $this->item->{$item_index_name};
-        else :*/
+        } else { */
             $item_index = '';
-        //endif;
+        //};
 
-        if(!$item_index) :
-        elseif(!is_array($item_index)) :
+        if(!$item_index) {
+        } elseif(!is_array($item_index)) {
             $item_index = array_map('trim', explode(',', $item_index));
-        endif;
+        }
 
-        if (!$item_index || (count($item_index) === 1)) :
-            $nonce_action = $this->template->param('singular') . '-' . $this->name;
-        else :
-            $nonce_action = $this->template->param('plural') . '-' . $this->name;
-        endif;
+        $nonce_action = (!$item_index || (count($item_index) === 1))
+            ? $this->factory->param('singular') . '-' . $this->name
+            : $this->factory->param('plural') . '-' . $this->name;
 
-        if ($item_index && count($item_index) === 1) :
+        if ($item_index && count($item_index) === 1) {
             $nonce_action .= '-' . reset($item_index);
-        endif;
+        }
 
         return sanitize_title($nonce_action);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return true;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
-        if (!$this->get('attrs.href')) :
-            $this->set('attrs.href', $this->template->param('page_url'));
-        endif;
+        if (!$this->get('attrs.href')) {
+            $this->set('attrs.href', $this->factory->param('page_url'));
+        }
 
-        if($query_args = $this->get('query_args', [])) :
-            $this->set('attrs.href', \add_query_arg($query_args, $this->get('attrs.href')));
-        endif;
+        if($query_args = $this->get('query_args', [])) {
+            $this->set('attrs.href', add_query_arg($query_args, $this->get('attrs.href')));
+        }
 
-        if ($nonce = $this->get('nonce')) :
-            if ($nonce === true) :
-                $nonce = $this->template->param('page_url');
-            endif;
+        if ($nonce = $this->get('nonce')) {
+            if ($nonce === true) {
+                $nonce = $this->factory->param('page_url');
+            }
+            $this->set('attrs.href', wp_nonce_url($this->get('attrs.href'), $nonce));
+        }
 
-            $this->set('attrs.href', \wp_nonce_url($this->get('attrs.href'), $nonce));
-        endif;
-
-        if ($referer = $this->get('referer')) :
-            if ($referer === true) :
+        if ($referer = $this->get('referer')) {
+            if ($referer === true) {
                 $referer = set_url_scheme('//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-            endif;
-
-            $this->set(
-                'attrs.href',
-                \add_query_arg(
-                    [
-                        '_wp_http_referer' => urlencode(
-                            wp_unslash($referer)
-                        )
-                    ],
-                    $this->get('attrs.href')
+            }
+            $this->set('attrs.href', add_query_arg([
+                '_wp_http_referer' => urlencode(
+                    wp_unslash($referer)
                 )
-            );
-        endif;
+            ], $this->get('attrs.href')));
+        }
 
         // Argument de requête par défaut
         /*$default_query_args = [
             'action' => $row_action_name
         ];
-        if (($item_index_name = $this->getParam('item_index_name')) && isset($item->{$item_index_name})) :
+        if (($item_index_name = $this->getParam('item_index_name')) && isset($item->{$item_index_name})) {
             $default_query_args[$item_index_name] = $item->{$item_index_name};
-        endif;
+        }
         $href = \add_query_arg(
             $default_query_args,
             $href
         );*/
 
-        if (!$this->get('content')) :
+        if (!$this->get('content')) {
             $this->set('content', $this->name);
-        endif;
+        }
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function render()
+    public function render(): string
     {
-        if ($this->get('hide_empty') && !$this->get('count_items', 0)) :
+        if ($this->get('hide_empty') && !$this->get('count_items', 0)) {
             return '';
-        endif;
+        }
 
-        return partial(
-            'tag',
-            [
-                'tag'       => 'a',
-                'attrs'     => $this->get('attrs', []),
-                'content'   => $this->get('content')
-            ]
-        );
+        return (string)partial('tag', [
+            'tag'       => 'a',
+            'attrs'     => $this->get('attrs', []),
+            'content'   => $this->get('content')
+        ]);
     }
 }

@@ -9,25 +9,19 @@
 ?>
 <td <?php echo $this->get('attrs', ''); ?>>
     <?php
-    echo field(
-            'label',
-            [
-                'attrs' => [
-                    'class' => 'screen-reader-text',
-                    'for'   => 'cb-select-all-' . $this->get('index')
-                ],
-                'content' => __( 'Select All' )
-            ]
-        );
+    echo field('label', [
+        'attrs'   => [
+            'class' => 'screen-reader-text',
+            'for'   => 'cb-select-all-' . $this->get('index')
+        ],
+        'content' => __('Select All')
+    ]);
     ?>
     <?php
-    echo field(
-        'checkbox',
-        [
-            'attrs' => [
-                'id' => 'cb-select-all-' . $this->get('index')
-            ]
+    echo field('checkbox', [
+        'attrs' => [
+            'id' => 'cb-select-all-' . $this->get('index')
         ]
-    );
+    ]);
     ?>
 </td>

@@ -1,96 +1,99 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\RowActions;
 
-use tiFy\Kernel\Collection\Collection;
+use tiFy\Support\Collection;
 use tiFy\Template\Templates\ListTable\Contracts\ListTable;
-use tiFy\Template\Templates\ListTable\Contracts\RowActionsItem;
 use tiFy\Template\Templates\ListTable\Contracts\RowActionsCollection as RowActionsCollectionContract;
+use tiFy\Template\Templates\ListTable\Contracts\RowActionsItem;
 
 class RowActionsCollection extends Collection implements RowActionsCollectionContract
 {
     /**
+     * Instance du gabarit associé.
+     * @var ListTable
+     */
+    protected $factory;
+
+    /**
      * Liste des actions par ligne.
-     * @var void|RowActionsItem[]
+     * @var array|RowActionsItem[]
      */
     protected $items = [];
 
     /**
-     * Instance du motif d'affichage associé.
-     * @var ListTable
-     */
-    protected $template;
-
-    /**
      * CONSTRUCTEUR.
      *
-     * @param array $row_actions Liste des éléments
-     * @param ListTable $template Instance du motif d'affichage associé.
+     * @param ListTable $factory Instance du motif d'affichage associé.
      *
      * @return void
      */
-    public function __construct($row_actions, ListTable $template)
+    public function __construct(ListTable $factory)
     {
-        $this->template = $template;
+        $this->factory = $factory;
 
-        $this->parse($row_actions);
+        $attrs = $this->factory->param('row_actions', []);
+
+        $this->parse(is_array($attrs) ? $attrs : []);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->render();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($row_actions = [])
+    public function parse(array $row_actions = []): RowActionsCollectionContract
     {
-        if ($row_actions) :
-            foreach ($row_actions as $name => $attrs) :
-                if (is_numeric($name)) :
+        if ($row_actions) {
+            foreach ($row_actions as $name => $attrs) {
+                if (is_numeric($name)) {
                     $name = $attrs;
                     $attrs = [];
-                elseif (is_string($attrs)) :
+                } elseif (is_string($attrs)) {
                     $attrs = ['content' => $attrs];
-                endif;
+                }
 
-                $alias = $this->template->bound("row-actions.item.{$name}")
+                $alias = $this->factory->bound("row-actions.item.{$name}")
                     ? "row-actions.item.{$name}"
                     : 'row-actions.item';
 
-                $this->items[$name] = $this->template->resolve($alias, [$name, $attrs, $this->template]);
-            endforeach;
+                $this->items[$name] = $this->factory->resolve($alias, [$name, $attrs, $this->factory]);
+            }
 
             $this->items = array_filter($this->items, function ($value) {
                 return (string)$value !== '';
             });
-        endif;
+        }
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function render()
+    public function render(): string
     {
         $actions = $this->collect()->filter(function (RowActionsItem $item) {
             return $item->isActive();
         });
 
-        if ($action_count = count($actions)) :
+        if ($action_count = count($actions)) {
             $i = 0;
-            $always_visible = $this->template->param('row_actions_always_visible');
+            $always_visible = $this->factory->param('row_actions_always_visible');
 
             $output = '';
             $output .= "<div class=\"" . ($always_visible ? 'row-actions visible' : 'row-actions') . "\">";
-            foreach ($actions as $action => $link) :
+            foreach ($actions as $action => $link) {
                 ++$i;
                 ($i == $action_count) ? $sep = '' : $sep = ' | ';
                 $output .= "<span class=\"{$action}\">{$link}{$sep}</span>";
-            endforeach;
+            }
 
             $output .= "</div>";
 
@@ -99,8 +102,8 @@ class RowActionsCollection extends Collection implements RowActionsCollectionCon
                 "</span></button>";
 
             return $output;
-        else :
+        } else {
             return '';
-        endif;
+        }
     }
 }

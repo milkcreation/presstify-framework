@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable\BulkActions;
 
@@ -9,29 +9,23 @@ use tiFy\Template\Templates\ListTable\Contracts\ListTable;
 class BulkActionsItem extends SelectChoice implements BulkActionsItemContract
 {
     /**
-     * Instance du motif d'affichage associé.
+     * Instance du gabarit associé.
      * @var ListTable
      */
-    protected $template;
-
-    /**
-     * Nom de qualification.
-     * @var string
-     */
-    protected $name = '';
+    protected $factory;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param string $name Nom de qualification.
+     * @param string|int $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration personnalisés.
-     * @param ListTable $template Instance du motif d'affichage associé.
+     * @param ListTable $factory Instance du motif d'affichage associé.
      *
      * @return void
      */
-    public function __construct($name, $attrs, ListTable $template)
+    public function __construct($name, array $attrs, ListTable $factory)
     {
-        $this->template = $template;
+        $this->factory = $factory;
 
         parent::__construct($name, $attrs);
     }

@@ -7,11 +7,11 @@ use tiFy\Template\Templates\ListTable\ViewFilters\ViewFiltersItem;
 class ViewFiltersItemAll extends ViewFiltersItem
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function defaults()
     {
-        $count = ($db = $this->template->db())
+        $count = ($db = $this->factory->db())
             ? $db->select()->count(
                 [
                     'post_type'   => array_diff(
@@ -42,7 +42,7 @@ class ViewFiltersItemAll extends ViewFiltersItem
             'count_items'       => $count,
             'show_count'        => true,
             'remove_query_args' => ['post_status'],
-            'current'           => !$this->template->request()->query('post_status', '')
+            'current'           => !$this->factory->request()->query('post_status', '')
         ];
     }
 }

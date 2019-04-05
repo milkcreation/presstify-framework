@@ -11,7 +11,6 @@ use tiFy\Kernel\Config\Config;
 use tiFy\Container\Container;
 use tiFy\Kernel\Events\Manager as Events;
 use tiFy\Kernel\Filesystem\Paths;
-use tiFy\Kernel\Http\Request;
 use tiFy\tiFy;
 
 /**
@@ -22,7 +21,6 @@ use tiFy\tiFy;
  * @method static Config Config()
  * @method static Events Events()
  * @method static Paths Paths()
- * @method static Request Request()
  * @method static ViewEngine ViewEngine()
  */
 class Kernel
@@ -59,15 +57,10 @@ class Kernel
             case 'Paths' :
                 $alias = Paths::class;
                 break;
-            case 'Request' :
-                $alias = 'request';
-                break;
             case 'ViewEngine' :
                 $alias = 'view.engine';
                 break;
         endswitch;
-
-
 
         return tiFy::instance()->get($alias, $args);
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Template;
 
@@ -9,7 +9,7 @@ class TemplateManager implements TemplateManagerContract
 {
     /**
      * Liste des éléments déclarés.
-     * @var array
+     * @var TemplateFactory[]
      */
     protected $items = [];
 
@@ -26,33 +26,27 @@ class TemplateManager implements TemplateManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function register($name, $attrs = [])
-    {
-        return $this->set($name, $this->items[$name] ?? app()->get('template.factory', [$name, $attrs]));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function set($name, TemplateFactory $template)
-    {
-        return $this->items[$name] = $template;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function get($name)
+    public function get(string $name): ?TemplateFactory
     {
         return $this->items[$name] ?? null;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function resourcesDir($path = '')
+    public function register(string $name, array $attrs = []): TemplateManagerContract
+    {
+        $this->set($name, app()->get('template.factory', [$attrs]));
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resourcesDir(?string $path = ''): ?string
     {
         $path = $path ? '/Resources/' . ltrim($path, '/') : '/Resources';
 
@@ -60,13 +54,23 @@ class TemplateManager implements TemplateManagerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function resourcesUrl($path = '')
+    public function resourcesUrl(?string $path = ''): ?string
     {
         $cinfo = class_info($this);
         $path = '/Resources/' . ltrim($path, '/');
 
         return file_exists($cinfo->getDirname() . $path) ? class_info($this)->getUrl() . $path : '';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function set(string $name, TemplateFactory $template): TemplateManagerContract
+    {
+        $this->items[$name] = $this->items[$name] ?? call_user_func($template, $name);
+
+        return $this;
     }
 }

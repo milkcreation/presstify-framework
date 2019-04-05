@@ -57,7 +57,7 @@ class Collection implements CollectionContract
      */
     public static function createFromItems(array $items) : CollectionContract
     {
-        return (new static())->setItems($items);
+        return (new static())->set($items);
     }
 
     /**
@@ -103,9 +103,9 @@ class Collection implements CollectionContract
     /**
      * @inheritdoc
      */
-    public function get($key, $default = null)
+    public function get($key)
     {
-        return $this->items[$key] ?? $default;
+        return $this->items[$key] ?? null;
     }
 
     /**
@@ -182,16 +182,6 @@ class Collection implements CollectionContract
     public function pluck($value, $key = null)
     {
         return $this->collect()->pluck($value, $key)->all();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setItems($items): CollectionContract
-    {
-        $this->set($items);
-
-        return $this;
     }
 
     /**
