@@ -74,6 +74,13 @@ interface ColumnsItem extends ParamsBag
     public function isSortable(): bool;
 
     /**
+     * Vérification d'affichage de la colonne.
+     *
+     * @return boolean
+     */
+    public function isVisible(): bool;
+
+    /**
      * {@inheritdoc}
      *
      * @return static

@@ -73,7 +73,7 @@ class ListTable extends TemplateFactory implements ListTableContract
         parent::load();
 
         if ($ajax = $this->ajax()) {
-            assets()->setDataJs('listTable', $ajax->parse()->all());
+            $ajax->parse()->all();
         }
     }
 

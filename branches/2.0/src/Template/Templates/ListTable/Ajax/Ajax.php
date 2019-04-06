@@ -45,13 +45,19 @@ class Ajax extends ParamsBag implements AjaxContract
     public function defaults()
     {
         return [
-            'options'     => [],
+            'ajax'        => [
+                'url'      => $this->xhr->getUrl(),
+                'dataType' => 'json',
+                'type'     => 'POST',
+            ],
+            'data'        => [],
             'columns'     => $this->getColumns(),
             'language'    => $this->getLanguage(),
+            'options'     => [
+                'pageLength' => $this->factory->pagination()->getPerPage()
+            ],
             'total_items' => $this->factory->pagination()->getTotalItems(),
             'total_pages' => $this->factory->pagination()->getTotalPages(),
-            'per_page'    => $this->factory->pagination()->getPerPage(),
-            'xhr'         => $this->xhr->getUrl()
         ];
     }
 
@@ -68,9 +74,7 @@ class Ajax extends ParamsBag implements AjaxContract
                 'name'      => $c->getName(),
                 'title'     => $c->getTitle(),
                 'orderable' => false,
-                'visible'   => !$c->isHidden(),
-                //'className' => "{$name} column-{$name}" . ($this->PrimaryColumn === $name
-                // ? ' has-row-actions column-primary' : ''),
+                'visible'   => $c->isVisible()
             ]);
         }
         return $cols;
@@ -114,6 +118,8 @@ class Ajax extends ParamsBag implements AjaxContract
         parent::parse();
 
         $this->set('options', $this->parseOptions($this->get('options', [])));
+
+        $this->factory->param()->set('attrs.data-options', $this->all());
 
         return $this;
     }
