@@ -205,6 +205,14 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
     /**
      * @inheritdoc
      */
+    public function isVisible(): bool
+    {
+        return !$this->isHidden();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function parse()
     {
         parent::parse();

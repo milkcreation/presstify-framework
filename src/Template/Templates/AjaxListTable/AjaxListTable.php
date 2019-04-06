@@ -50,17 +50,4 @@ class AjaxListTable extends ShareListTable
             echo '';
         }
     }
-
-    /**
-     * Champs cachés
-     */
-    public function hidden_fields()
-    {
-        /**
-         * Ajout dynamique d'arguments passés dans la requête ajax de récupération d'éléments
-         * ex en PHP : <input type="hidden" id="ajaxDatatablesData" value="<?php echo urlencode( json_encode( array( 'key' => 'value' ) ) );?>"/>
-         * ex en JS : $( '#ajaxDatatablesData' ).val( encodeURIComponent( JSON.stringify( resp.data ) ) );
-         */
-        ?><input type="hidden" id="ajaxDatatablesData" value="<?php echo rawurlencode(json_encode($this->getDatatablesAjaxData())); ?>"/><?php
-    }
 }
