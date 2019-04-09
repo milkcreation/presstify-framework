@@ -172,7 +172,7 @@ class Ajax extends ParamsBag implements AjaxContract
             'pagination'      => (string)$this->factory->viewer('pagination', ['which' => 'bottom']),
             'recordsTotal'    => $this->factory->pagination()->getTotalItems(),
             'recordsFiltered' => $this->factory->pagination()->getTotalItems(),
-            'search_form'     => (string)$this->factory->viewer('search-box')
+            'search'          => (string)$this->factory->viewer('search')
         ];
     }
 }

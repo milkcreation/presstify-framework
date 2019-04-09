@@ -47,6 +47,17 @@ class ColumnsCollection extends Collection implements ColumnsCollectionContract
     /**
      * @inheritdoc
      */
+    public function getHideable(): iterable
+    {
+        return $this->collect()
+            ->filter(function (ColumnsItem $item) {
+                return $item->get('hideable') === true;
+            });
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getHidden(): array
     {
         return $this->collect()
@@ -122,5 +133,13 @@ class ColumnsCollection extends Collection implements ColumnsCollectionContract
         }
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function renderToggle(): string
+    {
+        return ($cols = $this->getHideable()) ? (string)$this->factory->viewer('columns-toggle', compact('cols')) : '';
     }
 }

@@ -21,13 +21,6 @@ interface Pagination extends ParamsBag
     public function firstPage(): string;
 
     /**
-     * Récupération de la classe HTML du conteneur de l'interface de pagination.
-     *
-     * @return string
-     */
-    public function getClass(): string;
-
-    /**
      * Récupération du nombre d'éléments affiché par page.
      *
      * @return int

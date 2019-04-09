@@ -36,11 +36,11 @@ jQuery(function ($) {
          * @returns {*}
          */
         dataSrc: function (json) {
-          if (!$('.search-box').length) {
-            $(json.search_form).insertBefore('.tablenav.top');
-          }
+          $('[data-control="list-table.search"]').each(function () {
+            $(this).replaceWith(json.search);
+          });
 
-          $('.tablenav-pages').each(function () {
+          $('[data-control="list-table.pagination"]').each(function () {
             $(this).replaceWith(json.pagination);
           });
 
@@ -185,13 +185,13 @@ jQuery(function ($) {
                 api.page(page).draw('page');
               });
               // Champ de recherche
-              $(document).on('click', '.search-box #search-submit', function (e) {
+              $(document).on('click', '[data-control="list-table.search"] > button', function (e) {
                 e.preventDefault();
 
                 api.search($(this).prev().val()).draw();
               });
               // Affichage/Masquage des colonnes
-              $('.hide-column-tog').change(function (e) {
+              $('[data-control="list-table.column.toggle"]').change(function (e) {
                 e.preventDefault();
 
                 let $this = $(this),
@@ -334,6 +334,6 @@ jQuery(function ($) {
   });
 
   $(document).ready(function ($) {
-    $('[data-control="list-table.ajax"]').tifyListTable();
+    $('[data-control="list-table"]').tifyListTable();
   });
 });

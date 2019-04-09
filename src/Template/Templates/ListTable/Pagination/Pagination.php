@@ -73,9 +73,10 @@ class Pagination extends ParamsBag implements PaginationContract
     public function defaults()
     {
         return [
-            'total_items' => 0,
-            'total_pages' => 0,
+            'attrs'       => [],
             'per_page'    => 0,
+            'total_items' => 0,
+            'total_pages' => 0
         ];
     }
 
@@ -89,21 +90,6 @@ class Pagination extends ParamsBag implements PaginationContract
             'url'        => $this->unpagedUrl(),
             'pagination' => $this,
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getClass(): string
-    {
-        $classes = [];
-        $classes[] = 'tablenav-pages';
-
-        $classes[] = ($total_pages = $this->getTotalPages())
-            ? ($total_pages < 2 ? 'one-page' : '')
-            : 'no-pages';
-
-        return join(' ', $classes);
     }
 
     /**
@@ -228,6 +214,22 @@ class Pagination extends ParamsBag implements PaginationContract
         ) {
             wp_redirect(add_query_arg('paged', $this->getTotalPages()));
             exit;
+        }
+
+        $classes = [];
+        $classes[] = 'tablenav-pages';
+        $classes[] = ($total_pages = $this->getTotalPages())
+            ? ($total_pages < 2 ? 'one-page' : '')
+            : 'no-pages';
+
+        if ($class = $this->get('attrs.class')) {
+            $this->set('attrs.class', sprintf($class, join(' ', $classes)));
+        } else {
+            $this->set('attrs.class', join(' ', $classes));
+        }
+
+        if ($this->factory->ajax()) {
+            $this->set('attrs.data-control', 'list-table.pagination');
         }
 
         return $this;
