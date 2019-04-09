@@ -7,7 +7,7 @@
  */
 ?>
 <?php $pagination = $this->pagination()->which($which??'top'); ?>
-<div class="<?php echo $pagination->getClass(); ?>">
+<div <?php echo $this->htmlAttrs($pagination->get('attrs', [])); ?>>
     <span class="displaying-num">
         <?php
         printf(

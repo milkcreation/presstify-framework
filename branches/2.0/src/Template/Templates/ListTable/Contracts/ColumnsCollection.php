@@ -28,6 +28,13 @@ interface ColumnsCollection extends Collection
     public function get($name);
 
     /**
+     * Récupération de la liste des colonnes pouvant être masquées.
+     *
+     * @return Collection
+     */
+    public function getHideable(): iterable;
+
+    /**
      * Récupération de la liste des noms de qualification des colonnes masquées.
      *
      * @return string[]
@@ -63,4 +70,11 @@ interface ColumnsCollection extends Collection
      * @return static
      */
     public function parse(array $columns = []): ColumnsCollection;
+
+    /**
+     * Affichage de l'interface de masquage des colonnes dans la table.
+     *
+     * @return string
+     */
+    public function renderToggle(): string;
 }

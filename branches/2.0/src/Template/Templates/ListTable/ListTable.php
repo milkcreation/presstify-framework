@@ -2,7 +2,7 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Contracts\Template\FactoryRequest;
+use tiFy\Contracts\Template\{FactoryRequest, TemplateFactory as TemplateFactoryContract};
 use tiFy\Template\TemplateFactory;
 use tiFy\Template\Templates\ListTable\Contracts\{Ajax,
     BulkActionsCollection,
@@ -13,6 +13,7 @@ use tiFy\Template\Templates\ListTable\Contracts\{Ajax,
     Pagination,
     Request,
     RowActionsCollection,
+    Search,
     ViewFiltersCollection};
 
 class ListTable extends TemplateFactory implements ListTableContract
@@ -68,13 +69,15 @@ class ListTable extends TemplateFactory implements ListTableContract
     /**
      * @inheritdoc
      */
-    public function load()
+    public function load(): TemplateFactoryContract
     {
         parent::load();
 
         if ($ajax = $this->ajax()) {
             $ajax->parse()->all();
         }
+
+        return $this;
     }
 
     /**
@@ -88,12 +91,12 @@ class ListTable extends TemplateFactory implements ListTableContract
     /**
      * @inheritdoc
      */
-    public function prepare()
+    public function prepare(): TemplateFactoryContract
     {
         $this->items()->query();
 
         if (!$this->items()->exists()) {
-            return;
+            return $this;
         }
 
         $total_items = $this->items()->total();
@@ -103,7 +106,10 @@ class ListTable extends TemplateFactory implements ListTableContract
         $this->pagination()
             ->set('per_page', $per_page)
             ->set('total_items', $total_items)
-            ->set('total_pages', $total_pages);
+            ->set('total_pages', $total_pages)
+            ->parse();
+
+        return $this;
     }
 
     /**
@@ -130,6 +136,14 @@ class ListTable extends TemplateFactory implements ListTableContract
     public function rowActions(): RowActionsCollection
     {
         return $this->resolve('row-actions');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function search(): Search
+    {
+        return $this->resolve('search');
     }
 
     /**

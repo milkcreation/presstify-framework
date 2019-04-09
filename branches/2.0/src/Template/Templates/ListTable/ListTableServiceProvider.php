@@ -28,6 +28,7 @@ use tiFy\Template\Templates\ListTable\RowActions\RowActionsItemEdit;
 use tiFy\Template\Templates\ListTable\RowActions\RowActionsItemPreview;
 use tiFy\Template\Templates\ListTable\RowActions\RowActionsItemTrash;
 use tiFy\Template\Templates\ListTable\RowActions\RowActionsItemUntrash;
+use tiFy\Template\Templates\ListTable\Search\Search;
 use tiFy\Template\Templates\ListTable\Viewer\Viewer;
 use tiFy\Template\Templates\ListTable\ViewFilters\ViewFiltersCollection;
 use tiFy\Template\Templates\ListTable\ViewFilters\ViewFiltersItem;
@@ -72,6 +73,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         $this->registerItems();
         $this->registerPagination();
         $this->registerRowActions();
+        $this->registerSearch();
         $this->registerViewFilters();
     }
 
@@ -258,6 +260,18 @@ class ListTableServiceProvider extends FactoryServiceProvider
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemUntrash($name, $attrs, $factory);
             });
+    }
+
+    /**
+     * Déclaration du controleurs de gestion du formulaire de recherche.
+     *
+     * @return void
+     */
+    public function registerSearch()
+    {
+        $this->getContainer()->share($this->getFullAlias('search'), function () {
+            return new Search($this->factory);
+        });
     }
 
     /**

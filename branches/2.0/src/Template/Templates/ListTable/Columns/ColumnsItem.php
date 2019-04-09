@@ -55,6 +55,7 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
         return [
             'attrs'    => [],
             'content'  => '',
+            'hideable' => true,
             'hidden'   => false,
             'primary'  => false,
             'sortable' => false,

@@ -35,9 +35,9 @@ interface TemplateFactory
     /**
      * Initialisation du controleur.
      *
-     * @return void
+     * @return static
      */
-    public function boot();
+    public function boot(): TemplateFactory;
 
     /**
      * Vérification d'existance d'un service fourni.
@@ -100,9 +100,9 @@ interface TemplateFactory
     /**
      * Intialisation de l'affichage de la disposition.
      *
-     * @return void
+     * @return static
      */
-    public function load();
+    public function load(): TemplateFactory;
 
     /**
      * Récupération du nom de qualification du controleur.
@@ -131,16 +131,16 @@ interface TemplateFactory
     /**
      * Préparation des éléments d'affichage.
      *
-     * @return void
+     * @return static
      */
-    public function prepare();
+    public function prepare(): TemplateFactory;
 
     /**
      * Déclenchement de actions de traitement requises.
      *
-     * @return void
+     * @return static
      */
-    public function process();
+    public function process(): TemplateFactory;
 
     /**
      * Récupération de l'instance du controleur de requête Http.

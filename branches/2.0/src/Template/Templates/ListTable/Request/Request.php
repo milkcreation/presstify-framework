@@ -91,11 +91,11 @@ class Request extends FactoryRequest implements RequestContract
                 if ($length = $this->get('length', 0)) {
                     $query_args['per_page'] = $length;
                 }
-                /*
-                if (isset($_REQUEST['search']) && isset($_REQUEST['search']['value'])) {
-                    $query_args['search'] = $_REQUEST['search']['value'];
-                }
 
+                if ($this->searchExists()) {
+                    $query_args['search'] = $this->searchTerm();
+                }
+                /*
                 if (isset($_REQUEST['order'])) {
                     $query_args['orderby'] = [];
                 }
@@ -106,8 +106,6 @@ class Request extends FactoryRequest implements RequestContract
                 */
             }
         }
-
-
         return $query_args;
     }
 
@@ -116,7 +114,7 @@ class Request extends FactoryRequest implements RequestContract
      */
     public function searchExists(): bool
     {
-        return !empty($this->get('s'));
+        return $this->factory->ajax() ? !empty($this->input('search.value')) : !empty($this->get('s'));
     }
 
     /**
@@ -124,6 +122,6 @@ class Request extends FactoryRequest implements RequestContract
      */
     public function searchTerm(): string
     {
-        return $this->searchExists() ? esc_attr(wp_unslash($this->get('s'))) : '';
+       return  $this->factory->ajax() ? $this->input('search.value', '') : $this->get('s', '');
     }
 }

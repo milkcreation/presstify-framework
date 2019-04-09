@@ -9,6 +9,7 @@ use tiFy\Template\Templates\ListTable\Contracts\{BulkActionsCollection,
     ColumnsCollection,
     Pagination,
     Request,
+    Search,
     ViewFiltersCollection};
 use tiFy\Template\Templates\ListTable\ListTable;
 
@@ -25,6 +26,7 @@ use tiFy\Template\Templates\ListTable\ListTable;
  * @method Pagination pagination()
  * @method FactoryParams|mixed param($key = null, $default = null)
  * @method Request request()
+ * @method Search search()
  * @method ViewFiltersCollection viewFilters()
  */
 class Viewer extends FactoryViewer
@@ -50,6 +52,7 @@ class Viewer extends FactoryViewer
             'pagination',
             'request',
             'row',
+            'search',
             'viewFilters'
         );
     }

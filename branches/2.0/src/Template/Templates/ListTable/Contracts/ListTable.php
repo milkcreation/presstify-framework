@@ -62,6 +62,13 @@ interface ListTable extends TemplateFactory
     public function rowActions(): RowActionsCollection;
 
     /**
+     * Récupération de l'instance du controleur du formulaire de recherche.
+     *
+     * @return Search
+     */
+    public function search(): Search;
+
+    /**
      * Récupération de l'instance du controleur des filtres de la vue.
      *
      * @return ViewFiltersCollection

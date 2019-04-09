@@ -116,9 +116,9 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function boot()
+    public function boot(): TemplateFactoryContract
     {
-
+        return $this;
     }
 
     /**
@@ -188,13 +188,15 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function load()
+    public function load(): TemplateFactoryContract
     {
         if (!$this->loaded) {
             $this->loaded = true;
             $this->process();
             $this->prepare();
         }
+
+        return $this;
     }
 
     /**
@@ -232,17 +234,17 @@ class TemplateFactory implements TemplateFactoryContract
     /**
      * @inheritdoc
      */
-    public function prepare()
+    public function prepare(): TemplateFactoryContract
     {
-
+        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function process()
+    public function process(): TemplateFactoryContract
     {
-
+        return $this;
     }
 
     /**

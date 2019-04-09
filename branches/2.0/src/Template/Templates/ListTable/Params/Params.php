@@ -50,7 +50,10 @@ class Params extends FactoryParams
             $this->get('attrs.class'), 'wp-list-table widefat fixed striped ' . $this->get('plural'))
         );
         $this->set('attrs.class', $class);
-        $this->set('attrs.data-control', $this->get('ajax') ? 'list-table.ajax': 'list-table');
+
+        if ($this->get('ajax')) {
+            $this->set('attrs.data-control', 'list-table');
+        }
 
         return $this;
     }
