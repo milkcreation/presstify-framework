@@ -34,6 +34,8 @@ use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\UserManager;
 use tiFy\Kernel\Kernel;
+use tiFy\Kernel\ClassInfo\ClassInfo;
+use tiFy\Kernel\Composer\ClassLoader;
 
 /**
  * KERNEL
@@ -80,11 +82,9 @@ if (!function_exists('class_info')) {
      *
      * @param string|object Nom complet ou instance de la classe.
      *
-     * @return string
-     * @see \tiFy\Kernel\ClassInfo\ClassInfo
-     *
+     * @return ClassInfo
      */
-    function class_info($class)
+    function class_info($class): ClassInfo
     {
         return Kernel::ClassInfo($class);
     }
@@ -94,9 +94,9 @@ if (!function_exists('class_loader')) {
     /**
      * ClassLoader - Controleur de déclaration d'espaces de nom et d'inclusion de fichier automatique.
      *
-     * @return \tiFy\Kernel\Composer\ClassLoader
+     * @return ClassLoader
      */
-    function class_loader()
+    function class_loader(): ClassLoader
     {
         return Kernel::ClassLoader();
     }

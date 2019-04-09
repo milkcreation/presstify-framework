@@ -38,7 +38,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
      *
      * @return void
      */
-    public function __construct($name, $attrs)
+    public function __construct(string $name, array $attrs)
     {
         $this->name = $name;
 
