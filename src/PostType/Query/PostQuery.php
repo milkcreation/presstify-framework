@@ -104,6 +104,7 @@ class PostQuery implements PostQueryContract
 
         $wp_query = new WP_Query();
         $posts = $wp_query->query($args);
+
         if ($wp_query->found_posts) :
             return $this->getItem(reset($posts));
         endif;

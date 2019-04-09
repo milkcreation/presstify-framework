@@ -2,7 +2,7 @@
 
 namespace tiFy\Container;
 
-//use League\Container\Argument\RawArgument;
+use League\Container\Argument\RawArgument;
 use League\Container\Container as LeagueContainer;
 use League\Container\ServiceProvider\ServiceProviderInterface;
 use tiFy\Contracts\Container\Container as ContainerContract;
@@ -36,15 +36,17 @@ class Container extends LeagueContainer implements ContainerContract
 
     /**
      * @inheritdoc
+     */
     protected function getFromThisContainer($alias, array $args = [])
     {
         array_walk($args, function (&$arg) {
-            $arg = new RawArgument($arg);
+            if (is_string($arg)) {
+                $arg = new RawArgument($arg);
+            }
         });
 
         return parent::getFromThisContainer($alias, $args);
     }
-     */
 
     /**
      * @inheritdoc

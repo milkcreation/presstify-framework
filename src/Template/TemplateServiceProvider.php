@@ -26,7 +26,7 @@ class TemplateServiceProvider extends AppServiceProvider
         });
 
         $this->getContainer()->add('template.factory', function ($attrs) {
-            new TemplateFactory($attrs);
+            return new TemplateFactory($attrs);
         });
     }
 }
