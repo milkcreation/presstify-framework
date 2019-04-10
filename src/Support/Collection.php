@@ -187,9 +187,11 @@ class Collection implements CollectionContract
     /**
      * @inheritdoc
      */
-    public function set($items): CollectionContract
+    public function set($key, $value = null): CollectionContract
     {
-        array_walk($items, [$this, 'walk']);
+        $keys = is_array($key) ? $key : [$key => $value];
+
+        array_walk($keys, [$this, 'walk']);
 
         return $this;
     }

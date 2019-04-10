@@ -227,7 +227,7 @@ class PostTypePostMeta implements PostTypePostMetaContract
      */
     public function update($post_id, $meta_key, $meta_value)
     {
-        if (!$post_type = \get_post_type($post_id)) :
+        if (!$post_type = get_post_type($post_id)) :
             return false;
         endif;
 

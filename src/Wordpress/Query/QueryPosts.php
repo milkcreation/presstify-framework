@@ -2,7 +2,6 @@
 
 namespace tiFy\Wordpress\Query;
 
-use tiFy\Wordpress\Contracts\QueryPost as QueryPostContract;
 use tiFy\Wordpress\Contracts\QueryPosts as QueryPostsContract;
 use tiFy\Support\Collection;
 use WP_Post;
@@ -12,7 +11,7 @@ class QueryPosts extends Collection implements QueryPostsContract
 {
     /**
      * Classe de rappel de traitement d'un élément.
-     * @var QueryPostContract
+     * @var string
      */
     protected $itemClass = QueryPost::class;
 

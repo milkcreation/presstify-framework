@@ -2,16 +2,23 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface TaxonomyFactory extends ParamsBag
 {
+    /**
+     * Initialisation du controleur.
+     *
+     * @return void
+     */
+    public function boot(): void;
+
     /**
      * Récupération du nom de qualification du type de post.
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Récupération d'un intitulé.
@@ -25,5 +32,24 @@ interface TaxonomyFactory extends ParamsBag
      *
      * @return string
      */
-    public function label(string $key, string $default = '') : string;
+    public function label(string $key, string $default = ''): string;
+
+    /**
+     * Définition de métadonnée de terme.
+     *
+     * @param string|array $key Indice de la métadonnée ou tableau indexé ou tableau associatif.
+     * @param bool $single Indicateur de donnée unique. Valeur par défaut des déclarations par tableau indexé.
+     *
+     * @return static
+     */
+    public function meta($key, bool $single = true): TaxonomyFactory;
+
+    /**
+     * Définition de l'instance du gestionnaire de taxonomies.
+     *
+     * @param TaxonomyManager $manager
+     *
+     * @return static
+     */
+    public function setManager(TaxonomyManager $manager): TaxonomyFactory;
 }

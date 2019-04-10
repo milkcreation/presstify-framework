@@ -224,4 +224,13 @@ interface QueryPost extends ParamsBag
      * @return boolean
      */
     public function hasTerm($term, string $taxonomy): bool;
+
+    /**
+     * Vérification si le type de post correspond.
+     *
+     * @param array $post_types Liste des types de post à vérifier.
+     *
+     * @return bool
+     */
+    public function inTypes(array $post_types): bool;
 }

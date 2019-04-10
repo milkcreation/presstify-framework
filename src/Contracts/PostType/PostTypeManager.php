@@ -1,35 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\PostType;
 
-interface PostTypeManager extends PostTypeResolverTrait
+use tiFy\Contracts\Support\Manager;
+
+interface PostTypeManager extends Manager
 {
     /**
-     * Récupération d'une instance de controleur de type de post.
+     * Récupération de l'instance du controleur de metadonnées de post.
      *
-     * @param string $name Nom de qualification du controleur.
-     *
-     * @return null|PostTypeFactory
+     * @return PostTypePostMeta|null
      */
-    public function get($name);
-
-    /**
-     * Création d'un type de post personnalisé.
-     *
-     * @param string $name Nom de qualification du type de post.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return PostTypeFactory
-     */
-    public function register($name, $attrs = []);
+    public function post_meta(): ?PostTypePostMeta;
 
     /**
      * Résolution d'un service fourni par le gestionnaire.
      *
      * @param string $alias Nom de qualification du service.
-     * @param array $args Liste des variables passées en argument au service.
      *
      * @return object
      */
-    public function resolve($alias, $args = []);
+    public function resolve(string $alias);
 }

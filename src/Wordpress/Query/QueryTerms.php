@@ -11,7 +11,7 @@ class QueryTerms extends Collection implements QueryTermsContract
 {
     /**
      * Classe de rappel de traitement d'un élément.
-     * @var QueryTerm
+     * @var string
      */
     protected $itemClass = QueryTerm::class;
 

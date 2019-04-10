@@ -1,51 +1,59 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Taxonomy;
 
+use InvalidArgumentException;
+use tiFy\Contracts\Taxonomy\TaxonomyFactory as TaxonomyFactoryContract;
 use tiFy\Contracts\Taxonomy\TaxonomyManager as TaxonomyManagerContract;
-use tiFy\Contracts\Taxonomy\TaxonomyFactory;
+use tiFy\Contracts\Taxonomy\TaxonomyTermMeta;
+use tiFy\Support\Manager;
 
-final class TaxonomyManager implements TaxonomyManagerContract
+class TaxonomyManager extends Manager implements TaxonomyManagerContract
 {
-    use TaxonomyResolverTrait;
-
     /**
-     * Liste des types de post déclarés.
-     * @var TaxonomyFactory[]
+     * @inheritdoc
      */
-    protected $items = [];
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function get($name): ?TaxonomyFactoryContract
     {
-        $this->manager = $this;
+        return parent::get($name);
     }
 
     /**
      * @inheritdoc
      */
-    public function get($name)
+    public function register($name, array $attrs = []): TaxonomyManagerContract
     {
-        return $this->items[$name] ?? null;
+        return $this->set([$name => new TaxonomyFactory($name, $attrs)]);
     }
 
     /**
      * @inheritdoc
      */
-    public function register($name, $attrs = [])
+    public function term_meta(): ?TaxonomyTermMeta
     {
-        return $this->items[$name] = $this->items[$name] ?? $this->resolve('factory', [$name, $attrs]);
+        return $this->resolve('term-meta');
     }
 
     /**
      * @inheritdoc
      */
-    public function resolve($alias, $args = [])
+    public function resolve(string $alias)
     {
-        return app()->get("taxonomy.{$alias}", $args);
+        return $this->container->get("taxonomy.{$alias}");
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function walk(&$item, $key = null)
+    {
+        if (!$item instanceof TaxonomyFactoryContract) {
+            throw new InvalidArgumentException(sprintf(
+                __('La taxonomie devrait être une instance de %s'),
+                TaxonomyFactoryContract::class
+            ));
+        } else {
+            $item->setManager($this)->boot();
+        }
     }
 }

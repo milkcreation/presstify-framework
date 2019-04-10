@@ -91,13 +91,14 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function pluck($value, $key = null);
 
     /**
-     * Définition de la liste des éléments.
+     * Définition d'un attribut.
      *
-     * @param mixed $items Liste des éléments.
+     * @param string|array $key Clé d'indexe de l'élément ou tableau associatif des éléments à définir.
+     * @param mixed $value Valeur de l'élément si la clé d'index est de type string.
      *
-     * @return $this
+     * @return static
      */
-    public function set($items): Collection;
+    public function set($key, $value = null): Collection;
 
     /**
      * Traitement d'un élément.

@@ -268,4 +268,12 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         return has_term($term, $taxonomy, $this->getPost());
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function inTypes(array $post_types): bool
+    {
+        return in_array($this->getType(), $post_types);
+    }
 }
