@@ -13,8 +13,7 @@ class TaxonomyServiceProvider extends AppServiceProvider
      */
     protected $provides = [
         'taxonomy',
-        'taxonomy.factory',
-        'taxonomy.term.meta'
+        'taxonomy.term-meta'
     ];
 
     /**
@@ -23,7 +22,6 @@ class TaxonomyServiceProvider extends AppServiceProvider
     public function register()
     {
         $this->registerManager();
-        $this->registerFactory();
         $this->registerTermMeta();
     }
 
@@ -34,17 +32,9 @@ class TaxonomyServiceProvider extends AppServiceProvider
      */
     public function registerManager()
     {
-        $this->getContainer()->share('taxonomy', TaxonomyManager::class);
-    }
-
-    /**
-     * Déclaration du controleur de gestion d'une taxonomie.
-     *
-     * @return void
-     */
-    public function registerFactory()
-    {
-        $this->getContainer()->add('taxonomy.factory', TaxonomyFactory::class);
+        $this->getContainer()->share('taxonomy', function () {
+            return new TaxonomyManager($this->getContainer());
+        });
     }
 
     /**
@@ -54,6 +44,8 @@ class TaxonomyServiceProvider extends AppServiceProvider
      */
     public function registerTermMeta()
     {
-        $this->getContainer()->share('taxonomy.term.meta', TaxonomyTermMeta::class);
+        $this->getContainer()->share('taxonomy.term-meta', function () {
+            return new TaxonomyTermMeta();
+        });
     }
 }

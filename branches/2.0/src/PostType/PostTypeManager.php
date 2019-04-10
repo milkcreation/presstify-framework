@@ -1,51 +1,59 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\PostType;
 
+use InvalidArgumentException;
+use tiFy\Contracts\PostType\PostTypeFactory as PostTypeFactoryContract;
 use tiFy\Contracts\PostType\PostTypeManager as PostTypeManagerContract;
-use tiFy\Contracts\PostType\PostTypeFactory;
+use tiFy\Contracts\PostType\PostTypePostMeta;
+use tiFy\Support\Manager;
 
-final class PostTypeManager implements PostTypeManagerContract
+class PostTypeManager extends Manager implements PostTypeManagerContract
 {
-    use PostTypeResolverTrait;
-
     /**
-     * Liste des types de post déclarés.
-     * @var PostTypeFactory[]
+     * @inheritdoc
      */
-    protected $items = [];
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function get($name): ?PostTypeFactoryContract
     {
-        $this->manager = $this;
+        return parent::get($name);
     }
 
     /**
      * @inheritdoc
      */
-    public function get($name)
+    public function post_meta(): PostTypePostMeta
     {
-        return $this->items[$name] ?? null;
+        return $this->resolve('post-meta');
     }
 
     /**
      * @inheritdoc
      */
-    public function register($name, $attrs = [])
+    public function register($name, array $attrs = []): PostTypeManagerContract
     {
-        return $this->items[$name] = $this->items[$name] ?? $this->resolve('factory', [$name, $attrs]);
+        return $this->set([$name => new PostTypeFactory($name, $attrs)]);
     }
 
     /**
      * @inheritdoc
      */
-    public function resolve($alias, $args = [])
+    public function resolve(string $alias)
     {
-        return app()->get("post-type.{$alias}", $args);
+        return $this->container->get("post-type.{$alias}");
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function walk(&$item, $key = null)
+    {
+        if (!$item instanceof PostTypeFactoryContract) {
+            throw new InvalidArgumentException(sprintf(
+                __('Le type de post devrait être une instance de %s'),
+                PostTypeFactoryContract::class
+            ));
+        } else {
+            $item->setManager($this)->boot();
+        }
     }
 }

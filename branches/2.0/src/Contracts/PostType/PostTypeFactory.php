@@ -1,17 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\PostType;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface PostTypeFactory extends ParamsBag
 {
+    /**
+     * Initialisation du controleur.
+     *
+     * @return void
+     */
+    public function boot(): void;
+
     /**
      * Récupération du nom de qualification du type de post.
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Récupération d'un intitulé.
@@ -26,5 +33,24 @@ interface PostTypeFactory extends ParamsBag
      *
      * @return string
      */
-    public function label(string $key, string $default = '') : string;
+    public function label(string $key, string $default = ''): string;
+
+    /**
+     * Définition de métadonnée de terme.
+     *
+     * @param string|array $key Indice de la métadonnée ou tableau indexé ou tableau associatif.
+     * @param bool $single Indicateur de donnée unique. Valeur par défaut des déclarations par tableau indexé.
+     *
+     * @return static
+     */
+    public function meta($key, bool $single = true): PostTypeFactory;
+
+    /**
+     * Définition de l'instance du gestionnaire de types de post.
+     *
+     * @param PostTypeManager $manager
+     *
+     * @return static
+     */
+    public function setManager(PostTypeManager $manager): PostTypeFactory;
 }

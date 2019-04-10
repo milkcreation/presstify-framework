@@ -2,34 +2,23 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
-interface TaxonomyManager extends TaxonomyResolverTrait
+use tiFy\Contracts\Support\Manager;
+
+interface TaxonomyManager extends Manager
 {
     /**
-     * Récupération d'une instance de controleur de taxonomie.
+     * Récupération de l'instance du controleur de metadonnées de terme.
      *
-     * @param string $name Nom de qualification du controleur.
-     *
-     * @return null|TaxonomyFactory
+     * @return TaxonomyTermMeta|null
      */
-    public function get($name);
-
-    /**
-     * Création d'une taxonomie personnalisée.
-     *
-     * @param string $name Nom de qualification de la taxonomie.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return TaxonomyFactory
-     */
-    public function register($name, $attrs = []);
+    public function term_meta(): ?TaxonomyTermMeta;
 
     /**
      * Résolution d'un service fourni par le gestionnaire.
      *
      * @param string $alias Nom de qualification du service.
-     * @param array $args Liste des variables passées en argument au service.
      *
      * @return object
      */
-    public function resolve($alias, $args = []);
+    public function resolve(string $alias);
 }

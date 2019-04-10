@@ -231,9 +231,9 @@ class ParamsBag implements ParamsBagContract
 
         array_walk($keys, [$this, 'map']);
 
-        foreach ($keys as $k => $v) :
+        foreach ($keys as $k => $v) {
             Arr::set($this->attributes, $k, $v);
-        endforeach;
+        }
 
         return $this;
     }

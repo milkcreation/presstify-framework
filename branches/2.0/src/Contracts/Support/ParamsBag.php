@@ -112,8 +112,9 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
     /**
      * Définition d'un attribut.
      *
-     * @param string|array $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $value Valeur de l'attribut.
+     * @param string|array $key Clé d'indexe de l'attribut, Syntaxe à point permise ou tableau associatif des attributs
+     *                          à définir.
+     * @param mixed $value Valeur de l'attribut si la clé d'index est de type string.
      *
      * @return static
      */

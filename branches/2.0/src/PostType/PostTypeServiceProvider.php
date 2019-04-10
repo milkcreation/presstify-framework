@@ -13,8 +13,7 @@ class PostTypeServiceProvider extends AppServiceProvider
      */
     protected $provides = [
         'post-type',
-        'post-type.factory',
-        'post-type.post.meta'
+        'post-type.post-meta'
     ];
 
     /**
@@ -23,7 +22,6 @@ class PostTypeServiceProvider extends AppServiceProvider
     public function register()
     {
         $this->registerManager();
-        $this->registerFactory();
         $this->registerPostMeta();
     }
 
@@ -34,17 +32,9 @@ class PostTypeServiceProvider extends AppServiceProvider
      */
     public function registerManager()
     {
-        $this->getContainer()->share('post-type', PostTypeManager::class);
-    }
-
-    /**
-     * Déclaration du controleur de déclaration d'un type de contenu.
-     *
-     * @return void
-     */
-    public function registerFactory()
-    {
-        $this->getContainer()->add('post-type.factory', PostTypeFactory::class);
+        $this->getContainer()->share('post-type', function() {
+            return new PostTypeManager($this->getContainer());
+        });
     }
 
     /**
@@ -54,6 +44,8 @@ class PostTypeServiceProvider extends AppServiceProvider
      */
     public function registerPostMeta()
     {
-        $this->getContainer()->share('post-type.post.meta', PostTypePostMeta::class);
+        $this->getContainer()->share('post-type.post-meta', function () {
+            return new PostTypePostMeta();
+        });
     }
 }
