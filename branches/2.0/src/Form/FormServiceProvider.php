@@ -2,7 +2,7 @@
 
 namespace tiFy\Form;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Contracts\Form\FactoryField as FactoryFieldContract;
 use tiFy\Form\Addon\AjaxSubmit\AjaxSubmit as AddonAjaxSubmit;
@@ -29,7 +29,7 @@ use tiFy\Form\Field\Html\Html as FieldHtml;
 use tiFy\Form\Field\Recaptcha\Recaptcha as FieldRecaptcha;
 use tiFy\Form\Field\Tag\Tag as FieldTag;
 
-class FormServiceProvider extends AppServiceProvider
+class FormServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

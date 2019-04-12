@@ -3,9 +3,9 @@
 namespace tiFy\Filesystem;
 
 use League\Flysystem\AdapterInterface;
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 
-class FilesystemServiceProvider extends AppServiceProvider
+class FilesystemServiceProvider extends ServiceProvider
 {
     /**
      * Liste des services fournis.

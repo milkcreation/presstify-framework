@@ -2,9 +2,9 @@
 
 namespace tiFy\Console;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 
-class ConsoleServiceProvider extends AppServiceProvider
+class ConsoleServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

@@ -56,7 +56,7 @@ final class Column implements ColumnContract
                     $_screen = (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen))
                         ? "list::{$screen}": $screen;
 
-                    $this->items[] = app()->resolve('column.item', [$name, $attrs, $_screen]);
+                    $this->items[] = app()->get('column.item', [$name, $attrs, $_screen]);
                 endforeach;
             endforeach;
         }, 0);

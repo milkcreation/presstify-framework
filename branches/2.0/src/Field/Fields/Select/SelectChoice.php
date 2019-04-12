@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\Select;
 
 use tiFy\Contracts\Field\SelectChoice as SelectChoiceContract;
-use tiFy\Kernel\Params\ParamsBag;
 use tiFy\Support\HtmlAttrs;
+use tiFy\Support\ParamsBag;
 
 class SelectChoice extends ParamsBag implements SelectChoiceContract
 {
@@ -32,13 +32,13 @@ class SelectChoice extends ParamsBag implements SelectChoiceContract
     {
         $this->name = $name;
 
-        parent::__construct($attrs);
+        $this->set($attrs);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'name'      => $this->name,
@@ -51,23 +51,23 @@ class SelectChoice extends ParamsBag implements SelectChoiceContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getContent()
+    public function getContent(): string
     {
         return (string)$this->get('content');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return (string)$this->get('name', '');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getValue()
     {
@@ -75,7 +75,7 @@ class SelectChoice extends ParamsBag implements SelectChoiceContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getParent()
     {
@@ -83,41 +83,41 @@ class SelectChoice extends ParamsBag implements SelectChoiceContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function hasParent()
+    public function hasParent(): bool
     {
         return !is_null($this->get('parent'));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isDisabled()
+    public function isDisabled(): bool
     {
         return in_array('disabled', $this->get('attrs', []));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isGroup()
+    public function isGroup(): bool
     {
         return $this->get('group');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function isSelected()
+    public function isSelected(): bool
     {
         return !$this->isGroup() && in_array('selected', $this->get('attrs', []), true);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function setDepth($depth = 0)
+    public function setDepth(int $depth = 0): SelectChoiceContract
     {
         $this->depth = $depth;
 
@@ -125,40 +125,58 @@ class SelectChoice extends ParamsBag implements SelectChoiceContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function setSelected(array $selected): SelectChoiceContract
     {
-        parent::parse($attrs);
+        if (!is_null($selected)) {
+            if (!$this->isGroup() && in_array($this->getValue(), $selected)) {
+                $this->push('attrs', 'selected');
+            }
+        }
+        return $this;
+    }
 
-        if ($this->isGroup()) :
+    /**
+     * @inheritdoc
+     */
+    public function parse(): SelectChoiceContract
+    {
+        parent::parse();
+
+        if ($this->isGroup()) {
             $this->pull('value');
-            $this->set('attrs.label', htmlentities($this->pull('content')));
-        else :
+            $this->set(
+                'attrs.label',
+                str_repeat("&nbsp;&nbsp;&nbsp;", $this->depth) . htmlentities($this->pull('content'))
+            );
+        } else {
             $this->set('attrs.value', $this->getValue());
-        endif;
+        }
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function tagClose()
+    public function tagClose(): string
     {
-        return $this->isGroup() ? "</optgroup>" : "</option>";
+        return $this->isGroup() ? "\n" . str_repeat("\t", $this->depth) . "</optgroup>" : "</option>";
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function tagContent()
+    public function tagContent(): string
     {
         return $this->getContent() ? $this->getContent() : '';
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function tagOpen()
+    public function tagOpen(): string
     {
         $attrs = HtmlAttrs::createFromAttrs($this->get('attrs', []));
 

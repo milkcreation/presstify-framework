@@ -2,9 +2,10 @@
 
 namespace tiFy\Contracts\Cron;
 
+use Exception;
 use Carbon\Carbon;
 use tiFy\Contracts\Kernel\Logger;
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface CronJob extends ParamsBag
 {
@@ -43,6 +44,8 @@ interface CronJob extends ParamsBag
      * @param string $time Date
      *
      * @return Carbon
+     *
+     * @throws Exception
      */
     public function getDatetime($time = 'now');
 

@@ -7,7 +7,7 @@ use \DateTimeZone;
 use Carbon\Carbon;
 use tiFy\Contracts\Cron\CronJob as CronJobContract;
 use tiFy\Contracts\Kernel\Logger;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 
 class CronJob extends ParamsBag implements CronJobContract
 {
@@ -43,7 +43,7 @@ class CronJob extends ParamsBag implements CronJobContract
     {
         $this->name = $name;
 
-        parent::__construct($attrs);
+        $this->set($attrs)->parse();
 
         add_action($this->getHook(), $this);
     }
@@ -263,9 +263,9 @@ class CronJob extends ParamsBag implements CronJobContract
     /**
      * @inheritdoc
      */
-    public function parse($attrs = [])
+    public function parse()
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $date = $this->get('date');
         if (!$date instanceof DateTime) :

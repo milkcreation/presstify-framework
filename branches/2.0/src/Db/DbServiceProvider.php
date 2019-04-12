@@ -2,7 +2,7 @@
 
 namespace tiFy\Db;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 use tiFy\Db\Factory\Handle;
 use tiFy\Db\Factory\Make;
 use tiFy\Db\Factory\Meta;
@@ -11,7 +11,7 @@ use tiFy\Db\Factory\Parser;
 use tiFy\Db\Factory\QueryLoop;
 use tiFy\Db\Factory\Select;
 
-class DbServiceProvider extends AppServiceProvider
+class DbServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

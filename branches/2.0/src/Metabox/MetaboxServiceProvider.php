@@ -2,10 +2,10 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 use tiFy\Metabox\Tab\MetaboxTabController;
 
-class MetaboxServiceProvider extends AppServiceProvider
+class MetaboxServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

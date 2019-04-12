@@ -2,6 +2,12 @@
 
 namespace tiFy\Contracts\Kernel;
 
+/**
+ * Interface QueryCollection
+ * @package tiFy\Contracts\Kernel
+ *
+ * @deprecated Utiliser tiFy\Contracts\Support\Collection en remplacement
+ */
 interface QueryCollection extends Collection
 {
     /**

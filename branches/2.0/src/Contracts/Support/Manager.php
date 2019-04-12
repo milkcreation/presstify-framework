@@ -41,5 +41,5 @@ interface Manager
      *
      * @return void
      */
-    public function walk(&$item, $key = null);
+    public function walk(&$item, $key = null): void;
 }

@@ -63,7 +63,7 @@ class HtmlAttrs implements HtmlAttrsContract
      */
     public function set(array $attrs): HtmlAttrsContract
     {
-        array_walk($attrs, [$this, 'wrap']);
+        array_walk($attrs, [$this, 'walk']);
 
         return $this;
     }
@@ -71,12 +71,11 @@ class HtmlAttrs implements HtmlAttrsContract
     /**
      * @inheritdoc
      */
-    public function wrap($value, $key = null)
+    public function walk($value, $key = null): void
     {
         if (is_array($value)) {
             $value = $this->arrayEncode($value);
         }
-
         $this->attributes[] = is_numeric($key) ? "{$value}" : "{$key}=\"{$value}\"";
     }
 }

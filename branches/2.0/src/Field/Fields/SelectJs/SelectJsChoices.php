@@ -105,7 +105,7 @@ class SelectJsChoices extends SelectChoices
     /**
      * {@inheritdoc}
      */
-    public function walk($items = [], $depth = 0, $parent = null)
+    public function walker($items = [], $depth = 0, $parent = null)
     {
         $output = "";
         foreach ($items as $item) :
@@ -119,7 +119,7 @@ class SelectJsChoices extends SelectChoices
 
             $output .= $item->tagOpen();
             $output .= $item->tagContent();
-            $output .= $this->walk($items, ($depth + 1), $item->getName());
+            $output .= $this->walker($items, ($depth + 1), $item->getName());
             $output .= $item->tagClose();
         endforeach;
 

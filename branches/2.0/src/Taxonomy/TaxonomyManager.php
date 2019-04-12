@@ -45,7 +45,7 @@ class TaxonomyManager extends Manager implements TaxonomyManagerContract
     /**
      * @inheritdoc
      */
-    public function walk(&$item, $key = null)
+    public function walk(&$item, $key = null): void
     {
         if (!$item instanceof TaxonomyFactoryContract) {
             throw new InvalidArgumentException(sprintf(

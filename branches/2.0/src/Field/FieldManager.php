@@ -118,15 +118,12 @@ final class FieldManager implements FieldManagerContract
      */
     public function __construct()
     {
-        add_action(
-            'after_setup_theme',
-            function () {
-                foreach ($this->items as $alias => $concrete) :
-                    app()->bind("field.{$alias}", $concrete)->build([null, []]);
-                endforeach;
-            },
-            999999
-        );
+        add_action('after_setup_theme', function () {
+            foreach ($this->items as $alias => $concrete) {
+                app()->add("field.{$alias}", $concrete);
+                app("field.{$alias}");
+            }
+        }, 999999);
     }
 
     /**
@@ -153,7 +150,7 @@ final class FieldManager implements FieldManagerContract
             $attrs = $attrs ? : [];
         endif;
 
-        return app()->resolve($alias, [$id, $attrs]);
+        return app()->get($alias, [$id, $attrs]);
     }
 
     /**

@@ -8,7 +8,7 @@ use tiFy\Contracts\Kernel\QueryCollection as QueryCollectionContract;
  * Class QueryCollection
  * @package tiFy\Kernel\Collection
  *
- * @deprecated
+ * @deprecated Utiliser tiFy\Contracts\Support\Collection en remplacement
  */
 class QueryCollection extends Collection implements QueryCollectionContract
 {

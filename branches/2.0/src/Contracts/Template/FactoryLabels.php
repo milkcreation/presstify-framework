@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Template;
 
-use tiFy\Contracts\Kernel\LabelsBag;
+use tiFy\Contracts\Support\LabelsBag;
 
 interface FactoryLabels extends LabelsBag
 {

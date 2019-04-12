@@ -4,8 +4,8 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryNotices;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Kernel\Notices\Notices as NoticesController;
+use tiFy\Support\ParamsBag;
 
 class Notices extends NoticesController implements FactoryNotices
 {
@@ -50,7 +50,7 @@ class Notices extends NoticesController implements FactoryNotices
 
         app()->share(
             "form.factory.notices.{$this->form()->name()}.params",
-            params(array_merge(
+            ParamsBag::createFromAttrs(array_merge(
                     [
                         'error'   => [
                             'title'       => '',

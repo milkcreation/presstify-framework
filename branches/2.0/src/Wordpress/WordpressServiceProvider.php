@@ -2,15 +2,18 @@
 
 namespace tiFy\Wordpress;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
+use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Db\Db;
 use tiFy\Wordpress\Filesystem\Filesystem;
+use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
 use tiFy\Wordpress\Mail\Mail;
 use tiFy\Wordpress\Media\Download;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Media\Upload;
 use tiFy\Wordpress\Metabox\Metabox;
+use tiFy\Wordpress\Options\Options;
 use tiFy\Wordpress\PageHook\PageHook;
 use tiFy\Wordpress\Partial\Partial;
 use tiFy\Wordpress\PostType\PostType;
@@ -30,7 +33,7 @@ use WP_Screen;
 use WP_Term;
 use WP_Term_Query;
 
-class WordpressServiceProvider extends AppServiceProvider
+class WordpressServiceProvider extends ServiceProvider
 {
     /**
      * Liste des services fournis.
@@ -38,8 +41,10 @@ class WordpressServiceProvider extends AppServiceProvider
      */
     protected $provides = [
         'wp',
+        'wp.column',
         'wp.db',
         'wp.filesystem',
+        'wp.field',
         'wp.form',
         'wp.mail',
         'wp.media',
@@ -48,6 +53,7 @@ class WordpressServiceProvider extends AppServiceProvider
         'wp.metabox',
         'wp.page-hook',
         'wp.partial',
+        'wp.options',
         'wp.post-type',
         'wp.query.post',
         'wp.query.posts',
@@ -73,18 +79,21 @@ class WordpressServiceProvider extends AppServiceProvider
             $wp = $this->getContainer()->get('wp');
 
             if ($wp->is()) {
+                if ($this->getContainer()->has('column')) {
+                    $this->getContainer()->get('wp.column');
+                }
                 if ($this->getContainer()->has('cron')) {
                     $this->getContainer()->get('cron');
                 }
-
                 if ($this->getContainer()->has('db')) {
                     $this->getContainer()->get('wp.db');
                 }
-
+                if ($this->getContainer()->has('field')) {
+                    $this->getContainer()->get('wp.field');
+                }
                 if ($this->getContainer()->has('form')) {
                     $this->getContainer()->get('wp.form');
                 }
-
                 if ($this->getContainer()->has('mailer')) {
                     $this->getContainer()->get('wp.mail');
                 }
@@ -97,30 +106,27 @@ class WordpressServiceProvider extends AppServiceProvider
 
                 $this->getContainer()->get('wp.page-hook');
 
+                if ($this->getContainer()->has('options')) {
+                    $this->getContainer()->get('wp.options');
+                }
                 if ($this->getContainer()->has('partial')) {
                     $this->getContainer()->get('wp.partial');
                 }
-
                 if ($this->getContainer()->has('post-type')) {
                     $this->getContainer()->get('wp.post-type');
                 }
-
                 if ($this->getContainer()->has('router')) {
                     $this->getContainer()->get('wp.routing');
                 }
-
                 if ($this->getContainer()->has('storage')) {
                     $this->getContainer()->get('wp.filesystem');
                 }
-
                 if ($this->getContainer()->has('taxonomy')) {
                     $this->getContainer()->get('wp.taxonomy');
                 }
-
                 if ($this->getContainer()->has('template')) {
                     $this->getContainer()->get('wp.template');
                 }
-
                 if ($this->getContainer()->has('user')) {
                     $this->getContainer()->get('wp.user');
                 }
@@ -134,12 +140,15 @@ class WordpressServiceProvider extends AppServiceProvider
     public function register()
     {
         $this->registerManager();
+        $this->registerColumn();
         $this->registerDb();
         $this->registerFilesystem();
+        $this->registerField();
         $this->registerForm();
         $this->registerMail();
         $this->registerMedia();
         $this->registerMetabox();
+        $this->registerOptions();
         $this->registerPageHook();
         $this->registerPartial();
         $this->registerPostType();
@@ -148,6 +157,18 @@ class WordpressServiceProvider extends AppServiceProvider
         $this->registerTaxonomy();
         $this->registerTemplate();
         $this->registerUser();
+    }
+
+    /**
+     * Déclaration du controleur des colonnes.
+     *
+     * @return void
+     */
+    public function registerColumn()
+    {
+        $this->getContainer()->share('wp.column', function() {
+            return new Column($this->getContainer()->get('column'));
+        });
     }
 
     /**
@@ -171,6 +192,18 @@ class WordpressServiceProvider extends AppServiceProvider
     {
         $this->getContainer()->share('wp.filesystem',  function () {
             return new Filesystem($this->getContainer()->get('storage'));
+        });
+    }
+
+    /**
+     * Déclaration du controleur des champs.
+     *
+     * @return void
+     */
+    public function registerField()
+    {
+        $this->getContainer()->share('wp.field', function() {
+            return new Field($this->getContainer()->get('field'));
         });
     }
 
@@ -239,6 +272,18 @@ class WordpressServiceProvider extends AppServiceProvider
     {
         $this->getContainer()->share('wp.metabox', function () {
             return new Metabox($this->getContainer()->get('metabox'));
+        });
+    }
+
+    /**
+     * Déclaration du controleur des options
+     *
+     * @return void
+     */
+    public function registerOptions()
+    {
+        $this->getContainer()->share('wp.options', function() {
+            return new Options($this->getContainer()->get('options'));
         });
     }
 

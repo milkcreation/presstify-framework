@@ -2,9 +2,9 @@
 
 namespace tiFy\Taxonomy;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 
-class TaxonomyServiceProvider extends AppServiceProvider
+class TaxonomyServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

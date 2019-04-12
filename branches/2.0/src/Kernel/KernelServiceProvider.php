@@ -1,20 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Kernel;
 
 use tiFy\Http\RedirectResponse;
 use tiFy\Http\Request;
-use tiFy\Kernel\Assets\Assets;
-use tiFy\Kernel\ClassInfo\ClassInfo;
 use tiFy\Container\ServiceProvider;
-use tiFy\Kernel\Encryption\Encrypter;
+use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\Events\Manager as EventsManager;
 use tiFy\Kernel\Events\Listener;
 use tiFy\Kernel\Logger\Logger;
 use tiFy\Kernel\Notices\Notices;
-use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Kernel\Validation\Validator;
-use tiFy\View\ViewEngine;
+use tiFy\Support\ClassInfo;
+use tiFy\Support\ParamsBag;
 
 class KernelServiceProvider extends ServiceProvider
 {
@@ -25,17 +22,14 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'assets',
-        ClassInfo::class,
-        'encrypter',
+        'class-info',
         'events',
         'events.listener',
         'logger',
         'notices',
         'params.bag',
         'request',
-        'redirect',
-        'validator',
-        'view.engine'
+        'redirect'
     ];
 
     /**
@@ -45,9 +39,23 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function __construct()
     {
-        if (!defined('TIFY_CONFIG_DIR')) :
+        if (!defined('TIFY_CONFIG_DIR')) {
             define('TIFY_CONFIG_DIR', get_template_directory() . '/config');
-        endif;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function boot()
+    {
+        $this->getContainer()->share('path', function () {
+            return new Path();
+        });
+
+        $this->getContainer()->share('class-loader', new ClassLoader($this->getContainer()));
+
+        $this->getContainer()->share('config', new Config($this->getContainer()));
     }
 
     /**
@@ -59,10 +67,8 @@ class KernelServiceProvider extends ServiceProvider
             return new Assets();
         });
 
-        $this->getContainer()->add(ClassInfo::class);
-
-        $this->getContainer()->add('encrypter', function ($secret = null, $private = null) {
-            return new Encrypter($secret, $private);
+        $this->getContainer()->add('class-info', function ($class) {
+            return new ClassInfo($class);
         });
 
         $this->getContainer()->share('events', function () {
@@ -81,8 +87,8 @@ class KernelServiceProvider extends ServiceProvider
             return new Notices();
         });
 
-        $this->getContainer()->add('params.bag', function ($attrs = []) {
-            return new ParamsBag($attrs);
+        $this->getContainer()->add('params.bag', function (?array $attrs = []) {
+            return is_array($attrs) ? ParamsBag::createFromAttrs($attrs) : new ParamsBag();
         });
 
         $this->getContainer()->share('request', function () {
@@ -91,14 +97,6 @@ class KernelServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('redirect', function (?string $url, int $status = null, array $headers = []) {
             return new RedirectResponse($url, $status, $headers);
-        });
-
-        $this->getContainer()->add('validator', function () {
-            return new Validator();
-        });
-
-        $this->getContainer()->add('view.engine', function () {
-            return new ViewEngine();
         });
     }
 }

@@ -2,11 +2,11 @@
 
 namespace tiFy\Mail;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 use tiFy\Mail\Adapter\PhpMailer as AdapterPhpMailer;
 use PHPMailer;
 
-class MailServiceProvider extends AppServiceProvider
+class MailServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

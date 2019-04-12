@@ -3,7 +3,7 @@
 namespace tiFy\Taxonomy;
 
 use Illuminate\Support\Str;
-use tiFy\Kernel\Labels\LabelsBag;
+use tiFy\Support\LabelsBag;
 
 /**
  * @see https://codex.wordpress.org/Function_Reference/register_taxonomy
@@ -22,37 +22,37 @@ class TaxonomyLabelsBag extends LabelsBag
 
             'menu_name' => _x(Str::ucfirst($this->getPlural()), 'admin menu', 'tify'),
 
-            'all_items' => !$this->getGender()
+            'all_items' => !$this->hasGender()
                 ? sprintf(__('Tous les %s', 'tify'), $this->getPlural())
                 : sprintf(__('Toutes les %s', 'tify'), $this->getPlural()),
 
             'edit_item' => $this->defaultEditItem(),
 
-            'view_item' => !$this->getGender()
+            'view_item' => !$this->hasGender()
                 ? sprintf(__('Voir cet %s', 'tify'), $this->getSingular())
                 : sprintf(__('Voir cette %s', 'tify'), $this->getSingular()),
 
-            'update_item' => !$this->getGender()
+            'update_item' => !$this->hasGender()
                 ? sprintf(__('Mettre à jour ce %s', 'tify'), $this->getSingular())
                 : sprintf(__('Mettre à jour cette %s', 'tify'), $this->getSingular()),
 
-            'add_new_item' => !$this->getGender()
+            'add_new_item' => !$this->hasGender()
                 ? sprintf(__('Ajouter un %s', 'tify'), $this->getSingular())
                 : sprintf(__('Ajouter une %s', 'tify'), $this->getSingular()),
 
-            'new_item_name' => !$this->getGender()
+            'new_item_name' => !$this->hasGender()
                 ? sprintf(__('Créer un %s', 'tify'), $this->getSingular())
                 : sprintf(__('Créer une %s', 'tify'), $this->getSingular()),
 
-            'parent_item' => !$this->getGender()
+            'parent_item' => !$this->hasGender()
                 ? sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular()))
                 : sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular())),
 
-            'parent_item_colon' => !$this->getGender()
+            'parent_item_colon' => !$this->hasGender()
                 ? sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular()))
                 : sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular())),
 
-            'search_items' => !$this->getGender()
+            'search_items' => !$this->hasGender()
                 ? sprintf(__('Rechercher un %s', 'tify'), $this->getSingular())
                 : sprintf(__('Rechercher une %s', 'tify'), $this->getSingular()),
 
@@ -62,11 +62,11 @@ class TaxonomyLabelsBag extends LabelsBag
 
             'add_or_remove_items' => sprintf(__('Ajouter ou supprimer des %s', 'tify'), $this->getPlural()),
 
-            'choose_from_most_used' => !$this->getGender()
+            'choose_from_most_used' => !$this->hasGender()
                 ? sprintf(__('Choisir parmi les %s les plus utilisés', 'tify'), $this->getPlural())
                 : sprintf(__('Choisir parmi les %s les plus utilisées', 'tify'), $this->getPlural()),
 
-            'not_found' => !$this->getGender()
+            'not_found' => !$this->hasGender()
                 ? sprintf(__('Aucun %s trouvé', 'tify'), Str::ucfirst($this->getSingular()))
                 : sprintf(__('Aucune %s trouvée', 'tify'), Str::ucfirst($this->getSingular())),
 

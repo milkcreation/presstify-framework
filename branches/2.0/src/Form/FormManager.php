@@ -6,7 +6,7 @@ use Closure;
 use tiFy\Contracts\Form\FormManager as FormManagerContract;
 use tiFy\Contracts\Form\FormFactory;
 
-final class FormManager implements FormManagerContract
+class FormManager implements FormManagerContract
 {
     /**
      * Liste des formulaires déclarés.

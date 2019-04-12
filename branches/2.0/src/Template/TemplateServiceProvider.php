@@ -2,9 +2,9 @@
 
 namespace tiFy\Template;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 
-class TemplateServiceProvider extends AppServiceProvider
+class TemplateServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

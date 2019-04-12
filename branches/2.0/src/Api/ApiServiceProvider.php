@@ -8,53 +8,66 @@ use tiFy\Api\Facebook\FacebookSigninController;
 use tiFy\Api\Facebook\FacebookSignupController;
 use tiFy\Api\Recaptcha\Recaptcha;
 use tiFy\Api\Youtube\Youtube;
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 
-class ApiServiceProvider extends AppServiceProvider
+class ApiServiceProvider extends ServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * Liste des noms de qualification des services fournis.
+     * {@internal Permet le chargement différé des services qualifié.}
+     * @var string[]
+     */
+    protected $provides = [
+        'api',
+        'api.facebook',
+        'api.facebook.profile',
+        'api.facebook.signin',
+        'api.facebook.signup',
+        'api.recaptcha',
+        'api.youtube',
+    ];
+
+    /**
+     * @inheritdoc
      */
     public function boot()
     {
-        $this->app->singleton('api', function () { return new Api(); })->build();
+        add_action('after_setup_theme', function () {
+            $this->getContainer()->get('api');
+        });
+    }
 
-        if (config('api.facebook', [])) :
-            $this->app->singleton('api.facebook',
-                function ($args = []) {
-                    return Facebook::create($args);
-                }
-            )->build([config('api.facebook', [])]);
+    public function register()
+    {
+        $this->getContainer()->share('api', function () {
+            return new Api($this->getContainer());
+        });
 
-            $this->app->singleton(
-                'api.facebook.profile',
-                config('api.facebook.profile', FacebookProfileController::class)
-            )->build();
+        $this->getContainer()->share('api.facebook', function () {
+            return Facebook::create(config('api.facebook', []));
+        });
 
-            $this->app->singleton(
-                'api.facebook.signin',
-                config('api.facebook.signin', FacebookSigninController::class)
-            )->build();
+        $this->getContainer()->share('api.facebook.profile', function () {
+            $concrete = config('api.facebook.profile', FacebookProfileController::class);
+            return new $concrete();
+        });
 
-            $this->app->singleton(
-                'api.facebook.signup',
-                config('api.facebook.signup', FacebookSignupController::class)
-            )->build();
-        endif;
+        $this->getContainer()->share('api.facebook.signin', function () {
+            $concrete = config('api.facebook.signin', FacebookSigninController::class);
+            return new $concrete();
+        });
 
-        if (config('api.recaptcha', [])) :
-            $this->app->singleton('api.recaptcha', function ($args = []) {
-                return Recaptcha::create($args);
-            })->build([config('api.recaptcha', [])]);
-        endif;
+        $this->getContainer()->share('api.facebook.signup', function () {
+            $concrete = config('api.facebook.signup', FacebookSignupController::class);
+            return new $concrete();
+        });
 
-        if (config('api.youtube', [])) :
-            $this->app->singleton(
-                'api.youtube',
-                function ($args = []) {
-                    return Youtube::make($args);
-                }
-            )->build([config('api.youtube', [])]);
-        endif;
+        $this->getContainer()->share('api.recaptcha', function () {
+            return Facebook::create(config('api.recaptcha', []));
+        });
+
+        $this->getContainer()->share('api.youtube', function () {
+            return Facebook::create(config('api.youtube', []));
+        });
     }
 }

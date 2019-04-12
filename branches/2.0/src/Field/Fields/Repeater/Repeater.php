@@ -5,6 +5,7 @@ namespace tiFy\Field\Fields\Repeater;
 use tiFy\Contracts\Field\Repeater as RepeaterContract;
 use tiFy\Field\FieldController;
 use tiFy\Support\Arr;
+use tiFy\Support\ParamsBag;
 
 class Repeater extends FieldController implements RepeaterContract
 {
@@ -166,7 +167,7 @@ class Repeater extends FieldController implements RepeaterContract
      */
     public function wp_ajax()
     {
-        $params = params(request()->request->all());
+        $params = ParamsBag::createFromAttrs(request()->request->all());
 
         check_ajax_referer('FieldRepeater' . $params->get('_id'));
 
