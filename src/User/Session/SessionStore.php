@@ -2,6 +2,7 @@
 
 namespace tiFy\User\Session;
 
+use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
@@ -186,9 +187,9 @@ class SessionStore extends ParamsBag implements SessionStoreContract
 
         // Contrôle de validité du cookie
         $hash = $this->getCookieHash($session_key, $session_expiration);
-        if (empty($cookie_hash) || !\hash_equals($hash, $cookie_hash)) :
+        if (empty($cookie_hash) || !hash_equals($hash, $cookie_hash)) {
             return false;
-        endif;
+        }
 
         return compact($this->cookieKeys);
     }
@@ -200,7 +201,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     {
         $to_hash = $session_key . '|' . $expiration;
 
-        return hash_hmac('md5', $to_hash, \wp_hash($to_hash));
+        return hash_hmac('md5', $to_hash, wp_hash($to_hash));
     }
 
     /**
@@ -218,7 +219,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     {
         try {
             return user()->session()->getDb();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             wp_die($e->getMessage(), __('ERREUR SYSTEME', 'tify'), $e->getCode());
             exit;
         }
@@ -312,17 +313,17 @@ class SessionStore extends ParamsBag implements SessionStoreContract
      */
     public function put($key, $value = null)
     {
-        if ($value !== $this->get($key)) :
-            if (! is_array($key)) :
+        if ($value !== $this->get($key)) {
+            if (!is_array($key)) {
                 $key = [$key => $value];
-            endif;
+            }
 
-            foreach ($key as $arrayKey => $arrayValue) :
+            foreach ($key as $arrayKey => $arrayValue) {
                 Arr::set($this->attributes, $arrayKey, $arrayValue);
-            endforeach;
+            }
 
             $this->changed = true;
-        endif;
+        }
 
         return $this;
     }
@@ -336,15 +337,12 @@ class SessionStore extends ParamsBag implements SessionStoreContract
             // Récupération des attributs de session
             $session = $this->getSession();
 
-            $this->getDb()->handle()->replace(
-                [
-                    'session_name'   => $session['session_name'],
-                    'session_key'    => $session['session_key'],
-                    'session_value'  => \maybe_serialize($this->attributes),
-                    'session_expiry' => $session['session_expiration']
-                ],
-                ['%s', '%s', '%s', '%d']
-            );
+            $this->getDb()->handle()->replace([
+                'session_name'   => $session['session_name'],
+                'session_key'    => $session['session_key'],
+                'session_value'  => maybe_serialize($this->attributes),
+                'session_expiry' => $session['session_expiration']
+            ], ['%s', '%s', '%s', '%d']);
 
             $this->changed = false;
         endif;
