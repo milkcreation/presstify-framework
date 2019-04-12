@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Field;
 
-use tiFy\Contracts\Kernel\Collection;
+use tiFy\Contracts\Support\Collection;
 
 interface SelectChoices extends Collection
 {
@@ -11,37 +11,21 @@ interface SelectChoices extends Collection
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
-     * Récupération de la liste des éléments de la liste des éléments sélectionnés.
+     * Traitement de cartographie d'un élément de la liste.
      *
-     * @return array|SelectChoice[]
+     * @return static
      */
-    public function getSelectionChoices();
-
-    /**
-     * Traitement récursif d'encapuslation d'un élément de la liste.
-     *
-     * @return void
-     */
-    public function recursiveWrap($name, $attrs, $parent = null);
+    public function map($name, $attrs, $parent = null): SelectChoices;
 
     /**
      * Affichage de la liste des éléments.
      *
      * @return string
      */
-    public function render();
-
-    /**
-     * Définition de liste des éléments selectionnés.
-     *
-     * @param mixed $selected
-     *
-     * @return $this
-     */
-    public function setSelected($selected = null);
+    public function render(): string;
 
     /**
      * Itérateur d'affichage.
@@ -52,5 +36,5 @@ interface SelectChoices extends Collection
      *
      * @return string
      */
-    public function walk($items = [], $depth = 0, $parent = null);
+    public function walker($items = [], $depth = 0, $parent = null): string;
 }

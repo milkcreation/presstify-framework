@@ -35,7 +35,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         $this->name = $name;
         $this->form = $this;
 
-        $this->set($attrs)->parse();
+        $this->set($attrs);
 
         app()->share("form.factory.events.{$this->name()}", function () {
             return $this->resolve('factory.events', [$this->get('events', []), $this]);
@@ -78,6 +78,8 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         });
 
         $this->boot();
+
+        $this->parse();
 
         $this->_init();
     }

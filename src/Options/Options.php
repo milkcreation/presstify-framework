@@ -1,21 +1,21 @@
 <?php
 
-/**
- * @name Options.
- * @desc Gestion des options du site.
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
-
 namespace tiFy\Options;
 
-use tiFy\Contracts\Options\OptionsPageInterface;
+use Psr\Container\ContainerInterface;
+use tiFy\Options\Page\OptionsPage;
 
-final class Options
+class Options
 {
     /**
+     * Instance de conteneur d'injection de dépendances.
+     *
+     */
+    protected $container;
+
+    /**
      * Liste des éléments.
-     * @var OptionsPageInterface[]
+     * @var OptionsPage[]
      */
     protected $items = [];
 
@@ -24,19 +24,17 @@ final class Options
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(ContainerInterface $container)
     {
-        add_action(
-            'init',
-            function () {
-                foreach(config('options', []) as $name => $attrs) :
-                    $this->items[$name] = app(OptionsPageInterface::class, [$name, $attrs]);
-                endforeach;
+        $this->container = $container;
 
-                if (!isset($this->items['tify_options'])) :
-                    $this->items['tify_options'] = app(OptionsPageInterface::class, ['tify_options', []]);
-                endif;
+        add_action('init', function () {
+            foreach(config('options', []) as $name => $attrs) {
+                $this->items[$name] = new OptionsPage($name, $attrs);
             }
-        );
+            if (!isset($this->items['tify_options'])) {
+                $this->items['tify_options'] = new OptionsPage('tify_options', []);
+            }
+        });
     }
 }

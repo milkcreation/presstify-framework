@@ -2,42 +2,26 @@
 
 namespace tiFy\Options;
 
-use tiFy\Contracts\Options\OptionsPageInterface;
-use tiFy\Options\Options;
-use tiFy\Options\Page\OptionsPageController;
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 
-class OptionsServiceProvider extends AppServiceProvider
+class OptionsServiceProvider extends ServiceProvider
 {
     /**
-     * Liste des alias de qualification de services.
-     * @var array
-     */
-    protected $aliases = [
-        OptionsPageInterface::class => OptionsPageController::class
-    ];
-
-    /**
-     * Liste des services à instance multiples auto-déclarés.
+     * Liste des noms de qualification des services fournis.
+     * {@internal Permet le chargement différé des services qualifié.}
      * @var string[]
      */
-    protected $bindings = [
-        OptionsPageController::class
+    protected $provides = [
+        'options',
     ];
 
     /**
-     * Liste des services à instance unique auto-déclarés.
-     * @var string[]
+     * @inheritdoc
      */
-    protected $singletons = [
-        Options::class
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function register()
     {
-        $this->app->resolve(Options::class, [$this->app]);
+        $this->getContainer()->share('options', function () {
+            return new Options($this->getContainer());
+        });
     }
 }

@@ -56,5 +56,5 @@ interface HtmlAttrs
      *
      * @return void
      */
-    public function wrap($value, $key = null);
+    public function walk($value, $key = null): void;
 }

@@ -60,7 +60,7 @@ class Youtube extends MadcodaYoutube
      *
      * @return static
      */
-    public static function make($attrs = [])
+    public static function create($attrs = [])
     {
         if (!self::$instance) :
             self::$instance = new static($attrs, is_ssl());

@@ -200,7 +200,7 @@ class Notices implements NoticesContract
         $alias = 'notices.viewer' . spl_object_hash($this);
 
         /** @var ViewEngine $viewer */
-        if (!app()->bound($alias)) :
+        if (!app()->has($alias)) :
             /** @var Notices $notices */
             $notices = app('notices');
 
@@ -213,7 +213,7 @@ class Notices implements NoticesContract
                 ->setDirectory($directory)
                 ->setOverrideDir($override_dir);
         else :
-           $viewer =  app()->resolve($alias);
+           $viewer =  app()->get($alias);
         endif;
 
         if (is_null($view)) :

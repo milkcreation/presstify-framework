@@ -3,6 +3,7 @@
 namespace tiFy\PostType\Metabox\Fileshare;
 
 use tiFy\Metabox\MetaboxWpPostController;
+use tiFy\Support\ParamsBag;
 
 class Fileshare extends MetaboxWpPostController
 {
@@ -180,7 +181,7 @@ class Fileshare extends MetaboxWpPostController
      */
     public function wp_ajax()
     {
-        $params = params(request()->request->all());
+        $params = ParamsBag::createFromAttrs(request()->request->all());
 
         check_ajax_referer('MetaboxFileshare' . $params->get('_id'));
 

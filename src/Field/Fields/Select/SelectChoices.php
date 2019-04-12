@@ -1,18 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\Select;
 
 use Illuminate\Support\Arr;
+use tiFy\Contracts\Field\SelectChoice as SelectChoiceContract;
 use tiFy\Contracts\Field\SelectChoices as SelectChoicesContract;
-use tiFy\Kernel\Collection\QueryCollection;
+use tiFy\Support\Collection;
 
-class SelectChoices extends QueryCollection implements SelectChoicesContract
+class SelectChoices extends Collection implements SelectChoicesContract
 {
     /**
      * Liste des éléments.
-     * @var SelectChoice[]
+     * @var SelectChoiceContract[]
      */
     protected $items = [];
+
+    /**
+     * Liste des éléments sélectionnés.
+     * @var array
+     */
+    protected $selected = [];
 
     /**
      * CONSTRUCTEUR.
@@ -22,111 +29,76 @@ class SelectChoices extends QueryCollection implements SelectChoicesContract
      */
     public function __construct($items = [], $selected = null)
     {
-        foreach($items as $name => $attrs) :
-            $this->recursiveWrap($name, $attrs);
-        endforeach;
-
-        $this->setSelected($selected);
+        foreach($items as $name => $attrs) {
+            $this->map($name, $attrs);
+        }
+        $this->selected = Arr::wrap($selected);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getSelectionChoices()
+    public function map($name, $attrs, $parent = null): SelectChoicesContract
     {
-        return $this->collect()->filter(function (SelectChoice $item) {
-            return $item->isSelected();
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function recursiveWrap($name, $attrs, $parent = null)
-    {
-        if (is_string($attrs)) :
-            $this->wrap(['content' => $attrs, 'parent' => $parent], $name);
-        elseif (is_array($attrs)) :
-            $this->wrap(['content' => $name, 'group' => true, 'parent' => $parent], $name);
-            foreach($attrs as $_name => $_attrs) :
-                $this->recursiveWrap($_name, $_attrs, $name);
-            endforeach;
-        else :
-            $this->wrap($attrs, $name);
-        endif;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function render()
-    {
-        return $this->walk($this->items);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSelected($selected = null)
-    {
-        if (!is_null($selected)) :
-            $selected = Arr::wrap($selected);
-
-            $this->collect()->each(function (SelectChoice $item) use ($selected) {
-                if (!$item->isGroup() && in_array($item->getValue(), $selected)) :
-                    $item->push('attrs', 'selected');
-                endif;
-            });
-        endif;
-
-        if (!$this->collect()->first(function(SelectChoice $item) { return $item->isSelected(); })) :
-            if ($first = $this->collect()->first()) :
-                $first->push('attrs', 'selected');
-            endif;
-        endif;
-
+        if (is_string($attrs)) {
+            $this->walk(['content' => $attrs, 'parent' => $parent], $name);
+        } elseif (is_array($attrs)) {
+            $this->walk(['content' => $name, 'group' => true, 'parent' => $parent], $name);
+            foreach ($attrs as $_name => $_attrs) {
+                $this->map($_name, $_attrs, $name);
+            }
+        } else {
+            $this->walk($attrs, $name);
+        }
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function walk($items = [], $depth = 0, $parent = null)
+    public function render(): string
+    {
+        return $this->walker($this->items);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function walker($items = [], $depth = 0, $parent = null): string
     {
         $output = "";
-        foreach ($items as $item) :
-            if ($item->getParent() !== $parent) :
+        foreach ($items as $item) {
+            /** @var SelectChoiceContract $item */
+            if ($item->getParent() !== $parent) {
                 continue;
-            endif;
+            } else {
+                $item->setDepth($depth)->parse()->setSelected($this->selected);
 
-            $item->setDepth($depth);
-
-            $output .= $item->tagOpen();
-            $output .= $item->tagContent();
-            $output .= $this->walk($items, ($depth + 1), $item->getName());
-            $output .= $item->tagClose();
-        endforeach;
-
+                $output .= $item->tagOpen();
+                $output .= $item->tagContent();
+                $output .= $this->walker($items, ($depth + 1), $item->getName());
+                $output .= $item->tagClose();
+            }
+        }
         return $output;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function wrap($item, $name = null)
+    public function walk($item, $name = null): SelectChoiceContract
     {
-        if (!$item instanceof SelectChoice) :
+        if (!$item instanceof SelectChoice) {
             $item = new SelectChoice($name, $item);
-        endif;
-
+        }
         return $this->items[] = $item;
     }
 }

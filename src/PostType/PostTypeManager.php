@@ -45,7 +45,7 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     /**
      * @inheritdoc
      */
-    public function walk(&$item, $key = null)
+    public function walk(&$item, $key = null): void
     {
         if (!$item instanceof PostTypeFactoryContract) {
             throw new InvalidArgumentException(sprintf(

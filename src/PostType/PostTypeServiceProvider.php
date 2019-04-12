@@ -2,9 +2,9 @@
 
 namespace tiFy\PostType;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 
-class PostTypeServiceProvider extends AppServiceProvider
+class PostTypeServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

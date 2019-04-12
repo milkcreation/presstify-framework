@@ -4,6 +4,7 @@ namespace tiFy\Field\Fields\SelectJs;
 
 use tiFy\Contracts\Field\SelectJs as SelectJsContract;
 use tiFy\Field\FieldController;
+use tiFy\Support\ParamsBag;
 
 class SelectJs extends FieldController implements SelectJsContract
 {
@@ -167,7 +168,7 @@ class SelectJs extends FieldController implements SelectJsContract
         $choices = $this->get('choices', []);
         if (!$choices instanceof SelectJsChoices) :
             if ($args = $this->get('ajax.args', [])) :
-                $choices = params($args);
+                $choices = ParamsBag::createFromAttrs($args);
             endif;
 
             $choices = new SelectJsChoices($choices, $this->getValue());
@@ -267,7 +268,7 @@ class SelectJs extends FieldController implements SelectJsContract
 
         /** @var SelectJsChoices $choices */
         $choices_cb = wp_unslash(request()->post('_choices_cb'));
-        $choices = new $choices_cb(params(request()->post('args', [])));
+        $choices = new $choices_cb(ParamsBag::createFromAttrs(request()->post('args', [])));
         $choices->setField($this);
 
         $items = $choices->all();

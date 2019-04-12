@@ -109,43 +109,42 @@ class PostTypePostMeta implements PostTypePostMetaContract
     public function save($post_id, $post)
     {
         // Bypass - S'il s'agit d'une routine de sauvegarde automatique.
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) :
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
-        endif;
-
+        }
         // Bypass - Si le script est executé via Ajax.
-        if (defined('DOING_AJAX') && DOING_AJAX) :
+        if (defined('DOING_AJAX') && DOING_AJAX) {
             return;
-        endif;
+        }
 
         // Bypass - Si l'argument de requête renseignant l'indication de type de post est manquant.
-        if (! $post_type = request()->post('post_type', '')) :
+        if (! $post_type = request()->post('post_type', '')) {
             return;
-        endif;
+        }
 
         // Bypass - Si l'utilisateur courant n'est pas habilité  à modifié le contenu.
-        if (('page' === $post_type) && ! current_user_can('edit_page', $post_id)) :
+        if (('page' === $post_type) && ! current_user_can('edit_page', $post_id)) {
             return;
-        endif;
+        }
 
-        if (('page' !== $post_type) && ! current_user_can('edit_post', $post_id)) :
+        if (('page' !== $post_type) && ! current_user_can('edit_post', $post_id)) {
             return;
-        endif;
+        }
 
         // Bypass - Si la vérification de l'existance du post est en échec.
-        if (! $post = get_post($post_id)) :
+        if (! $post = get_post($post_id)) {
             return;
-        endif;
+        }
 
         // Bypass - Si le type de post définit dans la requête est différent du type de post du contenu a éditer.
-        if ($post_type !== $post->post_type) :
+        if ($post_type !== $post->post_type) {
             return;
-        endif;
+        }
 
         // Bypass - Si aucune métadonnée n'est déclarée pour le type de post.
-        if (empty($this->metaKeys[$post_type])) :
+        if (empty($this->metaKeys[$post_type])) {
             return;
-        endif;
+        }
 
         // Déclaration des variables
         $meta_keys = $this->metaKeys[$post_type];
@@ -155,19 +154,19 @@ class PostTypePostMeta implements PostTypePostMetaContract
         $request = [];
 
         // Récupération des metadonnés en requête $_POST
-        foreach ($this->metaKeys[$post_type] as $key) :
-            if ($value = request()->post($key)) :
+        foreach ($this->metaKeys[$post_type] as $key) {
+            if ($value = request()->post($key)) {
                 $request[$key] = $value;
-            endif;
-        endforeach;
+            }
+        }
 
-        foreach ($meta_keys as $meta_key) :
+        foreach ($meta_keys as $meta_key) {
             // Vérification d'existance de la metadonnées en base
             if ($_meta = $this->get($post_id, $meta_key)) :
                 $meta_exists += $_meta;
             endif;
 
-            if (! isset($request[$meta_key])) :
+            if (!isset($request[$meta_key])) :
                 continue;
             endif;
 
@@ -182,7 +181,7 @@ class PostTypePostMeta implements PostTypePostMetaContract
                 $meta_ids += array_keys($request[$meta_key]);
                 $postmeta[$meta_key] = $request[$meta_key];
             endif;
-        endforeach;
+        }
 
         // Suppression des metadonnées absente du processus de sauvegarde
         foreach ($meta_exists as $meta_id => $meta_value) :

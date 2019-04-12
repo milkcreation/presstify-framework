@@ -2,7 +2,7 @@
 
 namespace tiFy\User;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 use tiFy\User\Metadata\Metadata;
 use tiFy\User\Metadata\Option as MetaOption;
 use tiFy\User\Role\RoleManager;
@@ -12,7 +12,7 @@ use tiFy\User\Signin\SigninFactory;
 use tiFy\User\Signin\SigninManager;
 use tiFy\User\Signup\SignupManager;
 
-class UserServiceProvider extends AppServiceProvider
+class UserServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

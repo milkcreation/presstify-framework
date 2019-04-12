@@ -4,7 +4,7 @@ namespace tiFy\Template\Factory;
 
 use tiFy\Contracts\Template\FactoryLabels as FactoryLabelsContract;
 use tiFy\Contracts\Template\TemplateFactory;
-use tiFy\Kernel\Labels\LabelsBag;
+use tiFy\Support\LabelsBag;
 
 class FactoryLabels extends LabelsBag implements FactoryLabelsContract
 {

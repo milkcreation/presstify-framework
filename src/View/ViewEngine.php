@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\View;
 
 use League\Plates\Engine as LeaguePlatesEngine;
+use LogicException;
 use tiFy\Contracts\View\ViewEngine as ViewEngineContract;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 
 class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
 {
@@ -39,24 +40,22 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
      */
     public function __construct($attrs = [])
     {
-        if (is_string($attrs)) :
-            $directory = $attrs;
-            $attrs = compact('directory');
-        endif;
+        if (is_string($attrs)) {
+            $attrs = ['directory'=> $attrs];
+        }
 
-        $this->params = new ParamsBag(array_merge($this->attributes, $attrs));
+        $this->params = ParamsBag::createFromAttrs(array_merge($this->attributes, $attrs));
 
         $directory = $this->get('directory');
+        parent::__construct($directory && is_dir($directory) ? $directory : null, $this->get('ext'));
 
-        parent::__construct(is_dir($directory) ? $directory : null, $this->get('ext'));
-
-        if ($override_dir = $this->get('override_dir')) :
+        if ($override_dir = $this->get('override_dir')) {
             $this->setOverrideDir($override_dir);
-        endif;
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function all()
     {
@@ -64,7 +63,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function get($key, $default = '')
     {
@@ -72,7 +71,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getController($name)
     {
@@ -82,19 +81,17 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getOverrideDir($path = '')
     {
-        if ($this->folders->exists('_override')) :
-            return $this->folders->get('_override')->getPath() . ($path ? trim($path, '/') : '');
-        else :
-            return '';
-        endif;
+        return $this->folders->exists('_override')
+            ? $this->folders->get('_override')->getPath() . ($path ? trim($path, '/') : '')
+            : '';
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function has($key)
     {
@@ -102,7 +99,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function make($name, $args = [])
     {
@@ -113,28 +110,25 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function modifyFolder($name, $directory, $fallback = null)
     {
-        if ($folder = $this->getFolders()->get($name)) :
-            if (is_null($folder)) :
+        if ($folder = $this->getFolders()->get($name)) {
+            if (is_null($folder)) {
                 $fallback = $folder->getFallback();
-            endif;
-            $this
-                ->removeFolder($name)
-                ->addFolder($name, $directory, $fallback);
-        endif;
-
+            }
+            $this->removeFolder($name)->addFolder($name, $directory, $fallback);
+        }
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function set($key, $value)
     {
-        switch($key) :
+        switch($key) {
             case 'controller' :
                 $this->setController($value);
                 break;
@@ -150,13 +144,12 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
             default :
                 $this->params->set($key, $value);
                 break;
-        endswitch;
-
+        }
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setController($controller)
     {
@@ -166,7 +159,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setDirectory($directory)
     {
@@ -176,7 +169,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setFileExtension($fileExtension)
     {
@@ -186,7 +179,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setOverrideDir($override_dir)
     {
@@ -194,12 +187,11 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
 
         try {
             $this->addFolder('_override', $override_dir, true);
-        } catch(\LogicException $e) {
+        } catch(LogicException $e) {
             if($this->getFolders()->get('_override')->getPath() !== $override_dir) :
                 $this->modifyFolder('_override', $override_dir);
             endif;
         }
-
         return $this;
     }
 }

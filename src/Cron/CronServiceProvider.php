@@ -2,9 +2,9 @@
 
 namespace tiFy\Cron;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 
-class CronServiceProvider extends AppServiceProvider
+class CronServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

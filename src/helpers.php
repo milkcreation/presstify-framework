@@ -1,46 +1,45 @@
 <?php declare(strict_types=1);
 
 use App\App;
-use tiFy\Contracts\Kernel\Assets;
-use tiFy\Contracts\Kernel\ParamsBag;
-use tiFy\Contracts\Cron\CronManager;
+use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
+use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Db\DbManager;
-use tiFy\Contracts\Http\Request;
-use tiFy\Http\RedirectResponse as HttpRedirect;
 use tiFy\Contracts\Field\FieldController;
 use tiFy\Contracts\Field\FieldManager;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
+use tiFy\Contracts\Http\RedirectResponse;
+use tiFy\Contracts\Http\Request;
+use tiFy\Contracts\Kernel\Assets;
+use tiFy\Contracts\Kernel\ClassLoader;
+use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Logger;
-use tiFy\Contracts\Kernel\Validator;
+use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\Partial\PartialFactory;
 use tiFy\Contracts\Partial\PartialManager;
-use tiFy\Contracts\PostType\PostTypeManager;
 use tiFy\Contracts\PostType\PostTypeFactory;
-use tiFy\Contracts\Routing\Router;
+use tiFy\Contracts\PostType\PostTypeManager;
 use tiFy\Contracts\Routing\Route;
+use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Url;
 use tiFy\Contracts\Routing\UrlFactory;
-use tiFy\Contracts\Taxonomy\TaxonomyManager;
+use tiFy\Contracts\Support\ClassInfo;
+use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;
-use tiFy\Contracts\View\ViewController;
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\Taxonomy\TaxonomyManager;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\UserManager;
-use tiFy\Kernel\Kernel;
-use tiFy\Kernel\ClassInfo\ClassInfo;
-use tiFy\Kernel\Composer\ClassLoader;
+use tiFy\Contracts\Validation\Validator;
+use tiFy\Contracts\View\ViewController;
+use tiFy\Contracts\View\ViewEngine;
+use tiFy\tiFy;
 
-/**
- * KERNEL
- * ---------------------------------------------------------------------------------------------------------------------
- */
 if (!function_exists('app')) {
     /**
      * App - Controleur de l'application.
@@ -54,8 +53,8 @@ if (!function_exists('app')) {
      */
     function app($abstract = null, $args = [])
     {
-        /** @var App $factory */
-        $factory = Kernel::App();
+        /* @var App $factory */
+        $factory = container('app');
 
         if (is_null($abstract)) {
             return $factory;
@@ -86,7 +85,7 @@ if (!function_exists('class_info')) {
      */
     function class_info($class): ClassInfo
     {
-        return Kernel::ClassInfo($class);
+        return app('class-info', [$class]);
     }
 }
 
@@ -98,7 +97,7 @@ if (!function_exists('class_loader')) {
      */
     function class_loader(): ClassLoader
     {
-        return Kernel::ClassLoader();
+        return container('class-loader');
     }
 }
 
@@ -114,16 +113,16 @@ if (!function_exists('config')) {
      * @param null|array|string Clé d'indice (Syntaxe à point permise)|Liste des attributs de configuration à définir.
      * @param mixed $default Valeur de retour par défaut lors de la récupération d'un attribut.
      *
-     * @return mixed|\tiFy\Kernel\Config\Config
+     * @return Config|mixed
      */
     function config($key = null, $default = null)
     {
-        /** @var \tiFy\Kernel\Config\Config $factory */
-        $factory = Kernel::Config();
+        /* @var Config $factory */
+        $factory = container('config');
 
         if (is_null($key)) {
             return $factory;
-        } elseif (is_array($key)){
+        } elseif (is_array($key)) {
             return $factory->set($key);
         } else {
             return $factory->get($key, $default);
@@ -138,13 +137,11 @@ if (!function_exists('container')) {
      *
      * @param string $abstract Nom de qualification du service à récupérer.
      *
-     * @return \tiFy\Container\Container
-     * @deprecated
-     *
+     * @return Container|mixed
      */
     function container($abstract = null)
     {
-        $factory = Kernel::Container();
+        $factory = tiFy::instance();
 
         if (is_null($abstract)) {
             return $factory;
@@ -163,7 +160,7 @@ if (!function_exists('cron')) {
      */
     function cron(?string $name = null)
     {
-        /** @var CronManager $manager */
+        /* @var CronManager $manager */
         $manager = app('cron');
 
         if (is_null($name)) {
@@ -183,7 +180,7 @@ if (!function_exists('db')) {
      */
     function db(?string $name = null)
     {
-        /** @var DbManager $manager */
+        /* @var DbManager $manager */
         $manager = app('db');
 
         if (is_null($name)) {
@@ -199,9 +196,9 @@ if (!function_exists('events')) {
      *
      * @return EventsManager
      */
-    function events()
+    function events(): EventsManager
     {
-        return Kernel::Events();
+        return app('events');
     }
 }
 
@@ -217,7 +214,7 @@ if (!function_exists('field')) {
      */
     function field($name = null, $id = null, $attrs = null)
     {
-        /** @var FieldManager $manager */
+        /* @var FieldManager $manager */
         $manager = app('field');
 
         if (is_null($name)) {
@@ -237,7 +234,7 @@ if (!function_exists('form')) {
      */
     function form($name = null)
     {
-        /** @var FormManager $factory */
+        /* @var FormManager $factory */
         $factory = app('form');
 
         if (is_null($name)) {
@@ -285,7 +282,7 @@ if (!function_exists('partial')) {
      */
     function partial(?string $name = null, $id = null, ?array $attrs = null)
     {
-        /** @var PartialManager $manager */
+        /* @var PartialManager $manager */
         $manager = app('partial');
 
         if (is_null($name)) {
@@ -297,13 +294,13 @@ if (!function_exists('partial')) {
 
 if (!function_exists('paths')) {
     /**
-     * Paths - Controleur des chemins vers les répertoires de l'application.
+     * Path - Controleur des chemins vers les répertoires de l'application.
      *
-     * @return \tiFy\Kernel\Filesystem\Paths
+     * @return Path
      */
-    function paths()
+    function paths(): Path
     {
-        return Kernel::Paths();
+        return container('path');
     }
 }
 
@@ -317,7 +314,7 @@ if (!function_exists('post_type')) {
      */
     function post_type($name = null)
     {
-        /** @var PostTypeManager $manager */
+        /* @var PostTypeManager $manager */
         $manager = app('post-type');
 
         if (is_null($name)) {
@@ -336,10 +333,14 @@ if (!function_exists('redirect')) {
      * @param array $headers Liste des entête HTTP
      * @param bool $secure Activation de la sécurisation
      *
-     * @return HttpRedirect
+     * @return RedirectResponse
      */
-    function redirect(?string $to = null, ?int $status = 302, ?array $headers = [], ?bool $secure = null)
-    {
+    function redirect(
+        ?string $to = null,
+        ?int $status = 302,
+        ?array $headers = [],
+        ?bool $secure = null
+    ): RedirectResponse {
         if (is_null($to)) {
             return app('redirect');
         }
@@ -359,21 +360,7 @@ if (!function_exists('request')) {
     }
 }
 
-if (! function_exists('resolve')) {
-    /**
-     * Resolve - Récupération d'une instance de service fourni par le conteneur d'injection de dépendances.
-     *
-     * @param string $name Nom de qualification du service
-     *
-     * @return null|object
-     */
-    function resolve($name)
-    {
-        return container($name);
-    }
-}
-
-if (! function_exists('route')) {
+if (!function_exists('route')) {
     /**
      * Routing - Récupération de l'url vers une route.
      *
@@ -401,7 +388,7 @@ if (!function_exists('route_exists')) {
     }
 }
 
-if (! function_exists('router')) {
+if (!function_exists('router')) {
     /**
      * Routing - Récupération de l'instance du controleur de routage ou déclaration d'une nouvelle route.
      *
@@ -412,7 +399,7 @@ if (! function_exists('router')) {
      */
     function router(?string $name = null, ?array $attrs = [])
     {
-        /** @var Router $factory */
+        /* @var Router $factory */
         $factory = app('router');
 
         if (is_null($name)) {
@@ -432,7 +419,7 @@ if (!function_exists('storage')) {
      */
     function storage(?string $name = null)
     {
-        /** @var StorageManager $manager */
+        /* @var StorageManager $manager */
         $manager = app('storage');
 
         if (is_null($name)) {
@@ -442,7 +429,7 @@ if (!function_exists('storage')) {
     }
 }
 
-if (! function_exists('taxonomy')) {
+if (!function_exists('taxonomy')) {
     /**
      * Récupération de l'instance du contrôleur de taxonomies ou instance d'une taxonomie déclarée.
      *
@@ -452,7 +439,7 @@ if (! function_exists('taxonomy')) {
      */
     function taxonomy(?string $name = null)
     {
-        /** @var TaxonomyManager $manager */
+        /* @var TaxonomyManager $manager */
         $manager = app('taxonomy');
 
         if (is_null($name)) {
@@ -473,7 +460,7 @@ if (!function_exists('template')) {
      */
     function template(?string $name = null, array $params = [])
     {
-        /** @var TemplateManager $manager */
+        /* @var TemplateManager $manager */
         $manager = app('template');
 
         if (is_null($name)) {
@@ -487,7 +474,7 @@ if (!function_exists('template')) {
     }
 }
 
-if (! function_exists('url')) {
+if (!function_exists('url')) {
     /**
      * Récupération de l'instance du contrôleur d'url.
      *
@@ -499,7 +486,7 @@ if (! function_exists('url')) {
     }
 }
 
-if (! function_exists('url_factory')) {
+if (!function_exists('url_factory')) {
     /**
      * Récupération de l'instance du contrôleur de traitement d'url.
      *
@@ -525,7 +512,7 @@ if (!function_exists('user')) {
     }
 }
 
-if (! function_exists('validator')) {
+if (!function_exists('validator')) {
     /**
      * Récupération d'un instance du contrôleur de validation.
      *
@@ -550,7 +537,8 @@ if (!function_exists('view')) {
      */
     function view($view = null, $data = [])
     {
-        $factory = Kernel::ViewEngine();
+        /* @var ViewEngine $factory */
+        $factory = app('viewer');
 
         if (func_num_args() === 0) {
             return $factory;

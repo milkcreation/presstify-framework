@@ -2,7 +2,7 @@
 
 namespace tiFy\Partial;
 
-use tiFy\App\Container\AppServiceProvider;
+use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Partial\PartialFactory;
 use tiFy\Partial\Partials\Accordion\Accordion;
 use tiFy\Partial\Partials\Breadcrumb\Breadcrumb;
@@ -19,7 +19,7 @@ use tiFy\Partial\Partials\Spinner\Spinner;
 use tiFy\Partial\Partials\Table\Table;
 use tiFy\Partial\Partials\Tag\Tag;
 
-class PartialServiceProvider extends AppServiceProvider
+class PartialServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

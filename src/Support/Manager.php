@@ -22,6 +22,8 @@ class Manager implements ManagerContract
     /**
      * CONSTRUCTEUR.
      *
+     * @param ContainerInterface $container Conteneur d'injection de dépendances.
+     *
      * @return void
      */
     public function __construct(ContainerInterface $container)
@@ -64,7 +66,7 @@ class Manager implements ManagerContract
     /**
      * @inheritdoc
      */
-    public function walk(&$item, $key = null)
+    public function walk(&$item, $key = null): void
     {
 
     }
