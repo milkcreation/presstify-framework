@@ -63,7 +63,7 @@ class Config extends ParamsBag implements ConfigContract
     public function defaults()
     {
         return [
-            'site_url' => env('SITE_URL')
+            'app_url' => env('APP_URL')
         ];
     }
 }

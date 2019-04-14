@@ -56,7 +56,9 @@ final class tiFy extends Container
         });
 
         add_action('after_setup_theme', function () {
-            $this->share('app', new App($this));
+            if (class_exists(App::class)) {
+                $this->share('app', new App($this));
+            }
         }, 0);
     }
 

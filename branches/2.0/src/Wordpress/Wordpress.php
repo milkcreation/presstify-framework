@@ -20,9 +20,9 @@ class Wordpress implements WordpressContract
      */
     public function __construct()
     {
-        if ($this->is()) :
-            config(['site_url' => site_url()]);
-        endif;
+        if ($this->is()) {
+            config(['app_url' => site_url()]);
+        }
     }
 
     /**
