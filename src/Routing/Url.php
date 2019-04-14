@@ -108,7 +108,7 @@ class Url implements UrlContract
     {
         $path = $path ? '/' . ltrim($path, '/') : '';
 
-        return config('site_url') . $path;
+        return config('app_url') . $path;
     }
 
     /**

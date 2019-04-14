@@ -54,7 +54,7 @@ class Application extends SfApplication
                 require_once $vendor_path;
                 $env = Dotenv::create($root_path);
                 $env->load();
-                $url = getenv('SITE_URL') ?: '';
+                $url = getenv('APP_URL') ?: '';
             endif;
         endif;
 
