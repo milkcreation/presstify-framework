@@ -8,7 +8,7 @@
 <?php
 echo partial('notice', [
     'attrs'   => $this->get('attrs', []),
-    'content' => $this->get('content', '') . $this->get('accept', ''),
+    'content' => $this->get('content', ''),
     'dismiss' => $this->get('dismiss', '')
 ]);
 ?>
