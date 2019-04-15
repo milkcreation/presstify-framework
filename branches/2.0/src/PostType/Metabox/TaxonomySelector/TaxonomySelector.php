@@ -70,6 +70,7 @@ class TaxonomySelector extends MetaboxWpPostController
         endif;
 
         $this->set('items', $items);
+        $this->set('value', get_post_meta($post->ID, $this->get('name'), true));
 
         return $this->viewer('content', $this->all());
     }
@@ -80,8 +81,9 @@ class TaxonomySelector extends MetaboxWpPostController
     public function defaults()
     {
         return [
-            'multiple'      => true,
-            'taxonomy'      => 'category'
+            'multiple' => true,
+            'name'     => '_related_tax',
+            'taxonomy' => 'category'
         ];
     }
 
@@ -90,7 +92,7 @@ class TaxonomySelector extends MetaboxWpPostController
      */
     public function header($post = null, $args = null, $null = null)
     {
-        return $this->item->getTitle() ? : __('Catégories associées', 'tify');
+        return $this->item->getTitle() ?: __('Catégories associées', 'tify');
     }
 
     /**
@@ -107,5 +109,15 @@ class TaxonomySelector extends MetaboxWpPostController
                 );
             }
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function metadatas()
+    {
+        return [
+            $this->get('name') => true
+        ];
     }
 }

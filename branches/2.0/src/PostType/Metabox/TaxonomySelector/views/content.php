@@ -8,12 +8,15 @@
     <?php echo field('hidden', ['name' => "tax_input[{$tax}][]", 'value' => '']); ?>
 <?php endforeach; ?>
 
+
 <?php if ($this->get('multiple', true)) : ?>
     <?php
     echo field(
         'checkbox-collection',
         [
-            'items' => $this->get('items', []),
+            'choices' => $this->get('items', []),
+            'name'    => $this->get('name'),
+            'value'   => $this->get('value')
         ]
     );
     ?>
@@ -22,7 +25,9 @@
     echo field(
         'radio-collection',
         [
-            'items' => $this->get('items', []),
+            'choices' => $this->get('items', []),
+            'name'    => $this->get('name'),
+            'value'   => $this->get('value')
         ]
     );
     ?>
