@@ -69,7 +69,6 @@ class WpQuery implements WpQueryContract
         if (preg_match('#^([\w]+)@wp$#', $ctag, $matches)) {
             $ctag = $matches[1];
         }
-
         return isset($this->ctags[$ctag]) ? call_user_func($this->ctags[$ctag]) : false;
     }
 

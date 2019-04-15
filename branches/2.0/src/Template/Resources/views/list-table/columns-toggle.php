@@ -7,7 +7,7 @@
  * @var tiFy\Template\Templates\ListTable\Contracts\ColumnsItem $col
  */
 ?>
-<?php foreach ($this->columns() as $col) {
+<?php foreach ($this->columns()->getHideable() as $col) {
     echo field('checkbox', [
         'after' => (string)field('label', [
             'content' => $col->getTitle(),

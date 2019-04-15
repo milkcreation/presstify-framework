@@ -4,13 +4,19 @@ namespace tiFy\Wordpress\PageHook;
 
 use Closure;
 use tiFy\Contracts\Routing\Route;
-use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;
 use tiFy\Support\ParamsBag;
+use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;
 use tiFy\Wordpress\Query\QueryPost;
 use WP_Post;
 
 class PageHookItem extends ParamsBag implements PageHookItemContract
 {
+    /**
+     * Description.
+     * @var string|Closure
+     */
+    protected $desc;
+
     /**
      * Nom de qualification.
      * @var string
@@ -30,6 +36,12 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     protected $route;
 
     /**
+     * Intitulé de qualification.
+     * @var string|Closure
+     */
+    protected $title;
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param string $name Nom de qualification.
@@ -41,29 +53,30 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     {
         $this->name = $name;
 
-        add_filter('display_post_states', function (array $post_states, WP_Post $post) {
-            if (($label = $this->get('display_post_states')) && $this->is($post)) :
-                if (!is_string($label)) :
-                    $label = $this->getTitle();
-                endif;
-                $post_states[] = $label;
-            endif;
+        $this->set($attrs)->parse();
 
+        add_filter('display_post_states', function (array $post_states, WP_Post $post) {
+            if (($label = $this->get('display_post_states')) && $this->is($post)) {
+                if (!is_string($label)) {
+                    $label = $this->getTitle();
+                }
+                $post_states[] = $label;
+            }
             return $post_states;
         }, 10, 2);
 
         add_action('edit_form_top', function (WP_Post $post) {
-            if (($label = $this->get('edit_form_notice')) && $this->is($post)) :
-                if (!is_string($label)) :
+            if (($label = $this->get('edit_form_notice')) && $this->is($post)) {
+                if (!is_string($label)) {
                     $label = sprintf(__('Vous éditez actuellement : %s.', 'tify'), $this->getTitle());
-                endif;
+                }
                 echo "<div class=\"notice notice-info inline\">\n\t<p>{$label}</p>\n</div>";
-            endif;
+            }
         });
 
         add_action('init', function () {
-            if (($rewrite = $this->get('rewrite')) && $this->exists()) :
-                if (preg_match('/(.*)@post_type/', $rewrite, $matches) && post_type_exists($matches[1])) :
+            if (($rewrite = $this->get('rewrite')) && $this->exists()) {
+                if (preg_match('/(.*)@post_type/', $rewrite, $matches) && post_type_exists($matches[1])) {
                     global $wp_rewrite, $wp_post_types;
 
                     $post_type = $matches[1];
@@ -77,44 +90,42 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                         'top'
                     );
 
-                    if ($this->post()->post_type === 'page') :
+                    if ($this->post()->post_type === 'page') {
                         add_rewrite_rule(
                             $this->post()->post_name . '/' . $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
                             'index.php?page_id=' . $this->post()->ID . '&paged=$matches[1]',
                             'top'
                         );
-                    else :
+                    } else {
                         add_rewrite_rule(
                             $this->post()->post_name . '/' . $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
-                            'index.php?p=' . $this->post()->ID . '&post_type=' . $this->post()->post_type . '&paged=$matches[1]',
+                            'index.php?p=' . $this->post()->ID . '&post_type=' . $this->post()->post_type .
+                            '&paged=$matches[1]',
                             'top'
                         );
-                    endif;
+                    }
 
                     add_filter('post_type_link', function (string $post_link, WP_Post $post) use ($post_type) {
-                        if ($post->post_type === $post_type) :
+                        if ($post->post_type === $post_type) {
                             return $this->post()->getPermalink() . $post->post_name;
-                        endif;
-
+                        }
                         return $post_link;
                     }, 99999, 2);
 
                     add_action('save_post', function (int $post_id) {
-                        if ($this->is($post_id)) :
+                        if ($this->is($post_id)) {
                             flush_rewrite_rules();
-                        endif;
+                        }
                     }, 999999);
-                endif;
-            endif;
+                }
+            }
         }, 999999);
 
         add_action('wp', function () {
-            if (($route = $this->get('route')) && is_callable($route) && $this->exists()) :
+            if (($route = $this->get('route')) && is_callable($route) && $this->exists()) {
                 $this->route = router()->get($this->getPath() . '[/page/{page:\d+}]', $route);
-            endif;
+            }
         }, 0);
-
-        $this->set($attrs)->parse();
     }
 
     /**
@@ -216,15 +227,13 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      */
     public function post()
     {
-        if (is_null($this->post)) :
-            if (!$post_id = $this->get('id')) :
+        if (is_null($this->post)) {
+            if (!$post_id = $this->get('id')) {
                 $this->set('id', $post_id = (int)get_option($this->get('option_name'), 0));
-            endif;
-
+            }
             $this->post = ($post_id && ($post = get_post($post_id)))
                 ? new QueryPost($post) : false;
-        endif;
-
+        }
         return $this->post;
     }
 

@@ -1,9 +1,11 @@
 <?php declare(strict_types=1);
 
 use App\App;
+use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
+use tiFy\Contracts\Database\Database;
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Db\DbManager;
 use tiFy\Contracts\Field\FieldController;
@@ -167,6 +169,26 @@ if (!function_exists('cron')) {
             return $manager;
         }
         return $manager->getItem($name);
+    }
+}
+
+if (!function_exists('database')) {
+    /**
+     * Récupération du gestionnaire de base de données ou Table de traitement de requête.
+     *
+     * @param string|null $table Nom de qualification de la table sur laquelle traiter les requête.
+     *
+     * @return Database|LaraDatabaseQueryBuilder|null
+     */
+    function database(?string $table = null)
+    {
+        /* @var Database $manager */
+        $manager = app('database');
+
+        if (is_null($table)) {
+            return $manager;
+        }
+        return $manager::table($table);
     }
 }
 
