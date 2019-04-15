@@ -72,6 +72,16 @@ interface Route extends
     public function getUrl(array $params = [], bool $absolute = true): string;
 
     /**
+     * Récupération de variable d'url de la route.
+     *
+     * @param string $key Clé d'indice de la variable.
+     * @param string $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getVar(string $key, $default = null);
+
+    /**
      * Récupération de la liste des arguments passée dans la requête HTTP courante.
      *
      * @return array

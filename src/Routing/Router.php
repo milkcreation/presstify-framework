@@ -80,8 +80,8 @@ class Router extends LeagueRouter implements RouterContract
     public function current(): ?RouteContract
     {
         return $this->current = $this->current ?? $this->collect()->first(function (Route $item) {
-                return $item->isCurrent();
-            });
+            return $item->isCurrent();
+        });
     }
 
     /**

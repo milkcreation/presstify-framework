@@ -29,11 +29,13 @@ class Routing implements RoutingContract
     {
         $this->manager = $manager;
 
+        app()->get('wp.wp_query');
+
         app()->add('router.strategy.default', function () {
             return new TemplateStrategy();
         });
 
-        add_action('wp', function () {
+        add_action('parse_query', function () {
             try {
                 $response = $this->manager->dispatch(Request::convertToPsr());
 
@@ -62,6 +64,6 @@ class Routing implements RoutingContract
                     }
                 }
             }
-        }, 0);
+        });
     }
 }

@@ -87,6 +87,14 @@ class Route extends LeagueRoute implements RouteContract
     /**
      * @inheritdoc
      */
+    public function getVar(string $key, $default = null)
+    {
+        return $this->vars[$key] ?? $default;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function isCurrent(): bool
     {
         return $this->current;

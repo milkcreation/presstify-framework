@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Http\Response;
+use Wp_Query;
 use Zend\Diactoros\Response as PsrResponse;
 
 class Template extends ApplicationStrategy
@@ -56,24 +57,15 @@ class Template extends ApplicationStrategy
         /** @var RouteContract $route */
         $route->setCurrent();
 
-        /**
-         * @todo
-         * add_action('pre_get_posts', function (WP_Query &$wp_query) {
+        add_action('pre_get_posts', function (WP_Query &$wp_query) {
             if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
                 foreach ($this->cTags as $ct) {
                     $wp_query->{$ct} = false;
                 }
-
-                if ($query_args = $this->get('query_args', [])) {
-                    $wp_query->parse_query($query_args);
-                } else {
-                    $wp_query->query_vars = $wp_query->fill_query_vars([]);
-                }
-
+                $wp_query->query_vars = $wp_query->fill_query_vars([]);
                 $wp_query->is_route = true;
             }
         }, 0);
-         */
 
         $controller = $route->getCallable($this->getContainer());
 
