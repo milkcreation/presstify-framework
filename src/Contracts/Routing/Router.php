@@ -178,15 +178,4 @@ interface Router extends
      * @return string
      */
     public function url(string $name, array $parameters = [], bool $absolute = true);
-
-    /**
-     * Déclaration d'une route dédiée aux requêtes Ajax XmlHttpRequest (Xhr).
-     *
-     * @param string $path Chemin relatif vers la route.
-     * @param string|callable $handler Traitement de la route.
-     * @param string $method Méthode de la requête.
-     *
-     * @return Route
-     */
-    public function xhr(string $path, $handler, string $method = 'POST'): Route;
 }

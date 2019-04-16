@@ -96,6 +96,13 @@ interface Route extends
     public function isCurrent(): bool;
 
     /**
+     * Définition du nom de qualification de la route.
+     *
+     * @return Route
+     */
+    public function name(string $name): Route;
+
+    /**
      * Définition de l'indicateur de route en réponse à la requête courante.
      *
      * @return void

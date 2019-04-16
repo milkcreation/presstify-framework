@@ -6,11 +6,11 @@ use League\Route\{Route as LeagueRoute,
     RouteCollectionInterface as LeagueRouteCollection,
     RouteGroup as LeagueRouteGroup};
 use tiFy\Contracts\Routing\{RouteGroup as RouteGroupContract, Router as RouterContract};
-use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, StrategyAwareTrait};
+use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait, StrategyAwareTrait};
 
 class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
 {
-    use ContainerAwareTrait, RegisterMapAwareTrait, StrategyAwareTrait;
+    use ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait, StrategyAwareTrait;
 
     /**
      * Instance du contrôleur de routage.
@@ -76,5 +76,15 @@ class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
         }
 
         return $route;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function name(string $name): RouteGroupContract
+    {
+        $this->name = $name;
+
+        return $this;
     }
 }

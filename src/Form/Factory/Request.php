@@ -11,6 +11,12 @@ class Request extends ParamsBag implements FactoryRequest
     use ResolverTrait;
 
     /**
+     * Indicateur de traitement effectué.
+     * @var boolean
+     */
+    protected $handled = false;
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param FormFactory $form Instance du contrôleur de formulaire.
@@ -27,80 +33,88 @@ class Request extends ParamsBag implements FactoryRequest
      */
     public function handle()
     {
-        if (!wp_verify_nonce(request()->input('_token', ''), 'Form' . $this->form()->name())) :
+        if (!$this->handled && !$this->form->get('handle', true)) {
+            return null;
+        } else {
+            $this->handled = true;
+        }
+
+        if (!wp_verify_nonce(request()->input('_token', ''), 'Form' . $this->form()->name())) {
             return false;
-        endif;
+        }
 
         $this->prepare();
 
         $this->events('request.handle');
 
-        foreach($this->fields() as $name => $field) :
+        foreach ($this->fields() as $name => $field) {
             $check = true;
 
             $field->setValue($this->get($field->getSlug()));
 
             // Validation de champ requis.
-            if ($field->getRequired('check')) :
+            if ($field->getRequired('check')) {
                 $value = $field->getValue($field->getRequired('raw', true));
 
-                if (!$check = $this->validation()->call($field->getRequired('call'), $value, $field->getRequired('args', []))) :
+                if (!$check = $this->validation()->call(
+                    $field->getRequired('call'), $value,
+                    $field->getRequired('args', []))
+                ) {
                     $this->notices()->add(
                         'error',
                         sprintf($field->getRequired('message'), $field->getTitle()),
                         [
-                            'type'    => 'field',
-                            'field'   => $field->getSlug(),
-                            'test'    => 'required'
+                            'type'  => 'field',
+                            'field' => $field->getSlug(),
+                            'test'  => 'required'
                         ]
                     );
-                endif;
-            endif;
+                }
+            }
 
             // Validations complémentaires.
-            if ($check) :
-                if ($validations = $field->get('validations', [])) :
+            if ($check) {
+                if ($validations = $field->get('validations', [])) {
                     $value = $field->getValue($field->getRequired('raw', true));
 
-                    foreach ($validations as $validation) :
-                        if (!$this->validation()->call($validation['call'], $value, $validation['args'])) :
+                    foreach ($validations as $validation) {
+                        if (!$this->validation()->call($validation['call'], $value, $validation['args'])) {
                             $this->notices()->add(
                                 'error',
                                 sprintf($validation['message'], $field->getTitle()),
                                 [
-                                    'field'   => $field->getSlug()
+                                    'field' => $field->getSlug()
                                 ]
                             );
-                        endif;
-                    endforeach;
-                endif;
-            endif;
+                        }
+                    }
+                }
+            }
 
             $this->events('request.validation.field.' . $field->getType(), [&$field]);
             $this->events('request.validation.field', [&$field]);
-        endforeach;
+        }
 
         $this->events('request.validation', [&$this]);
 
-        if ($this->notices()->has('error')) :
+        if ($this->notices()->has('error')) {
             $this->resetFields();
 
             return null;
-        endif;
+        }
 
         $this->events('request.submit', [&$this]);
 
-        if ($this->notices()->has('error')) :
+        if ($this->notices()->has('error')) {
             $this->resetFields();
-
             return null;
-        endif;
+        }
 
         $this->events('request.success', [&$this]);
 
         $redirect = add_query_arg([
-                'success' => $this->form()->name()
-            ],
+            'success' => $this->form()->name()
+        ],
             $this->get(
                 '_http_referer',
                 request()->server('HTTP_REFERER')
@@ -110,11 +124,10 @@ class Request extends ParamsBag implements FactoryRequest
 
         $this->events('request.redirect', [&$redirect]);
 
-        if ($redirect) :
+        if ($redirect) {
             wp_redirect($redirect);
             exit;
-        endif;
-
+        }
         return null;
     }
 
@@ -127,13 +140,12 @@ class Request extends ParamsBag implements FactoryRequest
 
         $attrs = call_user_func([request(), $this->form()->getMethod()]);
 
-        foreach($this->fields() as $field) :
-            if (isset($attrs[$field->getName()]) && ($field->getSlug() !== $field->getName())) :
+        foreach ($this->fields() as $field) {
+            if (isset($attrs[$field->getName()]) && ($field->getSlug() !== $field->getName())) {
                 $attrs[$field->getSlug()] = $attrs[$field->getName()];
                 unset($attrs[$field->getName()]);
-            endif;
-        endforeach;
-
+            }
+        }
         $this->set($attrs)->parse();
     }
 
@@ -142,10 +154,10 @@ class Request extends ParamsBag implements FactoryRequest
      */
     public function resetFields()
     {
-        foreach($this->fields() as $field) :
-            if (!$field->supports('transport')) :
+        foreach ($this->fields() as $field) {
+            if (!$field->supports('transport')) {
                 $field->resetValue();
-            endif;
-        endforeach;
+            }
+        }
     }
 }
