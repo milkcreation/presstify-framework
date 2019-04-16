@@ -18,11 +18,20 @@ interface QueryPost extends ParamsBag
     /**
      * Récupération d'une instance basée sur l'identifiant de qualification d'un post.
      *
-     * @param int $post_id
+     * @param int $post_id Identifiant de qualification.
      *
      * @return static
      */
     public static function createFromId($post_id): ?QueryPost;
+
+    /**
+     * Récupération d'une instance basée sur le nom de qualification d'un post.
+     *
+     * @param string $post_name Nom de qualification
+     *
+     * @return static
+     */
+    public static function createFromName(string $post_name): ?QueryPost;
 
     /**
      * Récupération de l'identifiant de qualification de l'auteur original.

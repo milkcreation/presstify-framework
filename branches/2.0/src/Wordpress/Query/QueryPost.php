@@ -5,6 +5,7 @@ namespace tiFy\Wordpress\Query;
 use tiFy\Wordpress\Contracts\QueryPost as QueryPostContract;
 use tiFy\Support\ParamsBag;
 use WP_Post;
+use WP_Query;
 use WP_Term_Query;
 
 class QueryPost extends ParamsBag implements QueryPostContract
@@ -46,6 +47,15 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         return ($post_id && is_numeric($post_id) && ($wp_post = get_post($post_id)) && ($wp_post instanceof WP_Post))
             ? new static($wp_post) : null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function createFromName(string $post_name): ?QueryPostContract
+    {
+        return (($wp_post = (new WP_Query)->query(['name' => $post_name, 'post_type' => 'any', 'posts_per_page' => 1]))
+            && ($wp_post[0] instanceof WP_Post)) ? new static($wp_post[0]) : null;
     }
 
     /**

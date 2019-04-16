@@ -256,9 +256,9 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     {
         $this->events('form.prepare', [&$this]);
 
-        foreach ($this->fields() as $field) :
+        foreach ($this->fields() as $field) {
             $field->prepare();
-        endforeach;
+        }
 
         $this->prepared = true;
 
@@ -270,9 +270,9 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function render()
     {
-        if (!$this->prepared) :
+        if (!$this->prepared) {
             $this->prepare();
-        endif;
+        }
 
         $this->renderPrepare();
 
@@ -289,41 +289,41 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function renderPrepare()
     {
         // Attributs HTML du champ.
-        if (!$this->has('attrs.id')) :
+        if (!$this->has('attrs.id')) {
             $this->set('attrs.id', "Form-content--{$this->name()}");
-        endif;
-        if (!$this->get('attrs.id')) :
+        }
+        if (!$this->get('attrs.id')) {
             $this->pull('attrs.id');
-        endif;
+        }
 
         $default_class = "Form-content Form-content--{$this->name()}";
-        if (!$this->has('attrs.class')) :
+        if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $default_class);
-        else :
+        } else {
             $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
-        endif;
-        if (!$this->get('attrs.class')) :
+        }
+        if (!$this->get('attrs.class')) {
             $this->pull('attrs.class');
-        endif;
+        }
 
         $this->set('attrs.action', $this->getAction() .
             ($this->option('anchor') && ($id = $this->get('attrs.id'))
                 ? "#{$id}" : '')
         );
         $this->set('attrs.method', $this->getMethod());
-        if ($enctype = $this->get('enctype')) :
+        if ($enctype = $this->get('enctype')) {
             $this->set('attrs.enctype', $enctype);
-        endif;
+        }
 
         // Activation de l'agencement des éléments.
-        if ($grid = $this->get('grid')) :
+        if ($grid = $this->get('grid')) {
             $grid = is_array($grid) ? $grid : [];
 
             $this->set("attrs.data-grid", 'true');
             $this->set("attrs.data-grid_gutter", $grid['gutter'] ?? 0);
-        endif;
+        }
 
-        if ($this->onSuccess()) :
+        if ($this->onSuccess()) {
             $this->notices()->add('success', $this->notices()->params('success.message'));
 
             assets()->addInlineJs(
@@ -334,10 +334,10 @@ class FormFactory extends ParamsBag implements FormFactoryContract
                 'both',
                 true
             );
-        endif;
+        }
 
-        foreach ($this->fields() as $field) :
+        foreach ($this->fields() as $field) {
             $field->renderPrepare();
-        endforeach;
+        }
     }
 }

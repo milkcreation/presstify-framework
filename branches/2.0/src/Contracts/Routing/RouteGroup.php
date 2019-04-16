@@ -22,4 +22,11 @@ interface RouteGroup extends
      * @return string
      */
     public function getPrefix(): string;
+
+    /**
+     * Définition du nom de qualification de la route.
+     *
+     * @return Route
+     */
+    public function name(string $name): RouteGroup;
 }

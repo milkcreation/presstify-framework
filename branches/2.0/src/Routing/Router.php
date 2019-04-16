@@ -11,12 +11,12 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterContract};
 use tiFy\Http\RedirectResponse;
-use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait};
+use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait};
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
 class Router extends LeagueRouter implements RouterContract
 {
-    use ContainerAwareTrait, RegisterMapAwareTrait;
+    use ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait;
 
     /**
      * Instance de la route associée à la requête HTTP courante.
@@ -29,12 +29,6 @@ class Router extends LeagueRouter implements RouterContract
      * @var Route[]
      */
     protected $items;
-
-    /**
-     * Préfixe du chemin des routes XHR (requête Ajax XmlHttpRequest).
-     * @var string
-     */
-    protected $xhrPrefix = 'xhr';
 
     /**
      * CONSTRUCTEUR.
@@ -198,16 +192,6 @@ class Router extends LeagueRouter implements RouterContract
 
     /**
      * @inheritdoc
-     *
-     * @return RouteContract
-     */
-    public function post($path, $handler): LeagueRoute
-    {
-        return parent::post($path, $handler);
-    }
-
-    /**
-     * @inheritdoc
      */
     public function redirect(string $name, array $parameters = [], int $status = 302): void
     {
@@ -234,14 +218,6 @@ class Router extends LeagueRouter implements RouterContract
         } catch (InvalidArgumentException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode());
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function xhr(string $path, $handler, string $method = 'POST'): RouteContract
-    {
-        return $this->map($method, $this->xhrPrefix . '/' . ltrim($path, '/'), $handler);
     }
 
     /**

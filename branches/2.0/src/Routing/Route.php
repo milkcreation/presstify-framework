@@ -107,4 +107,14 @@ class Route extends LeagueRoute implements RouteContract
     {
         $this->current = true;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function name(string $name): RouteContract
+    {
+        $this->name = $name;
+
+        return $this;
+    }
 }
