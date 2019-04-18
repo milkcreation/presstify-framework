@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\PostType;
 
@@ -81,6 +81,14 @@ class PostTypePostMeta implements PostTypePostMetaContract
     public function isSingle($post_type, $meta_key)
     {
         return isset($this->single[$post_type][$meta_key]) ? $this->single[$post_type][$meta_key] : false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function keys(?string $post_type = ''): array
+    {
+       return $post_type ? ($this->metaKeys[$post_type] ?? []) : $this->metaKeys;
     }
 
     /**

@@ -118,19 +118,19 @@ class Navtabs extends PartialFactory implements NavtabsContract
     {
         check_ajax_referer('tiFyPartialNavTabs');
 
-        if (!$key = request()->post('key')) :
+        if (!$key = request()->post('key')) {
             wp_die(0);
-        endif;
+        }
 
         $raw_key = base64_decode($key);
-        if (!$raw_key = maybe_unserialize($raw_key)) :
+        if (!$raw_key = maybe_unserialize($raw_key)) {
             wp_die(0);
-        else :
+        } else {
             $raw_key = maybe_unserialize($raw_key);
-        endif;
+        };
 
-        $success = \update_user_meta(get_current_user_id(), 'navtab' . $raw_key['_screen_id'], $raw_key['name']);
+        $success = update_user_meta(get_current_user_id(), 'navtab' . $raw_key['_screen_id'], $raw_key['name']);
 
-        \wp_send_json(['success' => $success]);
+        wp_send_json(['success' => $success]);
     }
 }

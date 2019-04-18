@@ -9,7 +9,7 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '[aria-control="navtabs"] li:not(.active) > a[data-toggle="tab"]', function (e) {
         var key = $(this).data('key');
 
-        $.ajax({
+        /*$.ajax({
             'url':      tify.ajax_url,
             'type' :    'POST',
             'data' :    {
@@ -17,7 +17,7 @@ jQuery(document).ready(function ($) {
                 key :           key,
                 _ajax_nonce :   tiFyPartialNavtabs._ajax_nonce
             }
-        });
+        });*/
     });
 
     var

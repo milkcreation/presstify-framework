@@ -2,7 +2,7 @@
 
 namespace tiFy\Wordpress\Media;
 
-use tiFy\Contracts\Kernel\Encrypter;
+use tiFy\Contracts\Encryption\Encrypter;
 use tiFy\Wordpress\Contracts\Download as DownloadContract;
 use WP_Post;
 
@@ -40,38 +40,80 @@ class Download implements DownloadContract
         });
 
         add_filter('media_row_actions', function ($actions, WP_Post $post, $detached) {
-            $actions['wp_media_dl'] = "<a href=\"" . $this->url($post->ID) . "\">" . __('Télécharger',
-                    'tify') . "</a>";
-
+            $actions['wp_media_dl'] = "<a href=\"" . $this->url($post->ID) . "\">" . __('Télécharger', 'tify') . "</a>";
             return $actions;
         }, 99, 3);
 
         events()->on('wp.media.download.register', function ($abspath, DownloadContract $mediaDownload) {
-            if (in_array($abspath, self::$allowed)) :
+            if (in_array($abspath, self::$allowed)) {
                 return;
-            endif;
-
-            if (!$token = request()->get('wp_media_dl', false)) :
+            } elseif (!$token = request()->get('wp_media_dl', false)) {
                 return;
-            endif;
-
-            if (is_admin()) :
-                if (!$_wp_nonce = request()->get('_wpnonce', false)) :
+            } elseif (is_admin()) {
+                if (!$_wp_nonce = request()->get('_wpnonce', false)) {
                     return;
-                endif;
-                if (wp_verify_nonce($_wp_nonce, "wp.media.download.{$token}")) :
+                } elseif (wp_verify_nonce($_wp_nonce, "wp.media.download.{$token}")) {
                     $this->register($abspath);
-                endif;
-            else :
+                }
+            } else {
                 $media = $this->encrypter->decrypt($token);
 
-                if (is_numeric($media)) :
-                    if (get_post_meta($media, '_tify_media_download_token', true) === $token) :
-                        $this->register($abspath);
-                    endif;
+                if (is_numeric($media) && get_post_meta($media, '_tify_media_download_token', true) === $token) {
+                    $this->register($abspath);
+                }
+            }
+        });
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function register($file)
+    {
+        if (preg_match('#^' . preg_quote(ABSPATH, DIRECTORY_SEPARATOR) . '#', $file)) :
+            $abspath = $file;
+        else :
+            if (is_numeric($file)) :
+                $url = wp_get_attachment_url(absint($file));
+            else :
+                $url = $file;
+            endif;
+
+            $rel = trim(preg_replace('/' . preg_quote(site_url('/'), '/') . '/', '', $url), '/');
+            $abspath = ABSPATH . $rel;
+        endif;
+
+        if (!file_exists($abspath)) :
+            return;
+        endif;
+
+        if (!in_array($abspath, self::$allowed)) :
+            array_push(self::$allowed, $abspath);
+        endif;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function url($file, $query_vars = [])
+    {
+        $vars = [];
+        if (is_admin()) :
+            $baseurl = wp_nonce_url(admin_url('/'), "wp.media.download.{$file}");
+            $vars['wp_media_dl'] = is_int($file) ? $file : urlencode_deep($file);
+        else :
+            $baseurl = home_url('/');
+            $token = $this->encrypter->encrypt($file);
+            if (is_numeric($file)) :
+                if ($token !== get_post_meta($file, '_tify_media_download_token', true)) :
+                    update_post_meta($file, '_tify_media_download_token', $token);
                 endif;
             endif;
-        });
+
+            $vars['wp_media_dl'] = $token;
+        endif;
+
+        return add_query_arg(array_merge($query_vars, $vars), $baseurl);
     }
 
     /**
@@ -197,56 +239,5 @@ class Download implements DownloadContract
         events()->trigger('wp.media.download.after', [$abspath, &$this]);
 
         exit;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function register($file)
-    {
-        if (preg_match('#^' . preg_quote(ABSPATH, DIRECTORY_SEPARATOR) . '#', $file)) :
-            $abspath = $file;
-        else :
-            if (is_numeric($file)) :
-                $url = wp_get_attachment_url(absint($file));
-            else :
-                $url = $file;
-            endif;
-
-            $rel = trim(preg_replace('/' . preg_quote(site_url('/'), '/') . '/', '', $url), '/');
-            $abspath = ABSPATH . $rel;
-        endif;
-
-        if (!file_exists($abspath)) :
-            return;
-        endif;
-
-        if (!in_array($abspath, self::$allowed)) :
-            array_push(self::$allowed, $abspath);
-        endif;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function url($file, $query_vars = [])
-    {
-        $vars = [];
-        if (is_admin()) :
-            $baseurl = wp_nonce_url(admin_url('/'), "wp.media.download.{$file}");
-            $vars['wp_media_dl'] = is_int($file) ? $file : urlencode_deep($file);
-        else :
-            $baseurl = home_url('/');
-            $token = $this->encrypter->encrypt($file);
-            if (is_numeric($file)) :
-                if ($token !== get_post_meta($file, '_tify_media_download_token', true)) :
-                    update_post_meta($file, '_tify_media_download_token', $token);
-                endif;
-            endif;
-
-            $vars['wp_media_dl'] = $token;
-        endif;
-
-        return add_query_arg(array_merge($query_vars, $vars), $baseurl);
     }
 }

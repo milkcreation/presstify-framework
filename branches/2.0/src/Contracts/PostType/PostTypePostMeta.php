@@ -36,6 +36,15 @@ interface PostTypePostMeta
     public function isSingle($post_type, $meta_key);
 
     /**
+     * Récupération de la liste des clés d'identification de métadonnées déclarées.
+     *
+     * @param string|null $post_type Nom de qualification du type de post
+     *
+     * @return array
+     */
+    public function keys(?string $post_type = ''): array;
+
+    /**
      * Déclaration d'une métadonnée.
      *
      * @param string $post_type Type de post.

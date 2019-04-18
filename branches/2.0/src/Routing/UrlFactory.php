@@ -27,10 +27,9 @@ class UrlFactory implements UrlFactoryContract
      */
     public function __construct($url)
     {
-        if (!$url instanceof UriInterface) :
+        if (!$url instanceof UriInterface) {
             $url = Http::createFromString($url);
-        endif;
-
+        }
         $this->url = $url;
     }
 
@@ -57,10 +56,9 @@ class UrlFactory implements UrlFactoryContract
      */
     public function deleteSegments($segment): UrlFactoryContract
     {
-        if (preg_match("#{$segment}#", $this->url->getPath(), $matches)) :
+        if (preg_match("#{$segment}#", $this->url->getPath(), $matches)) {
             $this->url = $this->url->withPath(preg_replace("#{$matches[0]}#", '', $this->url->getPath()));
-        endif;
-
+        }
         return $this;
     }
 

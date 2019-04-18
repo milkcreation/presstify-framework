@@ -4,6 +4,7 @@ namespace tiFy\Field\Fields\DatetimeJs;
 
 use tiFy\Contracts\Field\DatetimeJs as DatetimeJsContract;
 use tiFy\Field\FieldController;
+use tiFy\Support\DateTime;
 
 class DatetimeJs extends FieldController implements DatetimeJsContract
 {
@@ -102,7 +103,15 @@ class DatetimeJs extends FieldController implements DatetimeJsContract
      */
     public function display()
     {
-        $date = new \DateTime($this->getValue());
+        try {
+            $date = new DateTime($this->getValue());
+        } catch(\Exception $e) {
+            try {
+                $date = DateTime::createFromIsoFormat('DD/MM/YYYY', $this->getValue());
+            } catch(\Exception $e) {
+                return $e->getMessage();
+            }
+        }
 
         $Y = $date->format('Y');
         $m = $date->format('m');
