@@ -7,8 +7,8 @@ use tiFy\Contracts\User\RoleFactory;
 use tiFy\Contracts\User\UserManager;
 use tiFy\Wordpress\Contracts\User as UserContract;
 use tiFy\Wordpress\User\Signin\SigninFactory;
-use WP_User_Query;
 use WP_Roles;
+use WP_User_Query;
 
 class User implements UserContract
 {
@@ -35,7 +35,7 @@ class User implements UserContract
             }
         }, 0);
 
-        add_action('init', function() {
+        add_action('init', function () {
             foreach (config('user.signin', []) as $name => $attrs) {
                 $this->manager->signin()->register($name, $attrs);
             }
@@ -44,35 +44,35 @@ class User implements UserContract
             }
         }, 999998);
 
-        add_action('profile_update', function($user_id) {
+        add_action('profile_update', function ($user_id) {
             $this->manager->meta()->Save($user_id);
             $this->manager->option()->Save($user_id);
         }, 2);
 
-        add_action('user_register', function($user_id) {
+        add_action('user_register', function ($user_id) {
             $this->manager->meta()->Save($user_id);
             $this->manager->option()->Save($user_id);
         });
 
-        events()->on('user.role.factory.boot', function (RoleFactory $factory){
-            /** @var \WP_Roles $wp_roles */
+        events()->on('user.role.factory.boot', function (RoleFactory $factory) {
+            /* @var WP_Roles $wp_roles */
             global $wp_roles;
 
             $name = $factory->getName();
 
             /** @var \WP_Role $role */
-            if (!$role = $wp_roles->get_role($name)) :
+            if (!$role = $wp_roles->get_role($name)) {
                 $role = $wp_roles->add_role($name, $factory->get('display_name'));
-            elseif (($names = $wp_roles->get_names()) && ($names[$name] !== $factory->get('display_name'))) :
+            } elseif (($names = $wp_roles->get_names()) && ($names[$name] !== $factory->get('display_name'))) {
                 $wp_roles->remove_role($name);
                 $role = $wp_roles->add_role($name, $factory->get('display_name'));
-            endif;
+            }
 
-            foreach ($factory->get('capabilities', []) as $cap => $grant) :
-                if (!isset($role->capabilities[$cap]) || ($role->capabilities[$cap] !== $grant)) :
+            foreach ($factory->get('capabilities', []) as $cap => $grant) {
+                if (!isset($role->capabilities[$cap]) || ($role->capabilities[$cap] !== $grant)) {
                     $role->add_cap($cap, $grant);
-                endif;
-            endforeach;
+                }
+            }
         });
 
         $this->register();
@@ -100,10 +100,9 @@ class User implements UserContract
 
         $user_query = new WP_User_Query($query_args);
 
-        if (empty($user_query->get_results())) :
+        if (empty($user_query->get_results())) {
             return $users;
-        endif;
-
+        }
         return (new Collection($user_query->get_results()))->pluck($value, $key)->all();
     }
 
@@ -115,10 +114,9 @@ class User implements UserContract
         $wp_roles = new WP_Roles();
         $roles = $wp_roles->get_names();
 
-        if (!isset($roles[$role])) :
+        if (!isset($roles[$role])) {
             return $role;
-        endif;
-
+        }
         return translate_user_role($roles[$role]);
     }
 }

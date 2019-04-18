@@ -25,20 +25,20 @@ class PageHook implements PageHookContract
         $this->set(config('page-hook', []));
 
         add_action('init', function () {
-            if ($this->items) :
+            if ($this->items) {
                 /** @var MetaboxManager $metabox */
                 $metabox = app('metabox');
                 $metabox->add('PageHook-optionsNode', 'tify_options@options', [
-                    'title'     => __('Pages d\'accroche', 'tify'),
-                    'content'   => PageHookAdminOptions::class
+                    'title'   => __('Pages d\'accroche', 'tify'),
+                    'content' => PageHookAdminOptions::class
                 ]);
-            endif;
+            }
         });
 
         add_action('current_screen', function (WP_Screen $wp_screen) {
-            if ($wp_screen->id === 'settings_page_tify_options') :
+            if ($wp_screen->id === 'settings_page_tify_options') {
                 flush_rewrite_rules();
-            endif;
+            }
         });
     }
 
@@ -65,10 +65,9 @@ class PageHook implements PageHookContract
     {
         $keys = is_array($name) ? $name : [$name => $attrs];
 
-        foreach ($keys as $k => $v) :
+        foreach ($keys as $k => $v) {
             $this->items[$k] = new PageHookItem($k, $v);
-        endforeach;
-
+        }
         return $this;
     }
 }

@@ -102,6 +102,15 @@ interface QueryPost extends ParamsBag
     public function getMeta($meta_key, $single = false, $default = null);
 
     /**
+     * Récupération de la liste des indices de métadonnées.
+     *
+     * @param boolean $registered Indicateur de récupération de indices de metadonnés déclarés.
+     *
+     * @return array
+     */
+    public function getMetaKeys(bool $registered = true): array;
+
+    /**
      * Récupération d'une metadonnée de type multiple.
      *
      * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
@@ -242,4 +251,23 @@ interface QueryPost extends ParamsBag
      * @return bool
      */
     public function inTypes(array $post_types): bool;
+
+    /**
+     * Enregistrement en base de données.
+     *
+     * @param array $postdata Liste des données à enregistrer
+     *
+     * @return void
+     */
+    public function update($postdata);
+
+    /**
+     * Vérification des permissions de mise à jour d'une métadonnée
+     *
+     * @param string $meta_key
+     * @param mixed $meta_value
+     *
+     * @return bool
+     */
+    public function canUpdateMeta(string $meta_key, $meta_value): bool;
 }

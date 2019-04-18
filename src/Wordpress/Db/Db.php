@@ -25,9 +25,9 @@ class Db implements DbContract
         $this->manager = $manager;
 
         add_action('init', function () {
-            foreach(config('db', []) as $name => $attrs) :
+            foreach(config('db', []) as $name => $attrs) {
                 $this->manager->register($name, $attrs);
-            endforeach;
+            }
         }, 9);
     }
 }

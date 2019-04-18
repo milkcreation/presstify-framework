@@ -31,16 +31,16 @@ class Form implements FormContract
         });
 
         add_action('init', function () {
-            foreach (config('form', []) as $name => $attrs) :
+            foreach (config('form', []) as $name => $attrs) {
                 $this->manager->register($name, $attrs);
-            endforeach;
+            }
         }, 999999);
 
         add_action('wp', function () {
-            foreach ($this->manager->all() as $form) :
+            foreach ($this->manager->all() as $form) {
                 $this->manager->current($form);
                 $this->manager->reset();
-            endforeach;
+            }
         }, 999999);
     }
 }

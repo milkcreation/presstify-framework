@@ -27,64 +27,59 @@ class Taxonomy implements TaxonomyContract
         $this->manager = $manager;
 
         add_action('init', function () {
-            foreach (config('taxonomy', []) as $name => $attrs) :
+            foreach (config('taxonomy', []) as $name => $attrs) {
                 $this->manager->register($name, $attrs);
-            endforeach;
+            }
         }, 0);
 
-        add_action('init', function() {
+        add_action('init', function () {
             global $wp_taxonomies;
 
-            foreach($wp_taxonomies as $name => $attrs) :
-                if (!$this->manager->get($name)) :
+            foreach ($wp_taxonomies as $name => $attrs) {
+                if (!$this->manager->get($name)) {
                     $this->manager->register($name, get_object_vars($attrs));
-                endif;
-            endforeach;
+                }
+            }
         }, 999999);
 
         events()->on('taxonomy.factory.boot', function (TaxonomyFactory $factory) {
             global $wp_taxonomies;
 
-            if(!isset($wp_taxonomies[$factory->getName()])) :
+            if (!isset($wp_taxonomies[$factory->getName()])) {
                 register_taxonomy($factory->getName(), $factory->get('object_type', []), $factory->all());
-            endif;
+            }
 
             add_action('init', function () use ($factory) {
-                if ($post_types = $factory->get('object_type', [])) :
+                if ($post_types = $factory->get('object_type', [])) {
                     $post_types = is_array($post_types) ? $post_types : array_map('trim', explode(',', $post_types));
-                    foreach ($post_types as $post_type) :
+                    foreach ($post_types as $post_type) {
                         register_taxonomy_for_object_type($factory->getName(), $post_type);
-                    endforeach;
-                endif;
+                    }
+                }
             }, 25);
 
             add_action('admin_init', function () use ($factory) {
-                if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) :
+                if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
                     return;
-                elseif (defined('DOING_AJAX') && DOING_AJAX) :
+                } elseif (defined('DOING_AJAX') && DOING_AJAX) {
                     return;
-                elseif (!$initial_terms = $factory->get('initial_terms')) :
+                } elseif (!$initial_terms = $factory->get('initial_terms')) {
                     return;
-                endif;
-
-                foreach ($initial_terms as $slug => $name) :
-                    if (!$term = get_term_by('slug', $slug, $factory->getName())) :
+                }
+                foreach ($initial_terms as $slug => $name) {
+                    if (!$term = get_term_by('slug', $slug, $factory->getName())) {
                         wp_insert_term($name, $factory->getName(), ['slug' => $slug]);
-                    endif;
-                endforeach;
+                    }
+                }
             });
         });
 
         add_action('edited_term', function ($term_id, $tt_id, $taxonomy) {
-            // S'il s'agit d'une routine de sauvegarde automatique.
-            if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) :
+            if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
                 return;
-            endif;
-            // Si le script est executé via Ajax.
-            if (defined('DOING_AJAX') && DOING_AJAX) :
+            } elseif (defined('DOING_AJAX') && DOING_AJAX) {
                 return;
-            endif;
-
+            }
             $this->manager->term_meta()->save($term_id, $tt_id, $taxonomy);
         }, 10, 3);
     }
@@ -116,6 +111,6 @@ class Taxonomy implements TaxonomyContract
             'orderby'    => 'meta_value_num',
         ]);
 
-        return  (new WP_Term_Query())->query($args);
+        return (new WP_Term_Query())->query($args);
     }
 }

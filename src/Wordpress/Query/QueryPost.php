@@ -147,6 +147,18 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritdoc
      */
+    public function getMetaKeys(bool $registered = true): array
+    {
+        if($registered) {
+            return post_type()->post_meta()->keys($this->getType());
+        } else {
+            return get_post_custom_keys($this->getId()) ? : [];
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getMetaMulti($meta_key, $default = null)
     {
         return $this->getMeta($meta_key, false, $default);
@@ -285,5 +297,44 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function inTypes(array $post_types): bool
     {
         return in_array($this->getType(), $post_types);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function update($postdata)
+    {
+        $p = ParamsBag::createFromAttrs($postdata);
+        $columns = database()->getConnection()->getSchemaBuilder()->getColumnListing('posts');
+        $db = database('posts');
+
+        $update = [];
+        foreach($columns as $col) {
+            if ($p->has($col)) {
+                $update[$col] = $p->get($col);
+            }
+        }
+        if ($update) {
+            $db->where(['ID' => $this->getId()])->update($update);
+        }
+
+        if ($p->has('meta')) {
+            foreach($p->get('meta') as $k => $v) {
+                if ($this->canUpdateMeta($k, $v)) {
+                    database('postmeta')->updateOrInsert(
+                        ['post_id' => $this->getId(), 'meta_key' => $k],
+                        ['meta_value' => maybe_serialize($v)]
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canUpdateMeta(string $meta_key, $meta_value): bool
+    {
+        return in_array($meta_key, $this->getMetaKeys());
     }
 }

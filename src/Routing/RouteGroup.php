@@ -77,14 +77,4 @@ class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
 
         return $route;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function name(string $name): RouteGroupContract
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 }

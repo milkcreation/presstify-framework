@@ -145,6 +145,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      *      @var string $method Propriété 'method' de la balise <form/>.
      *      @var string $action Propriété 'action' de la balise <form/>.
      *      @var string $enctype Propriété 'enctype' de la balise <form/>.
+     *      @var boolean $handle Activation du traitement automatique de la requête de soumission du formulaire.
      *      @var array $attrs Liste des attributs complémentaires de la balise <form/>.
      *      @var boolean|array $grid Activation de l'agencement des éléments.
      *      @var array $addons Liste des attributs des addons actifs.
@@ -165,6 +166,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             'method'  => 'post',
             'action'  => '',
             'enctype' => '',
+            'handle'  => true,
             'attrs'   => [],
             'grid'    => false,
             'addons'  => [],

@@ -153,14 +153,18 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
      */
     public function parseDefaults()
     {
+        if (!$this->get('attrs.id')) {
+            $this->pull('attrs.id');
+        }
+
         $default_class = 'tiFyPartial-' . class_info($this)->getShortName() .
             ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex();
-        if (!$this->has('attrs.class')) :
+        if (!$this->has('attrs.class')) {
             $this->set(
                 'attrs.class',
                 $default_class
             );
-        else :
+        } else {
             $this->set(
                 'attrs.class',
                 sprintf(
@@ -168,14 +172,14 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
                     $default_class
                 )
             );
-        endif;
-        if (!$this->get('attrs.class')) :
+        }
+        if (!$this->get('attrs.class')) {
             $this->pull('attrs.class');
-        endif;
+        }
 
-        foreach($this->get('view', []) as $key => $value) :
+        foreach($this->get('view', []) as $key => $value) {
             $this->viewer()->set($key, $value);
-        endforeach;
+        }
     }
 
     /**
