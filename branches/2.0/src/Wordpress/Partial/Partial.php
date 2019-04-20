@@ -30,12 +30,12 @@ class Partial
                      'dropdown',
                      'holder',
                      'modal',
-                     'navtabs',
                      'notice',
                      'pagination',
                      'sidebar',
                      'slider',
                      'spinner',
+                     'tab',
                      'table',
                      'tag',
                  ] as $alias) {

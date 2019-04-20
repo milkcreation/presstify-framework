@@ -177,7 +177,7 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
             $this->pull('attrs.class');
         }
 
-        foreach($this->get('view', []) as $key => $value) {
+        foreach ($this->get('view', []) as $key => $value) {
             $this->viewer()->set($key, $value);
         }
     }
@@ -187,14 +187,12 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
      */
     public function viewer($view = null, $data = [])
     {
-        if (is_null($this->viewer)) :
+        if (is_null($this->viewer)) {
             $this->viewer = app()->get('partial.viewer', [$this]);
-        endif;
-
-        if (func_num_args() === 0) :
+        }
+        if (func_num_args() === 0) {
             return $this->viewer;
-        endif;
-
+        }
         return $this->viewer->make("_override::{$view}", $data);
     }
 }

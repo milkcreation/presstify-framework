@@ -63,14 +63,13 @@ class Select extends FieldController implements SelectContract
         parent::parse($attrs);
 
         $choices = $this->get('choices', []);
-
-        if (!$choices instanceof SelectChoices) :
+        if (!$choices instanceof SelectChoices) {
             $this->set('choices', new SelectChoices($choices, $this->getValue()));
-        endif;
+        }
 
-        if ($this->get('multiple')) :
+        if ($this->get('multiple')) {
             $this->push('attrs', 'multiple');
-        endif;
+        }
     }
 
     /**
@@ -78,8 +77,8 @@ class Select extends FieldController implements SelectContract
      */
     public function parseName()
     {
-        if ($name = $this->get('name')) :
+        if ($name = $this->get('name')) {
             $this->set('attrs.name', $this->get('multiple') ? "{$name}[]" : $name);
-        endif;
+        }
     }
 }

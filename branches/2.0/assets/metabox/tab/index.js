@@ -1,3 +1,6 @@
 /** DEPS */
-/** Bootstrap - Tab */
-import 'bootstrap/js/src/tab';
+/** tab */
+import 'partial/tab/index';
+
+/** CSS */
+import './css/styles.css';

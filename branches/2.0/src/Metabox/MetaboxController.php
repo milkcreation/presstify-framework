@@ -35,14 +35,11 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
 
         parent::__construct($args);
 
-        add_action(
-            'current_screen',
-            function ($wp_current_screen) {
-                if ($wp_current_screen->id === $this->item->getScreen()->getHookname()) :
-                    $this->load($wp_current_screen);
-                endif;
-            }
-        );
+        add_action('current_screen', function ($wp_current_screen) {
+            if ($wp_current_screen->id === $this->item->getScreen()->getHookname()) :
+                $this->load($wp_current_screen);
+            endif;
+        });
 
         $this->boot();
     }

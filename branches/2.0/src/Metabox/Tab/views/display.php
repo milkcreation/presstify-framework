@@ -1,6 +1,5 @@
 <?php
 ?>
-
 <div id="MetaboxTab-container--" class="MetaboxTab-container">
     <div class="hndle MetaboxTab-containerHeader">
         <h3 class="hndle">
@@ -12,12 +11,15 @@
         <div class="MetaboxTab-wrapperBack"></div>
         <div class="MetaboxTab-wrapperContent">
             <?php
-            echo partial(
-                'navtabs',
-                [
-                    'items' => $this->get('items', [])
+            echo partial('tab', [
+                'items' => $this->get('items', []),
+                'rotation' => [
+                    'left',
+                    'top',
+                    'default',
+                    'pills'
                 ]
-            );
+            ]);
             ?>
         </div>
     </div>

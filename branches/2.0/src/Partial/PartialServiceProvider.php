@@ -10,12 +10,12 @@ use tiFy\Partial\Partials\CookieNotice\CookieNotice;
 use tiFy\Partial\Partials\Dropdown\Dropdown;
 use tiFy\Partial\Partials\Holder\Holder;
 use tiFy\Partial\Partials\Modal\Modal;
-use tiFy\Partial\Partials\Navtabs\Navtabs;
 use tiFy\Partial\Partials\Notice\Notice;
 use tiFy\Partial\Partials\Pagination\Pagination;
 use tiFy\Partial\Partials\Sidebar\Sidebar;
 use tiFy\Partial\Partials\Slider\Slider;
 use tiFy\Partial\Partials\Spinner\Spinner;
+use tiFy\Partial\Partials\Tab\Tab;
 use tiFy\Partial\Partials\Table\Table;
 use tiFy\Partial\Partials\Tag\Tag;
 
@@ -35,12 +35,12 @@ class PartialServiceProvider extends ServiceProvider
         'partial.factory.dropdown',
         'partial.factory.holder',
         'partial.factory.modal',
-        'partial.factory.navtabs',
         'partial.factory.notice',
         'partial.factory.pagination',
         'partial.factory.sidebar',
         'partial.factory.slider',
         'partial.factory.spinner',
+        'partial.factory.tab',
         'partial.factory.table',
         'partial.factory.tag',
         'partial.viewer'
@@ -89,10 +89,6 @@ class PartialServiceProvider extends ServiceProvider
             return new Modal($id, $attrs);
         });
 
-        $this->getContainer()->add('partial.factory.navtabs', function (?string $id = null, ?array $attrs = null) {
-            return new Navtabs($id, $attrs);
-        });
-
         $this->getContainer()->add('partial.factory.notice', function (?string $id = null, ?array $attrs = null) {
             return new Notice($id, $attrs);
         });
@@ -111,6 +107,10 @@ class PartialServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('partial.factory.spinner', function (?string $id = null, ?array $attrs = null) {
             return new Spinner($id, $attrs);
+        });
+
+        $this->getContainer()->add('partial.factory.tab', function (?string $id = null, ?array $attrs = null) {
+            return new Tab($id, $attrs);
         });
 
         $this->getContainer()->add('partial.factory.table', function (?string $id = null, ?array $attrs = null) {
