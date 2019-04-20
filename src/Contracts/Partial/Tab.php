@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Partial;
 
-interface Navtabs extends PartialFactory
+interface Tab extends PartialFactory
 {
     /**
      * Mise à jour de l'onglet courant via Ajax.

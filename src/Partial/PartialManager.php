@@ -13,12 +13,12 @@ use tiFy\Partial\Partials\CookieNotice\CookieNotice;
 use tiFy\Partial\Partials\Dropdown\Dropdown;
 use tiFy\Partial\Partials\Holder\Holder;
 use tiFy\Partial\Partials\Modal\Modal;
-use tiFy\Partial\Partials\Navtabs\Navtabs;
 use tiFy\Partial\Partials\Notice\Notice;
 use tiFy\Partial\Partials\Pagination\Pagination;
 use tiFy\Partial\Partials\Sidebar\Sidebar;
 use tiFy\Partial\Partials\Slider\Slider;
 use tiFy\Partial\Partials\Spinner\Spinner;
+use tiFy\Partial\Partials\Tab\Tab;
 use tiFy\Partial\Partials\Table\Table;
 use tiFy\Partial\Partials\Tag\Tag;
 
@@ -32,12 +32,12 @@ use tiFy\Partial\Partials\Tag\Tag;
  * @method static Dropdown Dropdown(string $id = null, array $attrs = [])
  * @method static Holder Holder(string $id = null, array $attrs = [])
  * @method static Modal Modal(string $id = null, array $attrs = [])
- * @method static Navtabs Navtabs(string $id = null, array $attrs = [])
  * @method static Notice Notice(string $id = null, array $attrs = [])
  * @method static Pagination Pagination(string $id = null, array $attrs = [])
  * @method static Sidebar Sidebar(string $id = null, array $attrs = [])
  * @method static Slider Slider(string $id = null, array $attrs = [])
  * @method static Spinner Spinner(string $id = null, array $attrs = [])
+ * @method static Tab Tab(string $id = null, array $attrs = [])
  * @method static Table Table(string $id = null, array $attrs = [])
  * @method static Tag Tag(string $id = null, array $attrs = [])
  */

@@ -5,7 +5,7 @@ namespace tiFy\Partial;
 use tiFy\View\ViewController;
 
 /**
- * Class FieldView
+ * Class PartialView
  *
  * @method string after()
  * @method string attrs()

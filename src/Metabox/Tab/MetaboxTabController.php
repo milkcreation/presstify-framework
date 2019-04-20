@@ -88,22 +88,6 @@ class MetaboxTabController extends ParamsBag
                     add_action('edit_user_profile', [$this, 'render']);
                     break;
             endswitch;
-
-            add_action('admin_enqueue_scripts', function () {
-                wp_enqueue_style(
-                    'MetaboxTab',
-                    assets()->url('metabox/tab/css/styles.css'),
-                    ['PartialNavtabs'],
-                    150216
-                );
-                wp_enqueue_script(
-                    'MetaboxTab',
-                    assets()->url('metabox/tab/js/scripts.js'),
-                    ['PartialNavtabs'],
-                    151019,
-                    true
-                );
-            });
         endif;
     }
 
@@ -131,7 +115,7 @@ class MetaboxTabController extends ParamsBag
                 'name'     => $item->getName(),
                 'title'    => call_user_func_array([$item, 'getHeader'], $args),
                 'parent'   => $item->getParent(),
-                'content'  => call_user_func_array([$item, 'getContent'], $args),
+                'content'  => '<div class="MetaboxTab-content">' . call_user_func_array([$item, 'getContent'], $args) . '</div>',
                 'args'     => $args,
                 'position' => $item->getPosition(),
                 // @todo 'current'   => (get_user_meta(get_current_user_id(), 'navtab' . get_current_screen()->id, true) === $node->getName())
