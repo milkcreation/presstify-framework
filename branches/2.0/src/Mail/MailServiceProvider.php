@@ -4,7 +4,7 @@ namespace tiFy\Mail;
 
 use tiFy\Container\ServiceProvider;
 use tiFy\Mail\Adapter\PhpMailer as AdapterPhpMailer;
-use PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class MailServiceProvider extends ServiceProvider
 {

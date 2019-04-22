@@ -2,9 +2,9 @@
 
 namespace tiFy\Mail\Adapter;
 
-use PHPMailer as LibPhpMailer;
+use PHPMailer\PHPMailer\PHPMailer as LibPhpMailer;
 use tiFy\Contracts\Mail\LibraryAdapter;
-use phpmailerException;
+use Exception;
 
 class PhpMailer implements LibraryAdapter
 {
@@ -105,7 +105,7 @@ class PhpMailer implements LibraryAdapter
      */
     public function getHeaders()
     {
-        return explode($this->lib->LE, $this->lib->createHeader());
+        return explode($this->lib::getLE(), $this->lib->createHeader());
     }
 
     /**
@@ -131,7 +131,7 @@ class PhpMailer implements LibraryAdapter
     {
         try {
             return $this->lib->preSend();
-        } catch (phpmailerException $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -142,8 +142,8 @@ class PhpMailer implements LibraryAdapter
     public function send()
     {
         try {
-            return $this->lib->Send();
-        } catch (phpmailerException $e) {
+            return $this->lib->send();
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -207,8 +207,11 @@ class PhpMailer implements LibraryAdapter
      */
     public function setFrom($email, $name = '')
     {
-        $this->lib->setFrom($email, $name);
-
+        try {
+            $this->lib->setFrom($email, $name);
+        } catch (Exception $e) {
+            return $this;
+        }
         return $this;
     }
 

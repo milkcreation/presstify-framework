@@ -84,28 +84,28 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
         $this->name = $name;
         $this->index = self::$_index++;
 
-        if ($screen instanceof WpScreenContract) :
+        if ($screen instanceof WpScreenContract) {
             $this->screen = $screen;
-        else :
+        } else {
             add_action('admin_init', function () use ($screen) {
                 $this->screen = WpScreen::get($screen);
 
-                $content = $this->getContent();
+                $content = $this->get('content', '');
 
-                if (is_string($content) && class_exists($content)) :
+                if (is_string($content) && class_exists($content)) {
                     $controller = new $content($this, $this->getArgs());
-                elseif(is_object($content)) :
+                } elseif (is_object($content)) {
                     $controller = $content;
                     call_user_func_array($controller, [$this, $this->getArgs()]);
-                else :
+                } else {
                     $controller = null;
-                endif;
+                }
 
-                if ($controller instanceof MetaboxController) :
+                if ($controller instanceof MetaboxController) {
                     $this->set('controller', $controller);
-                endif;
+                }
             }, 999999);
-        endif;
+        }
 
         parent::__construct($attrs);
     }
@@ -131,11 +131,14 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
      */
     public function getContent()
     {
-        if ($this->get('controller') instanceof MetaboxController) :
-            return call_user_func_array([$this->get('controller'), 'content'], func_get_args());
-        else :
-            return $this->get('content', '');
-        endif;
+        $content = $this->get('controller') instanceof MetaboxController
+            ? call_user_func_array([$this->get('controller'), 'content'], func_get_args())
+            : $this->get('content', '');
+
+        if (is_callable($content)) {
+            $content = call_user_func_array($content, func_get_args());
+        }
+        return "<div class=\"MetaboxTab-content\">{$content}</div>";
     }
 
     /**

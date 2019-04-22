@@ -18,7 +18,6 @@ class MailerMessageView extends ViewController
         array_walk($contacts, function (&$item) {
             $item = isset($item[1]) ? "{$item[1]} <{$item[0]}>" : "{$item[0]}";
         });
-
         return $contacts;
     }
 }

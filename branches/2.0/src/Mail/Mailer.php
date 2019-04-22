@@ -58,7 +58,6 @@ class Mailer extends ParamsBag implements MailerContract
                 }
             }
         }
-
         return $output;
     }
 
@@ -74,51 +73,49 @@ class Mailer extends ParamsBag implements MailerContract
     {
         $output = (func_num_args() === 2) ? func_get_arg(1) : [];
 
-        if (is_string($contacts)) :
+        if (is_string($contacts)) {
             $email = '';
             $name = '';
             $bracket_pos = strpos($contacts, '<');
-            if ($bracket_pos !== false) :
-                if ($bracket_pos > 0) :
+            if ($bracket_pos !== false) {
+                if ($bracket_pos > 0) {
                     $name = substr($contacts, 0, $bracket_pos - 1);
                     $name = str_replace('"', '', $name);
                     $name = trim($name);
-                endif;
+                }
 
                 $email = substr($contacts, $bracket_pos + 1);
                 $email = str_replace('>', '', $email);
                 $email = trim($email);
-            elseif (!empty($contacts)) :
+            } elseif (!empty($contacts)) {
                 $email = $contacts;
-            endif;
-
-            if ($email && is_email($email)) :
+            }
+            if ($email && is_email($email)) {
                 $output[] = [$email, $name];
-            endif;
-        elseif (is_array($contacts)) :
+            }
+        } elseif (is_array($contacts)) {
             if ((count($contacts) === 2) &&
                 isset($contacts[0]) && isset($contacts[1]) &&
                 is_string($contacts[0]) && is_string($contacts[1])
-            ) :
-                if (is_email($contacts[0]) && !is_email($contacts[1])) :
+            ) {
+                if (is_email($contacts[0]) && !is_email($contacts[1])) {
                     $output[] = array_map('trim', $contacts);
-                endif;
-            else :
-                foreach ($contacts as $c) :
-                    if (is_string($c)) :
+                }
+            } else {
+                foreach ($contacts as $c) {
+                    if (is_string($c)) {
                         $output = $this->_parseContacts($c, $output);
-                    elseif (is_array($c)) :
+                    } elseif (is_array($c)) {
                         $email = $c[0] ?? null;
                         $name = $c[1] ?? '';
 
-                        if ($email && is_email($email)) :
+                        if ($email && is_email($email)) {
                             $output[] = [$email, $name];
-                        endif;
-                    endif;
-                endforeach;
-            endif;
-        endif;
-
+                        }
+                    }
+                }
+            }
+        }
         return $output;
     }
 
@@ -173,7 +170,6 @@ class Mailer extends ParamsBag implements MailerContract
         array_walk($message, function (&$item, $key) use ($header, $footer) {
             $item = $header[$key] . $item . $footer[$key];
         });
-
         return $message;
     }
 
@@ -194,7 +190,6 @@ class Mailer extends ParamsBag implements MailerContract
 
             $part = [$html, $text];
         }
-
         return $part;
     }
 
@@ -341,7 +336,6 @@ class Mailer extends ParamsBag implements MailerContract
         if (is_null($this->lib)) {
             $this->lib = app()->get('mailer.library');
         }
-
         return $this->lib;
     }
 
@@ -359,7 +353,6 @@ class Mailer extends ParamsBag implements MailerContract
             $queue = app()->get('mail.queue');
             return $queue->add($this->params, $date, $extras);
         }
-
         return 0;
     }
 
@@ -370,10 +363,9 @@ class Mailer extends ParamsBag implements MailerContract
     {
         $this->_parseParams($params);
 
-        if ($res = $this->getLib()->send()) :
+        if ($res = $this->getLib()->send()) {
             $this->lib = null;
-        endif;
-
+        }
         return $res;
     }
 
@@ -383,14 +375,11 @@ class Mailer extends ParamsBag implements MailerContract
     public function viewer($view = null, $data = [])
     {
         if (is_null($this->viewer)) {
-            $this->viewer = app()->get('mailer.message.viewer', $this->get('viewer', []));
-            $this->pull('viewer');
+            $this->viewer = app()->get('mailer.message.viewer', $this->pull('viewer', []));
         }
-
-        if (func_num_args() === 0) :
+        if (func_num_args() === 0) {
             return $this->viewer;
-        endif;
-
+        }
         return $this->viewer->make("_override::{$view}", $data);
     }
 }

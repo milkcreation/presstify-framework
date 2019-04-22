@@ -23,17 +23,14 @@ class PostTypeFieldItemController
     /**
      * CONSTRUCTEUR.
      *
-     * @param $name Nom de qualification.
+     * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
-     * @param AppInterface $app Classe de rappel du controleur de l'application associée.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [], AppInterface $app)
+    public function __construct($name, $attrs = [])
     {
-        parent::__construct($attrs, $app);
 
-        $this->app->appAddAction('current_screen', [$this, '_load']);
     }
 
     /**

@@ -71,7 +71,6 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
         if ($code && $this->has("notices.{$code}")) {
             $message = $this->get("notices.{$code}");
         }
-
         $this->notices()->add($type, $message, $datas);
 
         return $this;
@@ -109,7 +108,6 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
         if (!$redirect_url) {
             $redirect_url = $this->get('redirect_url', '');
         }
-
         return $redirect_url;
     }
 
@@ -121,7 +119,6 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
         if (!$redirect_url) {
             $redirect_url = $this->get('redirect_url', '');
         }
-
         return $redirect_url;
     }
 
@@ -178,7 +175,6 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
         if ($signin !== $this->getName()) {
             return null;
         }
-
         switch ($action = request()->get('action', 'login')) {
             default :
                 break;

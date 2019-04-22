@@ -107,21 +107,19 @@ class MetaboxTabController extends ParamsBag
          *
          * data-key=\"{$key}\"
          */
-
-        foreach ($this->items as $item) :
+        foreach ($this->items as $item) {
             $args = array_merge(func_get_args(), [$item->getArgs()]);
 
             $items[] = [
                 'name'     => $item->getName(),
                 'title'    => call_user_func_array([$item, 'getHeader'], $args),
                 'parent'   => $item->getParent(),
-                'content'  => '<div class="MetaboxTab-content">' . call_user_func_array([$item, 'getContent'], $args) . '</div>',
+                'content'  => call_user_func_array([$item, 'getContent'], $args),
                 'args'     => $args,
                 'position' => $item->getPosition(),
                 // @todo 'current'   => (get_user_meta(get_current_user_id(), 'navtab' . get_current_screen()->id, true) === $node->getName())
             ];
-        endforeach;
-
+        }
         return $items;
     }
 
@@ -132,20 +130,15 @@ class MetaboxTabController extends ParamsBag
      */
     public function render()
     {
-        $args = func_num_args() && ($this->screen->getObjectType() !== 'options')
-            ? func_get_args()
-            : [];
+        $args = func_num_args() && ($this->screen->getObjectType() !== 'options') ? func_get_args() : [];
 
         $title = $this->get('title', __('Réglages', 'tify'));
 
         echo view()
             ->setDirectory(__DIR__ . '/views')
-            ->render(
-                'display',
-                [
-                    'title' => $title instanceof Closure ? call_user_func_array($title, $args) : $title,
-                    'items' => call_user_func_array([$this, 'parseItems'], $args)
-                ]
-            );
+            ->render('display', [
+                'title' => $title instanceof Closure ? call_user_func_array($title, $args) : $title,
+                'items' => call_user_func_array([$this, 'parseItems'], $args)
+            ]);
     }
 }
