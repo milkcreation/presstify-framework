@@ -9,7 +9,6 @@ jQuery(document).ready(function($) {
             $closest = $self.closest('[data-control="notice"]');
 
         var o = JSON.parse(decodeURIComponent($closest.data('options')));
-
         $closest.attr('aria-loading', 'true');
         $.post(tify.ajax_url, {
             action: o.ajax_action,

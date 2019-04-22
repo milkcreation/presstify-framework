@@ -1,24 +1,27 @@
 <?php
 
-/**
- * @see https://github.com/google/recaptcha
- */
-
 namespace tiFy\Api\Recaptcha;
 
 use ReCaptcha\ReCaptcha as ReCaptchaSdk;
 use ReCaptcha\RequestMethod\SocketPost;
+use RuntimeException;
 use tiFy\Api\Recaptcha\Field\Recaptcha as RecaptchaField;
 use tiFy\Contracts\Api\Recaptcha as RecaptchaInterface;
-use tiFy\Field\FieldManager;
 
+/**
+ * Class Recaptcha
+ * @package tiFy\Api\Recaptcha
+ *
+ * @see https://github.com/google/recaptcha
+ */
 class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
 {
     /**
      * Liste des attributs de configuration.
      * @var array $attrs {
-     *      @var string $secretkey Clé secrète, requise pour la communication entre le site et Google. Veillez à ne surtout pas divulger cette clé !
-     *      @var string $sitekey Clé du site, utilisée dans le code HTML
+     * @var string $secretkey Clé secrète, requise pour la communication entre le site et Google. Veillez à ne surtout
+     *     pas divulger cette clé !
+     * @var string $sitekey Clé du site, utilisée dans le code HTML
      * }
      */
     protected $attributes = [];
@@ -40,35 +43,27 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
             parent::__construct($attrs['secretkey'], (ini_get('allow_url_fopen') ? null : new SocketPost));
             $this->attributes = $attrs;
 
-            add_action(
-                'after_setup_theme',
-                function() {
-                    /** @var FieldManager $field */
-                    $field = app('field');
+            field()->register('recaptcha', RecaptchaField::class);
 
-                    $field->register('recaptcha', RecaptchaField::class);
+            add_action('wp_footer', function () {
+                if ($this->widgets) {
+                    $js = "var onloadCallback=function(){";
+                    foreach ($this->widgets as $id => $params) {
+                        $js .= "let el=document.getElementById('{$id}');";
+                        $js .= "if(typeof(el)!='undefined' && el!=null){";
+                        $js .= "grecaptcha.render('{$id}', " . json_encode($params) . ");";
+                        $js .= "}";
+                    }
+                    $js .= "};";
+
+                    assets()->addInlineJs($js, 'user', true);
+                    ?>
+                    <script type="text/javascript"
+                            src="https://www.google.com/recaptcha/api.js?hl=<?php echo $this->getLanguage(); ?>&onload=onloadCallback&render=explicit"
+                            async defer></script><?php
                 }
-            );
-
-            add_action(
-                'wp_footer',
-                function () {
-                    if ($this->widgets) :
-                        $js = "var onloadCallback=function(){";
-                        foreach($this->widgets as $id => $params) :
-                            $js .= "let el=document.getElementById('{$id}');";
-                            $js .= "if(typeof(el)!='undefined' && el!=null){";
-                            $js .= "grecaptcha.render('{$id}', " . json_encode($params) . ");";
-                            $js .= "}";
-                        endforeach;
-                        $js .= "};";
-
-                        assets()->addInlineJs($js, 'user', true);
-                    ?><script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=<?php echo $this->getLanguage(); ?>&onload=onloadCallback&render=explicit" async defer></script><?php
-                    endif;
-                }
-            );
-        } catch (\RuntimeException $e) {
+            });
+        } catch (RuntimeException $e) {
             wp_die($e->getMessage(), __('Api reCaptcha : Erreur de configuration', 'tify'), $e->getCode());
         }
     }
@@ -94,7 +89,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addWidgetRender($id, $params = [])
     {
@@ -104,29 +99,24 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function create($attrs = [])
     {
-        return new static(
-            array_merge(
-                [
-                    'secretkey' => '',
-                    'sitekey'   => '',
-                ],
-                $attrs
-            )
-        );
+        return new static(array_merge([
+            'secretkey' => '',
+            'sitekey'   => '',
+        ], $attrs));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getLanguage()
     {
         global $locale;
 
-        switch ($locale) :
+        switch ($locale) {
             default :
                 list($lang, $indice) = preg_split('/_/', $locale, 2);
                 break;
@@ -163,13 +153,12 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
             case 'es_VE' :
                 $lang = 'es-419';
                 break;
-        endswitch;
-
+        }
         return $lang;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSiteKey()
     {
@@ -177,7 +166,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validation()
     {

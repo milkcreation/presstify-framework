@@ -1,24 +1,31 @@
 <?php
 
-namespace tiFy\Contracts\Api;
+namespace tiFy\Api\Facebook\Contracts;
 
-interface FacebookItemInterface
+interface FacebookLogin
 {
     /**
      * Initialisation du controleur.
      *
      * @return void
      */
-    public function boot();
+    public function boot(): void;
+
+    /**
+     * Récupération de l'instance du gestionnaire.
+     *
+     * @return Facebook
+     */
+    public function fb(): Facebook;
 
     /**
      * Traitement.
      *
      * @param string $action Nom de qualification de l'action.
      *
-     * @return string
+     * @return void
      */
-    public function process($action = '');
+    public function process($action = ''): void;
 
     /**
      * Url de l'action.
@@ -29,7 +36,7 @@ interface FacebookItemInterface
      *
      * @return string
      */
-    public function url($action = '', $permissions = ['email'], $redirect_url = '');
+    public function url($action = '', $permissions = ['email'], $redirect_url = ''): string;
 
     /**
      * Bouton de lancement de l'action.
@@ -39,5 +46,5 @@ interface FacebookItemInterface
      *
      * @return string
      */
-    public function trigger($action = '', $attrs = []);
+    public function trigger($action = '', $attrs = []): string;
 }

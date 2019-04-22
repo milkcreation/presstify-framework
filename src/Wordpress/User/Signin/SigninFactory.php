@@ -14,9 +14,9 @@ class SigninFactory extends tiFySigninFactory
     {
         add_action('init', [$this, 'handle']);
 
-        events()->on('user.signin.handle.login', [$this, 'handleLogin']);
+        events()->listen('user.signin.handle.login', [$this, 'handleLogin'], -999999);
 
-        events()->on('user.signin.handle.logout', [$this, 'handleLogout']);
+        events()->listen('user.signin.handle.logout', [$this, 'handleLogout'], -999999);
     }
 
     /**
