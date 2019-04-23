@@ -20,6 +20,7 @@ interface Router extends
     MiddlewareAwareInterface,
     RegisterMapAwareTrait,
     RouteCollectionInterface,
+    RouteCollectionAwareTrait,
     StrategyAwareInterface
 {
     /**
