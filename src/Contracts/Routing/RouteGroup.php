@@ -11,6 +11,7 @@ interface RouteGroup extends
     ContainerAwareTrait,
     MiddlewareAwareInterface,
     RegisterMapAwareTrait,
+    RouteCollectionAwareTrait,
     RouteCollectionInterface,
     RouteConditionHandlerInterface,
     StrategyAwareInterface,

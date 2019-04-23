@@ -91,10 +91,9 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function dispatch(ServerRequestInterface $request): ResponseInterface
     {
-        if (is_null($this->getStrategy())) :
+        if (is_null($this->getStrategy())) {
             $this->setStrategy($this->getContainer()->get('router.strategy.default'));
-        endif;
-
+        }
         return parent::dispatch($request);
     }
 

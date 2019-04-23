@@ -8,12 +8,6 @@ use tiFy\Contracts\Routing\Route as RouteContract;
 trait RouteCollectionAwareTrait
 {
     /**
-     * Préfixe du chemin des routes XHR (requête Ajax XmlHttpRequest).
-     * @var string
-     */
-    protected $xhrPrefix = 'xhr';
-
-    /**
      * {@inheritdoc}
      *
      * @return RouteContract
@@ -44,6 +38,6 @@ trait RouteCollectionAwareTrait
      */
     public function xhr(string $path, $handler, string $method = 'POST'): RouteContract
     {
-        return $this->map($method, $this->xhrPrefix . '/' . ltrim($path, '/'), $handler);
+        return $this->map($method, '/' . ltrim($path, '/'), $handler);
     }
 }
