@@ -66,6 +66,11 @@ class Template extends ApplicationStrategy
                 $wp_query->is_route = true;
             }
         }, 0);
+        add_action('wp', function () {
+            global $wp_query;
+            $wp_query->is_404 = false;
+            status_header(200);
+        });
 
         $controller = $route->getCallable($this->getContainer());
 
@@ -75,11 +80,6 @@ class Template extends ApplicationStrategy
 
         $psrResponse = new PsrResponse();
         if ($resolved instanceof ViewController) {
-            add_action('wp', function () {
-                global $wp_query;
-                $wp_query->is_404 = false;
-                status_header(200);
-            });
             add_action('template_redirect', function () use ($resolved) {
                 echo $resolved->render();
                 exit;
