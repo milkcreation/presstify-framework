@@ -1,30 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
-use Illuminate\Support\Collection as IlluminateCollection;
+use Illuminate\Support\Collection as laraCollection;
 use tiFy\Contracts\Kernel\Collection;
 
 interface FactoryFields extends FactoryResolver, Collection
 {
     /**
-     * Récupération de la liste des champs par ordre d'affichage.
+     * Récupération de la liste des champs par groupe d'appartenance.
      *
-     * @return IlluminateCollection|FactoryField[]
+     * @return laraCollection|FactoryField[]|null
      */
-    public function byGroup();
-
-    /**
-     * Récupération de la liste des champs par ordre d'affichage.
-     *
-     * @return FactoryField[]
-     */
-    public function byPosition();
-
-    /**
-     * Vérification d'existance de groupe.
-     *
-     * @return bool
-     */
-    public function hasGroup();
+    public function fromGroup(string $name): ?iterable;
 }

@@ -35,7 +35,7 @@ class Routing implements RoutingContract
             return new TemplateStrategy();
         });
 
-        add_action('parse_query', function () {
+        add_action('after_setup_theme', function () {
             try {
                 $response = $this->manager->dispatch(Request::convertToPsr());
 
@@ -64,6 +64,6 @@ class Routing implements RoutingContract
                     }
                 }
             }
-        });
+        }, 999999);
     }
 }

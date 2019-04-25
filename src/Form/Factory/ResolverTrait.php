@@ -9,6 +9,8 @@ use tiFy\Contracts\Form\FactoryButtons;
 use tiFy\Contracts\Form\FactoryEvents;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryFields;
+use tiFy\Contracts\Form\FactoryGroup;
+use tiFy\Contracts\Form\FactoryGroups;
 use tiFy\Contracts\Form\FactoryNotices;
 use tiFy\Contracts\Form\FactoryOptions;
 use tiFy\Contracts\Form\FactoryRequest;
@@ -142,6 +144,27 @@ trait ResolverTrait
     public function form()
     {
         return $this->form;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return FactoryGroup|null
+     */
+    public function fromGroup(string $name)
+    {
+        return $this->groups()->get($name);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return FactoryGroups|FactoryGroup[]
+     */
+    public function groups()
+    {
+        return $this->resolve("factory.groups.{$this->form()->name()}");
     }
 
     /**

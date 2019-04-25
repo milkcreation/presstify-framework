@@ -26,15 +26,14 @@ class FormManager implements FormManagerContract
     public function addonRegister($name, $controller)
     {
         app()->add("form.addon.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
-            if (is_object($controller) || $controller instanceof Closure) :
+            if (is_object($controller) || $controller instanceof Closure) {
                 return call_user_func_array($controller, [$name, $attrs, $form]);
-            elseif (class_exists($controller)) :
+            } elseif (class_exists($controller)) {
                 return new $controller($name, $attrs, $form);
-            else :
+            } else {
                 return app()->get('form.addon', [$name, $attrs, $form]);
-            endif;
+            }
         });
-
         return $this;
     }
 
@@ -52,15 +51,14 @@ class FormManager implements FormManagerContract
     public function buttonRegister($name, $controller)
     {
         app()->add("form.button.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
-            if (is_object($controller) || $controller instanceof Closure) :
+            if (is_object($controller) || $controller instanceof Closure) {
                 return call_user_func_array($controller, [$name, $attrs, $form]);
-            elseif (class_exists($controller)) :
+            } elseif (class_exists($controller)) {
                 return new $controller($name, $attrs, $form);
-            else :
+            } else {
                 return app()->get('form.button', [$name, $attrs, $form]);
-            endif;
+            }
         });
-
         return $this;
     }
 
@@ -69,17 +67,15 @@ class FormManager implements FormManagerContract
      */
     public function current($form = null)
     {
-        if (is_null($form)) :
+        if (is_null($form)) {
             return $this->current;
-        endif;
-
-        if (is_string($form)) :
+        } elseif (is_string($form)) {
             $form = $this->get($form);
-        endif;
+        }
 
-        if (!$form instanceof FormFactory) :
+        if (!$form instanceof FormFactory) {
             return null;
-        endif;
+        }
 
         $this->current = $form;
 
@@ -94,15 +90,14 @@ class FormManager implements FormManagerContract
     public function fieldRegister($name, $controller)
     {
         app()->add("form.field.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
-            if (is_object($controller) || $controller instanceof Closure) :
+            if (is_object($controller) || $controller instanceof Closure) {
                 return call_user_func_array($controller, [$name, $attrs, $form]);
-            elseif (class_exists($controller)) :
+            } elseif (class_exists($controller)) {
                 return new $controller($name, $attrs, $form);
-            else :
+            } else {
                 return app()->get('form.field', [$name, $attrs, $form]);
-            endif;
+            }
         });
-
         return $this;
     }
 
@@ -142,10 +137,9 @@ class FormManager implements FormManagerContract
      */
     public function reset()
     {
-        if ($this->current instanceof FormFactory) :
+        if ($this->current instanceof FormFactory) {
             $this->current->onResetCurrent();
-        endif;
-
+        }
         $this->current = null;
     }
 

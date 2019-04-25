@@ -46,7 +46,7 @@ interface FactoryField extends FactoryResolver, ParamsBag
     /**
      * Récupération du groupe d'appartenance.
      *
-     * @return int
+     * @return FactoryGroup
      */
     public function getGroup();
 

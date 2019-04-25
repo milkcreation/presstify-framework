@@ -19,6 +19,8 @@ use tiFy\Form\Factory\Buttons as FactoryButtons;
 use tiFy\Form\Factory\Events as FactoryEvents;
 use tiFy\Form\Factory\Field as FactoryField;
 use tiFy\Form\Factory\Fields as FactoryFields;
+use tiFy\Form\Factory\Group as FactoryGroup;
+use tiFy\Form\Factory\Groups as FactoryGroups;
 use tiFy\Form\Factory\Notices as FactoryNotices;
 use tiFy\Form\Factory\Options as FactoryOptions;
 use tiFy\Form\Factory\Request as FactoryRequest;
@@ -55,6 +57,8 @@ class FormServiceProvider extends ServiceProvider
         'form.factory.events',
         'form.factory.field',
         'form.factory.fields',
+        'form.factory.group',
+        'form.factory.groups',
         'form.factory.notices',
         'form.factory.options',
         'form.factory.request',
@@ -167,6 +171,14 @@ class FormServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('form.factory.fields', function ($fields, FormFactoryContract $form) {
             return new FactoryFields($fields, $form);
+        });
+
+        $this->getContainer()->add('form.factory.group', function ($attrs) {
+            return new FactoryGroup($attrs);
+        });
+
+        $this->getContainer()->add('form.factory.groups', function ($groups, FormFactoryContract $form) {
+            return new FactoryGroups($groups, $form);
         });
 
         $this->getContainer()->add('form.factory.notices', function ($notices, FormFactoryContract $form) {

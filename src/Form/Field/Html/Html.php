@@ -3,6 +3,7 @@
 namespace tiFy\Form\Field\Html;
 
 use tiFy\Form\FieldController;
+use Closure;
 
 class Html extends FieldController
 {
@@ -17,6 +18,8 @@ class Html extends FieldController
      */
     public function render()
     {
-        return $this->field()->getValue();
+        $value = $this->field()->getValue();
+
+        return ! $value instanceof Closure ? (string)$value : call_user_func($value);
     }
 }

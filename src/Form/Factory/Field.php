@@ -63,7 +63,7 @@ class Field extends ParamsBag implements FactoryField
         'before'      => '',
         'after'       => '',
         'label'       => true,
-        'group'       => 0,
+        'group'       => '',
         'position'    => 0,
         'type'        => 'html',
         'name'        => '',
@@ -162,7 +162,7 @@ class Field extends ParamsBag implements FactoryField
      */
     public function getGroup()
     {
-        return $this->get('group', 0);
+        return $this->fromGroup($this->get('group', ''));
     }
 
     /**

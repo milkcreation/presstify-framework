@@ -30,59 +30,27 @@ class Fields extends Collection implements FactoryFields
         $this->form = $form;
 
         // Déclaration des champs.
-        foreach ($fields as $slug => $attrs) :
-            if (!is_null($slug)) :
-                $this->items[$slug] = $this->resolve("factory.field", [$slug, $attrs, $this->form()]);
+        foreach ($fields as $slug => $attrs) {
+            if (!is_null($slug)) {
+                /* @var FactoryField $item */
+                $item = $this->items[$slug] = $this->resolve("factory.field", [$slug, $attrs, $this->form()]);
 
-                app()->share("form.factory.field.{$this->form()->name()}.{$slug}", $this->items[$slug]);
-            endif;
-        endforeach;
+                app()->share("form.factory.field.{$this->form()->name()}.{$slug}", $item);
 
-        // Ordonnacement des champs.
-        foreach ($this->byGroup() as $group) :
-            $max = $group->max(function (FactoryField $field) { return $field->getPosition(); });
-            $pad = 0;
-
-            $group->each(function (FactoryField $field) use (&$pad, $max) {
-                $number = 10000 * ($field->getGroup()+1);
-                $position = $field->getPosition() ? : ++$pad+$max;
-
-                return $field->setPosition(absint($number+$position));
-            });
-        endforeach;
-
-        $this->items = $this->byPosition();
+                if (!$item->getGroup()) {
+                    $this->groups()->set($item->get('group', ''), []);
+                }
+            }
+        }
     }
 
     /**
      * @inheritdoc
      */
-    public function byGroup()
+    public function fromGroup(string $name): ?iterable
     {
-        return $this->collect()->groupBy(function (FactoryField $field) {
-            return $field->getGroup();
-        })->all();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function byPosition()
-    {
-        return $this->collect()->sortBy(function (FactoryField $field) {
-            return $field->getPosition();
-        })->all();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasGroup()
-    {
-        return !empty(
-            $this->collect()->max(function (FactoryField $field) {
-                return $field->getGroup();
-            })
-        );
+        return $this->collect()->filter(function (FactoryField $field) use ($name) {
+            return $field->getGroup()->getName() === $name;
+        });
     }
 }
