@@ -53,6 +53,10 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             return $this->resolve('factory.fields', [$this->get('fields', []), $this]);
         });
 
+        app()->share("form.factory.groups.{$this->name()}", function () {
+            return $this->resolve('factory.groups', [$this->get('groups', []), $this]);
+        });
+
         app()->share("form.factory.notices.{$this->name()}", function () {
             return $this->resolve('factory.notices', [$this->get('notices', []), $this]);
         });
@@ -100,6 +104,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             'addons',
             'buttons',
             'fields',
+            'groups',
             'notices',
             'options',
             'request',
@@ -258,6 +263,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     {
         $this->events('form.prepare', [&$this]);
 
+        $this->groups()->prepare();
         foreach ($this->fields() as $field) {
             $field->prepare();
         }
@@ -278,11 +284,12 @@ class FormFactory extends ParamsBag implements FormFactoryContract
 
         $this->renderPrepare();
 
+        $groups = $this->groups()->getGrouped();
         $fields = $this->fields();
         $buttons = $this->buttons();
         $notices = $this->notices()->getMessages();
 
-        return $this->viewer('form', compact('buttons', 'fields', 'notices'));
+        return $this->viewer('form', compact('buttons', 'fields', 'groups', 'notices'));
     }
 
     /**

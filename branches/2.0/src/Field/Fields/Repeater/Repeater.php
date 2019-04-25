@@ -43,7 +43,7 @@ class Repeater extends FieldController implements RepeaterContract
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function boot()
     {
@@ -70,7 +70,7 @@ class Repeater extends FieldController implements RepeaterContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function enqueue_scripts()
     {
@@ -79,12 +79,10 @@ class Repeater extends FieldController implements RepeaterContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function parse($attrs = [])
     {
-        $this->set('button.content', __('Ajouter un élément', 'tify'));
-
         parent::parse($attrs);
 
         $this->set('attrs.class', trim(sprintf($this->get('attrs.class', '%s'), ' FieldRepeater')));
@@ -93,59 +91,55 @@ class Repeater extends FieldController implements RepeaterContract
 
         $this->set('attrs.data-control', 'repeater');
 
-        if (!$this->get('button.tag')) :
-            $this->set('button.tag', 'a');
-        endif;
-        if(($this->get('button.tag') === 'a') && !$this->get('button.attrs.href')) :
+        $button = $this->get('button');
+        $button = is_string($button) ? ['content' => $button] : $button;
+
+        $button = array_merge([
+            'tag' => 'a',
+            'content' => __('Ajouter un élément', 'tify')
+        ], $button);
+        $this->set('button', $button);
+
+        if(($this->get('button.tag') === 'a') && !$this->get('button.attrs.href')) {
             $this->set('button.attrs.href', "#{$this->get('attrs.id')}");
-        endif;
-        if (! $this->get('button.attrs.class')) :
+        }
+        if (! $this->get('button.attrs.class')) {
             $this->set('button.attrs.class', 'FieldRepeater-buttonAdd' . (is_admin() ? ' button-secondary' : ''));
-        endif;
+        }
         $this->set('button.attrs.data-control', 'repeater.trigger');
 
-        if ($sortable = $this->get('sortable')) :
-            if (!is_array($sortable)) :
+        if ($sortable = $this->get('sortable')) {
+            if (!is_array($sortable)) {
                 $sortable = [];
-            endif;
-            $this->set(
-                'sortable',
-                array_merge(
-                    [
-                        'placeholder' => 'FieldRepeater-itemPlaceholder',
-                        'axis'        => 'y'
-                    ],
-                    $sortable
-                )
-            );
-
+            }
+            $this->set('sortable', array_merge([
+                'placeholder' => 'FieldRepeater-itemPlaceholder',
+                'axis'        => 'y'
+            ], $sortable));
             $this->set('order', '__order_' . $this->getName());
-        endif;
+        }
 
-        $this->set(
-            'attrs.data-options',
-            [
-                'ajax'      => array_merge(
-                    [
-                        'url'    => admin_url('admin-ajax.php', 'relative'),
-                        'data'   => [
-                            'action'      => 'field_repeater',
-                            '_ajax_nonce' => wp_create_nonce('FieldRepeater' . $this->getId()),
-                            '_id'         => $this->getId(),
-                            '_viewer'     => $this->get('viewer'),
-                            'args'        => $this->get('args', []),
-                            'max'         => $this->get('max'),
-                            'name'        => $this->getName(),
-                            'order'       => $this->get('order'),
-                        ],
-                        'method' => 'post',
+        $this->set('attrs.data-options', [
+            'ajax'      => array_merge(
+                [
+                    'url'    => admin_url('admin-ajax.php', 'relative'),
+                    'data'   => [
+                        'action'      => 'field_repeater',
+                        '_ajax_nonce' => wp_create_nonce('FieldRepeater' . $this->getId()),
+                        '_id'         => $this->getId(),
+                        '_viewer'     => $this->get('viewer'),
+                        'args'        => $this->get('args', []),
+                        'max'         => $this->get('max'),
+                        'name'        => $this->getName(),
+                        'order'       => $this->get('order'),
                     ],
-                    $this->get('ajax', [])
-                ),
-                'removable' => $this->get('removable'),
-                'sortable'  => $this->get('sortable'),
-            ]
-        );
+                    'method' => 'post',
+                ],
+                $this->get('ajax', [])
+            ),
+            'removable' => $this->get('removable'),
+            'sortable'  => $this->get('sortable'),
+        ]);
 
         $this->set('value', array_values(Arr::wrap($this->get('value', []))));
     }
@@ -155,9 +149,9 @@ class Repeater extends FieldController implements RepeaterContract
      */
     public function parseDefaults()
     {
-        foreach($this->get('viewer', []) as $key => $value) :
+        foreach($this->get('viewer', []) as $key => $value) {
             $this->viewer()->set($key, $value);
-        endforeach;
+        }
     }
 
     /**
@@ -173,9 +167,9 @@ class Repeater extends FieldController implements RepeaterContract
 
         $max = $params->get('max');
 
-        if (($max > 0) && ($params->get('count') >= $max)) :
+        if (($max > 0) && ($params->get('count') >= $max)) {
             wp_send_json_error(__('Nombre de valeur maximum atteinte', 'tify'));
-        else :
+        } else {
             $this->set('name', $params->get('name'));
             $this->set('viewer', $params->get('_viewer', []));
 
@@ -188,6 +182,6 @@ class Repeater extends FieldController implements RepeaterContract
                     )
                 )
             );
-        endif;
+        }
     }
 }

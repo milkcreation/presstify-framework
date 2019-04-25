@@ -76,10 +76,15 @@ class Template extends ApplicationStrategy
 
         $args = array_values($route->getVars());
         array_push($args, $request);
-        $resolved = $controller(...$args);
 
         $psrResponse = new PsrResponse();
-        if ($resolved instanceof ViewController) {
+        add_action('template_redirect', function () use ($controller, $args, $psrResponse) {
+            echo $controller(...$args);
+            exit;
+        }, 1);
+
+
+        /*if ($resolved instanceof ViewController) {
             add_action('template_redirect', function () use ($resolved) {
                 echo $resolved->render();
                 exit;
@@ -90,7 +95,7 @@ class Template extends ApplicationStrategy
             $psrResponse = Response::convertToPsr($resolved);
         } else {
             $psrResponse->getBody()->write((string)$resolved);
-        }
+        }*/
 
         return $this->applyDefaultResponseHeaders($psrResponse);
     }
