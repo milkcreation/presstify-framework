@@ -12,12 +12,6 @@ use WP_Post;
 class PageHookItem extends ParamsBag implements PageHookItemContract
 {
     /**
-     * Description.
-     * @var string|Closure
-     */
-    protected $desc;
-
-    /**
      * Nom de qualification.
      * @var string
      */
@@ -34,12 +28,6 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      * @var Route
      */
     protected $route;
-
-    /**
-     * Intitulé de qualification.
-     * @var string|Closure
-     */
-    protected $title;
 
     /**
      * CONSTRUCTEUR.
@@ -121,11 +109,11 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             }
         }, 999999);
 
-        add_action('wp', function () {
+        add_action('after_setup_theme', function () {
             if (($route = $this->get('route')) && is_callable($route) && $this->exists()) {
                 $this->route = router()->get($this->getPath() . '[/page/{page:\d+}]', $route);
             }
-        }, 0);
+        }, 11);
     }
 
     /**
@@ -218,8 +206,12 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      */
     public function is($post = null)
     {
-        return ($this->exists() && ($post = get_post($post)))
-            ? ($this->post()->getId() === $post->ID) : false;
+        if (!$post && ($route = $this->route())) {
+            return router()->current() === $route;
+        } else {
+            return ($this->exists() && ($post = get_post($post)))
+                ? ($this->post()->getId() == $post->ID) : false;
+        }
     }
 
     /**

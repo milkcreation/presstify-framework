@@ -63,7 +63,7 @@ class Field extends ParamsBag implements FactoryField
         'before'      => '',
         'after'       => '',
         'label'       => true,
-        'group'       => '',
+        'group'       => 0,
         'position'    => 0,
         'type'        => 'html',
         'name'        => '',

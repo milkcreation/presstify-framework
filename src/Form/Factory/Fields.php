@@ -38,7 +38,7 @@ class Fields extends Collection implements FactoryFields
                 app()->share("form.factory.field.{$this->form()->name()}.{$slug}", $item);
 
                 if (!$item->getGroup()) {
-                    $this->groups()->set($item->get('group', ''), []);
+                    $this->groups()->set($item->get('group', 0), []);
                 }
             }
         }

@@ -48,7 +48,7 @@ class Groups extends Collection implements FactoryGroups
     /**
      * @inheritdoc
      */
-    public function getGrouped(string $parent = ''): iterable
+    public function getGrouped(string $parent = ''): ?iterable
     {
         return $this->grouped[$parent] ?? [];
     }

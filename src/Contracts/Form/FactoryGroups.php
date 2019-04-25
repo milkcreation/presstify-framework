@@ -11,7 +11,7 @@ interface FactoryGroups extends FactoryResolver, Collection
      *
      * @return FactoryGroup[]|null
      */
-    public function getGrouped(string $parent = ''): iterable;
+    public function getGrouped(string $parent = ''): ?iterable;
 
     /**
      * Récupération de l'indice incrémenté de qualification d'un élément.
