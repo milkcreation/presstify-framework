@@ -59,7 +59,7 @@ class Group extends ParamsBag implements FactoryGroup
             'after'    => '',
             'before'   => '',
             'attrs'    => [],
-            'parent'   => '',
+            'parent'   => null,
             'position' => null
         ];
     }
@@ -102,7 +102,7 @@ class Group extends ParamsBag implements FactoryGroup
      */
     public function getFields(): iterable
     {
-        return $this->fields()->fromGroup($this->getName());
+        return $this->fields()->fromGroup($this->getName()) ?: [];
     }
 
     /**
@@ -110,7 +110,7 @@ class Group extends ParamsBag implements FactoryGroup
      */
     public function getChilds(): iterable
     {
-        return $this->manager->getGrouped($this->getName());
+        return $this->getName() ? $this->manager->getGrouped($this->getName()) : [];
     }
 
     /**
