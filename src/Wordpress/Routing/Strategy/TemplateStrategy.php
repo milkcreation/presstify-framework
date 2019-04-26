@@ -83,20 +83,6 @@ class Template extends ApplicationStrategy
             exit;
         }, 1);
 
-
-        /*if ($resolved instanceof ViewController) {
-            add_action('template_redirect', function () use ($resolved) {
-                echo $resolved->render();
-                exit;
-            }, 1);
-        } elseif ($resolved instanceof ResponseInterface) {
-            $psrResponse = $resolved;
-        } elseif ($resolved instanceof SfResponse) {
-            $psrResponse = Response::convertToPsr($resolved);
-        } else {
-            $psrResponse->getBody()->write((string)$resolved);
-        }*/
-
         return $this->applyDefaultResponseHeaders($psrResponse);
     }
 }

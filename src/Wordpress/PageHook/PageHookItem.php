@@ -113,7 +113,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             if (($route = $this->get('route')) && is_callable($route) && $this->exists()) {
                 $this->route = router()->get($this->getPath() . '[/page/{page:\d+}]', $route);
             }
-        }, 11);
+        }, 25);
     }
 
     /**
