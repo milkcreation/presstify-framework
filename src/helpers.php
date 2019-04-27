@@ -41,6 +41,7 @@ use tiFy\Contracts\Validation\Validator;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\tiFy;
+use tiFy\Routing\Redirector;
 
 if (!function_exists('app')) {
     /**
@@ -355,18 +356,18 @@ if (!function_exists('redirect')) {
      * @param array $headers Liste des entête HTTP
      * @param bool $secure Activation de la sécurisation
      *
-     * @return RedirectResponse
+     * @return Redirector
      */
     function redirect(
         ?string $to = null,
         ?int $status = 302,
         ?array $headers = [],
         ?bool $secure = null
-    ): RedirectResponse {
+    ): Redirector {
         if (is_null($to)) {
             return app('redirect');
         }
-        return app('redirect', [$to, $status, $headers, $secure]);
+        return app('redirect')->to($to, $status, $headers, $secure);
     }
 }
 

@@ -10,12 +10,6 @@ use WP_Term_Query;
 class QueryTerms extends Collection implements QueryTermsContract
 {
     /**
-     * Classe de rappel de traitement d'un élément.
-     * @var string
-     */
-    protected $itemClass = QueryTerm::class;
-
-    /**
      * Instance de la requête de récupération des termes de Wordpress.
      * @var WP_Term_Query
      */
@@ -32,9 +26,7 @@ class QueryTerms extends Collection implements QueryTermsContract
     {
         $this->wp_term_query = $wp_term_query;
 
-        $items = $wp_term_query->terms ? : [];
-
-        array_walk($items, [$this, 'walk']);
+        $this->set($this->wp_term_query->terms ? : []);
     }
 
     /**
@@ -86,7 +78,7 @@ class QueryTerms extends Collection implements QueryTermsContract
      */
     public function walk($item, $key = null)
     {
-        $this->items[$key] = new $this->itemClass($item);
+        $this->items[$key] = new QueryTerm($item);
     }
 
     /**

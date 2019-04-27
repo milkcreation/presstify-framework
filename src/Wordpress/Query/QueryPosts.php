@@ -10,12 +10,6 @@ use WP_Query;
 class QueryPosts extends Collection implements QueryPostsContract
 {
     /**
-     * Classe de rappel de traitement d'un élément.
-     * @var string
-     */
-    protected $itemClass = QueryPost::class;
-
-    /**
      * Instance de la requête Wordpress de récupération des posts.
      * @var WP_Query
      */
@@ -32,8 +26,7 @@ class QueryPosts extends Collection implements QueryPostsContract
     {
         $this->wp_query = $wp_query;
 
-        $items = $wp_query->posts;
-        array_walk($items, [$this, 'walk']);
+        $this->set($this->wp_query->posts);
     }
 
     /**
@@ -91,7 +84,7 @@ class QueryPosts extends Collection implements QueryPostsContract
      */
     public function walk($item, $key = null)
     {
-        $this->items[$key] = new $this->itemClass($item);
+        $this->items[$key] = new QueryPost($item);
     }
 
     /**

@@ -9,7 +9,7 @@ use WP_Term;
 class QueryTerm extends ParamsBag implements QueryTermContract
 {
     /**
-     * Objet Term Wordpress.
+     * Instance de terme de taxonomie Wordpress.
      * @var WP_Term
      */
     protected $wp_term;
@@ -17,7 +17,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * CONSTRUCTEUR.
      *
-     * @param WP_Term $wp_term Objet terme Wordpress.
+     * @param WP_Term $wp_term Instance de terme de taxonomie Wordpress.
      *
      * @return void
      */
@@ -60,7 +60,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
      */
     public function getMeta($meta_key, $single = false, $default = null)
     {
-        return get_term_meta($this->getId(), $meta_key, $single) ? : $default;
+        return get_term_meta($this->getId(), $meta_key, $single) ?: $default;
     }
 
     /**

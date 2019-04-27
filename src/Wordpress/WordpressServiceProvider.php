@@ -21,6 +21,8 @@ use tiFy\Wordpress\Query\QueryPost;
 use tiFy\Wordpress\Query\QueryPosts;
 use tiFy\Wordpress\Query\QueryTerm;
 use tiFy\Wordpress\Query\QueryTerms;
+use tiFy\Wordpress\Query\QueryUser;
+use tiFy\Wordpress\Query\QueryUsers;
 use tiFy\Wordpress\Routing\Routing;
 use tiFy\Wordpress\Routing\WpQuery;
 use tiFy\Wordpress\Routing\WpScreen;
@@ -32,6 +34,8 @@ use WP_Post;
 use WP_Screen;
 use WP_Term;
 use WP_Term_Query;
+use WP_User;
+use WP_User_Query;
 
 class WordpressServiceProvider extends ServiceProvider
 {
@@ -59,6 +63,8 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.query.posts',
         'wp.query.term',
         'wp.query.terms',
+        'wp.query.user',
+        'wp.query.users',
         'wp.routing',
         'wp.taxonomy',
         'wp.template',
@@ -330,12 +336,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerQuery()
     {
-        $this->getContainer()->add('wp.query.posts', function(WP_Query $wp_query) {
-            return new QueryPosts($wp_query);
+        $this->getContainer()->add('wp.query.posts', function(?WP_Query $wp_query = null) {
+            return !is_null($wp_query) ? new QueryPosts($wp_query) : QueryPosts::createFromGlobals();
         });
 
-        $this->getContainer()->add('wp.query.post', function (WP_Post $wp_post) {
-            return new QueryPost($wp_post);
+        $this->getContainer()->add('wp.query.post', function (?WP_Post $wp_post = null) {
+            return !is_null($wp_post) ? new QueryPost($wp_post) : QueryPost::createFromGlobal();
         });
 
         $this->getContainer()->add('wp.query.terms', function(WP_Term_Query $wp_term_query) {
@@ -344,6 +350,14 @@ class WordpressServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('wp.query.term', function (WP_Term $wp_term) {
             return new QueryTerm($wp_term);
+        });
+
+        $this->getContainer()->add('wp.query.users', function(WP_User_Query $wp_user_query) {
+            return new QueryUsers($wp_user_query);
+        });
+
+        $this->getContainer()->add('wp.query.user', function (?WP_User $wp_user = null) {
+            return !is_null($wp_user) ? new QueryUser($wp_user) : QueryUser::createFromGlobal();
         });
     }
 

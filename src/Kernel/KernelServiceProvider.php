@@ -2,7 +2,6 @@
 
 namespace tiFy\Kernel;
 
-use tiFy\Http\RedirectResponse;
 use tiFy\Http\Request;
 use tiFy\Container\ServiceProvider;
 use tiFy\Kernel\Assets\Assets;
@@ -28,8 +27,7 @@ class KernelServiceProvider extends ServiceProvider
         'logger',
         'notices',
         'params.bag',
-        'request',
-        'redirect'
+        'request'
     ];
 
     /**
@@ -93,10 +91,6 @@ class KernelServiceProvider extends ServiceProvider
 
         $this->getContainer()->share('request', function () {
             return Request::setFromGlobals();
-        });
-
-        $this->getContainer()->add('redirect', function (?string $url, int $status = null, array $headers = []) {
-            return new RedirectResponse($url, $status, $headers);
         });
     }
 }
