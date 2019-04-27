@@ -10,7 +10,7 @@ use tiFy\Kernel\Collection\QueryCollection;
  * Class UserQueryCollection
  * @package tiFy\User\Query
  *
- * @deprecated
+ * @deprecated Utiliser \tiFy\Wordpress\Query\QueryUsers en remplacement.
  */
 class UserQueryCollection extends QueryCollection implements UserQueryCollectionContract
 {

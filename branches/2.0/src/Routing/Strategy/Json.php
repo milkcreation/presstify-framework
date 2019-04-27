@@ -22,7 +22,7 @@ class Json extends JsonStrategy
 
         $controller = $route->getCallable($this->getContainer());
 
-        $args = $route->getVars();
+        $args = array_values($route->getVars());
         array_push($args, $request);
         $resolved = $controller(...$args);
 

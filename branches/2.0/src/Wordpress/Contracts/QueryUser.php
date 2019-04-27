@@ -1,140 +1,151 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace tiFy\Contracts\User;
+namespace tiFy\Wordpress\Contracts;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
+use WP_User;
 
-/**
- * Interface UserQueryItem
- * @package tiFy\Contracts\User
- *
- * @deprecated Utiliser \tiFy\Wordpress\Query\QueryUser en remplacement.
- */
-interface UserQueryItem extends ParamsBag
+interface QueryUser extends ParamsBag
 {
+    /**
+     * Création d'un instance de la classe basée sur l'utilisateur courant.
+     *
+     * @return static
+     */
+    public static function createFromGlobal(): QueryUser;
+
+    /**
+     * Création d'une instance de la classe basée sur un identifiant de qualification valide.
+     *
+     * @param int $user_id Identifiant de qualification.
+     *
+     * @return static|null
+     */
+    public static function createFromId(int $user_id): ?QueryUser;
+
     /**
      * Vérification des habilitations.
      * @see WP_User::has_cap()
      * @see map_meta_cap()
      *
      * @param string $capability Nom de qalification de l'habiltation.
-     * @param int $object_id  Optionel. Identifiant de qualification de l'object à vérifier lorsque $capability est de type "meta".
+     * @param array $args Liste de paramètres dynamique passé en arguments.
      *
-     * @return bool
+     * @return boolean
      */
-    public function can($capability);
+    public function can(string $capability, array...$args): bool;
 
     /**
      * Récupération des renseignements biographiques.
      *
      * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 
     /**
      * Récupération du nom d'affichage publique.
      *
      * @return string
      */
-    public function getDisplayName();
+    public function getDisplayName(): string;
 
     /**
      * Récupération de l'email.
      *
      * @return string
      */
-    public function getEmail();
+    public function getEmail(): string;
 
     /**
      * Récupération du prénom.
      *
      * @return string
      */
-    public function getFirstName();
+    public function getFirstName(): string;
 
     /**
      * Récupération de l'identifiant de qualification Wordpress de l'utilisateur.
      *
      * @return int
      */
-    public function getId();
+    public function getId(): int;
 
     /**
      * Récupération du nom de famille.
      *
      * @return string
      */
-    public function getLastName();
+    public function getLastName(): string;
 
     /**
      * Récupération de l'identifiant de connection de l'utilisateur.
      *
      * @return string
      */
-    public function getLogin();
+    public function getLogin(): string;
 
     /**
      * Récupération du surnom.
      *
      * @return string
      */
-    public function getNicename();
+    public function getNicename(): string;
 
     /**
      * Récupération du pseudonyme.
      *
      * @return string
      */
-    public function getNickname();
+    public function getNickname(): string;
 
     /**
      * Récupération du mot de passe encrypté.
      *
      * @return string
      */
-    public function getPass();
+    public function getPass(): string;
 
     /**
      * Récupération de la date de création du compte utilisateur.
      *
      * @return string
      */
-    public function getRegistered();
+    public function getRegistered(): string;
 
     /**
      * Récupération de la liste des roles.
      *
      * @return array
      */
-    public function getRoles();
+    public function getRoles(): array;
 
     /**
      * Récupération de l'url du site internet associé à l'utilisateur.
      *
      * @return string
      */
-    public function getUrl();
+    public function getUrl(): string;
 
     /**
      * Récupération de l'objet utilisateur Wordpress associé.
      *
-     * @return \WP_User
+     * @return WP_User
      */
-    public function getUser();
+    public function getWpUser(): WP_User;
 
     /**
      * Vérification de l'appartenance à un roles.
      *
      * @param string $role Identifiant de qualification du rôle.
      *
-     * @return bool
+     * @return boolean
      */
-    public function hasRole($role);
+    public function hasRole(string $role): bool;
 
     /**
      * Vérifie si l'utilisateur est connecté.
      *
-     * @bool
+     * @return boolean
      */
-    public function isLoggedIn();
+    public function isLoggedIn(): bool;
 }

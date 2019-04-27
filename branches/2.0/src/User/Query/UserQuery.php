@@ -11,7 +11,7 @@ use WP_User_Query;
  * Class UserQuery
  * @package tiFy\User\Query
  *
- * @deprecated
+ * @deprecated Utiliser \tiFy\Wordpress\Query\QueryUsers en remplacement.
  */
 class UserQuery implements UserQueryContract
 {
@@ -31,7 +31,7 @@ class UserQuery implements UserQueryContract
      * Controleur de données d'une liste d'éléments.
      * @var string
      */
-    protected $collectionController = UserQueryCollection::class;
+    protected $collectionController = QueryUsers::class;
 
     /**
      * {@inheritdoc}

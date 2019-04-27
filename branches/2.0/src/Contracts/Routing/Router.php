@@ -158,18 +158,6 @@ interface Router extends
     public function isCurrentNamed(string $name): bool;
 
     /**
-     * Redirection vers une route déclarée.
-     * @see https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
-     *
-     * @param string $name Identifiant de qualification de la route
-     * @param array $parameters Liste des variables passées en argument.
-     * @param int $status Code de redirection.
-     *
-     * @return void
-     */
-    public function redirect(string $name, array $parameters = [], int $status = 302): void;
-
-    /**
      * Récupération de l'url d'une route.
      *
      * @param string $name Nom de qualification.

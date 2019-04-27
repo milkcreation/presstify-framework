@@ -5,6 +5,7 @@ namespace tiFy\Wordpress\Contracts;
 use tiFy\Contracts\Support\ParamsBag;
 use WP_Post;
 use WP_Term;
+use WP_User;
 
 interface QueryPost extends ParamsBag
 {
@@ -39,6 +40,25 @@ interface QueryPost extends ParamsBag
      * @return int
      */
     public function getAuthorId();
+
+    /**
+     * Récupération d'un commentaire associé.
+     *
+     * @param int $id Identifiant de qualification du commentaire.
+     *
+     * @return QueryComment|null
+     */
+    public function getComment(int $id): ?QueryComment;
+
+    /**
+     * Récupération de la liste des commentaires associé.
+     * @see https://codex.wordpress.org/Class_Reference/WP_Comment_Query
+     *
+     * @param array $args Liste des argument de récupération.
+     *
+     * @return QueryComments|QueryComment[]|null
+     */
+    public function getComments(array $args = []): iterable;
 
     /**
      * Récupération du contenu de description.
@@ -171,6 +191,8 @@ interface QueryPost extends ParamsBag
      * Récupération de l'object Post Wordpress associé.
      *
      * @return WP_Post
+     *
+     * @deprecated
      */
     public function getPost();
 
@@ -234,6 +256,13 @@ interface QueryPost extends ParamsBag
     public function getType();
 
     /**
+     * Récupération de l'instance de post Wordpress associée.
+     *
+     * @return WP_Post
+     */
+    public function getWpPost();
+
+    /**
      * Vérification d'existance de terme(s) de taxonomie pour le post associé.
      *
      * @param string|int|array Nom de qualification|Identifiant de qualification|Slug du terme ou liste de terme.
@@ -253,21 +282,32 @@ interface QueryPost extends ParamsBag
     public function inTypes(array $post_types): bool;
 
     /**
-     * Enregistrement en base de données.
+     * Sauvegarde des données du post en base.
      *
      * @param array $postdata Liste des données à enregistrer
      *
      * @return void
      */
-    public function update($postdata);
+    public function save($postdata): void;
 
     /**
-     * Vérification des permissions de mise à jour d'une métadonnée
+     * Sauvegarde (Ajout ou mise à jour) d'un commentaire associé au post.
      *
-     * @param string $meta_key
-     * @param mixed $meta_value
+     * @param string $content Contenu du commentaire.
+     * @param array $commentdata
+     * @param WP_User|null $wp_user
      *
-     * @return bool
+     * @return int
      */
-    public function canUpdateMeta(string $meta_key, $meta_value): bool;
+    public function saveComment(string $content, array $commentdata = [], ?WP_User $wp_user = null): int;
+
+    /**
+     * Sauvegarde (Ajout ou mise à jour) de metadonnées du post en base.
+     *
+     * @param string|array $key Indice de métadonnées ou tableau associatif clé/valeur.
+     * @param mixed $value Valeur de la métadonnées si key est un indice.
+     *
+     * @return void
+     */
+    public function saveMeta($key, $value = null): void;
 }

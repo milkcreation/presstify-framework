@@ -9,7 +9,7 @@ use tiFy\Kernel\Params\ParamsBag;
  * Class UserQueryItem
  * @package tiFy\User\Query
  *
- * @deprecated
+ * @deprecated Utiliser \tiFy\Wordpress\Query\QueryUser en remplacement.
  */
 class UserQueryItem extends ParamsBag implements UserQueryItemContract
 {

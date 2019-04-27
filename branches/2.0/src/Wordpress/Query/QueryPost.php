@@ -2,16 +2,18 @@
 
 namespace tiFy\Wordpress\Query;
 
+use tiFy\Wordpress\Contracts\QueryComment as QueryCommentContract;
 use tiFy\Wordpress\Contracts\QueryPost as QueryPostContract;
 use tiFy\Support\ParamsBag;
 use WP_Post;
 use WP_Query;
+use WP_User;
 use WP_Term_Query;
 
 class QueryPost extends ParamsBag implements QueryPostContract
 {
     /**
-     * Objet Post Wordpress.
+     * Instance de post Wordpress.
      * @var WP_Post
      */
     protected $wp_post;
@@ -19,7 +21,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * CONSTRUCTEUR.
      *
-     * @param WP_Post $wp_post Objet Post Wordpress.
+     * @param WP_Post $wp_post Instance de post Wordpress.
      *
      * @return void
      */
@@ -64,6 +66,22 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function getAuthorId()
     {
         return (int)$this->get('post_author', 0);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getComment(int $id): ?QueryCommentContract
+    {
+        return ($res = QueryComment::createFromId($id)) && ($res->getPostId() === $this->getId()) ? $res : null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getComments(array $args = []): iterable
+    {
+        return QueryComments::createFromArgs(array_merge(['post_id' => $this->getId()], $args)) ?: [];
     }
 
     /**
@@ -141,7 +159,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getMeta($meta_key, $single = false, $default = null)
     {
-        return get_post_meta($this->getId(), $meta_key, $single) ? : $default;
+        return get_post_meta($this->getId(), $meta_key, $single) ?: $default;
     }
 
     /**
@@ -149,10 +167,10 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getMetaKeys(bool $registered = true): array
     {
-        if($registered) {
+        if ($registered) {
             return post_type()->post_meta()->keys($this->getType());
         } else {
-            return get_post_custom_keys($this->getId()) ? : [];
+            return get_post_custom_keys($this->getId()) ?: [];
         }
     }
 
@@ -215,11 +233,13 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @deprecated
      */
     public function getPost()
     {
-        return $this->wp_post;
+        return $this->getWpPost();
     }
 
     /**
@@ -286,9 +306,17 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritdoc
      */
+    public function getWpPost()
+    {
+        return $this->wp_post;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function hasTerm($term, string $taxonomy): bool
     {
-        return has_term($term, $taxonomy, $this->getPost());
+        return has_term($term, $taxonomy, $this->getWpPost());
     }
 
     /**
@@ -302,14 +330,14 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritdoc
      */
-    public function update($postdata)
+    public function save($postdata): void
     {
         $p = ParamsBag::createFromAttrs($postdata);
         $columns = database()->getConnection()->getSchemaBuilder()->getColumnListing('posts');
         $db = database('posts');
 
         $update = [];
-        foreach($columns as $col) {
+        foreach ($columns as $col) {
             if ($p->has($col)) {
                 $update[$col] = $p->get($col);
             }
@@ -319,22 +347,52 @@ class QueryPost extends ParamsBag implements QueryPostContract
         }
 
         if ($p->has('meta')) {
-            foreach($p->get('meta') as $k => $v) {
-                if ($this->canUpdateMeta($k, $v)) {
-                    database('postmeta')->updateOrInsert(
-                        ['post_id' => $this->getId(), 'meta_key' => $k],
-                        ['meta_value' => maybe_serialize($v)]
-                    );
-                }
-            }
+            $this->saveMeta($p->get('meta'));
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function canUpdateMeta(string $meta_key, $meta_value): bool
+    public function saveComment(string $content, array $commentdata = [], ?WP_User $wp_user = null): int
     {
-        return in_array($meta_key, $this->getMetaKeys());
+        $user = $wp_user ? new QueryUser($wp_user) : QueryUser::createFromGlobal();
+
+        $commentdata = array_merge([
+            'comment_ID'           => 0,
+            'comment_post_ID'      => $this->getId(),
+            'comment_author'       => $user->getDisplayName(),
+            'comment_author_email' => $user->getEmail(),
+            'comment_author_url'   => $user->getUrl(),
+            'comment_author_IP'    => request()->ip(),
+            'comment_content'      => $content,
+            'comment_agent'        => request()->userAgent(),
+            'comment_type'         => '',
+            'comment_parent'       => 0,
+            'comment_approved'     => 1,
+            'user_id'              => $user->getId(),
+            'meta'                 => []
+        ], $commentdata);
+
+        if ($comment_id = wp_insert_comment($commentdata)) {
+            foreach ($commentdata['meta'] as $k => $v) {
+                add_comment_meta($comment_id, $k, $v);
+            }
+            return $comment_id;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function saveMeta($key, $value = null): void
+    {
+        $keys = is_array($key) ? $key : [$key => $value];
+
+        foreach ($keys as $k => $v) {
+            update_post_meta($this->getId(), $k, $v);
+        }
     }
 }

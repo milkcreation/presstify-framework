@@ -6,7 +6,7 @@ namespace tiFy\Contracts\User;
  * Interface UserQueryCollection
  * @package tiFy\Contracts\User
  *
- * @deprecated
+ * @deprecated Utiliser \tiFy\Wordpress\Query\QueryUsers en remplacement.
  */
 interface UserQueryCollection
 {

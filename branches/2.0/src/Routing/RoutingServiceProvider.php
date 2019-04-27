@@ -20,7 +20,8 @@ class RoutingServiceProvider extends ServiceProvider
         'router.emitter',
         'router.middleware.xhr',
         'router.strategy.default',
-        'router.strategy.json'
+        'router.strategy.json',
+        'redirect'
     ];
 
     /**
@@ -30,6 +31,7 @@ class RoutingServiceProvider extends ServiceProvider
     {
         $this->registerEmitter();
         $this->registerMiddleware();
+        $this->registerRedirect();
         $this->registerRouter();
         $this->registerStrategies();
         $this->registerUrl();
@@ -56,6 +58,18 @@ class RoutingServiceProvider extends ServiceProvider
     {
         $this->getContainer()->add('router.middleware.xhr', function () {
             return new Xhr();
+        });
+    }
+
+    /**
+     * Déclaration du controleur de redirection.
+     *
+     * @return void
+     */
+    public function registerRedirect()
+    {
+        $this->getContainer()->add('redirect', function () {
+            return new Redirector($this->getContainer()->get('router'));
         });
     }
 

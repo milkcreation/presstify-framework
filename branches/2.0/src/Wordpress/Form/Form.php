@@ -30,17 +30,14 @@ class Form implements FormContract
             return new Mailer($name, $attrs, $form);
         });
 
-        add_action('init', function () {
+        add_action('wp', function () {
             foreach (config('form', []) as $name => $attrs) {
                 $this->manager->register($name, $attrs);
             }
-        }, 999999);
-
-        add_action('wp', function () {
             foreach ($this->manager->all() as $form) {
                 $this->manager->current($form);
                 $this->manager->reset();
             }
-        }, 999999);
+        });
     }
 }

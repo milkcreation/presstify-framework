@@ -192,18 +192,6 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * @inheritdoc
      */
-    public function redirect(string $name, array $parameters = [], int $status = 302): void
-    {
-        if ($to = $this->url($name, $parameters)) {
-            $response = RedirectResponse::createPsr($to, $status);
-
-            $this->emit($response);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function url(string $name, array $parameters = [], bool $absolute = true): ?string
     {
         try {

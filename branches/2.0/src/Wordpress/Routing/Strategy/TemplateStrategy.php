@@ -77,12 +77,23 @@ class Template extends ApplicationStrategy
         $args = array_values($route->getVars());
         array_push($args, $request);
 
-        $psrResponse = new PsrResponse();
-        add_action('template_redirect', function () use ($controller, $args, $psrResponse) {
-            echo $controller(...$args);
+        add_action('template_redirect', function () use ($controller, $args) {
+            $resolved = $controller(...$args);
+
+            $psrResponse = new PsrResponse();
+            if ($resolved instanceof ViewController) {
+                $psrResponse->getBody()->write((string)$resolved);
+            } elseif ($resolved instanceof ResponseInterface) {
+                $psrResponse = $resolved;
+            } elseif ($resolved instanceof SfResponse) {
+                $psrResponse = Response::convertToPsr($resolved);
+            } else {
+                $psrResponse->getBody()->write((string)$resolved);
+            }
+            router()->emit($psrResponse);
             exit;
         }, 1);
 
-        return $this->applyDefaultResponseHeaders($psrResponse);
+        return $this->applyDefaultResponseHeaders(new PsrResponse());
     }
 }
