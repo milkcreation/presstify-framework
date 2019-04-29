@@ -27,9 +27,19 @@ class DateTime extends Carbon
     public function __construct($time = null, $tz = null)
     {
         if (is_null($tz)) {
-            $tz = self::$GlobalTimeZone;
+            $tz = self::getGlobalTimeZone();
         }
         parent::__construct($time, $tz);
+    }
+
+    /**
+     * Récupération du fuseau horaire par défaut.
+     *
+     * @return DateTimeZone
+     */
+    public static function getGlobalTimeZone()
+    {
+        return self::$GlobalTimeZone ? : self::setGlobalTimeZone();
     }
 
     /**
@@ -42,15 +52,5 @@ class DateTime extends Carbon
     public static function setGlobalTimeZone(?DateTimeZone $tz = null)
     {
         return self::$GlobalTimeZone = $tz ?: new DateTimeZone((request()->server('TZ') ?: 'UTC'));
-    }
-
-    /**
-     * Récupération du fuseau horaire par défaut.
-     *
-     * @return DateTimeZone
-     */
-    public function getGlobalTimeZone()
-    {
-        return self::$GlobalTimeZone ? : self::setGlobalTimeZone();
     }
 }

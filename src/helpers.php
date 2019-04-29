@@ -358,12 +358,8 @@ if (!function_exists('redirect')) {
      *
      * @return Redirector
      */
-    function redirect(
-        ?string $to = null,
-        ?int $status = 302,
-        ?array $headers = [],
-        ?bool $secure = null
-    ): Redirector {
+    function redirect(?string $to = null, ?int $status = 302, ?array $headers = [], ?bool $secure = null)
+    {
         if (is_null($to)) {
             return app('redirect');
         }
