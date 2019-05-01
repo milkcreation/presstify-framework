@@ -4,7 +4,7 @@ namespace tiFy\Wordpress\User;
 
 use Illuminate\Support\Collection;
 use tiFy\Contracts\User\RoleFactory;
-use tiFy\Contracts\User\UserManager;
+use tiFy\Contracts\User\User as tiFyUser;
 use tiFy\Wordpress\Contracts\User as UserContract;
 use tiFy\Wordpress\User\Signin\SigninFactory;
 use WP_Roles;
@@ -13,45 +13,56 @@ use WP_User_Query;
 class User implements UserContract
 {
     /**
-     * Instance du gestionnaire utilisateur.
-     * @var UserManager
+     * Instance de l'accesseur de service utilisateur.
+     * @var tiFyUser
      */
-    protected $manager;
+    protected $accessor;
 
     /**
      * CONSTRUCTEUR
      *
-     * @param UserManager $manager Instance du gestionnaire utilisateur.
+     * @param tiFyUser $accessor Instance du gestionnaire utilisateur.
      *
      * @return void
      */
-    public function __construct(UserManager $manager)
+    public function __construct(tiFyUser $accessor)
     {
-        $this->manager = $manager;
+        $this->accessor = $accessor;
 
         add_action('init', function () {
+            /* @see https://codex.wordpress.org/Roles_and_Capabilities */
             foreach (config('user.role', []) as $name => $attrs) {
-                $this->manager->role()->register($name, $attrs);
+                $this->accessor->role()->register($name, $attrs);
             }
         }, 0);
 
         add_action('init', function () {
+            global $wp_roles;
+
+            foreach($wp_roles->roles as $role => $data) {
+                if (!$this->accessor->role()->get($role)) {
+                    $this->accessor->role()->register(
+                        $role, ['display_name' => $data['name'], 'capabilities' => $data['capabilities']]
+                    );
+                }
+            }
+
             foreach (config('user.signin', []) as $name => $attrs) {
-                $this->manager->signin()->register($name, $attrs);
+                $this->accessor->signin()->register($name, $attrs);
             }
             foreach (config('user.signup', []) as $name => $attrs) {
-                $this->manager->signup()->register($name, $attrs);
+                $this->accessor->signup()->register($name, $attrs);
             }
         }, 999998);
 
         add_action('profile_update', function ($user_id) {
-            $this->manager->meta()->Save($user_id);
-            $this->manager->option()->Save($user_id);
+            $this->accessor->meta()->Save($user_id);
+            $this->accessor->option()->Save($user_id);
         }, 2);
 
         add_action('user_register', function ($user_id) {
-            $this->manager->meta()->Save($user_id);
-            $this->manager->option()->Save($user_id);
+            $this->accessor->meta()->Save($user_id);
+            $this->accessor->option()->Save($user_id);
         });
 
         events()->on('user.role.factory.boot', function (RoleFactory $factory) {

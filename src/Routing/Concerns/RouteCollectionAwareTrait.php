@@ -4,6 +4,7 @@ namespace tiFy\Routing\Concerns;
 
 use League\Route\Route as LeagueRoute;
 use tiFy\Contracts\Routing\Route as RouteContract;
+use tiFy\Routing\Middleware\Xhr;
 
 trait RouteCollectionAwareTrait
 {
@@ -38,6 +39,6 @@ trait RouteCollectionAwareTrait
      */
     public function xhr(string $path, $handler, string $method = 'POST'): RouteContract
     {
-        return $this->map($method, '/' . ltrim($path, '/'), $handler);
+        return $this->map($method, '/' . ltrim($path, '/'), $handler)->middleware(new Xhr());
     }
 }

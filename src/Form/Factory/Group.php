@@ -141,8 +141,11 @@ class Group extends ParamsBag implements FactoryGroup
      */
     public function parse(): FactoryGroup
     {
+        $class = 'Form-fieldsGroup Form-fieldsGroup--' . $this->getName();
         if (!$this->has('attrs.class')) {
-            $this->set('attrs.class', 'Form-fieldsGroup Form-fieldsGroup--' . $this->getName());
+            $this->set('attrs.class', $class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class'), $class));
         }
         $position = $this->getPosition();
         if (is_null($position)) {

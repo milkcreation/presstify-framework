@@ -5,6 +5,7 @@ namespace tiFy\User;
 use tiFy\Container\ServiceProvider;
 use tiFy\User\Metadata\Metadata;
 use tiFy\User\Metadata\Option as MetaOption;
+use tiFy\User\Role\RoleFactory;
 use tiFy\User\Role\RoleManager;
 use tiFy\User\Session\SessionManager;
 use tiFy\User\Session\SessionStore;
@@ -24,6 +25,7 @@ class UserServiceProvider extends ServiceProvider
         'user.meta',
         'user.option',
         'user.role',
+        'user.role.factory',
         'user.session',
         'user.session.store',
         'user.signin',
@@ -45,7 +47,7 @@ class UserServiceProvider extends ServiceProvider
     public function register()
     {
         $this->getContainer()->share('user', function () {
-            return new UserManager();
+            return new User($this->getContainer());
         });
 
         $this->getContainer()->share('user.meta', function () {
@@ -57,7 +59,11 @@ class UserServiceProvider extends ServiceProvider
         });
 
         $this->getContainer()->share('user.role', function () {
-            return new RoleManager();
+            return new RoleManager($this->getContainer());
+        });
+
+        $this->getContainer()->add('user.role.factory', function () {
+            return new RoleFactory();
         });
 
         $this->getContainer()->share('user.session', function () {

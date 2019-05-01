@@ -2,10 +2,19 @@
 
 namespace tiFy\Contracts\Support;
 
+use Psr\Container\ContainerInterface;
+
 interface Manager
 {
     /**
-     * Récupération d'un élément définit.
+     * Récupération de la liste des éléments définis.
+     *
+     * @return array
+     */
+    public function all(): iterable;
+
+    /**
+     * Récupération d'un élément défini.
      *
      * @param string|int $key Indice de qualification de l'élément.
      *
@@ -14,24 +23,31 @@ interface Manager
     public function get($key);
 
     /**
+     * Récupération de l'instance du conteneur d'injection de dépendances.
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer(): ContainerInterface;
+
+    /**
      * Déclaration d'un élément basée sur une liste d'attributs.
      *
      * @param string|int $key Indice de qualification de l'élément.
-     * @param array $attrs Liste des attributs.
+     * @param mixed $attrs Liste des attributs dynamiques.
      *
      * @return static
      */
-    public function register($key, array $attrs = []);
+    public function register($key, ...$args);
 
     /**
      * Définition d'un élément ou d'une liste d'éléments.
      *
      * @param string|int|array $key Indice de qualification de l'élément ou tableau associatif de la liste des éléments.
-     * @param mixed $item Valeur de l'élément lorsque la clef est un indice.
+     * @param mixed $value Valeur de l'élément lorsque la clef est un indice.
      *
      * @return static
      */
-    public function set($key, $item = null);
+    public function set($key, $value = null);
 
     /**
      * Traitement des éléments au moment de la définition.

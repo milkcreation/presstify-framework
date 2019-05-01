@@ -21,9 +21,9 @@ class TaxonomyManager extends Manager implements TaxonomyManagerContract
     /**
      * @inheritdoc
      */
-    public function register($name, array $attrs = []): TaxonomyManagerContract
+    public function register($name, ...$args): TaxonomyManagerContract
     {
-        return $this->set([$name => new TaxonomyFactory($name, $attrs)]);
+        return $this->set([$name => $args[0] ?? []]);
     }
 
     /**
@@ -48,12 +48,8 @@ class TaxonomyManager extends Manager implements TaxonomyManagerContract
     public function walk(&$item, $key = null): void
     {
         if (!$item instanceof TaxonomyFactoryContract) {
-            throw new InvalidArgumentException(sprintf(
-                __('La taxonomie devrait être une instance de %s'),
-                TaxonomyFactoryContract::class
-            ));
-        } else {
-            $item->setManager($this)->boot();
+            $item = new TaxonomyFactory($key, $item);
         }
+        $item->setManager($this)->boot();
     }
 }

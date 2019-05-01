@@ -89,7 +89,9 @@ class ListTable extends TemplateFactory implements ListTableContract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @return ListTableContract
      */
     public function prepare(): TemplateFactoryContract
     {

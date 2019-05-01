@@ -10,7 +10,6 @@ use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterContract};
-use tiFy\Http\RedirectResponse;
 use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait};
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
