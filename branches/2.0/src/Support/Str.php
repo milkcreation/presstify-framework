@@ -62,7 +62,7 @@ class Str
      *
      * @return string
      */
-    public function excerpt($string, $args = array())
+    public static function excerpt($string, $args = array())
     {
         $defaults = array(
             'length' => 255,

@@ -26,6 +26,7 @@ use tiFy\Contracts\Partial\PartialFactory;
 use tiFy\Contracts\Partial\PartialManager;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostTypeManager;
+use tiFy\Contracts\Routing\Redirector;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Url;
@@ -36,12 +37,11 @@ use tiFy\Contracts\Taxonomy\TaxonomyFactory;
 use tiFy\Contracts\Taxonomy\TaxonomyManager;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
-use tiFy\Contracts\User\UserManager;
+use tiFy\Contracts\User\User;
 use tiFy\Contracts\Validation\Validator;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\tiFy;
-use tiFy\Routing\Redirector;
 
 if (!function_exists('app')) {
     /**
@@ -356,7 +356,7 @@ if (!function_exists('redirect')) {
      * @param array $headers Liste des entête HTTP
      * @param bool $secure Activation de la sécurisation
      *
-     * @return Redirector
+     * @return Redirector|RedirectResponse
      */
     function redirect(?string $to = null, ?int $status = 302, ?array $headers = [], ?bool $secure = null)
     {
@@ -523,9 +523,9 @@ if (!function_exists('user')) {
     /**
      * Instance du gestionnaire utilisateur.
      *
-     * @return UserManager
+     * @return User
      */
-    function user(): UserManager
+    function user(): User
     {
         return app('user');
     }

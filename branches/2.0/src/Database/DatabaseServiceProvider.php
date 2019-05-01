@@ -1,7 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Database;
 
+//use Illuminate\Events\Dispatcher;
+//use Illuminate\Container\Container;
 use tiFy\Container\ServiceProvider;
 
 class DatabaseServiceProvider extends ServiceProvider
@@ -12,13 +14,13 @@ class DatabaseServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'database',
+        'database'
     ];
 
     /**
      * @inheritdoc
      */
-    public function register()
+    public function register(): void
     {
         $this->getContainer()->share('database', function () {
             $manager = new Database();
@@ -32,7 +34,11 @@ class DatabaseServiceProvider extends ServiceProvider
                 'collation' => getenv('DB_COLLATE') ?: 'utf8mb4_unicode_ci',
                 'prefix'    => getenv('DB_PREFIX') ?: ''
             ]);
+            //$manager->setEventDispatcher(new Dispatcher(new Container()));
+
             $manager->setAsGlobal();
+
+            $manager->bootEloquent();
 
             return $manager;
         });

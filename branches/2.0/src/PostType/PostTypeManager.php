@@ -29,9 +29,9 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     /**
      * @inheritdoc
      */
-    public function register($name, array $attrs = []): PostTypeManagerContract
+    public function register($name, ...$args): PostTypeManagerContract
     {
-        return $this->set([$name => new PostTypeFactory($name, $attrs)]);
+        return $this->set([$name => $args[0] ?? []]);
     }
 
     /**
@@ -48,12 +48,8 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     public function walk(&$item, $key = null): void
     {
         if (!$item instanceof PostTypeFactoryContract) {
-            throw new InvalidArgumentException(sprintf(
-                __('Le type de post devrait être une instance de %s'),
-                PostTypeFactoryContract::class
-            ));
-        } else {
-            $item->setManager($this)->boot();
+            $item = new PostTypeFactory($key, $item);
         }
+        $item->setManager($this)->boot();
     }
 }

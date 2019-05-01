@@ -10,13 +10,15 @@ use tiFy\Container\Container;
 class Application extends Container
 {
     /**
-     * Instance du conteneur d'injection
+     * Instance du conteneur d'injection de dépendances.
      * @var ContainerInterface
      */
     protected $container;
 
     /**
      * CONSTRUCTEUR.
+     *
+     * @param ContainerInterface $container
      *
      * @return void
      */
@@ -49,9 +51,19 @@ class Application extends Container
     }
 
     /**
+     * Compatibilité corcel.
+     *
+     * @return string
+     */
+    public function version(): string
+    {
+        return 'tiFy';
+    }
+
+    /**
      * @inheritdoc
      */
-    public function getServiceProviders()
+    public function getServiceProviders(): array
     {
         return config('app.providers', []);
     }

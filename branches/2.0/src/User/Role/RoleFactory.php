@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\User\Role;
 
+use tiFy\Contracts\User\RoleManager;
 use tiFy\Contracts\User\RoleFactory as RoleFactoryContract;
 use tiFy\Support\ParamsBag;
 
@@ -14,26 +15,29 @@ class RoleFactory extends ParamsBag implements RoleFactoryContract
     protected $name = '';
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param string $name Nom de qualification du role.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return void
+     * Instance du gestionnaire.
+     * @var RoleManager
      */
-    public function __construct($name, $attrs)
+    private $manager;
+
+    /**
+     * Indicateur de préparation du controleur.
+     * @var boolean
+     */
+    private $_prepared = false;
+
+    /**
+     * @inheritdoc
+     */
+    public function boot(): void
     {
-        $this->name = $name;
 
-        $this->set($attrs)->parse();
-
-        events()->trigger('user.role.factory.boot', [$this]);
     }
 
     /**
      * @inheritdoc
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'display_name'  => $this->getName(),
@@ -45,7 +49,7 @@ class RoleFactory extends ParamsBag implements RoleFactoryContract
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -53,16 +57,44 @@ class RoleFactory extends ParamsBag implements RoleFactoryContract
     /**
      * @inheritdoc
      */
-    public function parse()
+    public function parse(): RoleFactoryContract
     {
+        parent::parse();
+
         $capabilities = [];
-        foreach ($this->get('capabilities', []) as $cap => $grant) :
-            if (is_numeric($cap)) :
+        foreach ($this->get('capabilities', []) as $cap => $grant) {
+            if (is_numeric($cap)) {
                 $cap = $grant;
                 $grant = true;
-            endif;
+            }
             $capabilities[$cap] = $grant;
-        endforeach;
+        }
         $this->set('capabilities', $capabilities);
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function prepare(RoleManager $manager, ?string $name = null, array $attrs = []): RoleFactoryContract
+    {
+        if (!$this->_prepared) {
+            $this->manager = $manager;
+
+            if ($name) {
+                $this->name = $name;
+            }
+            if ($attrs) {
+                $this->set($attrs);
+            }
+            $this->parse();
+
+            events()->trigger('user.role.factory.boot', [$this]);
+
+            $this->boot();
+            $this->_prepared = true;
+        }
+        return $this;
     }
 }

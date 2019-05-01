@@ -34,6 +34,14 @@ class Manager implements ManagerContract
     /**
      * @inheritdoc
      */
+    public function all(): iterable
+    {
+        return $this->items;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function get($key)
     {
         return $this->items[$key] ?? null;
@@ -42,17 +50,25 @@ class Manager implements ManagerContract
     /**
      * @inheritdoc
      */
-    public function register($key, array $attrs = [])
+    public function getContainer(): ContainerInterface
     {
-        return $this->set([$key => $attrs]);
+        return $this->container;
     }
 
     /**
      * @inheritdoc
      */
-    public function set($key, $item = null)
+    public function register($key, ...$args)
     {
-        $keys = is_array($key) ? $key : [$key => $item];
+        return $this->set([$key => $args]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function set($key, $value = null)
+    {
+        $keys = is_array($key) ? $key : [$key => $value];
 
         array_walk($keys, [$this, 'walk']);
 

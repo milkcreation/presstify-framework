@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2019-04-29",
+  "time": "2019-05-01",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -52,7 +52,9 @@
     "html2text/html2text": "^4.0",
     "http-interop/http-factory-diactoros": "^1.0",
     "illuminate/http": "^5.8",
+    "illuminate/events": "^5.8",
     "illuminate/database": "^5.8",
+    "jgrossi/corcel": "^2.8",
     "league/container": "^2.4",
     "league/csv": "^9.0",
     "league/event": "^2.1",

@@ -124,4 +124,14 @@ class Request extends FactoryRequest implements RequestContract
     {
        return  $this->factory->ajax() ? $this->input('search.value', '') : $this->get('s', '');
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setPerPage(int $per_page): RequestContract
+    {
+        $this->perPage = $per_page;
+
+        return $this;
+    }
 }

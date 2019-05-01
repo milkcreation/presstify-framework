@@ -40,4 +40,13 @@ interface Request extends FactoryRequest
      * @return string
      */
     public function searchTerm(): string;
+
+    /**
+     * Définition du nombre d'élément affiché par page.
+     *
+     * @param int $per_page
+     *
+     * @return static
+     */
+    public function setPerPage(int $per_page): Request;
 }

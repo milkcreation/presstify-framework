@@ -86,7 +86,8 @@ class Template extends ApplicationStrategy
             } elseif ($resolved instanceof ResponseInterface) {
                 $psrResponse = $resolved;
             } elseif ($resolved instanceof SfResponse) {
-                $psrResponse = Response::convertToPsr($resolved);
+                $resolved->send();
+                exit;
             } else {
                 $psrResponse->getBody()->write((string)$resolved);
             }
