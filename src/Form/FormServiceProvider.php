@@ -149,8 +149,8 @@ class FormServiceProvider extends ServiceProvider
      */
     public function registerFactory()
     {
-        $this->getContainer()->add('form.factory', function ($name, $attrs = []) {
-            return new FormFactory($name, $attrs);
+        $this->getContainer()->add('form.factory', function () {
+            return new FormFactory();
         });
 
         $this->getContainer()->add('form.factory.addons', function ($addons, FormFactoryContract $form) {
@@ -251,7 +251,7 @@ class FormServiceProvider extends ServiceProvider
     public function registerManager()
     {
         $this->getContainer()->share('form', function () {
-            return new FormManager();
+            return new FormManager($this->getContainer());
         });
     }
 }

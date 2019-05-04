@@ -29,34 +29,41 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public static function createFromId($term_id): ?QueryTermContract
+    public static function createFromId(int $term_id): ?QueryTermContract
     {
-        return ($term_id && is_numeric($term_id) && ($wp_term = get_term($term_id)) && ($wp_term instanceof WP_Term))
+        return (($wp_term = get_term($term_id)) && ($wp_term instanceof WP_Term))
             ? new static($wp_term) : null;
     }
 
     /**
-     * Récupération de la description.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getDescription()
+    public static function createFromSlug(string $term_slug, string $taxonomy): ?QueryTermContract
+    {
+        return (($wp_term = get_term_by('slug', $term_slug, $taxonomy)) && ($wp_term instanceof WP_Term))
+            ? new static($wp_term) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDescription(): string
     {
         return (string)$this->get('description', '');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getId()
+    public function getId(): int
     {
-        return (int)$this->get('term_id', 0);
+        return intval($this->get('term_id', 0));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMeta($meta_key, $single = false, $default = null)
     {
@@ -64,7 +71,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMetaMulti($meta_key, $default = null)
     {
@@ -72,7 +79,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMetaSingle($meta_key, $default = null)
     {
@@ -80,33 +87,41 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return (string)$this->get('name', '');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getSlug()
+    public function getPermalink(): string
+    {
+        return get_term_link($this->getWpTerm());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSlug(): string
     {
         return (string)$this->get('slug', '');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTaxonomy()
+    public function getTaxonomy(): string
     {
         return (string)$this->get('taxonomy', '');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTerm()
+    public function getWpTerm(): WP_Term
     {
         return $this->wp_term;
     }

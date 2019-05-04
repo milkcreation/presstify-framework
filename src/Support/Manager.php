@@ -32,7 +32,7 @@ class Manager implements ManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function all(): iterable
     {
@@ -40,7 +40,7 @@ class Manager implements ManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get($key)
     {
@@ -48,7 +48,7 @@ class Manager implements ManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getContainer(): ContainerInterface
     {
@@ -56,7 +56,7 @@ class Manager implements ManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register($key, ...$args)
     {
@@ -64,7 +64,7 @@ class Manager implements ManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function set($key, $value = null)
     {
@@ -80,7 +80,7 @@ class Manager implements ManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function walk(&$item, $key = null): void
     {

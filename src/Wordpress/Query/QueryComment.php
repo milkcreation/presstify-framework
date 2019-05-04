@@ -32,7 +32,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function createFromId(int $comment_id): ?QueryCommentContract
     {
@@ -41,7 +41,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAgent(): string
     {
@@ -49,7 +49,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAuthor(): string
     {
@@ -57,7 +57,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAuthorEmail(): string
     {
@@ -65,7 +65,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAuthorIp(): string
     {
@@ -73,7 +73,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAuthorUrl(): string
     {
@@ -81,7 +81,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getContent(): string
     {
@@ -89,7 +89,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDate(bool $gmt = false): string
     {
@@ -99,7 +99,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDateTime(bool $gmt = false): DateTime
     {
@@ -107,7 +107,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getEditLink(): string
     {
@@ -115,7 +115,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): int
     {
@@ -123,7 +123,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMeta(string $meta_key, bool $single = false, $default = null)
     {
@@ -131,7 +131,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMetaMulti(string $meta_key, $default = null)
     {
@@ -139,7 +139,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMetaSingle(string $meta_key, $default = null)
     {
@@ -147,7 +147,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getParent(): ?QueryCommentContract
     {
@@ -155,7 +155,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getParentId(): int
     {
@@ -163,7 +163,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPost(): QueryPostContract
     {
@@ -171,7 +171,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPostId(): int
     {
@@ -179,7 +179,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getType(): string
     {
@@ -187,7 +187,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getUser(): QueryUserContract
     {
@@ -195,7 +195,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getUserId(): int
     {
@@ -203,7 +203,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getWpComment(): WP_Comment
     {
@@ -211,15 +211,7 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
-     */
-    public function inTypes(array $comment_types): bool
-    {
-        return in_array($this->getType(), $comment_types);
-    }
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isApproved(): bool
     {
@@ -227,10 +219,18 @@ class QueryComment extends ParamsBag implements QueryCommentContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isSpam(): bool
     {
         return $this->get('comment_approved', '') === 'spam';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function typeIn(array $comment_types): bool
+    {
+        return in_array($this->getType(), $comment_types);
     }
 }

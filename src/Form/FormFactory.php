@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form;
 
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
+use tiFy\Contracts\Form\FormManager;
 use tiFy\Form\Factory\ResolverTrait;
 use tiFy\Support\ParamsBag;
 
@@ -11,132 +12,49 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     use ResolverTrait;
 
     /**
+     * Indicateur de démarrage.
+     * @var boolean
+     */
+    protected $booted = false;
+
+    /**
+     * Instance du gestionnaire de formulaire.
+     * @var string
+     */
+    protected $manager = '';
+
+    /**
      * Nom de qualification du formulaire.
      * @var string
      */
     protected $name = '';
 
     /**
-     * Indicateur de préparation active.
+     * Indicateur de préparation.
      * @var boolean
      */
     protected $prepared = false;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param string $name Nom de qualification du formulaire.
-     * @param array $attrs Liste des attributs de configuration
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct($name, $attrs = [])
-    {
-        $this->name = $name;
-        $this->form = $this;
-
-        $this->set($attrs);
-
-        app()->share("form.factory.events.{$this->name()}", function () {
-            return $this->resolve('factory.events', [$this->get('events', []), $this]);
-        });
-
-        app()->share("form.factory.addons.{$this->name()}", function () {
-            return $this->resolve('factory.addons', [$this->get('addons', []), $this]);
-        });
-
-        app()->share("form.factory.buttons.{$this->name()}", function () {
-            return $this->resolve('factory.buttons', [$this->get('buttons', []), $this]);
-        });
-
-        app()->share("form.factory.fields.{$this->name()}", function () {
-            return $this->resolve('factory.fields', [$this->get('fields', []), $this]);
-        });
-
-        app()->share("form.factory.groups.{$this->name()}", function () {
-            return $this->resolve('factory.groups', [$this->get('groups', []), $this]);
-        });
-
-        app()->share("form.factory.notices.{$this->name()}", function () {
-            return $this->resolve('factory.notices', [$this->get('notices', []), $this]);
-        });
-
-        app()->share("form.factory.options.{$this->name()}", function () {
-            return $this->resolve('factory.options', [$this->get('options', []), $this]);
-        });
-
-        app()->share("form.factory.request.{$this->name()}", function () {
-            return $this->resolve('factory.request', [$this]);
-        });
-
-        app()->share("form.factory.session.{$this->name()}", function () {
-            return $this->resolve('factory.session', [$this]);
-        });
-
-        app()->share("form.factory.validation.{$this->name()}", function () {
-            return $this->resolve('factory.validation', [$this]);
-        });
-
-        app()->share("form.factory.viewer.{$this->name()}", function () {
-            return $this->resolve('factory.viewer', [$this]);
-        });
-
-        $this->boot();
-
-        $this->parse();
-
-        $this->_init();
-    }
-
-    /**
-     * Initialisation du formulaire.
-     *
-     * @return void
-     */
-    private function _init()
-    {
-        $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
-
-        $this->events('form.init', [&$this]);
-
-        foreach([
-            'events',
-            'addons',
-            'buttons',
-            'fields',
-            'groups',
-            'notices',
-            'options',
-            'request',
-            'session',
-            'validation',
-            'viewer'
-        ] as $service) {
-            $this->resolve("factory.{$service}." . $this->name());
-        }
-    }
-
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->render();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function boot()
+    public function boot(): void
     {
 
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function csrf()
+    public function csrf(): string
     {
         return wp_create_nonce('Form' . $this->name());
     }
@@ -144,25 +62,25 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     /**
      * Listes des attributs de configuration par défaut.
      * @return array {
-     *      @var string $title Intitulé de qualification du formulaire.
-     *      @var string $before Pré-affichage, avant la balise <form/>.
-     *      @var string $after Post-affichage, après la balise <form/>.
-     *      @var string $method Propriété 'method' de la balise <form/>.
-     *      @var string $action Propriété 'action' de la balise <form/>.
-     *      @var string $enctype Propriété 'enctype' de la balise <form/>.
-     *      @var boolean $handle Activation du traitement automatique de la requête de soumission du formulaire.
-     *      @var array $attrs Liste des attributs complémentaires de la balise <form/>.
-     *      @var boolean|array $grid Activation de l'agencement des éléments.
-     *      @var array $addons Liste des attributs des addons actifs.
-     *      @var array $buttons Liste des attributs des boutons actifs.
-     *      @var array $events Liste des événements de court-circuitage.
-     *      @var array $fields Liste des attributs de champs.
-     *      @var array $notices Liste des attributs des messages de notification.
-     *      @var array $options Liste des options du formulaire.
-     *      @var array $viewer Attributs de configuration du gestionnaire de gabarits d'affichage.
+     * @var string $title Intitulé de qualification du formulaire.
+     * @var string $before Pré-affichage, avant la balise <form/>.
+     * @var string $after Post-affichage, après la balise <form/>.
+     * @var string $method Propriété 'method' de la balise <form/>.
+     * @var string $action Propriété 'action' de la balise <form/>.
+     * @var string $enctype Propriété 'enctype' de la balise <form/>.
+     * @var boolean $handle Activation du traitement automatique de la requête de soumission du formulaire.
+     * @var array $attrs Liste des attributs complémentaires de la balise <form/>.
+     * @var boolean|array $grid Activation de l'agencement des éléments.
+     * @var array $addons Liste des attributs des addons actifs.
+     * @var array $buttons Liste des attributs des boutons actifs.
+     * @var array $events Liste des événements de court-circuitage.
+     * @var array $fields Liste des attributs de champs.
+     * @var array $notices Liste des attributs des messages de notification.
+     * @var array $options Liste des options du formulaire.
+     * @var array $viewer Attributs de configuration du gestionnaire de gabarits d'affichage.
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'title'   => '',
@@ -185,31 +103,31 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->get('action', '');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->get('method', 'post');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->get('title') ?: $this->name();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasGrid()
     {
@@ -217,7 +135,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function index()
     {
@@ -225,58 +143,62 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function name()
+    public function name(): string
     {
-        return $this->name;
+        return strval($this->name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function onSetCurrent()
+    public function onSetCurrent(): void
     {
-        return $this->events('form.set.current', [&$this]);
+        $this->events('form.set.current', [&$this]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function onSuccess()
+    public function onSuccess(): bool
     {
         return request()->get('success') === $this->name();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function onResetCurrent()
+    public function onResetCurrent(): void
     {
-        return $this->events('form.reset.current', [&$this]);
+        $this->events('form.reset.current', [&$this]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function prepare()
+    public function prepare(): FormFactoryContract
     {
-        $this->events('form.prepare', [&$this]);
+        if (!$this->prepared) {
+            $this->events('form.prepare', [&$this]);
 
-        $this->groups()->prepare();
-        foreach ($this->fields() as $field) {
-            $field->prepare();
+            $this->groups()->prepare();
+            foreach ($this->fields() as $field) {
+                $field->prepare();
+            }
+
+            $this->prepared = true;
+
+            $this->events('form.prepared', [&$this]);
         }
 
-        $this->prepared = true;
-
-        $this->events('form.prepared', [&$this]);
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function render()
+    public function render(): string
     {
         if (!$this->prepared) {
             $this->prepare();
@@ -289,15 +211,14 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         $buttons = $this->buttons();
         $notices = $this->notices()->getMessages();
 
-        return $this->viewer('form', compact('buttons', 'fields', 'groups', 'notices'));
+        return (string)$this->viewer('form', compact('buttons', 'fields', 'groups', 'notices'));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function renderPrepare()
     {
-        // Attributs HTML du champ.
         if (!$this->has('attrs.id')) {
             $this->set('attrs.id', "Form-content--{$this->name()}");
         }
@@ -324,7 +245,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             $this->set('attrs.enctype', $enctype);
         }
 
-        // Activation de l'agencement des éléments.
         if ($grid = $this->get('grid')) {
             $grid = is_array($grid) ? $grid : [];
 
@@ -348,5 +268,87 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         foreach ($this->fields() as $field) {
             $field->renderPrepare();
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setInstance(string $name, FormManager $manager): FormFactoryContract
+    {
+        if (!$this->booted) {
+            $this->name = $name;
+            $this->manager = $manager;
+            $this->form = $this;
+
+            app()->share("form.factory.events.{$this->name}", function () {
+                return $this->resolve('factory.events', [$this->get('events', []), $this]);
+            });
+
+            app()->share("form.factory.addons.{$this->name}", function () {
+                return $this->resolve('factory.addons', [$this->get('addons', []), $this]);
+            });
+
+            app()->share("form.factory.buttons.{$this->name}", function () {
+                return $this->resolve('factory.buttons', [$this->get('buttons', []), $this]);
+            });
+
+            app()->share("form.factory.fields.{$this->name}", function () {
+                return $this->resolve('factory.fields', [$this->get('fields', []), $this]);
+            });
+
+            app()->share("form.factory.groups.{$this->name}", function () {
+                return $this->resolve('factory.groups', [$this->get('groups', []), $this]);
+            });
+
+            app()->share("form.factory.notices.{$this->name}", function () {
+                return $this->resolve('factory.notices', [$this->get('notices', []), $this]);
+            });
+
+            app()->share("form.factory.options.{$this->name}", function () {
+                return $this->resolve('factory.options', [$this->get('options', []), $this]);
+            });
+
+            app()->share("form.factory.request.{$this->name}", function () {
+                return $this->resolve('factory.request', [$this]);
+            });
+
+            app()->share("form.factory.session.{$this->name}", function () {
+                return $this->resolve('factory.session', [$this]);
+            });
+
+            app()->share("form.factory.validation.{$this->name}", function () {
+                return $this->resolve('factory.validation', [$this]);
+            });
+
+            app()->share("form.factory.viewer.{$this->name}", function () {
+                return $this->resolve('factory.viewer', [$this]);
+            });
+
+            $this->boot();
+            $this->booted = true;
+
+            $this->parse();
+
+            $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
+
+            $this->events('form.init', [&$this]);
+
+            foreach ([
+                         'events',
+                         'addons',
+                         'buttons',
+                         'fields',
+                         'groups',
+                         'notices',
+                         'options',
+                         'request',
+                         'session',
+                         'validation',
+                         'viewer'
+                     ] as $service) {
+                $this->resolve("factory.{$service}." . $this->name());
+            }
+        }
+        return $this;
     }
 }

@@ -8,9 +8,16 @@ use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;
 use tiFy\Wordpress\Query\QueryPost;
 use WP_Post;
+use WP_Query;
 
 class PageHookItem extends ParamsBag implements PageHookItemContract
 {
+    /**
+     * Indicateur.
+     * @var boolean|null;
+     */
+    private $_is;
+
     /**
      * Nom de qualification.
      * @var string
@@ -114,6 +121,18 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                 $this->route = router()->get($this->getPath() . '[/page/{page:\d+}]', $route);
             }
         }, 25);
+
+        add_action('pre_get_posts', function (WP_Query &$wp_query) {
+            if ($wp_query->is_main_query() && ($query_args = $this->get('wp_query'))) {
+                if ($this->is()) {
+                    if (is_array($query_args)) {
+                        $wp_query->parse_query($query_args);
+                    } else {
+                        $wp_query->parse_query($wp_query->query);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -133,7 +152,8 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             'rewrite'             => '',
             'route'               => false,
             'show_option_none'    => __('Aucune page choisie', 'tify'),
-            'title'               => $this->name
+            'title'               => $this->name,
+            'wp_query'            => true
         ];
     }
 
@@ -206,12 +226,27 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      */
     public function is($post = null)
     {
-        if (!$post && ($route = $this->route())) {
-            return router()->current() === $route;
-        } else {
-            return ($this->exists() && ($post = get_post($post)))
-                ? ($this->post()->getId() == $post->ID) : false;
+        if (is_null($this->_is)) {
+            $this->_is = false;
+            if (!$post && ($route = $this->route())) {
+                $this->_is = router()->current() === $route;
+            } elseif ($this->exists()) {
+                if ($post && ($post = get_post($post))) {
+                    $this->_is = $this->post()->getId() === intval($post->ID);
+                } else {
+                    global $wp_query;
+
+                    if ($pagename = $wp_query->query['pagename'] ?? '') {
+                        $this->_is = $this->post()->getName() === $pagename;
+                    } elseif ($page_id = $wp_query->query['page_id'] ?? 0) {
+                        $this->_is = $this->post()->getName() === intval($page_id);
+                    } else {
+                        $this->_is = false;
+                    }
+                }
+            }
         }
+        return $this->_is;
     }
 
     /**

@@ -69,7 +69,9 @@ interface QueryComment extends ParamsBag
     public function getDate(bool $gmt = false): string;
 
     /**
-     * Récupération d'une instance de la date création.
+     * Récupération d'un objet DateTime basée sur la date création.
+     *
+     * @param boolean $gmt Indicateur de récupération de la date GMT.
      *
      * @return DateTime
      */
@@ -177,15 +179,6 @@ interface QueryComment extends ParamsBag
     public function getWpComment(): WP_Comment;
 
     /**
-     * Vérification de correspondance du type de commentaire.
-     *
-     * @param string[] $comment_types Liste des types de correspondance à vérifier.
-     *
-     * @return boolean
-     */
-    public function inTypes(array $comment_types): bool;
-
-    /**
      * Vérification d'approbation du commentaire.
      *
      * @return boolean
@@ -198,4 +191,13 @@ interface QueryComment extends ParamsBag
      * @return boolean
      */
     public function isSpam(): bool;
+
+    /**
+     * Vérification de correspondance du type de commentaire.
+     *
+     * @param string[] $comment_types Liste des types de correspondance à vérifier.
+     *
+     * @return boolean
+     */
+    public function typeIn(array $comment_types): bool;
 }

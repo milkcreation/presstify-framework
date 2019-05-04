@@ -12,23 +12,33 @@ interface QueryTerm extends ParamsBag
      *
      * @param int $term_id
      *
-     * @return static
+     * @return static|null
      */
-    public static function createFromId($term_id): ?QueryTerm;
+    public static function createFromId(int $term_id): ?QueryTerm;
+
+    /**
+     * Récupération d'une instance basée sur le nom de qualification du terme.
+     *
+     * @param string $term_slug
+     * @param string $taxonomy Nom de qualification de la taxonomie associée.
+     *
+     * @return static|null
+     */
+    public static function createFromSlug(string $term_slug, string $taxonomy): ?QueryTerm;
 
     /**
      * Récupération de la description.
      *
      * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 
     /**
      * Récupération de l'identifiant de qualification Wordpress du terme.
      *
      * @return int
      */
-    public function getId();
+    public function getId(): int;
 
     /**
      * Récupération d'une metadonnée.
@@ -66,26 +76,33 @@ interface QueryTerm extends ParamsBag
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
+
+    /**
+     * Récupération du permalien d'affichage de la liste de élément associés au terme.
+     *
+     * @return string
+     */
+    public function getPermalink(): string;
 
     /**
      * Récupération du nom de qualification Wordpress du terme.
      *
      * @return string
      */
-    public function getSlug();
+    public function getSlug(): string;
 
     /**
      * Récupération de la taxonomie relative.
      *
      * @return string
      */
-    public function getTaxonomy();
+    public function getTaxonomy(): string;
 
     /**
      * Récupération de l'object Terme Wordpress associé.
      *
      * @return WP_Term
      */
-    public function getTerm();
+    public function getWpTerm(): WP_Term;
 }

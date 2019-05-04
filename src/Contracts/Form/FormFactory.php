@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
@@ -7,46 +7,46 @@ use tiFy\Contracts\Support\ParamsBag;
 interface FormFactory extends FactoryResolver, ParamsBag
 {
     /**
-     * Résolution de sortie de l'affichage.
+     * Résolution de sortie de l'affichage du formulaire.
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
      * Initialisation du contrôleur.
      *
      * @return void
      */
-    public function boot();
+    public function boot(): void;
 
     /**
      * Récupération de la chaîne de sécurisation du formulaire (CSRF).
      *
      * @return string
      */
-    public function csrf();
+    public function csrf(): string;
 
     /**
      * Récupération de l'action du formulaire (url).
      *
      * @return string
      */
-    public function getAction();
+    public function getAction(): string;
 
     /**
      * Récupération de la méthode de soumission du formulaire.
      *
      * @return string
      */
-    public function getMethod();
+    public function getMethod(): string;
 
     /**
      * Récupération de l'intitulé de qualification du formulaire.
      *
      * @return string
      */
-    public function getTitle();
+    public function getTitle(): string;
 
     /**
      * Vérification d'activation de l'agencement des éléments.
@@ -58,7 +58,7 @@ interface FormFactory extends FactoryResolver, ParamsBag
     /**
      * Récupération du numéro d'indice du formulaire.
      *
-     * @return null|int
+     * @return int|null
      */
     public function index();
 
@@ -67,33 +67,43 @@ interface FormFactory extends FactoryResolver, ParamsBag
      *
      * @return string
      */
-    public function name();
+    public function name(): string;
 
     /**
      * Evénement de déclenchement à l'initialisation du formulaire en tant que formulaire courant.
      *
      * @return void
      */
-    public function onSetCurrent();
+    public function onSetCurrent(): void;
 
     /**
      * Evénement de déclenchement à la réinitialisation du formulaire courant du formulaire.
      *
      * @return void
      */
-    public function onResetCurrent();
+    public function onResetCurrent(): void;
 
     /**
      * Initialisation (préparation) du champ.
      *
-     * @return void
+     * @return static
      */
-    public function prepare();
+    public function prepare(): FormFactory;
 
     /**
      * Affichage.
      *
      * @return string
      */
-    public function render();
+    public function render(): string;
+
+    /**
+     * Définition de l'instance.
+     *
+     * @param string $name Nom de qualification du formulaire.
+     * @param FormManager $manager Instance du gestionnaire de formulaires.
+     *
+     * @return static
+     */
+    public function setInstance(string $name, FormManager $manager): FormFactory;
 }
