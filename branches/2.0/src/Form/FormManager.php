@@ -1,12 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form;
 
 use Closure;
+use Exception;
 use tiFy\Contracts\Form\FormManager as FormManagerContract;
 use tiFy\Contracts\Form\FormFactory;
+use tiFy\Support\Manager;
 
-class FormManager implements FormManagerContract
+class FormManager extends Manager implements FormManagerContract
 {
     /**
      * Liste des formulaires déclarés.
@@ -21,9 +23,9 @@ class FormManager implements FormManagerContract
     protected $current;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function addonRegister($name, $controller)
+    public function addonRegister($name, $controller): FormManagerContract
     {
         app()->add("form.addon.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
             if (is_object($controller) || $controller instanceof Closure) {
@@ -38,17 +40,9 @@ class FormManager implements FormManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function all()
-    {
-        return $this->items;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buttonRegister($name, $controller)
+    public function buttonRegister($name, $controller): FormManagerContract
     {
         app()->add("form.button.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
             if (is_object($controller) || $controller instanceof Closure) {
@@ -63,9 +57,9 @@ class FormManager implements FormManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function current($form = null)
+    public function current($form = null): ?FormFactory
     {
         if (is_null($form)) {
             return $this->current;
@@ -85,9 +79,9 @@ class FormManager implements FormManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function fieldRegister($name, $controller)
+    public function fieldRegister($name, $controller): FormManagerContract
     {
         app()->add("form.field.{$name}", function ($name, $attrs, FormFactory $form) use ($controller) {
             if (is_object($controller) || $controller instanceof Closure) {
@@ -102,17 +96,9 @@ class FormManager implements FormManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function get($name)
-    {
-        return $this->items[$name] ?? null;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function index($name)
+    public function index($name): ?int
     {
         $index = array_search($name, array_keys($this->items));
 
@@ -120,33 +106,30 @@ class FormManager implements FormManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function register($name, $attrs = [])
+    public function register($name, ...$args): FormManagerContract
     {
-        $controller = $attrs['controller'] ?? null;
-
-        return $this->set(
-            $name,
-            ($controller ? new $controller($name, $attrs) : app()->get('form.factory', [$name, $attrs]))
-        );
+        return $this->set([$name => $args[0] ?? []]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function reset()
+    public function reset(): FormManagerContract
     {
         if ($this->current instanceof FormFactory) {
             $this->current->onResetCurrent();
         }
         $this->current = null;
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function resourcesDir($path = '')
+    public function resourcesDir($path = ''): string
     {
         $path = $path ? '/' . ltrim($path, '/') : '';
 
@@ -156,9 +139,9 @@ class FormManager implements FormManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function resourcesUrl($path = '')
+    public function resourcesUrl($path = ''): string
     {
         $cinfo = class_info($this);
         $path = $path ? '/' . ltrim($path, '/') : '';
@@ -169,10 +152,35 @@ class FormManager implements FormManagerContract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
+     *
+     * @throws Exception
      */
-    public function set($name, FormFactory $form)
+    public function walk(&$item, $name = null): void
     {
-        return $this->items[$name] = $form;
+        $name = strval($name);
+        $attrs = [];
+        if (is_string($item)) {
+            $item = new $item();
+        } elseif (is_array($item)) {
+            $attrs = $item;
+            if (isset($attrs['controller'])) {
+                $controller = $attrs['controller'];
+                unset($attrs['controller']);
+
+                $item = new $controller();
+            } else {
+                $item = $this->getContainer()->get('form.factory');
+            }
+        }
+        if (!$item instanceof FormFactory) {
+            throw new Exception(sprintf(
+                __('Déclaration de %s en erreur, le formulaire devrait être une instance de %s'),
+                $name,
+                FormFactory::class
+            ));
+        } else {
+            $item->set($attrs)->setInstance($name, $this);
+        }
     }
 }

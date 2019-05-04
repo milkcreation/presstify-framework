@@ -10,8 +10,7 @@
 
 <?php if ($field->hasWrapper()) : ?>
     <?php echo partial('tag', array_merge($field->get('wrapper', []), [
-        'content' =>
-            $this->fetch('field-label', compact('field')) .
+        'content' => $this->fetch('field-label', compact('field')) .
             $this->fetch('field-content', compact('field'))
     ])); ?>
 <?php else : ?>

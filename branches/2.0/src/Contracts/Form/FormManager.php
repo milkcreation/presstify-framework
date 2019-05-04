@@ -2,7 +2,9 @@
 
 namespace tiFy\Contracts\Form;
 
-interface FormManager
+use tiFy\Contracts\Support\Manager;
+
+interface FormManager extends Manager
 {
     /**
      * Déclaration d'un addon.
@@ -12,14 +14,7 @@ interface FormManager
      *
      * @return $this
      */
-    public function addonRegister($name, $concrete);
-
-    /**
-     * Récupération de la liste des instance de formulaires déclarés.
-     *
-     * @return FormFactory[]
-     */
-    public function all();
+    public function addonRegister($name, $concrete): FormManager;
 
     /**
      * Déclaration d'un bouton.
@@ -29,16 +24,16 @@ interface FormManager
      *
      * @return $this
      */
-    public function buttonRegister($name, $concrete);
+    public function buttonRegister($name, $concrete): FormManager;
 
     /**
      * Récupération ou définition du formulaire courant.
      *
      * @param string|FormFactory $form Nom de qualification ou instance du formulaire.
      *
-     * @return null|FormFactory
+     * @return FormFactory|null
      */
-    public function current($form = null);
+    public function current($form = null): ?FormFactory;
 
     /**
      * Déclaration d'un champ.
@@ -48,25 +43,16 @@ interface FormManager
      *
      * @return $this
      */
-    public function fieldRegister($name, $concrete);
-
-    /**
-     * Récupération d'une instance formulaire déclaré.
-     *
-     * @param string $name Nom de qualification du formulaire.
-     *
-     * @return null|FormFactory
-     */
-    public function get($name);
+    public function fieldRegister($name, $concrete): FormManager;
 
     /**
      * Récupération du numéro d'indice d'un formulaire déclaré.
      *
      * @param string $name Nom de qualification du formulaire.
      *
-     * @return null|int
+     * @return int|null
      */
-    public function index($name);
+    public function index($name): ?int;
 
     /**
      * Déclaration d'un formulaire.
@@ -74,16 +60,16 @@ interface FormManager
      * @param string $name Nom de qualification.
      * @param array $attrs Attributs de configuration.
      *
-     * @return FormFactory
+     * @return FormManager
      */
-    public function register($name, $attrs = []);
+    public function register($name, ...$args): FormManager;
 
     /**
      * Réinitialisation du formulaire courant.
      *
-     * @return void
+     * @return FormManager
      */
-    public function reset();
+    public function reset(): FormManager;
 
     /**
      * Récupération du chemin absolu vers le répertoire des ressources.
@@ -92,7 +78,7 @@ interface FormManager
      *
      * @return string
      */
-    public function resourcesDir($path = '');
+    public function resourcesDir($path = ''): string;
 
     /**
      * Récupération de l'url absolue vers le répertoire des ressources.
@@ -101,15 +87,5 @@ interface FormManager
      *
      * @return string
      */
-    public function resourcesUrl($path = '');
-
-    /**
-     * Définition d'un formulaire.
-     *
-     * @param string $name Nom de qualification.
-     * @param FormFactory $form Instance de controleur de formulaire.
-     *
-     * @return FormFactory
-     */
-    public function set($name, FormFactory $form);
+    public function resourcesUrl($path = ''): string;
 }

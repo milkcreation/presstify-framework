@@ -26,6 +26,15 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function all();
 
     /**
+     * Récupération de la liste des éléments découpés en lot.
+     *
+     * @param int $size Nombre d'éléments par lot.
+     *
+     * @return LaraCollection[]
+     */
+    public function chunk(int $size): iterable;
+
+    /**
      * Instanciation du controleur de traitement d'une collection d'élément.
      *
      * @param null|array $items Liste des éléments à traiter. Si null utilise la liste des éléments déclarés.

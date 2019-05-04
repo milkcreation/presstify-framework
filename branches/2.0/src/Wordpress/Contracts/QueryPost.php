@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Support\DateTime;
 use WP_Post;
 use WP_Term;
 use WP_User;
@@ -42,6 +43,16 @@ interface QueryPost extends ParamsBag
     public function getAuthorId();
 
     /**
+     * Récupération de la liste des classes associées.
+     *
+     * @param string[] $classes Liste de classes complémentaires.
+     * @param bool $html Activation du format de sortie de l'attribut de balise class. ex. class="post"
+     *
+     * @return string|array
+     */
+    public function getClass(array $classes = [], bool $html = true);
+
+    /**
      * Récupération d'un commentaire associé.
      *
      * @param int $id Identifiant de qualification du commentaire.
@@ -77,6 +88,15 @@ interface QueryPost extends ParamsBag
      * @return string
      */
     public function getDate($gmt = false);
+
+    /**
+     * Récupération d'un objet DateTime basée sur la date création.
+     *
+     * @param bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
+     *
+     * @return DateTime
+     */
+    public function getDateTime(bool $gmt = false): DateTime;
 
     /**
      * Récupération du lien d'édition du post dans l'interface administrateur.
@@ -273,13 +293,13 @@ interface QueryPost extends ParamsBag
     public function hasTerm($term, string $taxonomy): bool;
 
     /**
-     * Vérification si le type de post correspond.
+     * Vérification de correspondance du type de post.
      *
      * @param array $post_types Liste des types de post à vérifier.
      *
      * @return bool
      */
-    public function inTypes(array $post_types): bool;
+    public function typeIn(array $post_types): bool;
 
     /**
      * Sauvegarde des données du post en base.

@@ -2,8 +2,8 @@
 
 namespace tiFy\Support;
 
-use Illuminate\Support\Collection as IlluminateCollection;
 use ArrayIterator;
+use Illuminate\Support\Collection as IlluminateCollection;
 use tiFy\Contracts\Support\Collection as CollectionContract;
 
 class Collection implements CollectionContract
@@ -21,7 +21,7 @@ class Collection implements CollectionContract
     protected $_iteration;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __get($key)
     {
@@ -29,7 +29,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __set($key, $value)
     {
@@ -37,7 +37,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __isset($key)
     {
@@ -45,7 +45,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __unset($key)
     {
@@ -53,7 +53,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function createFromItems(array $items) : CollectionContract
     {
@@ -61,7 +61,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function all()
     {
@@ -69,7 +69,15 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function chunk(int $size): iterable
+    {
+        return $this->collect()->chunk($size);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function collect($items = null)
     {
@@ -77,7 +85,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function count()
     {
@@ -85,7 +93,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function current()
     {
@@ -93,7 +101,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function exists()
     {
@@ -101,7 +109,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get($key)
     {
@@ -109,7 +117,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getIterator()
     {
@@ -117,7 +125,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getIteration()
     {
@@ -125,7 +133,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function has($key)
     {
@@ -133,7 +141,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function key()
     {
@@ -141,7 +149,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function offsetExists($key)
     {
@@ -149,7 +157,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function offsetGet($key)
     {
@@ -157,7 +165,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function offsetSet($key, $value)
     {
@@ -169,7 +177,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function offsetUnset($key)
     {
@@ -177,7 +185,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function pluck($value, $key = null)
     {
@@ -185,7 +193,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function set($key, $value = null): CollectionContract
     {
@@ -197,7 +205,7 @@ class Collection implements CollectionContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function walk($value, $key = null)
     {

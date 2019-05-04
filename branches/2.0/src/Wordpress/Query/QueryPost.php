@@ -2,13 +2,14 @@
 
 namespace tiFy\Wordpress\Query;
 
+use tiFy\Support\DateTime;
+use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\QueryComment as QueryCommentContract;
 use tiFy\Wordpress\Contracts\QueryPost as QueryPostContract;
-use tiFy\Support\ParamsBag;
 use WP_Post;
 use WP_Query;
-use WP_User;
 use WP_Term_Query;
+use WP_User;
 
 class QueryPost extends ParamsBag implements QueryPostContract
 {
@@ -33,7 +34,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function createFromGlobal(): ?QueryPostContract
     {
@@ -43,7 +44,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function createFromId($post_id): ?QueryPostContract
     {
@@ -52,7 +53,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function createFromName(string $post_name): ?QueryPostContract
     {
@@ -61,15 +62,25 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAuthorId()
     {
-        return (int)$this->get('post_author', 0);
+        return intval($this->get('post_author', 0));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function getClass(array $classes = [], bool $html = true)
+    {
+        $classes = get_post_class($classes, $this->getId());
+
+        return $html ? 'class="' . join(' ', $classes) . '"' : $classes;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getComment(int $id): ?QueryCommentContract
     {
@@ -77,7 +88,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getComments(array $args = []): iterable
     {
@@ -85,7 +96,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getContent($raw = false)
     {
@@ -100,17 +111,25 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDate($gmt = false)
     {
         return $gmt
-            ? (string)$this->get('post_date_gmt', '')
-            : (string)$this->get('post_date', '');
+            ? strval($this->get('post_date_gmt', ''))
+            : strval($this->get('post_date', ''));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function getDateTime(bool $gmt = false): DateTime
+    {
+        return Datetime::createFromTimeString($this->getDate($gmt));
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getEditLink()
     {
@@ -118,7 +137,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getExcerpt($raw = false)
     {
@@ -139,23 +158,23 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getGuid()
     {
-        return (string)$this->get('guid', '');
+        return strval($this->get('guid', ''));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId()
     {
-        return (int)$this->get('ID', 0);
+        return intval($this->get('ID', 0));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMeta($meta_key, $single = false, $default = null)
     {
@@ -163,7 +182,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMetaKeys(bool $registered = true): array
     {
@@ -175,7 +194,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMetaMulti($meta_key, $default = null)
     {
@@ -183,7 +202,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMetaSingle($meta_key, $default = null)
     {
@@ -191,17 +210,17 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getModified($gmt = false)
     {
         return $gmt
-            ? (string)$this->get('post_modified_gmt', '')
-            : (string)$this->get('post_modified', '');
+            ? strval($this->get('post_modified_gmt', ''))
+            : strval($this->get('post_modified', ''));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getName()
     {
@@ -209,7 +228,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getParentId()
     {
@@ -217,7 +236,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPath()
     {
@@ -225,7 +244,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPermalink()
     {
@@ -233,7 +252,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @deprecated
      */
@@ -243,7 +262,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSlug()
     {
@@ -251,7 +270,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getStatus()
     {
@@ -259,7 +278,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTerms($taxonomy, $args = [])
     {
@@ -270,7 +289,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getThumbnail($size = 'post-thumbnail', $attrs = [])
     {
@@ -278,7 +297,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getThumbnailUrl($size = 'post-thumbnail')
     {
@@ -286,7 +305,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTitle($raw = false)
     {
@@ -296,7 +315,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getType()
     {
@@ -304,7 +323,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getWpPost()
     {
@@ -312,7 +331,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasTerm($term, string $taxonomy): bool
     {
@@ -320,15 +339,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
-     */
-    public function inTypes(array $post_types): bool
-    {
-        return in_array($this->getType(), $post_types);
-    }
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function save($postdata): void
     {
@@ -352,7 +363,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function saveComment(string $content, array $commentdata = [], ?WP_User $wp_user = null): int
     {
@@ -385,7 +396,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function saveMeta($key, $value = null): void
     {
@@ -394,5 +405,13 @@ class QueryPost extends ParamsBag implements QueryPostContract
         foreach ($keys as $k => $v) {
             update_post_meta($this->getId(), $k, $v);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function typeIn(array $post_types): bool
+    {
+        return in_array($this->getType(), $post_types);
     }
 }
