@@ -17,6 +17,20 @@ jQuery(function ($) {
 
       this._initOptions();
 
+
+      this._on(this.el, {
+        'list-table:created-row' : function(e, args) {
+          let i = 0;
+          $.each(args.data, function (u,v) {
+            if (typeof v !== 'string') {
+              $(args.row).find('td:eq(' + (i++) + ')').attr(v.attrs).html(v.render);
+            } else {
+              return false;
+            }
+          });
+        }
+      });
+
       let ajax = {
         /**
          * @param {object} d
@@ -83,6 +97,7 @@ jQuery(function ($) {
              */
             createdRow: function (row, data, dataIndex, cells) {
               let dataTable = this;
+
               self._trigger('created-row', null, {row, data, dataIndex, cells, dataTable});
             },
             /**

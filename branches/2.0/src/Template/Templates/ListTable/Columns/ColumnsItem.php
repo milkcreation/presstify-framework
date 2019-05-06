@@ -50,7 +50,7 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
     /**
      * @inheritdoc
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'attrs'    => [],
@@ -95,6 +95,14 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
     /**
      * @inheritdoc
      */
+    public function cellAttrs(): string
+    {
+        return HtmlAttrs::createFromAttrs($this->get('attrs', []));
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getName(): string
     {
         return $this->name;
@@ -105,7 +113,7 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
      */
     public function getTemplate(string $default = 'tbody-col'): string
     {
-        return $this->factory->viewer()->exists('tbody-col_' . $this->getName())
+        return $this->factory->viewer()->exists('_override::tbody-col_' . $this->getName())
             ? 'tbody-col_' . $this->getName() : $default;
     }
 
@@ -256,9 +264,9 @@ class ColumnsItem extends ParamsBag implements ColumnsItemContract
             }
 
             return (string)$this->factory->viewer($this->getTemplate(), [
-                'item'    => $item,
+                'column'  => $this,
                 'content' => $this->content() . ($this->isPrimary() ? $this->factory->rowActions() : ''),
-                'attrs'   => HtmlAttrs::createFromAttrs($this->get('attrs', [])),
+                'item'    => $item
             ]);
         } else {
             return '';

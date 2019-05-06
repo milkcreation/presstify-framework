@@ -160,7 +160,8 @@ class Ajax extends ParamsBag implements AjaxContract
         if ($this->factory->items()->exists()) {
             foreach ($this->factory->items() as $i => $item) {
                 foreach ($this->factory->columns() as $name => $col) {
-                    $cols[$i][$name] = $col->render();
+                    $cols[$i][$name]['attrs'] = $col->get('attrs', []);
+                    $cols[$i][$name]['render'] = $col->render();
                 }
             }
         }

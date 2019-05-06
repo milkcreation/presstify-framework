@@ -14,6 +14,13 @@ interface ColumnsItem extends ParamsBag
     public function __toString(): string;
 
     /**
+     * Attributs HTML de la balise d'encapsulation de la cellule.
+     *
+     * @return string
+     */
+    public function cellAttrs(): string;
+
+    /**
      * Récupération du contenu d'affichage.
      *
      * @return string

@@ -7,4 +7,10 @@
  * @var tiFy\Template\Templates\ListTable\Contracts\ColumnsItem $column
  */
 ?>
-<tr><?php foreach ($this->columns() as $column) : echo $column; endforeach; ?></tr>
+<tr>
+    <?php foreach ($this->columns() as $column) : ?>
+    <td <?php echo $column->cellAttrs(); ?>>
+        <?php echo $column; ?>
+    </td>
+    <?php endforeach; ?>
+</tr>
