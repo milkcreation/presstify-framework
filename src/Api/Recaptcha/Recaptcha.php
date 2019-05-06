@@ -45,24 +45,26 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
 
             field()->register('recaptcha', RecaptchaField::class);
 
-            add_action('wp_footer', function () {
+            add_action('wp_head', function () {
                 if ($this->widgets) {
-                    $js = "var onloadCallback=function(){";
+                    $js = "function onloadCallback () {";
                     foreach ($this->widgets as $id => $params) {
                         $js .= "let el=document.getElementById('{$id}');";
                         $js .= "if(typeof(el)!='undefined' && el!=null){";
                         $js .= "grecaptcha.render('{$id}', " . json_encode($params) . ");";
-                        $js .= "}";
+                        $js .= "};";
                     }
                     $js .= "};";
+                    asset()->setInlineJs($js, true);
 
-                    assets()->addInlineJs($js, 'user', true);
-                    ?>
-                    <script type="text/javascript"
-                            src="https://www.google.com/recaptcha/api.js?hl=<?php echo $this->getLanguage(); ?>&onload=onloadCallback&render=explicit"
-                            async defer></script><?php
+                    add_action('wp_footer', function () {
+                        ?><script type="text/javascript"
+                                  src="https://www.google.com/recaptcha/api.js?hl=<?php echo $this->getLanguage(); ?>&onload=onloadCallback&render=explicit"
+                                  async defer></script><?php
+                    });
                 }
-            });
+            }, 11);
+
         } catch (RuntimeException $e) {
             wp_die($e->getMessage(), __('Api reCaptcha : Erreur de configuration', 'tify'), $e->getCode());
         }

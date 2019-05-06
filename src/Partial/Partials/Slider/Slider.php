@@ -15,14 +15,14 @@ class Slider extends PartialFactory implements SliderContract
         add_action('init', function () {
             wp_register_style(
                 'PartialSlider',
-                assets()->url('partial/slider/css/styles.css'),
+                asset()->url('partial/slider/css/styles.css'),
                 ['slick', 'slick-theme'],
                 170722
             );
 
             wp_register_script(
                 'PartialSlider',
-                assets()->url('partial/slider/js/scripts.js'),
+                asset()->url('partial/slider/js/scripts.js'),
                 ['slick'],
                 170722,
                 true

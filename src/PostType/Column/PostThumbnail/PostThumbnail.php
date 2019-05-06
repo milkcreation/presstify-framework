@@ -25,10 +25,9 @@ class PostThumbnail extends AbstractColumnDisplayPostTypeController
         partial('holder')->enqueue_scripts();
 
         $column_name = "column-{$this->item->getName()}";
-        assets()->addInlineCss(
+        asset()->setInlineCss(
             ".wp-list-table th.{$column_name},.wp-list-table td.{$column_name}{width:80px;text-align:center;}" .
-            ".wp-list-table td.{$column_name} img{max-width:80px;max-height:60px;}",
-            'admin'
+            ".wp-list-table td.{$column_name} img{max-width:80px;max-height:60px;}"
         );
     }
 

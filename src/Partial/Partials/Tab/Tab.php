@@ -16,14 +16,14 @@ class Tab extends PartialFactory implements TabContract
         add_action('init', function () {
             wp_register_style(
                 'PartialTab',
-                assets()->url('partial/tab/css/styles.css'),
+                asset()->url('partial/tab/css/styles.css'),
                 [],
                 170704
             );
 
             wp_register_script(
                 'PartialTab',
-                assets()->url('partial/tab/js/scripts.js'),
+                asset()->url('partial/tab/js/scripts.js'),
                 ['jquery-ui-widget'],
                 170704,
                 true

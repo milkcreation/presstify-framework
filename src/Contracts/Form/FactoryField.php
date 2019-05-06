@@ -14,6 +14,20 @@ interface FactoryField extends FactoryResolver, ParamsBag
     public function __toString();
 
     /**
+     * Récupération du pré-affichage du champ.
+     *
+     * @return string
+     */
+    public function after(): string;
+
+    /**
+     * Récupération du post-affichage du champ.
+     *
+     * @return string
+     */
+    public function before(): string;
+
+    /**
      * Récupération d'attributs d'addon.
      * {@internal Retourne la liste complète si $key est à null.}
      *

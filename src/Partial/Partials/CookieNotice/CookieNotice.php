@@ -28,7 +28,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
 
             wp_register_script(
                 'PartialCookieNotice',
-                assets()->url('partial/cookie-notice/js/scripts.js'),
+                asset()->url('partial/cookie-notice/js/scripts.js'),
                 ['PartialNotice'],
                 170626,
                 true

@@ -16,14 +16,14 @@ class Notice extends PartialFactory implements NoticeContract
         add_action('init', function () {
             wp_register_style(
                 'PartialNotice',
-                assets()->url('partial/notice/css/styles.css'),
+                asset()->url('partial/notice/css/styles.css'),
                 [],
                 180214
             );
 
             wp_register_script(
                 'PartialNotice',
-                assets()->url('partial/notice/js/scripts.js'),
+                asset()->url('partial/notice/js/scripts.js'),
                 ['jquery'],
                 180214,
                 true

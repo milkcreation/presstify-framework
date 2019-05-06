@@ -43,13 +43,13 @@ class TextRemaining extends FieldController implements TextRemainingContract
             function () {
                 wp_register_style(
                     'FieldTextRemaining',
-                    assets()->url('field/text-remaining/css/styles.css'),
+                    asset()->url('field/text-remaining/css/styles.css'),
                     [],
                     180611
                 );
                 wp_register_script(
                     'FieldTextRemaining',
-                    assets()->url('field/text-remaining/js/scripts.js'),
+                    asset()->url('field/text-remaining/js/scripts.js'),
                     ['jquery'],
                     180611,
                     true

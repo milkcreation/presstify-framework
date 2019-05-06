@@ -2,6 +2,7 @@
 
 use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
+use tiFy\Contracts\Asset\Asset;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
@@ -16,7 +17,6 @@ use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Http\RedirectResponse;
 use tiFy\Contracts\Http\Request;
-use tiFy\Contracts\Kernel\Assets;
 use tiFy\Contracts\Kernel\ClassLoader;
 use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\EventsManager;
@@ -66,15 +66,15 @@ if (!function_exists('app')) {
     }
 }
 
-if (!function_exists('assets')) {
+if (!function_exists('asset')) {
     /**
-     * Assets - Controleur des assets.
+     * Assets - Gestionnaire des assets.
      *
-     * @return Assets
+     * @return Asset
      */
-    function assets(): Assets
+    function asset(): Asset
     {
-        return app('assets');
+        return app('asset');
     }
 }
 

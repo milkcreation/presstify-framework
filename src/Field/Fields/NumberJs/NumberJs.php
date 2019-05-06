@@ -44,13 +44,13 @@ class NumberJs extends FieldController implements NumberJsContract
             function () {
                 wp_register_style(
                     'FieldNumberJs',
-                    assets()->url('field/number-js/css/styles.css'),
+                    asset()->url('field/number-js/css/styles.css'),
                     ['dashicons'],
                     171019
                 );
                 wp_register_script(
                     'FieldNumberJs',
-                    assets()->url('field/number-js/js/scripts.css'),
+                    asset()->url('field/number-js/js/scripts.css'),
                     ['jquery-ui-spinner'],
                     171019,
                     true

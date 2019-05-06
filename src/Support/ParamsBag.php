@@ -72,7 +72,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function all()
     {
@@ -80,7 +80,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function count()
     {
@@ -88,7 +88,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function defaults()
     {
@@ -96,7 +96,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get($key, $default = '')
     {
@@ -104,7 +104,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getIterator()
     {
@@ -112,7 +112,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function has($key)
     {
@@ -120,7 +120,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function json($options = 0)
     {
@@ -128,7 +128,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function jsonSerialize()
     {
@@ -136,7 +136,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function keys()
     {
@@ -144,7 +144,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function map(&$value, $key)
     {
@@ -152,7 +152,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse()
     {
@@ -162,7 +162,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function pull($key, $default = null)
     {
@@ -170,7 +170,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function offsetExists($offset)
     {
@@ -178,7 +178,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function offsetGet($key)
     {
@@ -186,7 +186,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function offsetSet($key, $value)
     {
@@ -194,7 +194,7 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function offsetUnset($key)
     {
@@ -202,24 +202,22 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function push($key, $value)
     {
-        if (!$this->has($key)) :
+        if (!$this->has($key)) {
             $this->set($key, []);
-        endif;
+        }
 
         $arr = $this->get($key);
 
-        if (!is_array($arr)) :
-            return false;
-        else :
+        if (is_array($arr)) {
             array_push($arr, $value);
             $this->set($key, $arr);
+        }
 
-            return true;
-        endif;
+        return $this;
     }
 
     /**
@@ -239,24 +237,22 @@ class ParamsBag implements ParamsBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function unshift($value, $key)
     {
-        if (!$this->has($key)) :
+        if (!$this->has($key)) {
             $this->set($key, []);
-        endif;
+        }
 
         $arr = $this->get($key);
 
-        if (!is_array($arr)) :
-            return false;
-        else :
+        if (is_array($arr)) {
             array_unshift($arr, $value);
             $this->set($key, $arr);
+        }
 
-            return true;
-        endif;
+        return $this;
     }
 
     /**

@@ -40,7 +40,7 @@ class SelectImage extends FieldController implements SelectImageContract
         add_action('init', function () {
             wp_register_style(
                 'FieldSelectImage',
-                assets()->url('field/select-image/css/styles.css'),
+                asset()->url('field/select-image/css/styles.css'),
                 ['FieldSelectJs'],
                 180808
             );

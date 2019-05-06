@@ -49,13 +49,13 @@ class DatetimeJs extends FieldController implements DatetimeJsContract
             function () {
                 wp_register_style(
                     'FieldDatetimeJs',
-                    assets()->url('field/datetime-js/css/styles.css'),
+                    asset()->url('field/datetime-js/css/styles.css'),
                     [],
                     171112
                 );
                 wp_register_script(
                     'FieldDatetimeJs',
-                    assets()->url('field/datetime-js/js/scripts.js'),
+                    asset()->url('field/datetime-js/js/scripts.js'),
                     ['jquery', 'moment'],
                     171112,
                     true

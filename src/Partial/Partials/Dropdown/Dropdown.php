@@ -16,13 +16,13 @@ class Dropdown extends PartialFactory implements DropdownContract
         add_action('init', function () {
             wp_register_style(
                 'PartialDropdown',
-                assets()->url('partial/dropdown/css/styles.css'),
+                asset()->url('partial/dropdown/css/styles.css'),
                 [],
                 181221
             );
             wp_register_script(
                 'PartialDropdown',
-                assets()->url('partial/dropdown/js/scripts.js'),
+                asset()->url('partial/dropdown/js/scripts.js'),
                 ['jquery-ui-widget'],
                 181221,
                 true

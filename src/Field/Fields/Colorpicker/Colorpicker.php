@@ -42,7 +42,7 @@ class Colorpicker extends FieldController implements ColorpickerContract
             function () {
                 wp_register_style(
                     'FieldColorpicker',
-                    assets()->url('field/colorpicker/css/styles.css'),
+                    asset()->url('field/colorpicker/css/styles.css'),
                     ['spectrum'],
                     180725
                 );
@@ -54,7 +54,7 @@ class Colorpicker extends FieldController implements ColorpickerContract
 
                 wp_register_script(
                     'FieldColorpicker',
-                    assets()->url('field/colorpicker/js/scripts.js'),
+                    asset()->url('field/colorpicker/js/scripts.js'),
                     $deps,
                     180725,
                     true

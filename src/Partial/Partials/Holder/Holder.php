@@ -15,7 +15,7 @@ class Holder extends PartialFactory implements HolderContract
         add_action('init', function () {
             wp_register_style(
                 'PartialHolder',
-                assets()->url('partial/holder/css/styles.css'),
+                asset()->url('partial/holder/css/styles.css'),
                 [],
                 160714
             );

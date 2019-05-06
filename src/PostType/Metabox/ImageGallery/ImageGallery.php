@@ -87,14 +87,14 @@ class ImageGallery extends MetaboxWpPostController
 
                 wp_enqueue_style(
                     'MetaboxPostTypeImageGallery',
-                    \assets()->url('post-type/metabox/image-gallery/css/styles.css'),
+                    asset()->url('post-type/metabox/image-gallery/css/styles.css'),
                     ['tiFyAdmin'],
                     180808
                 );
 
                 wp_enqueue_script(
                     'MetaboxPostTypeImageGallery',
-                    \assets()->url('post-type/metabox/image-gallery/js/scripts.js'),
+                    asset()->url('post-type/metabox/image-gallery/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable'],
                     180808,
                     true

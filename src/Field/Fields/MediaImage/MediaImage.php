@@ -58,13 +58,13 @@ class MediaImage extends FieldController implements MediaImageContract
             function () {
                 wp_register_style(
                     'FieldMediaImage',
-                    assets()->url('field/media-image/css/styles.css'),
+                    asset()->url('field/media-image/css/styles.css'),
                     ['tiFyAdmin'],
                     180516
                 );
                 wp_register_script(
                     'FieldMediaImage',
-                    assets()->url('field/media-image/js/scripts.js'),
+                    asset()->url('field/media-image/js/scripts.js'),
                     ['jquery'],
                     180516,
                     true

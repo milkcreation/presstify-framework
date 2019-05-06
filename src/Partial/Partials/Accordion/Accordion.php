@@ -15,13 +15,13 @@ class Accordion extends PartialFactory implements AccordionContract
         add_action('init', function () {
             wp_register_style(
                 'PartialAccordion',
-                assets()->url('partial/accordion/css/styles.css'),
+                asset()->url('partial/accordion/css/styles.css'),
                 [],
                 181221
             );
             wp_register_script(
                 'PartialAccordion',
-                assets()->url('partial/accordion/js/scripts.js'),
+                asset()->url('partial/accordion/js/scripts.js'),
                 ['jquery-ui-widget'],
                 181221,
                 true

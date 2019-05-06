@@ -33,7 +33,7 @@ class Spinner extends PartialFactory implements SpinnerContract
         add_action('init', function () {
             wp_register_style(
                 'PartialSpinner',
-                assets()->url('partial/spinner/css/spinkit.min.css'),
+                asset()->url('partial/spinner/css/spinkit.min.css'),
                 [],
                 '1.2.5'
             );
@@ -41,7 +41,7 @@ class Spinner extends PartialFactory implements SpinnerContract
             foreach ($this->spinners as $spinner) :
                 wp_register_style(
                     "PartialSpinner-{$spinner}",
-                    assets()->url("/partial/spinner/css/{$spinner}.min.css"),
+                    asset()->url("/partial/spinner/css/{$spinner}.min.css"),
                     [],
                     '1.2.5'
                 );

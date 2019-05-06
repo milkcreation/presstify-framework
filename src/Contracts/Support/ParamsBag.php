@@ -105,7 +105,7 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
      * @param mixed $value Valeur de l'attribut.
      *
-     * @return mixed
+     * @return static
      */
     public function push($key, $value);
 
@@ -126,7 +126,7 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
      * @param mixed $value Valeur de l'attribut.
      *
-     * @return mixed
+     * @return static
      */
     public function unshift($value, $key);
 

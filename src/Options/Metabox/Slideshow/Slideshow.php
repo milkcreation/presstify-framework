@@ -98,14 +98,14 @@ class Slideshow extends MetaboxWpOptionsController
 
                 wp_enqueue_style(
                     'MetaboxOptionsSlideshow',
-                    assets()->url('options/metabox/slideshow/css/styles.css'),
+                    asset()->url('options/metabox/slideshow/css/styles.css'),
                     [],
                     181015
                 );
 
                 wp_enqueue_script(
                     'MetaboxOptionsSlideshow',
-                    assets()->url('options/metabox/slideshow/js/scripts.js'),
+                    asset()->url('options/metabox/slideshow/js/scripts.js'),
                     [
                         'tinymce',
                         'jquery-ui-sortable'

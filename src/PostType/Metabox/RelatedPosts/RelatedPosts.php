@@ -194,13 +194,13 @@ class RelatedPosts extends MetaboxWpPostController
             function () {
                 wp_enqueue_style(
                     'MetaboxPostTypeRelatedPosts',
-                    assets()->url('post-type/metabox/related-posts/css/styles.css'),
+                    asset()->url('post-type/metabox/related-posts/css/styles.css'),
                     ['tify_control-suggest', 'tify_control-holder_image']
                 );
 
                 wp_enqueue_script(
                     'MetaboxPostTypeRelatedPosts',
-                    assets()->url('post-type/metabox/related-posts/js/scripts.js'),
+                    asset()->url('post-type/metabox/related-posts/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable', 'tify_control-suggest']
                 );
                 wp_localize_script(

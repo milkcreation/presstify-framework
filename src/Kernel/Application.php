@@ -6,6 +6,7 @@ use BadMethodCallException;
 use Exception;
 use Interop\Container\ContainerInterface;
 use tiFy\Container\Container;
+use XStatic\ProxyManager;
 
 class Application extends Container
 {
@@ -29,6 +30,8 @@ class Application extends Container
         $this->delegate($container);
 
         parent::__construct();
+
+        $this->registerProxy();
     }
 
     /**
@@ -61,10 +64,22 @@ class Application extends Container
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getServiceProviders(): array
     {
         return config('app.providers', []);
+    }
+
+    /**
+     *
+     */
+    public function registerProxy()
+    {
+        $manager = new ProxyManager($this);
+        foreach(config('app.proxy', []) as $alias => $proxy) {
+            $manager->addProxy($alias, $proxy);
+        }
+        $manager->enable(ProxyManager::ROOT_NAMESPACE_ANY);
     }
 }

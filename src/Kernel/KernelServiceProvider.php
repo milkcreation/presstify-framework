@@ -4,7 +4,6 @@ namespace tiFy\Kernel;
 
 use tiFy\Http\Request;
 use tiFy\Container\ServiceProvider;
-use tiFy\Kernel\Assets\Assets;
 use tiFy\Kernel\Events\Manager as EventsManager;
 use tiFy\Kernel\Events\Listener;
 use tiFy\Kernel\Logger\Logger;
@@ -20,7 +19,6 @@ class KernelServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'assets',
         'class-info',
         'events',
         'events.listener',
@@ -43,7 +41,7 @@ class KernelServiceProvider extends ServiceProvider
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function boot()
     {
@@ -57,14 +55,10 @@ class KernelServiceProvider extends ServiceProvider
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register()
     {
-        $this->getContainer()->share('assets', function () {
-            return new Assets();
-        });
-
         $this->getContainer()->add('class-info', function ($class) {
             return new ClassInfo($class);
         });
