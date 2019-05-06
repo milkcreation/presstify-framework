@@ -25,7 +25,7 @@ class Pagination extends PartialFactory implements PaginationContract
         add_action('init', function () {
             wp_register_style(
                 'PartialPagination',
-                assets()->url('partial/pagination/css/styles.css'),
+                asset()->url('partial/pagination/css/styles.css'),
                 [],
                 181005
             );

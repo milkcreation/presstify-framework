@@ -6,7 +6,7 @@
  * @var tiFy\Contracts\Form\FactoryField $field
  */
 ?>
-<?php echo $field->get('before'); ?>
+<?php echo $field->before(); ?>
 
 <?php if ($field->hasWrapper()) : ?>
     <?php echo partial('tag', array_merge($field->get('wrapper', []), [
@@ -18,4 +18,4 @@
     <?php $this->insert('field-content', compact('field')); ?>
 <?php endif; ?>
 
-<?php echo $field->get('after');
+<?php echo $field->after();

@@ -17,13 +17,13 @@ class Modal extends PartialFactory implements ModalContract
         add_action('init', function () {
             wp_register_style(
                 'PartialModal',
-                assets()->url('partial/modal/css/styles.css'),
+                asset()->url('partial/modal/css/styles.css'),
                 [],
                 171206
             );
             wp_register_script(
                 'PartialModal',
-                assets()->url('partial/modal/js/scripts.js'),
+                asset()->url('partial/modal/js/scripts.js'),
                 ['jquery'],
                 171206,
                 true
@@ -96,35 +96,30 @@ class Modal extends PartialFactory implements ModalContract
         parent::parse();
 
         $class = 'modal';
-        if ($this->get('animation')) :
+        if ($this->get('animation')) {
             $class .= ' fade';
-        endif;
-        if ( ! $this->get('attrs.id')) :
+        }
+        if ( ! $this->get('attrs.id')) {
             $this->set('attrs.id', 'Modal-' . $this->getId());
-        endif;
+        }
 
         $this->set('attrs.class', $this->get('attrs.class', '') . " {$class}");
 
         $this->set('attrs.role', 'dialog');
         $this->set('attrs.aria-control', 'modal');
 
-        $this->set(
-            'options',
-            array_merge(
-                [
-                    'backdrop' => true,
-                    'keyboard' => true,
-                    'focus'    => true,
-                    'show'     => true
-                ],
-                $this->get('options')
-            )
-        );
-        foreach (['backdrop', 'keyboard', 'focus', 'show'] as $key) :
-            if ($this->has("options.{$key}")) :
+        $this->set('options', array_merge([
+            'backdrop' => true,
+            'keyboard' => true,
+            'focus'    => true,
+            'show'     => true
+        ], $this->get('options')));
+
+        foreach (['backdrop', 'keyboard', 'focus', 'show'] as $key) {
+            if ($this->has("options.{$key}")) {
                 $this->set("attrs.data-{$key}", $this->get("options.{$key}") ? 'true' : 'false');
-            endif;
-        endforeach;
+            }
+        }
 
         if ($backdrop_close = $this->get('backdrop_close')) :
             $backdrop_close = $backdrop_close instanceof Closure
@@ -161,19 +156,18 @@ class Modal extends PartialFactory implements ModalContract
 
         $ajax = $this->get('ajax', false);
 
-        if (is_string($ajax)) :
-            assets()->setDataJs($this->getId(), ['content' => $ajax]);
-        endif;
+        if (is_string($ajax)) {
+            asset()->setDataJs($this->getId(), ['content' => $ajax], true);
+        }
 
-        $this->set(
-            'attrs.data-options.ajax',
+        $this->set('attrs.data-options.ajax',
             (
             $ajax !== false
                 ? array_merge(
                 is_array($ajax) ? $ajax : [],
                 [
                     'action' => 'partial_modal',
-                    'csrf'   => \wp_create_nonce('PartialModal' . $this->getId()),
+                    'csrf'   => wp_create_nonce('PartialModal' . $this->getId()),
                     'data'   => []
                 ]
             )
@@ -183,18 +177,14 @@ class Modal extends PartialFactory implements ModalContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function display()
     {
         if ($this->get('in_footer')) :
-            add_action(
-                (! is_admin() ? 'wp_footer' : 'admin_footer'),
-                function () {
-                    echo parent::display();
-                },
-                999999
-            );
+            add_action((! is_admin() ? 'wp_footer' : 'admin_footer'), function () {
+                echo parent::display();
+            }, 999999);
 
             return '';
         else :
@@ -213,9 +203,9 @@ class Modal extends PartialFactory implements ModalContract
             'content' => ''
         ], $attrs);
 
-        if ((Arr::get($attrs, 'tag') === 'a') && ! Arr::has($attrs, 'attrs.href')) :
+        if ((Arr::get($attrs, 'tag') === 'a') && ! Arr::has($attrs, 'attrs.href')) {
             Arr::set($attrs, 'attrs.href', "#{$this->get('attrs.id')}");
-        endif;
+        }
 
         Arr::set($attrs, 'attrs.aria-control', 'modal-trigger');
         Arr::set($attrs, 'attrs.data-target', "#{$this->get('attrs.id')}");

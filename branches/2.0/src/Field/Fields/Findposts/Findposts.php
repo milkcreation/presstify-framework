@@ -63,13 +63,13 @@ class Findposts extends FieldController implements FindpostsContract
 
                 wp_register_style(
                     'FieldFindposts',
-                    assets()->url('field/findposts/css/styles.css'),
+                    asset()->url('field/findposts/css/styles.css'),
                     181006
                 );
 
                 wp_register_script(
                     'FieldFindposts',
-                    assets()->url('field/findposts/js/scripts.js'),
+                    asset()->url('field/findposts/js/scripts.js'),
                     ['media'],
                     181006,
                     true

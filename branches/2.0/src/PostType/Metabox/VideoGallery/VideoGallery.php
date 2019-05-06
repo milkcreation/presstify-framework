@@ -90,14 +90,14 @@ class VideoGallery extends MetaboxWpPostController
 
                 wp_enqueue_style(
                     'PostTypeMetaboxVideoGallery',
-                    assets()->url('post-type/metabox/video-gallery/css/styles.css'),
+                    asset()->url('post-type/metabox/video-gallery/css/styles.css'),
                     ['tiFyAdmin'],
                     180724
                 );
 
                 wp_enqueue_script(
                     'PostTypeMetaboxVideoGallery',
-                    assets()->url('post-type/metabox/video-gallery/js/scripts.js'),
+                    asset()->url('post-type/metabox/video-gallery/js/scripts.js'),
                     ['jquery', 'jquery-ui-sortable', 'tiFyAdmin'],
                     180724,
                     true

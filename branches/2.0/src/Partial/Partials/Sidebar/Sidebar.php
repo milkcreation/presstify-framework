@@ -25,13 +25,13 @@ class Sidebar extends PartialFactory implements SidebarContract
         add_action('init', function () {
             wp_register_style(
                 'PartialSidebar',
-                assets()->url('partial/sidebar/css/styles.css'),
+                asset()->url('partial/sidebar/css/styles.css'),
                 [],
                 180511
             );
             wp_register_script(
                 'PartialSidebar',
-                assets()->url('partial/sidebar/css/scripts.js'),
+                asset()->url('partial/sidebar/css/scripts.js'),
                 ['jquery'],
                 180511,
                 true

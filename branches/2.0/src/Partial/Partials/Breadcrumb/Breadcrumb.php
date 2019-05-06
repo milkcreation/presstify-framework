@@ -27,7 +27,7 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
         add_action('init', function () {
             wp_register_style(
                 'PartialBreadcrumb',
-                assets()->url('partial/breadcrumb/css/styles.css'),
+                asset()->url('partial/breadcrumb/css/styles.css'),
                 [],
                 180122
             );

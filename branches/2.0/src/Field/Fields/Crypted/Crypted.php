@@ -64,14 +64,14 @@ class Crypted extends FieldController implements CryptedContract
 
                 wp_register_style(
                     'FieldCrypted',
-                    assets()->url('field/crypted/css/styles.css'),
+                    asset()->url('field/crypted/css/styles.css'),
                     ['dashicons'],
                     180519
                 );
 
                 wp_register_script(
                     'FieldCrypted',
-                    assets()->url('field/crypted/js/scripts.js'),
+                    asset()->url('field/crypted/js/scripts.js'),
                     ['jquery'],
                     180519,
                     true

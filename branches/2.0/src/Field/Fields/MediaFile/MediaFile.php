@@ -39,13 +39,13 @@ class MediaFile extends FieldController implements MediaFileContract
             function () {
                 wp_register_style(
                     'FieldMediaFile',
-                    assets()->url('field/media-file/css/styles.css'),
+                    asset()->url('field/media-file/css/styles.css'),
                     ['dashicons'],
                     180616
                 );
                 wp_register_script(
                     'FieldMediaFile',
-                    assets()->url('field/media-file/js/scripts.js'),
+                    asset()->url('field/media-file/js/scripts.js'),
                     ['jquery'],
                     180616,
                     true

@@ -15,7 +15,7 @@ class Table extends PartialFactory implements  TableContract
         add_action('init', function () {
             wp_register_style(
                 'PartialTable',
-                assets()->url('partial/table/css/styles.css'),
+                asset()->url('partial/table/css/styles.css'),
                 [],
                 160714
             );

@@ -2,6 +2,7 @@
 
 namespace tiFy\Form\Factory;
 
+use Closure;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FieldController;
@@ -118,6 +119,24 @@ class Field extends ParamsBag implements FactoryField
     public function __toString()
     {
         return $this->render();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function after(): string
+    {
+        $after = $this->get('after', '');
+        return $after instanceof Closure ? call_user_func($after) : strval($after);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function before(): string
+    {
+        $before = $this->get('before', '');
+        return $before instanceof Closure ? call_user_func($before) : strval($before);
     }
 
     /**

@@ -21,7 +21,9 @@ class RoutingServiceProvider extends ServiceProvider
         'router.middleware.xhr',
         'router.strategy.default',
         'router.strategy.json',
-        'redirect'
+        'redirect',
+        'url',
+        'url.factory'
     ];
 
     /**

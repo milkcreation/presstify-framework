@@ -54,14 +54,14 @@ class Repeater extends FieldController implements RepeaterContract
 
             wp_register_style(
                 'FieldRepeater',
-                assets()->url('/field/repeater/css/styles.css'),
+                asset()->url('/field/repeater/css/styles.css'),
                 [is_admin() ? 'tiFyAdmin' : ''],
                 170421
             );
 
             wp_register_script(
                 'FieldRepeater',
-                assets()->url('/field/repeater/js/scripts.js'),
+                asset()->url('/field/repeater/js/scripts.js'),
                 ['jquery', 'jquery-ui-widget', 'jquery-ui-sortable'],
                 170421,
                 true

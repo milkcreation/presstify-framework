@@ -255,12 +255,11 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         if ($this->onSuccess()) {
             $this->notices()->add('success', $this->notices()->params('success.message'));
 
-            assets()->addInlineJs(
+            asset()->setInlineJs(
                 'if (window.history && window.history.replaceState){' .
                 'let anchor=window.location.href.split("#")[1],' .
                 'location=window.location.href.split("?")[0] + (anchor ? "#" + anchor : "");' .
                 'window.history.pushState("", document.title, location);};',
-                'both',
                 true
             );
         }

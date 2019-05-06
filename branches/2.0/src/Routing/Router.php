@@ -27,7 +27,7 @@ class Router extends LeagueRouter implements RouterContract
      * Liste des routes déclarées.
      * @var Route[]
      */
-    protected $items;
+    protected $items = [];
 
     /**
      * CONSTRUCTEUR.

@@ -105,7 +105,7 @@ class TaxonomySelector extends MetaboxWpPostController
             function () {
                 \wp_enqueue_style(
                     'MetaboxesPostTypeTaxonomySelector',
-                    assets()->url('post-type/metabox/taxonomy-selector/css/styles.css')
+                    asset()->url('post-type/metabox/taxonomy-selector/css/styles.css')
                 );
             }
         );

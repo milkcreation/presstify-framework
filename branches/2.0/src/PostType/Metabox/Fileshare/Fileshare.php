@@ -95,14 +95,14 @@ class Fileshare extends MetaboxWpPostController
 
                     wp_enqueue_style(
                         'MetaboxPostTypeFileshare',
-                        assets()->url('post-type/metabox/fileshare/css/styles.css'),
+                        asset()->url('post-type/metabox/fileshare/css/styles.css'),
                         ['tiFyAdmin'],
                         151216
                     );
 
                     wp_enqueue_script(
                         'MetaboxPostTypeFileshare',
-                        assets()->url('post-type/metabox/fileshare/js/scripts.js'),
+                        asset()->url('post-type/metabox/fileshare/js/scripts.js'),
                         ['jquery', 'jquery-ui-sortable'],
                         151216,
                         true

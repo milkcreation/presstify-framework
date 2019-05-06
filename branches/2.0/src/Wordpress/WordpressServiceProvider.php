@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress;
 
 use tiFy\Container\ServiceProvider;
+use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Database\Database;
 use tiFy\Wordpress\Db\Db;
@@ -47,6 +48,7 @@ class WordpressServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'wp',
+        'wp.asset',
         'wp.column',
         'wp.database',
         'wp.db',
@@ -84,10 +86,14 @@ class WordpressServiceProvider extends ServiceProvider
         require_once __DIR__ . '/helpers.php';
 
         add_action('after_setup_theme', function () {
-            /** @var Wordpress $wp */
+            /* @var Wordpress $wp */
             $wp = $this->getContainer()->get('wp');
 
             if ($wp->is()) {
+                if ($this->getContainer()->has('asset')) {
+                    $this->getContainer()->get('wp.asset');
+                }
+
                 if ($this->getContainer()->has('column')) {
                     $this->getContainer()->get('wp.column');
                 }
@@ -167,6 +173,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerManager();
+        $this->registerAsset();
         $this->registerColumn();
         $this->registerDatabase();
         $this->registerFilesystem();
@@ -184,6 +191,18 @@ class WordpressServiceProvider extends ServiceProvider
         $this->registerTaxonomy();
         $this->registerTemplate();
         $this->registerUser();
+    }
+
+    /**
+     * Déclaration du gestionnaire d'assets.
+     *
+     * @return void
+     */
+    public function registerAsset()
+    {
+        $this->getContainer()->share('wp.asset', function () {
+            return new Asset($this->getContainer()->get('asset'));
+        });
     }
 
     /**
