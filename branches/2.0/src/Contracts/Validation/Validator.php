@@ -99,6 +99,16 @@ interface Validator
     public function isEqual($a, $b): bool;
 
     /**
+     * Vérifie si une valeur appartient à une liste de valeurs
+     *
+     * @param mixed $value Valeur à vérifier.
+     * @param mixed[] $values Liste des valeurs d'appartenance.
+     *
+     * @return boolean
+     */
+    public function isInArray($value, array $values): bool;
+
+    /**
      * Vérifie si une valeur ne contient que des chiffres.
      *
      * @param mixed $value Valeur à vérifier.
@@ -144,6 +154,16 @@ interface Validator
      * @return boolean
      */
     public function notEmpty($value): bool;
+
+    /**
+     * Vérifie si une valeur n'appartient pas à une liste de valeurs.
+     *
+     * @param mixed $value Valeur à vérifier.
+     * @param mixed[] $values Liste des valeurs d'appartenance.
+     *
+     * @return boolean
+     */
+    public function notInArray($value, array $values): bool;
 
     /**
      * Vérifie si une valeur est un mot de passe valide.

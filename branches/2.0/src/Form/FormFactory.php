@@ -145,6 +145,14 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     /**
      * @inheritDoc
      */
+    public function isPrepared(): bool
+    {
+        return $this->prepared;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function name(): string
     {
         return strval($this->name);
@@ -179,7 +187,13 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function prepare(): FormFactoryContract
     {
-        if (!$this->prepared) {
+        if (!$this->isPrepared()) {
+            $this->boot();
+
+            $this->parse();
+
+            $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
+
             $this->events('form.prepare', [&$this]);
 
             $this->groups()->prepare();
@@ -323,30 +337,9 @@ class FormFactory extends ParamsBag implements FormFactoryContract
                 return $this->resolve('factory.viewer', [$this]);
             });
 
-            $this->boot();
-            $this->booted = true;
-
-            $this->parse();
-
-            $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
-
             $this->events('form.init', [&$this]);
 
-            foreach ([
-                         'events',
-                         'addons',
-                         'buttons',
-                         'fields',
-                         'groups',
-                         'notices',
-                         'options',
-                         'request',
-                         'session',
-                         'validation',
-                         'viewer'
-                     ] as $service) {
-                $this->resolve("factory.{$service}." . $this->name());
-            }
+            $this->booted = true;
         }
         return $this;
     }
