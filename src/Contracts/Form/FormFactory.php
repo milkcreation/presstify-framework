@@ -63,6 +63,13 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function index();
 
     /**
+     * Vérification de préparation active.
+     *
+     * @return boolean
+     */
+    public function isPrepared(): bool;
+
+    /**
      * Récupération du nom de qualification du formulaire.
      *
      * @return string

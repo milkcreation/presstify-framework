@@ -7,7 +7,7 @@ use tiFy\Contracts\Validation\Validator as ValidatorContract;
 class Validator implements ValidatorContract
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function exactLength($value, int $length = 0): bool
     {
@@ -15,7 +15,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasSpecialChars($value): bool
     {
@@ -23,7 +23,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasMaj($value): bool
     {
@@ -31,7 +31,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isAlpha($value): bool
     {
@@ -39,7 +39,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isAlphaNum($value): bool
     {
@@ -47,7 +47,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isDate($value, string $format = 'd/m/Y'): bool
     {
@@ -60,7 +60,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isDifferent($a, $b): bool
     {
@@ -68,7 +68,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isEmail($value): bool
     {
@@ -76,7 +76,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isEmpty($value): bool
     {
@@ -84,7 +84,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isEqual($a, $b): bool
     {
@@ -92,7 +92,15 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function isInArray($value, array $values): bool
+    {
+        return in_array($value, $values);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function isInteger($value): bool
     {
@@ -100,7 +108,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isUrl($value): bool
     {
@@ -108,7 +116,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function maxLength($value, int $max = 0): bool
     {
@@ -116,7 +124,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function minLength($value, int $min = 0): bool
     {
@@ -124,7 +132,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function notEmpty($value): bool
     {
@@ -132,7 +140,15 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function notInArray($value, array $values): bool
+    {
+        return !$this->isInArray($value, $values);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function validPassword($value, array $args = []): bool
     {
@@ -178,7 +194,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function regex($value, string $regex): bool
     {
