@@ -67,13 +67,10 @@ class Recaptcha extends FieldController
      */
     public function display()
     {
-        $this->recaptcha->addWidgetRender(
-            $this->get('attrs.id'),
-            [
-                'sitekey' => $this->get('sitekey'),
-                'theme'   => $this->get('theme')
-            ]
-        );
+        $this->recaptcha->addWidgetRender($this->get('attrs.id'), [
+            'sitekey' => $this->get('sitekey'),
+            'theme'   => $this->get('theme')
+        ]);
 
         return parent::display();
     }

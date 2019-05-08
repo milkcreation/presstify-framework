@@ -12,16 +12,13 @@
 
     <form <?php echo $this->htmlAttrs($this->form()->get('attrs', [])); ?>>
         <?php
-        echo field(
-            'hidden',
-            [
-                'name'  => '_token',
-                'value' => $this->form()->csrf(),
-                'attrs' => [
-                    'class' => ''
-                ]
+        echo field('hidden', [
+            'name'  => '_token',
+            'value' => $this->form()->csrf(),
+            'attrs' => [
+                'class' => ''
             ]
-        );
+        ]);
         ?>
 
         <header class="Form-header Form-header--<?php echo $this->form()->name(); ?>">
