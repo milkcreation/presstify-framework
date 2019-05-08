@@ -26,17 +26,35 @@ class Form implements FormContract
     {
         $this->manager = $manager;
 
+        foreach (config('form', []) as $name => $attrs) {
+            $this->manager->register($name, $attrs);
+        }
+
         app()->add('form.addon.mailer', function ($name, $attrs, FormFactory $form) {
             return new Mailer($name, $attrs, $form);
         });
 
         add_action('wp', function () {
-            foreach (config('form', []) as $name => $attrs) {
-                $this->manager->register($name, $attrs);
-            }
             foreach ($this->manager->all() as $form) {
-                $this->manager->current($form);
-                $this->manager->reset();
+                /* @var FormFactory $form */
+                if ($form->isAuto()) {
+                    $this->manager->current($form);
+                    $form->prepare()->request()->handle();
+                    $this->manager->reset();
+                }
+            }
+        });
+
+        add_action('init', function () {
+            if (is_admin()) {
+                foreach ($this->manager->all() as $form) {
+                    /* @var FormFactory $form */
+                    if ($form->isAuto()) {
+                        $this->manager->current($form);
+                        $form->prepare();
+                        $this->manager->reset();
+                    }
+                }
             }
         });
     }

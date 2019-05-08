@@ -47,7 +47,7 @@ class Request extends ParamsBag implements FactoryRequest
      */
     public function handle(): void
     {
-        if (!$this->handled && !$this->form->get('handle', true)) {
+        if ($this->handled) {
             return;
         } else {
             $this->handled = true;

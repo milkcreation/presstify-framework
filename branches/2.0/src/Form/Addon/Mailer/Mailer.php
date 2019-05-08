@@ -87,13 +87,10 @@ class Mailer extends AddonController
         /** @var MetaboxManager $metabox */
         if ($this->get('admin.confirmation') || $this->get('admin.notification')) :
             $metabox = app('metabox');
-            $metabox->add(
-                "FormAddonMailer-{$this->form()->name()}",
-                'tify_options@options',
-                [
-                    'title' => $this->form()->getTitle()
-                ]
-            );
+
+            $metabox->add("FormAddonMailer-{$this->form()->name()}", 'tify_options@options', [
+                'title' => $this->form()->getTitle()
+            ]);
 
             if ($this->get('admin.confirmation')) :
                 $metabox->add(
@@ -216,13 +213,13 @@ class Mailer extends AddonController
         /** @var MailerContract $mailer */
         $mailer = app('mailer');
 
-        if ($params = $this->parseParams($this->get('confirmation', []), 'confirmation')) :
+        if ($params = $this->parseParams($this->get('confirmation', []), 'confirmation')) {
             $mailer->send($params);
-        endif;
+        }
 
-        if ($params = $this->parseParams($this->get('notification', []), 'notification')) :
+        if ($params = $this->parseParams($this->get('notification', []), 'notification')) {
             $mailer->send($params);
-        endif;
+        }
     }
 
     /**

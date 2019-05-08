@@ -53,7 +53,6 @@
     "html2text/html2text": "^4.0",
     "http-interop/http-factory-diactoros": "^1.0",
     "illuminate/http": "^5.8",
-    "illuminate/events": "^5.8",
     "illuminate/database": "^5.8",
     "jgrossi/corcel": "^2.8",
     "jeremeamia/xstatic": "^1.0",
