@@ -188,13 +188,29 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function prepare(): FormFactoryContract
     {
         if (!$this->isPrepared()) {
+            $this->events('form.prepare', [&$this]);
+
             $this->boot();
 
             $this->parse();
 
-            $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
+            foreach ([
+                         'events',
+                         'addons',
+                         'buttons',
+                         'fields',
+                         'groups',
+                         'notices',
+                         'options',
+                         'request',
+                         'session',
+                         'validation',
+                         'viewer'
+                     ] as $service) {
+                $this->resolve("factory.{$service}." . $this->name());
+            }
 
-            $this->events('form.prepare', [&$this]);
+            $this->events()->listen('form.set.current', [$this->request(), 'handle'], -999999);
 
             $this->groups()->prepare();
             foreach ($this->fields() as $field) {
