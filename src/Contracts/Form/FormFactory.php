@@ -63,6 +63,13 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function index();
 
     /**
+     * Vérification d'activation automatisée.
+     *
+     * @return boolean
+     */
+    public function isAuto(): bool;
+
+    /**
      * Vérification de préparation active.
      *
      * @return boolean
