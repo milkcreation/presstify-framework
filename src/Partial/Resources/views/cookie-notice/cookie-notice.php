@@ -4,13 +4,11 @@
  */
 ?>
 <?php $this->before(); ?>
-
 <?php
 echo partial('notice', [
     'attrs'   => $this->get('attrs', []),
-    'content' => $this->get('content', ''),
+    'content' => $this->get('content', '') . $this->get('accept', ''),
     'dismiss' => $this->get('dismiss', '')
 ]);
 ?>
-
 <?php $this->after();
