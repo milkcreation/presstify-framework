@@ -109,7 +109,7 @@ class AccordionItems extends QueryCollection implements AccordionItemsContract
             ];
 
             $output .= "<li ". HtmlAttrs::createFromAttrs($attrs) .">";
-            $output .= (string) $this->partial->viewer('item', compact('item'));
+            $output .= $this->partial->viewer('item', compact('item'));
             $output .= $this->walk($items, ($depth + 1), $item->getName());
             $output .= "</li>";
         endforeach;

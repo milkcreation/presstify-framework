@@ -14,7 +14,7 @@ class RoleFactory extends tiFyRoleFactory
         parent::boot();
 
         if (!$this->get('admin_bar') && current_user_can($this->getName()) && !is_admin()) {
-            show_admin_bar(false);
+            //show_admin_bar(false);
         }
     }
 

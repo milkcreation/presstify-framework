@@ -115,16 +115,13 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
             $this->set('accept.attrs.href', "#{$this->get('attrs.id')}");
         endif;
 
-        $this->set(
-            'attrs.data-options',
-            [
-                'ajax_action'   => $this->get('ajax_action'),
-                'ajax_nonce'    => $this->get('ajax_nonce'),
-                'cookie_name'   => $this->get('cookie_name'),
-                'cookie_hash'   => $this->get('cookie_hash'),
-                'cookie_expire' => $this->get('cookie_expire')
-            ]
-        );
+        $this->set('attrs.data-options', [
+            'ajax_action'   => $this->get('ajax_action'),
+            'ajax_nonce'    => $this->get('ajax_nonce'),
+            'cookie_name'   => $this->get('cookie_name'),
+            'cookie_hash'   => $this->get('cookie_hash'),
+            'cookie_expire' => $this->get('cookie_expire')
+        ]);
 
         $this->set('accept.attrs.data-toggle', 'notice.accept');
 
