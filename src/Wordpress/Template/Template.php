@@ -2,9 +2,9 @@
 
 namespace tiFy\Wordpress\Template;
 
-use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
-use WP_Screen;
+use tiFy\Template\Templates\FileBrowser\Contracts\FileIcon as FileIconContract;
+//use WP_Screen;
 
 class Template
 {
@@ -25,8 +25,17 @@ class Template
     {
         $this->manager = $manager;
 
-        events()->listen('template.factory.boot.*', function (TemplateFactory $factory){
-            exit;
+        foreach(config('template', []) as $name => $attrs) {
+            $this->manager->register($name, $attrs);
+        }
+
+        // Surcharge de fournisseurs de service.
+        /*$this->manager->getContainer()->add(FileIconContract::class, function () {
+            return new Templates\FileBrowser\FileIcon();
+        });*/
+
+        events()->listen('template.factory.boot', function (/*string $name, TemplateFactory $factory*/){
+            /*
             add_action('admin_menu', function () use ($factory) {
                 if ($attrs = $factory->config('admin_menu', [])) {
                     $factory->config([
@@ -79,6 +88,7 @@ class Template
                     });
                 }
             });
+            */
         });
     }
 }

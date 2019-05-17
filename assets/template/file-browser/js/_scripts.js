@@ -1,3 +1,5 @@
+"use strict";
+
 jQuery(document).ready(function ($) {
     var $content = $('.Browser-content'),
         $infos = $('.Browser-itemInfos');

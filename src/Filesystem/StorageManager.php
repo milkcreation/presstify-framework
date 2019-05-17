@@ -4,14 +4,34 @@ namespace tiFy\Filesystem;
 
 use League\Flysystem\Adapter\Local as LocalAdapter;
 use League\Flysystem\MountManager;
-use League\Flysystem\Plugin\ForcedCopy;
+use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StorageManager as StorageManagerContract;
 
 class StorageManager extends MountManager implements StorageManagerContract
 {
     /**
-     * @inheritdoc
+     * Instance du conteneur d'injection de dépendance.
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param Container $container
+     *
+     * @return void
+     */
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+
+        parent::__construct([]);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function createLocal(array $config)
     {
@@ -20,11 +40,11 @@ class StorageManager extends MountManager implements StorageManagerContract
             ? LocalAdapter::SKIP_LINKS
             : LocalAdapter::DISALLOW_LINKS;
 
-        return  app()->get('filesystem', [new LocalAdapter($config['root'], LOCK_EX, $links, $permissions)]);
+        return  $this->container->get(Filesystem::class, [new LocalAdapter($config['root'], LOCK_EX, $links, $permissions)]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function disk(string $name)
     {
@@ -32,21 +52,21 @@ class StorageManager extends MountManager implements StorageManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register(string $name, $attrs)
     {
-        if (!$attrs instanceof Filesystem) :
+        if (!$attrs instanceof Filesystem) {
             $filesystem = $this->createLocal($attrs);
-        else :
+        } else {
             $filesystem = $attrs;
-        endif;
+        }
 
         return $this->set($name, $filesystem);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function set(string $name, Filesystem $filesystem)
     {

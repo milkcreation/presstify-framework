@@ -2,22 +2,12 @@
 
 namespace tiFy\Contracts\Template;
 
-use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\View\ViewEngine;
 
-interface TemplateFactory
+interface TemplateFactory extends ParamsBag
 {
-    /**
-     * Résolution de sortie de la classe en tant qu'instance.
-     *
-     * @param string $name Nom de qualification.
-     *
-     * @return static
-     */
-    public function __invoke(string $name): TemplateFactory;
-
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
      *
@@ -35,9 +25,9 @@ interface TemplateFactory
     /**
      * Initialisation du controleur.
      *
-     * @return static
+     * @return void
      */
-    public function boot(): TemplateFactory;
+    public function boot(): void;
 
     /**
      * Vérification d'existance d'un service fourni.
@@ -47,17 +37,6 @@ interface TemplateFactory
      * @return mixed.
      */
     public function bound(string $alias);
-
-    /**
-     * Récupération de l'instance de gestion de la configuration ou Définition d'attributs de configuration ou
-     * récupération d'un attribut de configuration.
-     *
-     * @param null|string|array $key Clé d'indice de l'attribut de configuration. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return ParamsBag|mixed
-     */
-    public function config($key = null, $default = null);
 
     /**
      * Récupération de l'instance du controleur de base de données
@@ -72,13 +51,6 @@ interface TemplateFactory
      * @return void
      */
     public function display();
-
-    /**
-     * Récupération du conteneur d'injection de dépendances.
-     *
-     * @return Container
-     */
-    public function getContainer(): Container;
 
     /**
      * Récupération de la liste des fournisseurs de services.
@@ -96,13 +68,6 @@ interface TemplateFactory
      * @return FactoryLabels|string
      */
     public function label(?string $key = null, string $default = '');
-
-    /**
-     * Intialisation de l'affichage de la disposition.
-     *
-     * @return static
-     */
-    public function load(): TemplateFactory;
 
     /**
      * Récupération du nom de qualification du controleur.
@@ -165,6 +130,16 @@ interface TemplateFactory
      * @return mixed.
      */
     public function resolve(string $alias, array $args = []);
+
+    /**
+     * Définition de l'instance du template.
+     *
+     * @param string $name Nom de qualification.
+     * @param TemplateManager $manager Instance du gestionnaire de templates.
+     *
+     * @return static
+     */
+    public function setInstance(string $name, TemplateManager $manager): TemplateFactory;
 
     /**
      * Récupération de l'identifiant de qualification compatible à l'utilisation dans une url.

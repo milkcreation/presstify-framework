@@ -24,7 +24,7 @@ class Labels extends PostTypeLabelsBag
     {
         $this->factory = $factory;
 
-        parent::__construct($factory->name(), $factory->config('labels', []));
+        parent::__construct($factory->name(), $factory->get('labels', []));
     }
 
     /**

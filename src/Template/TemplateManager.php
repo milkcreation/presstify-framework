@@ -2,49 +2,38 @@
 
 namespace tiFy\Template;
 
-use tiFy\Contracts\Template\TemplateFactory;
+use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
 use tiFy\Contracts\Template\TemplateManager as TemplateManagerContract;
+use tiFy\Support\Manager;
 
-class TemplateManager implements TemplateManagerContract
+class TemplateManager extends Manager implements TemplateManagerContract
 {
     /**
      * Liste des éléments déclarés.
-     * @var TemplateFactory[]
+     * @var TemplateFactoryContract[]
      */
     protected $items = [];
 
     /**
-     * CONSTRUCTEUR.
+     * {@inheritDoc}
      *
-     * @return void
+     * @return TemplateFactoryContract|null
      */
-    public function __construct()
+    public function get($name): ?TemplateFactoryContract
     {
-        foreach (config('template', []) as $name => $attrs) :
-            $this->register($name, $attrs);
-        endforeach;
+        return parent::get($name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function get(string $name): ?TemplateFactory
+    public function register($name, ...$args): TemplateManagerContract
     {
-        return $this->items[$name] ?? null;
+        return $this->set([$name => $args[0] ?? []]);
     }
 
     /**
-     * @inheritdoc
-     */
-    public function register(string $name, array $attrs = []): TemplateManagerContract
-    {
-        $this->set($name, app()->get('template.factory', [$attrs]));
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function resourcesDir(?string $path = ''): ?string
     {
@@ -54,7 +43,7 @@ class TemplateManager implements TemplateManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function resourcesUrl(?string $path = ''): ?string
     {
@@ -65,12 +54,16 @@ class TemplateManager implements TemplateManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function set(string $name, TemplateFactory $template): TemplateManagerContract
+    public function walk(&$item, $key = null): void
     {
-        $this->items[$name] = $this->items[$name] ?? call_user_func($template, $name);
-
-        return $this;
+        if (!$item instanceof TemplateFactory) {
+            $attrs = $item;
+            /* @var TemplateFactoryContract: $item */
+            $item = $this->getContainer()->get(TemplateFactoryContract::class);
+            $item->set($attrs);
+        }
+        $item->setInstance((string)$key, $this);
     }
 }

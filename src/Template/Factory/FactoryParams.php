@@ -25,7 +25,7 @@ class FactoryParams extends ParamsBag implements FactoryParamsContract
     {
         $this->factory = $factory;
 
-        $this->set($this->factory->config('params', []))->parse();
+        $this->set($this->factory->get('params', []))->parse();
     }
 
     /**

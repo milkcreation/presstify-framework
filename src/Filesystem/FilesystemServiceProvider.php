@@ -4,6 +4,7 @@ namespace tiFy\Filesystem;
 
 use League\Flysystem\AdapterInterface;
 use tiFy\Container\ServiceProvider;
+use tiFy\Contracts\Filesystem\Filesystem as FilesystemContract;
 
 class FilesystemServiceProvider extends ServiceProvider
 {
@@ -12,21 +13,21 @@ class FilesystemServiceProvider extends ServiceProvider
      * @var array
      */
     protected $provides = [
-        'filesystem',
+        FilesystemContract::class,
         'storage'
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register()
     {
-        $this->getContainer()->add('filesystem', function (AdapterInterface $adapter) {
+        $this->getContainer()->add(FilesystemContract::class, function (AdapterInterface $adapter) {
             return new Filesystem($adapter);
         });
 
         $this->getContainer()->share('storage', function () {
-            return new StorageManager();
+            return new StorageManager($this->getContainer());
         });
     }
 }

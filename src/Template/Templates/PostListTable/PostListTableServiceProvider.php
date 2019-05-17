@@ -26,18 +26,18 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     /**
      * @inheritdoc
      */
-    public function registerColumns()
+    public function registerColumns(): void
     {
-        parent::registerColumns();
+        parent::registerFactoryColumns();
 
         $this->getContainer()->add(
-            $this->getFullAlias('columns.item.post_title'),
+            $this->getFactoryAlias('columns.item.post_title'),
             function ($name, $attrs, ListTable $factory) {
                 return new ColumnsItemPostTitle($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('columns.item.post_type'),
+            $this->getFactoryAlias('columns.item.post_type'),
             function ($name, $attrs, ListTable $factory) {
                 return new ColumnsItemPostType($name, $attrs, $factory);
             });
@@ -46,9 +46,9 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     /**
      * @inheritdoc
      */
-    public function registerDb()
+    public function registerFactoryDb(): void
     {
-        $this->getContainer()->share($this->getFullAlias('db'), function() {
+        $this->getContainer()->share($this->getFactoryAlias('db'), function() {
             return new DbPostsController($this->factory->name());
         });
     }
@@ -56,9 +56,9 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     /**
      * @inheritdoc
      */
-    public function registerLabels()
+    public function registerFactoryLabels(): void
     {
-        $this->getContainer()->share($this->getFullAlias('labels'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
             return new Labels($this->factory);
         });
     }
@@ -66,9 +66,9 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     /**
      * @inheritdoc
      */
-    public function registerParams()
+    public function registerFactoryParams(): void
     {
-        $this->getContainer()->share($this->getFullAlias('params'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('params'), function () {
             return new Params($this->factory);
         });
     }
@@ -76,9 +76,9 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     /**
      * @inheritdoc
      */
-    public function registerRequest()
+    public function registerFactoryRequest(): void
     {
-        $this->getContainer()->share($this->getFullAlias('request'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('request'), function () {
             return (Request::capture())->setTemplateFactory($this->factory);
         });
     }
@@ -86,24 +86,24 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     /**
      * @inheritdoc
      */
-    public function registerViewFilters()
+    public function registerFactoryViewFilters(): void
     {
-        parent::registerViewFilters();
+        parent::registerFactoryViewFilters();
 
         $this->getContainer()->add(
-            $this->getFullAlias('view-filters.item.all'),
+            $this->getFactoryAlias('view-filters.item.all'),
             function ($name, $attrs, ListTable $factory) {
                 new ViewFiltersItemAll($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('view-filters.item.publish'),
+            $this->getFactoryAlias('view-filters.item.publish'),
             function ($name, $attrs, ListTable $factory) {
                 new ViewFiltersItemPublish($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('view-filters.item.trash'),
+            $this->getFactoryAlias('view-filters.item.trash'),
             function ($name, $attrs, ListTable $factory) {
                 new ViewFiltersItemTrash($name, $attrs, $factory);
             });

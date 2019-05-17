@@ -2,8 +2,6 @@
 
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
-use Psr\Http\Message\ServerRequestInterface;
-use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\Support\ParamsBag;
 
 interface Ajax extends ParamsBag
@@ -30,18 +28,11 @@ interface Ajax extends ParamsBag
     public function parseOptions(array $options = []): array;
 
     /**
-     * Définition de la route XHR associée.
-     *
-     * @param Route $route
-     *
-     * @return static
-     */
-    public function setXhr(Route $route): Ajax;
-
-    /**
      * Traitement de la requête ajax (XmlHttpRequest).
+     *
+     * @param array $args Liste des arguments dynamique passé à la requête
      *
      * @return array
      */
-    public function xhrHandler(ServerRequestInterface $psrRequest);
+    public function xhrHandler(...$args);
 }

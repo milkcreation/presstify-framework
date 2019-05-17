@@ -38,7 +38,7 @@ class Collection extends tiFyCollection implements CollectionContract
     {
         $this->factory = $factory;
 
-        $items = $this->factory->config('items', []);
+        $items = $this->factory->get('items', []);
 
         array_walk($items, [$this, 'walk']);
 

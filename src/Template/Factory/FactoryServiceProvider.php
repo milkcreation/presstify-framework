@@ -3,12 +3,14 @@
 namespace tiFy\Template\Factory;
 
 use tiFy\Contracts\Db\DbFactory;
-use tiFy\Contracts\Template\TemplateFactory;
+use tiFy\Contracts\Template\{TemplateFactory, FactoryServiceProvider as FactoryServiceProviderContract};
 use tiFy\Container\ServiceProvider;
 use tiFy\View\ViewEngine;
 
-class FactoryServiceProvider extends ServiceProvider
+class FactoryServiceProvider extends ServiceProvider implements FactoryServiceProviderContract
 {
+    use FactoryAwareTrait;
+
     /**
      * Instance du gabarit d'affichage.
      * @var TemplateFactory
@@ -16,52 +18,36 @@ class FactoryServiceProvider extends ServiceProvider
     protected $factory;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param TemplateFactory $factory Instance du gabarit d'affichage associé.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct(TemplateFactory $factory)
+    public function boot(): void
     {
-        $this->factory = $factory;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        events()->on('template.factory.boot.'. $this->factory->name(), function () {
-            $this->register();
+        events()->listen('template.factory.boot', function () {
+            $this->registerFactory();
         });
     }
 
     /**
-     * Récupération de l'alias de qualification complet d'un service fournis.
-     *
-     * @param string $alias Nom de qualification court.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getFullAlias(string $alias)
+    public function getFactoryAlias(string $alias): string
     {
         return "template.factory.{$this->factory->name()}.{$alias}";
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function register()
+    public function registerFactory(): void
     {
-        $this->registerAssets();
-        $this->registerDb();
-        $this->registerLabels();
-        $this->registerParams();
-        $this->registerNotices();
-        $this->registerRequest();
-        $this->registerUrl();
-        $this->registerViewer();
+        $this->registerFactoryAssets();
+        $this->registerFactoryDb();
+        $this->registerFactoryLabels();
+        $this->registerFactoryParams();
+        $this->registerFactoryNotices();
+        $this->registerFactoryRequest();
+        $this->registerFactoryUrl();
+        $this->registerFactoryViewer();
     }
 
     /**
@@ -69,9 +55,9 @@ class FactoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerAssets()
+    public function registerFactoryAssets(): void
     {
-        $this->getContainer()->share($this->getFullAlias('assets'), function() {
+        $this->getContainer()->share($this->getFactoryAlias('assets'), function () {
             return new FactoryAssets($this->factory);
         });
     }
@@ -81,10 +67,10 @@ class FactoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerDb()
+    public function registerFactoryDb(): void
     {
-        $this->getContainer()->share($this->getFullAlias('db'), function() {
-            if ($db = $this->factory->config('providers.db', [])) {
+        $this->getContainer()->share($this->getFactoryAlias('db'), function () {
+            if ($db = $this->factory->get('providers.db', [])) {
                 return $db instanceof DbFactory ? $db : new FactoryDb($this->factory);
             } else {
                 return null;
@@ -97,9 +83,9 @@ class FactoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerLabels()
+    public function registerFactoryLabels(): void
     {
-        $this->getContainer()->share($this->getFullAlias('labels'), function() {
+        $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
             return new FactoryLabels($this->factory);
         });
     }
@@ -109,9 +95,9 @@ class FactoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerNotices()
+    public function registerFactoryNotices(): void
     {
-        $this->getContainer()->share($this->getFullAlias('notices'), function() {
+        $this->getContainer()->share($this->getFactoryAlias('notices'), function () {
             return new FactoryNotices($this->factory);
         });
     }
@@ -121,9 +107,9 @@ class FactoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerParams()
+    public function registerFactoryParams(): void
     {
-        $this->getContainer()->share($this->getFullAlias('params'), function() {
+        $this->getContainer()->share($this->getFactoryAlias('params'), function () {
             return new FactoryParams($this->factory);
         });
     }
@@ -133,9 +119,9 @@ class FactoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerRequest()
+    public function registerFactoryRequest(): void
     {
-        $this->getContainer()->share($this->getFullAlias('request'), function() {
+        $this->getContainer()->share($this->getFactoryAlias('request'), function () {
             return FactoryRequest::capture()->setTemplateFactory($this->factory);
         });
     }
@@ -145,9 +131,9 @@ class FactoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerUrl()
+    public function registerFactoryUrl(): void
     {
-        $this->getContainer()->share($this->getFullAlias('url'), function() {
+        $this->getContainer()->share($this->getFactoryAlias('url'), function () {
             return new FactoryUrl($this->factory);
         });
     }
@@ -157,10 +143,10 @@ class FactoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerViewer()
+    public function registerFactoryViewer(): void
     {
-        $this->getContainer()->share($this->getFullAlias('viewer'), function() {
-            $params = $this->factory->config('viewer', []);
+        $this->getContainer()->share($this->getFactoryAlias('viewer'), function () {
+            $params = $this->factory->get('viewer', []);
 
             if (!$params instanceof ViewEngine) {
                 $viewer = new ViewEngine(array_merge([

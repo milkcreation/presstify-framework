@@ -2,12 +2,8 @@
 
 namespace tiFy\Template\Templates\ListTable\Ajax;
 
-use Psr\Http\Message\ServerRequestInterface;
-use tiFy\Contracts\Routing\Route;
 use tiFy\Support\ParamsBag;
-use tiFy\Template\Templates\ListTable\Contracts\Ajax as AjaxContract;
-use tiFy\Template\Templates\ListTable\Contracts\ColumnsItem;
-use tiFy\Template\Templates\ListTable\Contracts\ListTable;
+use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract, ColumnsItem, ListTable};
 
 class Ajax extends ParamsBag implements AjaxContract
 {
@@ -16,12 +12,6 @@ class Ajax extends ParamsBag implements AjaxContract
      * @var ListTable
      */
     protected $factory;
-
-    /**
-     * Instance de la route XHR associée.
-     * @var Route
-     */
-    protected $xhr;
 
     /**
      * CONSTRUCTEUR.
@@ -36,17 +26,26 @@ class Ajax extends ParamsBag implements AjaxContract
 
         $attrs = $this->factory->param('ajax', []);
 
+        if (is_string($attrs)) {
+            $attrs = [
+                'ajax'        => [
+                    'url'      => $attrs,
+                    'dataType' => 'json',
+                    'type'     => 'POST',
+                ]
+            ];
+        }
         $this->set(is_array($attrs) ? $attrs : []);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function defaults()
     {
         return [
             'ajax'        => [
-                'url'      => $this->xhr->getUrl(),
+                'url'      => '',
                 'dataType' => 'json',
                 'type'     => 'POST',
             ],
@@ -62,7 +61,7 @@ class Ajax extends ParamsBag implements AjaxContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getColumns(): array
     {
@@ -81,7 +80,7 @@ class Ajax extends ParamsBag implements AjaxContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getLanguage(): array
     {
@@ -111,7 +110,7 @@ class Ajax extends ParamsBag implements AjaxContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse()
     {
@@ -125,7 +124,7 @@ class Ajax extends ParamsBag implements AjaxContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parseOptions(array $options = []): array
     {
@@ -140,21 +139,11 @@ class Ajax extends ParamsBag implements AjaxContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setXhr(Route $route): AjaxContract
+    public function xhrHandler(...$args)
     {
-        $this->xhr = $route;
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function xhrHandler(ServerRequestInterface $psrRequest)
-    {
-        $this->factory->load();
+        $this->factory->prepare();
 
         $cols = [];
         if ($this->factory->items()->exists()) {
