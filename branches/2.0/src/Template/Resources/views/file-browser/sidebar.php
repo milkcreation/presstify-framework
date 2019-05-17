@@ -7,12 +7,25 @@
  */
 ?>
 <div class="Browser-sidebarInfos" data-control="file-browser.sidebar.file-infos">
+    <h3 class="Browser-title"><?php _e('Élèment sélectionné', 'tify'); ?></h3>
     <?php $this->insert('file-infos', compact('file')); ?>
 </div>
 <hr>
-<div class="Browser-sidebarAction">
-    <div class="Browser-sidebarAction--newdir">
-        <?php $this->insert('form-newdir', compact('file')); ?>
-        <a href="#" class="Browser-button"><?php _e('Créer un dossier', 'tify'); ?></a>
-    </div>
-</div>
+
+<h3 class="Browser-title"><?php _e('Répertoire courant', 'tify'); ?></h3>
+
+<ul class="Browser-sidebarActions">
+    <li class="Browser-sidebarAction Browser-sidebarAction--newdir">
+        <?php $this->insert('action-newdir', compact('file')); ?>
+        <div class="Browser-sidebarActionButton">
+            <a href="#"
+               class="Browser-button Browser-button--form_toggle"
+               data-control="file-browser.button.toggle"
+               data-target="[data-control='file-browser.action.newdir']"
+            ><?php _e('Créer un dossier', 'tify'); ?></a>
+        </div>
+    </li>
+    <li class="Browser-sidebarAction Browser-sidebarAction--upload">
+        <?php $this->insert('action-upload', compact('file')); ?>
+    </li>
+</ul>
