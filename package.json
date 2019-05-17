@@ -8,6 +8,7 @@
     "collect.js": "^4.6.1",
     "datatables.net-dt": "^1.10.19",
     "datatables.net-plugins": "^1.10.19",
+    "dropzone": "^5.5.1",
     "font-awesome": "^4.7.0",
     "holderjs": "^2.9.4",
     "hover.css": "^2.3.2",

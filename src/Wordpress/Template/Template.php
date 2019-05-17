@@ -30,9 +30,9 @@ class Template
         }
 
         // Surcharge de fournisseurs de service.
-        /*$this->manager->getContainer()->add(FileIconContract::class, function () {
+        $this->manager->getContainer()->add(FileIconContract::class, function () {
             return new Templates\FileBrowser\FileIcon();
-        });*/
+        });
 
         events()->listen('template.factory.boot', function (/*string $name, TemplateFactory $factory*/){
             /*
