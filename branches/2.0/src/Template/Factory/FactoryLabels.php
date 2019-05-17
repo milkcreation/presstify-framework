@@ -25,6 +25,6 @@ class FactoryLabels extends LabelsBag implements FactoryLabelsContract
     {
         $this->factory = $factory;
 
-        parent::__construct($this->factory->name(), $this->factory->config('labels', []));
+        parent::__construct($this->factory->name(), $this->factory->get('labels', []));
     }
 }

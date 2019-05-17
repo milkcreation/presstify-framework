@@ -2,26 +2,18 @@
 
 namespace tiFy\Contracts\Template;
 
-interface TemplateManager
+use Psr\Container\ContainerInterface;
+use tiFy\Contracts\Container\Container;
+use tiFy\Contracts\Support\Manager;
+
+interface TemplateManager extends Manager
 {
     /**
-     * Récupération d'un motif d'affichage.
+     * {@inheritDoc}
      *
-     * @param string $name Nom de qualification du motif.
-     *
-     * @return TemplateFactory|null
+     * @return Container
      */
-    public function get(string $name): ?TemplateFactory;
-
-    /**
-     * Déclaration d'un motif d'affichage.
-     *
-     * @param string $name Nom de qualification de la disposition.
-     * @param array $attrs Liste des attributs de configuration de la disposition.
-     *
-     * @return static
-     */
-    public function register(string $name, array $attrs = []): TemplateManager;
+    public function getContainer(): ContainerInterface;
 
     /**
      * Récupération du chemin absolu vers le répertoire de stockage des ressources.
@@ -40,14 +32,4 @@ interface TemplateManager
      * @return string
      */
     public function resourcesUrl(?string $path = ''): ?string;
-
-    /**
-     * Définition d'un motif d'affichage.
-     *
-     * @param string $name Nom de qualification de la disposition.
-     * @param TemplateFactory $pattern Motif d'affichage.
-     *
-     * @return static
-     */
-    public function set(string $name, TemplateFactory $pattern): TemplateManager;
 }

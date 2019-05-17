@@ -1,12 +1,12 @@
-/** DEPS */
-/** datatables */
+// DEPS
+// datatables
 import 'datatables.net-dt';
 
-/** jQuery-ui - Widget */
+// jQuery-ui > widget
 import 'jquery-ui/ui/widget';
 
-/** SCSS */
+// SCSS
 import './scss/styles.scss';
 
-/** JS */
+// JS
 import './js/scripts';

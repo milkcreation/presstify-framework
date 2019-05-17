@@ -17,7 +17,7 @@ class PostListTable extends BaseListTable implements PostListTableContract
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return PostListTableContract
      */

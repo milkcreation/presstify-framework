@@ -25,6 +25,6 @@ class FactoryDb extends DbFactory implements FactoryDbContract
     {
         $this->factory = $factory;
 
-        parent::__construct($this->factory->name(), $this->factory->config('providers.db', []));
+        parent::__construct($this->factory->name(), $this->factory->get('providers.db', []));
     }
 }

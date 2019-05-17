@@ -2,7 +2,6 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use stdClass;
 use tiFy\Template\Factory\FactoryServiceProvider;
 use tiFy\Template\Templates\ListTable\Ajax\Ajax;
 use tiFy\Template\Templates\ListTable\BulkActions\BulkActionsCollection;
@@ -43,38 +42,20 @@ class ListTableServiceProvider extends FactoryServiceProvider
     protected $factory;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function boot()
+    public function registerFactory(): void
     {
-        parent::boot();
+        parent::registerFactory();
 
-        events()->on('template.factory.boot.'. $this->factory->name(), function (ListTable $factory) {
-            if ($ajax = $factory->ajax()) {
-                $ajax->setXhr(
-                    router()
-                        ->xhr('/template/list-table/' . $factory->slug(), [$ajax, 'xhrHandler'])
-                        ->strategy('json')
-                );
-            }
-        });
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function register()
-    {
-        parent::register();
-
-        $this->registerAjax();
-        $this->registerBulkActions();
-        $this->registerColumns();
-        $this->registerItems();
-        $this->registerPagination();
-        $this->registerRowActions();
-        $this->registerSearch();
-        $this->registerViewFilters();
+        $this->registerFactoryAjax();
+        $this->registerFactoryBulkActions();
+        $this->registerFactoryColumns();
+        $this->registerFactoryItems();
+        $this->registerFactoryPagination();
+        $this->registerFactoryRowActions();
+        $this->registerFactorySearch();
+        $this->registerFactoryViewFilters();
     }
 
     /**
@@ -82,11 +63,11 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerAjax()
+    public function registerFactoryAjax(): void
     {
-        $this->getContainer()->share($this->getFullAlias('ajax'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('ajax'), function () {
             return $this->factory->param('ajax') ? new Ajax($this->factory) : null;
-          });
+        });
     }
 
     /**
@@ -94,20 +75,20 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerBulkActions()
+    public function registerFactoryBulkActions(): void
     {
-        $this->getContainer()->share($this->getFullAlias('bulk-actions'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('bulk-actions'), function () {
             return new BulkActionsCollection($this->factory);
         });
 
         $this->getContainer()->add(
-            $this->getFullAlias('bulk-actions.item'),
+            $this->getFactoryAlias('bulk-actions.item'),
             function (string $name, array $attrs, ListTable $factory) {
                 return new BulkActionsItem($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('bulk-actions.item.trash'),
+            $this->getFactoryAlias('bulk-actions.item.trash'),
             function (string $name, array $attrs, ListTable $factory) {
                 return new BulkActionsItemTrash($name, $attrs, $factory);
             });
@@ -118,23 +99,23 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerColumns()
+    public function registerFactoryColumns(): void
     {
-        $this->getContainer()->share($this->getFullAlias('columns'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('columns'), function () {
             if (!$columns = $this->factory->param('columns', [])) {
-                $columns = ($this->getContainer()->has($this->getFullAlias('db')))
-                    ? $this->getContainer()->get($this->getFullAlias('db'))->getColNames() : [];
+                $columns = ($this->getContainer()->has($this->getFactoryAlias('db')))
+                    ? $this->getContainer()->get($this->getFactoryAlias('db'))->getColNames() : [];
             }
             return new ColumnsCollection($columns, $this->factory);
         });
 
         $this->getContainer()->add(
-            $this->getFullAlias('columns.item'), function ($name, $attrs, ListTable $factory) {
+            $this->getFactoryAlias('columns.item'), function ($name, $attrs, ListTable $factory) {
             return new ColumnsItem($name, $attrs, $factory);
         });
 
         $this->getContainer()->add(
-            $this->getFullAlias('columns.item.cb'),
+            $this->getFactoryAlias('columns.item.cb'),
             function ($name, $attrs, ListTable $factory) {
                 return new ColumnsItemCb($name, $attrs, $factory);
             });
@@ -145,21 +126,21 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerItems()
+    public function registerFactoryItems(): void
     {
-        $this->getContainer()->share($this->getFullAlias('items'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('items'), function () {
             return new Collection($this->factory);
         });
 
-        $this->getContainer()->add($this->getFullAlias('item'), Item::class);
+        $this->getContainer()->add($this->getFactoryAlias('item'), Item::class);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function registerLabels()
+    public function registerFactoryLabels(): void
     {
-        $this->getContainer()->share($this->getFullAlias('labels'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
             return new Labels($this->factory);
         });
     }
@@ -169,29 +150,29 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerPagination()
+    public function registerFactoryPagination(): void
     {
-        $this->getContainer()->share($this->getFullAlias('pagination'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('pagination'), function () {
             return new Pagination($this->factory);
         });
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function registerParams()
+    public function registerFactoryParams(): void
     {
-        $this->getContainer()->share($this->getFullAlias('params'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('params'), function () {
             return new Params($this->factory);
         });
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function registerRequest()
+    public function registerFactoryRequest(): void
     {
-        $this->getContainer()->share($this->getFullAlias('request'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('request'), function () {
             return (Request::capture())->setTemplateFactory($this->factory);
         });
     }
@@ -201,62 +182,62 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerRowActions()
+    public function registerFactoryRowActions(): void
     {
-        $this->getContainer()->share($this->getFullAlias('row-actions'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('row-actions'), function () {
             return new RowActionsCollection($this->factory);
         });
 
-        $this->getContainer()->add($this->getFullAlias('row-actions.item'),
+        $this->getContainer()->add($this->getFactoryAlias('row-actions.item'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItem($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.activate'),
+            $this->getFactoryAlias('row-actions.item.activate'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemActivate($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.deactivate'),
+            $this->getFactoryAlias('row-actions.item.deactivate'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemDeactivate($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.delete'),
+            $this->getFactoryAlias('row-actions.item.delete'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemDelete($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.duplicate'),
+            $this->getFactoryAlias('row-actions.item.duplicate'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemDuplicate($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.edit'),
+            $this->getFactoryAlias('row-actions.item.edit'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemEdit($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.preview'),
+            $this->getFactoryAlias('row-actions.item.preview'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemPreview($name, $attrs, $factory);
             });
 
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.trash'),
+            $this->getFactoryAlias('row-actions.item.trash'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemTrash($name, $attrs, $factory);
             });
 
         $this->getContainer()->add(
-            $this->getFullAlias('row-actions.item.untrash'),
+            $this->getFactoryAlias('row-actions.item.untrash'),
             function ($name, $attrs, ListTable $factory) {
                 new RowActionsItemUntrash($name, $attrs, $factory);
             });
@@ -267,9 +248,9 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerSearch()
+    public function registerFactorySearch(): void
     {
-        $this->getContainer()->share($this->getFullAlias('search'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('search'), function () {
             return new Search($this->factory);
         });
     }
@@ -279,10 +260,10 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerViewer()
+    public function registerFactoryViewer(): void
     {
-        $this->getContainer()->share($this->getFullAlias('viewer'), function () {
-            $params = $this->factory->config('viewer', []);
+        $this->getContainer()->share($this->getFactoryAlias('viewer'), function () {
+            $params = $this->factory->get('viewer', []);
 
             if (!$params instanceof ViewEngine) {
                 $viewer = new ViewEngine(array_merge([
@@ -308,14 +289,14 @@ class ListTableServiceProvider extends FactoryServiceProvider
      *
      * @return void
      */
-    public function registerViewFilters()
+    public function registerFactoryViewFilters(): void
     {
-        $this->getContainer()->share($this->getFullAlias('view-filters'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('view-filters'), function () {
             return new ViewFiltersCollection($this->factory);
         });
 
         $this->getContainer()->add(
-            $this->getFullAlias('view-filters.item'),
+            $this->getFactoryAlias('view-filters.item'),
             function ($name, $attrs, ListTable $factory) {
                 new ViewFiltersItem($name, $attrs, $factory);
             });

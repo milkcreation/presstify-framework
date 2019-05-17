@@ -69,20 +69,6 @@ class ListTable extends TemplateFactory implements ListTableContract
     /**
      * @inheritdoc
      */
-    public function load(): TemplateFactoryContract
-    {
-        parent::load();
-
-        if ($ajax = $this->ajax()) {
-            $ajax->parse()->all();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function pagination(): Pagination
     {
         return $this->resolve('pagination');
@@ -95,22 +81,29 @@ class ListTable extends TemplateFactory implements ListTableContract
      */
     public function prepare(): TemplateFactoryContract
     {
-        $this->items()->query();
+        if (!$this->prepared) {
+            parent::prepare();
 
-        if (!$this->items()->exists()) {
-            return $this;
+            $this->items()->query();
+
+            if (!$this->items()->exists()) {
+                return $this;
+            }
+
+            $total_items = $this->items()->total();
+            $per_page = $this->request()->getPerPage();
+            $total_pages = ceil($total_items / $per_page);
+
+            $this->pagination()
+                ->set('per_page', $per_page)
+                ->set('total_items', $total_items)
+                ->set('total_pages', $total_pages)
+                ->parse();
+
+            if ($ajax = $this->ajax()) {
+                $ajax->parse()->all();
+            }
         }
-
-        $total_items = $this->items()->total();
-        $per_page = $this->request()->getPerPage();
-        $total_pages = ceil($total_items / $per_page);
-
-        $this->pagination()
-            ->set('per_page', $per_page)
-            ->set('total_items', $total_items)
-            ->set('total_pages', $total_pages)
-            ->parse();
-
         return $this;
     }
 

@@ -2,7 +2,6 @@
 
 namespace tiFy\PostType;
 
-use InvalidArgumentException;
 use tiFy\Contracts\PostType\PostTypeFactory as PostTypeFactoryContract;
 use tiFy\Contracts\PostType\PostTypeManager as PostTypeManagerContract;
 use tiFy\Contracts\PostType\PostTypePostMeta;
@@ -11,7 +10,7 @@ use tiFy\Support\Manager;
 class PostTypeManager extends Manager implements PostTypeManagerContract
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get($name): ?PostTypeFactoryContract
     {
@@ -19,7 +18,7 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function post_meta(): PostTypePostMeta
     {
@@ -27,7 +26,7 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register($name, ...$args): PostTypeManagerContract
     {
@@ -35,7 +34,7 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function resolve(string $alias)
     {
@@ -43,7 +42,7 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function walk(&$item, $key = null): void
     {
