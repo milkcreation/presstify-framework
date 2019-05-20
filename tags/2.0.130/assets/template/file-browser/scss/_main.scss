@@ -1,0 +1,226 @@
+.Browser {
+  position: relative;
+  height: 800px;
+  background-color: color(white);
+  color: color(gray, 900);
+  border: solid 1px color(gray, 300);
+}
+
+// TITRE
+.Browser-title {
+  font-size: 18px;
+  color: color(gray, 900);
+}
+
+// BOUTONS
+.Browser-button {
+  display: inline-block;
+  border: solid 2px color(gray, 900);
+  background-color: color(white);
+  color: color(gray, 900);
+  font-weight: bold;
+  padding: 5px 20px;
+}
+
+.Browser-button:hover,
+.Browser-button:focus,
+.Browser-button:active {
+  background-color: color(gray, 900);
+  color: color(white);
+}
+
+.Browser-button--valid {
+  border: none;
+  background-color: color(green, 600);
+  color: color(white);
+}
+
+.Browser-button--valid:hover,
+.Browser-button--valid:focus,
+.Browser-button--valid:active {
+  background-color: color(green, 500);
+}
+
+.Browser-button--cancel {
+  border: none;
+  background-color: color(red, 600);
+  color: color(white);
+}
+
+.Browser-button--cancel:hover,
+.Browser-button--cancel:focus,
+.Browser-button--cancel:active {
+  background-color: color(red, 500);
+}
+
+.Browser-button--toggle[aria-visible="true"] {
+  display: none;
+}
+
+// ACTIONS
+.Browser-action {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.Browser-action .Browser-title {
+  color: color(gray, 900);
+  font-weight: bold;
+  text-align: center;
+  padding: 5px 0;
+  border-bottom: none;
+}
+
+.Browser-action--toggleable {
+  display: none;
+}
+
+.Browser-actionNotices {
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.Browser-actionClose {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: color(gray, 900);
+  line-height: 1;
+}
+
+.Browser-actionClose:active,
+.Browser-actionClose:focus,
+.Browser-actionClose:hover {
+  color: color(gray, 700);
+}
+
+// ACTIONS > FORMULAIRE
+.Browser-actionFormFields {
+  margin-bottom: 10px;
+}
+
+.Browser-actionFormButtons {
+  text-align: center;
+}
+
+// CONTENU DU REPERTOIRE
+.Browser-content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 300px;
+  padding: 10px;
+}
+
+.Browser-contentHeader {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  margin: 0;
+  height: 50px;
+  line-height: 50px;
+  background-color: color(white);
+  border-bottom: solid 1px color(gray, 300);
+}
+
+.Browser-contentHeader .Browser-switcher {
+  position:absolute;
+  right:0;
+  top:0;
+  padding:0 10px;
+  line-height:50px;
+  border-left: solid 1px color(gray, 300);
+}
+
+.Browser-contentBody {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  bottom: 50px;
+  left: 0;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.Browser-content.load::after {
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+}
+
+.Browser-contentLoader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: none;
+}
+
+.Browser-content.load .Browser-contentLoader {
+  display: inherit;
+}
+
+/**
+ * Liste des fichiers
+ */
+.Browser-contentFileList > * {
+  box-sizing: border-box;
+}
+
+.Browser-contentFileList::before,
+.Browser-contentFileList::after {
+  display: table;
+  content: "";
+}
+
+.Browser-contentFileList::after {
+  clear: both;
+}
+
+.Browser-contentFileList {
+  margin: 0;
+  padding: 0;
+}
+
+.Browser-contentFile {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.Browser-contentFileLink {
+  color: color(gray, 900);
+}
+
+.Browser-contentFileLink:active,
+.Browser-contentFileLink:focus,
+.Browser-contentFileLink:hover {
+  color: color(gray, 900);
+}
+
+.Browser-contentFileLink {
+  position: relative;
+  text-decoration: none;
+}
+
+.Browser-contentFile.selected .Browser-contentFileLink {
+  color: color(gray, 900);
+  background-color: color(gray, 300);
+}
+
+.Browser-contentFilePreview {
+  position: relative;
+  overflow: hidden;
+}
