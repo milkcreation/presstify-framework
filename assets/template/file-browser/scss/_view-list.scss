@@ -1,0 +1,31 @@
+[data-control="file-browser.content"][data-view="list"] {
+  & .Browser-contentFile:nth-child(odd) {
+    background-color: color(white);
+  }
+  & .Browser-contentFile:nth-child(even) {
+    background-color: color(gray, 100);
+  }
+
+  & .Browser-contentFileLink {
+    display: block;
+    padding: 5px 10px;
+    border-bottom: solid 1px color(gray, 300);
+  }
+
+  & .Browser-contentFileAttr {
+    display: inline-block;
+  }
+
+  & .Browser-contentFileAttr--preview {
+    vertical-align: middle;
+    width: 20px;
+  }
+
+  & .Browser-contentFileAttr--name {
+    width: calc(50% - 20px);
+  }
+
+  & .Browser-contentFileAttr--size {
+    width: 10%;
+  }
+}
