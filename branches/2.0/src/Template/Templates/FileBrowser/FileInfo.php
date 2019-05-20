@@ -7,12 +7,13 @@ use Exception;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Adapter\Local;
 use SplFileInfo;
+use Mimey\MimeTypes;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\DateTime;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\FileBrowser\Contracts\{FileBrowser, FileIcon, FileInfo as FileInfoContract};
+use tiFy\Template\Templates\FileBrowser\Contracts\{FileBrowser, FileInfo as FileInfoContract};
 
 /**
  * @mixin SplFileInfo
@@ -128,6 +129,14 @@ class FileInfo extends ParamsBag implements FileInfoContract
     /**
      * @inheritDoc
      */
+    public function getDownloadUrl(): string
+    {
+        return $this->getFactory()->baseUrl() . '?dl=' . $this->getRelPath();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getExtension(): string
     {
         return $this->get('extension');
@@ -189,9 +198,9 @@ class FileInfo extends ParamsBag implements FileInfoContract
     /**
      * @inheritDoc
      */
-    public function getIcon(): FileIcon
+    public function getIcon(): string
     {
-        return $this->getFactory()->resolve('file-icon', [$this]);
+        return $this->getFactory()->getIcon('file', $this);
     }
 
     /**
@@ -199,10 +208,7 @@ class FileInfo extends ParamsBag implements FileInfoContract
      */
     public function getMimetype(): ?string
     {
-        if ($info = $this->adapter()->getMimetype($this->getRelPath())) {
-            return $info['mimetype'] ?? null;
-        }
-        return null;
+        return $this->isFile() ? (new MimeTypes())->getMimeType($this->getExtension()) : 'directory';
     }
 
     /**
@@ -290,5 +296,13 @@ class FileInfo extends ParamsBag implements FileInfoContract
     public function isRoot(): bool
     {
         return ! $this->getRelPath() || ($this->getRelPath() === '/');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isSelected(): bool
+    {
+        return $this->getRelPath() === $this->getFactory()->getPath();
     }
 }

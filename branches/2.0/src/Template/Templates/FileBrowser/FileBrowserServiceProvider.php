@@ -9,7 +9,7 @@ use tiFy\Template\Templates\FileBrowser\Contracts\{
     Breadcrumb,
     FileBrowser,
     FileCollection,
-    FileIcon,
+    IconSet,
     FileInfo,
     Filesystem,
     Sidebar};
@@ -47,9 +47,9 @@ class FileBrowserServiceProvider extends FactoryServiceProvider
         $this->registerFactoryAjax();
         $this->registerFactoryBreadcrumb();
         $this->registerFactoryFileCollection();
-        $this->registerFactoryFileIcon();
         $this->registerFactoryFileInfo();
         $this->registerFactoryFilesystem();
+        $this->registerFactoryIconSet();
         $this->registerFactorySidebar();
     }
 
@@ -114,23 +114,6 @@ class FileBrowserServiceProvider extends FactoryServiceProvider
     }
 
     /**
-     * Déclaration du controleur de l'icone associé à un fichier.
-     *
-     * @return void
-     */
-    public function registerFactoryFileIcon(): void
-    {
-        $this->getContainer()->add($this->getFactoryAlias('file-icon'), function (FileInfo $file) {
-            $fileIcon = $this->factory->get('providers.file-icon');
-            $fileIcon = $fileIcon instanceof FileIcon
-                ? $fileIcon
-                : $this->getContainer()->get(FileIcon::class);
-
-            return $fileIcon->setFactory($this->factory)->set($file);
-        });
-    }
-
-    /**
      * Déclaration du controleur d'informations fichier.
      *
      * @return void
@@ -161,6 +144,23 @@ class FileBrowserServiceProvider extends FactoryServiceProvider
             return $filesystem instanceof tiFyFilesystem
                 ? $filesystem
                 : $this->getContainer()->get(Filesystem::class, [$this->factory]);
+        });
+    }
+
+    /**
+     * Déclaration du controleur de gestion des icones.
+     *
+     * @return void
+     */
+    public function registerFactoryIconSet(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('icon-set'), function () {
+            $iconSet = $this->factory->get('providers.icon-set');
+            $iconSet = $iconSet instanceof IconSet
+                ? $iconSet
+                : $this->getContainer()->get(IconSet::class);
+
+            return $iconSet->setFactory($this->factory)->set($this->factory->param('icon', []))->parse();
         });
     }
 

@@ -12,6 +12,7 @@ use tiFy\Template\Templates\FileBrowser\Contracts\{Breadcrumb, FileCollection, F
  * @method Breadcrumb|iterable breadcrumb()
  * @method FileInfo|null getFile(?string $path = null)
  * @method FileCollection|FileInfo[] getFiles(?string $path = null, bool $recursive = false)
+ * @method string getIcon(string $name = null, ...$args)
  */
 class Viewer extends FactoryViewer
 {
@@ -33,6 +34,7 @@ class Viewer extends FactoryViewer
             'breadcrumb',
             'getFile',
             'getFiles',
+            'getIcon',
             'param'
         );
     }

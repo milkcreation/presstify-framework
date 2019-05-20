@@ -57,11 +57,25 @@ interface FileBrowser extends TemplateFactory
     public function getFiles(?string $path = null, bool $recursive = false): ?FileCollection;
 
     /**
+     * Récupération d'un icône.
+     *
+     * @return string|null
+     */
+    public function getIcon($name, ...$args): ?string;
+
+    /**
      * Récupération du chemin relatif courant.
      *
      * @return string
      */
     public function getPath(): string;
+
+    /**
+     * Récupération d'un instance du gestionnaire d'icones.
+     *
+     * @return IconSet
+     */
+    public function icon(): IconSet;
 
     /**
      * {@inheritdoc}

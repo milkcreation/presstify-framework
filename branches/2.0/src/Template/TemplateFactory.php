@@ -2,6 +2,7 @@
 
 namespace tiFy\Template;
 
+use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\{
     FactoryAssets,
     FactoryNotices,
@@ -12,6 +13,7 @@ use tiFy\Contracts\Template\{
     TemplateManager as TemplateManagerContract};
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Str;
+use Zend\Diactoros\Response as PsrResponse;
 
 class TemplateFactory extends ParamsBag implements TemplateFactoryContract
 {
@@ -23,7 +25,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
 
     /**
      * Instance du gestionnaire de templates.
-     * @var TemplateManagerContract
+     * @var TemplateManager
      */
     protected $manager;
 
@@ -74,9 +76,33 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
+    public function baseUrl(): string
+    {
+        return $this->manager->baseUrl . '/' . $this->name();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function boot(): void
     {
 
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function controller(ServerRequestInterface $psrRequest)
+    {
+        return new PsrResponse();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function controllerXhr(ServerRequestInterface $psrRequest)
+    {
+        return [];
     }
 
     /**

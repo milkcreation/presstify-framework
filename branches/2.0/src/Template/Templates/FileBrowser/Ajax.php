@@ -23,7 +23,7 @@ class Ajax extends ParamsBag implements AjaxContract
     public function defaults()
     {
         return [
-            'url'      => '',
+            'url'      => $this->getFactory()->baseUrl() . '/xhr',
             'dataType' => 'json',
             'type'     => 'POST'
         ];
@@ -47,11 +47,33 @@ class Ajax extends ParamsBag implements AjaxContract
     public function handler(...$args)
     {
         $this->factory->setPath($path = request()->input('path'));
+        $file = $this->factory->getFile($path);
 
         switch (request()->input('action')) {
-            case 'delete' :
-                $file = $this->factory->getFile();
+            case 'browse' :
+                return [
+                    'success' => true,
+                    'views'   => [
+                        'files'    => (string)$this->factory->viewer(
+                            'explorer-items', ['files' => $this->factory->getFiles()]
+                        )
+                    ]
+                ];
+                break;
+            case 'create' :
+                $path = $file->isDir() ? $path : $file->getDirname();
+                $this->factory->filesystem()->createDir($path . '/' . request()->input('name'));
 
+                return [
+                    'success' => true,
+                    'views'   => [
+                        'breadcrumb' => (string)$this->factory->breadcrumb(),
+                        'content'    => (string)$this->factory->getFiles(),
+                        'sidebar'    => (string)$this->factory->sidebar()
+                    ]
+                ];
+                break;
+            case 'delete' :
                 if ($file->isDir()) {
                     $this->factory->adapter()->deleteDir($file->getRelPath());
                 } else {
@@ -61,40 +83,35 @@ class Ajax extends ParamsBag implements AjaxContract
                 $this->factory->setPath($file->getDirname());
 
                 return [
-                    'success'    => true,
-                    'breadcrumb' => (string)$this->factory->breadcrumb(),
-                    'content'    => (string)$this->factory->getFiles(),
-                    'sidebar'    => (string)$this->factory->sidebar()
-                ];
-                break;
-            case 'getdir' :
-                return [
-                    'success'    => true,
-                    'breadcrumb' => (string)$this->factory->breadcrumb(),
-                    'content'    => (string)$this->factory->getFiles(),
-                    'sidebar'    => (string)$this->factory->sidebar(),
-                ];
-                break;
-            case 'getfile' :
-                return [
                     'success' => true,
-                    'sidebar' => (string)$this->factory->sidebar(),
+                    'views'   => [
+                        'breadcrumb' => (string)$this->factory->breadcrumb(),
+                        'content'    => (string)$this->factory->getFiles(),
+                        'sidebar'    => (string)$this->factory->sidebar()
+                    ]
                 ];
                 break;
-            case 'newdir' :
-                $file = $this->factory->getFile($path);
-                $path = $file->isDir() ? $path : $file->getDirname();
-                $this->factory->filesystem()->createDir($path . '/' . request()->input('newdir'));
-
-                return [
-                    'success'    => true,
-                    'breadcrumb' => (string)$this->factory->breadcrumb(),
-                    'content'    => (string)$this->factory->getFiles(),
-                ];
+            case 'get' :
+                if ($file->isDir()) {
+                    return [
+                        'success' => true,
+                        'views'   => [
+                            'breadcrumb' => (string)$this->factory->breadcrumb(),
+                            'content'    => (string)$this->factory->getFiles(),
+                            'sidebar'    => (string)$this->factory->sidebar()
+                        ]
+                    ];
+                } else {
+                    return [
+                        'success' => true,
+                        'views'   => [
+                            'sidebar' => (string)$this->factory->sidebar()
+                        ]
+                    ];
+                }
                 break;
-            case 'newname' :
-                $file = $this->factory->getFile();
-                $newpath = $this->factory->getFile()->getDirname() . '/' . request()->input('newname');
+            case 'rename' :
+                $newpath = $this->factory->getFile()->getDirname() . '/' . request()->input('name');
                 $newpath .= ($file->isFile() && (request()->input('keep') === 'on') && $file->getExtension())
                     ? '.' . $file->getExtension()
                     : '';
@@ -104,16 +121,16 @@ class Ajax extends ParamsBag implements AjaxContract
                 $this->factory->setPath($newpath);
 
                 return [
-                    'success'    => true,
-                    'breadcrumb' => (string)$this->factory->breadcrumb(),
-                    'content'    => (string)$this->factory->getFiles(),
-                    'sidebar'    => (string)$this->factory->sidebar(),
+                    'success' => true,
+                    'views'   => [
+                        'breadcrumb' => (string)$this->factory->breadcrumb(),
+                        'content'    => (string)$this->factory->getFiles(),
+                        'sidebar'    => (string)$this->factory->sidebar()
+                    ]
                 ];
                 break;
             case 'upload' :
-                $file = $this->factory->getFile();
                 $path = $file->isDir() ? $path : $file->getDirname();
-
 
                 foreach (request()->files as $key => $f) {
                     /* @var UploadedFile $f */
@@ -124,10 +141,12 @@ class Ajax extends ParamsBag implements AjaxContract
                 }
 
                 return [
-                    'success'    => true,
-                    'breadcrumb' => (string)$this->factory->breadcrumb(),
-                    'content'    => (string)$this->factory->getFiles(),
-                    'sidebar'    => (string)$this->factory->sidebar(),
+                    'success' => true,
+                    'views'   => [
+                        'breadcrumb' => (string)$this->factory->breadcrumb(),
+                        'content'    => (string)$this->factory->getFiles(),
+                        'sidebar'    => (string)$this->factory->sidebar()
+                    ]
                 ];
                 break;
         }

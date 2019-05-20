@@ -14,6 +14,13 @@ interface Manager
     public function all(): iterable;
 
     /**
+     * Initialisation du gestionnaire.
+     *
+     * @return void
+     */
+    public function boot(): void;
+
+    /**
      * Récupération d'un élément défini.
      *
      * @param string|int $key Indice de qualification de l'élément.

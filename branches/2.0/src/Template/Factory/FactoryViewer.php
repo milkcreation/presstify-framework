@@ -9,9 +9,7 @@ use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\View\ViewController;
 
 /**
- * Class BaseViewer
- * @package tiFy\Template\Factory
- *
+ * @method string getBaseUrl()
  * @method FactoryLabels|string label(?string $key = null, string $default = '')
  * @method string name()
  * @method FactoryParams|mixed param($key = null, $default = null)

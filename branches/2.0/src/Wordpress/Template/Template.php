@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Template;
 
 use tiFy\Contracts\Template\TemplateManager;
-use tiFy\Template\Templates\FileBrowser\Contracts\FileIcon as FileIconContract;
+use tiFy\Template\Templates\FileBrowser\Contracts\IconSet as IconSetContract;
 //use WP_Screen;
 
 class Template
@@ -30,9 +30,9 @@ class Template
         }
 
         // Surcharge de fournisseurs de service.
-        $this->manager->getContainer()->add(FileIconContract::class, function () {
-            return new Templates\FileBrowser\FileIcon();
-        });
+        /*$this->manager->getContainer()->add(IconSetContract::class, function () {
+            return new Templates\FileBrowser\IconSet();
+        });*/
 
         events()->listen('template.factory.boot', function (/*string $name, TemplateFactory $factory*/){
             /*

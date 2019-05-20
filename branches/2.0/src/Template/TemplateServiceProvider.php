@@ -9,12 +9,12 @@ use tiFy\Template\Templates\FileBrowser\Contracts\{
     Breadcrumb as BreadcrumbContract,
     FileBrowser as FileBrowserContract,
     FileCollection as FileCollectionContract,
-    FileIcon as FileIconContract,
+    IconSet as IconSetContract,
     FileInfo as FileInfoContract,
     Filesystem as FilesystemContract,
     Sidebar as SidebarContract
 };
-use tiFy\Template\Templates\FileBrowser\{Ajax, Breadcrumb, FileCollection, FileIcon, FileInfo, Filesystem, Sidebar};
+use tiFy\Template\Templates\FileBrowser\{Ajax, Breadcrumb, FileCollection, IconSet, FileInfo, Filesystem, Sidebar};
 
 class TemplateServiceProvider extends ServiceProvider
 {
@@ -30,9 +30,9 @@ class TemplateServiceProvider extends ServiceProvider
         AjaxContract::class,
         BreadcrumbContract::class,
         FileCollectionContract::class,
-        FileIconContract::class,
         FileInfoContract::class,
         FilesystemContract::class,
+        IconSetContract::class,
         SidebarContract::class
     ];
 
@@ -69,8 +69,8 @@ class TemplateServiceProvider extends ServiceProvider
             return new FileCollection();
         });
 
-        $this->getContainer()->add(FileIconContract::class, function () {
-            return new FileIcon();
+        $this->getContainer()->add(IconSetContract::class, function () {
+            return new IconSet();
         });
 
         $this->getContainer()->add(FileInfoContract::class, function (array $infos) {

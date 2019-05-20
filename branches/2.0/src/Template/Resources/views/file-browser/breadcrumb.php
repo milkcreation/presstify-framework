@@ -6,23 +6,23 @@
  * @var tiFy\Template\Templates\FileBrowser\Contracts\Breadcrumb|iterable $items
  */
 ?>
-<ol class="Browser-contentBreadcrumb" data-control="file-browser.breadcrumb">
-    <li class="Browser-contentBreadcrumbPart BrowserFolder-BreadcrumbPart--root">
+<ol class="Browser-breadcrumb" data-control="file-browser.breadcrumb">
+    <li class="Browser-breadcrumbPart">
         <a href="#"
-           class="Browser-contentBreadcrumbPartLink"
-           data-control="file-browser.link.dir"
-           data-target="/"
+           class="Browser-breadcrumbPartLink"
+           data-control="file-browser.action.get"
+           data-path="/"
         >
-            <span class="fa fa-home"></span>
+            <?php echo $this->getIcon('home'); ?>
         </a>
     </li>
 
     <?php foreach($items as $path => $name) : ?>
-        <li class="Browser-contentBreadcrumbPart">
+        <li class="Browser-breadcrumbPart">
             <a href="#"
-               class="Browser-contentBreadcrumbPartLink"
-               data-control="file-browser.link.dir"
-               data-target="<?php echo $path; ?>"
+               class="Browser-breadcrumbPartLink"
+               data-control="file-browser.action.get"
+               data-path="<?php echo $path; ?>"
             >
                 <?php echo $name; ?>
             </a>

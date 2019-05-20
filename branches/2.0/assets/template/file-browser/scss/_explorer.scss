@@ -1,0 +1,52 @@
+.Browser-explorer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 300px;
+  width: 300px;
+  z-index: 10;
+  padding: 10px;
+  background-color: color(white);
+  border-right: solid 1px color(gray, 300);
+}
+
+.Browser-explorerItem {
+  line-height: 1.4;
+}
+
+.Browser-explorerItem > .Browser-explorerItems {
+  padding-left: 5px;
+  //display:none;
+}
+
+.Browser-explorerItemContent {
+  color: color(gray, 600);
+  font-size: 12px;
+
+}
+
+.Browser-explorerItem--dir {
+  & {
+    margin-bottom: 5px;
+  }
+
+  & > .Browser-explorerItemContent {
+    color: color(gray, 900);
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  & > .Browser-explorerItemContent:active,
+  & > .Browser-explorerItemContent:focus,
+  & > .Browser-explorerItemContent:hover {
+    color: color(gray, 900);
+  }
+
+  & > .Browser-explorerItemContent[aria-selected="true"] {
+    font-weight: bold;
+  }
+
+  & > .Browser-explorerItemContent[aria-selected="true"] > .Browser-explorerItems {
+    display: inherit;
+  }
+}

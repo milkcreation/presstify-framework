@@ -11,16 +11,23 @@
             <?php $this->insert('sidebar', ['file' => $this->getFile()]); ?>
         </div>
 
-        <div class="Browser-content" data-control="file-browser.content">
+        <?php $this->insert('explorer'); ?>
+
+        <div class="Browser-content" data-control="file-browser.content" data-view="grid">
             <?php $this->insert('loader'); ?>
 
-            <?php $this->insert('breadcrumb', ['items' => $this->breadcrumb()]); ?>
+            <div class="Browser-contentHeader">
+                <?php $this->insert('breadcrumb', ['items' => $this->breadcrumb()]); ?>
+                <?php $this->insert('switcher'); ?>
+            </div>
 
-            <div class="Browser-contentView Browser-contentView--grid">
+            <div class="Browser-contentBody">
                 <?php if ($files = $this->getFiles()) : ?>
                     <?php $this->insert('files', compact('files')); ?>
                 <?php endif; ?>
             </div>
+
+            <div class="Browser-contentFooter"></div>
         </div>
     </div>
 </div>
