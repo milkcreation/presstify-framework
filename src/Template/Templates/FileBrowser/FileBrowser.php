@@ -5,6 +5,7 @@ namespace tiFy\Template\Templates\FileBrowser;
 use Exception;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Util;
+use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Template\{TemplateFactory as TemplateFactoryContract};
 use tiFy\Template\TemplateFactory;
@@ -14,6 +15,7 @@ use tiFy\Template\Templates\FileBrowser\Contracts\{
     FileInfo,
     FileBrowser as FileBrowserContract,
     FileCollection,
+    IconSet,
     Sidebar};
 
 class FileBrowser extends TemplateFactory implements FileBrowserContract
@@ -54,6 +56,24 @@ class FileBrowser extends TemplateFactory implements FileBrowserContract
     public function breadcrumb(): Breadcrumb
     {
         return $this->resolve('breadcrumb');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function controller(ServerRequestInterface $psrRequest)
+    {
+        if ($path = $this->request()->input('dl')) {
+            return $this->filesystem()->download($path);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function controllerXhr(ServerRequestInterface $psrRequest)
+    {
+        return $this->ajax()->handler($psrRequest);
     }
 
     /**
@@ -106,9 +126,25 @@ class FileBrowser extends TemplateFactory implements FileBrowserContract
     /**
      * @inheritDoc
      */
+    public function getIcon($name, ...$args): ?string
+    {
+        return $this->icon()->$name(...$args);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getPath(): string
     {
         return $this->path ?: '/';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function icon(): IconSet
+    {
+        return $this->resolve('icon-set');
     }
 
     /**

@@ -2,17 +2,53 @@
 
 namespace tiFy\Template;
 
+use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
 use tiFy\Contracts\Template\TemplateManager as TemplateManagerContract;
 use tiFy\Support\Manager;
+use tiFy\Support\Proxy\Router;
 
 class TemplateManager extends Manager implements TemplateManagerContract
 {
+    /**
+     * Url de base de routage.
+     * @var string
+     */
+    public $baseUrl = '';
+
     /**
      * Liste des éléments déclarés.
      * @var TemplateFactoryContract[]
      */
     protected $items = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): void
+    {
+        $this->baseUrl = md5('tify:template');
+
+        Router::get($this->baseUrl . '/{name}', [$this, 'controller']);
+        Router::post($this->baseUrl . '/{name}', [$this, 'controller']);
+        Router::xhr($this->baseUrl . '/{name}/xhr', [$this, 'controllerXhr']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function controller($name, ServerRequestInterface $psrRequest)
+    {
+        return $this->get($name)->controller($psrRequest);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function controllerXhr($name, ServerRequestInterface $psrRequest)
+    {
+        return $this->get($name)->controllerXhr($psrRequest);
+    }
 
     /**
      * {@inheritDoc}

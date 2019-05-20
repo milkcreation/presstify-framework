@@ -17,35 +17,43 @@ jQuery(function ($) {
     },
 
     // INITIALISATION
-    // -------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     // Initialisation des événements déclenchement.
     _initEvents: function () {
       this._on(this.el, {
-        'click [data-control="file-browser.button.toggle"]': this._onButtonToggle
+        'click [data-control="file-browser.action.toggle"]': this._onActionToggle
       });
 
       this._on(this.el, {
-        'click [data-control="file-browser.link.dir"]': this._onDirClick
+        'click [data-control="file-browser.explorer.browse"]': this._onBrowse
       });
 
       this._on(this.el, {
-        'click [data-control="file-browser.link.file"]': this._onFileClick
+        'click [data-control="file-browser.action.get"]': this._onGet
       });
 
       this._on(this.el, {
-        'submit [data-control="file-browser.action.delete.form"]': this._onDeleteSubmit
+        'submit [data-control="file-browser.action.delete.form"]': this._onDelete
       });
 
       this._on(this.el, {
-        'submit [data-control="file-browser.action.newdir.form"]': this._onNewdirSubmit
+        'submit [data-control="file-browser.action.create.form"]': this._onCreate
       });
 
       this._on(this.el, {
-        'submit [data-control="file-browser.action.newname.form"]': this._onNewnameSubmit
+        'submit [data-control="file-browser.action.rename.form"]': this._onRename
       });
 
       this._on(this.el, {
-        'file-browser:refresh': this._initUploader
+        'click [data-toggle], change [data-toggle]': this._onToggle
+      });
+
+      this._on(this.el, {
+        'click [data-control="file-browser.view.toggle"]': this._onViewToggle
+      });
+
+      this._on(this.el, {
+        'file-browser:refresh': this._onRefresh
       });
     },
     // Initialisation des attributs de configuration.
@@ -63,62 +71,105 @@ jQuery(function ($) {
         url: self.option('ajax.url'),
         createImageThumbnails: false,
         success: function (result, resp) {
-          $('[data-control="file-browser.breadcrumb"]', self.el).replaceWith(resp.breadcrumb);
-          $('[data-control="file-browser.content.items"]', self.el).replaceWith(resp.content);
-          $('[data-control="file-browser.sidebar"]', self.el).html(resp.sidebar);
+          self._doUpdateViews(resp.views || {});
           self._trigger('refresh');
         }
       });
     },
 
+    // ACTIONS
+    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Mise à jours des vues.
+     * @param {{breadcrumb:string, content:string, sidebar:string}} views
+     * @private
+     */
+    _doUpdateViews: function (views) {
+      if (views.breadcrumb) {
+        $('[data-control="file-browser.breadcrumb"]', self.el).replaceWith(views.breadcrumb);
+      }
+      if (views.content) {
+        $('[data-control="file-browser.content.items"]', self.el).replaceWith(views.content);
+      }
+      if (views.sidebar) {
+        $('[data-control="file-browser.sidebar"]', self.el).html(views.sidebar);
+      }
+    },
+
     // EVENEMENTS
-    // -------------------------------------------------------------------------------------------------------------
-    // Action au clic sur un répertoire.
-    _onButtonToggle: function (e) {
-      e.preventDefault();
-
-      let el = e.currentTarget;
-
-      $($(el).data('target')).toggle();
-    },
-    // Action au clic sur un répertoire.
-    _onDirClick: function (e) {
+    // -----------------------------------------------------------------------------------------------------------------
+    // Bascule de fenêtre d'action.
+    _onActionToggle: function (e) {
       e.preventDefault();
 
       let self = this,
           el = e.currentTarget,
-          ajax = $.extend(self.option('ajax'), {data: {path: $(el).data('target'), action: 'getdir'}});
+          action = $(el).data('action'),
+          target = '[data-control="file-browser.action.' + action + '"]',
+          form = '[data-control="file-browser.action.' + action + '.form"]';
+
+      $(target).toggle();
+      if ($(target).is(':visible')) {
+        $('[data-action="' + action + '"]', self.el).each(function () {
+          $(this).attr('aria-visible', true);
+        });
+      } else {
+        if ($(el).data('reset') === true) {
+          $(form).trigger('reset');
+
+          if (action === 'rename') {
+            $('.Browser-actionFormExt').show();
+          }
+        }
+        $('[data-action="' + action + '"]', self.el).each(function () {
+          $(this).attr('aria-visible', false);
+        });
+      }
+    },
+    // Au clic sur un dossier de l'explorateur de fichier
+    _onBrowse: function (e) {
+      e.preventDefault();
+
+      let self = this,
+          el = e.currentTarget,
+          closest = $(el).closest('[data-control="file-browser.explorer.item"]'),
+          list = $('[data-control="file-browser.explorer.items"]', closest),
+          ajax = $.extend(self.option('ajax'), {data: {path: $(el).data('path'), action: 'browse'}});
+
+      if ($(el).attr('selected') === true) {
+        $(el).attr('selected', false);
+      } else {
+        $(el).attr('selected', true);
+
+        $.ajax(ajax)
+            .done(function (resp) {
+              if (list.length) {
+                list.replaceWith(resp.views.files);
+              } else {
+                closest.append(resp.views.files);
+              }
+            });
+      }
+    },
+    // Au clic sur un élément (fichier ou dossier) de la vue.
+    _onGet: function (e) {
+      e.preventDefault();
+
+      let self = this,
+          el = e.currentTarget,
+          ajax = $.extend(self.option('ajax'), {data: {path: $(el).data('path'), action: 'get'}});
 
       $(el).closest('[data-control="file-browser.content.item"]').addClass('selected')
           .siblings().removeClass('selected');
 
       $.ajax(ajax)
           .done(function (resp) {
-            $('[data-control="file-browser.breadcrumb"]', self.el).replaceWith(resp.breadcrumb);
-            $('[data-control="file-browser.content.items"]', self.el).replaceWith(resp.content);
-            $('[data-control="file-browser.sidebar"]', self.el).html(resp.sidebar);
+            self._doUpdateViews(resp.views || {});
             self._trigger('refresh');
           });
     },
-    // Action au clic sur un fichier.
-    _onFileClick: function (e) {
-      e.preventDefault();
-
-      let self = this,
-          el = e.currentTarget,
-          ajax = $.extend(self.option('ajax'), {data: {path: $(el).data('target'), action: 'getfile'}});
-
-      $(el).closest('[data-control="file-browser.content.item"]').addClass('selected')
-          .siblings().removeClass('selected');
-
-      $.ajax(ajax)
-          .done(function (resp) {
-            $('[data-control="file-browser.sidebar"]', self.el).html(resp.sidebar);
-            self._trigger('refresh');
-          });
-    },
-    // Action à la soumission de formulaire de suppression.
-    _onDeleteSubmit: function (e) {
+    // À la soumission de formulaire de suppression.
+    _onDelete: function (e) {
       e.preventDefault();
 
       let self = this,
@@ -127,43 +178,56 @@ jQuery(function ($) {
 
       $.ajax(ajax)
           .done(function (resp) {
-            $('[data-control="file-browser.breadcrumb"]', self.el).replaceWith(resp.breadcrumb);
-            $('[data-control="file-browser.content.items"]', self.el).replaceWith(resp.content);
-            $('[data-control="file-browser.sidebar"]', self.el).html(resp.sidebar);
+            self._doUpdateViews(resp.views || {});
             self._trigger('refresh');
           });
     },
-    // Action à la soumission de formulaire de création de nouveau répertoire.
-    _onNewdirSubmit: function (e) {
+    // À la soumission de formulaire de création de nouveau répertoire.
+    _onCreate: function (e) {
       e.preventDefault();
 
       let self = this,
           el = e.currentTarget,
-          ajax = $.extend(self.option('ajax'), {data: 'action=newdir&' + $(el).serialize()});
+          ajax = $.extend(self.option('ajax'), {data: 'action=create&' + $(el).serialize()});
 
       $.ajax(ajax)
           .done(function (resp) {
-            $('[data-control="file-browser.breadcrumb"]', self.el).replaceWith(resp.breadcrumb);
-            $('[data-control="file-browser.content.items"]', self.el).replaceWith(resp.content);
+            self._doUpdateViews(resp.views || {});
             self._trigger('refresh');
           });
     },
-    // Action à la soumission de formulaire de création de renommage.
-    _onNewnameSubmit: function (e) {
+    // À la soumission de formulaire de création de renommage.
+    _onRename: function (e) {
       e.preventDefault();
 
       let self = this,
           el = e.currentTarget,
-          ajax = $.extend(self.option('ajax'), {data: 'action=newname&' + $(el).serialize()});
+          ajax = $.extend(self.option('ajax'), {data: 'action=rename&' + $(el).serialize()});
 
       $.ajax(ajax)
           .done(function (resp) {
-            $('[data-control="file-browser.breadcrumb"]', self.el).replaceWith(resp.breadcrumb);
-            $('[data-control="file-browser.content.items"]', self.el).replaceWith(resp.content);
-            $('[data-control="file-browser.sidebar"]', self.el).html(resp.sidebar);
+            self._doUpdateViews(resp.views || {});
             self._trigger('refresh');
           });
-    }
+    },
+    // Rafraichissement de l'interface.
+    _onRefresh: function () {
+      this._initUploader();
+    },
+    // Bascule d'affichage.
+    _onToggle: function (e) {
+      let el = e.currentTarget;
+
+      $($(el).data('toggle')).toggle();
+    },
+    // Bascule de la vue fichier.
+    _onViewToggle: function (e) {
+      let el = e.currentTarget,
+          view = $(el).data('view');
+
+      $(el).parent().addClass('selected').siblings().removeClass('selected');
+      $('[data-control="file-browser.content"]').attr('data-view', view);
+    },
   });
 
   $(document).ready(function ($) {

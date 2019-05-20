@@ -2,6 +2,7 @@
 
 namespace tiFy\Contracts\Template;
 
+use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\View\ViewEngine;
@@ -23,11 +24,36 @@ interface TemplateFactory extends ParamsBag
     public function assets(): FactoryAssets;
 
     /**
+     * Url de routage.
+     *
+     * @return string
+     */
+    public function baseUrl(): string;
+
+    /**
      * Initialisation du controleur.
      *
      * @return void
      */
     public function boot(): void;
+
+    /**
+     * Controleur de routage.
+     *
+     * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
+     *
+     * @return mixed
+     */
+    public function controller(ServerRequestInterface $psrRequest);
+
+    /**
+     * Controleur de routage des requêtes XmlHttpRequest (via ajax).
+     *
+     * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
+     *
+     * @return mixed
+     */
+    public function controllerXhr(ServerRequestInterface $psrRequest);
 
     /**
      * Vérification d'existance d'un service fourni.

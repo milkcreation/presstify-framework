@@ -3,19 +3,13 @@
   height: 800px;
   background-color: color(white);
   color: color(gray, 900);
+  border: solid 1px color(gray, 300);
 }
 
 // TITRE
 .Browser-title {
-  font-size:18px;
-  color: color(gray, 700);
-  padding-bottom:3px;
-  border-bottom: dashed 1px color(gray, 700);
-}
-
-// SEPARATEUR
-.Browser-title {
-
+  font-size: 18px;
+  color: color(gray, 900);
 }
 
 // BOUTONS
@@ -59,9 +53,22 @@
   background-color: color(red, 500);
 }
 
+.Browser-button--toggle[aria-visible="true"] {
+  display: none;
+}
+
 // ACTIONS
 .Browser-action {
+  position: relative;
   margin-bottom: 15px;
+}
+
+.Browser-action .Browser-title {
+  color: color(gray, 900);
+  font-weight: bold;
+  text-align: center;
+  padding: 5px 0;
+  border-bottom: none;
 }
 
 .Browser-action--toggleable {
@@ -74,71 +81,26 @@
   text-align: center;
 }
 
+.Browser-actionClose {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: color(gray, 900);
+  line-height: 1;
+}
+
+.Browser-actionClose:active,
+.Browser-actionClose:focus,
+.Browser-actionClose:hover {
+  color: color(gray, 700);
+}
+
 // ACTIONS > FORMULAIRE
 .Browser-actionFormFields {
   margin-bottom: 10px;
 }
 
 .Browser-actionFormButtons {
-  text-align: center;
-}
-
-// BARRE LATERALE
-.Browser-sidebar {
-  position: absolute;
-  top: 0;
-  right: auto;
-  bottom: 0;
-  left: 0;
-  width: 300px;
-  padding: 10px;
-}
-
-// BARRE LATERALE > INFORMATIONS
-.Browser-finfo .Browser-finfoPreview {
-  display: block;
-  margin: 10px auto;
-  width: 150px;
-  height: 150px;
-}
-
-.Browser-finfo .Browser-fileIcon {
-  width: 150px;
-  height: 150px;
-  font-size: 150px;
-  line-height: 1;
-}
-
-.Browser-finfo .Browser-finfoAttrs {
-  margin-bottom: 20px;
-}
-
-.Browser-finfo .Browser-finfoAttr {
-  font-size: 12px;
-  line-height: 1.6;
-  border-bottom: dotted 1px color(gray, 300);
-}
-
-.Browser-finfo .Browser-finfoAttr label {
-  margin: 0;
-  display: inline-block;
-  width: 40%;
-}
-
-.Browser-finfoAction {
-  margin-bottom: 15px;
-}
-
-.Browser-finfoActionButton {
-  text-align: center;
-}
-
-// BARRE LATERALE > ACTIONS
-.Browser-sidebarAction {
-  margin-bottom:15px;
-}
-
-.Browser-sidebarActionButton {
   text-align: center;
 }
 
@@ -150,6 +112,38 @@
   bottom: 0;
   left: 300px;
   padding: 10px;
+}
+
+.Browser-contentHeader {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  margin: 0;
+  height: 50px;
+  line-height: 50px;
+  background-color: color(white);
+  border-bottom: solid 1px color(gray, 300);
+}
+
+.Browser-contentHeader .Browser-switcher {
+  position:absolute;
+  right:0;
+  top:0;
+  padding:0 10px;
+  line-height:50px;
+  border-left: solid 1px color(gray, 300);
+}
+
+.Browser-contentBody {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  bottom: 50px;
+  left: 0;
+  overflow: hidden;
+  overflow-y: auto;
 }
 
 .Browser-content.load::after {
@@ -176,61 +170,6 @@
 
 .Browser-content.load .Browser-contentLoader {
   display: inherit;
-}
-
-// FIL D'ARIANE
-.Browser-contentBreadcrumb {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1;
-  margin: 0;
-  padding: 0 10px;
-  height: 50px;
-  line-height: 50px;
-  background-color: color(white);
-  border-bottom: solid 1px color(gray, 300);
-}
-
-.Browser-contentBreadcrumbPart {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0 2px 0 0;
-  padding: 0;
-  font-size: 14px;
-  line-height: 1;
-}
-
-.Browser-contentBreadcrumbPart + .Browser-contentBreadcrumbPart::before {
-  padding: 0 1px;
-  content: "/\00a0";
-  color: color(gray, 500);
-}
-
-.Browser-contentBreadcrumbPartLink {
-  text-decoration: none;
-  color: color(gray, 900);
-}
-
-.Browser-contentBreadcrumbPartLink:active,
-.Browser-contentBreadcrumbPartLink:focus,
-.Browser-contentBreadcrumbPartLink:hover {
-  color: color(gray, 600);
-}
-
-/**
- * Zone de vue des fichiers du répertoire courant
- */
-.Browser-contentView {
-  position: absolute;
-  top: 50px;
-  right: 0;
-  bottom: 50px;
-  left: 0;
-  padding: 5px;
-  overflow: hidden;
-  overflow-y: auto;
 }
 
 /**
@@ -268,7 +207,7 @@
 .Browser-contentFileLink:active,
 .Browser-contentFileLink:focus,
 .Browser-contentFileLink:hover {
-  color: color(gray, 700);
+  color: color(gray, 900);
 }
 
 .Browser-contentFileLink {
@@ -284,50 +223,4 @@
 .Browser-contentFilePreview {
   position: relative;
   overflow: hidden;
-}
-
-// VUE GRILLE
-.Browser-contentView--grid .Browser-contentFileList {
-  margin: 0 -10px;
-}
-
-.Browser-contentView--grid .Browser-contentFile {
-  float: left;
-  padding: 10px;
-}
-
-.Browser-contentView--grid .Browser-contentFileLink {
-  display: block;
-  width: 200px;
-  height: 200px;
-  border: solid 1px color(gray, 300);
-  text-align: center;
-}
-
-.Browser-contentView--grid .Browser-contentFile.selected .Browser-contentFileLink {
-  border: solid 1px color(gray, 400);
-}
-
-.Browser-contentView--grid .Browser-contentFilePreview {
-  display: block;
-  margin: 10px auto;
-  width: 150px;
-  height: 150px;
-}
-
-.Browser-contentView--grid .Browser-fileIcon {
-  width: 150px;
-  height: 150px;
-  font-size: 150px;
-  line-height: 1;
-}
-
-.Browser-contentView--grid .Browser-contentFileName {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 1;
-  padding: 5px;
-  background-color: color(white);
 }

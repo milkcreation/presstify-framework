@@ -29,6 +29,8 @@ class Manager implements ManagerContract
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+
+        $this->boot();
     }
 
     /**
@@ -37,6 +39,14 @@ class Manager implements ManagerContract
     public function all(): iterable
     {
         return $this->items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): void
+    {
+
     }
 
     /**

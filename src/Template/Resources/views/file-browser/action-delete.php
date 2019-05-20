@@ -9,6 +9,8 @@
 <div class="Browser-action Browser-action--toggleable Browser-action--delete"
      data-control="file-browser.action.delete"
 >
+    <h3 class="Browser-title"><?php _e('Supprimer', 'tify'); ?></h3>
+
     <div class="Browser-actionNotices">
         <?php if ($file->isDir()) : ?>
             <?php echo partial('notice', [
@@ -43,12 +45,20 @@
             <?php echo field('button', [
                 'attrs'   => [
                     'class' => 'Browser-button Browser-button--cancel Browser-actionButton',
-                    'data-control' => 'file-browser.button.toggle',
-                    'data-target'  => "[data-control='file-browser.action.delete']"
+                    'data-control' => 'file-browser.action.toggle',
+                    'data-action'  => 'delete',
+                    'data-reset'   => 'true'
                 ],
                 'type'    => 'button',
                 'content' => __('Annuler', 'tify')
             ]); ?>
         </div>
     </form>
+
+    <a href="#"
+       class="Browser-actionClose"
+       data-control="file-browser.action.toggle"
+       data-action="delete">
+        <?php echo $this->getIcon('close'); ?>
+    </a>
 </div>

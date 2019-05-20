@@ -47,6 +47,13 @@ interface FileInfo extends ParamsBag, FactoryAwareTrait
     public function getDirname(): string;
 
     /**
+     * Récupération de l'url de téléchargement du fichier.
+     *
+     * @return string
+     */
+    public function getDownloadUrl(): string;
+
+    /**
      * Récupération de l'extension.
      *
      * @return string
@@ -81,9 +88,9 @@ interface FileInfo extends ParamsBag, FactoryAwareTrait
     /**
      * Récupération de l'icône représentative.
      *
-     * @return FileIcon
+     * @return string
      */
-    public function getIcon(): FileIcon;
+    public function getIcon(): string;
 
     /**
      * Récupération du type mime du fichier.
@@ -164,4 +171,11 @@ interface FileInfo extends ParamsBag, FactoryAwareTrait
      * @return boolean
      */
     public function isRoot(): bool;
+
+    /**
+     * Vérifie s'il s'agit de l'élément courant.
+     *
+     * @return boolean
+     */
+    public function isSelected(): bool;
 }

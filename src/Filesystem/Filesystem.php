@@ -5,6 +5,7 @@ namespace tiFy\Filesystem;
 use League\Flysystem\Filesystem as LeagueFilesystem;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use tiFy\Contracts\Filesystem\Filesystem as FilesystemContract;
+use tiFy\Support\Str;
 
 class Filesystem extends LeagueFilesystem implements FilesystemContract
 {
@@ -26,6 +27,9 @@ class Filesystem extends LeagueFilesystem implements FilesystemContract
         $disposition = 'inline'
     ): StreamedResponse {
         $response    = new StreamedResponse();
+        $name = $name ?? basename($path);
+        $name = Str::ascii($name);
+
         $disposition = $response->headers->makeDisposition($disposition, $name ?? basename($path));
         $response->headers->replace($headers + [
                 'Content-Type'        => $this->getMimeType($path),
