@@ -39,6 +39,7 @@ trait RouteCollectionAwareTrait
      */
     public function xhr(string $path, $handler, string $method = 'POST'): RouteContract
     {
-        return $this->map($method, '/' . ltrim($path, '/'), $handler)->strategy('json')->middleware(new Xhr());
+        return $this->map(strtoupper($method), '/' . ltrim($path, '/'), $handler)
+            ->strategy('json')->middleware(new Xhr());
     }
 }

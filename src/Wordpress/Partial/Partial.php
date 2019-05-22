@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial;
 
@@ -32,6 +32,7 @@ class Partial
                      'modal',
                      'notice',
                      'pagination',
+                     'pdf-preview',
                      'sidebar',
                      'slider',
                      'spinner',

@@ -12,6 +12,7 @@ use tiFy\Partial\Partials\Holder\Holder;
 use tiFy\Partial\Partials\Modal\Modal;
 use tiFy\Partial\Partials\Notice\Notice;
 use tiFy\Partial\Partials\Pagination\Pagination;
+use tiFy\Partial\Partials\PdfPreview\PdfPreview;
 use tiFy\Partial\Partials\Sidebar\Sidebar;
 use tiFy\Partial\Partials\Slider\Slider;
 use tiFy\Partial\Partials\Spinner\Spinner;
@@ -37,6 +38,7 @@ class PartialServiceProvider extends ServiceProvider
         'partial.factory.modal',
         'partial.factory.notice',
         'partial.factory.pagination',
+        'partial.factory.pdf-preview',
         'partial.factory.sidebar',
         'partial.factory.slider',
         'partial.factory.spinner',
@@ -95,6 +97,10 @@ class PartialServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('partial.factory.pagination', function (?string $id = null, ?array $attrs = null) {
             return new Pagination($id, $attrs);
+        });
+
+        $this->getContainer()->add('partial.factory.pdf-preview', function (?string $id = null, ?array $attrs = null) {
+            return new PdfPreview($id, $attrs);
         });
 
         $this->getContainer()->add('partial.factory.sidebar', function (?string $id = null, ?array $attrs = null) {

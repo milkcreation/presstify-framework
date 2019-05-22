@@ -2,6 +2,7 @@
 
 namespace tiFy\Filesystem;
 
+use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as LeagueFilesystem;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use tiFy\Contracts\Filesystem\Filesystem as FilesystemContract;
@@ -10,7 +11,7 @@ use tiFy\Support\Str;
 class Filesystem extends LeagueFilesystem implements FilesystemContract
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function download(string $path, ?string $name = null, array $headers = []): StreamedResponse
     {
@@ -18,7 +19,17 @@ class Filesystem extends LeagueFilesystem implements FilesystemContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function path($path): ?string
+    {
+        $adapter = $this->getAdapter();
+
+        return $adapter instanceof Local ? $adapter->applyPathPrefix($path) : null;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function response(
         string $path,
@@ -26,7 +37,7 @@ class Filesystem extends LeagueFilesystem implements FilesystemContract
         array $headers = [],
         $disposition = 'inline'
     ): StreamedResponse {
-        $response    = new StreamedResponse();
+        $response = new StreamedResponse();
         $name = $name ?? basename($path);
         $name = Str::ascii($name);
 
@@ -43,13 +54,5 @@ class Filesystem extends LeagueFilesystem implements FilesystemContract
         });
 
         return $response;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function path($path): string
-    {
-        return $this->getAdapter()->applyPathPrefix($path);
     }
 }

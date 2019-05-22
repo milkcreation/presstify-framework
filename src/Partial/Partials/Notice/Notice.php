@@ -54,6 +54,7 @@ class Notice extends PartialFactory implements NoticeContract
             'content' => 'Lorem ipsum dolor site amet',
             'dismiss' => false,
             'type'    => 'info',
+            'timeout' => 0
         ];
     }
 
@@ -82,6 +83,7 @@ class Notice extends PartialFactory implements NoticeContract
         endif;
 
         $this->set('attrs.data-control', 'notice');
+        $this->set('attrs.data-timeout', $this->get('timeout', 0));
 
         $this->set('attrs.aria-type', $this->get('type'));
 

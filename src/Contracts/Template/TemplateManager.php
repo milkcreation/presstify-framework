@@ -10,24 +10,35 @@ use tiFy\Contracts\Support\Manager;
 interface TemplateManager extends Manager
 {
     /**
-     * Controleur de routage des requêtes standard.
+     * Récupération de l'instance du controleur des requêtes HTTP des ressources en cache.
      *
-     * @param string Nom de qualification du gabarit d'affichage.
+     * @param string $name Nom de qualification du gabarit d'affichage.
+     * @param string $path Chemin vers la ressource en cache.
      * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
      *
      * @return mixed
      */
-    public function controller(string $name, ServerRequestInterface $psrRequest);
+    public function httpCacheController(string $name, string $path, ServerRequestInterface $psrRequest);
 
     /**
-     * Controleur de routage des requêtes XmlHttpRequest (via ajax).
+     * Récupération de l'instance du controleur des requêtes HTTP.
      *
-     * @param string Nom de qualification du gabarit d'affichage.
+     * @param string $name Nom de qualification du gabarit d'affichage.
      * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
      *
      * @return mixed
      */
-    public function controllerXhr($name, ServerRequestInterface $psrRequest);
+    public function httpController(string $name, ServerRequestInterface $psrRequest);
+
+    /**
+     * Récupération de l'instance du controleur des requêtes XmlHttpRequest (via ajax).
+     *
+     * @param string $name Nom de qualification du gabarit d'affichage.
+     * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
+     *
+     * @return mixed
+     */
+    public function httpXhrController(string $name, ServerRequestInterface $psrRequest);
 
     /**
      * {@inheritDoc}

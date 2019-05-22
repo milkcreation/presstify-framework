@@ -46,7 +46,7 @@ class KernelServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->getContainer()->share('path', function () {
-            return new Path();
+            return new Path($this->getContainer());
         });
 
         $this->getContainer()->share('class-loader', new ClassLoader($this->getContainer()));

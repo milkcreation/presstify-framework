@@ -5,6 +5,7 @@ namespace tiFy\Template;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\{
     FactoryAssets,
+    FactoryCache,
     FactoryNotices,
     FactoryRequest,
     FactoryServiceProvider,
@@ -13,7 +14,6 @@ use tiFy\Contracts\Template\{
     TemplateManager as TemplateManagerContract};
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Str;
-use Zend\Diactoros\Response as PsrResponse;
 
 class TemplateFactory extends ParamsBag implements TemplateFactoryContract
 {
@@ -76,9 +76,11 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function baseUrl(): string
+    public function baseUrl(bool $absolute = false): string
     {
-        return $this->manager->baseUrl . '/' . $this->name();
+        $path = $this->manager->baseUrl . '/' . $this->name();
+
+        return $absolute ? url()->root($path) : $path;
     }
 
     /**
@@ -92,17 +94,17 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function controller(ServerRequestInterface $psrRequest)
+    public function bound(string $abstract)
     {
-        return new PsrResponse();
+        return $this->manager->getContainer()->has("template.factory.{$this->name()}.{$abstract}");
     }
 
     /**
      * @inheritDoc
      */
-    public function controllerXhr(ServerRequestInterface $psrRequest)
+    public function cache(): FactoryCache
     {
-        return [];
+        return $this->resolve('cache');
     }
 
     /**
@@ -132,9 +134,25 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function bound(string $abstract)
+    public function httpCacheController(string $path, ServerRequestInterface $psrRequest)
     {
-        return $this->manager->getContainer()->has("template.factory.{$this->name()}.{$abstract}");
+        return $cache = $this->cache() ? $this->cache()->getResponse($path, $psrRequest) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function httpController(ServerRequestInterface $psrRequest)
+    {
+        return call_user_func($this->resolve('controller'), $psrRequest);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function httpXhrController(ServerRequestInterface $psrRequest)
+    {
+        return call_user_func($this->resolve('xhr'), $psrRequest);
     }
 
     /**
