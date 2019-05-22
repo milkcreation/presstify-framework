@@ -23,7 +23,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function boot(): void
     {
         events()->listen('template.factory.boot', function () {
-            $this->registerFactory();
+            $this->registerFactories();
         });
     }
 
@@ -38,10 +38,13 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     /**
      * @inheritDoc
      */
-    public function registerFactory(): void
+    public function registerFactories(): void
     {
         $this->registerFactoryAssets();
+        $this->registerFactoryCache();
         $this->registerFactoryDb();
+        $this->registerFactoryHttpController();
+        $this->registerFactoryHttpXhrController();
         $this->registerFactoryLabels();
         $this->registerFactoryParams();
         $this->registerFactoryNotices();
@@ -63,6 +66,18 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     }
 
     /**
+     * Déclaration du controleur de cache.
+     *
+     * @return void
+     */
+    public function registerFactoryCache(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('cache'), function () {
+            return (new FactoryCache())->setFactory($this->factory);
+        });
+    }
+
+    /**
      * Déclaration du controleur de base de données.
      *
      * @return void
@@ -75,6 +90,30 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
             } else {
                 return null;
             }
+        });
+    }
+
+    /**
+     * Déclaration du controleur de requête HTTP.
+     *
+     * @return void
+     */
+    public function registerFactoryHttpController(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('controller'), function () {
+            return (new FactoryHttpController())->setFactory($this->factory);
+        });
+    }
+
+    /**
+     * Déclaration du controleur de requête HTTP XHR.
+     *
+     * @return void
+     */
+    public function registerFactoryHttpXhrController(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('xhr'), function () {
+            return (new FactoryHttpXhrController())->setFactory($this->factory);
         });
     }
 

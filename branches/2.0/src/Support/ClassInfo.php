@@ -92,7 +92,7 @@ class ClassInfo implements ClassInfoContract
      */
     public function getRelPath(): string
     {
-        return paths()->makeRelativePath($this->getDirname());
+        return paths()->relPathFromBase($this->getDirname());
     }
 
     /**

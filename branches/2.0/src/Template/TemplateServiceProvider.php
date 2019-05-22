@@ -3,18 +3,39 @@
 namespace tiFy\Template;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
-use tiFy\Template\Templates\FileBrowser\Contracts\{
+use tiFy\Contracts\Template\{
+    FactoryCache as FactoryCacheContract,
+    FactoryHttpController as FactoryHttpControllerContract,
+    FactoryHttpXhrController as FactoryHttpXhrControllerContract,
+    TemplateFactory as TemplateFactoryContract
+};
+use tiFy\Template\Templates\FileManager\Contracts\{
     Ajax as AjaxContract,
     Breadcrumb as BreadcrumbContract,
-    FileBrowser as FileBrowserContract,
+    Cache as CacheContract,
+    FileManager as FileManagerContract,
     FileCollection as FileCollectionContract,
-    IconSet as IconSetContract,
+    HttpController as HttpControllerContract,
     FileInfo as FileInfoContract,
     Filesystem as FilesystemContract,
+    FileTag as FileTagContract,
+    HttpXhrController as HttpXhrControllerContract,
+    IconSet as IconSetContract,
     Sidebar as SidebarContract
 };
-use tiFy\Template\Templates\FileBrowser\{Ajax, Breadcrumb, FileCollection, IconSet, FileInfo, Filesystem, Sidebar};
+use tiFy\Template\Factory\{FactoryCache, FactoryHttpController, FactoryHttpXhrController};
+use tiFy\Template\Templates\FileManager\{
+    Ajax,
+    Breadcrumb,
+    Cache,
+    FileCollection,
+    IconSet,
+    FileInfo,
+    Filesystem,
+    FileTag,
+    HttpController,
+    HttpXhrController,
+    Sidebar};
 
 class TemplateServiceProvider extends ServiceProvider
 {
@@ -26,12 +47,20 @@ class TemplateServiceProvider extends ServiceProvider
     protected $provides = [
         'template',
         TemplateFactoryContract::class,
-        // FileBrowser
+        // Factory
+        FactoryCache::class,
+        FactoryHttpControllerContract::class,
+        FactoryHttpXhrControllerContract::class,
+        // FileManager
         AjaxContract::class,
         BreadcrumbContract::class,
+        CacheContract::class,
         FileCollectionContract::class,
         FileInfoContract::class,
         FilesystemContract::class,
+        FileTagContract::class,
+        HttpControllerContract::class,
+        HttpXhrControllerContract::class,
         IconSetContract::class,
         SidebarContract::class
     ];
@@ -49,13 +78,32 @@ class TemplateServiceProvider extends ServiceProvider
             return new TemplateFactory();
         });
 
-        $this->registerFileBrowser();
+        $this->registerFactories();
+        $this->registerFileManager();
     }
 
     /**
      * @inheritDoc
      */
-    public function registerFileBrowser(): void
+    public function registerFactories(): void
+    {
+        $this->getContainer()->add(FactoryCacheContract::class, function () {
+            return new FactoryCache();
+        });
+
+        $this->getContainer()->add(FactoryHttpControllerContract::class, function () {
+            return new FactoryHttpController();
+        });
+
+        $this->getContainer()->add(FactoryHttpXhrControllerContract::class, function () {
+            return new FactoryHttpXhrController();
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerFileManager(): void
     {
         $this->getContainer()->add(AjaxContract::class, function () {
             return new Ajax();
@@ -63,6 +111,10 @@ class TemplateServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(BreadcrumbContract::class, function () {
             return new Breadcrumb();
+        });
+
+        $this->getContainer()->add(CacheContract::class, function () {
+            return new Cache();
         });
 
         $this->getContainer()->add(FileCollectionContract::class, function () {
@@ -77,8 +129,20 @@ class TemplateServiceProvider extends ServiceProvider
             return new FileInfo($infos);
         });
 
-        $this->getContainer()->add(FilesystemContract::class, function (FileBrowserContract $factory) {
+        $this->getContainer()->add(FilesystemContract::class, function (FileManagerContract $factory) {
             return Filesystem::createFromFactory($factory);
+        });
+
+        $this->getContainer()->add(FileTagContract::class, function () {
+            return new FileTag();
+        });
+
+        $this->getContainer()->add(HttpControllerContract::class, function () {
+            return new HttpController();
+        });
+
+        $this->getContainer()->add(HttpXhrControllerContract::class, function () {
+            return new HttpXhrController();
         });
 
         $this->getContainer()->add(SidebarContract::class, function () {

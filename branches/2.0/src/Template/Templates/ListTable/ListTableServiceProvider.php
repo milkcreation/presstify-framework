@@ -44,9 +44,9 @@ class ListTableServiceProvider extends FactoryServiceProvider
     /**
      * @inheritDoc
      */
-    public function registerFactory(): void
+    public function registerFactories(): void
     {
-        parent::registerFactory();
+        parent::registerFactories();
 
         $this->registerFactoryAjax();
         $this->registerFactoryBulkActions();

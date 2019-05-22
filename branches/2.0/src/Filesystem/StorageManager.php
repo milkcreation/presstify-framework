@@ -40,7 +40,9 @@ class StorageManager extends MountManager implements StorageManagerContract
             ? LocalAdapter::SKIP_LINKS
             : LocalAdapter::DISALLOW_LINKS;
 
-        return  $this->container->get(Filesystem::class, [new LocalAdapter($config['root'], LOCK_EX, $links, $permissions)]);
+        return  $this->container->get(
+            Filesystem::class, [new LocalAdapter($config['root'], LOCK_EX, $links, $permissions)]
+        );
     }
 
     /**

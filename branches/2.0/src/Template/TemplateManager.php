@@ -3,8 +3,7 @@
 namespace tiFy\Template;
 
 use Psr\Http\Message\ServerRequestInterface;
-use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
-use tiFy\Contracts\Template\TemplateManager as TemplateManagerContract;
+use tiFy\Contracts\Template\{TemplateFactory as TemplateFactoryContract, TemplateManager as TemplateManagerContract};
 use tiFy\Support\Manager;
 use tiFy\Support\Proxy\Router;
 
@@ -27,27 +26,13 @@ class TemplateManager extends Manager implements TemplateManagerContract
      */
     public function boot(): void
     {
-        $this->baseUrl = md5('tify:template');
+        $this->baseUrl = md5('tify:template'); // 7855ce7d975d5a1ede9b5a83d7235dee
 
-        Router::get($this->baseUrl . '/{name}', [$this, 'controller']);
-        Router::post($this->baseUrl . '/{name}', [$this, 'controller']);
-        Router::xhr($this->baseUrl . '/{name}/xhr', [$this, 'controllerXhr']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function controller($name, ServerRequestInterface $psrRequest)
-    {
-        return $this->get($name)->controller($psrRequest);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function controllerXhr($name, ServerRequestInterface $psrRequest)
-    {
-        return $this->get($name)->controllerXhr($psrRequest);
+        foreach(['head', 'delete', 'get', 'options', 'post', 'put', 'patch'] as $method) {
+            Router::$method($this->baseUrl . '/{name}', [$this, 'httpController']);
+            Router::xhr($this->baseUrl . '/{name}/xhr', [$this, 'httpXhrController'], $method);
+        }
+        Router::get($this->baseUrl . '/{name}/cache/{path:.*}', [$this, 'httpCacheController']);
     }
 
     /**
@@ -58,6 +43,30 @@ class TemplateManager extends Manager implements TemplateManagerContract
     public function get($name): ?TemplateFactoryContract
     {
         return parent::get($name);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function httpCacheController(string $name, string $path, ServerRequestInterface $psrRequest)
+    {
+        return $this->get($name)->httpCacheController($path, $psrRequest);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function httpController(string $name, ServerRequestInterface $psrRequest)
+    {
+        return $this->get($name)->httpController($psrRequest);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function httpXhrcontroller(string $name, ServerRequestInterface $psrRequest)
+    {
+        return $this->get($name)->httpXhrController($psrRequest);
     }
 
     /**

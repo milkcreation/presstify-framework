@@ -33,9 +33,9 @@ interface Filesystem extends FilesystemInterface
      *
      * @param string $path Chemin relatif.
      *
-     * @return string
+     * @return string|null
      */
-    public function path($path): string;
+    public function path($path): ?string;
 
     /**
      * Génération de la réponse "streamée" d'un fichier.

@@ -15,6 +15,7 @@ use tiFy\Partial\Partials\Holder\Holder;
 use tiFy\Partial\Partials\Modal\Modal;
 use tiFy\Partial\Partials\Notice\Notice;
 use tiFy\Partial\Partials\Pagination\Pagination;
+use tiFy\Partial\Partials\PdfPreview\PdfPreview;
 use tiFy\Partial\Partials\Sidebar\Sidebar;
 use tiFy\Partial\Partials\Slider\Slider;
 use tiFy\Partial\Partials\Spinner\Spinner;
@@ -34,6 +35,7 @@ use tiFy\Partial\Partials\Tag\Tag;
  * @method static Modal Modal(string $id = null, array $attrs = [])
  * @method static Notice Notice(string $id = null, array $attrs = [])
  * @method static Pagination Pagination(string $id = null, array $attrs = [])
+ * @method static PdfPreview PdfPreview(string $id = null, array $attrs = [])
  * @method static Sidebar Sidebar(string $id = null, array $attrs = [])
  * @method static Slider Slider(string $id = null, array $attrs = [])
  * @method static Spinner Spinner(string $id = null, array $attrs = [])

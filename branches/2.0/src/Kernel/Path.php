@@ -2,172 +2,273 @@
 
 namespace tiFy\Kernel;
 
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\AdapterInterface;
-use Symfony\Component\Filesystem\Filesystem as SfFilesystem;
+use League\Flysystem\Adapter\Local as LocalAdapter;
+use League\Flysystem\FilesystemNotFoundException;
+use tify\Contracts\Container\Container;
+use tiFy\Contracts\Filesystem\Filesystem as FilesystemContract;
 use tiFy\Contracts\Kernel\Path as PathContract;
 use tiFy\Filesystem\Filesystem;
+use tiFy\Filesystem\StorageManager;
 
-class Path extends Filesystem implements PathContract
+class Path extends StorageManager implements PathContract
 {
     /**
-     * Séparateur de portion de chemin.
+     * Séparateur de dossier.
      * @var string
      */
     const DS = DIRECTORY_SEPARATOR;
 
     /**
-     * Chemin absolu vers le repertoire racine du projet.
-     * @var string
+     * Instance du conteneur d'injection de dépendances.
+     * @var Container
      */
-    protected $basePath;
-
-    /**
-     * Chemin absolu vers le répertoire de stockage des fichiers de configuration.
-     * @var string
-     */
-    protected $configPath;
-
-    /**
-     * Chemin absolu vers le répertoire publique.
-     * @var string
-     */
-    protected $publicPath;
-
-    /**
-     * Chemin absolu vers le répertoire de stockage des fichiers de journalisation.
-     * @var string
-     */
-    protected $logPath;
-
-    /**
-     * Chemin absolu vers le répertoire du thème courant.
-     * @var string
-     */
-    protected $themePath;
-
-    /**
-     * Chemin absolu vers le repertoire racine de presstiFy.
-     * @var string
-     */
-    protected $tiFyPath;
+    protected $container;
 
     /**
      * CONSTRUCTEUR
      *
+     * @param Container $container Instance du conteneur d'injection de dépendances.
+     *
      * @return void
      */
-    public function __construct()
+    public function __construct(Container $container)
     {
-        parent::__construct(new Local(ROOT_PATH));
+        $this->container = $container;
+
+        parent::__construct($this->container);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
+     */
+    public function diskBase(): FilesystemContract
+    {
+        if (!$disk = $this->getFilesystem('base')) {
+            $disk = $this->mount('base', ROOT_PATH);
+        }
+
+        return $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diskCache(): FilesystemContract
+    {
+        if (!$disk = $this->getFilesystem('cache')) {
+            $disk = $this->mount('cache', $this->getStoragePath('/cache'));
+        }
+
+        return $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diskConfig(): FilesystemContract
+    {
+        if (!$disk = $this->getFilesystem('config')) {
+            $disk = $this->mount('config', !$this->isWp()
+                ? $this->getBasePath('config') : get_template_directory() . '/config'
+            );
+        }
+
+        return $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diskLog(): FilesystemContract
+    {
+        if (!$disk = $this->getFilesystem('log')) {
+            $disk = $this->mount('log', $this->getStoragePath('/log'));
+        }
+
+        return $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diskPathFromBase(FilesystemContract $disk, string $path = '', bool $absolute = true): ?string
+    {
+        $path = preg_replace('#^' . preg_quote($this->getBasePath(), self::DS) . "#", '', $disk->path($path), 1, $n);
+
+        return $n === 1 ? $this->getBasePath($path, $absolute) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diskPublic(): FilesystemContract
+    {
+        if (!$disk = $this->getFilesystem('public')) {
+            $disk = $this->mount('public', !$this->isWp() ? $this->getBasePath('/public') : ABSPATH);
+        }
+
+        return $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diskStorage(): FilesystemContract
+    {
+        if (!$disk = $this->getFilesystem('storage')) {
+            $disk = $this->mount('storage', !$this->isWp()
+                ? $this->getBasePath('storage') : WP_CONTENT_DIR . '/uploads'
+            );
+        }
+
+        return $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diskTheme(): FilesystemContract
+    {
+        if (!$disk = $this->getFilesystem('theme')) {
+            $disk = $this->mount('theme', get_template_directory());
+        }
+
+        return $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diskTiFy(): FilesystemContract
+    {
+        if (!$disk = $this->getFilesystem('tify')) {
+            $disk = $this->mount('tify', $this->getBasePath('/vendor/presstify/framework/src'));
+        }
+
+        return $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBasePath(string $path = '', bool $absolute = true): string
+    {
+        return $this->normalize($absolute ? $this->diskBase()->path($path) : $path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCachePath(string $path = '', bool $absolute = true): string
+    {
+        return $this->diskPathFromBase($this->diskCache(), $path, $absolute);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getConfigPath(string $path = '', bool $absolute = true): string
+    {
+        return $this->diskPathFromBase($this->diskConfig(), $path, $absolute);
+    }
+
+    /**
+     * {@inheritDoc}
      *
-     * @return Local
+     * @return FilesystemContract
      */
-    public function getAdapter(): AdapterInterface
+    public function getFilesystem($prefix): ?FilesystemContract
     {
-        return parent::getAdapter();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getBasePath(string $path = '', bool $rel = false): string
-    {
-        if(!$this->basePath) {
-            $this->basePath = rtrim($this->getAdapter()->getPathPrefix(), self::DS);
+        try {
+            /** @var FilesystemContract $filesystem */
+            $filesystem = parent::getFilesystem($prefix);
+            return $filesystem;
+        } catch (FilesystemNotFoundException $e) {
+            return null;
         }
-        return $this->getPath($this->basePath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getConfigPath(string $path = '', bool $rel = false): string
+    public function getLogPath(string $path = '', bool $absolute = true): string
     {
-        if(!$this->configPath) {
-            $this->configPath = !$this->isWpClassic()
-                ? $this->getBasePath('config')
-                : get_template_directory() . '/config';
-        }
-        return $this->getPath($this->configPath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);
+        return $this->diskPathFromBase($this->diskLog(), $path, $absolute);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getLogPath(string $path = '', bool $rel = false): string
+    public function getPublicPath(string $path = '', bool $absolute = true): string
     {
-        if(!$this->logPath) {
-            $this->logPath = WP_CONTENT_DIR . '/uploads/log';
-        }
-        return $this->getPath($this->logPath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);
-    }
-
-
-    /**
-     * @inheritdoc
-     */
-    public function getPath(string $path = '', bool $rel = false): string
-    {
-        return $rel ? $this->makeRelativePath($path) : $path;
+        return $this->diskPathFromBase($this->diskPublic(), $path, $absolute);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getPublicPath(string $path = '', bool $rel = false): string
+    public function getStoragePath(string $path = '', bool $absolute = true): string
     {
-        if(!$this->publicPath) {
-            $this->publicPath = !$this->isWpClassic()
-                ? $this->getBasePath('public')
-                : rtrim(ABSPATH, self::DS);
-        }
-        return $this->getPath($this->publicPath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);
+        return $this->diskPathFromBase($this->diskStorage(), $path, $absolute);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getThemePath(string $path = '', bool $rel = false): string
+    public function getThemePath(string $path = '', bool $absolute = true): string
     {
-        if(!$this->themePath) {
-            $this->themePath = get_template_directory();
-        }
-        return $this->getPath($this->themePath . ($path ? self::DS. ltrim($path, self::DS) : $path), $rel);
+        return $this->diskPathFromBase($this->diskTheme(), $path, $absolute);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTiFyPath(string $path = '', bool $rel = false): string
+    public function getTifyPath(string $path = '', bool $absolute = true): string
     {
-        if(!$this->tiFyPath) {
-            $this->tiFyPath = $this->getBasePath('/vendor/presstify/framework/src');
-        }
-        return $this->getPath($this->tiFyPath . ($path ? self::DS . ltrim($path, self::DS) : $path), $rel);
+        return $this->diskPathFromBase($this->diskTiFy(), $path, $absolute);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function isWpClassic(): bool
+    public function isWp(): bool
     {
-        return rtrim(ABSPATH, self::DS) === $this->getBasePath();
+        return defined('ABSPATH') && ($this->normalize(ABSPATH) === $this->normalize($this->getBasePath()));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function makeRelativePath(string $target_path, ?string $base_path = null): string
+    public function mount(string $name, string $root, array $config = []): FilesystemContract
     {
-        $base_path = $base_path ? : $this->getBasePath();
+        $permissions = $config['permissions'] ?? [];
+        $links = ($config['links'] ?? null) === 'skip'
+            ? LocalAdapter::SKIP_LINKS
+            : LocalAdapter::DISALLOW_LINKS;
 
-        $path = (new SfFilesystem())->makePathRelative($target_path, $base_path);
+        return $this->mountFilesystem($name, new Filesystem(new LocalAdapter($root, LOCK_EX, $links, $permissions)))
+            ->getFilesystem($name);
+    }
 
-        return !is_dir($target_path) ? rtrim($path, self::DS) : $path;
+    /**
+     * @inheritDoc
+     */
+    public function normalize($path): string
+    {
+        return self::DS . ltrim(rtrim($path, self::DS), self::DS);
+    }
+
+    /**
+     * Récupération du chemin par rapport à la racine.
+     *
+     * @param string $pathname Chemin absolue vers un dossier ou un fichier.
+     *
+     * @return string
+     */
+    public function relPathFromBase(string $pathname): ?string
+    {
+        $path = preg_replace('#^' . preg_quote($this->getBasePath(), self::DS) . "#", '', $pathname, 1, $n);
+
+        return $n === 1 ? $this->getBasePath($path): null;
     }
 }

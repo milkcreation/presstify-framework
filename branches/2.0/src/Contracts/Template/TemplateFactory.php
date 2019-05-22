@@ -26,9 +26,11 @@ interface TemplateFactory extends ParamsBag
     /**
      * Url de routage.
      *
+     * @param boolean $absolute Activation de la récupération de l'url absolue.
+     *
      * @return string
      */
-    public function baseUrl(): string;
+    public function baseUrl(bool $absolute = false): string;
 
     /**
      * Initialisation du controleur.
@@ -38,24 +40,6 @@ interface TemplateFactory extends ParamsBag
     public function boot(): void;
 
     /**
-     * Controleur de routage.
-     *
-     * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
-     *
-     * @return mixed
-     */
-    public function controller(ServerRequestInterface $psrRequest);
-
-    /**
-     * Controleur de routage des requêtes XmlHttpRequest (via ajax).
-     *
-     * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
-     *
-     * @return mixed
-     */
-    public function controllerXhr(ServerRequestInterface $psrRequest);
-
-    /**
      * Vérification d'existance d'un service fourni.
      *
      * @param string $alias Alias de qualification du service.
@@ -63,6 +47,13 @@ interface TemplateFactory extends ParamsBag
      * @return mixed.
      */
     public function bound(string $alias);
+
+    /**
+     * Instance du controleur de cache.
+     *
+     * @return FactoryCache
+     */
+    public function cache(): FactoryCache;
 
     /**
      * Récupération de l'instance du controleur de base de données
@@ -84,6 +75,34 @@ interface TemplateFactory extends ParamsBag
      * @return string[]
      */
     public function getServiceProviders();
+
+    /**
+     * Récupération de l'instance du controleur des requêtes HTTP des ressources en cache.
+     *
+     * @param string $path Chemin vers la ressource en cache.
+     * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
+     *
+     * @return mixed
+     */
+    public function httpCacheController(string $path, ServerRequestInterface $psrRequest);
+
+    /**
+     * Récupération du controleur de requête HTTP.
+     *
+     * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
+     *
+     * @return mixed
+     */
+    public function httpController(ServerRequestInterface $psrRequest);
+
+    /**
+     * Récupération du controleur de requêtes XmlHttpRequest (via ajax).
+     *
+     * @param ServerRequestInterface $psrRequest Instance de la requête Psr.
+     *
+     * @return mixed
+     */
+    public function httpXhrController(ServerRequestInterface $psrRequest);
 
     /**
      * Récupération de l'instance du controleur des intitulés ou récupération d'un intitulé.

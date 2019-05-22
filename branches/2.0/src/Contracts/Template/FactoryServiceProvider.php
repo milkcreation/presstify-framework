@@ -20,5 +20,5 @@ interface FactoryServiceProvider extends ServiceProvider, FactoryAwareTrait
      *
      * @return void
      */
-    public function registerFactory(): void;
+    public function registerFactories(): void;
 }
