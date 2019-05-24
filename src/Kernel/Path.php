@@ -2,12 +2,10 @@
 
 namespace tiFy\Kernel;
 
-use League\Flysystem\Adapter\Local as LocalAdapter;
 use League\Flysystem\FilesystemNotFoundException;
 use tify\Contracts\Container\Container;
 use tiFy\Contracts\Filesystem\Filesystem as FilesystemContract;
 use tiFy\Contracts\Kernel\Path as PathContract;
-use tiFy\Filesystem\Filesystem;
 use tiFy\Filesystem\StorageManager;
 
 class Path extends StorageManager implements PathContract
@@ -241,13 +239,10 @@ class Path extends StorageManager implements PathContract
      */
     public function mount(string $name, string $root, array $config = []): FilesystemContract
     {
-        $permissions = $config['permissions'] ?? [];
-        $links = ($config['links'] ?? null) === 'skip'
-            ? LocalAdapter::SKIP_LINKS
-            : LocalAdapter::DISALLOW_LINKS;
+        $filesystem = $this->createLocal($root, $config);
+        $this->set($name, $filesystem);
 
-        return $this->mountFilesystem($name, new Filesystem(new LocalAdapter($root, LOCK_EX, $links, $permissions)))
-            ->getFilesystem($name);
+        return $filesystem;
     }
 
     /**
@@ -259,11 +254,7 @@ class Path extends StorageManager implements PathContract
     }
 
     /**
-     * Récupération du chemin par rapport à la racine.
-     *
-     * @param string $pathname Chemin absolue vers un dossier ou un fichier.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function relPathFromBase(string $pathname): ?string
     {

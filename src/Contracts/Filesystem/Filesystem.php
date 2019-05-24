@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Filesystem;
 
+use League\Flysystem\AdapterInterface;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem as LeagueFilesystem;
 use League\Flysystem\FilesystemInterface;
@@ -27,6 +28,13 @@ interface Filesystem extends FilesystemInterface
      * @throws FileNotFoundException
      */
     public function download(string $path, ?string $name = null, array $headers = []): StreamedResponse;
+
+    /**
+     * Récupération de l'adaptateur "réel", lorsque celui-ci est englobé dans un système de cache.
+     *
+     * @return AdapterInterface
+     */
+    public function getRealAdapter(): AdapterInterface;
 
     /**
      * Récupération du chemin absolu associé à un chemin relatif.
