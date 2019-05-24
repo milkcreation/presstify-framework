@@ -2,6 +2,8 @@
 
 namespace tiFy\Filesystem;
 
+use League\Flysystem\AdapterInterface;
+use League\Flysystem\Cached\CachedAdapter;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as LeagueFilesystem;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -21,9 +23,19 @@ class Filesystem extends LeagueFilesystem implements FilesystemContract
     /**
      * @inheritDoc
      */
+    public function getRealAdapter(): AdapterInterface
+    {
+        $disk = $this->getAdapter();
+
+        return $disk instanceof CachedAdapter ? $disk->getAdapter() : $disk;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function path($path): ?string
     {
-        $adapter = $this->getAdapter();
+        $adapter = $this->getRealAdapter();
 
         return $adapter instanceof Local ? $adapter->applyPathPrefix($path) : null;
     }

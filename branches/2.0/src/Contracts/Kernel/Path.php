@@ -160,7 +160,7 @@ interface Path extends StorageManager
     public function isWp(): bool;
 
     /**
-     * Création d'un gestionnaire de disque.
+     * Montage d'un disque local.
      *
      * @param string $name Nom de qualification.
      * @param string $root Chemin absolu vers la racine du disque.
