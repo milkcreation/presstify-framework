@@ -2,8 +2,8 @@
 
 namespace tiFy\Filesystem;
 
+use League\Flysystem\FileNotFoundException;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StaticCacheManager as StaticCacheManagerContract;
@@ -13,12 +13,12 @@ class StaticCacheManager extends StorageManager implements StaticCacheManagerCon
     /**
      * CONSTRUCTEUR.
      *
-     * @param Container $container Instance du conteneur d'injection de dépendances.
+     * @param Container|null $container Instance du conteneur d'injection de dépendances.
      * @param string| $cache_dir Chemin relatif vers le répertoire de stockage du cache.
      *
      * @return void
      */
-    public function __construct(Container $container, ?string $cache_dir = null)
+    public function __construct(?Container $container = null, ?string $cache_dir = null)
     {
         parent::__construct($container);
 
@@ -31,23 +31,46 @@ class StaticCacheManager extends StorageManager implements StaticCacheManagerCon
     /**
      * @inheritDoc
      */
-    public function getResponse(string $path, ServerRequestInterface $psrRequest): StreamedResponse
+    public function cacheFileExists(string $path, array $params): bool
     {
-        $path = rawurldecode($path);
-
-        if (!$this->getCache()->has($path)) {
-            $this->put('cache://'. $path, $this->read('source://'. $path));
-        }
-
-        return $this->getCache()->response($path);
+        return ($path = $this->getCachePath($path, $params)) ? $this->getCache()->has($path) : false;
     }
 
     /**
      * @inheritDoc
      */
-    public function ready(): bool
+    public function clearCache(string $path = ''): void
     {
-        return $this->getCache() && $this->getSource();
+        if ($path) {
+            $this->getCache()->deleteDir(dirname($this->getCachePath($path)));
+        } else {
+            foreach($this->getCache()->listContents() as $content) {
+                if ($content['type'] === 'dir') {
+                    $this->getCache()->deleteDir($content['path']);
+                } else {
+                    $this->getCache()->delete($content['path']);
+                }
+            }
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getResponse(string $path, ServerRequestInterface $psrRequest)
+    {
+        $sourcePath = $this->getSourcePath($path);
+        $cachePath = $this->getCachePath($path, []);
+
+        try {
+            if (!$this->cacheFileExists($path, [])) {
+                $this->put("cache://{$cachePath}", $this->read("source://{$sourcePath}"));
+            }
+
+            return $this->getCache()->binary($cachePath);
+        } catch (FileNotFoundException $e) {
+            return __('Impossible de retrouver le média.', 'tify');
+        }
     }
 
     /**
@@ -61,9 +84,37 @@ class StaticCacheManager extends StorageManager implements StaticCacheManagerCon
     /**
      * @inheritDoc
      */
+    public function getCachePath(string $path, array $params =  []): ?string
+    {
+        $sourcePath = $this->getSourcePath($path);
+        ksort($params);
+        $md5 = md5($sourcePath . '?' . http_build_query($params));
+
+        return $sourcePath . '/' . $md5;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getSource(): ?Filesystem
     {
         return $this->disk('source');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSourcePath(string $path): ?string
+    {
+        return rawurldecode($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function ready(): bool
+    {
+        return $this->getCache() && $this->getSource();
     }
 
     /**
