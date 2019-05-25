@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
-use tiFy\Http\Response;
 use Wp_Query;
 use Zend\Diactoros\Response as PsrResponse;
 
@@ -50,7 +49,7 @@ class Template extends ApplicationStrategy
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function invokeRouteCallable(Route $route, ServerRequestInterface $request): ResponseInterface
     {

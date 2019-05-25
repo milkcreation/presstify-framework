@@ -41,7 +41,7 @@ class Routing implements RoutingContract
 
                 $this->manager->emit($response);
 
-                if ($response->getHeaders() || $response->getBody()->getSize()) {
+                if ($response->getHeaders() /*|| $response->getBody()->getSize()*/) {
                     exit;
                 }
             } catch (Exception $e) {

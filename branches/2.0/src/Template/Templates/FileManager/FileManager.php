@@ -81,7 +81,7 @@ class FileManager extends TemplateFactory implements FileManagerContract
         $path = $path ?? $this->getPath();
 
         try {
-            $adapter = $this->filesystem()->getAdapter();
+            $adapter = $this->filesystem()->getRealAdapter();
 
             return $this->fileinfo($adapter->getMetadata($path) + Util::pathinfo($path));
         } catch (Exception $e) {
@@ -137,6 +137,7 @@ class FileManager extends TemplateFactory implements FileManagerContract
     {
         if (!$this->prepared) {
             parent::prepare();
+            $this->getFile('test2/test2/test2');
         }
 
         return $this;

@@ -22,7 +22,7 @@ class HttpXhrController extends FactoryHttpXhrController implements HttpXhrContr
     public function post()
     {
         $action = $this->factory->request()->input('action');
-        $path = $this->factory->request()->input('path');
+        $path = rawurldecode($this->factory->request()->input('path'));
         $response = null;
 
         if (method_exists($this, $action)) {
@@ -121,9 +121,9 @@ class HttpXhrController extends FactoryHttpXhrController implements HttpXhrContr
             $file = $this->factory->getFile($path);
 
             if ($file->isDir()) {
-                $this->factory->adapter()->deleteDir($file->getRelPath());
+                $this->factory->adapter()->deleteDir($path);
             } else {
-                $this->factory->adapter()->delete($file->getRelPath());
+                $this->factory->adapter()->delete($path);
             }
 
             $this->factory->setPath($file->getDirname());
@@ -133,7 +133,8 @@ class HttpXhrController extends FactoryHttpXhrController implements HttpXhrContr
                 'views'   => [
                     'breadcrumb' => (string)$this->factory->breadcrumb(),
                     'content'    => (string)$this->factory->getFiles(),
-                    'sidebar'    => (string)$this->factory->sidebar()
+                    'sidebar'    => (string)$this->factory->sidebar(),
+                    'notice'     => $this->notice(__('L\'élément a été supprimé avec succès.', 'tify'), 'success')
                 ]
             ];
         }
