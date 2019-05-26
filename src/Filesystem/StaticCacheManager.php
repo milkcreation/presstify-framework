@@ -11,6 +11,12 @@ use tiFy\Contracts\Filesystem\StaticCacheManager as StaticCacheManagerContract;
 class StaticCacheManager extends StorageManager implements StaticCacheManagerContract
 {
     /**
+     * Indicateur de conservation de l'extension d'un fichier mis en cache.
+     * @var boolean
+     */
+    protected $withExtension = true;
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param Container|null $container Instance du conteneur d'injection de dépendances.
@@ -89,6 +95,10 @@ class StaticCacheManager extends StorageManager implements StaticCacheManagerCon
         $sourcePath = $this->getSourcePath($path);
         ksort($params);
         $md5 = md5($sourcePath . '?' . http_build_query($params));
+
+        if ($this->withExtension) {
+            $md5 .= ($ext = pathinfo($path, PATHINFO_EXTENSION)) ? ".{$ext}" : '';
+        }
 
         return $sourcePath . '/' . $md5;
     }

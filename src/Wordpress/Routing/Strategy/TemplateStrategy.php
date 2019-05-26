@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
+use tiFy\Http\Response;
 use Wp_Query;
 use Zend\Diactoros\Response as PsrResponse;
 
@@ -49,6 +50,16 @@ class Template extends ApplicationStrategy
     ];
 
     /**
+     * CONSTRUCTEUR.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->addDefaultResponseHeader('content-type', 'text/html');
+    }
+
+    /**
      * @inheritDoc
      */
     public function invokeRouteCallable(Route $route, ServerRequestInterface $request): ResponseInterface
@@ -79,21 +90,21 @@ class Template extends ApplicationStrategy
         add_action('template_redirect', function () use ($controller, $args) {
             $resolved = $controller(...$args);
 
-            $psrResponse = new PsrResponse();
             if ($resolved instanceof ViewController) {
-                $psrResponse->getBody()->write((string)$resolved);
+                $response = Response::create((string)$resolved);
             } elseif ($resolved instanceof ResponseInterface) {
-                $psrResponse = $resolved;
+                $response = Response::createFromPsr($resolved);
             } elseif ($resolved instanceof SfResponse) {
-                $resolved->send();
-                exit;
+                $response = $resolved;
             } else {
-                $psrResponse->getBody()->write((string)$resolved);
+                $response = Response::create((string)$resolved);
             }
-            router()->emit($psrResponse);
+            $response = $this->applyDefaultResponseHeaders(Response::convertToPsr($response));
+
+            router()->emit($response);
             exit;
         }, 1);
 
-        return $this->applyDefaultResponseHeaders(new PsrResponse());
+        return $this->applyDefaultResponseHeaders((new PsrResponse())->withStatus(100));
     }
 }

@@ -39,11 +39,14 @@ class Routing implements RoutingContract
             try {
                 $response = $this->manager->dispatch(Request::convertToPsr());
 
-                $this->manager->emit($response);
-
-                if ($response->getHeaders() /*|| $response->getBody()->getSize()*/) {
+                if ($response->getStatusCode() !== 100) {
+                    $this->manager->emit($response);
                     exit;
                 }
+
+                /*if ($response->getHeaders() || $response->getBody()->getSize()) {
+                    exit;
+                }*/
             } catch (Exception $e) {
                 /**
                  * Suppression du slash de fin dans l'url des routes déclarées.

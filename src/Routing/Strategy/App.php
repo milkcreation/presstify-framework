@@ -10,12 +10,21 @@ use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Http\Response;
-use Zend\Diactoros\Response as PsrResponse;
 
 class App extends ApplicationStrategy
 {
     /**
-     * @inheritdoc
+     * CONSTRUCTEUR.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->addDefaultResponseHeader('content-type', 'text/html');
+    }
+
+    /**
+     * @inheritDoc
      */
     public function invokeRouteCallable(Route $route, ServerRequestInterface $request): ResponseInterface
     {
@@ -28,17 +37,16 @@ class App extends ApplicationStrategy
         array_push($args, $request);
         $resolved = $controller(...$args);
 
-        $psrResponse = new PsrResponse();
         if ($resolved instanceof ViewController) {
-            $psrResponse->getBody()->write((string)$resolved);
+            $response = Response::create((string)$resolved);
         } elseif ($resolved instanceof ResponseInterface) {
-            $psrResponse = $resolved;
+            $response = Response::createFromPsr($resolved);
         } elseif ($resolved instanceof SfResponse) {
-            $psrResponse = Response::convertToPsr($resolved);
+            $response = $resolved;
         } else {
-            $psrResponse->getBody()->write((string)$resolved);
+            $response = Response::create((string)$resolved);
         }
 
-        return $this->applyDefaultResponseHeaders($psrResponse);
+        return $this->applyDefaultResponseHeaders(Response::convertToPsr($response));
     }
 }
