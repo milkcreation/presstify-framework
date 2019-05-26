@@ -2,9 +2,11 @@
 
 namespace tiFy\Support\Proxy;
 
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\Routing\RouteGroup as RouteGroupContract;
+use tiFy\Contracts\Routing\Router as RouterContract;
 
 /**
  * @method static array all()
@@ -22,6 +24,7 @@ use tiFy\Contracts\Routing\RouteGroup as RouteGroupContract;
  * @method static bool hasNamedRoute(string $name)
  * @method static bool isCurrentNamed(string $name)
  * @method static RouteContract map(string $method, string $path, callable $handler)
+ * @method static RouterContract middleware(MiddlewareInterface $middleware)
  * @method static RouteContract patch(string $path, callable $handler)
  * @method static RouteContract post(string $path, callable $handler)
  * @method static RouteContract put(string $path, callable $handler)

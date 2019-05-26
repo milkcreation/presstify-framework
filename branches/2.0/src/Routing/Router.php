@@ -101,6 +101,8 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function emit(ResponseInterface $response): void
     {
+        events()->trigger('router.emit.response', [$response]);
+
         /** @var EmitterInterface $emitter */
         $emitter = $this->getContainer()->get('router.emitter');
 

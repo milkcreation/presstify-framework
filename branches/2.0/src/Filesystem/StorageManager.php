@@ -76,7 +76,7 @@ class StorageManager extends MountManager implements StorageManagerContract
      */
     public function getContainer(): ?Container
     {
-        return $this->container instanceof Container ? $this->container : null;
+        return $this->container;
     }
 
     /**
