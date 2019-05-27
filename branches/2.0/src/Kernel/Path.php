@@ -260,6 +260,6 @@ class Path extends StorageManager implements PathContract
     {
         $path = preg_replace('#^' . preg_quote($this->getBasePath(), self::DS) . "#", '', $pathname, 1, $n);
 
-        return $n === 1 ? $this->getBasePath($path): null;
+        return $n === 1 ? $this->getBasePath($path, false): null;
     }
 }
