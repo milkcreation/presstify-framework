@@ -13,7 +13,7 @@ use tiFy\Contracts\Http\Response as ResponseContract;
 class Response extends LaraResponse implements ResponseContract
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function convertToPsr(?SfResponse $response = null): ?ResponseInterface
     {
@@ -27,7 +27,7 @@ class Response extends LaraResponse implements ResponseContract
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return ResponseContract
      */

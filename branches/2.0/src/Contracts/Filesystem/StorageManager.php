@@ -3,29 +3,14 @@
 namespace tiFy\Contracts\Filesystem;
 
 use InvalidArgumentException;
-use League\Flysystem\FilesystemInterface;
-use League\Flysystem\FilesystemNotFoundException;
-use League\Flysystem\MountManager;
+use League\Flysystem\{AdapterInterface, FilesystemInterface, FilesystemNotFoundException, MountManager};
 use tiFy\Contracts\Container\Container;
 
 /**
- * Interface StorageManager
- * @package tiFy\Contracts\Filesystem
- *
  * @mixin MountManager
  */
 interface StorageManager extends FilesystemInterface
 {
-    /**
-     * Création d'une instance de disque local.
-     *
-     * @param string $root Chemin absolu vers le répertoire du stockage de fichiers.
-     * @param array $config Liste des paramètres de configuration.
-     *
-     * @return Filesystem
-     */
-    public function createLocal(string $root, array $config): Filesystem;
-
     /**
      * Récupération d'un point de montage.
      *
@@ -53,6 +38,26 @@ interface StorageManager extends FilesystemInterface
      *
      */
     public function getFilesystem($name);
+
+    /**
+     * Création d'une instance de système de fichier locaux.
+     *
+     * @param string $root Chemin absolu vers le répertoire du stockage de fichiers.
+     * @param array $config Liste des paramètres de configuration.
+     *
+     * @return AdapterInterface
+     */
+    public function localAdapter(string $root, array $config = []): AdapterInterface;
+
+    /**
+     * Création d'une instance de système de fichiers locaux.
+     *
+     * @param string $root Chemin absolu vers le répertoire du stockage de fichiers.
+     * @param array $config Liste des paramètres de configuration.
+     *
+     * @return Filesystem
+     */
+    public function localFilesytem(string $root, array $config): Filesystem;
 
     /**
      * Montage d'une instance de gestionnaire de fichiers.
