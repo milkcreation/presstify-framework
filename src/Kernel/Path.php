@@ -239,7 +239,7 @@ class Path extends StorageManager implements PathContract
      */
     public function mount(string $name, string $root, array $config = []): FilesystemContract
     {
-        $filesystem = $this->createLocal($root, $config);
+        $filesystem = $this->localFilesytem($root, $config);
         $this->set($name, $filesystem);
 
         return $filesystem;

@@ -30,7 +30,7 @@ class StaticCacheManager extends StorageManager implements StaticCacheManagerCon
 
         if ($cache_dir) {
             $path = ROOT_PATH . $cache_dir;
-            $this->setCache($this->createLocal($path));
+            $this->setCache($this->localFilesytem($path));
         }
     }
 

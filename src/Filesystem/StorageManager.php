@@ -3,15 +3,10 @@
 namespace tiFy\Filesystem;
 
 use InvalidArgumentException;
-use League\Flysystem\Cached\CachedAdapter;
-use League\Flysystem\Cached\CacheInterface;
-use League\Flysystem\Cached\Storage\Memory as MemoryStore;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\FilesystemInterface;
-use League\Flysystem\MountManager;
+use League\Flysystem\{AdapterInterface, Adapter\Local, FilesystemInterface, MountManager};
+use League\Flysystem\Cached\{CachedAdapter, CacheInterface, Storage\Memory as MemoryStore};
 use tiFy\Contracts\Container\Container;
-use tiFy\Contracts\Filesystem\Filesystem as FilesystemContract;
-use tiFy\Contracts\Filesystem\StorageManager as StorageManagerContract;
+use tiFy\Contracts\Filesystem\{Filesystem as FilesystemContract, StorageManager as StorageManagerContract};
 
 class StorageManager extends MountManager implements StorageManagerContract
 {
@@ -33,34 +28,6 @@ class StorageManager extends MountManager implements StorageManagerContract
         $this->container = $container;
 
         parent::__construct();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createLocal(string $root, array $config = []): FilesystemContract
-    {
-        $permissions = $config['permissions'] ?? [];
-        $links = ($config['links'] ?? null) === 'skip'
-            ? Local::SKIP_LINKS
-            : Local::DISALLOW_LINKS;
-
-        $params = [
-            'disable_asserts' => true,
-            'case_sensitive' => true
-        ];
-
-        $adapter = new Local($root, LOCK_EX, $links, $permissions);
-
-        if ($cache = $config['cache'] ?? true) {
-            $adapter = $cache instanceof CacheInterface
-                ? new CachedAdapter($adapter, $cache)
-                : new CachedAdapter($adapter, new MemoryStore());
-        }
-
-        return $this->getContainer()->has(FilesystemContract::class)
-            ? $this->getContainer()->get(FilesystemContract::class, [$adapter, $params])
-            : new Filesystem($adapter, $params);
     }
 
     /**
@@ -90,6 +57,44 @@ class StorageManager extends MountManager implements StorageManagerContract
     /**
      * @inheritDoc
      */
+    public function localAdapter(string $root, array $config = []): AdapterInterface
+    {
+        $permissions = $config['permissions'] ?? [];
+        $links = ($config['links'] ?? null) === 'skip'
+            ? Local::SKIP_LINKS
+            : Local::DISALLOW_LINKS;
+
+        $adapter = new Local($root, LOCK_EX, $links, $permissions);
+
+        if ($cache = $config['cache'] ?? true) {
+            $adapter = $cache instanceof CacheInterface
+                ? new CachedAdapter($adapter, $cache)
+                : new CachedAdapter($adapter, new MemoryStore());
+        }
+
+        return $adapter;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function localFilesytem(string $root, array $config = []): FilesystemContract
+    {
+        $adapter = $this->localAdapter($root, $config);
+
+        $params = [
+            'disable_asserts' => true,
+            'case_sensitive' => true
+        ];
+
+        return $this->getContainer()->has(FilesystemContract::class)
+            ? $this->getContainer()->get(FilesystemContract::class, [$adapter, $params])
+            : new Filesystem($adapter, $params);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function mountFilesystem($name, FilesystemInterface $filesystem)
     {
         if ($filesystem instanceof FilesystemContract) {
@@ -109,7 +114,7 @@ class StorageManager extends MountManager implements StorageManagerContract
      */
     public function register(string $name, $attrs): StorageManagerContract
     {
-        $filesystem = !$attrs instanceof Filesystem ? $this->createLocal($attrs['root']?? '', $attrs) : $attrs;
+        $filesystem = !$attrs instanceof Filesystem ? $this->localFilesytem($attrs['root']?? '', $attrs) : $attrs;
 
         return $this->set($name, $filesystem);
     }
