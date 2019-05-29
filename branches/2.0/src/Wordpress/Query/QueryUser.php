@@ -29,7 +29,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function createFromGlobal(): QueryUserContract
     {
@@ -37,24 +37,32 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public static function createFromId($user_id): ?QueryUserContract
+    public static function createFromId(int $user_id): ?QueryUserContract
     {
-        return ($user_id && is_numeric($user_id) && ($wp_user = new WP_User($user_id)) && ($wp_user instanceof WP_User))
+        return (($wp_user = new WP_User($user_id)) && ($wp_user instanceof WP_User))
             ? new static($wp_user) : null;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function can(string $capability, array...$args): bool
+    public function can(string $capability, ...$args): bool
     {
-        return $this->getWpUser()->has_cap($capability, $args);
+        return $this->getWpUser()->has_cap($capability, ...$args);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function capabilities(): array
+    {
+        return $this->getWpUser()->allcaps;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getDescription(): string
     {
@@ -62,7 +70,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDisplayName(): string
     {
@@ -70,7 +78,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getEmail(): string
     {
@@ -78,7 +86,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getFirstName(): string
     {
@@ -86,7 +94,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): int
     {
@@ -94,7 +102,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getLastName(): string
     {
@@ -102,7 +110,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getLogin(): string
     {
@@ -110,7 +118,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getNicename(): string
     {
@@ -118,7 +126,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getNickname(): string
     {
@@ -126,7 +134,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPass(): string
     {
@@ -134,7 +142,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getRegistered(): string
     {
@@ -142,7 +150,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getRoles(): array
     {
@@ -150,7 +158,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getUrl(): string
     {
@@ -158,7 +166,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getWpUser(): WP_User
     {
@@ -166,18 +174,26 @@ class QueryUser extends ParamsBag implements QueryUserContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function hasRole($role): bool
+    public function hasRole(string $role): bool
     {
-        return in_array($role, $this->getRoles());
+        return $this->roleIn([$role]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isLoggedIn(): bool
     {
         return wp_get_current_user()->exists();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function roleIn(array $roles): bool
+    {
+        return !!array_intersect($this->getRoles(), $roles);
     }
 }

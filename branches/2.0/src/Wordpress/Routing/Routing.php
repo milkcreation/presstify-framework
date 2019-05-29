@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress\Routing;
 
@@ -43,7 +43,6 @@ class Routing implements RoutingContract
                     $this->manager->emit($response);
                     exit;
                 }
-
                 /*if ($response->getHeaders() || $response->getBody()->getSize()) {
                     exit;
                 }*/

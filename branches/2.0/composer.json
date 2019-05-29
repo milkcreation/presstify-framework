@@ -51,7 +51,6 @@
     "google/recaptcha": "^1.1",
     "filp/whoops": "^2.3",
     "html2text/html2text": "^4.0",
-    "http-interop/http-factory-diactoros": "^1.0",
     "illuminate/http": "^5.8",
     "illuminate/database": "^5.8",
     "intervention/image": "^2.4",
@@ -88,7 +87,7 @@
     "symfony/security-csrf": "^4.2",
     "symfony/serializer": "^4.2",
     "swiftmailer/swiftmailer": "^6.0",
-    "zendframework/zend-diactoros": "^1.8",
+    "zendframework/zend-diactoros": "^2.1",
     "zendframework/zend-httphandlerrunner": "^1.0"
   },
   "suggest": {
