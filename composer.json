@@ -71,7 +71,6 @@
     "monolog/monolog": "^1.22",
     "nyholm/psr7": "^1.1",
     "pelago/emogrifier": "^2.0",
-    "phpdocumentor/reflection-docblock": "^4.3",
     "phpmailer/phpmailer": "^6.0",
     "ralouphie/mimey": "^2.1",
     "redeyeventures/geopattern": "^1.1",
@@ -102,6 +101,7 @@
     "mrclay/minify": "Minification avancée des scripts CSS et JS",
     "mustache/mustache": "Gestionnaire de templates PHP",
     "neitanod/forceutf8": "Forçage d'encodage en utf-8 d'une chaine de caractères",
+    "phpdocumentor/reflection-docblock": "Analyse des annotation PHP DocBlock",
     "vimeo/vimeo-api": "Client PHP Api Vimeo"
   },
   "autoload": {
