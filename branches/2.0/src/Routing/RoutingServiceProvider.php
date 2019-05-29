@@ -2,11 +2,11 @@
 
 namespace tiFy\Routing;
 
-use Http\Factory\Diactoros\ResponseFactory;
 use tiFy\Container\ServiceProvider;
 use tiFy\Routing\Middleware\Xhr;
 use tiFy\Routing\Strategy\App;
 use tiFy\Routing\Strategy\Json;
+use Zend\Diactoros\ResponseFactory;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 
 class RoutingServiceProvider extends ServiceProvider
