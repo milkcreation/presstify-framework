@@ -33,7 +33,14 @@ interface QueryUser extends ParamsBag
      *
      * @return boolean
      */
-    public function can(string $capability, array...$args): bool;
+    public function can(string $capability, ...$args): bool;
+
+    /**
+     * Récupération de la liste des habilitations associées.
+     *
+     * @return array
+     */
+    public function capabilities(): array;
 
     /**
      * Récupération des renseignements biographiques.
@@ -134,7 +141,7 @@ interface QueryUser extends ParamsBag
     public function getWpUser(): WP_User;
 
     /**
-     * Vérification de l'appartenance à un roles.
+     * Vérification de l'appartenance à un role.
      *
      * @param string $role Identifiant de qualification du rôle.
      *
@@ -148,4 +155,13 @@ interface QueryUser extends ParamsBag
      * @return boolean
      */
     public function isLoggedIn(): bool;
+
+    /**
+     * Vérification d'appartenance selon une liste de rôles fournis.
+     *
+     * @param string[] $roles Liste des rôles parmis lequels vérifier.
+     *
+     * @return boolean
+     */
+    public function roleIn(array $roles): bool;
 }

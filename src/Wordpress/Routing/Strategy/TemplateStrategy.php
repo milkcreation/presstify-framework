@@ -1,15 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress\Routing\Strategy;
 
-use League\Route\Route;
-use League\Route\Strategy\ApplicationStrategy;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use League\Route\{Route, Strategy\ApplicationStrategy};
+use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Http\Response;
+use tiFy\Support\Proxy\Router;
 use Wp_Query;
 use Zend\Diactoros\Response as PsrResponse;
 
@@ -76,6 +75,7 @@ class Template extends ApplicationStrategy
                 $wp_query->is_route = true;
             }
         }, 0);
+
         add_action('wp', function () {
             global $wp_query;
             $wp_query->is_404 = false;
@@ -88,6 +88,13 @@ class Template extends ApplicationStrategy
         array_push($args, $request);
 
         add_action('template_redirect', function () use ($controller, $args) {
+            /*if (!headers_sent()) {
+                foreach (headers_list() as $header) {
+                    list($name) = explode(':', $header);
+                    header_remove($name);
+                }
+            }*/
+
             $resolved = $controller(...$args);
 
             if ($resolved instanceof ViewController) {
@@ -99,9 +106,12 @@ class Template extends ApplicationStrategy
             } else {
                 $response = Response::create((string)$resolved);
             }
+            if (!$response->headers->has('content-type')) {
+                $response->headers->set('content-type', 'text/html');
+            }
             $response = $this->applyDefaultResponseHeaders(Response::convertToPsr($response));
 
-            router()->emit($response);
+            Router::emit($response);
             exit;
         }, 1);
 
