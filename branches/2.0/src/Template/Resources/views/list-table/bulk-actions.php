@@ -2,7 +2,7 @@
 /**
  * Liste des actions groupés.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Template\Templates\ListTable\Viewer\Viewer $this
+ * @var tiFy\Template\Templates\ListTable\Viewer $this
  * @var string $which top|bottom.
  */
 ?>
@@ -10,4 +10,4 @@
     <div class="alignleft actions bulkactions">
         <?php echo $this->bulkActions()->which($which??'top'); ?>
     </div>
-<?php endif;?>
+<?php endif;

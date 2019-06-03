@@ -3,8 +3,9 @@
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\Template\{FactoryAwareTrait, FactoryDb};
 
-interface Item extends ParamsBag
+interface Item extends FactoryAwareTrait, ParamsBag
 {
     /**
      * Récupération de la valeur de l'attribut de qualification de l'élément.
@@ -13,12 +14,29 @@ interface Item extends ParamsBag
      *
      * @return mixed
      */
-    public function getPrimary($default = null);
+    public function getKeyValue($default = null);
 
     /**
      * Récupération de la clé d'indice de l'attribut de qualification de l'élément.
      *
-     * @return mixed
+     * @return string
      */
-    public function getPrimaryKey();
+    public function getKeyName(): string;
+
+    /**
+     * Récupération de l'instance du modèle.
+     * {@internal Le controleur de base de données doit être actif.}
+     *
+     * @return FactoryDb|null
+     */
+    public function model(): ?FactoryDb;
+
+    /**
+     * Définition de l'instance de l'objet associé à l'élément.
+     *
+     * @param object $object
+     *
+     * @return static
+     */
+    public function setObject(object $object): Item;
 }

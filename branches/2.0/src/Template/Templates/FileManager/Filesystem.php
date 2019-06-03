@@ -51,7 +51,7 @@ class Filesystem extends tiFyFilesystem implements FilesystemContract
             $adapter = new Local($args['root'], $args['writeFlags'], $args['linkHandling'], $args['permissions']);
         }
 
-        return (new static($adapter, $config))->setFactory($factory);
+        return (new static($adapter, $config))->setTemplateFactory($factory);
     }
 
     /**
@@ -59,7 +59,7 @@ class Filesystem extends tiFyFilesystem implements FilesystemContract
      *
      * @return FilesystemContract
      */
-    public function setFactory(TemplateFactory $factory): FactoryAwareTraitContract
+    public function setTemplateFactory(TemplateFactory $factory): FactoryAwareTraitContract
     {
         $this->factory = $factory;
 

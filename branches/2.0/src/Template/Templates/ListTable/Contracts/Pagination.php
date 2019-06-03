@@ -3,8 +3,9 @@
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\Template\FactoryAwareTrait;
 
-interface Pagination extends ParamsBag
+interface Pagination extends FactoryAwareTrait, ParamsBag
 {
     /**
      * Rendu d'affichage de la page courante.
@@ -32,14 +33,14 @@ interface Pagination extends ParamsBag
      *
      * @return int
      */
-    public function getTotalItems(): int;
+    public function getTotalFounds(): int;
 
     /**
      * Récupération du nombre total de page d'éléments.
      *
      * @return int
      */
-    public function getTotalPages(): int;
+    public function getTotalPaged(): int;
 
     /**
      * Vérification de la désactivation du lien vers la première page.
@@ -111,7 +112,7 @@ interface Pagination extends ParamsBag
      *
      * @return Pagination
      */
-    public function parse();
+    public function parse(): Pagination;
 
     /**
      * Rendu d'affichage de l'accès à la page précédente.

@@ -8,23 +8,11 @@ use tiFy\Http\Request;
 
 class FactoryRequest extends Request implements FactoryRequestContract
 {
+    use FactoryAwareTrait;
+
     /**
      * Instance du gabarit d'affichage.
      * @var TemplateFactory
      */
     protected $factory;
-
-    /**
-     * Définition de l'instance du controleur de motif d'affichage.
-     *
-     * @param TemplateFactory $factory Instance du gabarit d'affichage associé.
-     *
-     * @return $this
-     */
-    public function setTemplateFactory(TemplateFactory $factory): FactoryRequestContract
-    {
-        $this->factory = $factory;
-
-        return $this;
-    }
 }

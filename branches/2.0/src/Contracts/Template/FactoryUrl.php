@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Template;
 
 use tiFy\Contracts\Routing\Url;
 
-interface FactoryUrl extends Url
+interface FactoryUrl extends FactoryAwareTrait, Url
 {
 
 }

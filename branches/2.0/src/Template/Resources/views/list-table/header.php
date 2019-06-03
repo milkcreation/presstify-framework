@@ -2,7 +2,7 @@
 /**
  * Entête.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Template\Templates\ListTable\Viewer\Viewer $this
+ * @var tiFy\Template\Templates\ListTable\Viewer $this
  */
 ?>
 <h2>

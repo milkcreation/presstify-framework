@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Template;
 
-interface FactoryAssets
+interface FactoryAssets extends FactoryAwareTrait
 {
 
 }

@@ -8,6 +8,8 @@ use tiFy\Support\ParamsBag;
 
 class FactoryParams extends ParamsBag implements FactoryParamsContract
 {
+    use FactoryAwareTrait;
+
     /**
      * Instance du gabarit d'affichage.
      * @var TemplateFactory
@@ -15,23 +17,9 @@ class FactoryParams extends ParamsBag implements FactoryParamsContract
     protected $factory;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param TemplateFactory $factory Instance du gabarit d'affichage associé.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct(TemplateFactory $factory)
-    {
-        $this->factory = $factory;
-
-        $this->set($this->factory->get('params', []))->parse();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'singular' => $this->factory->label('singular') ?: $this->factory->name(),

@@ -3,8 +3,9 @@
 namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Template\Factory\FactoryParams;
+use tiFy\Template\Templates\FileManager\Contracts\Params as ParamsContract;
 
-class Params extends FactoryParams
+class Params extends FactoryParams implements ParamsContract
 {
     /**
      * Instance du gabarit associé.
@@ -17,8 +18,7 @@ class Params extends FactoryParams
      */
     public function defaults(): array
     {
-        return array_merge(parent::defaults(), [
-        ]);
+        return array_merge(parent::defaults(), []);
     }
 
     /**

@@ -2,14 +2,12 @@
 /**
  * Colonne "Case à coché" de la ligne de données de la table.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Template\Templates\ListTable\Viewer\Viewer $this
- * @var tiFy\Template\Templates\ListTable\Contracts\ColumnsItem $column
- * @var tiFy\Template\Templates\ListTable\Contracts\Item|WP_Post $item
+ * @var tiFy\Template\Templates\ListTable\Viewer $this
+ * @var tiFy\Template\Templates\ListTable\Contracts\Columns $column
+ * @var tiFy\Template\Templates\ListTable\Contracts\Item $item
  * @var string $content
  */
-?>
-<input
-    type="checkbox"
-    name="<?php echo $item->getPrimaryKey(); ?>[]"
-    value="<?php echo $item->getPrimary(); ?>"
-/>
+echo partial('checkbox', [
+    'name'  => "{$item->getKeyName()}[]",
+    'value' => $item->getKeyValue()
+]);

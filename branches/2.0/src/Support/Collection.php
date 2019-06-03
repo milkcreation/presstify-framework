@@ -5,6 +5,7 @@ namespace tiFy\Support;
 use ArrayIterator;
 use Illuminate\Support\Collection as IlluminateCollection;
 use tiFy\Contracts\Support\Collection as CollectionContract;
+use Traversable;
 
 class Collection implements CollectionContract
 {
@@ -197,7 +198,13 @@ class Collection implements CollectionContract
      */
     public function set($key, $value = null): CollectionContract
     {
-        $keys = is_array($key) ? $key : [$key => $value];
+        if (is_array($key)) {
+            $keys = $key;
+        } elseif ($key instanceof Traversable) {
+            $keys = iterator_to_array($key);
+        } else {
+            $keys = [$key => $value];
+        }
 
         array_walk($keys, [$this, 'walk']);
 

@@ -2,13 +2,11 @@
 /**
  * Pagination - Accès à la dernière page.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Template\Templates\ListTable\Viewer\Viewer $this
- * @var tiFy\Template\Templates\ListTable\Pagination\Pagination $pagination
+ * @var tiFy\Template\Templates\ListTable\Viewer $this
+ * @var tiFy\Template\Templates\ListTable\Pagination $pagination
  * @var boolean $disabled
  * @var string $url
  */
-?>
-<?php
 if ($this->get('disabled')) :
     echo partial('tag', [
         'tag'     => 'span',

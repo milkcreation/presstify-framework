@@ -6,6 +6,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\{
     FactoryAssets,
     FactoryCache,
+    FactoryDb,
+    FactoryQueryBuilder,
     FactoryNotices,
     FactoryRequest,
     FactoryServiceProvider,
@@ -110,7 +112,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function db()
+    public function db(): ?FactoryDb
     {
         return $this->resolve('db');
     }
@@ -203,9 +205,9 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     public function prepare(): TemplateFactoryContract
     {
         if (!$this->prepared) {
-            $this->process();
+            $this->proceed();
             $this->prepared = true;
-            events()->trigger('template.factory.prepare', [$this->name(), &$this]);
+            events()->trigger('template.factory.prepared', [$this->name(), &$this]);
         }
         return $this;
     }
@@ -213,9 +215,17 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function process(): TemplateFactoryContract
+    public function proceed(): TemplateFactoryContract
     {
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function query(): FactoryQueryBuilder
+    {
+        return $this->resolve('query-builder');
     }
 
     /**
@@ -262,7 +272,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
                 $resolved = new $serviceProvider();
 
                 if ($resolved instanceof FactoryServiceProvider) {
-                    $resolved->setFactory($this)->setContainer($this->manager->getContainer());
+                    $resolved->setTemplateFactory($this)->setContainer($this->manager->getContainer());
                     $this->manager->getContainer()->addServiceProvider($resolved);
                 }
             }

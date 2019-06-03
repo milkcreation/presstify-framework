@@ -17,6 +17,7 @@ use tiFy\Template\Templates\FileManager\Contracts\{
     FileInfo,
     Filesystem,
     FileTag,
+    Params,
     Sidebar};
 use tiFy\View\ViewEngine;
 
@@ -35,7 +36,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     {
         parent::boot();
 
-        events()->listen('template.factory.prepare', function (string $name) {
+        events()->listen('template.factory.prepared', function (string $name) {
             if ($name === $this->factory->name()) {
                 $this->factory->ajax()->parse();
             }
@@ -59,6 +60,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
         $this->registerFactoryHttpController();
         $this->registerFactoryHttpXhrController();
         $this->registerFactoryIconSet();
+        $this->registerFactoryParams();
         $this->registerFactorySidebar();
     }
 
@@ -70,9 +72,9 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryAjax(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('ajax'), function () {
-            $ajax = $this->factory->get('providers.ajax');
-            $ajax = $ajax instanceof AjaxContract
-                ? $ajax
+            $ctrl = $this->factory->get('providers.ajax');
+            $ctrl = $ctrl instanceof AjaxContract
+                ? $ctrl
                 : $this->getContainer()->get(AjaxContract::class);
 
             $attrs = $this->factory->param('ajax', []);
@@ -84,7 +86,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
                 ];
             }
 
-            return $ajax->setFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 
@@ -96,12 +98,12 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryBreadcrumb(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('breadcrumb'), function () {
-            $breadcrumb = $this->factory->get('providers.breadcrumb');
-            $breadcrumb = $breadcrumb instanceof Breadcrumb
-                ? $breadcrumb
+            $ctrl = $this->factory->get('providers.breadcrumb');
+            $ctrl = $ctrl instanceof Breadcrumb
+                ? $ctrl
                 : $this->getContainer()->get(Breadcrumb::class);
 
-            return $breadcrumb->setFactory($this->factory)->setPath();
+            return $ctrl->setTemplateFactory($this->factory)->setPath();
         });
     }
 
@@ -113,15 +115,15 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryCache(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('cache'), function () {
-            $cache = $this->factory->get('providers.cache');
-            $cache = $cache instanceof Cache
-                ? $cache
+            $ctrl = $this->factory->get('providers.cache');
+            $ctrl = $ctrl instanceof Cache
+                ? $ctrl
                 : $this->getContainer()->get(Cache::class);
 
             $root = paths()->getCachePath('Template/' . $this->factory->name());
             $repo = $this->getContainer()->get(tiFyFilesystem::class, [new Local($root)]);
 
-            return $cache->setFactory($this->factory)
+            return $ctrl->setTemplateFactory($this->factory)
                 ->setSource($this->factory->filesystem())->setCache($repo);
         });
     }
@@ -134,12 +136,12 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryFileCollection(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('file-collection'), function (array $files = []) {
-            $fileCollect = $this->factory->get('providers.file-collection');
-            $fileCollect = $fileCollect instanceof FileCollection
-                ? $fileCollect
+            $ctrl = $this->factory->get('providers.file-collection');
+            $ctrl = $ctrl instanceof FileCollection
+                ? $ctrl
                 : $this->getContainer()->get(FileCollection::class);
 
-            return $fileCollect->setFactory($this->factory)->set($files);
+            return $ctrl->setTemplateFactory($this->factory)->set($files);
         });
     }
 
@@ -151,13 +153,12 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryFileInfo(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('file-info'), function (array $infos) {
-            $fileInfo = $this->factory->get('providers.file-info');
-
-            $fileInfo = $fileInfo instanceof FileInfo
-                ? $fileInfo
+            $ctrl = $this->factory->get('providers.file-info');
+            $ctrl = $ctrl instanceof FileInfo
+                ? $ctrl
                 : $this->getContainer()->get(FileInfo::class, [$infos]);
 
-            return $fileInfo->setFactory($this->factory);
+            return $ctrl->setTemplateFactory($this->factory);
         });
     }
 
@@ -169,10 +170,10 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryFilesystem(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('filesystem'), function () {
-            $filesystem = $this->factory->get('providers.filesystem');
+            $ctrl = $this->factory->get('providers.filesystem');
 
-            return $filesystem instanceof tiFyFilesystem
-                ? $filesystem
+            return $ctrl instanceof tiFyFilesystem
+                ? $ctrl
                 : $this->getContainer()->get(Filesystem::class, [$this->factory]);
         });
     }
@@ -185,45 +186,40 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryFileTag(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('file-tag'), function (FileInfo $file) {
-            $tag = $this->factory->get('providers.file-tag');
+            $ctrl = $this->factory->get('providers.file-tag');
+            $ctrl = $ctrl instanceof FileTag ? $ctrl : $this->getContainer()->get(FileTag::class);
 
-            $tag = $tag instanceof FileTag ? $tag : $this->getContainer()->get(FileTag::class);
-
-            return $tag->setFactory($this->factory)->setFile($file);
+            return $ctrl->setTemplateFactory($this->factory)->setFile($file);
         });
     }
 
     /**
-     * Déclaration du controleur de requête HTTP.
-     *
-     * @return void
+     * @inheritDoc
      */
     public function registerFactoryHttpController(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('controller'), function () {
-            $controller = $this->factory->get('providers.controller');
-            $controller = $controller instanceof HttpController
-                ? $controller
+            $ctrl = $this->factory->get('providers.controller');
+            $ctrl = $ctrl instanceof HttpController
+                ? $ctrl
                 : $this->getContainer()->get(HttpController::class);
 
-            return $controller->setFactory($this->factory);
+            return $ctrl->setTemplateFactory($this->factory);
         });
     }
 
     /**
-     * Déclaration du controleur de requête HTTP XHR.
-     *
-     * @return void
+     * @inheritDoc
      */
     public function registerFactoryHttpXhrController(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('xhr'), function () {
-            $xhr = $this->factory->get('providers.xhr');
-            $xhr = $xhr instanceof HttpXhrController
-                ? $xhr
+            $ctrl = $this->factory->get('providers.xhr');
+            $ctrl = $ctrl instanceof HttpXhrController
+                ? $ctrl
                 : $this->getContainer()->get(HttpXhrController::class);
 
-            return $xhr->setFactory($this->factory);
+            return $ctrl->setTemplateFactory($this->factory);
         });
     }
 
@@ -235,12 +231,12 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryIconSet(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('icon-set'), function () {
-            $iconSet = $this->factory->get('providers.icon-set');
-            $iconSet = $iconSet instanceof IconSet
-                ? $iconSet
+            $ctrl = $this->factory->get('providers.icon-set');
+            $ctrl = $ctrl instanceof IconSet
+                ? $ctrl
                 : $this->getContainer()->get(IconSet::class);
 
-            return $iconSet->setFactory($this->factory)->set($this->factory->param('icon', []))->parse();
+            return $ctrl->setTemplateFactory($this->factory)->set($this->factory->param('icon', []))->parse();
         });
     }
 
@@ -250,7 +246,14 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryParams(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            return new Params($this->factory);
+            $ctrl = $this->factory->get('providers.params');
+            $ctrl = $ctrl instanceof Params
+                ? $ctrl
+                : $this->getContainer()->get(Params::class);
+
+            $attrs = $this->factory->get('params', []);
+
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : [])->parse();
         });
     }
 
@@ -262,19 +265,17 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactorySidebar(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('sidebar'), function () {
-            $sidebar = $this->factory->get('providers.sidebar');
-            $sidebar = $sidebar instanceof Sidebar
-                ? $sidebar
+            $ctrl = $this->factory->get('providers.sidebar');
+            $ctrl = $ctrl instanceof Sidebar
+                ? $ctrl
                 : $this->getContainer()->get(Sidebar::class);
 
-            return $sidebar->setFactory($this->factory);
+            return $ctrl->setTemplateFactory($this->factory);
         });
     }
 
     /**
-     * Déclaration du controleur de gabarit d'affichage.
-     *
-     * @return void
+     * @inheritDoc
      */
     public function registerFactoryViewer(): void
     {

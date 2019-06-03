@@ -2,8 +2,10 @@
 
 namespace tiFy\Support\Proxy;
 
+use Psr\Http\Message\{ResponseInterface as Response};
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\Routing\RouteGroup as RouteGroupContract;
 use tiFy\Contracts\Routing\Router as RouterContract;
@@ -14,6 +16,7 @@ use tiFy\Contracts\Routing\Router as RouterContract;
  * @method static RouteContract|null current()
  * @method static string|null currentRouteName()
  * @method static RouteContract delete(string $path, callable $handler)
+ * @method static void emit(Response|SfResponse $response)
  * @method static bool exists()
  * @method static RouteContract get(string $path, callable $handler)
  * @method static ContainerInterface getContainer()

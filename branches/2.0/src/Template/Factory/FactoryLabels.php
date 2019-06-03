@@ -8,23 +8,11 @@ use tiFy\Support\LabelsBag;
 
 class FactoryLabels extends LabelsBag implements FactoryLabelsContract
 {
+    use FactoryAwareTrait;
+
     /**
      * Instance du gabarit d'affichage.
      * @var TemplateFactory
      */
     protected $factory;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param TemplateFactory $factory Instance du gabarit d'affichage associé.
-     *
-     * @return void
-     */
-    public function __construct(TemplateFactory $factory)
-    {
-        $this->factory = $factory;
-
-        parent::__construct($this->factory->name(), $this->factory->get('labels', []));
-    }
 }
