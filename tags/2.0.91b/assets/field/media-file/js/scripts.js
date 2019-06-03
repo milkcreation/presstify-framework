@@ -1,18 +1,18 @@
 "use strict";
 
-var tiFyFieldMediaFileFrame;
+let tiFyFieldMediaFileFrame;
 
 jQuery(document).ready(function ($) {
     $(document).on('click', '[aria-control="media_file"]', function (e) {
         e.preventDefault();
 
-        var $closest = $(this),
+        let $closest = $(this),
             o = $.parseJSON(decodeURIComponent($(this).data('options')));
 
         tiFyFieldMediaFileFrame = wp.media.frames.file_frame = wp.media(o);
 
         tiFyFieldMediaFileFrame.on('select', function () {
-            attachment = tiFyFieldMediaFileFrame.state().get('selection').first().toJSON();
+            let attachment = tiFyFieldMediaFileFrame.state().get('selection').first().toJSON();
             $closest.attr('aria-active', 'true');
             $('[aria-control="infos"]', $closest).val(attachment.title + ' → ' + attachment.filename);
             $('[aria-control="input"]', $closest).val(attachment.id);
@@ -25,7 +25,7 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
         e.stopPropagation();
 
-        $closest = $(this).parent();
+        let $closest = $(this).parent();
 
         $closest.attr('aria-active', 'false');
         $('[aria-control="infos"]', $closest).val('');

@@ -31,7 +31,7 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on('click', '.tiFyTabMetaboxPostTypeVideoGallery-itemRemove', function (e) {
-        $container = $(this).parent();
+        let $container = $(this).parent();
         $container.fadeOut(function () {
             $container.remove();
         });
@@ -55,7 +55,7 @@ jQuery(document).ready(function ($) {
         });
 
         taboox_video_gallery_src_frame.on('select', function () {
-            attachment = taboox_video_gallery_src_frame.state().get('selection').first().toJSON();
+            let attachment = taboox_video_gallery_src_frame.state().get('selection').first().toJSON();
             $target.html(attachment.url);
         });
 
@@ -79,7 +79,7 @@ jQuery(document).ready(function ($) {
         });
 
         taboox_video_gallery_poster_frame.on('select', function () {
-            attachment = taboox_video_gallery_poster_frame.state().get('selection').first().toJSON();
+            let attachment = taboox_video_gallery_poster_frame.state().get('selection').first().toJSON();
             $target.css('background-image', 'url(' + attachment.url + '');
             $target.next().val(attachment.id);
         });

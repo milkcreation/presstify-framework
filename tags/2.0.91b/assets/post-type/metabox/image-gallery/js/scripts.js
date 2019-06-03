@@ -59,8 +59,8 @@ jQuery(document).ready(function ($) {
     $('.taboox_image_gallery-list').disableSelection();
 
     $(document).on('click', '.tiFyTabMetaboxPostTypeImageGallery-itemRemove', function (e) {
-        $container = $(this).parent();
-        $list = $container.parent();
+        let $container = $(this).parent();
+        let $list = $container.parent();
         $container.fadeOut(function () {
             $container.remove();
             orderRefresh($list);
