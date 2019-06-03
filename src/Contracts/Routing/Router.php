@@ -11,6 +11,7 @@ use League\Route\RouteCollectionInterface;
 use League\Route\Route as LeagueRoute;
 use League\Route\Strategy\StrategyAwareInterface;
 use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
+use Symfony\Component\HttpFoundation\Response as SfResponse;
 
 interface Router extends
     ArrayAccess,
@@ -91,11 +92,11 @@ interface Router extends
     /**
      * Emission de la réponse.
      *
-     * @param ResponseInterface $response Réponse HTTP.
+     * @param ResponseInterface|SfResponse $response Réponse HTTP.
      *
      * @return void
      */
-    public function emit(ResponseInterface $response): void;
+    public function emit($response): void;
 
     /**
      * Vérification d'existance de routes déclarées.

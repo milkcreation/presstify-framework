@@ -18,5 +18,5 @@ interface FactoryAwareTrait
      *
      * @return static
      */
-    public function setFactory(TemplateFactory $factory): FactoryAwareTrait;
+    public function setTemplateFactory(TemplateFactory $factory): FactoryAwareTrait;
 }

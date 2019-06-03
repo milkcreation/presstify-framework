@@ -2,9 +2,11 @@
 
 namespace tiFy\Contracts\Template;
 
-use tiFy\Contracts\Db\DbFactory;
-
-interface FactoryDb extends DbFactory
+/**
+ * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
+interface FactoryDb extends FactoryAwareTrait
 {
 
 }

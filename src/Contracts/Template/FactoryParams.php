@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Template;
 
 use tiFy\Contracts\Support\ParamsBag;
 
-interface FactoryParams extends ParamsBag
+interface FactoryParams extends FactoryAwareTrait, ParamsBag
 {
 
 }

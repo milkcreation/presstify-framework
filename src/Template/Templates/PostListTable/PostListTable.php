@@ -2,9 +2,9 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use tiFy\Contracts\Template\TemplateFactory;
+use tiFy\Contracts\Template\{FactoryDb, TemplateFactory};
 use tiFy\Template\Templates\ListTable\ListTable as BaseListTable;
-use tiFy\Template\Templates\PostListTable\Contracts\PostListTable as PostListTableContract;
+use tiFy\Template\Templates\PostListTable\Contracts\{Db, PostListTable as PostListTableContract};
 
 class PostListTable extends BaseListTable implements PostListTableContract
 {
@@ -15,6 +15,16 @@ class PostListTable extends BaseListTable implements PostListTableContract
     protected $serviceProviders = [
         PostListTableServiceProvider::class,
     ];
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Db
+     */
+    public function db(): FactoryDb
+    {
+        return parent::db();
+    }
 
     /**
      * {@inheritDoc}

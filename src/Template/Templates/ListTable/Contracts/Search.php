@@ -3,8 +3,9 @@
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\Template\FactoryAwareTrait;
 
-interface Search extends ParamsBag
+interface Search extends FactoryAwareTrait, ParamsBag
 {
     /**
      * Résolution de sortie d'une instance de la classe sous la forme d'une chaîne de caractères.

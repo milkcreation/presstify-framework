@@ -28,7 +28,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function defaults()
     {
@@ -40,7 +40,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function defaultEditItem()
     {
@@ -52,7 +52,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function defaultDatasItem()
     {
@@ -67,7 +67,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDeterminant(string $string): string
     {
@@ -79,7 +79,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasGender(): bool
     {
@@ -87,7 +87,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getName(): string
     {
@@ -95,7 +95,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPlural(): string
     {
@@ -103,7 +103,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSingular(): string
     {
@@ -111,7 +111,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isFirstVowel(string $string): bool
     {
@@ -121,13 +121,17 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
+     *
+     * @return static
      */
-    public function parse()
+    public function parse(): self
     {
         parent::parse();
 
         $this->set('plural', Str::lower($this->get('plural')));
         $this->set('singular', Str::lower($this->get('singular')));
+
+        return $this;
     }
 }

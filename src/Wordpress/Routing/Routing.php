@@ -43,9 +43,6 @@ class Routing implements RoutingContract
                     $this->manager->emit($response);
                     exit;
                 }
-                /*if ($response->getHeaders() || $response->getBody()->getSize()) {
-                    exit;
-                }*/
             } catch (Exception $e) {
                 /**
                  * Suppression du slash de fin dans l'url des routes déclarées.

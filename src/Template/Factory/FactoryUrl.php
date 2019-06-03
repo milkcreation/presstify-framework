@@ -8,6 +8,8 @@ use tiFy\Routing\Url;
 
 class FactoryUrl extends Url implements FactoryUrlContract
 {
+    use FactoryAwareTrait;
+
     /**
      * Instance du gabarit d'affichage.
      * @var TemplateFactory
@@ -17,14 +19,10 @@ class FactoryUrl extends Url implements FactoryUrlContract
     /**
      * CONSTRUCTEUR.
      *
-     * @param TemplateFactory $factory Instance du gabarit d'affichage associé.
-     *
      * @return void
      */
-    public function __construct(TemplateFactory $factory)
+    public function __construct()
     {
-        $this->factory = $factory;
-
         parent::__construct(router(), request());
     }
 }

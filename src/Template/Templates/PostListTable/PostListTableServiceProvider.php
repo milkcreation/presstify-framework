@@ -2,18 +2,12 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use tiFy\Template\Templates\ListTable\Contracts\ListTable;
 use tiFy\Template\Templates\ListTable\ListTableServiceProvider;
-use tiFy\PostType\Db\DbPostsController;
-use tiFy\Template\Templates\PostListTable\Columns\ColumnsItemPostTitle;
-use tiFy\Template\Templates\PostListTable\Columns\ColumnsItemPostType;
-use tiFy\Template\Templates\PostListTable\Contracts\PostListTable;
-use tiFy\Template\Templates\PostListTable\Labels\Labels;
-use tiFy\Template\Templates\PostListTable\Params\Params;
-use tiFy\Template\Templates\PostListTable\Request\Request;
-use tiFy\Template\Templates\PostListTable\ViewFilters\ViewFiltersItemAll;
-use tiFy\Template\Templates\PostListTable\ViewFilters\ViewFiltersItemPublish;
-use tiFy\Template\Templates\PostListTable\ViewFilters\ViewFiltersItemTrash;
+use tiFy\Template\Templates\PostListTable\Contracts\{
+    Db,
+    Params,
+    QueryBuilder,
+    PostListTable};
 
 class PostListTableServiceProvider extends ListTableServiceProvider
 {
@@ -24,37 +18,40 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     protected $factory;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function registerColumns(): void
+    public function registerFactoryColumns(): void
     {
         parent::registerFactoryColumns();
 
-        $this->getContainer()->add(
-            $this->getFactoryAlias('columns.item.post_title'),
-            function ($name, $attrs, ListTable $factory) {
-                return new ColumnsItemPostTitle($name, $attrs, $factory);
+        $this->getContainer()->add($this->getFactoryAlias('column.post_title'),
+            function (string $name, array $attrs = []) {
+                return (new ColumnPostTitle())->setName($name)->set($attrs)->parse();
             });
 
-        $this->getContainer()->add(
-            $this->getFactoryAlias('columns.item.post_type'),
-            function ($name, $attrs, ListTable $factory) {
-                return new ColumnsItemPostType($name, $attrs, $factory);
+        $this->getContainer()->add($this->getFactoryAlias('column.post_type'),
+            function (string $name, array $attrs = []) {
+                return (new ColumnPostType())->setName($name)->set($attrs)->parse();
             });
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function registerFactoryDb(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('db'), function() {
-            return new DbPostsController($this->factory->name());
+        $this->getContainer()->share($this->getFactoryAlias('db'), function () {
+            $ctrl = $this->factory->get('providers.db');
+            $ctrl = $ctrl instanceof Db
+                ? $ctrl
+                : $this->getContainer()->get(Db::class);
+
+            return $ctrl->setTemplateFactory($this->factory);
         });
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function registerFactoryLabels(): void
     {
@@ -64,48 +61,61 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function registerFactoryParams(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            return new Params($this->factory);
+            $ctrl = $this->factory->get('providers.params');
+            $ctrl = $ctrl instanceof Params
+                ? $ctrl
+                : $this->getContainer()->get(Params::class);
+
+            $attrs = $this->factory->get('params', []);
+
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : [])->parse();
         });
     }
 
     /**
-     * @inheritdoc
+     * Déclaration du controleur de construction de requête.
+     *
+     * @return void
      */
-    public function registerFactoryRequest(): void
+    public function registerFactoryQueryBuilder(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('request'), function () {
-            return (Request::capture())->setTemplateFactory($this->factory);
+        $this->getContainer()->share($this->getFactoryAlias('query-builder'), function () {
+            $ctrl = $this->factory->get('providers.query-builder');
+            $ctrl = $ctrl instanceof QueryBuilder
+                ? $ctrl
+                : $this->getContainer()->get(QueryBuilder::class);
+
+            $attrs = $this->factory->param('query_args', []);
+
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function registerFactoryViewFilters(): void
     {
         parent::registerFactoryViewFilters();
 
-        $this->getContainer()->add(
-            $this->getFactoryAlias('view-filters.item.all'),
-            function ($name, $attrs, ListTable $factory) {
-                new ViewFiltersItemAll($name, $attrs, $factory);
+        $this->getContainer()->add($this->getFactoryAlias('view-filter.all'),
+            function (string $name, array $attrs = []) {
+                return (new ViewFilterAll())->setName($name)->set($attrs)->parse();
             });
 
-        $this->getContainer()->add(
-            $this->getFactoryAlias('view-filters.item.publish'),
-            function ($name, $attrs, ListTable $factory) {
-                new ViewFiltersItemPublish($name, $attrs, $factory);
+        $this->getContainer()->add($this->getFactoryAlias('view-filter.publish'),
+            function (string $name, array $attrs = []) {
+                return (new ViewFilterPublish())->setName($name)->set($attrs)->parse();
             });
 
-        $this->getContainer()->add(
-            $this->getFactoryAlias('view-filters.item.trash'),
-            function ($name, $attrs, ListTable $factory) {
-                new ViewFiltersItemTrash($name, $attrs, $factory);
+        $this->getContainer()->add($this->getFactoryAlias('view-filter.trash'),
+            function (string $name, array $attrs = []) {
+                return (new ViewFilterTrash())->setName($name)->set($attrs)->parse();
             });
     }
 }

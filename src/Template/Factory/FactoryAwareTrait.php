@@ -25,9 +25,11 @@ trait FactoryAwareTrait
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return static
      */
-    public function setFactory(TemplateFactory $factory): FactoryAwareTraitContract
+    public function setTemplateFactory(TemplateFactory $factory): FactoryAwareTraitContract
     {
         $this->factory = $factory;
 

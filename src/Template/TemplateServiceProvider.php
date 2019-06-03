@@ -3,39 +3,80 @@
 namespace tiFy\Template;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Template\{
-    FactoryCache as FactoryCacheContract,
-    FactoryHttpController as FactoryHttpControllerContract,
-    FactoryHttpXhrController as FactoryHttpXhrControllerContract,
-    TemplateFactory as TemplateFactoryContract
-};
+use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
 use tiFy\Template\Templates\FileManager\Contracts\{
-    Ajax as AjaxContract,
-    Breadcrumb as BreadcrumbContract,
-    Cache as CacheContract,
+    Ajax as FileManagerAjaxContract,
+    Breadcrumb as FileManagerBreadcrumbContract,
+    Cache as FileManagerCacheContract,
+    FileCollection as FileManagerFileCollectionContract,
+    FileInfo as FileManagerFileInfoContract,
     FileManager as FileManagerContract,
-    FileCollection as FileCollectionContract,
-    HttpController as HttpControllerContract,
-    FileInfo as FileInfoContract,
-    Filesystem as FilesystemContract,
-    FileTag as FileTagContract,
-    HttpXhrController as HttpXhrControllerContract,
-    IconSet as IconSetContract,
-    Sidebar as SidebarContract
+    Filesystem as FileManagerFilesystemContract,
+    FileTag as FileManagerFileTagContract,
+    HttpController as FileManagerHttpControllerContract,
+    HttpXhrController as FileManagerHttpXhrControllerContract,
+    IconSet as FileManagerIconSetContract,
+    Params as FileManagerParamsContract,
+    Sidebar as FileManagerSidebarContract};
+use tiFy\Template\Templates\ListTable\Contracts\{
+    Ajax as ListTableAjaxContract,
+    Assets as ListTableAssetsContract,
+    BulkAction as ListTableBulkActionContract,
+    BulkActions as ListTableBulkActionsContract,
+    Column as ListTableColumnContract,
+    Columns as ListTableColumnsContract,
+    HttpXhrController as ListTableHttpXhrControllerContract,
+    Item as ListTableItemContract,
+    Items as ListTableItemsContract,
+    Pagination as ListTablePaginationContract,
+    Params as ListTableParamsContract,
+    QueryBuilder as ListTableQueryBuilderContract,
+    RowAction as ListTableRowActionContract,
+    RowActions as ListTableRowActionsContract,
+    Search as ListTableSearchContract,
+    ViewFilter as ListTableViewFilterContract,
+    ViewFilters as ListTableViewFiltersContract};
+use tiFy\Template\Templates\PostListTable\Contracts\{
+    Db as PostListTableDbContract,
+    Params as PostListTableParamsContract,
+    QueryBuilder as PostListTableQueryBuilderContract,
 };
-use tiFy\Template\Factory\{FactoryCache, FactoryHttpController, FactoryHttpXhrController};
 use tiFy\Template\Templates\FileManager\{
-    Ajax,
-    Breadcrumb,
-    Cache,
-    FileCollection,
-    IconSet,
-    FileInfo,
-    Filesystem,
-    FileTag,
-    HttpController,
-    HttpXhrController,
-    Sidebar};
+    Ajax as FileManagerAjax,
+    Breadcrumb as FileManagerBreadcrumb,
+    Cache as FileManagerCache,
+    FileCollection as FileManagerFileCollection,
+    FileInfo as FileManagerFileInfo,
+    Filesystem as FileManagerFilesystem,
+    FileTag as FileManagerFileTag,
+    HttpController as FileManagerHttpController,
+    HttpXhrController as FileManagerHttpXhrController,
+    IconSet as FileManagerIconSet,
+    Params as FileManagerParams,
+    Sidebar as FileManagerSidebar};
+use tiFy\Template\Templates\ListTable\{
+    Ajax as ListTableAjax,
+    Assets as ListTableAssets,
+    BulkAction as ListTableBulkAction,
+    BulkActions as ListTableBulkActions,
+    Column as ListTableColumn,
+    Columns as ListTableColumns,
+    HttpXhrController as ListTableHttpXhrController,
+    Item as ListTableItem,
+    Items as ListTableItems,
+    Pagination as ListTablePagination,
+    Params as ListTableParams,
+    QueryBuilder as ListTableQueryBuilder,
+    RowAction as ListTableRowAction,
+    RowActions as ListTableRowActions,
+    Search as ListTableSearch,
+    ViewFilter as ListTableViewFilter,
+    ViewFilters as ListTableViewFilters};
+use tiFy\Template\Templates\PostListTable\{
+    Db as PostListTableDb,
+    Params as PostListTableParams,
+    QueryBuilder as PostListTableQueryBuilder
+};
 
 class TemplateServiceProvider extends ServiceProvider
 {
@@ -47,22 +88,41 @@ class TemplateServiceProvider extends ServiceProvider
     protected $provides = [
         'template',
         TemplateFactoryContract::class,
-        // Factory
-        FactoryCache::class,
-        FactoryHttpControllerContract::class,
-        FactoryHttpXhrControllerContract::class,
         // FileManager
-        AjaxContract::class,
-        BreadcrumbContract::class,
-        CacheContract::class,
-        FileCollectionContract::class,
-        FileInfoContract::class,
-        FilesystemContract::class,
-        FileTagContract::class,
-        HttpControllerContract::class,
-        HttpXhrControllerContract::class,
-        IconSetContract::class,
-        SidebarContract::class
+        FileManagerAjaxContract::class,
+        FileManagerBreadcrumbContract::class,
+        FileManagerCacheContract::class,
+        FileManagerFileCollectionContract::class,
+        FileManagerFileInfoContract::class,
+        FileManagerFilesystemContract::class,
+        FileManagerFileTagContract::class,
+        FileManagerHttpControllerContract::class,
+        FileManagerHttpXhrControllerContract::class,
+        FileManagerIconSetContract::class,
+        FileManagerParamsContract::class,
+        FileManagerSidebarContract::class,
+        // ListTable
+        ListTableAjaxContract::class,
+        ListTableAssetsContract::class,
+        ListTableBulkActionContract::class,
+        ListTableBulkActionsContract::class,
+        ListTableColumnContract::class,
+        ListTableColumnsContract::class,
+        ListTableHttpXhrControllerContract::class,
+        ListTableItemContract::class,
+        ListTableItemsContract::class,
+        ListTablePaginationContract::class,
+        ListTableParamsContract::class,
+        ListTableQueryBuilderContract::class,
+        ListTableRowActionContract::class,
+        ListTableRowActionsContract::class,
+        ListTableSearchContract::class,
+        ListTableViewFilterContract::class,
+        ListTableViewFiltersContract::class,
+        // PostTable
+        PostListTableDbContract::class,
+        PostListTableParamsContract::class,
+        PostListTableQueryBuilderContract::class,
     ];
 
     /**
@@ -78,26 +138,9 @@ class TemplateServiceProvider extends ServiceProvider
             return new TemplateFactory();
         });
 
-        $this->registerFactories();
         $this->registerFileManager();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerFactories(): void
-    {
-        $this->getContainer()->add(FactoryCacheContract::class, function () {
-            return new FactoryCache();
-        });
-
-        $this->getContainer()->add(FactoryHttpControllerContract::class, function () {
-            return new FactoryHttpController();
-        });
-
-        $this->getContainer()->add(FactoryHttpXhrControllerContract::class, function () {
-            return new FactoryHttpXhrController();
-        });
+        $this->registerListTable();
+        $this->registerPostListTable();
     }
 
     /**
@@ -105,48 +148,144 @@ class TemplateServiceProvider extends ServiceProvider
      */
     public function registerFileManager(): void
     {
-        $this->getContainer()->add(AjaxContract::class, function () {
-            return new Ajax();
+        $this->getContainer()->add(FileManagerAjaxContract::class, function () {
+            return new FileManagerAjax();
         });
 
-        $this->getContainer()->add(BreadcrumbContract::class, function () {
-            return new Breadcrumb();
+        $this->getContainer()->add(FileManagerBreadcrumbContract::class, function () {
+            return new FileManagerBreadcrumb();
         });
 
-        $this->getContainer()->add(CacheContract::class, function () {
-            return new Cache();
+        $this->getContainer()->add(FileManagerCacheContract::class, function () {
+            return new FileManagerCache();
         });
 
-        $this->getContainer()->add(FileCollectionContract::class, function () {
-            return new FileCollection();
+        $this->getContainer()->add(FileManagerFileCollectionContract::class, function () {
+            return new FileManagerFileCollection();
         });
 
-        $this->getContainer()->add(IconSetContract::class, function () {
-            return new IconSet();
+        $this->getContainer()->add(FileManagerFileInfoContract::class, function (array $infos) {
+            return new FileManagerFileInfo($infos);
         });
 
-        $this->getContainer()->add(FileInfoContract::class, function (array $infos) {
-            return new FileInfo($infos);
+        $this->getContainer()->add(FileManagerFilesystemContract::class, function (FileManagerContract $factory) {
+            return FileManagerFilesystem::createFromFactory($factory);
         });
 
-        $this->getContainer()->add(FilesystemContract::class, function (FileManagerContract $factory) {
-            return Filesystem::createFromFactory($factory);
+        $this->getContainer()->add(FileManagerFileTagContract::class, function () {
+            return new FileManagerFileTag();
         });
 
-        $this->getContainer()->add(FileTagContract::class, function () {
-            return new FileTag();
+        $this->getContainer()->add(FileManagerHttpControllerContract::class, function () {
+            return new FileManagerHttpController();
         });
 
-        $this->getContainer()->add(HttpControllerContract::class, function () {
-            return new HttpController();
+        $this->getContainer()->add(FileManagerHttpXhrControllerContract::class, function () {
+            return new FileManagerHttpXhrController();
         });
 
-        $this->getContainer()->add(HttpXhrControllerContract::class, function () {
-            return new HttpXhrController();
+        $this->getContainer()->add(FileManagerIconSetContract::class, function () {
+            return new FileManagerIconSet();
         });
 
-        $this->getContainer()->add(SidebarContract::class, function () {
-            return new Sidebar();
+        $this->getContainer()->add(FileManagerParamsContract::class, function () {
+            return new FileManagerParams();
+        });
+
+        $this->getContainer()->add(FileManagerSidebarContract::class, function () {
+            return new FileManagerSidebar();
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerListTable(): void
+    {
+        $this->getContainer()->add(ListTableAjaxContract::class, function () {
+            return new ListTableAjax();
+        });
+
+        $this->getContainer()->add(ListTableAssetsContract::class, function () {
+            return new ListTableAssets();
+        });
+
+        $this->getContainer()->add(ListTableBulkActionContract::class, function (string $name, array $attrs = []) {
+            return new ListTableBulkAction($name, $attrs);
+        });
+
+        $this->getContainer()->add(ListTableBulkActionsContract::class, function () {
+            return new ListTableBulkActions();
+        });
+
+        $this->getContainer()->add(ListTableColumnContract::class, function () {
+            return new ListTableColumn();
+        });
+
+        $this->getContainer()->add(ListTableColumnsContract::class, function () {
+            return new ListTableColumns();
+        });
+
+        $this->getContainer()->add(ListTableHttpXhrControllerContract::class, function () {
+            return new ListTableHttpXhrController();
+        });
+
+        $this->getContainer()->add(ListTableItemContract::class, function () {
+            return new ListTableItem();
+        });
+
+        $this->getContainer()->add(ListTableItemsContract::class, function () {
+            return new ListTableItems();
+        });
+
+        $this->getContainer()->add(ListTablePaginationContract::class, function () {
+            return new ListTablePagination();
+        });
+
+        $this->getContainer()->add(ListTableParamsContract::class, function () {
+            return new ListTableParams();
+        });
+
+        $this->getContainer()->add(ListTableQueryBuilderContract::class, function () {
+            return new ListTableQueryBuilder();
+        });
+
+        $this->getContainer()->add(ListTableRowActionContract::class, function () {
+            return new ListTableRowAction();
+        });
+
+        $this->getContainer()->add(ListTableRowActionsContract::class, function () {
+            return new ListTableRowActions();
+        });
+
+        $this->getContainer()->add(ListTableSearchContract::class, function () {
+            return new ListTableSearch();
+        });
+
+        $this->getContainer()->add(ListTableViewFilterContract::class, function () {
+            return new ListTableViewFilter();
+        });
+
+        $this->getContainer()->add(ListTableViewFiltersContract::class, function () {
+            return new ListTableViewFilters();
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerPostListTable(): void
+    {
+        $this->getContainer()->add(PostListTableDbContract::class, function () {
+            return new PostListTableDb();
+        });
+
+        $this->getContainer()->add(PostListTableParamsContract::class, function () {
+            return new PostListTableParams();
+        });
+
+        $this->getContainer()->add(PostListTableQueryBuilderContract::class, function () {
+            return new PostListTableQueryBuilder();
         });
     }
 }

@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Template;
 
 use tiFy\Contracts\Support\LabelsBag;
 
-interface FactoryLabels extends LabelsBag
+interface FactoryLabels extends FactoryAwareTrait, LabelsBag
 {
 
 }

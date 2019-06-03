@@ -3,7 +3,6 @@
 namespace tiFy\Contracts\Template;
 
 use Psr\Http\Message\ServerRequestInterface;
-use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\View\ViewEngine;
 
@@ -58,9 +57,9 @@ interface TemplateFactory extends ParamsBag
     /**
      * Récupération de l'instance du controleur de base de données
      *
-     * @return FactoryDb|DbFactory|null
+     * @return FactoryDb|null
      */
-    public function db();
+    public function db(): ?FactoryDb;
 
     /**
      * Affichage du rendu.
@@ -146,11 +145,18 @@ interface TemplateFactory extends ParamsBag
     public function prepare(): TemplateFactory;
 
     /**
-     * Déclenchement de actions de traitement requises.
+     * Procéde aux actions de traitement requises.
      *
      * @return static
      */
-    public function process(): TemplateFactory;
+    public function proceed(): TemplateFactory;
+
+    /**
+     * Récupération de l'instance du constructeur de requête.
+     *
+     * @return FactoryQueryBuilder
+     */
+    public function query(): FactoryQueryBuilder;
 
     /**
      * Récupération de l'instance du controleur de requête Http.

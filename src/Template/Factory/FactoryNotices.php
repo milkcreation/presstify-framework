@@ -8,21 +8,11 @@ use tiFy\Kernel\Notices\Notices;
 
 class FactoryNotices extends Notices implements FactoryNoticesContract
 {
+    use FactoryAwareTrait;
+
     /**
      * Instance du gabarit d'affichage.
      * @var TemplateFactory
      */
     protected $factory;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param TemplateFactory $factory Instance du gabarit d'affichage associé.
-     *
-     * @return void
-     */
-    public function __construct(TemplateFactory $factory)
-    {
-        $this->factory = $factory;
-    }
 }

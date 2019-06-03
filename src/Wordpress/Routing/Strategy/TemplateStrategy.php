@@ -2,17 +2,18 @@
 
 namespace tiFy\Wordpress\Routing\Strategy;
 
-use League\Route\{Route, Strategy\ApplicationStrategy};
+use League\Route\Route;
 use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
-use tiFy\Http\Response;
 use tiFy\Support\Proxy\Router;
+use tiFy\Http\Response;
+use tiFy\Routing\Strategy\App as AppStrategy;
 use Wp_Query;
 use Zend\Diactoros\Response as PsrResponse;
 
-class Template extends ApplicationStrategy
+class Template extends AppStrategy
 {
     /**
      * Indicateur de contexte d'affichage de page de Wordpress.
@@ -49,16 +50,6 @@ class Template extends ApplicationStrategy
     ];
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->addDefaultResponseHeader('content-type', 'text/html');
-    }
-
-    /**
      * @inheritDoc
      */
     public function invokeRouteCallable(Route $route, ServerRequestInterface $request): ResponseInterface
@@ -88,13 +79,6 @@ class Template extends ApplicationStrategy
         array_push($args, $request);
 
         add_action('template_redirect', function () use ($controller, $args) {
-            /*if (!headers_sent()) {
-                foreach (headers_list() as $header) {
-                    list($name) = explode(':', $header);
-                    header_remove($name);
-                }
-            }*/
-
             $resolved = $controller(...$args);
 
             if ($resolved instanceof ViewController) {
@@ -106,10 +90,10 @@ class Template extends ApplicationStrategy
             } else {
                 $response = Response::create((string)$resolved);
             }
+
             if (!$response->headers->has('content-type')) {
                 $response->headers->set('content-type', 'text/html');
             }
-            $response = $this->applyDefaultResponseHeaders(Response::convertToPsr($response));
 
             Router::emit($response);
             exit;

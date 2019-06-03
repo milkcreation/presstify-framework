@@ -4,7 +4,7 @@ namespace tiFy\Contracts\Template;
 
 use tiFy\Contracts\Kernel\Notices;
 
-interface FactoryNotices extends Notices
+interface FactoryNotices extends FactoryAwareTrait, Notices
 {
 
 }

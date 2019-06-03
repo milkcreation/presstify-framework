@@ -134,9 +134,9 @@ class DbFactory extends ParamsBag implements DbFactoryContract
 
         $this->set($attrs)->parse();
 
-        if ($this->get('install', false)) :
+        if ($this->get('install', false)) {
             $this->install();
-        endif;
+        }
     }
 
     /**

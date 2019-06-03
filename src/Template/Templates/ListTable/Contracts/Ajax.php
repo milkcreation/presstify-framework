@@ -3,8 +3,9 @@
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\Template\FactoryAwareTrait;
 
-interface Ajax extends ParamsBag
+interface Ajax extends FactoryAwareTrait, ParamsBag
 {
     /**
      * Récupération de la liste des colonnes.
@@ -23,16 +24,9 @@ interface Ajax extends ParamsBag
     /**
      * Traitement de la liste des options.
      *
+     * @param array $options
+     *
      * @return array
      */
     public function parseOptions(array $options = []): array;
-
-    /**
-     * Traitement de la requête ajax (XmlHttpRequest).
-     *
-     * @param array $args Liste des arguments dynamique passé à la requête
-     *
-     * @return array
-     */
-    public function xhrHandler(...$args);
 }

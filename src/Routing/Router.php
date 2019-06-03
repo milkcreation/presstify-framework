@@ -8,8 +8,10 @@ use InvalidArgumentException;
 use League\Route\{Route as LeagueRoute, RouteGroup as LeagueRouteGroup, Router as LeagueRouter};
 use LogicException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
+use Psr\Http\Message\{ResponseInterface as Response, ServerRequestInterface as Request};
+use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterContract};
+use tiFy\Http\Response as HttpResponse;
 use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait};
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
@@ -88,7 +90,7 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * @inheritdoc
      */
-    public function dispatch(ServerRequestInterface $request): ResponseInterface
+    public function dispatch(Request $request): Response
     {
         if (is_null($this->getStrategy())) {
             $this->setStrategy($this->getContainer()->get('router.strategy.default'));
@@ -97,16 +99,23 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function emit(ResponseInterface $response): void
+    public function emit($response): void
     {
-        events()->trigger('router.emit.response', [$response]);
+        if ($response instanceof Response) {
+            /** @var EmitterInterface $emitter */
+            $emitter = $this->getContainer()->get('router.emitter');
+            $emitter->emit($response);
 
-        /** @var EmitterInterface $emitter */
-        $emitter = $this->getContainer()->get('router.emitter');
+            events()->trigger('router.emit.response', [$response]);
+        } elseif ($response instanceof SfResponse) {
+            $response->send();
 
-        $emitter->emit($response);
+            events()->trigger('router.emit.response', [HttpResponse::convertToPsr($response)]);
+        } else {
+            (new HttpResponse(__('La réponse attendue n\'est pas conforme', 'tify'), 500))->send();
+        }
     }
 
     /**
@@ -274,7 +283,7 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * @inheritdoc
      */
-    protected function prepRoutes(ServerRequestInterface $request): void
+    protected function prepRoutes(Request $request): void
     {
         $this->processGroups($request);
         $this->buildNameIndex();

@@ -23,6 +23,7 @@ class Response extends LaraResponse implements ResponseContract
 
             return $psrHttpFactory->createResponse($response);
         }
+
         return null;
     }
 
@@ -31,8 +32,8 @@ class Response extends LaraResponse implements ResponseContract
      *
      * @return ResponseContract
      */
-    public static function createFromPsr(ResponseInterface $psrResponse): SfResponse
+    public static function createFromPsr(ResponseInterface $psrResponse, bool $streamed = false): SfResponse
     {
-        return (new HttpFoundationFactory())->createResponse($psrResponse);
+        return (new HttpFoundationFactory())->createResponse($psrResponse, $streamed);
     }
 }

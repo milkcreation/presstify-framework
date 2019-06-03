@@ -2,19 +2,19 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Contracts\Template\{FactoryRequest, TemplateFactory as TemplateFactoryContract};
+use tiFy\Contracts\Template\{FactoryQueryBuilder, TemplateFactory as TemplateFactoryContract};
 use tiFy\Template\TemplateFactory;
 use tiFy\Template\Templates\ListTable\Contracts\{Ajax,
-    BulkActionsCollection,
-    Collection,
-    ColumnsCollection,
+    BulkActions,
+    Columns,
     Item,
+    Items,
     ListTable as ListTableContract,
     Pagination,
-    Request,
-    RowActionsCollection,
+    QueryBuilder,
+    RowActions,
     Search,
-    ViewFiltersCollection};
+    ViewFilters};
 
 class ListTable extends TemplateFactory implements ListTableContract
 {
@@ -27,7 +27,7 @@ class ListTable extends TemplateFactory implements ListTableContract
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function ajax(): ?Ajax
     {
@@ -35,23 +35,23 @@ class ListTable extends TemplateFactory implements ListTableContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function bulkActions(): BulkActionsCollection
+    public function bulkActions(): BulkActions
     {
         return $this->resolve('bulk-actions');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function columns(): ColumnsCollection
+    public function columns(): Columns
     {
         return $this->resolve('columns');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function item(): ?Item
     {
@@ -59,15 +59,15 @@ class ListTable extends TemplateFactory implements ListTableContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function items(): Collection
+    public function items(): Items
     {
         return $this->resolve('items');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function pagination(): Pagination
     {
@@ -75,40 +75,29 @@ class ListTable extends TemplateFactory implements ListTableContract
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return ListTableContract
      */
-    public function prepare(): TemplateFactoryContract
+    public function proceed(): TemplateFactoryContract
     {
-        if (!$this->prepared) {
-            parent::prepare();
+        $this->items()->set($this->query()->proceed());
 
-            $this->items()->query();
-
-            if (!$this->items()->exists()) {
-                return $this;
-            }
-
-            $total_items = $this->items()->total();
-            $per_page = $this->request()->getPerPage();
-            $total_pages = ceil($total_items / $per_page);
-
-            $this->pagination()
-                ->set('per_page', $per_page)
-                ->set('total_items', $total_items)
-                ->set('total_pages', $total_pages)
-                ->parse();
-
-            if ($ajax = $this->ajax()) {
-                $ajax->parse()->all();
-            }
+        if (!$this->items()->exists()) {
+            return $this;
         }
+
+        $this->pagination()->parse();
+
+        if ($ajax = $this->ajax()) {
+            $ajax->parse();
+        }
+
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function render()
     {
@@ -116,25 +105,25 @@ class ListTable extends TemplateFactory implements ListTableContract
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
-     * @return Request
+     * @return QueryBuilder
      */
-    public function request(): FactoryRequest
+    public function query(): FactoryQueryBuilder
     {
-        return parent::request();
+        return parent::query();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function rowActions(): RowActionsCollection
+    public function rowActions(): RowActions
     {
         return $this->resolve('row-actions');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function search(): Search
     {
@@ -142,9 +131,9 @@ class ListTable extends TemplateFactory implements ListTableContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function viewFilters(): ViewFiltersCollection
+    public function viewFilters(): ViewFilters
     {
         return $this->resolve('view-filters');
     }

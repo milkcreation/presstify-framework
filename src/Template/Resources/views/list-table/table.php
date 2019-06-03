@@ -2,7 +2,7 @@
 /**
  * Table.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Template\Templates\ListTable\Viewer\Viewer $this
+ * @var tiFy\Template\Templates\ListTable\Viewer $this
  */
 ?>
 <?php $this->insert('tablenav', ['which' => 'top']); ?>
@@ -11,4 +11,4 @@
     <?php $this->insert('tbody'); ?>
     <?php $this->insert('tfoot'); ?>
 </table>
-<?php $this->insert('tablenav', ['which' => 'bottom']); ?>
+<?php $this->insert('tablenav', ['which' => 'bottom']);

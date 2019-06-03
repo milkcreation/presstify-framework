@@ -2,12 +2,11 @@
 /**
  * Interface de bascule d'affichage des colonnes de la table.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Template\Templates\ListTable\Viewer\Viewer $this
- * @var tiFy\Template\Templates\ListTable\Contracts\ColumnsCollection $cols
- * @var tiFy\Template\Templates\ListTable\Contracts\ColumnsItem $col
+ * @var tiFy\Template\Templates\ListTable\Viewer $this
+ * @var tiFy\Template\Templates\ListTable\Contracts\Columns $cols
+ * @var tiFy\Template\Templates\ListTable\Contracts\Column $col
  */
-?>
-<?php foreach ($this->columns()->getHideable() as $col) {
+foreach ($this->columns()->getHideable() as $col) {
     echo field('checkbox', [
         'after' => (string)field('label', [
             'content' => $col->getTitle(),

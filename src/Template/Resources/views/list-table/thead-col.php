@@ -2,8 +2,8 @@
 /**
  * Entête de la table.
  * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Template\Templates\ListTable\Viewer\Viewer $this
- * @var string $attrs Liste des attributs de blise HTML.
+ * @var tiFy\Template\Templates\ListTable\Viewer $this
+ * @var string $attrs Liste des attributs de balise HTML.
  * @var string $content Contenu.
  */
 ?>

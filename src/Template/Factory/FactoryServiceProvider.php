@@ -3,7 +3,9 @@
 namespace tiFy\Template\Factory;
 
 use tiFy\Contracts\Db\DbFactory;
-use tiFy\Contracts\Template\{TemplateFactory, FactoryServiceProvider as FactoryServiceProviderContract};
+use tiFy\Contracts\Template\{
+    FactoryServiceProvider as FactoryServiceProviderContract,
+    TemplateFactory};
 use tiFy\Container\ServiceProvider;
 use tiFy\View\ViewEngine;
 
@@ -47,6 +49,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
         $this->registerFactoryHttpXhrController();
         $this->registerFactoryLabels();
         $this->registerFactoryParams();
+        $this->registerFactoryQueryBuilder();
         $this->registerFactoryNotices();
         $this->registerFactoryRequest();
         $this->registerFactoryUrl();
@@ -61,7 +64,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryAssets(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('assets'), function () {
-            return new FactoryAssets($this->factory);
+            return (new FactoryAssets())->setTemplateFactory($this->factory);
         });
     }
 
@@ -73,7 +76,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryCache(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('cache'), function () {
-            return (new FactoryCache())->setFactory($this->factory);
+            return (new FactoryCache())->setTemplateFactory($this->factory);
         });
     }
 
@@ -86,7 +89,9 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     {
         $this->getContainer()->share($this->getFactoryAlias('db'), function () {
             if ($db = $this->factory->get('providers.db', [])) {
-                return $db instanceof DbFactory ? $db : new FactoryDb($this->factory);
+                return $db instanceof DbFactory
+                    ? $db
+                    : (new FactoryDb())->setTemplateFactory($this->factory);
             } else {
                 return null;
             }
@@ -101,7 +106,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryHttpController(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('controller'), function () {
-            return (new FactoryHttpController())->setFactory($this->factory);
+            return (new FactoryHttpController())->setTemplateFactory($this->factory);
         });
     }
 
@@ -113,7 +118,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryHttpXhrController(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('xhr'), function () {
-            return (new FactoryHttpXhrController())->setFactory($this->factory);
+            return (new FactoryHttpXhrController())->setTemplateFactory($this->factory);
         });
     }
 
@@ -125,7 +130,8 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryLabels(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
-            return new FactoryLabels($this->factory);
+            return (new FactoryLabels($this->factory->name(), $this->factory->get('labels', [])))
+                ->setTemplateFactory($this->factory);
         });
     }
 
@@ -137,7 +143,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryNotices(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('notices'), function () {
-            return new FactoryNotices($this->factory);
+            return (new FactoryNotices())->setTemplateFactory($this->factory);
         });
     }
 
@@ -149,7 +155,24 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryParams(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            return new FactoryParams($this->factory);
+            $attrs = $this->factory->get('params', []);
+
+            return (new FactoryParams())->setTemplateFactory($this->factory)
+                ->set(is_array($attrs) ? $attrs : [])->parse();
+        });
+    }
+
+    /**
+     * Déclaration du controleur de construction de requête.
+     *
+     * @return void
+     */
+    public function registerFactoryQueryBuilder(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('query-builder'), function () {
+            $attrs = $this->factory->param('query_args', []);
+
+            return (new FactoryQueryBuilder())->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 
@@ -173,7 +196,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryUrl(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('url'), function () {
-            return new FactoryUrl($this->factory);
+            return (new FactoryUrl())->setTemplateFactory($this->factory);
         });
     }
 
