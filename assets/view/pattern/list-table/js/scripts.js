@@ -19,7 +19,7 @@ jQuery(document).ready(function($){
 
         if ($closest.next().attr('id') != 'Item-preview--' + item_index) {
             // Création de la zone de prévisualisation
-            $preview = $('#Item-previewContainer').clone(true);
+            let $preview = $('#Item-previewContainer').clone(true);
             var id      = 'Item-preview--' + item_index,
                 data    = $.extend(
                     {
@@ -76,7 +76,7 @@ jQuery(document).ready(function($){
                 }
             );
         } else {
-            $preview = $closest.next();
+            let $preview = $closest.next();
         }
 
         $preview.toggle();

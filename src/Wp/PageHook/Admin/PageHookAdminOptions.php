@@ -4,7 +4,6 @@ namespace tiFy\Wp\PageHook\Admin;
 
 use tiFy\Contracts\Wp\PageHookItem;
 use tiFy\Metabox\MetaboxWpOptionsController;
-use tiFy\Wp\PageHook\PageHook;
 
 class PageHookAdminOptions extends MetaboxWpOptionsController
 {
@@ -31,9 +30,7 @@ class PageHookAdminOptions extends MetaboxWpOptionsController
     {
         parent::parse($attrs);
 
-        /** @var  PageHook $pageHook */
-        $pageHook = app()->get('wp.page-hook');
-        $this->set('items', $pageHook->all());
+        $this->set('items', page_hook()->all());
     }
 
     /**
