@@ -204,7 +204,7 @@ class Slideshow extends MetaboxWpOptionsController
             'name'      => request()->post('name'),
             'editable'  => request()->post('editable', [])
         ];
-        $itemClass = request()->post('item_class', SlideshowItem::class);
+        $itemClass = wp_unslash(request()->post('item_class', SlideshowItem::class));
         $this->viewer = null;
         $this->set('viewer', request()->post('viewer', []));
 
