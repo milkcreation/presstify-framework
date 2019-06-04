@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
+use WP_Site;
 use WP_User;
 
 interface QueryUser extends ParamsBag
@@ -41,6 +42,15 @@ interface QueryUser extends ParamsBag
      * @return array
      */
     public function capabilities(): array;
+
+    /**
+     * Récupération de la liste des sites pour lequels l'utilisateur est habilité.
+     *
+     * @param boolean $all Tous les sites, si actif. Par défaut tous hormis deleted|archived|spam.
+     *
+     * @return WP_Site[]
+     */
+    public function getBlogs(bool $all = false): iterable;
 
     /**
      * Récupération des renseignements biographiques.

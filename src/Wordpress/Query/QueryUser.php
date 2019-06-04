@@ -4,10 +4,17 @@ namespace tiFy\Wordpress\Query;
 
 use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\QueryUser as QueryUserContract;
+use WP_Site;
 use WP_User;
 
 class QueryUser extends ParamsBag implements QueryUserContract
 {
+    /**
+     * Liste des sites pour lequels l'utilisateur est habilité.
+     * @var WP_Site[]|array
+     */
+    protected $blogs;
+
     /**
      * Instance d'utilisateur Wordpress.
      * @var WP_User
@@ -59,6 +66,22 @@ class QueryUser extends ParamsBag implements QueryUserContract
     public function capabilities(): array
     {
         return $this->getWpUser()->allcaps;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBlogs($all = false): iterable
+    {
+        if (is_null($this->blogs)) {
+            $this->blogs = get_blogs_of_user($this->getId(), $all);
+
+            array_walk($this->blogs, function (&$site) {
+                $site = WP_Site::get_instance($site->userblog_id);
+            });
+        }
+
+        return $this->blogs;
     }
 
     /**
