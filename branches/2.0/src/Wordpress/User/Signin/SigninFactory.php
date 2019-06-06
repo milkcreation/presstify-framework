@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress\User\Signin;
 
@@ -10,7 +10,7 @@ class SigninFactory extends tiFySigninFactory
     /**
      * @inheritdoc
      */
-    public function boot()
+    public function boot(): void
     {
         add_action('init', [$this, 'handle']);
 
@@ -22,7 +22,7 @@ class SigninFactory extends tiFySigninFactory
     /**
      * @inheritdoc
      */
-    public function defaults()
+    public function defaults(): array
     {
         return array_merge(parent::defaults(), [
             'redirect_url'       => site_url('/'),
@@ -43,7 +43,7 @@ class SigninFactory extends tiFySigninFactory
      *
      * @return void
      */
-    public function handleLogin()
+    public function handleLogin(): void
     {
         check_admin_referer('Signin-login-' . $this->getName());
 
@@ -125,7 +125,7 @@ class SigninFactory extends tiFySigninFactory
      *
      * @return void
      */
-    public function handleLogout()
+    public function handleLogout(): void
     {
         check_admin_referer('signin-logout-' . $this->getName());
 

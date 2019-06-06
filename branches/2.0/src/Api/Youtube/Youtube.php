@@ -94,7 +94,7 @@ class Youtube extends MadcodaYoutube
      */
     public function getEmbed($video, $params = [])
     {
-        if(validator()->isUrl($video)) :
+        if(validator()::url()->validate($video)) :
             try {
                 $video_id = self::parseVIdFromURL($video);
                 $video_url = $video;
@@ -138,11 +138,11 @@ class Youtube extends MadcodaYoutube
      * @param string $video Identifiant ou url de la vidéo.
      * @param array $formats Format de l'image, par ordre de préférence. maxres|standard|height|medium|default.
      *
-     * @return array
+     * @return array|\WP_Error
      */
     public function getThumbnailSrc($video, $formats = [])
     {
-        if(validator()->isUrl($video)) :
+        if(v::url()->validate($video)) :
             if (!self::isUrl($video)) :
                 return new \WP_Error(
                     'tFyComponentsApiYtInvalidSrc',

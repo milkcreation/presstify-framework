@@ -22,11 +22,11 @@ class Manager implements ManagerContract
     /**
      * CONSTRUCTEUR.
      *
-     * @param ContainerInterface $container Conteneur d'injection de dépendances.
+     * @param ContainerInterface|null $container Conteneur d'injection de dépendances.
      *
      * @return void
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(?ContainerInterface $container = null)
     {
         $this->container = $container;
 
@@ -60,7 +60,7 @@ class Manager implements ManagerContract
     /**
      * @inheritDoc
      */
-    public function getContainer(): ContainerInterface
+    public function getContainer(): ?ContainerInterface
     {
         return $this->container;
     }

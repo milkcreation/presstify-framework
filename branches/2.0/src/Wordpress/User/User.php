@@ -4,6 +4,7 @@ namespace tiFy\Wordpress\User;
 
 use Illuminate\Support\Collection;
 use tiFy\Contracts\User\RoleFactory;
+use tiFy\Contracts\User\SigninFactory as BaseSigninFactoryContract;
 use tiFy\Contracts\User\User as tiFyUser;
 use tiFy\Wordpress\Contracts\User as UserContract;
 use tiFy\Wordpress\User\Signin\SigninFactory;
@@ -96,8 +97,8 @@ class User implements UserContract
      */
     public function register()
     {
-        app()->add('user.signin.factory', function ($name, $attrs) {
-            return new SigninFactory($name, $attrs);
+        app()->add(BaseSigninFactoryContract::class, function () {
+            return new SigninFactory();
         });
     }
 

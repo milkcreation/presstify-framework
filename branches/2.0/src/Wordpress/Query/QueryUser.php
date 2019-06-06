@@ -4,6 +4,8 @@ namespace tiFy\Wordpress\Query;
 
 use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\QueryUser as QueryUserContract;
+use tiFy\Wordpress\Contracts\UserBuilder;
+use tiFy\Wordpress\Database\Model\User as Model;
 use WP_Site;
 use WP_User;
 
@@ -14,6 +16,12 @@ class QueryUser extends ParamsBag implements QueryUserContract
      * @var WP_Site[]|array
      */
     protected $blogs;
+
+    /**
+     * Instance du modèle de base de données associé.
+     * @var UserBuilder
+     */
+    protected $db;
 
     /**
      * Instance d'utilisateur Wordpress.
@@ -50,6 +58,28 @@ class QueryUser extends ParamsBag implements QueryUserContract
     {
         return (($wp_user = new WP_User($user_id)) && ($wp_user instanceof WP_User))
             ? new static($wp_user) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function createFromEmail(string $email): ?QueryUserContract
+    {
+        return (($userdata = WP_User::get_data_by('email', $email)) &&
+            (($wp_user = new WP_User($userdata)) instanceof WP_User))
+            ? new static($wp_user) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function db(): UserBuilder
+    {
+        if (!$this->db) {
+            $this->db = (new Model())->find($this->getId());
+        }
+
+        return $this->db;
     }
 
     /**
@@ -218,5 +248,63 @@ class QueryUser extends ParamsBag implements QueryUserContract
     public function roleIn(array $roles): bool
     {
         return !!array_intersect($this->getRoles(), $roles);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function save($userdata): void
+    {
+        $p = ParamsBag::createFromAttrs($userdata);
+        $columns =  $this->db()->getConnection()->getSchemaBuilder()->getColumnListing($this->db()->getTable());
+
+        $update = [];
+        foreach ($columns as $col) {
+            if ($p->has($col)) {
+                $update[$col] = $p->get($col);
+                if ($col === 'user_pass') {
+                    $update[$col] = wp_hash_password($update[$col]);
+                }
+            }
+        }
+
+        $keys = [
+            'first_name',
+            'last_name',
+            'nickname',
+            'description',
+            'rich_editing',
+            'syntax_highlighting',
+            'comment_shortcuts',
+            'admin_color',
+            'use_ssl',
+            'show_admin_bar_front',
+            'locale'
+        ];
+        foreach ($keys as $key) {
+            if ($value = $p->pull($key)) {
+                $p->set("meta.{$key}", $value);
+            }
+        }
+
+        if ($update) {
+            $this->db()->where(['ID' => $this->getId()])->update($update);
+        }
+
+        if ($p->has('meta')) {
+            $this->saveMeta($p->get('meta'));
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function saveMeta($key, $value = null): void
+    {
+        $keys = is_array($key) ? $key : [$key => $value];
+
+        foreach ($keys as $k => $v) {
+            $this->db()->saveMeta($k, $v);
+        }
     }
 }

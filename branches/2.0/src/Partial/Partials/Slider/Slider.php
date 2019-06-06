@@ -79,13 +79,11 @@ class Slider extends PartialFactory implements SliderContract
 
         $items = $this->get('items', []);
 
-        $validator = validator();
-
         foreach($items as &$item) :
             if (is_callable($item)) :
                 $item = call_user_func($item);
             elseif (is_array($item)) :
-            elseif ($validator->isUrl($item)) :
+            elseif (validator()::url()->validate($item)) :
                 $item = "<img src=\"{$item}\" alt=\"\"/>";
             endif;
         endforeach;

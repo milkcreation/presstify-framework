@@ -41,11 +41,18 @@ interface TemplateManager extends Manager
     public function httpXhrController(string $name, ServerRequestInterface $psrRequest);
 
     /**
+     * Préparation des urls de routage.
+     *
+     * @return static
+     */
+    public function prepareRoutes(): TemplateManager;
+
+    /**
      * {@inheritDoc}
      *
-     * @return Container
+     * @return Container|null
      */
-    public function getContainer(): ContainerInterface;
+    public function getContainer(): ?ContainerInterface;
 
     /**
      * Récupération du chemin absolu vers le répertoire de stockage des ressources.
@@ -64,4 +71,13 @@ interface TemplateManager extends Manager
      * @return string
      */
     public function resourcesUrl(?string $path = ''): ?string;
+
+    /**
+     * Définition du prefixe des urls de routage.
+     *
+     * @param string $prefix Prefixe des urls de routage.
+     *
+     * @return static
+     */
+    public function setUrlPrefix(string $prefix): TemplateManager;
 }

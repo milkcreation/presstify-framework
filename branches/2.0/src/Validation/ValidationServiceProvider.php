@@ -12,16 +12,23 @@ class ValidationServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'validator'
+        'validator',
+        'validator.rule.password'
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register()
     {
-        $this->getContainer()->add('validator', function () {
-            return new Validator();
+        $this->getContainer()->share('validator', function () {
+            return new Validator($this->getContainer(), [
+                'password' => $this->getContainer()->get('validator.rule.password')
+            ]);
+        });
+
+        $this->getContainer()->add('validator.rule.password', function () {
+            return new Rules\Password();
         });
     }
 }

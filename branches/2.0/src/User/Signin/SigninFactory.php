@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\User\Signin;
 
 use tiFy\Contracts\Kernel\Notices as NoticesContract;
+use tiFy\Contracts\User\SigninManager;
 use tiFy\Contracts\User\SigninFactory as SigninFactoryContract;
 use tiFy\Contracts\View\ViewController;
 use tiFy\Contracts\View\ViewEngine;
@@ -12,6 +13,12 @@ use tiFy\Support\ParamsBag;
 
 class SigninFactory extends ParamsBag implements SigninFactoryContract
 {
+    /**
+     * Instance du gestionnaire d'interface d'authentification.
+     * @var SigninManager
+     */
+    protected $manager;
+
     /**
      * Nom de qualification.
      * @var string
@@ -25,38 +32,27 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     protected $notices;
 
     /**
+     * Indicateur d'initialisation de la classe.
+     * @var boolean
+     */
+    protected $prepared = false;
+
+    /**
      * Instance du gestionnaire de gabarits d'affichage.
      * @var ViewEngine
      */
     protected $viewer;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param string $name Nom de qualification du controleur.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct(string $name, array $attrs)
-    {
-        $this->name = $name;
-
-        $this->set($attrs)->parse();
-
-        $this->boot();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->authForm();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function authForm()
     {
@@ -64,7 +60,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function addNotice($type, $message = '', $code = null, $datas = []): SigninFactoryContract
     {
@@ -77,15 +73,15 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function boot()
+    public function boot(): void
     {
 
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function defaults()
     {
@@ -101,7 +97,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAuthRedirectUrl(?string $redirect_url = null): string
     {
@@ -112,7 +108,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getLogoutRedirectUrl(?string $redirect_url = null): string
     {
@@ -123,7 +119,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getLogoutUrl(?string $redirect_url = null): string
     {
@@ -141,7 +137,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMessages(string $type): array
     {
@@ -149,7 +145,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getName(): string
     {
@@ -157,7 +153,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getRoles(): array
     {
@@ -165,15 +161,15 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function handle()
+    public function handle(): void
     {
         if (!$signin = request()->get('signin', false)) {
-            return null;
+            return;
         }
         if ($signin !== $this->getName()) {
-            return null;
+            return;
         }
         switch ($action = request()->get('action', 'login')) {
             default :
@@ -188,7 +184,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasRole($role): bool
     {
@@ -200,9 +196,9 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function logoutLink($attrs = [])
+    public function logoutLink($attrs = []): string
     {
         $attrs = array_merge($this->get('logout_link', []), $attrs);
         $url = $this->getLogoutUrl($attrs['redirect']);
@@ -211,15 +207,15 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function lostpasswordLink()
+    public function lostpasswordLink(): string
     {
-        return $this->viewer('lostpassword-link', $this->all());
+        return (string)$this->viewer('lostpassword-link', $this->all());
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function notices(): NoticesContract
     {
@@ -231,9 +227,11 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
+     *
+     * @return SigninFactoryContract
      */
-    public function parse()
+    public function parse(): SigninFactoryContract
     {
         parent::parse();
 
@@ -366,6 +364,25 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
             'redirect' => '',
             'content'  => __('Mot de passe oublié', 'tify'),
         ], $this->get('lost_password_link', [])));
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function prepare($name, SigninManager $manager): SigninFactoryContract
+    {
+        if (!$this->prepared) {
+            $this->name = $name;
+            $this->manager = $manager;
+
+            $this->parse();
+            $this->prepared = true;
+            $this->boot();
+        }
+
+        return $this;
     }
 
     /**

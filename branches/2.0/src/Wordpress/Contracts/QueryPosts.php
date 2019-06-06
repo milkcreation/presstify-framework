@@ -2,6 +2,7 @@
 
 namespace tiFy\Wordpress\Contracts;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use tiFy\Contracts\Support\Collection;
 use WP_Query;
 
@@ -17,6 +18,15 @@ interface QueryPosts extends Collection
      * @return static
      */
     public static function createFromArgs($args = []): QueryPosts;
+
+    /**
+     * Récupération d'une instance basée sur une resultat de requête en base de données.
+     *
+     * @param EloquentCollection $collection
+     *
+     * @return static
+     */
+    public static function createFromEloquent(EloquentCollection $collection): QueryPosts;
 
     /**
      * Récupération d'une instance basée sur la requête globale.
@@ -53,9 +63,16 @@ interface QueryPosts extends Collection
     public function getTitles(): array;
 
     /**
+     * {@inheritDoc}
+     *
+     * @return QueryPosts
+     */
+    public function set($key, $value = null): Collection;
+
+    /**
      * Récupération de l'instance de la requête Wordpress de récupération des posts.
      *
-     * @return null|WP_Query
+     * @return WP_Query|null
      */
-    public function WpQuery(): WP_Query;
+    public function WpQuery(): ?WP_Query;
 }

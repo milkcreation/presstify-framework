@@ -2,7 +2,9 @@
 
 namespace tiFy\Template;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Template\{TemplateFactory as TemplateFactoryContract, TemplateManager as TemplateManagerContract};
 use tiFy\Support\Manager;
 use tiFy\Support\Proxy\Router;
@@ -22,18 +24,10 @@ class TemplateManager extends Manager implements TemplateManagerContract
     protected $items = [];
 
     /**
-     * @inheritDoc
+     * Préfixe de urls de routage.
+     * @var string
      */
-    public function boot(): void
-    {
-        $this->baseUrl = md5('tify:template'); // 7855ce7d975d5a1ede9b5a83d7235dee
-
-        foreach(['head', 'delete', 'get', 'options', 'post', 'put', 'patch'] as $method) {
-            Router::$method($this->baseUrl . '/{name}', [$this, 'httpController']);
-            Router::xhr($this->baseUrl . '/{name}/xhr', [$this, 'httpXhrController'], $method);
-        }
-        Router::get($this->baseUrl . '/{name}/cache/{path:.*}', [$this, 'httpCacheController'])->strategy('app');
-    }
+    public $urlPrefix = '/';
 
     /**
      * {@inheritDoc}
@@ -43,6 +37,16 @@ class TemplateManager extends Manager implements TemplateManagerContract
     public function get($name): ?TemplateFactoryContract
     {
         return parent::get($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Container|null
+     */
+    public function getContainer(): ?ContainerInterface
+    {
+        return parent::getContainer();
     }
 
     /**
@@ -72,6 +76,24 @@ class TemplateManager extends Manager implements TemplateManagerContract
     /**
      * @inheritDoc
      */
+    public function prepareRoutes(): TemplateManagerContract
+    {
+        $this->baseUrl = md5('tify:template'); // 7855ce7d975d5a1ede9b5a83d7235dee
+
+        $base_url = '/' . rtrim(ltrim($this->urlPrefix, '/'), '/') . '/' . $this->baseUrl;
+
+        foreach(['head', 'delete', 'get', 'options', 'post', 'put', 'patch'] as $method) {
+            Router::$method($base_url . '/{name}', [$this, 'httpController']);
+            Router::xhr($base_url . '/{name}/xhr', [$this, 'httpXhrController'], $method);
+        }
+        Router::get($base_url . '/{name}/cache/{path:.*}', [$this, 'httpCacheController'])->strategy('app');
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function register($name, ...$args): TemplateManagerContract
     {
         return $this->set([$name => $args[0] ?? []]);
@@ -96,6 +118,16 @@ class TemplateManager extends Manager implements TemplateManagerContract
         $path = '/Resources/' . ltrim($path, '/');
 
         return file_exists($cinfo->getDirname() . $path) ? class_info($this)->getUrl() . $path : '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setUrlPrefix(string $prefix): TemplateManagerContract
+    {
+        $this->urlPrefix = $prefix;
+
+        return $this;
     }
 
     /**

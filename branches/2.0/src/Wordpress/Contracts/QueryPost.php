@@ -36,6 +36,13 @@ interface QueryPost extends ParamsBag
     public static function createFromName(string $post_name): ?QueryPost;
 
     /**
+     * Récupération de l'instance du modèle de base de donnée associé.
+     *
+     * @return PostBuilder
+     */
+    public function db(): PostBuilder;
+
+    /**
      * Récupération de l'identifiant de qualification de l'auteur original.
      *
      * @return int
@@ -78,7 +85,7 @@ interface QueryPost extends ParamsBag
      *
      * @return string
      */
-    public function getContent($raw = false);
+    public function getContent(bool $raw = false);
 
     /**
      * Récupération de la date de création au format datetime.
@@ -87,10 +94,10 @@ interface QueryPost extends ParamsBag
      *
      * @return string
      */
-    public function getDate($gmt = false);
+    public function getDate(bool $gmt = false);
 
     /**
-     * Récupération d'un objet DateTime basée sur la date création.
+     * Récupération de l'objet DateTime basée sur la date création.
      *
      * @param bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
      *
@@ -112,7 +119,7 @@ interface QueryPost extends ParamsBag
      *
      * @return string
      */
-    public function getExcerpt($raw = false);
+    public function getExcerpt(bool $raw = false);
 
     /**
      * Récupération de l'identifiant unique de qualification global.
@@ -139,7 +146,7 @@ interface QueryPost extends ParamsBag
      *
      * @return mixed
      */
-    public function getMeta($meta_key, $single = false, $default = null);
+    public function getMeta(string $meta_key, $single = false, $default = null);
 
     /**
      * Récupération de la liste des indices de métadonnées.
@@ -158,7 +165,7 @@ interface QueryPost extends ParamsBag
      *
      * @return mixed
      */
-    public function getMetaMulti($meta_key, $default = null);
+    public function getMetaMulti(string $meta_key, $default = null);
 
     /**
      * Récupération d'une metadonnée de type simple.
@@ -168,7 +175,7 @@ interface QueryPost extends ParamsBag
      *
      * @return mixed
      */
-    public function getMetaSingle($meta_key, $default = null);
+    public function getMetaSingle(string $meta_key, $default = null);
 
     /**
      * Récupération de la date de la dernière modification au format datetime.
@@ -177,7 +184,16 @@ interface QueryPost extends ParamsBag
      *
      * @return string
      */
-    public function getModified($gmt = false);
+    public function getModified(bool $gmt = false);
+
+    /**
+     * Récupération de l'objet DateTime basée sur la date de modification.
+     *
+     * @param bool $gmt Activation de la valeur basée sur le temps moyen de Greenwich.
+     *
+     * @return DateTime
+     */
+    public function getModifiedDateTime(bool $gmt = false): DateTime;
 
     /**
      * Alias de récupération de l'identifiant de qualification Wordpress (post_name).
@@ -266,7 +282,7 @@ interface QueryPost extends ParamsBag
      *
      * @return string
      */
-    public function getTitle($raw = false);
+    public function getTitle(bool $raw = false);
 
     /**
      * Récupération du type de post.
@@ -293,22 +309,13 @@ interface QueryPost extends ParamsBag
     public function hasTerm($term, string $taxonomy): bool;
 
     /**
-     * Vérification de correspondance du type de post.
-     *
-     * @param array $post_types Liste des types de post à vérifier.
-     *
-     * @return bool
-     */
-    public function typeIn(array $post_types): bool;
-
-    /**
      * Sauvegarde des données du post en base.
      *
      * @param array $postdata Liste des données à enregistrer
      *
      * @return void
      */
-    public function save($postdata): void;
+    public function save(array $postdata): void;
 
     /**
      * Sauvegarde (Ajout ou mise à jour) d'un commentaire associé au post.
@@ -330,4 +337,13 @@ interface QueryPost extends ParamsBag
      * @return void
      */
     public function saveMeta($key, $value = null): void;
+
+    /**
+     * Vérification de correspondance du type de post.
+     *
+     * @param array $post_types Liste des types de post à vérifier.
+     *
+     * @return bool
+     */
+    public function typeIn(array $post_types): bool;
 }
