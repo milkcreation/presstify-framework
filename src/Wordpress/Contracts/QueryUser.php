@@ -16,13 +16,29 @@ interface QueryUser extends ParamsBag
     public static function createFromGlobal(): QueryUser;
 
     /**
-     * Création d'une instance de la classe basée sur un identifiant de qualification valide.
+     * Création d'une instance de la classe basée sur un identifiant de qualification existant.
      *
-     * @param int $user_id Identifiant de qualification.
+     * @param int $user_id
      *
      * @return static|null
      */
     public static function createFromId(int $user_id): ?QueryUser;
+
+    /**
+     * Création d'une instance de la classe basée sur un email existant.
+     *
+     * @param string $email
+     *
+     * @return static|null
+     */
+    public static function createFromEmail(string $email): ?QueryUser;
+
+    /**
+     * Récupération de l'instance du modèle de base de donnée associé.
+     *
+     * @return UserBuilder
+     */
+    public function db(): UserBuilder;
 
     /**
      * Vérification des habilitations.
@@ -174,4 +190,23 @@ interface QueryUser extends ParamsBag
      * @return boolean
      */
     public function roleIn(array $roles): bool;
+
+    /**
+     * Sauvegarde des données de l'utilisateur en base.
+     *
+     * @param array $userdata Liste des données à enregistrer
+     *
+     * @return void
+     */
+    public function save($userdata): void;
+
+    /**
+     * Sauvegarde (Ajout ou mise à jour) de metadonnées de l'utilisateur en base.
+     *
+     * @param string|array $key Indice de métadonnées ou tableau associatif clé/valeur.
+     * @param mixed $value Valeur de la métadonnées si key est un indice.
+     *
+     * @return void
+     */
+    public function saveMeta($key, $value = null): void;
 }

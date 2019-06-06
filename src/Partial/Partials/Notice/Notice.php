@@ -41,6 +41,7 @@ class Notice extends PartialFactory implements NoticeContract
      *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      *      @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
      *      @var bool $dismiss Affichage du bouton de masquage de la notification.
+     *      @var int $timeout Délai d'expiration d'affichage du message. Exprimé en secondes.
      *      @var string $type Type de notification info|warning|success|error. défaut info.
      * }
      */
@@ -53,8 +54,8 @@ class Notice extends PartialFactory implements NoticeContract
             'viewer'  => [],
             'content' => 'Lorem ipsum dolor site amet',
             'dismiss' => false,
-            'type'    => 'info',
-            'timeout' => 0
+            'timeout' => 0,
+            'type'    => 'info'
         ];
     }
 

@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Wordpress\Template\Templates\FileBrowser;
+namespace tiFy\Wordpress\Template\Templates\FileManager;
 
-use tiFy\Template\Templates\FileBrowser\Contracts\{FileInfo};
-use tiFy\Template\Templates\FileBrowser\IconSet as tiFyTmplBrowserIconSet;
+use tiFy\Template\Templates\FileManager\Contracts\{FileInfo};
+use tiFy\Template\Templates\FileManager\IconSet as BaseIconSet;
 
-class IconSet extends tiFyTmplBrowserIconSet
+class IconSet extends BaseIconSet
 {
     /**
      * @inheritDoc

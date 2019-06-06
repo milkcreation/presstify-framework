@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Template;
 
 use tiFy\Contracts\Template\TemplateManager;
-use tiFy\Template\Templates\FileBrowser\Contracts\IconSet as IconSetContract;
+use tiFy\Template\Templates\FileManager\Contracts\IconSet as IconSetContract;
 //use WP_Screen;
 
 class Template
@@ -24,6 +24,15 @@ class Template
     public function __construct(TemplateManager $manager)
     {
         $this->manager = $manager;
+
+        $prefix = '/';
+        if (is_multisite()) {
+            $prefix = get_blog_details()->path !== '/'
+                ? rtrim(preg_replace('#^' . url()->rewriteBase() . '#', '', get_blog_details()->path), '/')
+                : '/';
+        }
+
+        $this->manager->setUrlPrefix($prefix)->prepareRoutes();
 
         foreach(config('template', []) as $name => $attrs) {
             $this->manager->register($name, $attrs);

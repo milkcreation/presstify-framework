@@ -6,7 +6,6 @@ use League\Route\Http\Exception\MethodNotAllowedException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use tiFy\Template\Factory\FactoryHttpXhrController;
 use tiFy\Template\Templates\FileManager\Contracts\HttpXhrController as HttpXhrControllerContract;
-use Respect\Validation\Validator as v;
 
 class HttpXhrController extends FactoryHttpXhrController implements HttpXhrControllerContract
 {
@@ -61,7 +60,7 @@ class HttpXhrController extends FactoryHttpXhrController implements HttpXhrContr
         $file = $this->factory->getFile($path);
         $name = request()->input('name');
 
-        if (!v::notEmpty()->validate($name)) {
+        if (!validator()::notEmpty()->validate($name)) {
             return [
                 'success' => false,
                 'views'   => [
@@ -206,7 +205,7 @@ class HttpXhrController extends FactoryHttpXhrController implements HttpXhrContr
                     'notice' => $this->notice(__('Impossible de trouver l\'élément à renommer.', 'tify'), 'warning')
                 ]
             ];
-        } elseif (!v::notEmpty()->validate($name)) {
+        } elseif (!validator()::notEmpty()->validate($name)) {
             return [
                 'success' => false,
                 'views'   => [

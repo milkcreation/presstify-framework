@@ -6,6 +6,8 @@ use tiFy\Support\DateTime;
 use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\QueryComment as QueryCommentContract;
 use tiFy\Wordpress\Contracts\QueryPost as QueryPostContract;
+use tiFy\Wordpress\Contracts\PostBuilder;
+use tiFy\Wordpress\Database\Model\Post as Model;
 use WP_Post;
 use WP_Query;
 use WP_Term_Query;
@@ -13,6 +15,12 @@ use WP_User;
 
 class QueryPost extends ParamsBag implements QueryPostContract
 {
+    /**
+     * Instance du modèle de base de données associé.
+     * @var PostBuilder
+     */
+    protected $db;
+
     /**
      * Instance de post Wordpress.
      * @var WP_Post
@@ -57,8 +65,20 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function createFromName(string $post_name): ?QueryPostContract
     {
-        return (($wp_post = (new WP_Query)->query(['name' => $post_name, 'post_type' => 'any', 'posts_per_page' => 1]))
+        return (($wp_post = (new WP_Query())->query(['name' => $post_name, 'post_type' => 'any', 'posts_per_page' => 1]))
             && ($wp_post[0] instanceof WP_Post)) ? new static($wp_post[0]) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function db(): PostBuilder
+    {
+        if (!$this->db) {
+            $this->db = (new Model())->find($this->getId());
+        }
+
+        return $this->db;
     }
 
     /**
@@ -98,7 +118,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getContent($raw = false)
+    public function getContent(bool $raw = false)
     {
         $content = (string)$this->get('post_content', '');
 
@@ -113,7 +133,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getDate($gmt = false)
+    public function getDate(bool $gmt = false)
     {
         return $gmt
             ? strval($this->get('post_date_gmt', ''))
@@ -139,7 +159,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getExcerpt($raw = false)
+    public function getExcerpt(bool $raw = false)
     {
         if (!$excerpt = (string)$this->get('post_excerpt', '')) :
             $text = $this->get('post_content', '');
@@ -176,7 +196,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getMeta($meta_key, $single = false, $default = null)
+    public function getMeta(string $meta_key, $single = false, $default = null)
     {
         return get_post_meta($this->getId(), $meta_key, $single) ?: $default;
     }
@@ -196,7 +216,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getMetaMulti($meta_key, $default = null)
+    public function getMetaMulti(string $meta_key, $default = null)
     {
         return $this->getMeta($meta_key, false, $default);
     }
@@ -204,7 +224,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getMetaSingle($meta_key, $default = null)
+    public function getMetaSingle(string $meta_key, $default = null)
     {
         return $this->getMeta($meta_key, true, $default);
     }
@@ -212,11 +232,19 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getModified($gmt = false)
+    public function getModified(bool $gmt = false)
     {
         return $gmt
             ? strval($this->get('post_modified_gmt', ''))
             : strval($this->get('post_modified', ''));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getModifiedDateTime(bool $gmt = false): DateTime
+    {
+        return Datetime::createFromTimeString($this->getModified($gmt));
     }
 
     /**
@@ -307,7 +335,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getTitle($raw = false)
+    public function getTitle(bool $raw = false)
     {
         $title = (string)$this->get('post_title', '');
 
@@ -344,8 +372,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function save($postdata): void
     {
         $p = ParamsBag::createFromAttrs($postdata);
-        $columns = database()->getConnection()->getSchemaBuilder()->getColumnListing('posts');
-        $db = database('posts');
+        $columns =  $this->db()->getConnection()->getSchemaBuilder()->getColumnListing($this->db()->getTable());
 
         $update = [];
         foreach ($columns as $col) {
@@ -353,8 +380,9 @@ class QueryPost extends ParamsBag implements QueryPostContract
                 $update[$col] = $p->get($col);
             }
         }
+
         if ($update) {
-            $db->where(['ID' => $this->getId()])->update($update);
+            $this->db()->where(['ID' => $this->getId()])->update($update);
         }
 
         if ($p->has('meta')) {
@@ -403,7 +431,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
         $keys = is_array($key) ? $key : [$key => $value];
 
         foreach ($keys as $k => $v) {
-            update_post_meta($this->getId(), $k, $v);
+            $this->db()->saveMeta($k, $v);
         }
     }
 

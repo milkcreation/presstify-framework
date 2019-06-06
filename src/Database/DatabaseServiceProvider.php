@@ -2,8 +2,6 @@
 
 namespace tiFy\Database;
 
-//use Illuminate\Events\Dispatcher;
-//use Illuminate\Container\Container;
 use tiFy\Container\ServiceProvider;
 
 class DatabaseServiceProvider extends ServiceProvider
@@ -34,7 +32,6 @@ class DatabaseServiceProvider extends ServiceProvider
                 'collation' => getenv('DB_COLLATE') ?: 'utf8mb4_unicode_ci',
                 'prefix'    => getenv('DB_PREFIX') ?: ''
             ]);
-            //$manager->setEventDispatcher(new Dispatcher(new Container()));
 
             $manager->setAsGlobal();
 

@@ -3,15 +3,13 @@
 namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\User as CorcelUser;
-use Illuminate\Database\Eloquent\Builder;
+use tiFy\Wordpress\Contracts\UserBuilder;
 
-/**
- * Class User
- * @package tiFy\Wordpress\Database\Model
- *
- * @mixin Builder
- */
-class User extends CorcelUser
+class User extends CorcelUser implements UserBuilder
 {
-
+    /**
+     * Nom de qualification de la connexion associé.
+     * @var string
+     */
+    protected $connection = 'wp';
 }

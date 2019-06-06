@@ -137,7 +137,6 @@ class FileManager extends TemplateFactory implements FileManagerContract
     {
         if (!$this->prepared) {
             parent::prepare();
-            $this->getFile('test2/test2/test2');
         }
 
         return $this;

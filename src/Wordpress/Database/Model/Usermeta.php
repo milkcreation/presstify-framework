@@ -6,12 +6,13 @@ use Corcel\Model\Meta\UserMeta as CorcelUsermeta;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Class Usermeta
- * @package tiFy\Wordpress\Database\Model
- *
  * @mixin Builder
  */
 class Usermeta extends CorcelUsermeta
 {
-
+    /**
+     * Nom de qualification de la connexion associé.
+     * @var string
+     */
+    protected $connection = 'wp';
 }

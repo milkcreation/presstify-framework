@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2019-06-04",
+  "time": "2019-06-06",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -75,7 +75,6 @@
     "ralouphie/mimey": "^2.1",
     "redeyeventures/geopattern": "^1.1",
     "respect/validation": "^1.1",
-    "spatie/image": "^1.5",
     "symfony/console": "^4.2",
     "symfony/filesystem": "^4.2",
     "symfony/finder": "^4.2",

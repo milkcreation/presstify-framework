@@ -13,7 +13,7 @@ interface SigninFactory extends ParamsBag
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
      * Ajout d'un message de notification.
@@ -39,7 +39,7 @@ interface SigninFactory extends ParamsBag
      *
      * @return void
      */
-    public function boot();
+    public function boot(): void;
 
     /**
      * Récupération de l'url de redirection du formulaire d'authentification.
@@ -96,7 +96,7 @@ interface SigninFactory extends ParamsBag
      *
      * @return void
      */
-    public function handle();
+    public function handle(): void;
 
     /**
      * Vérification d'autorisation de connection de rôle(s) utilisateur donné(s).
@@ -114,14 +114,14 @@ interface SigninFactory extends ParamsBag
      *
      * @return string
      */
-    public function logoutLink($attrs = []);
+    public function logoutLink($attrs = []): string;
 
     /**
      * Affichage du lien vers l'interface de récupération de mot de passe oublié.
      *
      * @return string
      */
-    public function lostpasswordLink();
+    public function lostpasswordLink(): string;
 
     /**
      * Récupération de l'instance du gestionnaire de message de notification.
@@ -129,4 +129,21 @@ interface SigninFactory extends ParamsBag
      * @return Notices
      */
     public function notices(): Notices;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return SigninFactory
+     */
+    public function parse(): SigninFactory;
+
+    /**
+     * Initialisation de la classe.
+     *
+     * @param string $name Nom de qualification de l'interface d'authentification.
+     * @param SigninManager $manager Instance du gestionnaire.
+     *
+     * @return SigninFactory
+     */
+    public function prepare(string $name, SigninManager $manager): SigninFactory;
 }

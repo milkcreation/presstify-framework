@@ -4,53 +4,31 @@ namespace tiFy\User\Signin;
 
 use tiFy\Contracts\User\SigninFactory as SigninFactoryContract;
 use tiFy\Contracts\User\SigninManager as SigninManagerContract;
+use tiFy\Support\Manager;
 
-class SigninManager implements SigninManagerContract
+class SigninManager extends Manager implements SigninManagerContract
 {
     /**
-     * Liste des éléments déclarés.
-     * @var SigninFactoryContract[]
+     * @inheritDoc
      */
-    protected $items = [];
-
-    /**
-     * @inheritdoc
-     */
-    public function all(): array
+    public function register($name, ...$args): SigninManagerContract
     {
-        return $this->items;
+        return $this->set([$name => $args[0] ?? []]);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function get(string $name): ?SigninFactoryContract
+    public function walk(&$item, $key = null): void
     {
-        return $this->items[$name] ?? null;
-    }
+        if (!$item instanceof SigninFactoryContract) {
+            $attrs = $item;
+            $item = $this->getContainer()
+                ? $this->getContainer()->get(SigninFactoryContract::class)
+                : new SigninFactory();
+            $item->set($attrs);
+        }
 
-    /**
-     * @inheritdoc
-     */
-    public function register(string $name, array $attrs): SigninManagerContract
-    {
-        $controller = $attrs['controller'] ?? null;
-
-        /** @var SigninFactoryContract $factory */
-        $factory = $controller ? new $controller($name, $attrs) : app()->get('user.signin.factory', [$name, $attrs]);
-
-        $this->set($factory);
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function set(SigninFactoryContract $factory, ?string $name = null): SigninManagerContract
-    {
-        $this->items[$name ? : $factory->getName()] = $factory;
-
-        return $this;
+        $this->items[$key] = $item->prepare((string)$key, $this);
     }
 }

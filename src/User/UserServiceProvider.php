@@ -2,6 +2,7 @@
 
 namespace tiFy\User;
 
+use tiFy\Contracts\User\SigninFactory as SigninFactoryContract;
 use tiFy\Container\ServiceProvider;
 use tiFy\User\Metadata\Metadata;
 use tiFy\User\Metadata\Option as MetaOption;
@@ -29,7 +30,7 @@ class UserServiceProvider extends ServiceProvider
         'user.session',
         'user.session.store',
         'user.signin',
-        'user.signin.factory',
+        SigninFactory::class,
         'user.signup'
     ];
 
@@ -75,11 +76,11 @@ class UserServiceProvider extends ServiceProvider
         });
 
         $this->getContainer()->share('user.signin', function () {
-            return new SigninManager();
+            return new SigninManager($this->getContainer());
         });
 
-        $this->getContainer()->add('user.signin.factory', function ($name, $attrs = []) {
-            return new SigninFactory($name, $attrs);
+        $this->getContainer()->add(SigninFactoryContract::class, function () {
+            return new SigninFactory();
         });
 
         $this->getContainer()->share('user.signup', function () {
