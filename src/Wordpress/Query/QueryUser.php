@@ -304,7 +304,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
         $keys = is_array($key) ? $key : [$key => $value];
 
         foreach ($keys as $k => $v) {
-            $this->db()->saveMeta($k, $v);
+            $this->db()->saveMeta($k, maybe_serialize($v));
         }
     }
 }
