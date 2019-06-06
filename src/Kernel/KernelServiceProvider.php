@@ -3,6 +3,7 @@
 namespace tiFy\Kernel;
 
 use tiFy\Http\Request;
+use tiFy\Http\Uri;
 use tiFy\Container\ServiceProvider;
 use tiFy\Kernel\Events\Manager as EventsManager;
 use tiFy\Kernel\Events\Listener;
@@ -25,7 +26,8 @@ class KernelServiceProvider extends ServiceProvider
         'logger',
         'notices',
         'params.bag',
-        'request'
+        'request',
+        'uri'
     ];
 
     /**
@@ -85,6 +87,10 @@ class KernelServiceProvider extends ServiceProvider
 
         $this->getContainer()->share('request', function () {
             return Request::setFromGlobals();
+        });
+
+        $this->getContainer()->share('uri', function () {
+            return Uri::createFromRequest($this->getContainer()->get('request'));
         });
     }
 }
