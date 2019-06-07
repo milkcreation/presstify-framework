@@ -402,8 +402,8 @@ class Field extends ParamsBag implements FactoryField
             endif;
 
             $required['call'] = !empty($required['value_none']) && empty($required['call'])
-                ? 'is-equal'
-                : 'not-empty';
+                ? 'equals'
+                : 'notEmpty';
             $required['args'] = !empty($required['value_none']) && empty($required['args'])
                 ? [] + [$required['value_none']]
                 : [];

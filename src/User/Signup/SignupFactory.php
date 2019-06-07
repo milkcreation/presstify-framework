@@ -62,7 +62,7 @@ class SignupFactory extends ParamsBag implements SignupFactoryContract
                         'placeholder' => __('Indiquez votre e-mail', 'tify'),
                     ],
                     'type'        => 'text',
-                    'validations' => 'is-email',
+                    'validations' => 'email',
                     'required'    => true,
                     'addons'      => [
                         'user' => [
