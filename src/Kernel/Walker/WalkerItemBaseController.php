@@ -2,10 +2,10 @@
 
 namespace tiFy\Kernel\Walker;
 
-use  tiFy\Kernel\Item\AbstractItemIterator;
-use tiFy\Kernel\Tools;
+use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\HtmlAttrs;
 
-class WalkerItemBaseController extends AbstractItemIterator
+class WalkerItemBaseController extends ParamsBag
 {
     /**
      * Classe de rappel du controleur principal
@@ -145,7 +145,7 @@ class WalkerItemBaseController extends AbstractItemIterator
     {
         $this->parseHtmlAttrs();
 
-        return Tools::Html()->parseAttrs($this->get('attrs', []));
+        return HtmlAttrs::createFromAttrs($this->get('attrs', []));
     }
 
     /**
