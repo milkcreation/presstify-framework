@@ -23,9 +23,9 @@ class RoleManager extends Manager implements RoleManagerContract
      *
      * @return RoleFactoryContract
      */
-    public function get($name): ?RoleFactoryContract
+    public function get(...$args): ?RoleFactoryContract
     {
-        return parent::get($name);
+        return parent::get($args[0]);
     }
 
     /**

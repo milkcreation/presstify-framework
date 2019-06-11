@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Pagination;
 
-use tiFy\Contracts\Partial\Pagination as PaginationContract;
+use tiFy\Contracts\Partial\{Pagination as PaginationContract, PartialFactory as PartialFactoryContract};
 use tiFy\Partial\PartialFactory;
 
 class Pagination extends PartialFactory implements PaginationContract
@@ -18,28 +18,13 @@ class Pagination extends PartialFactory implements PaginationContract
     protected $url;
 
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialPagination',
-                asset()->url('partial/pagination/css/styles.css'),
-                [],
-                181005
-            );
-        });
-    }
-
-    /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var array $links {
      *          @var boolean|array $first Activation du lien vers la première page|Liste d'attributs.
      *          @var boolean|array $last Activation du lien vers la dernière page|Liste d'attributs.
@@ -56,13 +41,13 @@ class Pagination extends PartialFactory implements PaginationContract
      *      @var PaginationUrl|string $url Url de lien vers les pages. %d correspond au numéro de page.
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'before' => '',
-            'after'  => '',
-            'attrs'  => [],
-            'viewer' => [],
+            'attrs'         => [],
+            'after'         => '',
+            'before'        => '',
+            'viewer'        => [],
             'links'  => [
                 'first'    => true,
                 'last'     => true,
@@ -76,55 +61,99 @@ class Pagination extends PartialFactory implements PaginationContract
     }
 
     /**
-     * @inheritdoc
+     * Récupération d'un séparateur de nombre.
+     *
+     * @param array $numbers Liste des numéros de page existants.
+     *
+     * @return void
      */
-    public function enqueue_scripts()
+    public function ellipsis(&$numbers)
     {
-        wp_enqueue_style('PartialPagination');
+        $numbers[] = [
+            'tag'     => 'span',
+            'content' => '...',
+            'attrs'   => 'PartialPagination-itemEllipsis'
+        ];
     }
 
     /**
-     * @inheritdoc
+     * Boucle de récupération des numéros de page.
+     *
+     * @param array $numbers Liste des numéros de page existants.
+     * @param int $start Démarrage de la boucle de récupération.
+     * @param int $end Fin de la boucle de récupération.
+     *
+     * @return void
      */
-    public function parse()
+    public function numLoop(&$numbers, $start, $end)
+    {
+        for ($num = $start; $num <= $end; $num++) {
+            if ($num == 1 && !$this->query->getPage()) {
+                $current = 'true';
+            } elseif ($this->query->getPage() == $num) {
+                $current = 'true';
+            } else {
+                $current = 'false';
+            }
+
+            $numbers[] = [
+                'tag'     => 'a',
+                'content' => $num,
+                'attrs'   => [
+                    'class'        => 'PartialPagination-itemPage PartialPagination-itemPage--link',
+                    'href'         => $this->url->page($num),
+                    'aria-current' => $current
+                ]
+            ];
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialPagination'));
 
         $this->url = $this->get('url', []);
-        if (!$this->url instanceof PaginationUrl) :
+        if (!$this->url instanceof PaginationUrl) {
             $this->url = new PaginationUrl($this->url);
-        endif;
+        }
         $this->set('url', $this->url);
 
         $this->query = $this->get('query', []);
-        if (!$this->query instanceof PaginationQuery) :
+        if (!$this->query instanceof PaginationQuery) {
             $this->query = new PaginationQuery($this->query);
-        endif;
+        }
         $this->set('query', $this->query);
 
         $this->parseLinks();
 
-        if ($this->get('links.numbers')) :
+        if ($this->get('links.numbers')) {
             $this->parseNumbers();
-        endif;
+        }
 
         $this->viewer()->setController(PaginationView::class);
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function parseDefaults()
+    public function parseDefaults(): PartialFactoryContract
     {
-        foreach($this->get('view', []) as $key => $value) :
+        foreach ($this->get('view', []) as $key => $value) {
             $this->viewer()->set($key, $value);
-        endforeach;
+        }
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parseLinks()
     {
@@ -163,20 +192,20 @@ class Pagination extends PartialFactory implements PaginationContract
             ]
         ];
 
-        foreach($defaults as $link => $default) :
+        foreach ($defaults as $link => $default) {
             $attrs = $this->get("links.{$link}", []);
 
-            if ($attrs === false) :
-            elseif ($attrs === true) :
+            if ($attrs === false) {
+            } elseif ($attrs === true) {
                 $attrs = $default;
-            elseif (is_string($attrs)) :
+            } elseif (is_string($attrs)) {
                 $attrs = array_merge($default, ['content' => $attrs]);
-            else :
+            } else {
                 $attrs = array_merge($default, $attrs);
-            endif;
+            }
 
             $this->set("links.{$link}", $attrs);
-        endforeach;
+        }
     }
 
     /**
@@ -198,72 +227,24 @@ class Pagination extends PartialFactory implements PaginationContract
         $right_gap = (($block_high + $anchor + $gap) < $this->query->getTotalPage()) ? true : false;
 
         $numbers = [];
-        if ($left_gap && !$right_gap) :
+        if ($left_gap && !$right_gap) {
             $this->numLoop($numbers, 1, $anchor);
             $this->ellipsis($numbers);
             $this->numLoop($numbers, $block_min, $this->query->getTotalPage());
-        elseif ($left_gap && $right_gap) :
+        } elseif ($left_gap && $right_gap) {
             $this->numLoop($numbers, 1, $anchor);
             $this->ellipsis($numbers);
             $this->numLoop($numbers, $block_min, $block_high);
             $this->ellipsis($numbers);
-            $this->numLoop($numbers, ($this->query->getTotalPage()-$anchor+1), $this->query->getTotalPage());
-        elseif (!$left_gap && $right_gap) :
+            $this->numLoop($numbers, ($this->query->getTotalPage() - $anchor + 1), $this->query->getTotalPage());
+        } elseif (!$left_gap && $right_gap) {
             $this->numLoop($numbers, 1, $block_high);
             $this->ellipsis($numbers);
-            $this->numLoop($numbers, ($this->query->getTotalPage()-$anchor+1), $this->query->getTotalPage());
-        else :
+            $this->numLoop($numbers, ($this->query->getTotalPage() - $anchor + 1), $this->query->getTotalPage());
+        } else {
             $this->numLoop($numbers, 1, $this->query->getTotalPage());
-        endif;
+        }
 
         $this->set('numbers', $numbers);
-    }
-
-    /**
-     * Boucle de récupération des numéros de page.
-     *
-     * @param array $numbers Liste des numéros de page existants.
-     * @param int $start Démarrage de la boucle de récupération.
-     * @param int $end Fin de la boucle de récupération.
-     *
-     * @return void
-     */
-    public function numLoop(&$numbers, $start, $end)
-    {
-        for ($num = $start; $num <= $end; $num++) :
-            if ($num == 1 && !$this->query->getPage()) :
-                $current = 'true';
-            elseif ($this->query->getPage() == $num) :
-                $current = 'true';
-            else :
-                $current = 'false';
-            endif;
-
-            $numbers[] = [
-                'tag'     => 'a',
-                'content' => $num,
-                'attrs'   => [
-                    'class'        => 'PartialPagination-itemPage PartialPagination-itemPage--link',
-                    'href'         => $this->url->page($num),
-                    'aria-current' => $current
-                ]
-            ];
-        endfor;
-    }
-
-    /**
-     * Récupération d'un séparateur de nombre.
-     *
-     * @param array $numbers Liste des numéros de page existants.
-     *
-     * @return void
-     */
-    public function ellipsis(&$numbers)
-    {
-        $numbers[] = [
-            'tag' => 'span',
-            'content' => '...',
-            'attrs' => 'PartialPagination-itemEllipsis'
-        ];
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Partial;
 
@@ -14,9 +14,9 @@ interface Modal extends PartialFactory
     public function trigger($attrs = []);
 
     /**
-     * Chargement du contenu de la modale via Ajax.
+     * Chargement du contenu de la modale via une requête XHR.
      *
      * @return void
      */
-    public function wp_ajax();
+    public function xhrGetContent();
 }

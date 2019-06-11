@@ -34,9 +34,9 @@ class TemplateManager extends Manager implements TemplateManagerContract
      *
      * @return TemplateFactoryContract|null
      */
-    public function get($name): ?TemplateFactoryContract
+    public function get(...$args): ?TemplateFactoryContract
     {
-        return parent::get($name);
+        return parent::get($args[0]);
     }
 
     /**

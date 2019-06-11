@@ -1,20 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial;
 
+use BadMethodCallException;
+use Exception;
+use tiFy\Contracts\Partial\PartialView as PartialViewContract;
 use tiFy\View\ViewController;
 
 /**
- * Class PartialView
- *
  * @method string after()
  * @method string attrs()
  * @method string before()
  * @method string content()
+ * @method string getAlias()
  * @method string getId()
  * @method string getIndex()
  */
-class PartialView extends ViewController
+class PartialView extends ViewController implements PartialViewContract
 {
     /**
      * Liste des méthodes héritées.
@@ -25,29 +27,34 @@ class PartialView extends ViewController
         'attrs',
         'before',
         'content',
+        'getAlias',
         'getId',
         'getIndex'
     ];
 
     /**
-     * Translation d'appel des méthodes de l'application associée.
-     *
-     * @param string $name Nom de la méthode à appeler.
-     * @param array $arguments Liste des variables passées en argument.
-     *
-     * @return mixed
+     * @inheritDoc
      */
     public function __call($name, $arguments)
     {
-        if (in_array($name, $this->mixins)) :
-            return call_user_func_array(
-                [$this->engine->get('partial'), $name],
-                $arguments
+        try {
+            if (in_array($name, $this->mixins)) {
+                return call_user_func_array([$this->engine->get('partial'), $name], $arguments);
+            } else {
+                throw new BadMethodCallException(
+                    sprintf(
+                        __('La méthode %s du controleur de portion d\'affichage n\'est pas permise.', 'tify'),
+                        $name
+                    )
+                );
+            }
+        } catch (Exception $e) {
+            throw new BadMethodCallException(
+                sprintf(
+                    __('La méthode %s du controleur de portion d\'affichage n\'est pas disponible.', 'tify'),
+                    $name
+                )
             );
-        elseif (method_exists($this, $name)) :
-            return call_user_func_array([$this, $name], $arguments);
-        endif;
-
-        return null;
+        }
     }
 }

@@ -1,44 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Tab;
 
-use tiFy\Contracts\Partial\Tab as TabContract;
+use tiFy\Contracts\Partial\{PartialFactory as PartialFactoryContract, Tab as TabContract};
 use tiFy\Contracts\Partial\TabItems as TabItemsContract;
 use tiFy\Partial\PartialFactory;
 
 class Tab extends PartialFactory implements TabContract
 {
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialTab',
-                asset()->url('partial/tab/css/styles.css'),
-                [],
-                170704
-            );
-
-            wp_register_script(
-                'PartialTab',
-                asset()->url('partial/tab/js/scripts.js'),
-                ['jquery-ui-widget'],
-                170704,
-                true
-            );
-        });
-    }
-
-    /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string $active Nom de qualification de l'élément actif.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var string $before Contenu placé avant.
      *      @var array $items {
      *          Liste des onglets de navigation.
      *
@@ -48,25 +26,24 @@ class Tab extends PartialFactory implements TabContract
      *          @var int $position Ordre d'affichage dans le
      *      }
      *      @var array $rotation Rotation des styles d'onglet.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
+            'attrs'         => [],
+            'after'         => '',
+            'before'        => '',
+            'viewer'        => [],
             'active'   => null,
-            'after'    => '',
-            'attrs'    => [],
-            'before'   => '',
             'items'    => [],
-            'rotation' => [],
-            'viewer'   => []
+            'rotation' => []
         ];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function display()
+    public function display(): string
     {
         /* @var TabItemsContract $items */
         $items = $this->get('items');
@@ -75,16 +52,7 @@ class Tab extends PartialFactory implements TabContract
     }
 
     /**
-     * @inheritdoc
-     */
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('PartialTab');
-        wp_enqueue_script('PartialTab');
-    }
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTabStyle(int $depth = 0)
     {
@@ -92,9 +60,9 @@ class Tab extends PartialFactory implements TabContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
@@ -106,10 +74,12 @@ class Tab extends PartialFactory implements TabContract
         }
         /* @var TabItemsContract $items */
         $this->set('items', $items->prepare($this));
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function viewer($view = null, $data = [])
     {
@@ -121,25 +91,10 @@ class Tab extends PartialFactory implements TabContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function wp_ajax()
+    public function xhrSetTab()
     {
-        check_ajax_referer('tiFyPartialTab');
-
-        if (!$key = request()->post('key')) {
-            wp_die(0);
-        }
-
-        $raw_key = base64_decode($key);
-        if (!$raw_key = maybe_unserialize($raw_key)) {
-            wp_die(0);
-        } else {
-            $raw_key = maybe_unserialize($raw_key);
-        };
-
-        $success = update_user_meta(get_current_user_id(), 'tab' . $raw_key['_screen_id'], $raw_key['name']);
-
-        wp_send_json(['success' => $success]);
+        return ['success' => true];
     }
 }

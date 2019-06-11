@@ -58,15 +58,15 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
      */
     public function setChecked($checked = null)
     {
-        if (!is_null($checked)) :
+        if (!is_null($checked)) {
             $checked = Arr::wrap($checked);
 
             $this->collect()->each(function (CheckboxChoice $item) use ($checked) {
-                if (in_array($item->getValue(), $checked)) :
+                if (in_array($item->getValue(), $checked)) {
                     $item->setChecked();
-                endif;
+                }
             });
-        endif;
+        }
 
         return $this;
     }
@@ -76,9 +76,9 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
      */
     public function setField(CheckboxCollection $field)
     {
-        if (!$this->field instanceof CheckboxCollection) :
+        if (!$this->field instanceof CheckboxCollection) {
             $this->field = $field;
-        endif;
+        }
 
         return $this;
     }
@@ -88,9 +88,9 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
      */
     public function wrap($item, $key = null)
     {
-        if (!$item instanceof CheckboxChoice) :
+        if (!$item instanceof CheckboxChoice) {
             $item = new CheckboxChoice($key, $item);
-        endif;
+        }
 
         return $this->items[$key] = $item;
     }

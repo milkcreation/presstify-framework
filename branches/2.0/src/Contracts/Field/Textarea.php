@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Field;
 
-interface Textarea extends FieldController
+interface Textarea extends FieldFactory
 {
 
 }

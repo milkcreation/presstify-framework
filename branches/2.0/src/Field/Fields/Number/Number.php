@@ -1,39 +1,45 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\Number;
 
-use tiFy\Contracts\Field\Number as NumberContract;
-use tiFy\Field\FieldController;
+use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, Number as NumberContract};
+use tiFy\Field\FieldFactory;
 
-class Number extends FieldController implements NumberContract
+class Number extends FieldFactory implements NumberContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant le champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $name Clé d'indice de la valeur de soumission du champ.
-     *      @var int $value Valeur courante de soumission du champ.
+     * {@inheritDoc}
+     *
+     * @return array {
      *      @var array $attrs Attributs HTML du champ.
-     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      * }
      */
-    protected $attributes = [
-        'before'        => '',
-        'after'         => '',
-        'name'          => '',
-        'value'         => 0,
-        'attrs'         => [],
-        'viewer'        => [],
-    ];
+    public function defaults(): array
+    {
+        return [
+            'attrs'  => [],
+            'after'  => '',
+            'before' => '',
+            'name'   => '',
+            'value'  => 0,
+            'viewer' => []
+        ];
+    }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parse($attrs = [])
+    public function parse(): FieldFactoryContract
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.type', 'number');
+
+        return $this;
     }
 }

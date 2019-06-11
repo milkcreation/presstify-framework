@@ -1,23 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\Repeater;
 
-use tiFy\Contracts\Field\Repeater as RepeaterContract;
-use tiFy\Field\FieldController;
+use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, Repeater as RepeaterContract};
+use tiFy\Field\FieldFactory;
 use tiFy\Support\Arr;
 use tiFy\Support\ParamsBag;
 
-class Repeater extends FieldController implements RepeaterContract
+class Repeater extends FieldFactory implements RepeaterContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant le champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $name Clé d'indice de la valeur de soumission du champ.
-     *      @var array $value Valeur courante de soumission du champ.
+     * {@inheritDoc}
+     *
+     * @return array {
      *      @var array $attrs Attributs HTML du champ.
-     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var array $ajax Liste des arguments de requête de récupération des éléments via Ajax.
      *      @var array $button Liste des attributs de configuration du bouton d'ajout d'un élément.
      *      @var int $max Nombre maximum de valeur pouvant être ajoutées. -1 par défaut, pas de limite.
@@ -27,63 +28,30 @@ class Repeater extends FieldController implements RepeaterContract
      *      @var array $args Arguments complémentaires porté par la requête Ajax.
      * }
      */
-    protected $attributes = [
-        'before'      => '',
-        'after'       => '',
-        'name'        => '',
-        'value'       => [],
-        'attrs'       => [],
-        'viewer'      => [],
-        'ajax'        => [],
-        'button'      => [],
-        'max'         => -1,
-        'removable'   => true,
-        'sortable'    => true,
-        'args'        => [],
-    ];
-
-    /**
-     * @inheritdoc
-     */
-    public function boot()
+    public function defaults(): array
     {
-        add_action('init', function () {
-            add_action('wp_ajax_field_repeater', [$this, 'wp_ajax']);
-
-            add_action('wp_ajax_nopriv_field_repeater', [$this, 'wp_ajax']);
-
-            wp_register_style(
-                'FieldRepeater',
-                asset()->url('/field/repeater/css/styles.css'),
-                [is_admin() ? 'tiFyAdmin' : ''],
-                170421
-            );
-
-            wp_register_script(
-                'FieldRepeater',
-                asset()->url('/field/repeater/js/scripts.js'),
-                ['jquery', 'jquery-ui-widget', 'jquery-ui-sortable'],
-                170421,
-                true
-            );
-        });
+        return [
+            'attrs'  => [],
+            'after'  => '',
+            'before' => '',
+            'name'   => '',
+            'value'  => '',
+            'viewer' => [],
+            'ajax'        => [],
+            'args'        => [],
+            'button'      => [],
+            'max'         => -1,
+            'removable'   => true,
+            'sortable'    => true
+        ];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function enqueue_scripts()
+    public function parse(): FieldFactoryContract
     {
-        wp_enqueue_style('FieldRepeater');
-        wp_enqueue_script('FieldRepeater');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function parse($attrs = [])
-    {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.class', trim(sprintf($this->get('attrs.class', '%s'), ' FieldRepeater')));
 
@@ -142,46 +110,40 @@ class Repeater extends FieldController implements RepeaterContract
         ]);
 
         $this->set('value', array_values(Arr::wrap($this->get('value', []))));
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parseDefaults()
+    public function parseDefaults(): FieldFactoryContract
     {
-        foreach($this->get('viewer', []) as $key => $value) {
-            $this->viewer()->set($key, $value);
-        }
+        $this->parseViewer();
+
+        return $this;
     }
 
     /**
-     * Récupération des champs via Ajax.
+     * Récupération de la réponse HTTP via une requête XHR.
      *
-     * @return void
+     * @return array
      */
-    public function wp_ajax()
+    public function xhrResponse(): array
     {
         $params = ParamsBag::createFromAttrs(request()->request->all());
-
-        check_ajax_referer('FieldRepeater' . $params->get('_id'));
-
         $max = $params->get('max');
 
         if (($max > 0) && ($params->get('count') >= $max)) {
-            wp_send_json_error(__('Nombre de valeur maximum atteinte', 'tify'));
+            return [
+                'success' => false,
+                'data' => __('Nombre de valeur maximum atteinte', 'tify')
+            ];
         } else {
-            $this->set('name', $params->get('name'));
-            $this->set('viewer', $params->get('_viewer', []));
-
-            wp_send_json_success(
-                (string)$this->viewer(
-                    'item-wrap',
-                    array_merge(
-                        $params->all(),
-                        ['value' => '']
-                    )
-                )
-            );
+            return [
+                'success' => true,
+                'data'    => (string)$this->viewer('item-wrap', array_merge($params->all(), ['value' => '']))
+            ];
         }
     }
 }

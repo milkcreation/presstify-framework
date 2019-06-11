@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Tag;
 
-use tiFy\Contracts\Partial\Tag as TagContract;
+use tiFy\Contracts\Partial\{PartialFactory as PartialFactoryContract, Tag as TagContract};
 use tiFy\Partial\PartialFactory;
 
 class Tag extends PartialFactory implements TagContract
@@ -17,20 +17,20 @@ class Tag extends PartialFactory implements TagContract
     ];
 
     /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string $tag Balise HTML div|span|a|... défaut div.
      *      @var string|callable $content Contenu de la balise HTML.
      *      @var boolean $singleton Activation de balise de type singleton. ex <{tag}/>. Usage avancé, cet attributon
      *                              se fait automatiquement pour les balises connues.
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'before'    => '',
@@ -44,14 +44,16 @@ class Tag extends PartialFactory implements TagContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
-        if (in_array($this->get('tag'), $this->singleton)) :
+        if (in_array($this->get('tag'), $this->singleton)) {
             $this->set('singleton', true);
-        endif;
+        }
+
+        return $this;
     }
 }

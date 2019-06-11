@@ -2,16 +2,28 @@
 
 namespace tiFy\Partial\Partials\PdfPreview;
 
+use tiFy\Contracts\Partial\{PartialFactory as PartialFactoryContract, PdfPreview as PdfPreviewContract};
 use tiFy\Partial\PartialFactory;
 
-class PdfPreview extends PartialFactory
+class PdfPreview extends PartialFactory implements PdfPreviewContract
 {
     /**
      * @inheritDoc
+     *
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+     * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
+            'attrs'         => [],
+            'after'         => '',
+            'before'        => '',
+            'viewer'        => [],
             'src'     => 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf',
             'view'    => [
                 'attrs' => [
@@ -57,7 +69,7 @@ class PdfPreview extends PartialFactory
     /**
      * @inheritDoc
      */
-    public function display()
+    public function display(): string
     {
         return (string)$this->viewer('pdf-preview', $this->all());
     }
@@ -65,7 +77,7 @@ class PdfPreview extends PartialFactory
     /**
      * @inheritDoc
      */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         $defaults = $this->defaults();
         foreach(['view', 'prev', 'next', 'page', 'num', 'total'] as $el) {
@@ -89,5 +101,7 @@ class PdfPreview extends PartialFactory
             'num.attrs.data-control'     => 'pdf-preview.page.num',
             'total.attrs.data-control'   => 'pdf-preview.page.total',
         ]);
+
+        return $this;
     }
 }

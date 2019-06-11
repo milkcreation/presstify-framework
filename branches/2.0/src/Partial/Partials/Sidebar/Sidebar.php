@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Sidebar;
 
 use Closure;
 use Illuminate\Support\Collection;
-use tiFy\Contracts\Partial\Sidebar as SidebarContract;
+use tiFy\Contracts\Partial\{PartialFactory as PartialFactoryContract, Sidebar as SidebarContract};
 use tiFy\Partial\PartialFactory;
 
 /**
@@ -18,35 +18,13 @@ use tiFy\Partial\PartialFactory;
 class Sidebar extends PartialFactory implements SidebarContract
 {
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialSidebar',
-                asset()->url('partial/sidebar/css/styles.css'),
-                [],
-                180511
-            );
-            wp_register_script(
-                'PartialSidebar',
-                asset()->url('partial/sidebar/css/scripts.js'),
-                ['jquery'],
-                180511,
-                true
-            );
-        });
-    }
-
-    /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée
      *                             l'unité par défault est le px.
      *      @var int $z -index Profondeur de champs.
@@ -73,12 +51,12 @@ class Sidebar extends PartialFactory implements SidebarContract
      *      @var string $theme Theme couleur de l'interface light|dark.
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'before'        => '',
-            'after'         => '',
             'attrs'         => [],
+            'after'         => '',
+            'before'        => '',
             'viewer'        => [],
             'width'         => '300px',
             'z-index'       => 99990,
@@ -96,18 +74,9 @@ class Sidebar extends PartialFactory implements SidebarContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('PartialSidebar');
-        wp_enqueue_script('PartialSidebar');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
@@ -123,16 +92,16 @@ class Sidebar extends PartialFactory implements SidebarContract
             ->set('attrs.aria-theme', $this->get('theme'));
 
         $items = [];
-        foreach ($this->get('items', []) as $item) :
-            if ($item instanceof SidebarItem) :
+        foreach ($this->get('items', []) as $item) {
+            if ($item instanceof SidebarItem) {
                 $items[] = $item;
-            elseif (is_array($item)) :
+            } elseif (is_array($item)) {
                 $items[] = new SidebarItem($item);
-            elseif (is_string($item)) :
+            } elseif (is_string($item)) {
                 $item = ['content' => $item];
                 $items[] = new SidebarItem($item);
-            endif;
-        endforeach;
+            }
+        }
 
         $header = $this->get('header');
         $this->set('header', $header instanceof Closure
@@ -143,31 +112,33 @@ class Sidebar extends PartialFactory implements SidebarContract
             ? call_user_func($footer) : (is_string($footer) ? $footer : '&nbsp;'));
 
         $this->set('items', (new Collection($items))->sortBy('position')->all());
+
+        return $this;
     }
 
     /**
-     * Traitement de la liste des attributs par défaut.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function parseDefaults()
+    public function parseDefaults(): PartialFactoryContract
     {
-        $default_class = class_info($this)->getShortName() . ' ' .
-            class_info($this)->getShortName() . '--' . $this->getIndex();
-        if (!$this->has('attrs.class')) :
+        $default_class = ucfirst($this->getAlias()) . ' ' . ucfirst($this->getAlias()) . '--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $default_class);
-        else :
+        } else {
             $this->set('attrs.class', sprintf(
                 $this->get('attrs.class', ''),
                 $default_class
             ));
-        endif;
-        if (!$this->get('attrs.class')) :
-            $this->pull('attrs.class');
-        endif;
+        }
 
-        foreach($this->get('view', []) as $key => $value) :
+        if (!$this->get('attrs.class')) {
+            $this->pull('attrs.class');
+        }
+
+        foreach($this->get('view', []) as $key => $value) {
             $this->viewer()->set($key, $value);
-        endforeach;
+        }
+
+        return $this;
     }
 }

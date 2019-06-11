@@ -1,35 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Table;
 
-use tiFy\Contracts\Partial\Table as TableContract;
+use tiFy\Contracts\Partial\{PartialFactory as PartialFactoryContract, Table as TableContract};
 use tiFy\Partial\PartialFactory;
 
 class Table extends PartialFactory implements  TableContract
 {
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialTable',
-                asset()->url('partial/table/css/styles.css'),
-                [],
-                160714
-            );
-        });
-    }
-
-    /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var bool $header Activation de l'entête de table.
      *      @var bool $footer Activation du pied de table.
      *      @var string[] $columns Intitulé des colonnes.
@@ -37,12 +22,12 @@ class Table extends PartialFactory implements  TableContract
      *      @var string $none Intitulé de la table lorsque la table ne contient aucune donnée.
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'before'  => '',
-            'after'   => '',
             'attrs'   => [],
+            'after'   => '',
+            'before'  => '',
             'viewer'  => [],
             'header'  => true,
             'footer'  => true,
@@ -65,20 +50,14 @@ class Table extends PartialFactory implements  TableContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('PartialTable');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
         $this->set('count', count($this->get('columns', [])));
+
+        return $this;
     }
 }

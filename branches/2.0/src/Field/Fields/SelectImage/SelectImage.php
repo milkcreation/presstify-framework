@@ -1,84 +1,66 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\SelectImage;
 
-use tiFy\Contracts\Field\SelectImage as SelectImageContract;
+use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, SelectImage as SelectImageContract};
 use tiFy\Contracts\Field\SelectChoice;
-use tiFy\Field\FieldController;
+use tiFy\Field\FieldFactory;
 
-class SelectImage extends FieldController implements SelectImageContract
+class SelectImage extends FieldFactory implements SelectImageContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant le champ.
+     * {@inheritDoc}
+     *
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
      *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
      *      @var string $name Clé d'indice de la valeur de soumission du champ.
      *      @var string $value Valeur courante de soumission du champ.
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string|string[]|array|SelectChoice[]|SelectImageChoices $choices Chemin absolu vers les éléments de la
      *                                                                            liste de selection|Liste de selection
      *                                                                            d'éléments.
      * }
      */
-    protected $attributes = [
-        'before'     => '',
-        'after'      => '',
-        'name'       => '',
-        'value'      => null,
-        'attrs'      => [],
-        'viewer'     => [],
-        'choices'    => []
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function defaults(): array
     {
-        add_action('init', function () {
-            wp_register_style(
-                'FieldSelectImage',
-                asset()->url('field/select-image/css/styles.css'),
-                ['FieldSelectJs'],
-                180808
-            );
-        });
+        return [
+            'attrs'   => [],
+            'after'   => '',
+            'before'  => '',
+            'name'    => '',
+            'value'   => null,
+            'viewer'  => [],
+            'choices' => []
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function enqueue_scripts()
+    public function parse(): FieldFactoryContract
     {
-        wp_enqueue_style('FieldSelectImage');
-        wp_enqueue_script('FieldSelectJs');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parse($attrs = [])
-    {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.class', trim($this->get('attrs.class', '%s') . ' FieldSelectJs FieldSelectImage'));
 
         $choices = $this->get('choices', []);
-        if (!$choices instanceof SelectImageChoices) :
-            $choices = new SelectImageChoices($choices,$this->getValue());
-        endif;
+        if (!$choices instanceof SelectImageChoices) {
+            $choices = new SelectImageChoices($choices, $this->getValue());
+        }
         $this->set('choices', $choices->setField($this));
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parseDefaults()
+    public function parseDefaults(): FieldFactoryContract
     {
-        foreach($this->get('viewer', []) as $key => $value) :
-            $this->viewer()->set($key, $value);
-        endforeach;
+        $this->parseViewer();
+
+        return $this;
     }
 }

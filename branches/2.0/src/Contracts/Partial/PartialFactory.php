@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Partial;
 
@@ -13,82 +13,124 @@ interface PartialFactory extends ParamsBag
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
-     * Affichage du contenu placé après le champ
+     * Post-affichage.
      *
      * @return void
      */
-    public function after();
+    public function after(): void;
 
     /**
      * Affichage de la liste des attributs de balise.
      *
-     * @return string
+     * @return void
      */
-    public function attrs();
+    public function attrs(): void;
 
     /**
-     * Affichage du contenu placé avant le champ
+     * Pré-affichage.
      *
      * @return void
      */
-    public function before();
+    public function before(): void;
 
     /**
      * Initialisation du controleur.
      *
      * @return void
      */
-    public function boot();
+    public function boot(): void;
 
     /**
-     * Affichage du contenu de la balise champ.
+     * Affichage du contenu.
      *
      * @return void
      */
-    public function content();
+    public function content(): void;
 
     /**
      * Affichage.
      *
      * @return string
      */
-    public function display();
+    public function display(): string;
 
     /**
-     * Mise en file des scripts CSS et JS utilisés pour l'affichage.
-     *
-     * @return $this
-     */
-    public function enqueue_scripts();
-
-    /**
-     * Récupération de l'identifiant de qualification du controleur.
+     * Récupération de l'identifiant de qualification dans le gestionnaire.
      *
      * @return string
      */
-    public function getId();
+    public function getAlias(): string;
 
     /**
-     * Récupération de l'indice de la classe courante.
+     * Récupération de l'identifiant de qualification.
+     *
+     * @return string
+     */
+    public function getId(): string;
+
+    /**
+     * Récupération de l'indice de qualification dans le gestionnaire.
      *
      * @return int
      */
-    public function getIndex();
+    public function getIndex(): int;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return static
+     */
+    public function parse(): PartialFactory;
 
     /**
      * Traitement de la liste des attributs par défaut.
      *
-     * @return void
+     * @return static
      */
-    public function parseDefaults();
+    public function parseDefaults(): PartialFactory;
 
     /**
-     * Récupération de la vue.
-     * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
-     * {@internal Sinon récupére le gabarit d'affichage et passe les variables en argument.}
+     * Traitement des attributs de configuration du pilote d'affichage.
+     *
+     * @return $this
+     */
+    public function parseViewer(): PartialFactory;
+
+    /**
+     * Définition de l'instance de l'élément.
+     *
+     * @param string $alias Alias de qualification de l'instance dans le gestionnaire.
+     * @param Partial $manager Instance du gestionnaire.
+     *
+     * @return static
+     */
+    public function prepare(string $alias, Partial $manager): PartialFactory;
+
+    /**
+     * Définition de l'identifiant de qualification.
+     *
+     * @param string $id
+     *
+     * @return static
+     */
+    public function setId(string $id): PartialFactory;
+
+    /**
+     * Définition de l'indice de qualification.
+     *
+     * @param int $index
+     *
+     * @return static
+     */
+    public function setIndex(int $index): PartialFactory;
+
+    /**
+     * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
+     * {@internal Si aucun argument n'est passé à la méthode, retourne l'instance du controleur de liste.}
+     * {@internal Sinon récupére l'instance du gabarit d'affichage et passe les variables en argument.}
      *
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.

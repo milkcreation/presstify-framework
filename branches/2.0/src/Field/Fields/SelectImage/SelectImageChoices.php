@@ -16,7 +16,7 @@ class SelectImageChoices extends SelectJsChoices
      */
     public function __construct($items, $selected = null)
     {
-        if (is_string($items)) :
+        if (is_string($items)) {
             $finder = new Finder();
             $finder
                 ->in($items)
@@ -24,10 +24,10 @@ class SelectImageChoices extends SelectJsChoices
                 ->files()
                 ->name('#(\.ico$|\.gif$|\.jpe?g$|\.png$|\.svg$)#');
             $items = [];
-            foreach ($finder as $file) :
+            foreach ($finder as $file) {
                 $items[$file->getRelativePathname()] = Tools::File()->imgBase64Src($file->getRealPath());
-            endforeach;
-        endif;
+            }
+        }
 
         parent::__construct($items, $selected);
     }

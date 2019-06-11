@@ -58,21 +58,21 @@ class RadioChoices extends Collection implements RadioChoicesContract
      */
     public function setChecked($checked = null)
     {
-        if (!is_null($checked)) :
+        if (!is_null($checked)) {
             $checked = Arr::wrap($checked);
 
             $this->collect()->each(function (RadioChoice $item) use ($checked) {
-                if (in_array($item->getValue(), $checked)) :
+                if (in_array($item->getValue(), $checked)) {
                     $item->setChecked();
-                endif;
+                }
             });
-        endif;
+        }
 
-        if (!$this->collect()->first(function(RadioChoice $item) { return $item->isChecked(); })) :
-            if ($first = $this->collect()->first()) :
+        if (!$this->collect()->first(function(RadioChoice $item) { return $item->isChecked(); })) {
+            if ($first = $this->collect()->first()) {
                 $first->setChecked();
-            endif;
-        endif;
+            }
+        }
 
         return $this;
     }
@@ -82,9 +82,9 @@ class RadioChoices extends Collection implements RadioChoicesContract
      */
     public function setField(RadioCollection $field)
     {
-        if (!$this->field instanceof RadioCollection) :
+        if (!$this->field instanceof RadioCollection) {
             $this->field = $field;
-        endif;
+        }
 
         return $this;
     }
@@ -94,9 +94,9 @@ class RadioChoices extends Collection implements RadioChoicesContract
      */
     public function wrap($item, $key = null)
     {
-        if (!$item instanceof RadioChoice) :
+        if (!$item instanceof RadioChoice) {
             $item = new RadioChoice($key, $item);
-        endif;
+        }
 
         return $this->items[$key] = $item;
     }

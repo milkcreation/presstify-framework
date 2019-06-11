@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Spinner;
 
-use tiFy\Contracts\Partial\Spinner as SpinnerContract;
+use tiFy\Contracts\Partial\{PartialFactory as PartialFactoryContract, Spinner as SpinnerContract};
 use tiFy\Partial\PartialFactory;
 
 class Spinner extends PartialFactory implements SpinnerContract
@@ -26,84 +26,50 @@ class Spinner extends PartialFactory implements SpinnerContract
     ];
 
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialSpinner',
-                asset()->url('partial/spinner/css/spinkit.min.css'),
-                [],
-                '1.2.5'
-            );
-
-            foreach ($this->spinners as $spinner) :
-                wp_register_style(
-                    "PartialSpinner-{$spinner}",
-                    asset()->url("/partial/spinner/css/{$spinner}.min.css"),
-                    [],
-                    '1.2.5'
-                );
-            endforeach;
-        });
-    }
-
-    /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string $spinner Choix de l'indicateur de préchargement. 'rotating-plane|fading-circle|folding-cube|
      *                           double-bounce|wave|wandering-cubes|spinner-pulse|chasing-dots|three-bounce|circle|
      *                           cube-grid. @see http://tobiasahlin.com/spinkit/
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'before'  => '',
-            'after'   => '',
-            'attrs'   => [],
-            'viewer'  => [],
+            'attrs'         => [],
+            'after'         => '',
+            'before'        => '',
+            'viewer'        => [],
             'spinner' => 'spinner-pulse',
         ];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function enqueue_scripts($spinner = null)
-    {
-        if (!$spinner || !in_array($spinner, $this->spinners)) :
-            wp_enqueue_style('PartialSpinner');
-        else :
-            wp_enqueue_style("PartialSpinner-{$spinner}");
-        endif;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
-        switch($spinner = $this->get('spinner')) :
+        switch($spinner = $this->get('spinner')) {
             default :
                 $spinner_class = "sk-{$spinner}";
                 break;
             case 'spinner-pulse':
                 $spinner_class = "sk-spinner sk-{$spinner}";
                 break;
-        endswitch;
+        }
 
         $this->set('attrs.class', ($exists = $this->get('attrs.class'))
             ? "{$exists} {$spinner_class}"
             : $spinner_class
         );
+
+        return $this;
     }
 }

@@ -15,8 +15,8 @@ class Mailer extends tiFyMailer
 
         if ($this->get('enqueue_scripts') && ($this->get('admin.confirmation') || $this->get('admin.notification'))) {
             add_action('admin_enqueue_scripts', function () {
-                field('repeater')->enqueue_scripts();
-                field('toggle-switch')->enqueue_scripts();
+                field('repeater')->enqueue();
+                field('toggle-switch')->enqueue();
             });
         }
     }

@@ -11,6 +11,7 @@ use tiFy\Partial\PartialView;
  * @method string attrs()
  * @method string before()
  * @method string content()
+ * @method string getAlias()
  * @method string getId()
  * @method string getIndex()
  * @method string getTabStyle(int $depth = 0)
@@ -26,6 +27,7 @@ class TabView extends PartialView
         'attrs',
         'before',
         'content',
+        'getAlias',
         'getId',
         'getIndex',
         'getTabStyle'

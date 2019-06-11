@@ -1,49 +1,45 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\Submit;
 
-use tiFy\Contracts\Field\Submit as SubmitContract;
-use tiFy\Field\FieldController;
+use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, Submit as SubmitContract};
+use tiFy\Field\FieldFactory;
 
-class Submit extends FieldController implements SubmitContract
+class Submit extends FieldFactory implements SubmitContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant le champ.
+     * {@inheritDoc}
+     *
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
      *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
      *      @var string $name Clé d'indice de la valeur de soumission du champ.
      *      @var string $value Valeur courante de soumission du champ.
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      * }
      */
-    protected $attributes = [
-        'before' => '',
-        'after'  => '',
-        'name'   => '',
-        'value'  => '',
-        'attrs'  => [],
-        'viewer' => []
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'value' => __('Envoyer', 'tify')
+            'attrs'  => [],
+            'after'  => '',
+            'before' => '',
+            'name'   => '',
+            'value'  => __('Envoyer', 'tify'),
+            'viewer' => []
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parse($attrs = [])
+    public function parse(): FieldFactoryContract
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.type', 'submit');
+
+        return $this;
     }
 }

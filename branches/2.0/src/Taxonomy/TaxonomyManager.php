@@ -13,9 +13,9 @@ class TaxonomyManager extends Manager implements TaxonomyManagerContract
     /**
      * @inheritdoc
      */
-    public function get($name): ?TaxonomyFactoryContract
+    public function get(...$args): ?TaxonomyFactoryContract
     {
-        return parent::get($name);
+        return parent::get($args[0]);
     }
 
     /**

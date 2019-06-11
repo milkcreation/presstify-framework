@@ -2,41 +2,19 @@
 
 namespace tiFy\Partial\Partials\Accordion;
 
-use tiFy\Contracts\Partial\Accordion as AccordionContract;
+use tiFy\Contracts\Partial\{Accordion as AccordionContract, PartialFactory as PartialFactoryContract};
 use tiFy\Partial\PartialFactory;
 
 class Accordion extends PartialFactory implements AccordionContract
 {
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialAccordion',
-                asset()->url('partial/accordion/css/styles.css'),
-                [],
-                181221
-            );
-            wp_register_script(
-                'PartialAccordion',
-                asset()->url('partial/accordion/js/scripts.js'),
-                ['jquery-ui-widget'],
-                181221,
-                true
-            );
-        });
-    }
-
-    /**
-     * Liste des attributs de configuration par defaut.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string $theme Theme d'affichage. light|dark.
      *      @var array|AccordionItem[]|AccordionItems Liste des éléments.
      *      @var mixed $opened Définition de la liste des éléments ouverts à l'initialisation.
@@ -44,42 +22,33 @@ class Accordion extends PartialFactory implements AccordionContract
      *      @var boolean $triggered Activation de la limite d'ouverture et de fermeture par le déclencheur de l'élement.
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'before'    => '',
-            'after'     => '',
             'attrs'     => [],
+            'after'     => '',
+            'before'    => '',
             'viewer'    => [],
-            'theme'     => 'light',
             'items'     => [],
-            'opened'    => null,
             'multiple'  => false,
+            'opened'    => null,
+            'theme'     => 'light',
             'triggered' => false,
         ];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('PartialAccordion');
-        wp_enqueue_script('PartialAccordion');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialAccordion'));
 
-        if ($theme = $this->get('theme')) :
+        if ($theme = $this->get('theme')) {
             $this->set('attrs.class', trim($this->get('attrs.class') . " PartialAccordion--{$theme}"));
-        endif;
+        }
 
         $this->set('attrs.data-control', 'accordion');
 
@@ -95,22 +64,26 @@ class Accordion extends PartialFactory implements AccordionContract
         );
 
         $items = $this->get('items', []);
-        if (!$items instanceof AccordionItems) :
+        if (!$items instanceof AccordionItems) {
             $items = new AccordionItems($items, $this->get('opened'));
-        endif;
+        }
 
         $items->setPartial($this);
 
         $this->set('items', $items);
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function parseDefaults()
+    public function parseDefaults(): PartialFactoryContract
     {
-        foreach($this->get('view', []) as $key => $value) :
+        foreach($this->get('view', []) as $key => $value) {
             $this->viewer()->set($key, $value);
-        endforeach;
+        }
+
+        return $this;
     }
 }

@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Field;
 
-interface RadioCollection extends FieldController
+interface RadioCollection extends FieldFactory
 {
 
 }

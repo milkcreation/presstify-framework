@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Partial;
 
@@ -22,9 +22,9 @@ interface CookieNotice extends PartialFactory
     public function setCookie($cookie_name, $cookie_expire = 0);
 
     /**
-     * Génération du cookie de notification via Ajax.
+     * Génération du cookie de notification via une requête XHR.
      *
      * @return void
      */
-    public function wp_ajax();
+    public function xhrSetCookie();
 }
