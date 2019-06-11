@@ -12,9 +12,9 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     /**
      * @inheritDoc
      */
-    public function get($name): ?PostTypeFactoryContract
+    public function get(...$args): ?PostTypeFactoryContract
     {
-        return parent::get($name);
+        return parent::get($args[0]);
     }
 
     /**

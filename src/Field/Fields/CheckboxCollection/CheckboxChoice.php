@@ -52,19 +52,19 @@ class CheckboxChoice extends ParamsBag implements CheckboxChoiceContract
         $this->name = $name;
         $this->index = self::$_index++;
 
-        if (is_string($attrs)) :
+        if (is_string($attrs)) {
             $attrs = [
                 'label' => [
                     'content' => $attrs
                 ],
             ];
-        endif;
+        }
 
-        if ($attrs instanceof Checkbox) :
+        if ($attrs instanceof Checkbox) {
             $this->checkbox = $attrs;
-        else :
+        } else {
             parent::__construct($attrs);
-        endif;
+        }
     }
 
     /**
@@ -147,29 +147,29 @@ class CheckboxChoice extends ParamsBag implements CheckboxChoiceContract
     {
         parent::parse($attrs);
 
-        if (!$this->get('attrs.id')) :
-            $this->set('attrs.id', 'FieldCheckboxCollection-item--'. $this->index);
-        endif;
+        if (!$this->get('attrs.id')) {
+            $this->set('attrs.id', 'FieldCheckboxCollection-item--' . $this->index);
+        }
 
-        if (!$this->get('checkbox.attrs.id')) :
+        if (!$this->get('checkbox.attrs.id')) {
             $this->set('checkbox.attrs.id', 'FieldCheckboxCollection-itemInput--'. $this->index);
-        endif;
+        }
 
-        if (!$this->get('checkbox.attrs.class')) :
+        if (!$this->get('checkbox.attrs.class')) {
             $this->set('checkbox.attrs.class', 'FieldCheckboxCollection-itemInput');
-        endif;
+        }
 
-        if (!$this->get('label.attrs.id')) :
+        if (!$this->get('label.attrs.id')) {
             $this->set('label.attrs.id', 'FieldCheckboxCollection-itemLabel--'. $this->index);
-        endif;
+        }
 
-        if (!$this->get('label.attrs.class')) :
+        if (!$this->get('label.attrs.class')) {
             $this->set('label.attrs.class', 'FieldCheckboxCollection-itemLabel');
-        endif;
+        }
 
-        if (!$this->get('label.attrs.for')) :
+        if (!$this->get('label.attrs.for')) {
             $this->set('label.attrs.for', 'FieldCheckboxCollection-itemInput--'. $this->index);
-        endif;
+        }
 
         $this->checkbox = field('checkbox', $this->get('checkbox', []));
         $this->label = field('label', $this->get('label', []));
@@ -188,9 +188,9 @@ class CheckboxChoice extends ParamsBag implements CheckboxChoiceContract
      */
     public function setName($name)
     {
-        if($this->getCheckbox() instanceof Checkbox) :
+        if($this->getCheckbox() instanceof Checkbox) {
             $this->getCheckbox()->set('attrs.name', $name);
-        endif;
+        }
 
         return $this;
     }
@@ -200,9 +200,9 @@ class CheckboxChoice extends ParamsBag implements CheckboxChoiceContract
      */
     public function setChecked()
     {
-        if($this->getCheckbox() instanceof Checkbox) :
+        if($this->getCheckbox() instanceof Checkbox) {
             $this->getCheckbox()->push('attrs', 'checked');
-        endif;
+        }
 
         return $this;
     }

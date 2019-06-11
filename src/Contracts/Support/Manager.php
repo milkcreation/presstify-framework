@@ -23,11 +23,11 @@ interface Manager
     /**
      * Récupération d'un élément défini.
      *
-     * @param string|int $key Indice de qualification de l'élément.
+     * @param array $args Liste des arguments dynamique de récupération de l'élément.
      *
      * @return mixed
      */
-    public function get($key);
+    public function get(...$args);
 
     /**
      * Récupération de l'instance du conteneur d'injection de dépendances.

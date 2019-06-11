@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial;
 
 use Closure;
-use Illuminate\Support\Str;
-use tiFy\Contracts\Partial\PartialFactory as PartialFactoryContract;
+use tiFy\Contracts\Partial\{Partial as Manager, PartialFactory as PartialFactoryContract};
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Support\HtmlAttrs;
 use tiFy\Support\ParamsBag;
@@ -12,16 +11,35 @@ use tiFy\Support\ParamsBag;
 abstract class PartialFactory extends ParamsBag implements PartialFactoryContract
 {
     /**
-     * Identifiant de qualification du champ.
+     * Indicateur d'initialisation.
+     * @var string
+     */
+    private $booted = false;
+
+    /**
+     * Alias de qualification dans le gestionnaire.
+     * @var string
+     */
+    private $alias = false;
+
+    /**
+     * Identifiant de qualification.
+     * {@internal par défaut concaténation de l'alias et de l'indice.}
      * @var string
      */
     protected $id = '';
 
     /**
-     * Compte de l'indice de l'instance courante.
+     * Indice de l'instance dans le gestionnaire.
      * @var int
      */
     protected $index = 0;
+
+    /**
+     * Instance du gestionnaire de portions d'affichage.
+     * @var Manager
+     */
+    protected $manager;
 
     /**
      * Instance du moteur de gabarits d'affichage.
@@ -30,135 +48,122 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
     protected $viewer;
 
     /**
-     * Répertoire de stockage par défaut des gabarits d'affichage.
-     * @var resource
+     * @inheritDoc
      */
-    protected $viewer_dir;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param string $id Nom de qualification.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return void
-     */
-    public function __construct($id = null, $attrs = [])
-    {
-        $id = $id ?? Str::random(32);
-
-        $this->id = $id;
-        $this->index = partial()->index($this);
-        $this->index ? $this->set($attrs)->parse() : $this->boot();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->display();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function after()
+    public function after(): void
     {
-        $after = $this->get('after', '');
-
-        echo $after instanceof Closure ? call_user_func($after) : $after;
+        echo ($after = $this->get('after', '')) instanceof Closure ? call_user_func($after) : $after;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function attrs()
+    public function attrs(): void
     {
         echo HtmlAttrs::createFromAttrs($this->get('attrs', []));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function before()
+    public function before(): void
     {
-        $before = $this->get('before', '');
-
-        echo $before instanceof Closure ? call_user_func($before) : $before;
+        echo ($before = $this->get('before', '')) instanceof Closure ? call_user_func($before) : $before;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function boot()
+    public function boot(): void
     {
 
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function content()
+    public function content(): void
     {
-        $content = $this->get('content', '');
-
-        echo $content instanceof Closure ? call_user_func($content) : $content;
+        echo ($content = $this->get('content', '')) instanceof Closure ? call_user_func($content) : $content;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @return array
      */
-    public function display()
+    public function defaults(): array
     {
-        return $this->viewer(class_info($this)->getKebabName(), $this->all());
+        return [];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function enqueue_scripts()
+    public function display(): string
     {
-        return $this;
+        return (string)$this->viewer($this->getAlias(), $this->all());
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getId()
+    public function getAlias(): string
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getId(): string
     {
         return $this->id;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
+     *
+     * @return $this
      */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
         $this->parseDefaults();
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
+     *
+     * @return $this
      */
-    public function parseDefaults()
+    public function parseDefaults(): PartialFactoryContract
     {
         if (!$this->get('attrs.id')) {
             $this->pull('attrs.id');
         }
 
-        $default_class = 'tiFyPartial-' . class_info($this)->getShortName() .
-            ' tiFyPartial-' . class_info($this)->getShortName() . '--' . $this->getIndex();
+        $default_class = 'tiFyPartial-' . $this->getAlias() .
+            ' tiFyPartial-' . $this->getAlias() . '--' . $this->getIndex();
         if (!$this->has('attrs.class')) {
             $this->set(
                 'attrs.class',
@@ -177,22 +182,79 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
             $this->pull('attrs.class');
         }
 
-        foreach ($this->get('view', []) as $key => $value) {
-            $this->viewer()->set($key, $value);
-        }
+        $this->parseViewer();
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
+     *
+     * @return $this
+     */
+    public function parseViewer(): PartialFactoryContract
+    {
+        foreach($this->get('viewer', []) as $key => $value) {
+            $this->viewer()->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return $this
+     */
+    public function prepare(string $alias, Manager $manager): PartialFactoryContract
+    {
+        if (!$this->booted) {
+            $this->alias = $alias;
+            $this->manager = $manager;
+
+            $this->booted = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return $this
+     */
+    public function setId(string $id): PartialFactoryContract
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return $this
+     */
+    public function setIndex(int $index): PartialFactoryContract
+    {
+        $this->index = $index;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function viewer($view = null, $data = [])
     {
         if (is_null($this->viewer)) {
             $this->viewer = app()->get('partial.viewer', [$this]);
         }
+
         if (func_num_args() === 0) {
             return $this->viewer;
         }
+
         return $this->viewer->make("_override::{$view}", $data);
     }
 }

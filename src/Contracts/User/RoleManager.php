@@ -17,7 +17,7 @@ interface RoleManager extends Manager
      *
      * @return null|RoleFactory
      */
-    public function get($name): ?RoleFactory;
+    public function get(...$args): ?RoleFactory;
 
     /**
      * Définition d'un rôle.

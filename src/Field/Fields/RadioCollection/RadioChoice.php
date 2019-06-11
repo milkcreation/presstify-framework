@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\RadioCollection;
 
@@ -52,19 +52,19 @@ class RadioChoice extends ParamsBag implements RadioChoiceContract
         $this->name = $name;
         $this->index = self::$_index++;
 
-        if (is_string($attrs)) :
+        if (is_string($attrs)) {
             $attrs = [
                 'label' => [
                     'content' => $attrs
                 ],
             ];
-        endif;
+        }
 
-        if ($attrs instanceof Radio) :
+        if ($attrs instanceof Radio) {
             $this->radio = $attrs;
-        else :
+        } else {
             parent::__construct($attrs);
-        endif;
+        }
     }
 
     /**
@@ -81,13 +81,13 @@ class RadioChoice extends ParamsBag implements RadioChoiceContract
     public function defaults()
     {
         return [
-            'label'     => [
-                'before'       => '',
-                'after'        => '',
-                'content'      => '',
-                'attrs'        => []
+            'label' => [
+                'before'  => '',
+                'after'   => '',
+                'content' => '',
+                'attrs'   => []
             ],
-            'radio'  => [
+            'radio' => [
                 'before'  => '',
                 'after'   => '',
                 'attrs'   => [],
@@ -146,29 +146,29 @@ class RadioChoice extends ParamsBag implements RadioChoiceContract
     {
         parent::parse($attrs);
 
-        if (!$this->get('attrs.id')) :
-            $this->set('attrs.id', 'FieldRadioCollection-item--'. $this->index);
-        endif;
+        if (!$this->get('attrs.id')) {
+            $this->set('attrs.id', 'FieldRadioCollection-item--' . $this->index);
+        }
 
-        if (!$this->get('radio.attrs.id')) :
-            $this->set('radio.attrs.id', 'FieldRadioCollection-itemInput--'. $this->index);
-        endif;
+        if (!$this->get('radio.attrs.id')) {
+            $this->set('radio.attrs.id', 'FieldRadioCollection-itemInput--' . $this->index);
+        }
 
-        if (!$this->get('radio.attrs.class')) :
+        if (!$this->get('radio.attrs.class')) {
             $this->set('radio.attrs.class', 'FieldRadioCollection-itemInput');
-        endif;
+        }
 
-        if (!$this->get('label.attrs.id')) :
-            $this->set('label.attrs.id', 'FieldRadioCollection-itemLabel--'. $this->index);
-        endif;
+        if (!$this->get('label.attrs.id')) {
+            $this->set('label.attrs.id', 'FieldRadioCollection-itemLabel--' . $this->index);
+        }
 
-        if (!$this->get('label.attrs.class')) :
+        if (!$this->get('label.attrs.class')) {
             $this->set('label.attrs.class', 'FieldRadioCollection-itemLabel');
-        endif;
+        }
 
-        if (!$this->get('label.attrs.for')) :
-            $this->set('label.attrs.for', 'FieldRadioCollection-itemInput--'. $this->index);
-        endif;
+        if (!$this->get('label.attrs.for')) {
+            $this->set('label.attrs.for', 'FieldRadioCollection-itemInput--' . $this->index);
+        }
 
         $this->radio = field('radio', $this->get('radio', []));
         $this->label = field('label', $this->get('label', []));
@@ -187,9 +187,9 @@ class RadioChoice extends ParamsBag implements RadioChoiceContract
      */
     public function setName($name)
     {
-        if($this->getRadio() instanceof Radio) :
+        if ($this->getRadio() instanceof Radio) {
             $this->getRadio()->set('attrs.name', $name);
-        endif;
+        }
 
         return $this;
     }
@@ -199,9 +199,9 @@ class RadioChoice extends ParamsBag implements RadioChoiceContract
      */
     public function setChecked()
     {
-        if($this->getRadio() instanceof Radio) :
+        if ($this->getRadio() instanceof Radio) {
             $this->getRadio()->push('attrs', 'checked');
-        endif;
+        }
 
         return $this;
     }

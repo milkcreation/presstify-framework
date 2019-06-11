@@ -52,9 +52,9 @@ class Manager implements ManagerContract
     /**
      * @inheritDoc
      */
-    public function get($key)
+    public function get(...$args)
     {
-        return $this->items[$key] ?? null;
+        return $this->items[$args[0]] ?? null;
     }
 
     /**

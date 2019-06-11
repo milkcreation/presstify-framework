@@ -1,78 +1,48 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\TextRemaining;
 
-use tiFy\Contracts\Field\TextRemaining as TextRemainingContract;
-use tiFy\Field\FieldController;
+use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, TextRemaining as TextRemainingContract};
+use tiFy\Field\FieldFactory;
 
-class TextRemaining extends FieldController implements TextRemainingContract
+class TextRemaining extends FieldFactory implements TextRemainingContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @param array $attributes {
-     *      @var string $before Contenu placé avant le champ.
+     * {@inheritDoc}
+     *
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
      *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
      *      @var string $name Clé d'indice de la valeur de soumission du champ.
      *      @var string $value Valeur courante de soumission du champ.
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string $selector Type de selecteur. textarea (défaut)|input.
      *      @var int $max Nombre maximum de caractères attendus. 150 par défaut.
      *      @var boolean $limit Activation de la limite de saisie selon le nombre maximum de caractères.
      *  }
      */
-    protected $attributes = [
-        'before'        => '',
-        'after'         => '',
-        'name'          => '',
-        'value'         => '',
-        'attrs'         => [],
-        'viewer'        => [],
-        'selector'      => 'textarea',
-        'max'           => 150,
-        'limit'         => false
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot()
+    public function defaults(): array
     {
-        add_action(
-            'init',
-            function () {
-                wp_register_style(
-                    'FieldTextRemaining',
-                    asset()->url('field/text-remaining/css/styles.css'),
-                    [],
-                    180611
-                );
-                wp_register_script(
-                    'FieldTextRemaining',
-                    asset()->url('field/text-remaining/js/scripts.js'),
-                    ['jquery'],
-                    180611,
-                    true
-                );
-            }
-        );
+        return [
+            'attrs'    => [],
+            'after'    => '',
+            'before'   => '',
+            'name'     => '',
+            'value'    => '',
+            'viewer'   => [],
+            'limit'    => false,
+            'max'      => 150,
+            'selector' => 'textarea'
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function enqueue_scripts()
+    public function parse(): FieldFactoryContract
     {
-        wp_enqueue_style('FieldTextRemaining');
-        wp_enqueue_script('FieldTextRemaining');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parse($attrs = [])
-    {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set(
             'attrs.class',
@@ -103,25 +73,26 @@ class TextRemaining extends FieldController implements TextRemainingContract
             ]
         );
 
-        switch($this->get('tag')) :
+        switch($this->get('tag')) {
             case 'textarea' :
                 $this->set('content', $this->get('value'));
                 break;
             case 'input' :
                 $this->set('attrs.value', $this->get('value'));
                 break;
-        endswitch;
+        }
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parseDefaults()
+    public function parseDefaults(): FieldFactoryContract
     {
         $this->parseName();
+        $this->parseViewer();
 
-        foreach($this->get('viewer', []) as $key => $value) :
-            $this->viewer()->set($key, $value);
-        endforeach;
+        return $this;
     }
 }

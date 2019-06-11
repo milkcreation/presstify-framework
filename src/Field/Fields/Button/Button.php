@@ -1,55 +1,51 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\Button;
 
-use tiFy\Contracts\Field\Button as ButtonContract;
-use tiFy\Field\FieldController;
+use tiFy\Contracts\Field\{Button as ButtonContract, FieldFactory as FieldFactoryContract};
+use tiFy\Field\FieldFactory;
 
-class Button extends FieldController implements ButtonContract
+class Button extends FieldFactory implements ButtonContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant le champ.
+     * {@inheritDoc}
+     *
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
      *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
      *      @var string $name Clé d'indice de la valeur de soumission du champ.
      *      @var string $value Valeur courante de soumission du champ.
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string $content Contenu de la balise HTML.
      *      @var string $type Type de bouton. button par défaut.
      * }
      */
-    protected $attributes = [
-        'before'  => '',
-        'after'   => '',
-        'name'    => '',
-        'value'   => '',
-        'attrs'   => [],
-        'viewer'  => [],
-        'content' => '',
-        'type'    => 'button',
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'content' => __('Envoyer', 'tify')
+            'attrs'   => [],
+            'after'   => '',
+            'before'  => '',
+            'name'    => '',
+            'value'   => '',
+            'viewer'  => [],
+            'content' => __('Envoyer', 'tify'),
+            'type'    => 'button',
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parse($attrs = [])
+    public function parse(): FieldFactoryContract
     {
-        parent::parse($attrs);
+        parent::parse();
 
-        if (!$this->has('attrs.type')) :
-            $this->set('attrs.type',  $this->get('type', 'button'));
-        endif;
+        if (!$this->has('attrs.type')) {
+            $this->set('attrs.type', $this->get('type', 'button'));
+        }
+
+        return $this;
     }
 }

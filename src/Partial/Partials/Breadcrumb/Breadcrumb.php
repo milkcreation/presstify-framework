@@ -20,22 +20,7 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
     private $disabled = false;
 
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialBreadcrumb',
-                asset()->url('partial/breadcrumb/css/styles.css'),
-                [],
-                180122
-            );
-        });
-    }
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function addPart($part)
     {
@@ -45,29 +30,29 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
     }
 
     /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string[]|array[]|object[]|callable[] $parts Liste des élements du fil d'ariane.
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'before' => '',
-            'after'  => '',
             'attrs'  => [],
+            'after'  => '',
+            'before' => '',
             'viewer' => [],
             'parts'  => [],
         ];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function disable()
     {
@@ -77,13 +62,13 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function display()
+    public function display(): string
     {
-        if ($this->disabled) :
+        if ($this->disabled) {
             return '';
-        endif;
+        }
 
         $this->set('items', $this->parsePartList());
 
@@ -91,7 +76,7 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function enable()
     {
@@ -101,54 +86,46 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
     }
 
     /**
-     * @inheritdoc
-     */
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('PartialBreadcrumb');
-    }
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parsePartList()
     {
-        if (!$this->parts) :
+        if (!$this->parts) {
             $this->parts = (new WpQueryPart())->getList();
-        endif;
+        }
 
         $parts = [];
-        foreach($this->parts as $part) :
+        foreach($this->parts as $part) {
             $parts[] = $this->parsePart($part);
-        endforeach;
+        }
 
         return $parts;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parsePart($part)
     {
-        if (is_string($part)) :
+        if (is_string($part)) {
             return $part;
-        elseif (is_object($part) && is_string((string) $part)) :
+        } elseif (is_object($part) && is_string((string) $part)) {
             return (string)$part;
-        elseif (is_array($part)) :
+        } elseif (is_array($part)) {
             $defaults = [
-                'class'     => 'tiFyPartial-BreadcrumbItem',
-                'content'   => ''
+                'class'   => 'tiFyPartial-BreadcrumbItem',
+                'content' => ''
             ];
             $part = array_merge($defaults, $part);
 
             return "<li class=\"{$part['class']}\">{$part['content']}</li>";
-        endif;
+        }
 
         return '';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function prependPart($part)
     {
@@ -158,7 +135,7 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function reset()
     {

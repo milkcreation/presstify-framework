@@ -1,24 +1,42 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Partial\PartialFactory;
-use tiFy\Partial\Partials\Accordion\Accordion;
-use tiFy\Partial\Partials\Breadcrumb\Breadcrumb;
-use tiFy\Partial\Partials\CookieNotice\CookieNotice;
-use tiFy\Partial\Partials\Dropdown\Dropdown;
-use tiFy\Partial\Partials\Holder\Holder;
-use tiFy\Partial\Partials\Modal\Modal;
-use tiFy\Partial\Partials\Notice\Notice;
-use tiFy\Partial\Partials\Pagination\Pagination;
-use tiFy\Partial\Partials\PdfPreview\PdfPreview;
-use tiFy\Partial\Partials\Sidebar\Sidebar;
-use tiFy\Partial\Partials\Slider\Slider;
-use tiFy\Partial\Partials\Spinner\Spinner;
-use tiFy\Partial\Partials\Tab\Tab;
-use tiFy\Partial\Partials\Table\Table;
-use tiFy\Partial\Partials\Tag\Tag;
+use tiFy\Contracts\Partial\{
+    Accordion as AccordionContract,
+    Breadcrumb as BreadcrumbContract,
+    CookieNotice as CookieNoticeContract,
+    Dropdown as DropdownContract,
+    Holder as HolderContract,
+    Modal as ModalContract,
+    Notice as NoticeContract,
+    Pagination as PaginationContract,
+    Partial as PartialContract,
+    PartialFactory,
+    PdfPreview as PdfPreviewContract,
+    Sidebar as SidebarContract,
+    Slider as SliderContract,
+    Spinner as SpinnerContract,
+    Tab as TabContract,
+    Table as TableContract,
+    Tag as TagContract};
+use tiFy\Partial\Partials\{
+    Accordion\Accordion,
+    Breadcrumb\Breadcrumb,
+    CookieNotice\CookieNotice,
+    Dropdown\Dropdown,
+    Holder\Holder,
+    Modal\Modal,
+    Notice\Notice,
+    Pagination\Pagination,
+    PdfPreview\PdfPreview,
+    Sidebar\Sidebar,
+    Slider\Slider,
+    Spinner\Spinner,
+    Tab\Tab,
+    Table\Table,
+    Tag\Tag};
 
 class PartialServiceProvider extends ServiceProvider
 {
@@ -29,115 +47,129 @@ class PartialServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'partial',
-        'partial.factory',
-        'partial.factory.accordion',
-        'partial.factory.breadcrumb',
-        'partial.factory.cookie-notice',
-        'partial.factory.dropdown',
-        'partial.factory.holder',
-        'partial.factory.modal',
-        'partial.factory.notice',
-        'partial.factory.pagination',
-        'partial.factory.pdf-preview',
-        'partial.factory.sidebar',
-        'partial.factory.slider',
-        'partial.factory.spinner',
-        'partial.factory.tab',
-        'partial.factory.table',
-        'partial.factory.tag',
-        'partial.viewer'
+        'partial.viewer',
+        AccordionContract::class,
+        BreadcrumbContract::class,
+        CookieNoticeContract::class,
+        DropdownContract::class,
+        HolderContract::class,
+        ModalContract::class,
+        NoticeContract::class,
+        PaginationContract::class,
+        PdfPreviewContract::class,
+        SidebarContract::class,
+        SliderContract::class,
+        SpinnerContract::class,
+        TabContract::class,
+        TableContract::class,
+        TagContract::class
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function register()
+    public function register(): void
     {
         $this->getContainer()->share('partial', function () {
-            return new PartialManager();
+            return new Partial($this->getContainer());
         });
 
         $this->registerFactories();
+
+        $this->registerViewer();
     }
 
     /**
-     * Déclaration des controleurs de gabarit d'affichage.
+     * Déclaration des controleurs de portions d'affichage.
      *
      * @return void
      */
-    public function registerFactories()
+    public function registerFactories(): void
     {
-        $this->getContainer()->add('partial.factory.accordion', function (?string $id = null, ?array $attrs = null) {
-            return new Accordion($id, $attrs);
+        $this->getContainer()->add(AccordionContract::class, function () {
+            return new Accordion();
         });
 
-        $this->getContainer()->add('partial.factory.breadcrumb', function (?string $id = null, ?array $attrs = null) {
-            return new Breadcrumb($id, $attrs);
+        $this->getContainer()->add(BreadcrumbContract::class, function () {
+            return new Breadcrumb();
         });
 
-        $this->getContainer()->add('partial.factory.cookie-notice', function (?string $id = null, ?array $attrs = null) {
-            return new CookieNotice($id, $attrs);
+        $this->getContainer()->add(CookieNoticeContract::class, function () {
+            return new CookieNotice();
         });
 
-        $this->getContainer()->add('partial.factory.dropdown', function (?string $id = null, ?array $attrs = null) {
-            return new Dropdown($id, $attrs);
+        $this->getContainer()->add(DropdownContract::class, function () {
+            return new Dropdown();
         });
 
-        $this->getContainer()->add('partial.factory.holder', function (?string $id = null, ?array $attrs = null) {
-            return new Holder($id, $attrs);
+        $this->getContainer()->add(HolderContract::class, function () {
+            return new Holder();
         });
 
-        $this->getContainer()->add('partial.factory.modal', function (?string $id = null, ?array $attrs = null) {
-            return new Modal($id, $attrs);
+        $this->getContainer()->add(ModalContract::class, function () {
+            return new Modal();
         });
 
-        $this->getContainer()->add('partial.factory.notice', function (?string $id = null, ?array $attrs = null) {
-            return new Notice($id, $attrs);
+        $this->getContainer()->add(NoticeContract::class, function () {
+            return new Notice();
         });
 
-        $this->getContainer()->add('partial.factory.pagination', function (?string $id = null, ?array $attrs = null) {
-            return new Pagination($id, $attrs);
+        $this->getContainer()->add(PaginationContract::class, function () {
+            return new Pagination();
         });
 
-        $this->getContainer()->add('partial.factory.pdf-preview', function (?string $id = null, ?array $attrs = null) {
-            return new PdfPreview($id, $attrs);
+        $this->getContainer()->add(PdfPreviewContract::class, function () {
+            return new PdfPreview();
         });
 
-        $this->getContainer()->add('partial.factory.sidebar', function (?string $id = null, ?array $attrs = null) {
-            return new Sidebar($id, $attrs);
+        $this->getContainer()->add(SidebarContract::class, function () {
+            return new Sidebar();
         });
 
-        $this->getContainer()->add('partial.factory.slider', function (?string $id = null, ?array $attrs = null) {
-            return new Slider($id, $attrs);
+        $this->getContainer()->add(SliderContract::class, function () {
+            return new Slider();
         });
 
-        $this->getContainer()->add('partial.factory.spinner', function (?string $id = null, ?array $attrs = null) {
-            return new Spinner($id, $attrs);
+        $this->getContainer()->add(SpinnerContract::class, function () {
+            return new Spinner();
         });
 
-        $this->getContainer()->add('partial.factory.tab', function (?string $id = null, ?array $attrs = null) {
-            return new Tab($id, $attrs);
+        $this->getContainer()->add(TabContract::class, function () {
+            return new Tab();
         });
 
-        $this->getContainer()->add('partial.factory.table', function (?string $id = null, ?array $attrs = null) {
-            return new Table($id, $attrs);
+        $this->getContainer()->add(TableContract::class, function () {
+            return new Table();
         });
 
-        $this->getContainer()->add('partial.factory.tag', function (?string $id = null, ?array $attrs = null) {
-            return new Tag($id, $attrs);
+        $this->getContainer()->add(TagContract::class, function () {
+            return new Tag();
         });
+    }
 
-        $this->getContainer()->add('partial.viewer', function(PartialFactory $factory) {
-            $alias = class_info($factory)->getKebabName();
-            $default_dir = partial()->resourcesDir("/views/{$alias}");
+    /**
+     * Déclaration du controleur d'affichage.
+     *
+     * @return void
+     */
+    public function registerViewer(): void
+    {
+        $this->getContainer()->add('partial.viewer', function (PartialFactory $factory) {
+            /** @var PartialContract $manager */
+            $manager = $this->getContainer()->get('partial');
+
+            $directory = $factory->get(
+                'viewer.directory',
+                $manager->resourcesDir("/views/{$factory->getAlias()}")
+            );
             $override_dir = $factory->get('viewer.override_dir');
 
             return view()
-                ->setDirectory(is_dir($default_dir) ? $default_dir : null)
+                ->setDirectory(is_dir($directory) ? $directory : null)
                 ->setController(PartialView::class)
                 ->setOverrideDir((($override_dir) && is_dir($override_dir))
                     ? $override_dir
-                    : (is_dir($default_dir) ? $default_dir : __DIR__)
+                    : (is_dir($directory) ? $directory : __DIR__)
                 )
                 ->set('partial', $factory);
         });

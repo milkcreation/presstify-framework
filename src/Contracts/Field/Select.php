@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Field;
 
-interface Select extends FieldController
+interface Select extends FieldFactory
 {
 
 }

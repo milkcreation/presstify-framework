@@ -1,46 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Modal;
 
 use Closure;
 use Illuminate\Support\Arr;
-use tiFy\Contracts\Partial\Modal as ModalContract;
+use tiFy\Contracts\Partial\{Modal as ModalContract, PartialFactory as PartialFactoryContract};
 use tiFy\Partial\PartialFactory;
 
 class Modal extends PartialFactory implements ModalContract
 {
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialModal',
-                asset()->url('partial/modal/css/styles.css'),
-                [],
-                171206
-            );
-            wp_register_script(
-                'PartialModal',
-                asset()->url('partial/modal/js/scripts.js'),
-                ['jquery'],
-                171206,
-                true
-            );
-            add_action('wp_ajax_partial_modal', [$this, 'wp_ajax']);
-            add_action('wp_ajax_nopriv_partial_modal', [$this, 'wp_ajax']);
-        });
-    }
-
-    /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var array $options {
      *          Liste des options d'affichage.
      *      }
@@ -55,18 +31,17 @@ class Modal extends PartialFactory implements ModalContract
      *                                      pour activer désactiver ou fonction/méthode d'affichage.
      *      @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
      *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
-     *      @var bool $in_footer Ajout automatique de la fenêtre de dialogue dans le pied de page du site.
      *      @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
      *                                   attributs de récupération Ajax
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'before'         => '',
-            'after'          => '',
-            'attrs'          => [],
-            'viewer'         => [],
+            'attrs'         => [],
+            'after'         => '',
+            'before'        => '',
+            'viewer'        => [],
             'options'        => [],
             'animation'      => true,
             'size'           => '',
@@ -74,7 +49,6 @@ class Modal extends PartialFactory implements ModalContract
             'header'         => true,
             'body'           => true,
             'footer'         => true,
-            'in_footer'      => true,
             'ajax'           => false,
         ];
     }
@@ -82,16 +56,7 @@ class Modal extends PartialFactory implements ModalContract
     /**
      * @inheritdoc
      */
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('PartialModal');
-        wp_enqueue_script('PartialModal');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
@@ -99,7 +64,7 @@ class Modal extends PartialFactory implements ModalContract
         if ($this->get('animation')) {
             $class .= ' fade';
         }
-        if ( ! $this->get('attrs.id')) {
+        if (!$this->get('attrs.id')) {
             $this->set('attrs.id', 'Modal-' . $this->getId());
         }
 
@@ -121,33 +86,33 @@ class Modal extends PartialFactory implements ModalContract
             }
         }
 
-        if ($backdrop_close = $this->get('backdrop_close')) :
+        if ($backdrop_close = $this->get('backdrop_close')) {
             $backdrop_close = $backdrop_close instanceof Closure
                 ? call_user_func($backdrop_close, $this->all())
                 : (is_string($backdrop_close) ? $backdrop_close : $this->viewer('backdrop_close', $this->all()));
             $this->set('backdrop_close', $backdrop_close);
-        endif;
+        }
 
-        if ($body = $this->get('body')) :
+        if ($body = $this->get('body')) {
             $body = $body instanceof Closure
                 ? call_user_func($body, $this->all())
                 : (is_string($body) ? $body : $this->viewer('body', $this->all()));
             $this->set('body', $body);
-        endif;
+        }
 
-        if ($footer = $this->get('footer')) :
+        if ($footer = $this->get('footer')) {
             $footer = $footer instanceof Closure
                 ? call_user_func($footer, $this->all())
                 : (is_string($footer) ? $footer : $this->viewer('footer', $this->all()));
             $this->set('footer', $footer);
-        endif;
+        }
 
-        if ($header = $this->get('header')) :
+        if ($header = $this->get('header')) {
             $header = $header instanceof Closure
                 ? call_user_func($this->get('header'), $this->all())
                 : (is_string($header) ? $header : $this->viewer('header', $this->all()));
             $this->set('header', $header);
-        endif;
+        }
 
         $this->set('size', in_array($this->get('size'), ['lg', 'sm', 'full', 'flex'])
             ? 'modal-' . $this->get('size') : '');
@@ -174,28 +139,14 @@ class Modal extends PartialFactory implements ModalContract
                 : false
             )
         );
+
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function display()
-    {
-        if ($this->get('in_footer')) :
-            add_action((! is_admin() ? 'wp_footer' : 'admin_footer'), function () {
-                echo parent::display();
-            }, 999999);
-
-            return '';
-        else :
-            return parent::display();
-        endif;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function trigger($attrs = [])
+    public function trigger($attrs = []): string
     {
         $attrs = array_merge([
             'tag'     => 'a',
@@ -203,21 +154,24 @@ class Modal extends PartialFactory implements ModalContract
             'content' => ''
         ], $attrs);
 
-        if ((Arr::get($attrs, 'tag') === 'a') && ! Arr::has($attrs, 'attrs.href')) {
+        if ((Arr::get($attrs, 'tag') === 'a') && !Arr::has($attrs, 'attrs.href')) {
             Arr::set($attrs, 'attrs.href', "#{$this->get('attrs.id')}");
         }
 
         Arr::set($attrs, 'attrs.aria-control', 'modal-trigger');
         Arr::set($attrs, 'attrs.data-target', "#{$this->get('attrs.id')}");
 
-        return $this->viewer('trigger', $attrs);
+        return (string)$this->viewer('trigger', $attrs);
     }
 
     /**
      * @inheritdoc
      */
-    public function wp_ajax()
+    public function xhrGetContent()
     {
-        wp_send_json((string) $this->viewer('ajax'));
+        return [
+            'success' => true,
+            'html'    => (string)$this->viewer('ajax')
+        ];
     }
 }

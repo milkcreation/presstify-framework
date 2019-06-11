@@ -3,10 +3,10 @@
 namespace tiFy\Api\Recaptcha\Field;
 
 use tiFy\Contracts\Api\Recaptcha as RecaptchaContract;
-use tiFy\Field\FieldController;
+use tiFy\Field\FieldFactory;
 use tiFy\Field\FieldView;
 
-class Recaptcha extends FieldController
+class Recaptcha extends FieldFactory
 {
     /**
      * Instance du controleur de champ reCaptcha

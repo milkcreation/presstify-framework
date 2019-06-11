@@ -9,8 +9,8 @@ use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Database\Database;
 use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Db\DbManager;
-use tiFy\Contracts\Field\FieldController;
-use tiFy\Contracts\Field\FieldManager;
+use tiFy\Contracts\Field\Field;
+use tiFy\Contracts\Field\FieldFactory;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
 use tiFy\Contracts\Form\FormFactory;
@@ -23,7 +23,7 @@ use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Logger;
 use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\Partial\PartialFactory;
-use tiFy\Contracts\Partial\PartialManager;
+use tiFy\Contracts\Partial\Partial;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostTypeManager;
 use tiFy\Contracts\Routing\Redirector;
@@ -233,11 +233,11 @@ if (!function_exists('field')) {
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return null|FieldManager|FieldController
+     * @return Field|FieldFactory|null
      */
     function field($name = null, $id = null, $attrs = null)
     {
-        /* @var FieldManager $manager */
+        /* @var Field $manager */
         $manager = app('field');
 
         if (is_null($name)) {
@@ -301,11 +301,11 @@ if (!function_exists('partial')) {
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return null|PartialManager|PartialFactory
+     * @return null|Partial|PartialFactory
      */
     function partial(?string $name = null, $id = null, ?array $attrs = null)
     {
-        /* @var PartialManager $manager */
+        /* @var Partial $manager */
         $manager = app('partial');
 
         if (is_null($name)) {

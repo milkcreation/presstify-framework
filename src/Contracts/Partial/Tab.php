@@ -5,9 +5,9 @@ namespace tiFy\Contracts\Partial;
 interface Tab extends PartialFactory
 {
     /**
-     * Mise à jour de l'onglet courant via Ajax.
+     * Mise à jour de l'onglet courant via une requête XHR.
      *
      * @return void
      */
-    public function wp_ajax();
+    public function xhrSetTab();
 }

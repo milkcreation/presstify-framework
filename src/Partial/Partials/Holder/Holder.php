@@ -1,48 +1,33 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Holder;
 
-use tiFy\Contracts\Partial\Holder as HolderContract;
+use tiFy\Contracts\Partial\{Holder as HolderContract, PartialFactory as PartialFactoryContract};
 use tiFy\Partial\PartialFactory;
 
 class Holder extends PartialFactory implements HolderContract
 {
     /**
-     * @inheritdoc
-     */
-    public function boot()
-    {
-        add_action('init', function () {
-            wp_register_style(
-                'PartialHolder',
-                asset()->url('partial/holder/css/styles.css'),
-                [],
-                160714
-            );
-        });
-    }
-
-    /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
      *
-     * @return array $attributes {
-     *      @var string $before Contenu placé avant.
-     *      @var string $after Contenu placé après.
-     *      @var array $attrs Attributs de balise HTML.
-     *      @var array $viewer Attributs de configuration du controleur de gabarit d'affichage.
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var string $content Contenu de remplacement.
      *      @var int $width Rapport de largeur relatif à la hauteur.
      *      @var int $height Rapport de hauteur relatif à la largeur.
      *
      * }
      */
-    public function defaults()
+    public function defaults() : array
     {
         return [
-            'before'           => '',
-            'after'            => '',
-            'attrs'            => [],
-            'viewer'           => [],
+            'attrs'         => [],
+            'after'         => '',
+            'before'        => '',
+            'viewer'        => [],
             'content'          => '',
             'width'            => 100,
             'height'           => 100,
@@ -56,31 +41,31 @@ class Holder extends PartialFactory implements HolderContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('PartialHolder');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function parse()
+    public function parse(): PartialFactoryContract
     {
         parent::parse();
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialHolder'));
-        $this->set('attrs.style', "background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};font-size:{$this->get('font-size')}\"");
+        $this->set(
+            'attrs.style',
+            "background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};" .
+            "font-size:{$this->get('font-size')}\""
+        );
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function parseDefaults()
+    public function parseDefaults(): PartialFactoryContract
     {
-        foreach($this->get('view', []) as $key => $value) :
+        foreach($this->get('view', []) as $key => $value) {
             $this->viewer()->set($key, $value);
-        endforeach;
+        }
+
+        return $this;
     }
 }

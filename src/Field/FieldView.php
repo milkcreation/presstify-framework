@@ -1,22 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field;
 
+use Exception;
+use BadMethodCallException;
+use tiFy\Contracts\Field\FieldView as FieldViewContract;
 use tiFy\View\ViewController;
 
 /**
- * Class FieldView
- *
  * @method string after()
  * @method string attrs()
  * @method string before()
  * @method string content()
+ * @method string getAlias()
  * @method string getId()
  * @method string getIndex()
  * @method string getName()
  * @method string getValue()
  */
-class FieldView extends ViewController
+class FieldView extends ViewController implements FieldViewContract
 {
     /**
      * Liste des méthodes héritées.
@@ -27,6 +29,7 @@ class FieldView extends ViewController
         'attrs',
         'before',
         'content',
+        'getAlias',
         'getId',
         'getIndex',
         'getName',
@@ -34,22 +37,28 @@ class FieldView extends ViewController
     ];
 
     /**
-     * Translation d'appel des méthodes de l'application associée.
-     *
-     * @param string $name Nom de la méthode à appeler.
-     * @param array $arguments Liste des variables passées en argument.
-     *
-     * @return mixed
+     * @inheritDoc
      */
     public function __call($name, $arguments)
     {
-        if (in_array($name, $this->mixins)) :
-            return call_user_func_array(
-                [$this->engine->get('field'), $name],
-                $arguments
+        try {
+            if (in_array($name, $this->mixins)) {
+                return call_user_func_array([$this->engine->get('field'), $name], $arguments);
+            } else {
+                throw new BadMethodCallException(
+                    sprintf(
+                        __('La méthode %s du controleur de champs n\'est pas permise.', 'tify'),
+                        $name
+                    )
+                );
+            }
+        } catch (Exception $e) {
+            throw new BadMethodCallException(
+                sprintf(
+                    __('La méthode %s du controleur de champs n\'est pas disponible.', 'tify'),
+                    $name
+                )
             );
-        else :
-            return null;
-        endif;
+        }
     }
 }

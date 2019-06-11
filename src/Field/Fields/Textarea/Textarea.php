@@ -1,39 +1,45 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Field\Fields\Textarea;
 
-use tiFy\Contracts\Field\Textarea as TextareaContract;
-use tiFy\Field\FieldController;
+use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, Textarea as TextareaContract};
+use tiFy\Field\FieldFactory;
 
-class Textarea extends FieldController implements TextareaContract
+class Textarea extends FieldFactory implements TextareaContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array $attributes {
-     *      @var string $before Contenu placé avant le champ.
+     * {@inheritDoc}
+     *
+     * @return array {
+     *      @var array $attrs Attributs HTML du champ.
      *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
      *      @var string $name Clé d'indice de la valeur de soumission du champ.
      *      @var string $value Valeur courante de soumission du champ.
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      * }
      */
-    protected $attributes = [
-        'before' => '',
-        'after'  => '',
-        'name'   => '',
-        'value'  => '',
-        'attrs'  => [],
-        'viewer' => []
-    ];
+    public function defaults(): array
+    {
+        return [
+            'attrs'  => [],
+            'after'  => '',
+            'before' => '',
+            'name'   => '',
+            'value'  => '',
+            'viewer' => []
+        ];
+    }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parse($attrs = [])
+    public function parse(): FieldFactoryContract
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('content', $this->get('value'));
+
+        return $this;
     }
 }
