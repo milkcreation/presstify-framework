@@ -1,4 +1,5 @@
-// jQuery-ui > widget
+// DEPS
+// jQuery-ui - widget
 import 'jquery-ui/ui/widget';
 
 // JS

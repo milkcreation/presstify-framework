@@ -4,21 +4,21 @@
  */
 ?>
 
-<div class="tiFyPartial-TableBody">
+<div class="tiFyPartial-tableBody">
 <?php if ($datas = $this->get('datas', [])) : ?>
     <?php $num = 0; foreach ($datas as $row => $dr) : ?>
-    <div class="tiFyPartial-TableBodyTr tiFyPartial-TableBodyTr--<?php echo $row; ?> tiFyPartial-TableTr tiFyPartial-TableTr-<?php echo ($num++ % 2 === 0) ? 'even' : 'odd'; ?>">
+    <div class="tiFyPartial-tableBodyTr tiFyPartial-tableBodyTr--<?php echo $row; ?> tiFyPartial-tableTr tiFyPartial-tableTr-<?php echo ($num++ % 2 === 0) ? 'even' : 'odd'; ?>">
         <?php foreach ($this->get('columns', []) as $name => $label) : ?>
-        <div class="tiFyPartial-TableCell<?php echo $count; ?> tiFyPartial-TableBodyTd tiFyPartial-TableBodyTd--<?php echo $name; ?> tiFyPartial-TableTd">
-            <span class="tiFyPartial-TableCell-label"><?php echo $label; ?></span>
+        <div class="tiFyPartial-tableCell<?php echo $count; ?> tiFyPartial-tableBodyTd tiFyPartial-tableBodyTd--<?php echo $name; ?> tiFyPartial-tableTd">
+            <span class="tiFyPartial-tableCell-label"><?php echo $label; ?></span>
             <?php echo $dr[$name];?>
         </div>
         <?php endforeach; ?>
     </div>
     <?php endforeach; ?>
 <?php else : ?>
-    <div class="tiFyPartial-TableBodyTr tiFyPartial-TableBodyTr--empty tiFyPartial-TableTr">
-        <div class="tiFyPartial-TableCell1 tiFyPartial-TableBodyTd tiFyPartial-TableBodyTd--empty tiFyPartial-TableTd">
+    <div class="tiFyPartial-tableBodyTr tiFyPartial-tableBodyTr--empty tiFyPartial-tableTr">
+        <div class="tiFyPartial-tableCell1 tiFyPartial-tableBodyTd tiFyPartial-tableBodyTd--empty tiFyPartial-tableTd">
             <?php echo $none; ?>
         </div>
     </div>

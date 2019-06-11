@@ -43,18 +43,18 @@ class NumberJs extends FieldFactory implements NumberJsContract
      */
     public function parse(): FieldFactoryContract
     {
-        $this->set('container.attrs.id', 'tiFyField-NumberJsContainer--' . $this->getIndex());
+        $this->set('container.attrs.id', 'tiFyField-numberJsContainer--' . $this->getIndex());
 
         parent::parse();
 
         if ($container_class = $this->get('container.attrs.class')) {
-            $this->set('container.attrs.class', "tiFyField-NumberJsContainer {$container_class}");
+            $this->set('container.attrs.class', "tiFyField-numberJsContainer {$container_class}");
         } else {
-            $this->set('container.attrs.class', 'tiFyField-NumberJsContainer');
+            $this->set('container.attrs.class', 'tiFyField-numberJsContainer');
         }
 
         if (!$this->has('attrs.id')) {
-            $this->set('attrs.id', 'tiFyField-NumberJs--' . $this->getIndex());
+            $this->set('attrs.id', 'tiFyField-numberJs--' . $this->getIndex());
         }
         $this->set('attrs.type', 'text');
         $this->set('attrs.data-options', array_merge([

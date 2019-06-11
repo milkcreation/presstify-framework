@@ -1,6 +1,6 @@
-/** DEPS */
-/** tiFy - SelectJs */
+// DEPS
+// tiFy - SelectJs
 import '../select-js/index';
 
-/** CSS */
-import './css/styles.css';
+// SCSS
+import './scss/styles.scss';

@@ -7,6 +7,7 @@ use tiFy\Contracts\Partial\{Partial as Manager, PartialFactory as PartialFactory
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Support\HtmlAttrs;
 use tiFy\Support\ParamsBag;
+use tiFy\Support\Str;
 
 abstract class PartialFactory extends ParamsBag implements PartialFactoryContract
 {
@@ -162,8 +163,8 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
             $this->pull('attrs.id');
         }
 
-        $default_class = 'tiFyPartial-' . $this->getAlias() .
-            ' tiFyPartial-' . $this->getAlias() . '--' . $this->getIndex();
+        $default_class = 'tiFyPartial-' . Str::camel($this->getAlias()) .
+            ' tiFyPartial-' . Str::camel($this->getAlias()) . '--' . $this->getIndex();
         if (!$this->has('attrs.class')) {
             $this->set(
                 'attrs.class',
@@ -211,6 +212,8 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
         if (!$this->booted) {
             $this->alias = $alias;
             $this->manager = $manager;
+
+            $this->boot();
 
             $this->booted = true;
         }

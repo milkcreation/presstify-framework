@@ -14,7 +14,7 @@ class CustomHeader extends MetaboxWpTermController
         add_action(
             'admin_enqueue_scripts',
             function(){
-                field('media-image')->enqueue_scripts();
+                field('media-image')->enqueue();
             }
         );
     }

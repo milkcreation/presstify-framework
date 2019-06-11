@@ -1,7 +1,10 @@
-/** Sass **/
+// DEPS
+// JQuery - Widget
+import '~/jquery-ui/ui/widget.js';
+
+// SCSS
 import './scss/styles.scss';
 
-/** Scripts **/
-import 'jquery-ui/ui/widget.js';
+// JS
 import './js/imageLightbox';
 import './js/scripts';

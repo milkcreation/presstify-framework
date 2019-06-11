@@ -6,7 +6,7 @@
 <?php $this->before(); ?>
 
     <div <?php $this->attrs(); ?>>
-        <div class="tiFyField-ToggleSwitchWrapper">
+        <div class="tiFyField-toggleSwitchWrapper">
             <?php
             echo field(
                 'radio',
@@ -17,13 +17,13 @@
                             'content' => $this->get('label_on'),
                             'attrs'   => [
                                 'for'   => $this->getId() . '--on',
-                                'class' => 'tiFyField-ToggleSwitchLabel tiFyField-ToggleSwitchLabel--on',
+                                'class' => 'tiFyField-toggleSwitchLabel tiFyField-toggleSwitchLabel--on',
                             ],
                         ]
                     ),
                     'attrs'   => [
                         'id'           => $this->getId() . '--on',
-                        'class'        => 'tiFyField-ToggleSwitchRadio tiFyField-ToggleSwitchRadio--on',
+                        'class'        => 'tiFyField-toggleSwitchRadio tiFyField-toggleSwitchRadio--on',
                         'autocomplete' => 'off',
                     ],
                     'name'    => $this->getName(),
@@ -43,13 +43,13 @@
                             'content' => $this->get('label_off'),
                             'attrs'   => [
                                 'for'   => $this->getId() . '--off',
-                                'class' => 'tiFyField-ToggleSwitchLabel tiFyField-ToggleSwitchLabel--off',
+                                'class' => 'tiFyField-toggleSwitchLabel tiFyField-toggleSwitchLabel--off',
                             ],
                         ]
                     ),
                     'attrs'   => [
                         'id'           => $this->getId() . '--off',
-                        'class'        => 'tiFyField-ToggleSwitchRadio tiFyField-ToggleSwitchRadio--off',
+                        'class'        => 'tiFyField-toggleSwitchRadio tiFyField-toggleSwitchRadio--off',
                         'autocomplete' => 'off',
                     ],
                     'name'    => $this->getName(),
@@ -60,7 +60,7 @@
             );
             ?>
 
-            <span class="tiFyField-ToggleSwitchHandler"></span>
+            <span class="tiFyField-toggleSwitchHandler"></span>
         </div>
     </div>
 

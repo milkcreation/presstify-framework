@@ -11,6 +11,7 @@ use tiFy\Contracts\Field\{
     Field as FieldContract,
     FieldFactory,
     File as FileContract,
+    FileJs as FileJsContract,
     DatetimeJs as DatetimeJsContract,
     Hidden as HiddenContract,
     Label as LabelContract,
@@ -35,6 +36,7 @@ use tiFy\Field\Fields\{
     CheckboxCollection\CheckboxCollection,
     Colorpicker\Colorpicker,
     File\File,
+    FileJs\FileJs,
     DatetimeJs\DatetimeJs,
     Hidden\Hidden,
     Label\Label,
@@ -69,6 +71,7 @@ class FieldServiceProvider extends ServiceProvider
         CheckboxCollectionContract::class,
         ColorpickerContract::class,
         FileContract::class,
+        FileJsContract::class,
         DatetimeJsContract::class,
         HiddenContract::class,
         LabelContract::class,
@@ -128,6 +131,10 @@ class FieldServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(FileContract::class, function () {
             return new File();
+        });
+
+        $this->getContainer()->add(FileJsContract::class, function () {
+            return new FileJs();
         });
 
         $this->getContainer()->add(DatetimeJsContract::class, function () {

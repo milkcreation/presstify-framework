@@ -108,7 +108,7 @@ class Fileshare extends MetaboxWpPostController
                         true
                     );
                 else :
-                    field('media-file')->enqueue_scripts();
+                    field('media-file')->enqueue();
                 endif;
             }
         );

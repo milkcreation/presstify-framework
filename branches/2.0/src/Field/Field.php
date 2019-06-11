@@ -3,15 +3,15 @@
 namespace tiFy\Field;
 
 use InvalidArgumentException;
-use tiFy\Contracts\Field\{
-    Button,
+use tiFy\Contracts\Field\{Button,
     Checkbox,
     CheckboxCollection,
     Colorpicker,
+    DatetimeJs,
     Field as FieldContract,
     FieldFactory,
     File,
-    DatetimeJs,
+    FileJs,
     Hidden,
     Label,
     Number,
@@ -28,8 +28,7 @@ use tiFy\Contracts\Field\{
     Text,
     Textarea,
     TextRemaining,
-    ToggleSwitch
-};
+    ToggleSwitch};
 use tiFy\Support\Manager;
 
 class Field extends Manager implements FieldContract
@@ -45,6 +44,7 @@ class Field extends Manager implements FieldContract
         'colorpicker'         => Colorpicker::class,
         'datetime-js'         => DatetimeJs::class,
         'file'                => File::class,
+        'file-js'             => FileJs::class,
         'hidden'              => Hidden::class,
         'label'               => Label::class,
         'number'              => Number::class,
@@ -90,7 +90,7 @@ class Field extends Manager implements FieldContract
         $alias = $args[0] ?? null;
         if (!$alias || !isset($this->items[$alias])) {
             throw new InvalidArgumentException(
-                __('Aucune instance de portion d\'affichage n\'est définie sous l\'alias %s', 'tify'),
+                __('Aucune instance de champs n\'est définie sous l\'alias %s', 'tify'),
                 $alias
             );
         }
@@ -118,8 +118,30 @@ class Field extends Manager implements FieldContract
 
         return $partial
             ->setIndex($this->indexes[$alias])
-            ->setId($id ?? $alias.$this->indexes[$alias])
+            ->setId($id ?? $alias . $this->indexes[$alias])
             ->set($attrs)->parse();
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @throws InvalidArgumentException
+     */
+    public function walk(&$item, $key = null): void
+    {
+        if ($item instanceof FieldFactory) {
+            $item->prepare((string)$key, $this);
+
+            $this->instances[$key] = [$item];
+            $this->indexes[$key] = 0;
+        } else {
+            throw new InvalidArgumentException(
+                sprintf(
+                    __('La déclaration d\'une instance de champs doit être de type %s', 'tify'),
+                    FieldFactory::class
+                )
+            );
+        }
     }
 
     /**
@@ -127,8 +149,7 @@ class Field extends Manager implements FieldContract
      */
     public function registerDefaults(): FieldContract
     {
-        foreach ($this->defaults as $name => $alias)
-        {
+        foreach ($this->defaults as $name => $alias) {
             $this->set($name, $this->getContainer()->get($alias));
         }
 
@@ -158,27 +179,5 @@ class Field extends Manager implements FieldContract
         return (file_exists($cinfo->getDirname() . "/Resources{$path}"))
             ? $cinfo->getUrl() . "/Resources{$path}"
             : '';
-    }
-
-    /**
-     * @inheritDoc
-     *
-     * @throws InvalidArgumentException
-     */
-    public function walk(&$item, $key = null): void
-    {
-        if ($item instanceof FieldFactory) {
-            $item->prepare((string)$key, $this);
-
-            $this->instances[$key] = [$item];
-            $this->indexes[$key] = 0;
-        } else {
-            throw new InvalidArgumentException(
-                sprintf(
-                    __('La déclaration d\'une instance de portion d\'affichage doit être de type %s', 'tify'),
-                    FieldFactory::class
-                )
-            );
-        }
     }
 }

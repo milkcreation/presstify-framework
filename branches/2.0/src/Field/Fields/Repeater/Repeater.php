@@ -125,7 +125,7 @@ class Repeater extends FieldFactory implements RepeaterContract
     }
 
     /**
-     * Récupération de la réponse HTTP via une requête XHR.
+     * Génération de la réponse HTTP via une requête XHR.
      *
      * @return array
      */

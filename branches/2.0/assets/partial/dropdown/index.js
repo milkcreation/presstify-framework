@@ -1,9 +1,9 @@
-/** DEPS */
-/** jQuery-ui - Widget */
+// DEPS
+// jQuery-ui - Widget
 import 'jquery-ui/ui/widget';
 
-/** CSS */
-import './css/styles.css';
+// SCSS
+import './scss/styles.scss';
 
-/** JS */
+// JS
 import './js/scripts';

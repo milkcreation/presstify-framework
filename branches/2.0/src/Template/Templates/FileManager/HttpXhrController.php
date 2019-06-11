@@ -77,7 +77,9 @@ class HttpXhrController extends FactoryHttpXhrController implements HttpXhrContr
                 'success' => false,
                 'views'   => [
                     'notice' => (string)$this->notice(
-                        __('Un dossier portant ce nom autre existe déjà dans le répertoire courant.', 'tify'), 'warning')
+                        __('Un dossier portant ce nom autre existe déjà dans le répertoire courant.', 'tify'),
+                        'warning'
+                    )
                 ]
             ];
         } elseif ($this->factory->filesystem()->createDir($path)) {

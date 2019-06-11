@@ -31,7 +31,7 @@
     box-shadow: 0px 0px 1px 0px #ccc;
 }
 
-[data-control='password-js'] .tiFyField-CryptedWrapper::before {
+[data-control='password-js'] .tiFyField-passwordJsWrapper::before {
     position: absolute;
     font-family: "dashicons";
     content: "\f112";
@@ -43,13 +43,13 @@
     color: #AAA;
 }
 
-[data-control='password-js'] .tiFyField-CryptedWrapper {
+[data-control='password-js'] .tiFyField-passwordJsWrapper {
     position: relative;
     display: inline-block;
     font-size: 14px;
 }
 
-[data-control='password-js'].loading .tiFyField-CryptedWrapper::before {
+[data-control='password-js'].loading .tiFyField-passwordJsWrapper::before {
     content: "\f463";
     margin-top: -10px;
     -webkit-animation: rotating 2s infinite linear;

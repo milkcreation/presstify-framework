@@ -99,7 +99,7 @@ class DatetimeJs extends FieldFactory implements DatetimeJsContract
                         [
                             'attrs' => [
                                 'id'           => $this->getId() . "-handler-yyyy",
-                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--year',
+                                'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--year',
                                 'size'         => 4,
                                 'maxlength'    => 4,
                                 'min'          => 0,
@@ -128,7 +128,7 @@ class DatetimeJs extends FieldFactory implements DatetimeJsContract
                         [
                             'attrs'   => [
                                 'id'           => $this->getId() . "-handler-mm",
-                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--month',
+                                'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--month',
                                 'autocomplete' => 'off'
                             ],
                             'choices' => $choices,
@@ -145,7 +145,7 @@ class DatetimeJs extends FieldFactory implements DatetimeJsContract
                         [
                             'attrs' => [
                                 'id'           => $this->getId() . "-handler-dd",
-                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--day',
+                                'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--day',
                                 'size'         => 2,
                                 'maxlength'    => 2,
                                 'min'          => $this->get('none_allowed') ? 0 : 1,
@@ -165,7 +165,7 @@ class DatetimeJs extends FieldFactory implements DatetimeJsContract
                         [
                             'attrs' => [
                                 'id'           => $this->getId() . "-handler-hh",
-                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--hour',
+                                'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--hour',
                                 'size'         => 2,
                                 'maxlength'    => 2,
                                 'min'          => 0,
@@ -185,7 +185,7 @@ class DatetimeJs extends FieldFactory implements DatetimeJsContract
                         [
                             'attrs' => [
                                 'id'           => $this->getId() . "-handler-ii",
-                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--minute',
+                                'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--minute',
                                 'size'         => 2,
                                 'maxlength'    => 2,
                                 'min'          => 0,
@@ -205,7 +205,7 @@ class DatetimeJs extends FieldFactory implements DatetimeJsContract
                         [
                             'attrs' => [
                                 'id'           => $this->getId() . "-handler-ss",
-                                'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--second',
+                                'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--second',
                                 'size'         => 2,
                                 'maxlength'    => 2,
                                 'min'          => 0,
@@ -232,8 +232,8 @@ class DatetimeJs extends FieldFactory implements DatetimeJsContract
                 'hidden',
                 [
                     'attrs' => [
-                        'id'           => 'tiFyField-DatetimeJsInput--' . $this->getIndex(),
-                        'class'        => 'tiFyField-DatetimeJsField tiFyField-DatetimeJsField--value',
+                        'id'           => 'tiFyField-datetimeJsInput--' . $this->getIndex(),
+                        'class'        => 'tiFyField-datetimeJsField tiFyField-datetimeJsField--value',
                         'name'         => $this->getName(),
                         'value'        => $value
                     ]

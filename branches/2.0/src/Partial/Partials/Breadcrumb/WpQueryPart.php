@@ -17,7 +17,7 @@ class WpQueryPart
      */
     public function getItemContentClass()
     {
-        return 'tiFyPartial-BreadcrumbItemContent';
+        return 'tiFyPartial-breadcrumbItemContent';
     }
 
     /**
@@ -27,7 +27,7 @@ class WpQueryPart
      */
     public function getItemWrapperClass()
     {
-        return 'tiFyPartial-BreadcrumbItem';
+        return 'tiFyPartial-breadcrumbItem';
     }
 
     /**

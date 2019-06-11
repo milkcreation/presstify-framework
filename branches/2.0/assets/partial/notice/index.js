@@ -1,11 +1,9 @@
-// Librairie tierce
-// Presstify Framework
-// observer
+// DEPS
+// Presstify - observer
 import '../../observer/index';
 
+// SCSS
+import './scss/styles.scss';
 
-/** CSS */
-import './css/styles.css';
-
-/** JS */
+// JS
 import './js/scripts';

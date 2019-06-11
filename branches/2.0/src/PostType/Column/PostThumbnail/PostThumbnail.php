@@ -22,7 +22,7 @@ class PostThumbnail extends AbstractColumnDisplayPostTypeController
      */
     public function admin_enqueue_scripts()
     {
-        partial('holder')->enqueue_scripts();
+        partial('holder')->enqueue();
 
         $column_name = "column-{$this->item->getName()}";
         asset()->setInlineCss(

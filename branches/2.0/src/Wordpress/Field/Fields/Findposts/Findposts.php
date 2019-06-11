@@ -103,7 +103,7 @@ class Findposts extends FieldFactory implements FindpostsContract
 
         parent::parse();
 
-        $this->set('attrs.id', 'tiFyField-Findposts--' . $this->getId());
+        $this->set('attrs.id', 'tiFyField-findposts--' . $this->getId());
 
         return $this;
     }

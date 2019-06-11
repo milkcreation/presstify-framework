@@ -1,6 +1,6 @@
-/** DEPS */
-/** tiFy - Notice */
+// DEPS
+// tiFy - Partial > Notice
 import '../notice/index';
 
-/** JS */
+// JS
 import './js/scripts';

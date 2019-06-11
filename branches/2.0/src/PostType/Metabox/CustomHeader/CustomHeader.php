@@ -11,12 +11,9 @@ class CustomHeader extends MetaboxWpPostController
      */
     public function load($wp_screen)
     {
-        add_action(
-            'admin_enqueue_scripts',
-            function(){
-                field('media-image')->enqueue_scripts();
-            }
-        );
+        add_action('admin_enqueue_scripts', function(){
+            field('media-image')->enqueue();
+        });
     }
 
     /**

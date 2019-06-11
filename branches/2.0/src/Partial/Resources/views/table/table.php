@@ -6,7 +6,7 @@
 
 <?php $this->before(); ?>
 
-<div class="tiFyPartial-Table">
+<div class="tiFyPartial-table">
     <?php if ($this->get('header')) $this->insert('header', $this->all()); ?>
 
     <?php $this->insert('body', $this->all()); ?>

@@ -157,6 +157,6 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on('click', '[aria-control="findposts"] > button', function() {
-        scripts.open('target', '#' + $('.tiFyField-Findposts', $(this).closest('[aria-control="findposts"]')).attr('id'));
+        scripts.open('target', '#' + $('.tiFyField-findposts', $(this).closest('[aria-control="findposts"]')).attr('id'));
     });
 });

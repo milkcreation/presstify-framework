@@ -7,38 +7,38 @@ jQuery(document).ready(function ($) {
 
             var $closest = $(this).closest('[aria-control="datetime_js"]');
             var value = "", dateFormat = "";
-            if ($('.tiFyField-DatetimeJsField--year', $closest).length) {
-                value += $('.tiFyField-DatetimeJsField--year', $closest).val();
+            if ($('.tiFyField-datetimeJsField--year', $closest).length) {
+                value += $('.tiFyField-datetimeJsField--year', $closest).val();
                 dateFormat += "YYYY";
             }
-            if ($('.tiFyField-DatetimeJsField--month', $closest).length) {
-                value += "-" + ("0" + parseInt($('.tiFyField-DatetimeJsField--month', $closest).val(), 10)).slice(-2);
+            if ($('.tiFyField-datetimeJsField--month', $closest).length) {
+                value += "-" + ("0" + parseInt($('.tiFyField-datetimeJsField--month', $closest).val(), 10)).slice(-2);
 
                 if (dateFormat)
                     dateFormat += "-";
                 dateFormat += "MM";
             }
-            if ($('.tiFyField-DatetimeJsField--day', $closest).length) {
-                value += "-" + ("0" + parseInt($('.tiFyField-DatetimeJsField--day', $closest).val(), 10)).slice(-2);
+            if ($('.tiFyField-datetimeJsField--day', $closest).length) {
+                value += "-" + ("0" + parseInt($('.tiFyField-datetimeJsField--day', $closest).val(), 10)).slice(-2);
                 if (dateFormat)
                     dateFormat += "-";
                 dateFormat += "DD";
             }
-            if ($('.tiFyField-DatetimeJsField--hour', $closest).length) {
-                value += " " + ("0" + parseInt($('.tiFyField-DatetimeJsField--hour', $closest).val(), 10)).slice(-2);
+            if ($('.tiFyField-datetimeJsField--hour', $closest).length) {
+                value += " " + ("0" + parseInt($('.tiFyField-datetimeJsField--hour', $closest).val(), 10)).slice(-2);
                 if (dateFormat)
                     dateFormat += " ";
                 dateFormat += "HH";
             }
-            if ($('.tiFyField-DatetimeJsField--minute', $closest).length) {
-                value += ":" + ("0" + parseInt($('.tiFyField-DatetimeJsField--minute', $closest).val(), 10)).slice(-2);
+            if ($('.tiFyField-datetimeJsField--minute', $closest).length) {
+                value += ":" + ("0" + parseInt($('.tiFyField-datetimeJsField--minute', $closest).val(), 10)).slice(-2);
 
                 if (dateFormat)
                     dateFormat += ":";
                 dateFormat += "mm";
             }
-            if ($('.tiFyField-DatetimeJsField--second', $closest).length) {
-                value += ":" + ("0" + parseInt($('.tiFyField-DatetimeJsField--second', $closest).val(), 10)).slice(-2);
+            if ($('.tiFyField-datetimeJsField--second', $closest).length) {
+                value += ":" + ("0" + parseInt($('.tiFyField-datetimeJsField--second', $closest).val(), 10)).slice(-2);
                 if (dateFormat)
                     dateFormat += ":";
                 dateFormat += "ss";
@@ -51,7 +51,7 @@ jQuery(document).ready(function ($) {
                 $closest.addClass('invalid');
             }
 
-            $('.tiFyField-DatetimeJsField--value', $closest).val(value);
+            $('.tiFyField-datetimeJsField--value', $closest).val(value);
 
             $closest.trigger('tify_fields_ajax_date_change');
         });

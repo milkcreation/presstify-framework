@@ -165,7 +165,7 @@ class SelectJs extends FieldFactory implements SelectJsContract
                         [
                             'attrs'   => [
                                 'id'    => '',
-                                'class' => 'tiFyField-SelectJsPickerSpinkit',
+                                'class' => 'tiFyField-selectJsPickerSpinkit',
                             ],
                             'spinner' => 'three-bounce',
                         ]
@@ -210,7 +210,7 @@ class SelectJs extends FieldFactory implements SelectJsContract
     }
 
     /**
-     * Récupération de réponse HTTP via un requête XHR.
+     * Génération de réponse HTTP via un requête XHR.
      *
      * @return array
      */

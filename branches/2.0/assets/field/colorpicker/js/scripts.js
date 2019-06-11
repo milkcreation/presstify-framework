@@ -12,7 +12,7 @@ jQuery(document).ready(function ($) {
         $(obj).spectrum(options);
     });
 
-    $('.tiFyField-Colorpicker').each(function () {
+    $('.tiFyField-colorpicker').each(function () {
         $(document).trigger('tify_field.colorpicker.init', $(this));
     });
 });

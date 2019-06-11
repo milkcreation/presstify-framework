@@ -1,5 +1,5 @@
-/** SCSS */
+// SCSS
 import './sss/styles.scss';
 
-/** JS */
+// JS
 import './js/scripts';

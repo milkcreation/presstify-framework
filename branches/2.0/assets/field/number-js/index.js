@@ -1,12 +1,12 @@
-/** DEPS */
-/** Dashicons */
+// DEPS
+// Dashicons
 import 'wp-css/dashicons.css';
 
-/** jQuery-ui - Spinner */
+// jQuery-ui - Spinner
 import 'jquery-ui/ui/widgets/spinner';
 
-/** CSS */
-import './css/styles.css';
+// SCSS
+import './scss/styles.scss';
 
-/** JS */
+// JS
 import './js/scripts';

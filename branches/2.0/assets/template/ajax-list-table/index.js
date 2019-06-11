@@ -2,7 +2,7 @@
 // datatables
 import 'datatables.net-dt';
 
-// jQuery-ui > widget
+// jQuery-ui - widget
 import 'jquery-ui/ui/widget';
 
 // SCSS

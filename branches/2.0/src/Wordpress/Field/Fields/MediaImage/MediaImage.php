@@ -145,7 +145,7 @@ class MediaImage extends FieldFactory implements MediaImageContract
         if ($this->get('value_img')) {
             $this->set(
                 'attrs.class',
-                trim($this->get('attrs.class') . ' tiFyField-MediaImage--selected')
+                trim($this->get('attrs.class') . ' tiFyField-mediaImage--selected')
             );
         }
 

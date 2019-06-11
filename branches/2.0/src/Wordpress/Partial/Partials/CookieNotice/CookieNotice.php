@@ -80,7 +80,7 @@ class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
         parent::parse();
 
         if(!$this->get('ajax_nonce')) {
-            $this->set('ajax_nonce', wp_create_nonce('tiFyPartial-CookieNotice'));
+            $this->set('ajax_nonce', wp_create_nonce('tiFyPartial-cookieNotice'));
         }
 
         $this->set([
@@ -96,7 +96,7 @@ class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
      */
     public function xhrSetCookie()
     {
-        check_ajax_referer('tiFyPartial-CookieNotice');
+        check_ajax_referer('tiFyPartial-cookieNotice');
 
         parent::xhrSetCookie();
     }

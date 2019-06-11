@@ -1,6 +1,6 @@
-/** DEPS */
-/** tab */
+// DEPS
+// tiFy - Partial > tab
 import 'partial/tab/index';
 
-/** CSS */
-import './css/styles.css';
+// CSS
+import './scss/styles.scss';

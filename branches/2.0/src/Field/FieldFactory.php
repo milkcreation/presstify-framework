@@ -6,6 +6,7 @@ use Closure;
 use tiFy\Contracts\Field\{Field as Manager, FieldFactory as FieldFactoryContract};
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Support\HtmlAttrs;
+use tiFy\Support\Str;
 use tiFy\Support\ParamsBag;
 
 abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
@@ -190,8 +191,8 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
      */
     public function parseDefaults(): FieldFactoryContract
     {
-        $default_class = 'tiFyField-' . class_info($this)->getShortName() .
-            ' tiFyField-' . class_info($this)->getShortName() . '--' . $this->getIndex();
+        $default_class = 'tiFyField-' . Str::camel($this->getAlias()) .
+            ' tiFyField-' . Str::camel($this->getAlias()) . '--' . $this->getIndex();
         if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $default_class);
         } else {
@@ -257,6 +258,8 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
         if (!$this->booted) {
             $this->alias = $alias;
             $this->manager = $manager;
+
+            $this->boot();
 
             $this->booted = true;
         }
