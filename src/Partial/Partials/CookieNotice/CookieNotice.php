@@ -59,7 +59,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
         $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);
 
         if (!$this->get('cookie_name')) {
-            $this->set('cookie_name', md5('tiFyPartial-CookieNotice--' . $this->getIndex()));
+            $this->set('cookie_name', md5('tiFyPartial-cookieNotice--' . $this->getIndex()));
         }
 
         if ($this->getCookie()) {
@@ -138,7 +138,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
      */
     public function xhrSetCookie()
     {
-        check_ajax_referer('tiFyPartial-CookieNotice');
+        check_ajax_referer('tiFyPartial-cookieNotice');
 
         $cookie_name = request()->input('cookie_name', '');
         $cookie_hash = request()->input('cookie_hash', '');

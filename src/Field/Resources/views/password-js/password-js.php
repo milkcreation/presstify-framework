@@ -6,8 +6,8 @@
 <?php $this->before(); ?>
 
 <div <?php echo $this->htmlAttrs($this->get('container.attrs', [])); ?>>
-    <div class="tiFyField-CryptedWrapper">
-        <a href="#<?php echo $this->get('container.attrs.id'); ?>" class="tiFyField-CryptedToggle"
+    <div class="tiFyField-passwordJsWrapper">
+        <a href="#<?php echo $this->get('container.attrs.id'); ?>" class="tiFyField-passwordJsToggle"
            aria-control="toggle"></a>
 
         <?php

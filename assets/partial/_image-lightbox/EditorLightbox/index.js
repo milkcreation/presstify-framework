@@ -1,5 +1,5 @@
-/** Dépendances **/
+// DEPS
 import '../tiFyImageLightbox/index';
 
-/** Scripts **/
+// JS
 import './js/scripts';

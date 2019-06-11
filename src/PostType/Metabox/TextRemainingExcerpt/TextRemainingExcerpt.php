@@ -54,7 +54,7 @@ class TextRemainingExcerpt extends MetaboxWpPostController
         add_action(
             'admin_enqueue_scripts',
             function () {
-                field('text-remaining')->enqueue_scripts();
+                field('text-remaining')->enqueue();
             }
         );
     }

@@ -1,12 +1,12 @@
-/** Dépendances */
-/** jQuery-ui - Widget */
+// DEPS
+// jQuery-ui - Widget
 import 'jquery-ui/ui/widget';
 
-/** jQuery-ui - Sortable */
+// jQuery-ui - Sortable =
 import 'jquery-ui/ui/widgets/sortable';
 
-/** CSS */
-import './css/styles.css';
+// SCSS
+import './scss/styles.scss';
 
-/** JS */
+// JS
 import './js/scripts';

@@ -113,7 +113,7 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
             return (string)$part;
         } elseif (is_array($part)) {
             $defaults = [
-                'class'   => 'tiFyPartial-BreadcrumbItem',
+                'class'   => 'tiFyPartial-breadcrumbItem',
                 'content' => ''
             ];
             $part = array_merge($defaults, $part);

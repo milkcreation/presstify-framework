@@ -6,6 +6,7 @@ use tiFy\Contracts\Field\{
     Colorpicker as ColorpickerContract,
     Field as Manager,
     DatetimeJs as DatetimeJsContract,
+    FileJs as FileJsContract,
     NumberJs as NumberJsContract,
     PasswordJs as PasswordJsContract,
     Repeater as RepeaterContract,
@@ -20,6 +21,7 @@ use tiFy\Wordpress\Contracts\Field\{
 use tiFy\Wordpress\Field\Fields\{
     Colorpicker\Colorpicker,
     DatetimeJs\DatetimeJs,
+    FileJs\FileJs,
     Findposts\Findposts,
     MediaFile\MediaFile,
     MediaImage\MediaImage,
@@ -65,6 +67,9 @@ class Field
         $this->registerOverride();
 
         $this->manager->registerDefaults();
+        foreach ($this->register as $name => $alias) {
+            $this->manager->set($name, $this->manager->getContainer()->get($alias));
+        }
     }
 
     /**
@@ -100,6 +105,10 @@ class Field
 
         app()->add(DatetimeJsContract::class, function () {
             return new DatetimeJs();
+        });
+
+        app()->add(FileJsContract::class, function () {
+            return new FileJs();
         });
 
         app()->add(NumberJsContract::class, function () {

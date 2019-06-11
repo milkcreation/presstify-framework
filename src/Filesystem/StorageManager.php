@@ -87,7 +87,7 @@ class StorageManager extends MountManager implements StorageManagerContract
             'case_sensitive' => true
         ];
 
-        return $this->getContainer()->has(FilesystemContract::class)
+        return $this->getContainer() && $this->getContainer()->has(FilesystemContract::class)
             ? $this->getContainer()->get(FilesystemContract::class, [$adapter, $params])
             : new Filesystem($adapter, $params);
     }

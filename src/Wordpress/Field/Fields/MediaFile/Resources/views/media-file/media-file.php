@@ -19,7 +19,7 @@
         );
         ?>
 
-        <div class="tiFyField-MediaFileInput tiFy-Input--media">
+        <div class="tiFyField-mediaFileInput tiFy-Input--media">
             <?php
             echo field(
                 'text',

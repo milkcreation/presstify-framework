@@ -69,7 +69,7 @@ class PasswordJs extends FieldFactory implements PasswordJsContract
     {
         parent::parse();
 
-        $this->set('container.attrs.id', 'tiFyField-CryptedContainer--' . $this->getId());
+        $this->set('container.attrs.id', 'tiFyField-passwordJsContainer--' . $this->getId());
         $this->set('container.attrs.data-control', 'password-js');
         $this->set('container.attrs.aria-hide', $this->get('hide') ? 'true' : 'false');
         $this->set('container.attrs.data-options', [

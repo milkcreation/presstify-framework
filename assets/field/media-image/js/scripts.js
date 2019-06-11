@@ -3,11 +3,11 @@
 let tify_control_media_image_frame;
 
 jQuery(document).ready(function ($) {
-    $(document).on('click', '.tiFyField-MediaImageAdd', function (e) {
+    $(document).on('click', '.tiFyField-mediaImageAdd', function (e) {
         e.preventDefault();
 
         let $this = $(this),
-            $closest = $this.closest('.tiFyField-MediaImage'),
+            $closest = $this.closest('.tiFyField-mediaImage'),
             title = $(this).data('media_library_title'),
             button = $(this).data('media_library_button');
 
@@ -27,22 +27,22 @@ jQuery(document).ready(function ($) {
             let attachment = tify_control_media_image_frame.state().get('selection').first().toJSON();
 
             $this.css('background-image', 'url(' + attachment.url + '');
-            $('.tiFyField-MediaImageInput', $closest).val(attachment.id);
-            $('.tiFyField-MediaImageReset:hidden', $closest).fadeIn();
-            $closest.addClass('tiFyField-MediaImage--selected');
+            $('.tiFyField-mediaImageInput', $closest).val(attachment.id);
+            $('.tiFyField-mediaImageReset:hidden', $closest).fadeIn();
+            $closest.addClass('tiFyField-mediaImage--selected');
         });
 
         tify_control_media_image_frame.open();
     });
 
-    $(document).on('click', '.tiFyField-MediaImageRemove', function (e) {
+    $(document).on('click', '.tiFyField-mediaImageRemove', function (e) {
         e.preventDefault();
 
         let $this = $(this),
-            $closest = $this.closest('.tiFyField-MediaImage');
+            $closest = $this.closest('.tiFyField-mediaImage');
 
-        $closest.removeClass('tiFyField-MediaImage--selected');
-        $('.tiFyField-MediaImageInput', $closest).val('');
-        $('.tiFyField-MediaImageAdd', $closest).css('background-image', 'url(' + $('.tiFyField-MediaImage', $closest).data('default') + ')');
+        $closest.removeClass('tiFyField-mediaImage--selected');
+        $('.tiFyField-mediaImageInput', $closest).val('');
+        $('.tiFyField-mediaImageAdd', $closest).css('background-image', 'url(' + $('.tiFyField-mediaImage', $closest).data('default') + ')');
     });
 });

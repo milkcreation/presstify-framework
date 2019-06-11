@@ -1,15 +1,15 @@
-/** DEPS */
-/** SpinKit */
+// DEPS
+// SpinKit
 import 'spinkit/scss/spinners/7-three-bounce.scss';
 
-/** jQuery-ui - Widget */
+// jQuery-ui - Widget
 import 'jquery-ui/ui/widget';
 
-/** jQuery-ui - Sortable */
+// jQuery-ui - Sortable
 import 'jquery-ui/ui/widgets/sortable';
 
-/** CSS */
-import './css/styles.css';
+// CSS
+import './scss/styles.scss';
 
-/** JS */
+// JS
 import './js/scripts';

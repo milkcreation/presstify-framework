@@ -22,12 +22,13 @@ class File extends FieldFactory implements FileContract
     public function defaults(): array
     {
         return [
-            'attrs'  => [],
-            'after'  => '',
-            'before' => '',
-            'name'   => '',
-            'value'  => '',
-            'viewer' => []
+            'attrs'    => [],
+            'after'    => '',
+            'before'   => '',
+            'name'     => '',
+            'value'    => '',
+            'viewer'   => [],
+            'multiple' => false
         ];
     }
 
@@ -39,7 +40,9 @@ class File extends FieldFactory implements FileContract
         parent::parse();
 
         $this->set('attrs.type', 'file');
-
+        if ($this->get('multiple')) {
+            $this->push('attrs', 'multiple');
+        }
         return $this;
     }
 }

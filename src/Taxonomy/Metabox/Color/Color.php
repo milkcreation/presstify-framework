@@ -37,7 +37,7 @@ class Color extends MetaboxWpTermController
         add_action(
             'admin_enqueue_scripts',
             function () {
-                field('colorpicker')->enqueue_scripts();
+                field('colorpicker')->enqueue();
             }
         );
     }
