@@ -137,7 +137,8 @@ class Field extends Manager implements FieldContract
         } else {
             throw new InvalidArgumentException(
                 sprintf(
-                    __('La déclaration d\'une instance de champs doit être de type %s', 'tify'),
+                    __('La déclaration du champ %s devrait être une instance de %s', 'tify'),
+                    $key,
                     FieldFactory::class
                 )
             );

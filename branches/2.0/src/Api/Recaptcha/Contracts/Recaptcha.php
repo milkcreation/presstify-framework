@@ -1,6 +1,6 @@
 <?php
 
-namespace tiFy\Contracts\Api;
+namespace tiFy\Api\Recaptcha\Contracts;
 
 use ReCaptcha\ReCaptcha as ReCaptchaSdk;
 use ReCaptcha\Response;

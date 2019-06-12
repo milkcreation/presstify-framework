@@ -6,22 +6,19 @@ use ReCaptcha\ReCaptcha as ReCaptchaSdk;
 use ReCaptcha\RequestMethod\SocketPost;
 use RuntimeException;
 use tiFy\Api\Recaptcha\Field\Recaptcha as RecaptchaField;
-use tiFy\Contracts\Api\Recaptcha as RecaptchaInterface;
+use tiFy\Api\Recaptcha\Contracts\Recaptcha as RecaptchaContract;
 
 /**
- * Class Recaptcha
- * @package tiFy\Api\Recaptcha
- *
  * @see https://github.com/google/recaptcha
  */
-class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
+class Recaptcha extends ReCaptchaSdk implements RecaptchaContract
 {
     /**
      * Liste des attributs de configuration.
-     * @var array $attrs {
-     * @var string $secretkey Clé secrète, requise pour la communication entre le site et Google. Veillez à ne surtout
-     *     pas divulger cette clé !
-     * @var string $sitekey Clé du site, utilisée dans le code HTML
+     * @var array {
+     *      @var string $secretkey Clé secrète, requise pour la communication entre le site et Google.
+     *                             Veillez a ne surtout jamais divulger cette clé.
+     *      @var string $sitekey Clé du site, utilisée dans le code HTML
      * }
      */
     protected $attributes = [];
@@ -43,7 +40,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
             parent::__construct($attrs['secretkey'], (ini_get('allow_url_fopen') ? null : new SocketPost));
             $this->attributes = $attrs;
 
-            field()->register('recaptcha', RecaptchaField::class);
+            field()->set('recaptcha', new RecaptchaField());
 
             add_action('wp_head', function () {
                 if ($this->widgets) {
@@ -160,7 +157,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSiteKey()
     {
@@ -168,7 +165,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function validation()
     {

@@ -1,23 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Api\Recaptcha\Field;
 
-use tiFy\Contracts\Api\Recaptcha as RecaptchaContract;
-use tiFy\Field\FieldFactory;
-use tiFy\Field\FieldView;
+use tiFy\Api\Recaptcha\Contracts\{FieldRecaptcha, Recaptcha as RecaptchaContract};
+use tiFy\Contracts\Field\FieldFactory as FieldFactoryContract;
+use tiFy\Field\{FieldFactory, FieldView};
 
-class Recaptcha extends FieldFactory
+class Recaptcha extends FieldFactory implements FieldRecaptcha
 {
     /**
-     * Instance du controleur de champ reCaptcha
+     * Instance du controleur de champ reCaptcha.
      * @var RecaptchaContract
      */
     protected $recaptcha;
 
     /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
+     *
      * @see https://developers.google.com/recaptcha/docs/display
-     * @var array $attributs {
+     *
+     * @return array {
      *      @var string $before Contenu placé avant le champ.
      *      @var string $after Contenu placé après le champ.
      *      @var string $name Clé d'indice de la valeur de soumission du champ.
@@ -29,43 +31,26 @@ class Recaptcha extends FieldFactory
      *      @var string $secretkey Clé publique. Optionnel si l'API $recaptcha est active.
      * }
      */
-    protected $attributes = [
-        'before'    => '',
-        'after'     => '',
-        'name'      => '',
-        'value'     => '',
-        'attrs'     => [],
-        'viewer'    => [],
-        'theme'     => 'light',
-        'tabindex'  => 0,
-        'sitekey'   => '',
-        'secretkey' => ''
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parse($attrs = [])
+    public function defaults(): array
     {
-        parent::parse($attrs);
-
-        $this->recaptcha = app('api.recaptcha');
-
-        if (!$this->get('attrs.id')) :
-            $this->set('attrs.id', 'Field-recapcha--' . $this->getIndex());
-        endif;
-
-        $this->set('attrs.data-tabindex', $this->get('tabindex'));
-
-        if (!$this->get('sitekey')) :
-            $this->set('sitekey', $this->recaptcha->getSiteKey());
-        endif;
+        return [
+            'attrs'     => [],
+            'after'     => '',
+            'before'    => '',
+            'name'      => '',
+            'value'     => '',
+            'viewer'    => [],
+            'sitekey'   => '',
+            'secretkey' => '',
+            'theme'     => 'light',
+            'tabindex'  => 0
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function display()
+    public function display(): string
     {
         $this->recaptcha->addWidgetRender($this->get('attrs.id'), [
             'sitekey' => $this->get('sitekey'),
@@ -76,11 +61,33 @@ class Recaptcha extends FieldFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
+     */
+    public function parse(): FieldFactoryContract
+    {
+        parent::parse();
+
+        $this->recaptcha = app('api.recaptcha');
+
+        if (!$this->get('attrs.id')) {
+            $this->set('attrs.id', 'Field-recapcha--' . $this->getIndex());
+        }
+
+        $this->set('attrs.data-tabindex', $this->get('tabindex'));
+
+        if (!$this->get('sitekey')) {
+            $this->set('sitekey', $this->recaptcha->getSiteKey());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function viewer($view = null, $data = [])
     {
-        if (!$this->viewer) :
+        if (!$this->viewer) {
             $cinfo = class_info(Recaptcha::class);
             $default_dir = $cinfo->getDirname() . '/views/';
             $this->viewer = view()
@@ -92,11 +99,11 @@ class Recaptcha extends FieldFactory
                         : (is_dir($default_dir) ? $default_dir : $cinfo->getDirname())
                 )
                 ->set('field', $this);
-        endif;
+        }
 
-        if (func_num_args() === 0) :
+        if (func_num_args() === 0) {
             return $this->viewer;
-        endif;
+        }
 
         return $this->viewer->make("_override::{$view}", $data);
     }
