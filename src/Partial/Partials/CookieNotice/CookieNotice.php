@@ -2,10 +2,11 @@
 
 namespace tiFy\Partial\Partials\CookieNotice;
 
+use Exception;
 use Closure;
-use tiFy\Contracts\Partial\{CookieNotice as CookieNoticeContract, PartialFactory as PartialFactoryContract};
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
+use tiFy\Contracts\Partial\{CookieNotice as CookieNoticeContract, PartialFactory as PartialFactoryContract};
+use tiFy\Http\Response;
 use tiFy\Partial\PartialFactory;
 
 class CookieNotice extends PartialFactory implements CookieNoticeContract
@@ -37,11 +38,44 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
             'accept'        => [],
             'content'       => '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>',
             'cookie_name'   => '',
-            'cookie_hash'   => true,
-            'cookie_expire' => HOUR_IN_SECONDS,
+            'cookie_hash'   => null,
+            'cookie_expire' => 60 * 60 * 24 * 3,
             'dismiss'       => false,
             'type'          => 'info'
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCookie(): ?string
+    {
+        return request()->cookie($this->get('cookie_name'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCookieArgs(string $name, ?string $value = null, int $expire = 0): array
+    {
+        $value = md5($value ? : '');
+
+        $expire = $expire ? time() + $expire : 0;
+
+        $path = rtrim(ltrim(request()->getBasePath(), '/'), '/');
+        $path = $path ? "/{$path}/" : '/';
+
+        $domain = request()->getHost();
+
+        $secure = request()->isSecure();
+
+        $httpOnly = true;
+
+        $raw = false;
+
+        $sameSite = null;
+
+        return [$name, $value, $expire, $path, $domain, $secure, $httpOnly, $raw, $sameSite];
     }
 
     /**
@@ -59,7 +93,11 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
         $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);
 
         if (!$this->get('cookie_name')) {
-            $this->set('cookie_name', md5('tiFyPartial-cookieNotice--' . $this->getIndex()));
+            $this->set('cookie_name', $this->getId());
+        }
+
+        if ($this->get('cookie_hash')) {
+            $this->set('cookie_name', $this->get('cookie_name') . $this->get('cookie_hash'));
         }
 
         if ($this->getCookie()) {
@@ -68,14 +106,14 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
 
         $this->set('accept.tag', $this->get('accept.tag', 'a'));
 
-        if(($this->get('accept.tag') === 'a') && !$this->has('accept.attrs.href')) :
+        if (($this->get('accept.tag') === 'a') && !$this->has('accept.attrs.href')) {
             $this->set('accept.attrs.href', "#{$this->get('attrs.id')}");
-        endif;
+        }
 
         $this->set('attrs.data-options', [
-            'cookie_name'   => $this->get('cookie_name'),
-            'cookie_hash'   => $this->get('cookie_hash'),
-            'cookie_expire' => $this->get('cookie_expire')
+            '_id'    => $this->getId(),
+            'name'   => $this->get('cookie_name'),
+            'expire' => $this->get('cookie_expire')
         ]);
 
         $this->set('accept.attrs.data-toggle', 'notice.accept');
@@ -88,47 +126,12 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
     /**
      * @inheritDoc
      */
-    public function getCookie()
+    public function setCookie(string $name, ?string $value = null, int $expire = 0)
     {
-        $salt = (!$cookie_hash = $this->get('cookie_hash'))
-            ? ''
-            : (($cookie_hash === true) ? $salt = '_' . COOKIEHASH : $cookie_hash);
+        $args = $this->getCookieArgs($name, $value, $expire);
 
-        return request()->cookie($this->get('cookie_name') . $salt, '');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setCookie($cookie_name, $cookie_expire = 0)
-    {
-        $secure = ('https' === parse_url(home_url(), PHP_URL_SCHEME));
-
-        $time = time();
         $response = new Response();
-        $response->headers->setCookie(
-            new Cookie(
-                $cookie_name,
-                (string)$time,
-                $cookie_expire ? $time + $cookie_expire : 0,
-                COOKIEPATH,
-                COOKIE_DOMAIN ? : null,
-                $secure
-            )
-        );
-
-        if (COOKIEPATH != SITECOOKIEPATH) :
-            $response->headers->setCookie(
-                new Cookie(
-                    $cookie_name,
-                    (string)$time,
-                    $cookie_expire ? $time + $cookie_expire : 0,
-                    SITECOOKIEPATH,
-                    COOKIE_DOMAIN ? : null,
-                    $secure
-                )
-            );
-        endif;
+        $response->headers->setCookie(new Cookie(...$args));
 
         $response->send();
     }
@@ -136,22 +139,17 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
     /**
      * @inheritDoc
      */
-    public function xhrSetCookie()
+    public function xhrResponse(): array
     {
-        check_ajax_referer('tiFyPartial-cookieNotice');
+        $name = request()->input('name');
+        $value = request()->input('_id');
+        $expire = (int)request()->input('expire', 0);
 
-        $cookie_name = request()->input('cookie_name', '');
-        $cookie_hash = request()->input('cookie_hash', '');
-        $cookie_expire = request()->input('cookie_expire', 0);
-
-        if (!$cookie_hash) {
-            $cookie_hash = '';
-        } elseif ($cookie_hash == 'true') {
-            $cookie_hash = '_' . COOKIEHASH;
+        try {
+            $this->setCookie($name, $value, $expire);
+            return ['success' => true];
+        } catch (Exception $e) {
+            return ['success' => false];
         }
-
-        $this->setCookie($cookie_name . $cookie_hash, $cookie_expire);
-
-        wp_die(1);
     }
 }

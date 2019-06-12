@@ -7,24 +7,36 @@ interface CookieNotice extends PartialFactory
     /**
      * Récupération d'un cookie.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCookie();
+    public function getCookie(): ?string;
+
+    /**
+     * Récupération de la liste des arguments de génération de cookie.
+     *
+     * @param string $name Nom de qualification du cookie.
+     * @param string|null $value Valeur du cookie.
+     * @param int $expire Nombre de secondes jusqu'à l'expiration du cookie.
+     *
+     * @return array
+     */
+    public function getCookieArgs(string $name, ?string $value = null, int $expire = 0): array;
 
     /**
      * Définition d'un cookie.
      *
-     * @var string $name Nom de qualification du cookie.
-     * @var int $cookie_expire Temps avant l'expiration du cookie. Exprimé en secondes.
+     * @param string $name Nom de qualification du cookie.
+     * @param string|null $value Valeur du cookie.
+     * @param int $expire Nombre de secondes jusqu'à l'expiration du cookie.
      *
      * @return void
      */
-    public function setCookie($cookie_name, $cookie_expire = 0);
+    public function setCookie(string $name, ?string $value = null, int $expire = 0);
 
     /**
      * Génération du cookie de notification via une requête XHR.
      *
-     * @return void
+     * @return array
      */
-    public function xhrSetCookie();
+    public function xhrResponse(): array;
 }
