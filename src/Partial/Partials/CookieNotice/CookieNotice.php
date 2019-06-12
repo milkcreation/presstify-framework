@@ -112,7 +112,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
                 (string)$time,
                 $cookie_expire ? $time + $cookie_expire : 0,
                 COOKIEPATH,
-                COOKIE_DOMAIN,
+                COOKIE_DOMAIN ? : null,
                 $secure
             )
         );
@@ -124,7 +124,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
                     (string)$time,
                     $cookie_expire ? $time + $cookie_expire : 0,
                     SITECOOKIEPATH,
-                    COOKIE_DOMAIN,
+                    COOKIE_DOMAIN ? : null,
                     $secure
                 )
             );

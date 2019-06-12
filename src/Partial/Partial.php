@@ -20,8 +20,7 @@ use tiFy\Contracts\Partial\{
     Spinner,
     Tab,
     Table,
-    Tag,
-};
+    Tag};
 use tiFy\Support\Manager;
 
 class Partial extends Manager implements PartialContract
@@ -159,7 +158,8 @@ class Partial extends Manager implements PartialContract
         } else {
             throw new InvalidArgumentException(
                 sprintf(
-                    __('La déclaration d\'une instance de portion d\'affichage doit être de type %s', 'tify'),
+                    __('La déclaration de la protion d\'affichage %s devrait être une instance de %s', 'tify'),
+                    $key,
                     PartialFactory::class
                 )
             );
