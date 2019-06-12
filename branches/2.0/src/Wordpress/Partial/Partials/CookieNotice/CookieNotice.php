@@ -2,7 +2,9 @@
 
 namespace tiFy\Wordpress\Partial\Partials\CookieNotice;
 
+use Symfony\Component\HttpFoundation\Cookie;
 use tiFy\Contracts\Partial\PartialFactory as BasePartialFactoryContract;
+use tiFy\Http\Response;
 use tiFy\Partial\Partials\CookieNotice\CookieNotice as BaseCookieNotice;
 use tiFy\Wordpress\Contracts\Partial\PartialFactory as PartialFactoryContract;
 
@@ -16,12 +18,12 @@ class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
         add_action('init', function () {
             add_action(
                 'wp_ajax_tify_partial_cookie_notice',
-                [$this, 'xhrSetCookie']
+                [$this, 'wpAjaxResponse']
             );
 
             add_action(
                 'wp_ajax_nopriv_tify_partial_cookie_notice',
-                [$this, 'xhrSetCookie']
+                [$this, 'wpAjaxResponse']
             );
 
             wp_register_script(
@@ -56,6 +58,7 @@ class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
+            'cookie_hash'   => '_' . COOKIEHASH,
             'ajax_action'   => 'tify_partial_cookie_notice',
             'ajax_nonce'    => '',
         ]);
@@ -84,8 +87,8 @@ class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
         }
 
         $this->set([
-            'attrs.data-options.ajax_action' => $this->get('ajax_action'),
-            'attrs.data-options.ajax_nonce' => $this->get('ajax_nonce')
+            'attrs.data-options.action' => $this->get('ajax_action'),
+            'attrs.data-options._ajax_nonce' => $this->get('ajax_nonce')
         ]);
 
         return $this;
@@ -94,10 +97,28 @@ class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
     /**
      * @inheritDoc
      */
-    public function xhrSetCookie()
+    public function setCookie(string $name, ?string $value = null, int $expire = 0)
+    {
+        $args = $this->getCookieArgs($name, $value, $expire);
+
+        $response = new Response();
+        $response->headers->setCookie(new Cookie(...$args));
+
+        if ($args[3] !== SITECOOKIEPATH) {
+            $args[3] = SITECOOKIEPATH;
+            $response->headers->setCookie(new Cookie(...$args));
+        }
+
+        $response->send();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function wpAjaxResponse()
     {
         check_ajax_referer('tiFyPartial-cookieNotice');
 
-        parent::xhrSetCookie();
+        wp_send_json(parent::xhrResponse());
     }
 }
