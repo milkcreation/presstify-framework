@@ -241,7 +241,7 @@ class MailerNew
         if( isset( self::$From ) ) :
             $phpmailer->setFrom( self::$From['email'], self::$From['name'] );
         endif;    
-            
+
         /// Destinataires
         foreach( (array) self::$To as $contact ) :
             $phpmailer->addAddress( $contact['email'], $contact['name'] );

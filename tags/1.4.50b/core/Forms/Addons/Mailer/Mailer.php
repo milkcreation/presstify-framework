@@ -205,6 +205,7 @@ class Mailer extends \tiFy\Core\Forms\Addons\Factory
     {
         // Expédition du message de confirmation
         if ($options = $this->getFormAttr('confirmation')) :
+            
             $options = $this->parseOptions($options, 'confirmation');
 
             MailerNew::send($options);

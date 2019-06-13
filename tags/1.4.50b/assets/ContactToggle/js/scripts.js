@@ -11,8 +11,8 @@ jQuery(document).ready(function($) {
                 attrs : o.attrs
             }
         ).
-            done(function(data, textStatus, jqXHR) {
-                $('.modal-dialog', $modal).replaceWith(data);
-            });
+        done(function(data, textStatus, jqXHR) {
+            $('.modal-dialog', $modal).replaceWith(data);
+        });
     });
 });
