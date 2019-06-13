@@ -1,0 +1,53 @@
+<?php declare(strict_types=1);
+
+namespace tiFy\Template\Templates\ListTable;
+
+use tiFy\Support\Collection;
+use tiFy\Template\Factory\FactoryAwareTrait;
+use tiFy\Template\Templates\ListTable\Contracts\{ListTable, ViewFilter, ViewFilters as ViewFiltersContract};
+
+class ViewFilters extends Collection implements ViewFiltersContract
+{
+    use FactoryAwareTrait;
+
+    /**
+     * Instance du gabarit associé.
+     * @var ListTable
+     */
+    protected $factory;
+
+    /**
+     * Liste des filtres.
+     * @var array|ViewFilter[]
+     */
+    protected $items = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function parse(array $filters = []): ViewFiltersContract
+    {
+        if ($filters) {
+            foreach ($filters as $name => $attrs) {
+                if (is_numeric($name)) {
+                    $name = $attrs;
+                    $attrs = [];
+                } elseif (is_string($attrs)) {
+                    $attrs = ['content' => $attrs];
+                }
+
+                $alias = $this->factory->bound("view-filter.{$name}")
+                    ? "view-filter.{$name}"
+                    : 'view-filter';
+
+                $this->items[$name] = $this->factory->resolve($alias, [$name, $attrs, $this->factory]);
+            }
+
+            $this->items = array_filter($this->items, function ($value) {
+                return (string)$value !== '';
+            });
+        }
+
+        return $this;
+    }
+}
