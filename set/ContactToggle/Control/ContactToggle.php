@@ -54,7 +54,7 @@ class ContactToggle extends \tiFy\Core\Control\Factory
 
         \wp_register_script(
             'tify_control-contact_toggle',
-            self::tFyAppAssetsUrl('ContactToggle.js', get_class()),
+            $this->appAbsUrl() . '/assets/ContactToggle/js/scripts.js',
             ['jquery', 'tify_control-modal'],
             170301,
             true

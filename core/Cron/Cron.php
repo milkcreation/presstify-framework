@@ -40,7 +40,7 @@ class Cron extends \tiFy\App\Core
      */
     public function __construct()
     {
-        parent::__construct();
+	parent::__construct();
 
         // Déclaration des tâches planifiées configurées
         foreach ((array)self::tFyAppConfig() as $schedule_id => $schedules_attrs) :
