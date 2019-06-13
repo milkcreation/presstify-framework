@@ -3,8 +3,9 @@
 namespace tiFy\Wordpress\Field\Fields\Findposts;
 
 use tiFy\Contracts\Field\FieldFactory as BaseFieldFactoryContract;
-use tiFy\Wordpress\Contracts\Field\{FieldFactory as FieldFactoryContract, Findposts as FindpostsContract};
 use tiFy\Field\FieldFactory;
+use tiFy\Wordpress\Contracts\Field\{FieldFactory as FieldFactoryContract, Findposts as FindpostsContract};
+use tiFy\Support\Proxy\Asset;
 use WP_Post;
 use WP_Query;
 
@@ -30,8 +31,8 @@ class Findposts extends FieldFactory implements FindpostsContract
                 true
             );
 
-            add_action('wp_ajax_field_findposts', [$this, 'xhrGetResponse']);
-            add_action('wp_ajax_nopriv_field_findposts', [$this, 'xhrGetResponse']);
+            add_action('wp_ajax_field_findposts', [$this, 'xhrResponse']);
+            add_action('wp_ajax_nopriv_field_findposts', [$this, 'xhrResponse']);
 
             add_action('wp_ajax_field_findposts_post_permalink', [$this, 'xhrGetPermalink']);
             add_action('wp_ajax_nopriv_field_findposts_post_permalink', [$this, 'xhrGetPermalink']);
@@ -79,6 +80,10 @@ class Findposts extends FieldFactory implements FindpostsContract
                 echo $this->modal($this->get('ajax_action'), $this->get('query_args'));
             });
         }
+
+        Asset::setDataJs($this->getAlias() . 'l10n', [
+            'error' => __( 'Une erreur s\'est produite. Veuillez recharger la page et essayer à nouveau.', 'tify')
+        ], true);
 
         return parent::display();
     }
@@ -160,20 +165,24 @@ class Findposts extends FieldFactory implements FindpostsContract
      *
      * @return void
      */
-    public function xhrGetResponse(): void
+    public function xhrResponse(): void
     {
-        check_ajax_referer('FieldFindposts' . request()->post('id'));
+        check_ajax_referer('FieldFindposts' . request()->input('id'));
+
+        /** @todo Rendre dynamique (la variable doit passer en arguments par la requête Xhr) */
+        $this->set('viewer.directory', __DIR__ . '/Resources/views/findposts');
 
         $post_types = get_post_types(['public' => true], 'objects');
 
-        $s = wp_unslash(request()->post('ps'));
+        $s = wp_unslash(request()->input('ps', ''));
         $args = [
             'post_type'      => array_keys($post_types),
             'post_status'    => 'any',
             'posts_per_page' => 50,
         ];
-        $args = wp_parse_args(request()->post('query_args', []), $args);
-        unset($args['post_type']['attachment']);
+
+        $args = wp_parse_args(request()->input('query_args', []), $args);
+        array_diff($args['post_type'], ['attachment']);
 
         if ('' !== $s) {
             $args['s'] = $s;
@@ -183,38 +192,38 @@ class Findposts extends FieldFactory implements FindpostsContract
 
         if (!$posts) {
             wp_send_json_error(__('No items found.'));
-        }
+        } else {
+            $alt = 'alternate';
 
-        $alt = 'alternate';
+            foreach ($posts as &$post) {
+                /** @var WP_Post $post */
+                $post = $post->to_array();
 
-        foreach ($posts as &$post) {
-            /** @var WP_Post $post */
-            $post = $post->to_array();
-            $post['_post_title'] = trim($post['post_title']) ? $post['post_title'] : __('(no title)');
+                $post['_post_title'] = trim($post['post_title']) ? $post['post_title'] : __('(no title)');
 
-            switch ($post['post_status']) {
-                case 'publish' :
-                case 'private' :
-                    $post['_post_status'] = __('Published');
-                    break;
-                case 'future' :
-                    $post['_post_status'] = __('Scheduled');
-                    break;
-                case 'pending' :
-                    $post['_post_status'] = __('Pending Review');
-                    break;
-                case 'draft' :
-                    $post['_post_status'] = __('Draft');
-                    break;
-                default:
-                    $post['_post_status'] = '';
-                    break;
+                switch ($post['post_status']) {
+                    case 'publish' :
+                    case 'private' :
+                        $post['_post_status'] = __('Published');
+                        break;
+                    case 'future' :
+                        $post['_post_status'] = __('Scheduled');
+                        break;
+                    case 'pending' :
+                        $post['_post_status'] = __('Pending Review');
+                        break;
+                    case 'draft' :
+                        $post['_post_status'] = __('Draft');
+                        break;
+                    default:
+                        $post['_post_status'] = '';
+                        break;
+                }
+
+                $post['_post_date'] = ('0000-00-00 00:00:00' == $post['post_date']) ? '' : mysql2date(__('Y/m/d'),
+                    $post['post_date']);
             }
-
-            $post['_post_date'] = ('0000-00-00 00:00:00' == $post['post_date']) ? '' : mysql2date(__('Y/m/d'),
-                $post['post_date']);
+            wp_send_json_success((string)$this->viewer('response', compact('post_types', 'posts', 'alt')));
         }
-
-        wp_send_json_success((string)$this->viewer('response', compact('post_types', 'posts', 'alt')));
     }
 }

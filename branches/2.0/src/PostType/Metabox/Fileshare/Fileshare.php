@@ -87,31 +87,28 @@ class Fileshare extends MetaboxWpPostController
      */
     public function load($wp_screen)
     {
-        add_action(
-            'admin_enqueue_scripts',
-            function () {
-                if ($this->get('max', -1) !== 1) :
-                    wp_enqueue_media();
+        add_action('admin_enqueue_scripts', function () {
+            if ($this->get('max', -1) !== 1) :
+                wp_enqueue_media();
 
-                    wp_enqueue_style(
-                        'MetaboxPostTypeFileshare',
-                        asset()->url('post-type/metabox/fileshare/css/styles.css'),
-                        ['tiFyAdmin'],
-                        151216
-                    );
+                wp_enqueue_style(
+                    'MetaboxPostTypeFileshare',
+                    asset()->url('post-type/metabox/fileshare/css/styles.css'),
+                    ['tiFyAdmin'],
+                    151216
+                );
 
-                    wp_enqueue_script(
-                        'MetaboxPostTypeFileshare',
-                        asset()->url('post-type/metabox/fileshare/js/scripts.js'),
-                        ['jquery', 'jquery-ui-sortable'],
-                        151216,
-                        true
-                    );
-                else :
-                    field('media-file')->enqueue();
-                endif;
-            }
-        );
+                wp_enqueue_script(
+                    'MetaboxPostTypeFileshare',
+                    asset()->url('post-type/metabox/fileshare/js/scripts.js'),
+                    ['jquery', 'jquery-ui-sortable'],
+                    151216,
+                    true
+                );
+            else :
+                field('media-file')->enqueue();
+            endif;
+        });
     }
 
     /**

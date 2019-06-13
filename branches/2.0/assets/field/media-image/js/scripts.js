@@ -1,3 +1,5 @@
+/* global wp */
+
 "use strict";
 
 let tify_control_media_image_frame;

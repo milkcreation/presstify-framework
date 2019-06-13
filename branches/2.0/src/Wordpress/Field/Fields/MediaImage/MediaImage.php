@@ -13,7 +13,9 @@ class MediaImage extends FieldFactory implements MediaImageContract
      */
     public function boot(): void
     {
-        add_action('init', function () {
+        add_action('admin_init', function () {
+            @wp_enqueue_media();
+
             wp_register_style(
                 'FieldMediaImage',
                 asset()->url('field/media-image/css/styles.css'),
@@ -83,8 +85,6 @@ class MediaImage extends FieldFactory implements MediaImageContract
         if (!is_admin()) {
             return '';
         }
-
-        wp_enqueue_media();
 
         return parent::display();
     }

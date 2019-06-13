@@ -98,12 +98,12 @@ let scripts;
                 $spinner.hide();
             }).done(function (x) {
                 if (!x.success) {
-                    $response.text(attachMediaBoxL10n.error);
+                    $response.text(tify.findpostsl10n.error);
                 }
 
                 $response.html(x.data);
             }).fail(function () {
-                $response.text(attachMediaBoxL10n.error);
+                $response.text(tify.findpostsl10n.error);
             });
         }
     };
