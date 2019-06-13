@@ -1,3 +1,5 @@
+/* global wp */
+
 "use strict";
 
 let tiFyFieldMediaFileFrame;

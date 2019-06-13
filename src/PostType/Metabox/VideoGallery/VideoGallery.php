@@ -83,35 +83,32 @@ class VideoGallery extends MetaboxWpPostController
      */
     public function load($current_screen)
     {
-        add_action(
-            'admin_enqueue_scripts',
-            function () {
-                wp_enqueue_media();
+        add_action('admin_enqueue_scripts', function () {
+            wp_enqueue_media();
 
-                wp_enqueue_style(
-                    'PostTypeMetaboxVideoGallery',
-                    asset()->url('post-type/metabox/video-gallery/css/styles.css'),
-                    ['tiFyAdmin'],
-                    180724
-                );
+            wp_enqueue_style(
+                'PostTypeMetaboxVideoGallery',
+                asset()->url('post-type/metabox/video-gallery/css/styles.css'),
+                ['tiFyAdmin'],
+                180724
+            );
 
-                wp_enqueue_script(
-                    'PostTypeMetaboxVideoGallery',
-                    asset()->url('post-type/metabox/video-gallery/js/scripts.js'),
-                    ['jquery', 'jquery-ui-sortable', 'tiFyAdmin'],
-                    180724,
-                    true
-                );
+            wp_enqueue_script(
+                'PostTypeMetaboxVideoGallery',
+                asset()->url('post-type/metabox/video-gallery/js/scripts.js'),
+                ['jquery', 'jquery-ui-sortable', 'tiFyAdmin'],
+                180724,
+                true
+            );
 
-                wp_localize_script(
-                    'PostTypeMetaboxVideoGallery',
-                    'tify_taboox_video_gallery',
-                    [
-                        'maxAttempt' => __('Nombre maximum de vidéos dans la galerie atteint', 'tify'),
-                    ]
-                );
-            }
-        );
+            wp_localize_script(
+                'PostTypeMetaboxVideoGallery',
+                'tify_taboox_video_gallery',
+                [
+                    'maxAttempt' => __('Nombre maximum de vidéos dans la galerie atteint', 'tify'),
+                ]
+            );
+        });
     }
 
     /**

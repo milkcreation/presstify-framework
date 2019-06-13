@@ -13,7 +13,9 @@ class MediaFile extends FieldFactory implements MediaFileContract
      */
     public function boot(): void
     {
-        add_action('init', function () {
+        add_action('admin_init', function () {
+            @wp_enqueue_media();
+
             wp_register_style(
                 'FieldMediaFile',
                 asset()->url('field/media-file/css/styles.css'),
@@ -64,8 +66,6 @@ class MediaFile extends FieldFactory implements MediaFileContract
         if (!is_admin()) {
             return '';
         }
-
-        wp_enqueue_media();
 
         return parent::display();
     }
