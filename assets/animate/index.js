@@ -1,3 +1,5 @@
+import '~/hover.css/scss/hover.scss';
+
 /** Sass */
 import './scss/styles.scss';
 

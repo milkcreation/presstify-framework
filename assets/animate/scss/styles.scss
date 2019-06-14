@@ -1,6 +1,3 @@
-@import "~animate.css";
-@import "~hover.css";
-
 .tiFy-animate {
   transition: all 1s;
 }
@@ -197,12 +194,12 @@
 
 @for $i from 1 through 50 {
   $time: $i*100;
-  .tiFy-animateDuration--#{$time}ms{
-    animation-duration:#{$time}ms;
-    transition-duration:#{$time}ms;
+  .tiFy-animateDuration--#{$time}ms {
+    animation-duration: #{$time}ms;
+    transition-duration: #{$time}ms;
   }
-  .tiFy-animateDelay--#{$time}ms{
-    animation-delay:#{$time}ms;
-    transition-delay:#{$time}ms;
+  .tiFy-animateDelay--#{$time}ms {
+    animation-delay: #{$time}ms;
+    transition-delay: #{$time}ms;
   }
 }

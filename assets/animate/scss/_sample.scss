@@ -1,0 +1,123 @@
+/**
+ * @see node_modules/animate-sass/animations
+ * @see https://github.com/tgdev/animate-sass
+ */
+
+/**
+ * attention-seekers
+ */
+$use-bounce: true;
+$use-flash: true;
+$use-pulse: true;
+$use-shake: true;
+$use-swing: true;
+$use-tada: true;
+$use-wiggle: true;
+$use-wobble: true;
+/**
+ * bounce-enter
+ */
+$use-bounceIn: true;
+$use-bounceInDown: true;
+$use-bounceInLeft: true;
+$use-bounceInRight: true;
+$use-bounceInUp: true;
+/**
+ * bounce-exit
+ */
+$use-bounceOut: true;
+$use-bounceOutDown: true;
+$use-bounceOutLeft: true;
+$use-bounceOutRight: true;
+$use-bounceOutUp: true;
+/**
+ *fade-enter
+ */
+$use-fadeIn: true;
+$use-fadeInDown: true;
+$use-fadeInDownBig: true;
+$use-fadeInLeft: true;
+$use-fadeInLeftBig: true;
+$use-fadeInRight: true;
+$use-fadeInRightBig: true;
+$use-fadeInUp: true;
+$use-fadeInUpBig: true;
+/**
+ * fade-exit
+ */
+$use-fadeOut: true;
+$use-fadeOutDown: true;
+$use-fadeOutDownBig: true;
+$use-fadeOutLeft: true;
+$use-fadeOutLeftBig: true;
+$use-fadeOutRight: true;
+$use-fadeOutRightBig: true;
+$use-fadeOutUp: true;
+$use-fadeOutUpBig: true;
+/**
+ *flippers
+ */
+$use-flip: true;
+$use-flipInX: true;
+$use-flipInY: true;
+$use-flipOutX: true;
+$use-flipOutY: true;
+/**
+ * lightspeed
+ */
+$use-lightSpeedIn: true;
+$use-lightSpeedOut: true;
+/**
+ * rotate-enter
+ */
+$use-rotateIn: true;
+$use-rotateInDownLeft: true;
+$use-rotateInDownRight: true;
+$use-rotateInUpLeft: true;
+$use-rotateInUpRight: true;
+/**
+ * rotate-exit
+ */
+$use-rotateOut: true;
+$use-rotateOutDownLeft: true;
+$use-rotateOutDownRight: true;
+$use-rotateOutUpLeft: true;
+$use-rotateOutUpRight: true;
+/**
+ * slide-enter
+ */
+$use-slideInDown: true;
+$use-slideInLeft: true;
+$use-slideInRight: true;
+$use-slideInUp: true;
+/**
+ * slide-exit
+ */
+$use-slideOutDown: true;
+$use-slideOutLeft: true;
+$use-slideOutRight: true;
+$use-slideOutUp: true;
+/**
+ * special
+ */
+$use-hinge: true;
+$use-rollIn: true;
+$use-rollOut: true;
+/**
+ * zoom-enter
+ */
+$use-zoomIn: true;
+$use-zoomInDown: true;
+$use-zoomInLeft: true;
+$use-zoomInRight: true;
+$use-zoomInUp: true;
+/**
+ * zoom-exit
+ */
+$use-zoomOut: true;
+$use-zoomOutDown: true;
+$use-zoomOutLeft: true;
+$use-zoomOutRight: true;
+$use-zoomOutUp: true;
+
+@import "~animate-sass/animate";
