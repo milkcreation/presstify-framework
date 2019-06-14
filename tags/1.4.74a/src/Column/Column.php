@@ -227,6 +227,7 @@ final class Column
     {
         foreach ($this->getActiveItems() as $c) :
             $echo = false;
+            $output = '';
 
             switch ($this->screen->getObjectType()) :
                 case 'post_type' :
@@ -257,8 +258,8 @@ final class Column
                     break;
             endswitch;
 
-            $content = $c->getContent();
-            $output = call_user_func_array($content, func_get_args());
+            $content = $c->getContent() ?: $output;
+            $output = is_callable($content) ? call_user_func_array($content, func_get_args()) : $content;
 
             if ($echo) :
                 echo $output;
