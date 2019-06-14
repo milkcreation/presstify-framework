@@ -4,8 +4,9 @@ namespace tiFy\Kernel\Events;
 
 use League\Event\Emitter;
 use League\Event\Event;
+use tiFy\Contracts\Kernel\EventsInterface;
 
-class Events extends Emitter
+class Events extends Emitter implements EventsInterface
 {
     /**
      * {@inheritdoc}
