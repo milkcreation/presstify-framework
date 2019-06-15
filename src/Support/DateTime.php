@@ -33,6 +33,14 @@ class DateTime extends Carbon
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function createFromFormat($format, $time, $tz=null)
+    {
+        return parent::createFromFormat($format, $time, is_null($tz) ? self::getGlobalTimeZone() : $tz);
+    }
+
+    /**
      * Récupération du fuseau horaire par défaut.
      *
      * @return DateTimeZone

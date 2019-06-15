@@ -6,7 +6,6 @@ abstract class AbstractCommandController
 {
     /**
      * Instance de l'application du controleur.
-     *
      * @var ControllerApplication
      */
     protected $app;
