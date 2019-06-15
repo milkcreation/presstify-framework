@@ -3,22 +3,21 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Template\Factory\FactoryServiceProvider;
-use tiFy\Template\Templates\ListTable\Contracts\{
-    Ajax as AjaxContract,
+use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract,
     BulkAction,
     BulkActions,
     Column,
     Columns,
     HttpXhrController,
-    ListTable,
     Item,
     Items,
+    ListTable,
     Pagination,
     Params,
     QueryBuilder,
-    Search,
     RowAction,
     RowActions,
+    Search,
     ViewFilter,
     ViewFilters};
 use tiFy\View\ViewEngine;
@@ -46,6 +45,94 @@ class ListTableServiceProvider extends FactoryServiceProvider
         $this->registerFactoryRowActions();
         $this->registerFactorySearch();
         $this->registerFactoryViewFilters();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerFactoryHttpXhrController(): void
+    {
+        $this->getContainer()->add($this->getFactoryAlias('xhr'), function () {
+            $ctrl = $this->factory->get('providers.xhr');
+            $ctrl = $ctrl instanceof HttpXhrController
+                ? $ctrl
+                : $this->getContainer()->get(HttpXhrController::class);
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerFactoryLabels(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
+            return new Labels($this->factory);
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerFactoryParams(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('params'), function () {
+            $ctrl = $this->factory->get('providers.params');
+            $ctrl = $ctrl instanceof Params
+                ? $ctrl
+                : $this->getContainer()->get(Params::class);
+
+            $attrs = $this->factory->get('params', []);
+
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : [])->parse();
+        });
+    }
+
+    /**
+     * Déclaration du controleur de construction de requête.
+     *
+     * @return void
+     */
+    public function registerFactoryQueryBuilder(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('query-builder'), function () {
+            $ctrl = $this->factory->get('providers.query-builder');
+            $ctrl = $ctrl instanceof QueryBuilder
+                ? $ctrl
+                : $this->getContainer()->get(QueryBuilder::class);
+
+            $attrs = $this->factory->param('query_args', []);
+
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerFactoryViewer(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('viewer'), function () {
+            $params = $this->factory->get('viewer', []);
+
+            if (!$params instanceof ViewEngine) {
+                $viewer = new ViewEngine(array_merge([
+                    'directory' => template()->resourcesDir('/views/list-table')
+                ], $params));
+                $viewer->setController(Viewer::class);
+
+                if (!$viewer->getOverrideDir()) {
+                    $viewer->setOverrideDir(template()->resourcesDir('/views/list-table'));
+                }
+            } else {
+                $viewer = $params;
+            }
+
+            $viewer->set('factory', $this->factory);
+
+            return $viewer;
+        });
     }
 
     /**
@@ -103,7 +190,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
 
         $this->getContainer()->add($this->getFactoryAlias('bulk-action.trash'),
             function (string $name, array $attrs = []) {
-                return (new BulkActionTrash($name, $attrs));
+                return new BulkActionTrash($name, $attrs);
             });
     }
 
@@ -134,24 +221,12 @@ class ListTableServiceProvider extends FactoryServiceProvider
             return $ctrl->setTemplateFactory($this->factory)->setName($name)->set($attrs)->parse();
         });
 
-        $this->getContainer()->add($this->getFactoryAlias('column.cb'),
-            function (string $name, array $attrs = []) {
-                return (new ColumnCb())->setName($name)->set($attrs)->parse();
-            });
-    }
+        $this->getContainer()->add($this->getFactoryAlias('column.cb'), function (string $name, array $attrs = []) {
+            return (new ColumnCb())->setTemplateFactory($this->factory)->setName($name)->set($attrs)->parse();
+        });
 
-    /**
-     * @inheritDoc
-     */
-    public function registerFactoryHttpXhrController(): void
-    {
-        $this->getContainer()->add($this->getFactoryAlias('xhr'), function () {
-            $ctrl = $this->factory->get('providers.xhr');
-            $ctrl = $ctrl instanceof HttpXhrController
-                ? $ctrl
-                : $this->getContainer()->get(HttpXhrController::class);
-
-            return $ctrl->setTemplateFactory($this->factory);
+        $this->getContainer()->add($this->getFactoryAlias('column.num'), function (string $name, array $attrs = []) {
+            return (new ColumnNum())->setTemplateFactory($this->factory)->setName($name)->set($attrs)->parse();
         });
     }
 
@@ -183,16 +258,6 @@ class ListTableServiceProvider extends FactoryServiceProvider
     }
 
     /**
-     * @inheritDoc
-     */
-    public function registerFactoryLabels(): void
-    {
-        $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
-            return new Labels($this->factory);
-        });
-    }
-
-    /**
      * Déclaration du controleur de pagination.
      *
      * @return void
@@ -206,42 +271,6 @@ class ListTableServiceProvider extends FactoryServiceProvider
                 : $this->getContainer()->get(Pagination::class);
 
             return $ctrl->setTemplateFactory($this->factory);
-        });
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerFactoryParams(): void
-    {
-        $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            $ctrl = $this->factory->get('providers.params');
-            $ctrl = $ctrl instanceof Params
-                ? $ctrl
-                : $this->getContainer()->get(Params::class);
-
-            $attrs = $this->factory->get('params', []);
-
-            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : [])->parse();
-        });
-    }
-
-    /**
-     * Déclaration du controleur de construction de requête.
-     *
-     * @return void
-     */
-    public function registerFactoryQueryBuilder(): void
-    {
-        $this->getContainer()->share($this->getFactoryAlias('query-builder'), function () {
-            $ctrl = $this->factory->get('providers.query-builder');
-            $ctrl = $ctrl instanceof QueryBuilder
-                ? $ctrl
-                : $this->getContainer()->get(QueryBuilder::class);
-
-            $attrs = $this->factory->param('query_args', []);
-
-            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 
@@ -329,33 +358,6 @@ class ListTableServiceProvider extends FactoryServiceProvider
             $attrs = $this->factory->param('search', []);
 
             return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : [])->parse();
-        });
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerFactoryViewer(): void
-    {
-        $this->getContainer()->share($this->getFactoryAlias('viewer'), function () {
-            $params = $this->factory->get('viewer', []);
-
-            if (!$params instanceof ViewEngine) {
-                $viewer = new ViewEngine(array_merge([
-                    'directory' => template()->resourcesDir('/views/list-table')
-                ], $params));
-                $viewer->setController(Viewer::class);
-
-                if (!$viewer->getOverrideDir()) {
-                    $viewer->setOverrideDir(template()->resourcesDir('/views/list-table'));
-                }
-            } else {
-                $viewer = $params;
-            }
-
-            $viewer->set('factory', $this->factory);
-
-            return $viewer;
         });
     }
 

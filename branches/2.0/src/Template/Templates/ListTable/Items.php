@@ -12,6 +12,12 @@ class Items extends Collection implements ItemsContract
     use FactoryAwareTrait;
 
     /**
+     * Indice de l'élément courant.
+     * @var int
+     */
+    protected $index = 0;
+
+    /**
      * Instance du gabarit associé.
      * @var ListTable
      */
@@ -60,6 +66,6 @@ class Items extends Collection implements ItemsContract
             $item->setObject($object);
         }
 
-        $this->items[$key] = $item->parse();
+        $this->items[$key] = $item->setIndex($this->index++)->parse();
     }
 }

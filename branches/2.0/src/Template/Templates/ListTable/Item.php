@@ -18,6 +18,12 @@ class Item extends ParamsBag implements ItemContract
     protected $factory;
 
     /**
+     * Indice de l'élément.
+     * @var int
+     */
+    protected $index;
+
+    /**
      * Instance de l'objet associé.
      * @var object
      */
@@ -48,9 +54,29 @@ class Item extends ParamsBag implements ItemContract
     /**
      * @inheritDoc
      */
+    public function getIndex(): int
+    {
+        return $this->index;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function model(): ?FactoryDb
     {
         return $this->object instanceof FactoryDb ? $this->object : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setIndex(int $index): ItemContract
+    {
+        if (is_null($this->index)) {
+            $this->index = $index;
+        }
+
+        return $this;
     }
 
     /**

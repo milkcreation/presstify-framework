@@ -31,7 +31,7 @@ class PostListTableServiceProvider extends ListTableServiceProvider
 
         $this->getContainer()->add($this->getFactoryAlias('column.post_type'),
             function (string $name, array $attrs = []) {
-                return (new ColumnPostType())->setName($name)->set($attrs)->parse();
+                return (new ColumnPostType())->setTemplateFactory($this->factory)->setName($name)->set($attrs)->parse();
             });
     }
 

@@ -24,12 +24,28 @@ interface Item extends FactoryAwareTrait, ParamsBag
     public function getKeyName(): string;
 
     /**
+     * Récupération de l'indice de l'élément.
+     *
+     * @return int
+     */
+    public function getIndex(): int;
+
+    /**
      * Récupération de l'instance du modèle.
      * {@internal Le controleur de base de données doit être actif.}
      *
      * @return FactoryDb|null
      */
     public function model(): ?FactoryDb;
+
+    /**
+     * Définition de l'indice de l'élément.
+     *
+     * @param int $index
+     *
+     * @return static
+     */
+    public function setIndex(int $index): Item;
 
     /**
      * Définition de l'instance de l'objet associé à l'élément.
