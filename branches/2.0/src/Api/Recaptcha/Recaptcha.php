@@ -7,6 +7,7 @@ use ReCaptcha\RequestMethod\SocketPost;
 use RuntimeException;
 use tiFy\Api\Recaptcha\Field\Recaptcha as RecaptchaField;
 use tiFy\Api\Recaptcha\Contracts\Recaptcha as RecaptchaContract;
+use tiFy\Support\Proxy\Asset;
 
 /**
  * @see https://github.com/google/recaptcha
@@ -42,7 +43,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaContract
 
             field()->set('recaptcha', new RecaptchaField());
 
-            add_action('wp_head', function () {
+            add_action('wp_print_footer_scripts', function () {
                 if ($this->widgets) {
                     $js = "function onloadCallback () {";
                     foreach ($this->widgets as $id => $params) {
@@ -52,15 +53,12 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaContract
                         $js .= "};";
                     }
                     $js .= "};";
-                    asset()->setInlineJs($js, true);
-
-                    add_action('wp_footer', function () {
-                        ?><script type="text/javascript"
+                    echo '<script type="text/javascript">' . $js . '</script>';
+                    echo '<script type="text/javascript"
                                   src="https://www.google.com/recaptcha/api.js?hl=<?php echo $this->getLanguage(); ?>&onload=onloadCallback&render=explicit"
-                                  async defer></script><?php
-                    });
+                                  async defer></script>';
                 }
-            }, 11);
+            });
 
         } catch (RuntimeException $e) {
             wp_die($e->getMessage(), __('Api reCaptcha : Erreur de configuration', 'tify'), $e->getCode());
