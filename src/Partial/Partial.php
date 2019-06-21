@@ -3,12 +3,12 @@
 namespace tiFy\Partial;
 
 use InvalidArgumentException;
-use tiFy\Contracts\Partial\{
-    Accordion,
+use tiFy\Contracts\Partial\{Accordion,
     Breadcrumb,
     CookieNotice,
     Dropdown,
     Holder,
+    ImageLightbox,
     Modal,
     Notice,
     Pagination,
@@ -30,21 +30,22 @@ class Partial extends Manager implements PartialContract
      * @var array
      */
     protected $defaults = [
-        'accordion'     => Accordion::class,
-        'breadcrumb'    => Breadcrumb::class,
-        'cookie-notice' => CookieNotice::class,
-        'dropdown'      => Dropdown::class,
-        'holder'        => Holder::class,
-        'modal'         => Modal::class,
-        'notice'        => Notice::class,
-        'pagination'    => Pagination::class,
-        'pdf-preview'   => PdfPreview::class,
-        'sidebar'       => Sidebar::class,
-        'slider'        => Slider::class,
-        'spinner'       => Spinner::class,
-        'tab'           => Tab::class,
-        'table'         => Table::class,
-        'tag'           => Tag::class
+        'accordion'      => Accordion::class,
+        'breadcrumb'     => Breadcrumb::class,
+        'cookie-notice'  => CookieNotice::class,
+        'dropdown'       => Dropdown::class,
+        'holder'         => Holder::class,
+        'image-lightbox' => ImageLightbox::class,
+        'modal'          => Modal::class,
+        'notice'         => Notice::class,
+        'pagination'     => Pagination::class,
+        'pdf-preview'    => PdfPreview::class,
+        'sidebar'        => Sidebar::class,
+        'slider'         => Slider::class,
+        'spinner'        => Spinner::class,
+        'tab'            => Tab::class,
+        'table'          => Table::class,
+        'tag'            => Tag::class,
     ];
 
     /**
@@ -101,7 +102,7 @@ class Partial extends Manager implements PartialContract
 
         return $partial
             ->setIndex($this->indexes[$alias])
-            ->setId($id ?? $alias.$this->indexes[$alias])
+            ->setId($id ?? $alias . $this->indexes[$alias])
             ->set($attrs)->parse();
     }
 
@@ -110,8 +111,7 @@ class Partial extends Manager implements PartialContract
      */
     public function registerDefaults(): PartialContract
     {
-        foreach ($this->defaults as $name => $alias)
-        {
+        foreach ($this->defaults as $name => $alias) {
             $this->set($name, $this->getContainer()->get($alias));
         }
 

@@ -121,7 +121,7 @@ class Sidebar extends PartialFactory implements SidebarContract
      */
     public function parseDefaults(): PartialFactoryContract
     {
-        $default_class = ucfirst($this->getAlias()) . ' ' . ucfirst($this->getAlias()) . '--' . $this->getIndex();
+        $default_class = 'Sidebar Sidebar--' . $this->getIndex();
         if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $default_class);
         } else {

@@ -9,6 +9,7 @@ use tiFy\Contracts\Partial\{
     CookieNotice as CookieNoticeContract,
     Dropdown as DropdownContract,
     Holder as HolderContract,
+    ImageLightbox as ImageLightboxContract,
     Modal as ModalContract,
     Notice as NoticeContract,
     Pagination as PaginationContract,
@@ -27,6 +28,7 @@ use tiFy\Partial\Partials\{
     CookieNotice\CookieNotice,
     Dropdown\Dropdown,
     Holder\Holder,
+    ImageLightbox\ImageLightbox,
     Modal\Modal,
     Notice\Notice,
     Pagination\Pagination,
@@ -53,6 +55,7 @@ class PartialServiceProvider extends ServiceProvider
         CookieNoticeContract::class,
         DropdownContract::class,
         HolderContract::class,
+        ImageLightboxContract::class,
         ModalContract::class,
         NoticeContract::class,
         PaginationContract::class,
@@ -104,6 +107,10 @@ class PartialServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(HolderContract::class, function () {
             return new Holder();
+        });
+
+        $this->getContainer()->add(ImageLightboxContract::class, function () {
+            return new ImageLightbox();
         });
 
         $this->getContainer()->add(ModalContract::class, function () {
