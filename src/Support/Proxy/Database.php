@@ -2,8 +2,6 @@
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Support\Proxy;
-
 class Database extends AbstractProxy
 {
     public static function getInstanceIdentifier()

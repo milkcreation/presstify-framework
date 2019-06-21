@@ -10,6 +10,7 @@ use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\{ResponseInterface as Response, ServerRequestInterface as Request};
 use Symfony\Component\HttpFoundation\Response as SfResponse;
+use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterContract};
 use tiFy\Http\Response as HttpResponse;
 use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait};
@@ -30,20 +31,6 @@ class Router extends LeagueRouter implements RouterContract
      * @var Route[]
      */
     protected $items = [];
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param ContainerInterface $container Instance du conteneur d'injection de dépendances.
-     *
-     * @return void
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->setContainer($container);
-
-        parent::__construct();
-    }
 
     /**
      * @inheritdoc
@@ -140,6 +127,16 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return Container|null
+     */
+    public function getContainer(): ?ContainerInterface
+    {
+        return $this->container instanceof Container ? $this->container : null;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @return RouteContract
@@ -184,7 +181,9 @@ class Router extends LeagueRouter implements RouterContract
     {
         $path = sprintf('/%s', ltrim(url()->rewriteBase() . sprintf('/%s', ltrim($path, '/')), '/'));
 
-        $route = new Route($method, $path, $handler, $this);
+        $route = $this->getContainer()
+            ? $this->getContainer()->get(RouteContract::class, [$method, $path, $handler, $this])
+            : new Route($method, $path, $handler, $this);
 
         $this->routes[] = $route;
 

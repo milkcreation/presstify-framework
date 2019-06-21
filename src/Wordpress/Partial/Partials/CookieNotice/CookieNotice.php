@@ -6,9 +6,9 @@ use Symfony\Component\HttpFoundation\Cookie;
 use tiFy\Contracts\Partial\PartialFactory as BasePartialFactoryContract;
 use tiFy\Http\Response;
 use tiFy\Partial\Partials\CookieNotice\CookieNotice as BaseCookieNotice;
-use tiFy\Wordpress\Contracts\Partial\PartialFactory as PartialFactoryContract;
+use tiFy\Wordpress\Contracts\Partial\{CookieNotice as CookieNoticeContract, PartialFactory as PartialFactoryContract};
 
-class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
+class CookieNotice extends BaseCookieNotice implements CookieNoticeContract
 {
     /**
      * @inheritDoc
@@ -47,12 +47,12 @@ class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
      *      @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
      *      @var bool $dismiss Affichage du bouton de masquage de la notification.
      *      @var string $type Type de notification info|warning|success|error. défaut info.
-     *      @var array $accept Attribut du lien de validation et de création du cookie.
      *      @var string $cookie_name Nom de qualification du cookie.
      *      @var bool|string $cookie_hash Activation ou valeur d'un hashage pour le nom de qualification du cookie.
      *      @var int $cookie_expire Expiration du cookie. Exprimé en secondes.
      *      @var string $ajax_action Action ajax de création du cookie.
      *      @var string $ajax_nonce Chaine de sécurisation CSRF.
+     *      @var array $trigger Liste des attributs de configuration du lien de validation et de création du cookie.
      * }
      */
     public function defaults(): array
@@ -115,7 +115,7 @@ class CookieNotice extends BaseCookieNotice implements PartialFactoryContract
     /**
      * @inheritDoc
      */
-    public function wpAjaxResponse()
+    public function wpAjaxResponse(): void
     {
         check_ajax_referer('tiFyPartial-cookieNotice');
 

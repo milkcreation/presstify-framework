@@ -53,12 +53,10 @@ class CheckboxCollection extends FieldFactory implements CheckboxCollectionContr
     /**
      * @inheritDoc
      */
-    public function parseName(): FieldFactoryContract
+    public function getName(): string
     {
-        if ($name = $this->get('name')) {
-            $this->set('attrs.name', "{$name}[]");
-        }
+        $name = $this->get('attrs.name', '') ? : $this->get('name');
 
-        return $this;
+        return "{$name}[]";
     }
 }

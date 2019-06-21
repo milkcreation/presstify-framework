@@ -57,7 +57,7 @@ interface StorageManager extends FilesystemInterface
      *
      * @return Filesystem
      */
-    public function localFilesytem(string $root, array $config): Filesystem;
+    public function localFilesytem(string $root, array $config = []): Filesystem;
 
     /**
      * Montage d'une instance de gestionnaire de fichiers.

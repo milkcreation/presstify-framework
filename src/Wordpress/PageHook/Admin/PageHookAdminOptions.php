@@ -8,7 +8,7 @@ use tiFy\Metabox\MetaboxWpOptionsController;
 class PageHookAdminOptions extends MetaboxWpOptionsController
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function content($var1 = null, $var2 = null, $var3 = null)
     {
@@ -16,7 +16,7 @@ class PageHookAdminOptions extends MetaboxWpOptionsController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function header($var1 = null, $var2 = null, $var3 = null)
     {
@@ -24,7 +24,7 @@ class PageHookAdminOptions extends MetaboxWpOptionsController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function parse($attrs = [])
     {
@@ -34,15 +34,15 @@ class PageHookAdminOptions extends MetaboxWpOptionsController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function settings()
     {
         $settings = [];
-        foreach($this->get('items', []) as $item) :
+        foreach($this->get('items', []) as $item) {
             /** @var PageHookItem $item */
             array_push($settings, $item->getOptionName());
-        endforeach;
+        }
 
         return $settings;
     }

@@ -5,9 +5,9 @@ namespace tiFy\Wordpress\Routing;
 use Exception;
 use FastRoute\Dispatcher as FastRoute;
 use League\Route\Dispatcher;
-use tiFy\Contracts\Routing\Router as RouterManager;
+use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterManager};
 use tiFy\Http\Request;
-use tiFy\Wordpress\Contracts\Routing as RoutingContract;
+use tiFy\Wordpress\Contracts\Routing\Routing as RoutingContract;
 use tiFy\Wordpress\Routing\Strategy\Template as TemplateStrategy;
 
 class Routing implements RoutingContract
@@ -29,10 +29,16 @@ class Routing implements RoutingContract
     {
         $this->manager = $manager;
 
-        app()->get('wp.wp_query');
+        $this->manager->getContainer()->get('wp.wp_query');
 
-        app()->add('router.strategy.default', function () {
+        $this->manager->getContainer()->add('router.strategy.default', function () {
             return new TemplateStrategy();
+        });
+
+        $this->manager->getContainer()->add(
+            RouteContract::class,
+            function (string $method, string $path, callable $handler, $collection) {
+                return new Route($method, $path, $handler, $collection);
         });
 
         add_action('parse_request', function () {
@@ -63,6 +69,6 @@ class Routing implements RoutingContract
                     }
                 }
             }
-        },0);
+        }, 0);
     }
 }

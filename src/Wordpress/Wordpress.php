@@ -5,7 +5,7 @@ namespace tiFy\Wordpress;
 use tiFy\Wordpress\Contracts\Wordpress as WordpressContract;
 use tiFy\Wordpress\Contracts\PostType;
 use tiFy\Wordpress\Contracts\Taxonomy;
-use tiFy\Wordpress\Contracts\Routing;
+use tiFy\Wordpress\Contracts\Routing\Routing;
 use tiFy\Wordpress\Contracts\User;
 use tiFy\Wordpress\Contracts\WpQuery;
 use tiFy\Wordpress\Contracts\WpScreen;
