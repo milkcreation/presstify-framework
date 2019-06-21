@@ -1,7 +1,7 @@
 "use strict";
 
 jQuery(document).ready(function ($) {
-    let $slider = $('[aria-control="slider"]');
+    let $slider = $('[data-control="slider"]');
 
     $slider
         .on('init', function () {

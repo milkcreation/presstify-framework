@@ -4,6 +4,7 @@ namespace tiFy\Partial\Partials\Slider;
 
 use tiFy\Contracts\Partial\{PartialFactory as PartialFactoryContract, Slider as SliderContract};
 use tiFy\Partial\PartialFactory;
+use tiFy\Validation\Validator as v;
 
 class Slider extends PartialFactory implements SliderContract
 {
@@ -46,18 +47,17 @@ class Slider extends PartialFactory implements SliderContract
         parent::parse();
 
         $items = $this->get('items', []);
-
         foreach($items as &$item) {
             if (is_callable($item)) {
                 $item = call_user_func($item);
             } elseif (is_array($item)){
-            } elseif (validator()::url()->validate($item)) {
+            } elseif (v::url()->validate($item)) {
                 $item = "<img src=\"{$item}\" alt=\"\"/>";
             }
         }
         $this->set('items', $items);
 
-        $this->set('attrs.aria-control', 'slider');
+        $this->set('attrs.data-control', 'slider');
         $this->set('attrs.data-slick', htmlentities(json_encode($this->get('options', []))));
 
         return $this;
