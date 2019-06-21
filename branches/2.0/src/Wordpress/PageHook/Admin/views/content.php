@@ -11,16 +11,14 @@
         <tr>
             <th><?php echo $item->getTitle(); ?></th>
             <td>
-                <?php
-                wp_dropdown_pages(
-                    [
-                        'name'             => $item->getOptionName(),
-                        'post_type'        => $item->getObjectName(),
-                        'selected'         => $item->post() ? $item->post()->getId() : 0,
-                        'sort_column'      => $item->get('listorder'),
-                        'show_option_none' => $item->get('show_option_none'),
-                    ]
-                );
+                <?php wp_dropdown_pages([
+                    'name'             => $item->getOptionName(),
+                    'post_type'        => $item->getObjectName(),
+                    'selected'         => $item->post() ? $item->post()->getId() : 0,
+                    'sort_order'       => $item->get('order', 'ASC'),
+                    'sort_column'      => $item->get('orderby', 'post_title'),
+                    'show_option_none' => $item->get('show_option_none'),
+                ]);
                 ?>
             </td>
         </tr>

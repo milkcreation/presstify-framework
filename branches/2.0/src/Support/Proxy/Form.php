@@ -2,10 +2,12 @@
 
 namespace tiFy\Support\Proxy;
 
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
 
 /**
  * @method static FormManager all()
+ * @method static FormFactory|null get(string $name)
  */
 class Form extends AbstractProxy
 {

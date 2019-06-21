@@ -10,7 +10,9 @@ use League\Route\Middleware\MiddlewareAwareInterface;
 use League\Route\RouteCollectionInterface;
 use League\Route\Route as LeagueRoute;
 use League\Route\Strategy\StrategyAwareInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
+use tiFy\Contracts\Container\Container;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 
 interface Router extends
@@ -113,6 +115,13 @@ interface Router extends
      * @return array
      */
     public function getData();
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Container|null
+     */
+    public function getContainer(): ?ContainerInterface;
 
     /**
      * Récupération d'une route déclarée selon son nom de qualification.

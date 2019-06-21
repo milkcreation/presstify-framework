@@ -1,15 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Options;
 
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as Container;
 use tiFy\Options\Page\OptionsPage;
+use tiFy\Support\Manager;
 
 class Options
 {
     /**
      * Instance de conteneur d'injection de dépendances.
-     *
+     * @var Container
      */
     protected $container;
 
@@ -24,7 +25,7 @@ class Options
      *
      * @return void
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         $this->container = $container;
 

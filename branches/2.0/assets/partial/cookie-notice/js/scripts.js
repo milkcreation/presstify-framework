@@ -2,26 +2,28 @@
 "use strict";
 
 jQuery(document).ready(function($) {
-    $(document).on('click', '[data-control="notice"] [data-toggle="notice.accept"]', function(e){
+    $(document).on('click', '[data-toggle="notice.trigger"]', function(e){
         e.preventDefault();
         e.stopPropagation();
 
         let $self = $(this),
-            $closest = $self.closest('[data-control="notice"]');
+            $target = $self.data('target') ? $($self.data('target')) : $self.closest('[data-control="notice"]');
 
-        let o = JSON.parse(decodeURIComponent($closest.data('options')));
+        if ($target.length) {
+            let o = JSON.parse(decodeURIComponent($target.data('options')));
 
-        $closest.attr('aria-loading', 'true');
-        $.post(tify.ajax_url, o)
-            .done(function (resp) {
-                if (resp.success) {
-                    $closest.attr('aria-loading', 'false');
-                    $closest.attr('aria-hide', 'true');
-                    $self.trigger('cookie-notice:done');
-                }
-            })
-            .always(function () {
-                $self.trigger('cookie-notice:always');
-            });
+            $target.attr('aria-loading', 'true');
+            $.post(tify.ajax_url, o)
+                .done(function (resp) {
+                    if (resp.success) {
+                        $target.attr('aria-loading', 'false');
+                        $target.attr('aria-fade', 'out');
+                        $self.trigger('cookie-notice:done');
+                    }
+                })
+                .always(function () {
+                    $self.trigger('cookie-notice:always');
+                });
+        }
     });
 });

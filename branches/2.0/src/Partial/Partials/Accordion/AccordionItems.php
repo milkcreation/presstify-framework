@@ -126,9 +126,9 @@ class AccordionItems extends QueryCollection implements AccordionItemsContract
      */
     public function wrap($item, $key = null)
     {
-        if (!$item instanceof AccordionItem) :
+        if (!$item instanceof AccordionItem) {
             $item = new AccordionItem($key, $item);
-        endif;
+        }
 
         return $this->items[$key] = $item;
     }

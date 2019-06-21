@@ -2,10 +2,12 @@
 
 namespace tiFy\Routing;
 
+use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterContract};
 use tiFy\Container\ServiceProvider;
-use tiFy\Routing\Middleware\Xhr;
-use tiFy\Routing\Strategy\App;
-use tiFy\Routing\Strategy\Json;
+use tiFy\Routing\{
+    Middleware\Xhr,
+    Strategy\App,
+    Strategy\Json};
 use Zend\Diactoros\ResponseFactory;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 
@@ -17,8 +19,10 @@ class RoutingServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'router',
+        RouteContract::class,
         'router.emitter',
         'router.middleware.xhr',
+        'router.strategy.app',
         'router.strategy.default',
         'router.strategy.json',
         'redirect',
@@ -83,7 +87,13 @@ class RoutingServiceProvider extends ServiceProvider
     public function registerRouter()
     {
         $this->getContainer()->share('router', function () {
-            return new Router($this->getContainer());
+            return (new Router())->setContainer($this->getContainer());
+        });
+
+        $this->getContainer()->add(
+            RouteContract::class,
+            function (string $method, string $path, callable $handler, $collection) {
+                return new Route($method, $path, $handler, $collection);
         });
     }
 
@@ -97,9 +107,11 @@ class RoutingServiceProvider extends ServiceProvider
         $this->getContainer()->add('router.strategy.default', function () {
             return new App();
         });
+
         $this->getContainer()->add('router.strategy.app', function () {
             return new App();
         });
+
         $this->getContainer()->add('router.strategy.json', function () {
             return new Json(new ResponseFactory());
         });

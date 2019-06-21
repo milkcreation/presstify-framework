@@ -114,7 +114,17 @@ class StorageManager extends MountManager implements StorageManagerContract
      */
     public function register(string $name, $attrs): StorageManagerContract
     {
-        $filesystem = !$attrs instanceof Filesystem ? $this->localFilesytem($attrs['root']?? '', $attrs) : $attrs;
+        if ($attrs instanceof Filesystem) {
+            $filesystem = $attrs;
+        } elseif (is_array($attrs)) {
+            $filesystem = $this->localFilesytem($attrs['root']?? '', $attrs);
+        } elseif (is_string($attrs)) {
+            $filesystem = $this->localFilesytem($attrs);
+        } else {
+            throw new InvalidArgumentException(
+                __('Les arguments ne permettent pas de définir le système de fichiers', 'theme')
+            );
+        }
 
         return $this->set($name, $filesystem);
     }

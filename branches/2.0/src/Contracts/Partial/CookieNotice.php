@@ -34,6 +34,15 @@ interface CookieNotice extends PartialFactory
     public function setCookie(string $name, ?string $value = null, int $expire = 0);
 
     /**
+     * Élement de validation du cookie.
+     *
+     * @param array $args Liste des attributs de configuration.
+     *
+     * @return string
+     */
+    public function trigger($args = []): string;
+
+    /**
      * Génération du cookie de notification via une requête XHR.
      *
      * @return array

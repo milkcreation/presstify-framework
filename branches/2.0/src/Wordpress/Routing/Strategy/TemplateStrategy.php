@@ -5,11 +5,11 @@ namespace tiFy\Wordpress\Routing\Strategy;
 use League\Route\Route;
 use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
 use Symfony\Component\HttpFoundation\Response as SfResponse;
-use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Contracts\View\ViewController;
-use tiFy\Support\Proxy\Router;
 use tiFy\Http\Response;
+use tiFy\Support\Proxy\Router;
 use tiFy\Routing\Strategy\App as AppStrategy;
+use tiFy\Wordpress\Contracts\Routing\Route as RouteContract;
 use Wp_Query;
 use Zend\Diactoros\Response as PsrResponse;
 
@@ -57,21 +57,23 @@ class Template extends AppStrategy
         /** @var RouteContract $route */
         $route->setCurrent();
 
-        add_action('pre_get_posts', function (WP_Query &$wp_query) {
-            if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
-                foreach ($this->cTags as $ct) {
-                    $wp_query->{$ct} = false;
-                }
-                $wp_query->query_vars = $wp_query->fill_query_vars([]);
-                $wp_query->is_route = true;
-            }
-        }, 0);
+        if (!$route->isWpQuery()) {
+            add_action('pre_get_posts', function (WP_Query &$wp_query) {
+                if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
+                    foreach ($this->cTags as $ct) {
+                        $wp_query->{$ct} = false;
+                    }
+                    $wp_query->query_vars = $wp_query->fill_query_vars([]);
+                    $wp_query->is_route = true;
 
-        add_action('wp', function () {
-            global $wp_query;
-            $wp_query->is_404 = false;
-            status_header(200);
-        });
+                    add_action('wp', function () {
+                        global $wp_query;
+                        $wp_query->is_404 = false;
+                        status_header(200);
+                    });
+                }
+            }, 0);
+        }
 
         $controller = $route->getCallable($this->getContainer());
 

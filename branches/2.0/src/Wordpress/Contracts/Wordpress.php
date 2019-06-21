@@ -2,6 +2,7 @@
 
 namespace tiFy\Wordpress\Contracts;
 
+use tiFy\Wordpress\Contracts\Routing\Routing;
 use WP_Screen;
 
 interface Wordpress
