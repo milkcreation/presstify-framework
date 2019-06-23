@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Kernel;
 
-use tiFy\Contracts\Filesystem\Filesystem;
+use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
 
 interface Path extends StorageManager
@@ -10,76 +10,76 @@ interface Path extends StorageManager
     /**
      * {@inheritDoc}
      *
-     * @return Filesystem|null
+     * @return LocalFilesystem|null
      */
-    public function getFilesystem($prefix): ?Filesystem;
+    public function getFilesystem($prefix): ?LocalFilesystem;
 
     /**
      * Récupération de l'instance du gestionnaire de dossier racine.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function diskBase(): Filesystem;
+    public function diskBase(): LocalFilesystem;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier de stockage des fichiers de cache.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function diskCache(): Filesystem;
+    public function diskCache(): LocalFilesystem;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier de stockage des fichiers de configuration.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function diskConfig(): Filesystem;
+    public function diskConfig(): LocalFilesystem;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier de stockage des fichiers de journalisation.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function diskLog(): Filesystem;
+    public function diskLog(): LocalFilesystem;
 
     /**
      * Récupération du chemin de gestionnaire de fichiers par rapport à la racine.
      *
-     * @param Filesystem $disk
+     * @param LocalFilesystem $disk
      * @param string $path Chemin absolue vers un dossier ou un fichier du gestionnaire.
      * @param boolean $absolute Activation de la récupération du chemin en absolu.
      *
      * @return string
      */
-    public function diskPathFromBase(Filesystem $disk, string $path = '', bool $absolute = true): ?string;
+    public function diskPathFromBase(LocalFilesystem $disk, string $path = '', bool $absolute = true): ?string;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier publique.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function diskPublic(): Filesystem;
+    public function diskPublic(): LocalFilesystem;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier de stockage.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function diskStorage(): Filesystem;
+    public function diskStorage(): LocalFilesystem;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier du theme.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function diskTheme(): Filesystem;
+    public function diskTheme(): LocalFilesystem;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier du framework PresstiFy.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function diskTiFy(): Filesystem;
+    public function diskTiFy(): LocalFilesystem;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire de base (racine).
@@ -166,9 +166,9 @@ interface Path extends StorageManager
      * @param string $root Chemin absolu vers la racine du disque.
      * @param array $config Configuration.
      *
-     * @return Filesystem
+     * @return LocalFilesystem
      */
-    public function mount(string $name, string $root, array $config = []): Filesystem;
+    public function mount(string $name, string $root, array $config = []): LocalFilesystem;
 
     /**
      * Récupération du chemin par rapport à la racine.

@@ -38,9 +38,9 @@ use tiFy\Template\Templates\ListTable\Contracts\{
     ViewFilters as ListTableViewFiltersContract};
 use tiFy\Template\Templates\PostListTable\Contracts\{
     Db as PostListTableDbContract,
+    Item as PostListTableItemContract,
     Params as PostListTableParamsContract,
-    QueryBuilder as PostListTableQueryBuilderContract,
-};
+    QueryBuilder as PostListTableQueryBuilderContract};
 use tiFy\Template\Templates\FileManager\{
     Ajax as FileManagerAjax,
     Breadcrumb as FileManagerBreadcrumb,
@@ -74,6 +74,7 @@ use tiFy\Template\Templates\ListTable\{
     ViewFilters as ListTableViewFilters};
 use tiFy\Template\Templates\PostListTable\{
     Db as PostListTableDb,
+    Item as PostListTableItem,
     Params as PostListTableParams,
     QueryBuilder as PostListTableQueryBuilder
 };
@@ -121,6 +122,7 @@ class TemplateServiceProvider extends ServiceProvider
         ListTableViewFiltersContract::class,
         // PostTable
         PostListTableDbContract::class,
+        PostListTableItemContract::class,
         PostListTableParamsContract::class,
         PostListTableQueryBuilderContract::class,
     ];
@@ -278,6 +280,10 @@ class TemplateServiceProvider extends ServiceProvider
     {
         $this->getContainer()->add(PostListTableDbContract::class, function () {
             return new PostListTableDb();
+        });
+
+        $this->getContainer()->add(PostListTableItemContract::class, function () {
+            return new PostListTableItem();
         });
 
         $this->getContainer()->add(PostListTableParamsContract::class, function () {

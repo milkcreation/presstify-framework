@@ -4,6 +4,7 @@ namespace tiFy\Wordpress\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Support\DateTime;
+use tiFy\Wordpress\Contracts\Database\PostBuilder;
 use WP_Post;
 use WP_Term;
 use WP_User;

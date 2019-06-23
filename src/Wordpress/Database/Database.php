@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress\Database;
 
 use tiFy\Contracts\Database\Database as DatabaseManager;
-use tiFy\Wordpress\Contracts\Database as DatabaseContract;
+use tiFy\Wordpress\Contracts\Database\Database as DatabaseContract;
 
 class Database implements DatabaseContract
 {

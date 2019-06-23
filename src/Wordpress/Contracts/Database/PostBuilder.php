@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Wordpress\Contracts;
+namespace tiFy\Wordpress\Contracts\Database;
 
 use Corcel\Model\Builder\PostBuilder as CorcelPostBuilder;
 use Corcel\Concerns\MetaFields;

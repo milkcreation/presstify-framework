@@ -1,11 +1,13 @@
 "use strict";
 
+import moment from "moment/moment";
+
 jQuery(document).ready(function ($) {
     $(document)
-        .on('change.tify.fields.ajax_date', '[aria-control="datetime_js"]', function (e) {
+        .on('change.tify.fields.ajax_date', '[data-control="datetime-js"] > *', function (e) {
             e.preventDefault();
 
-            var $closest = $(this).closest('[aria-control="datetime_js"]');
+            var $closest = $(this).closest('[data-control="datetime-js"]');
             var value = "", dateFormat = "";
             if ($('.tiFyField-datetimeJsField--year', $closest).length) {
                 value += $('.tiFyField-datetimeJsField--year', $closest).val();

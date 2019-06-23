@@ -2,11 +2,14 @@
 
 namespace tiFy\Kernel;
 
-use League\Flysystem\FilesystemNotFoundException;
-use tify\Contracts\Container\Container;
-use tiFy\Contracts\Filesystem\Filesystem as FilesystemContract;
+use League\Flysystem\{
+    Cached\CachedAdapter,
+    Cached\CacheInterface,
+    Cached\Storage\Memory as MemoryStore,
+    FilesystemNotFoundException};
+use tiFy\Contracts\Filesystem\LocalFilesystem as LocalFilesystemContract;
 use tiFy\Contracts\Kernel\Path as PathContract;
-use tiFy\Filesystem\StorageManager;
+use tiFy\Filesystem\{LocalAdapter, LocalFilesystem,  StorageManager};
 
 class Path extends StorageManager implements PathContract
 {
@@ -17,29 +20,9 @@ class Path extends StorageManager implements PathContract
     const DS = DIRECTORY_SEPARATOR;
 
     /**
-     * Instance du conteneur d'injection de dépendances.
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * CONSTRUCTEUR
-     *
-     * @param Container $container Instance du conteneur d'injection de dépendances.
-     *
-     * @return void
-     */
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-
-        parent::__construct($this->container);
-    }
-
-    /**
      * @inheritDoc
      */
-    public function diskBase(): FilesystemContract
+    public function diskBase(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('base')) {
             $disk = $this->mount('base', ROOT_PATH);
@@ -51,7 +34,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskCache(): FilesystemContract
+    public function diskCache(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('cache')) {
             $disk = $this->mount('cache', $this->getStoragePath('/cache'));
@@ -63,7 +46,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskConfig(): FilesystemContract
+    public function diskConfig(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('config')) {
             $disk = $this->mount('config', !$this->isWp()
@@ -77,7 +60,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskLog(): FilesystemContract
+    public function diskLog(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('log')) {
             $disk = $this->mount('log', $this->getStoragePath('/log'));
@@ -89,7 +72,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskPathFromBase(FilesystemContract $disk, string $path = '', bool $absolute = true): ?string
+    public function diskPathFromBase(LocalFilesystemContract $disk, string $path = '', bool $absolute = true): ?string
     {
         $path = preg_replace('#^' . preg_quote($this->getBasePath(), self::DS) . "#", '', $disk->path($path), 1, $n);
 
@@ -99,7 +82,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskPublic(): FilesystemContract
+    public function diskPublic(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('public')) {
             $disk = $this->mount('public', !$this->isWp() ? $this->getBasePath('/public') : ABSPATH);
@@ -111,7 +94,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskStorage(): FilesystemContract
+    public function diskStorage(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('storage')) {
             $disk = $this->mount('storage', !$this->isWp()
@@ -125,7 +108,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskTheme(): FilesystemContract
+    public function diskTheme(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('theme')) {
             $disk = $this->mount('theme', get_template_directory());
@@ -137,7 +120,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskTiFy(): FilesystemContract
+    public function diskTiFy(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('tify')) {
             $disk = $this->mount('tify', $this->getBasePath('/vendor/presstify/framework/src'));
@@ -173,12 +156,12 @@ class Path extends StorageManager implements PathContract
     /**
      * {@inheritDoc}
      *
-     * @return FilesystemContract
+     * @return LocalFilesystem
      */
-    public function getFilesystem($prefix): ?FilesystemContract
+    public function getFilesystem($prefix): ?LocalFilesystemContract
     {
         try {
-            /** @var FilesystemContract $filesystem */
+            /** @var LocalFilesystem $filesystem */
             $filesystem = parent::getFilesystem($prefix);
             return $filesystem;
         } catch (FilesystemNotFoundException $e) {
@@ -237,9 +220,26 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function mount(string $name, string $root, array $config = []): FilesystemContract
+    public function mount(string $name, string $root, array $config = []): LocalFilesystemContract
     {
-        $filesystem = $this->localFilesytem($root, $config);
+        // @todo Utiliser le conteneur d'injection de dépendance.
+        $permissions = $config['permissions'] ?? [];
+        $links = ($config['links'] ?? null) === 'skip'
+            ? LocalAdapter::SKIP_LINKS
+            : LocalAdapter::DISALLOW_LINKS;
+
+        $adapter = new LocalAdapter($root, LOCK_EX, $links, $permissions);
+
+        if ($cache = $config['cache'] ?? true) {
+            $adapter = $cache instanceof CacheInterface
+                ? new CachedAdapter($adapter, $cache)
+                : new CachedAdapter($adapter, new MemoryStore());
+        }
+
+        $filesystem = new LocalFilesystem($adapter, [
+            'disable_asserts' => true,
+            'case_sensitive' => true
+        ]);
         $this->set($name, $filesystem);
 
         return $filesystem;

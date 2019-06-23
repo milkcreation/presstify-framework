@@ -5,8 +5,7 @@ namespace tiFy\Filesystem;
 use League\Flysystem\FileNotFoundException;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Container\Container;
-use tiFy\Contracts\Filesystem\Filesystem;
-use tiFy\Contracts\Filesystem\StaticCacheManager as StaticCacheManagerContract;
+use tiFy\Contracts\Filesystem\{Filesystem, StaticCacheManager as StaticCacheManagerContract};
 
 class StaticCacheManager extends StorageManager implements StaticCacheManagerContract
 {

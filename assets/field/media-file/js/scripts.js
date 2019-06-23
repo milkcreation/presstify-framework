@@ -5,7 +5,7 @@
 let tiFyFieldMediaFileFrame;
 
 jQuery(document).ready(function ($) {
-    $(document).on('click', '[aria-control="media_file"]', function (e) {
+    $(document).on('click', '[data-control="media_file"]', function (e) {
         e.preventDefault();
 
         let $closest = $(this),
@@ -16,21 +16,21 @@ jQuery(document).ready(function ($) {
         tiFyFieldMediaFileFrame.on('select', function () {
             let attachment = tiFyFieldMediaFileFrame.state().get('selection').first().toJSON();
             $closest.attr('aria-active', 'true');
-            $('[aria-control="infos"]', $closest).val(attachment.title + ' → ' + attachment.filename);
-            $('[aria-control="input"]', $closest).val(attachment.id);
+            $('[data-control="infos"]', $closest).val(attachment.title + ' → ' + attachment.filename);
+            $('[data-control="input"]', $closest).val(attachment.id);
         });
 
         tiFyFieldMediaFileFrame.open();
     });
 
-    $(document).on('click', '[aria-control="media_file"] [aria-control="reset"]', function (e) {
+    $(document).on('click', '[data-control="media_file"] [data-control="reset"]', function (e) {
         e.preventDefault();
         e.stopPropagation();
 
         let $closest = $(this).parent();
 
         $closest.attr('aria-active', 'false');
-        $('[aria-control="infos"]', $closest).val('');
-        $('[aria-control="input"]', $closest).val('');
+        $('[data-control="infos"]', $closest).val('');
+        $('[data-control="input"]', $closest).val('');
     });
 });

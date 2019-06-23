@@ -8,6 +8,7 @@ use tiFy\Contracts\Form\FormManager;
 /**
  * @method static FormManager all()
  * @method static FormFactory|null get(string $name)
+ * @method static FormManager set(string|array $key, FormFactory|array|null $value = null)
  */
 class Form extends AbstractProxy
 {

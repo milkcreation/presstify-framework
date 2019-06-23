@@ -40,6 +40,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         $this->registerFactoryAjax();
         $this->registerFactoryBulkActions();
         $this->registerFactoryColumns();
+        $this->registerFactoryItem();
         $this->registerFactoryItems();
         $this->registerFactoryPagination();
         $this->registerFactoryRowActions();
@@ -231,6 +232,23 @@ class ListTableServiceProvider extends FactoryServiceProvider
     }
 
     /**
+     * Déclaration du controleur d'un élément.
+     *
+     * @return void
+     */
+    public function registerFactoryItem(): void
+    {
+        $this->getContainer()->add($this->getFactoryAlias('item'), function () {
+            $ctrl = $this->factory->get('providers.item');
+            $ctrl = $ctrl instanceof Item
+                ? $ctrl
+                : $this->getContainer()->get(Item::class);
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+    }
+
+    /**
      * Déclaration des controleurs d'éléments.
      *
      * @return void
@@ -245,15 +263,6 @@ class ListTableServiceProvider extends FactoryServiceProvider
                 : $this->getContainer()->get(Items::class);
 
             return $ctrl->setTemplateFactory($this->factory)->set($this->factory->get('items', []));
-        });
-
-        $this->getContainer()->add($this->getFactoryAlias('item'), function () {
-            $ctrl = $this->factory->get('providers.item');
-            $ctrl = $ctrl instanceof Item
-                ? $ctrl
-                : $this->getContainer()->get(Item::class);
-
-            return $ctrl->setTemplateFactory($this->factory);
         });
     }
 

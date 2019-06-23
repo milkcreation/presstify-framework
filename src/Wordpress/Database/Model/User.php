@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\User as CorcelUser;
-use tiFy\Wordpress\Contracts\UserBuilder;
+use tiFy\Wordpress\Contracts\Database\UserBuilder;
 
 class User extends CorcelUser implements UserBuilder
 {

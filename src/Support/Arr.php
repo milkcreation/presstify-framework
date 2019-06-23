@@ -2,48 +2,26 @@
 
 namespace tiFy\Support;
 
-use Illuminate\Support\Arr as IlluminateArr;
+use Illuminate\Support\Arr as BaseArr;
 
-/**
- * Class Str
- * @package tiFy\Support
- *
- * @mixin IlluminateArr
- */
-class Arr
+class Arr extends BaseArr
 {
     /**
-     * Appel statique de l'héritage des méthodes de la classe Str de Laravel.
-     * {@internal Utile pour l'appel statique interne à Illuminate\Support\Str}
+     * Serialisation de données si nécessaire.
+     * @see https://codex.wordpress.org/Function_Reference/maybe_serialize
      *
-     * @param string $name Nom de qualification de la méthode.
-     * @param array $args Liste des variables passées en argument à la méthode.
-     *
-     * @return mixed
-     */
-    public static function __callstatic($name, $args)
-    {
-        if (method_exists(IlluminateArr::class, $name)) :
-            return call_user_func_array([IlluminateArr::class, $name], $args);
-        endif;
-
-        return null;
-    }
-
-    /**
-     * Appel de l'héritage des méthodes statiques de la classe Str de Laravel.
-     *
-     * @param string $name Nom de qualification de la méthode.
-     * @param array $args Liste des variables passées en argument à la méthode.
+     * @param string|array|object $data.
      *
      * @return mixed
      */
-    public function __call($name, $args)
+    public static function serialize($data)
     {
-        if (method_exists(IlluminateArr::class, $name)) :
-            return call_user_func_array([IlluminateArr::class, $name], $args);
-        endif;
+        if (is_array($data) || is_object($data)) {
+            $data = serialize($data);
+        } elseif (is_serialized($data, false)) {
+            $data = serialize($data);
+        }
 
-        return null;
+        return $data;
     }
 }

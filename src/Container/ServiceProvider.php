@@ -21,7 +21,7 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
     protected $provides = [];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function boot()
     {
@@ -29,7 +29,7 @@ class ServiceProvider extends AbstractServiceProvider implements ServiceProvider
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register()
     {

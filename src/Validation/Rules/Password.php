@@ -2,7 +2,6 @@
 
 namespace tiFy\Validation\Rules;
 
-use Respect\Validation\Validator as v;
 use tiFy\Contracts\Validation\Rule;
 
 class Password extends AbstractRule
@@ -67,9 +66,7 @@ class Password extends AbstractRule
     }
 
     /**
-     * @param string $input
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function validate($input): bool
     {

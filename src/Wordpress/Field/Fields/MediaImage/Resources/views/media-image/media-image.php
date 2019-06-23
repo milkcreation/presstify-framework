@@ -31,7 +31,7 @@
                value="<?php echo $this->getValue(); ?>"/>
 
         <?php if ($this->get('removable', true)) : ?>
-            <a href="#<?php $this->get('attrs.id', ''); ?>" class="tiFyField-mediaImageRemove tiFy-Button--remove"></a>
+            <a href="#<?php $this->get('attrs.id', ''); ?>" class="tiFyField-mediaImageRemove ThemeButton--remove"></a>
         <?php endif; ?>
     </div>
 

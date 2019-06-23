@@ -2,7 +2,7 @@
     position: relative;
 }
 
-[data-control='password-js'] [aria-control='toggle']::before {
+[data-control='password-js'] [data-control='toggle']::before {
     position: absolute;
     font-family: "dashicons";
     content: "\f530";
@@ -15,11 +15,11 @@
     z-index: 1;
 }
 
-[data-control='password-js'][aria-hide='true'] [aria-control='toggle']::before {
+[data-control='password-js'][aria-hide='true'] [data-control='toggle']::before {
     content: "\f177";
 }
 
-[data-control='password-js'] [aria-control='toggle'] {
+[data-control='password-js'] [data-control='toggle'] {
     position: absolute;
     content: "";
     width: 30px;

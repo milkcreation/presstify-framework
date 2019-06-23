@@ -2,10 +2,13 @@
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Filesystem\Filesystem;
+use tiFy\Contracts\Filesystem\{Filesystem, LocalAdapter, LocalFilesystem, StorageManager};
 
 /**
  * @method static Filesystem|null disk(string $name)
+ * @method static LocalAdapter localAdapter(string $root, array $config = [])
+ * @method static LocalFilesystem localFilesystem(string|LocalAdapter $root, array $config = [])
+ * @method static StorageManager set(string $name, Filesystem $filesystem)
  */
 class Storage extends AbstractProxy
 {

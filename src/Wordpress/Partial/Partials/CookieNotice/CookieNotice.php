@@ -2,9 +2,7 @@
 
 namespace tiFy\Wordpress\Partial\Partials\CookieNotice;
 
-use Symfony\Component\HttpFoundation\Cookie;
 use tiFy\Contracts\Partial\PartialFactory as BasePartialFactoryContract;
-use tiFy\Http\Response;
 use tiFy\Partial\Partials\CookieNotice\CookieNotice as BaseCookieNotice;
 use tiFy\Wordpress\Contracts\Partial\{CookieNotice as CookieNoticeContract, PartialFactory as PartialFactoryContract};
 
@@ -58,7 +56,6 @@ class CookieNotice extends BaseCookieNotice implements CookieNoticeContract
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
-            'cookie_hash'   => '_' . COOKIEHASH,
             'ajax_action'   => 'tify_partial_cookie_notice',
             'ajax_nonce'    => '',
         ]);
@@ -97,7 +94,7 @@ class CookieNotice extends BaseCookieNotice implements CookieNoticeContract
     /**
      * @inheritDoc
      */
-    public function setCookie(string $name, ?string $value = null, int $expire = 0)
+    /*public function setCookie(string $name, ?string $value = null, int $expire = 0)
     {
         $args = $this->getCookieArgs($name, $value, $expire);
 
@@ -110,7 +107,7 @@ class CookieNotice extends BaseCookieNotice implements CookieNoticeContract
         }
 
         $response->send();
-    }
+    }*/
 
     /**
      * @inheritDoc

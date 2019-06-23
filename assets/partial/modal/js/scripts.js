@@ -1,7 +1,7 @@
 "use strict";
 
 jQuery(document).ready(function ($) {
-    $('[aria-control="modal"]')
+    $('[data-control="modal"]')
         .modal()
         .on('shown.bs.modal', function () {
             var $modal = $(this);
@@ -37,9 +37,9 @@ jQuery(document).ready(function ($) {
             }
         });
 
-    $(document).on('click', '[aria-control="modal-trigger"]', function (e) {
+    $(document).on('click', '[data-control="modal-trigger"]', function (e) {
         e.preventDefault();
 
-        $($(this).data('target') + '[aria-control="modal"]').modal('show');
+        $($(this).data('target') + '[data-control="modal"]').modal('show');
     });
 });

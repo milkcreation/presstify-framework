@@ -110,5 +110,5 @@
 })(jQuery, document, window);
 
 jQuery(document).ready(function ($) {
-    $('[aria-control="scroll_paginate"]').tifyPagination();
+    $('[data-control="scroll_paginate"]').tifyPagination();
 });

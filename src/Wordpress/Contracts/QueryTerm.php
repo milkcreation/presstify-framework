@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Wordpress\Contracts\Database\TaxonomyBuilder;
 use WP_Term;
 
 interface QueryTerm extends ParamsBag
@@ -25,6 +26,13 @@ interface QueryTerm extends ParamsBag
      * @return static|null
      */
     public static function createFromSlug(string $term_slug, string $taxonomy): ?QueryTerm;
+
+    /**
+     * Récupération de l'instance du modèle de base de donnée associé.
+     *
+     * @return TaxonomyBuilder
+     */
+    public function db(): TaxonomyBuilder;
 
     /**
      * Récupération de la description.
@@ -105,4 +113,23 @@ interface QueryTerm extends ParamsBag
      * @return WP_Term
      */
     public function getWpTerm(): WP_Term;
+
+    /**
+     * Sauvegarde des données du terme en base.
+     *
+     * @param array $postdata Liste des données à enregistrer.
+     *
+     * @return void
+     */
+    public function save(array $termdata): void;
+
+    /**
+     * Sauvegarde (Ajout ou mise à jour) de metadonnées du terme en base.
+     *
+     * @param string|array $key Indice de métadonnées ou tableau associatif clé/valeur.
+     * @param mixed $value Valeur de la métadonnées si key est un indice.
+     *
+     * @return void
+     */
+    public function saveMeta($key, $value = null): void;
 }

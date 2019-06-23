@@ -185,9 +185,7 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function parseDefaults(): FieldFactoryContract
     {
@@ -208,8 +206,6 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
 
     /**
      * @inheritDoc
-     *
-     * @return $this
      */
     public function parseName(): FieldFactoryContract
     {
@@ -221,9 +217,7 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function parseValue(): FieldFactoryContract
     {
@@ -235,9 +229,7 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function parseViewer(): FieldFactoryContract
     {
@@ -249,9 +241,7 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function prepare(string $alias, Manager $manager): FieldFactoryContract
     {
@@ -268,9 +258,7 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function setId(string $id): FieldFactoryContract
     {
@@ -280,9 +268,7 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function setIndex(int $index): FieldFactoryContract
     {
