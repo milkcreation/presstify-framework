@@ -1,8 +1,8 @@
-[data-control='password-js'] {
+[data-control="password-js"] {
     position: relative;
 }
 
-[data-control='password-js'] [data-control='toggle']::before {
+[data-control="password-js.toggle"]::before {
     position: absolute;
     font-family: "dashicons";
     content: "\f530";
@@ -15,11 +15,11 @@
     z-index: 1;
 }
 
-[data-control='password-js'][aria-hide='true'] [data-control='toggle']::before {
+[data-control="password-js"][aria-hide="true"] [data-control="password-js.toggle"]::before {
     content: "\f177";
 }
 
-[data-control='password-js'] [data-control='toggle'] {
+[data-control="password-js"] [data-control="password-js.toggle"] {
     position: absolute;
     content: "";
     width: 30px;
@@ -31,7 +31,7 @@
     box-shadow: 0px 0px 1px 0px #ccc;
 }
 
-[data-control='password-js'] .tiFyField-passwordJsWrapper::before {
+[data-control="password-js"] .tiFyField-passwordJsWrapper::before {
     position: absolute;
     font-family: "dashicons";
     content: "\f112";
@@ -43,13 +43,13 @@
     color: #AAA;
 }
 
-[data-control='password-js'] .tiFyField-passwordJsWrapper {
+[data-control="password-js"] .tiFyField-passwordJsWrapper {
     position: relative;
     display: inline-block;
     font-size: 14px;
 }
 
-[data-control='password-js'].loading .tiFyField-passwordJsWrapper::before {
+[data-control="password-js"].loading .tiFyField-passwordJsWrapper::before {
     content: "\f463";
     margin-top: -10px;
     -webkit-animation: rotating 2s infinite linear;
