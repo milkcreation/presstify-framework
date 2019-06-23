@@ -13,7 +13,9 @@ class ValidationServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'validator',
-        'validator.rule.password'
+        'validator.rule.base64',
+        'validator.rule.password',
+        'validator.rule.serialized',
     ];
 
     /**
@@ -23,12 +25,23 @@ class ValidationServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('validator', function () {
             return new Validator($this->getContainer(), [
-                'password' => $this->getContainer()->get('validator.rule.password')
+                'base64'     => $this->getContainer()->get('validator.rule.base64'),
+                'password'   => $this->getContainer()->get('validator.rule.password'),
+                'serialized' => $this->getContainer()->get('validator.rule.serialized'),
             ]);
+        });
+
+        $this->getContainer()->add('validator.rule.base64', function () {
+            return new Rules\Base64();
         });
 
         $this->getContainer()->add('validator.rule.password', function () {
             return new Rules\Password();
+        });
+
+
+        $this->getContainer()->add('validator.rule.serialized', function () {
+            return new Rules\Serialized();
         });
     }
 }

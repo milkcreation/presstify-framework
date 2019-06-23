@@ -5,6 +5,7 @@ namespace tiFy\Template\Templates\PostListTable;
 use tiFy\Template\Templates\ListTable\ListTableServiceProvider;
 use tiFy\Template\Templates\PostListTable\Contracts\{
     Db,
+    Item,
     Params,
     QueryBuilder,
     PostListTable};
@@ -24,14 +25,21 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     {
         parent::registerFactoryColumns();
 
-        $this->getContainer()->add($this->getFactoryAlias('column.post_title'),
+        $this->getContainer()->add(
+            $this->getFactoryAlias('column.post_title'),
             function (string $name, array $attrs = []) {
-                return (new ColumnPostTitle())->setName($name)->set($attrs)->parse();
+                return (new ColumnPostTitle())
+                    ->setTemplateFactory($this->factory)
+                    ->setName($name)
+                    ->set($attrs)->parse();
             });
 
         $this->getContainer()->add($this->getFactoryAlias('column.post_type'),
             function (string $name, array $attrs = []) {
-                return (new ColumnPostType())->setTemplateFactory($this->factory)->setName($name)->set($attrs)->parse();
+                return (new ColumnPostType())
+                    ->setTemplateFactory($this->factory)
+                    ->setName($name)
+                    ->set($attrs)->parse();
             });
     }
 
@@ -45,6 +53,23 @@ class PostListTableServiceProvider extends ListTableServiceProvider
             $ctrl = $ctrl instanceof Db
                 ? $ctrl
                 : $this->getContainer()->get(Db::class);
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+    }
+
+    /**
+     * Déclaration du controleur d'un élément.
+     *
+     * @return void
+     */
+    public function registerFactoryItem(): void
+    {
+        $this->getContainer()->add($this->getFactoryAlias('item'), function () {
+            $ctrl = $this->factory->get('providers.item');
+            $ctrl = $ctrl instanceof Item
+                ? $ctrl
+                : $this->getContainer()->get(Item::class);
 
             return $ctrl->setTemplateFactory($this->factory);
         });

@@ -13,13 +13,13 @@
                 'name'  => $this->get('name'),
                 'value' => $this->get('value'),
                 'attrs' => [
-                    'aria-control' => 'input',
+                    'data-control' => 'input',
                 ],
             ]
         );
         ?>
 
-        <div class="tiFyField-mediaFileInput tiFy-Input--media">
+        <div class="tiFyField-mediaFileInput ThemeInput--media">
             <?php
             echo field(
                 'text',
@@ -28,7 +28,7 @@
                     'attrs' => [
                         'autocomplete' => 'off',
                         'disabled',
-                        'aria-control' => 'infos',
+                        'datat-control' => 'infos',
                         'placeholder'  => __('Cliquez pour ajouter un fichier', 'tify'),
                     ],
                 ]
@@ -44,7 +44,7 @@
                 'attrs'   => [
                     'class'        => 'dashicons dashicons-no-alt',
                     'href'         => '#' . $this->get('attrs.id'),
-                    'aria-control' => 'reset',
+                    'data-control' => 'reset',
                 ],
                 'content' => '',
             ]

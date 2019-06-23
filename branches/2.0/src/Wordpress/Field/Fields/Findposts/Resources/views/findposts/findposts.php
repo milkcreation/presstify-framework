@@ -7,7 +7,7 @@
 ?>
 <?php $this->before(); ?>
 
-<div aria-control="findposts">
+<div data-control="findposts">
     <?php
     echo field(
         'text',

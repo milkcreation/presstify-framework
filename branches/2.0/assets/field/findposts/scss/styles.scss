@@ -2,11 +2,11 @@
     top: 0;
 }
 
-[aria-control="findposts"] {
+[data-control="findposts"] {
     position: relative;
 }
 
-[aria-control="findposts"] > input {
+[data-control="findposts"] > input {
     padding-right: 30px;
     margin: 0;
     width: 100%;
@@ -14,7 +14,7 @@
     box-shadow: none;
 }
 
-[aria-control="findposts"] > button {
+[data-control="findposts"] > button {
     position: absolute;
     top: 0;
     right: 0;
@@ -35,7 +35,7 @@
     cursor: pointer;
 }
 
-[aria-control="findposts"] > button::before {
+[data-control="findposts"] > button::before {
     position: absolute;
     top: 50%;
     right: 0;

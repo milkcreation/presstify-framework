@@ -3,7 +3,6 @@
  * @var tiFy\PostType\Metabox\VideoGallery\ViewController $this
  */
 ?>
-
 <li class="tiFyTabMetaboxPostTypeVideoGallery-item">
     <div class="tiFyTabMetaboxPostTypeVideoGallery-itemPoster">
         <?php
@@ -66,5 +65,5 @@
         ?>
     </div>
 
-    <a href="#remove" class="tiFyTabMetaboxPostTypeVideoGallery-itemRemove tiFy-Button--remove"></a>
+    <a href="#remove" class="tiFyTabMetaboxPostTypeVideoGallery-itemRemove ThemeButton--remove"></a>
 </li>

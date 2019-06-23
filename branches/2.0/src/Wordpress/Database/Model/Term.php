@@ -3,15 +3,14 @@
 namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\Term as CorcelTerm;
-use Illuminate\Database\Eloquent\Builder;
+use tiFy\Database\Concerns\ColumnsAwareTrait;
+use tiFy\Wordpress\Contracts\Database\TaxonomyBuilder;
 
 /**
- * Class Term
- * @package tiFy\Wordpress\Database\Model
- *
- * @mixin Builder
+ * @method static TaxonomyBuilder hasMeta(string|array $meta_key, mixed|null $value, string $operator = '=')
+ * @method static TaxonomyBuilder hasMetaLike(string $key, string $value)
  */
-class Term extends CorcelTerm
+class Term extends CorcelTerm implements TaxonomyBuilder
 {
-
+    use ColumnsAwareTrait;
 }

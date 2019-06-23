@@ -71,7 +71,7 @@ class Modal extends PartialFactory implements ModalContract
         $this->set('attrs.class', $this->get('attrs.class', '') . " {$class}");
 
         $this->set('attrs.role', 'dialog');
-        $this->set('attrs.aria-control', 'modal');
+        $this->set('attrs.data-control', 'modal');
 
         $this->set('options', array_merge([
             'backdrop' => true,
@@ -158,7 +158,7 @@ class Modal extends PartialFactory implements ModalContract
             Arr::set($attrs, 'attrs.href', "#{$this->get('attrs.id')}");
         }
 
-        Arr::set($attrs, 'attrs.aria-control', 'modal-trigger');
+        Arr::set($attrs, 'attrs.data-control', 'modal-trigger');
         Arr::set($attrs, 'attrs.data-target', "#{$this->get('attrs.id')}");
 
         return (string)$this->viewer('trigger', $attrs);

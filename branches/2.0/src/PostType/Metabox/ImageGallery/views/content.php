@@ -5,7 +5,7 @@
 ?>
 
 <div class="tiFyTabMetaboxPostTypeImageGallery">
-    <ul class="tiFyTabMetaboxPostTypeImageGallery-items tiFy-CardItems">
+    <ul class="tiFyTabMetaboxPostTypeImageGallery-items ThemeCards">
     <?php $order = 0; foreach ($this->get('items', []) as $attachment_id) : ?>
         <?php echo $this->displayItem($attachment_id, ++$order, $this->get('name', '')); ?>
     <?php endforeach; ?>

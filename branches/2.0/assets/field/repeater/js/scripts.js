@@ -9,7 +9,7 @@ jQuery(function ($) {
             classes: {
                 listItem: 'FieldRepeater-item',
                 listItemContent: 'FieldRepeater-itemContent',
-                listItemRemove: 'FieldRepeater-itemRemove tiFy-Button--remove',
+                listItemRemove: 'FieldRepeater-itemRemove ThemeButton--remove',
                 listItemSort: 'FieldRepeater-itemSort',
                 listItems: 'FieldRepeater-items',
                 trigger: 'FieldSelectJs-trigger'

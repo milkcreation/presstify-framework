@@ -95,7 +95,7 @@ class MediaFile extends FieldFactory implements MediaFileContract
             $media_id = 0;
         }
 
-        $this->set('attrs.aria-control', 'media_file');
+        $this->set('attrs.data-control', 'media_file');
         $this->set('attrs.data-options.library.type', $this->get('filetype'));
         $this->set('attrs.data-options.editing', true);
         $this->set('attrs.data-options.multiple', false);

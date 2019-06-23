@@ -42,7 +42,7 @@
             <?php _e('Email (requis)', 'tify'); ?>
         </th>
         <td>
-            <div class="tiFy-Input--email">
+            <div class="ThemeInput--email">
                 <?php
                 echo field(
                     'text',
@@ -65,7 +65,7 @@
             <?php _e('Nom (optionnel)', 'tify'); ?>
         </th>
         <td>
-            <div class="tiFy-Input--user">
+            <div class="ThemeInput--user">
                 <?php
                 echo field(
                     'text',

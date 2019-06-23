@@ -7,9 +7,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Class Postmeta
- * @package tiFy\Wordpress\Database\Model
- *
  * @mixin Builder
  */
 class Postmeta extends CorcelPostmeta

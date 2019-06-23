@@ -31,4 +31,13 @@ interface Rule extends Validatable
      * @return static
      */
     public function setValidator(Validator $validator): Rule;
+
+    /**
+     * Test de validation.
+     *
+     * @param string $input
+     *
+     * @return bool
+     */
+    public function validate($input);
 }

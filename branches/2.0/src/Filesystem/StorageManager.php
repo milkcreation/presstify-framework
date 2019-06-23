@@ -3,10 +3,13 @@
 namespace tiFy\Filesystem;
 
 use InvalidArgumentException;
-use League\Flysystem\{AdapterInterface, Adapter\Local, FilesystemInterface, MountManager};
-use League\Flysystem\Cached\{CachedAdapter, CacheInterface, Storage\Memory as MemoryStore};
+use League\Flysystem\{AdapterInterface, FilesystemInterface, MountManager};
 use tiFy\Contracts\Container\Container;
-use tiFy\Contracts\Filesystem\{Filesystem as FilesystemContract, StorageManager as StorageManagerContract};
+use tiFy\Contracts\Filesystem\{
+    Filesystem as FilesystemContract,
+    LocalAdapter as LocalAdapterContract,
+    LocalFilesystem as LocalFilesystemContract,
+    StorageManager as StorageManagerContract};
 
 class StorageManager extends MountManager implements StorageManagerContract
 {
@@ -57,39 +60,21 @@ class StorageManager extends MountManager implements StorageManagerContract
     /**
      * @inheritDoc
      */
-    public function localAdapter(string $root, array $config = []): AdapterInterface
+    public function localAdapter(...$args): AdapterInterface
     {
-        $permissions = $config['permissions'] ?? [];
-        $links = ($config['links'] ?? null) === 'skip'
-            ? Local::SKIP_LINKS
-            : Local::DISALLOW_LINKS;
-
-        $adapter = new Local($root, LOCK_EX, $links, $permissions);
-
-        if ($cache = $config['cache'] ?? true) {
-            $adapter = $cache instanceof CacheInterface
-                ? new CachedAdapter($adapter, $cache)
-                : new CachedAdapter($adapter, new MemoryStore());
-        }
-
-        return $adapter;
+        return ($this->getContainer() && $this->getContainer()->has(LocalAdapterContract::class))
+            ? $this->getContainer()->get(LocalAdapterContract::class, $args)
+            : new LocalAdapter(...$args);
     }
 
     /**
      * @inheritDoc
      */
-    public function localFilesytem(string $root, array $config = []): FilesystemContract
+    public function localFilesytem(...$args): LocalFilesystemContract
     {
-        $adapter = $this->localAdapter($root, $config);
-
-        $params = [
-            'disable_asserts' => true,
-            'case_sensitive' => true
-        ];
-
-        return $this->getContainer() && $this->getContainer()->has(FilesystemContract::class)
-            ? $this->getContainer()->get(FilesystemContract::class, [$adapter, $params])
-            : new Filesystem($adapter, $params);
+        return $this->getContainer() && $this->getContainer()->has(LocalFilesystemContract::class)
+            ? $this->getContainer()->get(LocalFilesystemContract::class, $args)
+            : new LocalFilesystem(...$args);
     }
 
     /**

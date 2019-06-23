@@ -156,7 +156,7 @@ jQuery(document).ready(function ($) {
         return false;
     });
 
-    $(document).on('click', '[aria-control="findposts"] > button', function() {
-        scripts.open('target', '#' + $('.tiFyField-findposts', $(this).closest('[aria-control="findposts"]')).attr('id'));
+    $(document).on('click', '[data-control="findposts"] > button', function() {
+        scripts.open('target', '#' + $('.tiFyField-findposts', $(this).closest('[data-control="findposts"]')).attr('id'));
     });
 });

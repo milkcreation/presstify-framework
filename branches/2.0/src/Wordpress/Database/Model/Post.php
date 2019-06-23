@@ -4,8 +4,9 @@ namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\Post as CorcelPost;
 use Illuminate\Database\Eloquent\Builder;
+use tiFy\Database\Concerns\ColumnsAwareTrait;
 use tiFy\Support\ParamsBag;
-use tiFy\Wordpress\Contracts\PostBuilder;
+use tiFy\Wordpress\Contracts\Database\PostBuilder;
 
 /**
  * @method static PostBuilder hasMeta(string|array $meta_key, mixed|null $value, string $operator = '=')
@@ -13,11 +14,7 @@ use tiFy\Wordpress\Contracts\PostBuilder;
  */
 class Post extends CorcelPost implements PostBuilder
 {
-    /**
-     * Liste des colonnes de la table.
-     * @var array
-     */
-    protected $columns;
+    use ColumnsAwareTrait;
 
     /**
      * @var Builder
@@ -33,33 +30,6 @@ class Post extends CorcelPost implements PostBuilder
         \Corcel\Model\Term::class    => \Corcel\Model\Meta\TermMeta::class,
         \Corcel\Model\User::class    => \Corcel\Model\Meta\UserMeta::class,
     ];
-
-    /**
-     * Récupération de la liste des colonnes de la table.
-     *
-     * @return array
-     */
-    public function getColumns(): array
-    {
-        if (is_null($this->columns)) {
-            $this->columns = $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable())
-                ?: [];
-        }
-
-        return $this->columns;
-    }
-
-    /**
-     * Vérification d'une colonne dans la table.
-     *
-     * @param string $name Nom de qualification de la colonne.
-     *
-     * @return bool
-     */
-    public function hasColumn(string $name): bool
-    {
-        return in_array($name, $this->getColumns());
-    }
 
     /**
      * Condition de requête de limitation dun nombre d'éléments.

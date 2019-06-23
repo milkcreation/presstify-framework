@@ -3,14 +3,13 @@
 namespace tiFy\Validation;
 
 use Psr\Container\ContainerInterface as Container;
-use Respect\Validation\Exceptions\ComponentException;
-use Respect\Validation\Validator as BaseValidator;
-use tiFy\Contracts\Validation\Rule;
-use tiFy\Contracts\Validation\Validator as ValidatorContract;
-use tiFy\Validation\Rules\Password;
+use Respect\Validation\{Exceptions\ComponentException, Validator as BaseValidator};
+use tiFy\Contracts\Validation\{Rule, Validator as ValidatorContract};
 
 /**
- * @method static Password password(array $args = [])
+ * @method static Rules\Base64 base64()
+ * @method static Rules\Password password(array $args = [])
+ * @method static Rules\Serialized serialized(bool $strict = true)
  */
 class Validator extends BaseValidator implements ValidatorContract
 {

@@ -10,7 +10,7 @@ jQuery(function ($) {
         options: {
             classes: {
                 listItem: 'MetaboxFileshare-item',
-                listItemRemove: 'MetaboxFileshare-itemRemove tiFy-Button--remove',
+                listItemRemove: 'MetaboxFileshare-itemRemove ThemeButton--remove',
                 listItemSort: 'MetaboxFileshare-itemSort',
                 listItems: 'MetaboxFileshare-items',
                 trigger: 'MetaboxFileshare-trigger button-secondary'

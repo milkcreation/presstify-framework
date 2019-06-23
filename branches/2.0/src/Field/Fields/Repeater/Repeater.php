@@ -4,8 +4,7 @@ namespace tiFy\Field\Fields\Repeater;
 
 use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, Repeater as RepeaterContract};
 use tiFy\Field\FieldFactory;
-use tiFy\Support\Arr;
-use tiFy\Support\ParamsBag;
+use tiFy\Support\{Arr, Proxy\Request};
 
 class Repeater extends FieldFactory implements RepeaterContract
 {
@@ -88,23 +87,18 @@ class Repeater extends FieldFactory implements RepeaterContract
         }
 
         $this->set('attrs.data-options', [
-            'ajax'      => array_merge(
-                [
-                    'url'    => admin_url('admin-ajax.php', 'relative'),
-                    'data'   => [
-                        'action'      => 'field_repeater',
-                        '_ajax_nonce' => wp_create_nonce('FieldRepeater' . $this->getId()),
-                        '_id'         => $this->getId(),
-                        '_viewer'     => $this->get('viewer'),
-                        'args'        => $this->get('args', []),
-                        'max'         => $this->get('max'),
-                        'name'        => $this->getName(),
-                        'order'       => $this->get('order'),
-                    ],
-                    'method' => 'post',
+            'ajax'      => array_merge([
+                'url'    => admin_url('admin-ajax.php', 'relative'),
+                'data'   => [
+                    '_id'         => $this->getId(),
+                    '_viewer'     => $this->get('viewer'),
+                    'args'        => $this->get('args', []),
+                    'max'         => $this->get('max'),
+                    'name'        => $this->getName(),
+                    'order'       => $this->get('order'),
                 ],
-                $this->get('ajax', [])
-            ),
+                'method' => 'post',
+            ], $this->get('ajax', [])),
             'removable' => $this->get('removable'),
             'sortable'  => $this->get('sortable'),
         ]);
@@ -131,10 +125,10 @@ class Repeater extends FieldFactory implements RepeaterContract
      */
     public function xhrResponse(): array
     {
-        $params = ParamsBag::createFromAttrs(request()->request->all());
-        $max = $params->get('max');
+        $max = Request::input('max', -1);
+        $this->set('viewer', Request::input('_viewer', []))->parseViewer();
 
-        if (($max > 0) && ($params->get('count') >= $max)) {
+        if (($max > 0) && (Request::input('count', 0) >= $max)) {
             return [
                 'success' => false,
                 'data' => __('Nombre de valeur maximum atteinte', 'tify')
@@ -142,7 +136,7 @@ class Repeater extends FieldFactory implements RepeaterContract
         } else {
             return [
                 'success' => true,
-                'data'    => (string)$this->viewer('item-wrap', array_merge($params->all(), ['value' => '']))
+                'data'    => (string)$this->viewer('item-wrap', array_merge(Request::all(), ['value' => '']))
             ];
         }
     }

@@ -2,15 +2,10 @@
 
 namespace tiFy\Kernel;
 
-use tiFy\Http\Request;
-use tiFy\Http\Uri;
+use tiFy\Http\{Request, Response, Uri};
 use tiFy\Container\ServiceProvider;
-use tiFy\Kernel\Events\Manager as EventsManager;
-use tiFy\Kernel\Events\Listener;
-use tiFy\Kernel\Logger\Logger;
-use tiFy\Kernel\Notices\Notices;
-use tiFy\Support\ClassInfo;
-use tiFy\Support\ParamsBag;
+use tiFy\Kernel\{Events\Manager as EventsManager, Events\Listener, Logger\Logger, Notices\Notices};
+use tiFy\Support\{ClassInfo, ParamsBag};
 
 class KernelServiceProvider extends ServiceProvider
 {
@@ -48,7 +43,7 @@ class KernelServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->getContainer()->share('path', function () {
-            return new Path($this->getContainer());
+            return new Path();
         });
 
         $this->getContainer()->share('class-loader', new ClassLoader($this->getContainer()));
@@ -87,6 +82,10 @@ class KernelServiceProvider extends ServiceProvider
 
         $this->getContainer()->share('request', function () {
             return Request::setFromGlobals();
+        });
+
+        $this->getContainer()->share('response', function () {
+            return new Response();
         });
 
         $this->getContainer()->share('uri', function () {

@@ -52,26 +52,10 @@ class Repeater extends BaseRepeater implements FieldFactoryContract
     {
         parent::parse();
 
-        $this->set('attrs.data-options', [
-            'ajax'      => array_merge(
-                [
-                    'url'    => admin_url('admin-ajax.php', 'relative'),
-                    'data'   => [
-                        'action'      => 'field_repeater',
-                        '_ajax_nonce' => wp_create_nonce('FieldRepeater' . $this->getId()),
-                        '_id'         => $this->getId(),
-                        '_viewer'     => $this->get('viewer'),
-                        'args'        => $this->get('args', []),
-                        'max'         => $this->get('max'),
-                        'name'        => $this->getName(),
-                        'order'       => $this->get('order'),
-                    ],
-                    'method' => 'post',
-                ],
-                $this->get('ajax', [])
-            ),
-            'removable' => $this->get('removable'),
-            'sortable'  => $this->get('sortable'),
+        $this->set([
+            'attrs.data-options.ajax.url' => admin_url('admin-ajax.php', 'relative'),
+            'attrs.data-options.ajax.data.action' => 'field_repeater',
+            'attrs.data-options.ajax.data._ajax_nonce' => wp_create_nonce('FieldRepeater' . $this->getId()),
         ]);
 
         return $this;

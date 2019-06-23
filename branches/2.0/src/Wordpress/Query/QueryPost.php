@@ -2,11 +2,11 @@
 
 namespace tiFy\Wordpress\Query;
 
-use tiFy\Support\DateTime;
-use tiFy\Support\ParamsBag;
-use tiFy\Wordpress\Contracts\QueryComment as QueryCommentContract;
-use tiFy\Wordpress\Contracts\QueryPost as QueryPostContract;
-use tiFy\Wordpress\Contracts\PostBuilder;
+use tiFy\Support\{DateTime, ParamsBag};
+use tiFy\Wordpress\Contracts\{
+    Database\PostBuilder,
+    QueryComment as QueryCommentContract,
+    QueryPost as QueryPostContract};
 use tiFy\Wordpress\Database\Model\Post as Model;
 use WP_Post;
 use WP_Query;
@@ -23,22 +23,22 @@ class QueryPost extends ParamsBag implements QueryPostContract
 
     /**
      * Instance de post Wordpress.
-     * @var WP_Post
+     * @var WP_Post|null
      */
     protected $wp_post;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param WP_Post $wp_post Instance de post Wordpress.
+     * @param WP_Post|null $wp_post Instance de post Wordpress.
      *
      * @return void
      */
-    public function __construct(WP_Post $wp_post)
+    public function __construct(?WP_Post $wp_post = null)
     {
-        $this->wp_post = $wp_post;
-
-        $this->set($this->wp_post->to_array())->parse();
+        if ($this->wp_post = $wp_post instanceof WP_Post ? $wp_post : null) {
+            $this->set($this->wp_post->to_array())->parse();
+        }
     }
 
     /**
@@ -65,7 +65,10 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function createFromName(string $post_name): ?QueryPostContract
     {
-        return (($wp_post = (new WP_Query())->query(['name' => $post_name, 'post_type' => 'any', 'posts_per_page' => 1]))
+        return (($wp_post = (new WP_Query())->query(['name'           => $post_name,
+                                                     'post_type'      => 'any',
+                                                     'posts_per_page' => 1,
+            ]))
             && ($wp_post[0] instanceof WP_Post)) ? new static($wp_post[0]) : null;
     }
 
@@ -372,7 +375,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function save($postdata): void
     {
         $p = ParamsBag::createFromAttrs($postdata);
-        $columns =  $this->db()->getConnection()->getSchemaBuilder()->getColumnListing($this->db()->getTable());
+        $columns = $this->db()->getConnection()->getSchemaBuilder()->getColumnListing($this->db()->getTable());
 
         $update = [];
         foreach ($columns as $col) {
@@ -410,7 +413,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
             'comment_parent'       => 0,
             'comment_approved'     => 1,
             'user_id'              => $user->getId(),
-            'meta'                 => []
+            'meta'                 => [],
         ], $commentdata);
 
         if ($comment_id = wp_insert_comment($commentdata)) {

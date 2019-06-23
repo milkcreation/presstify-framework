@@ -5,6 +5,7 @@ namespace tiFy\Wordpress;
 use tiFy\Container\ServiceProvider;
 use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Column\Column;
+use tiFy\Wordpress\Cookie\Cookie;
 use tiFy\Wordpress\Database\Database;
 use tiFy\Wordpress\Db\Db;
 use tiFy\Wordpress\Filesystem\Filesystem;
@@ -50,6 +51,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp',
         'wp.asset',
         'wp.column',
+        'wp.cookie',
         'wp.database',
         'wp.db',
         'wp.filesystem',
@@ -96,6 +98,10 @@ class WordpressServiceProvider extends ServiceProvider
 
                 if ($this->getContainer()->has('column')) {
                     $this->getContainer()->get('wp.column');
+                }
+
+                if ($this->getContainer()->has('cookie')) {
+                    $this->getContainer()->get('wp.cookie');
                 }
 
                 if ($this->getContainer()->has('cron')) {
@@ -175,6 +181,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->registerManager();
         $this->registerAsset();
         $this->registerColumn();
+        $this->registerCookie();
         $this->registerDatabase();
         $this->registerFilesystem();
         $this->registerField();
@@ -214,6 +221,18 @@ class WordpressServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('wp.column', function () {
             return new Column($this->getContainer()->get('column'));
+        });
+    }
+
+    /**
+     * Déclaration du controleur des cookies.
+     *
+     * @return void
+     */
+    public function registerCookie()
+    {
+        $this->getContainer()->share('wp.cookie', function () {
+            return new Cookie($this->getContainer()->get('cookie'));
         });
     }
 
