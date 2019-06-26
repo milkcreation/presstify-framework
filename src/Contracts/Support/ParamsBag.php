@@ -40,6 +40,15 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
     public function defaults();
 
     /**
+     * Suppression d'un ou plusieurs attributs.
+     *
+     * @param  array|string $keys Liste des indices des attributs à supprimer. Syntaxe à point permise.
+     *
+     * @return void
+     */
+    public function forget($keys): void;
+
+    /**
      * Récupération d'un attribut.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.

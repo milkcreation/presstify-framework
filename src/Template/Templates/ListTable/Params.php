@@ -23,7 +23,7 @@ class Params extends FactoryParams implements ParamsContract
                 'class' => '%s'
             ],
             'edit_base_uri'              => '',
-            'bulk_actions'               => [],
+            'bulk-actions'               => [],
             'columns'                    => [],
             'colum_primary'              => '',
             'item_primary_key'           => '',
@@ -33,8 +33,8 @@ class Params extends FactoryParams implements ParamsContract
             'preview_item_columns'       => [],
             'preview_item_ajax_args'     => [],
             'table_classes'              => '%s',
-            'view_filters'               => [],
-            'row_actions'                => [],
+            'view-filters'               => [],
+            'row-actions'                => [],
             'row_actions_always_visible' => false
         ]);
     }

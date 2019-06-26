@@ -154,9 +154,9 @@ interface TemplateFactory extends ParamsBag
     /**
      * Récupération de l'instance du constructeur de requête.
      *
-     * @return FactoryQueryBuilder
+     * @return FactoryBuilder
      */
-    public function query(): FactoryQueryBuilder;
+    public function builder(): FactoryBuilder;
 
     /**
      * Récupération de l'instance du controleur de requête Http.

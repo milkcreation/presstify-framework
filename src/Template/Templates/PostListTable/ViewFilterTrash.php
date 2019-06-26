@@ -11,9 +11,13 @@ class ViewFilterTrash extends ViewFilter
      */
     public function defaults() : array
     {
-        $count = ($db = $this->factory->db())
-            ? $db->where('post_status', 'trash')->count()
-            : 0;
+        if ($builder = $this->factory->builder()) {
+            $builder->remove(['post_status']);
+
+            $count = $builder->queryWhere()->where('post_status', 'trash')->count();
+        } else {
+            $count = 0;
+        }
 
         return [
             'content'     => __('Corbeille', 'tify'),

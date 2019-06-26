@@ -3,6 +3,7 @@
 namespace tiFy\Support;
 
 use Illuminate\Support\Arr as BaseArr;
+use tiFy\Validation\Validator as v;
 
 class Arr extends BaseArr
 {
@@ -18,7 +19,7 @@ class Arr extends BaseArr
     {
         if (is_array($data) || is_object($data)) {
             $data = serialize($data);
-        } elseif (is_serialized($data, false)) {
+        } elseif (v::serialized(false)->validate($data)) {
             $data = serialize($data);
         }
 

@@ -2,7 +2,8 @@
 
 namespace tiFy\Wordpress\Contracts;
 
-use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\{Support\ParamsBag, User\RoleFactory};
+use tiFy\Wordpress\Contracts\Database\UserBuilder;
 use WP_Site;
 use WP_User;
 
@@ -148,7 +149,7 @@ interface QueryUser extends ParamsBag
     /**
      * Récupération de la liste des roles.
      *
-     * @return array
+     * @return RoleFactory[]|array
      */
     public function getRoles(): array;
 

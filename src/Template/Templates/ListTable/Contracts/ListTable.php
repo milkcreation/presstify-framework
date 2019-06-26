@@ -2,7 +2,7 @@
 
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
-use tiFy\Contracts\Template\FactoryQueryBuilder;
+use tiFy\Contracts\Template\FactoryBuilder;
 use tiFy\Contracts\Template\TemplateFactory;
 
 interface ListTable extends TemplateFactory
@@ -50,9 +50,9 @@ interface ListTable extends TemplateFactory
     /**
      * {@inheritDoc}
      *
-     * @return QueryBuilder
+     * @return Builder
      */
-    public function query(): FactoryQueryBuilder;
+    public function builder(): FactoryBuilder;
 
     /**
      * Récupération de l'instance du controleur des actions sur un élément.

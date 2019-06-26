@@ -36,6 +36,14 @@ class PostQueryItem extends ParamsBag implements PostQueryItemContract
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function createFromPostdata(array $postdata): ?PostQueryItemContract
+    {
+        return isset($postdata['ID']) ? new static(new WP_Post((object)$postdata)) : null;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getAuthorId()

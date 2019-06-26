@@ -7,7 +7,7 @@ use tiFy\Contracts\Template\{
     FactoryAssets,
     FactoryCache,
     FactoryDb,
-    FactoryQueryBuilder,
+    FactoryBuilder,
     FactoryNotices,
     FactoryRequest,
     FactoryServiceProvider,
@@ -223,9 +223,9 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function query(): FactoryQueryBuilder
+    public function builder(): FactoryBuilder
     {
-        return $this->resolve('query-builder');
+        return $this->resolve('builder');
     }
 
     /**

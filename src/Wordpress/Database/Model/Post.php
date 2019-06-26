@@ -7,14 +7,18 @@ use Illuminate\Database\Eloquent\Builder;
 use tiFy\Database\Concerns\ColumnsAwareTrait;
 use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
+use tiFy\Wordpress\Database\Concerns\MetaFieldsAwareTrait;
 
 /**
+ * @method static Postmeta createMeta($key, $value = null)
+ * @method static mixed getMeta(string $meta_key)
  * @method static PostBuilder hasMeta(string|array $meta_key, mixed|null $value, string $operator = '=')
- * @method static PostBuilder hasMetaLike(string $key, string $value)
+ * @method static PostBuilder hasMetaLike(string $key, string $value),
+ * @method static boolean saveMeta($key, $value = null)
  */
 class Post extends CorcelPost implements PostBuilder
 {
-    use ColumnsAwareTrait;
+    use ColumnsAwareTrait, MetaFieldsAwareTrait;
 
     /**
      * @var Builder
@@ -22,13 +26,14 @@ class Post extends CorcelPost implements PostBuilder
     protected $clauseQuery;
 
     /**
+     * Cartographie des classes de gestion des métadonnées.
      * @var array
      */
     protected $builtInClasses = [
-        \Corcel\Model\Comment::class => \Corcel\Model\Meta\CommentMeta::class,
-        Post::class                  => Postmeta::class,
-        \Corcel\Model\Term::class    => \Corcel\Model\Meta\TermMeta::class,
-        \Corcel\Model\User::class    => \Corcel\Model\Meta\UserMeta::class,
+        Comment::class => CommentMeta::class,
+        Post::class    => Postmeta::class,
+        Term::class    => Termmeta::class,
+        User::class    => Usermeta::class,
     ];
 
     /**
@@ -44,7 +49,11 @@ class Post extends CorcelPost implements PostBuilder
     {
         $query = $query ?: $this->clauseQuery();
 
-        return $query->forPage($page_num > 0 ? $page_num : 1, $per_page);
+        if ($per_page > 0) {
+            return $query->forPage($page_num > 0 ? $page_num : 1, $per_page);
+        } else {
+            return $query;
+        }
     }
 
     /**
@@ -163,7 +172,7 @@ class Post extends CorcelPost implements PostBuilder
      */
     public function queryFromArgs(array $args = [], ?Builder $query = null): Builder
     {
-        $query = $query ?: $this->clauseQuery();
+        $query = $query ?: $this->query();
 
         $p = ParamsBag::createFromAttrs($args);
 

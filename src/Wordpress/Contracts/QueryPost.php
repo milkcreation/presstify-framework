@@ -14,7 +14,7 @@ interface QueryPost extends ParamsBag
     /**
      * Récupération d'une instance basée sur le post global courant.
      *
-     * @return static
+     * @return static|null
      */
     public static function createFromGlobal(): ?QueryPost;
 
@@ -23,7 +23,7 @@ interface QueryPost extends ParamsBag
      *
      * @param int $post_id Identifiant de qualification.
      *
-     * @return static
+     * @return static|null
      */
     public static function createFromId($post_id): ?QueryPost;
 
@@ -32,9 +32,18 @@ interface QueryPost extends ParamsBag
      *
      * @param string $post_name Nom de qualification
      *
-     * @return static
+     * @return static|null
      */
     public static function createFromName(string $post_name): ?QueryPost;
+
+    /**
+     * Récupération d'une instance basée sur une liste de données de post.
+     *
+     * @param array $postdata Liste des données de post. ID requis.
+     *
+     * @return static|null
+     */
+    public static function createFromPostdata(array $postdata): ?QueryPost;
 
     /**
      * Récupération de l'instance du modèle de base de donnée associé.

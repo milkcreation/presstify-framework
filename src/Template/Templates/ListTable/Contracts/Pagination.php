@@ -22,6 +22,20 @@ interface Pagination extends FactoryAwareTrait, ParamsBag
     public function firstPage(): string;
 
     /**
+     * Récupération du numéro de la page courante.
+     *
+     * @return int
+     */
+    public function getCurrentPage(): int;
+
+    /**
+     * Récupération du nombre total de page d'éléments.
+     *
+     * @return int
+     */
+    public function getLastPage(): int;
+
+    /**
      * Récupération du nombre d'éléments affiché par page.
      *
      * @return int
@@ -33,14 +47,7 @@ interface Pagination extends FactoryAwareTrait, ParamsBag
      *
      * @return int
      */
-    public function getTotalFounds(): int;
-
-    /**
-     * Récupération du nombre total de page d'éléments.
-     *
-     * @return int
-     */
-    public function getTotalPaged(): int;
+    public function getTotal(): int;
 
     /**
      * Vérification de la désactivation du lien vers la première page.
@@ -90,13 +97,6 @@ interface Pagination extends FactoryAwareTrait, ParamsBag
      * @return string
      */
     public function nextPage(): string;
-
-    /**
-     * Récupération du numéro de la page courante.
-     *
-     * @return int
-     */
-    public function pageNum(): int;
 
     /**
      * Récupération de l'url vers une page.

@@ -21,6 +21,7 @@ use tiFy\Template\Templates\FileManager\Contracts\{
 use tiFy\Template\Templates\ListTable\Contracts\{
     Ajax as ListTableAjaxContract,
     Assets as ListTableAssetsContract,
+    Builder as ListTableBuilderContract,
     BulkAction as ListTableBulkActionContract,
     BulkActions as ListTableBulkActionsContract,
     Column as ListTableColumnContract,
@@ -30,17 +31,20 @@ use tiFy\Template\Templates\ListTable\Contracts\{
     Items as ListTableItemsContract,
     Pagination as ListTablePaginationContract,
     Params as ListTableParamsContract,
-    QueryBuilder as ListTableQueryBuilderContract,
     RowAction as ListTableRowActionContract,
     RowActions as ListTableRowActionsContract,
     Search as ListTableSearchContract,
     ViewFilter as ListTableViewFilterContract,
     ViewFilters as ListTableViewFiltersContract};
 use tiFy\Template\Templates\PostListTable\Contracts\{
+    Builder as PostListTableBuilderContract,
     Db as PostListTableDbContract,
     Item as PostListTableItemContract,
-    Params as PostListTableParamsContract,
-    QueryBuilder as PostListTableQueryBuilderContract};
+    Params as PostListTableParamsContract};
+use tiFy\Template\Templates\UserListTable\Contracts\{
+    Builder as UserListTableBuilderContract,
+    Db as UserListTableDbContract,
+    Item as UserListTableItemContract};
 use tiFy\Template\Templates\FileManager\{
     Ajax as FileManagerAjax,
     Breadcrumb as FileManagerBreadcrumb,
@@ -57,6 +61,7 @@ use tiFy\Template\Templates\FileManager\{
 use tiFy\Template\Templates\ListTable\{
     Ajax as ListTableAjax,
     Assets as ListTableAssets,
+    Builder as ListTableBuilder,
     BulkAction as ListTableBulkAction,
     BulkActions as ListTableBulkActions,
     Column as ListTableColumn,
@@ -66,18 +71,20 @@ use tiFy\Template\Templates\ListTable\{
     Items as ListTableItems,
     Pagination as ListTablePagination,
     Params as ListTableParams,
-    QueryBuilder as ListTableQueryBuilder,
     RowAction as ListTableRowAction,
     RowActions as ListTableRowActions,
     Search as ListTableSearch,
     ViewFilter as ListTableViewFilter,
     ViewFilters as ListTableViewFilters};
 use tiFy\Template\Templates\PostListTable\{
+    Builder as PostListTableBuilder,
     Db as PostListTableDb,
     Item as PostListTableItem,
-    Params as PostListTableParams,
-    QueryBuilder as PostListTableQueryBuilder
-};
+    Params as PostListTableParams};
+use tiFy\Template\Templates\UserListTable\{
+    Builder as UserListTableBuilder,
+    Db as UserListTableDb,
+    Item as UserListTableItem};
 
 class TemplateServiceProvider extends ServiceProvider
 {
@@ -114,7 +121,7 @@ class TemplateServiceProvider extends ServiceProvider
         ListTableItemsContract::class,
         ListTablePaginationContract::class,
         ListTableParamsContract::class,
-        ListTableQueryBuilderContract::class,
+        ListTableBuilderContract::class,
         ListTableRowActionContract::class,
         ListTableRowActionsContract::class,
         ListTableSearchContract::class,
@@ -124,7 +131,11 @@ class TemplateServiceProvider extends ServiceProvider
         PostListTableDbContract::class,
         PostListTableItemContract::class,
         PostListTableParamsContract::class,
-        PostListTableQueryBuilderContract::class,
+        PostListTableBuilderContract::class,
+        // UserTable
+        UserListTableDbContract::class,
+        UserListTableItemContract::class,
+        UserListTableBuilderContract::class,
     ];
 
     /**
@@ -143,6 +154,7 @@ class TemplateServiceProvider extends ServiceProvider
         $this->registerFileManager();
         $this->registerListTable();
         $this->registerPostListTable();
+        $this->registerUserListTable();
     }
 
     /**
@@ -248,8 +260,8 @@ class TemplateServiceProvider extends ServiceProvider
             return new ListTableParams();
         });
 
-        $this->getContainer()->add(ListTableQueryBuilderContract::class, function () {
-            return new ListTableQueryBuilder();
+        $this->getContainer()->add(ListTableBuilderContract::class, function () {
+            return new ListTableBuilder();
         });
 
         $this->getContainer()->add(ListTableRowActionContract::class, function () {
@@ -290,8 +302,26 @@ class TemplateServiceProvider extends ServiceProvider
             return new PostListTableParams();
         });
 
-        $this->getContainer()->add(PostListTableQueryBuilderContract::class, function () {
-            return new PostListTableQueryBuilder();
+        $this->getContainer()->add(PostListTableBuilderContract::class, function () {
+            return new PostListTableBuilder();
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerUserListTable(): void
+    {
+        $this->getContainer()->add(UserListTableDbContract::class, function () {
+            return new UserListTableDb();
+        });
+
+        $this->getContainer()->add(UserListTableItemContract::class, function () {
+            return new UserListTableItem();
+        });
+
+        $this->getContainer()->add(UserListTableBuilderContract::class, function () {
+            return new UserListTableBuilder();
         });
     }
 }

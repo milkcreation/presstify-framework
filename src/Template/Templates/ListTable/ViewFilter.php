@@ -2,7 +2,7 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Support\ParamsBag;
+use tiFy\Support\{ParamsBag, Proxy\Partial};
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Contracts\{ListTable, ViewFilter as ViewFilterContract};
 
@@ -67,7 +67,7 @@ class ViewFilter extends ParamsBag implements ViewFilterContract
         parent::parse();
 
         if (!$this->get('attrs.href')) {
-            $this->set('attrs.href', $this->factory->param('page_url'));
+            $this->set('attrs.href', $this->factory->param('page_url', $this->factory->request()->fullUrl()));
         }
 
         if ($query_args = $this->get('query_args', [])) {
@@ -98,7 +98,7 @@ class ViewFilter extends ParamsBag implements ViewFilterContract
             return '';
         }
 
-        return (string)partial('tag', [
+        return (string)Partial::get('tag', [
             'tag'     => 'a',
             'attrs'   => $this->get('attrs', []),
             'content' => $this->get('content'),

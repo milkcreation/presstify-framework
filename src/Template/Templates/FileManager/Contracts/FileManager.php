@@ -59,6 +59,7 @@ interface FileManager extends TemplateFactory
     /**
      * Récupération d'un icône.
      *
+     *
      * @return string|null
      */
     public function getIcon($name, ...$args): ?string;

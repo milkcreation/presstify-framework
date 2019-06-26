@@ -95,6 +95,15 @@ class ParamsBag implements ParamsBagContract
         return [];
     }
 
+
+    /**
+     * @inheritDoc
+     */
+    public function forget($keys): void
+    {
+        Arr::forget($this->attributes, $keys);
+    }
+
     /**
      * @inheritDoc
      */

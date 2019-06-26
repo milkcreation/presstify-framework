@@ -14,8 +14,11 @@ use Illuminate\Database\Eloquent\Builder;
  * @mixin Model
  * @mixin MetaFields
  * @mixin CorcelPostBuilder
- * @method static PostBuilder hasMeta(string|array $meta_key, mixed|null $value, string $operator= '=')
- * @method static PostBuilder hasMetaLike(string $key, string $value)
+ * @method static Postmeta createMeta($key, $value = null)
+ * @method static mixed getMeta(string $meta_key)
+ * @method static PostBuilder hasMeta(string|array $meta_key, mixed|null $value, string $operator = '=')
+ * @method static PostBuilder hasMetaLike(string $key, string $value),
+ * @method static boolean saveMeta($key, $value = null)
  */
 interface PostBuilder
 {

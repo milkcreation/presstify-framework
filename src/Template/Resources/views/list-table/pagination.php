@@ -6,7 +6,7 @@
  * @var string $which top|bottom.
  */
 ?>
-<?php if ($this->query()->totalFounds()) : ?>
+<?php if ($total = $this->pagination()->getTotal()) : ?>
     <?php $pagination = $this->pagination()->which($which ?? 'top'); ?>
     <div <?php echo $this->htmlAttrs($pagination->get('attrs', [])); ?>>
         <span class="displaying-num">
@@ -15,10 +15,10 @@
                 _n(
                     '%s élément',
                     '%s éléments',
-                    $this->query()->totalFounds(),
+                    $total,
                     'tify'
                 ),
-                number_format_i18n($pagination->getTotalFounds())
+                number_format_i18n($total)
             );
             ?>
         </span>

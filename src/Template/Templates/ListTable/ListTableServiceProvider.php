@@ -14,7 +14,7 @@ use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract,
     ListTable,
     Pagination,
     Params,
-    QueryBuilder,
+    Builder,
     RowAction,
     RowActions,
     Search,
@@ -51,6 +51,23 @@ class ListTableServiceProvider extends FactoryServiceProvider
     /**
      * @inheritDoc
      */
+    public function registerFactoryBuilder(): void
+    {
+        $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
+            $ctrl = $this->factory->get('providers.builder');
+            $ctrl = $ctrl instanceof Builder
+                ? clone $ctrl
+                : $this->getContainer()->get(Builder::class);
+
+            $attrs = $this->factory->param('query_args', []);
+
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function registerFactoryHttpXhrController(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('xhr'), function () {
@@ -69,7 +86,8 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryLabels(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
-            return new Labels($this->factory);
+            return (new Labels($this->factory->name(), $this->factory->get('labels', [])))
+                ->setTemplateFactory($this->factory);
         });
     }
 
@@ -87,25 +105,6 @@ class ListTableServiceProvider extends FactoryServiceProvider
             $attrs = $this->factory->get('params', []);
 
             return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : [])->parse();
-        });
-    }
-
-    /**
-     * Déclaration du controleur de construction de requête.
-     *
-     * @return void
-     */
-    public function registerFactoryQueryBuilder(): void
-    {
-        $this->getContainer()->share($this->getFactoryAlias('query-builder'), function () {
-            $ctrl = $this->factory->get('providers.query-builder');
-            $ctrl = $ctrl instanceof QueryBuilder
-                ? $ctrl
-                : $this->getContainer()->get(QueryBuilder::class);
-
-            $attrs = $this->factory->param('query_args', []);
-
-            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 
@@ -175,7 +174,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
                 ? $ctrl
                 : $this->getContainer()->get(BulkActions::class);
 
-            $attrs = $this->factory->param('bulk_actions', []);
+            $attrs = $this->factory->param('bulk-actions', []);
 
             return $ctrl->setTemplateFactory($this->factory)->parse(is_array($attrs) ? $attrs : []);
         });
@@ -296,7 +295,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
                 ? $ctrl
                 : $this->getContainer()->get(RowActions::class);
 
-            $attrs = $this->factory->param('row_actions', []);
+            $attrs = $this->factory->param('row-actions', []);
 
             return $ctrl->setTemplateFactory($this->factory)->parse(is_array($attrs) ? $attrs : []);
         });
@@ -383,12 +382,12 @@ class ListTableServiceProvider extends FactoryServiceProvider
                 ? $ctrl
                 : $this->getContainer()->get(ViewFilters::class);
 
-            $attrs = $this->factory->param('view_filters', []);
+            $attrs = $this->factory->param('view-filters', []);
 
             return $ctrl->setTemplateFactory($this->factory)->parse(is_array($attrs) ? $attrs : []);
         });
 
-        $this->getContainer()->share($this->getFactoryAlias('view-filter'), function (string $name, array $attrs = []) {
+        $this->getContainer()->add($this->getFactoryAlias('view-filter'), function (string $name, array $attrs = []) {
             $ctrl = $this->factory->get('providers.view-filter');
             $ctrl = $ctrl instanceof ViewFilter
                 ? $ctrl

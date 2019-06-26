@@ -43,13 +43,13 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactories(): void
     {
         $this->registerFactoryAssets();
+        $this->registerFactoryBuilder();
         $this->registerFactoryCache();
         $this->registerFactoryDb();
         $this->registerFactoryHttpController();
         $this->registerFactoryHttpXhrController();
         $this->registerFactoryLabels();
         $this->registerFactoryParams();
-        $this->registerFactoryQueryBuilder();
         $this->registerFactoryNotices();
         $this->registerFactoryRequest();
         $this->registerFactoryUrl();
@@ -65,6 +65,20 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     {
         $this->getContainer()->share($this->getFactoryAlias('assets'), function () {
             return (new FactoryAssets())->setTemplateFactory($this->factory);
+        });
+    }
+
+    /**
+     * Déclaration du controleur de construction de requête.
+     *
+     * @return void
+     */
+    public function registerFactoryBuilder(): void
+    {
+        $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
+            $attrs = $this->factory->param('query_args', []);
+
+            return (new FactoryBuilder())->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 
@@ -159,20 +173,6 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
 
             return (new FactoryParams())->setTemplateFactory($this->factory)
                 ->set(is_array($attrs) ? $attrs : [])->parse();
-        });
-    }
-
-    /**
-     * Déclaration du controleur de construction de requête.
-     *
-     * @return void
-     */
-    public function registerFactoryQueryBuilder(): void
-    {
-        $this->getContainer()->share($this->getFactoryAlias('query-builder'), function () {
-            $attrs = $this->factory->param('query_args', []);
-
-            return (new FactoryQueryBuilder())->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 

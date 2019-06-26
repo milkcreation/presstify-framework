@@ -14,8 +14,6 @@ class MediaFile extends FieldFactory implements MediaFileContract
     public function boot(): void
     {
         add_action('admin_init', function () {
-            @wp_enqueue_media();
-
             wp_register_style(
                 'FieldMediaFile',
                 asset()->url('field/media-file/css/styles.css'),
@@ -29,6 +27,10 @@ class MediaFile extends FieldFactory implements MediaFileContract
                 180616,
                 true
             );
+        });
+
+        add_action('admin_enqueue_scripts', function () {
+            @wp_enqueue_media();
         });
     }
 

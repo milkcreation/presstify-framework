@@ -9,11 +9,12 @@ use tiFy\Template\Templates\ListTable\Contracts\{
     Columns,
     Items,
     Pagination,
-    QueryBuilder,
+    Builder,
     Search,
     ViewFilters};
 
 /**
+ * @method Builder builder()
  * @method BulkActions bulkActions()
  * @method Columns columns()
  * @method Items items()
@@ -21,7 +22,6 @@ use tiFy\Template\Templates\ListTable\Contracts\{
  * @method string name()
  * @method Pagination pagination()
  * @method FactoryParams|mixed param($key = null, $default = null)
- * @method QueryBuilder query()
  * @method Search search()
  * @method ViewFilters viewFilters()
  */
@@ -42,11 +42,11 @@ class Viewer extends FactoryViewer
 
         array_push(
             $this->mixins,
+            'builder',
             'bulkActions',
             'columns',
             'items',
             'pagination',
-            'query',
             'row',
             'search',
             'viewFilters'

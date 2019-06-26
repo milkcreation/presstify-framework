@@ -34,10 +34,10 @@ class HttpXhrController extends FactoryHttpXhrController implements HttpXhrContr
         return [
             'data'            => $cols,
             'draw'            => $this->factory->request()->input('draw'),
-            'pagenum'         => $this->factory->query()->pageNum(),
+            'pagenum'         => $this->factory->pagination()->getCurrentPage(),
             'pagination'      => (string)$this->factory->viewer('pagination', ['which' => 'bottom']),
-            'recordsTotal'    => $this->factory->query()->totalFounds(),
-            'recordsFiltered' => $this->factory->query()->totalFounds(),
+            'recordsTotal'    => $this->factory->pagination()->getTotal(),
+            'recordsFiltered' => $this->factory->pagination()->getTotal(),
             'search'          => (string)$this->factory->viewer('search')
         ];
     }

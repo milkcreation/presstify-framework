@@ -4,14 +4,12 @@ namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\Meta\CommentMeta as CorcelCommentmeta;
 use Illuminate\Database\Eloquent\Builder;
+use tiFy\Wordpress\Database\Concerns\MetaAwareTrait;
 
 /**
- * Class Commentmeta
- * @package tiFy\Wordpress\Database\Model
- *
  * @mixin Builder
  */
 class Commentmeta extends CorcelCommentmeta
 {
-
+    use MetaAwareTrait;
 }

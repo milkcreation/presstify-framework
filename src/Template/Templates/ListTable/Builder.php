@@ -2,11 +2,11 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Contracts\Template\FactoryQueryBuilder as FactoryQueryBuilderContract;
-use tiFy\Template\Templates\ListTable\Contracts\QueryBuilder as QueryBuilderContract;
-use tiFy\Template\Factory\FactoryQueryBuilder;
+use tiFy\Contracts\Template\FactoryBuilder as FactoryBuilderContract;
+use tiFy\Template\Factory\FactoryBuilder;
+use tiFy\Template\Templates\ListTable\Contracts\Builder as BuilderContract;
 
-class QueryBuilder extends FactoryQueryBuilder implements QueryBuilderContract
+class Builder extends FactoryBuilder implements BuilderContract
 {
     /**
      * Instance du gabarit d'affichage.
@@ -15,11 +15,44 @@ class QueryBuilder extends FactoryQueryBuilder implements QueryBuilderContract
     protected $factory;
 
     /**
+     * @inheritDoc
+     */
+    public function setItems(): BuilderContract
+    {
+        if ($this->db()) {
+            $this->parse();
+
+            $this->queryWhere();
+            $this->queryOrder();
+            $this->queryLimit();
+            $items = $this->query()->get();
+            $count = $items->count();
+            $this->resetQuery();
+
+            $this->factory->items()->set($items);
+
+            if ($count) {
+                $total = $this->queryWhere()->count();
+                $this->resetQuery();
+
+                $this->factory->pagination()->set([
+                    'current_page' => $this->pageNum,
+                    'count'        => $count,
+                    'last_page'    => ceil($total / $this->perPage),
+                    'total'        => $total,
+                ])->parse();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      *
-     * @return QueryBuilderContract
+     * @return BuilderContract
      */
-    public function parse(): FactoryQueryBuilderContract
+    public function parse(): FactoryBuilderContract
     {
         parent::parse();
 
