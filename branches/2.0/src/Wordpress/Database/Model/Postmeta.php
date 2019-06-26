@@ -3,27 +3,22 @@
 namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\Meta\PostMeta as CorcelPostmeta;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use tiFy\Wordpress\Database\Concerns\MetaAwareTrait;
 
 /**
  * @mixin Builder
+ * @property $meta_value
  */
 class Postmeta extends CorcelPostmeta
 {
-    /**
-     * @return mixed
-     */
-    public function getValueAttribute()
-    {
-        try {
-            $value = maybe_unserialize($this->meta_value);
+    use MetaAwareTrait;
 
-            return $value === false && $this->meta_value !== false ?
-                $this->meta_value :
-                $value;
-        } catch (Exception $ex) {
-            return $this->meta_value;
-        }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
     }
 }

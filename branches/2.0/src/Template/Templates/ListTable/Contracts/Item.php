@@ -39,6 +39,11 @@ interface Item extends FactoryAwareTrait, ParamsBag
     public function model(): ?FactoryDb;
 
     /**
+     * @inheritDoc
+     */
+    public function parse(): Item;
+
+    /**
      * Définition de l'indice de l'élément.
      *
      * @param int $index

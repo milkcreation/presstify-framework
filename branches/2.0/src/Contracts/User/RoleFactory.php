@@ -14,6 +14,13 @@ interface RoleFactory extends ParamsBag
     public function boot(): void;
 
     /**
+     * Récupération de l'intitulé d'affichage.
+     *
+     * @return string
+     */
+    public function getDisplayName(): string;
+
+    /**
      * Récupération du nom de qualification.
      *
      * @return string

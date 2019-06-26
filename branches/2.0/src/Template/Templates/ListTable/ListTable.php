@@ -2,7 +2,7 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Contracts\Template\{FactoryQueryBuilder, TemplateFactory as TemplateFactoryContract};
+use tiFy\Contracts\Template\{FactoryBuilder, TemplateFactory as TemplateFactoryContract};
 use tiFy\Template\TemplateFactory;
 use tiFy\Template\Templates\ListTable\Contracts\{Ajax,
     BulkActions,
@@ -11,7 +11,7 @@ use tiFy\Template\Templates\ListTable\Contracts\{Ajax,
     Items,
     ListTable as ListTableContract,
     Pagination,
-    QueryBuilder,
+    Builder,
     RowActions,
     Search,
     ViewFilters};
@@ -81,13 +81,11 @@ class ListTable extends TemplateFactory implements ListTableContract
      */
     public function proceed(): TemplateFactoryContract
     {
-        $this->items()->set($this->query()->proceed());
+        $this->builder()->parse()->setItems();
 
         if (!$this->items()->exists()) {
             return $this;
         }
-
-        $this->pagination()->parse();
 
         if ($ajax = $this->ajax()) {
             $ajax->parse();
@@ -107,11 +105,11 @@ class ListTable extends TemplateFactory implements ListTableContract
     /**
      * {@inheritDoc}
      *
-     * @return QueryBuilder
+     * @return Builder
      */
-    public function query(): FactoryQueryBuilder
+    public function builder(): FactoryBuilder
     {
-        return parent::query();
+        return parent::builder();
     }
 
     /**

@@ -23,6 +23,8 @@ class ImageGallery extends MetaboxWpPostController
 
     /**
      * {@inheritdoc}
+     *
+     * @param \WP_Post $post
      */
     public function content($post = null, $args = null, $null = null)
     {
@@ -81,7 +83,7 @@ class ImageGallery extends MetaboxWpPostController
     public function load($current_screen)
     {
         add_action('admin_enqueue_scripts', function () {
-            wp_enqueue_media();
+            @wp_enqueue_media();
 
             wp_enqueue_style(
                 'MetaboxPostTypeImageGallery',

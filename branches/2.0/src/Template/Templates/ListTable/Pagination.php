@@ -30,7 +30,7 @@ class Pagination extends ParamsBag implements PaginationContract
         $total_pages_after = '</span></span>';
 
         if ('bottom' === $this->which) {
-            $html_current_page = (string)$this->pageNum();
+            $html_current_page = (string)$this->getCurrentPage();
             $total_pages_before = '<span class="screen-reader-text">' .
                 __('Page courante', 'tify') .
                 '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
@@ -41,8 +41,8 @@ class Pagination extends ParamsBag implements PaginationContract
                 '<label for="current-page-selector" class="screen-reader-text">' .
                 __('Page courante', 'tify') .
                 '</label>',
-                (string)$this->pageNum(),
-                strlen((string)$this->getTotalPaged())
+                (string)$this->getCurrentPage(),
+                strlen((string)$this->getLastPage())
             );
         }
 
@@ -51,10 +51,10 @@ class Pagination extends ParamsBag implements PaginationContract
         );*/
 
         return $total_pages_before . sprintf(
-            _x('%1$s sur %2$s', 'paging', 'tify'),
-            $html_current_page,
-            $this->getTotalPaged()
-        ) . $total_pages_after;
+                _x('%1$s sur %2$s', 'paging', 'tify'),
+                $html_current_page,
+                $this->getLastPage()
+            ) . $total_pages_after;
     }
 
     /**
@@ -63,7 +63,12 @@ class Pagination extends ParamsBag implements PaginationContract
     public function defaults()
     {
         return [
-            'attrs'       => []
+            'attrs'        => [],
+            'count'        => 0,
+            'current_page' => 0,
+            'last_page'    => 0,
+            'per_page'     => 0,
+            'total'        => 0,
         ];
     }
 
@@ -80,27 +85,37 @@ class Pagination extends ParamsBag implements PaginationContract
     }
 
     /**
+     * Récupération du numéro de la page courante.
+     *
+     * @return int
+     */
+    public function getCurrentPage(): int
+    {
+        return (int)$this->get('current_page', 0);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLastPage(): int
+    {
+        return (int)$this->get('last_page', 0);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getPerPage(): int
     {
-        return $this->factory->query()->perPage();
+        return (int)$this->get('per_page', 0);
     }
 
     /**
      * @inheritDoc
      */
-    public function getTotalFounds(): int
+    public function getTotal(): int
     {
-        return $this->factory->query()->totalFounds();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTotalPaged(): int
-    {
-        return $this->factory->query()->totalPaged();
+        return (int)$this->get('total', 0);
     }
 
     /**
@@ -108,7 +123,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableFirst(): bool
     {
-        return ($this->pageNum() === 1 || $this->factory->query()->pageNum() === 2);
+        return ($this->getCurrentPage() === 1 || $this->factory->builder()->pageNum() === 2);
     }
 
     /**
@@ -116,7 +131,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableLast(): bool
     {
-        return $this->pageNum() >= ($this->getTotalPaged() - 1);
+        return $this->getCurrentPage() >= ($this->getLastPage() - 1);
     }
 
     /**
@@ -124,7 +139,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableNext(): bool
     {
-        return $this->pageNum() === $this->getTotalPaged();
+        return $this->getCurrentPage() === $this->getLastPage();
     }
 
     /**
@@ -132,7 +147,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisablePrev(): bool
     {
-        return $this->pageNum() === 1;
+        return $this->getCurrentPage() === 1;
     }
 
     /**
@@ -150,7 +165,7 @@ class Pagination extends ParamsBag implements PaginationContract
     {
         return (string)$this->factory->viewer('pagination-last', [
             'disabled'   => $this->isDisableLast(),
-            'url'        => $this->pagedUrl($this->getTotalPaged()),
+            'url'        => $this->pagedUrl($this->getLastPage()),
             'pagination' => $this,
         ]);
     }
@@ -162,17 +177,9 @@ class Pagination extends ParamsBag implements PaginationContract
     {
         return (string)$this->factory->viewer('pagination-next', [
             'disabled'   => $this->isDisableNext(),
-            'url'        => $this->pagedUrl(min($this->getTotalPaged(), $this->pageNum() + 1)),
+            'url'        => $this->pagedUrl(min($this->getLastPage(), $this->getCurrentPage() + 1)),
             'pagination' => $this,
         ]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function pageNum(): int
-    {
-        return $this->factory->query()->pageNum();
     }
 
     /**
@@ -192,7 +199,7 @@ class Pagination extends ParamsBag implements PaginationContract
 
         $classes = [];
         $classes[] = 'tablenav-pages';
-        $classes[] = ($total_pages = $this->getTotalPaged())
+        $classes[] = ($total_pages = $this->getLastPage())
             ? ($total_pages < 2 ? 'one-page' : '')
             : 'no-pages';
 
@@ -216,7 +223,7 @@ class Pagination extends ParamsBag implements PaginationContract
     {
         return (string)$this->factory->viewer('pagination-prev', [
             'disabled'   => $this->isDisablePrev(),
-            'url'        => $this->pagedUrl(max(1,  $this->pageNum() - 1)),
+            'url'        => $this->pagedUrl(max(1, $this->getCurrentPage() - 1)),
             'pagination' => $this,
         ]);
     }

@@ -31,10 +31,10 @@ class Ajax extends ParamsBag implements AjaxContract
             'columns'     => $this->getColumns(),
             'language'    => $this->getLanguage(),
             'options'     => [
-                'pageLength' => $this->factory->query()->perPage()
+                'pageLength' => $this->factory->builder()->perPage()
             ],
-            'total_items' => $this->factory->query()->totalFounds(),
-            'total_pages' => $this->factory->query()->totalPaged(),
+            'total_items' => $this->factory->pagination()->getTotal(),
+            'total_pages' => $this->factory->pagination()->getLastPage()
         ];
     }
 

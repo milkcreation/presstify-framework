@@ -7,7 +7,7 @@ use tiFy\Template\Templates\PostListTable\Contracts\{
     Db,
     Item,
     Params,
-    QueryBuilder,
+    Builder,
     PostListTable};
 
 class PostListTableServiceProvider extends ListTableServiceProvider
@@ -17,6 +17,23 @@ class PostListTableServiceProvider extends ListTableServiceProvider
      * @var PostListTable
      */
     protected $factory;
+
+    /**
+     * @inheritDoc
+     */
+    public function registerFactoryBuilder(): void
+    {
+        $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
+            $ctrl = $this->factory->get('providers.builder');
+            $ctrl = $ctrl instanceof Builder
+                ? clone $ctrl
+                : $this->getContainer()->get(Builder::class);
+
+            $attrs = $this->factory->param('query_args', []);
+
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
+        });
+    }
 
     /**
      * @inheritDoc
@@ -67,8 +84,9 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     {
         $this->getContainer()->add($this->getFactoryAlias('item'), function () {
             $ctrl = $this->factory->get('providers.item');
+
             $ctrl = $ctrl instanceof Item
-                ? $ctrl
+                ? clone $ctrl
                 : $this->getContainer()->get(Item::class);
 
             return $ctrl->setTemplateFactory($this->factory);
@@ -103,25 +121,6 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     }
 
     /**
-     * Déclaration du controleur de construction de requête.
-     *
-     * @return void
-     */
-    public function registerFactoryQueryBuilder(): void
-    {
-        $this->getContainer()->share($this->getFactoryAlias('query-builder'), function () {
-            $ctrl = $this->factory->get('providers.query-builder');
-            $ctrl = $ctrl instanceof QueryBuilder
-                ? $ctrl
-                : $this->getContainer()->get(QueryBuilder::class);
-
-            $attrs = $this->factory->param('query_args', []);
-
-            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
-        });
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerFactoryViewFilters(): void
@@ -130,17 +129,23 @@ class PostListTableServiceProvider extends ListTableServiceProvider
 
         $this->getContainer()->add($this->getFactoryAlias('view-filter.all'),
             function (string $name, array $attrs = []) {
-                return (new ViewFilterAll())->setName($name)->set($attrs)->parse();
+                return (new ViewFilterAll())
+                    ->setTemplateFactory($this->factory)
+                    ->setName($name)->set($attrs)->parse();
             });
 
         $this->getContainer()->add($this->getFactoryAlias('view-filter.publish'),
             function (string $name, array $attrs = []) {
-                return (new ViewFilterPublish())->setName($name)->set($attrs)->parse();
+                return (new ViewFilterPublish())
+                    ->setTemplateFactory($this->factory)
+                    ->setName($name)->set($attrs)->parse();
             });
 
         $this->getContainer()->add($this->getFactoryAlias('view-filter.trash'),
             function (string $name, array $attrs = []) {
-                return (new ViewFilterTrash())->setName($name)->set($attrs)->parse();
+                return (new ViewFilterTrash())
+                    ->setTemplateFactory($this->factory)
+                    ->setName($name)->set($attrs)->parse();
             });
     }
 }

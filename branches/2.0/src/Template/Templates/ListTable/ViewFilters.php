@@ -34,13 +34,16 @@ class ViewFilters extends Collection implements ViewFiltersContract
                     $attrs = [];
                 } elseif (is_string($attrs)) {
                     $attrs = ['content' => $attrs];
+                } elseif ($attrs instanceof ViewFilter) {
+                    $this->items[$name] = $attrs->setTemplateFactory($this->factory)->setName($name)->parse();
+                    continue;
                 }
 
                 $alias = $this->factory->bound("view-filter.{$name}")
                     ? "view-filter.{$name}"
                     : 'view-filter';
 
-                $this->items[$name] = $this->factory->resolve($alias, [$name, $attrs, $this->factory]);
+                $this->items[$name] = $this->factory->resolve($alias, [$name, $attrs]);
             }
 
             $this->items = array_filter($this->items, function ($value) {

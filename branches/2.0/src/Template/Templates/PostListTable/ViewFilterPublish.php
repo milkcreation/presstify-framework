@@ -11,9 +11,13 @@ class ViewFilterPublish extends ViewFilter
      */
     public function defaults(): array
     {
-        $count = ($db = $this->factory->db())
-            ? $db->where('post_status', 'publish')->count()
-            : 0;
+        if ($builder = $this->factory->builder()) {
+            $builder->remove(['post_status']);
+
+            $count = $builder->queryWhere()->where('post_status', 'publish')->count();
+        } else {
+            $count = 0;
+        }
 
         return [
             'content'     => _n('Publié', 'Publiés', ($count > 1 ? 2 : 1), 'tify'),

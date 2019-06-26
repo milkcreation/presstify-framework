@@ -63,6 +63,14 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
+    public static function createFromPostdata(array $postdata): ?QueryPostContract
+    {
+        return isset($postdata['ID']) ? new static(new WP_Post((object)$postdata)) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function createFromName(string $post_name): ?QueryPostContract
     {
         return (($wp_post = (new WP_Query())->query(['name'           => $post_name,

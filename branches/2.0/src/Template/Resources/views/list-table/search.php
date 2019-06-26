@@ -22,7 +22,7 @@
             'type' => 'search',
         ],
         'name'  => 's',
-        'value' => $this->query()->searchTerm(),
+        'value' => $this->builder()->searchTerm(),
     ]);
     ?>
     <?php

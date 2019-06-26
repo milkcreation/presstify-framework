@@ -2,9 +2,9 @@
 
 namespace tiFy\Wordpress\User\Role;
 
-use tiFy\User\Role\RoleFactory as tiFyRoleFactory;
+use tiFy\User\Role\RoleFactory as BaseRoleFactory;
 
-class RoleFactory extends tiFyRoleFactory
+class RoleFactory extends BaseRoleFactory
 {
     /**
      * @inheritdoc
@@ -13,9 +13,9 @@ class RoleFactory extends tiFyRoleFactory
     {
         parent::boot();
 
-        if (!$this->get('admin_bar') && current_user_can($this->getName()) && !is_admin()) {
-            //show_admin_bar(false);
-        }
+        /*if (!$this->get('admin_bar') && current_user_can($this->getName()) && !is_admin()) {
+            show_admin_bar(false);
+        }*/
     }
 
     /**

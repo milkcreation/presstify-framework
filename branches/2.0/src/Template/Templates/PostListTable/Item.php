@@ -2,19 +2,25 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use tiFy\Contracts\Template\FactoryDb;
+use BadMethodCallException;
+use Exception;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{Item as BaseItemContract, ListTable};
+use tiFy\Template\Templates\ListTable\Item as BaseItem;
+use tiFy\Template\Templates\ListTable\Contracts\{Item as BaseItemContract};
 use tiFy\Template\Templates\PostListTable\Contracts\Item as ItemContract;
+use tiFy\Wordpress\Contracts\QueryPost as QueryPostContract;
 use tiFy\Wordpress\Query\QueryPost;
 
-class Item extends QueryPost implements ItemContract
+/**
+ * @mixin QueryPost
+ */
+class Item extends BaseItem implements ItemContract
 {
     use FactoryAwareTrait;
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var PostListTable
      */
     protected $factory;
 
@@ -31,61 +37,31 @@ class Item extends QueryPost implements ItemContract
     protected $object;
 
     /**
+     * Objet de délégation associé.
+     * @var QueryPostContract
+     */
+    protected $delegateObject;
+
+    /**
      * @inheritDoc
      */
-    public function getKeyName(): string
+    public function __call($name, $args)
     {
-        if (($primary_key = $this->factory->param('item_primary_key')) && $this->has($primary_key)) {
-            return (string)$primary_key;
-        } elseif ($db = $this->factory->db()) {
-            return $db->getKeyName();
-        } else {
-            return current($this->keys());
+        try {
+            return $this->delegateObject->$name(...$args);
+        } catch (Exception $e) {
+            throw new BadMethodCallException(sprintf(__('La méthode %s n\'est pas disponible.', 'tify'), $name));
         }
     }
 
     /**
      * @inheritDoc
      */
-    public function getKeyValue($default = null)
+    public function parse(): BaseItemContract
     {
-        return $this->get($this->getKeyName(), $default);
-    }
+        parent::parse();
 
-    /**
-     * @inheritDoc
-     */
-    public function getIndex(): int
-    {
-        return $this->index;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function model(): ?FactoryDb
-    {
-        return $this->object instanceof FactoryDb ? $this->object : null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setIndex(int $index): BaseItemContract
-    {
-        if (is_null($this->index)) {
-            $this->index = $index;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setObject(object $object): BaseItemContract
-    {
-        $this->object = $object;
+        $this->delegateObject = QueryPost::createFromId($this->getKeyValue());
 
         return $this;
     }

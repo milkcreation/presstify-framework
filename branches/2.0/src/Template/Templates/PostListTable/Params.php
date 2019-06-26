@@ -18,7 +18,7 @@ class Params extends ListTableParams
                 'post_type',
                 'post_date' => __('Date', 'tify'),
             ],
-            'view_filters' => [
+            'view-filters' => [
                 'all',
                 'publish',
                 'trash'
@@ -41,11 +41,11 @@ class Params extends ListTableParams
         ]);
 
         if ($this->factory->request()->input('status') !== 'trash') {
-            $defaults['bulk_actions'] = ['trash' => __('Déplacer dans la corbeille', 'tify')];
-            $defaults['row_actions'] = ['edit', 'trash'];
+            $defaults['bulk-actions'] = ['trash' => __('Déplacer dans la corbeille', 'tify')];
+            $defaults['row-actions'] = ['edit', 'trash'];
         } else {
-            $defaults['bulk_actions'] = ['untrash', 'delete'];
-            $defaults['row_actions'] = ['untrash', 'delete'];
+            $defaults['bulk-actions'] = ['untrash', 'delete'];
+            $defaults['row-actions'] = ['untrash', 'delete'];
         }
 
         return $defaults;

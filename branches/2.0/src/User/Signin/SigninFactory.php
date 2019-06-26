@@ -188,7 +188,7 @@ class SigninFactory extends ParamsBag implements SigninFactoryContract
      */
     public function hasRole($role): bool
     {
-        if (!$roles =$this->getRoles()) {
+        if (!$roles = $this->getRoles()) {
             return true;
         } else {
             return !!array_intersect(Arr::wrap($role), $roles);

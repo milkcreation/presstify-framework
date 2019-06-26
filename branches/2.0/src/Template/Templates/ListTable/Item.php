@@ -70,6 +70,16 @@ class Item extends ParamsBag implements ItemContract
     /**
      * @inheritDoc
      */
+    public function parse(): ItemContract
+    {
+        parent::parse();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setIndex(int $index): ItemContract
     {
         if (is_null($this->index)) {

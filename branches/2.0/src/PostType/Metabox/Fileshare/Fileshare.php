@@ -4,6 +4,7 @@ namespace tiFy\PostType\Metabox\Fileshare;
 
 use tiFy\Metabox\MetaboxWpPostController;
 use tiFy\Support\ParamsBag;
+use tiFy\Wordpress\Proxy\Field;
 
 class Fileshare extends MetaboxWpPostController
 {
@@ -39,6 +40,8 @@ class Fileshare extends MetaboxWpPostController
 
     /**
      * {@inheritdoc}
+     *
+     * @param \WP_Post $post
      */
     public function content($post = null, $args = null, $null = null)
     {
@@ -89,7 +92,7 @@ class Fileshare extends MetaboxWpPostController
     {
         add_action('admin_enqueue_scripts', function () {
             if ($this->get('max', -1) !== 1) :
-                wp_enqueue_media();
+                @wp_enqueue_media();
 
                 wp_enqueue_style(
                     'MetaboxPostTypeFileshare',
@@ -106,7 +109,7 @@ class Fileshare extends MetaboxWpPostController
                     true
                 );
             else :
-                field('media-file')->enqueue();
+                Field::get('media-file')->enqueue();
             endif;
         });
     }
@@ -182,14 +185,14 @@ class Fileshare extends MetaboxWpPostController
 
         check_ajax_referer('MetaboxFileshare' . $params->get('_id'));
 
-        if (($params->get('max') > 0) && ($params->get('index') >= $params->get('max'))) :
+        if (($params->get('max') > 0) && ($params->get('index') >= $params->get('max'))) {
             wp_send_json_error(__('Nombre maximum de fichiers partagés atteint.', 'tify'));
-        else :
+        } else {
             $this->set('viewer', $params->get('_viewer', []));
 
             wp_send_json_success(
                 (string)$this->viewer('item-wrap', $this->itemWrap($params->get('value'), $params->get('index')))
             );
-        endif;
+        }
     }
 }

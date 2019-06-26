@@ -23,6 +23,8 @@ class VideoGallery extends MetaboxWpPostController
 
     /**
      * {@inheritdoc}
+     *
+     * @param \WP_Post $post
      */
     public function content($post = null, $args = null, $null = null)
     {
@@ -61,7 +63,7 @@ class VideoGallery extends MetaboxWpPostController
             $attrs
         );
         $attrs['poster_src'] =
-            ($attrs['poster'] && ($image = \wp_get_attachment_image_src($attrs['poster'], 'thumbnail')))
+            ($attrs['poster'] && ($image = wp_get_attachment_image_src($attrs['poster'], 'thumbnail')))
                 ? $image[0]
                 : '';
         $attrs['name'] = $name;
@@ -84,7 +86,7 @@ class VideoGallery extends MetaboxWpPostController
     public function load($current_screen)
     {
         add_action('admin_enqueue_scripts', function () {
-            wp_enqueue_media();
+            @wp_enqueue_media();
 
             wp_enqueue_style(
                 'PostTypeMetaboxVideoGallery',

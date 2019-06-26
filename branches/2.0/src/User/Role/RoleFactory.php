@@ -35,7 +35,7 @@ class RoleFactory extends ParamsBag implements RoleFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function defaults(): array
     {
@@ -47,7 +47,15 @@ class RoleFactory extends ParamsBag implements RoleFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function getDisplayName(): string
+    {
+        return $this->get('display_name');
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getName(): string
     {
