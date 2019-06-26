@@ -126,7 +126,10 @@ class Repeater extends FieldFactory implements RepeaterContract
     public function xhrResponse(): array
     {
         $max = Request::input('max', -1);
-        $this->set('viewer', Request::input('_viewer', []))->parseViewer();
+        $this
+            ->set('name', Request::input('name', ''))
+            ->set('viewer', Request::input('_viewer', []))
+            ->parse();
 
         if (($max > 0) && (Request::input('count', 0) >= $max)) {
             return [
