@@ -2,8 +2,6 @@
 
 namespace tiFy\Components\Tools\File;
 
-use tiFy\Kernel\Tools;
-
 class File
 {
     /**
@@ -18,9 +16,9 @@ class File
         $contents = '';
 
         // Vérifie si le chemin du fichier est une url
-        if (Tools::Checker()->isUrl($filename)) :
-            if (preg_match('/^' . preg_quote(site_url('/'), '/') . '/', $filename)) :
-                $filename = preg_replace('/^' . preg_quote(site_url('/'), '/') . '/', \paths()->getPublicPath('/'), $filename);
+        if (validator()::url()->validate($filename)) :
+            if (preg_match('/^' . preg_quote(url()->root(), '/') . '/', $filename)) :
+                $filename = preg_replace('/^' . preg_quote(url()->root(), '/') . '/', \paths()->getPublicPath('/'), $filename);
 
                 if (file_exists($filename)) :
                     $contents = file_get_contents($filename);
@@ -44,13 +42,13 @@ class File
      * @param string $filename Chemin absolu|Url
      * @param string $root_path Chemin absolu vers la racine
      *
-     * @return NULL|string
+     * @return string|null
      */
     public function getRelPath($filename, $root_path = ABSPATH)
     {
         $root_path = wp_normalize_path($root_path);
 
-        if (Tools::Checker()->isUrl($filename)) :
+        if (validator()::url()->validate($filename)) :
             $root_subdir = preg_replace('#^'. ABSPATH .'#', '', $root_path);
             $root_subdir = trim($root_subdir, '/');
 
