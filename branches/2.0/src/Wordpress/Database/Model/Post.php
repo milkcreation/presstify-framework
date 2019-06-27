@@ -163,6 +163,16 @@ class Post extends CorcelPost implements PostBuilder
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return PostBuilder
+     */
+    public static function query(): Builder
+    {
+        return (new static)->newQuery();
+    }
+
+    /**
      * Récupération de la requête basée sur une liste d'arguments.
      *
      * @param array $args Liste des arguments de requêtes.
