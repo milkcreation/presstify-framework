@@ -22,5 +22,10 @@ use Illuminate\Database\Eloquent\Builder;
  */
 interface PostBuilder
 {
-
+    /**
+     * {@inheritDoc}
+     *
+     * @return PostBuilder
+     */
+    public static function query(): Builder;
 }
