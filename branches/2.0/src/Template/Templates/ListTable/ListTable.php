@@ -81,7 +81,7 @@ class ListTable extends TemplateFactory implements ListTableContract
      */
     public function proceed(): TemplateFactoryContract
     {
-        $this->builder()->parse()->setItems();
+        $this->builder()->setItems();
 
         if (!$this->items()->exists()) {
             return $this;

@@ -2,6 +2,7 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use tiFy\Contracts\Template\FactoryBuilder as FactoryBuilderContract;
 use tiFy\Template\Factory\FactoryBuilder;
 use tiFy\Template\Templates\ListTable\Contracts\Builder as BuilderContract;
@@ -15,6 +16,20 @@ class Builder extends FactoryBuilder implements BuilderContract
     protected $factory;
 
     /**
+     * Mots clefs de recherche.
+     * @var string
+     */
+    protected $search = '';
+
+    /**
+     * @inheritDoc
+     */
+    public function getSearch(): string
+    {
+        return $this->search;
+    }
+
+    /**
      * @inheritDoc
      */
     public function setItems(): BuilderContract
@@ -22,26 +37,29 @@ class Builder extends FactoryBuilder implements BuilderContract
         if ($this->db()) {
             $this->parse();
 
+            $this->querySearch();
             $this->queryWhere();
             $this->queryOrder();
+            $total = $this->query()->count();
+            if ($total < $this->getPerPage()) {
+                $this->setPage(1);
+            }
+
             $this->queryLimit();
             $items = $this->query()->get();
-            $count = $items->count();
-            $this->resetQuery();
 
             $this->factory->items()->set($items);
 
-            if ($count) {
-                $total = $this->queryWhere()->count();
-                $this->resetQuery();
-
+            if ($count = $items->count()) {
                 $this->factory->pagination()->set([
-                    'current_page' => $this->pageNum,
+                    'current_page' => $this->getPage(),
                     'count'        => $count,
-                    'last_page'    => ceil($total / $this->perPage),
+                    'last_page'    => ceil($total / $this->getPerPage()),
                     'total'        => $total,
                 ])->parse();
             }
+
+            $this->resetQuery();
         }
 
         return $this;
@@ -56,23 +74,17 @@ class Builder extends FactoryBuilder implements BuilderContract
     {
         parent::parse();
 
+        $this->setSearch((string)$this->get('s', ''));
+
         if ($this->factory->ajax() && $this->pull('draw', 0)) {
-            $this->perPage = (int)$this->pull('length', $this->perPage);
-            $this->pageNum = (int)ceil(($this->pull('start') / $this->perPage) + 1);
+            $this
+                ->setSearch((string)$this->get('search.value', $this->getSearch()))
+                ->setPerPage((int)$this->pull('length', $this->getPerPage()))
+                ->setPage((int)ceil(($this->pull('start') / $this->getPerPage()) + 1));
 
-            $columns = $this->pull('columns');
-            $search = $this->pull('search');
-            $action = $this->pull('action');
-
-            /*if ($this->searchExists()) {
-                $query_args['search'] = $this->searchTerm();
-            }
-            if (isset($_REQUEST['order'])) {
-                $query_args['orderby'] = [];
-            }
-            foreach ((array)$_REQUEST['order'] as $k => $v) {
-                $query_args['orderby'][$_REQUEST['columns'][$v['column']]['data']] = $v['dir'];
-            }*/
+            $this->pull('columns');
+            $this->pull('search');
+            $this->pull('action');
         }
 
         return $this;
@@ -81,16 +93,22 @@ class Builder extends FactoryBuilder implements BuilderContract
     /**
      * @inheritDoc
      */
-    public function searchExists(): bool
+    public function querySearch(): EloquentBuilder
     {
-        return $this->factory->ajax() ? !empty($this->get('search.value')) : !empty($this->get('s'));
+        if ($terms = $this->getSearch()) {
+            $this->query()->where($this->db()->getKeyName(), 'like', "%{$terms}%");
+        }
+
+        return $this->query();
     }
 
     /**
      * @inheritDoc
      */
-    public function searchTerm(): string
+    public function setSearch(string $search): BuilderContract
     {
-        return $this->factory->ajax() ? $this->get('search.value', '') : $this->get('s', '');
+        $this->search = $search;
+
+        return $this;
     }
 }

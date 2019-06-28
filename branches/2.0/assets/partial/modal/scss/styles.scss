@@ -4,6 +4,16 @@
 @import '~bootstrap/scss/mixins';
 @import '~bootstrap/scss/modal';
 
+.modal-backdrop-dismiss {
+  position:fixed;
+  right:0;
+  background-color:transparent;
+  border:none;
+  font-size:30px;
+  font-weight:100;
+  outline: none;
+}
+
 .modal-dialog.modal-full {
   width: auto;
   margin-left: 15px;

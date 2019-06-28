@@ -173,3 +173,19 @@ div[class*="ThemeInput--"] {
     content: "\f110";
   }
 }
+
+// Animation
+@keyframes tiFyFadeOut {
+  0% {
+    opacity: 1;
+    height: initial;
+  }
+  99% {
+    height: initial;
+    opacity: 0;
+  }
+  100% {
+    height: 0;
+    opacity: 0;
+  }
+}

@@ -42,32 +42,22 @@ interface StorageManager extends FilesystemInterface
     /**
      * Création d'une instance de système de fichier locaux.
      *
-     * @param array $args {
-     *      Liste dynamiques des arguments.
-     *
-     *      - Lorsque le conteneur d'injection existe :
-     *      @var string $root Chemin absolu vers le répertoire du stockage de fichiers.
-     *      @var array $config Liste des paramètres de configuration.
-     * }
+     * @param  string $root Chemin absolu vers le répertoire du stockage de fichiers.
+     * @param  array $config Liste des paramètres de configuration.
      *
      * @return LocalAdapter
      */
-    public function localAdapter(...$args): AdapterInterface;
+    public function localAdapter(string $root, array $config = []): AdapterInterface;
 
     /**
      * Création d'une instance de système de fichiers locaux.
      *
-     * @param array $args {
-     *      Liste dynamiques des arguments.
-     *
-     *      - Lorsque le conteneur d'injection existe :
-     *      @var string $root Chemin absolu vers le répertoire du stockage de fichiers.
-     *      @var array $config Liste des paramètres de configuration.
-     * }
+     * @param  string $root Chemin absolu vers le répertoire du stockage de fichiers.
+     * @param  array $config Liste des paramètres de configuration.
      *
      * @return LocalFilesystem
      */
-    public function localFilesytem(...$args): LocalFilesystem;
+    public function localFilesytem(string $root, array $config = []): LocalFilesystem;
 
     /**
      * Montage d'une instance de gestionnaire de fichiers.

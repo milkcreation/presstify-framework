@@ -3,7 +3,7 @@
 namespace tiFy\Template\Factory;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use tiFy\Contracts\Template\{FactoryDb, FactoryBuilder as FactoryBuilderContract, TemplateFactory};
+use tiFy\Contracts\Template\{FactoryBuilder as FactoryBuilderContract, FactoryDb, TemplateFactory};
 use tiFy\Support\ParamsBag;
 
 class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
@@ -23,22 +23,22 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     protected $columns;
 
     /**
-     * Colonne d'ordonnancement des éléments.
-     * @var string
-     */
-    protected $orderby = '';
-
-    /**
      * Sens d'ordonnancement des éléments.
      * @var string
      */
     protected $order = '';
 
     /**
+     * Colonne d'ordonnancement des éléments.
+     * @var string
+     */
+    protected $orderby = '';
+
+    /**
      * Numéro de la page d'affichage courante.
      * @var int
      */
-    protected $pageNum = 0;
+    protected $page = 0;
 
     /**
      * Nombre d'éléments affichés par page.
@@ -76,17 +76,41 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     /**
      * @inheritDoc
      */
-    public function hasColumn(string $name): bool
+    public function getOrder(): string
     {
-        return in_array($name, $this->getColumns());
+        return $this->order;
     }
 
     /**
      * @inheritDoc
      */
-    public function pageNum(): int
+    public function getOrderBy(): string
     {
-        return (int)$this->pageNum;
+        return $this->orderby ?: $this->db()->getKeyName();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPage(): int
+    {
+        return $this->page;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPerPage(): int
+    {
+        return $this->perPage;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasColumn(string $name): bool
+    {
+        return in_array($name, $this->getColumns());
     }
 
     /**
@@ -98,23 +122,13 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
 
         $this->set($this->factory->request()->all());
 
-        $this->perPage = $this->pull('per_page', 20);
-        $this->pageNum = $this->pull('paged', 1) ?: 1;
-
-        $order = strtolower($this->pull('order', $this->factory->param('order', 'desc')));
-        $this->order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
-
-        $this->orderby = $this->pull('orderby', '');
+        $this
+            ->setPerPage($this->get('per_page', 20))
+            ->setPage((int)$this->get('paged', 1))
+            ->setOrder($this->get('order', 'ASC'))
+            ->setOrderBy($this->get('orderby', ''));
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function perPage(): int
-    {
-        return (int)$this->perPage;
     }
 
     /**
@@ -134,7 +148,7 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
      */
     public function queryLimit(): EloquentBuilder
     {
-        return $this->query()->forPage($this->pageNum, $this->perPage);
+        return $this->query()->forPage($this->getPage(), $this->getPerPage());
     }
 
     /**
@@ -142,11 +156,7 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
      */
     public function queryOrder(): EloquentBuilder
     {
-        if (!$this->orderby) {
-            $this->orderby = $this->db()->getKeyName();
-        }
-
-        return $this->query()->orderBy($this->orderby, $this->order);
+        return $this->query()->orderBy($this->getOrderBy(), $this->getOrder());
     }
 
     /**
@@ -179,6 +189,37 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     public function resetQuery(): FactoryBuilderContract
     {
         $this->query = null;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setOrder(string $order): FactoryBuilderContract
+    {
+        $order = strtoupper($order ?: 'ASC');
+        $this->order = in_array($order, ['ASC', 'DESC']) ? $order : 'ASC';
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setOrderBy(string $orderby): FactoryBuilderContract
+    {
+        $this->orderby = $orderby;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPage(int $page): FactoryBuilderContract
+    {
+        $this->page = $page ? $page : 1;
 
         return $this;
     }

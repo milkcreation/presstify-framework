@@ -9,7 +9,7 @@
     <?php $this->insert('header'); ?>
     <?php $this->insert('view-filters'); ?>
     <form method="get" action="">
-        <?php if ($this->items()->exists() || $this->builder()->searchExists()) : ?>
+        <?php if ($this->param('search') && ($this->items()->exists() || $this->request()->input('s'))) : ?>
             <?php $this->insert('search'); ?>
         <?php endif; ?>
         <?php $this->insert('table'); ?>
