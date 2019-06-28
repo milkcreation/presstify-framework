@@ -41,6 +41,60 @@ class Builder extends ListTableBuilder implements BuilderContract
      *
      * @return PostBuilder
      */
+    public function queryLimit(): EloquentBuilder
+    {
+        return parent::queryLimit();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return PostBuilder
+     */
+    public function queryOrder(): EloquentBuilder
+    {
+        return parent::queryOrder();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return PostBuilder
+     */
+    public function querySearch(): EloquentBuilder
+    {
+        if ($term = $this->getSearch()) {
+            $terms = is_string($term) ? explode(' ', $term) : $term;
+
+            $terms = collect($terms)->map(function ($term) {
+                return trim(str_replace('%', '', $term));
+            })->filter()->map(function ($term) {
+                return '%' . $term . '%';
+            });
+
+            if ($terms->isEmpty()) {
+                return $this->query();
+            }
+
+            return $this->query()->where(function (EloquentBuilder $query) use ($terms) {
+                $terms->each(function ($term) use ($query) {
+                    /** @var PostBuilder $query */
+                    $query->orWhere('post_title', 'like', $term)
+                        ->orWhere('post_excerpt', 'like', $term)
+                        ->orWhere('post_content', 'like', $term);
+                });
+            });
+        }
+
+        return $this->query();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return PostBuilder
+     */
     public function queryWhere(): EloquentBuilder
     {
         parent::queryWhere();

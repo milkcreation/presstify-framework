@@ -31,7 +31,7 @@ class Ajax extends ParamsBag implements AjaxContract
             'columns'     => $this->getColumns(),
             'language'    => $this->getLanguage(),
             'options'     => [
-                'pageLength' => $this->factory->builder()->perPage()
+                'pageLength' => $this->factory->pagination()->getPerPage()
             ],
             'total_items' => $this->factory->pagination()->getTotal(),
             'total_pages' => $this->factory->pagination()->getLastPage()

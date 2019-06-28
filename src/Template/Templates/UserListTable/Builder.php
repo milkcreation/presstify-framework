@@ -51,6 +51,40 @@ class Builder extends ListTableBuilder implements BuilderContract
      *
      * @return UserBuilder
      */
+    public function querySearch(): EloquentBuilder
+    {
+        if ($term = $this->getSearch()) {
+            $terms = is_string($term) ? explode(' ', $term) : $term;
+
+            $terms = collect($terms)->map(function ($term) {
+                return trim(str_replace('%', '', $term));
+            })->filter()->map(function ($term) {
+                return '%' . $term . '%';
+            });
+
+            if ($terms->isEmpty()) {
+                return $this->query();
+            }
+
+            return $this->query()->where(function (EloquentBuilder $query) use ($terms) {
+                $terms->each(function ($term) use ($query) {
+                    /** @var UserBuilder $query */
+                    $query->orWhere('user_login', 'like', $term)
+                        ->orWhere('user_email', 'like', $term)
+                        ->orWhere('user_nicename', 'like', $term)
+                        ->orWhere('display_name', 'like', $term);
+                });
+            });
+        }
+
+        return $this->query();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return UserBuilder
+     */
     public function queryWhere(): EloquentBuilder
     {
         parent::queryWhere();

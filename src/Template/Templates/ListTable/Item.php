@@ -34,7 +34,7 @@ class Item extends ParamsBag implements ItemContract
      */
     public function getKeyName(): string
     {
-        if (($primary_key = $this->factory->param('item_primary_key')) && $this->has($primary_key)) {
+        if (($primary_key = $this->factory->param('primary_key')) && $this->has($primary_key)) {
             return (string)$primary_key;
         } elseif ($db = $this->factory->db()) {
             return $db->getKeyName();

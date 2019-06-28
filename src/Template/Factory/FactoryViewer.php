@@ -9,7 +9,6 @@ use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\View\ViewController;
 
 /**
- * @method string getBaseUrl()
  * @method FactoryLabels|string label(?string $key = null, string $default = '')
  * @method string name()
  * @method FactoryParams|mixed param($key = null, $default = null)
@@ -30,7 +29,8 @@ class FactoryViewer extends ViewController implements FactoryViewerContract
     protected $mixins = [
         'label',
         'name',
-        'param'
+        'param',
+        'request'
     ];
 
     /**

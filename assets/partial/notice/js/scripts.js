@@ -8,18 +8,29 @@ jQuery(function ($) {
       $(this).closest('[data-control="notice"]').attr('aria-hide', 'true');
     });
 
-    $(document).tifyObserver({
-          selector: '[data-control="notice"]',
-          func: function (i, target) {
-            let $el = $(target),
-                time = parseInt($el.data('timeout')) || 0;
+    $('[data-control="notice"][data-timeout]').each(function () {
+      let $el = $(this),
+          time = parseInt($el.data('timeout')) || 0;
 
-            if (time !== 0) {
-              setTimeout(function () {
-                $el.fadeOut();
-              }, time);
-            }
-          }
+      if (time !== 0) {
+        setTimeout(function () {
+          $el.attr('aria-hide', 'true');
+        }, time);
+      }
+    });
+
+    $(document).tifyObserver({
+      selector: '[data-control="notice"]',
+      func: function (i, target) {
+        let $el = $(target),
+            time = parseInt($el.data('timeout')) || 0;
+
+        if (time !== 0) {
+          setTimeout(function () {
+            $el.attr('aria-hide', 'true');
+          }, time);
+        }
+      }
     });
   });
 });

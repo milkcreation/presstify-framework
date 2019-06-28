@@ -7,5 +7,4 @@
  * @var tiFy\Template\Templates\ListTable\Contracts\Item $item
  * @var string $content
  */
-?>
-<?php echo $this->get('content', '');
+echo $this->get('content', '');

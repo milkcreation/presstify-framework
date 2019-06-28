@@ -3,7 +3,12 @@
 namespace tiFy\Filesystem;
 
 use InvalidArgumentException;
-use League\Flysystem\{AdapterInterface, FilesystemInterface, MountManager};
+use League\Flysystem\{AdapterInterface,
+    Cached\CachedAdapter,
+    Cached\CacheInterface,
+    Cached\Storage\Memory as MemoryStore,
+    FilesystemInterface,
+    MountManager};
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Filesystem\{
     Filesystem as FilesystemContract,
@@ -60,21 +65,34 @@ class StorageManager extends MountManager implements StorageManagerContract
     /**
      * @inheritDoc
      */
-    public function localAdapter(...$args): AdapterInterface
+    public function localAdapter(string $root, array $config = []): AdapterInterface
     {
-        return ($this->getContainer() && $this->getContainer()->has(LocalAdapterContract::class))
-            ? $this->getContainer()->get(LocalAdapterContract::class, $args)
-            : new LocalAdapter(...$args);
+        $permissions = $config['permissions'] ?? [];
+        $links = ($config['links'] ?? null) === 'skip'
+            ? LocalAdapter::SKIP_LINKS
+            : LocalAdapter::DISALLOW_LINKS;
+
+        $adapter = ($this->getContainer() && $this->getContainer()->has(LocalAdapterContract::class))
+            ? $this->getContainer()->get(LocalAdapterContract::class, [$root, LOCK_EX, $links, $permissions])
+            : new LocalAdapter($root, LOCK_EX, $links, $permissions);
+
+        if ($cache = $config['cache'] ?? true) {
+            $adapter = $cache instanceof CacheInterface
+                ? new CachedAdapter($adapter, $cache)
+                : new CachedAdapter($adapter, new MemoryStore());
+        }
+
+        return $adapter;
     }
 
     /**
      * @inheritDoc
      */
-    public function localFilesytem(...$args): LocalFilesystemContract
+    public function localFilesytem(string $root, array $config = []): LocalFilesystemContract
     {
         return $this->getContainer() && $this->getContainer()->has(LocalFilesystemContract::class)
-            ? $this->getContainer()->get(LocalFilesystemContract::class, $args)
-            : new LocalFilesystem(...$args);
+            ? $this->getContainer()->get(LocalFilesystemContract::class, [$root, $config])
+            : new LocalFilesystem($this->localAdapter($root, $config));
     }
 
     /**

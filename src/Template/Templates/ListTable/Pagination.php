@@ -123,7 +123,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableFirst(): bool
     {
-        return ($this->getCurrentPage() === 1 || $this->factory->builder()->pageNum() === 2);
+        return ($this->getCurrentPage() === 1 || $this->getCurrentPage() === 2);
     }
 
     /**
