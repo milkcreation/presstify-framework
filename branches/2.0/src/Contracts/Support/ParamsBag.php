@@ -26,6 +26,13 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
     public function all();
 
     /**
+     * Suppression de la liste des attributs déclarés.
+     *
+     * @return static
+     */
+    public function clear();
+
+    /**
      * Compte le nombre d'éléments.
      *
      * @return int
@@ -90,6 +97,15 @@ interface ParamsBag extends ArrayAccess, Countable, IteratorAggregate, JsonSeria
      * @return static
      */
     public function map(&$value, $key);
+
+    /**
+     * Récupération d'un jeu d'attributs associé à une liste de clés d'indices.
+     *
+     * @param string[] $keys Liste des clés d'indice du jeu d'attributs à récupérer.
+     *
+     * @return array
+     */
+    public function only(array $keys): array;
 
     /**
      * Traitement de la liste des attributs.

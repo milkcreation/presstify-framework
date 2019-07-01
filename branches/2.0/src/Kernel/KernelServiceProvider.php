@@ -2,7 +2,7 @@
 
 namespace tiFy\Kernel;
 
-use tiFy\Http\{Request, Response, Uri};
+use tiFy\Http\{Request, Response, Session, SessionFlashBag, Uri};
 use tiFy\Container\ServiceProvider;
 use tiFy\Kernel\{Events\Manager as EventsManager, Events\Listener, Logger\Logger, Notices\Notices};
 use tiFy\Support\{ClassInfo, ParamsBag};
@@ -22,6 +22,7 @@ class KernelServiceProvider extends ServiceProvider
         'notices',
         'params.bag',
         'request',
+        'session',
         'uri'
     ];
 
@@ -86,6 +87,16 @@ class KernelServiceProvider extends ServiceProvider
 
         $this->getContainer()->share('response', function () {
             return new Response();
+        });
+
+        $this->getContainer()->share('session', function () {
+            $session = new Session($this->getContainer());
+
+            if (session_status() == PHP_SESSION_NONE) {
+                $session->start();
+            }
+
+            return $session->setContainer($this->getContainer());
         });
 
         $this->getContainer()->share('uri', function () {

@@ -20,10 +20,6 @@
   }
 }
 
-.Form-fieldInput {
-  width: 100%;
-}
-
 form[data-grid="true"] {
   &[data-grid_gutter="0"] {
     & .Form-fields,
@@ -134,4 +130,10 @@ form[data-grid="true"] {
       }
     }
   }
+}
+
+.Form-fieldInput--password,
+.Form-fieldInput--text,
+.Form-fieldInput--textarea {
+  width:100%;
 }
