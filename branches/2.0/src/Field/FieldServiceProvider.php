@@ -26,6 +26,7 @@ use tiFy\Contracts\Field\{
     SelectImage as SelectImageContract,
     SelectJs as SelectJsContract,
     Submit as SubmitContract,
+    Suggest as SuggestContract,
     Text as TextContract,
     Textarea as TextareaContract,
     TextRemaining as TextRemainingContract,
@@ -51,6 +52,7 @@ use tiFy\Field\Fields\{
     SelectImage\SelectImage,
     SelectJs\SelectJs,
     Submit\Submit,
+    Suggest\Suggest,
     Text\Text,
     Textarea\Textarea,
     TextRemaining\TextRemaining,
@@ -86,6 +88,7 @@ class FieldServiceProvider extends ServiceProvider
         SelectImageContract::class,
         SelectJsContract::class,
         SubmitContract::class,
+        SuggestContract::class,
         TextContract::class,
         TextareaContract::class,
         TextRemainingContract::class,
@@ -191,6 +194,10 @@ class FieldServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(SubmitContract::class, function () {
             return new Submit();
+        });
+
+        $this->getContainer()->add(SuggestContract::class, function () {
+            return new Suggest();
         });
 
         $this->getContainer()->add(TextContract::class, function () {

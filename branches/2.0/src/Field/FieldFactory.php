@@ -280,6 +280,16 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     /**
      * @inheritDoc
      */
+    public function setViewer(ViewEngine $viewer): FieldFactoryContract
+    {
+        $this->viewer = $viewer;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function viewer($view = null, $data = [])
     {
         if (is_null($this->viewer)) {

@@ -5,9 +5,7 @@ namespace tiFy\Partial;
 use Closure;
 use tiFy\Contracts\Partial\{Partial as Manager, PartialFactory as PartialFactoryContract};
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Support\HtmlAttrs;
-use tiFy\Support\ParamsBag;
-use tiFy\Support\Str;
+use tiFy\Support\{HtmlAttrs, ParamsBag, Str};
 
 abstract class PartialFactory extends ParamsBag implements PartialFactoryContract
 {
@@ -241,6 +239,16 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
     public function setIndex(int $index): PartialFactoryContract
     {
         $this->index = $index;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setViewer(ViewEngine $viewer): PartialFactoryContract
+    {
+        $this->viewer = $viewer;
 
         return $this;
     }

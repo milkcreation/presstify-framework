@@ -12,6 +12,7 @@ use tiFy\Contracts\Field\{
     Repeater as RepeaterContract,
     SelectImage as SelectImageContract,
     SelectJs as SelectJsContract,
+    Suggest as SuggestContract,
     TextRemaining as TextRemainingContract,
     ToggleSwitch as ToggleSwitchContract};
 use tiFy\Wordpress\Contracts\Field\{
@@ -30,6 +31,7 @@ use tiFy\Wordpress\Field\Fields\{
     Repeater\Repeater,
     SelectImage\SelectImage,
     SelectJs\SelectJs,
+    Suggest\Suggest,
     TextRemaining\TextRemaining,
     ToggleSwitch\ToggleSwitch
 };
@@ -129,6 +131,10 @@ class Field
 
         app()->add(SelectJsContract::class, function () {
             return new SelectJs();
+        });
+
+        app()->add(SuggestContract::class, function () {
+            return new Suggest();
         });
 
         app()->add(TextRemainingContract::class, function () {
