@@ -128,6 +128,15 @@ interface PartialFactory extends ParamsBag
     public function setIndex(int $index): PartialFactory;
 
     /**
+     * Définition de l'instance du moteur d'affichage.
+     *
+     * @param ViewEngine $viewer
+     *
+     * @return static
+     */
+    public function setViewer(ViewEngine $viewer): PartialFactory;
+
+    /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
      * {@internal Si aucun argument n'est passé à la méthode, retourne l'instance du controleur de liste.}
      * {@internal Sinon récupére l'instance du gabarit d'affichage et passe les variables en argument.}

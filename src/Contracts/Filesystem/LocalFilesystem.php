@@ -8,6 +8,13 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 interface LocalFilesystem extends Filesystem
 {
     /**
+     * Récupération du contenu d'un fichier.
+     *
+     * @return string
+     */
+    public function __invoke(string $path): string;
+
+    /**
      * Génération de la réponse statique d'un fichier.
      *
      * @param string $path Chemin relatif vers un fichier du disque.

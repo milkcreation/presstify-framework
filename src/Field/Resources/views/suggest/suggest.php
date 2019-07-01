@@ -4,8 +4,5 @@
  */
 ?>
 <?php $this->before(); ?>
-<?php echo partial('tag', [
-    'tag'   => 'input',
-    'attrs' => $this->get('attrs', []),
-]); ?>
+<?php echo partial('tag', $this->get('container', [])); ?>
 <?php $this->after();

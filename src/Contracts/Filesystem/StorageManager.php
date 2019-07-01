@@ -40,6 +40,16 @@ interface StorageManager extends FilesystemInterface
     public function getFilesystem($name);
 
     /**
+     * Création d'une instance de système de fichiers locaux.
+     *
+     * @param  string $root Chemin absolu vers le répertoire du stockage de fichiers.
+     * @param  array $config Liste des paramètres de configuration.
+     *
+     * @return LocalFilesystem
+     */
+    public function local(string $root, array $config = []): LocalFilesystem;
+
+    /**
      * Création d'une instance de système de fichier locaux.
      *
      * @param  string $root Chemin absolu vers le répertoire du stockage de fichiers.
@@ -48,16 +58,6 @@ interface StorageManager extends FilesystemInterface
      * @return LocalAdapter
      */
     public function localAdapter(string $root, array $config = []): AdapterInterface;
-
-    /**
-     * Création d'une instance de système de fichiers locaux.
-     *
-     * @param  string $root Chemin absolu vers le répertoire du stockage de fichiers.
-     * @param  array $config Liste des paramètres de configuration.
-     *
-     * @return LocalFilesystem
-     */
-    public function localFilesytem(string $root, array $config = []): LocalFilesystem;
 
     /**
      * Montage d'une instance de gestionnaire de fichiers.

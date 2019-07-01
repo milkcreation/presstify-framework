@@ -21,7 +21,7 @@ class FileJs extends FieldFactory implements FileJsContract
      */
     public function boot(): void
     {
-        $this->url = md5($this->getId());
+        $this->url = md5($this->getAlias());
 
         $this->prepareRoute();
     }
@@ -64,6 +64,14 @@ class FileJs extends FieldFactory implements FileJsContract
     /**
      * @inheritDoc
      */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function parse(): FieldFactoryContract
     {
         parent::parse();
@@ -82,14 +90,6 @@ class FileJs extends FieldFactory implements FileJsContract
         $this->set('attrs.data-options', [$uploader => $this->pull('uploader', [])]);
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getUrl(): string
-    {
-        return $this->url;
     }
 
     /**
@@ -125,7 +125,7 @@ class FileJs extends FieldFactory implements FileJsContract
      */
     public function xhrResponse(): array
     {
-        $filesystem = (new StorageManager())->localFilesytem(request()->input('_dir'));
+        $filesystem = (new StorageManager())->local(request()->input('_dir'));
 
         foreach (request()->files as $key => $f) {
             /** @var UploadedFile $f */

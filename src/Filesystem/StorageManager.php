@@ -65,6 +65,16 @@ class StorageManager extends MountManager implements StorageManagerContract
     /**
      * @inheritDoc
      */
+    public function local(string $root, array $config = []): LocalFilesystemContract
+    {
+        return $this->getContainer() && $this->getContainer()->has(LocalFilesystemContract::class)
+            ? $this->getContainer()->get(LocalFilesystemContract::class, [$root, $config])
+            : new LocalFilesystem($this->localAdapter($root, $config));
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function localAdapter(string $root, array $config = []): AdapterInterface
     {
         $permissions = $config['permissions'] ?? [];
@@ -83,16 +93,6 @@ class StorageManager extends MountManager implements StorageManagerContract
         }
 
         return $adapter;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function localFilesytem(string $root, array $config = []): LocalFilesystemContract
-    {
-        return $this->getContainer() && $this->getContainer()->has(LocalFilesystemContract::class)
-            ? $this->getContainer()->get(LocalFilesystemContract::class, [$root, $config])
-            : new LocalFilesystem($this->localAdapter($root, $config));
     }
 
     /**
@@ -120,9 +120,9 @@ class StorageManager extends MountManager implements StorageManagerContract
         if ($attrs instanceof Filesystem) {
             $filesystem = $attrs;
         } elseif (is_array($attrs)) {
-            $filesystem = $this->localFilesytem($attrs['root']?? '', $attrs);
+            $filesystem = $this->local($attrs['root']?? '', $attrs);
         } elseif (is_string($attrs)) {
-            $filesystem = $this->localFilesytem($attrs);
+            $filesystem = $this->local($attrs);
         } else {
             throw new InvalidArgumentException(
                 __('Les arguments ne permettent pas de définir le système de fichiers', 'theme')

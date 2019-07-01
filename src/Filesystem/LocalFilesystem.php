@@ -2,6 +2,7 @@
 
 namespace tiFy\Filesystem;
 
+use Exception;
 use League\Flysystem\AdapterInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use tiFy\Contracts\Filesystem\{LocalAdapter, LocalFilesystem as LocalFilesystemContract};
@@ -9,6 +10,23 @@ use tiFy\Support\{DateTime, Str};
 
 class LocalFilesystem extends Filesystem implements LocalFilesystemContract
 {
+    /**
+     * @inheritDoc
+     */
+    public function __invoke(string $path): string
+    {
+        if ($this->has($path)) {
+            try {
+                if ($this->getMimetype($path) !== 'dir') {
+                    return $this->read($path);
+                }
+            } catch(Exception $e) {
+                return '';
+            }
+        }
+        return '';
+    }
+
     /**
      * @inheritDoc
      */
