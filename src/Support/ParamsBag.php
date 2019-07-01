@@ -82,6 +82,16 @@ class ParamsBag implements ParamsBagContract
     /**
      * @inheritDoc
      */
+    public function clear()
+    {
+         $this->attributes = [];
+
+         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function count()
     {
         return count($this->attributes);
@@ -163,24 +173,6 @@ class ParamsBag implements ParamsBagContract
     /**
      * @inheritDoc
      */
-    public function parse()
-    {
-        $this->attributes = array_merge($this->defaults(), $this->attributes);
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function pull($key, $default = null)
-    {
-        return Arr::pull($this->attributes, $key, $default);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function offsetExists($offset)
     {
         return isset($this->attributes[$offset]);
@@ -208,6 +200,32 @@ class ParamsBag implements ParamsBagContract
     public function offsetUnset($key)
     {
         unset($this->attributes[$key]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function only($keys): array
+    {
+        return Arr::only($this->attributes, $keys);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parse()
+    {
+        $this->attributes = array_merge($this->defaults(), $this->attributes);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function pull($key, $default = null)
+    {
+        return Arr::pull($this->attributes, $key, $default);
     }
 
     /**

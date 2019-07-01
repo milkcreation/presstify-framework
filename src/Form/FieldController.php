@@ -16,13 +16,13 @@ class FieldController implements FieldControllerContract
      */
     protected $fieldSupports = [
         'button'              => ['request', 'wrapper'],
-        'checkbox'            => ['checking', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
+        'checkbox'            => ['label', 'request', 'tabindex', 'wrapper', 'transport'],
         'checkbox-collection' => ['choices', 'label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'datetime-js'         => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'hidden'              => ['request'],
         'label'               => ['wrapper'],
         'password'            => ['label', 'request', 'tabindex', 'wrapper'],
-        'radio'               => ['checking', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
+        'radio'               => ['label', 'request', 'tabindex', 'wrapper', 'transport'],
         'radio-collection'    => ['choices', 'label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'repeater'            => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'select'              => ['choices', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
@@ -81,11 +81,11 @@ class FieldController implements FieldControllerContract
      */
     public function supports()
     {
-        if (isset($this->fieldSupports[$this->field()->getType()])) :
+        if (isset($this->fieldSupports[$this->field()->getType()])) {
             return $this->fieldSupports[$this->field()->getType()];
-        else :
+        } else {
             return $this->supports;
-        endif;
+        }
     }
 
     /**
@@ -93,24 +93,16 @@ class FieldController implements FieldControllerContract
      */
     public function render()
     {
-        $args = array_merge(
-            $this->field()->getExtras(),
-            [
-                'name'  => $this->field()->getName(),
-                'attrs' => $this->field()->get('attrs', [])
-            ]
-        );
+        $args = array_merge($this->field()->getExtras(), [
+            'name'  => $this->field()->getName(),
+            'attrs' => $this->field()->get('attrs', [])
+        ]);
 
-        if($this->field()->supports('choices')) :
+        if($this->field()->supports('choices')) {
             $args['choices'] = $this->field()->get('choices', []);
-        endif;
+        }
 
-        if ($this->field()->supports('checking')) :
-            $args['value'] = $this->field()->get('value');
-            $args['checked'] = $this->field()->getValue();
-        else :
-            $args['value'] = $this->field()->getValue();
-        endif;
+        $args['value'] = $this->field()->getValue();
 
         return field($this->field()->getType(), $args);
     }

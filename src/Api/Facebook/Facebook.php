@@ -71,11 +71,6 @@ class Facebook extends FacebookSdk implements FacebookContract
     {
         $this->container = $container;
 
-        // Initialisation de la session.
-        if (!session_id()) {
-            session_start();
-        }
-
         // Traitement des attributs de configuration du SDK PHP Facebook permis.
         $this->attributes = array_intersect_key($attrs, array_flip([
             'app_id',

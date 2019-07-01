@@ -81,9 +81,16 @@ class Modal extends PartialFactory implements ModalContract
         ], $this->get('options')));
 
         foreach (['backdrop', 'keyboard', 'focus', 'show'] as $key) {
-            if ($this->has("options.{$key}")) {
-                $this->set("attrs.data-{$key}", $this->get("options.{$key}") ? 'true' : 'false');
+            switch($key) {
+                case 'backdrop' :
+                    $value = $this->get("options.backdrop");
+                    $value = ($value === 'static') ? 'static': ($value ? 'true' : 'false');
+                    break;
+                default :
+                    $value = $this->get("options.{$key}") ? 'true' : 'false';
+                    break;
             }
+            $this->set("attrs.data-{$key}", $value);
         }
 
         if ($backdrop_close = $this->get('backdrop_close')) {

@@ -241,9 +241,9 @@ class Field extends ParamsBag implements FactoryField
 
         $this->events('field.get.value', [&$value, $this]);
 
-        if (!$raw) :
+        if (!$raw) {
             $value = is_array($value) ? array_map('esc_attr', $value) : esc_attr($value);
-        endif;
+        }
 
         return $value;
     }
@@ -378,19 +378,16 @@ class Field extends ParamsBag implements FactoryField
                 ? $required
                 : (is_string($required) ? ['message' => $required] : []);
 
-            $required = array_merge(
-                [
-                    'tagged'     => true,
-                    'check'      => true,
-                    'value_none' => '',
-                    'call'       => '',
-                    'args'       => [],
-                    'raw'        => true,
-                    'message'    => __('Le champ "%s" doit être renseigné.', 'tify'),
-                    'html5'      => false,
-                ],
-                $required
-            );
+            $required = array_merge([
+                'tagged'     => true,
+                'check'      => true,
+                'value_none' => '',
+                'call'       => '',
+                'args'       => [],
+                'raw'        => true,
+                'message'    => __('Le champ "%s" doit être renseigné.', 'tify'),
+                'html5'      => false,
+            ], $required);
 
             if ($tagged = $required['tagged']) :
                 $tagged = is_array($tagged) ? $tagged : (is_string($tagged) ? ['content' => $tagged] : []);
