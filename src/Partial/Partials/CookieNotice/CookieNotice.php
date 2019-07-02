@@ -50,7 +50,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
         $content = $this->get('content', '');
         $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);
 
-        $cookie = Cookie::instance($this->getId(), array_merge(['value' => 'ok'], $this->get('cookie', [])));
+        $cookie = Cookie::instance($this->getId(), array_merge(['value' => '1'], $this->get('cookie', [])));
 
         if ($cookie->get()) {
             $this->set('attrs.aria-hide', 'true');
@@ -98,7 +98,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
         try {
             $cookie = Cookie::instance($id, req::input('_cookie', []));
 
-            $cookie->set('ok');
+            $cookie->set('1');
             return ['success' => true];
         } catch (Exception $e) {
             return ['success' => false];
