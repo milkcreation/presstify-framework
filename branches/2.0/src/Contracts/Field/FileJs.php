@@ -5,7 +5,7 @@ namespace tiFy\Contracts\Field;
 interface FileJs extends FieldFactory
 {
     /**
-     * Récupération de l'url de traitement.
+     * Récupération de l'url de traitement ajax.
      *
      * @return string
      */
@@ -20,11 +20,13 @@ interface FileJs extends FieldFactory
     public function parseDropzone(): FieldFactory;
 
     /**
-     * Définition de la route de traitement.
+     * Définition de l'url de traitement ajax.
      *
-     * @return $this
+     * @param string|null $url
+     *
+     * @return static
      */
-    public function prepareRoute(): FieldFactory;
+    public function setUrl(?string $url = null): FieldFactory;
 
     /**
      * Génération de la réponse HTTP via une requête XHR.

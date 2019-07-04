@@ -8,7 +8,9 @@ use tiFy\Wordpress\{Contracts\Field\Suggest as SuggestContract,
     Query\QueryPost,
     Query\QueryPosts,
     Query\QueryTerm,
-    Query\QueryTerms};
+    Query\QueryTerms,
+    Query\QueryUser,
+    Query\QueryUsers};
 
 class Suggest extends BaseSuggest implements SuggestContract
 {
@@ -25,6 +27,11 @@ class Suggest extends BaseSuggest implements SuggestContract
             case 'term' :
                 return $this->xhrResponseTermQuery(...$args);
                 break;
+            case 'user' :
+                return $this->xhrResponseUserQuery(...$args);
+            case 'custom':
+                return parent::xhrResponse(...$args);
+                break;
         }
     }
 
@@ -35,7 +42,7 @@ class Suggest extends BaseSuggest implements SuggestContract
     {
         $args = array_merge([
             'post_type' => 'any'
-        ], req::input('query_args', []));
+        ], req::input('query_args', []), ['s' => req::input('_term', '')]);
 
         $posts = QueryPosts::createFromArgs($args) ?: [];
 
@@ -60,13 +67,40 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponseTermQuery(...$args): array
     {
-        $terms = QueryTerms::createFromArgs(req::input('query_args', [])) ?: [];
+        $args = array_merge(req::input('query_args', []), ['search' => req::input('_term', '')]);
+
+        $terms = QueryTerms::createFromArgs($args) ?: [];
 
         $items = collect($terms)->map(function (QueryTerm &$item) {
             return [
                 'label'  => (string)$item->getName(),
                 'value'  => (string)$item->getId(),
                 'render' => (string)$item->getName(),
+            ];
+        })->all();
+
+        return [
+            'success' => true,
+            'data'    => [
+                'items' => $items,
+            ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function xhrResponseUserQuery(...$args): array
+    {
+        $args = array_merge(req::input('query_args', []), ['search' => req::input('_term', '')]);
+
+        $terms = QueryUsers::createFromArgs($args) ?: [];
+
+        $items = collect($terms)->map(function (QueryUser &$item) {
+            return [
+                'label'  => (string)$item->getDisplayName(),
+                'value'  => (string)$item->getId(),
+                'render' => (string)$item->getDisplayName(),
             ];
         })->all();
 

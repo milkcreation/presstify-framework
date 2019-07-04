@@ -21,9 +21,7 @@ class FileJs extends FieldFactory implements FileJsContract
      */
     public function boot(): void
     {
-        $this->url = md5($this->getAlias());
-
-        $this->prepareRoute();
+        $this->setUrl();
     }
 
     /**
@@ -113,9 +111,9 @@ class FileJs extends FieldFactory implements FileJsContract
     /**
      * @inheritDoc
      */
-    public function prepareRoute(): FieldFactoryContract
+    public function setUrl(?string $url = null): FieldFactoryContract
     {
-        Router::xhr($this->getUrl(), [$this, 'xhrResponse']);
+        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse'])->getUrl() : $url;
 
         return $this;
     }

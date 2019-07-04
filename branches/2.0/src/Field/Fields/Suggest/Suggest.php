@@ -49,9 +49,7 @@ class Suggest extends FieldFactory implements SuggestContract
      */
     public function boot(): void
     {
-        $this->url = md5($this->getAlias());
-
-        $this->prepareRoute();
+        $this->setUrl();
     }
 
     /**
@@ -143,9 +141,9 @@ class Suggest extends FieldFactory implements SuggestContract
     /**
      * @inheritDoc
      */
-    public function prepareRoute(): FieldFactoryContract
+    public function setUrl(?string $url =  null): FieldFactoryContract
     {
-        route::xhr($this->getUrl(), [$this, 'xhrResponse']);
+        $this->url = is_null($url) ? route::xhr(md5($this->getAlias()), [$this, 'xhrResponse'])->getUrl() : $url;
 
         return $this;
     }
