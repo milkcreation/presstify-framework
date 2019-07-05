@@ -234,7 +234,7 @@ class MailerNew
     /** == Définition de l'agent d'expédition des email == **/
     public static function setMailer()
     {
-        $phpmailer = new \PHPMailer( true );
+        $phpmailer = new \PHPMailer\PHPMailer\PHPMailer( true );
     	do_action_ref_array( 'phpmailer_init', array( &$phpmailer ) );
 
         /// Expéditeur  
