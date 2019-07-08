@@ -114,13 +114,16 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return RouteGroupContract
      */
     public function group(string $prefix, callable $group): LeagueRouteGroup
     {
-        $group = new RouteGroup($prefix, $group, $this);
+        $group = $this->getContainer()
+            ? $this->getContainer()->get(RouteGroupContract::class, [$prefix, $group, $this])
+            : new RouteGroup($prefix, $group, $this);
+
         $this->groups[] = $group;
 
         return $group;
@@ -133,7 +136,7 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function getContainer(): ?ContainerInterface
     {
-        return $this->container instanceof Container ? $this->container : null;
+        return $this->container;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace tiFy\Routing;
 
-use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterContract};
+use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract};
 use tiFy\Container\ServiceProvider;
 use tiFy\Routing\{
     Middleware\Xhr,
@@ -20,6 +20,7 @@ class RoutingServiceProvider extends ServiceProvider
     protected $provides = [
         'router',
         RouteContract::class,
+        RouteGroupContract::class,
         'router.emitter',
         'router.middleware.xhr',
         'router.strategy.app',
@@ -27,7 +28,7 @@ class RoutingServiceProvider extends ServiceProvider
         'router.strategy.json',
         'redirect',
         'url',
-        'url.factory'
+        'url.factory',
     ];
 
     /**
@@ -94,7 +95,13 @@ class RoutingServiceProvider extends ServiceProvider
             RouteContract::class,
             function (string $method, string $path, callable $handler, $collection) {
                 return new Route($method, $path, $handler, $collection);
-        });
+            });
+
+        $this->getContainer()->add(
+            RouteGroupContract::class,
+            function (string $prefix, callable $handler, $collection) {
+                return new RouteGroup($prefix, $handler, $collection);
+            });
     }
 
     /**
