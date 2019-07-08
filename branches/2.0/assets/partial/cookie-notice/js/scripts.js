@@ -11,7 +11,7 @@ jQuery(document).ready(function($) {
 
         if ($target.length) {
             let o = JSON.parse(decodeURIComponent($target.data('options')));
-
+            
             $target.attr('aria-loading', 'true');
             $.post(tify.ajax_url, o)
                 .done(function (resp) {

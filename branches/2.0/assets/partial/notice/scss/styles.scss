@@ -3,9 +3,9 @@
     display:none;
 }
 
-[data-control="notice"][aria-fade="out"] {
+[data-control="notice"][aria-fade="out"] > * {
     animation-name: tiFyFadeOut;
-    animation-duration: 0.5s;
+    animation-duration: 1s;
     animation-fill-mode: forwards;
 }
 
