@@ -1,0 +1,191 @@
+@import "variables";
+@import "functions";
+
+// BOUTONS
+// Bouton > Suppression
+.ThemeButton--remove {
+  & {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    display: block;
+    border-color: transparent #F4F4F4 transparent transparent;
+    border-style: solid;
+    border-width: 0 35px 35px 0;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  &:hover {
+    border-color: transparent #E4E4E4 transparent transparent;
+    transform: scale(1.05) perspective(1px);
+  }
+
+  &::before {
+    position: absolute;
+    z-index: 15;
+    right: -36px;
+    top: 1px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    content: "\f335";
+    font: normal 20px/1 Dashicons;
+    color: #0074A2;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  &:hover::before {
+    transform: rotate(90deg) perspective(1px);
+  }
+}
+
+// FICHE ELEMENTS
+.ThemeCards {
+  list-style-type: none;
+  margin: 0 -10px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.ThemeCards.ui-sortable .ThemeCard {
+  cursor: move;
+}
+
+.ThemeCard {
+  & {
+    float: left;
+    margin: 0 0 10px;
+    padding: 0 10px;
+  }
+
+  & .CardContainer {
+    position: relative;
+    padding: 10px 10px 25px;
+    border: solid 1px #E4E4E4;
+    background-color: #F4F4F4;
+    text-align: center;
+    min-height: 150px;
+  }
+
+  & .CardImg {
+    display: inline-block;
+    margin-bottom: 5px;
+    border: solid 1px #DDD;
+    height: 150px;
+    width: 150px;
+  }
+
+  & .CardTitle {
+    margin: 5px 0;
+    height: 2.4em;
+    overflow: hidden;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+  }
+
+  & .CardOrder {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    font-size: 0.8em;
+    text-align: center;
+    padding: 0.1em;
+  }
+}
+
+// CHAMP DE SAISIE
+// ex. <div class="ThemeInput--email"><input .../></div>
+div[class*="ThemeInput--"] {
+  & {
+    position: relative;
+    display: inline-block;
+    padding-right: 30px;
+  }
+
+  &::before {
+    position: absolute;
+    top: 1px;
+    right: 0;
+    bottom: 1px;
+    width: 30px;
+    background-color: #F4F4F4;
+    border: 1px solid #ddd;
+    text-align: center;
+    display: block;
+    content: "";
+  }
+
+  &::after {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    margin-top: -10px;
+    line-height: 100%;
+    font: normal 20px/1 Dashicons;
+    color: #7eb4ea;
+    text-align: center;
+    display: block;
+  }
+
+  & > input {
+    width: 100%;
+  }
+}
+
+.tiFy-Input {
+  &--building::after {
+    content: "\f512";
+  }
+
+  &--editor-quote::after {
+    content: "\f205";
+  }
+
+  &--email::after {
+    content: "\f466";
+  }
+
+  &--generic::after {
+    content: "\f111";
+  }
+
+  &--link::after {
+    content: "\f103";
+  }
+
+  &--media::after {
+    content: "\f104";
+  }
+
+  &--phone::after {
+    content: "\f525";
+  }
+
+  &--search::after {
+    content: "\f179";
+  }
+
+  &--user::after {
+    content: "\f110";
+  }
+}
+
+// Animation
+@keyframes tiFyFadeOut {
+  0% {
+    opacity: 1;
+    height: initial;
+  }
+  99% {
+    height: initial;
+    opacity: 0;
+  }
+  100% {
+    height: 0;
+    opacity: 0;
+  }
+}
