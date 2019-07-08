@@ -5,7 +5,7 @@ namespace tiFy\Wordpress\Routing;
 use Exception;
 use FastRoute\Dispatcher as FastRoute;
 use League\Route\Dispatcher;
-use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterManager};
+use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterManager};
 use tiFy\Http\Request;
 use tiFy\Wordpress\Contracts\Routing\Routing as RoutingContract;
 use tiFy\Wordpress\Routing\Strategy\Template as TemplateStrategy;
@@ -40,6 +40,12 @@ class Routing implements RoutingContract
             function (string $method, string $path, callable $handler, $collection) {
                 return new Route($method, $path, $handler, $collection);
         });
+
+        $this->manager->getContainer()->add(
+            RouteGroupContract::class,
+            function (string $prefix, callable $handler, $collection) {
+                return new RouteGroup($prefix, $handler, $collection);
+            });
 
         add_action('parse_request', function () {
             try {

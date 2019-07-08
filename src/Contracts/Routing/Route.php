@@ -9,7 +9,6 @@ use League\Route\Middleware\MiddlewareAwareInterface;
 use League\Route\Strategy\StrategyAwareInterface;
 use League\Route\RouteConditionHandlerInterface;
 use LogicException;
-use phpDocumentor\Reflection\Types\Boolean;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 

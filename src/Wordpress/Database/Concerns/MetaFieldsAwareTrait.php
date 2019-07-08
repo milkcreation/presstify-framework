@@ -2,7 +2,7 @@
 
 namespace tiFy\Wordpress\Database\Concerns;
 
-use tiFy\Support\{Arr};
+use tiFy\Support\{Arr, Str};
 
 /**
  * @mixin \Corcel\Concerns\MetaFields
@@ -12,8 +12,23 @@ use tiFy\Support\{Arr};
 trait MetaFieldsAwareTrait
 {
     /**
+     * @param string $attribute
+     *
+     * @return mixed|null
+     */
+    public function getMeta($attribute)
+    {
+        if ($meta = $this->meta->{$attribute}) {
+            return is_string($meta) ? Str::unserialize($meta) : $meta;
+        }
+
+        return null;
+    }
+
+    /**
      * @param string $key
      * @param mixed $value
+     *
      * @return bool
      */
     public function saveMeta($key, $value = null)
@@ -35,6 +50,7 @@ trait MetaFieldsAwareTrait
     /**
      * @param string $key
      * @param mixed $value
+     *
      * @return bool
      */
     private function saveOneMeta($key, $value)
