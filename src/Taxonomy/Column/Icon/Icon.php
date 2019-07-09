@@ -19,7 +19,7 @@ class Icon extends AbstractColumnDisplayTaxonomyController
      */
     public function content($content = null, $column_name = null, $term_id = null)
     {
-        if (($icon = get_term_meta($term_id, $this->getAttr('name'), true)) && file_exists($this->getAttr('dir') . "/{$icon}") && ($data = file_get_contents($this->getAttr('dir') . "/{$icon}"))) :
+        if (($icon = get_term_meta($term_id, $this->item->get('attrs.name', '_icon'), true)) && file_exists($this->item->get('attrs.dir') . "/{$icon}") && ($data = file_get_contents($this->item->get('attrs.dir') . "/{$icon}"))) :
             echo "<img src=\"data:image/svg+xml;base64," . base64_encode($data) . "\" width=\"80\" height=\"80\" />";
         endif;
     }
