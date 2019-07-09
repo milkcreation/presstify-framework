@@ -99,7 +99,7 @@ class Template extends AppStrategy
 
             Router::emit($response);
             exit;
-        }, 1);
+        }, 50);
 
         return $this->applyDefaultResponseHeaders((new PsrResponse())->withStatus(100));
     }

@@ -30,18 +30,18 @@ class Repeater extends FieldFactory implements RepeaterContract
     public function defaults(): array
     {
         return [
-            'attrs'  => [],
-            'after'  => '',
-            'before' => '',
-            'name'   => '',
-            'value'  => '',
-            'viewer' => [],
-            'ajax'        => [],
-            'args'        => [],
-            'button'      => [],
-            'max'         => -1,
-            'removable'   => true,
-            'sortable'    => true
+            'attrs'     => [],
+            'after'     => '',
+            'before'    => '',
+            'name'      => '',
+            'value'     => '',
+            'viewer'    => [],
+            'ajax'      => [],
+            'args'      => [],
+            'button'    => [],
+            'max'       => -1,
+            'removable' => true,
+            'sortable'  => true,
         ];
     }
 

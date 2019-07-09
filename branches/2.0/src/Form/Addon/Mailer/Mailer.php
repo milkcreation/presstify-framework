@@ -58,11 +58,11 @@ class Mailer extends AddonController
              ->listen('request.submit', [$this, 'onRequestSubmit'])
              ->listen('request.success', [$this, 'onRequestSuccess']);
 
-        $prefix       = $this->get('option_name', "FormMailer_{$this->form()->name()}");
+        $prefix       = $this->get('option_name_prefix', "FormMailer_{$this->form()->name()}");
         $option_names = $this->get('option_names', []);
         foreach (['confirmation', 'sender', 'notification', 'recipients'] as $option) :
             $option_names[$option] = $option_names[$option]
-                                     ?? "{$prefix}-{$option}";
+                                     ?? "{$prefix}{$option}";
         endforeach;
         $this->set('option_names', $option_names);
 

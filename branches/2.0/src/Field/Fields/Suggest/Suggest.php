@@ -98,9 +98,15 @@ class Suggest extends FieldFactory implements SuggestContract
      */
     public function parse(): FieldFactoryContract
     {
-        parent::parse();
+        $default_class = 'FieldSuggest-input FieldSuggest-input' . '--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        }
 
-        $this->forget('attrs.name');
+        $this->parseValue();
+        $this->parseViewer();
 
         $this->set('options.classes', array_merge([
             'picker'      => 'FieldSuggest-picker',
@@ -124,6 +130,13 @@ class Suggest extends FieldFactory implements SuggestContract
         }
 
         $this->set('attrs.data-control', 'suggest.input');
+
+        $container_class = 'FieldSuggest FieldSuggest--' . $this->getIndex();
+        if (!$this->has('container.attrs.class')) {
+            $this->set('container.attrs.class', $container_class);
+        } else {
+            $this->set('container.attrs.class', sprintf($this->get('container.attrs.class', ''), $container_class));
+        }
 
         $this->set('container', array_merge([
             'tag'     => 'span',

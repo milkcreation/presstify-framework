@@ -4,6 +4,7 @@ namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxWpTermController as MetaboxWpTermControllerContract;
 use tiFy\Contracts\Metabox\MetaboxFactory;
+use WP_Term;
 
 abstract class MetaboxWpTermController extends MetaboxController implements MetaboxWpTermControllerContract
 {
@@ -30,7 +31,9 @@ abstract class MetaboxWpTermController extends MetaboxController implements Meta
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @param WP_Term $term
      */
     public function content($term = null, $taxonomy = null, $args = null)
     {
