@@ -56,16 +56,18 @@ class Suggest extends FieldFactory implements SuggestContract
      * {@inheritDoc}
      *
      * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var string $name Clé d'indice de la valeur de soumission du champ.
-     * @var string $value Valeur courante de soumission du champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var array|bool $ajax Liste des attributs de recherche des éléments via une requête xhr.
-     * @see https://api.jquery.com/jquery.ajax/
-     * @var array $options Liste des attributs de configuration de l'autocomplétion.
-     * @see https://api.jqueryui.com/autocomplete/
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+     *      @var array|bool $ajax Liste des attributs de recherche des éléments via une requête xhr.
+     *      @var bool|array $alt Activation du champ alternatif de stockage du résultat de la recherche|attributs de
+     *      configuration du champ altérnatif. @see \tiFy\Field\Fields\Hidden\Hidden
+     *      @see https://api.jquery.com/jquery.ajax/
+     *      @var array $options Liste des attributs de configuration de l'autocomplétion.
+     *      @see https://api.jqueryui.com/autocomplete/
      * }
      */
     public function defaults(): array
@@ -78,10 +80,12 @@ class Suggest extends FieldFactory implements SuggestContract
             'value'     => '',
             'viewer'    => [],
             'ajax'      => false,
+            'alt'       => false,
             'container' => [],
             'options'   => [
                 'minLength' => 2,
             ],
+            'spinner'   => true,
         ];
     }
 
@@ -98,21 +102,31 @@ class Suggest extends FieldFactory implements SuggestContract
      */
     public function parse(): FieldFactoryContract
     {
-        $default_class = 'FieldSuggest-input FieldSuggest-input' . '--' . $this->getIndex();
-        if (!$this->has('attrs.class')) {
-            $this->set('attrs.class', $default_class);
-        } else {
-            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
-        }
-
-        $this->parseValue();
-        $this->parseViewer();
+        parent::parse();
 
         $this->set('options.classes', array_merge([
             'picker'      => 'FieldSuggest-picker',
             'picker-item' => 'FieldSuggest-pickerItem',
         ], $this->get('options.classes', [])));
 
+        if ($alt = $this->get('alt')) {
+            $this->set('alt', array_merge([
+                'attrs' => [
+                    'class' => '%s FieldSuggest-alt'
+                ]
+            ],is_array($alt) ? $alt : []));
+            $this->set('alt.attrs.data-control', 'suggest.alt');
+        }
+
+        if ($spinner = $this->get('spinner')) {
+            $this->set('spinner', array_merge([
+                'tag' => 'div',
+                'attrs' => [
+                    'class' => '%s ThemeSpinner FieldSuggest-spinner'
+                ],
+            ],is_array($spinner) ? $spinner : []));
+            $this->set('spinner.attrs.data-control', 'suggest.spinner');
+        }
 
         $options = [
             'autocomplete' => $this->get('options', []),
@@ -140,13 +154,31 @@ class Suggest extends FieldFactory implements SuggestContract
 
         $this->set('container', array_merge([
             'tag'     => 'span',
-            'content' => $this->viewer('input', $this->all()),
         ], $this->get('container', [])));
 
         $this->set([
             'container.attrs.data-control' => 'suggest',
             'container.attrs.data-options' => $options,
         ]);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseDefaults(): FieldFactoryContract
+    {
+        $default_class = 'FieldSuggest-input FieldSuggest-input' . '--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        }
+
+        $this->parseName();
+        $this->parseValue();
+        $this->parseViewer();
 
         return $this;
     }

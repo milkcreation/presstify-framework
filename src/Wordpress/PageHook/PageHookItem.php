@@ -1,23 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress\PageHook;
 
 use Closure;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Support\ParamsBag;
-use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;
+use tiFy\Wordpress\Contracts\{PageHookItem as PageHookItemContract, QueryPost as QueryPostContract};
 use tiFy\Wordpress\Query\QueryPost;
 use WP_Post;
 use WP_Query;
 
 class PageHookItem extends ParamsBag implements PageHookItemContract
 {
-    /**
-     * Indicateur.
-     * @var boolean|null;
-     */
-    private $_is;
-
     /**
      * Nom de qualification.
      * @var string
@@ -44,7 +38,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
      *
      * @return void
      */
-    public function __construct($name, $attrs = [])
+    public function __construct(string $name, array $attrs = [])
     {
         $this->name = $name;
 
@@ -80,21 +74,21 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                     $wp_post_types[$post_type]->rewrite = false;
 
                     add_rewrite_rule(
-                        $this->post()->post_name . '/([^/]+)/?$',
+                        $this->post()->getName() . '/([^/]+)/?$',
                         'index.php?post_type=' . $post_type . '&name=$matches[1]',
                         'top'
                     );
 
-                    if ($this->post()->post_type === 'page') {
+                    if ($this->post()->typeIn(['page'])) {
                         add_rewrite_rule(
-                            $this->post()->post_name . '/' . $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
-                            'index.php?page_id=' . $this->post()->ID . '&paged=$matches[1]',
+                            $this->post()->getName() . '/' . $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
+                            'index.php?page_id=' . $this->post()->getId() . '&paged=$matches[1]',
                             'top'
                         );
                     } else {
                         add_rewrite_rule(
-                            $this->post()->post_name . '/' . $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
-                            'index.php?p=' . $this->post()->ID . '&post_type=' . $this->post()->post_type .
+                            $this->post()->getName() . '/' . $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
+                            'index.php?p=' . $this->post()->getId() . '&post_type=' . $this->post()->getType() .
                             '&paged=$matches[1]',
                             'top'
                         );
@@ -108,7 +102,8 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                     }, 99999, 2);
 
                     add_action('save_post', function (int $post_id) {
-                        if ($this->is($post_id)) {
+                        $post = get_post($post_id);
+                        if ($this->is($post)) {
                             flush_rewrite_rules();
                         }
                     }, 999999);
@@ -136,9 +131,9 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'id'                  => 0,
@@ -158,116 +153,116 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function exists()
+    public function exists(): bool
     {
         return $this->post() instanceof QueryPost;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getDescription()
+    public function getDescription(): string
     {
-        return $this->desc instanceof Closure ? call_user_func($this->desc) : $this->desc;
+        $desc = $this->get('desc', '');
+
+        return $desc instanceof Closure ? call_user_func($desc) : $desc;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->exists() ? $this->post()->getPath() : '';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getObjectType()
+    public function getObjectType(): string
     {
         return $this->get('object_type');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getObjectName()
+    public function getObjectName(): string
     {
         return $this->get('object_name');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getOptionName()
+    public function getOptionName(): string
     {
         return $this->get('option_name');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
-        return $this->title instanceof Closure ? call_user_func($this->title) : $this->title;
+        $title = $this->get('title', '');
+
+        return $title instanceof Closure ? call_user_func($title) : $title;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function is($post = null)
+    public function is(?WP_Post $post = null): bool
     {
-        if (is_null($this->_is)) {
-            $this->_is = false;
-            if (!$post && ($route = $this->route())) {
-                $this->_is = router()->current() === $route;
-            } elseif ($this->exists()) {
-                if ($post && ($post = get_post($post))) {
-                    $this->_is = $this->post()->getId() === intval($post->ID);
-                } else {
-                    global $wp_query;
+        if (!$post && ($route = $this->route())) {
+            return router()->current() === $route;
+        } elseif ($this->exists()) {
+            if ($post) {
+                return $this->post()->getId() === intval($post->ID);
+            } else {
+                global $wp_query;
 
-                    if ($pagename = $wp_query->query['pagename'] ?? '') {
-                        $this->_is = $this->post()->getName() === $pagename;
-                    } elseif ($page_id = $wp_query->query['page_id'] ?? 0) {
-                        $this->_is = $this->post()->getName() === intval($page_id);
-                    } else {
-                        $this->_is = false;
-                    }
+                if ($pagename = $wp_query->query['pagename'] ?? '') {
+                    return $this->post()->getName() === $pagename;
+                } elseif ($page_id = $wp_query->query['page_id'] ?? 0) {
+                    return $this->post()->getName() === intval($page_id);
                 }
             }
         }
-        return $this->_is;
+
+        return false;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function post()
+    public function post(): ?QueryPostContract
     {
         if (is_null($this->post)) {
             if (!$post_id = $this->get('id')) {
                 $this->set('id', $post_id = (int)get_option($this->get('option_name'), 0));
             }
             $this->post = ($post_id && ($post = get_post($post_id)))
-                ? new QueryPost($post) : false;
+                ? new QueryPost($post) : null;
         }
         return $this->post;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function route()
+    public function route(): ?Route
     {
         return $this->route instanceof Route ? $this->route : null;
     }

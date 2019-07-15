@@ -2,6 +2,19 @@
   position:relative;
 }
 
+.FieldSuggest-spinner {
+  position: absolute;
+  top:50%;
+  right:0;
+  margin-top:-10px;
+  width:20px; height:20px;
+  display:none;
+}
+
+.FieldSuggest[aria-loaded="true"] .FieldSuggest-spinner{
+  display:inherit;
+}
+
 .FieldSuggest-picker {
   position: absolute;
   background-color: #fff;

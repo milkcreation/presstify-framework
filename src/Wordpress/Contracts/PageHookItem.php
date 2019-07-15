@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress\Contracts;
 
@@ -13,70 +13,77 @@ interface PageHookItem extends ParamsBag
      *
      * @return boolean
      */
-    public function exists();
+    public function exists(): bool;
+
+    /**
+     * Récupération du la description.
+     *
+     * @return string
+     */
+    public function getDescription(): string;
 
     /**
      * Récupération du nom de qualification.
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Récupération du chemin relatif vers la page d'affichage du post associé.
      *
      * @return string
      */
-    public function getPath();
+    public function getPath(): string;
 
     /**
      * Récupération du type d'objet Wordpress.
      *
      * @return string
      */
-    public function getObjectType();
+    public function getObjectType(): string;
 
     /**
      * Récupération du nom de qualification de l'objet Wordpress
      *
      * @return string
      */
-    public function getObjectName();
+    public function getObjectName(): string;
 
     /**
      * Récupération du nom de qualification d'enregistrement en base de donnée.
      *
      * @return string
      */
-    public function getOptionName();
+    public function getOptionName(): string;
 
     /**
      * Récupération de l'intitulé de qualification.
      *
      * @return string
      */
-    public function getTitle();
+    public function getTitle(): string;
 
     /**
      * Vérifie si la page d'affichage courante correspond à la page d'accroche associée.
      *
-     * @param null|int|WP_Post Page d'affichage courante|Identifiant de qualification|Objet post Wordpress à vérifier.
+     * @param WP_Post|null Page d'affichage courante|Identifiant de qualification|Objet post Wordpress à vérifier.
      *
      * @return bool
      */
-    public function is($post = null);
+    public function is(?WP_Post $post = null);
 
     /**
      * Récupération de l'instance du post associé.
      *
-     * @return QueryPost
+     * @return QueryPost|null
      */
-    public function post();
+    public function post(): ?QueryPost;
 
     /**
      * Récupération de l'intance de la route associée.
      *
-     * @return Route
+     * @return Route|null
      */
-    public function route();
+    public function route(): ?Route;
 }

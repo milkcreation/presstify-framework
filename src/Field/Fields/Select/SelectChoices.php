@@ -48,8 +48,8 @@ class SelectChoices extends Collection implements SelectChoicesContract
      */
     public function map($name, $attrs, $parent = null): SelectChoicesContract
     {
-        if (is_string($attrs)) {
-            $this->walk(['content' => $attrs, 'parent' => $parent], $name);
+        if (is_scalar($attrs)) {
+            $this->walk(['content' => (string)$attrs, 'parent' => $parent], $name);
         } elseif (is_array($attrs)) {
             $this->walk(['content' => $name, 'group' => true, 'parent' => $parent], $name);
             foreach ($attrs as $_name => $_attrs) {
