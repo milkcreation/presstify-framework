@@ -36,13 +36,17 @@ jQuery(function ($) {
             source: function (request, response) {
               ajax = $.extend(true, ajax, {data: {_term: request.term}});
 
+              self.el.attr('aria-loaded', 'true');
+
               $.ajax(ajax).done(function (resp) {
                 if (resp.success) {
                   response(resp.data.items || []);
                 }
+              }).always(function () {
+                self.el.attr('aria-loaded', 'false');
               });
             }
-          })
+          });
         }
 
         this.autocomplete = $('[data-control="suggest.input"]', this.el).autocomplete(o || {});
@@ -71,9 +75,13 @@ jQuery(function ($) {
 
         this.autocomplete
             .on('autocompleteselect', function (event, ui) {
-              $(this).val(ui.item.label);
-              $('[data-control="suggest.altfield"]', self.el).val(ui.item.value);
-              return false;
+              let $alt = $('[data-control="suggest.alt"]', self.el);
+
+              if ($alt.length) {
+                $(this).val(ui.item.label);
+                $alt.val(ui.item.value);
+                return false;
+              }
             })
             .on('autocompletefocus', function (event, ui) {
               event.preventDefault();
@@ -104,6 +112,8 @@ jQuery(function ($) {
   });
 
   $(document).ready(function ($) {
-    $('[data-control="suggest"]').tifySuggest();
+    $(document).on('focus', '[data-control="suggest"]', function () {
+      $(this).tifySuggest();
+    });
   });
 });

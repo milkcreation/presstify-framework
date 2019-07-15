@@ -6,7 +6,8 @@ use Exception;
 use FastRoute\Dispatcher as FastRoute;
 use League\Route\Dispatcher;
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterManager};
-use tiFy\Http\Request;
+use tiFy\Http\{Request, RedirectResponse};
+use tiFy\Support\Proxy\Request as req;
 use tiFy\Wordpress\Contracts\Routing\Routing as RoutingContract;
 use tiFy\Wordpress\Routing\Strategy\Template as TemplateStrategy;
 
@@ -62,14 +63,21 @@ class Routing implements RoutingContract
                  * @see https://stackoverflow.com/questions/30830462/how-to-deal-with-extra-in-phpleague-route
                  */
                 if (config('routing.remove_trailing_slash', true)) {
-                    $path = request()->getBaseUrl() . request()->getPathInfo();
-                    $method = request()->getMethod();
+                    $permalinks = get_option('permalink_structure');
+                    if (substr($permalinks, -1) == '/') {
+                        update_option('permalink_structure',  rtrim($permalinks, '/'));
+                    }
+
+                    $path = req::getBaseUrl() . req::getPathInfo();
+                    $method = req::getMethod();
 
                     if (($path != '/') && (substr($path, -1) == '/') && ($method === 'GET')) {
-                        $match = (new Dispatcher($this->manager->getData()))->dispatch($method, rtrim($path, '/'));
+                        $dispatcher = new Dispatcher($this->manager->getData());
+                        $match = $dispatcher->dispatch($method, rtrim($path, '/'));
 
                         if ($match[0] === FastRoute::FOUND) {
-                            wp_redirect(request()->fullUrl());
+                            $response = RedirectResponse::createPsr(rtrim($path, '/'));
+                            $this->manager->emit($response);
                             exit;
                         }
                     }

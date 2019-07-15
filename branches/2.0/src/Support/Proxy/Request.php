@@ -7,8 +7,11 @@ namespace tiFy\Support\Proxy;
 /**
  * @method static mixed all(array|mixed|null $keys = null)
  * @method static string|array|null cookie(string|null $key = null, string|array|null $default = null)
+ * @method static string getBaseUrl()
  * @method static string getBasePath()
  * @method static string getHost()
+ * @method static string getMethod()
+ * @method static string getPathInfo()
  * @method static bool hasHeader(string $key)
  * @method static string|array|null header(string|null $key = null, string|array|null $default = null)
  * @method static mixed input(string|null $key = null, $default = null)

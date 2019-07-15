@@ -14,6 +14,10 @@ import 'jquery-ui/ui/widgets/menu';
 // jQuery-ui - Menu
 import 'jquery-ui/ui/widgets/autocomplete';
 
+// Presstify
+// Theme
+import '../../theme/index';
+
 // SCSS
 import './scss/styles.scss';
 
