@@ -44,7 +44,7 @@
             $('[data-control="accordion.item"]:has( > [data-control="accordion.items"])', this.el).each(function () {
 
                 let $trigger = $('<span/>')
-                    .addClass('PartialAccordion-itemTrigger')
+                    .addClass('Accordion-itemTrigger')
                     .data('control', 'accordion.item.trigger');
 
                 if (self.option('triggered')) {

@@ -4,10 +4,10 @@
  */
 ?>
 
-<div class="tiFyPartial-tableHead">
-    <div class="tiFyPartial-tableHeadTr tiFyPartial-tableTr">
+<div class="Table-head">
+    <div class="Table-headTr Table-tr">
     <?php foreach ($this->get('columns', []) as $name => $label) : ?>
-        <div class="tiFyPartial-tableCell<?php echo $this->get('count'); ?> tiFyPartial-tableHeadTh tiFyPartial-tableHeadTh--<?php echo $name; ?> tiFyPartial-tableTh tiFyPartial-tableTh--<?php echo $name; ?>">
+        <div class="Table-cell<?php echo $this->get('count'); ?> Table-headTh Table-headTh--<?php echo $name; ?> Table-th Table-th--<?php echo $name; ?>">
             <?php echo $label;?>
         </div>
     <?php endforeach; ?>

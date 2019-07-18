@@ -17,7 +17,7 @@ class WpQueryPart
      */
     public function getItemContentClass()
     {
-        return 'tiFyPartial-breadcrumbItemContent';
+        return 'Breadcrumb-itemContent';
     }
 
     /**
@@ -27,7 +27,7 @@ class WpQueryPart
      */
     public function getItemWrapperClass()
     {
-        return 'tiFyPartial-breadcrumbItem';
+        return 'Breadcrumb-item';
     }
 
     /**
@@ -493,7 +493,7 @@ class WpQueryPart
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
-                                    'href'  => \get_permalink($page_for_posts),
+                                    'href'  => get_permalink($page_for_posts),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                                     'class' => $this->getItemContentClass()
                                 ],
@@ -515,7 +515,7 @@ class WpQueryPart
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
-                                    'href'  => \get_permalink($parent),
+                                    'href'  => get_permalink($parent),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                                     'class' => $this->getItemContentClass()
                                 ],
@@ -536,7 +536,7 @@ class WpQueryPart
                         [
                             'tag'     => 'a',
                             'attrs'   => [
-                                'href'  => \get_permalink($page_for_posts),
+                                'href'  => get_permalink($page_for_posts),
                                 'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                                 'class' => $this->getItemContentClass()
                             ],
@@ -574,7 +574,7 @@ class WpQueryPart
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
-                                    'href'  => \get_permalink($page_for_posts),
+                                    'href'  => get_permalink($page_for_posts),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                                     'class' => $this->getItemContentClass()
                                 ],
@@ -611,7 +611,7 @@ class WpQueryPart
                         [
                             'tag'     => 'a',
                             'attrs'   => [
-                                'href'  => \get_post_type_archive_link(\get_post_type()),
+                                'href'  => get_post_type_archive_link(\get_post_type()),
                                 'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                                 'class' => $this->getItemContentClass()
                             ],
@@ -633,7 +633,7 @@ class WpQueryPart
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
-                                    'href'  => \get_permalink($parent),
+                                    'href'  => get_permalink($parent),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                                     'class' => $this->getItemContentClass()
                                 ],
@@ -656,7 +656,7 @@ class WpQueryPart
                             [
                                 'tag'     => 'a',
                                 'attrs'   => [
-                                    'href'  => \get_permalink($parent),
+                                    'href'  => get_permalink($parent),
                                     'title' => sprintf(__('Revenir à %s', 'tify'), $title),
                                     'class' => $this->getItemContentClass()
                                 ],

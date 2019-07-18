@@ -1,40 +1,29 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial\Partials\Sidebar;
 
-use tiFy\Kernel\Params\ParamsBag;
-use tiFy\Support\Callback;
+use tiFy\Support\{Callback, ParamsBag};
 
 class SidebarItem extends ParamsBag
 {
     /**
-     * {@inheritdoc}
+     * Nom de qualification de l'élément.
+     * @var string
      */
-    public function defaults()
-    {
-        return [
-            'name'      => $this->name,
-            'attrs'     => [],
-            'content'   => '',
-            'position'  => 0
-        ];
-    }
+    protected $name = '';
 
     /**
-     * {@inheritdoc}
+     * CONSTRUCTEUR.
+     *
+     * @param string $name Nom de qualification de l'élément.
+     * @param array $attrs Liste des attributs.
+     *
+     * @return void
      */
-    public function parse($attrs = [])
+    public function __construct(string $name, array $attrs = [])
     {
-        parent::parse($attrs);
-
-        $this->set('attrs.class', trim(
-            sprintf(
-                'Sidebar-item %s',
-                $this->get('attrs.class', '')
-                    ?
-                    : ''
-            )
-        ));
+        $this->name = $name;
+        $this->set($attrs)->parse();
     }
 
     /**
@@ -47,5 +36,32 @@ class SidebarItem extends ParamsBag
         $content = $this->get('content', '');
 
         return Callback::make($content) ? : $content;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function defaults(): array
+    {
+        return [
+            'name'      => $this->name,
+            'attrs'     => [],
+            'content'   => '',
+            'position'  => 0
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parse($attrs = []): self
+    {
+        parent::parse();
+
+        $this->set('attrs.class', trim(
+            sprintf("Sidebar-item Sidebar-item--{$this->name} %s", $this->get('attrs.class', '') ? : ''))
+        );
+
+        return $this;
     }
 }

@@ -6,11 +6,11 @@
 <?php $this->before(); ?>
 
 <div <?php $this->attrs(); ?>>
-    <span class="PartialHolder-pad"
+    <span class="Holder-pad"
           style="padding-top:<?php echo ceil((100/$this->get('width'))* $this->get('height')); ?>%"
     ></span>
 
-    <div class="PartialHolder-content">
+    <div class="Holder-content">
         <?php
         if ($content = $this->get('content')) :
             echo $this->get('content');

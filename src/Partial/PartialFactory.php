@@ -158,27 +158,18 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
     public function parseDefaults(): PartialFactoryContract
     {
         if (!$this->get('attrs.id')) {
-            $this->pull('attrs.id');
+            $this->forget('attrs.id');
         }
 
         $default_class = 'tiFyPartial-' . Str::camel($this->getAlias()) .
             ' tiFyPartial-' . Str::camel($this->getAlias()) . '--' . $this->getIndex();
         if (!$this->has('attrs.class')) {
-            $this->set(
-                'attrs.class',
-                $default_class
-            );
+            $this->set('attrs.class', $default_class);
         } else {
-            $this->set(
-                'attrs.class',
-                sprintf(
-                    $this->get('attrs.class', ''),
-                    $default_class
-                )
-            );
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
         }
         if (!$this->get('attrs.class')) {
-            $this->pull('attrs.class');
+            $this->forget('attrs.class');
         }
 
         $this->parseViewer();

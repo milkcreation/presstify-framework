@@ -119,12 +119,10 @@ class ImageLightbox extends PartialFactory implements ImageLightboxContract
         }
 
         if (!$this->get('attrs.class')) {
-            $this->pull('attrs.class');
+            $this->forget('attrs.class');
         }
 
-        foreach($this->get('view', []) as $key => $value) {
-            $this->viewer()->set($key, $value);
-        }
+        $this->parseViewer();
 
         return $this;
     }

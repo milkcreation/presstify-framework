@@ -5,7 +5,7 @@
  */
 ?>
 <div <?php echo $this->htmlAttrs($item->get('attrs', [])); ?>>
-    <div class="PartialAccordion-itemContentInner">
+    <div class="Accordion-itemContentInner">
         <?php echo $item->getContent(); ?>
     </div>
 </div>

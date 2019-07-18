@@ -96,14 +96,14 @@ class AccordionItems extends QueryCollection implements AccordionItemsContract
             endif;
 
             if (!$opened) :
-                $output = "<ul class=\"PartialAccordion-items PartialAccordion-items--{$depth}\" data-control=\"accordion.items\">";
+                $output = "<ul class=\"Accordion-items Accordion-items--{$depth}\" data-control=\"accordion.items\">";
                 $opened = true;
             endif;
 
             $item->setDepth($depth);
 
             $attrs = [
-                'class'        => "PartialAccordion-item PartialAccordion-item--{$item->getName()}",
+                'class'        => "Accordion-item Accordion-item--{$item->getName()}",
                 'data-control' => 'accordion.item',
                 'aria-open'    => $item->isOpen() ? 'true' : 'false'
             ];

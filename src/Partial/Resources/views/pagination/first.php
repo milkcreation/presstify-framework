@@ -7,7 +7,7 @@
 ?>
 
 <?php if ($this->getPage() > 1) : ?>
-    <li class="PartialPagination-item PartialPagination-item--first">
+    <li class="Pagination-item Pagination-item--first">
         <?php echo partial('tag', $this->get('links.first')); ?>
     </li>
 <?php endif;

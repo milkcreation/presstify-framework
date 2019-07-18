@@ -47,7 +47,6 @@ class Holder extends PartialFactory implements HolderContract
     {
         parent::parse();
 
-        $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialHolder'));
         $this->set(
             'attrs.style',
             "background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};" .
@@ -62,9 +61,18 @@ class Holder extends PartialFactory implements HolderContract
      */
     public function parseDefaults(): PartialFactoryContract
     {
-        foreach($this->get('view', []) as $key => $value) {
-            $this->viewer()->set($key, $value);
+        $default_class = 'Holder Holder--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
         }
+
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
+        }
+
+        $this->parseViewer();
 
         return $this;
     }

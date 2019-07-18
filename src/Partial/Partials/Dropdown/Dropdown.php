@@ -39,7 +39,6 @@ class Dropdown extends PartialFactory implements DropdownContract
     {
         parent::parse();
 
-        $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialDropdown'));
         $this->set('attrs.data-control', 'dropdown');
         $this->set('attrs.data-id', $this->getId());
 
@@ -74,9 +73,18 @@ class Dropdown extends PartialFactory implements DropdownContract
      */
     public function parseDefaults(): PartialFactoryContract
     {
-        foreach($this->get('view', []) as $key => $value) {
-            $this->viewer()->set($key, $value);
+        $default_class = 'Dropdown Dropdown--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
         }
+
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
+        }
+
+        $this->parseViewer();
 
         return $this;
     }
