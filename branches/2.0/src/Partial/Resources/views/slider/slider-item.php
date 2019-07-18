@@ -4,6 +4,6 @@
  * @var string $item
  */
 ?>
-<div class="tiFyPartial-sliderItem">
+<div class="Slider-item">
     <?php echo $item; ?>
 </div>

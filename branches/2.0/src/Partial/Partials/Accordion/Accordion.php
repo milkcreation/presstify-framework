@@ -11,15 +11,15 @@ class Accordion extends PartialFactory implements AccordionContract
      * {@inheritDoc}
      *
      * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var string $theme Theme d'affichage. light|dark.
-     * @var array|AccordionItem[]|AccordionItems Liste des éléments.
-     * @var mixed $opened Définition de la liste des éléments ouverts à l'initialisation.
-     * @var boolean $multiple Activation de l'ouverture multiple d'éléments.
-     * @var boolean $triggered Activation de la limite d'ouverture et de fermeture par le déclencheur de l'élement.
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+     *      @var string $theme Theme d'affichage. light|dark.
+     *      @var array|AccordionItem[]|AccordionItems Liste des éléments.
+     *      @var mixed $opened Définition de la liste des éléments ouverts à l'initialisation.
+     *      @var boolean $multiple Activation de l'ouverture multiple d'éléments.
+     *      @var boolean $triggered Activation de la limite d'ouverture et de fermeture par le déclencheur de l'élement.
      * }
      */
     public function defaults(): array
@@ -44,10 +44,8 @@ class Accordion extends PartialFactory implements AccordionContract
     {
         parent::parse();
 
-        $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialAccordion'));
-
         if ($theme = $this->get('theme')) {
-            $this->set('attrs.class', trim($this->get('attrs.class') . " PartialAccordion--{$theme}"));
+            $this->set('attrs.class', trim($this->get('attrs.class') . " Accordion--{$theme}"));
         }
 
         $this->set('attrs.data-control', 'accordion');
@@ -77,9 +75,18 @@ class Accordion extends PartialFactory implements AccordionContract
      */
     public function parseDefaults(): PartialFactoryContract
     {
-        foreach ($this->get('view', []) as $key => $value) {
-            $this->viewer()->set($key, $value);
+        $default_class = 'Accordion Accordion--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
         }
+
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
+        }
+
+        $this->parseViewer();
 
         return $this;
     }

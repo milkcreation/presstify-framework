@@ -97,6 +97,6 @@ class AccordionItem extends ParamsBag implements AccordionItemContract
 
         $this->set('attrs.data-control', 'accordion.item.content');
 
-        $this->set('attrs.class', 'PartialAccordion-itemContent');
+        $this->set('attrs.class', 'Accordion-itemContent');
     }
 }

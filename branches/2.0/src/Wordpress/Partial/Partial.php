@@ -6,6 +6,7 @@ use tiFy\Contracts\Partial\{
     Accordion as AccordionContract,
     Breadcrumb as BreadcrumbContract,
     CookieNotice as CookieNoticeContract,
+    CurtainMenu as CurtainMenuContract,
     Dropdown as DropdownContract,
     Holder as HolderContract,
     Modal as ModalContract,
@@ -22,6 +23,7 @@ use tiFy\Wordpress\Partial\Partials\{
     Accordion\Accordion,
     Breadcrumb\Breadcrumb,
     CookieNotice\CookieNotice,
+    CurtainMenu\CurtainMenu,
     Dropdown\Dropdown,
     Holder\Holder,
     Modal\Modal,
@@ -75,6 +77,10 @@ class Partial
 
         app()->add(CookieNoticeContract::class, function () {
             return new CookieNotice();
+        });
+
+        app()->add(CurtainMenuContract::class, function () {
+            return new CurtainMenu();
         });
 
         app()->add(DropdownContract::class, function () {

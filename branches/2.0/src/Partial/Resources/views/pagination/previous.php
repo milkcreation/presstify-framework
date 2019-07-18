@@ -7,7 +7,7 @@
 ?>
 
 <?php if ($this->getPage() > 1) : ?>
-    <li class="PartialPagination-item PartialPagination-item--previous">
+    <li class="Pagination-item Pagination-item--previous">
         <?php echo partial('tag', $this->get('links.previous')); ?>
     </li>
 <?php endif;

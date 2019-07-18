@@ -7,6 +7,7 @@ use tiFy\Contracts\Partial\{
     Accordion as AccordionContract,
     Breadcrumb as BreadcrumbContract,
     CookieNotice as CookieNoticeContract,
+    CurtainMenu as CurtainMenuContract,
     Dropdown as DropdownContract,
     Holder as HolderContract,
     ImageLightbox as ImageLightboxContract,
@@ -26,6 +27,7 @@ use tiFy\Partial\Partials\{
     Accordion\Accordion,
     Breadcrumb\Breadcrumb,
     CookieNotice\CookieNotice,
+    CurtainMenu\CurtainMenu,
     Dropdown\Dropdown,
     Holder\Holder,
     ImageLightbox\ImageLightbox,
@@ -53,6 +55,7 @@ class PartialServiceProvider extends ServiceProvider
         AccordionContract::class,
         BreadcrumbContract::class,
         CookieNoticeContract::class,
+        CurtainMenuContract::class,
         DropdownContract::class,
         HolderContract::class,
         ImageLightboxContract::class,
@@ -99,6 +102,10 @@ class PartialServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(CookieNoticeContract::class, function () {
             return new CookieNotice();
+        });
+
+        $this->getContainer()->add(CurtainMenuContract::class, function () {
+            return new CurtainMenu();
         });
 
         $this->getContainer()->add(DropdownContract::class, function () {

@@ -115,8 +115,6 @@ class Pagination extends PartialFactory implements PaginationContract
     {
         parent::parse();
 
-        $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'PartialPagination'));
-
         $this->url = $this->get('url', []);
         if (!$this->url instanceof PaginationUrl) {
             $this->url = new PaginationUrl($this->url);
@@ -145,9 +143,18 @@ class Pagination extends PartialFactory implements PaginationContract
      */
     public function parseDefaults(): PartialFactoryContract
     {
-        foreach ($this->get('view', []) as $key => $value) {
-            $this->viewer()->set($key, $value);
+        $default_class = 'Pagination Pagination--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
         }
+
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
+        }
+
+        $this->parseViewer();
 
         return $this;
     }

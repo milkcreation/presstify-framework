@@ -43,14 +43,6 @@ class Notice extends PartialFactory implements NoticeContract
     {
         parent::parse();
 
-        if (!$this->has('attrs.id')) {
-            $this->set('attrs.id', 'tiFyPartial-notice--' . $this->getIndex());
-        }
-
-        if(!$this->get('attrs.class')) {
-            $this->set('attrs.class', 'tiFyPartial-notice');
-        }
-
         $this->set('attrs.data-control', 'notice');
         $this->set('attrs.data-timeout', $this->get('timeout', 0));
 
@@ -74,6 +66,27 @@ class Notice extends PartialFactory implements NoticeContract
         } else {
             $this->set('dismiss', '');
         }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseDefaults(): PartialFactoryContract
+    {
+        $default_class = 'Notice Notice--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        }
+
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
+        }
+
+        $this->parseViewer();
 
         return $this;
     }

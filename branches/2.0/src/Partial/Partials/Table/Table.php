@@ -60,4 +60,25 @@ class Table extends PartialFactory implements  TableContract
 
         return $this;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseDefaults(): PartialFactoryContract
+    {
+        $default_class = 'Table Table--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        }
+
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
+        }
+
+        $this->parseViewer();
+
+        return $this;
+    }
 }

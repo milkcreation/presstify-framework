@@ -11,7 +11,7 @@
 
 <div <?php echo $this->attrs(); ?>>
 
-    <?php !$this->get('toggle') ? : $this->insert('toggle', $this->all()); ?>
+    <?php echo $this->get('toggle'); ?>
 
     <div class="Sidebar-panel">
 

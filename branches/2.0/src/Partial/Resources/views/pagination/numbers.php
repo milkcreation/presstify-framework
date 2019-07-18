@@ -6,7 +6,7 @@
  */
 ?>
 <?php foreach ($this->get('numbers', []) as $number) : ?>
-    <li class="PartialPagination-item PartialPagination-item--num">
+    <li class="Pagination-item Pagination-item--num">
         <?php echo partial('tag', $number); ?>
     </li>
 <?php endforeach;

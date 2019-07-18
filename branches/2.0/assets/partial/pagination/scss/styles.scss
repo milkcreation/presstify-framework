@@ -1,26 +1,26 @@
-.PartialPagination {
+.Pagination {
     width: 100%;
     text-align: center;
 }
 
-.PartialPagination-item {
+.Pagination-item {
     display: inline-block;
     text-indent: 0;
 }
 
-.PartialPagination-itemPage {
+.Pagination-itemPage {
     display: block;
     position: relative;
     padding: 6px 12px;
     text-align: center;
 }
 
-.PartialPagination-itemPage-link {
+.Pagination-itemPage-link {
     text-decoration: none;
 }
 
 /** Light */
-.PartialPagination-itemPage {
+.Pagination-itemPage {
     display: block;
     position: relative;
     padding: 6px 12px;
@@ -30,18 +30,18 @@
     color: #FFF;
 }
 
-.PartialPagination-itemPage--link {
+.Pagination-itemPage--link {
     color: #333;
 }
 
-.PartialPagination-itemPage[aria-current="true"] {
+.Pagination-itemPage[aria-current="true"] {
     background-color: #999;
     border-color: #999;
     color: #FFF;
 }
 
-.PartialPagination-itemPage--link:hover,
-.PartialPagination-itemPage--link:focus {
+.Pagination-itemPage--link:hover,
+.Pagination-itemPage--link:focus {
     background-color: #999;
     border-color: #999;
     color: #FFF;

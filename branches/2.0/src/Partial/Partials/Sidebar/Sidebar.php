@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Partial\{PartialFactory as PartialFactoryContract, Sidebar as SidebarContract};
 use tiFy\Partial\PartialFactory;
+use tiFy\Support\Arr;
 
 /**
  * RESSOURCES POUR EVOLUTION :
@@ -33,7 +34,7 @@ class Sidebar extends PartialFactory implements SidebarContract
      *      @var bool $closed Etat de fermeture initial de l'interface.
      *      @var bool $outside_close Fermeture au clic en dehors de l'interface.
      *      @var bool $animate Activation de l'animation à l'ouverture et la fermeture.
-     *      @var bool|string $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou
+     *      @var bool|string|array $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou
      *                               désactive le bouton; la valeur chaîne de caractère active et affiche la chaîne.
      *                               ex : <span>X</span>.
      *      @var string|int $min-width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface
@@ -92,14 +93,14 @@ class Sidebar extends PartialFactory implements SidebarContract
             ->set('attrs.aria-theme', $this->get('theme'));
 
         $items = [];
-        foreach ($this->get('items', []) as $item) {
+        foreach ($this->get('items', []) as $name => $item) {
             if ($item instanceof SidebarItem) {
                 $items[] = $item;
             } elseif (is_array($item)) {
-                $items[] = new SidebarItem($item);
+                $items[] = new SidebarItem((string)$name, $item);
             } elseif (is_string($item)) {
                 $item = ['content' => $item];
-                $items[] = new SidebarItem($item);
+                $items[] = new SidebarItem((string)$name, $item);
             }
         }
 
@@ -112,6 +113,22 @@ class Sidebar extends PartialFactory implements SidebarContract
             ? call_user_func($footer) : (is_string($footer) ? $footer : '&nbsp;'));
 
         $this->set('items', (new Collection($items))->sortBy('position')->all());
+
+        if ($toggle = $this->get('toggle')) {
+            if(is_string($toggle)) {
+                $attrs = ['content' => $toggle];
+            } elseif (is_array($toggle)) {
+                $attrs = $toggle;
+            } else {
+                $attrs = [];
+            }
+
+            if ($class = Arr::get($attrs, 'attrs.class', '') ? : '%s') {
+                Arr::set($attrs, 'attrs.class', sprintf($class, 'Sidebar-toggle'));
+            }
+
+            $this->set('toggle', $this->toggle($attrs));
+        }
 
         return $this;
     }
@@ -129,11 +146,45 @@ class Sidebar extends PartialFactory implements SidebarContract
         }
 
         if (!$this->get('attrs.class')) {
-            $this->pull('attrs.class');
+            $this->forget('attrs.class');
         }
 
         $this->parseViewer();
 
         return $this;
+    }
+
+    /**
+     * Lien de bascule d'affichage de la sidebar.
+     *
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return string
+     */
+    public function toggle(array $attrs = []): string
+    {
+        $id = $this->get('attrs.id');
+        $fill =$this->get('theme') === 'light' ? '#2B2B2B' : '#FFF';
+
+        $attrs = array_merge([
+            'tag'     => 'a',
+            'content' => "<svg xmlns=\"http://www.w3.org/2000/svg\"" .
+                "viewBox=\"0 0 50 50\" xml:space=\"preserve\" fill=\"{$fill}\" class=\"Sidebar-toggleSvg\">" .
+                "<g><rect width=\"50\" height=\"5\" x=\"0\" y=\"5\" ry=\"0\"/>" .
+                "<rect width=\"50\" height=\"5\" x=\"0\" y=\"22.5\" ry=\"0\"/>" .
+                "<rect width=\"50\" height=\"5\" x=\"0\" y=\"40\" ry=\"0\"/></g></svg>"
+        ], $attrs);
+
+        if ((Arr::get($attrs, 'tag') === 'a') && !Arr::has($attrs, 'attrs.href')) {
+            Arr::set($attrs, 'attrs.href', "#{$id}");
+        }
+
+        Arr::set($attrs, 'attrs.data-control', 'sidebar.toggle');
+
+        if ($id) {
+            Arr::set($attrs, 'attrs.data-target', "#{$id}");
+        }
+
+        return (string)$this->viewer('toggle', compact('attrs'));
     }
 }

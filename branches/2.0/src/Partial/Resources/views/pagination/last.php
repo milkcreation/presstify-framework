@@ -7,7 +7,7 @@
 ?>
 
 <?php if ($this->getPage() < $this->getTotalPage()) : ?>
-    <li class="PartialPagination-item PartialPagination-item--last">
+    <li class="Pagination-item Pagination-item--last">
         <?php echo partial('tag', $this->get('links.last')); ?>
     </li>
 <?php endif;

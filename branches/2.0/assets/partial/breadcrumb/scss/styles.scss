@@ -1,13 +1,13 @@
-.tiFyPartial-breadcrumb {
+.Breadcrumb {
     margin: 0;
     padding: 0;
 }
 
-.tiFyPartial-breadcrumb > li + li::before {
+.Breadcrumb > li + li::before {
     padding: 0 5px;
     content: "/\00a0";
 }
 
-.tiFyPartial-breadcrumb > li {
+.Breadcrumb > li {
     display: inline-block;
 }

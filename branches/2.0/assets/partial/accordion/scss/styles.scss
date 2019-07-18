@@ -8,10 +8,6 @@
 }
 
 [data-control="accordion.items"] {
-    -moz-transition-property: max-height;
-    -ms-transition-property: max-height;
-    -o-transition-property: max-height;
-    -webkit-transition-property: max-height;
     transition-property: max-height;
 }
 
@@ -20,13 +16,13 @@
 }
 
 /** STYLES GENERAUX */
-.PartialAccordion-itemContentInner {
+.Accordion-itemContentInner {
     position: relative;
     margin-right: 40px;
     padding: 10px;
 }
 
-.PartialAccordion-itemTrigger {
+.Accordion-itemTrigger {
     position: absolute;
     top: 0;
     left: 0;
@@ -37,8 +33,8 @@
     cursor: pointer;
 }
 
-.PartialAccordion-itemTrigger::before,
-.PartialAccordion-itemTrigger::after {
+.Accordion-itemTrigger::before,
+.Accordion-itemTrigger::after {
     position: absolute;
     top: 50%;
     right: 12px;
@@ -48,74 +44,65 @@
     transform: translateY(-50%);
 }
 
-.PartialAccordion-itemTrigger::after {
+.Accordion-itemTrigger::after {
     transform: translateY(-50%) rotate(90deg);
 }
 
-.PartialAccordion-item[aria-open="true"] > .PartialAccordion-itemContent > .PartialAccordion-itemTrigger::after {
+.Accordion-item[aria-open="true"] > .Accordion-itemContent > .Accordion-itemTrigger::after {
     display: none;
 }
 
 /** THEMES */
 /** Light */
-.PartialAccordion--light .PartialAccordion-itemContent {
+.Accordion--light .Accordion-itemContent {
     background-color: #FFF;
     border-bottom: solid 1px #E4E4E4;
     color: #333;
 }
 
-.PartialAccordion--light .PartialAccordion-itemTrigger {
+.Accordion--light .Accordion-itemTrigger {
     color: #333;
 }
 
-.PartialAccordion--light .PartialAccordion-itemTrigger::before,
-.PartialAccordion--light .PartialAccordion-itemTrigger::after {
+.Accordion--light .Accordion-itemTrigger::before,
+.Accordion--light .Accordion-itemTrigger::after {
     border-bottom: solid 1px #333;
 }
 
-.PartialAccordion--light .PartialAccordion-item.active > .PartialAccordion-itemContent {
+.Accordion--light .Accordion-item.active > .Accordion-itemContent {
     background-color: #E4E4E4;
 }
 
 /**
  * Dark
  */
-.PartialAccordion--dark .PartialAccordion-itemContent {
+.Accordion--dark .Accordion-itemContent {
     background-color: #23282D;
     border-bottom: solid 1px #2C333A;
     color: #EEE;
 }
 
-.PartialAccordion--dark .PartialAccordion-itemTrigger {
+.Accordion--dark .Accordion-itemTrigger {
     color: #EEE;
 }
 
-.PartialAccordion--dark .PartialAccordion-itemTrigger::before,
-.PartialAccordion--dark .PartialAccordion-itemTrigger::after {
+.Accordion--dark .Accordion-itemTrigger::before,
+.Accordion--dark .Accordion-itemTrigger::after {
     background-color: #EEE;
 }
 
-.PartialAccordion--dark .PartialAccordion-item.active > .PartialAccordion-itemContent {
+.Accordion--dark .Accordion-item.active > .Accordion-itemContent {
     background-color: #2C333A;
 }
 
 /**
  * ANIMATIONS
  */
-.PartialAccordion-items {
-    -moz-transition-duration: 400ms;
-    -ms-transition-duration: 400ms;
-    -o-transition-duration: 400ms;
-    -webkit-transition-duration: 400ms;
+.Accordion-items {
     transition-duration: 400ms;
-
-    -moz-transition-timing-function: cubic-bezier(0.42, 0, 1.0, 1.0);
-    -ms-transition-timing-function: cubic-bezier(0.42, 0, 1.0, 1.0);
-    -o-transition-timing-function: cubic-bezier(0.42, 0, 1.0, 1.0);
-    -webkit-transition-timing-function: cubic-bezier(0.42, 0, 1.0, 1.0);
     transition-timing-function: cubic-bezier(0.42, 0, 1.0, 1.0);
 }
 
-.PartialAccordion-itemTrigger:hover {
+.Accordion-itemTrigger:hover {
     opacity: 0.8;
 }

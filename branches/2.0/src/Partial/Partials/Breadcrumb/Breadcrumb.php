@@ -3,6 +3,7 @@
 namespace tiFy\Partial\Partials\Breadcrumb;
 
 use tiFy\Contracts\Partial\Breadcrumb as BreadcrumbContract;
+use tiFy\Contracts\Partial\PartialFactory as PartialFactoryContract;
 use tiFy\Partial\PartialFactory;
 
 class Breadcrumb extends PartialFactory implements BreadcrumbContract
@@ -88,6 +89,27 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
     /**
      * @inheritDoc
      */
+    public function parseDefaults(): PartialFactoryContract
+    {
+        $default_class = 'Breadcrumb Breadcrumb--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        }
+
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
+        }
+
+        $this->parseViewer();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function parsePartList()
     {
         if (!$this->parts) {
@@ -113,7 +135,7 @@ class Breadcrumb extends PartialFactory implements BreadcrumbContract
             return (string)$part;
         } elseif (is_array($part)) {
             $defaults = [
-                'class'   => 'tiFyPartial-breadcrumbItem',
+                'class'   => 'Breadcrumb-item',
                 'content' => ''
             ];
             $part = array_merge($defaults, $part);
