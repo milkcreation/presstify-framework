@@ -70,7 +70,7 @@ class CurtainMenuItems extends Collection implements CurtainMenuItemsContract
     {
         foreach ($items as $item) {
             if ($item->getParentName() === $parent) {
-                $item->setDepth($depth+1);
+                $item->parse()->setDepth($depth+1);
                 $this->prepareItems($items, ($depth + 1), $item->getName());
             }
         }
@@ -87,6 +87,6 @@ class CurtainMenuItems extends Collection implements CurtainMenuItemsContract
             $item = new CurtainMenuItem((string)$key, (array)$item);
         }
 
-        $this->items[(string)$key] = $item->setManager($this)->parse();
+        $this->items[(string)$key] = $item->setManager($this);
     }
 }

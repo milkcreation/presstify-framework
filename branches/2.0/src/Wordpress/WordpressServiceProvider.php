@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
 use tiFy\Container\ServiceProvider;
 use tiFy\Wordpress\Asset\Asset;
+use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Cookie\Cookie;
 use tiFy\Wordpress\Database\Database;
@@ -50,6 +51,7 @@ class WordpressServiceProvider extends ServiceProvider
     protected $provides = [
         'wp',
         'wp.asset',
+        'wp.auth',
         'wp.column',
         'wp.cookie',
         'wp.database',
@@ -57,6 +59,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.filesystem',
         'wp.field',
         'wp.form',
+        'wp.login-redirect',
         'wp.mail',
         'wp.media',
         'wp.media.download',
@@ -81,9 +84,9 @@ class WordpressServiceProvider extends ServiceProvider
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function boot()
+    public function boot(): void
     {
         require_once __DIR__ . '/helpers.php';
 
@@ -95,6 +98,8 @@ class WordpressServiceProvider extends ServiceProvider
                 if ($this->getContainer()->has('asset')) {
                     $this->getContainer()->get('wp.asset');
                 }
+
+                $this->getContainer()->get('wp.auth');
 
                 if ($this->getContainer()->has('column')) {
                     $this->getContainer()->get('wp.column');
@@ -174,12 +179,13 @@ class WordpressServiceProvider extends ServiceProvider
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function register()
+    public function register(): void
     {
         $this->registerManager();
         $this->registerAsset();
+        $this->registerAuth();
         $this->registerColumn();
         $this->registerCookie();
         $this->registerDatabase();
@@ -205,19 +211,31 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerAsset()
+    public function registerAsset(): void
     {
         $this->getContainer()->share('wp.asset', function () {
             return new Asset($this->getContainer()->get('asset'));
         });
     }
+    /**
+     * Déclaration du gestionnaire d'authentification.
+     *
+     * @return void
+     */
+    public function registerAuth(): void
+    {
+        $this->getContainer()->share('wp.auth', function () {
+            return new Auth();
+        });
+    }
+
 
     /**
      * Déclaration du controleur des colonnes.
      *
      * @return void
      */
-    public function registerColumn()
+    public function registerColumn(): void
     {
         $this->getContainer()->share('wp.column', function () {
             return new Column($this->getContainer()->get('column'));
@@ -229,7 +247,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerCookie()
+    public function registerCookie(): void
     {
         $this->getContainer()->share('wp.cookie', function () {
             return new Cookie($this->getContainer()->get('cookie'));
@@ -241,7 +259,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerDatabase()
+    public function registerDatabase(): void
     {
         $this->getContainer()->share('wp.database', function () {
             return new Database($this->getContainer()->get('database'));
@@ -260,7 +278,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerFilesystem()
+    public function registerFilesystem(): void
     {
         $this->getContainer()->share('wp.filesystem', function () {
             return new Filesystem($this->getContainer()->get('storage'));
@@ -272,7 +290,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerField()
+    public function registerField(): void
     {
         $this->getContainer()->share('wp.field', function () {
             return new Field($this->getContainer()->get('field'));
@@ -284,7 +302,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerForm()
+    public function registerForm(): void
     {
         $this->getContainer()->share('wp.form', function () {
             return new Form($this->getContainer()->get('form'));
@@ -296,7 +314,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerMail()
+    public function registerMail(): void
     {
         $this->getContainer()->share('wp.mail', function () {
             return new Mail();
@@ -308,7 +326,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerManager()
+    public function registerManager(): void
     {
         $this->getContainer()->share('wp', function () {
             return new Wordpress();
@@ -320,7 +338,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerMedia()
+    public function registerMedia(): void
     {
         $this->getContainer()->share('wp.media', function () {
             return new Media();
@@ -340,7 +358,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerMetabox()
+    public function registerMetabox(): void
     {
         $this->getContainer()->share('wp.metabox', function () {
             return new Metabox($this->getContainer()->get('metabox'));
@@ -352,7 +370,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerOptions()
+    public function registerOptions(): void
     {
         $this->getContainer()->share('wp.options', function () {
             return new Options($this->getContainer()->get('options'));
@@ -364,7 +382,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerPageHook()
+    public function registerPageHook(): void
     {
         $this->getContainer()->share('wp.page-hook', function () {
             return new PageHook();
@@ -376,7 +394,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerPartial()
+    public function registerPartial(): void
     {
         $this->getContainer()->share('wp.partial', function () {
             return new Partial($this->getContainer()->get('partial'));
@@ -388,7 +406,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerPostType()
+    public function registerPostType(): void
     {
         $this->getContainer()->share('wp.post-type', function () {
             return new PostType($this->getContainer()->get('post-type'));
@@ -400,7 +418,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerQuery()
+    public function registerQuery(): void
     {
         $this->getContainer()->add('wp.query.posts', function (?WP_Query $wp_query = null) {
             return !is_null($wp_query) ? new QueryPosts($wp_query) : QueryPosts::createFromGlobals();
@@ -432,7 +450,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerRouting()
+    public function registerRouting(): void
     {
         $this->getContainer()->share('wp.routing', function () {
             return new Routing($this->getContainer()->get('router'));
@@ -452,7 +470,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerTaxonomy()
+    public function registerTaxonomy(): void
     {
         $this->getContainer()->share('wp.taxonomy', function () {
             return new Taxonomy($this->getContainer()->get('taxonomy'));
@@ -464,7 +482,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerTemplate()
+    public function registerTemplate(): void
     {
         $this->getContainer()->share('wp.template', function () {
             return new Template($this->getContainer()->get('template'));
@@ -476,7 +494,7 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerUser()
+    public function registerUser(): void
     {
         $this->getContainer()->share('wp.user', function () {
             return new User($this->getContainer()->get('user'));
