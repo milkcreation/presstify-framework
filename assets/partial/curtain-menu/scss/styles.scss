@@ -96,7 +96,7 @@
 
 .CurtainMenu-panelTitleLink::before,
 .CurtainMenu-panelBack::before,
-.CurtainMenu-item--hasChildren > .tiFyControlCurtainMenu-itemLink::before {
+.CurtainMenu-item--hasChildren > .CurtainMenu-itemLink::before {
   position: absolute;
   top: 50%;
   display: block;
@@ -118,7 +118,7 @@
   content: "\f341";
 }
 
-.CurtainMenu-item--hasChildren > .tiFyControlCurtainMenu-itemLink::before {
+.CurtainMenu-item--hasChildren > .CurtainMenu-itemLink::before {
   right: 5px;
   content: "\f345";
 }

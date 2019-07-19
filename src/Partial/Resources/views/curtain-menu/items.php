@@ -24,7 +24,7 @@
                     data-control="curtain-menu.items">
                     <?php foreach ($items as $item) : ?>
                         <li <?php echo $item->getAttrs(); ?>>
-                            <?php echo $this->insert('item-title', compact('item')); ?>
+                            <?php echo $this->insert('item-nav', compact('item')); ?>
 
                             <?php echo $this->insert('items', [
                                 'depth'  => $item->getDepth(),

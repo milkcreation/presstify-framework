@@ -4,10 +4,11 @@ namespace tiFy\Wordpress\Partial\Partials\CurtainMenu;
 
 use tiFy\Contracts\Partial\PartialFactory as BasePartialFactoryContract;
 use tiFy\Partial\Partials\CurtainMenu\{CurtainMenu as BaseCurtainMenu, CurtainMenuItems};
+use tiFy\Support\Proxy\Partial as ptl;
 use tiFy\Wordpress\Contracts\Partial\{CurtainMenu as CurtainMenuContract, PartialFactory as PartialFactoryContract};
 use WP_Query;
-use WP_Term_Query;
 use WP_Term;
+use WP_Term_Query;
 
 class CurtainMenu extends BaseCurtainMenu implements CurtainMenuContract
 {
@@ -53,7 +54,7 @@ class CurtainMenu extends BaseCurtainMenu implements CurtainMenuContract
             // @todo
         } elseif ($items instanceof WP_Term_Query) {
             if (!empty($items->query_vars['child_of'])) {
-                $parent = (string) $items->query_vars['child_of'];
+                $parent = (string)$items->query_vars['child_of'];
             } else {
                 $parent = null;
             }
@@ -62,9 +63,19 @@ class CurtainMenu extends BaseCurtainMenu implements CurtainMenuContract
             $_items = [];
             array_walk($terms, function (WP_Term $t) use (&$_items, $parent) {
                 $_parent = (string)$t->parent;
+                $url = get_term_link($t);
+
                 $_items[(string)$t->term_id] = [
-                    'title'  => $t->name,
-                    'parent' => !empty($_parent) && ($_parent !== $parent) ? (string) $t->parent : null
+                    'nav'    => $t->name,
+                    'parent' => !empty($_parent) && ($_parent !== $parent) ? (string)$t->parent : null,
+                    'title'  => (string)ptl::get('tag', [
+                        'attrs'   => [
+                            'href' => $url,
+                        ],
+                        'content' => $t->name,
+                        'tag'     => 'a',
+                    ]),
+                    'url'    => $url,
                 ];
             });
             $items = new CurtainMenuItems($_items, $this->get('selected'));

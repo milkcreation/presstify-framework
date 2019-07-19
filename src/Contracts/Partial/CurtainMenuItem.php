@@ -7,7 +7,14 @@ use tiFy\Contracts\Support\ParamsBag;
 interface CurtainMenuItem extends ParamsBag
 {
     /**
-     * Vérification d'existance d'un parent associé à l'élément.
+     * Vérification d'existance d'éléments enfants associés.
+     *
+     * @return boolean
+     */
+    public function hasChild(): bool;
+
+    /**
+     * Vérification d'existance d'un élément parent associé.
      *
      * @return boolean
      */
@@ -32,16 +39,9 @@ interface CurtainMenuItem extends ParamsBag
     /**
      * Récupération de la liste des éléments associés (enfants).
      *
-     * @return CurtainMenuItem[]|array
+     * @return CurtainMenuItem[]|null
      */
-    public function getChilds(): array;
-
-    /**
-     * Récupération du contenu de l'élément.
-     *
-     * @return string
-     */
-    public function getContent(): string;
+    public function getChilds(): ?array;
 
     /**
      * Récupération du niveau de profondeur de l'élément.
@@ -56,6 +56,13 @@ interface CurtainMenuItem extends ParamsBag
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * Récupération de la liste des attributs de l'interface de navigation vers le panneau de l'élément.
+     *
+     * @return array
+     */
+    public function getNav(): array;
 
     /**
      * Récupération de l'élément parent.

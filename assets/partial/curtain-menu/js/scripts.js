@@ -24,7 +24,7 @@
         let subLevel = $('> [data-control="curtain-menu.panel"]', j);
 
         if (subLevel.length) {
-          $('> h3', j).on('click', function (e) {
+          $('> [data-control="curtain-menu.nav"]', j).on('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
 

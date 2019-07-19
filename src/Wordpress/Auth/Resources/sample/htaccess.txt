@@ -1,4 +1,4 @@
-#tiFySecurityLogin
+# BEGIN WpLoginRedirect
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
@@ -9,4 +9,4 @@ RewriteRule ^tiFy_lostpassword/? /wp-login.php?action=lostpassword [QSA,L]
 RewriteRule ^tiFy_register/? /wp-login.php?action=register [QSA,L]
 RewriteRule ^tiFy_postpass/? /wp-login.php?action=postpass [QSA,L]
 </IfModule>
-#!tiFySecurityLogin
+# END WpLoginRedirect
