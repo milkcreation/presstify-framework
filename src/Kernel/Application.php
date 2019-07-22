@@ -32,6 +32,8 @@ class Application extends Container
         parent::__construct();
 
         $this->registerProxy();
+
+        $this->boot();
     }
 
     /**
@@ -54,14 +56,9 @@ class Application extends Container
     }
 
     /**
-     * Compatibilité corcel.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function version(): string
-    {
-        return 'tiFy';
-    }
+    public function boot(): void {}
 
     /**
      * @inheritDoc
@@ -81,5 +78,15 @@ class Application extends Container
             $manager->addProxy($alias, $proxy);
         }
         $manager->enable(ProxyManager::ROOT_NAMESPACE_ANY);
+    }
+
+    /**
+     * Compatibilité corcel.
+     *
+     * @return string
+     */
+    public function version(): string
+    {
+        return 'tiFy';
     }
 }

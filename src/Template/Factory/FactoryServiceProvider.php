@@ -26,7 +26,7 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     {
         events()->listen('template.factory.boot', function () {
             $this->registerFactories();
-        });
+        }, 100);
     }
 
     /**
