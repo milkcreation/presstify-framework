@@ -103,6 +103,37 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
+    public function getBase64Src(int $id, $size = 'thumbnail'): ?string
+    {
+        if (!$src = wp_get_attachment_image_src($id, $size)) {
+            return null;
+        } else {
+            $src = reset($src);
+        }
+
+        if (preg_match('/^' . preg_quote(site_url('/'), '/'). '/', $src)) {
+            $filename = preg_replace('/' . preg_quote(site_url('/'), '/'). '/', ABSPATH, $src);
+        } elseif (preg_match('/^' . preg_quote(network_site_url('/'), '/'). '/', $src)) {
+            $filename = preg_replace('/' . preg_quote(network_site_url('/'), '/'). '/', ABSPATH, $src);
+        } else {
+            return null;
+        }
+
+        if (file_exists($filename)) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+            return sprintf(
+                'data:%s;base64,%s',
+                finfo_file($finfo, $filename),
+                base64_encode(file_get_contents($filename))
+            );
+        }
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getClass(array $classes = [], bool $html = true)
     {
         $classes = get_post_class($classes, $this->getId());

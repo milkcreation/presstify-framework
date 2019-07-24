@@ -138,11 +138,11 @@ class TaxonomyFactory extends ParamsBag implements TaxonomyFactoryContract
 
         $this->set('gender', $this->get('gender', false));
 
-        $labels =  (new TaxonomyLabelsBag($this->get('label'), array_merge([
+        $labels = TaxonomyLabelsBag::createFromAttrs(array_merge([
             'singular' => $this->get('singular'),
             'plural'   => $this->get('plural'),
             'gender'   => $this->get('gender'),
-        ], (array)$this->get('labels', []))));
+        ], (array)$this->get('labels', [])), $this->get('label'));
         $this->set('labels', $labels->all());
 
         $this->set('publicly_queryable', $this->has('publicly_queryable')

@@ -52,19 +52,13 @@ class Items extends Collection implements ItemsContract
     {
         $object = null;
         if ($item instanceof FactoryDb) {
-            $object = $item;
             $item = $item->attributesToArray();
         } elseif (is_object($item)) {
-            $object = $item;
             $item = get_object_vars($item);
         }
 
         /** @var Item $item */
         $item = $this->factory->resolve('item')->set($item);
-
-        if (!is_null($object)) {
-            $item->setObject($object);
-        }
 
         $this->items[$key] = $item->setIndex($this->index++)->parse();
     }

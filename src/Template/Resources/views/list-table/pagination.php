@@ -7,27 +7,21 @@
  */
 ?>
 <?php if ($total = $this->pagination()->getTotal()) : ?>
-    <?php $pagination = $this->pagination()->which($which ?? 'top'); ?>
+    <?php $pagination = $this->pagination()->setWhich($which ?? 'top'); ?>
     <div <?php echo $this->htmlAttrs($pagination->get('attrs', [])); ?>>
         <span class="displaying-num">
-            <?php
-            printf(
-                _n(
-                    '%s élément',
-                    '%s éléments',
-                    $total,
-                    'tify'
-                ),
+            <?php printf(
+                _n('%s élément', '%s éléments', $total, 'tify'),
                 number_format_i18n($total)
             );
             ?>
         </span>
-        <span class="pagination-links<?php echo $pagination->isInfiniteScroll() ? ' hide-if-js' : ''; ?>">
-            <?php echo $pagination->firstPage(); ?>
-            <?php echo $pagination->prevPage(); ?>
-            <?php echo $pagination->currentPage(); ?>
-            <?php echo $pagination->nextPage(); ?>
-            <?php echo $pagination->lastPage(); ?>
+        <span class="pagination-links">
+            <?php echo $this->insert('pagination-first'); ?>
+            <?php echo $this->insert('pagination-prev'); ?>
+            <?php echo $this->insert('pagination-current'); ?>
+            <?php echo $this->insert('pagination-next'); ?>
+            <?php echo $this->insert('pagination-last'); ?>
         </span>
     </div>
 <?php endif;

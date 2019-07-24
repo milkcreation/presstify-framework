@@ -3,6 +3,7 @@
 namespace tiFy\Support;
 
 use Carbon\Carbon;
+use DateTime as BaseDateTime;
 use DateTimeZone;
 use Exception;
 
@@ -33,7 +34,9 @@ class DateTime extends Carbon
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return BaseDateTime|static|null
      */
     public static function createFromFormat($format, $time, $tz=null)
     {

@@ -2,8 +2,6 @@
 
 namespace tiFy\Template\Templates\UserListTable;
 
-use BadMethodCallException;
-use Exception;
 use tiFy\Template\Templates\ListTable\Contracts\Item as BaseItemContract;
 use tiFy\Template\Templates\ListTable\Item as BaseItem;
 use tiFy\Template\Templates\UserListTable\Contracts\Item as ItemContract;
@@ -22,31 +20,17 @@ class Item extends BaseItem implements ItemContract
     protected $factory;
 
     /**
-     * Objet de délégation associé.
-     * @var QueryUserContract
+     * Objet de délégation d'appel des méthodes de la classe.
+     * @var QueryUserContract|null
      */
-    protected $delegateObject;
+    protected $delegate;
 
     /**
      * @inheritDoc
      */
-    public function __call($name, $args)
+    public function parseDelegate(): BaseItemContract
     {
-        try {
-            return $this->delegateObject->$name(...$args);
-        } catch (Exception $e) {
-            throw new BadMethodCallException(sprintf(__('La méthode %s n\'est pas disponible.', 'tify'), $name));
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parse(): BaseItemContract
-    {
-        parent::parse();
-
-        $this->delegateObject = QueryUser::createFromId($this->getKeyValue());
+        $this->delegate = QueryUser::createFromId($this->getKeyValue());
 
         return $this;
     }

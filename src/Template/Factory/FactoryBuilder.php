@@ -17,12 +17,6 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     protected $factory;
 
     /**
-     * Liste des colonnes de la table de base de données.
-     * @var string[]|null
-     */
-    protected $columns;
-
-    /**
      * Sens d'ordonnancement des éléments.
      * @var string
      */
@@ -63,19 +57,6 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     /**
      * @inheritDoc
      */
-    public function getColumns(): array
-    {
-        if (is_null($this->columns)) {
-            $this->columns = $this->db()->getConnection()->getSchemaBuilder()->getColumnListing($this->db()->getTable())
-                ?: [];
-        }
-
-        return $this->columns;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getOrder(): string
     {
         return $this->order;
@@ -103,14 +84,6 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     public function getPerPage(): int
     {
         return $this->perPage;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasColumn(string $name): bool
-    {
-        return in_array($name, $this->getColumns());
     }
 
     /**
@@ -165,7 +138,7 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     public function queryWhere(): EloquentBuilder
     {
         foreach ($this->all() as $k => $v) {
-            if ($this->hasColumn($k)) {
+            if ($this->db()->hasColumn($k)) {
                 is_array($v) ? $this->query()->whereIn($k, $v) : $this->query()->where($k, $v);
             }
         }

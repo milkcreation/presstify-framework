@@ -54,29 +54,21 @@ class Column extends ParamsBag implements ColumnContract
     public function content(): string
     {
         if ($item = $this->factory->item()) {
-            if ($value = $item->get($this->getName())) {
+            if ($content = $this->get('content')) {
+                return $content instanceof Closure ? call_user_func_array($content, [$item]) : $content;
+            } elseif($value = $item->get($this->getName())) {
                 $type = '';
-                /**
-                 * @todo
 
-                (
-                    ($db = $this->factory->db()) &&
-                    $db->getConnection()->getSchemaBuilder()->hasColumn($db->getTable(), $this->getName()))
-                    ? strtoupper($db->getColAttr($this->getName(), 'type'))
-                    : '';
-                 */
                 switch ($type) {
                     default:
-                        return is_array($value) ? join(', ', $value) : $value;
+                        return is_array($value) ? join(', ', $value) : (string)$value;
                         break;
                     case 'DATETIME' :
                         return mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
                         break;
                 }
             } else {
-                $content = $this->get('content');
-
-                return $content instanceof Closure ? call_user_func_array($content, [$item]) : $content;
+                return '';
             }
         } else {
             return $this->get('content');

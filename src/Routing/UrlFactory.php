@@ -83,6 +83,7 @@ class UrlFactory implements UrlFactoryContract
      */
     public function with(array $args)
     {
+        $this->without(array_keys($args));
         $this->url = (new AppendQuery((string)Query::createFromPairs($args)))->process($this->url);
 
         return $this;

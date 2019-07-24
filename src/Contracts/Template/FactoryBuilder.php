@@ -15,13 +15,6 @@ interface FactoryBuilder extends FactoryAwareTrait, ParamsBag
     public function db(): ?FactoryDb;
 
     /**
-     * Récupération de la liste des colonnes de la table.
-     *
-     * @return string[]
-     */
-    public function getColumns(): array;
-
-    /**
      * Récupération du sens d'ordonnancement des éléments récupérés.
      *
      * @return string
@@ -48,15 +41,6 @@ interface FactoryBuilder extends FactoryAwareTrait, ParamsBag
      * @return int
      */
     public function getPerPage(): int;
-
-    /**
-     * Vérification d'existance d'une colonne de la table selon son nom de qualification.
-     *
-     * @param string $name Nom de qalification de la colonne de la table de base de données.
-     *
-     * @return boolean
-     */
-    public function hasColumn(string $name): bool;
 
     /**
      * Récupération de l'instance courante en base de données.

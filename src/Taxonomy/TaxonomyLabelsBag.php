@@ -13,7 +13,7 @@ class TaxonomyLabelsBag extends LabelsBag
     /**
      * {@inheritdoc}
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'name' => Str::ucfirst($this->getPlural()),

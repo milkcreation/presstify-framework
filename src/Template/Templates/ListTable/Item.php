@@ -2,7 +2,8 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Contracts\Template\FactoryDb;
+use BadMethodCallException;
+use Exception;
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Contracts\{Item as ItemContract, ListTable};
@@ -24,10 +25,22 @@ class Item extends ParamsBag implements ItemContract
     protected $index;
 
     /**
-     * Instance de l'objet associé.
+     * Objet de délégation d'appel des méthodes de la classe.
      * @var object
      */
-    protected $object;
+    protected $delegate;
+
+    /**
+     * @inheritDoc
+     */
+    public function __call($name, $args)
+    {
+        try {
+            return $this->delegate->$name(...$args);
+        } catch (Exception $e) {
+            throw new BadMethodCallException(sprintf(__('La méthode %s n\'est pas disponible.', 'tify'), $name));
+        }
+    }
 
     /**
      * @inheritDoc
@@ -62,17 +75,19 @@ class Item extends ParamsBag implements ItemContract
     /**
      * @inheritDoc
      */
-    public function model(): ?FactoryDb
+    public function parse(): ItemContract
     {
-        return $this->object instanceof FactoryDb ? $this->object : null;
+        parent::parse();
+
+        return $this->parseDelegate();
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): ItemContract
+    public function parseDelegate(): ItemContract
     {
-        parent::parse();
+        $this->delegate = null;
 
         return $this;
     }
@@ -85,16 +100,6 @@ class Item extends ParamsBag implements ItemContract
         if (is_null($this->index)) {
             $this->index = $index;
         }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setObject(object $object): ItemContract
-    {
-        $this->object = $object;
 
         return $this;
     }

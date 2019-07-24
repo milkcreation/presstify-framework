@@ -79,7 +79,7 @@ class Download implements DownloadContract
                 $url = $file;
             endif;
 
-            $rel = trim(preg_replace('/' . preg_quote(site_url('/'), '/') . '/', '', $url), '/');
+            $rel = trim(preg_replace('/' . preg_quote(network_site_url('/'), '/') . '/', '', $url), '/');
             $abspath = ABSPATH . $rel;
         endif;
 
@@ -132,69 +132,74 @@ class Download implements DownloadContract
         $url = is_numeric($media) ? wp_get_attachment_url($media) : urldecode($media);
 
         // L'url du fichier média n'est pas valide
-        if (!isset($url)) :
+        if (!isset($url)) {
             wp_die(
                 '<h1>' . __('Téléchargement du fichier impossible', 'tify') . '</h1>' .
                 '<p>' . __('L\'url du fichier média n\'est pas valide', 'tify') . '</p>',
                 __('Impossible de trouver le fichier', 'tify'),
                 404
             );
-        endif;
+        }
 
-        $relpath = trim(preg_replace('/' . preg_quote(site_url('/'), '/') . '/', '', $url), '/');
-        $abspath = ABSPATH . $relpath;
+        if(preg_match('/^' . preg_quote(site_url('/'), '/') .'/', $url)) {
+            $abspath = preg_replace('/^' . preg_quote(site_url('/'), '/') .'/', ABSPATH, $url);
+        } elseif(preg_match('/^' . preg_quote(network_site_url('/'), '/') .'/', $url)) {
+            $abspath = preg_replace('/^' . preg_quote(network_site_url('/'), '/') .'/', ABSPATH, $url);
+        } else {
+            $abspath = $url;
+        }
 
         // Le fichier n'existe pas
-        if (!file_exists($abspath)) :
+        if (!file_exists($abspath)) {
             wp_die(
                 '<h1>' . __('Téléchargement du fichier impossible', 'tify') . '</h1>' .
                 '<p>' . __('Le fichier n\'existe pas', 'tify') . '</p>',
                 __('Impossible de trouver le fichier', 'tify'),
                 404
             );
-        endif;
+        }
 
         // Le type du fichier est indeterminé ou non référencé
         $fileinfo = wp_check_filetype($abspath, wp_get_mime_types());
-        if (empty($fileinfo['ext']) || empty($fileinfo['type'])) :
+        if (empty($fileinfo['ext']) || empty($fileinfo['type'])) {
             wp_die(
                 '<h1>' . __('Téléchargement du fichier impossible', 'tify') . '</h1>' .
                 '<p>' . __('Le type du fichier est indeterminé ou non référencé', 'tify') . '</p>',
                 __('Type de fichier erroné', 'tify'),
                 400
             );
-        endif;
+        }
 
         // Le type de fichier est interdit
-        if (!in_array($fileinfo['type'], get_allowed_mime_types())) :
+        if (!in_array($fileinfo['type'], get_allowed_mime_types())) {
             wp_die(
                 '<h1>' . __('Téléchargement du fichier impossible', 'tify') . '</h1>' .
                 '<p>' . __('Le type de fichier est interdit', 'tify') . '</p>',
                 __('Type de fichier interdit', 'tify'),
                 405
             );
-        endif;
+        }
 
         // Déclaration des permissions de téléchargement de fichier
         events()->trigger('wp.media.download.register', [$abspath, &$this]);
 
         // Bypass - Le téléchargement de ce fichier n'est pas autorisé
-        if (!in_array($abspath, self::$allowed)) :
+        if (!in_array($abspath, self::$allowed)) {
             wp_die(
                 '<h1>' . __('Téléchargement du fichier impossible', 'tify') . '</h1>' .
                 '<p>' . __('Le téléchargement de ce fichier n\'est pas autorisé', 'tify') . '</p>',
                 __('Téléchargement interdit', 'tify'),
                 401
             );
-        endif;
+        }
 
         // Définition de la taille du fichier
         $filesize = @ filesize($abspath);
         $rangefilesize = $filesize - 1;
 
-        if (ini_get('zlib.output_compression')) :
+        if (ini_get('zlib.output_compression')) {
             ini_set('zlib.output_compression', 'Off');
-        endif;
+        }
 
         clearstatcache();
         nocache_headers();
