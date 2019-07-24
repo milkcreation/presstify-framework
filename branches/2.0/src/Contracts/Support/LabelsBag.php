@@ -14,13 +14,6 @@ interface LabelsBag extends ParamsBag
     public function getDeterminant(string $string): string;
 
     /**
-     * Vérification du genre.
-     *
-     * @return boolean
-     */
-    public function hasGender(): bool;
-
-    /**
      * Récupération du nom de qualification.
      *
      * @return string
@@ -42,6 +35,13 @@ interface LabelsBag extends ParamsBag
     public function getSingular(): string;
 
     /**
+     * Vérification du genre.
+     *
+     * @return boolean
+     */
+    public function hasGender(): bool;
+
+    /**
      * Permet de vérifier si la première lettre d'une chaîne de caractère est une voyelle.
      *
      * @param string $string Chaîne de caractère à traiter.
@@ -49,4 +49,18 @@ interface LabelsBag extends ParamsBag
      * @return boolean
      */
     public function isFirstVowel(string $string): bool;
+
+    /**
+     * @inheritDoc
+     */
+    public function parse(): LabelsBag;
+
+    /**
+     * Définition du nom de qualification.
+     *
+     * @param string $name
+     *
+     * @return static
+     */
+    public function setName(string $name): LabelsBag;
 }

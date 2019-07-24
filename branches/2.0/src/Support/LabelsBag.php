@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Support;
 
-use tiFy\Contracts\Support\LabelsBag as LabelBagContract;
+use tiFy\Contracts\Support\{LabelsBag as LabelsBagContract, ParamsBag as ParamsBagContract};
 
-class LabelsBag extends ParamsBag implements LabelBagContract
+class LabelsBag extends ParamsBag implements LabelsBagContract
 {
     /**
      * Nom de qualification.
@@ -13,24 +13,22 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     protected $name = '';
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param string $name Nom de qualification.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct($name, $attrs = [])
+    public static function createFromAttrs($attrs, ?string $name = null): ParamsBagContract
     {
-        $this->name = $name;
+        $self = new static();
+        if (!is_null($name)) {
+            $self->setName($name);
+        }
 
-        $this->set($attrs)->parse();
+        return $self->set($attrs)->parse();
     }
 
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'gender'   => false,
@@ -42,7 +40,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     /**
      * @inheritDoc
      */
-    public function defaultEditItem()
+    public function defaultEditItem(): string
     {
         return sprintf(
             __('Éditer %s %s', 'tify'),
@@ -54,7 +52,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     /**
      * @inheritDoc
      */
-    public function defaultDatasItem()
+    public function defaultDatasItem(): string
     {
         if (self::isFirstVowel($this->getSingular())) {
             $determinant = __('de l\'', 'tify');
@@ -64,6 +62,18 @@ class LabelsBag extends ParamsBag implements LabelBagContract
             $determinant = __('du', 'tify');
         }
         return sprintf(__('Données %s %s', 'tify'), $determinant, $this->getSingular());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get($key, $defaults = '')
+    {
+        if (method_exists($this, $key)) {
+            return $this->{$key}();
+        } else {
+            return parent::get($key, $defaults);
+        }
     }
 
     /**
@@ -81,14 +91,6 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     /**
      * @inheritDoc
      */
-    public function hasGender(): bool
-    {
-        return !!$this->get('gender');
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return $this->name;
@@ -99,7 +101,7 @@ class LabelsBag extends ParamsBag implements LabelBagContract
      */
     public function getPlural(): string
     {
-        return $this->get('plural');
+        return $this->get('plural', __('éléments', 'tify'));
     }
 
     /**
@@ -107,7 +109,15 @@ class LabelsBag extends ParamsBag implements LabelBagContract
      */
     public function getSingular(): string
     {
-        return $this->get('singular');
+        return $this->get('singular', __('élément', 'tify'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasGender(): bool
+    {
+        return !!$this->get('gender');
     }
 
     /**
@@ -121,16 +131,24 @@ class LabelsBag extends ParamsBag implements LabelBagContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return static
+     * @inheritDoc
      */
-    public function parse(): self
+    public function parse(): LabelsBagContract
     {
-        parent::parse();
-
         $this->set('plural', Str::lower($this->get('plural')));
         $this->set('singular', Str::lower($this->get('singular')));
+
+        parent::parse();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setName(string $name): LabelsBagContract
+    {
+        $this->name = $name;
 
         return $this;
     }

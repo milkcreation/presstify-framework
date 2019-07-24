@@ -15,6 +15,13 @@ interface Search extends FactoryAwareTrait, ParamsBag
     public function __toString(): string;
 
     /**
+     * Vérification d'affichage du formulaire de recherche.
+     *
+     * @return boolean
+     */
+    public function exists(): bool;
+
+    /**
      * Affichage.
      *
      * @return string

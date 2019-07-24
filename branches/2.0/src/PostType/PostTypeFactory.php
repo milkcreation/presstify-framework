@@ -151,11 +151,11 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
 
         $this->set('gender', $this->get('gender', false));
 
-        $labels = new PostTypeLabelsBag($this->get('label'), array_merge([
+        $labels = PostTypeLabelsBag::createFromAttrs(array_merge([
             'singular' => $this->get('singular'),
             'plural'   => $this->get('plural'),
             'gender'   => $this->get('gender'),
-        ], (array)$this->get('labels', [])));
+        ], (array)$this->get('labels', [])), $this->get('label'));
         $this->set('labels', $labels->all());
 
         $this->set('exclude_from_search', $this->has('exclude_from_search')

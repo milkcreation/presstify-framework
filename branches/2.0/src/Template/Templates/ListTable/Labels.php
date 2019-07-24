@@ -16,13 +16,44 @@ class Labels extends FactoryLabels
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function all_items()
     {
-        return array_merge(parent::defaults(), [
-            'all_items'    => __('Tous les éléments', 'tify'),
-            'search_items' => __('Rechercher un élément', 'tify'),
-            'no_items'     => __('Aucun élément trouvé.', 'tify'),
-            'page_title'   => __('Tous les éléments', 'tify')
-        ]);
+        return sprintf(
+            $this->hasGender() ? __('Toutes les %s', 'tify') : __('Tous les %s', 'tify'),
+            $this->getPlural()
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function no_item()
+    {
+        return sprintf(
+            $this->hasGender() ? __('Aucune %s trouvée.', 'tify') : __('Aucun %s trouvé.', 'tify'),
+            $this->getSingular()
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function page_title()
+    {
+        return sprintf(
+            $this->hasGender() ? __('Toutes les %s', 'tify') : __('Tous les %s', 'tify'),
+            $this->getPlural()
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function search_item()
+    {
+        return sprintf(
+            $this->hasGender() ? __('Rechercher une %s', 'tify') : __('Rechercher un %s', 'tify'),
+            $this->getSingular()
+        );
     }
 }

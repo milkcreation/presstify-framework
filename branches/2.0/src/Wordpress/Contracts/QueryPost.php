@@ -60,6 +60,16 @@ interface QueryPost extends ParamsBag
     public function getAuthorId();
 
     /**
+     * Récupération de la source base64 d'une image.
+     *
+     * @param int $id Identifiant de qualification de l'image.
+     * @param string|array $size Taille de l'image. Nom de qualification (full|large|thumbnail|...)|taille perso [w,h].
+     *
+     * @return string|null
+     */
+    public function getBase64Src(int $id, $size = 'thumbnail'): ?string;
+
+    /**
      * Récupération de la liste des classes associées.
      *
      * @param string[] $classes Liste de classes complémentaires.

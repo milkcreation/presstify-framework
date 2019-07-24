@@ -37,6 +37,15 @@ class Search extends ParamsBag implements SearchContract
     /**
      * @inheritDoc
      */
+    public function exists(): bool
+    {
+        return $this->factory->param('search') &&
+            ($this->factory->items()->exists() || $this->factory->request()->input('s'));
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function parse(): SearchContract
     {
         parent::parse();
@@ -45,7 +54,12 @@ class Search extends ParamsBag implements SearchContract
             $this->set('attrs.data-control', 'list-table.search');
         }
 
-        $this->set('attrs.class', 'search');
+        $class = 'search-box';
+        if (! $this->has('attrs.class')) {
+            $this->set('attrs.class', $class);
+        } elseif ($_class = $this->get('attrs.class')) {
+            $this->set('attrs.class', sprintf($_class, $class));
+        }
 
         return $this;
     }

@@ -3,10 +3,20 @@
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
-use tiFy\Contracts\Template\{FactoryAwareTrait, FactoryDb};
+use tiFy\Contracts\Template\FactoryAwareTrait;
 
 interface Item extends FactoryAwareTrait, ParamsBag
 {
+    /**
+     * Délégation d'appel des méthodes du de l'object associé.
+     *
+     * @param string $name Nom de qualification de la méthode.
+     * @param array $args Liste des paramètres passés en arguments à la méthode.
+     *
+     * @return mixed
+     */
+    public function __call($name, $args);
+
     /**
      * Récupération de la valeur de l'attribut de qualification de l'élément.
      *
@@ -31,17 +41,16 @@ interface Item extends FactoryAwareTrait, ParamsBag
     public function getIndex(): int;
 
     /**
-     * Récupération de l'instance du modèle.
-     * {@internal Le controleur de base de données doit être actif.}
-     *
-     * @return FactoryDb|null
-     */
-    public function model(): ?FactoryDb;
-
-    /**
      * @inheritDoc
      */
     public function parse(): Item;
+
+    /**
+     * Traitement de l'object de délégation d'appel des méthodes de la classe.
+     *
+     * @return static
+     */
+    public function parseDelegate(): Item;
 
     /**
      * Définition de l'indice de l'élément.
@@ -51,13 +60,4 @@ interface Item extends FactoryAwareTrait, ParamsBag
      * @return static
      */
     public function setIndex(int $index): Item;
-
-    /**
-     * Définition de l'instance de l'objet associé à l'élément.
-     *
-     * @param object $object
-     *
-     * @return static
-     */
-    public function setObject(object $object): Item;
 }

@@ -100,7 +100,7 @@ class Builder extends ListTableBuilder implements BuilderContract
         parent::queryWhere();
 
         foreach ($this->all() as $k => $v) {
-            if ($this->hasColumn($k)) {
+            if ($this->db()->hasColumn($k)) {
                 is_array($v) ? $this->query()->whereIn($k, $v) : $this->query()->where($k, $v);
             }
         }

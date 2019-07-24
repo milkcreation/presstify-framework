@@ -2,8 +2,6 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use BadMethodCallException;
-use Exception;
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Item as BaseItem;
 use tiFy\Template\Templates\ListTable\Contracts\{Item as BaseItemContract};
@@ -31,37 +29,17 @@ class Item extends BaseItem implements ItemContract
     protected $index;
 
     /**
-     * Instance de l'objet associé.
-     * @var object
+     * Objet de délégation d'appel des méthodes de la classe.
+     * @var QueryPostContract|null
      */
-    protected $object;
-
-    /**
-     * Objet de délégation associé.
-     * @var QueryPostContract
-     */
-    protected $delegateObject;
+    protected $delegate;
 
     /**
      * @inheritDoc
      */
-    public function __call($name, $args)
+    public function parseDelegate(): BaseItemContract
     {
-        try {
-            return $this->delegateObject->$name(...$args);
-        } catch (Exception $e) {
-            throw new BadMethodCallException(sprintf(__('La méthode %s n\'est pas disponible.', 'tify'), $name));
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parse(): BaseItemContract
-    {
-        parent::parse();
-
-        $this->delegateObject = QueryPost::createFromId($this->getKeyValue());
+        $this->delegate = QueryPost::createFromId($this->getKeyValue());
 
         return $this;
     }

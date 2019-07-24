@@ -2,30 +2,20 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
+use tiFy\Contracts\Template\FactoryLabels as FactoryLabelsContract;
 use tiFy\PostType\PostTypeLabelsBag;
+use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\PostListTable\Contracts\PostListTable;
 
-class Labels extends PostTypeLabelsBag
+class Labels extends PostTypeLabelsBag implements FactoryLabelsContract
 {
+    use FactoryAwareTrait;
+
     /**
      * Instance du gabarit d'affichage.
      * @var PostListTable
      */
     protected $factory;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param PostListTable $factory Instance du motif d'affichage associé.
-     *
-     * @return void
-     */
-    public function __construct(PostListTable $factory)
-    {
-        $this->factory = $factory;
-
-        parent::__construct($factory->name(), $factory->get('labels', []));
-    }
 
     /**
      * @inheritDoc
@@ -38,5 +28,15 @@ class Labels extends PostTypeLabelsBag
             'no_items'     => __('Aucun élément trouvé.', 'tify'),
             'page_title'   => __('Tous les éléments', 'tify')
         ]);
+    }
+
+    public function all_items()
+    {
+        return sprintf(__('Tous les %s', 'tify'), ucfirst($this->getPlural()));
+    }
+
+    public function page_title()
+    {
+        return sprintf(__('Tous les %s', 'tify'), ucfirst($this->getPlural()));
     }
 }

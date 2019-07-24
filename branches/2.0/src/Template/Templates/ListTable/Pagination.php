@@ -11,87 +11,75 @@ class Pagination extends ParamsBag implements PaginationContract
     use FactoryAwareTrait;
 
     /**
+     * Nombre d'élément de la page courante.
+     * @var int
+     */
+    protected $count = 0;
+
+    /**
+     * Numéro de la page courante.
+     * @var int
+     */
+    protected $current_page = 0;
+
+    /**
+     * Numéro de la dernière page.
+     * @var int
+     */
+    protected $last_page = 0;
+
+    /**
+     * Nombre d'élément par page.
+     * @var int
+     */
+    protected $per_page = 0;
+
+    /**
+     * Nombre total d'éléments.
+     * @var int
+     */
+    protected $total = 0;
+
+    /**
      * Instance du gabarit associé.
      * @var ListTable
      */
     protected $factory;
 
     /**
-     *
+     * Emplacement d'affichage.
+     * @return string top|bottom.
      */
-    protected $which;
+    protected $which = 'top';
 
     /**
      * @inheritDoc
      */
-    public function currentPage(): string
-    {
-        $total_pages_before = '<span class="paging-input">';
-        $total_pages_after = '</span></span>';
-
-        if ('bottom' === $this->which) {
-            $html_current_page = (string)$this->getCurrentPage();
-            $total_pages_before = '<span class="screen-reader-text">' .
-                __('Page courante', 'tify') .
-                '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
-        } else {
-            $html_current_page = sprintf(
-                "%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s'" .
-                " size='%s' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
-                '<label for="current-page-selector" class="screen-reader-text">' .
-                __('Page courante', 'tify') .
-                '</label>',
-                (string)$this->getCurrentPage(),
-                strlen((string)$this->getLastPage())
-            );
-        }
-
-        /*$html_total_pages = sprintf(
-            "<span class='total-pages'>%s</span>", number_format_i18n($this->getTotalPaged())
-        );*/
-
-        return $total_pages_before . sprintf(
-                _x('%1$s sur %2$s', 'paging', 'tify'),
-                $html_current_page,
-                $this->getLastPage()
-            ) . $total_pages_after;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'attrs'        => [],
-            'count'        => 0,
-            'current_page' => 0,
-            'last_page'    => 0,
-            'per_page'     => 0,
-            'total'        => 0,
+            'first'        => [],
+            'last'         => [],
+            'next'         => [],
+            'prev'         => []
         ];
     }
 
     /**
      * @inheritDoc
      */
-    public function firstPage(): string
+    public function getCount(): int
     {
-        return (string)$this->factory->viewer('pagination-first', [
-            'disabled'   => $this->isDisableFirst(),
-            'url'        => $this->unpagedUrl(),
-            'pagination' => $this,
-        ]);
+        return $this->count;
     }
 
     /**
-     * Récupération du numéro de la page courante.
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getCurrentPage(): int
     {
-        return (int)$this->get('current_page', 0);
+        return $this->current_page;
     }
 
     /**
@@ -99,7 +87,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function getLastPage(): int
     {
-        return (int)$this->get('last_page', 0);
+        return $this->last_page;
     }
 
     /**
@@ -107,7 +95,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function getPerPage(): int
     {
-        return (int)$this->get('per_page', 0);
+        return $this->per_page;
     }
 
     /**
@@ -115,7 +103,15 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function getTotal(): int
     {
-        return (int)$this->get('total', 0);
+        return $this->total;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getWhich(): string
+    {
+        return $this->which;
     }
 
     /**
@@ -153,38 +149,6 @@ class Pagination extends ParamsBag implements PaginationContract
     /**
      * @inheritDoc
      */
-    public function isInfiniteScroll(): bool
-    {
-        return !!$this->get('infinite_scroll', false);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function lastPage(): string
-    {
-        return (string)$this->factory->viewer('pagination-last', [
-            'disabled'   => $this->isDisableLast(),
-            'url'        => $this->pagedUrl($this->getLastPage()),
-            'pagination' => $this,
-        ]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function nextPage(): string
-    {
-        return (string)$this->factory->viewer('pagination-next', [
-            'disabled'   => $this->isDisableNext(),
-            'url'        => $this->pagedUrl(min($this->getLastPage(), $this->getCurrentPage() + 1)),
-            'pagination' => $this,
-        ]);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function pagedUrl(int $page): string
     {
         return $this->factory->url()->with(['paged' => $page]);
@@ -213,19 +177,206 @@ class Pagination extends ParamsBag implements PaginationContract
             $this->set('attrs.data-control', 'list-table.pagination');
         }
 
+        return $this
+            ->parseFirst()
+            ->parseLast()
+            ->parseNext()
+            ->parsePrev();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseFirst(): PaginationContract
+    {
+        $class = $this->isDisableFirst() ? 'tablenav-pages-navspan button disabled' : 'first-page button';
+        if (!$this->has('first.attrs.class')) {
+            $this->set('first.attrs.class', $class);
+        } elseif ($_class = $this->get('first.attrs.class')) {
+            $this->set('first.attrs.class', sprintf($_class, $class));
+        }
+
+        if ($this->isDisableFirst()) {
+            if (!$this->has('first.tag')) {
+                $this->set('first.tag', 'span');
+            }
+
+            $this->set('first.attrs.aria-hidden', 'true');
+        } else {
+            if (!$this->has('first.tag')) {
+                $this->set('first.tag', 'a');
+            }
+            if (!$this->has('first.attrs.href')) {
+                $this->set('first.attrs.href', $this->unpagedUrl());
+            }
+        }
+
+        if (!$this->has('first.content')) {
+            $this->set('first.content', '&laquo;');
+        }
+
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function prevPage(): string
+    public function parseLast(): PaginationContract
     {
-        return (string)$this->factory->viewer('pagination-prev', [
-            'disabled'   => $this->isDisablePrev(),
-            'url'        => $this->pagedUrl(max(1, $this->getCurrentPage() - 1)),
-            'pagination' => $this,
-        ]);
+        $class = $this->isDisableLast() ? 'tablenav-pages-navspan button disabled' : 'last-page button';
+        if (!$this->has('last.attrs.class')) {
+            $this->set('last.attrs.class', $class);
+        } elseif ($_class = $this->get('last.attrs.class')) {
+            $this->set('last.attrs.class', sprintf($_class, $class));
+        }
+
+        if ($this->isDisableLast()) {
+            if (!$this->has('last.tag')) {
+                $this->set('last.tag', 'span');
+            }
+
+            $this->set('last.attrs.aria-hidden', 'true');
+        } else {
+            if (!$this->has('last.tag')) {
+                $this->set('last.tag', 'a');
+            }
+            if (!$this->has('last.attrs.href')) {
+                $this->set('last.attrs.href', $this->pagedUrl($this->getLastPage()));
+            }
+        }
+
+        if (!$this->has('last.content')) {
+            $this->set('last.content', '&raquo;');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseNext(): PaginationContract
+    {
+        $class = $this->isDisableNext() ? 'tablenav-pages-navspan button disabled' : 'next-page button';
+        if (!$this->has('next.attrs.class')) {
+            $this->set('next.attrs.class', $class);
+        } elseif ($_class = $this->get('next.attrs.class')) {
+            $this->set('next.attrs.class', sprintf($_class, $class));
+        }
+
+        if ($this->isDisableNext()) {
+            if (!$this->has('next.tag')) {
+                $this->set('next.tag', 'span');
+            }
+
+            $this->set('next.attrs.aria-hidden', 'true');
+        } else {
+            if (!$this->has('next.tag')) {
+                $this->set('next.tag', 'a');
+            }
+            if (!$this->has('next.attrs.href')) {
+                $this->set('next.attrs.href', $this->pagedUrl(min($this->getLastPage(), $this->getCurrentPage() + 1)));
+            }
+        }
+
+        if (!$this->has('next.content')) {
+            $this->set('next.content', '&rsaquo;');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parsePrev(): PaginationContract
+    {
+        $class = $this->isDisablePrev() ? 'tablenav-pages-navspan button disabled' : 'prev-page button';
+        if (!$this->has('prev.attrs.class')) {
+            $this->set('prev.attrs.class', $class);
+        } elseif ($_class = $this->get('prev.attrs.class')) {
+            $this->set('prev.attrs.class', sprintf($_class, $class));
+        }
+
+        if ($this->isDisablePrev()) {
+            if (!$this->has('prev.tag')) {
+                $this->set('prev.tag', 'span');
+            }
+            $this->set('prev.attrs.aria-hidden', 'true');
+        } else {
+            if (!$this->has('prev.tag')) {
+                $this->set('prev.tag', 'a');
+            }
+            if (!$this->has('prev.attrs.href')) {
+                $this->set('prev.attrs.href', $this->pagedUrl(max(1, $this->getCurrentPage() - 1)));
+            }
+        }
+
+        if (!$this->has('prev.content')) {
+            $this->set('prev.content', '&lsaquo;');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCount(int $count): PaginationContract
+    {
+        $this->count = $count;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCurrentPage(int $num): PaginationContract
+    {
+        $this->current_page = $num;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLastPage(int $num): PaginationContract
+    {
+        $this->last_page = $num;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPerPage(int $per_page): PaginationContract
+    {
+        $this->per_page = $per_page;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTotal(int $total): PaginationContract
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setWhich(string $which): PaginationContract
+    {
+        $this->which = $which;
+
+        return $this;
     }
 
     /**
@@ -234,15 +385,5 @@ class Pagination extends ParamsBag implements PaginationContract
     public function unpagedUrl(): string
     {
         return $this->factory->url()->without(['paged']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function which(string $which): PaginationContract
-    {
-        $this->which = $which;
-
-        return $this;
     }
 }

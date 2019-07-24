@@ -2,8 +2,8 @@
 
 namespace tiFy\Template\Factory;
 
-use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Template\{
+    FactoryDb as FactoryDbContract,
     FactoryServiceProvider as FactoryServiceProviderContract,
     TemplateFactory};
 use tiFy\Container\ServiceProvider;
@@ -101,11 +101,13 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
      */
     public function registerFactoryDb(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('db'), function () {
+        $this->getContainer()->share($this->getFactoryAlias('db'), function (): ?FactoryDbContract {
+
             if ($db = $this->factory->get('providers.db', [])) {
-                return $db instanceof DbFactory
+                $db = $db instanceof FactoryDbContract
                     ? $db
-                    : (new FactoryDb())->setTemplateFactory($this->factory);
+                    : new FactoryDb();
+                return $db->setTemplateFactory($this->factory);
             } else {
                 return null;
             }
@@ -144,8 +146,10 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
     public function registerFactoryLabels(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
-            return (new FactoryLabels($this->factory->name(), $this->factory->get('labels', [])))
-                ->setTemplateFactory($this->factory);
+            return (new FactoryLabels())->setTemplateFactory($this->factory)
+                ->setName($this->factory->name())
+                ->set($this->factory->get('labels', []))
+                ->parse();
         });
     }
 

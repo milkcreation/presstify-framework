@@ -51,12 +51,13 @@ class Builder extends FactoryBuilder implements BuilderContract
             $this->factory->items()->set($items);
 
             if ($count = $items->count()) {
-                $this->factory->pagination()->set([
-                    'current_page' => $this->getPage(),
-                    'count'        => $count,
-                    'last_page'    => ceil($total / $this->getPerPage()),
-                    'total'        => $total,
-                ])->parse();
+                $this->factory->pagination()
+                    ->setCount($count)
+                    ->setCurrentPage($this->getPage())
+                    ->setPerPage($this->getPerPage())
+                    ->setLastPage((int)ceil($total / $this->getPerPage()))
+                    ->setTotal($total)
+                    ->parse();
             }
 
             $this->resetQuery();

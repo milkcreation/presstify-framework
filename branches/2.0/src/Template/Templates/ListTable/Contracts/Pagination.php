@@ -8,18 +8,11 @@ use tiFy\Contracts\Template\FactoryAwareTrait;
 interface Pagination extends FactoryAwareTrait, ParamsBag
 {
     /**
-     * Rendu d'affichage de la page courante.
+     * Récupération du nombre d'éléments de la page courante.
      *
-     * @return string
+     * @return int
      */
-    public function currentPage(): string;
-
-    /**
-     * Rendu d'affichage de l'accès à la première page.
-     *
-     * @return string
-     */
-    public function firstPage(): string;
+    public function getCount(): int;
 
     /**
      * Récupération du numéro de la page courante.
@@ -50,6 +43,13 @@ interface Pagination extends FactoryAwareTrait, ParamsBag
     public function getTotal(): int;
 
     /**
+     * Récupération de l'emplacement d'affichage de l'interface de pagination.
+     *
+     * @return string
+     */
+    public function getWhich(): string;
+
+    /**
      * Vérification de la désactivation du lien vers la première page.
      *
      * @return boolean
@@ -78,27 +78,6 @@ interface Pagination extends FactoryAwareTrait, ParamsBag
     public function isDisablePrev(): bool;
 
     /**
-     * Vérification de l'activation de la pagination par infinite scroll.
-     *
-     * @return boolean
-     */
-    public function isInfiniteScroll(): bool;
-
-    /**
-     * Rendu d'affichage de l'accès à la dernière page.
-     *
-     * @return string
-     */
-    public function lastPage(): string;
-
-    /**
-     * Rendu d'affichage de l'accès à la page suivante.
-     *
-     * @return string
-     */
-    public function nextPage(): string;
-
-    /**
      * Récupération de l'url vers une page.
      *
      * @param int $page Numéro de la page.
@@ -108,25 +87,84 @@ interface Pagination extends FactoryAwareTrait, ParamsBag
     public function pagedUrl(int $page): string;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return Pagination
      */
     public function parse(): Pagination;
 
     /**
-     * Rendu d'affichage de l'accès à la page précédente.
+     * Traitement des attributs de configuration de la première page.
      *
-     * @return string
+     * @return Pagination
      */
-    public function prevPage(): string;
+    public function parseFirst(): Pagination;
 
     /**
-     * Récupération de l'url de la page courante sans l'argument de pagination.
+     * Traitement des attributs de configuration de la dernière page.
      *
-     * @return string
+     * @return Pagination
      */
-    public function unpagedUrl(): string;
+    public function parseLast(): Pagination;
+
+    /**
+     * Traitement des attributs de configuration de la page suivante.
+     *
+     * @return Pagination
+     */
+    public function parseNext(): Pagination;
+
+    /**
+     * Traitement des attributs de configuration de la page précédente.
+     *
+     * @return Pagination
+     */
+    public function parsePrev(): Pagination;
+
+    /**
+     * Définition du nombre d'élément sur la page courante.
+     *
+     * @param int $count
+     *
+     * @return static
+     */
+    public function setCount(int $count): Pagination;
+
+    /**
+     * Définition du numéro de la page courante.
+     *
+     * @param int $num
+     *
+     * @return static
+     */
+    public function setCurrentPage(int $num): Pagination;
+
+    /**
+     * Définition du numéro de la dernière page.
+     *
+     * @param int $num
+     *
+     * @return static
+     */
+    public function setLastPage(int $num): Pagination;
+
+    /**
+     * Définition du nombre d'éléments par page.
+     *
+     * @param int $per_page
+     *
+     * @return static
+     */
+    public function setPerPage(int $per_page): Pagination;
+
+    /**
+     * Définition du nombre total d'éléments.
+     *
+     * @param int $total
+     *
+     * @return static
+     */
+    public function setTotal(int $total): Pagination;
 
     /**
      * Définition de l'emplacement d'affichage.
@@ -135,5 +173,12 @@ interface Pagination extends FactoryAwareTrait, ParamsBag
      *
      * @return static
      */
-    public function which(string $which): Pagination;
+    public function setWhich(string $which): Pagination;
+
+    /**
+     * Récupération de l'url de la page courante sans l'argument de pagination.
+     *
+     * @return string
+     */
+    public function unpagedUrl(): string;
 }

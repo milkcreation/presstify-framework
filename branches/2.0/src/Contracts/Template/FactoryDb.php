@@ -2,11 +2,13 @@
 
 namespace tiFy\Contracts\Template;
 
+use tiFy\Contracts\Database\ColumnsAwareTrait;
+
 /**
  * @mixin \Illuminate\Database\Eloquent\Model
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-interface FactoryDb extends FactoryAwareTrait
+interface FactoryDb extends ColumnsAwareTrait, FactoryAwareTrait
 {
 
 }

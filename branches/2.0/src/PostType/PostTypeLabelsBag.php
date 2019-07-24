@@ -11,9 +11,9 @@ use tiFy\Support\LabelsBag;
 class PostTypeLabelsBag extends LabelsBag
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'name' => Str::ucfirst($this->getPlural()),
