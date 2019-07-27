@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Metabox;
 
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\WpScreen;
 
 interface MetaboxFactory extends ParamsBag

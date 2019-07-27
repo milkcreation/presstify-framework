@@ -2,11 +2,11 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxFactory as MetaboxFactoryContract;
 use tiFy\Contracts\Metabox\MetaboxController;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Contracts\Metabox\MetaboxFactory as MetaboxFactoryContract;
 use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
 use tiFy\Wordpress\Routing\WpScreen;
+use tiFy\Support\ParamsBag;
 
 class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
 {
@@ -28,17 +28,18 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
      * @param array $attrs {
      *      Attributs de configuration
      *
-     *      @var string $name Nom de qualification. optionnel, généré automatiquement.
-     *      @var string|callable $title Titre du greffon.
-     *      @var string|callable $content Fonction ou méthode ou classe de rappel d'affichage du contenu de la section.
-     *      @var mixed $args Liste des variables passées en argument dans les fonction d'affichage du titre, du contenu et dans l'objet.
-     *      @var string $parent Identifiant de la section parente.
-     *      @var string|callable@todo $cap Habilitation d'accès.
-     *      @var bool|callable@todo $show Affichage/Masquage.
-     *      @var int $position Ordre d'affichage du greffon.
+     * @return array
+     * @var string $name Nom de qualification. optionnel, généré automatiquement.
+     * @var string|callable $title Titre du greffon.
+     * @var string|callable $content Fonction ou méthode ou classe de rappel d'affichage du contenu de la section.
+     * @var mixed $args Liste des variables passées en argument dans les fonction d'affichage du titre, du contenu et
+     *     dans l'objet.
+     * @var string $parent Identifiant de la section parente.
+     * @var string|callable@todo $cap Habilitation d'accès.
+     * @var bool|callable@todo $show Affichage/Masquage.
+     * @var int $position Ordre d'affichage du greffon.
      * }
      *
-     * @return array
      */
     protected $attributes = [
         'title'    => '',
@@ -49,7 +50,7 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
         'args'     => [],
         'cap'      => 'manage_options',
         'parent'   => '',
-        'show'     => true
+        'show'     => true,
     ];
 
     /**
@@ -83,31 +84,42 @@ class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
     {
         $this->name = $name;
         $this->index = self::$_index++;
+        $this->set($attrs)->parse();
+
 
         if ($screen instanceof WpScreenContract) {
             $this->screen = $screen;
         } else {
-            add_action('admin_init', function () use ($screen) {
-                $this->screen = WpScreen::get($screen);
-
-                $content = $this->get('content', '');
-
+            if ($content = $this->get('content', '')) {
                 if (is_string($content) && class_exists($content)) {
-                    $controller = new $content($this, $this->getArgs());
+                    $controller = new $content();
                 } elseif (is_object($content)) {
                     $controller = $content;
-                    call_user_func_array($controller, [$this, $this->getArgs()]);
+                    if (is_callable($controller)) {
+                        call_user_func($controller);
+                    }
                 } else {
                     $controller = null;
                 }
 
                 if ($controller instanceof MetaboxController) {
+                    $controller->set($this->getArgs())->boot();
+                    $this->set('controller', $controller);
+                }
+            }
+
+            add_action('admin_init', function () use ($screen) {
+                $this->screen = WpScreen::get($screen);
+
+                $controller = $this->get('controller');
+
+                if ($controller instanceof MetaboxController) {
+                    $controller->setFactory($this)->parse()->prepare();
+
                     $this->set('controller', $controller);
                 }
             }, 999999);
         }
-
-        parent::__construct($attrs);
     }
 
     /**

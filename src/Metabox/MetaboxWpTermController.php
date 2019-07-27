@@ -1,35 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxWpTermController as MetaboxWpTermControllerContract;
-use tiFy\Contracts\Metabox\MetaboxFactory;
+use tiFy\Contracts\Metabox\{MetaboxController as MetaboxControllerContract,
+    MetaboxWpTermController as MetaboxWpTermControllerContract};
 use WP_Term;
 
 abstract class MetaboxWpTermController extends MetaboxController implements MetaboxWpTermControllerContract
 {
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param MetaboxFactory $item Instance de l'élément.
-     * @param array $attrs Liste des variables passées en arguments.
-     *
-     * @return void
-     */
-    public function __construct(MetaboxFactory $item, $args = [])
-    {
-        parent::__construct($item, $args);
-
-        foreach ($this->metadatas() as $meta => $single) :
-            if (is_numeric($meta)) :
-                $meta = (string) $single;
-                $single = true;
-            endif;
-
-            taxonomy()->term_meta()->register($this->getTaxonomy(), $meta, $single);
-        endforeach;
-    }
-
     /**
      * {@inheritDoc}
      *
@@ -41,7 +19,7 @@ abstract class MetaboxWpTermController extends MetaboxController implements Meta
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getTaxonomy()
     {
@@ -49,7 +27,7 @@ abstract class MetaboxWpTermController extends MetaboxController implements Meta
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function header($term = null, $taxonomy = null, $args = null)
     {
@@ -57,10 +35,29 @@ abstract class MetaboxWpTermController extends MetaboxController implements Meta
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function metadatas()
     {
         return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function prepare():  MetaboxControllerContract
+    {
+        parent::prepare();
+
+        foreach ($this->metadatas() as $meta => $single) {
+            if (is_numeric($meta)) {
+                $meta = (string)$single;
+                $single = true;
+            }
+
+            taxonomy()->term_meta()->register($this->getTaxonomy(), $meta, $single);
+        }
+
+        return $this;
     }
 }

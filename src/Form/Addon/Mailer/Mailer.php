@@ -116,7 +116,6 @@ class Mailer extends AddonController
                 );
             endif;
         endif;
-
     }
 
     /**

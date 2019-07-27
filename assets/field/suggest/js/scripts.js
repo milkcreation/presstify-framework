@@ -1,6 +1,24 @@
 "use strict";
 
 jQuery(function ($) {
+  // Attribution de la valeur à l'élément.
+  let _hook = $.valHooks.span;
+
+  $.valHooks.span = {
+    get: function (elem) {
+      if (typeof $(elem).tifySuggest('instance') === 'undefined') {
+        return _hook && _hook.get && _hook.get(elem) || undefined;
+      }
+      return $(elem).data('value');
+    },
+    set: function (elem, value) {
+      if (typeof $(elem).tifySuggest('instance') === 'undefined') {
+        return _hook && _hook.set && _hook.set(elem, value) || undefined;
+      }
+      $(elem).data('value', value);
+    }
+  };
+
   $.widget('tify.tifySuggest', {
     widgetEventPrefix: 'suggest:',
     id: undefined,
@@ -63,6 +81,7 @@ jQuery(function ($) {
 
         handler._renderItemData = function (ul, item, index) {
           let render = (item.render !== undefined) ? item.render : item.label;
+              item.value = $('<div/>').html(item.value).text();
 
           return $("<li>")
               .attr("data-index", index)
@@ -78,9 +97,10 @@ jQuery(function ($) {
               let $alt = $('[data-control="suggest.alt"]', self.el);
 
               if ($alt.length) {
-                $(this).val(ui.item.label);
-                $alt.val(ui.item.value);
-                return false;
+                $alt.val(ui.item.alt || ui.item.value);
+                self.el.data('value', ui.item.alt || ui.item.value);
+              } else {
+                self.el.data('value', ui.item.value);
               }
             })
             .on('autocompletefocus', function (event, ui) {
@@ -102,9 +122,9 @@ jQuery(function ($) {
           'change', 'close', 'create', 'focus', 'open', 'response', 'search', 'select'
         ];
 
-        events.forEach(function (event) {
-          self.autocomplete.on('autocomplete' + event, function () {
-            self._trigger(event, null, arguments);
+        events.forEach(function (eventname) {
+          self.autocomplete.on('autocomplete' + eventname, function (e) {
+            self._trigger(eventname, e, arguments);
           });
         });
       }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
@@ -7,7 +7,7 @@ use tiFy\Contracts\Metabox\MetaboxWpUserController as MetaboxWpUserControllerCon
 abstract class MetaboxWpUserController extends MetaboxController implements MetaboxWpUserControllerContract
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function content($user = null, $args = null, $null = null)
     {
@@ -15,7 +15,7 @@ abstract class MetaboxWpUserController extends MetaboxController implements Meta
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function header($user = null, $args = null, $null = null)
     {

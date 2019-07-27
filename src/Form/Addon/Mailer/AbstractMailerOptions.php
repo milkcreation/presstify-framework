@@ -3,7 +3,6 @@
 namespace tiFy\Form\Addon\Mailer;
 
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Metabox\MetaboxWpOptionsController;
 use tiFy\Form\Factory\ResolverTrait;
 
@@ -29,20 +28,7 @@ abstract class AbstractMailerOptions extends MetaboxWpOptionsController
     }
 
     /**
-     * Instanciation du contrôleur.
-     *
-     * @param MetaboxFactory $item Instance de l'élément.
-     * @param array $attrs Liste des variables passées en arguments.
-     *
-     * @return object
-     */
-    public function __invoke(MetaboxFactory $item, $args = [])
-    {
-        return parent::__construct($item, $args);
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function boot()
     {

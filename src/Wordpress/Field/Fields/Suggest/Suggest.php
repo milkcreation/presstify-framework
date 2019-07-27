@@ -48,9 +48,9 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $items = collect($posts)->map(function (QueryPost &$item) {
             return [
+                'alt'    => (string)$item->getId(),
                 'label'  => (string)$item->getTitle(),
-                'value'  => (string)$item->getId(),
-                'render' => (string)$item->getTitle(),
+                'value'  => (string)$item->getTitle(true)
             ];
         })->all();
 
@@ -73,9 +73,9 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $items = collect($terms)->map(function (QueryTerm &$item) {
             return [
+                'alt'    => (string)$item->getId(),
                 'label'  => (string)$item->getName(),
-                'value'  => (string)$item->getId(),
-                'render' => (string)$item->getName(),
+                'value'  => (string)$item->getName()
             ];
         })->all();
 
@@ -98,9 +98,9 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $items = collect($terms)->map(function (QueryUser &$item) {
             return [
+                'alt'    => (string)$item->getId(),
                 'label'  => (string)$item->getDisplayName(),
-                'value'  => (string)$item->getId(),
-                'render' => (string)$item->getDisplayName(),
+                'value'  => (string)$item->getDisplayName()
             ];
         })->all();
 

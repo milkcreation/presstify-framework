@@ -42,7 +42,15 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function __toString(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function boot(): void
     {
@@ -143,11 +151,20 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
     {
         parent::parse();
 
+        $labels = $this->get('labels', []);
+        if (is_object($labels)) {
+            $this->set('labels', get_object_vars($labels));
+        }
+
         $this->set('label', $this->get('label', _x($this->getName(), 'post type general name', 'tify')));
 
-        $this->set('plural', $this->get('plural', $this->get('label')));
+        $this->set('plural', $this->get('plural',
+            $this->get('labels.name', $this->get('label'))
+        ));
 
-        $this->set('singular', $this->get('singular', $this->get('label')));
+        $this->set('singular', $this->get('singular',
+            $this->get('labels.singular_name', $this->get('label'))
+        ));
 
         $this->set('gender', $this->get('gender', false));
 
@@ -155,7 +172,7 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
             'singular' => $this->get('singular'),
             'plural'   => $this->get('plural'),
             'gender'   => $this->get('gender'),
-        ], (array)$this->get('labels', [])), $this->get('label'));
+        ], $this->get('labels', [])), $this->get('label'));
         $this->set('labels', $labels->all());
 
         $this->set('exclude_from_search', $this->has('exclude_from_search')

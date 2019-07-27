@@ -31,9 +31,6 @@ class Asset
         }, 5);
 
         add_action('init', function () {
-            wp_register_style('tiFyAdmin', $this->manager->url('/admin/css/styles.css'), [], 180528);
-            wp_register_script('tiFyAdmin', $this->manager->url('/admin/js/scripts.js'), ['jquery'], 180528, true);
-
             $lib = require_once(__DIR__ . '/Resources/config/third-party.php');
             foreach ($lib['css'] as $handle => $attrs) {
                 wp_register_style($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);

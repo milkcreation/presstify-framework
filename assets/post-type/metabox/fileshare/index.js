@@ -1,4 +1,8 @@
 // DEPS
+// PresstiFy
+// Theme
+import '../../../theme/index';
+
 // jQuery-ui - Widget
 import 'jquery-ui/ui/widget';
 

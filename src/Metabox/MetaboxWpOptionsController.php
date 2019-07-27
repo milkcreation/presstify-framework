@@ -1,36 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxWpOptionsController as MetaboxWpOptionsControllerContract;
-use tiFy\Contracts\Metabox\MetaboxFactory;
+use tiFy\Contracts\Metabox\{MetaboxController as MetaboxControllerContract,
+    MetaboxWpOptionsController as MetaboxWpOptionsControllerContract};
 
 abstract class MetaboxWpOptionsController extends MetaboxController implements MetaboxWpOptionsControllerContract
 {
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param MetaboxFactory $item Instance de l'élément.
-     * @param array $attrs Liste des variables passées en arguments.
-     *
-     * @return void
-     */
-    public function __construct(MetaboxFactory $item, $args = [])
-    {
-        parent::__construct($item, $args);
-
-        foreach ($this->settings() as $setting => $attrs) :
-            if (is_numeric($setting)) :
-                $setting = (string) $attrs;
-                $attrs = [];
-            endif;
-
-            register_setting($this->getOptionsPage(), $setting, $attrs);
-        endforeach;
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function content($args = null, $null1 = null, $null2 = null)
     {
@@ -38,7 +16,7 @@ abstract class MetaboxWpOptionsController extends MetaboxController implements M
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getOptionsPage()
     {
@@ -46,7 +24,7 @@ abstract class MetaboxWpOptionsController extends MetaboxController implements M
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function header($args = null, $null1 = null, $null2 = null)
     {
@@ -54,7 +32,26 @@ abstract class MetaboxWpOptionsController extends MetaboxController implements M
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
+     */
+    public function prepare(): MetaboxControllerContract
+    {
+        parent::prepare();
+
+        foreach ($this->settings() as $setting => $attrs) {
+            if (is_numeric($setting)) {
+                $setting = (string)$attrs;
+                $attrs = [];
+            }
+
+            register_setting($this->getOptionsPage(), $setting, $attrs);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function settings()
     {

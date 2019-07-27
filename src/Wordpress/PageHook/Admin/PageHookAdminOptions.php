@@ -2,6 +2,7 @@
 
 namespace tiFy\Wordpress\PageHook\Admin;
 
+use tiFy\Contracts\Metabox\MetaboxController as MetaboxControllerContract;
 use tiFy\Wordpress\Contracts\PageHookItem;
 use tiFy\Metabox\MetaboxWpOptionsController;
 
@@ -26,11 +27,13 @@ class PageHookAdminOptions extends MetaboxWpOptionsController
     /**
      * @inheritDoc
      */
-    public function parse($attrs = [])
+    public function parse(): MetaboxControllerContract
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('items', page_hook()->all());
+
+        return $this;
     }
 
     /**

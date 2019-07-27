@@ -4,7 +4,6 @@
  */
 ?>
 <?php $this->before(); ?>
-
 <div <?php $this->attrs(); ?>>
     <span class="Holder-pad"
           style="padding-top:<?php echo ceil((100/$this->get('width'))* $this->get('height')); ?>%"
@@ -20,5 +19,4 @@
         ?>
     </div>
 </div>
-
 <?php $this->after();

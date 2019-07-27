@@ -2,6 +2,7 @@
 
 namespace tiFy\PostType\Metabox\Fileshare;
 
+use tiFy\Contracts\Metabox\MetaboxController as MetaboxControllerContract;
 use tiFy\Metabox\MetaboxWpPostController;
 use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Proxy\Field;
@@ -123,11 +124,11 @@ class Fileshare extends MetaboxWpPostController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parse($attrs = [])
+    public function parse(): MetaboxControllerContract
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'MetaboxFileshare'));
 
@@ -172,6 +173,8 @@ class Fileshare extends MetaboxWpPostController
             'removable'      => $this->get('removable'),
             'sortable'       => $this->get('sortable'),
         ]);
+
+        return $this;
     }
 
     /**

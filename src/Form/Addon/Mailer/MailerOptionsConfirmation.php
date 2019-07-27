@@ -42,7 +42,7 @@ class MailerOptionsConfirmation extends AbstractMailerOptions
      * @param array $sender Attributs de l'expéditeur
      *
      * @return array
-     */
+
     public function sanitize_sender($sender)
     {
         if (empty($sender['email'])) :
@@ -66,7 +66,7 @@ class MailerOptionsConfirmation extends AbstractMailerOptions
         endif;
 
         return $sender;
-    }
+    }  */
 
     /**
      * {@inheritdoc}

@@ -2,9 +2,10 @@
 
 namespace tiFy\Wordpress\Query;
 
-use tiFy\Support\{DateTime, ParamsBag};
-use tiFy\Wordpress\Contracts\{
-    Database\PostBuilder,
+use tiFy\Contracts\PostType\{PostTypeFactory, PostTypeStatus};
+use tiFy\Support\{Arr, DateTime, ParamsBag};
+use tiFy\Support\Proxy\PostType;
+use tiFy\Wordpress\Contracts\{Database\PostBuilder,
     QueryComment as QueryCommentContract,
     QueryPost as QueryPostContract};
 use tiFy\Wordpress\Database\Model\Post as Model;
@@ -16,10 +17,35 @@ use WP_User;
 class QueryPost extends ParamsBag implements QueryPostContract
 {
     /**
+     * Indicateur d'activaction du cache.
+     * @var boolean
+     */
+    protected $cacheable = true;
+
+    /**
+     * Nombre de seconde jusqu'à expiration du cache.
+     * @var int
+     */
+    protected $cacheExpire = 3600*24*365*5;
+
+    /**
+     * Clé d'indice d'enregistrement du cache.
+     * @var string
+     */
+    protected $cacheKey = '_cache';
+
+    /**
      * Instance du modèle de base de données associé.
      * @var PostBuilder
      */
     protected $db;
+
+    /**
+     * Instance du parent.
+     * {@internal Variation uniquement}
+     * @var QueryPost|false|null
+     */
+    protected $parent;
 
     /**
      * Instance de post Wordpress.
@@ -39,6 +65,71 @@ class QueryPost extends ParamsBag implements QueryPostContract
         if ($this->wp_post = $wp_post instanceof WP_Post ? $wp_post : null) {
             $this->set($this->wp_post->to_array())->parse();
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cacheable(): bool
+    {
+        return $this->cacheable;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cacheAdd($key, $value = null): QueryPostContract
+    {
+        if (!$cache = $this->getMetaSingle('_cache', []) ?: []) {
+            $cache['expire'] = time()+ $this->cacheExpire;
+            $cache['created'] = time();
+        }
+        $keys = !is_array($key) ? [$key => $value] : $key;
+        $cache['data'] = array_merge($cache['data'] ?? [], $keys);
+
+        $this->saveMeta($this->cacheKey, $cache);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cacheClear(string $key = null): QueryPostContract
+    {
+        if (is_null($key)) {
+            $this->saveMeta($this->cacheKey, []);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cacheCreate(): QueryPostContract
+    {
+        $this->cacheClear();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cacheGet(?string $key = null, $default = null)
+    {
+        $cache = $this->getMetaSingle($this->cacheKey, []);
+
+        return is_null($key) ? $cache : Arr::get($cache, "data.{$key}", $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cacheHas(string $key): bool
+    {
+        return $this->cacheable() && !is_null($this->cacheGet($key, null));
     }
 
     /**
@@ -73,11 +164,11 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function createFromName(string $post_name): ?QueryPostContract
     {
-        return (($wp_post = (new WP_Query())->query(['name'           => $post_name,
-                                                     'post_type'      => 'any',
-                                                     'posts_per_page' => 1,
-            ]))
-            && ($wp_post[0] instanceof WP_Post)) ? new static($wp_post[0]) : null;
+        return (($wp_post = (new WP_Query())->query([
+                'name'           => $post_name,
+                'post_type'      => 'any',
+                'posts_per_page' => 1,
+            ])) && ($wp_post[0] instanceof WP_Post)) ? new static($wp_post[0]) : null;
     }
 
     /**
@@ -111,10 +202,10 @@ class QueryPost extends ParamsBag implements QueryPostContract
             $src = reset($src);
         }
 
-        if (preg_match('/^' . preg_quote(site_url('/'), '/'). '/', $src)) {
-            $filename = preg_replace('/' . preg_quote(site_url('/'), '/'). '/', ABSPATH, $src);
-        } elseif (preg_match('/^' . preg_quote(network_site_url('/'), '/'). '/', $src)) {
-            $filename = preg_replace('/' . preg_quote(network_site_url('/'), '/'). '/', ABSPATH, $src);
+        if (preg_match('/^' . preg_quote(site_url('/'), '/') . '/', $src)) {
+            $filename = preg_replace('/' . preg_quote(site_url('/'), '/') . '/', ABSPATH, $src);
+        } elseif (preg_match('/^' . preg_quote(network_site_url('/'), '/') . '/', $src)) {
+            $filename = preg_replace('/' . preg_quote(network_site_url('/'), '/') . '/', ABSPATH, $src);
         } else {
             return null;
         }
@@ -249,7 +340,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function getMetaKeys(bool $registered = true): array
     {
         if ($registered) {
-            return post_type()->post_meta()->keys($this->getType());
+            return post_type()->post_meta()->keys((string)$this->getType());
         } else {
             return get_post_custom_keys($this->getId()) ?: [];
         }
@@ -300,6 +391,20 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
+    public function getParent(): ?QueryPostContract
+    {
+        if (is_null($this->parent) && ($parent_id = $this->getParentId())) {
+            $this->parent = static::createFromId($parent_id) ?: false;
+        } else {
+            $this->parent = false;
+        }
+
+        return $this->parent ?: null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getParentId()
     {
         return (int)$this->get('post_parent', 0);
@@ -342,9 +447,9 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getStatus()
+    public function getStatus(): PostTypeStatus
     {
-        return (string)$this->get('post_status', '');
+        return PostType::status($this->get('post_status', ''));
     }
 
     /**
@@ -387,9 +492,9 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getType()
+    public function getType(): ?PostTypeFactory
     {
-        return (string)$this->get('post_type', '');
+        return PostType::get($this->get('post_type', ''));
     }
 
     /**
@@ -482,6 +587,6 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function typeIn(array $post_types): bool
     {
-        return in_array($this->getType(), $post_types);
+        return in_array((string)$this->getType(), $post_types);
     }
 }

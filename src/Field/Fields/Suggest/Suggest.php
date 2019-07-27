@@ -199,13 +199,13 @@ class Suggest extends FieldFactory implements SuggestContract
     public function xhrResponse(...$args): array
     {
         $items = collect($this->languages)
-            ->filter(function ($value) {
-                return preg_match('/' . req::input('_term', '') . '/i', $value);
-            })->map(function (&$value, $key) {
+            ->filter(function ($label) {
+                return preg_match('/' . req::input('_term', '') . '/i', $label);
+            })->map(function (&$label, $value) {
                 return [
-                    'label'  => (string)$this->viewer('label', compact('value')),
-                    'value'  => (string)$key,
-                    'render' => (string)$this->viewer('render', compact('value')),
+                    'alt'    => (string)$value,
+                    'label'  => (string)$this->viewer('label', compact('label', 'value')),
+                    'value'  => (string)$value
                 ];
             })->all();
 

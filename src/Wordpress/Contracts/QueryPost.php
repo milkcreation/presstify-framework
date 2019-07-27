@@ -2,7 +2,7 @@
 
 namespace tiFy\Wordpress\Contracts;
 
-use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus, Support\ParamsBag};
 use tiFy\Support\DateTime;
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
 use WP_Post;
@@ -44,6 +44,59 @@ interface QueryPost extends ParamsBag
      * @return static|null
      */
     public static function createFromPostdata(array $postdata): ?QueryPost;
+
+    /**
+     * Indicateur d'activation de la mise en cache.
+     *
+     * @return boolean
+     */
+    public function cacheable(): bool;
+
+    /**
+     * Ajout de données de cache associées au produit.
+     *
+     * @param string|array Clé d'indice de la données de cache.
+     * @param mixed $value Valeur de retour par défaut
+     *
+     * @return static
+     */
+    public function cacheAdd($key, $value = null): QueryPost;
+
+    /**
+     * Suppression des données de cache associées au produit.
+     *
+     * @param string $key Clé d'indice de donnée mise en cache.
+     *
+     * @return static
+     */
+    public function cacheClear(string $key = null): QueryPost;
+
+    /**
+     * Génération des données mise en cache.
+     *
+     * @return static
+     */
+    public function cacheCreate(): QueryPost;
+
+    /**
+     * Récupération de donnée de cache associées au produit.
+     * {@internal Permet de récupérer de manière optimale des données relatives aux attributs de variation ...}
+     *
+     * @param string|null Clé d'indice de la données de cache. Si null, retourne la liste complète des données.
+     * @param mixed $default Valeur de retour par défaut
+     *
+     * @return mixed|array|string|boolean
+     */
+    public function cacheGet(?string $key = null, $default = null);
+
+    /**
+     * Vérification d'éxistance d'une donnée en cache.
+     *
+     * @param string Clé d'indice de la données de cache. Syntaxe à point permise.
+     *
+     * @return boolean
+     */
+    public function cacheHas(string $key): bool;
 
     /**
      * Récupération de l'instance du modèle de base de donnée associé.
@@ -230,6 +283,13 @@ interface QueryPost extends ParamsBag
     public function getParentId();
 
     /**
+     * Récupération de l'instance tiFy du produit parent.
+     *
+     * @return static|null
+     */
+    public function getParent(): ?QueryPost;
+
+    /**
      * Récupération du chenmin relatif vers l'affichage du post dans l'interface utilisateur.
      *
      * @return string
@@ -260,11 +320,11 @@ interface QueryPost extends ParamsBag
     public function getSlug();
 
     /**
-     * Récupération du statut de publication.
+     * Récupération de l'instance du statut associé.
      *
-     * @return string
+     * @return PostTypeStatus
      */
-    public function getStatus();
+    public function getStatus(): PostTypeStatus;
 
     /**
      * Récupération de la liste des termes de taxonomie.
@@ -277,7 +337,7 @@ interface QueryPost extends ParamsBag
     public function getTerms($taxonomy, $args = []);
 
     /**
-     * Récupération de l'url de l'image représentative.
+     * Récupération de l'image représentative.
      *
      * @param string|array $size Taille d'image déclaré|Tableau indexé [hauteur, largeur].
      * @param array $attrs Liste des attributs HTML de la balise img
@@ -307,9 +367,9 @@ interface QueryPost extends ParamsBag
     /**
      * Récupération du type de post.
      *
-     * @return string
+     * @return PostTypeFactory|null
      */
-    public function getType();
+    public function getType(): ?PostTypeFactory;
 
     /**
      * Récupération de l'instance de post Wordpress associée.
