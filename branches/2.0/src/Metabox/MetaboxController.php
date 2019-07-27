@@ -1,17 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxController as MetaboxControllerContract;
 use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
+use WP_Screen;
 
 abstract class MetaboxController extends ParamsBag implements MetaboxControllerContract
 {
     /**
      * Instance de l'élément.
-     * @var MetaboxFactory
+     * @var MetaboxFactory|null
      */
     protected $item;
 
@@ -22,38 +23,12 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     protected $viewer;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param MetaboxFactory $item Instance de l'élément.
-     * @param array $attrs Liste des variables passées en arguments.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct(MetaboxFactory $item, $args = [])
-    {
-        $this->item = $item;
-
-        parent::__construct($args);
-
-        add_action('current_screen', function ($wp_current_screen) {
-            if ($wp_current_screen->id === $this->item->getScreen()->getHookname()) :
-                $this->load($wp_current_screen);
-            endif;
-        });
-
-        $this->boot();
-    }
+    public function boot() {}
 
     /**
-     * {@inheritdoc}
-     */
-    public function boot()
-    {
-
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function content($var1 = null, $var2 = null, $var3 = null)
     {
@@ -61,7 +36,7 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getObjectName()
     {
@@ -69,7 +44,7 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getObjectType()
     {
@@ -77,7 +52,7 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function header($var1 = null, $var2 = null, $var3 = null)
     {
@@ -85,19 +60,53 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function load($wp_screen)
+    public function load(WP_Screen $wp_screen)
     {
 
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
+     */
+    public function parse(): MetaboxControllerContract
+    {
+        parent::parse();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function prepare(): MetaboxControllerContract
+    {
+        add_action('current_screen', function (WP_Screen $wp_screen) {
+            if ($wp_screen->id === $this->item->getScreen()->getHookname()) {
+                $this->load($wp_screen);
+            }
+        });
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setFactory(MetaboxFactory $factory): MetaboxControllerContract
+    {
+        $this->item = $factory;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function viewer($view = null, $data = [])
     {
-        if (!$this->viewer) :
+        if (!$this->viewer) {
             $cinfo = class_info($this);
             $default_dir = $cinfo->getDirname() . '/views';
             $this->viewer = view()
@@ -109,11 +118,11 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
                         : (is_dir($default_dir) ? $default_dir : $cinfo->getDirname())
                 )
                 ->set('metabox', $this);
-        endif;
+        }
 
-        if (func_num_args() === 0) :
+        if (func_num_args() === 0) {
             return $this->viewer;
-        endif;
+        }
 
         return $this->viewer->make("_override::{$view}", $data);
     }

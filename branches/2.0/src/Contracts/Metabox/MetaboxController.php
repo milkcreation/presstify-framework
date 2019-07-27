@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Metabox;
 
-use tiFy\Contracts\Kernel\ParamsBag;
-use tiFy\Contracts\View\ViewController;
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\{Support\ParamsBag, View\ViewController, View\ViewEngine};
+use WP_Screen;
 
 interface MetaboxController extends ParamsBag
 {
@@ -54,11 +53,21 @@ interface MetaboxController extends ParamsBag
     /**
      * Chargement de la page d'administration courante de Wordpress.
      *
-     * @param \WP_Screen $wp_screen Instance du controleur d'écran de la page d'administration courante de Wordpress.
+     * @param WP_Screen $wp_screen Instance du controleur d'écran de la page d'administration courante de Wordpress.
      *
      * @return void
      */
-    public function load($wp_screen);
+    public function load(WP_Screen $wp_screen);
+
+    /**
+     * @inheritDoc
+     */
+    public function prepare(): MetaboxController;
+
+    /**
+     * @inheritDoc
+     */
+    public function setFactory(MetaboxFactory $factory): MetaboxController;
 
     /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.

@@ -3,7 +3,6 @@
  * @var tiFy\PostType\Metabox\ImageGallery\ViewController $this
  */
 ?>
-
 <div class="tiFyTabMetaboxPostTypeImageGallery">
     <ul class="tiFyTabMetaboxPostTypeImageGallery-items ThemeCards">
     <?php $order = 0; foreach ($this->get('items', []) as $attachment_id) : ?>

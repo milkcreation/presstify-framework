@@ -50,7 +50,7 @@ class Holder extends PartialFactory implements HolderContract
         $this->set(
             'attrs.style',
             "background-color:{$this->get('background-color')};color:{$this->get('foreground-color')};" .
-            "font-size:{$this->get('font-size')}\""
+            "font-size:{$this->get('font-size')}"
         );
 
         return $this;

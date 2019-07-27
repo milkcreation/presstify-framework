@@ -1,15 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Metabox;
+
+use WP_Post;
 
 interface MetaboxWpPostController extends MetaboxController
 {
     /**
-     * Affichage du contenu.
+     * {@inheritDoc}
      *
-     * @param \WP_Post $post Objet post Wordpress.
-     * @param array $args Liste des variables passés en argument.
-     * @param null $null Paramètre indisponible.
+     * @param WP_Post $post Objet post Wordpress.
      *
      * @return string
      */

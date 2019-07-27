@@ -1,111 +1,131 @@
-/* globals tify */
-
 "use strict";
 
-jQuery(document).ready(function ($) {
-    $('.tiFyTabooxRelatedPosts-suggest').each(function () {
-        $(this).on('autocompleteselect', function (event, ui) {
-            event.preventDefault();
+jQuery(function ($) {
+  $.widget('tify.tifyMetaboxRelatedPosts', {
+    widgetEventPrefix: 'metabox-related-posts:',
+    options: {},
 
-            var $this = $(this),
-                $closest = $(this).closest('.tiFyTabooxRelatedPosts');
+    // INITIALISATION
+    // -------------------------------------------------------------------------------------------------------------
+    // Instanciation de l'élément.
+    _create: function () {
+      this.instance = this;
 
-            if (!ui.item.value) {
-                $('input[type="text"]', $this).val('');
-                return false;
-            }
+      this.el = this.element;
 
-            var post_id = ui.item.value,
-                action = $('.tiFyTabooxRelatedPosts-action', $closest).val(),
-                name = $('.tiFyTabooxRelatedPosts-item_name', $closest).val(),
-                max = $('.tiFyTabooxRelatedPosts-item_max', $closest).val(),
-                count = $('.tiFyTabooxRelatedPosts-listItem', $closest).length;
+      this._initOptions();
+      this._initSuggest();
+      this._initSortable();
+      this._initItems();
+    },
 
-            if ((max > 0) && (count >= max)) {
-                alert(MetaboxPostTypeRelatedPosts.maxAttempt);
-                $('input[type="text"]', $this).val('');
-                return false;
-            }
+    // Initialisation des attributs de configuration.
+    _initOptions: function () {
+      $.extend(
+          true,
+          this.options,
+          this.el.data('options') && $.parseJSON(decodeURIComponent(this.el.data('options'))) || {}
+      );
+    },
 
-            $.ajax({
-                url: tify.ajax_url,
-                data: {action: action, post_id: post_id, name: name, order: count},
-                success: function (resp) {
-                    $('.tiFyTabooxRelatedPosts-list', $closest).append(resp);
-                    $('input[type="text"]', $this).val('');
-                },
-                type: 'post',
-                dataType: 'html'
-            });
+    // Initialisation de l'ordonnancement des éléments.
+    _initSuggest: function () {
+      let self = this;
+
+      $('[data-control="suggest"]', this.el).on('suggest:select', function () {
+        let o = $.extend(true, self.option('ajax') || {}, {
+          data: {
+            index: $('[data-control="metabox.related-posts.item"]', self.el).length,
+            post_id: $(this).val()
+          }
         });
 
-        $(this).on('autocompletesearch', function (event, ui) {
-            var $closest = $(this).closest('.tiFyTabooxRelatedPosts');
-            var attrs = $(this).data('attrs');
-
-            // Gestion des doublons
-            if (attrs['query_args']['post__not_in'] === undefined) {
-                attrs['query_args']['post__not_in'] = [];
-            }
-
-            /// Empêche la récupération de l'élément courant
-            var post_id = $("#post_ID").val();
-            if ($.inArray(post_id, attrs['query_args']['post__not_in']) < 0) {
-                attrs['query_args']['post__not_in'].push(post_id);
-            }
-
-            //// Empêche la récupération des élements déjà selectionnés
-            $('.tiFyTabooxRelatedPosts-listItemPostID', $closest).each(function () {
-                var post_id = $(this).val();
-                if ($.inArray(post_id, attrs['query_args']['post__not_in']) < 0)
-                    attrs['query_args']['post__not_in'].push(post_id);
-            });
-            attrs = $.extend({'query_args': attrs['query_args']}, attrs);
-            $(this).data('attrs', attrs);
+        $.ajax(o).done(function (resp) {
+          if (resp.success) {
+            let $item = $(resp.data).appendTo($('[data-control="metabox.related-posts.items"]', self.el));
+            self._setItem($item);
+          }
         });
-    });
+      });
+    },
 
-    // Ordonnacement des éléments
-    $('.tiFyTabooxRelatedPosts-list').sortable({
-        placeholder: 'tiFyTaboox-TotemListItem--sortablePlaceholder',
-        update: function (event, ui) {
-            $('input.tiFyTabooxRelatedPosts-listItemOrder', $(this)).each(function (u, v) {
-                $(this).val($(this).closest('li').index() + 1);
-            });
-        }
-    });
-    $('.tiFyTabooxRelatedPosts-list').disableSelection();
+    // Initialisation de l'ordonnancement des éléments.
+    _initSortable: function () {
+      let self = this,
+          o = $.extend({
+            axis: 'y',
+            handle: '[data-control="metabox.related-posts.item.sort"]'
+          }, self.option('sortable') || {}, {
+            update: function (event, ui) {
+              self._doUpdateItemsOrder();
+            }
+          });
 
-    // Suppression d'un élément
-    $(document).on('click', '.tiFyTabooxRelatedPosts-listItemRemove', function (e) {
+      $('[data-control="metabox.related-posts.items"]', self.el).sortable(o).disableSelection();
+    },
+
+    // Initialisation de la liste des éléments.
+    _initItems: function () {
+      let self = this;
+
+      $('[data-control="metabox.related-posts.item"]', self.el).each(function () {
+        self._setItem($(this));
+      });
+    },
+
+    // SETTER
+    // -------------------------------------------------------------------------------------------------------------
+    // Définition d'un élément.
+    _setItem: function ($item) {
+      let self = this;
+
+      self._onItemMetasToggle($item);
+      self._onItemRemove($item);
+    },
+
+    // ACTIONS
+    // -------------------------------------------------------------------------------------------------------------
+    // Mise à jour des indicateurs d'ordre d'affichage.
+    _doUpdateItemsOrder: function () {
+      let self = this;
+
+      $('[data-control="metabox.related-posts.item.order"]', self.el).each(function (i) {
+        $(this).val(i + 1);
+      });
+    },
+
+    // EVENTS
+    // -------------------------------------------------------------------------------------------------------------
+    // Bascule d'affichage des métadonnées.
+    _onItemMetasToggle: function ($item) {
+      $('[data-control="metabox.related-posts.item.metas-toggle"]', $item).on(
+          'mouseenter mouseleave',
+          function (e) {
+            e.preventDefault();
+
+            if ($item.attr('aria-metas') === 'true') {
+              $item.attr('aria-metas', 'false')
+            } else {
+              $item.attr('aria-metas', 'true')
+            }
+          });
+    },
+    // Suppression d'un élément.
+    _onItemRemove: function ($item) {
+      let self = this;
+
+      $('[data-control="metabox.related-posts.item.remove"]', $item).on('click', function (e) {
         e.preventDefault();
-
-        var $suggest = $('.tiFyTabooxRelatedPosts-suggest', $(this).closest('.tiFyTabooxRelatedPosts')),
-            $item = $(this).closest('.tiFyTabooxRelatedPosts-listItem');
-
-        // Traitement des doublons
-        var attrs = $suggest.data('attrs');
-        if (attrs['query_args']['post__not_in'] !== undefined) {
-            var post_id = $('.tiFyTabooxRelatedPosts-listItemPostID', $item).val();
-            var index = $.inArray(post_id, attrs['query_args']['post__not_in']);
-            if (index > -1) {
-                attrs['query_args']['post__not_in'].splice(index, 1);
-            }
-            attrs = $.extend({'query_args': attrs['query_args']}, attrs);
-            $suggest.data('attrs', attrs);
-        }
 
         $item.fadeOut(function () {
-            var $closest = $(this).closest('.tiFyTabooxRelatedPosts-list');
-            $(this).remove();
-            $('input.tiFyTabooxRelatedPosts-listItemOrder', $closest).each(function (u, v) {
-                $(this).val($(this).closest('li').index() + 1);
-            });
+          $(this).remove();
+          self._doUpdateItemsOrder();
         });
-    });
+      });
+    },
+  });
+});
 
-    $(document).on('mouseenter mouseleave click', '.tiFyTabooxRelatedPosts-listItemMetaToggle', function (e) {
-        e.preventDefault();
-        $(this).next().toggleClass('active');
-    });
+jQuery(document).ready(function ($) {
+  $('[data-control="metabox.related-posts"]').tifyMetaboxRelatedPosts();
 });

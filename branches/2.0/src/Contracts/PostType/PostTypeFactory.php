@@ -7,6 +7,14 @@ use tiFy\Contracts\Support\ParamsBag;
 interface PostTypeFactory extends ParamsBag
 {
     /**
+     * Résolution de sortie de la classe sous forme de chaîne de caractère.
+     * {@internal Retourne le nom de qualification du type de post.}
+     *
+     * @return string
+     */
+    public function __toString(): string;
+
+    /**
      * Initialisation du controleur.
      *
      * @return void

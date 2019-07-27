@@ -2,13 +2,20 @@
 
 namespace tiFy\PostType;
 
-use tiFy\Contracts\PostType\PostTypeFactory as PostTypeFactoryContract;
-use tiFy\Contracts\PostType\PostTypeManager as PostTypeManagerContract;
-use tiFy\Contracts\PostType\PostTypePostMeta;
+use tiFy\Contracts\PostType\{PostTypeFactory as PostTypeFactoryContract,
+    PostTypeManager as PostTypeManagerContract,
+    PostTypePostMeta,
+    PostTypeStatus as PostTypeStatusContract};
 use tiFy\Support\Manager;
 
 class PostTypeManager extends Manager implements PostTypeManagerContract
 {
+    /**
+     * Liste des statut déclarés.
+     * @var PostTypeStatusContract[]
+     */
+    protected $statuses = [];
+
     /**
      * @inheritDoc
      */
@@ -39,6 +46,14 @@ class PostTypeManager extends Manager implements PostTypeManagerContract
     public function resolve(string $alias)
     {
         return $this->container->get("post-type.{$alias}");
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function status(string $name): PostTypeStatusContract
+    {
+        return $this->statuses[$name] = $this->statuses[$name] ?? PostTypeStatus::createFromName($name);
     }
 
     /**

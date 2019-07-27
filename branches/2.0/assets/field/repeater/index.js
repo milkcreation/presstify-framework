@@ -2,7 +2,7 @@
 // jQuery-ui - Widget
 import 'jquery-ui/ui/widget';
 
-// jQuery-ui - Sortable =
+// jQuery-ui - Sortable
 import 'jquery-ui/ui/widgets/sortable';
 
 // SCSS

@@ -2,6 +2,7 @@
 
 namespace tiFy\Options\Metabox\Slideshow;
 
+use tiFy\Contracts\Metabox\MetaboxController as MetaboxControllerContract;
 use tiFy\Metabox\MetaboxWpOptionsController;
 
 class Slideshow extends MetaboxWpOptionsController
@@ -126,11 +127,11 @@ class Slideshow extends MetaboxWpOptionsController
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function parse($attrs = [])
+    public function parse(): MetaboxControllerContract
     {
-        parent::parse($attrs);
+        parent::parse();
 
         $exists = array_merge(
             ['options' => [], 'items' => []],
@@ -181,6 +182,8 @@ class Slideshow extends MetaboxWpOptionsController
                 ]
             )
         );
+
+        return $this;
     }
 
     /**

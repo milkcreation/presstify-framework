@@ -8,6 +8,16 @@
     background-color: #FFF;
 }
 
+.MetaboxFileshare-item::after,
+.MetaboxFileshare-item::before {
+    display:block;
+    content:" ";
+}
+
+.MetaboxFileshare-item::after {
+    clear: both;
+}
+
 .MetaboxFileshare-itemIcon {
     float: left;
     margin-right: 5px;
