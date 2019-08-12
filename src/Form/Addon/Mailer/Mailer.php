@@ -67,7 +67,7 @@ class Mailer extends AddonController
         $this->set('option_names', $option_names);
 
         if ($this->get('confirmation') && get_option($option_names['confirmation'])) :
-            $from = get_option($option_names['sender']);
+            $from = get_option($option_names['sender']) ? !'' : ['email' => '', 'name' => ''];
 
             $this->set('confirmation.from', [$from['email'], $from['name']]);
         endif;
