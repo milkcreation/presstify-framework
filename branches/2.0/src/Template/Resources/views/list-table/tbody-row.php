@@ -9,8 +9,10 @@
 ?>
 <tr>
     <?php foreach ($this->columns() as $column) : ?>
-        <td <?php echo $column->cellAttrs(); ?>>
-            <?php echo $column; ?>
-        </td>
+        <?php echo partial('tag', [
+            'attrs'   => $column->get('attrs', []),
+            'content' => (string)$column,
+            'tag'     => $column->get('tag', 'td'),
+        ]); ?>
     <?php endforeach; ?>
 </tr>

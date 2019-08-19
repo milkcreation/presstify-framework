@@ -4,13 +4,15 @@ namespace tiFy\Wordpress\Field\Fields\Suggest;
 
 use tiFy\Field\Fields\Suggest\Suggest as BaseSuggest;
 use tiFy\Support\Proxy\Request as req;
-use tiFy\Wordpress\{Contracts\Field\Suggest as SuggestContract,
+use tiFy\Wordpress\{
+    Contracts\Field\Suggest as SuggestContract,
     Query\QueryPost,
     Query\QueryPosts,
     Query\QueryTerm,
     Query\QueryTerms,
     Query\QueryUser,
-    Query\QueryUsers};
+    Query\QueryUsers
+};
 
 class Suggest extends BaseSuggest implements SuggestContract
 {
@@ -41,16 +43,16 @@ class Suggest extends BaseSuggest implements SuggestContract
     public function xhrResponsePostQuery(...$args): array
     {
         $args = array_merge([
-            'post_type' => 'any'
+            'post_type' => 'any',
         ], req::input('query_args', []), ['s' => req::input('_term', '')]);
 
         $posts = QueryPosts::createFromArgs($args) ?: [];
 
         $items = collect($posts)->map(function (QueryPost &$item) {
             return [
-                'alt'    => (string)$item->getId(),
-                'label'  => (string)$item->getTitle(),
-                'value'  => (string)$item->getTitle(true)
+                'alt'   => (string)$item->getId(),
+                'label' => (string)$item->getTitle(),
+                'value' => (string)$item->getTitle(true),
             ];
         })->all();
 
@@ -73,9 +75,9 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $items = collect($terms)->map(function (QueryTerm &$item) {
             return [
-                'alt'    => (string)$item->getId(),
-                'label'  => (string)$item->getName(),
-                'value'  => (string)$item->getName()
+                'alt'   => (string)$item->getId(),
+                'label' => (string)$item->getName(),
+                'value' => (string)$item->getName(),
             ];
         })->all();
 
@@ -98,9 +100,9 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $items = collect($terms)->map(function (QueryUser &$item) {
             return [
-                'alt'    => (string)$item->getId(),
-                'label'  => (string)$item->getDisplayName(),
-                'value'  => (string)$item->getDisplayName()
+                'alt'   => (string)$item->getId(),
+                'label' => (string)$item->getDisplayName(),
+                'value' => (string)$item->getDisplayName(),
             ];
         })->all();
 

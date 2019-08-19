@@ -92,8 +92,10 @@ class Field extends Manager implements FieldContract
         $alias = $args[0] ?? null;
         if (!$alias || !isset($this->items[$alias])) {
             throw new InvalidArgumentException(
-                __('Aucune instance de champs n\'est définie sous l\'alias %s', 'tify'),
-                $alias
+                sprintf(
+                    __('Aucune instance de champs correspondant à l\'alias : %s', 'tify'),
+                    $alias
+                )
             );
         }
 

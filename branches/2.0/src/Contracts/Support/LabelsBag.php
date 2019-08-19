@@ -56,6 +56,15 @@ interface LabelsBag extends ParamsBag
     public function parse(): LabelsBag;
 
     /**
+     * Définition du genre de l'élément
+     *
+     * @param string $gender
+     *
+     * @return static
+     */
+    public function setGender(bool $gender): LabelsBag;
+
+    /**
      * Définition du nom de qualification.
      *
      * @param string $name
@@ -63,4 +72,22 @@ interface LabelsBag extends ParamsBag
      * @return static
      */
     public function setName(string $name): LabelsBag;
+
+    /**
+     * Définition de l'intitulé du pluriel d'un élément.
+     *
+     * @param string $plural
+     *
+     * @return static
+     */
+    public function setPlural(string $plural): LabelsBag;
+
+    /**
+     * Définition de l'intitulé du singulier d'un élément.
+     *
+     * @param string $singular
+     *
+     * @return static
+     */
+    public function setSingular(string $singular): LabelsBag;
 }

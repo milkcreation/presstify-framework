@@ -106,12 +106,12 @@ interface TemplateFactory extends ParamsBag
     /**
      * Récupération de l'instance du controleur des intitulés ou récupération d'un intitulé.
      *
-     * @param string|null $key Clé d'indexe de l'intitulé.
+     * @param string|array|null $key Clé d'indexe de l'intitulé.
      * @param string $default Valeur de retour par défaut.
      *
      * @return FactoryLabels|string
      */
-    public function label(?string $key = null, string $default = '');
+    public function label($key = null, string $default = '');
 
     /**
      * Récupération du nom de qualification du controleur.

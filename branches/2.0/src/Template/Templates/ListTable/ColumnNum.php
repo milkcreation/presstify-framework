@@ -27,8 +27,13 @@ class ColumnNum extends Column
      */
     public function content(): string
     {
-        return ($item = $this->factory->item())
-            ? (string)($item->getIndex()+1)
-            : '';
+        if (!$item = $this->factory->item()) {
+            return '';
+        } else {
+            $per_page = $this->factory->pagination()->getPerPage();
+            $page = $this->factory->pagination()->getCurrentPage();
+
+            return (string)($per_page*($page-1)+($item->getIndex()+1));
+        }
     }
 }

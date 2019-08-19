@@ -1,3 +1,4 @@
+/* global jQuery */
 "use strict";
 
 jQuery(function ($) {

@@ -50,7 +50,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     protected $slug;
 
     /**
-     * Liste des fournisseurs de service.
+     * Liste des fournisseurs de services.
      * @var string[]
      */
     protected $serviceProviders = [
@@ -160,11 +160,17 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function label(?string $key = null, string $default = '')
+    public function label($key = null, string $default = '')
     {
         $labels = $this->resolve('labels');
 
-        return is_null($key) ? $labels : $labels->get($key, $default);
+        if(is_string($key)) {
+            return $labels->get($key, $default);
+        }  elseif (is_array($key)) {
+            return $labels->set($key);
+        } else {
+            return $labels;
+        }
     }
 
     /**

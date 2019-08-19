@@ -76,8 +76,10 @@ class Partial extends Manager implements PartialContract
         $alias = $args[0] ?? null;
         if (!$alias || !isset($this->items[$alias])) {
             throw new InvalidArgumentException(
-                __('Aucune instance de portion d\'affichage n\'est définie sous l\'alias %s', 'tify'),
-                $alias
+                sprintf(
+                    __('Aucune instance de portion d\'affichage correspondant à l\'alias : %s', 'tify'),
+                    $alias
+                )
             );
         }
 

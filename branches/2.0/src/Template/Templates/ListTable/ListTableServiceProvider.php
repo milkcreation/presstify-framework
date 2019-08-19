@@ -3,12 +3,14 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Template\Factory\FactoryServiceProvider;
-use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract,
+use tiFy\Template\Templates\ListTable\Contracts\{
+    Ajax as AjaxContract,
     Builder,
     BulkAction,
     BulkActions,
     Column,
     Columns,
+    DbBuilder,
     HttpXhrController,
     Item,
     Items,
@@ -19,7 +21,8 @@ use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract,
     RowActions,
     Search,
     ViewFilter,
-    ViewFilters};
+    ViewFilters
+};
 use tiFy\View\ViewEngine;
 
 class ListTableServiceProvider extends FactoryServiceProvider
@@ -49,28 +52,31 @@ class ListTableServiceProvider extends FactoryServiceProvider
     }
 
     /**
-     * Déclaration du controleurs de gestion de la table en ajax.
+     * Déclaration du controleur de gestion de la table en ajax.
      *
      * @return void
      */
     public function registerFactoryAjax(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('ajax'), function () {
-            $ajax = $this->factory->get('providers.ajax');
-            $ajax = $ajax instanceof AjaxContract
-                ? $ajax
-                : $this->getContainer()->get(AjaxContract::class);
+            if ($attrs = $this->factory->param('ajax')) {
+                $ajax = $this->factory->get('providers.ajax');
+                $ajax = $ajax instanceof AjaxContract
+                    ? $ajax
+                    : $this->getContainer()->get(AjaxContract::class);
 
-            $attrs = $this->factory->param('ajax', []);
-            if (is_string($attrs)) {
-                $attrs = [
-                    'url'      => $attrs,
-                    'dataType' => 'json',
-                    'type'     => 'POST',
-                ];
+                if (is_string($attrs)) {
+                    $attrs = [
+                        'url'      => $attrs,
+                        'dataType' => 'json',
+                        'type'     => 'POST',
+                    ];
+                }
+
+                return $ajax->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
+            } else {
+                return null;
             }
-
-            return $ajax->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 
@@ -81,9 +87,16 @@ class ListTableServiceProvider extends FactoryServiceProvider
     {
         $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
             $ctrl = $this->factory->get('providers.builder');
-            $ctrl = $ctrl instanceof Builder
-                ? clone $ctrl
-                : $this->getContainer()->get(Builder::class);
+
+            if ($this->factory->db()) {
+                $ctrl = $ctrl instanceof DbBuilder
+                    ? clone $ctrl
+                    : $this->getContainer()->get(DbBuilder::class);
+            } else {
+                $ctrl = $ctrl instanceof Builder
+                    ? clone $ctrl
+                    : $this->getContainer()->get(Builder::class);
+            }
 
             $attrs = $this->factory->param('query_args', []);
 
@@ -361,13 +374,13 @@ class ListTableServiceProvider extends FactoryServiceProvider
         $this->getContainer()->share($this->getFactoryAlias('viewer'), function () {
             $params = $this->factory->get('viewer', []);
 
-            if (!$params instanceof ViewEngine) {
+            if ( ! $params instanceof ViewEngine) {
                 $viewer = new ViewEngine(array_merge([
                     'directory' => template()->resourcesDir('/views/list-table'),
                 ], $params));
                 $viewer->setController(Viewer::class);
 
-                if (!$viewer->getOverrideDir()) {
+                if ( ! $viewer->getOverrideDir()) {
                     $viewer->setOverrideDir(template()->resourcesDir('/views/list-table'));
                 }
             } else {

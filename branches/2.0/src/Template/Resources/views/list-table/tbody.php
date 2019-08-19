@@ -13,7 +13,7 @@
     <?php else : ?>
         <tr class="no-items">
             <td class="colspanchange" colspan="<?php echo $this->columns()->countVisible(); ?>">
-                <?php echo $this->label('no_items'); ?>
+                <?php echo $this->label('no_item'); ?>
             </td>
         </tr>
     <?php endif; ?>

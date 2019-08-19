@@ -96,7 +96,10 @@ class Ajax extends ParamsBag implements AjaxContract
 
         $this->set('options', $this->parseOptions($this->get('options', [])));
 
-        $this->factory->param()->set('attrs.data-options', $this->all());
+        $this->factory->param()->set([
+            'attrs.data-control' => 'list-table',
+            'attrs.data-options' => $this->all()
+        ]);
 
         return $this;
     }

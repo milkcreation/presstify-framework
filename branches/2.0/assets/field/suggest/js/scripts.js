@@ -1,3 +1,4 @@
+/* global jQuery */
 "use strict";
 
 jQuery(function ($) {
@@ -45,7 +46,7 @@ jQuery(function ($) {
     _initAutocomplete: function () {
       let self = this,
           ajax = this.option('ajax') || undefined,
-          exists = this.autocomplete || undefined,
+          exists = this.uiautocomplete || undefined,
           o = self.option('autocomplete');
 
       if (exists === undefined) {
@@ -67,9 +68,9 @@ jQuery(function ($) {
           });
         }
 
-        this.autocomplete = $('[data-control="suggest.input"]', this.el).autocomplete(o || {});
+        this.uiautocomplete = $('[data-control="suggest.input"]', this.el).autocomplete(o || {});
 
-        let handler = this.autocomplete.data('ui-autocomplete');
+        let handler = this.uiautocomplete.data('ui-autocomplete');
 
         handler._renderMenu = function (ul, items) {
           let that = this;
@@ -92,7 +93,7 @@ jQuery(function ($) {
               .data("ui-autocomplete-item", item);
         };
 
-        this.autocomplete
+        this.uiautocomplete
             .on('autocompleteselect', function (event, ui) {
               let $alt = $('[data-control="suggest.alt"]', self.el);
 
@@ -103,7 +104,7 @@ jQuery(function ($) {
                 self.el.data('value', ui.item.value);
               }
             })
-            .on('autocompletefocus', function (event, ui) {
+            .on('autocompletefocus', function (event) {
               event.preventDefault();
             });
       }
@@ -113,17 +114,17 @@ jQuery(function ($) {
       let self = this;
 
       // Délégation d'appel des événements d'autaocomplete.
-      // @see https://api.jqueryui.com/autocomplete/#event
+      // @see https://api.jqueryui.com/autocomplete/#events
       // ex. $('[data-control="suggest"]').on('suggest:select', function (e, file, resp) {
       //    console.log(resp);
       // });
-      if (this.autocomplete !== undefined) {
+      if (this.uiautocomplete !== undefined) {
         let events = [
           'change', 'close', 'create', 'focus', 'open', 'response', 'search', 'select'
         ];
 
         events.forEach(function (eventname) {
-          self.autocomplete.on('autocomplete' + eventname, function (e) {
+          self.uiautocomplete.on('autocomplete' + eventname, function (e) {
             self._trigger(eventname, e, arguments);
           });
         });

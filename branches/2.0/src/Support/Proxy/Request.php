@@ -11,6 +11,7 @@ namespace tiFy\Support\Proxy;
  * @method static string getBasePath()
  * @method static string getHost()
  * @method static string getMethod()
+ * @method static string|null getQueryString()
  * @method static string getPathInfo()
  * @method static string getRequestUri()
  * @method static bool hasHeader(string $key)

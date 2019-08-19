@@ -76,7 +76,10 @@ class Routing implements RoutingContract
                         $match = $dispatcher->dispatch($method, rtrim($path, '/'));
 
                         if ($match[0] === FastRoute::FOUND) {
-                            $response = RedirectResponse::createPsr(rtrim($path, '/'));
+                            $redirect_url = rtrim($path, '/');
+                            $redirect_url .= ($qs = req::getQueryString()) ? "?{$qs}" : '';
+
+                            $response = RedirectResponse::createPsr($redirect_url);
                             $this->manager->emit($response);
                             exit;
                         }

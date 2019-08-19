@@ -7,7 +7,7 @@
  * @var tiFy\Template\Templates\ListTable\Contracts\Item $item
  * @var string $content
  */
-echo partial('checkbox', [
+echo field('checkbox', [
     'name'  => "{$item->getKeyName()}[]",
     'value' => $item->getKeyValue()
 ]);
