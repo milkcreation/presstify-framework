@@ -2,18 +2,10 @@
 
 namespace tiFy\Contracts\Template;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use tiFy\Contracts\Support\ParamsBag;
 
 interface FactoryBuilder extends FactoryAwareTrait, ParamsBag
 {
-    /**
-     * Récupération de l'instance du gestionnaire de base de données.
-     *
-     * @return FactoryDb|null
-     */
-    public function db(): ?FactoryDb;
-
     /**
      * Récupération du sens d'ordonnancement des éléments récupérés.
      *
@@ -43,32 +35,11 @@ interface FactoryBuilder extends FactoryAwareTrait, ParamsBag
     public function getPerPage(): int;
 
     /**
-     * Récupération de l'instance courante en base de données.
+     * Récupération des mots clefs de recherche.
      *
-     * @return EloquentBuilder|null
+     * @return string
      */
-    public function query(): ?EloquentBuilder;
-
-    /**
-     * Aggrégation des conditions de limitation de la requête de récupération des éléments.
-     *
-     * @return EloquentBuilder
-     */
-    public function queryLimit(): EloquentBuilder;
-
-    /**
-     * Aggrégation des conditions d'ordonnancement de la requête de récupération des éléments.
-     *
-     * @return EloquentBuilder
-     */
-    public function queryOrder(): EloquentBuilder;
-
-    /**
-     * Aggrégation des conditions de filtrage de la requête de récupération des éléments.
-     *
-     * @return EloquentBuilder
-     */
-    public function queryWhere(): EloquentBuilder;
+    public function getSearch(): string;
 
     /**
      * Suppression d'un ou plusieurs attributs de requête de récupération des éléments.
@@ -78,13 +49,6 @@ interface FactoryBuilder extends FactoryAwareTrait, ParamsBag
      * @return static
      */
     public function remove($keys): FactoryBuilder;
-
-    /**
-     * Réinitialisation de la requête de récupération des éléments.
-     *
-     * @return static
-     */
-    public function resetQuery(): FactoryBuilder;
 
     /**
      * Définition du sens d'ordonnancement de récupération de éléments.
@@ -121,4 +85,13 @@ interface FactoryBuilder extends FactoryAwareTrait, ParamsBag
      * @return static
      */
     public function setPerPage(int $per_page): FactoryBuilder;
+
+    /**
+     * Définition des mots clefs de recherche.
+     *
+     * @param string $search
+     *
+     * @return string
+     */
+    public function setSearch(string $search): FactoryBuilder;
 }

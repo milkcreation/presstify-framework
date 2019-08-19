@@ -54,9 +54,11 @@ class ColumnCb extends Column
 
         $this->pull('attrs.data-colname');
 
-        $this->set('attrs.class', 'check-column');
-
-        $this->set('attrs.scope', 'row');
+        $this->set([
+            'attrs.class' => 'check-column',
+            'attrs.scope' => 'row',
+            'tag'         => 'th'
+        ]);
 
         return $this;
     }

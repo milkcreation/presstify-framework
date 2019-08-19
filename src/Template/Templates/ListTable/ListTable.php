@@ -4,26 +4,29 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Contracts\Template\{FactoryBuilder, TemplateFactory as TemplateFactoryContract};
 use tiFy\Template\TemplateFactory;
-use tiFy\Template\Templates\ListTable\Contracts\{Ajax,
+use tiFy\Template\Templates\ListTable\Contracts\{
+    Ajax,
+    Builder,
     BulkActions,
     Columns,
+    DbBuilder,
     Item,
     Items,
     ListTable as ListTableContract,
     Pagination,
-    Builder,
     RowActions,
     Search,
-    ViewFilters};
+    ViewFilters
+};
 
 class ListTable extends TemplateFactory implements ListTableContract
 {
     /**
-     * Liste des fournisseurs de service.
+     * Liste des fournisseurs de services.
      * @var string[]
      */
     protected $serviceProviders = [
-        ListTableServiceProvider::class
+        ListTableServiceProvider::class,
     ];
 
     /**
@@ -32,6 +35,16 @@ class ListTable extends TemplateFactory implements ListTableContract
     public function ajax(): ?Ajax
     {
         return $this->resolve('ajax');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Builder|DbBuilder
+     */
+    public function builder(): FactoryBuilder
+    {
+        return parent::builder();
     }
 
     /**
@@ -81,13 +94,11 @@ class ListTable extends TemplateFactory implements ListTableContract
      */
     public function proceed(): TemplateFactoryContract
     {
-        $this->builder()->setItems();
+        $this->builder()->fetchItems();
 
-        if (!$this->items()->exists()) {
+        if ( ! $this->items()->exists()) {
             return $this;
-        }
-
-        if ($ajax = $this->ajax()) {
+        } elseif ($ajax = $this->ajax()) {
             $ajax->parse();
         }
 
@@ -100,16 +111,6 @@ class ListTable extends TemplateFactory implements ListTableContract
     public function render()
     {
         return $this->viewer('list-table');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return Builder
-     */
-    public function builder(): FactoryBuilder
-    {
-        return parent::builder();
     }
 
     /**

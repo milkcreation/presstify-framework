@@ -50,10 +50,6 @@ class Params extends FactoryParams implements ParamsContract
         );
         $this->set('attrs.class', $class);
 
-        if ($this->get('ajax')) {
-            $this->set('attrs.data-control', 'list-table');
-        }
-
         return $this;
     }
 }

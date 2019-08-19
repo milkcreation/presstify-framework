@@ -20,23 +20,28 @@ class Labels extends PostTypeLabelsBag implements FactoryLabelsContract
     /**
      * @inheritDoc
      */
+    /**
+     * @inheritDoc
+     */
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
-            'all_items'    => __('Tous les éléments', 'tify'),
-            'search_items' => __('Rechercher un élément', 'tify'),
-            'no_items'     => __('Aucun élément trouvé.', 'tify'),
-            'page_title'   => __('Tous les éléments', 'tify')
+            'all_items' => sprintf(
+                $this->hasGender() ? __('Toutes les %s', 'tify') : __('Tous les %s', 'tify'),
+                $this->getPlural()
+            ),
+            'no_item' => sprintf(
+                $this->hasGender() ? __('Aucune %s trouvée.', 'tify') : __('Aucun %s trouvé.', 'tify'),
+                $this->getSingular()
+            ),
+            'page_title' => sprintf(
+                $this->hasGender() ? __('Toutes les %s', 'tify') : __('Tous les %s', 'tify'),
+                $this->getPlural()
+            ),
+            'search_item' => sprintf(
+                $this->hasGender() ? __('Rechercher une %s', 'tify') : __('Rechercher un %s', 'tify'),
+                $this->getSingular()
+            )
         ]);
-    }
-
-    public function all_items()
-    {
-        return sprintf(__('Tous les %s', 'tify'), ucfirst($this->getPlural()));
-    }
-
-    public function page_title()
-    {
-        return sprintf(__('Tous les %s', 'tify'), ucfirst($this->getPlural()));
     }
 }

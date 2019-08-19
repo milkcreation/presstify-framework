@@ -7,10 +7,28 @@ use tiFy\Contracts\Support\{LabelsBag as LabelsBagContract, ParamsBag as ParamsB
 class LabelsBag extends ParamsBag implements LabelsBagContract
 {
     /**
+     * Indicateur de gestion du féminin.
+     * @var boolean
+     */
+    protected $gender = false;
+
+    /**
      * Nom de qualification.
      * @var string
      */
     protected $name = '';
+
+    /**
+     * Intitulé de qualification du pluriel d'un élément.
+     * @var string
+     */
+    protected $plural = '';
+
+    /**
+     * Intitulé de qualification du singulier d'un élément.
+     * @var string
+     */
+    protected $singular = '';
 
     /**
      * @inheritDoc
@@ -23,18 +41,6 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
         }
 
         return $self->set($attrs)->parse();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function defaults(): array
-    {
-        return [
-            'gender'   => false,
-            'plural'   => $this->getName(),
-            'singular' => $this->getName(),
-        ];
     }
 
     /**
@@ -67,18 +73,6 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
     /**
      * @inheritDoc
      */
-    public function get($key, $defaults = '')
-    {
-        if (method_exists($this, $key)) {
-            return $this->{$key}();
-        } else {
-            return parent::get($key, $defaults);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getDeterminant(string $string): string
     {
         if (self::isFirstVowel($string)) {
@@ -101,7 +95,7 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
      */
     public function getPlural(): string
     {
-        return $this->get('plural', __('éléments', 'tify'));
+        return $this->plural ? : __('éléments', 'tify');
     }
 
     /**
@@ -109,7 +103,7 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
      */
     public function getSingular(): string
     {
-        return $this->get('singular', __('élément', 'tify'));
+        return $this->singular ? : __('élément', 'tify');
     }
 
     /**
@@ -117,7 +111,7 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
      */
     public function hasGender(): bool
     {
-        return !!$this->get('gender');
+        return $this->gender;
     }
 
     /**
@@ -135,10 +129,29 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
      */
     public function parse(): LabelsBagContract
     {
-        $this->set('plural', Str::lower($this->get('plural')));
-        $this->set('singular', Str::lower($this->get('singular')));
+        if ($this->has('gender')) {
+            $this->setGender(!!$this->pull('gender'));
+        }
+
+        if ($this->has('plural')) {
+            $this->setPlural(Str::lower($this->pull('plural')));
+        }
+
+        if ($this->has('singular')) {
+            $this->setSingular(Str::lower($this->pull('singular')));
+        }
 
         parent::parse();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setGender(bool $gender): LabelsBagContract
+    {
+        $this->gender = $gender;
 
         return $this;
     }
@@ -149,6 +162,26 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
     public function setName(string $name): LabelsBagContract
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPlural(string $plural): LabelsBagContract
+    {
+        $this->plural = $plural;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSingular(string $singular): LabelsBagContract
+    {
+        $this->singular = $singular;
 
         return $this;
     }

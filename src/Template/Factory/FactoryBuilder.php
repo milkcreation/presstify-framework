@@ -3,7 +3,7 @@
 namespace tiFy\Template\Factory;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use tiFy\Contracts\Template\{FactoryBuilder as FactoryBuilderContract, FactoryDb, TemplateFactory};
+use tiFy\Contracts\Template\{FactoryBuilder as FactoryBuilderContract, TemplateFactory};
 use tiFy\Support\ParamsBag;
 
 class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
@@ -47,12 +47,10 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     protected $query;
 
     /**
-     * @inheritDoc
+     * Mots clefs de recherche.
+     * @var string
      */
-    public function db(): ?FactoryDb
-    {
-        return $this->factory->db();
-    }
+    protected $search = '';
 
     /**
      * @inheritDoc
@@ -67,7 +65,7 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
      */
     public function getOrderBy(): string
     {
-        return $this->orderby ?: $this->db()->getKeyName();
+        return $this->orderby;
     }
 
     /**
@@ -89,6 +87,14 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     /**
      * @inheritDoc
      */
+    public function getSearch(): string
+    {
+        return $this->search;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function parse(): FactoryBuilderContract
     {
         parent::parse();
@@ -96,6 +102,7 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
         $this->set($this->factory->request()->all());
 
         $this
+            ->setSearch((string)$this->get('s', ''))
             ->setPerPage($this->get('per_page', 20))
             ->setPage((int)$this->get('paged', 1))
             ->setOrder($this->get('order', 'ASC'))
@@ -107,61 +114,9 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     /**
      * @inheritDoc
      */
-    public function query(): ?EloquentBuilder
-    {
-        if (is_null($this->query)) {
-            $this->query = $this->db() ? $this->db()::query() : null;
-        }
-
-        return $this->query;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function queryLimit(): EloquentBuilder
-    {
-        return $this->query()->forPage($this->getPage(), $this->getPerPage());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function queryOrder(): EloquentBuilder
-    {
-        return $this->query()->orderBy($this->getOrderBy(), $this->getOrder());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function queryWhere(): EloquentBuilder
-    {
-        foreach ($this->all() as $k => $v) {
-            if ($this->db()->hasColumn($k)) {
-                is_array($v) ? $this->query()->whereIn($k, $v) : $this->query()->where($k, $v);
-            }
-        }
-
-        return $this->query();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function remove($keys): FactoryBuilderContract
     {
         $this->forget($keys);
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function resetQuery(): FactoryBuilderContract
-    {
-        $this->query = null;
 
         return $this;
     }
@@ -203,6 +158,16 @@ class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
     public function setPerPage(int $per_page): FactoryBuilderContract
     {
         $this->perPage = $per_page > 0 ? $per_page : 0;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSearch(string $search): FactoryBuilderContract
+    {
+        $this->search = $search;
 
         return $this;
     }

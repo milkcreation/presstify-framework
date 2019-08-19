@@ -44,6 +44,7 @@ class Column extends ParamsBag implements ColumnContract
             'hidden'   => false,
             'primary'  => false,
             'sortable' => false,
+            'tag'      => 'td',
             'title'    => $this->getName()
         ];
     }
@@ -73,14 +74,6 @@ class Column extends ParamsBag implements ColumnContract
         } else {
             return $this->get('content');
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function cellAttrs(): string
-    {
-        return HtmlAttrs::createFromAttrs($this->get('attrs', []));
     }
 
     /**

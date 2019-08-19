@@ -43,27 +43,43 @@ class NumberJs extends FieldFactory implements NumberJsContract
      */
     public function parse(): FieldFactoryContract
     {
-        $this->set('container.attrs.id', 'tiFyField-numberJsContainer--' . $this->getIndex());
+        $this->set('container.attrs.id', 'FieldNumberJs--' . $this->getIndex());
 
         parent::parse();
 
         if ($container_class = $this->get('container.attrs.class')) {
-            $this->set('container.attrs.class', "tiFyField-numberJsContainer {$container_class}");
+            $this->set('container.attrs.class', "FieldNumberJs {$container_class}");
         } else {
-            $this->set('container.attrs.class', 'tiFyField-numberJsContainer');
+            $this->set('container.attrs.class', 'FieldNumberJs');
         }
+        $this->set('container.attrs.data-control', 'number-js');
+        $this->set('container.attrs.data-options.spinner', $this->get('options', []));
 
         if (!$this->has('attrs.id')) {
-            $this->set('attrs.id', 'tiFyField-numberJs--' . $this->getIndex());
+            $this->set('attrs.id', 'FieldNumberJs-input--' . $this->getIndex());
         }
         $this->set('attrs.type', 'text');
-        $this->set('attrs.data-options', array_merge([
-            'icons' => [
-                'down' => 'dashicons dashicons-arrow-down-alt2',
-                'up'   => 'dashicons dashicons-arrow-up-alt2',
-            ]
-        ],$this->get('options', [])));
-        $this->set('attrs.data-control', 'number-js');
+
+        $this->set('attrs.data-control', 'number-js.input');
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseDefaults(): FieldFactoryContract
+    {
+        $default_class = 'FieldNumberJs-input FieldNumberJs-input' . '--' . $this->getIndex();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        }
+
+        $this->parseName();
+        $this->parseValue();
+        $this->parseViewer();
 
         return $this;
     }

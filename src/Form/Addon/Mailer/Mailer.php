@@ -14,39 +14,39 @@ class Mailer extends AddonController
      * Définition des options de formulaire par défaut
      *
      * @var array {
-     * @var bool|array  $admin              {
+     * @var bool|array $admin {
      *      Affichage de l'intitulé et de la valeur de saisie du champ dans le corps du mail
      *
-     * @var bool        $confirmation       Activation de l'interface d'administration de l'email de confirmation de
+     * @var bool $confirmation Activation de l'interface d'administration de l'email de confirmation de
      *      reception à destination des utilisateurs.
-     * @var bool        $notification       Activation de l'interface d'administration de l'email de notification à
+     * @var bool $notification Activation de l'interface d'administration de l'email de notification à
      *      destination des administrateurs de site
      * }
      *
-     * @var bool|array  $confirmation       Attributs de configuration d'expédition de l'email de confirmation de
+     * @var bool|array $confirmation Attributs de configuration d'expédition de l'email de confirmation de
      *      reception à destination des utilisateurs.
      *
-     * @var bool|array  $notification       Attributs de configuration d'expédition de l'email de notification à
+     * @var bool|array $notification Attributs de configuration d'expédition de l'email de notification à
      *      destination des administrateurs de site.
      *
-     * @var string      $option_name_prefix Prefixe du nom d'enregistrement des options d'expédition de mail (usage
+     * @var string $option_name_prefix Prefixe du nom d'enregistrement des options d'expédition de mail (usage
      *      avancé).
-     * @var array       $option_names       (usage avancé) Cartographie nom d'enregistrement des options en base.
+     * @var array $option_names (usage avancé) Cartographie nom d'enregistrement des options en base.
      *
-     * @var bool|string $debug              Affichage du mail au lieu de l'expédition
+     * @var bool|string $debug Affichage du mail au lieu de l'expédition
      *      (false|'confirmation'|'notification')
      * }
      */
     public $attributes = [
         'admin'              => [
             'confirmation' => true,
-            'notification' => true
+            'notification' => true,
         ],
         'confirmation'       => [],
         'notification'       => [],
         'option_name_prefix' => '',
         'option_names'       => [],
-        'debug'              => false
+        'debug'              => false,
     ];
 
     /**
@@ -60,14 +60,13 @@ class Mailer extends AddonController
 
         $prefix       = $this->get('option_name_prefix', "FormMailer_{$this->form()->name()}");
         $option_names = $this->get('option_names', []);
-        foreach (['confirmation', 'sender', 'notification', 'recipients'] as $option) :
-            $option_names[$option] = $option_names[$option]
-                                     ?? "{$prefix}{$option}";
-        endforeach;
+        foreach (['confirmation', 'sender', 'notification', 'recipients'] as $option) {
+            $option_names[$option] = $option_names[$option] ?? "{$prefix}{$option}";
+        }
         $this->set('option_names', $option_names);
 
         if ($this->get('confirmation') && get_option($option_names['confirmation'])) :
-            $from = get_option($option_names['sender']) ? !'' : ['email' => '', 'name' => ''];
+            $from = get_option($option_names['sender']) ? ! '' : ['email' => '', 'name' => ''];
 
             $this->set('confirmation.from', [$from['email'], $from['name']]);
         endif;
@@ -89,7 +88,7 @@ class Mailer extends AddonController
             $metabox = app('metabox');
 
             $metabox->add("FormAddonMailer-{$this->form()->name()}", 'tify_options@options', [
-                'title' => $this->form()->getTitle()
+                'title' => $this->form()->getTitle(),
             ]);
 
             if ($this->get('admin.confirmation')) :
@@ -99,7 +98,7 @@ class Mailer extends AddonController
                     [
                         'parent'   => "FormAddonMailer-{$this->form()->name()}",
                         'content'  => $this->resolve('addon.mailer.options-confirmation', [$this->form()]),
-                        'position' => 1
+                        'position' => 1,
                     ]
                 );
             endif;
@@ -111,7 +110,7 @@ class Mailer extends AddonController
                     [
                         'parent'   => "FormAddonMailer-{$this->form()->name()}",
                         'content'  => $this->resolve('addon.mailer.options-notification', [$this->form()]),
-                        'position' => 2
+                        'position' => 2,
                     ]
                 );
             endif;
@@ -128,15 +127,15 @@ class Mailer extends AddonController
                 'subject' => sprintf(
                     __('Vous avez une nouvelle demande de contact sur le site %s', 'tify'),
                     get_bloginfo('name')
-                )
+                ),
             ],
             'confirmation' => [
                 'subject' => sprintf(
                     __('Votre demande de contact sur le site %s', 'tify'),
                     get_bloginfo('name')
                 ),
-                'to'      => '%%email%%'
-            ]
+                'to'      => '%%email%%',
+            ],
         ];
     }
 
@@ -152,7 +151,7 @@ class Mailer extends AddonController
             },
             'value' => function (FactoryField $field) {
                 return $field->getValues();
-            }
+            },
         ];
     }
 
@@ -224,8 +223,8 @@ class Mailer extends AddonController
     /**
      * Traitement des attributs de configuration de l'email.
      *
-     * @param array  $params Liste des paramètres d'envoi.
-     * @param string $type   Type d'expédition de l'email. notification|confirmation.
+     * @param array $params Liste des paramètres d'envoi.
+     * @param string $type Type d'expédition de l'email. notification|confirmation.
      *
      * @return array
      */
@@ -260,7 +259,7 @@ class Mailer extends AddonController
         });
 
         $params['body'] = $params['body']
-            ?? (string)$this->viewer('addon/mailer/body', array_merge($params, compact('fields')));
+                          ?? (string)$this->viewer('addon/mailer/body', array_merge($params, compact('fields')));
 
         return $params;
     }

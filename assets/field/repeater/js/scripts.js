@@ -1,3 +1,4 @@
+/* global jQuery */
 "use strict";
 
 jQuery(function ($) {
@@ -106,17 +107,17 @@ jQuery(function ($) {
         // Intialisation du controleur de déclenchement de la création d'un nouvel élément.
         _initControlTrigger: function () {
             this.trigger = $('[data-control="repeater.trigger"]', this.el);
-            this._onCreate();
+            this._onAdd();
         },
 
         // GETTER
         // -------------------------------------------------------------------------------------------------------------
-        _getCreateIndex: function () {
+        _getAddedIndex: function () {
             if (!$('[data-control="repeater.item"]', this.el).length) {
                 return 0;
             } else {
                 let indexes = [];
-                $('[data-control="repeater.item"]', this.el).each(function(u, v) {
+                $('[data-control="repeater.item"]', this.el).each(function() {
                     indexes.push($(this).data('index'));
                 });
                 return (Math.max(...indexes) + 1);
@@ -153,8 +154,8 @@ jQuery(function ($) {
 
         // ACTIONS
         // -------------------------------------------------------------------------------------------------------------
-        // Création d'un nouvel élément.
-        _doCreate: function () {
+        // Ajout d'un nouvel élément.
+        _doAdd: function () {
             let self = this;
 
             if (this.xhr !== undefined) {
@@ -167,7 +168,7 @@ jQuery(function ($) {
                     this.option('ajax'),
                     {
                         data: {
-                            index: this._getCreateIndex(),
+                            index: this._getAddedIndex(),
                             count: $('[data-control="repeater.item"]', this.el).length
                         }
                     }
@@ -182,7 +183,7 @@ jQuery(function ($) {
 
                         self._setItem($item);
 
-                        self._trigger('create', null, $item);
+                        self._trigger('add', null, $item);
                     }
                 })
                 .always(function () {
@@ -203,15 +204,15 @@ jQuery(function ($) {
 
         //EVENTS
         // -------------------------------------------------------------------------------------------------------------
-        // Activation de l'agent de contrôle de création d'un nouvel élément.
-        _onCreate: function () {
+        // Activation de l'agent de contrôle d'ajout d'un nouvel élément.
+        _onAdd: function () {
             let self = this;
 
             this.trigger.on('click.repeater.trigger.' + this.instance.uuid, function (e) {
                 e.stopPropagation();
                 e.preventDefault();
 
-                self._doCreate();
+                self._doAdd();
             });
         },
 

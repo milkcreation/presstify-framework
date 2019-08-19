@@ -78,7 +78,9 @@ class FactoryServiceProvider extends ServiceProvider implements FactoryServicePr
         $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
             $attrs = $this->factory->param('query_args', []);
 
-            return (new FactoryBuilder())->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
+            $ctrl =  $this->factory->db() ? new FactoryDbBuilder() : new FactoryBuilder();
+
+            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
         });
     }
 

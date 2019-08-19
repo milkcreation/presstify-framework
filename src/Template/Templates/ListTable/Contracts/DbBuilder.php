@@ -2,14 +2,14 @@
 
 namespace tiFy\Template\Templates\ListTable\Contracts;
 
-use tiFy\Contracts\Template\{FactoryAwareTrait, FactoryBuilder};
+use tiFy\Contracts\Template\{FactoryAwareTrait, FactoryDbBuilder};
 
-interface Builder extends FactoryAwareTrait, FactoryBuilder
+interface DbBuilder extends FactoryAwareTrait, FactoryDbBuilder
 {
     /**
      * Récupération de la liste des éléments.
      *
      * @return static
      */
-    public function fetchItems(): Builder;
+    public function fetchItems(): DbBuilder;
 }

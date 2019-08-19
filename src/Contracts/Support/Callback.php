@@ -46,5 +46,5 @@ interface Callback
      *
      * @return static
      */
-    public function set($callable): Callback;
+    public function set($callable): self;
 }

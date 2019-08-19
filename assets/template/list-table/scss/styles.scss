@@ -1,3 +1,9 @@
+table.wp-list-table th.column-num,
+table.wp-list-table td.column-num{
+    width:50px;
+    text-align:left;
+}
+
 .dataTables_hide {
     display: none;
 }

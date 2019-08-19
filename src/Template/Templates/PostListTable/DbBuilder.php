@@ -4,11 +4,11 @@ namespace tiFy\Template\Templates\PostListTable;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use tiFy\Contracts\Template\FactoryDb;
-use tiFy\Template\Templates\ListTable\Builder as ListTableBuilder;
-use tiFy\Template\Templates\PostListTable\Contracts\{Db, Builder as BuilderContract};
+use tiFy\Template\Templates\ListTable\DbBuilder as ListTableDbBuilder;
+use tiFy\Template\Templates\PostListTable\Contracts\{Db, DbBuilder as DbBuilderContract};
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
 
-class Builder extends ListTableBuilder implements BuilderContract
+class DbBuilder extends ListTableDbBuilder implements DbBuilderContract
 {
     /**
      * Instance de la requête courante en base de données.
