@@ -2,9 +2,9 @@
 
 namespace tiFy\Kernel;
 
-use tiFy\Http\{Request, Response, Session, SessionFlashBag, Uri};
+use tiFy\Http\{Request, Response, Session, Uri};
 use tiFy\Container\ServiceProvider;
-use tiFy\Kernel\{Events\Manager as EventsManager, Events\Listener, Logger\Logger, Notices\Notices};
+use tiFy\Kernel\{Events\Manager as EventsManager, Events\Listener, Notices\Notices};
 use tiFy\Support\{ClassInfo, ParamsBag};
 
 class KernelServiceProvider extends ServiceProvider
@@ -18,10 +18,10 @@ class KernelServiceProvider extends ServiceProvider
         'class-info',
         'events',
         'events.listener',
-        'logger',
         'notices',
         'params.bag',
         'request',
+        'response',
         'session',
         'uri'
     ];
@@ -67,10 +67,6 @@ class KernelServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('events.listener', function (callable $callback) {
             return new Listener($callback);
-        });
-
-        $this->getContainer()->add('logger', function ($name = null, $attrs = []) {
-            return Logger::create($name, $attrs);
         });
 
         $this->getContainer()->add('notices', function () {

@@ -20,8 +20,8 @@ use tiFy\Contracts\Http\Request;
 use tiFy\Contracts\Kernel\ClassLoader;
 use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\EventsManager;
-use tiFy\Contracts\Kernel\Logger;
 use tiFy\Contracts\Kernel\Path;
+use tiFy\Contracts\Log\LogManager;
 use tiFy\Contracts\Partial\PartialFactory;
 use tiFy\Contracts\Partial\Partial;
 use tiFy\Contracts\PostType\PostTypeFactory;
@@ -267,15 +267,25 @@ if (!function_exists('form')) {
     }
 }
 
-if (!function_exists('logger')) {
+if (! function_exists('logger')) {
     /**
      * Logger - Controleur de journalisation des actions.
      *
-     * @return Logger
+     * @param  string|null  $message
+     * @param  array  $context
+     *
+     * @return LogManager|void
      */
-    function logger(): Logger
+    function logger($message = null, array $context = []): ?LogManager
     {
-        return app('logger');
+        /* @var LogManager $manager */
+        $manager = app('log');
+
+        if (is_null($message)) {
+            return $manager;
+        }
+
+        $manager->debug($message, $context);
     }
 }
 

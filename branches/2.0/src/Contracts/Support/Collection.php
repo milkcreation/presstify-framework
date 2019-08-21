@@ -102,7 +102,7 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     /**
      * Définition d'un attribut.
      *
-     * @param string|array $key Clé d'indexe de l'élément ou tableau associatif des éléments à définir.
+     * @param string|array $key Clé d'indice de l'élément ou tableau associatif des éléments à définir.
      * @param mixed $value Valeur de l'élément si la clé d'index est de type string.
      *
      * @return static

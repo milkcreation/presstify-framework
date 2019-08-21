@@ -10,47 +10,54 @@ $paths = [
     __DIR__.'/../autoload.php',
     __DIR__.'/../../../autoload.php'
 ];
-foreach ($paths as $path) :
-    if (file_exists($path)) :
+foreach ($paths as $path) {
+    if (file_exists($path)) {
         require_once $path;
         break;
-    endif;
-endforeach;
-
-use tiFy\Console\Application;
-use Symfony\Component\Console\Input\InputOption;
-
-$app = (new Application('bee', '1.0.0'))->setDefaultHeaders($argv);
+    }
+}
 
 // Chargement de Wordpress
 $wp_paths = [
     __DIR__ . '/../../wp-load.php',
     __DIR__ . '/../../../../wp-load.php'
 ];
-foreach ($wp_paths as $wp_path) :
-    if (file_exists($wp_path)) :
+
+foreach ($wp_paths as $wp_path) {
+    if (file_exists($wp_path)) {
         require_once $wp_path;
         break;
-    endif;
-endforeach;
+    }
+}
+
+/*
+use tiFy\Console\Application;
+use Symfony\Component\Console\Input\InputOption;
+
+$app = (new Application('bee', '1.0.0'))->setDefaultHeaders($argv);
 
 // Déclaration des commandes.
-foreach (config('console.commands', []) as $k => $command) :
-    if (is_numeric($k) && class_exists($command)) :
+foreach (config('console.commands', []) as $k => $command) {
+    if (is_numeric($k) && class_exists($command)) {
         $command = $app->add(new $command());
-    elseif (class_exists($command)) :
+    } elseif (class_exists($command)) {
         $command = $app->add(new $command($k));
-    endif;
+    }
 
-    if (!$command->getDefinition()->hasOption('url')) :
+    if (!$command->getDefinition()->hasOption('url')) {
         $command->addOption(
-                'url',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'site url'
+            'url',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'site url'
         );
-    endif;
-endforeach;
+    }
+}
 
 // Exécution.
-$app->run();
+try {
+    $app->run();
+} catch (Exception $e) {
+    wp_die($e->getMessage(), 500);
+}
+*/

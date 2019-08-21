@@ -1,28 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Console;
 
-use Symfony\Component\Console\Command\Command as SfCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Exception;
+use Symfony\Component\Console\{
+    Command\Command as BaseCommand,
+    Input\InputInterface,
+    Output\OutputInterface
+};
 
-class Command extends SfCommand
+class Command extends BaseCommand
 {
     /**
      * @inheritdoc
      */
-    protected function configure()
-    {
-
-    }
+    protected function configure() { }
 
     /**
      * @inheritdoc
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-
-    }
+    protected function execute(InputInterface $input, OutputInterface $output) { }
 }
