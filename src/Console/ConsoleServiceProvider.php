@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Console;
 
@@ -17,16 +17,33 @@ class ConsoleServiceProvider extends ServiceProvider
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function boot()
+    {
+        add_action('shutdown', function () {
+            global $argv;
+
+            if(isset($argv[0]) && preg_match('/vendor\/bin\/bee$/', $argv[0])) {
+                $this->getContainer()->get('console.controller.application')->run();
+            }
+        }, 999999);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function register()
     {
         $this->getContainer()->share('console.controller.application', function() {
-            return (new ControllerApplication($this->getContainer()->get('console.controller.kernel')))->setCommands();
+            $app = new ControllerApplication($this->getContainer()->get('console.controller.kernel'));
+            $app->setName('bee');
+            $app->setVersion('1.0.0');
+            return $app->setCommands();
         });
 
         $this->getContainer()->share('console.controller.kernel', function() {
-            return new ControllerKernel(getenv('APP_ENV') ?? '', getenv('APP_DEBUG') ?? false);
+            return new ControllerKernel(getenv('APP_ENV') ?? '', (bool)(getenv('APP_DEBUG') ?? false));
         });
     }
 }

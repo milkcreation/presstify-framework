@@ -32,6 +32,8 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
 
     /**
      * @inheritDoc
+     *
+     * @return LabelsBagContract
      */
     public static function createFromAttrs($attrs, ?string $name = null): ParamsBagContract
     {

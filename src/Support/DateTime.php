@@ -62,6 +62,11 @@ class DateTime extends Carbon
      */
     public static function setGlobalTimeZone(?DateTimeZone $tz = null)
     {
-        return self::$GlobalTimeZone = $tz ?: new DateTimeZone((request()->server('TZ') ?: 'UTC'));
+        return self::$GlobalTimeZone = $tz ?: new DateTimeZone(
+            getenv('APP_TIMEZONE') ? :
+                request()->server('TZ',
+                    ini_get('date.timezone') ? :'UTC'
+                )
+        );
     }
 }

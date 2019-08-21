@@ -92,8 +92,5 @@ class Manager implements ManagerContract
     /**
      * @inheritDoc
      */
-    public function walk(&$item, $key = null): void
-    {
-
-    }
+    public function walk(&$item, $key = null): void {}
 }
