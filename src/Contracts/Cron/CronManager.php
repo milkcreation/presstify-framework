@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Cron;
 
-use tiFy\Contracts\Kernel\Collection;
+use Illuminate\Support\Collection;
+use tiFy\Contracts\Support\Manager;
 
-interface CronManager extends Collection
+interface CronManager extends Manager
 {
     /**
      * Suppression d'une tâche planifiée selon son identifiant d'action.
@@ -16,31 +17,23 @@ interface CronManager extends Collection
     public function clear($hook);
 
     /**
+     * Récupération d'une instance de la liste des tâches déclarées.
+     *
+     * @return Collection
+     */
+    public function collect(): Collection;
+
+    /**
      * Récupération d'une tâche planifiée déclarée.
      *
      * @param string $name Nom de qualification de l'élément.
      *
-     * @return null|CronJob
+     * @return CronJob|null
      */
-    public function getItem($name);
+    public function getJob($name): ?CronJob;
 
     /**
-     * Enregistrement d'une tâche planifiée.
-     *
-     * @param string $name Identifiant de qualification.
-     * @param array $attrs Liste des attribut de configuration.
-     *
-     * @return null|CronJob
+     * @inheritDoc
      */
-    public function register($name, $attrs = []);
-
-    /**
-     * Définition d'une tâche planifiée.
-     *
-     * @param string $name Identifiant de qualification.
-     * @param CronJob $job Instance de la tâche à définir.
-     *
-     * @return static
-     */
-    public function set($name, CronJob $job);
+    public function register($name, ...$args): ?CronJob;
 }

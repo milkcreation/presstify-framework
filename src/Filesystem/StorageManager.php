@@ -8,6 +8,7 @@ use League\Flysystem\{AdapterInterface,
     Cached\CacheInterface,
     Cached\Storage\Memory as MemoryStore,
     FilesystemInterface,
+    FilesystemNotFoundException,
     MountManager};
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Filesystem\{
@@ -41,9 +42,13 @@ class StorageManager extends MountManager implements StorageManagerContract
     /**
      * @inheritDoc
      */
-    public function disk(string $name): FilesystemContract
+    public function disk(string $name): ?FilesystemContract
     {
-        return $this->getFilesystem($name);
+        try {
+            return $this->getFilesystem($name);
+        } catch (FilesystemNotFoundException $e) {
+            return null;
+        }
     }
 
     /**
@@ -115,7 +120,7 @@ class StorageManager extends MountManager implements StorageManagerContract
     /**
      * @inheritDoc
      */
-    public function register(string $name, $attrs): StorageManagerContract
+    public function register(string $name, $attrs): ?FilesystemContract
     {
         if ($attrs instanceof Filesystem) {
             $filesystem = $attrs;
@@ -125,11 +130,14 @@ class StorageManager extends MountManager implements StorageManagerContract
             $filesystem = $this->local($attrs);
         } else {
             throw new InvalidArgumentException(
-                __('Les arguments ne permettent pas de définir le système de fichiers', 'theme')
+                sprintf(
+                    __('Les arguments fournis ne permettent pas de définir le système de fichiers %s', 'theme'),
+                    $name
+                )
             );
         }
 
-        return $this->set($name, $filesystem);
+        return $this->set($name, $filesystem)->disk($name);
     }
 
     /**

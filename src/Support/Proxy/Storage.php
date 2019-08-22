@@ -8,8 +8,7 @@ use tiFy\Contracts\Filesystem\{Filesystem, LocalAdapter, LocalFilesystem, Storag
  * @method static Filesystem|null disk(string $name)
  * @method static LocalFilesystem local(string|LocalAdapter $root, array $config = [])
  * @method static LocalAdapter localAdapter(string $root, array $config = [])
- * @method static StorageManager register(string $name, string|array|Filesystem $attrs)
- * @method static StorageManager set(string $name, Filesystem $filesystem)
+ * @method static Filesystem|LocalFilesystem register(string $name, string|array|Filesystem $attrs)
  */
 class Storage extends AbstractProxy
 {

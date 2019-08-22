@@ -1,14 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Cron;
 
-use tiFy\Contracts\Cron\CronManager as CronManagerContract;
-use tiFy\Contracts\Cron\CronJob;
-use tiFy\Kernel\Collection\Collection;
+use Psr\Container\ContainerInterface as Container;
+use Illuminate\Support\Collection;
+use tiFy\Contracts\Cron\{
+    CronManager as CronManagerContract,
+    CronJob as CronJobContract
+};
+use tiFy\Support\Manager;
 
 /**
  * USAGE
- *
+ * ---------------------------------------------------------------------------------------------------------------------
  * Configurer une tâche planifiée
  * 1. Dans le fichier wp-config.php, désactiver l'appel navigateur des tâches cron (recommandé).
  * > define('DISABLE_WP_CRON', true);
@@ -22,25 +26,18 @@ use tiFy\Kernel\Collection\Collection;
  * Désactiver absolument le mode test en production.
  * > http(s)://%site_url%/?job=%task%
  */
-
-final class CronManager extends Collection implements CronManagerContract
+class CronManager extends Manager implements CronManagerContract
 {
-    /**
-     * Listes des tâches planifiées déclarées.
-     * @var CronJob[]
-     */
-    protected $items = [];
-
     /**
      * CONSTRUCTEUR.
      *
+     * @param Container|null $container
+     *
      * @return void
      */
-    public function __construct()
+    public function __construct(?Container $container = null)
     {
-        foreach (config('cron', []) as $name => $attrs) {
-            $this->register($name, $attrs);
-        }
+        parent::__construct($container);
 
         add_action('init', function () {
             foreach(get_option('cron_job_infos', []) as $hook => $attrs) {
@@ -77,7 +74,7 @@ final class CronManager extends Collection implements CronManagerContract
                 ]);
             }
 
-            if (($job = request()->get('job', '')) && ($item = $this->getItem($job))) {
+            if (($job = request()->get('job', '')) && ($item = $this->getJob($job))) {
                 do_action($item->getHook());
                 exit;
             } elseif (!defined('DOING_CRON') ||  (DOING_CRON!==true)) {
@@ -126,36 +123,38 @@ final class CronManager extends Collection implements CronManagerContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getItem($name)
+    public function collect(): Collection
+    {
+        return new Collection($this->items);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getJob($name): CronJobContract
     {
         return $this->items[$name] ?? null;
     }
 
     /**
-     * Enregistrement d'une tâche planifiée.
-     *
-     * @param string $name Identifiant de qualification.
-     * @param array $attrs Liste des attribut de configuration.
-     *
-     * @return null|CronJob
+     * @inheritDoc
      */
-    public function register($name, $attrs = [])
+    public function register($name, ...$args): ?CronJobContract
     {
-        $controller = $attrs['controller'] ?? null;
-
-        return $this->set(
-            $name,
-            ($controller ? new $controller($name, $attrs) : app()->get('cron.job', [$name, $attrs]))
-        );
+        return $this->set($name, $attrs = $args[0] ?? [])->getJob($name);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function set($name, CronJob $job)
+    public function walk(&$job, $name = null): void
     {
-        return $this->items[$name] = $job;
+        if (!$job instanceof CronJob) {
+            $job = (new CronJob((string)$name))->setParams(is_array($job) ? $job : []);
+        }
+
+        $this->items[$name] = $job;
     }
 }

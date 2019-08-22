@@ -30,16 +30,20 @@ class Item extends BaseItem implements ItemContract
 
     /**
      * Objet de délégation d'appel des méthodes de la classe.
-     * @var QueryPostContract|null
+     * @var QueryPostContract|object|null
      */
     protected $delegate;
 
     /**
      * @inheritDoc
      */
-    public function parseDelegate(): BaseItemContract
+    public function parse(): BaseItemContract
     {
-        $this->delegate = QueryPost::createFromId($this->getKeyValue());
+        parent::parse();
+
+        if (is_null($this->delegate)) {
+            $this->setDelegate(QueryPost::createFromId($this->getKeyValue()));
+        }
 
         return $this;
     }

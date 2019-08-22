@@ -2,12 +2,13 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
+use tiFy\Template\Templates\ListTable\Contracts\Builder;
 use tiFy\Template\Templates\ListTable\ListTableServiceProvider;
 use tiFy\Template\Templates\PostListTable\Contracts\{
     Db,
     Item,
     Params,
-    Builder,
+    DbBuilder,
     PostListTable};
 
 class PostListTableServiceProvider extends ListTableServiceProvider
@@ -25,9 +26,16 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     {
         $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
             $ctrl = $this->factory->get('providers.builder');
-            $ctrl = $ctrl instanceof Builder
-                ? clone $ctrl
-                : $this->getContainer()->get(Builder::class);
+
+            if ($this->factory->db()) {
+                $ctrl = $ctrl instanceof DbBuilder
+                    ? clone $ctrl
+                    : $this->getContainer()->get(DbBuilder::class);
+            } else {
+                $ctrl = $ctrl instanceof Builder
+                    ? clone $ctrl
+                    : $this->getContainer()->get(Builder::class);
+            }
 
             $attrs = $this->factory->param('query_args', []);
 
@@ -99,7 +107,11 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     public function registerFactoryLabels(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
-            return new Labels($this->factory);
+            return (new Labels())
+                ->setTemplateFactory($this->factory)
+                ->setName($this->factory->name())
+                ->set($this->factory->get('labels', []))
+                ->parse();
         });
     }
 

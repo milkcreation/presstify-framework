@@ -2,7 +2,8 @@
 
 namespace tiFy\Template\Templates\UserListTable;
 
-use tiFy\Template\Templates\UserListTable\Contracts\{Db, Item, Builder};
+use tiFy\Template\Templates\UserListTable\Contracts\{Db, Item, DbBuilder};
+use tiFy\Template\Templates\ListTable\Contracts\Builder;
 use tiFy\Template\Templates\ListTable\ListTableServiceProvider;
 
 class UserListTableServiceProvider extends ListTableServiceProvider
@@ -20,9 +21,17 @@ class UserListTableServiceProvider extends ListTableServiceProvider
     {
         $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
             $ctrl = $this->factory->get('providers.builder');
-            $ctrl = $ctrl instanceof Builder
-                ? clone $ctrl
-                : $this->getContainer()->get(Builder::class);
+
+            if ($this->factory->db()) {
+                $ctrl = $ctrl instanceof DbBuilder
+                    ? clone $ctrl
+                    : $this->getContainer()->get(DbBuilder::class);
+            } else {
+                $ctrl = $ctrl instanceof Builder
+                    ? clone $ctrl
+                    : $this->getContainer()->get(Builder::class);
+            }
+
 
             $attrs = $this->factory->param('query_args', []);
 
