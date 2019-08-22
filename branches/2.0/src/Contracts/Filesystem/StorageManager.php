@@ -16,9 +16,9 @@ interface StorageManager extends FilesystemInterface
      *
      * @param string $name Nom de qualification du disque.
      *
-     * @return Filesystem
+     * @return Filesystem|null
      */
-    public function disk(string $name): Filesystem;
+    public function disk(string $name): ?Filesystem;
 
     /**
      * Récupération de l'instance du controleur d'injection de dépendances.
@@ -77,9 +77,9 @@ interface StorageManager extends FilesystemInterface
      * @param string $name Nom de qualification.
      * @param array|Filesystem $attrs Liste des attributs de configuration|Instance du gestionnaire de fichiers.
      *
-     * @return $this
+     * @return Filesystem|null
      */
-    public function register(string $name, $attrs): StorageManager;
+    public function register(string $name, $attrs): ?Filesystem;
 
     /**
      * Définition d'un disque.

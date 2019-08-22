@@ -46,11 +46,13 @@ interface Item extends FactoryAwareTrait, ParamsBag
     public function parse(): Item;
 
     /**
-     * Traitement de l'object de délégation d'appel des méthodes de la classe.
+     * Définition de l'instance de la classe de délégation d'appel des méthodes.
+     *
+     * @param object $delegate Instance de la classe de délégation.
      *
      * @return static
      */
-    public function parseDelegate(): Item;
+    public function setDelegate(object $delegate): Item;
 
     /**
      * Définition de l'indice de l'élément.

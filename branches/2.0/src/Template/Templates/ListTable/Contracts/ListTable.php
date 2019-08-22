@@ -50,7 +50,7 @@ interface ListTable extends TemplateFactory
     /**
      * {@inheritDoc}
      *
-     * @return Builder
+     * @return Builder|DbBuilder
      */
     public function builder(): FactoryBuilder;
 

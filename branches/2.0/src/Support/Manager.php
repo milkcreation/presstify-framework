@@ -44,10 +44,7 @@ class Manager implements ManagerContract
     /**
      * @inheritDoc
      */
-    public function boot(): void
-    {
-
-    }
+    public function boot(): void {}
 
     /**
      * @inheritDoc

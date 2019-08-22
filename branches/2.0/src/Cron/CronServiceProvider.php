@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Cron;
 
@@ -13,7 +13,6 @@ class CronServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'cron',
-        'cron.job'
     ];
 
     /**
@@ -22,11 +21,7 @@ class CronServiceProvider extends ServiceProvider
     public function register()
     {
         $this->getContainer()->share('cron', function () {
-            return new CronManager();
-        });
-
-        $this->getContainer()->add('cron.job', function ($name, $attrs) {
-            return new CronJob($name, $attrs);
+            return (new CronManager($this->getContainer()->get('app')))->set(config('cron', []));
         });
     }
 }

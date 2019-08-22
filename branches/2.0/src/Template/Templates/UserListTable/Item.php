@@ -28,9 +28,13 @@ class Item extends BaseItem implements ItemContract
     /**
      * @inheritDoc
      */
-    public function parseDelegate(): BaseItemContract
+    public function parse(): BaseItemContract
     {
-        $this->delegate = QueryUser::createFromId($this->getKeyValue());
+        parent::parse();
+
+        if (is_null($this->delegate)) {
+            $this->setDelegate(QueryUser::createFromId($this->getKeyValue()));
+        }
 
         return $this;
     }

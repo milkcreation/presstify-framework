@@ -26,7 +26,7 @@ class Item extends ParamsBag implements ItemContract
 
     /**
      * Objet de délégation d'appel des méthodes de la classe.
-     * @var object
+     * @var object|null
      */
     protected $delegate;
 
@@ -79,15 +79,15 @@ class Item extends ParamsBag implements ItemContract
     {
         parent::parse();
 
-        return $this->parseDelegate();
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function parseDelegate(): ItemContract
+    public function setDelegate(object $delegate): ItemContract
     {
-        $this->delegate = null;
+        $this->delegate = $delegate;
 
         return $this;
     }

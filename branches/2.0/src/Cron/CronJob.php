@@ -1,29 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Cron;
 
-use \DateTime;
-use \DateTimeZone;
-use Carbon\Carbon;
-use tiFy\Contracts\Cron\CronJob as CronJobContract;
-use tiFy\Contracts\Kernel\Logger;
-use tiFy\Support\ParamsBag;
+use Exception;
+use tiFy\Contracts\{
+    Cron\CronJob as CronJobContract,
+    Log\Logger as LoggerContract
+};
+use tiFy\Log\Logger;
+use tiFy\Support\{
+    DateTime,
+    ParamsBag
+};
 
 class CronJob extends ParamsBag implements CronJobContract
 {
     /**
-     * Liste des attributs de configuration.
-     * @var array {
-     *      @var string $title Intitulé de qualification.
-     *      @var string $description Description.
-     *      @var int|string|Carbon $date Date de déclenchement de la première itération.
-     *      @var string $freq Fréquence d'exécution des itérations.
-     *      @var callable $command
-     *      @var array $args Liste des variables complémentaires passées en arguments.
-     *      @var boolean|array $log Liste des attributs de configuration de la journalisation.
-     * }
+     * Instance du gestionnaire de journalisation.
+     * @var LoggerContract|null
      */
-    protected $attributes = [];
+    protected $logger;
 
     /**
      * Nom de qualification.
@@ -34,16 +30,13 @@ class CronJob extends ParamsBag implements CronJobContract
     /**
      * CONSTRUCTEUR.
      *
-     * @param string $name Nom de qualification de la tâche.
-     * @param array $attrs Liste des attributs de configuration.
+     * @param string $name Nom de qualification.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [])
+    public function __construct(string $name)
     {
         $this->name = $name;
-
-        $this->set($attrs)->parse();
 
         add_action($this->getHook(), $this);
     }
@@ -53,9 +46,9 @@ class CronJob extends ParamsBag implements CronJobContract
      *
      * @return void
      */
-    final public function __invoke()
+    final public function __invoke(): void
     {
-        if (wp_doing_cron() || $this->onTest()) :
+        if (wp_doing_cron() || $this->onTest()) {
             $start = $this->getDatetime()->setTimestamp(time());
 
             set_time_limit(0);
@@ -68,7 +61,7 @@ class CronJob extends ParamsBag implements CronJobContract
 
             $this->updateInfo('last', $end->getTimestamp());
 
-            $this->log()->notice(
+            $this->logger()->notice(
                 sprintf(
                     __('La tâche "%s" démarrée le %s s\'est terminée le %s'),
                     $this->getName(),
@@ -77,7 +70,7 @@ class CronJob extends ParamsBag implements CronJobContract
                 )
             );
             exit;
-        elseif(!$this->onTest()) :
+        } elseif(!$this->onTest()) {
             wp_die(
                 sprintf(
                     __(
@@ -92,11 +85,21 @@ class CronJob extends ParamsBag implements CronJobContract
                 __('Mode test inactif', 'tify'),
                 500
             );
-        endif;
+        }
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @return array {
+     *      @var string $title Intitulé de qualification.
+     *      @var string $description Description.
+     *      @var int|string|DateTime $date Date de déclenchement de la première itération.
+     *      @var string $freq Fréquence d'exécution des itérations.
+     *      @var callable $command
+     *      @var array $args Liste des variables complémentaires passées en arguments.
+     *      @var boolean|array $log Liste des attributs de configuration de la journalisation.
+     * }
      */
     public function defaults()
     {
@@ -108,108 +111,110 @@ class CronJob extends ParamsBag implements CronJobContract
             'freq'          => 'daily',
             'command'       => [$this, 'exec'],
             'args'          => [],
-            'log'           => true,
+            'logger'        => true,
             'test'          => false
         ];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function exec()
-    {
-        return true;
-    }
+    public function exec(): void {}
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getArgs()
+    public function getArgs(): array
     {
         return $this->get('args', []);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getCommand()
+    public function getCommand(): ?callable
     {
-        return $this->get('command');
+        return is_callable($command = $this->get('command')) ? $command : null;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getDate()
+    public function getDate(): DateTime
     {
         return $this->get('date');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getDatetime($time = 'now')
+    public function getDatetime($time = 'now'): ?DateTime
     {
-        return new Carbon($time, new DateTimeZone(get_option('timezone_string')));
+        try{
+            return new DateTime($time);
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->get('description');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getFrequency()
+    public function getFrequency(): string
     {
         return $this->get('freq');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getHook()
+    public function getHook(): string
     {
         return $this->get('hook');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getInfo($key, $default = null)
     {
         $infos = get_option('cron_job_infos', []);
+
         return (isset($infos[$this->getHook()][$key]))
             ? $infos[$this->getHook()][$key]
             : $default;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getLastDate()
+    public function getLastDate(): ?DateTime
     {
-        return ($timestamp = $this->getInfo('last'))
+        return ($timestamp = (int)$this->getInfo('last'))
             ? $this->getDatetime()->setTimestamp($timestamp)
             : null;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getNextDate()
+    public function getNextDate(): ?DateTime
     {
         return ($timestamp = wp_next_scheduled($this->getHook()))
             ? $this->getDatetime()->setTimestamp($timestamp)
@@ -217,33 +222,33 @@ class CronJob extends ParamsBag implements CronJobContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTimestamp()
+    public function getTimestamp(): int
     {
         return $this->getDate()->getTimestamp();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->get('title');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function log()
+    public function logger(): LoggerContract
     {
         return $this->get('logger');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function onTest()
+    public function onTest(): bool
     {
         return (bool)$this->get('test', false);
     }
@@ -251,77 +256,81 @@ class CronJob extends ParamsBag implements CronJobContract
     /**
      * @inheritdoc
      */
-    public function updateInfo($key, $value)
+    public function parse(): CronJobContract
+    {
+        parent::parse();
+
+        $date = $this->get('date');
+        if (!$date instanceof DateTime) {
+            $this->set('date', $this->getDatetime($date));
+        }
+
+        if ($logger = $this->pull('logger')) {
+            if (!$logger instanceof LoggerContract) {
+                $logger = (new Logger('cron'))->setParams(is_array($logger) ? $logger : []);
+            }
+            $this->setLogger($logger);
+        }
+
+        $freq = $this->get('freq');
+        $recurrences = wp_get_schedules();
+        if (is_array($freq)) {
+            if (!$freq_id = $this->get('freq.id')) {
+                $freq_id = 'daily';
+            } else {
+                add_filter('cron_schedules', function () use ($freq) {
+                    $attrs = array_merge([
+                        'interval' => DAY_IN_SECONDS,
+                        'display'  => __('Once Daily'),
+                    ], $freq);
+
+                    return [
+                        $attrs['id'] => [
+                            'interval' => $attrs['interval'],
+                            'display'  => $attrs['display'],
+                        ],
+                    ];
+                });
+            }
+        } else {
+            if (is_string($freq)) {
+                $freq_id = isset($recurrences[$freq]) ? $freq : 'daily';
+            } else {
+                $freq_id = 'daily';
+            }
+        }
+        $this->set('freq', $freq_id);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLogger(LoggerContract $logger): CronJobContract
+    {
+        $this->logger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setParams(array $params): CronJobContract
+    {
+        return $this->set($params)->parse();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateInfo($key, $value): CronJobContract
     {
         $jobs = get_option('cron_job_infos', []);
         $jobs[$this->getHook()][$key] = $value;
         update_option('cron_job_infos', $jobs, false);
 
         return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function parse()
-    {
-        parent::parse();
-
-        $date = $this->get('date');
-        if (!$date instanceof DateTime) :
-            $this->set(
-                'date',
-                $this->getDatetime($date)
-            );
-        endif;
-
-        $logger = $this->get('logger');
-        if (!$logger instanceof Logger) :
-            $defaults = [
-                'name'    => 'cron'
-            ];
-            $logger = is_array($logger)
-                ? array_merge($defaults, $logger)
-                : $defaults;
-
-            $this->set(
-                'logger',
-                app('logger', [$logger['name'], $logger])
-            );
-        endif;
-
-        $freq = $this->get('freq');
-        $recurrences = wp_get_schedules();
-        if (is_array($freq)) :
-            if (!$freq_id = $this->get('freq.id')) :
-                $freq_id = 'daily';
-            else :
-                add_filter(
-                    'cron_schedules',
-                    function () use ($freq) {
-                        $attrs = array_merge(
-                            [
-                                'interval' => DAY_IN_SECONDS,
-                                'display'  => __('Once Daily'),
-                            ],
-                            $freq
-                        );
-
-                        return [
-                            $attrs['id'] => [
-                                'interval' => $attrs['interval'],
-                                'display'  => $attrs['display'],
-                            ],
-                        ];
-                    });
-            endif;
-        else :
-            if (is_string($freq)) :
-                $freq_id = isset($recurrences[$freq]) ? $freq : 'daily';
-            else :
-                $freq_id = 'daily';
-            endif;
-        endif;
-        $this->set('freq', $freq_id);
     }
 }
