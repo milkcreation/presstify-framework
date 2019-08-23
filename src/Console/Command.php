@@ -9,6 +9,16 @@ use Symfony\Component\Console\{
     Output\OutputInterface
 };
 
+/**
+ * USAGE :
+ * Liste des commandes disponibles
+ * -------------------------------
+ * vendor/bin/bee list
+ *
+ * Arrêt complet des commandes CLI lancées
+ * ---------------------------------------
+ * pkill -9 php
+ */
 class Command extends BaseCommand
 {
     /**

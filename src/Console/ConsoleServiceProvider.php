@@ -2,6 +2,7 @@
 
 namespace tiFy\Console;
 
+use Symfony\Component\Console\Input\InputOption;
 use tiFy\Container\ServiceProvider;
 
 class ConsoleServiceProvider extends ServiceProvider
@@ -12,8 +13,7 @@ class ConsoleServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'console.controller.application',
-        'console.controller.kernel'
+        'console.application'
     ];
 
     /**
@@ -25,7 +25,7 @@ class ConsoleServiceProvider extends ServiceProvider
             global $argv;
 
             if(isset($argv[0]) && preg_match('/vendor\/bin\/bee$/', $argv[0])) {
-                $this->getContainer()->get('console.controller.application')->run();
+                $this->getContainer()->get('console.application')->run();
             }
         }, 999999);
     }
@@ -35,15 +35,27 @@ class ConsoleServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->getContainer()->share('console.controller.application', function() {
-            $app = new ControllerApplication($this->getContainer()->get('console.controller.kernel'));
-            $app->setName('bee');
-            $app->setVersion('1.0.0');
-            return $app->setCommands();
-        });
+        $this->getContainer()->share('console.application', function() {
+            $app = new Application('bee', '1.0.0');
 
-        $this->getContainer()->share('console.controller.kernel', function() {
-            return new ControllerKernel(getenv('APP_ENV') ?? '', (bool)(getenv('APP_DEBUG') ?? false));
+            foreach (config('console.commands', []) as $k => $command) {
+                if (is_numeric($k) && class_exists($command)) {
+                    $command = $app->add(new $command());
+                } elseif (class_exists($command)) {
+                    $command = $app->add(new $command($k));
+                }
+
+                if (!$command->getDefinition()->hasOption('url')) {
+                    $command->addOption(
+                        'url',
+                        null,
+                        InputOption::VALUE_OPTIONAL,
+                        'site url'
+                    );
+                }
+            }
+
+            return $app;
         });
     }
 }
