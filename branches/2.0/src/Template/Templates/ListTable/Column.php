@@ -55,8 +55,8 @@ class Column extends ParamsBag implements ColumnContract
     public function content(): string
     {
         if ($item = $this->factory->item()) {
-            if ($content = $this->get('content')) {
-                return $content instanceof Closure ? call_user_func_array($content, [$item]) : $content;
+            if (($content = $this->get('content')) && !$content instanceof Closure) {
+                return $content;
             } elseif($value = $item->get($this->getName())) {
                 $type = '';
 
@@ -239,11 +239,18 @@ class Column extends ParamsBag implements ColumnContract
                 $this->set('attrs.class', trim($this->get('attrs.class', '') . " {$classes}"));
             }
 
-            return (string)$this->factory->viewer($this->getTemplate(), [
-                'column'  => $this,
-                'content' => $this->content() . ($this->isPrimary() ? $this->factory->rowActions() : ''),
-                'item'    => $item
-            ]);
+            if (($content = $this->get('content')) instanceof Closure) {
+                return call_user_func($this->get('content'), [
+                        'column'  => $this,
+                        'item' => $this->factory->item()
+                    ]) . ($this->isPrimary() ? $this->factory->rowActions() : '');
+            } else {
+                return (string)$this->factory->viewer($this->getTemplate(), [
+                    'column'  => $this,
+                    'content' => $this->content() . ($this->isPrimary() ? $this->factory->rowActions() : ''),
+                    'item'    => $item
+                ]);
+            }
         } else {
             return '';
         }

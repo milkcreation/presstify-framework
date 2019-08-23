@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Console\Commands;
 
@@ -7,9 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class Sample
- * @package tiFy\Console\Commands
- *
  * @see https://symfony.com/doc/current/console.html
  */
 class Sample extends Command
@@ -23,7 +20,7 @@ class Sample extends Command
     /**
      * @inheritdoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             // Description de la commande affichée via "php vendor/bin/bee list"
@@ -36,7 +33,7 @@ class Sample extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         // Affichage de sortie sur plusieurs lignes dans la console (ou ajouter "\n" à la fin de chaque ligne)
         $output->writeln([
