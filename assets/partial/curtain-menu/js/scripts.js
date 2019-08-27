@@ -1,3 +1,4 @@
+/* global jQuery */
 "use strict";
 
 !(function ($) {
@@ -68,7 +69,7 @@
     _close: function (curLevel) {
       --this.level;
       curLevel.attr('aria-open', 'false');
-      let parentLevel = curLevel.closest('li').closest('[data-control="curtain-menu.panel"]');
+      //let parentLevel = curLevel.closest('li').closest('[data-control="curtain-menu.panel"]');
     }
   });
 

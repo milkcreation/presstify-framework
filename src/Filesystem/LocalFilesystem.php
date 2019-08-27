@@ -71,7 +71,7 @@ class LocalFilesystem extends Filesystem implements LocalFilesystemContract
     /**
      * @inheritDoc
      */
-    public function path($path): ?string
+    public function path(string $path = '/'): ?string
     {
         $adapter = $this->getRealAdapter();
 

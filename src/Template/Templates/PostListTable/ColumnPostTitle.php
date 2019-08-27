@@ -19,7 +19,7 @@ class ColumnPostTitle extends Column
     /**
      * @inheritDoc
      */
-    public function content(): string
+    public function value(): string
     {
         return ($item = $this->factory->item())
             ? "<strong>{$item['post_title']}</strong>"

@@ -13,6 +13,8 @@ class PasswordJs extends BasePasswordJs implements FieldFactoryContract
      */
     public function boot(): void
     {
+        parent::boot();
+
         add_action('init', function () {
             wp_register_style(
                 'FieldPasswordJs',
@@ -52,22 +54,6 @@ class PasswordJs extends BasePasswordJs implements FieldFactoryContract
     {
         parent::parse();
 
-        $this->set('container.attrs.data-options', [
-            '_ajax_nonce' => wp_create_nonce('tiFyFieldPasswordJs')
-        ]);
-
         return $this;
-    }
-
-    /**
-     * Décryptage Ajax.
-     *
-     * @return void
-     */
-    public function wpAjaxDecrypt()
-    {
-        check_ajax_referer('tiFyFieldPasswordJs');
-
-        wp_send_json_success(parent::xhrDecrypt());
     }
 }

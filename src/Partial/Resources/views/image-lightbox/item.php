@@ -5,5 +5,5 @@
  */
 ?>
 <a <?php echo $item->getAttrs(); ?>>
-    <?php echo $item->getThumbnail(); ?>
+    <?php echo $item->getContent(); ?>
 </a>

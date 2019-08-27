@@ -2,7 +2,7 @@
 
 namespace tiFy\Support\Proxy;
 
-//use tiFy\Contracts\Http\Request as RequestContract;
+use tiFy\Contracts\Http\Request as RequestContract;
 
 /**
  * @method static mixed all(array|mixed|null $keys = null)
@@ -17,6 +17,7 @@ namespace tiFy\Support\Proxy;
  * @method static bool hasHeader(string $key)
  * @method static string|array|null header(string|null $key = null, string|array|null $default = null)
  * @method static mixed input(string|null $key = null, $default = null)
+ * @method static RequestContract instance()
  * @method static boolean isMethod(string $method)
  * @method static boolean isSecure()
  * @method static string method()

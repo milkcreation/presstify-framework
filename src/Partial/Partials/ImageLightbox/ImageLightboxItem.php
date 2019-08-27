@@ -13,13 +13,13 @@ class ImageLightboxItem extends ParamsBag implements ImageLightboxItemContract
     public function defaults(): array
     {
         return [
-            'attrs'     => [],
-            'after'     => '',
-            'before'    => '',
-            'caption'   => '',
-            'group'     => '',
-            'src'       => '',
-            'thumbnail' => null,
+            'attrs'   => [],
+            'after'   => '',
+            'before'  => '',
+            'caption' => '',
+            'content' => null,
+            'group'   => '',
+            'src'     => '',
         ];
     }
 
@@ -34,9 +34,9 @@ class ImageLightboxItem extends ParamsBag implements ImageLightboxItemContract
     /**
      * @inheritDoc
      */
-    public function getThumbnail(): string
+    public function getContent(): string
     {
-        $thumbnail = $this->get('thumbnail', null);
+        $thumbnail = $this->get('content', null);
 
         if (is_null($thumbnail)) {
             return (string)partial('tag', [
@@ -47,7 +47,7 @@ class ImageLightboxItem extends ParamsBag implements ImageLightboxItemContract
                 ],
             ]);
         } else {
-            return is_callable($thumbnail) ? call_user_func($thumbnail): (string) $thumbnail;
+            return is_callable($thumbnail) ? call_user_func($thumbnail) : (string)$thumbnail;
         }
     }
 

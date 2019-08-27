@@ -5,6 +5,7 @@ namespace tiFy\Field\Fields\PasswordJs;
 use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, PasswordJs as PasswordJsContract};
 use tiFy\Contracts\Encryption\Encrypter;
 use tiFy\Field\FieldFactory;
+use tiFy\Support\Proxy\Router as route;
 
 class PasswordJs extends FieldFactory implements PasswordJsContract
 {
@@ -15,36 +16,51 @@ class PasswordJs extends FieldFactory implements PasswordJsContract
     protected $encrypter;
 
     /**
+     * Url de traitement.
+     * @var string Url de traitement
+     */
+    protected $url = '';
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): void
+    {
+        $this->setUrl();
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var string $name Clé d'indice de la valeur de soumission du champ.
-     *      @var string $value Valeur courante de soumission du champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var array $container Liste des attributs de configuration du conteneur de champ.
-     *      @var bool $readonly Controleur en lecture seule (désactive aussi l'enregistrement et le générateur).
-     *      @var int $length.
-     *      @var bool hide Masquage de la valeur true (masquée)|false (visible en clair)
+     * @var array $attrs Attributs HTML du champ.
+     * @var string $after Contenu placé après le champ.
+     * @var string $before Contenu placé avant le champ.
+     * @var string $name Clé d'indice de la valeur de soumission du champ.
+     * @var string $value Valeur courante de soumission du champ.
+     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+     * @var array $container Liste des attributs de configuration du conteneur de champ.
+     * @var bool $readonly Controleur en lecture seule (désactive aussi l'enregistrement et le générateur).
+     * @var int $length .
+     * @var bool hide Masquage de la valeur true (masquée)|false (visible en clair)
      * }
      */
     public function defaults(): array
     {
         return [
-            'attrs'  => [],
-            'after'  => '',
-            'before' => '',
-            'name'   => '',
-            'value'  => '',
-            'viewer' => [],
+            'attrs'     => [],
+            'after'     => '',
+            'before'    => '',
+            'name'      => '',
+            'value'     => '',
+            'viewer'    => [],
+            'ajax'      => true,
             'container' => [
                 'attrs' => [],
             ],
             'hide'      => true,
             'length'    => 32,
-            'readonly'  => false
+            'readonly'  => false,
         ];
     }
 
@@ -65,32 +81,69 @@ class PasswordJs extends FieldFactory implements PasswordJsContract
     /**
      * @inheritDoc
      */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function parse(): FieldFactoryContract
     {
         parent::parse();
 
-        $this->set('container.attrs.id', 'tiFyField-passwordJsContainer--' . $this->getId());
-        $this->set('container.attrs.data-control', 'password-js');
-        $this->set('container.attrs.aria-hide', $this->get('hide') ? 'true' : 'false');
-        $this->set('container.attrs.data-options', [
-            '_ajax_nonce' => wp_create_nonce('tiFyFieldCrypted')
+        if ($container_class = $this->get('container.attrs.class')) {
+            $this->set('container.attrs.class', "FieldPasswordJs {$container_class}");
+        } else {
+            $this->set('container.attrs.class', 'FieldPasswordJs');
+        }
+
+        $options = [];
+        if ($ajax = $this->get('ajax')) {
+            $defaults = [
+                'url'  => $this->getUrl(),
+                'type' => 'post',
+                'data' => [],
+            ];
+            $options['ajax'] = is_array($ajax) ? array_merge($defaults, $ajax) : $defaults;
+        }
+
+        $this->set([
+            'container.attrs.aria-hide'    => $this->get('hide') ? 'true' : 'false',
+            'container.attrs.data-control' => 'password-js',
+            'container.attrs.data-id'      => 'FieldPasswordJs--' . $this->getIndex(),
+            'container.attrs.data-options' => $options
         ]);
 
-        $this->set('attrs.type', $this->get('hide') ? 'password' : 'text');
-        $this->set('attrs.size', $this->get('attrs.size') ? : $this->get('length'));
+        $this->set([
+            'attrs.type' => $this->get('hide') ? 'password' : 'text',
+            'attrs.size' => $this->get('attrs.size') ?: $this->get('length'),
+        ]);
 
-        if(!$this->has('attrs.autocomplete')) {
+        if (!$this->has('attrs.autocomplete')) {
             $this->set('attrs.autocomplete', 'off');
         }
 
-        if($this->get('readonly')) {
+        if ($this->get('readonly')) {
             $this->push('attrs', 'readonly');
         }
-        $this->set('attrs.data-control', 'password-js.input');
 
-        $cypher = $this->getValue();
-        $this->set('attrs.data-cypher', $this->getEncrypter()->encrypt($cypher));
-        $this->set('attrs.value', $this->get('hide') ? $cypher : $this->get('attrs.value'));
+        $this->set([
+            'attrs.data-control' => 'password-js.input',
+            'attrs.data-cypher'  => $cypher = $this->getEncrypter()->encrypt($this->getValue()),
+            'attrs.value'        => $this->get('hide') ? $cypher : $this->get('attrs.value'),
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setUrl(?string $url =  null): FieldFactoryContract
+    {
+        $this->url = is_null($url) ? route::xhr(md5($this->getAlias()), [$this, 'xhrResponse'])->getUrl() : $url;
 
         return $this;
     }
@@ -100,11 +153,11 @@ class PasswordJs extends FieldFactory implements PasswordJsContract
      *
      * @return array
      */
-    public function xhrDecrypt(): array
+    public function xhrResponse(): array
     {
         return [
             'success' => true,
-            'data'    => $this->getEncrypter()->decrypt(request()->input('cypher'))
+            'data'    => $this->getEncrypter()->decrypt(request()->input('cypher')),
         ];
     }
 }
