@@ -20,5 +20,5 @@ interface ImageLightboxItem extends ParamsBag
      *
      * @return string
      */
-    public function getThumbnail(): string;
+    public function getContent(): string;
 }

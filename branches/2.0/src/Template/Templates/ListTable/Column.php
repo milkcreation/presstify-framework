@@ -33,7 +33,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function defaults(): array
     {
@@ -45,39 +45,13 @@ class Column extends ParamsBag implements ColumnContract
             'primary'  => false,
             'sortable' => false,
             'tag'      => 'td',
-            'title'    => $this->getName()
+            'title'    => $this->getName(),
+            'value'    => null
         ];
     }
 
     /**
-     * @inheritdoc
-     */
-    public function content(): string
-    {
-        if ($item = $this->factory->item()) {
-            if (($content = $this->get('content')) && !$content instanceof Closure) {
-                return $content;
-            } elseif($value = $item->get($this->getName())) {
-                $type = '';
-
-                switch ($type) {
-                    default:
-                        return is_array($value) ? join(', ', $value) : (string)$value;
-                        break;
-                    case 'DATETIME' :
-                        return mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
-                        break;
-                }
-            } else {
-                return '';
-            }
-        } else {
-            return $this->get('content');
-        }
-    }
-
-    /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getName(): string
     {
@@ -85,7 +59,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTemplate(string $default = 'tbody-col'): string
     {
@@ -94,7 +68,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTitle(): string
     {
@@ -102,7 +76,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function header(bool $with_id = true): string
     {
@@ -164,7 +138,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isHidden(): bool
     {
@@ -172,7 +146,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isPrimary(): bool
     {
@@ -180,7 +154,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isSortable(): bool
     {
@@ -188,7 +162,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isVisible(): bool
     {
@@ -196,7 +170,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse(): ColumnContract
     {
@@ -221,7 +195,7 @@ class Column extends ParamsBag implements ColumnContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function render(): string
     {
@@ -239,17 +213,16 @@ class Column extends ParamsBag implements ColumnContract
                 $this->set('attrs.class', trim($this->get('attrs.class', '') . " {$classes}"));
             }
 
+            $args = [
+                'item'   => $item,
+                'value'  => $this->value() . ($this->isPrimary() ? $this->factory->rowActions() : ''),
+                'column' => $this
+            ];
+
             if (($content = $this->get('content')) instanceof Closure) {
-                return call_user_func($this->get('content'), [
-                        'column'  => $this,
-                        'item' => $this->factory->item()
-                    ]) . ($this->isPrimary() ? $this->factory->rowActions() : '');
+                return call_user_func($content, $args);
             } else {
-                return (string)$this->factory->viewer($this->getTemplate(), [
-                    'column'  => $this,
-                    'content' => $this->content() . ($this->isPrimary() ? $this->factory->rowActions() : ''),
-                    'item'    => $item
-                ]);
+                return (string)$this->factory->viewer($this->getTemplate(), $args);
             }
         } else {
             return '';
@@ -264,5 +237,32 @@ class Column extends ParamsBag implements ColumnContract
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function value(): string
+    {
+        if ($item = $this->factory->item()) {
+            if (($value = $this->get('value')) && !is_null($value)) {
+                return $value;
+            } elseif($value = $item->get($this->getName())) {
+                $type = '';
+
+                switch ($type) {
+                    default:
+                        return is_array($value) ? join(', ', $value) : (string)$value;
+                        break;
+                    case 'DATETIME' :
+                        return mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
+                        break;
+                }
+            } else {
+                return '';
+            }
+        } else {
+            return $this->get('value') ? : '';
+        }
     }
 }

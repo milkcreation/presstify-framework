@@ -25,7 +25,8 @@
     border-left: solid 3px #00A0D2;
 }
 
-.Notice[aria-type="success"] {
+.Notice[aria-type="success"],
+.Notice[aria-type="notice"]{
     border-left: solid 3px #46B450;
 }
 

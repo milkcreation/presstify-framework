@@ -267,6 +267,14 @@ class MessagesBag implements MessagesBagContract
     /**
      * @inheritDoc
      */
+    public function exists(?int $level = null): bool
+    {
+        return $this->count($level) > 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function fetch(?int $level = null, $code = null): array
     {
         $items = [];

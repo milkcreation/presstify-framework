@@ -5,6 +5,6 @@
  * @var tiFy\Template\Templates\ListTable\Viewer $this
  * @var tiFy\Template\Templates\ListTable\Contracts\Column $column
  * @var tiFy\Template\Templates\ListTable\Contracts\Item $item
- * @var string $content
+ * @var string $value
  */
-echo $this->get('content', '');
+echo $this->get('value', '');

@@ -50,5 +50,5 @@ interface LocalFilesystem extends Filesystem
      *
      * @return string|null
      */
-    public function path($path): ?string;
+    public function path(string $path = '/'): ?string;
 }

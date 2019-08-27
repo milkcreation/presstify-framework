@@ -1,114 +1,75 @@
-/* globals tify */
-
+/* global jQuery, tify */
 "use strict";
 
-jQuery(document).ready(function ($) {
-    $(document).on('click', '[data-control="password-js.toggle"]', function (e) {
-        e.preventDefault();
+!(function ($) {
+  $.widget('tify.tifyPasswordJs', {
+    widgetEventPrefix: 'password-js:',
+    id: undefined,
+    xhr: undefined,
+    options: {},
 
-        var $closest = $(this).closest('[data-control="password-js"]'),
-            o = $.parseJSON(decodeURIComponent($closest.data('options'))),
-            $input = $('[data-control="password-js.input"]', $closest),
-            cypher = $input.attr('aria-cypher');
+    // INITIALISATION
+    // -------------------------------------------------------------------------------------------------------------
+    // Instanciation de l'élément.
+    _create: function () {
+      this.instance = this;
 
-        if ($closest.attr('aria-hide') === 'true') {
-            $closest.addClass('loading');
-            $input.prop('disabled', true);
+      this.el = this.element;
 
-            $.post(
-                tify.ajax_url,
-                {
-                    action: 'tify_field_crypted_decrypt',
-                    _ajax_nonce : o._ajax_nonce,
-                    cypher: cypher,
-                })
-                .done(function (resp) {
-                    $input
-                        .val(resp.data)
-                        .prop('disabled', false)
-                        .attr('type', 'text');
-                    $closest
-                        .removeClass('loading')
-                        .attr('aria-hide', 'false');
-                });
-        } else {
-            $input
-                .val(cypher)
-                .prop('disabled', false)
-                .attr('type', 'password');
+      this._initOptions();
 
-            $closest.attr('aria-hide', 'true');
-        }
-    });
+      this._on(this.el, {
+        'click [data-control="password-js.toggle"]': this._onActionToggle
+      });
+    },
 
-    /**
-     * SAISIE
+    // Initialisation des attributs de configuration.
+    _initOptions: function () {
+      $.extend(
+          true,
+          this.options,
+          this.el.data('options') && $.parseJSON(decodeURIComponent(this.el.data('options'))) || {}
+      );
+    },
 
-    var xhr = undefined;
-    var delay = (function () {
-        var timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
+    // Initialisation des événements.
+    _onActionToggle: function (e) {
+      e.preventDefault();
 
-    $(document).on('keyup change', '[data-tify_control_crypted_data="input"]', function (e) {
-        e.preventDefault();
+      let self = this,
+          $el = $(e.currentTarget),
+          ajax = self.option('ajax') || undefined,
+          $target = $('[data-id="' + $el.data('target') +'"]'),
+          $input = $('[data-control="password-js.input"]', $target),
+          cypher = $input.attr('data-cypher');
 
-        if (xhr !== undefined)
-            xhr.abort();
-
-        var $closest = $(this).closest('[data-tify_control="crypted_data"]')
-        value = $(this).val();
-
-        $closest.addClass('load');
-        delay(function () {
-            xhr = $.post(
-                tify.ajax_url,
-                {
-                    action: 'tiFyControlCryptedData_encrypt',
-                    value: value,
-                    encrypt_cb: $closest.data('encrypt_cb'),
-                    data: JSON.parse(decodeURIComponent($closest.data('transport')))
-                },
-                function (resp) {
-                    $closest.removeClass('load');
-                    $('.tiFyControlCryptedData-cypher', $closest).val(resp.data);
-                });
-        }, 300);
-
-        return false;
-    });
-     */
-    /**
-     * GENERATEUR
-
-    $(document).on('click', '[data-tify_control_crypted_data="generate"]', function (e) {
-        e.preventDefault();
-
-        var $closest = $(this).closest('[data-tify_control="crypted_data"]'),
-            $input = $('.tiFyControlCryptedData-input', $closest);
-
-        $closest.addClass('load');
+      if ($target.attr('aria-hide') === 'true') {
+        ajax = $.extend(true, ajax, {data: {action: 'decrypt', cypher: cypher}});
+        $target.addClass('loading');
         $input.prop('disabled', true);
 
-        $.post(
-            tify.ajax_url,
-            {
-                action: 'tiFyControlCryptedData_generate',
-                generate_cb: $closest.data('generate_cb'),
-                data: JSON.parse(decodeURIComponent($closest.data('transport')))
-            },
-            function (resp) {
-                $input
-                    .val(resp.data)
-                    .prop('disabled', false)
-                    .attr('type', 'text');
-                $closest.removeClass('masked load');
+        $.ajax(ajax).done(function (resp) {
+          if (resp.success) {
+            $input
+                .val(resp.data)
+                .prop('disabled', false)
+                .attr('type', 'text');
+          }
 
-                $input.trigger('keyup');
-            });
-    });
-     */
+          $target.removeClass('loading').attr('aria-hide', 'false');
+        });
+      } else {
+        $input
+            .val(cypher)
+            .prop('disabled', false)
+            .attr('type', 'password');
+
+        $target.attr('aria-hide', 'true');
+      }
+    }
+  });
+})(jQuery, document, window);
+
+jQuery(document).ready(function ($) {
+  $('[data-control="password-js"]').tifyPasswordJs();
 });

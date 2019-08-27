@@ -19,7 +19,7 @@ class ColumnPostType extends Column
     /**
      * @inheritDoc
      */
-    public function content(): string
+    public function value(): string
     {
         if ($item = $this->factory->item()) {
             return ($postType = post_type($item['post_type']))

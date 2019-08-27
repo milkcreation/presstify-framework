@@ -22,7 +22,6 @@ interface Encrypter
      * @param string $secret Clé secrète de hashage.
      * @param string $private Clé privée de hashage.
      *
-     *
      * @return string
      */
     public function encrypt(string $plain, ?string $secret = null, ?string $private = null): string;
@@ -31,9 +30,8 @@ interface Encrypter
      * Generation.
      *
      * @param int $length Longueur de la chaine.
-     * @param boolean $special_chars Activation des caractère spéciaux. !|@|#|$|%|^|&|*|(|)|.
-     * @param boolean $extra_special_chars Activation des caractère spéciaux complémentaires.
-     *                                     -|_| |[|]|{|}|<|>|~|`|+|=|,|.|;|:|/|?|||.
+     * @param boolean $special_chars Activation des caractère spéciaux. !@#$%^&*().
+     * @param boolean $extra_special_chars Activation des caractère spéciaux complémentaires. -_ []{}<>~`+=,.;:/?|.
      *
      * @return string
      */

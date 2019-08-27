@@ -125,6 +125,15 @@ interface MessagesBag extends ArrayAccess, Countable, IteratorAggregate, JsonSer
     public function error(string $message = '', ?array $datas = null, ?string $code = null): ?string;
 
     /**
+     * Vérification d'existance de messages ou seulement ceux associés à un type de notification.
+     *
+     * @param int|null $level Niveau de notification.
+     *
+     * @return boolean
+     */
+    public function exists(?int $level = null): bool;
+
+    /**
      * Retrouve la liste des messages et les données relatives associées à un type de notification et possiblement un
      * indice de qualification.
      *

@@ -15,13 +15,6 @@ interface Column extends FactoryAwareTrait, ParamsBag
     public function __toString(): string;
 
     /**
-     * Récupération du contenu d'affichage.
-     *
-     * @return string
-     */
-    public function content(): string;
-
-    /**
      * Récupération du nom de qualification.
      *
      * @return string
@@ -103,4 +96,11 @@ interface Column extends FactoryAwareTrait, ParamsBag
      * @return static
      */
     public function setName(string $name): Column;
+
+    /**
+     * Récupération de la valeur à afficher.
+     *
+     * @return string
+     */
+    public function value(): string;
 }

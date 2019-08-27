@@ -23,15 +23,15 @@
     position: absolute;
     content: "";
     width: 30px;
-    top: 0px;
-    bottom: 0px;
+    top: 0;
+    bottom: 0;
     left: 0;
     background-color: #F4F4F4;
     border: solid 1px #DDD;
-    box-shadow: 0px 0px 1px 0px #ccc;
+    box-shadow: 0 0 1px 0 #ccc;
 }
 
-[data-control="password-js"] .tiFyField-passwordJsWrapper::before {
+[data-control="password-js"] .FieldPasswordJs-wrapper::before {
     position: absolute;
     font-family: "dashicons";
     content: "\f112";
@@ -43,20 +43,20 @@
     color: #AAA;
 }
 
-[data-control="password-js"] .tiFyField-passwordJsWrapper {
+[data-control="password-js"] .FieldPasswordJs-wrapper {
     position: relative;
     display: inline-block;
     font-size: 14px;
 }
 
-[data-control="password-js"].loading .tiFyField-passwordJsWrapper::before {
+[data-control="password-js"].loading .FieldPasswordJs-wrapper::before {
     content: "\f463";
     margin-top: -10px;
     -webkit-animation: rotating 2s infinite linear;
     animation: rotating 2s infinite linear;
 }
 
-.Field-passwordJs {
+.FieldPasswordJs {
     padding-right: 25px;
     padding-left: 35px !important;
     width: 100%;

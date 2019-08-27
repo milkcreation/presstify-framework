@@ -6,10 +6,11 @@
 <?php $this->before(); ?>
 
 <div <?php echo $this->htmlAttrs($this->get('container.attrs', [])); ?>>
-    <div class="tiFyField-passwordJsWrapper">
-        <a class="tiFyField-passwordJsToggle"
+    <div class="FieldPasswordJs-wrapper">
+        <a class="FieldPasswordJs-toggle"
            data-control="password-js.toggle"
-           href="#<?php echo $this->get('container.attrs.id'); ?>"
+           data-target="<?php echo $this->get('container.attrs.data-id'); ?>"
+           href="#"
         ></a>
 
         <?php echo partial('tag', [
