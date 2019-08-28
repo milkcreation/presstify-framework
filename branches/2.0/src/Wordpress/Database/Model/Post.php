@@ -4,10 +4,10 @@ namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\Post as CorcelPost;
 use Illuminate\Database\Eloquent\Builder;
-use tiFy\Database\Concerns\ColumnsAwareTrait;
+use tiFy\Database\Concerns\{ColumnsAwareTrait, ConnectionAwareTrait};
 use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
-use tiFy\Wordpress\Database\Concerns\MetaFieldsAwareTrait;
+use tiFy\Wordpress\Database\Concerns\{BlogAwareTrait, MetaFieldsAwareTrait};
 
 /**
  * @method static Postmeta createMeta($key, $value = null)
@@ -18,7 +18,7 @@ use tiFy\Wordpress\Database\Concerns\MetaFieldsAwareTrait;
  */
 class Post extends CorcelPost implements PostBuilder
 {
-    use ColumnsAwareTrait, MetaFieldsAwareTrait;
+    use BlogAwareTrait, ColumnsAwareTrait, ConnectionAwareTrait, MetaFieldsAwareTrait;
 
     /**
      * @var Builder

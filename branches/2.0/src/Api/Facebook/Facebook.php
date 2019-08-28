@@ -141,7 +141,9 @@ class Facebook extends FacebookSdk implements FacebookContract
 
         // Classe de rappel de redirection
         $helper = $this->getRedirectLoginHelper();
-
+        if (isset($_GET['state'])) {
+            $helper->getPersistentDataHandler()->set('state', $_GET['state']);
+        }
         // Récupération du jeton d'accès
         try {
             $accessToken = $helper->getAccessToken($redirect_url);

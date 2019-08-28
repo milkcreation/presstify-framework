@@ -3,6 +3,7 @@
     display:none;
 }
 
+[data-control="notice"][aria-fade="out"],
 [data-control="notice"][aria-fade="out"] > * {
     animation-name: themeFadeOut;
     animation-duration: 1s;
