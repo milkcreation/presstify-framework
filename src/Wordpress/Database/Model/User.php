@@ -3,9 +3,9 @@
 namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\User as CorcelUser;
-use tiFy\Database\Concerns\ColumnsAwareTrait;
+use tiFy\Database\{Concerns\ColumnsAwareTrait, Concerns\ConnectionAwareTrait};
 use tiFy\Wordpress\Contracts\Database\UserBuilder;
-use tiFy\Wordpress\Database\Concerns\MetaFieldsAwareTrait;
+use tiFy\Wordpress\Database\Concerns\{BlogAwareTrait, MetaFieldsAwareTrait};
 
 /**
  * @method static Usermeta createMeta($key, $value = null)
@@ -16,7 +16,7 @@ use tiFy\Wordpress\Database\Concerns\MetaFieldsAwareTrait;
  */
 class User extends CorcelUser implements UserBuilder
 {
-    use ColumnsAwareTrait, MetaFieldsAwareTrait;
+    use BlogAwareTrait, ColumnsAwareTrait, ConnectionAwareTrait, MetaFieldsAwareTrait;
 
     /**
      * Cartographie des classes de gestion des métadonnées.

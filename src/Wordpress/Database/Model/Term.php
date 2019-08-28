@@ -3,9 +3,9 @@
 namespace tiFy\Wordpress\Database\Model;
 
 use Corcel\Model\Term as CorcelTerm;
-use tiFy\Database\Concerns\ColumnsAwareTrait;
+use tiFy\Database\Concerns\{ColumnsAwareTrait, ConnectionAwareTrait};
 use tiFy\Wordpress\Contracts\Database\TaxonomyBuilder;
-use tiFy\Wordpress\Database\Concerns\MetaFieldsAwareTrait;
+use tiFy\Wordpress\Database\Concerns\{BlogAwareTrait, MetaFieldsAwareTrait};
 
 /**
  * @method static Termmeta createMeta($key, $value = null)
@@ -16,7 +16,7 @@ use tiFy\Wordpress\Database\Concerns\MetaFieldsAwareTrait;
  */
 class Term extends CorcelTerm implements TaxonomyBuilder
 {
-    use ColumnsAwareTrait, MetaFieldsAwareTrait;
+    use BlogAwareTrait, ConnectionAwareTrait, ColumnsAwareTrait, MetaFieldsAwareTrait;
 
     /**
      * Cartographie des classes de gestion des métadonnées.

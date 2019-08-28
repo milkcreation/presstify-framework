@@ -97,10 +97,10 @@ class DbBuilder extends ListTableDbBuilder implements DbBuilderContract
             $this->query()->whereHas('meta', function (EloquentBuilder $query) use ($roles) {
                 foreach($roles as $i => $role) {
                     if (!$i) {
-                        $query->where('meta_key', $this->db()->getConnection()->getTablePrefix() . 'capabilities')
+                        $query->where('meta_key', $this->db()->getBlogPrefix() . 'capabilities')
                             ->where('meta_value', 'like', "%{$role}%");
                     } else {
-                        $query->orWhere('meta_key', $this->db()->getConnection()->getTablePrefix() . 'capabilities')
+                        $query->orWhere('meta_key', $this->db()->getBlogPrefix() . 'capabilities')
                             ->where('meta_value', 'like', "%{$role}%");
                     }
                 }
