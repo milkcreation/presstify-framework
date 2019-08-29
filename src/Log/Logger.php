@@ -106,7 +106,7 @@ class Logger extends MonologLogger implements LoggerContract
      */
     public function setDefaultHandler()
     {
-        if ($this->getContainer()->has('path')) {
+        if ($this->getContainer() && $this->getContainer()->has('path')) {
             /** @var PathContract $path */
             $path = $this->getContainer()->get('path');
 
