@@ -53,7 +53,7 @@ class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
     {
         $path = ($path === '/')
             ? $this->prefix
-            : ($this->prefix === '/' ? '' : $this->prefix) . sprintf('/%s', ltrim($path, '/'));
+            : rtrim($this->prefix, '/') . sprintf('/%s', ltrim($path, '/'));
 
         $route = $this->collection->map($method, $path, $handler);
 
