@@ -30,7 +30,7 @@ class Cookie implements CookieContract
     protected $container;
 
     /**
-     * Nom de qualification du domaine.
+     * Nom de qualification du domaine du site associé.
      * @var string|null
      */
     protected $domain;
@@ -68,8 +68,7 @@ class Cookie implements CookieContract
     /**
      * Suffixe de salage du nom de qualification du cookie.
      * @var string
-     */
-    protected $salt = '';
+     */    protected $salt = '';
 
     /**
      * Directive de permission d'envoi du cookie.
@@ -245,6 +244,26 @@ class Cookie implements CookieContract
     /**
      * @inheritDoc
      */
+    public function setBase64(bool $active = false): CookieContract
+    {
+        $this->base64 = $active;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDomain(?string $domain = null): CookieContract
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setName(string $name): CookieContract
     {
         $this->name = $name;
@@ -255,9 +274,9 @@ class Cookie implements CookieContract
     /**
      * @inheritDoc
      */
-    public function setBase64(bool $active = false): CookieContract
+    public function setPath(?string $path = null): CookieContract
     {
-        $this->base64 = $active;
+        $this->path = $path;
 
         return $this;
     }

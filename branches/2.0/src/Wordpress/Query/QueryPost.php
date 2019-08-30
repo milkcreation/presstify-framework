@@ -70,6 +70,45 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
+    public static function createFromGlobal(): ?QueryPostContract
+    {
+        global $post;
+
+        return $post instanceof WP_Post ? new static($post) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function createFromId($post_id): ?QueryPostContract
+    {
+        return ($post_id && is_numeric($post_id) && ($wp_post = get_post($post_id)) && ($wp_post instanceof WP_Post))
+            ? new static($wp_post) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function createFromPostdata(array $postdata): ?QueryPostContract
+    {
+        return isset($postdata['ID']) ? new static(new WP_Post((object)$postdata)) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function createFromName(string $post_name): ?QueryPostContract
+    {
+        return (($wp_post = (new WP_Query())->query([
+                'name'           => $post_name,
+                'post_type'      => 'any',
+                'posts_per_page' => 1,
+            ])) && ($wp_post[0] instanceof WP_Post)) ? new static($wp_post[0]) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function cacheable(): bool
     {
         return $this->cacheable;
@@ -130,45 +169,6 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function cacheHas(string $key): bool
     {
         return $this->cacheable() && !is_null($this->cacheGet($key, null));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function createFromGlobal(): ?QueryPostContract
-    {
-        global $post;
-
-        return $post instanceof WP_Post ? new static($post) : null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function createFromId($post_id): ?QueryPostContract
-    {
-        return ($post_id && is_numeric($post_id) && ($wp_post = get_post($post_id)) && ($wp_post instanceof WP_Post))
-            ? new static($wp_post) : null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function createFromPostdata(array $postdata): ?QueryPostContract
-    {
-        return isset($postdata['ID']) ? new static(new WP_Post((object)$postdata)) : null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function createFromName(string $post_name): ?QueryPostContract
-    {
-        return (($wp_post = (new WP_Query())->query([
-                'name'           => $post_name,
-                'post_type'      => 'any',
-                'posts_per_page' => 1,
-            ])) && ($wp_post[0] instanceof WP_Post)) ? new static($wp_post[0]) : null;
     }
 
     /**
