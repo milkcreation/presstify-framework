@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\Cookie;
 
 use tiFy\Contracts\Cookie\{Cookie as CookieContract};
+use WP_Site;
 
 class Cookie
 {
@@ -26,6 +27,16 @@ class Cookie
         if (!config()->has('cookie.salt')) {
             $this->manager->setSalt('_' . COOKIEHASH);
         }
+
+        if (is_multisite() && $site = WP_Site::get_instance(get_current_blog_id())) {
+            if (!config()->get('cookie.domain')) {
+                $this->manager->setDomain($site->domain);
+            }
+            if (!config()->get('cookie.path')) {
+                $this->manager->setPath($site->path);
+            }
+        }
+
 
         if ($cookies = config('cookie.cookies', [])) {
             foreach (config('cookie.cookies') as $k => $v) {

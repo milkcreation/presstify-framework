@@ -69,6 +69,23 @@ class Application extends Container
     }
 
     /**
+     * Détermine si l'application est lancée dans une console.
+     *
+     * @return boolean
+     */
+    public function runningInConsole(): bool
+    {
+        global $argv;
+
+        if (isset($_ENV['APP_RUNNING_IN_CONSOLE'])) {
+            return $_ENV['APP_RUNNING_IN_CONSOLE'] === 'true';
+        } elseif(isset($argv[0]) && preg_match('/vendor\/bin\/bee$/', $argv[0])) {
+            return true;
+        }
+        return php_sapi_name() === 'cli' || php_sapi_name() === 'phpdbg';
+    }
+
+    /**
      *
      */
     public function registerProxy()

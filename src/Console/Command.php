@@ -13,7 +13,7 @@ use Symfony\Component\Console\{
  * USAGE :
  * Liste des commandes disponibles
  * -------------------------------
- * vendor/bin/bee list
+ * php console list
  *
  * Arrêt complet des commandes CLI lancées
  * ---------------------------------------

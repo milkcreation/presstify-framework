@@ -22,9 +22,10 @@ class ConsoleServiceProvider extends ServiceProvider
     public function boot()
     {
         add_action('shutdown', function () {
-            global $argv;
+            /** @var \tiFy\Kernel\Application $app */
+            $app = $this->getContainer()->get('app');
 
-            if(isset($argv[0]) && preg_match('/vendor\/bin\/bee$/', $argv[0])) {
+            if($app->runningInConsole()) {
                 $this->getContainer()->get('console.application')->run();
             }
         }, 999999);
@@ -36,7 +37,7 @@ class ConsoleServiceProvider extends ServiceProvider
     public function register()
     {
         $this->getContainer()->share('console.application', function() {
-            $app = new Application('bee', '1.0.0');
+            $app = new Application('presstiFy PHP CLI Console', '1.0.0');
 
             foreach (config('console.commands', []) as $k => $command) {
                 if (is_numeric($k) && class_exists($command)) {

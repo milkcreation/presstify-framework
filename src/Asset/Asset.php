@@ -107,11 +107,11 @@ class Asset extends ParamsBag implements AssetContract
         if (is_array($value)) {
             foreach ($value as $k => &$v) {
                 if (is_scalar($v)) {
-                    $v = $this->normalize(strval($v));
+                    $v = (is_bool($v) || is_int($v)) ? $v : $this->normalize(strval($v));
                 }
             }
         } elseif (is_scalar($value)) {
-            $value = $this->normalize(strval($value));
+            $value = (is_bool($value) || is_int($value)) ? $value : $this->normalize(strval($value));
         }
         $this->push('data-js', compact('footer', 'key', 'value'));
 

@@ -119,13 +119,13 @@ interface Cookie
     public function setBase64(bool $active = false): Cookie;
 
     /**
-     * Définition du suffixe de Salage du nom de qualification des cookies.
+     * Définition du nom de qualification du domaine du site associé.
      *
-     * @param string $salt
+     * @param string|null $domain
      *
      * @return static
      */
-    public function setSalt(string $salt = ''): Cookie;
+    public function setDomain(?string $domain = null): Cookie;
 
     /**
      * Définition du nom de qualification du cookie.
@@ -135,6 +135,24 @@ interface Cookie
      * @return static
      */
     public function setName(string $name): Cookie;
+
+    /**
+     * Définition du chemin de validité des cookies.
+     *
+     * @param string|null $path
+     *
+     * @return static
+     */
+    public function setPath(?string $path = null): Cookie;
+
+    /**
+     * Définition du suffixe de Salage du nom de qualification des cookies.
+     *
+     * @param string $salt
+     *
+     * @return static
+     */
+    public function setSalt(string $salt = ''): Cookie;
 
     /**
      * Définition de la liste des arguments par défaut.

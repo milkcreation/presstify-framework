@@ -23,10 +23,10 @@ class Sample extends Command
     protected function configure(): void
     {
         $this
-            // Description de la commande affichée via "php vendor/bin/bee list"
+            // Description de la commande affichée via "php console list"
             ->setDescription(__('Test de commande cli.', 'tify'))
 
-            // Description complète de la commande affichée via "php vendor/bin/bee tify:sample --help"
+            // Description complète de la commande affichée via "php console tify:sample --help"
             ->setHelp(__('Cette commande sert de test de démonstration ...', 'tify') );
     }
 
