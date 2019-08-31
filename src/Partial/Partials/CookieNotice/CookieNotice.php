@@ -6,10 +6,24 @@ use Closure;
 use Exception;
 use tiFy\Contracts\Partial\{CookieNotice as CookieNoticeContract, PartialFactory as PartialFactoryContract};
 use tiFy\Partial\PartialFactory;
-use tiFy\Support\Proxy\{Cookie, Request as req};
+use tiFy\Support\Proxy\{Cookie, Request, Router};
 
 class CookieNotice extends PartialFactory implements CookieNoticeContract
 {
+    /**
+     * Url de traitement.
+     * @var string Url de traitement
+     */
+    protected $url;
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): void
+    {
+        $this->setUrl();
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -43,6 +57,14 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
     /**
      * @inheritDoc
      */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function parse(): PartialFactoryContract
     {
         parent::parse();
@@ -57,13 +79,29 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
         }
 
         $this->set('attrs.data-options', [
-            '_id'     => $this->getId(),
-            '_cookie' => $this->get('cookie', []),
+            'ajax'    => [
+                'url' => $this->getUrl(),
+                'data' => [
+                    '_id'     => $this->getId(),
+                    '_cookie' => $this->get('cookie', []),
+                ],
+                'method' => 'POST'
+            ]
         ]);
 
         if ($trigger = $this->get('trigger', [])) {
             $this->set('content', $this->get('content', '') . $this->trigger(is_array($trigger) ?: []));
         }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setUrl(?string $url = null): PartialFactoryContract
+    {
+        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse'])->getUrl() : $url;
 
         return $this;
     }
@@ -93,10 +131,10 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
      */
     public function xhrResponse(): array
     {
-        $id = req::input('_id');
+        $id = Request::input('_id');
 
         try {
-            $cookie = Cookie::instance($id, req::input('_cookie', []));
+            $cookie = Cookie::instance($id, Request::input('_cookie', []));
 
             $cookie->set('1');
             return ['success' => true];

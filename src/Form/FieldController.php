@@ -16,7 +16,7 @@ class FieldController implements FieldControllerContract
      */
     protected $fieldSupports = [
         'button'              => ['request', 'wrapper'],
-        'checkbox'            => ['label', 'request', 'tabindex', 'wrapper', 'transport'],
+        'checkbox'            => ['checking', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
         'checkbox-collection' => ['choices', 'label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'datetime-js'         => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
         'hidden'              => ['request'],

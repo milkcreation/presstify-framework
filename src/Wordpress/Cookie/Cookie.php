@@ -24,16 +24,20 @@ class Cookie
     {
         $this->manager = $manager;
 
-        if (!config()->has('cookie.salt')) {
-            $this->manager->setSalt('_' . COOKIEHASH);
-        }
-
         if (is_multisite() && $site = WP_Site::get_instance(get_current_blog_id())) {
             if (!config()->get('cookie.domain')) {
                 $this->manager->setDomain($site->domain);
             }
             if (!config()->get('cookie.path')) {
                 $this->manager->setPath($site->path);
+            }
+            if (!config()->has('cookie.salt')) {
+                $this->manager->setSalt('_' . md5($this->manager->getDomain() . $this->manager->getPath() .COOKIEHASH));
+            }
+
+        } else {
+            if (!config()->has('cookie.salt')) {
+                $this->manager->setSalt('_' . COOKIEHASH);
             }
         }
 

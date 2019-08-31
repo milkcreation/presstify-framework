@@ -102,7 +102,7 @@ class FileJs extends FieldFactory implements FileJsContract
                 '_dir' => $this->get('dirname')
             ]),
             'timeout'               => 0,
-            'url'                   => url()->rewriteBase() . $this->getUrl(),
+            'url'                   => $this->getUrl(),
         ], $this->get('uploader', [])));
 
         return $this;

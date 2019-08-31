@@ -71,13 +71,4 @@ interface TemplateManager extends Manager
      * @return string
      */
     public function resourcesUrl(?string $path = ''): ?string;
-
-    /**
-     * Définition du prefixe des urls de routage.
-     *
-     * @param string $prefix Prefixe des urls de routage.
-     *
-     * @return static
-     */
-    public function setUrlPrefix(string $prefix): TemplateManager;
 }

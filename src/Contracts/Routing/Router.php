@@ -177,4 +177,13 @@ interface Router extends
      * @return string
      */
     public function url(string $name, array $parameters = [], bool $absolute = true);
+
+    /**
+     * Définition du préfixe du chemin des routes.
+     *
+     * @param string|null $prefix
+     *
+     * @return $this
+     */
+    public function setPrefix(?string $prefix = null): Router;
 }

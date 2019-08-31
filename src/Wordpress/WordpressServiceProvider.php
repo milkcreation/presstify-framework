@@ -95,6 +95,10 @@ class WordpressServiceProvider extends ServiceProvider
             $wp = $this->getContainer()->get('wp');
 
             if ($wp->is()) {
+                if ($this->getContainer()->has('router')) {
+                    $this->getContainer()->get('wp.routing');
+                }
+
                 if ($this->getContainer()->has('asset')) {
                     $this->getContainer()->get('wp.asset');
                 }
@@ -152,8 +156,9 @@ class WordpressServiceProvider extends ServiceProvider
                 if ($this->getContainer()->has('post-type')) {
                     $this->getContainer()->get('wp.post-type');
                 }
-                if ($this->getContainer()->has('router')) {
-                    $this->getContainer()->get('wp.routing');
+
+                if ($this->getContainer()->has('validator')) {
+                    $this->getContainer()->get('validator');
                 }
 
                 if ($this->getContainer()->has('storage')) {

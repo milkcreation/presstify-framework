@@ -30,6 +30,10 @@ class Routing implements RoutingContract
     {
         $this->manager = $manager;
 
+        if (is_multisite()) {
+            $this->manager->setPrefix(get_blog_details()->path);
+        }
+
         $this->manager->getContainer()->get('wp.wp_query');
 
         $this->manager->getContainer()->add('router.strategy.default', function () {

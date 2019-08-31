@@ -33,6 +33,12 @@ class Router extends LeagueRouter implements RouterContract
     protected $items = [];
 
     /**
+     * Préfixe des chemins des routes.
+     * @var string|null
+     */
+    protected $prefix;
+
+    /**
      * @inheritdoc
      */
     public function all(): array
@@ -182,7 +188,9 @@ class Router extends LeagueRouter implements RouterContract
      */
     public function map(string $method, string $path, $handler): LeagueRoute
     {
-        $path = sprintf('/%s', ltrim(url()->rewriteBase() . sprintf('/%s', ltrim($path, '/')), '/'));
+        $prefix = ltrim(rtrim(is_null($this->prefix) ? url()->rewriteBase() : $this->prefix, '/'), '/');
+
+        $path = sprintf('/%s', $prefix . sprintf('/%s', ltrim($path, '/')));
 
         $route = $this->getContainer()
             ? $this->getContainer()->get(RouteContract::class, [$method, $path, $handler, $this])
@@ -316,5 +324,15 @@ class Router extends LeagueRouter implements RouterContract
 
             $this->addRoute($route->getMethod(), $this->parseRoutePath($route->getPath()), $route);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPrefix(?string $prefix = null): RouterContract
+    {
+        $this->prefix = $prefix;
+
+        return $this;
     }
 }

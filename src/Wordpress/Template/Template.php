@@ -26,14 +26,7 @@ class Template
     {
         $this->manager = $manager;
 
-        $prefix = '/';
-        if (is_multisite()) {
-            $prefix = get_blog_details()->path !== '/'
-                ? rtrim(preg_replace('#^' . url()->rewriteBase() . '#', '', get_blog_details()->path), '/')
-                : '/';
-        }
-
-        $this->manager->setUrlPrefix($prefix)->prepareRoutes();
+        $this->manager->prepareRoutes();
 
         foreach (config('template', []) as $name => $attrs) {
             $this->manager->register($name, $attrs);
