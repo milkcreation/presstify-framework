@@ -53,11 +53,25 @@ interface Cookie
     public function getContainer(): ?Container;
 
     /**
+     * Récupération du nom de qualification du domaine du site associé.
+     *
+     * @return string|null
+     */
+    public function getDomain(): ?string;
+
+    /**
      * Récupération du nom de qualification d'un cookie.
      *
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * Récupération du chemin de validité des cookies.
+     *
+     * @return static
+     */
+    public function getPath(): ?string;
 
     /**
      * Création ou récupération d'une instance.

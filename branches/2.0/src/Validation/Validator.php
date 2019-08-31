@@ -37,11 +37,11 @@ class Validator extends BaseValidator implements ValidatorContract
     {
         $this->container = $container;
 
-        array_walk($rules, function ($rule, $key) {
+        foreach ($rules as $key => $rule) {
             if ($rule instanceof Rule) {
                 self::$customs[$key] = $rule->setValidator($this)->setName($key);
             }
-        });
+        }
 
         parent::__construct($rules);
     }

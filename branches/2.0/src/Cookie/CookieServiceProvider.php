@@ -2,7 +2,6 @@
 
 namespace tiFy\Cookie;
 
-use tiFy\Contracts\Cookie\Cookie as CookieContract;
 use tiFy\Container\ServiceProvider;
 
 class CookieServiceProvider extends ServiceProvider

@@ -68,7 +68,8 @@ class Cookie implements CookieContract
     /**
      * Suffixe de salage du nom de qualification du cookie.
      * @var string
-     */    protected $salt = '';
+     */
+    protected $salt = '';
 
     /**
      * Directive de permission d'envoi du cookie.
@@ -153,9 +154,25 @@ class Cookie implements CookieContract
     /**
      * @inheritDoc
      */
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return $this->name . $this->salt;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPath(): ?string
+    {
+        return $this->path;
     }
 
     /**
@@ -186,8 +203,8 @@ class Cookie implements CookieContract
                 self::$instances[$alias]->setDefaults(
                     $attrs['value'] ?? null,
                     isset($attrs['expire']) ? (int)$attrs['expire'] : 0,
-                    isset($attrs['path']) ? (string)$attrs['path'] : null,
-                    isset($attrs['$domain']) ? (string)$attrs['$domain'] : null,
+                    isset($attrs['path']) ? (string)$attrs['path'] : self::$instances[$alias]->getPath(),
+                    isset($attrs['$domain']) ? (string)$attrs['$domain'] : self::$instances[$alias]->getDomain(),
                     isset($attrs['secure']) ? (bool)$attrs['secure'] : null,
                     $attrs['httpOnly'] ?? true,
                     $attrs['raw'] ?? false,
@@ -238,7 +255,7 @@ class Cookie implements CookieContract
         $response = resp::instance();
         $response->headers->setCookie($cookie);
 
-        return $response->send();
+        return $response->sendHeaders();
     }
 
     /**

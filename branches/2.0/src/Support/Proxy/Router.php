@@ -33,6 +33,7 @@ use tiFy\Contracts\Routing\Router as RouterContract;
  * @method static RouteContract put(string $path, callable $handler)
  * @method static RouteContract options(string $path, callable $handler)
  * @method static string url(string $name, array $parameters = [], bool $absolute = true)
+ * @method static RouteContract setPrefix(?string $prefix)
  * @method static RouteContract xhr(string $path, callable $handler, string $method = 'POST')
  */
 class Router extends AbstractProxy

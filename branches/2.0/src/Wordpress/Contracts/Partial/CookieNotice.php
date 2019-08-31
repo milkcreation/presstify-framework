@@ -6,8 +6,5 @@ use tiFy\Contracts\Partial\CookieNotice as BaseCookieNotice;
 
 interface CookieNotice extends BaseCookieNotice, PartialFactory
 {
-    /**
-     * @inheritDoc
-     */
-    public function wpAjaxResponse(): void;
+
 }

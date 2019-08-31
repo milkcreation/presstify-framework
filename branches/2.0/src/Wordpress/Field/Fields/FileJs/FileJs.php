@@ -24,19 +24,7 @@ class FileJs extends BaseFileJs implements FieldFactoryContract
      */
     public function setUrl(?string $url = null): BaseFieldFactoryContract
     {
-        if (is_null($url)) {
-            $prefix = '/';
-            if (is_multisite()) {
-                $prefix = get_blog_details()->path !== '/'
-                    ? rtrim(preg_replace('#^' . url()->rewriteBase() . '#', '', get_blog_details()->path), '/')
-                    : '/';
-            }
-            $path = $prefix . '/' . md5($this->getAlias());
-
-            $this->url = Router::xhr($path, [$this, 'xhrResponse'])->getUrl();
-        } else {
-            $this->url =  $url;
-        }
+        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse'])->getUrl() : $url;
 
         return $this;
     }
