@@ -21,15 +21,15 @@
         ]);
         ?>
 
-        <header class="Form-header Form-header--<?php echo $this->form()->name(); ?>">
+        <header class="Form-header Form-header--<?php echo $this->form()->tagName(); ?>">
             <?php $this->insert('header', $this->all()); ?>
         </header>
 
-        <section class="Form-body Form-body--<?php echo $this->form()->name(); ?>">
+        <section class="Form-body Form-body--<?php echo $this->form()->tagName(); ?>">
             <?php $this->insert('body', $this->all()); ?>
         </section>
 
-        <footer class="Form-footer Form-footer--<?php echo $this->form()->name(); ?>">
+        <footer class="Form-footer Form-footer--<?php echo $this->form()->tagName(); ?>">
             <?php $this->insert('footer', $this->all()); ?>
         </footer>
     </form>
