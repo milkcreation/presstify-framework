@@ -190,7 +190,7 @@ class Router extends LeagueRouter implements RouterContract
     {
         $prefix = ltrim(rtrim(is_null($this->prefix) ? url()->rewriteBase() : $this->prefix, '/'), '/');
 
-        $path = sprintf('/%s', $prefix . sprintf('/%s', ltrim($path, '/')));
+        $path = '/' . ltrim($prefix . sprintf('/%s', ltrim($path, '/')), '/');
 
         $route = $this->getContainer()
             ? $this->getContainer()->get(RouteContract::class, [$method, $path, $handler, $this])
