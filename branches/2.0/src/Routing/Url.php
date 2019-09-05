@@ -92,11 +92,11 @@ class Url implements UrlContract
      */
     public function rewriteBase(): string
     {
-        if (is_null($this->rewriteBase)) :
+        if (is_null($this->rewriteBase)) {
             $this->rewriteBase = $this->request->server->has('CONTEXT_PREFIX')
                 ? $this->request->server->get('CONTEXT_PREFIX')
                 : preg_replace('#^' . preg_quote($this->request->getSchemeAndHttpHost()) . '#', '', $this->root());
-        endif;
+        }
 
         return $this->rewriteBase;
     }

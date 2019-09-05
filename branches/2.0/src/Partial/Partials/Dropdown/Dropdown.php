@@ -67,25 +67,4 @@ class Dropdown extends PartialFactory implements DropdownContract
 
         return $this;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function parseDefaults(): PartialFactoryContract
-    {
-        $default_class = 'Dropdown Dropdown--' . $this->getIndex();
-        if (!$this->has('attrs.class')) {
-            $this->set('attrs.class', $default_class);
-        } else {
-            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
-        }
-
-        if (!$this->get('attrs.class')) {
-            $this->forget('attrs.class');
-        }
-
-        $this->parseViewer();
-
-        return $this;
-    }
 }

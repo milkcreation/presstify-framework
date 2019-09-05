@@ -48,45 +48,6 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
     /**
      * @inheritDoc
      */
-    public function defaultEditItem(): string
-    {
-        return sprintf(
-            __('Éditer %s %s', 'tify'),
-            $this->getDeterminant($this->getSingular()),
-            $this->getSingular()
-        );
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function defaultDatasItem(): string
-    {
-        if (self::isFirstVowel($this->getSingular())) {
-            $determinant = __('de l\'', 'tify');
-        } elseif ($this->hasGender()) {
-            $determinant = __('de la', 'tify');
-        } else {
-            $determinant = __('du', 'tify');
-        }
-        return sprintf(__('Données %s %s', 'tify'), $determinant, $this->getSingular());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDeterminant(string $string): string
-    {
-        if (self::isFirstVowel($string)) {
-            return __("l'", 'tify');
-        } else {
-            return $this->hasGender() ? __("la", 'tify') : __("le", 'tify');
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return $this->name;
@@ -95,35 +56,9 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
     /**
      * @inheritDoc
      */
-    public function getPlural(): string
-    {
-        return $this->plural ? : __('éléments', 'tify');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getSingular(): string
-    {
-        return $this->singular ? : __('élément', 'tify');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasGender(): bool
+    public function gender(): bool
     {
         return $this->gender;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isFirstVowel(string $string): bool
-    {
-        $first = strtolower(mb_substr(remove_accents($string), 0, 1));
-
-        return in_array($first, ['a', 'e', 'i', 'o', 'u', 'y']);
     }
 
     /**
@@ -146,6 +81,82 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
         parent::parse();
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function plural(bool $ucfirst = false): string
+    {
+        $str = $this->plural ? : __('éléments', 'tify');
+
+        return $ucfirst ? Str::ucfirst($str) : $str;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function pluralDefinite(bool $contraction = false): string
+    {
+        if ($contraction) {
+            $prefix = __('des', 'tify') . ' ';
+
+            return $prefix . $this->plural();
+        } else {
+            $prefix = __('les', 'tify') . ' ';
+
+            return $prefix . $this->plural();
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function pluralIndefinite(): string
+    {
+        $prefix = $this->useVowel() ? __('d\'', 'tify') : __('des', 'tify') . ' ';
+
+        return $prefix . $this->plural();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function singular(bool $ucfirst = false): string
+    {
+        $str = $this->singular ? : __('élément', 'tify');
+
+        return $ucfirst ? Str::ucfirst($str) : $str;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function singularDefinite(bool $contraction = false): string
+    {
+        if ($contraction) {
+            $prefix = $this->useVowel()
+                ? __('de l\'', 'tify')
+                : ($this->gender() ? __('de la', 'tify') . ' ' : __('du', 'tify'). ' ');
+
+            return $prefix . $this->singular();
+        } else {
+            $prefix = $this->useVowel()
+                ? __('l\'', 'tify')
+                : ($this->gender() ? __('la', 'tify') . ' ' : __('le ', 'tify') . ' ');
+
+            return $prefix . $this->singular();
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function singularIndefinite(): string
+    {
+        $prefix = $this->gender() ? __('une', 'tify') . ' ' : __('un', 'tify') . ' ';
+
+        return $prefix . $this->singular();
     }
 
     /**
@@ -186,5 +197,15 @@ class LabelsBag extends ParamsBag implements LabelsBagContract
         $this->singular = $singular;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function useVowel(): bool
+    {
+        $first = strtolower(mb_substr(remove_accents($this->singular()), 0, 1));
+
+        return in_array($first, ['a', 'e', 'i', 'o', 'u', 'y']);
     }
 }

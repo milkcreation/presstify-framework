@@ -16,57 +16,57 @@ class PostTypeLabelsBag extends LabelsBag
     public function defaults(): array
     {
         return [
-            'name' => Str::ucfirst($this->getPlural()),
+            'name' => $this->plural(true),
 
-            'singular_name' => Str::ucfirst($this->getSingular()),
+            'singular_name' => $this->singular(true),
 
-            'add_new' => !$this->hasGender()
-                ? sprintf(__('Ajouter un %s', 'tify'), $this->getSingular())
-                : sprintf(__('Ajouter une %s', 'tify'), $this->getSingular()),
+            'add_new' => !$this->gender()
+                ? sprintf(__('Ajouter un %s', 'tify'), $this->singular())
+                : sprintf(__('Ajouter une %s', 'tify'), $this->singular()),
 
-            'add_new_item' => !$this->hasGender()
-                ? sprintf(__('Ajouter un %s', 'tify'), $this->getSingular())
-                : sprintf(__('Ajouter une %s', 'tify'), $this->getSingular()),
+            'add_new_item' => !$this->gender()
+                ? sprintf(__('Ajouter un %s', 'tify'), $this->singular())
+                : sprintf(__('Ajouter une %s', 'tify'), $this->singular()),
 
-            'edit_item' => $this->defaultEditItem(),
+            'edit_item' => sprintf(__('Éditer %s', 'tify'), $this->singularDefinite()),
 
-            'new_item' => !$this->hasGender()
-                ? sprintf(__('Créer un %s', 'tify'), $this->getSingular())
-                : sprintf(__('Créer une %s', 'tify'), $this->getSingular()),
+            'new_item' => !$this->gender()
+                ? sprintf(__('Créer un %s', 'tify'), $this->singular())
+                : sprintf(__('Créer une %s', 'tify'), $this->singular()),
 
-            'view_item' => !$this->hasGender()
-                ? sprintf(__('Voir cet %s', 'tify'), $this->getSingular())
-                : sprintf(__('Voir cette %s', 'tify'), $this->getSingular()),
+            'view_item' => !$this->gender()
+                ? sprintf(__('Voir cet %s', 'tify'), $this->singular())
+                : sprintf(__('Voir cette %s', 'tify'), $this->singular()),
 
-            'view_items' => sprintf(__('Voir ces %s', 'tify'), $this->getPlural()),
+            'view_items' => sprintf(__('Voir ces %s', 'tify'), $this->plural()),
 
-            'search_items' => !$this->hasGender()
-                ? sprintf(__('Rechercher un %s', 'tify'), $this->getSingular())
-                : sprintf(__('Rechercher une %s', 'tify'), $this->getSingular()),
+            'search_items' => !$this->gender()
+                ? sprintf(__('Rechercher un %s', 'tify'), $this->singular())
+                : sprintf(__('Rechercher une %s', 'tify'), $this->singular()),
 
-            'not_found' => !$this->hasGender()
-                ? sprintf(__('Aucun %s trouvé', 'tify'), Str::ucfirst($this->getSingular()))
-                : sprintf(__('Aucune %s trouvée', 'tify'), Str::ucfirst($this->getSingular())),
+            'not_found' => !$this->gender()
+                ? sprintf(__('Aucun %s trouvé', 'tify'), $this->singular(true))
+                : sprintf(__('Aucune %s trouvée', 'tify'), $this->singular(true)),
 
-            'not_found_in_trash' => !$this->hasGender()
-                ? sprintf(__('Aucun %s dans la corbeille', 'tify'), Str::ucfirst($this->getSingular()))
-                : sprintf(__('Aucune %s dans la corbeille', 'tify'), Str::ucfirst($this->getSingular())),
+            'not_found_in_trash' => !$this->gender()
+                ? sprintf(__('Aucun %s dans la corbeille', 'tify'), $this->singular(true))
+                : sprintf(__('Aucune %s dans la corbeille', 'tify'), $this->singular(true)),
 
-            'parent_item_colon' => !$this->hasGender()
-                ? sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular()))
-                : sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular())),
+            'parent_item_colon' => !$this->gender()
+                ? sprintf(__('%s parent', 'tify'), $this->singular(true))
+                : sprintf(__('%s parent', 'tify'), $this->singular(true)),
 
-            'all_items' => !$this->hasGender()
-                ? sprintf(__('Tous les %s', 'tify'), $this->getPlural())
-                : sprintf(__('Toutes les %s', 'tify'), $this->getPlural()),
+            'all_items' => !$this->gender()
+                ? sprintf(__('Tous les %s', 'tify'), $this->plural())
+                : sprintf(__('Toutes les %s', 'tify'), $this->plural()),
 
-            'archives' => !$this->hasGender()
-                ? sprintf(__('Tous les %s', 'tify'), $this->getPlural())
-                : sprintf(__('Toutes les %s', 'tify'), $this->getPlural()),
+            'archives' => !$this->gender()
+                ? sprintf(__('Tous les %s', 'tify'), $this->plural())
+                : sprintf(__('Toutes les %s', 'tify'), $this->plural()),
 
-            'attributes' => !$this->hasGender()
-                ? sprintf(__('Tous les %s', 'tify'), $this->getPlural())
-                : sprintf(__('Toutes les %s', 'tify'), $this->getPlural()),
+            'attributes' => !$this->gender()
+                ? sprintf(__('Tous les %s', 'tify'), $this->plural())
+                : sprintf(__('Toutes les %s', 'tify'), $this->plural()),
 
             // @todo 'insert_into_item' => ''
 
@@ -80,7 +80,7 @@ class PostTypeLabelsBag extends LabelsBag
 
             // @todo 'use_featured_image' => ''
 
-            'menu_name' => _x(Str::ucfirst($this->getPlural()), 'admin menu', 'tify'),
+            'menu_name' => _x($this->plural(true), 'admin menu', 'tify'),
 
             // @todo 'filter_items_list' => ''
 
@@ -90,12 +90,12 @@ class PostTypeLabelsBag extends LabelsBag
 
             // @todo 'filter_items_list' => ''
 
-            'name_admin_bar' => _x(Str::ucfirst($this->getSingular()), 'add new on admin bar', 'tify'),
+            'name_admin_bar' => _x($this->singular(true), 'add new on admin bar', 'tify'),
 
             /* @todo
              * 'datas_item'                 => $this->defaultDatasItem(),
-             * 'import_items'               => sprintf(__('Importer des %s', 'tify'), $this->getPlural()),
-             * 'export_items'               => sprintf(__('Export des %s', 'tify'), $this->getPlural()),
+             * 'import_items'               => sprintf(__('Importer des %s', 'tify'), $this->plural()),
+             * 'export_items'               => sprintf(__('Export des %s', 'tify'), $this->plural()),
              */
         ];
     }

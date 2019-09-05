@@ -62,12 +62,13 @@ class Columns extends Collection implements ColumnsContract
         if (
             ($column_primary = $this->factory->param('column_primary', '')) &&
             ($column_primary !== 'cb') &&
+            ($column_primary !== 'num') &&
             $this->has($column_primary)
         ) {
             return (string)$column_primary;
         } else {
             return $this->collect()->first(function (Column $item) {
-                return $item->getName() !== 'cb';
+                return ($item->getName() !== 'cb') && ($item->getName() !== 'num');
             })->getName();
         }
     }

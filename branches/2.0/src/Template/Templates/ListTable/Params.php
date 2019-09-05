@@ -34,7 +34,7 @@ class Params extends FactoryParams implements ParamsContract
             'table_classes'              => '%s',
             'view-filters'               => [],
             'row-actions'                => [],
-            'row_actions_always_visible' => false
+            'row_actions_always_visible' => true
         ]);
     }
 

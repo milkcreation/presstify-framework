@@ -7,13 +7,13 @@ class RowActionPreview extends RowAction
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
-        return [
+        return array_merge(parent::defaults(), [
+            'attrs'   => [
+                'title' => __('Prévisualisation de l\'élément', 'tify'),
+            ],
             'content' => __('Prévisualisation', 'tify'),
-            'title'   => __('Prévisualisation de l\'élément', 'tify'),
-            'nonce'   => $this->getNonce(),
-            'class'   => 'preview_item'
-        ];
+        ]);
     }
 }

@@ -50,36 +50,35 @@ class Route extends LeagueRoute implements RouteContract
     {
         $routes = (new RouteParser())->parse($this->collection->parseRoutePath($this->getPath()));
 
-        foreach ($routes as $route) :
+        foreach ($routes as $route) {
             $url = '';
             $paramIdx = 0;
-            foreach ($route as $part) :
-                if (is_string($part)) :
+            foreach ($route as $part) {
+                if (is_string($part)) {
                     $url .= $part;
                     continue;
-                endif;
-
-                if ($paramIdx === count($params)) :
+                } elseif ($paramIdx === count($params)) {
                     throw new LogicException(__('Le nombre de paramètres fournis est insuffisant.', 'tify'));
-                endif;
-                $url .= $params[$paramIdx++];
-            endforeach;
+                }
 
-            if ($paramIdx === count($params)) :
-                if ($absolute) :
-                    $host = $this->getHost() ? : request()->getHost();
-                    $port = $this->getPort() ? : request()->getPort();
-                    $scheme = $this->getScheme() ? : request()->getScheme();
-                    if ((($port === 80) && ($scheme = 'http')) || (($port === 443) && ($scheme = 'https'))) :
+                $url .= $params[$paramIdx++];
+            }
+
+            if ($paramIdx === count($params)) {
+                if ($absolute) {
+                    $host = $this->getHost() ?: request()->getHost();
+                    $port = $this->getPort() ?: request()->getPort();
+                    $scheme = $this->getScheme() ?: request()->getScheme();
+                    if ((($port === 80) && ($scheme = 'http')) || (($port === 443) && ($scheme = 'https'))) {
                         $port = '';
-                    endif;
+                    }
 
                     $url = $scheme . '://' . $host . ($port ? ':' . $port : '') . $url;
-                endif;
+                }
 
                 return $url;
-            endif;
-        endforeach;
+            }
+        }
 
         throw new LogicException(__('Le nombre de paramètres fournis est trop important.', 'tify'));
     }

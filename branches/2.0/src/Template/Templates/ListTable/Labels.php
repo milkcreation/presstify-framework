@@ -20,20 +20,20 @@ class Labels extends FactoryLabels
     {
         return array_merge(parent::defaults(), [
             'all_items' => sprintf(
-                $this->hasGender() ? __('Toutes les %s', 'tify') : __('Tous les %s', 'tify'),
-                $this->getPlural()
+                $this->gender() ? __('Toutes les %s', 'tify') : __('Tous les %s', 'tify'),
+                $this->plural()
             ),
             'no_item' => sprintf(
-                $this->hasGender() ? __('Aucune %s trouvée.', 'tify') : __('Aucun %s trouvé.', 'tify'),
-                $this->getSingular()
+                $this->gender() ? __('Aucune %s trouvée.', 'tify') : __('Aucun %s trouvé.', 'tify'),
+                $this->singular()
             ),
             'page_title' => sprintf(
-                $this->hasGender() ? __('Toutes les %s', 'tify') : __('Tous les %s', 'tify'),
-                $this->getPlural()
+                $this->gender() ? __('Toutes les %s', 'tify') : __('Tous les %s', 'tify'),
+                $this->plural()
             ),
             'search_item' => sprintf(
-                $this->hasGender() ? __('Rechercher une %s', 'tify') : __('Rechercher un %s', 'tify'),
-                $this->getSingular()
+                $this->gender() ? __('Rechercher une %s', 'tify') : __('Rechercher un %s', 'tify'),
+                $this->singular()
             )
         ]);
     }

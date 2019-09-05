@@ -17,6 +17,7 @@ class FactoryHttpXhrController extends FactoryHttpController implements FactoryH
         $response = null;
 
         if (method_exists($this, $method)) {
+            $this->factory->prepare();
             $response = $this->{$method}($psrRequest);
         }
 

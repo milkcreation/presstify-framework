@@ -45,7 +45,7 @@ class Template
                             'menu_slug'   => $factory->name(),
                             'parent_slug' => '',
                             'page_title'  => $factory->label('all_items'),
-                            'menu_title'  => ucfirst($factory->label()->getPlural()),
+                            'menu_title'  => $factory->label()->plural(true),
                             'capability'  => 'manage_options',
                             'icon_url'    => null,
                             'position'    => null,

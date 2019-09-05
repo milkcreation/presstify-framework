@@ -15,18 +15,46 @@ interface RowAction extends FactoryAwareTrait, ParamsBag
     public function __toString(): string;
 
     /**
-     * Récupération de l'identifiant de qualification de la clef de sécurisation d'une action sur un élément.
+     * Récupération de l'url de base du lien.
      *
      * @return string
      */
-    public function getNonce(): string;
+    public function getBaseUrl(): string;
 
     /**
-     * Vérification d'activation de l'action.
+     * Récupération du nom de qualification.
+     *
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
+     * Controleur de requête HTTP.
+     *
+     * @return mixed
+     */
+    public function httpController();
+
+    /**
+     * Vérification de disponibilité de l'action.
      *
      * @return boolean
      */
-    public function isActive(): bool;
+    public function isAvailable(): bool;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return static
+     */
+    public function parse(): RowAction;
+
+    /**
+     * Traitement de l'url du lien.
+     *
+     * @return static
+     */
+    public function parseUrl(): RowAction;
 
     /**
      * Récupération du rendu de l'affichage.
