@@ -134,27 +134,6 @@ class Sidebar extends PartialFactory implements SidebarContract
     }
 
     /**
-     * @inheritDoc
-     */
-    public function parseDefaults(): PartialFactoryContract
-    {
-        $default_class = 'Sidebar Sidebar--' . $this->getIndex();
-        if (!$this->has('attrs.class')) {
-            $this->set('attrs.class', $default_class);
-        } else {
-            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
-        }
-
-        if (!$this->get('attrs.class')) {
-            $this->forget('attrs.class');
-        }
-
-        $this->parseViewer();
-
-        return $this;
-    }
-
-    /**
      * Lien de bascule d'affichage de la sidebar.
      *
      * @param array $attrs Liste des attributs de configuration.

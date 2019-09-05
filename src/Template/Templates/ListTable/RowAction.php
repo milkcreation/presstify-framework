@@ -2,9 +2,12 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Support\ParamsBag;
+use Closure;
+use tiFy\Contracts\Routing\UrlFactory;
+use tiFy\Support\{ParamsBag, Proxy\Partial};
+use tiFy\Http\Request;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{ListTable, RowAction as RowActionContract};
+use tiFy\Template\Templates\ListTable\Contracts\{Item, ListTable, RowAction as RowActionContract};
 
 class RowAction extends ParamsBag implements RowActionContract
 {
@@ -17,21 +20,34 @@ class RowAction extends ParamsBag implements RowActionContract
     protected $factory;
 
     /**
+     * Instance de l'élément associé.
+     * @var Item|null
+     */
+    protected $item;
+
+    /**
      * Nom de qualification.
      * @var string
      */
     protected $name = '';
 
     /**
+     * Instance de l'url.
+     * @var UrlFactory
+     */
+    protected $url;
+
+    /**
      * @inheritDoc
      */
     public function __toString(): string
     {
-        return (string) $this->render();
+        return (string)$this->render();
     }
 
     /**
-     * Liste des attributs de configuration.
+     * {@inheritDoc}
+     *
      * @return array {
      *      @var string $content Contenu du lien (chaîne de caractère ou éléments HTML).
      *      @var array $attrs Liste des attributs complémentaires de la balise du lien.
@@ -43,48 +59,54 @@ class RowAction extends ParamsBag implements RowActionContract
      *                                lien.
      * }
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
-            'content'    => '',
             'attrs'      => [],
-            'query_args' => [],
-            'nonce'      => true,
-            'referer'    => true
+            'content'    => '',
+            'url'        => '',
+            'xhr'        => !!$this->factory->ajax()
         ];
     }
 
     /**
      * @inheritDoc
      */
-    public function getNonce(): string
+    public function getBaseUrl(): string
     {
-        /*if (($item_index_name = $this->factory->param('item_index_name')) && isset($this->item->{$item_index_name})) {
-            $item_index = $this->item->{$item_index_name};
-        } else { */
-            $item_index = '';
-        //};
-
-        if(!$item_index) {
-        } elseif(!is_array($item_index)) {
-            $item_index = array_map('trim', explode(',', $item_index));
-        }
-
-        $nonce_action = (!$item_index || (count($item_index) === 1))
-            ? $this->factory->param('singular') . '-' . $this->name
-            : $this->factory->param('plural') . '-' . $this->name;
-
-        if ($item_index && count($item_index) === 1) {
-            $nonce_action .= '-' . reset($item_index);
-        }
-
-        return sanitize_title($nonce_action);
+        return $this->get('xhr') ? $this->factory->baseUrl() . '/xhr' : $this->factory->baseUrl();
     }
 
     /**
      * @inheritDoc
      */
-    public function isActive(): bool
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function httpController()
+    {
+        if ($item = $this->factory->builder()->getItem($this->factory->request()->input('id'))) {
+            return [
+                'success' => true,
+                'data'    => $item->getKeyValue()
+            ];
+        } else {
+            return [
+                'success' => true,
+                'data'    => __('Impossible de récupérer l\'élément associé.', 'tify')
+            ];
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAvailable(): bool
     {
         return true;
     }
@@ -92,51 +114,90 @@ class RowAction extends ParamsBag implements RowActionContract
     /**
      * @inheritDoc
      */
-    public function parse()
+    public function parse(): RowActionContract
     {
         parent::parse();
 
-        if (!$this->get('attrs.href')) {
-            $this->set('attrs.href', $this->factory->param('page_url'));
+        $this->parseUrl();
+        $this->set('attrs.href', (string)$this->url);
+
+        if ($this->get('xhr')) {
+            $this->set('attrs.data-control', 'list-table.row-action');
         }
 
-        if($query_args = $this->get('query_args', [])) {
-            $this->set('attrs.href', add_query_arg($query_args, $this->get('attrs.href')));
+        $default_class = "row-action row-action--" . $this->getName();
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
         }
 
-        if ($nonce = $this->get('nonce')) {
-            if ($nonce === true) {
-                $nonce = $this->factory->param('page_url');
-            }
-            $this->set('attrs.href', wp_nonce_url($this->get('attrs.href'), $nonce));
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
         }
-
-        if ($referer = $this->get('referer')) {
-            if ($referer === true) {
-                $referer = set_url_scheme('//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-            }
-            $this->set('attrs.href', add_query_arg([
-                '_wp_http_referer' => urlencode(
-                    wp_unslash($referer)
-                )
-            ], $this->get('attrs.href')));
-        }
-
-        // Argument de requête par défaut
-        /*$default_query_args = [
-            'action' => $row_action_name
-        ];
-        if (($item_index_name = $this->getParam('item_index_name')) && isset($item->{$item_index_name})) {
-            $default_query_args[$item_index_name] = $item->{$item_index_name};
-        }
-        $href = \add_query_arg(
-            $default_query_args,
-            $href
-        );*/
 
         if (!$this->get('content')) {
-            $this->set('content', $this->name);
+            $this->set('content', $this->getName());
         }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseUrl(): RowActionContract
+    {
+        if ($url = $this->pull('url')) {
+            if (is_bool($url)) {
+               $this->url = url_factory($this->getBaseUrl());
+            } elseif (is_string($url)) {
+                $this->url = url_factory($url);
+            } elseif (is_array($url)) {
+                $this->url = url_factory($url['base'] ?? $this->getBaseUrl());
+
+                if (isset($url['query_args'])) {
+                    $query_args = $url['query_args'];
+
+                    foreach($query_args as $key => $value) {
+                        if ($value instanceof Closure) {
+                            $this->url->with([$key => (string)$value($this->factory->item(), $this)]);
+                        } elseif (is_string($value)) {
+                            $this->url->with([$key => $value]);
+                        }
+                    }
+                }
+
+                if (isset($url['remove_query_args'])) {
+                    $remove_query_args = $url['remove_query_args'];
+
+                    if ($remove_query_args instanceof Closure) {
+                        $this->url->without([(array)$remove_query_args($this->factory->item(), $this)]);
+                    } elseif (is_array($remove_query_args)) {
+                        $this->url->without($remove_query_args);
+                    }
+                }
+
+                if (isset($url['redirect'])) {
+                    $redirect = $url['redirect'];
+
+                    if ($redirect instanceof Closure) {
+                        $this->url->with(['redirect' => (string)$redirect($this->factory->item(), $this)]);
+                    } elseif (is_string($redirect)) {
+                        $this->url->with(['redirect' => $redirect]);
+                    }
+                }
+            } elseif ($url instanceof UrlFactory) {
+                $this->url = $url;
+            }
+        } else {
+            $this->url = url_factory($this->getBaseUrl());
+        }
+
+        $this->url->with([
+            'action' => $this->getName(),
+            'id'     => $this->factory->item()->getKeyValue()
+        ]);
 
         return $this;
     }
@@ -148,13 +209,13 @@ class RowAction extends ParamsBag implements RowActionContract
     {
         if ($this->get('hide_empty') && !$this->get('count_items', 0)) {
             return '';
+        } else {
+            return (string)Partial::get('tag', [
+                'tag'       => 'a',
+                'attrs'     => $this->get('attrs', []),
+                'content'   => $this->get('content')
+            ]);
         }
-
-        return (string)partial('tag', [
-            'tag'       => 'a',
-            'attrs'     => $this->get('attrs', []),
-            'content'   => $this->get('content')
-        ]);
     }
 
     /**

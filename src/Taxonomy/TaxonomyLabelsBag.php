@@ -16,65 +16,65 @@ class TaxonomyLabelsBag extends LabelsBag
     public function defaults(): array
     {
         return [
-            'name' => Str::ucfirst($this->getPlural()),
+            'name' => $this->plural(true),
 
-            'singular_name' => Str::ucfirst($this->getSingular()),
+            'singular_name' => $this->singular(true),
 
-            'menu_name' => _x(Str::ucfirst($this->getPlural()), 'admin menu', 'tify'),
+            'menu_name' => _x($this->plural(true), 'admin menu', 'tify'),
 
-            'all_items' => !$this->hasGender()
-                ? sprintf(__('Tous les %s', 'tify'), $this->getPlural())
-                : sprintf(__('Toutes les %s', 'tify'), $this->getPlural()),
+            'all_items' => !$this->gender()
+                ? sprintf(__('Tous les %s', 'tify'), $this->plural())
+                : sprintf(__('Toutes les %s', 'tify'), $this->plural()),
 
-            'edit_item' => $this->defaultEditItem(),
+            'edit_item' => sprintf(__('Éditer %s', 'tify'), $this->singularDefinite()),
 
-            'view_item' => !$this->hasGender()
-                ? sprintf(__('Voir cet %s', 'tify'), $this->getSingular())
-                : sprintf(__('Voir cette %s', 'tify'), $this->getSingular()),
+            'view_item' => !$this->gender()
+                ? sprintf(__('Voir cet %s', 'tify'), $this->singular())
+                : sprintf(__('Voir cette %s', 'tify'), $this->singular()),
 
-            'update_item' => !$this->hasGender()
-                ? sprintf(__('Mettre à jour ce %s', 'tify'), $this->getSingular())
-                : sprintf(__('Mettre à jour cette %s', 'tify'), $this->getSingular()),
+            'update_item' => !$this->gender()
+                ? sprintf(__('Mettre à jour ce %s', 'tify'), $this->singular())
+                : sprintf(__('Mettre à jour cette %s', 'tify'), $this->singular()),
 
-            'add_new_item' => !$this->hasGender()
-                ? sprintf(__('Ajouter un %s', 'tify'), $this->getSingular())
-                : sprintf(__('Ajouter une %s', 'tify'), $this->getSingular()),
+            'add_new_item' => !$this->gender()
+                ? sprintf(__('Ajouter un %s', 'tify'), $this->singular())
+                : sprintf(__('Ajouter une %s', 'tify'), $this->singular()),
 
-            'new_item_name' => !$this->hasGender()
-                ? sprintf(__('Créer un %s', 'tify'), $this->getSingular())
-                : sprintf(__('Créer une %s', 'tify'), $this->getSingular()),
+            'new_item_name' => !$this->gender()
+                ? sprintf(__('Créer un %s', 'tify'), $this->singular())
+                : sprintf(__('Créer une %s', 'tify'), $this->singular()),
 
-            'parent_item' => !$this->hasGender()
-                ? sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular()))
-                : sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular())),
+            'parent_item' => !$this->gender()
+                ? sprintf(__('%s parent', 'tify'), $this->singular(true))
+                : sprintf(__('%s parent', 'tify'), $this->singular(true)),
 
-            'parent_item_colon' => !$this->hasGender()
-                ? sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular()))
-                : sprintf(__('%s parent', 'tify'), Str::ucfirst($this->getSingular())),
+            'parent_item_colon' => !$this->gender()
+                ? sprintf(__('%s parent', 'tify'), $this->singular(true))
+                : sprintf(__('%s parent', 'tify'), $this->singular(true)),
 
-            'search_items' => !$this->hasGender()
-                ? sprintf(__('Rechercher un %s', 'tify'), $this->getSingular())
-                : sprintf(__('Rechercher une %s', 'tify'), $this->getSingular()),
+            'search_items' => !$this->gender()
+                ? sprintf(__('Rechercher un %s', 'tify'), $this->singular())
+                : sprintf(__('Rechercher une %s', 'tify'), $this->singular()),
 
-            'popular_items' => sprintf(__('%s populaires', 'tify'), Str::ucfirst($this->getPlural())),
+            'popular_items' => sprintf(__('%s populaires', 'tify'), $this->plural(true)),
 
-            'separate_items_with_commas' => sprintf(__('Séparer les %s par une virgule', 'tify'), $this->getPlural()),
+            'separate_items_with_commas' => sprintf(__('Séparer les %s par une virgule', 'tify'), $this->plural()),
 
-            'add_or_remove_items' => sprintf(__('Ajouter ou supprimer des %s', 'tify'), $this->getPlural()),
+            'add_or_remove_items' => sprintf(__('Ajouter ou supprimer des %s', 'tify'), $this->plural()),
 
-            'choose_from_most_used' => !$this->hasGender()
-                ? sprintf(__('Choisir parmi les %s les plus utilisés', 'tify'), $this->getPlural())
-                : sprintf(__('Choisir parmi les %s les plus utilisées', 'tify'), $this->getPlural()),
+            'choose_from_most_used' => !$this->gender()
+                ? sprintf(__('Choisir parmi les %s les plus utilisés', 'tify'), $this->plural())
+                : sprintf(__('Choisir parmi les %s les plus utilisées', 'tify'), $this->plural()),
 
-            'not_found' => !$this->hasGender()
-                ? sprintf(__('Aucun %s trouvé', 'tify'), Str::ucfirst($this->getSingular()))
-                : sprintf(__('Aucune %s trouvée', 'tify'), Str::ucfirst($this->getSingular())),
+            'not_found' => !$this->gender()
+                ? sprintf(__('Aucun %s trouvé', 'tify'), $this->singular(true))
+                : sprintf(__('Aucune %s trouvée', 'tify'), $this->singular(true)),
 
 
             /* @todo
              * 'datas_item'                 => $this->defaultDatasItem(),
-             * 'import_items'               => sprintf(__('Importer des %s', 'tify'), $this->getPlural()),
-             * 'export_items'               => sprintf(__('Export des %s', 'tify'), $this->getPlural()),
+             * 'import_items'               => sprintf(__('Importer des %s', 'tify'), $this->plural()),
+             * 'export_items'               => sprintf(__('Export des %s', 'tify'), $this->plural()),
              */
         ];
     }

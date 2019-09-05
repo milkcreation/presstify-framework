@@ -19,6 +19,7 @@ class FactoryHttpController implements FactoryHttpControllerContract
         $response = null;
 
         if (method_exists($this, $method)) {
+            $this->factory->prepare();
             $response = $this->{$method}($psrRequest);
         }
 

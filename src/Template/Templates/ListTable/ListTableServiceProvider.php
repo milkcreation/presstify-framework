@@ -3,8 +3,7 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Template\Factory\FactoryServiceProvider;
-use tiFy\Template\Templates\ListTable\Contracts\{
-    Ajax as AjaxContract,
+use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract,
     Builder,
     BulkAction,
     BulkActions,
@@ -21,8 +20,7 @@ use tiFy\Template\Templates\ListTable\Contracts\{
     RowActions,
     Search,
     ViewFilter,
-    ViewFilters
-};
+    ViewFilters};
 use tiFy\View\ViewEngine;
 
 class ListTableServiceProvider extends FactoryServiceProvider
@@ -297,54 +295,86 @@ class ListTableServiceProvider extends FactoryServiceProvider
             return $ctrl->setTemplateFactory($this->factory)->parse(is_array($attrs) ? $attrs : []);
         });
 
-        $this->getContainer()->share($this->getFactoryAlias('row-action'), function (string $name, array $attrs = []) {
+        $this->getContainer()->add($this->getFactoryAlias('row-action'), function (): RowAction {
             $ctrl = $this->factory->get('providers.row-action');
             $ctrl = $ctrl instanceof RowAction
-                ? $ctrl
+                ? clone $ctrl
                 : $this->getContainer()->get(RowAction::class);
 
-            return $ctrl->setTemplateFactory($this->factory)->setName($name)->set($attrs)->parse();
+            return $ctrl->setTemplateFactory($this->factory);
         });
 
-        $this->getContainer()->add($this->getFactoryAlias('row-action.activate'),
-            function (string $name, array $attrs = []) {
-                return (new RowActionActivate())->setName($name)->set($attrs)->parse();
-            });
+        $this->getContainer()->add($this->getFactoryAlias('row-action.activate'), function (): RowAction {
+            $ctrl = $this->factory->get('providers.row-action.activate');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionActivate();
 
-        $this->getContainer()->add($this->getFactoryAlias('row-action.deactivate'),
-            function (string $name, array $attrs = []) {
-                return (new RowActionDeactivate())->setName($name)->set($attrs)->parse();
-            });
+            return $ctrl->setTemplateFactory($this->factory);
+        });
 
-        $this->getContainer()->add($this->getFactoryAlias('row-action.delete'),
-            function (string $name, array $attrs = []) {
-                return (new RowActionDelete())->setName($name)->set($attrs)->parse();
-            });
+        $this->getContainer()->add($this->getFactoryAlias('row-action.deactivate'), function (): RowAction {
+            $ctrl = $this->factory->get('providers.row-action.deactivate');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionDeactivate();
 
-        $this->getContainer()->add($this->getFactoryAlias('row-action.duplicate'),
-            function (string $name, array $attrs = []) {
-                return (new RowActionDuplicate())->setName($name)->set($attrs)->parse();
-            });
+            return $ctrl->setTemplateFactory($this->factory);
+        });
 
-        $this->getContainer()->add($this->getFactoryAlias('row-action.edit'),
-            function (string $name, array $attrs = []) {
-                return (new RowActionEdit())->setName($name)->set($attrs)->parse();
-            });
+        $this->getContainer()->add($this->getFactoryAlias('row-action.delete'), function (): RowAction {
+            $ctrl = $this->factory->get('providers.row-action.delete');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionDelete();
 
-        $this->getContainer()->add($this->getFactoryAlias('row-action.preview'),
-            function (string $name, array $attrs = []) {
-                return (new RowActionPreview())->setName($name)->set($attrs)->parse();
-            });
+            return $ctrl->setTemplateFactory($this->factory);
+        });
 
-        $this->getContainer()->add($this->getFactoryAlias('row-action.trash'),
-            function (string $name, array $attrs = []) {
-                return (new RowActionTrash())->setName($name)->set($attrs)->parse();
-            });
+        $this->getContainer()->add($this->getFactoryAlias('row-action.duplicate'), function (): RowAction {
+            $ctrl = $this->factory->get('providers.row-action.duplicate');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionDuplicate();
 
-        $this->getContainer()->add($this->getFactoryAlias('row-action.untrash'),
-            function (string $name, array $attrs = []) {
-                return (new RowActionUntrash())->setName($name)->set($attrs)->parse();
-            });
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+
+        $this->getContainer()->add($this->getFactoryAlias('row-action.edit'), function (): RowAction {
+            $ctrl = $this->factory->get('providers.row-action.edit');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionEdit();
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+
+        $this->getContainer()->add($this->getFactoryAlias('row-action.preview'), function (): RowAction {
+            $ctrl = $this->factory->get('providers.row-action.preview');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionPreview();
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+
+        $this->getContainer()->add($this->getFactoryAlias('row-action.trash'), function (): RowAction {
+            $ctrl = $this->factory->get('providers.row-action.trash');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionTrash();
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+
+        $this->getContainer()->add($this->getFactoryAlias('row-action.untrash'), function (): RowAction {
+            $ctrl = $this->factory->get('providers.row-action.untrash');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionUntrash();
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
     }
 
     /**

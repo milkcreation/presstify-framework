@@ -7,13 +7,13 @@ class RowActionUntrash extends RowAction
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
-        return [
-            'content'   => __('Rétablir', 'tify'),
-            'title'     => __('Restauration de l\'élément', 'tify'),
-            'nonce'     => $this->getNonce(),
-            'referer' => true
-        ];
+        return array_merge(parent::defaults(), [
+            'attrs'   => [
+                'title' => __('Restauration de l\'élément', 'tify'),
+            ],
+            'content' => __('Restaurer', 'tify'),
+        ]);
     }
 }

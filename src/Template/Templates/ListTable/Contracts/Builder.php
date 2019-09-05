@@ -7,7 +7,16 @@ use tiFy\Contracts\Template\{FactoryAwareTrait, FactoryBuilder};
 interface Builder extends FactoryAwareTrait, FactoryBuilder
 {
     /**
-     * Récupération de la liste des éléments.
+     * Récupération de l'instance d'un élément.
+     *
+     * @param string $key Indice de récupération de l'élément.
+     *
+     * @return Item|null
+     */
+    public function getItem(string $key): ?Item;
+
+    /**
+     * Retrouve la liste des éléments à afficher.
      *
      * @return static
      */

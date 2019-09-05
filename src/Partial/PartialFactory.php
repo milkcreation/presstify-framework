@@ -155,26 +155,46 @@ abstract class PartialFactory extends ParamsBag implements PartialFactoryContrac
      *
      * @return $this
      */
-    public function parseDefaults(): PartialFactoryContract
+    public function parseAttrsClass(): PartialFactoryContract
     {
-        if (!$this->get('attrs.id')) {
-            $this->forget('attrs.id');
-        }
+        $base = Str::ucfirst($this->getAlias());
 
-        $default_class = 'tiFyPartial-' . Str::camel($this->getAlias()) .
-            ' tiFyPartial-' . Str::camel($this->getAlias()) . '--' . $this->getIndex();
+        $default_class = "{$base} {$base}--" . $this->getIndex();
         if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $default_class);
         } else {
             $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
         }
+
         if (!$this->get('attrs.class')) {
             $this->forget('attrs.class');
         }
 
-        $this->parseViewer();
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return $this
+     */
+    public function parseAttrsId(): PartialFactoryContract
+    {
+        if (!$this->get('attrs.id')) {
+            $this->forget('attrs.id');
+        }
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return $this
+     */
+    public function parseDefaults(): PartialFactoryContract
+    {
+        return $this->parseAttrsId()->parseAttrsClass()->parseViewer();
     }
 
     /**

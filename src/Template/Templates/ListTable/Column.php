@@ -215,7 +215,8 @@ class Column extends ParamsBag implements ColumnContract
 
             $args = [
                 'item'   => $item,
-                'value'  => $this->value() . ($this->isPrimary() ? $this->factory->rowActions() : ''),
+                'value'  => $this->value() .
+                    ($this->isPrimary() ? $this->factory->rowActions() : ''),
                 'column' => $this
             ];
 

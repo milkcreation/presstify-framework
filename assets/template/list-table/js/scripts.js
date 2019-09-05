@@ -18,7 +18,6 @@ jQuery(function ($) {
 
       this._initOptions();
 
-
       this._on(this.el, {
         'list-table:created-row' : function(e, args) {
           let i = 0;
@@ -26,7 +25,7 @@ jQuery(function ($) {
             if (typeof v !== 'string') {
               $(args.row).find('td:eq(' + (i++) + ')').attr(v.attrs).html(v.render);
             } else {
-              return false;
+              return v;
             }
           });
         }
@@ -39,11 +38,7 @@ jQuery(function ($) {
          */
         data: function (d) {
           d = $.extend(d, {action: 'get_items'});
-          // Ajout dynamique d'arguments passés dans la requête ajax de récupération d'éléments.
-          // if ($('#ajaxDatatablesData').val()) {
-          //    let ajax_data = JSON.parse(decodeURIComponent($('#ajaxDatatablesData').val()));
-          //    d = $.extend(d, ajax_data);
-          // }
+
           return d;
         },
         /**
@@ -109,6 +104,7 @@ jQuery(function ($) {
              */
             drawCallback: function (settings) {
               let dataTable = this;
+
               self._trigger('draw-callback', null, {settings, dataTable});
             },
             /**
@@ -280,6 +276,7 @@ jQuery(function ($) {
              */
             rowCallback: function (row, data, displayNum, displayIndex, dataIndex) {
               let dataTable = this;
+
               self._trigger('row-callback', null, {row, data, displayNum, displayIndex, dataIndex, dataTable});
             },
             /**
@@ -351,6 +348,20 @@ jQuery(function ($) {
 
   $(document).ready(function ($) {
     $('[data-control="list-table"]').tifyListTable();
+
+    $(document).on('click', '[data-control="list-table.row-action"]', function (e) {
+      e.preventDefault();
+
+      let $self = $(this);
+
+      $.ajax({
+        url: $self.attr('href'),
+        method: 'POST',
+        type: 'json'
+      }).done(function (resp) {
+        console.log(resp);
+      });
+    });
   });
 });
 

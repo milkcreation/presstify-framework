@@ -7,13 +7,14 @@ class RowActionDeactivate extends RowAction
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
-        return [
+        return array_merge(parent::defaults(), [
+            'attrs'   => [
+                'style' => 'color:#D98500;',
+                'title' => __('Désactivation de l\'élément', 'tify'),
+            ],
             'content' => __('Désactiver', 'tify'),
-            'title'   => __('Désactivation de l\'élément', 'tify'),
-            'nonce'   => $this->getNonce(),
-            'attrs'   => ['style' => 'color:#D98500;']
-        ];
+        ]);
     }
 }

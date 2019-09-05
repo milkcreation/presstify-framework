@@ -7,15 +7,15 @@ class RowActionEdit extends RowAction
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
-        return [
+        return array_merge(parent::defaults(), [
+            'attrs'   => [
+                'title' => __('Modification de l\'élément', 'tify'),
+            ],
             'content' => __('Modifier', 'tify'),
-            'title'   => __('Modification de l\'élément', 'tify'),
-            'href'    => $this->factory->param('edit_base_uri'),
-            'nonce'   => false,
-            'referer' => false
-        ];
+            'url'     => $this->factory->param('edit_base_uri'),
+        ]);
     }
 
     /**
@@ -23,6 +23,6 @@ class RowActionEdit extends RowAction
      */
     public function isActive(): bool
     {
-        return !empty($this->get('href', ''));
+        return !is_null($this->url);
     }
 }

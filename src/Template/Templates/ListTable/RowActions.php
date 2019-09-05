@@ -4,8 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\ListTable;
-use tiFy\Template\Templates\ListTable\Contracts\{RowAction, RowActions as RowActionsContract};
+use tiFy\Template\Templates\ListTable\Contracts\{ListTable, RowAction, RowActions as RowActionsContract};
 
 class RowActions extends Collection implements RowActionsContract
 {
@@ -18,8 +17,8 @@ class RowActions extends Collection implements RowActionsContract
     protected $factory;
 
     /**
-     * Liste des actions par ligne.
-     * @var array|RowAction[]
+     * Liste des instances des actions déclarées.
+     * @var RowAction[]|array
      */
     protected $items = [];
 
@@ -29,6 +28,14 @@ class RowActions extends Collection implements RowActionsContract
     public function __toString(): string
     {
         return (string)$this->render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAlwaysVisible(): bool
+    {
+        return (bool)$this->factory->param('row_actions_always_visible', true);
     }
 
     /**
@@ -49,7 +56,10 @@ class RowActions extends Collection implements RowActionsContract
                     ? "row-action.{$name}"
                     : 'row-action';
 
-                $this->items[$name] = $this->factory->resolve($alias, [$name, $attrs]);
+                /** @var RowAction $row_action */
+                $row_action = $this->factory->resolve($alias);
+
+                $this->items[$name] = $row_action->setName($name)->set($attrs);
             }
 
             $this->items = array_filter($this->items, function ($value) {
@@ -65,31 +75,16 @@ class RowActions extends Collection implements RowActionsContract
      */
     public function render(): string
     {
-        $actions = $this->collect()->filter(function (RowAction $item) {
-            return $item->isActive();
-        });
-
-        if ($action_count = count($actions)) {
-            $i = 0;
-            $always_visible = $this->factory->param('row_actions_always_visible');
-
-            $output = '';
-            $output .= "<div class=\"" . ($always_visible ? 'row-actions visible' : 'row-actions') . "\">";
-            foreach ($actions as $action => $link) {
-                ++$i;
-                ($i == $action_count) ? $sep = '' : $sep = ' | ';
-                $output .= "<span class=\"{$action}\">{$link}{$sep}</span>";
+        $output = '';
+        $output .= "<div class=\"" . ($this->isAlwaysVisible() ? 'row-actions visible' : 'row-actions') . "\">";
+        /**  @var RowAction $r */
+        foreach ($this->all() as $r) {
+            if ($r->parse()->isAvailable()) {
+                $output .= "<span class=\"{$r->getName()}\">{$r}</span>";
             }
-
-            $output .= "</div>";
-
-            $output .= "<button type=\"button\" class=\"toggle-row\"><span class=\"screen-reader-text\">" .
-                __('Voir plus de détails', 'tify') .
-                "</span></button>";
-
-            return $output;
-        } else {
-            return '';
         }
+        $output .= "</div>";
+
+        return $output;
     }
 }

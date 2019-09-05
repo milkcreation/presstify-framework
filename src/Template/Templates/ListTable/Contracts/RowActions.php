@@ -22,6 +22,13 @@ interface RowActions extends Collection, FactoryAwareTrait
     public function all();
 
     /**
+     * Vérification de l'activation de la visibilité des actions par ligne.
+     *
+     * @return boolean
+     */
+    public function isAlwaysVisible(): bool;
+
+    /**
      * Traitement de la liste des actions par ligne.
      *
      * @param array $row_actions Liste des actions par ligne.

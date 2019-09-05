@@ -7,13 +7,14 @@ class RowActionDelete extends RowAction
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
-        return [
+        return array_merge(parent::defaults(), [
+            'attrs'   => [
+                'style' => 'color:#a00;',
+                'title' => __('Suppression définitive de l\'élément', 'tify'),
+            ],
             'content' => __('Supprimer définitivement', 'tify'),
-            'title'   => __('Suppression définitive de l\'élément', 'tify'),
-            'nonce'   => $this->getNonce(),
-            'attrs'   => ['style' => 'color:#a00;']
-        ];
+        ]);
     }
 }

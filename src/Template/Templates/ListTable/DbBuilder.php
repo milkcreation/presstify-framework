@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Contracts\Template\FactoryBuilder as FactoryBuilderContract;
 use tiFy\Template\Factory\FactoryDbBuilder;
-use tiFy\Template\Templates\ListTable\Contracts\DbBuilder as DbBuilderContract;
+use tiFy\Template\Templates\ListTable\Contracts\{DbBuilder as DbBuilderContract, Item};
 
 class DbBuilder extends FactoryDbBuilder implements DbBuilderContract
 {
@@ -13,6 +13,16 @@ class DbBuilder extends FactoryDbBuilder implements DbBuilderContract
      * @var ListTable
      */
     protected $factory;
+
+    /**
+     * @inheritDoc
+     */
+    public function getItem(string $key): ?Item
+    {
+        $this->parse();
+
+        return null;
+    }
 
     /**
      * @inheritDoc

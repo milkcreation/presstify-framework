@@ -7,13 +7,14 @@ class RowActionActivate extends RowAction
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
-        return [
+        return array_merge(parent::defaults(),[
+            'attrs'   => [
+                'style' => 'color:#006505;',
+                'title'   => __('Activation de l\'élément', 'tify'),
+            ],
             'content' => __('Activer', 'tify'),
-            'title'   => __('Activation de l\'élément', 'tify'),
-            'nonce'   => $this->getNonce(),
-            'attrs'   => ['style' => 'color:#006505;']
-        ];
+        ]);
     }
 }

@@ -86,6 +86,20 @@ interface PartialFactory extends ParamsBag
     public function parse(): PartialFactory;
 
     /**
+     * Traitement de l'attribut de balise HTML "id".
+     *
+     * @return static
+     */
+    public function parseAttrsId(): PartialFactory;
+
+    /**
+     * Traitement de l'attribut de balise HTML "class".
+     *
+     * @return static
+     */
+    public function parseAttrsClass(): PartialFactory;
+
+    /**
      * Traitement de la liste des attributs par défaut.
      *
      * @return static

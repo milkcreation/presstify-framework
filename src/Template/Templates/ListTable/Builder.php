@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Contracts\Template\FactoryBuilder as FactoryBuilderContract;
 use tiFy\Template\Factory\FactoryBuilder;
-use tiFy\Template\Templates\ListTable\Contracts\Builder as BuilderContract;
+use tiFy\Template\Templates\ListTable\Contracts\{Builder as BuilderContract, Item};
 
 class Builder extends FactoryBuilder implements BuilderContract
 {
@@ -13,6 +13,16 @@ class Builder extends FactoryBuilder implements BuilderContract
      * @var ListTable
      */
     protected $factory;
+
+    /**
+     * @inheritDoc
+     */
+    public function getItem(string $key): ?Item
+    {
+        $this->parse();
+
+        return null;
+    }
 
     /**
      * @inheritDoc

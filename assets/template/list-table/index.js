@@ -1,6 +1,7 @@
 // DEPS
 // datatables
 import 'datatables.net-dt';
+import 'datatables.net-dt/css/jquery.dataTables.css';
 
 // jQuery-ui - widget
 import 'jquery-ui/ui/widget';

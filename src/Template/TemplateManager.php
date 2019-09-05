@@ -72,7 +72,7 @@ class TemplateManager extends Manager implements TemplateManagerContract
      */
     public function prepareRoutes(): TemplateManagerContract
     {
-        $this->baseUrl = md5('tify:template'); // 7855ce7d975d5a1ede9b5a83d7235dee
+        $this->baseUrl = md5('tify:template');
 
         foreach(['head', 'delete', 'get', 'options', 'post', 'put', 'patch'] as $method) {
             Router::$method($this->baseUrl . '/{name}', [$this, 'httpController']);

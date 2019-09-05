@@ -7,12 +7,13 @@ class RowActionTrash extends RowAction
     /**
      * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
-        return [
+        return array_merge(parent::defaults(), [
+            'attrs'   => [
+                'title' => __('Mettre l\'élément à la corbeille', 'tify'),
+            ],
             'content' => __('Corbeille', 'tify'),
-            'title'   => __('Mettre l\'élément à la corbeille', 'tify'),
-            'nonce'   => $this->getNonce()
-        ];
+        ]);
     }
 }
