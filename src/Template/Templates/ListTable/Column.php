@@ -35,24 +35,6 @@ class Column extends ParamsBag implements ColumnContract
     /**
      * @inheritDoc
      */
-    public function defaults(): array
-    {
-        return [
-            'attrs'    => [],
-            'content'  => '',
-            'hideable' => true,
-            'hidden'   => false,
-            'primary'  => false,
-            'sortable' => false,
-            'tag'      => 'td',
-            'title'    => $this->getName(),
-            'value'    => null
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getName(): string
     {
         return $this->name;
@@ -133,7 +115,7 @@ class Column extends ParamsBag implements ColumnContract
 
         return (string)$this->factory->viewer($name, [
             'attrs'   => HtmlAttrs::createFromAttrs($attrs),
-            'content' => $content
+            'content' => $content,
         ]);
     }
 
@@ -172,31 +154,6 @@ class Column extends ParamsBag implements ColumnContract
     /**
      * @inheritDoc
      */
-    public function parse(): ColumnContract
-    {
-        parent::parse();
-
-        $this->set('name', $this->getName());
-
-        if ($sortable = $this->get('sortable')) {
-            $this->set(
-                'sortable',
-                is_bool($sortable)
-                    ? [$this->getName(), false]
-                    : (is_string($sortable) ? [$sortable, false] : $sortable)
-            );
-        }
-
-        $this->set('attrs.class', trim($this->get('attrs.class') . "{$this->getName()} column-{$this->getName()}"));
-
-        $this->set('attrs.data-colname', wp_strip_all_tags($this->getTitle()));
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function render(): string
     {
         if ($item = $this->factory->item()) {
@@ -213,11 +170,13 @@ class Column extends ParamsBag implements ColumnContract
                 $this->set('attrs.class', trim($this->get('attrs.class', '') . " {$classes}"));
             }
 
+            $row_actions = (string)($this->isPrimary() ? $this->factory->rowActions() : '');
+
             $args = [
-                'item'   => $item,
-                'value'  => $this->value() .
-                    ($this->isPrimary() ? $this->factory->rowActions() : ''),
-                'column' => $this
+                'item'        => $item,
+                'value'       => $this->value() . $row_actions,
+                'column'      => $this,
+                'row_actions' => $row_actions,
             ];
 
             if (($content = $this->get('content')) instanceof Closure) {
@@ -248,7 +207,7 @@ class Column extends ParamsBag implements ColumnContract
         if ($item = $this->factory->item()) {
             if (($value = $this->get('value')) && !is_null($value)) {
                 return $value;
-            } elseif($value = $item->get($this->getName())) {
+            } elseif ($value = $item->get($this->getName())) {
                 $type = '';
 
                 switch ($type) {
@@ -263,7 +222,50 @@ class Column extends ParamsBag implements ColumnContract
                 return '';
             }
         } else {
-            return $this->get('value') ? : '';
+            return $this->get('value') ?: '';
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defaults(): array
+    {
+        return [
+            'attrs'    => [],
+            'content'  => '',
+            'hideable' => true,
+            'hidden'   => false,
+            'primary'  => false,
+            'sortable' => false,
+            'tag'      => 'td',
+            'title'    => $this->getName(),
+            'value'    => null,
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parse(): ColumnContract
+    {
+        parent::parse();
+
+        $this->set('name', $this->getName());
+
+        if ($sortable = $this->get('sortable')) {
+            $this->set(
+                'sortable',
+                is_bool($sortable)
+                    ? [$this->getName(), false]
+                    : (is_string($sortable) ? [$sortable, false] : $sortable)
+            );
+        }
+
+        $this->set('attrs.class', trim($this->get('attrs.class') . "{$this->getName()} column-{$this->getName()}"));
+
+        $this->set('attrs.data-colname', wp_strip_all_tags($this->getTitle()));
+
+        return $this;
     }
 }

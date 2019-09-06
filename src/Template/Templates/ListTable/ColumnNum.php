@@ -31,9 +31,9 @@ class ColumnNum extends Column
             return '';
         } else {
             $per_page = $this->factory->pagination()->getPerPage();
-            $page = $this->factory->pagination()->getCurrentPage();
+            $page = $this->factory->pagination()->getPage();
 
-            return (string)($per_page*($page-1)+($item->getIndex()+1));
+            return (string)($per_page*($page-1)+($item->getOffset()+1));
         }
     }
 }

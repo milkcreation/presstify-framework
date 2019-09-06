@@ -4,6 +4,7 @@ namespace tiFy\Log;
 
 use App\App;
 use tiFy\Container\ServiceProvider;
+use tiFy\Support\Str;
 
 class LogServiceProvider extends ServiceProvider
 {
@@ -32,8 +33,9 @@ class LogServiceProvider extends ServiceProvider
             return new LogManager($this->getContainer()->get('app'));
         });
 
-        $this->getContainer()->add('logger', function (string $name, array $handlers = [], array $processors = []) {
-            return (new Logger($name, $handlers, $processors))->setContainer($this->getContainer()->get('app'));
+        $this->getContainer()->add('logger', function (?string $name = null) {
+            return (new Logger($name ?? Str::random()))
+                ->setContainer($this->getContainer()->get('app'));
         });
     }
 }
