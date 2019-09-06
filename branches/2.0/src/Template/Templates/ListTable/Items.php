@@ -2,7 +2,7 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Contracts\Template\FactoryDb;
+use tiFy\Contracts\{Support\Collection as CollectionContract, Template\FactoryDb};
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Contracts\{Items as ItemsContract, Item, ListTable};
@@ -12,16 +12,16 @@ class Items extends Collection implements ItemsContract
     use FactoryAwareTrait;
 
     /**
-     * Indice de l'élément courant.
-     * @var int
-     */
-    protected $index = 0;
-
-    /**
      * Instance du gabarit associé.
      * @var ListTable
      */
     protected $factory;
+
+    /**
+     * Indice de l'élément courant.
+     * @var int
+     */
+    protected $offset = 0;
 
     /**
      * Nombre total d'éléments trouvés.
@@ -34,6 +34,18 @@ class Items extends Collection implements ItemsContract
      * @var array|Item[]
      */
     protected $items = [];
+
+    /**
+     * Réinitialisation de la liste des éléments.
+     *
+     * @return $this
+     */
+    public function clear(): CollectionContract
+    {
+        $this->offset = 0;
+
+        return parent::clear();
+    }
 
     /**
      * Récupération du nombre total d'éléments trouvés.
@@ -60,6 +72,6 @@ class Items extends Collection implements ItemsContract
         /** @var Item $item */
         $item = $this->factory->resolve('item')->set($item);
 
-        $this->items[$key] = $item->setIndex($this->index++)->parse();
+        $this->items[$key] = $item->setOffset($this->offset++)->parse();
     }
 }

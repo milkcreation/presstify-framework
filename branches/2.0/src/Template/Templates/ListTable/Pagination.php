@@ -5,40 +5,11 @@ namespace tiFy\Template\Templates\ListTable;
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Contracts\{ListTable, Pagination as PaginationContract};
+use tiFy\Support\Traits\PaginationAwareTrait;
 
 class Pagination extends ParamsBag implements PaginationContract
 {
-    use FactoryAwareTrait;
-
-    /**
-     * Nombre d'élément de la page courante.
-     * @var int
-     */
-    protected $count = 0;
-
-    /**
-     * Numéro de la page courante.
-     * @var int
-     */
-    protected $current_page = 0;
-
-    /**
-     * Numéro de la dernière page.
-     * @var int
-     */
-    protected $last_page = 0;
-
-    /**
-     * Nombre d'élément par page.
-     * @var int
-     */
-    protected $per_page = 0;
-
-    /**
-     * Nombre total d'éléments.
-     * @var int
-     */
-    protected $total = 0;
+    use PaginationAwareTrait, FactoryAwareTrait;
 
     /**
      * Instance du gabarit associé.
@@ -69,46 +40,6 @@ class Pagination extends ParamsBag implements PaginationContract
     /**
      * @inheritDoc
      */
-    public function getCount(): int
-    {
-        return $this->count;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCurrentPage(): int
-    {
-        return $this->current_page;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getLastPage(): int
-    {
-        return $this->last_page;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getPerPage(): int
-    {
-        return $this->per_page;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTotal(): int
-    {
-        return $this->total;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getWhich(): string
     {
         return $this->which;
@@ -119,7 +50,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableFirst(): bool
     {
-        return ($this->getCurrentPage() === 1 || $this->getCurrentPage() === 2);
+        return ($this->getPage() === 1 || $this->getPage() === 2);
     }
 
     /**
@@ -127,7 +58,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableLast(): bool
     {
-        return $this->getCurrentPage() >= ($this->getLastPage() - 1);
+        return $this->getPage() >= ($this->getLastPage() - 1);
     }
 
     /**
@@ -135,7 +66,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisableNext(): bool
     {
-        return $this->getCurrentPage() === $this->getLastPage();
+        return $this->getPage() === $this->getLastPage();
     }
 
     /**
@@ -143,7 +74,7 @@ class Pagination extends ParamsBag implements PaginationContract
      */
     public function isDisablePrev(): bool
     {
-        return $this->getCurrentPage() === 1;
+        return $this->getPage() === 1;
     }
 
     /**
@@ -275,7 +206,7 @@ class Pagination extends ParamsBag implements PaginationContract
                 $this->set('next.tag', 'a');
             }
             if (!$this->has('next.attrs.href')) {
-                $this->set('next.attrs.href', $this->pagedUrl(min($this->getLastPage(), $this->getCurrentPage() + 1)));
+                $this->set('next.attrs.href', $this->pagedUrl(min($this->getLastPage(), $this->getPage() + 1)));
             }
         }
 
@@ -308,63 +239,13 @@ class Pagination extends ParamsBag implements PaginationContract
                 $this->set('prev.tag', 'a');
             }
             if (!$this->has('prev.attrs.href')) {
-                $this->set('prev.attrs.href', $this->pagedUrl(max(1, $this->getCurrentPage() - 1)));
+                $this->set('prev.attrs.href', $this->pagedUrl(max(1, $this->getPage() - 1)));
             }
         }
 
         if (!$this->has('prev.content')) {
             $this->set('prev.content', '&lsaquo;');
         }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setCount(int $count): PaginationContract
-    {
-        $this->count = $count;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setCurrentPage(int $num): PaginationContract
-    {
-        $this->current_page = $num;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setLastPage(int $num): PaginationContract
-    {
-        $this->last_page = $num;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setPerPage(int $per_page): PaginationContract
-    {
-        $this->per_page = $per_page;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setTotal(int $total): PaginationContract
-    {
-        $this->total = $total;
 
         return $this;
     }

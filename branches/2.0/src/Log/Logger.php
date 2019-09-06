@@ -24,7 +24,7 @@ class Logger extends MonologLogger implements LoggerContract
     /**
      * @inheritDoc
      */
-    public function __construct($name, array $handlers = [], array $processors = [])
+    public function __construct(string $name, array $handlers = [], array $processors = [])
     {
         parent::__construct($name, $handlers, $processors);
 

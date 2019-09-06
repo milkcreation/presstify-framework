@@ -38,7 +38,7 @@ interface Item extends FactoryAwareTrait, ParamsBag
      *
      * @return int
      */
-    public function getIndex(): int;
+    public function getOffset(): int;
 
     /**
      * @inheritDoc
@@ -61,5 +61,5 @@ interface Item extends FactoryAwareTrait, ParamsBag
      *
      * @return static
      */
-    public function setIndex(int $index): Item;
+    public function setOffset(int $index): Item;
 }

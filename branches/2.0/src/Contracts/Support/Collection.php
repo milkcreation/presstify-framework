@@ -35,6 +35,13 @@ interface Collection extends ArrayAccess, Countable, IteratorAggregate
     public function chunk(int $size): iterable;
 
     /**
+     * Réinitialisation de la liste des éléments.
+     *
+     * @return static
+     */
+    public function clear(): Collection;
+
+    /**
      * Instanciation du controleur de traitement d'une collection d'élément.
      *
      * @param null|array $items Liste des éléments à traiter. Si null utilise la liste des éléments déclarés.

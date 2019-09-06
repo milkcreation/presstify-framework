@@ -5,7 +5,6 @@ namespace tiFy\Template\Templates\ListTable;
 use Closure;
 use tiFy\Contracts\Routing\UrlFactory;
 use tiFy\Support\{ParamsBag, Proxy\Partial};
-use tiFy\Http\Request;
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Contracts\{Item, ListTable, RowAction as RowActionContract};
 

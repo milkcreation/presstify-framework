@@ -19,16 +19,16 @@ class Item extends ParamsBag implements ItemContract
     protected $factory;
 
     /**
-     * Indice de l'élément.
-     * @var int
-     */
-    protected $index;
-
-    /**
      * Objet de délégation d'appel des méthodes de la classe.
      * @var object|null
      */
     protected $delegate;
+
+    /**
+     * Indice de l'élément.
+     * @var int
+     */
+    protected $offset;
 
     /**
      * @inheritDoc
@@ -67,9 +67,9 @@ class Item extends ParamsBag implements ItemContract
     /**
      * @inheritDoc
      */
-    public function getIndex(): int
+    public function getOffset(): int
     {
-        return $this->index;
+        return $this->offset;
     }
 
     /**
@@ -95,10 +95,10 @@ class Item extends ParamsBag implements ItemContract
     /**
      * @inheritDoc
      */
-    public function setIndex(int $index): ItemContract
+    public function setOffset(int $offset): ItemContract
     {
-        if (is_null($this->index)) {
-            $this->index = $index;
+        if (is_null($this->offset)) {
+            $this->offset = $offset;
         }
 
         return $this;

@@ -56,7 +56,7 @@ class Collection implements CollectionContract
     /**
      * @inheritDoc
      */
-    public static function createFromItems(array $items) : CollectionContract
+    public static function createFromItems(array $items): CollectionContract
     {
         return (new static())->set($items);
     }
@@ -75,6 +75,16 @@ class Collection implements CollectionContract
     public function chunk(int $size): iterable
     {
         return $this->collect()->chunk($size);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function clear(): CollectionContract
+    {
+        $this->items = [];
+
+        return $this;
     }
 
     /**

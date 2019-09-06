@@ -47,7 +47,7 @@ class DbBuilder extends FactoryDbBuilder implements DbBuilderContract
         if ($count = $items->count()) {
             $this->factory->pagination()
                 ->setCount($count)
-                ->setCurrentPage($this->getPage())
+                ->setPage($this->getPage())
                 ->setPerPage($this->getPerPage())
                 ->setLastPage((int)ceil($total / $this->getPerPage()))
                 ->setTotal($total)

@@ -53,7 +53,7 @@ interface Logger extends PsrLoggerInterface, ResettableInterface
      *
      * @param array $params Liste des attributs de configuration.
      *
-     * @return void
+     * @return static
      */
     public function setParams(array $params): Logger;
 

@@ -4,44 +4,13 @@ namespace tiFy\Template\Templates\ListTable\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\Template\FactoryAwareTrait;
+use tiFy\Support\Traits\PaginationAwareTrait;
 
+/**
+ * @mixin PaginationAwareTrait
+ */
 interface Pagination extends FactoryAwareTrait, ParamsBag
 {
-    /**
-     * Récupération du nombre d'éléments de la page courante.
-     *
-     * @return int
-     */
-    public function getCount(): int;
-
-    /**
-     * Récupération du numéro de la page courante.
-     *
-     * @return int
-     */
-    public function getCurrentPage(): int;
-
-    /**
-     * Récupération du nombre total de page d'éléments.
-     *
-     * @return int
-     */
-    public function getLastPage(): int;
-
-    /**
-     * Récupération du nombre d'éléments affiché par page.
-     *
-     * @return int
-     */
-    public function getPerPage(): int;
-
-    /**
-     * Récupération du nombre total d'éléments.
-     *
-     * @return int
-     */
-    public function getTotal(): int;
-
     /**
      * Récupération de l'emplacement d'affichage de l'interface de pagination.
      *
@@ -120,51 +89,6 @@ interface Pagination extends FactoryAwareTrait, ParamsBag
      * @return Pagination
      */
     public function parsePrev(): Pagination;
-
-    /**
-     * Définition du nombre d'élément sur la page courante.
-     *
-     * @param int $count
-     *
-     * @return static
-     */
-    public function setCount(int $count): Pagination;
-
-    /**
-     * Définition du numéro de la page courante.
-     *
-     * @param int $num
-     *
-     * @return static
-     */
-    public function setCurrentPage(int $num): Pagination;
-
-    /**
-     * Définition du numéro de la dernière page.
-     *
-     * @param int $num
-     *
-     * @return static
-     */
-    public function setLastPage(int $num): Pagination;
-
-    /**
-     * Définition du nombre d'éléments par page.
-     *
-     * @param int $per_page
-     *
-     * @return static
-     */
-    public function setPerPage(int $per_page): Pagination;
-
-    /**
-     * Définition du nombre total d'éléments.
-     *
-     * @param int $total
-     *
-     * @return static
-     */
-    public function setTotal(int $total): Pagination;
 
     /**
      * Définition de l'emplacement d'affichage.
