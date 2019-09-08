@@ -3,14 +3,16 @@
 namespace tiFy\Template\Templates\UserListTable;
 
 use tiFy\Template\Templates\UserListTable\Contracts\{Db, Item, DbBuilder};
-use tiFy\Template\Templates\ListTable\Contracts\Builder;
-use tiFy\Template\Templates\ListTable\ListTableServiceProvider;
+use tiFy\Template\Templates\ListTable\{
+    Contracts\Builder as BaseBuilderContract,
+    ServiceProvider as BaseServiceProvider
+};
 
-class UserListTableServiceProvider extends ListTableServiceProvider
+class ServiceProvider extends BaseServiceProvider
 {
     /**
      * Instance du gabarit d'affichage.
-     * @var UserListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -20,16 +22,16 @@ class UserListTableServiceProvider extends ListTableServiceProvider
     public function registerFactoryBuilder(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
-            $ctrl = $this->factory->get('providers.builder');
+            $ctrl = $this->factory->provider('builder');
 
             if ($this->factory->db()) {
                 $ctrl = $ctrl instanceof DbBuilder
                     ? clone $ctrl
                     : $this->getContainer()->get(DbBuilder::class);
             } else {
-                $ctrl = $ctrl instanceof Builder
+                $ctrl = $ctrl instanceof BaseBuilderContract
                     ? clone $ctrl
-                    : $this->getContainer()->get(Builder::class);
+                    : $this->getContainer()->get(BaseBuilderContract::class);
             }
 
 
@@ -45,7 +47,7 @@ class UserListTableServiceProvider extends ListTableServiceProvider
     public function registerFactoryDb(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('db'), function () {
-            $ctrl = $this->factory->get('providers.db');
+            $ctrl = $this->factory->provider('db');
 
             $ctrl = $ctrl instanceof Db
                 ? $ctrl
@@ -63,7 +65,7 @@ class UserListTableServiceProvider extends ListTableServiceProvider
     public function registerFactoryItem(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('item'), function () {
-            $ctrl = $this->factory->get('providers.item');
+            $ctrl = $this->factory->provider('item');
 
             $ctrl = $ctrl instanceof Item
                 ? clone $ctrl

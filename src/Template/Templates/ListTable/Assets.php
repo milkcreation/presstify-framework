@@ -2,14 +2,14 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Template\Factory\FactoryAssets;
-use tiFy\Template\Templates\ListTable\Contracts\{Assets as AssetsContract, ListTable};
+use tiFy\Template\Factory\Assets as BaseAssets;
+use tiFy\Template\Templates\ListTable\Contracts\Assets as AssetsContract;
 
-class Assets extends FactoryAssets implements AssetsContract
+class Assets extends BaseAssets implements AssetsContract
 {
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 

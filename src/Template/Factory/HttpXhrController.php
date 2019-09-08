@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\FactoryHttpXhrController as FactoryHttpXhrControllerContract;
 use League\Route\Http\Exception\MethodNotAllowedException;
 
-class FactoryHttpXhrController extends FactoryHttpController implements FactoryHttpXhrControllerContract
+class HttpXhrController extends HttpController implements FactoryHttpXhrControllerContract
 {
     /**
      * @inheritDoc

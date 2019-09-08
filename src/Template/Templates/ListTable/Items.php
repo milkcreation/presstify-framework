@@ -2,10 +2,10 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Contracts\{Support\Collection as CollectionContract, Template\FactoryDb};
+use tiFy\Contracts\Template\FactoryDb;
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{Items as ItemsContract, Item, ListTable};
+use tiFy\Template\Templates\ListTable\Contracts\{Items as ItemsContract, Item as ItemContract};
 
 class Items extends Collection implements ItemsContract
 {
@@ -13,7 +13,7 @@ class Items extends Collection implements ItemsContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -24,45 +24,30 @@ class Items extends Collection implements ItemsContract
     protected $offset = 0;
 
     /**
-     * Nombre total d'éléments trouvés.
-     * @var int
-     */
-    protected $total = 0;
-
-    /**
      * Liste des éléments.
-     * @var array|Item[]
+     * @var array|ItemContract[]
      */
     protected $items = [];
 
     /**
-     * Réinitialisation de la liste des éléments.
      *
-     * @return $this
+     * @var string
      */
-    public function clear(): CollectionContract
-    {
-        $this->offset = 0;
-
-        return parent::clear();
-    }
+    protected $primaryKey;
 
     /**
-     * Récupération du nombre total d'éléments trouvés.
-     *
-     * @return int
+     * @inheritDoc
      */
-    public function total(): int
+    public function primaryKey(): ?string
     {
-        return $this->count();
+        return $this->primaryKey;
     }
 
     /**
      * @inheritDoc
      */
-    public function walk($item, $key = null)
+    public function setItem($item): ?ItemContract
     {
-        $object = null;
         if ($item instanceof FactoryDb) {
             $item = $item->attributesToArray();
         } elseif (is_object($item)) {
@@ -70,8 +55,33 @@ class Items extends Collection implements ItemsContract
         }
 
         /** @var Item $item */
-        $item = $this->factory->resolve('item')->set($item);
+        $item = $this->factory->resolve('item')->set((array)$item);
+        if (is_null($this->primaryKey())) {
+            $this->setPrimaryKey((string)current($item->keys()));
+        }
 
-        $this->items[$key] = $item->setOffset($this->offset++)->parse();
+        return $item->has($this->primaryKey()) ? $item : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPrimaryKey(string $primaryKey): ItemsContract
+    {
+        $this->primaryKey = $primaryKey;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function walk($item, $key = null): ?ItemContract
+    {
+        if ($item = $this->setItem($item)) {
+            return $this->items[$key] = $item->setOffset($this->offset++)->parse();
+        } else {
+            return null;
+        }
     }
 }

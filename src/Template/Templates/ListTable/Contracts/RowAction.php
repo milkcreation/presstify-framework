@@ -43,6 +43,13 @@ interface RowAction extends FactoryAwareTrait, ParamsBag
     public function isAvailable(): bool;
 
     /**
+     * Activation du traitement de l'action via ajax.
+     *
+     * @return boolean
+     */
+    public function isXhr(): bool;
+
+    /**
      * {@inheritDoc}
      *
      * @return static

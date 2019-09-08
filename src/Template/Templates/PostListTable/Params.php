@@ -2,9 +2,9 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use tiFy\Template\Templates\ListTable\Params as ListTableParams;
+use tiFy\Template\Templates\ListTable\Params as BaseParams;
 
-class Params extends ListTableParams
+class Params extends BaseParams
 {
     /**
      * @inheritDoc

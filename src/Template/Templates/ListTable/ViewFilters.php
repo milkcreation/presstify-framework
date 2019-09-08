@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{ListTable, ViewFilter, ViewFilters as ViewFiltersContract};
+use tiFy\Template\Templates\ListTable\Contracts\{ViewFilter as ViewFilterContract, ViewFilters as ViewFiltersContract};
 
 class ViewFilters extends Collection implements ViewFiltersContract
 {
@@ -12,13 +12,13 @@ class ViewFilters extends Collection implements ViewFiltersContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
     /**
      * Liste des filtres.
-     * @var array|ViewFilter[]
+     * @var array|ViewFilterContract[]
      */
     protected $items = [];
 
@@ -34,7 +34,7 @@ class ViewFilters extends Collection implements ViewFiltersContract
                     $attrs = [];
                 } elseif (is_string($attrs)) {
                     $attrs = ['content' => $attrs];
-                } elseif ($attrs instanceof ViewFilter) {
+                } elseif ($attrs instanceof ViewFilterContract) {
                     $this->items[$name] = $attrs->setTemplateFactory($this->factory)->setName($name)->parse();
                     continue;
                 }

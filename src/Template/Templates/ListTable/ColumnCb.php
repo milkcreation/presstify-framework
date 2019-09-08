@@ -14,6 +14,14 @@ class ColumnCb extends Column
     protected static $headerIndex = 0;
 
     /**
+     * @inheritDoc
+     */
+    public function canUseForPrimary(): bool
+    {
+        return false;
+    }
+
+    /**
      * @inheritdoc
      */
     public function header(bool $with_id = true): string
@@ -35,14 +43,6 @@ class ColumnCb extends Column
             'attrs' => HtmlAttrs::createFromAttrs($attrs),
             'index' => ++self::$headerIndex,
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isPrimary(): bool
-    {
-        return false;
     }
 
     /**

@@ -3,9 +3,9 @@
 namespace tiFy\Template\Templates\PostListTable\Contracts;
 
 use tiFy\Contracts\Template\{FactoryDb, TemplateFactory};
-use tiFy\Template\Templates\ListTable\Contracts\{Item as BaseItem, ListTable};
+use tiFy\Template\Templates\ListTable\Contracts\{Item as BaseItem, Factory as BaseFactory};
 
-interface PostListTable extends ListTable
+interface Factory extends BaseFactory
 {
     /**
      * {@inheritDoc}
@@ -24,7 +24,7 @@ interface PostListTable extends ListTable
     /**
      * {@inheritDoc}
      *
-     * @return PostListTable
+     * @return static
      */
     public function prepare(): TemplateFactory;
 }

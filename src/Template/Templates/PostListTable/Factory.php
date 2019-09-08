@@ -3,18 +3,20 @@
 namespace tiFy\Template\Templates\PostListTable;
 
 use tiFy\Contracts\Template\{FactoryDb, TemplateFactory};
-use tiFy\Template\Templates\ListTable\ListTable as BaseListTable;
-use tiFy\Template\Templates\ListTable\Contracts\{Item as BaseItem};
-use tiFy\Template\Templates\PostListTable\Contracts\{Db, Item, PostListTable as PostListTableContract};
+use tiFy\Template\Templates\ListTable\{
+    Factory as BaseFactory,
+    Contracts\Item as BaseItem
+};
+use tiFy\Template\Templates\PostListTable\Contracts\{Db, Item, Factory as FactoryContract};
 
-class PostListTable extends BaseListTable implements PostListTableContract
+class Factory extends BaseFactory implements FactoryContract
 {
     /**
      * Liste des fournisseurs de service.
      * @var string[]
      */
     protected $serviceProviders = [
-        PostListTableServiceProvider::class,
+        ServiceProvider::class,
     ];
 
     /**
@@ -40,7 +42,7 @@ class PostListTable extends BaseListTable implements PostListTableContract
     /**
      * {@inheritDoc}
      *
-     * @return PostListTableContract
+     * @return $this
      */
     public function prepare(): TemplateFactory
     {

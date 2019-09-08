@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{BulkAction, BulkActions as BulkActionsContract, ListTable};
+use tiFy\Template\Templates\ListTable\Contracts\{BulkAction, BulkActions as BulkActionsContract};
 
 class BulkActions extends Collection implements BulkActionsContract
 {
@@ -18,7 +18,7 @@ class BulkActions extends Collection implements BulkActionsContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 

@@ -5,7 +5,7 @@ namespace tiFy\Template\Templates\ListTable\Contracts;
 use tiFy\Contracts\Template\FactoryBuilder;
 use tiFy\Contracts\Template\TemplateFactory;
 
-interface ListTable extends TemplateFactory
+interface Factory extends TemplateFactory
 {
     /**
      * Récupération de l'instance du controleur de table Ajax

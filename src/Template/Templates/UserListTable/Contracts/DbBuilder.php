@@ -3,10 +3,10 @@
 namespace tiFy\Template\Templates\UserListTable\Contracts;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use tiFy\Template\Templates\ListTable\Contracts\DbBuilder as ListTableDbBuilder;
+use tiFy\Template\Templates\ListTable\Contracts\DbBuilder as BaseDbBuilder;
 use tiFy\Wordpress\Contracts\Database\UserBuilder;
 
-interface DbBuilder extends ListTableDbBuilder
+interface DbBuilder extends BaseDbBuilder
 {
     /**
      * {@inheritDoc}

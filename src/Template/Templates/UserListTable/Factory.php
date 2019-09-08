@@ -2,18 +2,20 @@
 
 namespace tiFy\Template\Templates\UserListTable;
 
-use tiFy\Template\Templates\ListTable\Contracts\Item as BaseItem;
-use tiFy\Template\Templates\ListTable\ListTable as BaseListTable;
-use tiFy\Template\Templates\UserListTable\Contracts\{UserListTable as UserListTableContract};
+use tiFy\Template\Templates\ListTable\{
+    Contracts\Item as BaseItem,
+    Factory as BaseFactory
+};
+use tiFy\Template\Templates\UserListTable\Contracts\Factory as FactoryContract;
 
-class UserListTable extends BaseListTable implements UserListTableContract
+class Factory extends BaseFactory implements FactoryContract
 {
     /**
      * Liste des fournisseurs de service.
      * @var string[]
      */
     protected $serviceProviders = [
-        UserListTableServiceProvider::class,
+        ServiceProvider::class,
     ];
 
     /**

@@ -59,6 +59,8 @@ interface FileManager extends TemplateFactory
     /**
      * Récupération d'un icône.
      *
+     * @param $name
+     * @param array Liste des arguments dynamiques.
      *
      * @return string|null
      */
@@ -100,6 +102,8 @@ interface FileManager extends TemplateFactory
 
     /**
      * Définition du chemin relatif courant.
+     *
+     * @param string $path
      *
      * @return FileManager
      */

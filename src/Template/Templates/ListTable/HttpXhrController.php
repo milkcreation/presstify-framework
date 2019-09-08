@@ -3,14 +3,14 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use League\Route\Http\Exception\NotFoundException;
-use tiFy\Template\Factory\FactoryHttpXhrController;
+use tiFy\Template\Factory\HttpXhrController as BaseHttpXhrController;
 use tiFy\Template\Templates\ListTable\Contracts\HttpXhrController as HttpXhrControllerContract;
 
-class HttpXhrController extends FactoryHttpXhrController implements HttpXhrControllerContract
+class HttpXhrController extends BaseHttpXhrController implements HttpXhrControllerContract
 {
     /**
-     * Instance du gabarit d'affichage.
-     * @var ListTable
+     * Instance du gabarit associé.
+     * @var Factory
      */
     protected $factory;
 

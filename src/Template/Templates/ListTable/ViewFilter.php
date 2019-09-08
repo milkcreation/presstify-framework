@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\{ParamsBag, Proxy\Partial};
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{ListTable, ViewFilter as ViewFilterContract};
+use tiFy\Template\Templates\ListTable\Contracts\ViewFilter as ViewFilterContract;
 
 class ViewFilter extends ParamsBag implements ViewFilterContract
 {
@@ -12,7 +12,7 @@ class ViewFilter extends ParamsBag implements ViewFilterContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 

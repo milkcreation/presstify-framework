@@ -2,9 +2,10 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Item as BaseItem;
-use tiFy\Template\Templates\ListTable\Contracts\{Item as BaseItemContract};
+use tiFy\Template\Templates\ListTable\{
+    Item as BaseItem,
+    Contracts\Item as BaseItemContract
+};
 use tiFy\Template\Templates\PostListTable\Contracts\Item as ItemContract;
 use tiFy\Wordpress\Contracts\QueryPost as QueryPostContract;
 use tiFy\Wordpress\Query\QueryPost;
@@ -14,19 +15,11 @@ use tiFy\Wordpress\Query\QueryPost;
  */
 class Item extends BaseItem implements ItemContract
 {
-    use FactoryAwareTrait;
-
     /**
-     * Instance du gabarit associé.
-     * @var PostListTable
+     * Instance du gabarit d'affichage.
+     * @var Factory
      */
     protected $factory;
-
-    /**
-     * Indice de l'élément.
-     * @var int
-     */
-    protected $index;
 
     /**
      * Objet de délégation d'appel des méthodes de la classe.

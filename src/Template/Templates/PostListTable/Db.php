@@ -12,7 +12,7 @@ class Db extends Post implements DbContract
 
     /**
      * Instance du gabarit d'affichage.
-     * @var PostListTable
+     * @var Factory
      */
     protected $factory;
 }

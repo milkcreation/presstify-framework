@@ -159,6 +159,13 @@ interface TemplateFactory extends ParamsBag
     public function builder(): FactoryBuilder;
 
     /**
+     * Récupération d'un fournisseur de service.
+     *
+     * @return object|callable|null
+     */
+    public function provider($alias);
+
+    /**
      * Récupération de l'instance du controleur de requête Http.
      *
      * @return FactoryRequest

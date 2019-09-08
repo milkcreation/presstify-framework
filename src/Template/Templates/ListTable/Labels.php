@@ -2,14 +2,13 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Template\Factory\FactoryLabels;
-use tiFy\Template\Templates\ListTable\Contracts\ListTable;
+use tiFy\Template\Factory\Labels as BaseLabels;
 
-class Labels extends FactoryLabels
+class Labels extends BaseLabels
 {
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 

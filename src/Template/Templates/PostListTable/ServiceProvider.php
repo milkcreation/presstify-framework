@@ -2,20 +2,23 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use tiFy\Template\Templates\ListTable\Contracts\Builder;
-use tiFy\Template\Templates\ListTable\ListTableServiceProvider;
+use tiFy\Template\Templates\ListTable\{
+    Contracts\Builder as BaseBuilderContract,
+    Contracts\RowAction as BaseRowActionContract,
+    ServiceProvider as BaseServiceProvider
+};
 use tiFy\Template\Templates\PostListTable\Contracts\{
     Db,
     Item,
     Params,
     DbBuilder,
-    PostListTable};
+};
 
-class PostListTableServiceProvider extends ListTableServiceProvider
+class ServiceProvider extends BaseServiceProvider
 {
     /**
      * Instance du gabarit d'affichage.
-     * @var PostListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -25,16 +28,16 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     public function registerFactoryBuilder(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
-            $ctrl = $this->factory->get('providers.builder');
+            $ctrl = $this->factory->provider('builder');
 
             if ($this->factory->db()) {
                 $ctrl = $ctrl instanceof DbBuilder
                     ? clone $ctrl
                     : $this->getContainer()->get(DbBuilder::class);
             } else {
-                $ctrl = $ctrl instanceof Builder
+                $ctrl = $ctrl instanceof BaseBuilderContract
                     ? clone $ctrl
-                    : $this->getContainer()->get(Builder::class);
+                    : $this->getContainer()->get(BaseBuilderContract::class);
             }
 
             $attrs = $this->factory->param('query_args', []);
@@ -74,7 +77,7 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     public function registerFactoryDb(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('db'), function () {
-            $ctrl = $this->factory->get('providers.db');
+            $ctrl = $this->factory->provider('db');
             $ctrl = $ctrl instanceof Db
                 ? $ctrl
                 : $this->getContainer()->get(Db::class);
@@ -91,7 +94,7 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     public function registerFactoryItem(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('item'), function () {
-            $ctrl = $this->factory->get('providers.item');
+            $ctrl = $this->factory->provider('item');
 
             $ctrl = $ctrl instanceof Item
                 ? clone $ctrl
@@ -121,7 +124,7 @@ class PostListTableServiceProvider extends ListTableServiceProvider
     public function registerFactoryParams(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            $ctrl = $this->factory->get('providers.params');
+            $ctrl = $this->factory->provider('params');
             $ctrl = $ctrl instanceof Params
                 ? $ctrl
                 : $this->getContainer()->get(Params::class);
@@ -132,6 +135,31 @@ class PostListTableServiceProvider extends ListTableServiceProvider
         });
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function registerFactoryRowActions(): void
+    {
+        parent::registerFactoryRowActions();
+
+        $this->getContainer()->add($this->getFactoryAlias('row-action.edit'), function (): BaseRowActionContract {
+            $ctrl = $this->factory->provider('row-action.edit');
+            $ctrl = $ctrl instanceof BaseRowActionContract
+                ? clone $ctrl
+                : new RowActionEdit();
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+
+        $this->getContainer()->add($this->getFactoryAlias('row-action.show'), function (): BaseRowActionContract {
+            $ctrl = $this->factory->provider('row-action.show');
+            $ctrl = $ctrl instanceof BaseRowActionContract
+                ? clone $ctrl
+                : new RowActionShow();
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+    }
     /**
      * @inheritDoc
      */

@@ -2,8 +2,10 @@
 
 namespace tiFy\Template\Templates\UserListTable;
 
-use tiFy\Template\Templates\ListTable\Contracts\Item as BaseItemContract;
-use tiFy\Template\Templates\ListTable\Item as BaseItem;
+use tiFy\Template\Templates\ListTable\{
+    Contracts\Item as BaseItemContract,
+    Item as BaseItem
+};
 use tiFy\Template\Templates\UserListTable\Contracts\Item as ItemContract;
 use tiFy\Wordpress\Contracts\QueryUser as QueryUserContract;
 use tiFy\Wordpress\Query\QueryUser;
@@ -14,8 +16,8 @@ use tiFy\Wordpress\Query\QueryUser;
 class Item extends BaseItem implements ItemContract
 {
     /**
-     * Instance du gabarit associé.
-     * @var UserListTable
+     * Instance du gabarit d'affichage.
+     * @var Factory
      */
     protected $factory;
 

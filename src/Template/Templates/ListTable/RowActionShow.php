@@ -2,7 +2,7 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-class RowActionEdit extends RowAction
+class RowActionShow extends RowAction
 {
     /**
      * @inheritDoc
@@ -12,9 +12,9 @@ class RowActionEdit extends RowAction
         return array_merge(parent::defaults(), [
             'attrs'   => [
                 'target' => '_blank',
-                'title' => __('Modification de l\'élément', 'tify'),
+                'title' => __('Afficher l\'élément', 'tify'),
             ],
-            'content' => __('Modifier', 'tify'),
+            'content' => __('Afficher', 'tify'),
             'url'     => '',
             'xhr'     => false,
         ]);

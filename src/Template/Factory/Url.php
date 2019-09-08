@@ -4,9 +4,9 @@ namespace tiFy\Template\Factory;
 
 use tiFy\Contracts\Template\FactoryUrl as FactoryUrlContract;
 use tiFy\Contracts\Template\TemplateFactory;
-use tiFy\Routing\Url;
+use tiFy\Routing\Url as BaseUrl;
 
-class FactoryUrl extends Url implements FactoryUrlContract
+class Url extends BaseUrl implements FactoryUrlContract
 {
     use FactoryAwareTrait;
 

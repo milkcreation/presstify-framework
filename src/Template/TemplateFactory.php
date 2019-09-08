@@ -104,6 +104,14 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
+    public function builder(): FactoryBuilder
+    {
+        return $this->resolve('builder');
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function cache(): FactoryCache
     {
         return $this->resolve('cache');
@@ -229,9 +237,13 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function builder(): FactoryBuilder
+    public function provider($alias)
     {
-        return $this->resolve('builder');
+        if ($providers = $this->get('providers') ? : []) {
+            return $providers[$alias] ?? null;
+        }
+
+        return null;
     }
 
     /**

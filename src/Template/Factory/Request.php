@@ -2,11 +2,11 @@
 
 namespace tiFy\Template\Factory;
 
-use tiFy\Contracts\Template\FactoryNotices as FactoryNoticesContract;
+use tiFy\Contracts\Template\FactoryRequest as FactoryRequestContract;
 use tiFy\Contracts\Template\TemplateFactory;
-use tiFy\Kernel\Notices\Notices;
+use tiFy\Http\Request as BaseRequest;
 
-class FactoryNotices extends Notices implements FactoryNoticesContract
+class Request extends BaseRequest implements FactoryRequestContract
 {
     use FactoryAwareTrait;
 

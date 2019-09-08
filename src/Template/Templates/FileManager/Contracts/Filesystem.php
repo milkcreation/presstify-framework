@@ -8,7 +8,9 @@ use tiFy\Contracts\Template\FactoryAwareTrait;
 interface Filesystem extends tiFyFilesystem, FactoryAwareTrait
 {
     /**
-     * Définition d'une instance de la classe
+     * Définition d'une instance de la classe.
+     *
+     * @param FileManager $factory
      *
      * @return static
      */
