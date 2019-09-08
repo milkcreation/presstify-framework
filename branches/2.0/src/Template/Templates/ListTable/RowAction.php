@@ -6,7 +6,7 @@ use Closure;
 use tiFy\Contracts\Routing\UrlFactory;
 use tiFy\Support\{ParamsBag, Proxy\Partial};
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{Item, ListTable, RowAction as RowActionContract};
+use tiFy\Template\Templates\ListTable\Contracts\{Item as ItemContract, RowAction as RowActionContract};
 
 class RowAction extends ParamsBag implements RowActionContract
 {
@@ -14,13 +14,13 @@ class RowAction extends ParamsBag implements RowActionContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
     /**
      * Instance de l'élément associé.
-     * @var Item|null
+     * @var ItemContract|null
      */
     protected $item;
 
@@ -73,7 +73,7 @@ class RowAction extends ParamsBag implements RowActionContract
      */
     public function getBaseUrl(): string
     {
-        return $this->get('xhr') ? $this->factory->baseUrl() . '/xhr' : $this->factory->baseUrl();
+        return $this->isXhr() ? $this->factory->baseUrl() . '/xhr' : $this->factory->baseUrl();
     }
 
     /**
@@ -113,16 +113,20 @@ class RowAction extends ParamsBag implements RowActionContract
     /**
      * @inheritDoc
      */
+    public function isXhr(): bool
+    {
+        return (bool)$this->get('xhr', !!$this->factory->ajax());
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function parse(): RowActionContract
     {
         parent::parse();
 
         $this->parseUrl();
         $this->set('attrs.href', (string)$this->url);
-
-        if ($this->get('xhr')) {
-            $this->set('attrs.data-control', 'list-table.row-action');
-        }
 
         $default_class = "row-action row-action--" . $this->getName();
         if (!$this->has('attrs.class')) {
@@ -139,6 +143,10 @@ class RowAction extends ParamsBag implements RowActionContract
             $this->set('content', $this->getName());
         }
 
+        if ($this->isXhr()) {
+            $this->set('attrs.data-control', 'list-table.row-action');
+        }
+
         return $this;
     }
 
@@ -152,6 +160,9 @@ class RowAction extends ParamsBag implements RowActionContract
                $this->url = url_factory($this->getBaseUrl());
             } elseif (is_string($url)) {
                 $this->url = url_factory($url);
+            } elseif ($url instanceof Closure) {
+                $this->url = $url($this->factory->item());
+                return $this;
             } elseif (is_array($url)) {
                 $this->url = url_factory($url['base'] ?? $this->getBaseUrl());
 

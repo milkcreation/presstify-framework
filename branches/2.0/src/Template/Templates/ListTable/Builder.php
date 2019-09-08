@@ -3,14 +3,14 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Contracts\Template\FactoryBuilder as FactoryBuilderContract;
-use tiFy\Template\Factory\FactoryBuilder;
+use tiFy\Template\Factory\Builder as BaseBuilder;
 use tiFy\Template\Templates\ListTable\Contracts\{Builder as BuilderContract, Item};
 
-class Builder extends FactoryBuilder implements BuilderContract
+class Builder extends BaseBuilder implements BuilderContract
 {
     /**
-     * Instance du gabarit d'affichage.
-     * @var ListTable
+     * Instance du gabarit associé.
+     * @var Factory
      */
     protected $factory;
 

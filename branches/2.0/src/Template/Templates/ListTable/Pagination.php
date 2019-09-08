@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{ListTable, Pagination as PaginationContract};
+use tiFy\Template\Templates\ListTable\Contracts\Pagination as PaginationContract;
 use tiFy\Support\Traits\PaginationAwareTrait;
 
 class Pagination extends ParamsBag implements PaginationContract
@@ -13,7 +13,7 @@ class Pagination extends ParamsBag implements PaginationContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 

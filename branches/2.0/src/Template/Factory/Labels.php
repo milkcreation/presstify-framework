@@ -6,7 +6,7 @@ use tiFy\Contracts\Template\FactoryLabels as FactoryLabelsContract;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Support\LabelsBag;
 
-class FactoryLabels extends LabelsBag implements FactoryLabelsContract
+class Labels extends LabelsBag implements FactoryLabelsContract
 {
     use FactoryAwareTrait;
 

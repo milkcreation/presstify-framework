@@ -4,9 +4,9 @@ namespace tiFy\Template\Templates\PostListTable\Contracts;
 
 use Corcel\Model\Builder\PostBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use tiFy\Template\Templates\ListTable\Contracts\DbBuilder as ListTableDbBuilder;
+use tiFy\Template\Templates\ListTable\Contracts\DbBuilder as BaseDbBuilder;
 
-interface DbBuilder extends ListTableDbBuilder
+interface DbBuilder extends BaseDbBuilder
 {
     /**
      * {@inheritDoc}

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use tiFy\Contracts\Template\{FactoryBuilder as FactoryBuilderContract, TemplateFactory};
 use tiFy\Support\ParamsBag;
 
-class FactoryBuilder extends ParamsBag implements FactoryBuilderContract
+class Builder extends ParamsBag implements FactoryBuilderContract
 {
     use FactoryAwareTrait;
 

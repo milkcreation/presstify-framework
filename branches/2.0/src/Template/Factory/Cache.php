@@ -5,7 +5,7 @@ namespace tiFy\Template\Factory;
 use tiFy\Contracts\Template\FactoryCache as FactoryCacheContract;
 use tiFy\Filesystem\StaticCacheManager;
 
-class FactoryCache extends StaticCacheManager implements FactoryCacheContract
+class Cache extends StaticCacheManager implements FactoryCacheContract
 {
     use FactoryAwareTrait;
 }

@@ -15,6 +15,13 @@ interface Column extends FactoryAwareTrait, ParamsBag
     public function __toString(): string;
 
     /**
+     * Indicateur d'utilisation d'un colonne en tant que colonne principale.
+     *
+     * @return boolean
+     */
+    public function canUseForPrimary(): bool;
+
+    /**
      * Récupération du nom de qualification.
      *
      * @return string

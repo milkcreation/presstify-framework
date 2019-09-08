@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\FactoryHttpController as FactoryHttpControllerContract;
 use Zend\Diactoros\Response;
 
-class FactoryHttpController implements FactoryHttpControllerContract
+class HttpController implements FactoryHttpControllerContract
 {
     use FactoryAwareTrait;
 

@@ -2,9 +2,9 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use tiFy\Template\Templates\ListTable\Column;
+use tiFy\Template\Templates\ListTable\Column as BaseColumn;
 
-class ColumnPostType extends Column
+class ColumnPostType extends BaseColumn
 {
     /**
      * @inheritDoc

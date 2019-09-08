@@ -1,3 +1,4 @@
+/* global jQuery */
 "use strict";
 
 import Dropzone from 'dropzone/dist/min/dropzone.min';

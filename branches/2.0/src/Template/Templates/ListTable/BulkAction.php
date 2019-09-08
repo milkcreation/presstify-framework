@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Field\Fields\Select\SelectChoice;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{BulkAction as BulkActionContract, ListTable};
+use tiFy\Template\Templates\ListTable\Contracts\BulkAction as BulkActionContract;
 
 class BulkAction extends SelectChoice implements BulkActionContract
 {
@@ -12,7 +12,7 @@ class BulkAction extends SelectChoice implements BulkActionContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 }

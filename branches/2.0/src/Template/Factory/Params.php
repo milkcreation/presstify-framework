@@ -6,7 +6,7 @@ use tiFy\Contracts\Template\FactoryParams as FactoryParamsContract;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Support\ParamsBag;
 
-class FactoryParams extends ParamsBag implements FactoryParamsContract
+class Params extends ParamsBag implements FactoryParamsContract
 {
     use FactoryAwareTrait;
 

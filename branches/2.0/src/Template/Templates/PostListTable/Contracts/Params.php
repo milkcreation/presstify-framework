@@ -2,9 +2,9 @@
 
 namespace tiFy\Template\Templates\PostListTable\Contracts;
 
-use tiFy\Template\Templates\ListTable\Contracts\Params as ListTableParams;
+use tiFy\Template\Templates\ListTable\Contracts\Params as BaseParams;
 
-interface Params extends ListTableParams
+interface Params extends BaseParams
 {
 
 }

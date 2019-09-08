@@ -14,7 +14,7 @@ use tiFy\View\ViewController;
  * @method FactoryParams|mixed param($key = null, $default = null)
  * @method FactoryRequest request()
  */
-class FactoryViewer extends ViewController implements FactoryViewerContract
+class Viewer extends ViewController implements FactoryViewerContract
 {
     /**
      * Instance du gabarit d'affichage.

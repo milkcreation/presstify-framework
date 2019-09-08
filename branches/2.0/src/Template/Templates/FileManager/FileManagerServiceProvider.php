@@ -72,7 +72,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryAjax(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('ajax'), function () {
-            $ctrl = $this->factory->get('providers.ajax');
+            $ctrl = $this->factory->provider('ajax');
             $ctrl = $ctrl instanceof AjaxContract
                 ? $ctrl
                 : $this->getContainer()->get(AjaxContract::class);
@@ -98,7 +98,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryBreadcrumb(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('breadcrumb'), function () {
-            $ctrl = $this->factory->get('providers.breadcrumb');
+            $ctrl = $this->factory->provider('breadcrumb');
             $ctrl = $ctrl instanceof Breadcrumb
                 ? $ctrl
                 : $this->getContainer()->get(Breadcrumb::class);
@@ -115,7 +115,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryCache(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('cache'), function () {
-            $ctrl = $this->factory->get('providers.cache');
+            $ctrl = $this->factory->provider('cache');
             $ctrl = $ctrl instanceof Cache
                 ? $ctrl
                 : $this->getContainer()->get(Cache::class);
@@ -136,7 +136,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryFileCollection(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('file-collection'), function (array $files = []) {
-            $ctrl = $this->factory->get('providers.file-collection');
+            $ctrl = $this->factory->provider('file-collection');
             $ctrl = $ctrl instanceof FileCollection
                 ? $ctrl
                 : $this->getContainer()->get(FileCollection::class);
@@ -153,7 +153,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryFileInfo(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('file-info'), function (array $infos) {
-            $ctrl = $this->factory->get('providers.file-info');
+            $ctrl = $this->factory->provider('file-info');
             $ctrl = $ctrl instanceof FileInfo
                 ? $ctrl
                 : $this->getContainer()->get(FileInfo::class, [$infos]);
@@ -170,7 +170,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryFilesystem(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('filesystem'), function () {
-            $ctrl = $this->factory->get('providers.filesystem');
+            $ctrl = $this->factory->provider('filesystem');
 
             return $ctrl instanceof tiFyFilesystem
                 ? $ctrl
@@ -186,7 +186,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryFileTag(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('file-tag'), function (FileInfo $file) {
-            $ctrl = $this->factory->get('providers.file-tag');
+            $ctrl = $this->factory->provider('file-tag');
             $ctrl = $ctrl instanceof FileTag ? $ctrl : $this->getContainer()->get(FileTag::class);
 
             return $ctrl->setTemplateFactory($this->factory)->setFile($file);
@@ -199,7 +199,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryHttpController(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('controller'), function () {
-            $ctrl = $this->factory->get('providers.controller');
+            $ctrl = $this->factory->provider('controller');
             $ctrl = $ctrl instanceof HttpController
                 ? $ctrl
                 : $this->getContainer()->get(HttpController::class);
@@ -214,7 +214,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryHttpXhrController(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('xhr'), function () {
-            $ctrl = $this->factory->get('providers.xhr');
+            $ctrl = $this->factory->provider('xhr');
             $ctrl = $ctrl instanceof HttpXhrController
                 ? $ctrl
                 : $this->getContainer()->get(HttpXhrController::class);
@@ -231,7 +231,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryIconSet(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('icon-set'), function () {
-            $ctrl = $this->factory->get('providers.icon-set');
+            $ctrl = $this->factory->provider('icon-set');
             $ctrl = $ctrl instanceof IconSet
                 ? $ctrl
                 : $this->getContainer()->get(IconSet::class);
@@ -246,7 +246,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactoryParams(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            $ctrl = $this->factory->get('providers.params');
+            $ctrl = $this->factory->provider('params');
             $ctrl = $ctrl instanceof Params
                 ? $ctrl
                 : $this->getContainer()->get(Params::class);
@@ -265,7 +265,7 @@ class FileManagerServiceProvider extends FactoryServiceProvider
     public function registerFactorySidebar(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('sidebar'), function () {
-            $ctrl = $this->factory->get('providers.sidebar');
+            $ctrl = $this->factory->provider('sidebar');
             $ctrl = $ctrl instanceof Sidebar
                 ? $ctrl
                 : $this->getContainer()->get(Sidebar::class);

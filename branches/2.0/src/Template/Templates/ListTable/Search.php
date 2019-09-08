@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{ListTable, Search as SearchContract};
+use tiFy\Template\Templates\ListTable\Contracts\Search as SearchContract;
 
 class Search extends ParamsBag implements SearchContract
 {
@@ -12,7 +12,7 @@ class Search extends ParamsBag implements SearchContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -30,7 +30,9 @@ class Search extends ParamsBag implements SearchContract
     public function defaults(): array
     {
         return [
-            'attrs' => []
+            'attrs'  => [],
+            'input'  => [],
+            'submit' => [],
         ];
     }
 
@@ -40,7 +42,7 @@ class Search extends ParamsBag implements SearchContract
     public function exists(): bool
     {
         return $this->factory->param('search') &&
-            ($this->factory->items()->exists() || $this->factory->request()->input('s'));
+               ($this->factory->items()->exists() || $this->factory->request()->input('s'));
     }
 
     /**
@@ -50,15 +52,36 @@ class Search extends ParamsBag implements SearchContract
     {
         parent::parse();
 
-        if ($this->factory->ajax()) {
-            $this->set('attrs.data-control', 'list-table.search');
-        }
-
         $class = 'search-box';
-        if (! $this->has('attrs.class')) {
+        if ( ! $this->has('attrs.class')) {
             $this->set('attrs.class', $class);
         } elseif ($_class = $this->get('attrs.class')) {
             $this->set('attrs.class', sprintf($_class, $class));
+        }
+
+        $this->set('input', array_merge([
+            'attrs' => [
+                'id'   => $this->factory->name(),
+                'type' => 'search',
+            ],
+            'name'  => 's',
+            'value' => $this->factory->request()->input('s', ''),
+        ], $this->get('input') ? : []));
+
+        $this->set('submit', array_merge([
+            'attrs'   => [
+                'id'    => 'search-submit',
+                'class' => 'button',
+                'type'  => 'submit',
+            ],
+            'content' => $this->factory->label('search_item'),
+            'tag'     => 'button'
+        ], $this->get('submit') ? : []));
+
+        if ($this->factory->ajax()) {
+            $this->set('attrs.data-control', 'list-table.search');
+            $this->set('submit.attrs.data-control', 'list-table.search.submit');
+            $this->set('input.attrs.data-control', 'list-table.search.input');
         }
 
         return $this;

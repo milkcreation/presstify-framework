@@ -4,11 +4,11 @@ namespace tiFy\Template\Templates\UserListTable;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use tiFy\Contracts\Template\{FactoryDb, FactoryBuilder};
-use tiFy\Template\Templates\ListTable\DbBuilder as ListTableDbBuilder;
+use tiFy\Template\Templates\ListTable\DbBuilder as BaseDbBuilder;
 use tiFy\Template\Templates\UserListTable\Contracts\{Db, DbBuilder as DbBuilderContract};
 use tiFy\Wordpress\Contracts\Database\UserBuilder;
 
-class DbBuilder extends ListTableDbBuilder implements DbBuilderContract
+class DbBuilder extends BaseDbBuilder implements DbBuilderContract
 {
     /**
      * Instance de la requête courante en base de données.

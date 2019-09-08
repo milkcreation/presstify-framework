@@ -6,7 +6,7 @@ use BadMethodCallException;
 use Exception;
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{Item as ItemContract, ListTable};
+use tiFy\Template\Templates\ListTable\Contracts\Item as ItemContract;
 
 class Item extends ParamsBag implements ItemContract
 {
@@ -14,7 +14,7 @@ class Item extends ParamsBag implements ItemContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -47,13 +47,7 @@ class Item extends ParamsBag implements ItemContract
      */
     public function getKeyName(): string
     {
-        if (($primary_key = $this->factory->param('primary_key')) && $this->has($primary_key)) {
-            return (string)$primary_key;
-        } elseif ($db = $this->factory->db()) {
-            return $db->getKeyName();
-        } else {
-            return current($this->keys());
-        }
+        return $this->factory->items()->primaryKey();
     }
 
     /**

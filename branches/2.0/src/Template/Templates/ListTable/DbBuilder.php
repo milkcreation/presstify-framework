@@ -3,14 +3,14 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Contracts\Template\FactoryBuilder as FactoryBuilderContract;
-use tiFy\Template\Factory\FactoryDbBuilder;
+use tiFy\Template\Factory\DbBuilder as BaseDbBuilder;
 use tiFy\Template\Templates\ListTable\Contracts\{DbBuilder as DbBuilderContract, Item};
 
-class DbBuilder extends FactoryDbBuilder implements DbBuilderContract
+class DbBuilder extends BaseDbBuilder implements DbBuilderContract
 {
     /**
-     * Instance du gabarit d'affichage.
-     * @var ListTable
+     * Instance du gabarit associé.
+     * @var Factory
      */
     protected $factory;
 

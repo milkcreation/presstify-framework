@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract, Column, ListTable};
+use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract, Column};
 
 class Ajax extends ParamsBag implements AjaxContract
 {
@@ -12,7 +12,7 @@ class Ajax extends ParamsBag implements AjaxContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -98,7 +98,8 @@ class Ajax extends ParamsBag implements AjaxContract
 
         $this->factory->param()->set([
             'attrs.data-control' => 'list-table',
-            'attrs.data-options' => $this->all()
+            'attrs.data-options' => $this->all(),
+            'table.attrs.data-control' => 'list-table.table',
         ]);
 
         return $this;

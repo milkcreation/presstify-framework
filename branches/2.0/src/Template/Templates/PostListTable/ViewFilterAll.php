@@ -2,9 +2,9 @@
 
 namespace tiFy\Template\Templates\PostListTable;
 
-use tiFy\Template\Templates\ListTable\ViewFilter;
+use tiFy\Template\Templates\ListTable\ViewFilter as BaseViewFilter;
 
-class ViewFilterAll extends ViewFilter
+class ViewFilterAll extends BaseViewFilter
 {
     /**
      * @inheritDoc

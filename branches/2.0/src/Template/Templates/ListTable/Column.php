@@ -6,7 +6,7 @@ use Closure;
 use tiFy\Support\HtmlAttrs;
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{Column as ColumnContract, ListTable};
+use tiFy\Template\Templates\ListTable\Contracts\Column as ColumnContract;
 
 class Column extends ParamsBag implements ColumnContract
 {
@@ -14,7 +14,7 @@ class Column extends ParamsBag implements ColumnContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -30,6 +30,14 @@ class Column extends ParamsBag implements ColumnContract
     public function __toString(): string
     {
         return (string)$this->render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function canUseForPrimary(): bool
+    {
+        return true;
     }
 
     /**

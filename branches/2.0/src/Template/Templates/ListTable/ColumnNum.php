@@ -7,19 +7,19 @@ class ColumnNum extends Column
     /**
      * @inheritDoc
      */
+    public function canUseForPrimary(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function defaults(): array
     {
         return [
             'title' => __('#', 'tify')
         ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isPrimary(): bool
-    {
-        return false;
     }
 
     /**

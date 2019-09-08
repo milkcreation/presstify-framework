@@ -13,20 +13,6 @@
         ],
         'content' => $this->label('search_item'),
     ]); ?>
-    <?php echo field('text', [
-        'attrs' => [
-            'id'   => $this->name(),
-            'type' => 'search',
-        ],
-        'name'  => 's',
-        'value' => $this->request()->input('s', ''),
-    ]); ?>
-    <?php echo field('button', [
-        'attrs'   => [
-            'id'    => 'search-submit',
-            'class' => 'button',
-            'type'  => 'submit',
-        ],
-        'content' => $this->label('search_item'),
-    ]); ?>
+    <?php echo field('text', $this->search()->get('input',  [])); ?>
+    <?php echo partial('tag', $this->search()->get('submit',  [])); ?>
 </p>

@@ -31,3 +31,7 @@ table.dataTable th.hidden,
 table.dataTable td.hidden {
     display: block;
 }
+
+.ListTable .row-actions > span + span::before {
+    content: "\007C\00A0";
+}

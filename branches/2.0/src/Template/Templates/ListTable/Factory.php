@@ -3,7 +3,7 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Contracts\Template\{FactoryBuilder, TemplateFactory as TemplateFactoryContract};
-use tiFy\Template\TemplateFactory;
+use tiFy\Template\TemplateFactory as BaseFactory;
 use tiFy\Template\Templates\ListTable\Contracts\{
     Ajax,
     Builder,
@@ -12,21 +12,21 @@ use tiFy\Template\Templates\ListTable\Contracts\{
     DbBuilder,
     Item,
     Items,
-    ListTable as ListTableContract,
+    Factory as FactoryContract,
     Pagination,
     RowActions,
     Search,
     ViewFilters
 };
 
-class ListTable extends TemplateFactory implements ListTableContract
+class Factory extends BaseFactory implements FactoryContract
 {
     /**
      * Liste des fournisseurs de services.
      * @var string[]
      */
     protected $serviceProviders = [
-        ListTableServiceProvider::class,
+        ServiceProvider::class,
     ];
 
     /**
@@ -90,7 +90,7 @@ class ListTable extends TemplateFactory implements ListTableContract
     /**
      * {@inheritDoc}
      *
-     * @return ListTableContract
+     * @return FactoryContract
      */
     public function proceed(): TemplateFactoryContract
     {

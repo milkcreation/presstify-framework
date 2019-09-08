@@ -22,11 +22,11 @@ interface Columns extends Collection, FactoryAwareTrait
     public function countVisible(): int;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return Column|null
      */
-    public function get($name);
+    public function get($key): ?Column;
 
     /**
      * Récupération de la liste des colonnes pouvant être masquées.

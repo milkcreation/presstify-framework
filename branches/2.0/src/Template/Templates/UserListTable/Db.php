@@ -12,7 +12,7 @@ class Db extends User implements DbContract
 
     /**
      * Instance du gabarit d'affichage.
-     * @var UserListTable
+     * @var Factory
      */
     protected $factory;
 }

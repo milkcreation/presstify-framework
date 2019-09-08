@@ -5,7 +5,6 @@ namespace tiFy\Template\Templates\PostListTable;
 use tiFy\Contracts\Template\FactoryLabels as FactoryLabelsContract;
 use tiFy\PostType\PostTypeLabelsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\PostListTable\Contracts\PostListTable;
 
 class Labels extends PostTypeLabelsBag implements FactoryLabelsContract
 {
@@ -13,7 +12,7 @@ class Labels extends PostTypeLabelsBag implements FactoryLabelsContract
 
     /**
      * Instance du gabarit d'affichage.
-     * @var PostListTable
+     * @var Factory
      */
     protected $factory;
 

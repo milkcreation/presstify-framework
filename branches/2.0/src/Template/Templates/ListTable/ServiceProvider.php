@@ -2,8 +2,9 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Template\Factory\FactoryServiceProvider;
-use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract,
+use tiFy\Template\Factory\ServiceProvider as BaseServiceProvider;
+use tiFy\Template\Templates\ListTable\Contracts\{
+    Ajax as AjaxContract,
     Builder,
     BulkAction,
     BulkActions,
@@ -13,21 +14,21 @@ use tiFy\Template\Templates\ListTable\Contracts\{Ajax as AjaxContract,
     HttpXhrController,
     Item,
     Items,
-    ListTable,
     Pagination,
     Params,
     RowAction,
     RowActions,
     Search,
     ViewFilter,
-    ViewFilters};
+    ViewFilters
+};
 use tiFy\View\ViewEngine;
 
-class ListTableServiceProvider extends FactoryServiceProvider
+class ServiceProvider extends BaseServiceProvider
 {
     /**
      * Instance du gabarit d'affichage.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -58,7 +59,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     {
         $this->getContainer()->share($this->getFactoryAlias('ajax'), function () {
             if ($attrs = $this->factory->param('ajax')) {
-                $ajax = $this->factory->get('providers.ajax');
+                $ajax = $this->factory->provider('ajax');
                 $ajax = $ajax instanceof AjaxContract
                     ? $ajax
                     : $this->getContainer()->get(AjaxContract::class);
@@ -84,7 +85,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryBuilder(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('builder'), function () {
-            $ctrl = $this->factory->get('providers.builder');
+            $ctrl = $this->factory->provider('builder');
 
             if ($this->factory->db()) {
                 $ctrl = $ctrl instanceof DbBuilder
@@ -110,7 +111,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryBulkActions(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('bulk-actions'), function () {
-            $ctrl = $this->factory->get('providers.bulk-actions');
+            $ctrl = $this->factory->provider('bulk-actions');
             $ctrl = $ctrl instanceof BulkActions
                 ? $ctrl
                 : $this->getContainer()->get(BulkActions::class);
@@ -121,7 +122,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('bulk-action'), function (string $name, array $attrs = []) {
-            $ctrl = $this->factory->get('providers.bulk-action');
+            $ctrl = $this->factory->provider('bulk-action');
             $ctrl = $ctrl instanceof BulkAction
                 ? $ctrl
                 : $this->getContainer()->get(BulkAction::class, [$name, $attrs]);
@@ -143,7 +144,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryColumns(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('columns'), function () {
-            $ctrl = $this->factory->get('providers.columns');
+            $ctrl = $this->factory->provider('columns');
             $ctrl = $ctrl instanceof Columns
                 ? $ctrl
                 : $this->getContainer()->get(Columns::class);
@@ -160,7 +161,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('column'), function (string $name, array $attrs = []) {
-            $ctrl = $this->factory->get('providers.column');
+            $ctrl = $this->factory->provider('column');
             $ctrl = $ctrl instanceof Column
                 ? $ctrl
                 : $this->getContainer()->get(Column::class);
@@ -183,7 +184,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryHttpXhrController(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('xhr'), function () {
-            $ctrl = $this->factory->get('providers.xhr');
+            $ctrl = $this->factory->provider('xhr');
             $ctrl = $ctrl instanceof HttpXhrController
                 ? $ctrl
                 : $this->getContainer()->get(HttpXhrController::class);
@@ -200,7 +201,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryItem(): void
     {
         $this->getContainer()->add($this->getFactoryAlias('item'), function () {
-            $ctrl = $this->factory->get('providers.item');
+            $ctrl = $this->factory->provider('item');
             $ctrl = $ctrl instanceof Item
                 ? clone $ctrl
                 : $this->getContainer()->get(Item::class);
@@ -217,11 +218,17 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryItems(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('items'), function () {
-            $ctrl = $this->factory->get('providers.items');
+            $ctrl = $this->factory->provider('items');
 
             $ctrl = $ctrl instanceof Items
                 ? $ctrl
                 : $this->getContainer()->get(Items::class);
+
+            if (($primary_key = $this->factory->param('primary_key'))) {
+                $ctrl->setPrimaryKey((string)$primary_key);
+            } elseif ($db = $this->factory->db()) {
+                $ctrl->setPrimaryKey($db->getKeyName());
+            }
 
             return $ctrl->setTemplateFactory($this->factory)->set($this->factory->get('items', []));
         });
@@ -247,7 +254,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryParams(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            $ctrl = $this->factory->get('providers.params');
+            $ctrl = $this->factory->provider('params');
             $ctrl = $ctrl instanceof Params
                 ? $ctrl
                 : $this->getContainer()->get(Params::class);
@@ -266,7 +273,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryPagination(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('pagination'), function () {
-            $ctrl = $this->factory->get('providers.pagination');
+            $ctrl = $this->factory->provider('pagination');
             $ctrl = $ctrl instanceof Pagination
                 ? $ctrl
                 : $this->getContainer()->get(Pagination::class);
@@ -285,7 +292,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryRowActions(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('row-actions'), function () {
-            $ctrl = $this->factory->get('providers.row-actions');
+            $ctrl = $this->factory->provider('row-actions');
             $ctrl = $ctrl instanceof RowActions
                 ? $ctrl
                 : $this->getContainer()->get(RowActions::class);
@@ -296,7 +303,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('row-action'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action');
+            $ctrl = $this->factory->provider('row-action');
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : $this->getContainer()->get(RowAction::class);
@@ -305,7 +312,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('row-action.activate'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action.activate');
+            $ctrl = $this->factory->provider('row-action.activate');
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : new RowActionActivate();
@@ -314,7 +321,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('row-action.deactivate'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action.deactivate');
+            $ctrl = $this->factory->provider('row-action.deactivate');
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : new RowActionDeactivate();
@@ -323,7 +330,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('row-action.delete'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action.delete');
+            $ctrl = $this->factory->provider('row-action.delete');
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : new RowActionDelete();
@@ -332,7 +339,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('row-action.duplicate'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action.duplicate');
+            $ctrl = $this->factory->provider('row-action.duplicate');
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : new RowActionDuplicate();
@@ -341,7 +348,8 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('row-action.edit'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action.edit');
+            $ctrl = $this->factory->provider('row-action.edit');
+
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : new RowActionEdit();
@@ -350,7 +358,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('row-action.preview'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action.preview');
+            $ctrl = $this->factory->provider('row-action.preview');
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : new RowActionPreview();
@@ -358,8 +366,17 @@ class ListTableServiceProvider extends FactoryServiceProvider
             return $ctrl->setTemplateFactory($this->factory);
         });
 
+        $this->getContainer()->add($this->getFactoryAlias('row-action.show'), function (): RowAction {
+            $ctrl = $this->factory->provider('row-action.show');
+            $ctrl = $ctrl instanceof RowAction
+                ? clone $ctrl
+                : new RowActionShow();
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
+
         $this->getContainer()->add($this->getFactoryAlias('row-action.trash'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action.trash');
+            $ctrl = $this->factory->provider('row-action.trash');
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : new RowActionTrash();
@@ -368,7 +385,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('row-action.untrash'), function (): RowAction {
-            $ctrl = $this->factory->get('providers.row-action.untrash');
+            $ctrl = $this->factory->provider('row-action.untrash');
             $ctrl = $ctrl instanceof RowAction
                 ? clone $ctrl
                 : new RowActionUntrash();
@@ -385,7 +402,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactorySearch(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('search'), function () {
-            $ctrl = $this->factory->get('providers.search');
+            $ctrl = $this->factory->provider('search');
             $ctrl = $ctrl instanceof Search
                 ? $ctrl
                 : $this->getContainer()->get(Search::class);
@@ -431,7 +448,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
     public function registerFactoryViewFilters(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('view-filters'), function () {
-            $ctrl = $this->factory->get('providers.view-filters');
+            $ctrl = $this->factory->provider('view-filters');
             $ctrl = $ctrl instanceof ViewFilters
                 ? $ctrl
                 : $this->getContainer()->get(ViewFilters::class);
@@ -442,7 +459,7 @@ class ListTableServiceProvider extends FactoryServiceProvider
         });
 
         $this->getContainer()->add($this->getFactoryAlias('view-filter'), function (string $name, array $attrs = []) {
-            $ctrl = $this->factory->get('providers.view-filter');
+            $ctrl = $this->factory->provider('view-filter');
             $ctrl = $ctrl instanceof ViewFilter
                 ? $ctrl
                 : $this->getContainer()->get(ViewFilter::class);

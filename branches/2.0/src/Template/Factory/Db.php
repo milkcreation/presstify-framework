@@ -2,14 +2,14 @@
 
 namespace tiFy\Template\Factory;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Builder, Model};
 use tiFy\Contracts\Template\{FactoryDb as FactoryDbContract, TemplateFactory};
 use tiFy\Database\Concerns\ColumnsAwareTrait;
 
 /**
- * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin Builder
  */
-class FactoryDb extends Model implements FactoryDbContract
+class Db extends Model implements FactoryDbContract
 {
     use ColumnsAwareTrait, FactoryAwareTrait;
 

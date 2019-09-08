@@ -5,7 +5,7 @@ namespace tiFy\Template\Factory;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use tiFy\Contracts\Template\{FactoryDbBuilder as FactoryDbBuilderContract, FactoryDb};
 
-class FactoryDbBuilder extends FactoryBuilder implements FactoryDbBuilderContract
+class DbBuilder extends Builder implements FactoryDbBuilderContract
 {
     /**
      * Instance de la requête courante en base de données.

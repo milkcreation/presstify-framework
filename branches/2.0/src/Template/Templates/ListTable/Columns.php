@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{Column, Columns as ColumnsContract, ListTable};
+use tiFy\Template\Templates\ListTable\Contracts\{Column, Columns as ColumnsContract};
 
 class Columns extends Collection implements ColumnsContract
 {
@@ -12,7 +12,7 @@ class Columns extends Collection implements ColumnsContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
@@ -28,6 +28,14 @@ class Columns extends Collection implements ColumnsContract
     public function countVisible(): int
     {
         return count($this->getVisible());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get($key): ?Column
+    {
+        return parent::get($key);
     }
 
     /**
@@ -61,14 +69,13 @@ class Columns extends Collection implements ColumnsContract
     {
         if (
             ($column_primary = $this->factory->param('column_primary', '')) &&
-            ($column_primary !== 'cb') &&
-            ($column_primary !== 'num') &&
-            $this->has($column_primary)
+            ($column = $this->get($column_primary)) &&
+            $column->canUseForPrimary()
         ) {
             return (string)$column_primary;
         } else {
             return $this->collect()->first(function (Column $item) {
-                return ($item->getName() !== 'cb') && ($item->getName() !== 'num');
+                return $item->canUseForPrimary();
             })->getName();
         }
     }

@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\ListTable\Contracts\{ListTable, RowAction, RowActions as RowActionsContract};
+use tiFy\Template\Templates\ListTable\Contracts\{RowAction as RowActionContract, RowActions as RowActionsContract};
 
 class RowActions extends Collection implements RowActionsContract
 {
@@ -12,13 +12,13 @@ class RowActions extends Collection implements RowActionsContract
 
     /**
      * Instance du gabarit associé.
-     * @var ListTable
+     * @var Factory
      */
     protected $factory;
 
     /**
      * Liste des instances des actions déclarées.
-     * @var RowAction[]|array
+     * @var RowActionContract[]|array
      */
     protected $items = [];
 
