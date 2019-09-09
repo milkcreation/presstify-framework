@@ -30,7 +30,7 @@ class Items extends Collection implements ItemsContract
     protected $items = [];
 
     /**
-     *
+     * Nom de qualification de la colonne de données primaire.
      * @var string
      */
     protected $primaryKey;
@@ -79,7 +79,10 @@ class Items extends Collection implements ItemsContract
     public function walk($item, $key = null): ?ItemContract
     {
         if ($item = $this->setItem($item)) {
-            return $this->items[$key] = $item->setOffset($this->offset++)->parse();
+            $this->items[] = $item->setOffset(is_numeric($key) ? $key : $this->offset)->parse();
+            $this->offset++;
+
+            return $item;
         } else {
             return null;
         }

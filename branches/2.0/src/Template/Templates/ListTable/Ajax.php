@@ -31,11 +31,29 @@ class Ajax extends ParamsBag implements AjaxContract
             'columns'     => $this->getColumns(),
             'language'    => $this->getLanguage(),
             'options'     => [
-                'pageLength' => $this->factory->pagination()->getPerPage()
+                'pageLength' => $this->factory->pagination()->getPerPage(),
             ],
             'total_items' => $this->factory->pagination()->getTotal(),
-            'total_pages' => $this->factory->pagination()->getLastPage()
+            'total_pages' => $this->factory->pagination()->getLastPage(),
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parse()
+    {
+        parent::parse();
+
+        $this->set('options', $this->parseOptions($this->get('options', [])));
+
+        $this->factory->param()->set([
+            'attrs.data-control'       => 'list-table',
+            'attrs.data-options'       => $this->all(),
+            'table.attrs.data-control' => 'list-table.table',
+        ]);
+
+        return $this;
     }
 
     /**
@@ -51,7 +69,7 @@ class Ajax extends ParamsBag implements AjaxContract
                 'name'      => $c->getName(),
                 'title'     => $c->getTitle(),
                 'orderable' => false,
-                'visible'   => $c->isVisible()
+                'visible'   => $c->isVisible(),
             ]);
         }
         return $cols;
@@ -82,27 +100,9 @@ class Ajax extends ParamsBag implements AjaxContract
             ],
             'aria'           => [
                 'sortAscending'  => __(': activer pour trier la colonne par ordre croissant', 'tify'),
-                'sortDescending' => __(': activer pour trier la colonne par ordre décroissant', 'tify')
-            ]
+                'sortDescending' => __(': activer pour trier la colonne par ordre décroissant', 'tify'),
+            ],
         ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parse()
-    {
-        parent::parse();
-
-        $this->set('options', $this->parseOptions($this->get('options', [])));
-
-        $this->factory->param()->set([
-            'attrs.data-control' => 'list-table',
-            'attrs.data-options' => $this->all(),
-            'table.attrs.data-control' => 'list-table.table',
-        ]);
-
-        return $this;
     }
 
     /**
@@ -116,7 +116,7 @@ class Ajax extends ParamsBag implements AjaxContract
             'deferLoading',
             'initComplete',
             'processing',
-            'serverSide'
+            'serverSide',
         ]));
     }
 }
