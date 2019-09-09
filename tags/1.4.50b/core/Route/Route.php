@@ -95,6 +95,7 @@ class Route extends \tiFy\App\Core
      */
     public function __construct()
     {
+        return;
         parent::__construct();
 
         // Déclaration des dépendances
