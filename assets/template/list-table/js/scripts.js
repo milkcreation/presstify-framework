@@ -363,14 +363,16 @@ jQuery(function ($) {
     _onClickRowAction: function (e) {
       e.preventDefault();
 
-      let $self = $(e.target);
+      let self = this,
+          $link = $(e.target),
+          $tr = $link.closest('tr');
 
       $.ajax({
-        url: $self.attr('href'),
+        url: $link.attr('href'),
         method: 'POST',
         type: 'json'
-      }).done(function (resp) {
-        console.log(resp);
+      }).done(function () {
+        self.dataTable.api().row($tr[0]).draw(true);
       });
     },
     // Soumission d'une recherche dans le formulaire.
