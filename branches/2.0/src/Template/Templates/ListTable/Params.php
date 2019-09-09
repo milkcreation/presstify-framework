@@ -30,7 +30,7 @@ class Params extends BaseParams implements ParamsContract
             'table'                      => [],
             'view-filters'               => [],
             'row-actions'                => [],
-            'row_actions_always_visible' => true
+            'row_actions_always_visible' => false
         ]);
     }
 
