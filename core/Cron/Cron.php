@@ -123,6 +123,8 @@ class Cron extends \tiFy\App\Core
             'log'           => true,
             // Attributs complémentaires passés en argument de la tâche planifiée
             'args'          => [],
+            // Active la programmation via wp_cron.
+            'scheduled'      => true,
             // Désenregistrement
             'unregister'    => false
         ];
@@ -199,16 +201,18 @@ class Cron extends \tiFy\App\Core
         self::$Schedules[$id] = $attrs;
 
         // Ajustement de la récurrence
-        if (($schedule = \wp_get_schedule($attrs['hook'], [$attrs])) && ($schedule !== $attrs['recurrence'])) :
-            self::unregister($id);
-        elseif($unregister) :
-            self::unregister($id);
-        endif;
+        if ($attrs['scheduled']) {
+            if (($schedule = \wp_get_schedule($attrs['hook'], [$attrs])) && ($schedule !== $attrs['recurrence'])) :
+                self::unregister($id);
+            elseif ($unregister) :
+                self::unregister($id);
+            endif;
 
-        if (!\wp_get_schedule($attrs['hook'], [$attrs])) :
-            \wp_schedule_event($attrs['timestamp'], $attrs['recurrence'], $attrs['hook'], [$attrs]);
-            self::$Schedules[$id] = $attrs;
-        endif;
+            if (!\wp_get_schedule($attrs['hook'], [$attrs])) :
+                \wp_schedule_event($attrs['timestamp'], $attrs['recurrence'], $attrs['hook'], [$attrs]);
+                self::$Schedules[$id] = $attrs;
+            endif;
+        }
 
         \add_action($attrs['hook'], $attrs['handle']);
 
