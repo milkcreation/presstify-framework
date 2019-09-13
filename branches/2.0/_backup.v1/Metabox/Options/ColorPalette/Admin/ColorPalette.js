@@ -7,7 +7,7 @@ jQuery(document).ready(function($){
 		var $container 	= $(this).closest( '.tify_taboox-color_palette' );
 		var index		= $( '> ul > li', $container ).length;
 		var name		= $container.data( 'name' );
-		$.post( tify_ajaxurl, { action : 'tify_taboox_color_palette', name : name, index : index }, function(resp){
+		$.post( tify.ajaxurl, { action : 'tify_taboox_color_palette', name : name, index : index }, function(resp){
 			$( '> ul', $container ).append( resp );
 			$( document ).trigger( 'tify_control.colorpicker.init', $( '> ul > li:last', $container ).find( '.tify_colorpicker > input[name="'+ name +'[colors]['+ index +'][hex]"]' ) );
 		});

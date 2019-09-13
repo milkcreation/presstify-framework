@@ -14,7 +14,7 @@ jQuery(document).ready(function($){
 		$target.addClass('tiFyVideo-inlineViewer--loading');
 		$this.trigger('tify_video_inline_toggle.click', [$target, video]);
 		$.post( 
-			tify_ajaxurl, 
+			tify.ajaxurl,
 			{ action : 'tiFyVideoGetEmbed', 'attr' : video }, 
 			function( resp ){
 				$this.removeClass('tiFyVideo-inlineToggle--loading');

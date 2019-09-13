@@ -106,7 +106,7 @@ class AjaxSubmit extends AddonController
                         $wrapper.trigger('tify_forms.ajax_submit.init', data, ID);
 
                         $.ajax({
-                            url: tify_ajaxurl,
+                            url: tify.ajaxurl,
                             data: data,
                             type: 'POST',
                             dataType: 'json',

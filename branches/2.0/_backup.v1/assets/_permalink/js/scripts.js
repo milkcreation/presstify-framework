@@ -11,7 +11,7 @@ jQuery(document).ready( function($){
 		var $this = $(this);
 		
 		$( '#sample-permalink' ).css('opacity', '0.5' );
-		$.post( tify_ajaxurl, { action: 'tiFyComponentsCustomFieldsPostTypePermalink', key: value }, function( data ){
+		$.post( tify.ajaxurl, { action: 'tiFyComponentsCustomFieldsPostTypePermalink', key: value }, function( data ){
 			setData( data );
 			$( $this.data('handler') ).val('').change();		
 		});
@@ -26,7 +26,7 @@ jQuery(document).ready( function($){
 		var $this = $(this);
 		
 		$( '#sample-permalink' ).css('opacity', '0.5' );
-		$.post( tify_ajaxurl, { action: 'tiFyComponentsCustomFieldsPostTypePermalink', post_id: ui.item.id }, function( data ){
+		$.post( tify.ajaxurl, { action: 'tiFyComponentsCustomFieldsPostTypePermalink', post_id: ui.item.id }, function( data ){
 			setData( data );
 			$( 'input', $this ).val( '' );
 		});
@@ -41,7 +41,7 @@ jQuery(document).ready( function($){
 		var $this = $(this);
 	
 		$( '#sample-permalink' ).css('opacity', '0.5' );
-		$.post( tify_ajaxurl, { action: 'tiFyComponentsCustomFieldsPostTypePermalink', url: $this.prev().val() }, function( data ){
+		$.post( tify.ajaxurl, { action: 'tiFyComponentsCustomFieldsPostTypePermalink', url: $this.prev().val() }, function( data ){
 			setData( data );
 			$this.prev().val( '' );
 		});
@@ -55,7 +55,7 @@ jQuery(document).ready( function($){
 		
 		var $this = $(this);
 		$( '#sample-permalink' ).css('opacity', '0.5' );
-		$.post( tify_ajaxurl, { action: 'tiFyComponentsCustomFieldsPostTypePermalink', cancel: $( '#post_ID' ).val() }, function( data ){
+		$.post( tify.ajaxurl, { action: 'tiFyComponentsCustomFieldsPostTypePermalink', cancel: $( '#post_ID' ).val() }, function( data ){
 			console.log( data );
 			cancelData( data );
 		});

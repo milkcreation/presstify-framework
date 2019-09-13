@@ -25,7 +25,7 @@ var tify_infinite_scroll_xhr, tify_infinite_scroll;
 				from 		= $( '> *', $target ).length;				
 				
 			tify_infinite_scroll_xhr = $.post( 
-				tify_ajaxurl,
+				tify.ajaxurl,
 				{ action: action, query_args : query_args, before : before, after : after , per_page : per_page, template: template, from : from },
 				function( resp ){
 					$target.removeClass( 'ty_iscroll_load' );

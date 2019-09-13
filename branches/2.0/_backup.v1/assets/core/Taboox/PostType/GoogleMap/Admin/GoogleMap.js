@@ -375,7 +375,7 @@
         	var self = this;
         	if (this.panel.is(':empty') || (this.panel.find('.tiFyControl-adminPanel').data('id') !== 0)) {
 				$.ajax({
-					url: tify_ajaxurl,
+					url: tify.ajaxurl,
 				    dataType: 'json',
 				    method:	'POST',
 				    data: { 
@@ -411,7 +411,7 @@
 				}
 			}
 			$.ajax({
-				url: tify_ajaxurl,
+				url: tify.ajaxurl,
 			    dataType: 'json',
 			    method:	'POST',
 			    data: {
@@ -456,7 +456,7 @@
         		meta_id = $(event.target).is(this.removeMarkerToggle) ? $('.tiFyControl-adminPanel', this.panel).data('id') : $(event.target).closest('.tiFyGoogleMap-marker').data('id'),
         		$marker = $('[data-id="'+meta_id+'"]', this.markersList);
         	$.ajax({
-				url: tify_ajaxurl,
+				url: tify.ajaxurl,
 			    dataType: 'json',
 			    method:	'POST',
 			    data: {
@@ -506,7 +506,7 @@
         	$marker.addClass('tiFyGoogleMap-marker--editing').siblings().removeClass('tiFyGoogleMap-marker--editing');
         	if (this.panel.is(':empty') || (this.panel.find('.tiFyControl-adminPanel').data('id') !== meta_id)) {
         		$.ajax({
-					url: tify_ajaxurl,
+					url: tify.ajaxurl,
 				    dataType: 'json',
 				    method:	'POST',
 				    data: {
@@ -614,7 +614,7 @@
         	marker.addListener('dragend', function() {
         		var $marker = $('[data-id="'+id+'"]', self.markersList);
         		$.ajax({
-					url: tify_ajaxurl,
+					url: tify.ajaxurl,
 				    dataType: 'json',
 				    method:	'POST',
 				    data: {

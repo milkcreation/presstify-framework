@@ -15,7 +15,7 @@
 			var $checked = $( '#find-posts-response .found-posts .found-radio > input:checked' );
 			
 			if( $checked.length )
-				$.post( tify_ajaxurl, { action : 'tify_get_post_permalink', post_id : $checked.val() }, function( resp ){
+				$.post( tify.ajaxurl, { action : 'tify_get_post_permalink', post_id : $checked.val() }, function( resp ){
 					$( $( '#affected' ).val() ).val( resp );
 					findPosts.close();
 				});
@@ -80,7 +80,7 @@ var findPosts;
 
 			spinner.show();
 
-			$.ajax( tify_ajaxurl, {
+			$.ajax( tify.ajaxurl, {
 				type: 'POST',
 				data: post,
 				dataType: 'json'

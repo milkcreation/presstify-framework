@@ -282,7 +282,7 @@ jQuery(document).ready( function($){
             <?php endif;?>
             // Récupération de l'élément à prévisualiser
             $.post( 
-                tify_ajaxurl, 
+                tify.ajaxurl,
                 data, 
                 function( resp ){
                     $( '.content', $preview ).html(resp);
