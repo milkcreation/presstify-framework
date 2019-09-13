@@ -74,7 +74,7 @@ jQuery( document ).ready( function($){
 		callback : function( name, uniqid ){
 			textarea = $( '#ajax_wp_editor'+uniqid );
 			$.ajax({
-				url : tify_ajaxurl,
+				url : tify.ajaxurl,
 				data : { action : 'wp_editor_box_editor_html', content:"", id:'ajax_wp_editor'+uniqid, textarea_name:name+'['+uniqid+'][txt]'},
 				type : 'post',
 				// the ajax respnose code

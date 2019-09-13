@@ -13,7 +13,7 @@ jQuery( document ).ready( function($) {
 			fieldGroup = $( this ).data( 'group' );
 
 		$.ajax({
-			url 		: tify_ajaxurl,
+			url 		: tify.ajaxurl,
 			data		: { action : 'theme_taboox_surveyform_item', type : fieldType, group : fieldGroup },
 			type 		: 'POST',
 			dataType	: 'html',
@@ -90,7 +90,7 @@ jQuery( document ).ready( function($) {
 			index = $( this ).closest( '.is-field-editor-items' ).data( 'index' );
 		
 		$.ajax({
-			url 		: tify_ajaxurl,
+			url 		: tify.ajaxurl,
 			data		: { action : 'theme_taboox_surveyform_item_choices', index : index, n : fieldEditorChoicesCount  },
 			type 		: 'POST',
 			dataType	: 'html',

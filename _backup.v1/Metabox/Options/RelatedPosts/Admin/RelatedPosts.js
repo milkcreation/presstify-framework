@@ -19,7 +19,7 @@ jQuery(document).ready( function($){
 			}
 			
 			$.ajax({
-				url 		: tify_ajaxurl,
+				url 		: tify.ajaxurl,
 				data		: { action: action, post_id: post_id, name: name, order: count },
 				success		: function( resp ){
 					$( '.tiFyTabooxRelatedPosts-list', $closest ).append( resp );

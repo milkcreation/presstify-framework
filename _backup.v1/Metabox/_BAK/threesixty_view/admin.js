@@ -54,7 +54,7 @@ jQuery(document).ready( function($){
 			 		order++;
 			 	
 			 		$.ajax({
-						url 		: tify_ajaxurl,
+						url 		: tify.ajaxurl,
 						data 		: { action : 'threesixty_view_item', post_id : post_id, attachment_id : attachment.id, order : order },
 						dataType 	: 'json',
 						type 		: 'post',

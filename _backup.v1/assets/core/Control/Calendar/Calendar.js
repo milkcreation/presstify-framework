@@ -6,7 +6,7 @@ jQuery( document ).ready( function($){
             selected = $(this).data( 'toggle' );
 
         $closest.addClass( 'load' );
-        $.post( tify_ajaxurl, { action: 'tiFyControlCalendar', id: id, selected: selected }, function( resp ){
+        $.post( tify.ajaxurl, { action: 'tiFyControlCalendar', id: id, selected: selected }, function( resp ){
             var $new = $( resp ).replaceAll( $closest );
             $new.trigger( 'tify_control.calendar.loaded', { id: id, selected: selected });
         });

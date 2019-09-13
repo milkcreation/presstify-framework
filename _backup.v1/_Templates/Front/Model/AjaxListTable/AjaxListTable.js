@@ -30,7 +30,7 @@ jQuery( document ).ready( function($){
 	        // Traitement Ajax
 	        ajax:			
 	        {
-	    	   url: 		tify_ajaxurl,
+	    	   url: 		tify.ajaxurl,
 	    	   data: 		function ( d ) {
 	    	    	d = $.extend( d, tiFyCoreAdminAjaxListTable.data );
 
@@ -76,7 +76,7 @@ jQuery( document ).ready( function($){
 	    			
 	    			var value = parseInt( $( '.screen-per-page', $(this) ).val() )
 	    			
-	    			$.post( tify_ajaxurl, { action: tiFyCoreAdminAjaxListTable.viewID +'_per_page', per_page: value }, function(){
+	    			$.post( tify.ajaxurl, { action: tiFyCoreAdminAjaxListTable.viewID +'_per_page', per_page: value }, function(){
 	    				$( '#show-settings-link' ).trigger( 'click' );
 	    			});
 	    			
