@@ -79,7 +79,7 @@ class Download implements DownloadContract
                 $url = $file;
             endif;
 
-            $rel = trim(preg_replace('/' . preg_quote(site_url('/'), '/') . '/', '', $url), '/');
+            $rel = trim(preg_replace('/' . preg_quote(network_site_url('/'), '/') . '/', '', $url), '/');
             $abspath = ABSPATH . $rel;
         endif;
 
@@ -141,7 +141,7 @@ class Download implements DownloadContract
             );
         endif;
 
-        $relpath = trim(preg_replace('/' . preg_quote(site_url('/'), '/') . '/', '', $url), '/');
+        $relpath = trim(preg_replace('/' . preg_quote(network_site_url('/'), '/') . '/', '', $url), '/');
         $abspath = ABSPATH . $relpath;
 
         // Le fichier n'existe pas
