@@ -4,6 +4,7 @@ namespace tiFy\Template;
 
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\{
+    FactoryActions,
     FactoryAssets,
     FactoryCache,
     FactoryDb,
@@ -54,7 +55,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
      * @var string[]
      */
     protected $serviceProviders = [
-        Factory\FactoryServiceProvider::class
+        Factory\ServiceProvider::class
     ];
 
     /**
@@ -65,6 +66,14 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
         $this->prepare();
 
         return (string)$this->render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function actions(): FactoryActions
+    {
+        return $this->resolve('actions');
     }
 
     /**
@@ -239,11 +248,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
      */
     public function provider($alias)
     {
-        if ($providers = $this->get('providers') ? : []) {
-            return $providers[$alias] ?? null;
-        }
-
-        return null;
+        return $this->get('providers', [])[$alias] ?? null;
     }
 
     /**

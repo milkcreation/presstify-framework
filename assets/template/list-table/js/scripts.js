@@ -36,37 +36,35 @@ jQuery(function ($) {
     },
     // Initialisation de la table de données.
     _initDataTable: function () {
-      let self = this;
+      let self = this,
+          ajax = $.extend({}, self.option('ajax') || {}, {
+            /**
+             * @param {object} d
+             * @returns {*}
+             */
+            data: function (d) {
+              return $.extend(d, {action: 'get_items'});
+            },
+            /**
+             * @param {object} json
+             * @returns {*}
+             */
+            dataSrc: function (json) {
+              $('[data-control="list-table.search"]', self.el).each(function () {
+                $(this).replaceWith(json.search);
+              });
 
-      let ajax = {
-        /**
-         * @param {object} d
-         * @returns {*}
-         */
-        data: function (d) {
-          d = $.extend(d, {action: 'get_items'});
-          return d;
-        },
-        /**
-         * @param {object} json
-         * @returns {*}
-         */
-        dataSrc: function (json) {
-          $('[data-control="list-table.search"]', self.el).each(function () {
-            $(this).replaceWith(json.search);
+              $('[data-control="list-table.pagination"]', self.el).each(function () {
+                $(this).replaceWith(json.pagination);
+              });
+
+              return json.data;
+            }
           });
-
-          $('[data-control="list-table.pagination"]', self.el).each(function () {
-            $(this).replaceWith(json.pagination);
-          });
-
-          return json.data;
-        }
-      };
 
       $.extend($.fn.dataTable.defaults, {
         // Attributs de la requête de traitement Ajax.
-        ajax: $.extend(self.option('ajax') || {}, ajax),
+        ajax: ajax,
         // Liste des colonnes.
         columns: self.option('columns') || [],
         // Désactivation du chargement Ajax à l'initialisation.
@@ -365,14 +363,15 @@ jQuery(function ($) {
 
       let self = this,
           $link = $(e.target),
-          $tr = $link.closest('tr');
+          row = $link.closest('tr')[0],
+          table = self.dataTable.api();
 
       $.ajax({
         url: $link.attr('href'),
         method: 'POST',
         type: 'json'
       }).done(function () {
-        self.dataTable.api().row($tr[0]).draw(true);
+        table.row(row).draw(false);
       });
     },
     // Soumission d'une recherche dans le formulaire.
@@ -383,9 +382,9 @@ jQuery(function ($) {
           $button = $(e.target),
           $container = $button.closest('[data-control="list-table.search"]'),
           $input = $('[data-control="list-table.search.input"]', $container),
-          api = self.dataTable.api();
+          table = self.dataTable.api();
 
-      api.search($input.val()).draw();
+      table.search($input.val()).draw();
     }
   });
 

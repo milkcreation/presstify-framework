@@ -96,10 +96,10 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
 
                     add_filter('post_type_link', function (string $post_link, WP_Post $post) use ($post_type) {
                         if ($post->post_type === $post_type) {
-                            return $this->post()->getPermalink() . $post->post_name;
+                            return rtrim($this->post()->getPermalink(), '/') . '/' . $post->post_name;
                         }
                         return $post_link;
-                    }, 99999, 2);
+                    }, 999999, 2);
 
                     add_action('save_post', function (int $post_id) {
                         $post = get_post($post_id);

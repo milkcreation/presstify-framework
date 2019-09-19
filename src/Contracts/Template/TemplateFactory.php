@@ -16,6 +16,13 @@ interface TemplateFactory extends ParamsBag
     public function __toString(): string;
 
     /**
+     * Instance du controleur de traitement des actions.
+     *
+     * @return FactoryActions
+     */
+    public function actions(): FactoryActions;
+
+    /**
      * Instance du controleur de gestion des assets.
      *
      * @return FactoryAssets

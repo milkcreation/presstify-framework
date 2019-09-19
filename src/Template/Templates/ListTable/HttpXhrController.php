@@ -2,6 +2,7 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
+use Exception;
 use League\Route\Http\Exception\NotFoundException;
 use tiFy\Template\Factory\HttpXhrController as BaseHttpXhrController;
 use tiFy\Template\Templates\ListTable\Contracts\HttpXhrController as HttpXhrControllerContract;
@@ -43,11 +44,7 @@ class HttpXhrController extends BaseHttpXhrController implements HttpXhrControll
                 'search'          => (string)$this->factory->viewer('search')
             ];
         } elseif ($action = $this->factory->request()->input('action')) {
-            if ($row_action = $this->factory->rowActions()->get($action)) {
-                return $row_action->httpController(func_get_args());
-            } else {
-                throw new NotFoundException();
-            }
+            return $this->factory->actions()->execute($action, func_get_args());
         } else {
             throw new NotFoundException();
         }

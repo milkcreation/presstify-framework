@@ -15,3 +15,10 @@
 "sjcl": "^1.0.8",
 "threesixty-slider": "^2.0.6",
 "trianglify": "^1.2.0"
+
+# jQuery - Héritage de plugin
+https://learn.jquery.com/jquery-ui/widget-factory/extending-widgets/
+http://github.bililite.com/extending-widgets.html
+
+# Javascript - requête Xhr synchrone
+https://www.freecodecamp.org/news/javascript-from-callbacks-to-async-await-1cc090ddad99/
