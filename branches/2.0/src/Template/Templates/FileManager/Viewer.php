@@ -2,7 +2,7 @@
 
 namespace tiFy\Template\Templates\FileManager;
 
-use tiFy\Template\Factory\FactoryViewer;
+use tiFy\Template\Factory\Viewer as BaseViewer;
 use tiFy\Template\Templates\FileManager\Contracts\{Breadcrumb, FileCollection, FileInfo};
 
 /**
@@ -15,7 +15,7 @@ use tiFy\Template\Templates\FileManager\Contracts\{Breadcrumb, FileCollection, F
  * @method string getIcon(string $name = null, ...$args)
  * @method string preview(FileInfo $file)
  */
-class Viewer extends FactoryViewer
+class Viewer extends BaseViewer
 {
     /**
      * Instance du gabarit associé.

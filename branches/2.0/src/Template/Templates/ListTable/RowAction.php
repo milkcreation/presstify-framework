@@ -87,24 +87,6 @@ class RowAction extends ParamsBag implements RowActionContract
     /**
      * @inheritDoc
      */
-    public function httpController()
-    {
-        if ($item = $this->factory->builder()->getItem($this->factory->request()->input('id'))) {
-            return [
-                'success' => true,
-                'data'    => $item->getKeyValue()
-            ];
-        } else {
-            return [
-                'success' => true,
-                'data'    => __('Impossible de récupérer l\'élément associé.', 'tify')
-            ];
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function isAvailable(): bool
     {
         return true;

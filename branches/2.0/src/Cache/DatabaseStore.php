@@ -175,7 +175,7 @@ class DatabaseStore extends AbstractStore implements DatabaseStoreContract
         if (!$schema->hasTable($table)) {
             $schema->create($table, function (Blueprint $table) {
                 $table->string('key')->unique();
-                $table->text('value');
+                $table->longText('value');
                 $table->integer('expiration');
             });
         }

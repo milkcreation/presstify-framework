@@ -25,7 +25,7 @@ class Ajax extends ParamsBag implements AjaxContract
             'ajax'        => [
                 'url'      => $this->factory->baseUrl() . '/xhr',
                 'dataType' => 'json',
-                'type'     => 'POST',
+                'method'     => 'POST',
             ],
             'data'        => [],
             'columns'     => $this->getColumns(),
