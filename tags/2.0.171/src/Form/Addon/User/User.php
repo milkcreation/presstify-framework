@@ -382,8 +382,6 @@ class User extends AddonController
             if ($auto_auth = $this->get('auto_auth')) {
                 wp_clear_auth_cookie();
                 wp_set_auth_cookie((int) $user->ID);
-
-                wp_redirect(is_bool($auto_auth) ? home_url('/') : $auto_auth);
             }
         endif;
     }
