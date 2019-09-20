@@ -16,7 +16,7 @@ import 'jquery-ui/ui/position';
 import 'jquery-ui/themes/base/menu.css';
 import 'jquery-ui/ui/widgets/menu';
 
-// jQuery-ui - Menu
+// jQuery-ui - Autocomplete
 import 'jquery-ui/themes/base/autocomplete.css';
 import 'jquery-ui/ui/widgets/autocomplete';
 

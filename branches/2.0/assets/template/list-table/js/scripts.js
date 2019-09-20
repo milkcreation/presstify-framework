@@ -16,8 +16,8 @@ jQuery(function ($) {
       this._initEvents();
       this._initDataTable();
     },
-    // INITIALISATION
-    // -------------------------------------------------------------------------------------------------------------
+    // INITIALISATIONS.
+    // -----------------------------------------------------------------------------------------------------------------
     // Initialisation des attributs de configuration.
     _initOptions: function () {
       $.extend(
@@ -91,7 +91,7 @@ jQuery(function ($) {
          *
          * @param {node} row
          * @param {array} data
-         * @param {int} dataIndex
+         * @param {number} dataIndex
          * @param {node[]} cells
          */
         createdRow: function (row, data, dataIndex, cells) {
@@ -114,8 +114,8 @@ jQuery(function ($) {
          *
          * @param {node} tfoot
          * @param {array} data
-         * @param {int} start
-         * @param {int} end
+         * @param {number} start
+         * @param {number} end
          * @param {array} display
          */
         footerCallback: function (tfoot, data, start, end, display) {
@@ -126,7 +126,7 @@ jQuery(function ($) {
          * Au moment du formatage des nombres.
          * @see https://datatables.net/reference/option/formatNumber
          *
-         * @param {int} formatNumber
+         * @param {number} formatNumber
          */
         formatNumber: function (formatNumber) {
           let dataTable = this;
@@ -138,8 +138,8 @@ jQuery(function ($) {
          *
          * @param {node} thead
          * @param {array} data
-         * @param {int} start
-         * @param {int} end
+         * @param {number} start
+         * @param {number} end
          * @param {array} display
          */
         headerCallback: function (thead, data, start, end, display) {
@@ -151,10 +151,10 @@ jQuery(function ($) {
          * @see https://datatables.net/reference/option/infoCallback
          *
          * @param {dataTable.Settings} settings
-         * @param {int} start
-         * @param {int} end
-         * @param {int} max
-         * @param {int} total
+         * @param {number} start
+         * @param {number} end
+         * @param {number} max
+         * @param {number} total
          * @param {string} pre
          */
         infoCallback: function (settings, start, end, max, total, pre) {
@@ -190,9 +190,9 @@ jQuery(function ($) {
          *
          * @param {node} row
          * @param {array|object} data
-         * @param {int} displayNum
-         * @param {int} displayIndex
-         * @param {int} dataIndex
+         * @param {number} displayNum
+         * @param {number} displayIndex
+         * @param {number} dataIndex
          */
         rowCallback: function (row, data, displayNum, displayIndex, dataIndex) {
           let dataTable = this;
@@ -253,7 +253,8 @@ jQuery(function ($) {
 
       self.dataTable = $('[data-control="list-table.table"]', self.el).dataTable(o);
     },
-    // EVENEMENTS
+    // EVENEMENTS.
+    // -----------------------------------------------------------------------------------------------------------------
     // Création d'une ligne de la table.
     _onDatatableCreatedRow: function (e, args) {
       let i = 0;

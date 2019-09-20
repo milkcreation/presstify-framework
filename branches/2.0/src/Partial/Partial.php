@@ -3,7 +3,8 @@
 namespace tiFy\Partial;
 
 use InvalidArgumentException;
-use tiFy\Contracts\Partial\{Accordion,
+use tiFy\Contracts\Partial\{
+    Accordion,
     Breadcrumb,
     CookieNotice,
     CurtainMenu,
@@ -16,12 +17,14 @@ use tiFy\Contracts\Partial\{Accordion,
     Partial as PartialContract,
     PartialFactory,
     PdfPreview,
+    Progress,
     Sidebar,
     Slider,
     Spinner,
     Tab,
     Table,
-    Tag};
+    Tag
+};
 use tiFy\Support\Manager;
 
 class Partial extends Manager implements PartialContract
@@ -42,6 +45,7 @@ class Partial extends Manager implements PartialContract
         'notice'         => Notice::class,
         'pagination'     => Pagination::class,
         'pdf-preview'    => PdfPreview::class,
+        'progress'       => Progress::class,
         'sidebar'        => Sidebar::class,
         'slider'         => Slider::class,
         'spinner'        => Spinner::class,
