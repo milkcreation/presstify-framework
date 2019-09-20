@@ -1061,7 +1061,7 @@ jQuery(function ($) {
             this.document.off('click.select-js.outside.' + this.instance.uuid);
         },
 
-        // ACCESSOR
+        // ACCESSEURS
         // -------------------------------------------------------------------------------------------------------------
         /**
          * Ajout d'une valeur à la liste de selection.

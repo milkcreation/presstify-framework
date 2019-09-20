@@ -112,6 +112,14 @@ class ViewController extends Template implements ViewControllerContract
     }
 
     /**
+     * @inheritDoc
+     */
+    public function pull($key, $defaults = null)
+    {
+        return Arr::pull($this->data, $key);
+    }
+
+    /**
      * @inheritdoc
      */
     public function reset($name)

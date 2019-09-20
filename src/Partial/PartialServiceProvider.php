@@ -17,12 +17,14 @@ use tiFy\Contracts\Partial\{
     Partial as PartialContract,
     PartialFactory,
     PdfPreview as PdfPreviewContract,
+    Progress as ProgressContract,
     Sidebar as SidebarContract,
     Slider as SliderContract,
     Spinner as SpinnerContract,
     Tab as TabContract,
     Table as TableContract,
-    Tag as TagContract};
+    Tag as TagContract
+};
 use tiFy\Partial\Partials\{
     Accordion\Accordion,
     Breadcrumb\Breadcrumb,
@@ -35,6 +37,7 @@ use tiFy\Partial\Partials\{
     Notice\Notice,
     Pagination\Pagination,
     PdfPreview\PdfPreview,
+    Progress\Progress,
     Sidebar\Sidebar,
     Slider\Slider,
     Spinner\Spinner,
@@ -63,6 +66,7 @@ class PartialServiceProvider extends ServiceProvider
         NoticeContract::class,
         PaginationContract::class,
         PdfPreviewContract::class,
+        ProgressContract::class,
         SidebarContract::class,
         SliderContract::class,
         SpinnerContract::class,
@@ -134,6 +138,10 @@ class PartialServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(PdfPreviewContract::class, function () {
             return new PdfPreview();
+        });
+
+        $this->getContainer()->add(ProgressContract::class, function () {
+            return new Progress();
         });
 
         $this->getContainer()->add(SidebarContract::class, function () {

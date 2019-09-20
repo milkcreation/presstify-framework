@@ -9,5 +9,9 @@ import 'jquery-ui/ui/widget';
 // SCSS
 import './scss/styles.scss';
 
+// Presstify
+// Theme
+import '../../theme/index';
+
 // JS
 import './js/scripts';

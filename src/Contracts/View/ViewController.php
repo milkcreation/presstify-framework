@@ -112,6 +112,16 @@ interface ViewController
     public function path();
 
     /**
+     * Récupération et suppression d'un attribut de configuration.
+     *
+     * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function pull(string $key, $default = null);
+
+    /**
      * Ouverture de déclaration de contenu de section ajouté.
      *
      * @param string $name Nom de qualification de la section.
