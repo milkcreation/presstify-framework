@@ -1,7 +1,9 @@
 /* global jQuery */
 "use strict";
 
-jQuery(document).ready(function ($) {
+import jQuery from 'jquery';
+
+jQuery(function ($) {
   $(document).on('click', '[data-toggle="notice.trigger"]', function (e) {
     e.preventDefault();
     e.stopPropagation();

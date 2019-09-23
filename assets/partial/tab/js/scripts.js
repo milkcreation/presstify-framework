@@ -24,7 +24,7 @@ jQuery(function ($) {
 
       this._activeRecursive(this.el);
 
-      $('[data-control="tab.nav.link"][aria-selected="false"]').click(function () {
+      $('[data-control="tab.nav.link"][aria-selected="false"]').on('click', function () {
         self._activeRecursive($($(this).attr('href')));
       });
     },

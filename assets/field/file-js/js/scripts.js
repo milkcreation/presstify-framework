@@ -1,7 +1,9 @@
-/* global jQuery */
 "use strict";
 
 import Dropzone from 'dropzone/dist/min/dropzone.min';
+import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
 
 jQuery(function ($) {
   $.widget('tify.tifyFileJs', {

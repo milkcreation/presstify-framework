@@ -252,7 +252,7 @@ jQuery(function ($) {
     },
   });
 
-  $(document).ready(function ($) {
+  $(document).ready(function () {
     $('[data-control="file-manager"]').tifyFileManager();
   });
 });

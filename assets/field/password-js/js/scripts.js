@@ -1,7 +1,10 @@
-/* global jQuery, tify */
 "use strict";
 
-!(function ($) {
+import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
+
+jQuery(function ($) {
   $.widget('tify.tifyPasswordJs', {
     widgetEventPrefix: 'password-js:',
     id: undefined,
@@ -68,8 +71,8 @@
       }
     }
   });
-})(jQuery, document, window);
 
-jQuery(document).ready(function ($) {
-  $('[data-control="password-js"]').tifyPasswordJs();
+  $(document).ready(function () {
+    $('[data-control="password-js"]').tifyPasswordJs();
+  });
 });

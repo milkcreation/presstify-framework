@@ -1,12 +1,14 @@
-/* globals tify, tinymce, MetaboxOptionsSlideshowAdmin */
-
+/* global tify, tinymce, MetaboxOptionsSlideshowAdmin */
 "use strict";
 
+import jQuery from 'jquery';
+
 /**
+ * @param {{l10nMax:string}} MetaboxOptionsSlideshowAdmin.
  * @param {{ajax_url:string}} tify
  */
-jQuery(document).ready(function ($) {
-    $(document).click('.tinymce', function() {
+jQuery(function ($) {
+    $(document).on('click', '.tinymce', function() {
         tinymce.init({
             selector: '.tinymce',
             inline: true,
@@ -43,7 +45,8 @@ jQuery(document).ready(function ($) {
 
     let initItem = function ($item) {
         $('[data-hide_unchecked]', $item).not(':checked').each(function () {
-            var target = $(this).data('hide_unchecked');
+            let target = $(this).data('hide_unchecked');
+
             $(this).closest('.MetaboxOptions-slideshowListItemInputs').find(target).each(function () {
                 $(this).hide();
             });
@@ -61,7 +64,8 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on('change', '.MetaboxOptions-slideshowListItemInputs [data-hide_unchecked]', function () {
-        var target = $(this).data('hide_unchecked');
+        let target = $(this).data('hide_unchecked');
+
         if ($(this).is(':checked')) {
             $(this).closest('.MetaboxOptions-slideshowListItemInputs').find(target).each(function () {
                 $(this).show();
@@ -75,7 +79,7 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click', '.MetaboxOptions-slideshowListItemHelper--remove', function (e) {
         e.preventDefault();
-        var $container = $(this).closest('.MetaboxOptions-slideshowListItem');
+        let $container = $(this).closest('.MetaboxOptions-slideshowListItem');
 
         $container.fadeOut(function () {
             $container.remove();
@@ -83,7 +87,7 @@ jQuery(document).ready(function ($) {
         });
     });
 
-    $('.MetaboxOptions-slideshowSelector--custom').click(function (e) {
+    $('.MetaboxOptions-slideshowSelector--custom').on('click', function (e) {
         e.preventDefault();
 
         getItem($(this).closest('.MetaboxOptions-slideshow'));
@@ -92,7 +96,7 @@ jQuery(document).ready(function ($) {
     $('.MetaboxOptions-slideshowListItems').sortable({
         axis: "y",
         update: function () {
-            var container = $(this).closest('.MetaboxOptions-slideshow');
+            let container = $(this).closest('.MetaboxOptions-slideshow');
             orderItem(container);
         },
         handle: ".MetaboxOptions-slideshowListItemHelper--sort"

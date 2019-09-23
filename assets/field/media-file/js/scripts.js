@@ -1,10 +1,11 @@
 /* global wp */
-
 "use strict";
+
+import jQuery from 'jquery';
 
 let tiFyFieldMediaFileFrame;
 
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
     $(document).on('click', '[data-control="media_file"]', function (e) {
         e.preventDefault();
 

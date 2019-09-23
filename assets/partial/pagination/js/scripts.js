@@ -10,6 +10,8 @@ jQuery(function ($) {
       'tify.tifyPagination', {
         // Définition des options par défaut
         options: {
+          ajax_action: '',
+          container_id: '',
           handler: '',
           target: ''
         },

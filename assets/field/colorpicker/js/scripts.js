@@ -1,9 +1,11 @@
-/* global jQuery */
 "use strict";
 
-jQuery(document).ready(function ($) {
+import jQuery from 'jquery';
+import 'spectrum/lib/spectrum';
+
+jQuery(function ($) {
     $(document).on('tify_field.colorpicker.init', function (event, obj) {
-        var options = $.parseJSON(
+        let options = $.parseJSON(
             decodeURIComponent(
                 $(obj).data('options')
             )
