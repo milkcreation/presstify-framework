@@ -46,7 +46,7 @@ class Route extends LeagueRoute implements RouteContract
     /**
      * {@inheritdoc}
      */
-    public function getUrl(array $params = [], bool $absolute = true): string
+    public function getUrl(array $params = [], bool $absolute = false): string
     {
         $routes = (new RouteParser())->parse($this->collection->parseRoutePath($this->getPath()));
 

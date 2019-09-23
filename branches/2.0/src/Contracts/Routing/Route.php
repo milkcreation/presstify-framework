@@ -68,7 +68,7 @@ interface Route extends
      *
      * @throws LogicException
      */
-    public function getUrl(array $params = [], bool $absolute = true): string;
+    public function getUrl(array $params = [], bool $absolute = false): string;
 
     /**
      * Récupération de variable d'url de la route.

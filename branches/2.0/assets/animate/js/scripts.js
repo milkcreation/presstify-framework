@@ -1,7 +1,9 @@
 "use strict";
 
+import jQuery from 'jquery';
+
 jQuery(document).ready(function ($) {
-    /** Détection de l'élément dans la zone visible */
+    // Détection de l'élément dans la zone visible
     function inViewport($ele) {
         let offset = $ele.offset();
 
@@ -20,7 +22,7 @@ jQuery(document).ready(function ($) {
             (uBound >= top && uBound <= bottom);
     }
 
-    /** Récupération de la cible */
+    // Récupération de la cible
     function getScrollTarget($ele) {
         if (typeof $ele.data('animate-scroll-target') === 'string' && $($ele.data('animate-scroll-target'))) {
             return $($ele.data('animate-scroll-target'));
@@ -31,7 +33,7 @@ jQuery(document).ready(function ($) {
         }
     }
 
-    /** Vérifie si la cible est atteinte au scroll */
+    // Vérifie si la cible est atteinte au scroll
     function isScrollTargetReached($ele) {
         let value;
 

@@ -1,5 +1,8 @@
 "use strict";
 
+import jQuery from 'jquery';
+import 'jquery-ui/ui/widget';
+
 jQuery(function ($) {
   $.widget('tify.tifyObserver', {
     widgetEventPrefix: 'observer:',
