@@ -1,5 +1,8 @@
 "use strict";
 
+import jQuery from 'jquery';
+import 'presstify-framework/observer/index';
+
 jQuery(function ($) {
   $(document).ready(function ($) {
     $(document).on('click', '[data-control="notice"] [data-toggle="notice.dismiss"]', function (e) {

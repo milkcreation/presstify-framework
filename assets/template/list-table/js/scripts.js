@@ -1,5 +1,9 @@
-/* global jQuery */
 "use strict";
+
+import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
+import 'datatables.net-dt';
 
 jQuery(function ($) {
   $.widget('tify.tifyListTable', {
@@ -39,14 +43,18 @@ jQuery(function ($) {
       let self = this,
           ajax = $.extend({}, self.option('ajax') || {}, {
             /**
-             * @param {object} d
+             * @param {Object} d
              * @returns {*}
              */
             data: function (d) {
               return $.extend(d, {action: 'get_items'});
             },
             /**
-             * @param {object} json
+             * @param {Object} json
+             * @param {string} json.data
+             * @param {string} json.search
+             * @param {string} json.pagination
+             *
              * @returns {*}
              */
             dataSrc: function (json) {
@@ -389,7 +397,7 @@ jQuery(function ($) {
     }
   });
 
-  $(document).ready(function ($) {
+  $(document).ready(function () {
     $('[data-control="list-table"]').tifyListTable();
   });
 });

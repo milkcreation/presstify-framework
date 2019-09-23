@@ -1,6 +1,10 @@
+@import '~jquery-ui/themes/base/core.css';
+@import '~jquery-ui/themes/base/theme.css';
+@import '~jquery-ui/themes/base/progressbar.css';
+
 [data-control="progress.meter"] {
   position: relative;
-  min-height: 20px;
+  height: 20px;
 }
 
 [data-control="progress.meter.bar"] {

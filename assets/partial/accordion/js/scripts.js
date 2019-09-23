@@ -1,5 +1,9 @@
-/* global jQuery, tify */
+/* global tify */
 "use strict";
+
+import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
 
 jQuery(function ($) {
   $.widget('tify.tifyAccordion', {
@@ -99,5 +103,7 @@ jQuery(function ($) {
     }
   });
 
-  $('[data-control="accordion"]').tifyAccordion();
+  $(document).ready(function() {
+    $('[data-control="accordion"]').tifyAccordion();
+  });
 });

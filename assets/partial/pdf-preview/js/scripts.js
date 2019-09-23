@@ -1,8 +1,15 @@
 "use strict";
 
-// Instanciation de pdf.js
+import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
 import pdfjs from 'pdfjs-dist';
 
+/**
+ * @typedef {Object} pdfjs
+ * @typedef {Object} pdfjs.GlobalWorkerOptions
+ * @property {string} pdfjs.GlobalWorkerOptions.workerSrc
+ */
 pdfjs.GlobalWorkerOptions.workerSrc = './node_modules/pdfjs-dist/build/pdf.worker.js';
 
 jQuery(function ($) {
@@ -47,7 +54,7 @@ jQuery(function ($) {
           this.el.data('options') && $.parseJSON(decodeURIComponent(this.el.data('options'))) || {}
       );
     },
-    // ACTION
+    // ACTIONS.
     // -----------------------------------------------------------------------------------------------------------------
     // Chargement initial.
     _doLoad: function () {
@@ -105,7 +112,7 @@ jQuery(function ($) {
       }
     },
 
-    // EVENEMENTS
+    // EVENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     // Navigation vers la page suivante.
     _onNavNext: function (e) {
@@ -130,7 +137,7 @@ jQuery(function ($) {
     }
   });
 
-  $(document).ready(function ($) {
+  $(document).ready(function () {
     $('[data-control="pdf-preview"]').tifyPdfPreview();
   });
 });

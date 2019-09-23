@@ -16,6 +16,11 @@
 "threesixty-slider": "^2.0.6",
 "trianglify": "^1.2.0"
 
+# jQueryUi - Ecriture de plugin
+https://learn.jquery.com/plugins/stateful-plugins-with-widget-factory/
+https://api.jqueryui.com/jquery.widget
+https://blog.rodneyrehm.de/archives/11-jQuery-Hooks.html
+
 # jQuery - Héritage de plugin
 https://learn.jquery.com/jquery-ui/widget-factory/extending-widgets/
 http://github.bililite.com/extending-widgets.html
