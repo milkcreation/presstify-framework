@@ -1,10 +1,11 @@
 /* global wp */
-
 "use strict";
+
+import jQuery from 'jquery';
 
 let tify_control_media_image_frame;
 
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
     $(document).on('click', '.tiFyField-mediaImageAdd', function (e) {
         e.preventDefault();
 

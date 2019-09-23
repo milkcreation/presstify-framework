@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2019-09-22",
+  "time": "2019-09-23",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -125,8 +125,5 @@
     "post-update-cmd": [
       "bower install --allow-root --save"
     ]
-  },
-  "bin": [
-    "bin/bee"
-  ]
+  }
 }

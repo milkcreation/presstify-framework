@@ -19,8 +19,6 @@ jQuery(function ($) {
       triggered: false
     },
 
-    // INITIALISATION
-    // -------------------------------------------------------------------------------------------------------------
     // Instanciation de l'élément.
     _create: function () {
       this.instance = this;
@@ -39,6 +37,8 @@ jQuery(function ($) {
       this._initControls();
     },
 
+    // INITIALISATIONS.
+    // -------------------------------------------------------------------------------------------------------------
     // Initialisation des attributs de configuration.
     _initOptions: function () {
       $.extend(
@@ -105,7 +105,7 @@ jQuery(function ($) {
       });
     },
 
-    // ACTIONS
+    // ACTIONS.
     // -----------------------------------------------------------------------------------------------------------------
     /**
      * Bascule
@@ -117,7 +117,7 @@ jQuery(function ($) {
       this._trigger(action);
     },
 
-    //EVENEMENTS
+    // EVENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     // Activation au clic sur le bouton de bascule.
     _onTriggerClick: function () {
@@ -142,7 +142,7 @@ jQuery(function ($) {
     },
   });
 
-  $(document).ready(function ($) {
+  $(document).ready(function () {
     $('[data-control="dropdown"]').tifyDropdown();
   });
 });

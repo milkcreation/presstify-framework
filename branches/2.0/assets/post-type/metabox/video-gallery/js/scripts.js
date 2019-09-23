@@ -1,10 +1,11 @@
 /* global tify, tify_taboox_video_gallery, wp */
-
 "use strict";
+
+import jQuery from 'jquery';
 
 let taboox_video_gallery_src_frame, taboox_video_gallery_poster_frame;
 
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
     $('.tiFyTabMetaboxPostTypeVideoGallery-add').on('click', function (e) {
         e.preventDefault();
 

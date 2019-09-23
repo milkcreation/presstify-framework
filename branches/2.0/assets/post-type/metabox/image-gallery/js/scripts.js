@@ -1,10 +1,11 @@
 /* global tify, tify_taboox_image_gallery, wp */
-
 "use strict";
+
+import jQuery from 'jquery';
 
 let tify_taboox_image_gallery_frame;
 
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
     $('.tiFyTabMetaboxPostTypeImageGallery-add').on('click', function (e) {
         e.preventDefault();
 

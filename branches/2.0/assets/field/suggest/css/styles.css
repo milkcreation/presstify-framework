@@ -1,1 +1,17 @@
-input[type=text][data-control="suggest.input"].ui-autocomplete-loading,input[type=email][data-control="suggest.input"].ui-autocomplete-loading{background-image:none}.FieldSuggest{position:relative}.FieldSuggest-spinner{position:absolute;top:50%;right:5px;margin-top:-10px;width:20px;height:20px;display:none}.FieldSuggest[aria-loaded=true] .FieldSuggest-spinner{display:inherit}.FieldSuggest-picker{position:absolute;background-color:#fff;overflow-y:auto;max-height:20em;z-index:10}.FieldSuggest-pickerItem{display:block;cursor:pointer;border-bottom:1px solid #e4e4e4}
+/* Error: Can't find stylesheet to import.
+ *   ,
+ * 5 | @import '~presstify-framework/theme/scss/styles';
+ *   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ *   '
+ *   styles.scss 5:9  root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Can't find stylesheet to import.\a   \2577 \a 5 \2502  @import '~presstify-framework/theme/scss/styles';\a   \2502          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\a   \2575 \a   styles.scss 5:9  root stylesheet";
+}

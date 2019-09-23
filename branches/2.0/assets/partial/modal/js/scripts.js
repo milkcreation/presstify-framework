@@ -12,7 +12,7 @@ jQuery(function ($) {
           var $modal = $(this);
           var o = $.parseJSON(decodeURIComponent($modal.data('options')));
 
-          if (tify[o.id] === undefined){
+          if (tify[o.id] === undefined) {
             tify[o.id] = {};
           }
 
@@ -23,13 +23,15 @@ jQuery(function ($) {
           if (o.ajax) {
             if (tify[o.id].content === undefined) {
               tify[o.id].content = resp;
-              $.post(tify.ajax_url, o.ajax, function(resp) {$('.modal-content', $modal).$modal.html(resp);});
+              $.post(tify.ajax_url, o.ajax, function (resp) {
+                $('.modal-content', $modal).$modal.html(resp);
+              });
             } else {
               $('.modal-content', $modal).html(tify[o.id].content);
             }
           }
         })
-        .on('hidden.bs.modal', function (){
+        .on('hidden.bs.modal', function () {
           var $modal = $(this);
           var o = $.parseJSON(decodeURIComponent($modal.data('options')));
 

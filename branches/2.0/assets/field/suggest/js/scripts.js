@@ -1,5 +1,11 @@
-/* global jQuery */
 "use strict";
+
+import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
+import 'jquery-ui/ui/position';
+import 'jquery-ui/ui/widgets/menu';
+import 'jquery-ui/ui/widgets/autocomplete';
 
 jQuery(function ($) {
   // Attribution de la valeur à l'élément.
@@ -132,7 +138,7 @@ jQuery(function ($) {
     },
   });
 
-  $(document).ready(function ($) {
+  $(document).ready(function () {
     $(document).on('focus', '[data-control="suggest"]', function () {
       $(this).tifySuggest();
     });

@@ -1,5 +1,9 @@
-/* global jQuery */
 "use strict";
+
+import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
+import 'jquery-ui/ui/widgets/sortable';
 
 jQuery(function ($) {
     $.widget('tify.tifyRepeater', {
@@ -228,7 +232,7 @@ jQuery(function ($) {
         }
     });
 
-    $(document).ready(function ($) {
+    $(document).ready(function () {
         $('[data-control="repeater"]').tifyRepeater();
     });
 });

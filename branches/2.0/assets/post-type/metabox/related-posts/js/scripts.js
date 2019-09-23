@@ -1,5 +1,11 @@
 "use strict";
 
+import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
+import 'jquery-ui/ui/widgets/sortable';
+import 'presstify-framework/field/suggest/js/scripts';
+
 jQuery(function ($) {
   $.widget('tify.tifyMetaboxRelatedPosts', {
     widgetEventPrefix: 'metabox-related-posts:',
@@ -56,7 +62,7 @@ jQuery(function ($) {
             axis: 'y',
             handle: '[data-control="metabox.related-posts.item.sort"]'
           }, self.option('sortable') || {}, {
-            update: function (event, ui) {
+            update: function () {
               self._doUpdateItemsOrder();
             }
           });
@@ -124,8 +130,8 @@ jQuery(function ($) {
       });
     },
   });
-});
 
-jQuery(document).ready(function ($) {
-  $('[data-control="metabox.related-posts"]').tifyMetaboxRelatedPosts();
+  $(document).ready(function () {
+    $('[data-control="metabox.related-posts"]').tifyMetaboxRelatedPosts();
+  });
 });
