@@ -1,6 +1,7 @@
 "use strict";
 
 import jQuery from 'jquery';
+import 'presstify-framework/observer/index';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/button';
@@ -89,5 +90,12 @@ jQuery(function ($) {
 
     $(document).ready(function () {
         $('[data-control="number-js"]').tifyNumberJs();
+    });
+
+    $(document).tifyObserver({
+        selector: '[data-control="number-js"]',
+        func: function (i, target) {
+            $(target).tifyNumberJs();
+        }
     });
 });
