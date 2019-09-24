@@ -37,8 +37,12 @@ class PaginationUrl
     {
         $url = clone $this->baseurl;
 
-        return $num > 1
-            ? sprintf($url->with(['page' => '%d'])->getDecode(), $num)
-            : $url->getDecode();
+        if (preg_match('/%d/', $url->getDecode())) {
+            return sprintf($url->getDecode(), $num);
+        } else {
+            return $num > 1
+                ? sprintf($url->with(['page' => '%d'])->getDecode(), $num)
+                : $url->getDecode();
+        }
     }
 }

@@ -43,10 +43,11 @@ interface QueryPosts extends Collection
      * @see https://developer.wordpress.org/reference/classes/wp_query/
      *
      * @param int[] $ids
+     * @param array $args Liste des arguments dynamique.
      *
      * @return static
      */
-    public static function createFromIds(array $ids): QueryPosts;
+    public static function createFromIds(array $ids, ...$args): QueryPosts;
 
     /**
      * Récupération de la liste des identifiants de qualification.

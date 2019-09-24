@@ -65,9 +65,9 @@ class QueryPosts extends Collection implements QueryPostsContract
     /**
      * @inheritDoc
      */
-    public static function createFromIds(array $ids): QueryPostsContract
+    public static function createFromIds(array $ids, ...$args): QueryPostsContract
     {
-        $post_types = func_get_arg(1) ? : array_keys(get_post_types());
+        $post_types = $args ? (array)$args[0] : array_keys(get_post_types());
 
         return new static(new WP_Query(['post__in' => $ids, 'post_type' => $post_types, 'posts_per_page' => -1]));
     }
