@@ -1,4 +1,3 @@
-/* global jQuery */
 "use strict";
 
 import jQuery from 'jquery';

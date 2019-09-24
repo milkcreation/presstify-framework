@@ -8,7 +8,7 @@ import jQuery from 'jquery';
  * @param {{ajax_url:string}} tify
  */
 jQuery(function ($) {
-    $(document).on('click', '.tinymce', function() {
+    /*$(document).on('click', '.tinymce', function() {
         tinymce.init({
             selector: '.tinymce',
             inline: true,
@@ -100,5 +100,5 @@ jQuery(function ($) {
             orderItem(container);
         },
         handle: ".MetaboxOptions-slideshowListItemHelper--sort"
-    });
+    }); */
 });

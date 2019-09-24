@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace tiFy\Options\Metabox\Slideshow;
+namespace tiFy\Metabox\Metaboxes\Slideshow;
 
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Kernel\Params\ParamsBag;

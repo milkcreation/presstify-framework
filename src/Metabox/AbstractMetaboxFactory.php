@@ -2,13 +2,12 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxController as MetaboxControllerContract;
 use tiFy\Contracts\Metabox\MetaboxFactory;
 use tiFy\Contracts\View\ViewEngine;
 use tiFy\Support\ParamsBag;
 use WP_Screen;
 
-abstract class MetaboxController extends ParamsBag implements MetaboxControllerContract
+abstract class AbstractMetaboxFactory extends ParamsBag
 {
     /**
      * Instance de l'élément.
@@ -30,7 +29,7 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     /**
      * @inheritDoc
      */
-    public function content($var1 = null, $var2 = null, $var3 = null)
+    public function content(...$args)
     {
         return __('Aucun contenu à afficher', 'tify');
     }
@@ -70,7 +69,7 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     /**
      * @inheritDoc
      */
-    public function parse(): MetaboxControllerContract
+    public function parse()
     {
         parent::parse();
 
@@ -80,7 +79,7 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     /**
      * @inheritDoc
      */
-    public function prepare(): MetaboxControllerContract
+    public function prepare()
     {
         add_action('current_screen', function (WP_Screen $wp_screen) {
             if ($wp_screen->id === $this->item->getScreen()->getHookname()) {
@@ -94,7 +93,7 @@ abstract class MetaboxController extends ParamsBag implements MetaboxControllerC
     /**
      * @inheritDoc
      */
-    public function setFactory(MetaboxFactory $factory): MetaboxControllerContract
+    public function setFactory(MetaboxFactory $factory)
     {
         $this->item = $factory;
 
