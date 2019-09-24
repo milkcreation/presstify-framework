@@ -99,15 +99,30 @@ jQuery(function ($) {
     // ACCESSEURS.
     // -----------------------------------------------------------------------------------------------------------------
     /**
-     * Définition de l'intitulé de l'indicateur.
+     * Décrémentation de l'indicateur.
      *
-     * @uses $('[data-control="progress"]').tifyProgress('increment', {label});
+     * @uses $('[data-control="progress"]').tifyProgress('decrement');
+     *
+     * @return this
+     */
+    decrement: function () {
+      if (this.meter.bar !== undefined) {
+        let value = this.meter.bar.progressbar('value');
+        this.value(--value);
+      }
+      return this.instance;
+    },
+    /**
+     * Incrémentation de l'indicateur.
+     *
+     * @uses $('[data-control="progress"]').tifyProgress('increment');
      */
     increment: function () {
       if (this.meter.bar !== undefined) {
         let value = this.meter.bar.progressbar('value');
         this.value(++value);
       }
+      return this.instance;
     },
     /**
      * Définition de l'intitulé de l'indicateur.
@@ -122,6 +137,7 @@ jQuery(function ($) {
 
         this.meter.label.text(label);
       }
+      return this.instance;
     },
     /**
      * Définition de la valeur de maximale de l'indicateur.
@@ -134,6 +150,7 @@ jQuery(function ($) {
       if (this.meter.bar !== undefined) {
         this.meter.bar.progressbar('option', 'max', max);
       }
+      return this.instance;
     },
     /**
      * Définition de la valeur de progression de l'indicateur.
@@ -146,6 +163,15 @@ jQuery(function ($) {
       if (this.meter.bar !== undefined) {
         this.meter.bar.progressbar('value', value);
       }
+      return this.instance;
+    },
+    /**
+     * Réinitialisation de la valeur de progression de l'indicateur.
+     *
+     * @uses $('[data-control="progress"]').tifyProgress('reset');
+     */
+    reset: function () {
+      return this.value(0);
     },
   });
 
