@@ -83,7 +83,7 @@ class Mailer extends AddonController
             $this->set('notification.to', $to);
         endif;
 
-        /** @var MetaboxManager $metabox */
+        /** @var MetaboxManager $metabox
         if ($this->get('admin.confirmation') || $this->get('admin.notification')) :
             $metabox = app('metabox');
 
@@ -114,7 +114,7 @@ class Mailer extends AddonController
                     ]
                 );
             endif;
-        endif;
+        endif;*/
     }
 
     /**
