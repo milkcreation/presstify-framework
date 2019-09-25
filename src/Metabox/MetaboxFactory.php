@@ -1,233 +1,100 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxController;
-use tiFy\Contracts\Metabox\MetaboxFactory as MetaboxFactoryContract;
-use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
-use tiFy\Wordpress\Routing\WpScreen;
+use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Support\ParamsBag;
 
-class MetaboxFactory extends ParamsBag implements MetaboxFactoryContract
+class MetaboxFactory extends ParamsBag
 {
     /**
-     * Compteur d'indices de qualification.
-     * @var int
+     * Instance du gestionnaire de metabox.
+     * @var MetaboxManager|null
      */
-    protected static $_index = 0;
+    protected $manager;
 
     /**
-     * Indicateur d'activation.
-     * @var boolean
+     * @inheritDoc
      */
-    protected $active = false;
+    public function boot(): void {}
 
     /**
-     * Traitement des arguments de configuration
-     *
-     * @param array $attrs {
-     *      Attributs de configuration
-     *
-     * @return array
-     * @var string $name Nom de qualification. optionnel, généré automatiquement.
-     * @var string|callable $title Titre du greffon.
-     * @var string|callable $content Fonction ou méthode ou classe de rappel d'affichage du contenu de la section.
-     * @var mixed $args Liste des variables passées en argument dans les fonction d'affichage du titre, du contenu et
-     *     dans l'objet.
-     * @var string $parent Identifiant de la section parente.
-     * @var string|callable@todo $cap Habilitation d'accès.
-     * @var bool|callable@todo $show Affichage/Masquage.
-     * @var int $position Ordre d'affichage du greffon.
-     * }
-     *
+     * @inheritDoc
      */
-    protected $attributes = [
-        'title'    => '',
-        'content'  => '',
-        'context'  => 'tab',
-        'priority' => 'default',
-        'position' => 0,
-        'args'     => [],
-        'cap'      => 'manage_options',
-        'parent'   => '',
-        'show'     => true,
-    ];
-
-    /**
-     * Indice de qualification.
-     * @var int
-     */
-    protected $index = 0;
-
-    /**
-     * Nom de qualification.
-     * @var string
-     */
-    protected $name = '';
-
-    /**
-     * Instance de l'écran d'affichage associé.
-     * @var WpScreenContract
-     */
-    protected $screen;
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @param string $name Nom de qualification.
-     * @param array $attrs Liste des attributs de configuration.
-     * @param null|string|\WP_Screen|WpScreenContract $screen Qualification de la page d'affichage.
-     *
-     * @return void
-     */
-    public function __construct($name, $attrs = [], $screen = null)
+    public function content()
     {
-        $this->name = $name;
-        $this->index = self::$_index++;
-        $this->set($attrs)->parse();
+        return __('Aucun contenu à afficher', 'tify');
+    }
 
+    /**
+     * @inheritDoc
+     */
+    public function header()
+    {
+        return '';
+    }
 
-        if ($screen instanceof WpScreenContract) {
-            $this->screen = $screen;
-        } else {
-            if ($content = $this->get('content', '')) {
-                if (is_string($content) && class_exists($content)) {
-                    $controller = new $content();
-                } elseif (is_object($content)) {
-                    $controller = $content;
-                    if (is_callable($controller)) {
-                        call_user_func($controller);
-                    }
-                } else {
-                    $controller = null;
-                }
+    /**
+     * @inheritDoc
+     */
+    public function parse()
+    {
+        parent::parse();
 
-                if ($controller instanceof MetaboxController) {
-                    $controller->set($this->getArgs())->boot();
-                    $this->set('controller', $controller);
-                }
-            }
+        return $this;
+    }
 
-            add_action('admin_init', function () use ($screen) {
-                $this->screen = WpScreen::get($screen);
+    /**
+     * @inheritDoc
+     */
+    public function setParams($attrs = [])
+    {
+        $this->set($attrs);
 
-                $controller = $this->get('controller');
+        return $this;
+    }
 
-                if ($controller instanceof MetaboxController) {
-                    $controller->setFactory($this)->parse()->prepare();
+    /**
+     * @inheritDoc
+     */
+    public function setManager(MetaboxManager $manager)
+    {
+        $this->manager = $manager;
 
-                    $this->set('controller', $controller);
-                }
-            }, 999999);
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setScreen($attrs = [])
+    {
+        $this->set($attrs);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewer($view = null, $data = [])
+    {
+        if (!$this->viewer) {
+            $this->viewer = view()
+                ->setDirectory($default_dir = __DIR__ . '/Resources/views')
+                ->setController(MetaboxViewer::class)
+                ->setOverrideDir(
+                    (($override_dir = $this->get('viewer.override_dir')) && is_dir($override_dir))
+                        ? $override_dir
+                        : $default_dir
+                )
+                ->set('metabox', $this);
         }
-    }
 
-    /**
-     * @inheritdoc
-     */
-    public function getArgs()
-    {
-        return $this->get('args', []);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getIndex()
-    {
-        return $this->index;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getContent()
-    {
-        $content = $this->get('controller') instanceof MetaboxController
-            ? call_user_func_array([$this->get('controller'), 'content'], func_get_args())
-            : $this->get('content', '');
-
-        if (is_callable($content)) {
-            $content = call_user_func_array($content, func_get_args());
+        if (func_num_args() === 0) {
+            return $this->viewer;
         }
-        return "<div class=\"MetaboxTab-content\">{$content}</div>";
-    }
 
-    /**
-     * @inheritdoc
-     */
-    public function getContext()
-    {
-        return $this->get('context', 'advanced');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getHeader()
-    {
-        if ($this->get('controller') instanceof MetaboxController) :
-            return call_user_func_array([$this->get('controller'), 'header'], func_get_args());
-        else :
-            return $this->getTitle();
-        endif;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getParent()
-    {
-        return $this->get('parent', '');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getPosition()
-    {
-        return $this->get('position', 0);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getScreen()
-    {
-        return $this->screen;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getTitle()
-    {
-        return $this->get('title', '');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isActive()
-    {
-        return $this->active;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function load(WpScreenContract $current_screen)
-    {
-        if ($this->getScreen() && ($current_screen->getHookname() === $this->getScreen()->getHookname())) :
-            $this->active = true;
-        endif;
+        return $this->viewer->make("_override::{$view}", $data);
     }
 }

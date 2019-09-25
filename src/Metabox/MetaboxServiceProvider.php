@@ -14,25 +14,16 @@ class MetaboxServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'metabox',
-        'metabox.factory',
-        'metabox.tab'
+        'metabox.viewer'
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register()
     {
         $this->getContainer()->share('metabox', function () {
-            return new MetaboxManager();
-        })->build();
-
-        $this->getContainer()->add('metabox.factory', function ($name, $attrs = [], $screen = null) {
-            return new MetaboxFactory($name, $attrs, $screen);
-        });
-
-        $this->getContainer()->add('metabox.tab', function ($attrs = [], $screen = null) {
-            return new MetaboxTabController($attrs, $screen);
+            return new MetaboxManager($this->getContainer());
         });
     }
 }
