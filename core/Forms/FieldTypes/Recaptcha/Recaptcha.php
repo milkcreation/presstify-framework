@@ -69,7 +69,7 @@ class Recaptcha extends \tiFy\Core\Forms\FieldTypes\Factory
         if ($field->getType() !== 'recaptcha') :
             return;
         endif;
-
+        
         // Impose l'attribut de champ requis
         $field->setAttr('required', true);
     }
@@ -103,8 +103,10 @@ class Recaptcha extends \tiFy\Core\Forms\FieldTypes\Factory
         $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
         if (!$resp->isSuccess()) :
+            $options = $this->getOptions();
+
             $errors[] = [
-                'message' => __("La saisie de la protection antispam est incorrecte.", 'tify'),
+                'message' => $options['message'] ? : __("La saisie de la protection antispam est incorrecte.", 'tify'),
                 'type'    => 'field',
                 'slug'    => $field->getSlug(),
                 'order'   => $field->getOrder(),
