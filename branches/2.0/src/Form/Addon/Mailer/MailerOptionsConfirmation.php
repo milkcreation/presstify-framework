@@ -1,39 +1,39 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form\Addon\Mailer;
 
-class MailerOptionsConfirmation extends AbstractMailerOptions
+class MailerOptionsConfirmation extends AbstractMetaboxDriver
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function header($args = null, $null1 = null, $null2 = null)
+    public function content(): string
     {
-        return __('Confirmation', 'tify');
+        $this->set([
+            'option_names' => $this->optionNames,
+            'option_values' => [
+                'confirmation' => get_option($this->optionNames['confirmation'], 'off') ?: 'off',
+                'sender'       => array_merge(
+                    [
+                        'email' => get_option('admin_email'),
+                        'name'  => ''
+                    ],
+                    get_option($this->optionNames['sender']) ?: []
+                )
+            ]
+        ]);
+
+        return (string) $this->viewer('confirmation', $this->all());
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function content($args = null, $null1 = null, $null2 = null)
+    public function defaults(): array
     {
-        $option_names = $this->optionNames;
-
-        $option_values = [
-            'confirmation' => get_option($option_names['confirmation'], 'off') ?: 'off',
-            'sender'       => array_merge(
-                [
-                    'email' => get_option('admin_email'),
-                    'name'  => ''
-                ],
-                get_option($option_names['sender']) ?: []
-            )
-        ];
-
-        return $this->viewer(
-            'addon/mailer/admin/confirmation',
-            compact('option_names', 'option_values')
-        );
+        return array_merge(parent::defaults(), [
+            'title' => __('Confirmation', 'tify')
+        ]);
     }
 
     /**
@@ -69,7 +69,7 @@ class MailerOptionsConfirmation extends AbstractMailerOptions
     }  */
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function settings()
     {

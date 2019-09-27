@@ -2,10 +2,9 @@
 
 namespace tiFy\Options\Page;
 
-use tiFy\Contracts\Metabox\MetaboxManager;
 use tiFy\Contracts\Options\OptionsPage as OptionPageContract;
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Support\ParamsBag;
+use tiFy\Support\{ParamsBag, Proxy\Metabox};
 use WP_Admin_Bar;
 use WP_Screen;
 
@@ -230,15 +229,12 @@ class OptionsPage extends ParamsBag implements OptionPageContract
      */
     public function parseItems()
     {
-        /** @var MetaboxManager $metabox */
-        $metabox = app('metabox');
-
         foreach($this->get('items', []) as $name => $attrs) {
             $this->items[$name] = $attrs;
 
-            $metabox->add($name, $this->getName() . '@options', array_merge([
-                'context' => 'tab'
-            ], $attrs));
+            Metabox::add($name,$attrs)
+                ->setScreen("{$this->getName()}@options")
+                ->setContext('tab');
         }
     }
 

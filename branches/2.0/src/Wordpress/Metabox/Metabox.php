@@ -2,10 +2,12 @@
 
 namespace tiFy\Wordpress\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxManager;
+use tiFy\Contracts\Metabox\{MetaboxDriver, MetaboxManager, MetaboxScreen as MetaboxScreenContract};
 use tiFy\Wordpress\Routing\WpScreen;
-use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
+use WP_Post;
 use WP_Screen;
+use WP_Term;
+use WP_User;
 
 class Metabox
 {
@@ -26,43 +28,65 @@ class Metabox
     {
         $this->manager = $manager;
 
-        /*
-        add_action('wp_loaded', function () {
-            foreach (config('metabox', []) as $screen => $items) {
-                if (!is_null($screen) && preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) {
-                    $screen = 'edit::' . $screen;
-                }
+        $this->registerOverride();
 
-                foreach ($items as $name => $attrs) {
-                    $this->items[] = app()->get('metabox.factory', [$name, $attrs, $screen]);
-                }
-            }
-        }, 0);
+        add_action('current_screen', function (WP_Screen $wp_screen) {
+            $metaboxes = $this->manager->all();
+            $screen = new WpScreen($wp_screen);
+            $tabRdr = function (...$args) {
+                echo $this->manager->render('tab', $args);
+            };
 
-        add_action('current_screen', function ($wp_current_screen) {
-            $this->screen = wordpress()->wp_screen($wp_current_screen);
+            switch ($screen->getObjectType()) {
+                case 'post_type' :
+                    add_action($screen->getObjectName() === 'page' ? 'edit_page_form' : 'edit_form_advanced', $tabRdr);
 
-            $attrs = [];
-            foreach ($this->tabs as $screen => $_attrs) {
-                if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) {
-                    $screen = 'edit::' . $screen;
-                }
-                $WpScreen = WpScreen::get($screen);
-
-                if ($WpScreen->getHookname() === $this->screen->getHookname()) {
-                    $attrs = $_attrs;
+                    array_walk($metaboxes, function (MetaboxDriver $box) {
+                        $box->setHandler(function (MetaboxDriver $box, WP_Post $post) {
+                            if (is_null($box['value'])) {
+                                $box['value'] = get_post_meta($post->ID, $box->name(), true);
+                            }
+                        });
+                    });
                     break;
-                }
+                case 'options' :
+                    add_settings_section('navtab', null, $tabRdr, $screen->getObjectName());
+
+                    array_walk($metaboxes, function (MetaboxDriver $box) {
+                        $box->setHandler(function (MetaboxDriver $box) {
+                            if (is_null($box['value'])) {
+                                $box['value'] = get_option($box->name());
+                            }
+                        });
+                    });
+                    break;
+                case 'taxonomy' :
+                    add_action($screen->getObjectName() . '_edit_form', $tabRdr, 10, 2);
+
+                    array_walk($metaboxes, function (MetaboxDriver $box) {
+                        $box->setHandler(function (MetaboxDriver $box, WP_Term $term, $taxonomy) {
+                            if (is_null($box['value'])) {
+                                $box['value'] = get_term_meta($term->term_id, $box->name(), true);
+                            }
+                        });
+                    });
+                    break;
+                case 'user' :
+                    add_action('show_user_profile', $tabRdr);
+                    add_action('edit_user_profile', $tabRdr);
+
+                    array_walk($metaboxes, function (MetaboxDriver $box) {
+                        $box->setHandler(function (MetaboxDriver $box, WP_User $user) {
+                            if (is_null($box['value'])) {
+                                $box['value'] = get_user_meta($user->ID, $box->name(), true);
+                            }
+                        });
+                    });
+                    break;
             }
+        });
 
-            // @var WP_Screen $wp_current_screen
-            foreach ($this->items as $item) {
-                $item->load($this->screen);
-            }
-
-            app()->get('metabox.tab', [$attrs, $this->screen]);
-        }, 999999);
-
+        /*
         add_action('add_meta_boxes', function () {
             foreach ($this->removes as $screen => $items) {
                 if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) {
@@ -99,5 +123,17 @@ class Metabox
                 }
             }
         }, 999999); */
+    }
+
+    /**
+     * Déclaration des controleurs de surchage.
+     *
+     * @return void
+     */
+    public function registerOverride(): void
+    {
+        app()->add(MetaboxScreenContract::class, function () {
+            return (new MetaboxScreen())->setManager($this->manager);
+        });
     }
 }

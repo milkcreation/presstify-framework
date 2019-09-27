@@ -133,9 +133,7 @@ class Partial extends Manager implements PartialContract
     {
         $path = $path ? '/' . ltrim($path, '/') : '';
 
-        return (file_exists(__DIR__ . "/Resources{$path}"))
-            ? __DIR__ . "/Resources{$path}"
-            : '';
+        return (file_exists(__DIR__ . "/Resources{$path}")) ? __DIR__ . "/Resources{$path}" : '';
     }
 
     /**
@@ -146,9 +144,7 @@ class Partial extends Manager implements PartialContract
         $cinfo = class_info($this);
         $path = $path ? '/' . ltrim($path, '/') : '';
 
-        return (file_exists($cinfo->getDirname() . "/Resources{$path}"))
-            ? $cinfo->getUrl() . "/Resources{$path}"
-            : '';
+        return (file_exists($cinfo->getDirname() . "/Resources{$path}")) ? $cinfo->getUrl() . "/Resources{$path}" : '';
     }
 
     /**

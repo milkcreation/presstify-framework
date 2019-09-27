@@ -40,6 +40,8 @@ jQuery(function ($) {
       this._initAutocomplete();
       this._initEvents();
     },
+    // INITIALISATIONS.
+    // -----------------------------------------------------------------------------------------------------------------
     // Initialisation des attributs de configuration.
     _initOptions: function () {
       $.extend(
@@ -125,9 +127,7 @@ jQuery(function ($) {
       //    console.log(resp);
       // });
       if (this.uiautocomplete !== undefined) {
-        let events = [
-          'change', 'close', 'create', 'focus', 'open', 'response', 'search', 'select'
-        ];
+        let events = ['change', 'close', 'create', 'focus', 'open', 'response', 'search', 'select'];
 
         events.forEach(function (eventname) {
           self.uiautocomplete.on('autocomplete' + eventname, function (e) {

@@ -1,33 +1,33 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form\Addon\Mailer;
 
-class MailerOptionsNotification extends AbstractMailerOptions
+class MailerOptionsNotification extends AbstractMetaboxDriver
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function header($args = null, $null1 = null, $null2 = null)
+    public function content(): string
     {
-        return __('Notification', 'tify');
+        $this->set([
+            'option_names' => $this->optionNames,
+            'option_values' => [
+                'notification' => get_option($this->optionNames['notification'], 'off') ?: 'off',
+                'recipients'   => get_option($this->optionNames['recipients']) ?: [],
+            ]
+        ]);
+
+        return (string) $this->viewer('notification', $this->all());
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function content($args = null, $null1 = null, $null2 = null)
+    public function defaults(): array
     {
-        $option_names = $this->optionNames;
-
-        $option_values = [
-            'notification' => get_option($option_names['notification'], 'off') ?: 'off',
-            'recipients'   => get_option($option_names['recipients']) ?: [],
-        ];
-
-        return $this->viewer(
-            'addon/mailer/admin/notification',
-            compact('option_names', 'option_values')
-        );
+        return array_merge(parent::defaults(), [
+            'title' => __('Notification', 'tify')
+        ]);
     }
 
     /**
@@ -36,7 +36,7 @@ class MailerOptionsNotification extends AbstractMailerOptions
      * @param array $recipients Attributs des destinataires
      *
      * @return array
-     */
+
     public function sanitize_recipients($recipients)
     {
         if ($recipients) :
@@ -65,7 +65,7 @@ class MailerOptionsNotification extends AbstractMailerOptions
         endif;
 
         return $recipients;
-    }
+    }    */
 
     /**
      * {@inheritdoc}

@@ -23,6 +23,7 @@ use tiFy\Contracts\Http\Request as RequestContract;
  * @method static boolean isSecure()
  * @method static string method()
  * @method static string|array|null server(string|null $key = null, string|array|null $default = null)
+ * @method static string url()
  */
 class Request extends AbstractProxy
 {

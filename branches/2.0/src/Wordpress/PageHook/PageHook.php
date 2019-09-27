@@ -1,17 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Wordpress\PageHook;
 
-use tiFy\Contracts\Metabox\MetaboxManager;
-use tiFy\Wordpress\Contracts\PageHook as PageHookContract;
-use tiFy\Wordpress\PageHook\Admin\PageHookAdminOptions;
+use Illuminate\Support\Collection;
+use tiFy\Wordpress\Contracts\{PageHook as PageHookContract, PageHookItem as PageHookItemContract};
+use tiFy\Support\Proxy\Metabox;
 use WP_Screen;
 
 class PageHook implements PageHookContract
 {
     /**
      * Liste des éléments déclarés.
-     * @var PageHookItem[]
+     * @var PageHookItemContract[]
      */
     protected $items = [];
 
@@ -24,16 +24,13 @@ class PageHook implements PageHookContract
     {
         $this->set(config('page-hook', []));
 
-        add_action('init', function () {
-            if ($this->items) {
-                /** @var MetaboxManager $metabox */
-                $metabox = app('metabox');
-                $metabox->add('PageHook-optionsNode', 'tify_options@options', [
-                    'title'   => __('Pages d\'accroche', 'tify'),
-                    'content' => PageHookAdminOptions::class
-                ]);
+        add_action('admin_init', function () {
+            if ($this->collect()->firstWhere('admin', '=', true)) {
+                Metabox::add('PageHook-optionsNode', (new PageHookMetabox())->setPageHook($this))
+                    ->setScreen('tify_options@options')
+                    ->setContext('tab');
             }
-        });
+        }, 999999);
 
         add_action('current_screen', function (WP_Screen $wp_screen) {
             if ($wp_screen->id === 'settings_page_tify_options') {
@@ -43,31 +40,40 @@ class PageHook implements PageHookContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function all()
+    public function all(): array
     {
         return $this->items;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function get($name)
+    public function collect(): Collection
+    {
+        return new Collection($this->items);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get($name): ?PageHookItemContract
     {
         return $this->items[$name] ?? null;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function set($name, $attrs = null)
+    public function set($name, $attrs = null): PageHookContract
     {
         $keys = is_array($name) ? $name : [$name => $attrs];
 
         foreach ($keys as $k => $v) {
             $this->items[$k] = new PageHookItem($k, $v);
         }
+
         return $this;
     }
 }

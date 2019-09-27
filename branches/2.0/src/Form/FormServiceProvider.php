@@ -106,11 +106,11 @@ class FormServiceProvider extends ServiceProvider
         });
 
         $this->getContainer()->add('form.addon.mailer.options-confirmation', function (FormFactoryContract $form) {
-            return new AddonMailerOptionsConfirmation($form);
+            return (new AddonMailerOptionsConfirmation())->setForm($form);
         });
 
         $this->getContainer()->add('form.addon.mailer.options-notification', function (FormFactoryContract $form) {
-            return new AddonMailerOptionsNotification($form);
+            return (new AddonMailerOptionsNotification())->setForm($form);
         });
 
         $this->getContainer()->add('form.addon.preview', function ($name, $attrs, FormFactoryContract $form) {
