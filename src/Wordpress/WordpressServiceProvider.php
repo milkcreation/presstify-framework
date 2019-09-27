@@ -12,6 +12,7 @@ use tiFy\Wordpress\Db\Db;
 use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
+use tiFy\Wordpress\Http\Http;
 use tiFy\Wordpress\Mail\Mail;
 use tiFy\Wordpress\Media\Download;
 use tiFy\Wordpress\Media\Media;
@@ -59,6 +60,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.filesystem',
         'wp.field',
         'wp.form',
+        'wp.http',
         'wp.login-redirect',
         'wp.mail',
         'wp.media',
@@ -133,6 +135,8 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('wp.form');
                 }
 
+                $this->getContainer()->get('wp.http');
+
                 if ($this->getContainer()->has('mailer')) {
                     $this->getContainer()->get('wp.mail');
                 }
@@ -197,6 +201,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->registerFilesystem();
         $this->registerField();
         $this->registerForm();
+        $this->registerHttp();
         $this->registerMail();
         $this->registerMedia();
         $this->registerMetabox();
@@ -311,6 +316,18 @@ class WordpressServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('wp.form', function () {
             return new Form($this->getContainer()->get('form'));
+        });
+    }
+
+    /**
+     * Déclaration du controleur des processus HTTP. Requête, Réponse, Session ...
+     *
+     * @return void
+     */
+    public function registerHttp(): void
+    {
+        $this->getContainer()->share('wp.http', function () {
+            return new Http($this->getContainer()->get('request'));
         });
     }
 

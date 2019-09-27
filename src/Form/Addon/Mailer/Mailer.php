@@ -1,12 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form\Addon\Mailer;
 
-use tiFy\Contracts\Form\FactoryField;
-use tiFy\Contracts\Form\FactoryRequest;
-use tiFy\Contracts\Mail\Mailer as MailerContract;
-use tiFy\Contracts\Metabox\MetaboxManager;
+use tiFy\Contracts\{Form\FactoryField, Form\FactoryRequest, Mail\Mailer as MailerContract};
 use tiFy\Form\AddonController;
+use tiFy\Support\Proxy\Metabox;
 
 class Mailer extends AddonController
 {
@@ -55,10 +53,10 @@ class Mailer extends AddonController
     public function boot()
     {
         $this->events()
-             ->listen('request.submit', [$this, 'onRequestSubmit'])
-             ->listen('request.success', [$this, 'onRequestSuccess']);
+            ->listen('request.submit', [$this, 'onRequestSubmit'])
+            ->listen('request.success', [$this, 'onRequestSuccess']);
 
-        $prefix       = $this->get('option_name_prefix', "FormMailer_{$this->form()->name()}");
+        $prefix = $this->get('option_name_prefix', "FormMailer_{$this->form()->name()}");
         $option_names = $this->get('option_names', []);
         foreach (['confirmation', 'sender', 'notification', 'recipients'] as $option) {
             $option_names[$option] = $option_names[$option] ?? "{$prefix}{$option}";
@@ -66,7 +64,7 @@ class Mailer extends AddonController
         $this->set('option_names', $option_names);
 
         if ($this->get('confirmation') && get_option($option_names['confirmation'])) :
-            $from = get_option($option_names['sender']) ? ! '' : ['email' => '', 'name' => ''];
+            $from = get_option($option_names['sender']) ? !'' : ['email' => '', 'name' => ''];
 
             $this->set('confirmation.from', [$from['email'], $from['name']]);
         endif;
@@ -83,38 +81,33 @@ class Mailer extends AddonController
             $this->set('notification.to', $to);
         endif;
 
-        /** @var MetaboxManager $metabox
-        if ($this->get('admin.confirmation') || $this->get('admin.notification')) :
-            $metabox = app('metabox');
-
-            $metabox->add("FormAddonMailer-{$this->form()->name()}", 'tify_options@options', [
+        if ($this->get('admin.confirmation') || $this->get('admin.notification')) {
+            Metabox::add("FormAddonMailer-{$this->form()->name()}", [
                 'title' => $this->form()->getTitle(),
-            ]);
+            ])
+                ->setScreen('tify_options@options')
+                ->setContext('tab');
 
-            if ($this->get('admin.confirmation')) :
-                $metabox->add(
-                    "FormAddonMailerConfirmation-{$this->form()->name()}",
-                    'tify_options@options',
-                    [
-                        'parent'   => "FormAddonMailer-{$this->form()->name()}",
-                        'content'  => $this->resolve('addon.mailer.options-confirmation', [$this->form()]),
-                        'position' => 1,
-                    ]
-                );
-            endif;
+            if ($this->get('admin.confirmation')) {
+                Metabox::add("FormAddonMailerConfirmation-{$this->form()->name()}", [
+                    'driver'   => $this->resolve('addon.mailer.options-confirmation', [$this->form()]),
+                    'parent'   => "FormAddonMailer-{$this->form()->name()}",
+                    'position' => 1,
+                ])
+                    ->setScreen('tify_options@options')
+                    ->setContext('tab');
+            }
 
-            if ($this->get('admin.notification')) :
-                $metabox->add(
-                    "FormAddonMailerNotification-{$this->form()->name()}",
-                    'tify_options@options',
-                    [
-                        'parent'   => "FormAddonMailer-{$this->form()->name()}",
-                        'content'  => $this->resolve('addon.mailer.options-notification', [$this->form()]),
-                        'position' => 2,
-                    ]
-                );
-            endif;
-        endif;*/
+            if ($this->get('admin.notification')) {
+                Metabox::add("FormAddonMailerNotification-{$this->form()->name()}", [
+                    'driver'   => $this->resolve('addon.mailer.options-notification', [$this->form()]),
+                    'parent'   => "FormAddonMailer-{$this->form()->name()}",
+                    'position' => 2,
+                ])
+                    ->setScreen('tify_options@options')
+                    ->setContext('tab');
+            }
+        }
     }
 
     /**
@@ -235,10 +228,10 @@ class Mailer extends AddonController
         endif;
 
         $params['subject'] = $params['subject']
-                             ?? sprintf(__('%1$s - Demande de contact', 'tify'), get_bloginfo('name'));
+            ?? sprintf(__('%1$s - Demande de contact', 'tify'), get_bloginfo('name'));
 
         $params['to'] = $params['to']
-                        ?? get_option('admin_email');
+            ?? get_option('admin_email');
 
         $params = array_map([$this, 'fieldTagValue'], $params);
 
@@ -247,19 +240,19 @@ class Mailer extends AddonController
         });
 
         $fields->each(function (FactoryField $item) {
-            $mailer_label         = $item->getAddonOption('mailer', 'label');
+            $mailer_label = $item->getAddonOption('mailer', 'label');
             $item['mailer_label'] = $mailer_label instanceof \Closure
                 ? call_user_func($mailer_label, $item)
                 : $mailer_label;
 
-            $mailer_value         = $item->getAddonOption('mailer', 'value');
+            $mailer_value = $item->getAddonOption('mailer', 'value');
             $item['mailer_value'] = $mailer_value instanceof \Closure
                 ? call_user_func($mailer_value, $item)
                 : $mailer_value;
         });
 
         $params['body'] = $params['body']
-                          ?? (string)$this->viewer('addon/mailer/body', array_merge($params, compact('fields')));
+            ?? (string)$this->viewer('addon/mailer/body', array_merge($params, compact('fields')));
 
         return $params;
     }

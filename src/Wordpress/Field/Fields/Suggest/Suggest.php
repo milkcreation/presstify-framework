@@ -2,6 +2,7 @@
 
 namespace tiFy\Wordpress\Field\Fields\Suggest;
 
+use Illuminate\Support\Collection;
 use tiFy\Field\Fields\Suggest\Suggest as BaseSuggest;
 use tiFy\Support\Proxy\Request as req;
 use tiFy\Wordpress\{
@@ -48,7 +49,7 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $posts = QueryPosts::createFromArgs($args) ?: [];
 
-        $items = collect($posts)->map(function (QueryPost &$item) {
+        $items = (new Collection($posts))->map(function (QueryPost &$item) {
             return [
                 'alt'   => (string)$item->getId(),
                 'label' => (string)$item->getTitle(),
@@ -73,7 +74,7 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $terms = QueryTerms::createFromArgs($args) ?: [];
 
-        $items = collect($terms)->map(function (QueryTerm &$item) {
+        $items = (new Collection($terms))->map(function (QueryTerm &$item) {
             return [
                 'alt'   => (string)$item->getId(),
                 'label' => (string)$item->getName(),
@@ -98,7 +99,7 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $terms = QueryUsers::createFromArgs($args) ?: [];
 
-        $items = collect($terms)->map(function (QueryUser &$item) {
+        $items = (new Collection($terms))->map(function (QueryUser &$item) {
             return [
                 'alt'   => (string)$item->getId(),
                 'label' => (string)$item->getDisplayName(),

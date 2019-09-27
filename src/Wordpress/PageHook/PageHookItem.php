@@ -136,6 +136,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
     public function defaults(): array
     {
         return [
+            'admin'               => true,
             'id'                  => 0,
             'desc'                => '',
             'display_post_states' => true,
