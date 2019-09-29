@@ -49,7 +49,7 @@ class ImageGallery extends MetaboxDriver
     public function defaults(): array
     {
         return [
-            'name'  => '_image_gallery',
+            'name'  => 'image_gallery',
             'max'   => -1,
             'title' => __('Galerie d\'images', 'tify'),
         ];

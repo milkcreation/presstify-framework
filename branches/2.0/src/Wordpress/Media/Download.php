@@ -70,7 +70,7 @@ class Download implements DownloadContract
      */
     public function register($file)
     {
-        if (preg_match('#^' . preg_quote(ABSPATH, DIRECTORY_SEPARATOR) . '#', $file)) :
+        if (preg_match('/^' . preg_quote(ABSPATH, DIRECTORY_SEPARATOR) . '/', $file)) :
             $abspath = $file;
         else :
             if (is_numeric($file)) :

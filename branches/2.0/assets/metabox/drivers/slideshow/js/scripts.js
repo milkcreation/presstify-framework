@@ -1,5 +1,5 @@
 /* global tify, tinymce, MetaboxOptionsSlideshowAdmin */
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
 

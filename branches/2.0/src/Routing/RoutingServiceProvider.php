@@ -32,9 +32,9 @@ class RoutingServiceProvider extends ServiceProvider
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function register()
+    public function register(): void
     {
         $this->registerEmitter();
         $this->registerMiddleware();
@@ -49,7 +49,7 @@ class RoutingServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerEmitter()
+    public function registerEmitter(): void
     {
         $this->getContainer()->share('router.emitter', function () {
             return new SapiEmitter();
@@ -61,7 +61,7 @@ class RoutingServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerMiddleware()
+    public function registerMiddleware(): void
     {
         $this->getContainer()->add('router.middleware.xhr', function () {
             return new Xhr();
@@ -73,7 +73,7 @@ class RoutingServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerRedirect()
+    public function registerRedirect(): void
     {
         $this->getContainer()->add('redirect', function () {
             return new Redirector($this->getContainer()->get('router'));
@@ -85,7 +85,7 @@ class RoutingServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerRouter()
+    public function registerRouter(): void
     {
         $this->getContainer()->share('router', function () {
             return (new Router())->setContainer($this->getContainer());
@@ -109,7 +109,7 @@ class RoutingServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerStrategies()
+    public function registerStrategies(): void
     {
         $this->getContainer()->add('router.strategy.default', function () {
             return new App();
@@ -129,7 +129,7 @@ class RoutingServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerUrl()
+    public function registerUrl(): void
     {
         $this->getContainer()->share('url', function () {
             return new Url($this->getContainer()->get('router'), request());

@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
-import 'presstify-framework/observer/index';
+import 'presstify-framework/observer/js/scripts';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/button';

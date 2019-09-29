@@ -107,11 +107,11 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     {
         $this->args = $args;
 
-        foreach($this->handlers as $handler) {
+        foreach ($this->handlers as $handler) {
             $handler($this, ...$this->args);
         }
 
-        $value = $this->get('value');
+        $value       = $this->get('value');
         $this->value = ($value instanceof Closure) ? $value($this, ...$this->args) : $value;
 
         return $this;
@@ -144,6 +144,7 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
             foreach ($key as $k => $v) {
                 $this->set("params.{$k}", $v);
             }
+
             return $this;
         } else {
             return $this->get("params.{$key}", $default);
@@ -157,7 +158,7 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     {
         parent::parse();
 
-        $this->params($this->get('params', []));
+        $this->params(array_merge($this->defaultParams(), $this->get('params', [])));
 
         return $this;
     }
@@ -238,9 +239,9 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
      */
     public function viewer(?string $view = null, array $data = [])
     {
-        if (!$this->viewer) {
-            $dir = $this->get('viewer.directory');
-            $defaultDir = file_exists($dir) ? $dir : $this->manager()->resourcesDir('/views/drivers/');
+        if ( ! $this->viewer) {
+            $dir         = $this->get('viewer.directory');
+            $defaultDir  = file_exists($dir) ? $dir : $this->manager()->resourcesDir('/views/drivers/');
             $fallbackDir = $this->get('viewer.override_dir') ?: $defaultDir;
 
             $this->viewer = view()

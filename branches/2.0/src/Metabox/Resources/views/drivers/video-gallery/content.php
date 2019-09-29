@@ -1,9 +1,8 @@
 <?php
 /**
- * @var tiFy\PostType\Metabox\VideoGallery\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
-
 <div class="tiFyTabMetaboxPostTypeVideoGallery">
     <ul class="tiFyTabMetaboxPostTypeVideoGallery-items">
         <?php foreach ($this->get('items', []) as $id => $attrs) : ?>

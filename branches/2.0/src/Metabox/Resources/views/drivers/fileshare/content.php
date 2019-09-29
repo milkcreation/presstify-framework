@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\View\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
 <div <?php echo $this->htmlAttrs($this->get('attrs', [])); ?> data-control="metabox-fileshare">

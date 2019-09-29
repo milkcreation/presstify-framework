@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress;
 
 use tiFy\Container\ServiceProvider;
+use tiFy\Support\Locale;
 use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
@@ -97,6 +98,10 @@ class WordpressServiceProvider extends ServiceProvider
             $wp = $this->getContainer()->get('wp');
 
             if ($wp->is()) {
+                require_once(ABSPATH . 'wp-admin/includes/translation-install.php');
+                Locale::set(get_locale());
+                Locale::setLanguages(wp_get_available_translations() ?: []);
+
                 if ($this->getContainer()->has('router')) {
                     $this->getContainer()->get('wp.routing');
                 }

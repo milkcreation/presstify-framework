@@ -1,9 +1,8 @@
 <?php
 /**
- * @var tiFy\Contracts\View\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
-
 <div class="MetaboxOptions-slideshowListItemHelpers">
     <div class="MetaboxOptions-slideshowListItemHelper MetaboxOptions-slideshowListItemHelper--order">
         <?php

@@ -9,10 +9,22 @@ class Order extends MetaboxDriver
     /**
      * @inheritDoc
      */
+    public function defaultParams(): array
+    {
+        return [
+            'attrs' => [
+                'min' => -1
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
-            'name'  => '_order',
+            'name'  => 'order',
             'title' => __('Ordre d\'affichage', 'tify')
         ]);
     }

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 import Dropzone from 'dropzone/dist/min/dropzone.min';
 import jQuery from 'jquery';

@@ -1,9 +1,8 @@
 <?php
 /**
- * @var tiFy\Contracts\View\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
-
 <div <?php echo $this->htmlAttrs($this->get('attrs', [])); ?>>
     <div class="MetaboxOptions-slideshowSelectors">
         <?php

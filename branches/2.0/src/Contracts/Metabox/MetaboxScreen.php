@@ -7,6 +7,13 @@ use tiFy\Contracts\Support\ParamsBag;
 interface MetaboxScreen extends ParamsBag
 {
     /**
+     * Récupération de la liste des boîtes de saisie associées à l'écran.
+     *
+     * @return MetaboxDriver[]|array
+     */
+    public function getMetaboxes(): array;
+
+    /**
      * Vérifie si la page courante correspond à l'écran.
      *
      * @return boolean
