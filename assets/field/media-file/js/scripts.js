@@ -1,5 +1,5 @@
 /* global wp */
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
 

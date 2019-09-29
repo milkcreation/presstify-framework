@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
 import 'jquery-ui/ui/widget';

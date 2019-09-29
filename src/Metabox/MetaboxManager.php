@@ -118,15 +118,15 @@ class MetaboxManager implements MetaboxManagerContract
     public function fetchRender(MetaboxContext $context, ?MetaboxScreen $screen = null): array
     {
         if (is_null($screen)) {
-            $screens = (new Collection($this->screens))->filter(function (MetaboxScreen $item) {
-                return $item->isCurrent();
+            $screens = (new Collection($this->screens))->filter(function (MetaboxScreen $screen) {
+                return $screen->isCurrent();
             })->all();
         } else {
             $screens = [$screen];
         }
 
-        return (new Collection($this->metaboxes))->filter(function (MetaboxDriver $item) use ($context, $screens) {
-            return ($item->context() === $context) && in_array($item->screen(), array_values($screens));
+        return (new Collection($this->metaboxes))->filter(function (MetaboxDriver $box) use ($context, $screens) {
+            return ($box->context() === $context) && in_array($box->screen(), array_values($screens));
         })->all();
     }
 

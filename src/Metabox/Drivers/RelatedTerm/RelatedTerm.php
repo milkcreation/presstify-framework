@@ -70,9 +70,19 @@ class RelatedTerm extends MetaboxDriver
         endif;
 
         $this->set('items', $items);
-        $this->set('value', get_post_meta($post->ID, $this->get('name'), true));
 
-        return (string) $this->viewer('content', $this->all());
+        return parent::content();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defaultParams(): array
+    {
+        return [
+            'multiple' => true,
+            'taxonomy' => 'category'
+        ];
     }
 
     /**
@@ -80,37 +90,9 @@ class RelatedTerm extends MetaboxDriver
      */
     public function defaults(): array
     {
-        return [
-            'multiple' => true,
-            'name'     => '_related_tax',
-            'taxonomy' => 'category',
+        return array_merge(parent::defaults(), [
+            'name'     => 'related_term',
             'title' => __('Catégories associées', 'tify')
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function load($current_screen)
-    {
-        add_action(
-            'admin_enqueue_scripts',
-            function () {
-                \wp_enqueue_style(
-                    'MetaboxesPostTypeTaxonomySelector',
-                    asset()->url('post-type/metabox/taxonomy-selector/css/styles.css')
-                );
-            }
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function metadatas()
-    {
-        return [
-            $this->get('name') => true
-        ];
+        ]);
     }
 }

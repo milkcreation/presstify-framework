@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form;
 
@@ -71,9 +71,9 @@ class FormServiceProvider extends ServiceProvider
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function register()
+    public function register(): void
     {
         $this->registerManager();
         $this->registerAddon();
@@ -87,7 +87,7 @@ class FormServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerAddon()
+    public function registerAddon(): void
     {
         $this->getContainer()->add('form.addon', function ($name, $attrs, FormFactoryContract $form) {
             return new AddonController($name, $attrs, $form);
@@ -131,7 +131,7 @@ class FormServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerButton()
+    public function registerButton(): void
     {
         $this->getContainer()->add('form.button', function ($name, $attrs, FormFactoryContract $form) {
                 return new ButtonController($name, $attrs, $form);
@@ -147,7 +147,7 @@ class FormServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerFactory()
+    public function registerFactory(): void
     {
         $this->getContainer()->add('form.factory', function () {
             return new FormFactory();
@@ -220,7 +220,7 @@ class FormServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerField()
+    public function registerField(): void
     {
         $this->getContainer()->add('form.field', function ($name, FactoryFieldContract $field) {
             return new FieldController($name, $field);
@@ -248,7 +248,7 @@ class FormServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerManager()
+    public function registerManager(): void
     {
         $this->getContainer()->share('form', function () {
             return new FormManager($this->getContainer());

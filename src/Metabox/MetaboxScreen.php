@@ -2,7 +2,8 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\{MetaboxManager, MetaboxScreen as MetaboxScreenContract};
+use Illuminate\Support\Collection;
+use tiFy\Contracts\Metabox\{MetaboxDriver, MetaboxManager, MetaboxScreen as MetaboxScreenContract};
 use tiFy\Support\{ParamsBag, Proxy\Request, Proxy\Router};
 
 class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
@@ -57,6 +58,16 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
     public function isCurrentRequest(): bool
     {
         return ltrim(rtrim(Request::getPathInfo(), '/'), '/') === ltrim(rtrim($this->name, '/'), '/');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMetaboxes(): array
+    {
+        return (new Collection($this->manager()->all()))->filter(function (MetaboxDriver $box) {
+            return $box->screen() === $this;
+        })->all();
     }
 
     /**

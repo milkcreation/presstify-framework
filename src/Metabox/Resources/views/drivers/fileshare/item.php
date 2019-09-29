@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\View\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
 <span class="MetaboxFileshare-itemIcon">
@@ -15,15 +15,10 @@
     <?php echo $this->get('mime'); ?>
 </span>
 
-<?php
-echo field(
-    'hidden',
-    [
-        'name'  => $this->get('name'),
-        'value' => $this->get('value'),
-        'attrs' => [
-            'class' => 'MetaboxFileshare-itemInput'
-        ]
+<?php echo field('hidden', [
+    'name'  => $this->get('name'),
+    'value' => $this->get('value'),
+    'attrs' => [
+        'class' => 'MetaboxFileshare-itemInput'
     ]
-);
-?>
+]);

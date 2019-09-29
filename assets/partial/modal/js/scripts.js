@@ -1,5 +1,5 @@
 /* global tify */
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
 import 'bootstrap/js/dist/modal';

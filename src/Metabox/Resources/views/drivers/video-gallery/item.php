@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\PostType\Metabox\VideoGallery\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
 <li class="tiFyTabMetaboxPostTypeVideoGallery-item">

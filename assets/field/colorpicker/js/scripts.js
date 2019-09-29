@@ -1,7 +1,15 @@
-"use strict";
+/* global tify */
+'use strict';
 
 import jQuery from 'jquery';
-import 'spectrum/lib/spectrum';
+import 'spectrum-colorpicker/spectrum';
+if (tify.locale.iso[1] !== undefined) {
+    try {
+        require('spectrum-colorpicker/i18n/jquery.spectrum-'+ tify.locale.iso[1]);
+    } catch (e) {
+        console.log('Unavailable spectrum language ' + tify.locale.iso[1]);
+    }
+}
 
 jQuery(function ($) {
     $(document).on('tify_field.colorpicker.init', function (event, obj) {

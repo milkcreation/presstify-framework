@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
-import 'presstify-framework/observer/index';
+import 'presstify-framework/observer/js/scripts';
 
 jQuery(function ($) {
   $(document).on('click', '[data-control="notice"] [data-toggle="notice.dismiss"]', function (e) {

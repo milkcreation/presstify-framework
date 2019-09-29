@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\View\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
 <a href="#" data-control="metabox-fileshare.trigger">

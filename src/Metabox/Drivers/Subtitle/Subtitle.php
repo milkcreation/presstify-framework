@@ -3,55 +3,44 @@
 namespace tiFy\Metabox\Drivers\Subtitle;
 
 use tiFy\Metabox\MetaboxDriver;
+use tiFy\Support\Proxy\Field;
 
 class Subtitle extends MetaboxDriver
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function content($post = null, $args = null, $null = null)
+    public function content(): string
     {
-        return field('text', [
-                'attrs' => [
-                    'class' => 'widefat'
-                ],
-                'name'  => $this->get('name'),
-                'value' => wp_unslash(get_post_meta($post->ID, $this->get('name'), true))
-            ]);
+        return (string)Field::get('text', array_merge($this->params(), [
+            'name'  => $this->name(),
+            'value' => $this->value()
+        ]));
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function defaults()
+    public function defaultParams(): array
     {
         return [
-            'name'    => '_subtitle',
             'attrs'   => [
                 'class'       => 'widefat',
                 'placeholder' => __('Sous-titre', 'tify'),
                 'style'       => 'margin-top:10px;margin-bottom:20px;background-color:#fff;font-size:1.4em;' .
-                    ' height:1.7em;line-height:100%;margin:10 0 15px;outline:0 none;padding:3px 8px;' .
-                    ' width:100%;'
-            ],
+                    'height:1.7em;line-height:100%;margin:10 0 15px;outline:0 none;padding:3px 8px;width:100%;'
+            ]
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function header($post = null, $args = null, $null = null)
+    public function defaults(): array
     {
-        return $this->item->getTitle() ? : __('Sous-titre', 'tify');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function metadatas()
-    {
-        return [
-            $this->get('name') => true
-        ];
+        return array_merge(parent::defaults(), [
+            'name'    => 'subtitle',
+            'title'   => __('Sous-titre', 'tify')
+        ]);
     }
 }

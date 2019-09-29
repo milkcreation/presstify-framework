@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Field\FieldView $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
 <li data-control="metabox-fileshare.item">

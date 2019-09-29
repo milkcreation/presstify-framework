@@ -1,5 +1,5 @@
 /* global tify, tify_taboox_image_gallery, wp */
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
 

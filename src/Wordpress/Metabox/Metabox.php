@@ -4,6 +4,7 @@ namespace tiFy\Wordpress\Metabox;
 
 use tiFy\Contracts\Metabox\{MetaboxDriver, MetaboxManager, MetaboxScreen as MetaboxScreenContract};
 use tiFy\Wordpress\Routing\WpScreen;
+use tiFy\Support\Proxy\Request;
 use WP_Post;
 use WP_Screen;
 use WP_Term;
@@ -18,9 +19,62 @@ class Metabox
     protected $manager;
 
     /**
+     * Liste des indices de qualification de données de post.
+     * @var array
+     */
+    protected $postKeys = [
+        'ID',
+        'post_author',
+        'post_date',
+        'post_date_gmt',
+        'post_content',
+        'post_title',
+        'post_excerpt',
+        'post_status',
+        'comment_status',
+        'ping_status',
+        'post_password',
+        'post_name',
+        'to_ping',
+        'pinged',
+        'post_modified',
+        'post_modified_gmt',
+        'post_content_filtered',
+        'post_parent',
+        'guid',
+        'menu_order',
+        'post_type',
+        'post_mime_type',
+        'comment_count',
+    ];
+
+    /**
+     * Liste des indices de qualification de données de terme de taxonomie.
+     * @var array
+     */
+    protected $termKeys = [
+        'description',
+        'name',
+        'parent',
+        'term_id',
+        'slug',
+    ];
+
+    /**
+     * Liste des indices de qualification de données utilisateur.
+     * @var array
+     */
+    protected $userKeys = [
+        'ID',
+        'login',
+        'first_name',
+        'last_name',
+    ];
+
+    /**
      * CONSTRUCTEUR.
      *
-     * @param MetaboxManager $manager Instance du gestionnaire de metaboxes.
+     * @param MetaboxManager $manager Instance du gestionnaire de boîtes de saisie.
      *
      * @return void
      */
@@ -31,65 +85,147 @@ class Metabox
         $this->registerOverride();
 
         add_action('current_screen', function (WP_Screen $wp_screen) {
-            $metaboxes = $this->manager->all();
             $screen = new WpScreen($wp_screen);
-            $tabRdr = function (...$args) {
-                echo $this->manager->render('tab', $args);
-            };
 
-            switch ($screen->getObjectType()) {
-                case 'post_type' :
-                    add_action($screen->getObjectName() === 'page' ? 'edit_page_form' : 'edit_form_advanced', $tabRdr);
+            if ($screen->getObjectType() === 'post_type') {
+                $post_type = $screen->getObjectName();
+                $boxes     = [];
 
-                    array_walk($metaboxes, function (MetaboxDriver $box) {
-                        $box->setHandler(function (MetaboxDriver $box, WP_Post $post) {
-                            if (is_null($box['value'])) {
-                                $box['value'] = get_post_meta($post->ID, $box->name(), true);
-                            }
+                if ($metaboxScreen = $this->manager->getScreen("{$post_type}@post_type")) {
+                    $boxes = $metaboxScreen->getMetaboxes();
+                }
+
+                array_walk($boxes, function (MetaboxDriver $box) use ($post_type) {
+                    if (($name = $box->name()) && ! in_array($name, $this->postKeys)) {
+                        post_type()->post_meta()->register($post_type, $name, true);
+                    }
+                });
+            } elseif (($screen->getHookname() === 'options')) {
+                $option_page = Request::input('option_page', '');
+                $boxes       = [];
+
+                if ($metaboxScreen = $this->manager->getScreen("{$option_page}@options")) {
+                    $boxes = $metaboxScreen->getMetaboxes();
+                }
+
+                array_walk($boxes, function (MetaboxDriver $box) use ($option_page) {
+                    if ($name = $box->name()) {
+                        register_setting($option_page, $name);
+                    }
+                });
+            } elseif ($screen->getObjectType() === 'taxonomy') {
+                $taxonomy = $screen->getObjectName();
+                $boxes    = [];
+
+                if ($metaboxScreen = $this->manager->getScreen("{$taxonomy}@taxonomy")) {
+                    $boxes = $metaboxScreen->getMetaboxes();
+                }
+
+                array_walk($boxes, function (MetaboxDriver $box) use ($taxonomy) {
+                    if (($name = $box->name()) && ! in_array($name, $this->termKeys)) {
+                        taxonomy()->term_meta()->register($taxonomy, $name, true);
+                    }
+                });
+            } elseif ($screen->getObjectType() === 'user') {
+                $roles = $screen->getObjectName();
+                $boxes = [];
+
+                /** @todo */
+                if ($metaboxScreen = $this->manager->getScreen("{$roles}@user")) {
+                    $boxes = $metaboxScreen->getMetaboxes();
+                }
+
+                array_walk($boxes, function (MetaboxDriver $box) use ($roles) {
+                    if (($name = $box->name()) && ! in_array($name, $this->userKeys)) {
+                        //user()->user_meta()->register($roles, $name, true);
+                    }
+                });
+            }
+
+            if ($screen->getObjectType()) {
+                $boxes  = $this->manager->all();
+                $tabRdr = function (...$args) {
+                    echo $this->manager->render('tab', $args);
+                };
+
+                switch ($screen->getObjectType()) {
+                    case 'post_type' :
+                        /** 'edit_form_top',
+                         * 'edit_form_before_permalink',
+                         * 'edit_form_after_title',
+                         * 'edit_form_after_editor',
+                         * 'submitpage_box',
+                         * 'submitpost_box',
+                         * 'edit_page_form',
+                         * 'edit_form_advanced',
+                         * 'dbx_post_sidebar' */
+                        add_action($screen->getObjectName() === 'page' ? 'edit_page_form' : 'edit_form_advanced',
+                            $tabRdr);
+
+                        array_walk($boxes, function (MetaboxDriver $box) {
+                            $box->setHandler(function (MetaboxDriver $box, WP_Post $post) {
+                                if (is_null($box['value'])) {
+                                    if ($name = $box->name()) {
+                                        if (in_array($name, $this->postKeys)) {
+                                            $box['value'] = $post->{$name};
+                                        } else {
+                                            $box['value'] = get_post_meta($post->ID, $box->name(), true);
+                                        }
+                                    }
+                                }
+                            });
                         });
-                    });
-                    break;
-                case 'options' :
-                    add_settings_section('navtab', null, $tabRdr, $screen->getObjectName());
+                        break;
+                    case 'options' :
+                        add_settings_section('navtab', null, $tabRdr, $screen->getObjectName());
 
-                    array_walk($metaboxes, function (MetaboxDriver $box) {
-                        $box->setHandler(function (MetaboxDriver $box) {
-                            if (is_null($box['value'])) {
-                                $box['value'] = get_option($box->name());
-                            }
+                        array_walk($boxes, function (MetaboxDriver $box) {
+                            $box->setHandler(function (MetaboxDriver $box) {
+                                if (is_null($box['value']) && ($name = $box->name())) {
+                                    $box['value'] = get_option($name);
+                                }
+                            });
                         });
-                    });
-                    break;
-                case 'taxonomy' :
-                    add_action($screen->getObjectName() . '_edit_form', $tabRdr, 10, 2);
+                        break;
+                    case 'taxonomy' :
+                        add_action($screen->getObjectName() . '_edit_form', $tabRdr, 10, 2);
 
-                    array_walk($metaboxes, function (MetaboxDriver $box) {
-                        $box->setHandler(function (MetaboxDriver $box, WP_Term $term, $taxonomy) {
-                            if (is_null($box['value'])) {
-                                $box['value'] = get_term_meta($term->term_id, $box->name(), true);
-                            }
+                        array_walk($boxes, function (MetaboxDriver $box) {
+                            $box->setHandler(function (MetaboxDriver $box, WP_Term $term) {
+                                if ($name = $box->name()) {
+                                    if (in_array($name, $this->termKeys)) {
+                                        $box['value'] = $term->{$name};
+                                    } else {
+                                        $box['value'] = get_term_meta($term->term_id, $box->name(), true);
+                                    }
+                                }
+                            });
                         });
-                    });
-                    break;
-                case 'user' :
-                    add_action('show_user_profile', $tabRdr);
-                    add_action('edit_user_profile', $tabRdr);
+                        break;
+                    case 'user' :
+                        add_action('show_user_profile', $tabRdr);
+                        add_action('edit_user_profile', $tabRdr);
 
-                    array_walk($metaboxes, function (MetaboxDriver $box) {
-                        $box->setHandler(function (MetaboxDriver $box, WP_User $user) {
-                            if (is_null($box['value'])) {
-                                $box['value'] = get_user_meta($user->ID, $box->name(), true);
-                            }
+                        array_walk($boxes, function (MetaboxDriver $box) {
+                            $box->setHandler(function (MetaboxDriver $box, WP_User $user) {
+                                if ($name = $box->name()) {
+                                    if (in_array($name, $this->userKeys)) {
+                                        $box['value'] = $user->{$name};
+                                    } else {
+                                        $box['value'] = get_user_meta($user->ID, $box->name(), true);
+                                    }
+                                }
+                            });
                         });
-                    });
-                    break;
+                        break;
+                }
             }
         });
 
         /*
         add_action('add_meta_boxes', function () {
             foreach ($this->removes as $screen => $items) {
-                if (preg_match('#(.*)@(post_type|taxonomy|user)#', $screen)) {
+                if (preg_match('/(.*)@(post_type|taxonomy|user)/', $screen)) {
                     $screen = 'edit::' . $screen;
                 }
                 $WpScreen = WpScreen::get($screen);

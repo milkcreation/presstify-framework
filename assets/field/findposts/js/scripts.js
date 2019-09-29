@@ -1,5 +1,5 @@
 /* globals tify, attachMediaBoxL10n */
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
 

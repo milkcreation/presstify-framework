@@ -1,9 +1,8 @@
 <?php
 /**
- * @var tiFy\Contracts\View\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
-
 <div class="MetaboxOptions-slideshowListItemInput MetaboxOptions-slideshowListItemInput--title">
     <h3><?php _e('Lien', 'tify'); ?></h3>
 

@@ -95,7 +95,7 @@ class Url implements UrlContract
         if (is_null($this->rewriteBase)) {
             $this->rewriteBase = $this->request->server->has('CONTEXT_PREFIX')
                 ? $this->request->server->get('CONTEXT_PREFIX')
-                : preg_replace('#^' . preg_quote($this->request->getSchemeAndHttpHost()) . '#', '', $this->root());
+                : preg_replace('/^' . preg_quote($this->request->getSchemeAndHttpHost()) . '/', '', $this->root());
         }
 
         return $this->rewriteBase;

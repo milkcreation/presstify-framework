@@ -46,12 +46,19 @@ interface MetaboxDriver extends ParamsBag
     public function manager(): ?MetaboxManager;
 
     /**
+     * Récupération du nom de qualification dans la requête d'enregistrement des données.
+     *
+     * @return string
+     */
+    public function name(): string;
+
+    /**
      * Récupération de l'instance des paramètres|récupération d'un paramètre|Définition de paramètres.
      *
      * @param string|array|null $key Clé d'indice du paramètres. Syntaxe à point permise.
      * @param mixed $default Valeur de retour par défaut.
      *
-     * @return ParamsBag|mixed
+     * @return mixed
      */
     public function params($key = null, $default = null);
 
@@ -95,6 +102,16 @@ interface MetaboxDriver extends ParamsBag
      * @return string
      */
     public function title(): string;
+
+    /**
+     * Récupération de la valeur courante.
+     *
+     * @param string|null $key Indice de qualification de la valeur. Syntaxe à point permise.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function value(?string $key = null, $default = null);
 
     /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.

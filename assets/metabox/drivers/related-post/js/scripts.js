@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
@@ -110,9 +110,9 @@ jQuery(function ($) {
             e.preventDefault();
 
             if ($item.attr('aria-metas') === 'true') {
-              $item.attr('aria-metas', 'false')
+              $item.attr('aria-metas', 'false');
             } else {
-              $item.attr('aria-metas', 'true')
+              $item.attr('aria-metas', 'true');
             }
           });
     },

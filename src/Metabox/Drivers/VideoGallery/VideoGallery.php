@@ -44,7 +44,7 @@ class VideoGallery extends MetaboxDriver
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
-            'name' => '_tify_taboox_video_gallery',
+            'name' => 'video_gallery',
             'max'  => -1,
             'title' => __('Galerie de vidéos', 'tify')
         ]);

@@ -1,9 +1,8 @@
 <?php
 /**
- * @var tiFy\Contracts\View\ViewController $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
-
 <div class="MetaboxOptions-slideshowListItemInput MetaboxOptions-slideshowListItemInput--caption">
     <h3><?php _e('Légende', 'tify'); ?></h3>
 
