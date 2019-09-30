@@ -115,7 +115,7 @@ class TabItems extends Collection implements TabItemsContract
             $pad = 0;
 
             $this->grouped[$group] = $tabs->each(function (TabItemContract $tab) use (&$pad, $max) {
-                $tab['position'] = $tab['position'] ?: ++$pad + $max;
+                $tab['position'] = is_numeric($tab['position']) ? $tab['position'] : ++$pad + $max;
             })->sortBy('position')->values();
         }
 

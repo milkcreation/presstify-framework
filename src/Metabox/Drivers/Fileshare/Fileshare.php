@@ -4,25 +4,45 @@ namespace tiFy\Metabox\Drivers\Fileshare;
 
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
 use tiFy\Metabox\MetaboxDriver;
-use tiFy\Support\ParamsBag;
-use tiFy\Wordpress\Proxy\Field;
+use tiFy\Support\Proxy\{Request, Router};
 
 class Fileshare extends MetaboxDriver
 {
+    /**
+     * Indice de l'intance courante.
+     * @var integer
+     */
+    static $instance = 0;
+
+    /**
+     * Url de traitement de requêtes XHR.
+     * @var string
+     */
+    protected $url = '';
+
     /**
      * @inheritDoc
      */
     public function boot(): void
     {
-        add_action(
-            'wp_ajax_metabox_fileshare',
-            [$this, 'wp_ajax']
-        );
+        static::$instance++;
+        $this->setUrl();
+    }
 
-        add_action(
-            'wp_ajax_nopriv_metabox_fileshare',
-            [$this, 'wp_ajax']
-        );
+    /**
+     * @inheritDoc
+     */
+    public function content(): string
+    {
+        if ($values = $this->value()) {
+            $items = [];
+            array_walk($values, function ($value, $index) use (&$items) {
+                $items[] = $this->item($value, $index);
+            });
+            $this->set('items', $items);
+        }
+
+        return parent::content();
     }
 
     /**
@@ -50,17 +70,29 @@ class Fileshare extends MetaboxDriver
     }
 
     /**
-     * @inheritDoc
+     * Récupération de l'url de traitement Xhr.
+     *
+     * @return string
      */
-    public function content(): string
+    public function getUrl(): string
     {
-        /*if ($items = get_post_meta($post->ID, $this->get('name'), true) ? : []) {
-            $items = array_wrap($items);
-            array_walk($items, [$this, 'itemWrap']);
-        }
-        $this->set('items', $items);*/
+        return $this->url;
+    }
 
-        return parent::content();
+    /**
+     * Définition de l'url de traitement Xhr.
+     *
+     * @param string|null $url
+     *
+     * @return $this
+     */
+    public function setUrl(?string $url = null): self
+    {
+        $this->url = is_null($url)
+            ? Router::xhr(md5('MetaboxFileshare--' . static::$instance), [$this, 'xhrResponse'])->getUrl()
+            : $url;
+
+        return $this;
     }
 
     /**
@@ -71,56 +103,19 @@ class Fileshare extends MetaboxDriver
      *
      * @return array
      */
-    public function itemWrap(&$value, $index)
+    public function item($value, $index)
     {
         $name = $this->get('name');
         $index = !is_numeric($index) ? $index : uniqid();
 
         return $value = [
-            'name'  => $this->get('single', false) ? "{$name}[]" : "{$name}[{$index}]",
+            'name'  => $this->get('params.max', -1) === 1 ? "{$name}[]" : "{$name}[{$index}]",
             'value' => $value,
             'index' => $index,
-            'icon'  => wp_get_attachment_image($value, [46, 60], true),
+            'icon'  => wp_get_attachment_image($value, [48, 64], true),
             'title' => get_the_title($value),
             'mime'  => get_post_mime_type($value),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load($wp_screen)
-    {
-        add_action('admin_enqueue_scripts', function () {
-            if ($this->get('max', -1) !== 1) :
-                @wp_enqueue_media();
-
-                wp_enqueue_style(
-                    'MetaboxPostTypeFileshare',
-                    asset()->url('post-type/metabox/fileshare/css/styles.css'),
-                    ['tiFyAdmin'],
-                    151216
-                );
-
-                wp_enqueue_script(
-                    'MetaboxPostTypeFileshare',
-                    asset()->url('post-type/metabox/fileshare/js/scripts.js'),
-                    ['jquery', 'jquery-ui-sortable'],
-                    151216,
-                    true
-                );
-            else :
-                Field::get('media-file')->enqueue();
-            endif;
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function metadatas()
-    {
-        return [$this->get('name')];
     }
 
     /**
@@ -130,41 +125,42 @@ class Fileshare extends MetaboxDriver
     {
         parent::parse();
 
-        $this->set('attrs.class', sprintf($this->get('attrs.class', '%s'), 'MetaboxFileshare'));
+        $this->params([
+            'attrs.class'        => sprintf($this->get('attrs.class', '%s'), 'MetaboxFileshare'),
+            'attrs.data-control' => 'metabox-fileshare',
+        ]);
 
         if ($sortable = $this->get('sortable')) {
-            $this->set('sortable', array_merge([
-                'placeholder' => 'MetaboxFileshare-itemPlaceholder',
-                'axis'        => 'y',
-            ], is_array($sortable) ? $sortable : []));
+            $this->params([
+                'sortable' => array_merge([
+                    'placeholder' => 'MetaboxFileshare-itemPlaceholder',
+                    'axis'        => 'y',
+                ], is_array($sortable) ? $sortable : []),
+            ]);
         }
 
-        $this->set('attrs.data-options', [
-            'ajax'      => array_merge(
-                [
-                    'url'    => admin_url('admin-ajax.php', 'relative'),
+        $this->params([
+            'attrs.data-options' => [
+                'ajax'      => array_merge([
                     'data'   => [
-                        'action'  => 'metabox_fileshare',
-                        //'_ajax_nonce' => wp_create_nonce('MetaboxFileshare' . $this->item->getIndex()),
-                        //'_id'         => $this->item->getIndex(),
-                        '_viewer' => $this->get('viewer', []),
-                        'max'     => $this->get('max', -1),
+                        'max'    => $this->params('max', -1),
+                        'name'   => $this->get('name'),
+                        'viewer' => $this->get('viewer', []),
                     ],
                     'method' => 'post',
+                    'url'    => $this->getUrl(),
+                ]),
+                'wp_media'  => [
+                    'title'    => __('Sélectionner les fichiers à associer', 'tify'),
+                    'editing'  => true,
+                    'multiple' => true,
+                    'library'  => [
+                        'type' => $this->params('filetype'),
+                    ],
                 ],
-                $this->get('ajax', [])
-            ),
-            'wp_media'  => [
-                'title'    => __('Sélectionner les fichiers à associer', 'tify'),
-                'editing'  => true,
-                'multiple' => true,
-                'library'  => [
-                    'type' => $this->get('filetype'),
-                ],
+                'removable' => $this->params('removable'),
+                'sortable'  => $this->params('sortable'),
             ],
-            'name'      => $this->get('name'),
-            'removable' => $this->get('removable'),
-            'sortable'  => $this->get('sortable'),
         ]);
 
         return $this;
@@ -173,22 +169,32 @@ class Fileshare extends MetaboxDriver
     /**
      * Récupération des champs via Ajax.
      *
-     * @return void
+     * @return array
      */
-    public function wp_ajax()
+    public function xhrResponse(): array
     {
-        $params = ParamsBag::createFromAttrs(request()->request->all());
+        $index = Request::input('index');
+        $max = Request::input('max', 0);
+        $value = Request::input('value');
 
-        check_ajax_referer('MetaboxFileshare' . $params->get('_id'));
-
-        if (($params->get('max') > 0) && ($params->get('index') >= $params->get('max'))) {
-            wp_send_json_error(__('Nombre maximum de fichiers partagés atteint.', 'tify'));
+        if (($max > 0) && ($index >= $max)) {
+            return [
+                'success' => false,
+                'data'    => __('Nombre maximum de fichiers partagés atteint.', 'tify'),
+            ];
         } else {
-            $this->set('viewer', $params->get('_viewer', []));
+            $this->set([
+                'name'   => Request::input('name', []),
+                'params' => [
+                    'max' => $max,
+                ],
+                'viewer' => Request::input('viewer', []),
+            ]);
 
-            wp_send_json_success(
-                (string)$this->viewer('item-wrap', $this->itemWrap($params->get('value'), $params->get('index')))
-            );
+            return [
+                'success' => true,
+                'data'    => (string)$this->viewer('item-wrap', $this->item($value, $index)),
+            ];
         }
     }
 }
