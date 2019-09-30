@@ -28,8 +28,8 @@ class RelatedPost extends MetaboxDriver
     protected $order = 0;
 
     /**
-     * Url de traitement Xhr.
-     * @var string Url de traitement
+     * Url de traitement de requêtes XHR.
+     * @var string
      */
     protected $url = '';
 

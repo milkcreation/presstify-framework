@@ -17,8 +17,5 @@
 
 <?php echo field('hidden', [
     'name'  => $this->get('name'),
-    'value' => $this->get('value'),
-    'attrs' => [
-        'class' => 'MetaboxFileshare-itemInput'
-    ]
+    'value' => $this->get('value')
 ]);

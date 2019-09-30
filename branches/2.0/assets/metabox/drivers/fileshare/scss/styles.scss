@@ -21,9 +21,19 @@
 }
 
 .MetaboxFileshare-itemIcon {
+    position:relative;
     float: left;
     margin-right: 5px;
-    margin-bottom: 5px;
+    width:80px;
+    height:80px;
+}
+
+.MetaboxFileshare-itemIcon > img {
+    position:absolute;
+    top:50%;
+    left:50%;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
 }
 
 .MetaboxFileshare-itemTitle {
