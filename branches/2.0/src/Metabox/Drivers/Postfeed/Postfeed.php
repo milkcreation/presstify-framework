@@ -16,18 +16,6 @@ class Postfeed extends MetaboxDriver
     static $instance = 0;
 
     /**
-     * Liste des éléments.
-     * @var array
-     */
-    protected $items = [];
-
-    /**
-     * Ordre des éléments.
-     * @var int
-     */
-    protected $order = 0;
-
-    /**
      * Url de traitement de requêtes XHR.
      * @var string
      */
@@ -142,7 +130,7 @@ class Postfeed extends MetaboxDriver
     }
 
     /**
-     * Récupération de l'url de traitement Xhr.
+     * Récupération de l'url de traitement XHR.
      *
      * @return string
      */
@@ -152,7 +140,7 @@ class Postfeed extends MetaboxDriver
     }
 
     /**
-     * Définition de l'url de traitement Xhr.
+     * Définition de l'url de traitement XHR.
      *
      * @param string|null $url
      *
@@ -205,6 +193,5 @@ class Postfeed extends MetaboxDriver
                 'data'    => __('Impossible de récupérer le contenu associé', 'tify'),
             ];
         }
-
     }
 }
