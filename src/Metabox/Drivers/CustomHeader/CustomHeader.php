@@ -3,7 +3,6 @@
 namespace tiFy\Metabox\Drivers\CustomHeader;
 
 use tiFy\Metabox\MetaboxDriver;
-use tiFy\Support\Proxy\Field;
 
 class CustomHeader extends MetaboxDriver
 {

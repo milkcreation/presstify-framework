@@ -19,6 +19,7 @@ use tiFy\Contracts\Partial\{
     Tab as TabContract,
     Table as TableContract
 };
+use tiFy\Wordpress\Contracts\Partial\MediaLibrary as MediaLibraryContract;
 use tiFy\Wordpress\Partial\Partials\{
     Accordion\Accordion,
     Breadcrumb\Breadcrumb,
@@ -27,6 +28,7 @@ use tiFy\Wordpress\Partial\Partials\{
     Dropdown\Dropdown,
     Holder\Holder,
     Modal\Modal,
+    MediaLibrary\MediaLibrary,
     Notice\Notice,
     Pagination\Pagination,
     Sidebar\Sidebar,
@@ -58,6 +60,7 @@ class Partial
         $this->registerOverride();
 
         $this->manager->registerDefaults();
+        $this->manager->set('media-library', app()->get(MediaLibraryContract::class));
     }
 
     /**
@@ -89,6 +92,10 @@ class Partial
 
         app()->add(HolderContract::class, function () {
             return new Holder();
+        });
+
+        app()->add(MediaLibraryContract::class, function () {
+            return new MediaLibrary();
         });
 
         app()->add(ModalContract::class, function () {

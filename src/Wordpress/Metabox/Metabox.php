@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\Metabox;
 
 use tiFy\Contracts\Metabox\{MetaboxDriver, MetaboxManager, MetaboxScreen as MetaboxScreenContract};
+use tiFy\Wordpress\Metabox\Drivers\{Fileshare\Fileshare, Imagefeed\Imagefeed, Videofeed\Videofeed};
 use tiFy\Wordpress\Routing\WpScreen;
 use tiFy\Support\Proxy\Request;
 use WP_Post;
@@ -136,9 +137,9 @@ class Metabox
                 }
 
                 array_walk($boxes, function (MetaboxDriver $box) use ($roles) {
-                    if (($name = $box->name()) && ! in_array($name, $this->userKeys)) {
+                    /*if (($name = $box->name()) && ! in_array($name, $this->userKeys)) {
                         //user()->user_meta()->register($roles, $name, true);
-                    }
+                    }*/
                 });
             }
 
@@ -270,6 +271,18 @@ class Metabox
     {
         app()->add(MetaboxScreenContract::class, function () {
             return (new MetaboxScreen())->setManager($this->manager);
+        });
+
+        app()->add('metabox.driver.fileshare', function () {
+            return new Fileshare();
+        });
+
+        app()->add('metabox.driver.imagefeed', function () {
+            return new Imagefeed();
+        });
+
+        app()->add('metabox.driver.videofeed', function () {
+            return new Videofeed();
         });
     }
 }

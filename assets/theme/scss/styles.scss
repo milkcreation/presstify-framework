@@ -2,7 +2,93 @@
 @import 'functions';
 
 // BOUTONS
-// Bouton > Suppression
+// Commun
+[class*="ThemeButton--"] {
+  cursor:pointer;
+}
+
+// Taille
+.ThemeButton--small {
+  padding: 5px 10px;
+}
+
+.ThemeButton--normal {
+  padding: 10px 15px;
+}
+
+.ThemeButton--large {
+  padding: 15px 20px;
+}
+
+// Bouton > ajout
+.ThemeButton--primary {
+  background-color: #FFF;
+  border-radius: 2px;
+  border: solid 1px #CCC;
+  color: #555;
+  cursor: pointer;
+  box-shadow: 0 1px 0 #CCC;
+}
+
+.ThemeButton--primary:hover {
+  border: solid 1px #AAA;
+  color: #333;
+}
+
+.ThemeButton--primary:disabled {
+  border: solid 1px #E4E4E4;
+  color: #B4B4B4;
+}
+
+// Bouton > ajout
+.ThemeButton--secondary {
+  background-color: #F4F4F4;
+  border-radius: 2px;
+  border: solid 1px #CCC;
+  color: #555;
+  cursor: pointer;
+  box-shadow: 0 1px 0 #CCC;
+}
+
+.ThemeButton--secondary:hover {
+  border: solid 1px #AAA;
+  color: #333;
+}
+
+.ThemeButton--secondary:disabled {
+  border: solid 1px #E4E4E4;
+  color: #B4B4B4;
+}
+
+// Bouton > Fermeture
+.ThemeButton--close {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+}
+
+.ThemeButton--close:hover {
+  opacity: 1;
+}
+
+.ThemeButton--close:before, .ThemeButton--close:after {
+  position: absolute;
+  left: 50%;
+  content: ' ';
+  height: 100%;
+  width: 2px;
+  background-color: #333;
+}
+
+.ThemeButton--close:before {
+  transform: rotate(45deg);
+}
+
+.ThemeButton--close:after {
+  transform: rotate(-45deg);
+}
+
+
 .ThemeButton--remove {
   & {
     position: absolute;

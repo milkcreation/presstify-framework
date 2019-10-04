@@ -4,29 +4,43 @@
 @import '~jquery-ui/themes/base/autocomplete.css';
 @import '~presstify-framework/theme/scss/styles';
 
-input[type="text"][data-control="suggest.input"].ui-autocomplete-loading,
-input[type="email"][data-control="suggest.input"].ui-autocomplete-loading {
+input[type="text"][data-control="suggest"].ui-autocomplete-loading,
+input[type="email"][data-control="suggest"].ui-autocomplete-loading {
   background-image: none;
 }
 
-[data-control="suggest"] [data-control="suggest.spinner"] {
+[aria-loaded="false"] > [data-control="suggest.spinner"] {
   display:none;
 }
 
-[data-control="suggest"][aria-loaded="true"] [data-control="suggest.spinner"] {
+[aria-loaded="true"] > [data-control="suggest.spinner"] {
   display:inherit;
 }
 
-.FieldSuggest {
+[aria-selected="false"] > [data-control="suggest.reset"] {
+  display:none;
+}
+
+[aria-selected="true"] > [data-control="suggest.reset"] {
+  display:inherit;
+}
+
+.FieldSuggest-wrap {
   position:relative;
 }
 
-.FieldSuggest-spinner {
+.FieldSuggest-input {
+  width:100%;
+}
+
+.ThemeSpinner.FieldSuggest-spinner,
+.ThemeButton--close.FieldSuggest-reset {
   position: absolute;
   top:50%;
   right:5px;
-  margin-top:-10px;
-  width:20px; height:20px;
+  margin-top:-8px;
+  width:16px;
+  height:16px;
 }
 
 .FieldSuggest-picker {
