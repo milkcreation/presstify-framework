@@ -13,14 +13,14 @@ use tiFy\Metabox\Drivers\{
     CustomHeader\CustomHeader as CustomHeaderDriver,
     Fileshare\Fileshare as FileshareDriver,
     Icon\Icon as IconDriver,
-    ImageGallery\ImageGallery as ImageGalleryDriver,
+    Imagefeed\Imagefeed as ImagefeedDriver,
     Order\Order as OrderDriver,
-    RelatedPost\RelatedPost as RelatedPostDriver,
+    Postfeed\Postfeed as PostfeedDriver,
     RelatedTerm\RelatedTerm as RelatedTermDriver,
     Slideshow\Slideshow as SlideshowDriver,
     Subtitle\Subtitle as SubtitleDriver,
     TextRemaining\TextRemaining as TextRemainingDriver,
-    VideoGallery\VideoGallery as VideoGalleryDriver
+    Videofeed\Videofeed as VideofeedDriver
 };
 
 class MetaboxServiceProvider extends ServiceProvider
@@ -99,12 +99,12 @@ class MetaboxServiceProvider extends ServiceProvider
             return new OrderDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.image-gallery", function () {
-            return new ImageGalleryDriver();
+        $this->getContainer()->add("metabox.driver.imagefeed", function () {
+            return new ImagefeedDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.related-post", function () {
-            return new RelatedPostDriver();
+        $this->getContainer()->add("metabox.driver.postfeed", function () {
+            return new PostfeedDriver();
         });
 
         $this->getContainer()->add("metabox.driver.related-term", function () {
@@ -123,8 +123,8 @@ class MetaboxServiceProvider extends ServiceProvider
             return new TextRemainingDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.video-gallery", function () {
-            return new VideoGalleryDriver();
+        $this->getContainer()->add("metabox.driver.videofeed", function () {
+            return new VideofeedDriver();
         });
     }
 }

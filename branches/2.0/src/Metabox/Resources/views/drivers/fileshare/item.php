@@ -16,6 +16,9 @@
 </span>
 
 <?php echo field('hidden', [
+    'attrs' => [
+        'data-control' => 'metabox-fileshare.item.input'
+    ],
     'name'  => $this->get('name'),
     'value' => $this->get('value')
 ]);

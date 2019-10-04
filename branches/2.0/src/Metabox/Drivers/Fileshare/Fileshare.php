@@ -37,7 +37,7 @@ class Fileshare extends MetaboxDriver
         if ($values = $this->value()) {
             $items = [];
             array_walk($values, function ($value, $index) use (&$items) {
-                $items[] = $this->item($value, $index);
+                $items[] = $this->item($index, (int)$value);
             });
             $this->set('items', $items);
         }
@@ -98,17 +98,17 @@ class Fileshare extends MetaboxDriver
     /**
      * Définition d'un élément.
      *
-     * @param int $value Identifiant de qualification du média.
      * @param int|string $index Indice de l'élément.
+     * @param int|null $value Identifiant de qualification du média.
      *
      * @return array
      */
-    public function item($value, $index)
+    public function item($index, ?int $value = null): array
     {
         $name = $this->get('name');
         $index = !is_numeric($index) ? $index : uniqid();
 
-        return $value = [
+        return [
             'name'  => $this->get('params.max', -1) === 1 ? "{$name}[]" : "{$name}[{$index}]",
             'value' => $value,
             'index' => $index,
@@ -150,11 +150,9 @@ class Fileshare extends MetaboxDriver
                     'method' => 'post',
                     'url'    => $this->getUrl(),
                 ]),
-                'wp_media'  => [
-                    'title'    => __('Sélectionner les fichiers à associer', 'tify'),
-                    'editing'  => true,
-                    'multiple' => true,
-                    'library'  => [
+                'media'   => [
+                    'multiple' => ($this->params('max', -1) === 1 ? false : true),
+                    'library' => [
                         'type' => $this->params('filetype'),
                     ],
                 ],
@@ -175,7 +173,7 @@ class Fileshare extends MetaboxDriver
     {
         $index = Request::input('index');
         $max = Request::input('max', 0);
-        $value = Request::input('value');
+        $value = (int)Request::input('value');
 
         if (($max > 0) && ($index >= $max)) {
             return [
@@ -193,7 +191,7 @@ class Fileshare extends MetaboxDriver
 
             return [
                 'success' => true,
-                'data'    => (string)$this->viewer('item-wrap', $this->item($value, $index)),
+                'data'    => (string)$this->viewer('item-wrap', $this->item($index, $value)),
             ];
         }
     }
