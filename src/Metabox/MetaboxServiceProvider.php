@@ -11,15 +11,15 @@ use tiFy\Metabox\Contexts\{TabContext};
 use tiFy\Metabox\Drivers\{
     Color\Color as ColorDriver,
     CustomHeader\CustomHeader as CustomHeaderDriver,
+    Excerpt\Excerpt as ExcerptDriver,
     Fileshare\Fileshare as FileshareDriver,
     Icon\Icon as IconDriver,
     Imagefeed\Imagefeed as ImagefeedDriver,
     Order\Order as OrderDriver,
     Postfeed\Postfeed as PostfeedDriver,
     RelatedTerm\RelatedTerm as RelatedTermDriver,
-    Slideshow\Slideshow as SlideshowDriver,
+    Slidefeed\Slidefeed as SlidefeedDriver,
     Subtitle\Subtitle as SubtitleDriver,
-    TextRemaining\TextRemaining as TextRemainingDriver,
     Videofeed\Videofeed as VideofeedDriver
 };
 
@@ -87,6 +87,10 @@ class MetaboxServiceProvider extends ServiceProvider
             return new CustomHeaderDriver();
         });
 
+        $this->getContainer()->add("metabox.driver.excerpt", function () {
+            return new ExcerptDriver();
+        });
+
         $this->getContainer()->add("metabox.driver.fileshare", function () {
             return new FileshareDriver();
         });
@@ -111,16 +115,12 @@ class MetaboxServiceProvider extends ServiceProvider
             return new RelatedTermDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.slideshow", function () {
-            return new SlideshowDriver();
+        $this->getContainer()->add("metabox.driver.slidefeed", function () {
+            return new SlidefeedDriver();
         });
 
         $this->getContainer()->add("metabox.driver.subtitle", function () {
             return new SubtitleDriver();
-        });
-
-        $this->getContainer()->add("metabox.driver.text-remaining", function () {
-            return new TextRemainingDriver();
         });
 
         $this->getContainer()->add("metabox.driver.videofeed", function () {
