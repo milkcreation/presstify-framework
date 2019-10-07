@@ -6,36 +6,40 @@ import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable';
 import 'presstify-framework/field/media-image/js/scripts';
+import 'presstify-framework/field/suggest/js/scripts';
+import 'presstify-framework/field/tinymce/js/scripts';
 import 'presstify-framework/partial/media-library/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyMetaboxSlidefeed', {
-    widgetEventPrefix: 'metabox-videofeed:',
+    widgetEventPrefix: 'metabox-slidefeed:',
     id: undefined,
     xhr: undefined,
     options: {
       classes: {
-        add: 'MetaboxSlidefeed-add ThemeButton--primary ThemeButton--normal',
+        addnew: 'MetaboxSlidefeed-addnew',
         down: 'MetaboxSlidefeed-itemSortDown',
         item: 'MetaboxSlidefeed-item',
         items: 'MetaboxSlidefeed-items',
         order: 'MetaboxSlidefeed-itemSortOrder',
-        remove: 'MetaboxSlidefeed-itemRemove ThemeButton--remove',
-        sort: 'MetaboxSlidefeed-itemSortHandler',
+        remove: 'MetaboxSlidefeed-itemRemove',
+        sort: 'MetaboxSlidefeed-itemSortHandle',
         suggest: 'MetaboxSlidefeed-suggest',
         up: 'MetaboxSlidefeed-itemSortUp',
       },
       removable: true,
-      sortable: true
+      sortable: true,
+      suggest: true
     },
     control: {
-      add: 'metabox-slidefeed.add',
+      addnew: 'metabox-slidefeed.addnew',
       down: 'metabox-slidefeed.item.down',
       item: 'metabox-slidefeed.item',
       items: 'metabox-slidefeed.items',
       order: 'metabox-slidefeed.item.order',
       remove: 'metabox-slidefeed.item.remove',
       sort: 'metabox-slidefeed.item.sort',
+      suggest: 'metabox-slidefeed.suggest',
       up: 'metabox-slidefeed.item.up',
     },
     // Instanciation de l'élément.
@@ -45,7 +49,7 @@ jQuery(function ($) {
       this.el = this.element;
 
       this.flags = {
-        isAdd: true,
+        isAddnew: true,
         isRemovable: true,
         isSortable: true,
         isSuggest: true
@@ -81,11 +85,19 @@ jQuery(function ($) {
     _initElementControls: function () {
       this.el.attr('aria-sortable', this.flags.isSortable);
       this.el.attr('aria-removable', this.flags.isRemovable);
-      this.el.attr('aria-removable', this.flags.isRemovable);
 
-      let add = $('[data-control="' + this.control.add + '"]', this.el);
-      if (add.length) {
-        add.addClass(this.option('classes.add'));
+      if (this.flags.isSuggest) {
+        let suggest = $('[data-control="' + this.control.suggest + '"]', this.el);
+        if (!suggest.length) {
+          suggest = $('<input type="text" data-control="' + this.control.suggest + '"/>').prependTo(this.el);
+        }
+        suggest.addClass(this.option('classes.suggest'));
+        suggest.tifySuggest();
+      }
+
+      let addnew = $('[data-control="' + this.control.addnew + '"]', this.el);
+      if (addnew.length) {
+        addnew.addClass(this.option('classes.addnew'));
       }
     },
     // Initialisation du controleur principal.
@@ -126,7 +138,7 @@ jQuery(function ($) {
     },
     // Initialisation des événements déclenchement.
     _initEvents: function () {
-      this._on(this.el, {'click [data-control="metabox-slidefeed.add"]': this._onAddItem});
+      this._on(this.el, {'click [data-control="metabox-slidefeed.addnew"]': this._onAddnewItem});
       this._on(this.el, {'click [data-control="metabox-slidefeed.item.library"]': this._onGetLibraryItem});
       this._on(this.el, {'click [data-control="metabox-slidefeed.item.down"]': this._onMoveDownItem});
       this._on(this.el, {'click [data-control="metabox-slidefeed.item.up"]': this._onMoveUpItem});
@@ -135,7 +147,7 @@ jQuery(function ($) {
     // EVENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     // Ajout d'un élément.
-    _onAddItem: function (e) {
+    _onAddnewItem: function (e) {
       e.preventDefault();
 
       if (this.xhr === undefined) {
@@ -230,15 +242,6 @@ jQuery(function ($) {
     _setItem: function ($item) {
       $item.addClass(this.option('classes.item'));
 
-      let $input = $('[data-control="' + this.control.input + '"]', $item);
-      if (!$input.length) {
-        $input = $('<textarea data-control="' + this.control.input + '"/>').appendTo($item);
-      }
-      if ($input.attr('name') === undefined) {
-        $input.attr('name', this.option('name'));
-      }
-      $input.addClass(this.option('classes.input'));
-
       if (this.flags.isRemovable) {
         let $remove = $('[data-control="' + this.control.remove + '"]', $item);
         if (!$remove.length) {
@@ -280,6 +283,6 @@ jQuery(function ($) {
   });
 
   $(document).ready(function () {
-    $('[data-control="metabox-videofeed"]').tifyMetaboxVideofeed();
+    $('[data-control="metabox-slidefeed"]').tifyMetaboxSlidefeed();
   });
 });

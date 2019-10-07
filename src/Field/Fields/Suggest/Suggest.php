@@ -86,7 +86,7 @@ class Suggest extends FieldFactory implements SuggestContract
                 'minLength' => 2,
             ],
             'spinner'   => true,
-            'reset'     => true
+            'reset'     => true,
         ];
     }
 
@@ -105,9 +105,23 @@ class Suggest extends FieldFactory implements SuggestContract
     {
         parent::parse();
 
+        $defaultClasses = [
+            'alt'     => 'FieldSuggest-alt',
+            'input'   => 'FieldSuggest-input',
+            'item'    => 'FieldSuggest-pickerItem',
+            'items'   => 'FieldSuggest-picker',
+            'reset'   => 'FieldSuggest-reset ThemeButton--close',
+            'spinner' => 'FieldSuggest-spinner ThemeSpinner',
+            'wrap'    => 'FieldSuggest-wrap',
+        ];
+        foreach ($defaultClasses as $k => $v) {
+            $this->set("classes.{$k}", sprintf($this->get("classes.{$k}", '%s'), $v));
+        }
+
         $options = [
             'alt'          => $this->get('alt'),
             'autocomplete' => $this->get('options', []),
+            'classes'      => $this->get('classes', []),
             'reset'        => $this->get('reset'),
             'spinner'      => $this->get('spinner'),
         ];
@@ -124,7 +138,7 @@ class Suggest extends FieldFactory implements SuggestContract
         }
 
         $this->set([
-            'attrs.data-control'           => 'suggest',
+            'attrs.data-control'           => $this->get('attrs.data-control', 'suggest'),
             'attrs.data-options'           => $options,
             'container.attrs.aria-loaded'  => 'false',
             'container.attrs.data-control' => 'suggest-container',
@@ -174,7 +188,7 @@ class Suggest extends FieldFactory implements SuggestContract
                 return [
                     'alt'   => (string)$value,
                     'label' => (string)$this->viewer('item-label', compact('label', 'value')),
-                    'value' => (string)$value
+                    'value' => (string)$value,
                 ];
             })->all();
 

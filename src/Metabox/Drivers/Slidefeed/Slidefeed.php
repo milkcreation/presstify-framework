@@ -32,11 +32,27 @@ class Slidefeed extends MetaboxDriver
     /**
      * @inheritDoc
      */
+    public function content(): string
+    {
+        if ($values = $this->value()) {
+            $items = [];
+            array_walk($values, function ($value, $index) use (&$items) {
+                $items[] = $this->item($index, $value);
+            });
+            $this->set('items', $items);
+        }
+
+        return parent::content();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function defaultParams(): array
     {
         return [
-            'custom'  => true,
-            'datas'   => ['image', 'title', 'url', 'caption'],
+            'addnew'  => true,
+            'fields'  => ['image', 'title', 'url', 'caption'],
             'max'     => -1,
             'suggest' => true,
         ];
@@ -44,25 +60,11 @@ class Slidefeed extends MetaboxDriver
 
     /**
      * @inheritDoc
-     *
-     * @return array {
-     * @var string $name Nom de qualification d'enregistrement.
-     * @var array $attrs Liste des attributs de balisae HTML du conteneur.
-     * @var string $ajax_action Action Ajax de récupération des éléments.
-     * @var array $editable Liste des interfaces d'édition des vignettes actives.
-     * @var integer $max Nombre maximum de vignette.
-     * @var array $args Liste des attribut de requête Ajax complémentaires.
-     * @todo boolean|array $suggest Liste de selection de contenu.
-     * @var boolean $custom Activation de l'ajout de vignettes personnalisées.
-     * @var array $options Liste des options d'affichage.
-     * @var array $viewer Liste des attributs de configuration du gestionnaire de gabarit.
-     * @var string $item_class Traitement de l'affichage d'un élément
-     * }
      */
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
-            'name'  => 'tify_taboox_slideshow',
+            'name'  => 'slidefeed',
             'title' => __('Diaporama', 'tify'),
         ]);
     }
@@ -107,9 +109,10 @@ class Slidefeed extends MetaboxDriver
         $index = !is_numeric($index) ? $index : uniqid();
 
         return [
-            'index' => $index,
-            'name'  => $this->get('params.max', -1) === 1 ? "{$name}[]" : "{$name}[{$index}]",
-            'value' => $value
+            'fields' => $this->get('params.fields', []),
+            'index'  => $index,
+            'name'   => $this->get('params.max', -1) === 1 ? "{$name}[]" : "{$name}[{$index}]",
+            'value'  => $value,
         ];
     }
 
@@ -120,9 +123,43 @@ class Slidefeed extends MetaboxDriver
     {
         parent::parse();
 
-        $this->params([
-            'attrs.data-options' => [
+        $defaultClasses = [
+            'addnew'  => 'MetaboxSlidefeed-addnew ThemeButton--primary ThemeButton--normal',
+            'down'    => 'MetaboxSlidefeed-itemSortDown ThemeFeed-itemSortDown',
+            'item'    => 'MetaboxSlidefeed-item ThemeFeed-item',
+            'items'   => 'MetaboxSlidefeed-items ThemeFeed-items',
+            'order'   => 'MetaboxSlidefeed-itemSortOrder ThemeFeed-itemOrder',
+            'remove'  => 'MetaboxSlidefeed-itemRemove ThemeFeed-itemRemove',
+            'sort'    => 'MetaboxSlidefeed-itemSortHandle ThemeFeed-itemSortHandle',
+            'suggest' => 'MetaboxSlidefeed-suggest',
+            'up'      => 'MetaboxSlidefeed-itemSortUp ThemeFeed-itemSortUp',
+        ];
+        foreach ($defaultClasses as $k => $v) {
+            $this->set("classes.{$k}", sprintf($this->get("classes.{$k}", '%s'), $v));
+        }
 
+        $this->params([
+            'addnew'             => [
+                'attrs'   => [
+                    'data-control' => 'metabox-slidefeed.addnew',
+                ],
+                'content' => __('Vignette personnalisée', 'tify'),
+            ],
+            'attrs.class'        => sprintf($this->get('attrs.class', '%s'), 'MetaboxSlidefeed'),
+            'attrs.data-control' => 'metabox-slidefeed',
+            'attrs.data-options' => [
+                'ajax'    => [
+                    'data'     => [
+                        'fields' => $this->params('fields', []),
+                        'max'    => $this->params('max', -1),
+                        'name'   => $this->get('name'),
+                        'viewer' => $this->get('viewer', []),
+                    ],
+                    'dataType' => 'json',
+                    'method'   => 'post',
+                    'url'      => $this->getUrl(),
+                ],
+                'classes' => $this->get('classes', []),
             ],
             'options'            => array_merge([
                 'ratio'       => '16:9',
@@ -131,6 +168,15 @@ class Slidefeed extends MetaboxDriver
                 'tab'         => true,
                 'progressbar' => false,
             ], $exists['options'] ?? []),
+            'suggest'            => [
+                'ajax'    => true,
+                'attrs'   => [
+                    'data-control' => 'metabox-slidefeed.suggest',
+                ],
+                'classes' => [
+                    'wrap' => '%s MetaboxSlidefeed-suggestWrap',
+                ],
+            ],
         ]);
 
         return $this;
@@ -158,7 +204,8 @@ class Slidefeed extends MetaboxDriver
             $this->set([
                 'name'   => Request::input('name', []),
                 'params' => [
-                    'max' => $max,
+                    'fields' => Request::input('fields', []),
+                    'max'    => $max,
                 ],
                 'viewer' => Request::input('viewer', []),
             ]);

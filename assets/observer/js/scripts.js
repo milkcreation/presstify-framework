@@ -1,6 +1,7 @@
 'use strict';
 
 import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 
 jQuery(function ($) {
@@ -10,6 +11,10 @@ jQuery(function ($) {
     options: {},
     // Instanciation de l'élément.
     _create: function () {
+      this.instance = this;
+
+      this.el = this.element;
+
       let func = this.option('func'),
           selector = this.option('selector'),
           observer = new MutationObserver(function (mutations) {
@@ -27,10 +32,9 @@ jQuery(function ($) {
                 }
               }
             });
-          });
-
-      var observerConfig = {attributes: true, childList: true, characterData: true, subtree: true};
-      var targetNode = document.body;
+          }),
+          observerConfig = {attributes: true, childList: true, characterData: true, subtree: true},
+          targetNode = document.body;
 
       observer.observe(targetNode, observerConfig);
     }
