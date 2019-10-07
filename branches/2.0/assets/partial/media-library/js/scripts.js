@@ -64,13 +64,13 @@ jQuery(function ($) {
   });
 
   $(document).ready(function () {
-    $('[data-control="media-library"]').tifyMediaLibrary();
-  });
-
-  $(document).tifyObserver({
-    selector: '[data-control="media-library"]',
-    func: function (i, target) {
-      $(target).tifyMediaLibrary();
-    }
+    $('[data-control="media-library"]')
+        .tifyMediaLibrary()
+        .tifyObserver({
+          selector: '[data-control="media-library"]',
+          func: function (i, target) {
+            $(target).tifyMediaLibrary();
+          }
+        });
   });
 });

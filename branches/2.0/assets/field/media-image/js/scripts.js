@@ -3,7 +3,6 @@
 
 import jQuery from 'jquery';
 import 'presstify-framework/partial/media-library/js/scripts';
-import 'presstify-framework/observer/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyMediaImage', {

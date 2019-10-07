@@ -4,43 +4,45 @@
 @import '~jquery-ui/themes/base/autocomplete.css';
 @import '~presstify-framework/theme/scss/styles';
 
-input[type="text"][data-control="suggest"].ui-autocomplete-loading,
-input[type="email"][data-control="suggest"].ui-autocomplete-loading {
-  background-image: none;
-}
-
-[aria-loaded="false"] > [data-control="suggest.spinner"] {
-  display:none;
-}
-
-[aria-loaded="true"] > [data-control="suggest.spinner"] {
-  display:inherit;
-}
-
-[aria-selected="false"] > [data-control="suggest.reset"] {
-  display:none;
-}
-
-[aria-selected="true"] > [data-control="suggest.reset"] {
-  display:inherit;
-}
-
 .FieldSuggest-wrap {
   position:relative;
+  display:inline-block;
 }
 
 .FieldSuggest-input {
   width:100%;
+  padding-right:25px;
 }
 
-.ThemeSpinner.FieldSuggest-spinner,
-.ThemeButton--close.FieldSuggest-reset {
+input[type="text"].FieldSuggest-input.ui-autocomplete-loading,
+input[type="email"].FieldSuggest-input.ui-autocomplete-loading {
+  background-image: none;
+}
+
+.ThemeButton--close.FieldSuggest-reset,
+.ThemeSpinner.FieldSuggest-spinner {
   position: absolute;
   top:50%;
   right:5px;
   margin-top:-8px;
   width:16px;
   height:16px;
+}
+
+[aria-selected="false"] > .FieldSuggest-reset {
+  display:none;
+}
+
+[aria-selected="true"] > .FieldSuggest-reset {
+  display:inherit;
+}
+
+[aria-loaded="false"] > .FieldSuggest-spinner {
+  display:none;
+}
+
+[aria-loaded="true"] > .FieldSuggest-spinner {
+  display:inherit;
 }
 
 .FieldSuggest-picker {
