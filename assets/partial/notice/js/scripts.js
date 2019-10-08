@@ -21,17 +21,14 @@ jQuery(function ($) {
     }
   });
 
-  $(document).tifyObserver({
-    selector: '[data-control="notice"]',
-    func: function (i, target) {
-      let $el = $(target),
-          time = parseInt($el.data('timeout')) || 0;
+  $.tify.observe('[data-control="notice"]', function (i, target) {
+    let $el = $(target),
+        time = parseInt($el.data('timeout')) || 0;
 
-      if (time !== 0) {
-        setTimeout(function () {
-          $el.attr('aria-hide', 'true');
-        }, time);
-      }
+    if (time !== 0) {
+      setTimeout(function () {
+        $el.attr('aria-hide', 'true');
+      }, time);
     }
   });
 });
