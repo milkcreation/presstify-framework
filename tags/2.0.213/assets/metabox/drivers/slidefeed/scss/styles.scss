@@ -1,0 +1,23 @@
+@import '~presstify-framework/theme/scss/styles';
+@import '~presstify-framework/field/suggest/scss/styles';
+@import '~presstify-framework/field/tinymce/scss/styles';
+
+.MetaboxSlidefeed-suggestWrap {
+  display: block;
+}
+
+.MetaboxSlidefeed-itemField {
+  margin-left: 160px;
+}
+
+.MetaboxSlidefeed-itemFieldLabel {
+  margin: 5px 0;
+}
+
+.MetaboxSlidefeed-itemField--image {
+  float: left;
+  display: block;
+  margin-left: 0;
+  width: 160px;
+  height: 160px;
+}

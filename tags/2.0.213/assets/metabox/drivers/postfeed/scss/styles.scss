@@ -1,0 +1,209 @@
+@import '~presstify-framework/field/suggest/scss/styles';
+
+[data-control="metabox-postfeed.item.tooltip"] {
+  display: none;
+}
+
+[data-control="metabox-postfeed.item.tooltip"][aria-show="true"] {
+  display: inherit;
+}
+
+.MetaboxPostfeed,
+.MetaboxPostfeed > * {
+  box-sizing: border-box;
+}
+
+.MetaboxPostfeed {
+  max-width: 1140px;
+}
+
+.MetaboxPostfeed-items {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: solid 1px #E4E4E4;
+}
+
+.MetaboxPostfeed-item {
+  position: relative;
+  min-height: 80px;
+  border: solid 1px #E4E4E4;
+  background-color: #FFF;
+}
+
+.MetaboxPostfeed-item::before,
+.MetaboxPostfeed-item::after {
+  display: block;
+  content: " ";
+}
+
+.MetaboxPostfeed-item::after {
+  clear: both;
+}
+
+.MetaboxPostfeed-itemOrder {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  text-align: center;
+  font-size: 10px;
+  margin: 0;
+  padding: 0.2em;
+}
+
+.MetaboxPostfeed-itemTooltip {
+  position: absolute;
+  left:18px;
+  bottom:0;
+  font-size: 10px;
+  line-height: 1.1;
+  margin: 0;
+  padding: 5px;
+  background-color: #FFF;
+  border: solid 1px #CCC;
+  z-index: 5;
+  width: 180px;
+  transform: translate(-50%, -100%);
+}
+
+.MetaboxPostfeed-itemTooltip::before {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  content: "";
+  display: inline-block;
+  height: 0;
+  width: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px 10px 0 10px;
+  border-top-color: #CCC;
+  transform: translate(-50%, 100%);
+}
+
+.MetaboxPostfeed-itemTooltip::after {
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  content: "";
+  display: inline-block;
+  height: 0;
+  width: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px 10px 0 10px;
+  border-top-color: #FFF;
+  transform: translate(-50%, 100%);
+}
+
+.MetaboxPostfeed-itemInfo {
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  border-radius:8px;
+  display:block;
+  width:16px;
+  height:16px;
+  line-height:16px;
+  text-align:center;
+  color:#FFF;
+  font-weight: bold;
+  background-color: #0073AA;
+  cursor: pointer;
+}
+
+.MetaboxPostfeed-itemInfo::before {
+  content:"i";
+}
+
+.MetaboxPostfeed-itemInfoLine {
+  padding: 0 0 2px;
+  margin: 0 0 3px;
+  border-bottom: dotted 1px #CCC;
+}
+
+.MetaboxPostfeed-itemInfoLine:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.MetaboxPostfeed-itemInfoLine label {
+  font-weight: bold;
+  vertical-align: middle;
+  display: inline-block;
+  margin-bottom: 0.2em;
+  width: 60px;
+}
+
+.MetaboxPostfeed-itemThumb {
+  float: left;
+  margin-right: 10px;
+  min-width: 80px;
+}
+
+.MetaboxPostfeed-itemThumbImg {
+  width: auto;
+  height: 80px;
+}
+
+.MetaboxPostfeed-itemTitle {
+  margin: 10px 0;
+  padding: 0;
+  font-weight: 400;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.MetaboxPostfeed-itemSortHandler {
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  z-index: 3;
+  color: #999;
+  cursor: move;
+  display: block;
+  font-weight: 700;
+  padding: 2px 0;
+  margin: 0;
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.MetaboxPostfeed-itemSortHandler::before {
+  content: "...";
+}
+
+.MetaboxPostfeed-itemSortOrder {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  box-shadow: none;
+  width: 20px;
+  padding: 0;
+  text-align: center;
+  font-size: 10px;
+}
+
+.MetaboxPostfeed-itemSortUp,
+.MetaboxPostfeed-itemSortDown {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  text-decoration: none;
+  transform: translateY(-50%);
+}
+
+.MetaboxPostfeed-itemSortUp {
+  margin-top: -10px;
+}
+
+.MetaboxPostfeed-itemSortDown {
+  margin-top: 10px;
+}
+
+.MetaboxPostfeed-itemSortUp::before {
+  content: "\25b2";
+}
+
+.MetaboxPostfeed-itemSortDown::before {
+  content: "\25bc";
+}
