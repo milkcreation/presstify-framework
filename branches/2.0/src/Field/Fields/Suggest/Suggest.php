@@ -81,12 +81,12 @@ class Suggest extends FieldFactory implements SuggestContract
             'viewer'    => [],
             'ajax'      => false,
             'alt'       => false,
-            'container' => [],
+            'classes'   => [],
             'options'   => [
                 'minLength' => 2,
             ],
             'spinner'   => true,
-            'reset'     => true,
+            'reset'     => true
         ];
     }
 
@@ -139,9 +139,7 @@ class Suggest extends FieldFactory implements SuggestContract
 
         $this->set([
             'attrs.data-control'           => $this->get('attrs.data-control', 'suggest'),
-            'attrs.data-options'           => $options,
-            'container.attrs.aria-loaded'  => 'false',
-            'container.attrs.data-control' => 'suggest-container',
+            'attrs.data-options'           => $options
         ]);
 
         return $this;
