@@ -8,15 +8,15 @@
         <?php echo field('suggest', $suggest); ?>
     <?php endif; ?>
 
-    <?php if ($addnew = $this->params('addnew')) : ?>
-        <?php echo field('button', $addnew); ?>
-    <?php endif; ?>
-
     <ul data-control="metabox-slidefeed.items">
         <?php foreach ($this->get('items', []) as $item) : ?>
             <?php echo $this->insert('item-wrap', $item); ?>
         <?php endforeach; ?>
     </ul>
+
+    <?php if ($addnew = $this->params('addnew')) : ?>
+        <?php echo field('button', $addnew); ?>
+    <?php endif; ?>
 
     <?php /*foreach ($this->get('options', []) as $k => $v) :
         echo field('hidden', [

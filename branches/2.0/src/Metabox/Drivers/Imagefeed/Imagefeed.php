@@ -16,6 +16,12 @@ class Imagefeed extends MetaboxDriver
     static $instance = 0;
 
     /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = 'imagefeed';
+
+    /**
      * Url de traitement de requêtes XHR.
      * @var string
      */
@@ -52,10 +58,11 @@ class Imagefeed extends MetaboxDriver
     public function defaultParams(): array
     {
         return [
-            'max' => -1,
+            'classes'   => [],
+            'max'       => -1,
             'library'   => true,
             'removable' => true,
-            'sortable'  => true
+            'sortable'  => true,
         ];
     }
 
@@ -92,7 +99,7 @@ class Imagefeed extends MetaboxDriver
             if (Validator::url()->validate($value)) {
                 $src = $value;
             } elseif (file_exists($value)) {
-              $src= Img::getBase64Src($value);
+                $src = Img::getBase64Src($value);
             }
         }
 
@@ -100,7 +107,7 @@ class Imagefeed extends MetaboxDriver
             'index' => $index,
             'name'  => $this->get('params.max', -1) === 1 ? "{$name}[]" : "{$name}[{$index}]",
             'value' => $value,
-            'src'   => $src
+            'src'   => $src,
         ];
     }
 
@@ -121,6 +128,21 @@ class Imagefeed extends MetaboxDriver
     {
         parent::parse();
 
+        $defaultClasses = [
+            'addnew' => 'MetaboxImagefeed-addnew ThemeButton--primary ThemeButton--normal',
+            'down'   => 'MetaboxImagefeed-itemSortDown ThemeFeed-itemSortDown',
+            'input'  => 'MetaboxImagefeed-itemInput',
+            'item'   => 'MetaboxImagefeed-item ThemeFeed-item',
+            'items'  => 'MetaboxImagefeed-items ThemeFeed-items',
+            'order'  => 'MetaboxImagefeed-itemOrder ThemeFeed-itemOrder',
+            'remove' => 'MetaboxImagefeed-itemRemove ThemeFeed-itemRemove',
+            'sort'   => 'MetaboxImagefeed-itemSortHandle ThemeFeed-itemSortHandle',
+            'up'     => 'MetaboxImagefeed-itemSortUp ThemeFeed-itemSortUp',
+        ];
+        foreach ($defaultClasses as $k => $v) {
+            $this->params(["classes.{$k}" => sprintf($this->get("classes.{$k}", '%s'), $v)]);
+        }
+
         $this->params([
             'attrs.class'        => sprintf($this->get('attrs.class', '%s'), 'MetaboxImagefeed'),
             'attrs.data-control' => 'metabox-imagefeed',
@@ -138,15 +160,16 @@ class Imagefeed extends MetaboxDriver
         $this->params([
             'attrs.data-options' => [
                 'ajax'      => [
-                    'data'   => [
+                    'data'     => [
                         'max'    => $this->params('max', -1),
                         'name'   => $this->get('name'),
                         'viewer' => $this->get('viewer', []),
                     ],
                     'dataType' => 'json',
-                    'method' => 'post',
-                    'url'    => $this->getUrl(),
+                    'method'   => 'post',
+                    'url'      => $this->getUrl(),
                 ],
+                'classes'   => $this->params('classes', []),
                 'library'   => $this->params('library'),
                 'removable' => $this->params('removable'),
                 'sortable'  => $this->params('sortable'),

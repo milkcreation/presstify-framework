@@ -7,6 +7,12 @@ use tiFy\Metabox\MetaboxDriver;
 class Icon extends MetaboxDriver
 {
     /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = 'icon';
+
+    /**
      * @inheritDoc
      */
     public function defaults(): array

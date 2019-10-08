@@ -15,6 +15,12 @@ class Slidefeed extends MetaboxDriver
     static $instance = 0;
 
     /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = 'slidefeed';
+
+    /**
      * Url de traitement de requêtes XHR.
      * @var string
      */
@@ -52,9 +58,10 @@ class Slidefeed extends MetaboxDriver
     {
         return [
             'addnew'  => true,
+            'classes' => [],
             'fields'  => ['image', 'title', 'url', 'caption'],
             'max'     => -1,
-            'suggest' => true,
+            'suggest' => false,
         ];
     }
 
@@ -128,14 +135,28 @@ class Slidefeed extends MetaboxDriver
             'down'    => 'MetaboxSlidefeed-itemSortDown ThemeFeed-itemSortDown',
             'item'    => 'MetaboxSlidefeed-item ThemeFeed-item',
             'items'   => 'MetaboxSlidefeed-items ThemeFeed-items',
-            'order'   => 'MetaboxSlidefeed-itemSortOrder ThemeFeed-itemOrder',
+            'order'   => 'MetaboxSlidefeed-itemOrder ThemeFeed-itemOrder',
             'remove'  => 'MetaboxSlidefeed-itemRemove ThemeFeed-itemRemove',
             'sort'    => 'MetaboxSlidefeed-itemSortHandle ThemeFeed-itemSortHandle',
             'suggest' => 'MetaboxSlidefeed-suggest',
             'up'      => 'MetaboxSlidefeed-itemSortUp ThemeFeed-itemSortUp',
         ];
         foreach ($defaultClasses as $k => $v) {
-            $this->set("classes.{$k}", sprintf($this->get("classes.{$k}", '%s'), $v));
+            $this->params(["classes.{$k}" => sprintf($this->get("classes.{$k}", '%s'), $v)]);
+        }
+
+        if ($suggest = $this->params('suggest', true)) {
+            $defaultSuggest = [
+                'ajax'    => true,
+                'attrs'   => [
+                    'data-control' => 'metabox-slidefeed.suggest',
+                    'placeholder'  => __('Rechercher parmi les contenus du site', 'tify'),
+                ],
+                'classes' => [
+                    'wrap' => '%s MetaboxSlidefeed-suggestWrap',
+                ],
+            ];
+            $this->params(['suggest' => is_array($suggest) ? array_merge($defaultSuggest, $suggest) : $defaultSuggest]);
         }
 
         $this->params([
@@ -143,7 +164,7 @@ class Slidefeed extends MetaboxDriver
                 'attrs'   => [
                     'data-control' => 'metabox-slidefeed.addnew',
                 ],
-                'content' => __('Vignette personnalisée', 'tify'),
+                'content' => __('Ajouter une vignette', 'tify'),
             ],
             'attrs.class'        => sprintf($this->get('attrs.class', '%s'), 'MetaboxSlidefeed'),
             'attrs.data-control' => 'metabox-slidefeed',
@@ -159,23 +180,8 @@ class Slidefeed extends MetaboxDriver
                     'method'   => 'post',
                     'url'      => $this->getUrl(),
                 ],
-                'classes' => $this->get('classes', []),
-            ],
-            'options'            => array_merge([
-                'ratio'       => '16:9',
-                'size'        => 'full',
-                'nav'         => true,
-                'tab'         => true,
-                'progressbar' => false,
-            ], $exists['options'] ?? []),
-            'suggest'            => [
-                'ajax'    => true,
-                'attrs'   => [
-                    'data-control' => 'metabox-slidefeed.suggest',
-                ],
-                'classes' => [
-                    'wrap' => '%s MetaboxSlidefeed-suggestWrap',
-                ],
+                'classes' => $this->params('classes', []),
+                'suggest' => $this->params('suggest'),
             ],
         ]);
 

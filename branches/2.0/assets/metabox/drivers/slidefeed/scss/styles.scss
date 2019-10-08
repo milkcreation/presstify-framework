@@ -11,7 +11,11 @@
 }
 
 .MetaboxSlidefeed-itemFieldLabel {
-  margin: 5px 0;
+  margin: 3px 0;
+  font-weight: 100;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #666;
 }
 
 .MetaboxSlidefeed-itemField--image {
@@ -20,4 +24,10 @@
   margin-left: 0;
   width: 160px;
   height: 160px;
+}
+
+.MetaboxSlidefeed-itemFieldCaptionInput {
+  min-height:100px;
+  padding:0 5px;
+  border:solid 1px #E4E4E4;
 }

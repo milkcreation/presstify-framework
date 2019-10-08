@@ -21,7 +21,7 @@ jQuery(function ($) {
         down: 'MetaboxSlidefeed-itemSortDown',
         item: 'MetaboxSlidefeed-item',
         items: 'MetaboxSlidefeed-items',
-        order: 'MetaboxSlidefeed-itemSortOrder',
+        order: 'MetaboxSlidefeed-itemOrder',
         remove: 'MetaboxSlidefeed-itemRemove',
         sort: 'MetaboxSlidefeed-itemSortHandle',
         suggest: 'MetaboxSlidefeed-suggest',
@@ -85,6 +85,8 @@ jQuery(function ($) {
     _initElementControls: function () {
       this.el.attr('aria-sortable', this.flags.isSortable);
       this.el.attr('aria-removable', this.flags.isRemovable);
+
+
 
       if (this.flags.isSuggest) {
         let suggest = $('[data-control="' + this.control.suggest + '"]', this.el);

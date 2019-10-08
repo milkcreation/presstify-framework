@@ -5,7 +5,7 @@
 ?>
 <?php $this->before(); ?>
 <?php echo partial('tag', [
-    'tag'     => 'textarea',
+    'tag'     => $this->get('tag', 'textarea'),
     'attrs'   => $this->get('attrs', []),
     'content' => $this->get('value', ''),
 ]); ?>

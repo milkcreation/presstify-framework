@@ -36,10 +36,7 @@ class Mailer extends AddonController
      * }
      */
     public $attributes = [
-        'admin'              => [
-            'confirmation' => true,
-            'notification' => true,
-        ],
+        'admin'              => true,
         'confirmation'       => [],
         'notification'       => [],
         'option_name_prefix' => '',
@@ -63,23 +60,32 @@ class Mailer extends AddonController
         }
         $this->set('option_names', $option_names);
 
-        if ($this->get('confirmation') && get_option($option_names['confirmation'])) :
+        if ($this->get('confirmation') && get_option($option_names['confirmation'])) {
             $from = get_option($option_names['sender']) ? !'' : ['email' => '', 'name' => ''];
 
             $this->set('confirmation.from', [$from['email'], $from['name']]);
-        endif;
+        }
 
         if (
             $this->get('notification') &&
             get_option($option_names['notification']) &&
             ($to = get_option($option_names['recipients']))
-        ) :
+        ) {
             array_walk($to, function (&$item) {
                 $item = [$item['email'], $item['name']];
             });
 
             $this->set('notification.to', $to);
-        endif;
+        }
+
+        if ($admin = $this->get('admin')) {
+            $defaultAdmin = [
+                'confirmation' => true,
+                'notification' => true,
+            ];
+
+            $this->set('admin', is_array($admin) ? array_merge($defaultAdmin, $admin) :$defaultAdmin);
+        }
 
         if ($this->get('admin.confirmation') || $this->get('admin.notification')) {
             Metabox::add("FormAddonMailer-{$this->form()->name()}", [
@@ -90,7 +96,7 @@ class Mailer extends AddonController
 
             if ($this->get('admin.confirmation')) {
                 Metabox::add("FormAddonMailerConfirmation-{$this->form()->name()}", [
-                    'driver'   => $this->resolve('addon.mailer.options-confirmation', [$this->form()]),
+                    'driver'   => $this->resolve('addon.mailer.options-confirmation', [$this->form(), $this]),
                     'parent'   => "FormAddonMailer-{$this->form()->name()}",
                     'position' => 1,
                 ])
@@ -100,7 +106,7 @@ class Mailer extends AddonController
 
             if ($this->get('admin.notification')) {
                 Metabox::add("FormAddonMailerNotification-{$this->form()->name()}", [
-                    'driver'   => $this->resolve('addon.mailer.options-notification', [$this->form()]),
+                    'driver'   => $this->resolve('addon.mailer.options-notification', [$this->form(), $this]),
                     'parent'   => "FormAddonMailer-{$this->form()->name()}",
                     'position' => 2,
                 ])

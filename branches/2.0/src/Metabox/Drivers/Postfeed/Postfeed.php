@@ -16,6 +16,12 @@ class Postfeed extends MetaboxDriver
     static $instance = 0;
 
     /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = 'postfeed';
+
+    /**
      * Url de traitement de requêtes XHR.
      * @var string
      */
@@ -55,15 +61,15 @@ class Postfeed extends MetaboxDriver
     public function defaultParams(): array
     {
         return [
-            'elements'    => ['title', 'ico'],
+            'classes'     => [],
             'max'         => -1,
             'suggest'     => [],
             'placeholder' => __('Rechercher un contenu en relation', 'tify'),
-            'query_args'  => [],
             'post_type'   => 'any',
             'post_status' => 'publish',
+            'query_args'  => [],
             'sortable'    => true,
-            'removable'   => true
+            'removable'   => true,
         ];
     }
 
@@ -73,8 +79,8 @@ class Postfeed extends MetaboxDriver
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
-            'name'   => 'postfeed',
-            'title'  => __('Éléments en relation', 'tify'),
+            'name'  => 'postfeed',
+            'title' => __('Éléments en relation', 'tify'),
         ]);
     }
 
@@ -84,6 +90,23 @@ class Postfeed extends MetaboxDriver
     public function parse(): MetaboxDriverContract
     {
         parent::parse();
+
+        $defaultClasses = [
+            'down'    => 'MetaboxPostfeed-itemSortDown ThemeFeed-itemSortDown',
+            'info'    => 'MetaboxPostfeed-itemInfo',
+            'input'   => 'MetaboxPostfeed-itemInput',
+            'item'    => 'MetaboxPostfeed-item ThemeFeed-item',
+            'items'   => 'MetaboxPostfeed-items ThemeFeed-items',
+            'order'   => 'MetaboxPostfeed-itemOrder ThemeFeed-itemOrder',
+            'remove'  => 'MetaboxPostfeed-itemRemove ThemeFeed-itemRemove',
+            'sort'    => 'MetaboxPostfeed-itemSortHandle ThemeFeed-itemSortHandle',
+            'suggest' => 'MetaboxPostfeed-suggest',
+            'tooltip' => 'MetaboxPostfeed-itemTooltip',
+            'up'      => 'MetaboxPostfeed-itemSortUp ThemeFeed-itemSortUp',
+        ];
+        foreach ($defaultClasses as $k => $v) {
+            $this->params(["classes.{$k}" => sprintf($this->get("classes.{$k}", '%s'), $v)]);
+        }
 
         $this->params([
             'attrs'   => [
@@ -102,14 +125,14 @@ class Postfeed extends MetaboxDriver
                 'alt'   => true,
                 'attrs' => [
                     'placeholder' => $this->params('placeholder'),
-                ]
+                ],
             ],
         ]);
 
         $this->params([
             'attrs.data-options' => [
                 'ajax'      => [
-                    'data'   => [
+                    'data'     => [
                         'max'    => $this->params('max', -1),
                         'name'   => $this->get('name'),
                         'viewer' => $this->get('viewer', []),
@@ -118,11 +141,12 @@ class Postfeed extends MetaboxDriver
                     'method'   => 'post',
                     'url'      => $this->getUrl(),
                 ],
+                'classes'   => $this->params('classes'),
                 'name'      => $this->name(),
                 'removable' => $this->params('removable'),
                 'sortable'  => $this->params('sortable'),
                 'suggest'   => $this->params('suggest'),
-                'viewer'
+                'viewer',
             ],
         ]);
 
@@ -184,7 +208,7 @@ class Postfeed extends MetaboxDriver
             return [
                 'success' => true,
                 'data'    => (string)$this->viewer('item-wrap', [
-                    'item'  => $item
+                    'item' => $item,
                 ]),
             ];
         } else {

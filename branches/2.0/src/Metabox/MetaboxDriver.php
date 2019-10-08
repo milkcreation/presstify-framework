@@ -10,6 +10,12 @@ use tiFy\Support\{Arr, ParamsBag};
 class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
 {
     /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = '';
+
+    /**
      * Liste des arguments dynamiques passée en paramètres à l'appel du rendu.
      * @var array
      */
@@ -54,6 +60,14 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     /**
      * @inheritDoc
      */
+    public function alias(): string
+    {
+        return $this->alias ?: class_info($this)->getKebabName();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function boot(): void { }
 
     /**
@@ -94,9 +108,7 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
             'position' => null,
             'title'    => '',
             'value'    => null,
-            'viewer'   => [
-                'directory' => $this->manager()->resourcesDir('/views/drivers/' . class_info($this)->getKebabName()),
-            ],
+            'viewer'   => [],
         ];
     }
 
@@ -111,7 +123,7 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
             $handler($this, ...$this->args);
         }
 
-        $value       = $this->get('value');
+        $value = $this->get('value');
         $this->value = ($value instanceof Closure) ? $value($this, ...$this->args) : $value;
 
         return $this;
@@ -239,9 +251,9 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
      */
     public function viewer(?string $view = null, array $data = [])
     {
-        if ( ! $this->viewer) {
-            $dir         = $this->get('viewer.directory');
-            $defaultDir  = file_exists($dir) ? $dir : $this->manager()->resourcesDir('/views/drivers/');
+        if (!$this->viewer) {
+            $dir = $this->get('viewer.directory', $this->manager()->resourcesDir('/views/drivers/' . $this->alias()));
+            $defaultDir = file_exists($dir) ? $dir : $this->manager()->resourcesDir('/views/drivers/');
             $fallbackDir = $this->get('viewer.override_dir') ?: $defaultDir;
 
             $this->viewer = view()

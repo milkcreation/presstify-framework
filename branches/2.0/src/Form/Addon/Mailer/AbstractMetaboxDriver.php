@@ -2,7 +2,7 @@
 
 namespace tiFy\Form\Addon\Mailer;
 
-use tiFy\Contracts\{Form\FormFactory, Metabox\MetaboxDriver as MetaboxDriverContract};
+use tiFy\Contracts\{Form\FormFactory, Form\AddonController, Metabox\MetaboxDriver as MetaboxDriverContract};
 use tiFy\Form\Factory\ResolverTrait;
 use tiFy\Metabox\{MetaboxDriver, MetaboxView};
 
@@ -11,8 +11,13 @@ abstract class AbstractMetaboxDriver extends MetaboxDriver
     use ResolverTrait;
 
     /**
+     * Instance de l'addon associé.
+     * @var AddonController|null
+     */
+    protected $addon;
+
+    /**
      * Liste des noms d'enregistement des options.
-     *
      * @var array
      */
     protected $optionNames = [];
@@ -24,7 +29,21 @@ abstract class AbstractMetaboxDriver extends MetaboxDriver
     {
         parent::parse();
 
-        $this->optionNames = $this->form()->addon('mailer')->get('option_names', []);
+        $this->optionNames = $this->addon->get('option_names', []);
+
+        return $this;
+    }
+
+    /**
+     * Définition de l'addon associé.
+     *
+     * @param AddonController $addon
+     *
+     * @return $this
+     */
+    public function setAddon(AddonController $addon): self
+    {
+        $this->addon = $addon;
 
         return $this;
     }

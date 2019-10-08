@@ -15,14 +15,14 @@ jQuery(function ($) {
     xhr: undefined,
     options: {
       classes: {
-        add: 'MetaboxVideofeed-add ThemeButton--primary ThemeButton--normal',
+        addnew: 'MetaboxVideofeed-addnew',
         down: 'MetaboxVideofeed-itemSortDown',
         input: 'MetaboxVideofeed-itemInput',
         item: 'MetaboxVideofeed-item',
         items: 'MetaboxVideofeed-items',
-        library: 'MetaboxVideofeed-itemLibrary ThemeButton--secondary ThemeButton--small',
-        order: 'MetaboxVideofeed-itemSortOrder',
-        remove: 'MetaboxVideofeed-itemRemove ThemeButton--remove',
+        library: 'MetaboxVideofeed-itemLibrary',
+        order: 'MetaboxVideofeed-itemOrder',
+        remove: 'MetaboxVideofeed-itemRemove',
         sort: 'MetaboxVideofeed-itemSortHandler',
         up: 'MetaboxVideofeed-itemSortUp',
       },
@@ -30,7 +30,7 @@ jQuery(function ($) {
       sortable: true
     },
     control: {
-      add: 'metabox-videofeed.add',
+      addnew: 'metabox-videofeed.addnew',
       down: 'metabox-videofeed.item.down',
       input: 'metabox-videofeed.item.input',
       item: 'metabox-videofeed.item',
@@ -84,9 +84,9 @@ jQuery(function ($) {
       this.el.attr('aria-sortable', this.flags.isSortable);
       this.el.attr('aria-removable', this.flags.isRemovable);
 
-      let add = $('[data-control="' + this.control.add + '"]', this.el);
-      if (add.length) {
-        add.addClass(this.option('classes.add'));
+      let addnew = $('[data-control="' + this.control.addnew + '"]', this.el);
+      if (addnew.length) {
+        addnew.addClass(this.option('classes.addnew'));
       }
     },
     // Initialisation du controleur principal.
@@ -127,7 +127,7 @@ jQuery(function ($) {
     },
     // Initialisation des événements déclenchement.
     _initEvents: function () {
-      this._on(this.el, {'click [data-control="metabox-videofeed.add"]': this._onAddItem});
+      this._on(this.el, {'click [data-control="metabox-videofeed.addnew"]': this._onAddnewItem});
       this._on(this.el, {'click [data-control="metabox-videofeed.item.library"]': this._onGetLibraryItem});
       this._on(this.el, {'click [data-control="metabox-videofeed.item.down"]': this._onMoveDownItem});
       this._on(this.el, {'click [data-control="metabox-videofeed.item.up"]': this._onMoveUpItem});
@@ -136,7 +136,7 @@ jQuery(function ($) {
     // EVENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     // Ajout d'un élément.
-    _onAddItem: function (e) {
+    _onAddnewItem: function (e) {
       e.preventDefault();
 
       if (this.xhr === undefined) {

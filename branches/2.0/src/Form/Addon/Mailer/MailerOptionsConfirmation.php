@@ -67,17 +67,4 @@ class MailerOptionsConfirmation extends AbstractMetaboxDriver
 
         return $sender;
     }  */
-
-    /**
-     * @inheritDoc
-     */
-    public function settings()
-    {
-        return [
-            $this->optionNames['confirmation'],
-            $this->optionNames['sender']     => [
-                'sanitize_callback' => [$this, 'sanitize_sender']
-            ]
-        ];
-    }
 }

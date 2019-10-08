@@ -12,7 +12,7 @@ use tiFy\Metabox\Drivers\{
     Color\Color as ColorDriver,
     CustomHeader\CustomHeader as CustomHeaderDriver,
     Excerpt\Excerpt as ExcerptDriver,
-    Fileshare\Fileshare as FileshareDriver,
+    Filefeed\Filefeed as FilefeedDriver,
     Icon\Icon as IconDriver,
     Imagefeed\Imagefeed as ImagefeedDriver,
     Order\Order as OrderDriver,
@@ -91,8 +91,8 @@ class MetaboxServiceProvider extends ServiceProvider
             return new ExcerptDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.fileshare", function () {
-            return new FileshareDriver();
+        $this->getContainer()->add("metabox.driver.filefeed", function () {
+            return new FilefeedDriver();
         });
 
         $this->getContainer()->add("metabox.driver.icon", function () {

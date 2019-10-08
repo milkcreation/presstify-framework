@@ -4,7 +4,7 @@
  */
 ?>
 <div <?php echo $this->htmlAttrs($this->params('attrs', [])); ?>>
-    <ul data-control="metabox-fileshare.items">
+    <ul data-control="metabox-filefeed.items">
         <?php foreach ($this->get('items', []) as $item) : ?>
             <?php $this->insert('item-wrap', $item); ?>
         <?php endforeach; ?>

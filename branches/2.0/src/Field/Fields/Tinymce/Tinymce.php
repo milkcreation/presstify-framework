@@ -30,6 +30,7 @@ class Tinymce extends FieldFactory implements TinymceContract
             'before'  => '',
             'name'    => '',
             'value'   => '',
+            'tag'     => 'textarea',
             'viewer'  => [],
             'options' => [],
         ];
@@ -51,6 +52,7 @@ class Tinymce extends FieldFactory implements TinymceContract
             'attrs.data-control' => 'tinymce',
             'attrs.data-options' => $options,
         ]);
+        $this->pull('attrs.value');
 
         return $this;
     }

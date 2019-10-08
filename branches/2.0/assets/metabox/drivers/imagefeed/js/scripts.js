@@ -15,13 +15,13 @@ jQuery(function ($) {
     xhr: undefined,
     options: {
       classes: {
-        add: 'MetaboxImagefeed-add ThemeButton--primary ThemeButton--normal',
+        addnew: 'MetaboxImagefeed-addnew',
         down: 'MetaboxImagefeed-itemSortDown',
         input: 'MetaboxImagefeed-itemInput',
         item: 'MetaboxImagefeed-item',
         items: 'MetaboxImagefeed-items',
-        order: 'MetaboxImagefeed-itemSortOrder',
-        remove: 'MetaboxImagefeed-itemRemove ThemeButton--remove',
+        order: 'MetaboxImagefeed-itemOrder',
+        remove: 'MetaboxImagefeed-itemRemove',
         sort: 'MetaboxImagefeed-itemSortHandler',
         up: 'MetaboxImagefeed-itemSortUp',
       },
@@ -29,7 +29,7 @@ jQuery(function ($) {
       sortable: true
     },
     control: {
-      add: 'metabox-imagefeed.add',
+      addnew: 'metabox-imagefeed.addnew',
       down: 'metabox-imagefeed.item.down',
       input: 'metabox-imagefeed.item.input',
       item: 'metabox-imagefeed.item',
@@ -80,9 +80,9 @@ jQuery(function ($) {
       this.el.attr('aria-sortable', this.flags.isSortable);
       this.el.attr('aria-removable', this.flags.isRemovable);
 
-      let add = $('[data-control="' + this.control.add + '"]', this.el);
-      if (add.length) {
-        add.addClass(this.option('classes.add'));
+      let addnew = $('[data-control="' + this.control.addnew + '"]', this.el);
+      if (addnew.length) {
+        addnew.addClass(this.option('classes.addnew'));
       }
     },
     // Initialisation du controleur principal.
@@ -122,7 +122,7 @@ jQuery(function ($) {
     },
     // Initialisation des événements déclenchement.
     _initEvents: function () {
-      this._on(this.el, {'click [data-control="metabox-imagefeed.add"]': this._onAddItem});
+      this._on(this.el, {'click [data-control="metabox-imagefeed.addnew"]': this._onAddnewItem});
       this._on(this.el, {'click [data-control="metabox-imagefeed.item.down"]': this._onMoveDownItem});
       this._on(this.el, {'click [data-control="metabox-imagefeed.item.up"]': this._onMoveUpItem});
       this._on(this.el, {'click [data-control="metabox-imagefeed.item.remove"]': this._onRemoveItem});
@@ -130,7 +130,7 @@ jQuery(function ($) {
     // EVENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     // Ajout d'un élément.
-    _onAddItem: function (e) {
+    _onAddnewItem: function (e) {
       e.preventDefault();
 
       let self = this;
