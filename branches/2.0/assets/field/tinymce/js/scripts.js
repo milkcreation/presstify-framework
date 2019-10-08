@@ -1,4 +1,4 @@
-/* global tify */
+/* global tify, tinyMCE */
 'use strict';
 
 import jQuery from 'jquery';
@@ -8,7 +8,7 @@ import 'jquery-ui/ui/widget';
 import 'tinymce/jquery.tinymce';
 
 jQuery(function ($) {
-  if (typeof (tinyMCE) == 'undefined') {
+  if (typeof (tinyMCE) === 'undefined') {
     require('tinymce/tinymce');
     require('tinymce/themes/silver/index');
     if (tify.locale.language !== undefined) {
@@ -47,7 +47,7 @@ jQuery(function ($) {
     _initControls : function () {
       let o = this.option();
 
-      if (typeof (tinyMCE) != 'undefined') {
+      if (typeof (tinyMCE) !== 'undefined') {
         o = $.extend({}, tinyMCE.settings || {}, o);
       }
 
@@ -56,19 +56,9 @@ jQuery(function ($) {
   });
 
   $(document).ready(function () {
-    $('[data-control="tinymce"]')
-        .tifyTinymce()
-        .tifyObserver({
-          selector: '[data-control="tinymce"]',
-          func: function (i, target) {
-            let o = $.parseJSON(decodeURIComponent($(this).data('options'))) || {};
-
-            if (typeof (tinyMCE) != 'undefined') {
-              o = $.extend({}, tinyMCE.settings || {}, o);
-            }
-
-            $(target).tinymce(o);
-          }
-        });
+    $('[data-control="tinymce"]').tifyTinymce();
+    $.tify.observe('[data-control="tinymce"]', function (i, target) {
+      $(target).tifyTinymce();
+    });
   });
 });
