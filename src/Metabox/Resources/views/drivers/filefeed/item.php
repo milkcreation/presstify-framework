@@ -3,21 +3,21 @@
  * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
-<span class="MetaboxFileshare-itemIcon">
+<span class="MetaboxFilefeed-itemIcon">
     <?php echo $this->get('icon'); ?>
 </span>
 
-<span class="MetaboxFileshare-itemTitle">
+<span class="MetaboxFilefeed-itemTitle">
     <?php echo $this->get('title'); ?>
 </span>
 
-<span class="MetaboxFileshare-itemMime">
+<span class="MetaboxFilefeed-itemMime">
     <?php echo $this->get('mime'); ?>
 </span>
 
 <?php echo field('hidden', [
     'attrs' => [
-        'data-control' => 'metabox-fileshare.item.input'
+        'data-control' => 'metabox-filefeed.item.input'
     ],
     'name'  => $this->get('name'),
     'value' => $this->get('value')

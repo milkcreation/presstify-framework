@@ -7,6 +7,12 @@ use tiFy\Metabox\MetaboxDriver;
 class Color extends MetaboxDriver
 {
     /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = 'color';
+
+    /**
      * @inheritDoc
      */
     public function defaults(): array

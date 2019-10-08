@@ -1,13 +1,19 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Metabox\Drivers\Fileshare;
+namespace tiFy\Metabox\Drivers\Filefeed;
 
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\Proxy\{Request, Router};
 
-class Fileshare extends MetaboxDriver
+class Filefeed extends MetaboxDriver
 {
+    /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = 'filefeed';
+
     /**
      * Indice de l'intance courante.
      * @var integer
@@ -51,6 +57,7 @@ class Fileshare extends MetaboxDriver
     public function defaultParams(): array
     {
         return [
+            'classes'   => [],
             'filetype'  => '', // video || application/pdf || video/flv, video/mp4,
             'max'       => -1,
             'removable' => true,
@@ -64,7 +71,7 @@ class Fileshare extends MetaboxDriver
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
-            'name'  => 'fileshare',
+            'name'  => 'filefeed',
             'title' => __('Partage de fichier', 'tify'),
         ]);
     }
@@ -89,7 +96,7 @@ class Fileshare extends MetaboxDriver
     public function setUrl(?string $url = null): self
     {
         $this->url = is_null($url)
-            ? Router::xhr(md5('MetaboxFileshare--' . static::$instance), [$this, 'xhrResponse'])->getUrl()
+            ? Router::xhr(md5('MetaboxFilefeed--' . static::$instance), [$this, 'xhrResponse'])->getUrl()
             : $url;
 
         return $this;
@@ -125,15 +132,30 @@ class Fileshare extends MetaboxDriver
     {
         parent::parse();
 
+        $defaultClasses = [
+            'addnew' => 'MetaboxFilefeed-addnew ThemeButton--primary ThemeButton--normal',
+            'down'   => 'MetaboxFilefeed-itemSortDown ThemeFeed-itemSortDown',
+            'input'  => 'MetaboxFilefeed-itemInput',
+            'item'   => 'MetaboxFilefeed-item ThemeFeed-item',
+            'items'  => 'MetaboxFilefeed-items ThemeFeed-items',
+            'order'  => 'MetaboxFilefeed-itemOrder ThemeFeed-itemOrder',
+            'remove' => 'MetaboxFilefeed-itemRemove ThemeFeed-itemRemove',
+            'sort'   => 'MetaboxFilefeed-itemSortHandle ThemeFeed-itemSortHandle',
+            'up'     => 'MetaboxFilefeed-itemSortUp ThemeFeed-itemSortUp',
+        ];
+        foreach ($defaultClasses as $k => $v) {
+            $this->params(["classes.{$k}" => sprintf($this->get("classes.{$k}", '%s'), $v)]);
+        }
+
         $this->params([
-            'attrs.class'        => sprintf($this->get('attrs.class', '%s'), 'MetaboxFileshare'),
-            'attrs.data-control' => 'metabox-fileshare',
+            'attrs.class'        => sprintf($this->get('attrs.class', '%s'), 'MetaboxFilefeed'),
+            'attrs.data-control' => 'metabox-filefeed',
         ]);
 
         if ($sortable = $this->get('sortable')) {
             $this->params([
                 'sortable' => array_merge([
-                    'placeholder' => 'MetaboxFileshare-itemPlaceholder',
+                    'placeholder' => 'MetaboxFilefeed-itemPlaceholder',
                     'axis'        => 'y',
                 ], is_array($sortable) ? $sortable : []),
             ]);
@@ -150,9 +172,10 @@ class Fileshare extends MetaboxDriver
                     'method' => 'post',
                     'url'    => $this->getUrl(),
                 ]),
-                'media'   => [
+                'classes'   => $this->params('classes', []),
+                'media'     => [
                     'multiple' => ($this->params('max', -1) === 1 ? false : true),
-                    'library' => [
+                    'library'  => [
                         'type' => $this->params('filetype'),
                     ],
                 ],

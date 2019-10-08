@@ -7,6 +7,12 @@ use tiFy\Metabox\MetaboxDriver;
 class Order extends MetaboxDriver
 {
     /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = 'order';
+
+    /**
      * @inheritDoc
      */
     public function defaultParams(): array

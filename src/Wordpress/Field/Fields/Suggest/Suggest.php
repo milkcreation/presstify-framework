@@ -4,7 +4,7 @@ namespace tiFy\Wordpress\Field\Fields\Suggest;
 
 use Illuminate\Support\Collection;
 use tiFy\Field\Fields\Suggest\Suggest as BaseSuggest;
-use tiFy\Support\Proxy\Request as req;
+use tiFy\Support\Proxy\Request;
 use tiFy\Wordpress\{
     Contracts\Field\Suggest as SuggestContract,
     Query\QueryPost,
@@ -43,9 +43,11 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponsePostQuery(...$args): array
     {
-        $args = array_merge([
-            'post_type' => 'any',
-        ], req::input('query_args', []), ['s' => req::input('_term', '')]);
+        $args = array_merge(
+            ['post_type' => 'any'],
+            Request::input('query_args', []),
+            ['s' => Request::input('_term', '')]
+        );
 
         $posts = QueryPosts::createFromArgs($args) ?: [];
 
@@ -70,7 +72,7 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponseTermQuery(...$args): array
     {
-        $args = array_merge(req::input('query_args', []), ['search' => req::input('_term', '')]);
+        $args = array_merge(Request::input('query_args', []), ['search' => Request::input('_term', '')]);
 
         $terms = QueryTerms::createFromArgs($args) ?: [];
 
@@ -95,7 +97,7 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponseUserQuery(...$args): array
     {
-        $args = array_merge(req::input('query_args', []), ['search' => req::input('_term', '')]);
+        $args = array_merge(Request::input('query_args', []), ['search' => Request::input('_term', '')]);
 
         $terms = QueryUsers::createFromArgs($args) ?: [];
 

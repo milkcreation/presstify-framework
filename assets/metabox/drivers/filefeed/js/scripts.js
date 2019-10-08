@@ -8,35 +8,35 @@ import 'jquery-ui/ui/widgets/sortable';
 import 'presstify-framework/partial/media-library/js/scripts';
 
 jQuery(function ($) {
-  $.widget('tify.tifyMetaboxFileshare', {
-    widgetEventPrefix: 'metabox-fileshare:',
+  $.widget('tify.tifyMetaboxFilefeed', {
+    widgetEventPrefix: 'metabox-filefeed:',
     id: undefined,
     xhr: undefined,
     options: {
       classes: {
-        add: 'MetaboxFileshare-add ThemeButton--primary ThemeButton--normal',
-        down: 'MetaboxFileshare-itemSortDown',
-        input: 'MetaboxFileshare-itemInput',
-        item: 'MetaboxFileshare-item',
-        items: 'MetaboxFileshare-items',
-        order: 'MetaboxFileshare-itemSortOrder',
-        remove: 'MetaboxFileshare-itemRemove ThemeButton--remove',
-        sort: 'MetaboxFileshare-itemSortHandler',
-        up: 'MetaboxFileshare-itemSortUp',
+        addnew: 'MetaboxFilefeed-addnew',
+        down: 'MetaboxFilefeed-itemSortDown',
+        input: 'MetaboxFilefeed-itemInput',
+        item: 'MetaboxFilefeed-item',
+        items: 'MetaboxFilefeed-items',
+        order: 'MetaboxFilefeed-itemOrder',
+        remove: 'MetaboxFilefeed-itemRemove',
+        sort: 'MetaboxFilefeed-itemSortHandler',
+        up: 'MetaboxFilefeed-itemSortUp',
       },
       removable: true,
       sortable: true
     },
     control: {
-      add: 'metabox-fileshare.add',
-      down: 'metabox-fileshare.item.down',
-      input: 'metabox-fileshare.item.input',
-      item: 'metabox-fileshare.item',
-      items: 'metabox-fileshare.items',
-      order: 'metabox-fileshare.item.order',
-      remove: 'metabox-fileshare.item.remove',
-      sort: 'metabox-fileshare.item.sort',
-      up: 'metabox-fileshare.item.up',
+      addnew: 'metabox-filefeed.addnew',
+      down: 'metabox-filefeed.item.down',
+      input: 'metabox-filefeed.item.input',
+      item: 'metabox-filefeed.item',
+      items: 'metabox-filefeed.items',
+      order: 'metabox-filefeed.item.order',
+      remove: 'metabox-filefeed.item.remove',
+      sort: 'metabox-filefeed.item.sort',
+      up: 'metabox-filefeed.item.up',
     },
     // Instanciation de l'élément.
     _create: function () {
@@ -79,9 +79,9 @@ jQuery(function ($) {
       this.el.attr('aria-sortable', this.flags.isSortable);
       this.el.attr('aria-removable', this.flags.isRemovable);
 
-      let add = $('[data-control="' + this.control.add + '"]', this.el);
-      if (add.length) {
-        add.addClass(this.option('classes.add'));
+      let addnew = $('[data-control="' + this.control.addnew + '"]', this.el);
+      if (addnew.length) {
+        addnew.addClass(this.option('classes.addnew'));
       }
     },
     // Initialisation du controleur principal.
@@ -122,15 +122,15 @@ jQuery(function ($) {
     },
     // Initialisation des événements déclenchement.
     _initEvents: function () {
-      this._on(this.el, {'click [data-control="metabox-fileshare.add"]': this._onAddItem});
-      this._on(this.el, {'click [data-control="metabox-fileshare.item.down"]': this._onMoveDownItem});
-      this._on(this.el, {'click [data-control="metabox-fileshare.item.up"]': this._onMoveUpItem});
-      this._on(this.el, {'click [data-control="metabox-fileshare.item.remove"]': this._onRemoveItem});
+      this._on(this.el, {'click [data-control="metabox-filefeed.addnew"]': this._onAddnewItem});
+      this._on(this.el, {'click [data-control="metabox-filefeed.item.down"]': this._onMoveDownItem});
+      this._on(this.el, {'click [data-control="metabox-filefeed.item.up"]': this._onMoveUpItem});
+      this._on(this.el, {'click [data-control="metabox-filefeed.item.remove"]': this._onRemoveItem});
     },
     // EVENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     // Ajout d'un élément.
-    _onAddItem: function (e) {
+    _onAddnewItem: function (e) {
       e.preventDefault();
 
       let self = this;
@@ -262,6 +262,6 @@ jQuery(function ($) {
   });
 
   $(document).ready(function () {
-    $('[data-control="metabox-fileshare"]').tifyMetaboxFileshare();
+    $('[data-control="metabox-filefeed"]').tifyMetaboxFilefeed();
   });
 });

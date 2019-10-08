@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Wordpress\Metabox\Drivers\Fileshare;
+namespace tiFy\Wordpress\Metabox\Drivers\Filefeed;
 
-use tiFy\Metabox\Drivers\Fileshare\Fileshare as BaseFileshare;
+use tiFy\Metabox\Drivers\Filefeed\Filefeed as BaseFilefeed;
 
-class Fileshare extends BaseFileshare
+class Filefeed extends BaseFilefeed
 {
     /**
      * @inheritDoc

@@ -4,7 +4,7 @@
  */
 echo partial('tag', [
     'attrs'   => [
-        'data-control' => 'metabox-imagefeed.add',
+        'data-control' => 'metabox-imagefeed.addnew',
     ],
     'content' => _n(
         __('Ajouter une image', 'tify'),

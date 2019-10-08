@@ -8,6 +8,12 @@ use tiFy\Support\Proxy\Field;
 class Subtitle extends MetaboxDriver
 {
     /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = 'subtitle';
+
+    /**
      * @inheritDoc
      */
     public function content(): string

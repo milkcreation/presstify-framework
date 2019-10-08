@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Metabox;
 
 use tiFy\Contracts\Metabox\{MetaboxDriver, MetaboxManager, MetaboxScreen as MetaboxScreenContract};
-use tiFy\Wordpress\Metabox\Drivers\{Fileshare\Fileshare, Imagefeed\Imagefeed, Videofeed\Videofeed};
+use tiFy\Wordpress\Metabox\Drivers\{Filefeed\Filefeed, Imagefeed\Imagefeed, Videofeed\Videofeed};
 use tiFy\Wordpress\Routing\WpScreen;
 use tiFy\Support\Proxy\Request;
 use WP_Post;
@@ -273,8 +273,8 @@ class Metabox
             return (new MetaboxScreen())->setManager($this->manager);
         });
 
-        app()->add('metabox.driver.fileshare', function () {
-            return new Fileshare();
+        app()->add('metabox.driver.filefeed', function () {
+            return new Filefeed();
         });
 
         app()->add('metabox.driver.imagefeed', function () {

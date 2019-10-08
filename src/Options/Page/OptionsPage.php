@@ -67,12 +67,6 @@ class OptionsPage extends ParamsBag implements OptionPageContract
             }
         });
 
-        add_action('admin_enqueue_scripts', function () {
-            if ((get_current_screen()->id === $this->get('hookname')) && $this->get('admin_enqueue_scripts')) {
-                wp_enqueue_style('optionsPage', asset()->url('options/css/styles.css'), [], 171030);
-            }
-        });
-
         add_action('admin_bar_menu', function (WP_Admin_Bar &$wp_admin_bar) {
             if ($this->items && !is_admin() && ($admin_bar = $this->get('admin_bar', []))) {
                 $wp_admin_bar->add_node($admin_bar);

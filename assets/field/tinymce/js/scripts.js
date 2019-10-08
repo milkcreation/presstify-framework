@@ -47,10 +47,6 @@ jQuery(function ($) {
     _initControls : function () {
       let o = this.option();
 
-      if (typeof (tinyMCE) !== 'undefined') {
-        o = $.extend({}, tinyMCE.settings || {}, o);
-      }
-
       this.el.tinymce(o);
     }
   });

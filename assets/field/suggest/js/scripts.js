@@ -88,7 +88,7 @@ jQuery(function ($) {
 
       this.wrap = $(this.el).closest('[data-control="' + this.control.wrap + '"]');
       if (!this.wrap.length) {
-        this.wrap = $(this.el).wrap('<span data-control="' + this.control.wrap + '"/>').parent();
+        this.wrap = $(this.el).wrap('<div data-control="' + this.control.wrap + '"/>').parent();
       }
       this.wrap.addClass(this.option('classes.wrap')).attr('aria-loaded', 'false').attr('aria-selected', 'false');
 

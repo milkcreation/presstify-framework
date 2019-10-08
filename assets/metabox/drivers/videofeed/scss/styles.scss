@@ -1,25 +1,5 @@
 @import '~presstify-framework/theme/scss/styles';
 
-.MetaboxVideofeed-item {
-  position: relative;
-  display: block;
-  min-height: 65px;
-  margin-bottom: 5px;
-  border: solid 1px #E4E4E4;
-  padding: 5px 20px;
-  background-color: #FFF;
-}
-
-.MetaboxVideofeed-item::after,
-.MetaboxVideofeed-item::before {
-  display: block;
-  content: " ";
-}
-
-.MetaboxVideofeed-item::after {
-  clear: both;
-}
-
 .MetaboxVideofeed-itemPoster{
   float:left;
   width:100px;
@@ -28,58 +8,4 @@
 
 .MetaboxVideofeed-itemSrc > textarea{
   resize:none;
-}
-
-.MetaboxVideofeed-itemSortHandler {
-  position: absolute;
-  top: 50%;
-  left: 4px;
-  z-index: 3;
-  color: #999;
-  cursor: move;
-  display: block;
-  font-weight: 700;
-  padding: 2px 0;
-  margin: 0;
-  transform: translateY(-50%) rotate(90deg);
-}
-
-.MetaboxVideofeed-itemSortHandler::before {
-  content: "...";
-}
-
-.MetaboxVideofeed-itemSortOrder {
-  position: absolute;
-  bottom:-2px;
-  right:-2px;
-  box-shadow: none;
-  width:20px;
-  padding:0;
-  text-align: center;
-  font-size: 10px;
-}
-
-.MetaboxVideofeed-itemSortUp,
-.MetaboxVideofeed-itemSortDown {
-  position: absolute;
-  top: 50%;
-  right: 4px;
-  text-decoration: none;
-  transform: translateY(-50%);
-}
-
-.MetaboxVideofeed-itemSortUp {
-  margin-top: -10px;
-}
-
-.MetaboxVideofeed-itemSortDown {
-  margin-top: 10px;
-}
-
-.MetaboxVideofeed-itemSortUp::before {
-  content: "\25b2";
-}
-
-.MetaboxVideofeed-itemSortDown::before {
-  content: "\25bc";
 }

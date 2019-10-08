@@ -66,17 +66,4 @@ class MailerOptionsNotification extends AbstractMetaboxDriver
 
         return $recipients;
     }    */
-
-    /**
-     * {@inheritdoc}
-     */
-    public function settings()
-    {
-        return [
-            $this->optionNames['notification'],
-            $this->optionNames['recipients'] => [
-                'sanitize_callback' => [$this, 'sanitize_recipients']
-            ]
-        ];
-    }
 }

@@ -4,7 +4,7 @@
  */
 echo partial('tag', [
     'attrs'   => [
-        'data-control' => 'metabox-videofeed.add',
+        'data-control' => 'metabox-videofeed.addnew',
     ],
     'content' => _n(
         __('Ajouter une video', 'tify'),
