@@ -220,7 +220,7 @@ class Column extends ParamsBag implements ColumnContract
 
                 switch ($type) {
                     default:
-                        return is_array($value) ? join(', ', $value) : (string)$value;
+                        return is_array($value) ? json_encode($value) : (string)$value;
                         break;
                     case 'DATETIME' :
                         return mysql2date(get_option('date_format') . ' @ ' . get_option('time_format'), $value);
