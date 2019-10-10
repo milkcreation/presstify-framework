@@ -35,36 +35,4 @@ class MailerOptionsConfirmation extends AbstractMetaboxDriver
             'title' => __('Confirmation', 'tify')
         ]);
     }
-
-    /**
-     * Vérification du format de l'email de l'expéditeur
-     *
-     * @param array $sender Attributs de l'expéditeur
-     *
-     * @return array
-
-    public function sanitize_sender($sender)
-    {
-        if (empty($sender['email'])) :
-            add_settings_error(
-                $this->getObjectName(),
-                'sender-email_empty',
-                sprintf(
-                    __('L\'email "%s" ne peut être vide', 'theme'),
-                    __('Expéditeur du message de confirmation de reception', 'theme')
-                )
-            );
-        elseif (!is_email($sender['email'])) :
-            add_settings_error(
-                $this->getObjectName(),
-                'sender-email_format',
-                sprintf(
-                    __('Le format de l\'email "%s" n\'est pas valide', 'theme'),
-                    __('Expéditeur du message de confirmation de reception', 'theme')
-                )
-            );
-        endif;
-
-        return $sender;
-    }  */
 }

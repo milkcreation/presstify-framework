@@ -1,4 +1,3 @@
-/* global wp */
 'use strict';
 
 import jQuery from 'jquery';
@@ -10,8 +9,6 @@ import 'presstify-framework/partial/media-library/js/scripts';
 jQuery(function ($) {
   $.widget('tify.tifyMetaboxFilefeed', {
     widgetEventPrefix: 'metabox-filefeed:',
-    id: undefined,
-    xhr: undefined,
     options: {
       classes: {
         addnew: 'MetaboxFilefeed-addnew',

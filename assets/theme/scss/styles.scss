@@ -5,6 +5,8 @@
 // Commun
 [class*="ThemeButton--"] {
   cursor: pointer;
+  text-decoration: none;
+  display:inline-block;
 }
 
 // Taille
@@ -62,6 +64,7 @@
 
 // Bouton > Fermeture
 .ThemeButton--close {
+  position: relative;
   width: 20px;
   height: 20px;
   opacity: 0.5;
@@ -191,15 +194,20 @@ div[class*="ThemeInput--"] {
 
   &::before {
     position: absolute;
-    top: 1px;
+    top: 0;
     right: 0;
-    bottom: 1px;
+    bottom: 0;
     width: 30px;
     background-color: #F4F4F4;
     border: 1px solid #ddd;
     text-align: center;
     display: block;
     content: "";
+  }
+
+  & > input {
+    margin:0;
+    width: 100%;
   }
 
   &::after {
@@ -214,10 +222,6 @@ div[class*="ThemeInput--"] {
     color: #7eb4ea;
     text-align: center;
     display: block;
-  }
-
-  & > input {
-    width: 100%;
   }
 }
 
@@ -311,13 +315,17 @@ div[class*="ThemeInput--"] {
   }
 }
 
+.ThemeFeed-items {
+  margin-bottom:10px;
+}
+
 .ThemeFeed-item {
   position: relative;
   display: block;
   min-height: 100px;
   margin-bottom: 5px;
   border: solid 1px #E4E4E4;
-  padding: 10px 25px 10px 15px;
+  padding: 10px 25px 10px 20px;
   background-color: #FFF;
 }
 
