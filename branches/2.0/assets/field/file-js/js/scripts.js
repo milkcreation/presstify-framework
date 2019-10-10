@@ -8,7 +8,6 @@ import 'jquery-ui/ui/widget';
 jQuery(function ($) {
   $.widget('tify.tifyFileJs', {
     widgetEventPrefix: 'file-js:',
-    id: undefined,
     options: {},
     // Instanciation de l'élément.
     _create: function () {
@@ -69,5 +68,8 @@ jQuery(function ($) {
 
   $(document).ready(function ($) {
     $('[data-control="file-js"]').tifyFileJs();
+    $.tify.observe('[data-control="file-js"]', function (i, target) {
+      $(target).tifyFileJs();
+    });
   });
 });

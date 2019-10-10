@@ -9,7 +9,7 @@ use tiFy\Support\Proxy\{Request, Router};
 class Videofeed extends MetaboxDriver
 {
     /**
-     * Indice de l'intance courante.
+     * Indice de l'instance courante.
      * @var integer
      */
     static $instance = 0;

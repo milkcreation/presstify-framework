@@ -86,8 +86,6 @@ jQuery(function ($) {
       this.el.attr('aria-sortable', this.flags.isSortable);
       this.el.attr('aria-removable', this.flags.isRemovable);
 
-
-
       if (this.flags.isSuggest) {
         let suggest = $('[data-control="' + this.control.suggest + '"]', this.el);
         if (!suggest.length) {

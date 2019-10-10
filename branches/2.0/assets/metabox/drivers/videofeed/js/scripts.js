@@ -1,4 +1,3 @@
-/* global wp */
 'use strict';
 
 import jQuery from 'jquery';
@@ -11,7 +10,6 @@ import 'presstify-framework/partial/media-library/js/scripts';
 jQuery(function ($) {
   $.widget('tify.tifyMetaboxVideofeed', {
     widgetEventPrefix: 'metabox-videofeed:',
-    id: undefined,
     xhr: undefined,
     options: {
       classes: {
