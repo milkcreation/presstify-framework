@@ -180,5 +180,5 @@ interface FieldFactory extends ParamsBag
      *
      * @return FieldView|ViewEngine
      */
-    public function viewer($view = null, $data = []);
+    public function viewer(?string $view = null, array $data = []);
 }

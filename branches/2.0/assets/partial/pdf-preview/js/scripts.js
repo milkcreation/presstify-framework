@@ -26,8 +26,7 @@ jQuery(function ($) {
       this._initOptions();
       this._initEvents();
     },
-
-    // INITIALISATION
+    // INITIALISATION.
     // -----------------------------------------------------------------------------------------------------------------
     // Initialisation des événements déclenchement.
     _initEvents: function () {
@@ -38,13 +37,8 @@ jQuery(function ($) {
 
       this._doLoad();
 
-      this._on(this.el, {
-        'click [data-control="pdf-preview.nav.next"]': this._onNavNext
-      });
-
-      this._on(this.el, {
-        'click [data-control="pdf-preview.nav.prev"]': this._onNavPrev
-      });
+      this._on(this.el, {'click [data-control="pdf-preview.nav.next"]': this._onNavNext});
+      this._on(this.el, {'click [data-control="pdf-preview.nav.prev"]': this._onNavPrev});
     },
     // Initialisation des attributs de configuration.
     _initOptions: function () {
@@ -68,7 +62,6 @@ jQuery(function ($) {
         self._doRenderPage(self.pageNum);
       });
     },
-
     // Affichage d'une page.
     _doRenderPage: function (num) {
       let self = this;
@@ -76,7 +69,7 @@ jQuery(function ($) {
       self.pageRendering = true;
 
       self.pdfDoc.getPage(num).then(function (pdfPage) {
-        let viewport = pdfPage.getViewport(1.0),
+        let viewport = pdfPage.getViewport({scale: 1}),
             canvas = $('[data-control="pdf-preview.view"]', self.el).get(0),
             context = canvas.getContext('2d');
 
@@ -102,7 +95,6 @@ jQuery(function ($) {
         console.error(reason);
       });
     },
-
     // Mise en file de l'affichage d'une page.
     _doQueueRenderPage: function (num) {
       if (this.pageRendering) {
@@ -111,7 +103,6 @@ jQuery(function ($) {
         this._doRenderPage(num);
       }
     },
-
     // EVENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     // Navigation vers la page suivante.
@@ -124,7 +115,6 @@ jQuery(function ($) {
       this.pageNum++;
       this._doQueueRenderPage(this.pageNum);
     },
-
     // Navigation vers la page précédente.
     _onNavPrev: function (e) {
       e.preventDefault();
@@ -139,5 +129,8 @@ jQuery(function ($) {
 
   $(document).ready(function () {
     $('[data-control="pdf-preview"]').tifyPdfPreview();
+    $.tify.observe('[data-control="pdf-preview"]', function (i, target) {
+      $(target).tifyPdfPreview();
+    });
   });
 });

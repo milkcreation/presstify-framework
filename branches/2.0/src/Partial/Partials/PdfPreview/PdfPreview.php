@@ -20,49 +20,49 @@ class PdfPreview extends PartialFactory implements PdfPreviewContract
     public function defaults(): array
     {
         return [
-            'attrs'         => [],
-            'after'         => '',
-            'before'        => '',
-            'viewer'        => [],
-            'src'     => 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf',
-            'view'    => [
+            'attrs'  => [],
+            'after'  => '',
+            'before' => '',
+            'viewer' => [],
+            'src'    => 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf',
+            'view'   => [
                 'attrs' => [
-                    'class' => 'PdfPreview-view'
-                ]
+                    'class' => 'PdfPreview-view',
+                ],
             ],
-            'prev'    => [
+            'prev'   => [
                 'tag'     => 'a',
                 'attrs'   => [
                     'href'  => '#',
                     'class' => 'PdfPreview-nav PdfPreview-nav--prev',
                 ],
-                'content' => __('Préc.', 'tify')
+                'content' => __('Préc.', 'tify'),
             ],
-            'next'    => [
-                'tag'   => 'a',
-                'attrs' => [
+            'next'   => [
+                'tag'     => 'a',
+                'attrs'   => [
                     'href'  => '#',
                     'class' => 'PdfPreview-nav PdfPreview-nav--next',
                 ],
-                'content' => __('Suiv.', 'tify')
+                'content' => __('Suiv.', 'tify'),
             ],
-            'page' => [
+            'page'   => [
                 'attrs' => [
-                    'class' => 'PdfPreview-page'
-                ]
+                    'class' => 'PdfPreview-page',
+                ],
             ],
-            'num' => [
+            'num'    => [
                 'tag'   => 'span',
                 'attrs' => [
                     'class' => 'PdfPreview-pageNum',
-                ]
+                ],
             ],
-            'total'   => [
+            'total'  => [
                 'tag'   => 'span',
                 'attrs' => [
                     'class' => 'PdfPreview-pageTotal',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 

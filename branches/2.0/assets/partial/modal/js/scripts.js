@@ -2,6 +2,8 @@
 'use strict';
 
 import jQuery from 'jquery';
+import 'jquery-ui/ui/core';
+import 'jquery-ui/ui/widget';
 import 'bootstrap/js/dist/modal';
 
 jQuery(function ($) {
@@ -9,8 +11,8 @@ jQuery(function ($) {
     $('[data-control="modal"]')
         .modal()
         .on('shown.bs.modal', function () {
-          var $modal = $(this);
-          var o = $.parseJSON(decodeURIComponent($modal.data('options')));
+          let $modal = $(this),
+            o = $.parseJSON(decodeURIComponent($modal.data('options')));
 
           if (tify[o.id] === undefined) {
             tify[o.id] = {};
@@ -22,9 +24,11 @@ jQuery(function ($) {
 
           if (o.ajax) {
             if (tify[o.id].content === undefined) {
-              tify[o.id].content = resp;
-              $.post(tify.ajax_url, o.ajax, function (resp) {
-                $('.modal-content', $modal).$modal.html(resp);
+              $.ajax(o.ajax).done(function (resp) {
+                if (resp.success) {
+                  tify[o.id].content = resp.data;
+                  $('.modal-content', $modal).html(resp.data);
+                }
               });
             } else {
               $('.modal-content', $modal).html(tify[o.id].content);
@@ -32,8 +36,8 @@ jQuery(function ($) {
           }
         })
         .on('hidden.bs.modal', function () {
-          var $modal = $(this);
-          var o = $.parseJSON(decodeURIComponent($modal.data('options')));
+          let $modal = $(this),
+              o = $.parseJSON(decodeURIComponent($modal.data('options')));
 
           if (o.ajax) {
             if (tify[o.id].original !== undefined) {

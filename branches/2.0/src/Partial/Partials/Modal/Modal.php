@@ -138,9 +138,8 @@ class Modal extends PartialFactory implements ModalContract
                 ? array_merge(
                 is_array($ajax) ? $ajax : [],
                 [
-                    'action' => 'partial_modal',
-                    'csrf'   => wp_create_nonce('PartialModal' . $this->getId()),
-                    'data'   => []
+                    'dataType' => 'json',
+                    'method' => 'post'
                 ]
             )
                 : false

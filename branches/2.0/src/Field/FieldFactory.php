@@ -290,7 +290,7 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     /**
      * @inheritDoc
      */
-    public function viewer($view = null, $data = [])
+    public function viewer(?string $view = null, array $data = [])
     {
         if (is_null($this->viewer)) {
             $this->viewer = app()->get('field.viewer', [$this]);

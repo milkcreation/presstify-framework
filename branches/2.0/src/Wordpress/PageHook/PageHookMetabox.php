@@ -3,8 +3,8 @@
 namespace tiFy\Wordpress\PageHook;
 
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
-use tiFy\Metabox\{MetaboxView, MetaboxDriver};
-use tiFy\Wordpress\Contracts\{PageHook, PageHookItem};
+use tiFy\Metabox\MetaboxDriver;
+use tiFy\Wordpress\Contracts\PageHook;
 
 class PageHookMetabox extends MetaboxDriver
 {
@@ -20,7 +20,7 @@ class PageHookMetabox extends MetaboxDriver
     public function defaults(): array
     {
         return array_merge(parent::defaults(), [
-            'title' => __('Pages d\'accroche', 'tify')
+            'title' => __('Pages d\'accroche', 'tify'),
         ]);
     }
 
@@ -32,7 +32,7 @@ class PageHookMetabox extends MetaboxDriver
         parent::parse();
 
         $this->set([
-            'items' => $this->pageHook()->collect()->where('admin', true)->all()
+            'items' => $this->pageHook()->collect()->where('admin', true)->all(),
         ]);
 
         return $this;
@@ -55,23 +55,9 @@ class PageHookMetabox extends MetaboxDriver
      */
     public function setPageHook(PageHook $pageHook): self
     {
-       $this->pageHook = $pageHook;
+        $this->pageHook = $pageHook;
 
-       return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function settings()
-    {
-        $settings = [];
-        foreach($this->get('items', []) as $item) {
-            /** @var PageHookItem $item */
-            array_push($settings, $item->getOptionName());
-        }
-
-        return $settings;
+        return $this;
     }
 
     /**
@@ -79,21 +65,10 @@ class PageHookMetabox extends MetaboxDriver
      */
     public function viewer(?string $view = null, array $data = [])
     {
-        if (!$this->viewer) {
-            $defaultDir = __DIR__ . '/Resources/views/metabox/';
-            $fallbackDir = $this->get('viewer.override_dir') ?: $defaultDir;
-
-            $this->viewer = view()
-                ->setDirectory($defaultDir)
-                ->setOverrideDir($fallbackDir)
-                ->setController(MetaboxView::class)
-                ->set('metabox', $this);
+        if (!$this->viewer && !$this->get('viewer.directory')) {
+            $this->set('viewer.directory', class_info($this->pageHook)->getDirname() . '/Resources/views/metabox');
         }
 
-        if (func_num_args() === 0) {
-            return $this->viewer;
-        }
-
-        return $this->viewer->make("_override::{$view}", $data);
+        return func_num_args() === 0 ? parent::viewer() : parent::viewer($view, $data);
     }
 }
