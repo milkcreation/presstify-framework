@@ -173,6 +173,30 @@ class QueryUser extends ParamsBag implements QueryUserContract
     /**
      * @inheritDoc
      */
+    public function getMeta(string $meta_key, bool $single = false, $default = null)
+    {
+        return get_user_meta($this->getId(), $meta_key, $single) ?: $default;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMetaMulti(string $meta_key, $default = null)
+    {
+        return $this->getMeta($meta_key, false, $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMetaSingle(string $meta_key, $default = null)
+    {
+        return $this->getMeta($meta_key, true, $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getNicename(): string
     {
         return $this->get('user_nicename', '');
@@ -184,6 +208,14 @@ class QueryUser extends ParamsBag implements QueryUserContract
     public function getNickname(): string
     {
         return $this->getWpUser()->nickname;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOption(string $option_name, $default = null)
+    {
+        return get_user_option($option_name, $this->getId()) ? : $default;
     }
 
     /**

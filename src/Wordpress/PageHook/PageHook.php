@@ -29,6 +29,10 @@ class PageHook implements PageHookContract
                 Metabox::add('PageHook-optionsNode', (new PageHookMetabox())->setPageHook($this))
                     ->setScreen('tify_options@options')
                     ->setContext('tab');
+
+                $this->collect()->where('admin', true)->each(function (PageHookItemContract $item) {
+                    register_setting('tify_options', $item->getOptionName());
+                });
             }
         }, 999999);
 

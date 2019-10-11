@@ -6,8 +6,7 @@
 ?>
 <table class="form-table">
     <tbody>
-    <?php
-    foreach ($this->get('items', []) as $item) : ?>
+    <?php foreach ($this->get('items', []) as $item) : ?>
         <tr>
             <th><?php echo $item->getTitle(); ?></th>
             <td>

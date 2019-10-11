@@ -119,6 +119,37 @@ interface QueryUser extends ParamsBag
     public function getLogin(): string;
 
     /**
+     * Récupération d'une metadonnée.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
+     * @param bool $single Type de metadonnés. single (true)|multiple (false). false par défaut.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getMeta(string $meta_key, bool $single = false, $default = null);
+
+    /**
+     * Récupération d'une metadonnée de type multiple.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getMetaMulti(string $meta_key, $default = null);
+
+    /**
+     * Récupération d'une metadonnée de type simple.
+     *
+     * @param string $meta_key Clé d'indexe de la metadonnée à récupérer
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getMetaSingle(string $meta_key, $default = null);
+
+    /**
      * Récupération du surnom.
      *
      * @return string
@@ -131,6 +162,16 @@ interface QueryUser extends ParamsBag
      * @return string
      */
     public function getNickname(): string;
+
+    /**
+     * Récupération d'une option de site.
+     *
+     * @param string $option_name Clé d'indexe de l'option à récupérer
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getOption(string $option_name, $default = null);
 
     /**
      * Récupération du mot de passe encrypté.
