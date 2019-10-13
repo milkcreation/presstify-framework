@@ -3,9 +3,6 @@
  * @var tiFy\Partial\PartialView $this
  */
 ?>
-
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary button-secondary" data-dismiss="modal">
-        <?php _e('Fermer', 'tify');?>
-    </button>
-</div>
+<button type="button" class="btn btn-secondary button-secondary" data-dismiss="modal">
+    <?php _e('Fermer', 'tify');?>
+</button>

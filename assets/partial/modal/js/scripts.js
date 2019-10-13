@@ -7,6 +7,124 @@ import 'jquery-ui/ui/widget';
 import 'bootstrap/js/dist/modal';
 
 jQuery(function ($) {
+  $.widget('tify.tifyModal', {
+    widgetEventPrefix: 'modal:',
+    options: {
+      classes:{
+        body: 'modal-body',
+        content: 'modal-content',
+        dialog: 'modal-dialog',
+        footer: 'modal-footer',
+        header: 'modal-header',
+      }
+    },
+    controls: {
+      body: 'modal.body',
+      content: 'modal.content',
+      dialof: 'modal.dialog',
+      footer: 'modal.footer',
+      header: 'modal.header',
+    },
+    // Instanciation de l'élément.
+    _create: function () {
+      this.instance = this;
+
+      this.el = this.element;
+
+      this._initOptions();
+      this._initControls();
+      this._initEvents();
+    },
+    // INTIALISATIONS
+    // -----------------------------------------------------------------------------------------------------------------
+    // Initialisation des attributs de configuration.
+    _initOptions: function () {
+      $.extend(
+          true,
+          this.options,
+          this.el.data('options') && $.parseJSON(decodeURIComponent(this.el.data('options'))) || {}
+      );
+    },
+    // Initialisation des agents de contrôle.
+    _initControls: function () {
+      let $dialog = $('[data-control="' + this.control.dialog + '"]', this.el);
+      if (!$dialog.length) {
+        $dialog = $('<div data-control="' + this.control.dialog + '"/>').appendTo(this.el);
+      }
+      $dialog.addClass(this.option('classes.dialog'));
+
+      let $content = $('[data-control="' + this.control.content + '"]', $dialog);
+      if (!$content.length) {
+        $content = $('<div data-control="' + this.control.content + '"/>').appendTo($dialog);
+      }
+      $content.addClass(this.option('classes.content'));
+
+      let $header = $('[data-control="' + this.control.header + '"]', $content);
+      if (!$header.length) {
+        $header = $('<div data-control="' + this.control.header + '"/>').appendTo($content);
+      }
+      $header.addClass(this.option('classes.header'));
+
+      let $body = $('[data-control="' + this.control.body + '"]', $content);
+      if (!$body.length) {
+        $body = $('<div data-control="' + this.control.body + '"/>').appendTo($content);
+      }
+      $body.addClass(this.option('classes.body'));
+
+      let $footer = $('[data-control="' + this.control.footer + '"]', $content);
+      if (!$footer.length) {
+        $footer = $('<div data-control="' + this.control.footer + '"/>').appendTo($content);
+      }
+      $footer.addClass(this.option('classes.footer'));
+    },
+    // Initialisation des événements.
+    _initEvents: function () {
+      this._on(this.el, {'click [data-control="modal.open"]': this._onClickOpen});
+      this._on(this.el, {'click [data-control="modal.close"]': this._onClickClose});
+    },
+    // EVENENEMENTS
+    // -----------------------------------------------------------------------------------------------------------------
+    // Clique sur le bouton d'ouverture
+    _onClickOpen: function (e) {
+      e.preventDefault();
+      this.open();
+    },
+    // Clique sur le bouton de fermeture
+    _onClickClose: function (e) {
+      e.preventDefault();
+      this.close();
+    },
+    // ACCESSEURS
+    // -----------------------------------------------------------------------------------------------------------------
+    // Fermeture de la modale.
+    close: function () {
+      this.el.modal('hide');
+    },
+    // Ouverture de la modale.
+    open: function () {
+      this.el.modal('show');
+    },
+    // Bascule d'affichage de la modale.
+    toggle: function () {
+      this.el.modal('toggle');
+    },
+    // Mise à jour de la position de la modale.
+    update: function () {
+      this.el.modal('handleUpdate');
+    },
+    // Destruction de la modale.
+    destroy: function () {
+      this.el.modal('dispose');
+    }
+  });
+
+  $(document).ready(function () {
+    $('[data-control="modal"]').tifyModal();
+    $.tify.observe('[data-control="modal"]', function (i, target) {
+      $(target).tifyModal();
+    });
+  });
+  /*
   $(document).ready(function () {
     $('[data-control="modal"]')
         .modal()
@@ -53,6 +171,5 @@ jQuery(function ($) {
 
       $($(this).data('target') + '[data-control="modal"]').modal('show');
     });
-  });
+  });*/
 });
-

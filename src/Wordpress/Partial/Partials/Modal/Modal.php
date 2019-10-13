@@ -26,8 +26,6 @@ class Modal extends BaseModal implements PartialFactoryContract
                 171206,
                 true
             );
-            add_action('wp_ajax_partial_modal', [$this, 'xhrGetContent']);
-            add_action('wp_ajax_nopriv_partial_modal', [$this, 'xhrGetContent']);
         });
     }
 

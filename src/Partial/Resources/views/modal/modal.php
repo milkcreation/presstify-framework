@@ -4,17 +4,21 @@
  */
 ?>
 <?php $this->before(); ?>
-
 <div <?php $this->attrs(); ?>>
     <?php echo $this->get('backdrop_close', ''); ?>
 
-    <div class="modal-dialog <?php echo $this->get('size'); ?>" role="document">
-        <div class="modal-content">
-            <?php echo $this->get('header', ''); ?>
-            <?php echo $this->get('body', ''); ?>
-            <?php echo $this->get('footer', ''); ?>
+    <div data-control="modal.dialog" class="<?php echo $this->get('size'); ?>">
+        <div data-control="modal.content">
+            <div data-control="modal.header">
+                <?php echo $this->get('header', ''); ?>
+            </div>
+            <div data-control="modal.body">
+                <?php echo $this->get('body', ''); ?>
+            </div>
+            <div data-control="modal.footer">
+                <?php echo $this->get('footer', ''); ?>
+            </div>
         </div>
     </div>
 </div>
-
 <?php $this->after();
