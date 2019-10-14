@@ -1,10 +1,9 @@
-/* global tify */
 'use strict';
 
 import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
-import 'bootstrap/js/dist/modal';
+import 'bootstrap/js/src/modal';
 
 jQuery(function ($) {
   $.widget('tify.tifyModal', {
@@ -12,18 +11,20 @@ jQuery(function ($) {
     options: {
       classes:{
         body: 'modal-body',
+        close: 'modal-close',
         content: 'modal-content',
         dialog: 'modal-dialog',
         footer: 'modal-footer',
         header: 'modal-header',
       }
     },
-    controls: {
-      body: 'modal.body',
+    control: {
+      body: 'modal.content.body',
+      close: 'modal.close',
       content: 'modal.content',
-      dialof: 'modal.dialog',
-      footer: 'modal.footer',
-      header: 'modal.header',
+      dialog: 'modal.dialog',
+      footer: 'modal.content.footer',
+      header: 'modal.content.header',
     },
     // Instanciation de l'élément.
     _create: function () {
@@ -31,7 +32,16 @@ jQuery(function ($) {
 
       this.el = this.element;
 
+      this.flags = {
+        hasBody: true,
+        hasClose: true,
+        hasFooter: true,
+        hasHeader: true,
+        isAnimated: true
+      };
+
       this._initOptions();
+      this._initFlags();
       this._initControls();
       this._initEvents();
     },
@@ -45,13 +55,32 @@ jQuery(function ($) {
           this.el.data('options') && $.parseJSON(decodeURIComponent(this.el.data('options'))) || {}
       );
     },
+    // Initialisation des indicateurs d'état.
+    _initFlags: function () {
+      this.flags.hasBody = !!this.option('body');
+      this.flags.hasClose = !!this.option('close');
+      this.flags.hasFooter = !!this.option('footer');
+      this.flags.hasHeader = !!this.option('header');
+      this.flags.isAnimated = !!this.option('animated');
+    },
     // Initialisation des agents de contrôle.
     _initControls: function () {
+      this.el.addClass('modal');
+
+      /*if (this.flags.isAnimated) {
+        this.el.addClass('fade');
+      }*/
+
+      this.el.modal(this.option('engine') || {});
+
       let $dialog = $('[data-control="' + this.control.dialog + '"]', this.el);
       if (!$dialog.length) {
         $dialog = $('<div data-control="' + this.control.dialog + '"/>').appendTo(this.el);
       }
       $dialog.addClass(this.option('classes.dialog'));
+      if (this.option('size')) {
+        $dialog.addClass(this.option('size'));
+      }
 
       let $content = $('[data-control="' + this.control.content + '"]', $dialog);
       if (!$content.length) {
@@ -59,23 +88,37 @@ jQuery(function ($) {
       }
       $content.addClass(this.option('classes.content'));
 
-      let $header = $('[data-control="' + this.control.header + '"]', $content);
-      if (!$header.length) {
-        $header = $('<div data-control="' + this.control.header + '"/>').appendTo($content);
+      if (this.flags.hasClose) {
+        let $close = $('[data-control="' + this.control.close + '"]', $content);
+        if (!$close.length) {
+          $close = $('<button type="button" data-control="' + this.control.close + '"/>').appendTo($content);
+        }
+        $close.addClass(this.option('classes.close'));
       }
-      $header.addClass(this.option('classes.header'));
 
-      let $body = $('[data-control="' + this.control.body + '"]', $content);
-      if (!$body.length) {
-        $body = $('<div data-control="' + this.control.body + '"/>').appendTo($content);
+      if (this.flags.hasHeader) {
+        let $header = $('[data-control="' + this.control.header + '"]', $content);
+        if (!$header.length) {
+          $header = $('<div data-control="' + this.control.header + '"/>').appendTo($content);
+        }
+        $header.addClass(this.option('classes.header'));
       }
-      $body.addClass(this.option('classes.body'));
 
-      let $footer = $('[data-control="' + this.control.footer + '"]', $content);
-      if (!$footer.length) {
-        $footer = $('<div data-control="' + this.control.footer + '"/>').appendTo($content);
+      if (this.flags.hasBody) {
+        let $body = $('[data-control="' + this.control.body + '"]', $content);
+        if (!$body.length) {
+          $body = $('<div data-control="' + this.control.body + '"/>').appendTo($content);
+        }
+        $body.addClass(this.option('classes.body'));
       }
-      $footer.addClass(this.option('classes.footer'));
+
+      if (this.flags.hasFooter) {
+        let $footer = $('[data-control="' + this.control.footer + '"]', $content);
+        if (!$footer.length) {
+          $footer = $('<div data-control="' + this.control.footer + '"/>').appendTo($content);
+        }
+        $footer.addClass(this.option('classes.footer'));
+      }
     },
     // Initialisation des événements.
     _initEvents: function () {
@@ -123,6 +166,11 @@ jQuery(function ($) {
     $.tify.observe('[data-control="modal"]', function (i, target) {
       $(target).tifyModal();
     });
+
+    $(document).on('click', '[data-control="modal.trigger"]', function (e) {
+      e.preventDefault();
+      $('[data-id="' + $(this).data('target') + '"][data-control="modal"]').tifyModal('open');
+    });
   });
   /*
   $(document).ready(function () {
@@ -165,11 +213,5 @@ jQuery(function ($) {
             }
           }
         });
-
-    $(document).on('click', '[data-control="modal-trigger"]', function (e) {
-      e.preventDefault();
-
-      $($(this).data('target') + '[data-control="modal"]').modal('show');
-    });
   });*/
 });
