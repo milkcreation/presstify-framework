@@ -141,8 +141,8 @@ jQuery(function ($) {
       let events = ['show', 'shown', 'hide', 'hidden'];
 
       events.forEach(function (eventname) {
-        self.el.on(eventname + '.bs.modal', function (event) {
-          self._trigger(eventname, event);
+        self.el.on(eventname + '.bs.modal', function () {
+          self._trigger(eventname);
         });
       });
 
