@@ -51,7 +51,7 @@ jQuery(function ($) {
       this._initControls();
       this._initEvents();
     },
-    // INITIALISATIONS
+    // INITIALISATIONS.
     // -----------------------------------------------------------------------------------------------------------------
     // Initialisation des attributs de configuration.
     _initOptions: function () {
@@ -192,7 +192,7 @@ jQuery(function ($) {
         self._trigger('remove', null, $item);
       });
     },
-    // ACTIONS
+    // ACTIONS.
     // -----------------------------------------------------------------------------------------------------------------
     // Mise à jour des indicateurs d'ordre d'affichage.
     _doUpdateOrders: function () {

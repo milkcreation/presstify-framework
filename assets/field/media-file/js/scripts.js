@@ -4,6 +4,7 @@ import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable';
+import 'presstify-framework/observer/js/scripts';
 import 'presstify-framework/partial/media-library/js/scripts';
 
 jQuery(function ($) {
@@ -114,6 +115,7 @@ jQuery(function ($) {
 
   $(document).ready(function ($) {
     $('[data-control="media-file"]').tifyMediaFile();
+
     $.tify.observe('[data-control="media-file"]', function (i, target) {
       $(target).tifyMediaFile();
     });

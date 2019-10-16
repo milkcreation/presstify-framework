@@ -6,9 +6,25 @@ use Closure;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Partial\{Modal as ModalContract, PartialFactory as PartialFactoryContract};
 use tiFy\Partial\PartialFactory;
+use tiFy\Support\Proxy\{Request, Router};
 
 class Modal extends PartialFactory implements ModalContract
 {
+    /**
+     * Url de traitement de requêtes XHR.
+     * @var string
+     */
+    protected $url = '';
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): void
+    {
+        parent::boot();
+        $this->setUrl();
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -45,9 +61,9 @@ class Modal extends PartialFactory implements ModalContract
             'backdrop' => [
                 'close' => true,
             ],
+            'close'    => true,
             'content'  => [
                 'body'   => true,
-                'close'  => true,
                 'header' => true,
                 'footer' => true,
             ],
@@ -57,7 +73,15 @@ class Modal extends PartialFactory implements ModalContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function parse(): PartialFactoryContract
     {
@@ -65,21 +89,20 @@ class Modal extends PartialFactory implements ModalContract
 
         $defaultClasses = [
             'body'    => 'modal-body',
-            'close'   => 'modal-close',
+            'close'   => 'modal-close ThemeButton--close',
             'content' => 'modal-content',
             'dialog'  => 'modal-dialog',
             'footer'  => 'modal-footer',
             'header'  => 'modal-header',
+            'spinner' => 'modal-spinner ThemeSpinner',
         ];
         foreach ($defaultClasses as $k => $v) {
             $this->set(["classes.{$k}" => sprintf($this->get("classes.{$k}", '%s'), $v)]);
         }
 
         $this->set([
-            'attrs.class'        => 'modal fade',
             'attrs.data-control' => $this->get('attrs.data-control', 'modal'),
             'attrs.data-id'      => $this->get('attrs.id', $this->getId()),
-            'attrs.role'         => 'dialog',
             'size'               => in_array($this->get('size'), ['sm', 'lg', 'full', 'flex'])
                 ? 'modal-' . $this->get('size') : '',
         ]);
@@ -102,27 +125,21 @@ class Modal extends PartialFactory implements ModalContract
             $this->set("attrs.data-{$key}", $value);
         }
 
-        /*if ($this->get('ajax', false)) {
-            $this->set('attrs.data-options.ajax',
-                (
-                $ajax !== false
-                    ? array_merge(
-                    is_array($ajax) ? $ajax : [],
-                    [
-                        'dataType' => 'json',
-                        'method'   => 'post',
-                    ]
-                )
-                    : false
-                )
-            );
-        }*/
-
         if ($backdrop_close = $this->get('backdrop_close')) {
             $backdrop_close = $backdrop_close instanceof Closure
                 ? call_user_func($backdrop_close, $this->all())
                 : (is_string($backdrop_close) ? $backdrop_close : $this->viewer('backdrop_close', $this->all()));
             $this->set('backdrop_close', $backdrop_close);
+        }
+
+        if ($close = $this->get('close', true)) {
+            if ($close instanceof Closure) {
+                $this->set('close', (string)$close($this->all()));
+            } elseif (is_string($close)) {
+                $this->set('close', $close);
+            } else {
+                $this->set('close', (string)$this->viewer('close', $this->all()));
+            }
         }
 
         if ($content = $this->get('content')) {
@@ -131,33 +148,55 @@ class Modal extends PartialFactory implements ModalContract
             } elseif (is_string($content)) {
                 $this->set('content', $content);
             } else {
-                foreach(['body', 'close', 'footer', 'header'] as $item) {
+                foreach (['body', 'footer', 'header'] as $item) {
                     if (${$item} = $this->get("content.{$item}", true)) {
                         if (${$item} instanceof Closure) {
                             $this->set("content.{$item}", (string)${$item}($this->all()));
                         } elseif (is_string(${$item})) {
                             $this->set("content.{$item}", ${$item});
                         } else {
-                            $this->set("content.{$item}", (string)$this->viewer($item, $this->all()));
+                            $this->set("content.{$item}", (string)$this->viewer("content-{$item}", $this->all()));
                         }
                     }
                 }
             }
         } else {
-            $this->get('content', '');
+            $this->get('content', (string)$this->viewer('content', $this->all()));
         }
 
         $this->set([
             'attrs.data-options' => [
                 'animated' => $this->get('animated'),
-                'body'     => !! $this->get('content.body'),
+                'body'     => !!$this->get('content.body'),
                 'classes'  => $this->get('classes', []),
-                'close'    => !! $this->get('content.close'),
-                'footer'   => !! $this->get('content.footer'),
-                'header'   => !! $this->get('content.header'),
+                'close'    => !!$this->get('close'),
+                'footer'   => !!$this->get('content.footer'),
+                'header'   => !!$this->get('content.header'),
                 'size'     => $this->get('size'),
             ],
         ]);
+
+        if ($ajax = $this->get('ajax', false)) {
+            $defaultAjax = [
+                'data'     => [
+                    'viewer' => $this->get('viewer', []),
+                ],
+                'dataType' => 'json',
+                'method'   => 'post',
+                'url'      => $this->getUrl(),
+            ];
+            $this->set('attrs.data-options.ajax', is_array($ajax) ? array_merge($defaultAjax, $ajax) : $defaultAjax);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setUrl(?string $url = null): ModalContract
+    {
+        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse'])->getUrl() : $url;
 
         return $this;
     }
@@ -173,7 +212,7 @@ class Modal extends PartialFactory implements ModalContract
             'content' => '',
         ], $attrs);
 
-        if ((Arr::get($attrs, 'tag') === 'a') && ! Arr::has($attrs, 'attrs.href')) {
+        if ((Arr::get($attrs, 'tag') === 'a') && !Arr::has($attrs, 'attrs.href')) {
             Arr::set($attrs, 'attrs.href', "#{$this->get('attrs.data-id')}");
         }
         Arr::set($attrs, 'attrs.data-control', 'modal.trigger');
@@ -185,11 +224,13 @@ class Modal extends PartialFactory implements ModalContract
     /**
      * @inheritdoc
      */
-    public function xhrGetContent()
+    public function xhrResponse()
     {
+        $this->set('viewer', Request::input('viewer', []))->parseViewer();
+
         return [
             'success' => true,
-            'html'    => (string)$this->viewer('ajax'),
+            'data'    => (string)$this->viewer('ajax-content'),
         ];
     }
 }

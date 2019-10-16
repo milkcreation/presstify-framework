@@ -2,10 +2,10 @@
 'use strict';
 
 import jQuery from 'jquery';
-import 'presstify-framework/observer/js/scripts';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'tinymce/jquery.tinymce';
+import 'presstify-framework/observer/js/scripts';
 
 jQuery(function ($) {
   if (typeof (tinyMCE) === 'undefined') {

@@ -28,7 +28,6 @@ jQuery(function ($) {
 
   $.widget('tify.tifySuggest', {
     widgetEventPrefix: 'suggest:',
-    id: undefined,
     options: {
       classes: {
         alt: 'FieldSuggest-alt',
@@ -174,7 +173,7 @@ jQuery(function ($) {
               event.preventDefault();
             });
 
-        // Délégation d'appel des événements d'autaocomplete.
+        // Délégation d'appel des événements d'autocomplete.
         // @see https://api.jqueryui.com/autocomplete/#events
         // ex. $('[data-control="suggest"]').on('suggest:select', function (e, file, resp) {
         //    console.log(resp);
@@ -182,8 +181,8 @@ jQuery(function ($) {
         let events = ['change', 'close', 'create', 'focus', 'open', 'response', 'search', 'select'];
 
         events.forEach(function (eventname) {
-          self.uiautocomplete.on('autocomplete' + eventname, function (e) {
-            self._trigger(eventname, e, arguments);
+          self.uiautocomplete.on('autocomplete' + eventname, function (e, ui) {
+            self._trigger(eventname, e, ui);
           });
         });
       }

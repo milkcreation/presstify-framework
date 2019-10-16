@@ -5,14 +5,10 @@
 ?>
 <div class="modal-header">
     <h5 class="modal-title"><?php _e('Titre de la fenêtre de dialogue Ajax', 'tify'); ?></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 
 <div class="modal-body">
-   <h3><?php _e('Exemple de contenu chargé via Ajax.', 'tify'); ?></h3>
-
+   <h3><?php _e('Exemple de contenu chargé depuis une requête Ajax.', 'tify'); ?></h3>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam nec nibh arcu. In laoreet justo a aliquet vulputate.
     Integer hendrerit vitae neque sit amet lacinia. Cras nulla quam, iaculis vel rutrum eu, accumsan ut ante.
     Phasellus vitae convallis arcu, vel feugiat nisi. Curabitur aliquam velit nunc, venenatis pulvinar nibh ultrices
@@ -23,5 +19,7 @@
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary button-secondary" data-dismiss="modal"><?php _e('Fermer', 'tify');?></button>
+    <button type="button" class="btn btn-secondary button-secondary" data-control="modal.close">
+        <?php _e('Fermer', 'tify');?>
+    </button>
 </div>

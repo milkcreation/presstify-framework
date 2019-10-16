@@ -16,7 +16,7 @@ use tiFy\Contracts\Partial\{
     Pagination as PaginationContract,
     Partial as PartialContract,
     PartialFactory,
-    PdfPreview as PdfPreviewContract,
+    Pdfviewer as PdfviewerContract,
     Progress as ProgressContract,
     Sidebar as SidebarContract,
     Slider as SliderContract,
@@ -36,7 +36,7 @@ use tiFy\Partial\Partials\{
     Modal\Modal,
     Notice\Notice,
     Pagination\Pagination,
-    PdfPreview\PdfPreview,
+    Pdfviewer\Pdfviewer,
     Progress\Progress,
     Sidebar\Sidebar,
     Slider\Slider,
@@ -65,7 +65,7 @@ class PartialServiceProvider extends ServiceProvider
         ModalContract::class,
         NoticeContract::class,
         PaginationContract::class,
-        PdfPreviewContract::class,
+        PdfviewerContract::class,
         ProgressContract::class,
         SidebarContract::class,
         SliderContract::class,
@@ -136,8 +136,8 @@ class PartialServiceProvider extends ServiceProvider
             return new Pagination();
         });
 
-        $this->getContainer()->add(PdfPreviewContract::class, function () {
-            return new PdfPreview();
+        $this->getContainer()->add(PdfviewerContract::class, function () {
+            return new Pdfviewer();
         });
 
         $this->getContainer()->add(ProgressContract::class, function () {
