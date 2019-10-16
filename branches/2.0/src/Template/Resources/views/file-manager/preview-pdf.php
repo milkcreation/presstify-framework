@@ -9,7 +9,7 @@
 <?php $this->insert('spinner'); ?>
 
 <?php
-echo partial('pdf-preview', [
+echo partial('pdfviewer', [
     'src'   => isset($file)
         ? $file->getUrl()
         : '7855ce7d975d5a1ede9b5a83d7235dee/document-manager/cache/Symfony_quick_tour_4.2.pdf',

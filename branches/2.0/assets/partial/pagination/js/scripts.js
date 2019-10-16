@@ -15,7 +15,6 @@ jQuery(function ($) {
           handler: '',
           target: ''
         },
-
         // Instanciation de l'élément
         _create: function () {
           let self = this;

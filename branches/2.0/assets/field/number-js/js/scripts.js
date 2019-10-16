@@ -1,11 +1,11 @@
 'use strict';
 
 import jQuery from 'jquery';
-import 'presstify-framework/observer/js/scripts';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/button';
 import 'jquery-ui/ui/widgets/spinner';
+import 'presstify-framework/observer/js/scripts';
 
 jQuery(function ($) {
   // Attribution de la valeur à l'élément.
@@ -28,7 +28,6 @@ jQuery(function ($) {
 
   $.widget('tify.tifyNumberJs', {
     widgetEventPrefix: 'number-js:',
-    id: undefined,
     options: {},
     // Instanciation de l'élément.
     _create: function () {
@@ -69,7 +68,7 @@ jQuery(function ($) {
 
       // Délégation d'appel des événements d'autaocomplete.
       // @see https://api.jqueryui.com/spinner/#events
-      // ex. $('[data-control="number-js"]').on('number-js:change', function (e, event, ui) {
+      // ex. $('[data-control="number-js"]').on('number-js:change', function (event, ui) {
       //    console.log(ui);
       // });
       if (this.uispinner !== undefined) {
@@ -77,12 +76,12 @@ jQuery(function ($) {
           'change', 'create', 'start', 'stop'
         ];
         events.forEach(function (eventname) {
-          self.uispinner.on('spin' + eventname, function (e) {
-            self._trigger(eventname, e, arguments);
+          self.uispinner.on('spin' + eventname, function (event, ui) {
+            self._trigger(eventname, event, ui);
           });
         });
-        self.uispinner.on('spin', function (e) {
-          self._trigger('spin', e, arguments);
+        self.uispinner.on('spin', function (event, ui) {
+          self._trigger('spin', event, ui);
         });
       }
     },
@@ -90,6 +89,7 @@ jQuery(function ($) {
 
   $(document).ready(function () {
     $('[data-control="number-js"]').tifyNumberJs();
+
     $.tify.observe('[data-control="number-js"]', function (i, target) {
       $(target).tifyNumberJs();
     });

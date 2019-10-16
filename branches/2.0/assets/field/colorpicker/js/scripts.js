@@ -16,8 +16,6 @@ if (tify.locale.iso[1] !== undefined) {
 jQuery(function ($) {
   $.widget('tify.tifyColorpicker', {
     widgetEventPrefix: 'colorpicker:',
-    id: undefined,
-    xhr: undefined,
     options: {
       classes: {}
     },

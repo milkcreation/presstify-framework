@@ -3,4 +3,4 @@
  * @var tiFy\Partial\PartialView $this
  */
 ?>
-<span>&times;</span>
+<span class="ThemeSpinner"></span>

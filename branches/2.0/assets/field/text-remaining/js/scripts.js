@@ -4,6 +4,7 @@ import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable';
+import 'presstify-framework/observer/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyTextRemaining', {
@@ -22,7 +23,6 @@ jQuery(function ($) {
       },
       limit: false
     },
-
     // Instanciation de l'élément.
     _create: function () {
       this.instance = this;
@@ -39,7 +39,6 @@ jQuery(function ($) {
       this._initFlags();
       this._initControls();
     },
-
     // INITIALISATIONS.
     // -----------------------------------------------------------------------------------------------------------------
     // Initialisation des attributs de configuration.
@@ -50,44 +49,38 @@ jQuery(function ($) {
           this.el.data('options') && $.parseJSON(decodeURIComponent(this.el.data('options'))) || {}
       );
     },
-
     // Initialisation des indicateurs d'état.
     _initFlags: function () {
       this.flags.isLimited = !!(this.option('limit'));
     },
-
     // Initialisation des agents de contrôle.
     _initControls: function () {
       this._initControlWrapper();
       this._initControlInfos();
       this._initControlField();
     },
-
     // Initialisation du controleur d'encapsulation du champ.
     _initControlWrapper: function () {
       this.wrapper = this.el.wrap('<div data-control="text-remaining.wrapper"/>')
           .closest('[data-control="text-remaining.wrapper"]')
           .addClass(this.option('classes.wrapper'));
     },
-
     // Initialisation du controleur d'informations de saisie.
     _initControlInfos: function () {
       this.infos = $('<span data-control="text-remaining.infos"/>', this.el)
           .appendTo(this.wrapper)
           .addClass(this.option('classes.infos'));
     },
-
     // Initialisation du controleur de saisie.
     _initControlField: function () {
       this._doReached();
       this._onType();
     },
-
     // ACTIONS.
     // -----------------------------------------------------------------------------------------------------------------
     // Récupération du nombre de caractères restants.
     _doReached: function () {
-      let max = this.option('max');
+      let max = parseInt(this.option('max') || 0);
 
       if (this.flags.isLimited) {
         this.el.val(this.el.val().substr(0, max));
@@ -100,7 +93,6 @@ jQuery(function ($) {
 
       this._trigger('type');
     },
-
     // EVENEMENTS.
     // -------------------------------------------------------------------------------------------------------------
     // Activation de l'agent de contrôle de création d'un nouvel élément.
@@ -114,7 +106,6 @@ jQuery(function ($) {
         self._doReached();
       });
     },
-
     // RECUPERATEURS.
     // -----------------------------------------------------------------------------------------------------------------
     _getInfos: function (length) {
@@ -143,5 +134,9 @@ jQuery(function ($) {
 
   $(document).ready(function () {
     $('[data-control="text-remaining"]').tifyTextRemaining();
+
+    $.tify.observe('[data-control="text-remaining"]', function (i, target) {
+      $(target).tifyTextRemaining();
+    });
   });
 });

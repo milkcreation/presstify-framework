@@ -7,8 +7,6 @@ import 'jquery-ui/ui/widget';
 jQuery(function ($) {
   $.widget('tify.tifyDropdown', {
     widgetEventPrefix: 'dropdown:',
-    id: undefined,
-    xhr: undefined,
     options: {
       classes: {
         button: 'Dropdown-button',
@@ -18,7 +16,7 @@ jQuery(function ($) {
       open: false,
       triggered: false
     },
-
+    xhr: undefined,
     // Instanciation de l'élément.
     _create: function () {
       this.instance = this;

@@ -6,7 +6,7 @@
 [class*="ThemeButton--"] {
   cursor: pointer;
   text-decoration: none;
-  display:inline-block;
+  display: inline-block;
 }
 
 // Taille
@@ -64,31 +64,35 @@
 
 // Bouton > Fermeture
 .ThemeButton--close {
-  position: relative;
-  width: 20px;
-  height: 20px;
-  opacity: 0.5;
-}
+  & {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    opacity: 0.5;
+    text-indent: -999999em;
+    outline: none;
+  }
 
-.ThemeButton--close:hover {
-  opacity: 1;
-}
+  &:hover {
+    opacity: 1;
+  }
 
-.ThemeButton--close:before, .ThemeButton--close:after {
-  position: absolute;
-  left: 50%;
-  content: ' ';
-  height: 100%;
-  width: 2px;
-  background-color: #333;
-}
+  &::before, &::after {
+    position: absolute;
+    left: 50%;
+    content: ' ';
+    height: 100%;
+    width: 2px;
+    background-color: #333;
+  }
 
-.ThemeButton--close:before {
-  transform: rotate(45deg);
-}
+  &::before {
+    transform: rotate(45deg);
+  }
 
-.ThemeButton--close:after {
-  transform: rotate(-45deg);
+  &::after {
+    transform: rotate(-45deg);
+  }
 }
 
 .ThemeButton--remove {
@@ -206,7 +210,7 @@ div[class*="ThemeInput--"] {
   }
 
   & > input {
-    margin:0;
+    margin: 0;
     width: 100%;
   }
 
@@ -316,13 +320,12 @@ div[class*="ThemeInput--"] {
 }
 
 .ThemeFeed-items {
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
 
 .ThemeFeed-item {
   position: relative;
   display: block;
-  min-height: 100px;
   margin-bottom: 5px;
   border: solid 1px #E4E4E4;
   padding: 10px 25px 10px 20px;

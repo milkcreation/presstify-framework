@@ -7,7 +7,6 @@ import 'presstify-framework/observer/js/scripts';
 jQuery(function ($) {
   $.widget('tify.tifyMediaLibrary', {
     widgetEventPrefix: 'media-library:',
-    id: undefined,
     options: {},
     // Instanciation de l'élément.
     _create: function () {
@@ -16,10 +15,10 @@ jQuery(function ($) {
       this.el = this.element;
 
       this._initOptions();
+      this._initControls();
       this._initEvents();
-      this._initLibrary();
     },
-    // INTIALISATIONS
+    // INTIALISATIONS.
     // -----------------------------------------------------------------------------------------------------------------
     // Initialisation des attributs de configuration.
     _initOptions: function () {
@@ -30,11 +29,7 @@ jQuery(function ($) {
       );
     },
     // Initialisation des événements.
-    _initEvents: function () {
-      this._on(this.el, {'click [data-control="media-library.open"]': this._onOpen});
-    },
-    // Initialisation des événements.
-    _initLibrary: function () {
+    _initControls: function () {
       let self = this,
           o = this.option();
 
@@ -50,13 +45,17 @@ jQuery(function ($) {
         self._trigger('select', null, [items]);
       });
     },
-    // EVENENEMENTS
+    // Initialisation des événements.
+    _initEvents: function () {
+      this._on(this.el, {'click [data-control="media-library.open"]': this._onOpen});
+    },
+    // EVENENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     _onOpen: function (e) {
       e.preventDefault();
       this.open();
     },
-    // ACCESSEURS
+    // ACCESSEURS.
     // -----------------------------------------------------------------------------------------------------------------
     open: function () {
       this.library.open();
@@ -64,7 +63,8 @@ jQuery(function ($) {
   });
 
   $(document).ready(function () {
-    $('[data-control="media-library"]').tifyMediaLibrary()
+    $('[data-control="media-library"]').tifyMediaLibrary();
+
     $.tify.observe('[data-control="media-library"]', function (i, target) {
       $(target).tifyMediaLibrary();
     });

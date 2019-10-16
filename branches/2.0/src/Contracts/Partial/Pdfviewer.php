@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface PdfPreview extends PartialFactory
+interface Pdfviewer extends PartialFactory
 {
 
 }

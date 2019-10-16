@@ -88,10 +88,9 @@ jQuery(function ($) {
       // });
       if (this.meter.bar !== undefined) {
         let events = ['change', 'complete', 'create'];
-
         events.forEach(function (eventname) {
-          self.meter.bar.on('progressbar' + eventname, function (e) {
-            self._trigger(eventname, e, arguments);
+          self.meter.bar.on('progressbar' + eventname, function (event, ui) {
+            self._trigger(eventname, event, ui);
           });
         });
       }

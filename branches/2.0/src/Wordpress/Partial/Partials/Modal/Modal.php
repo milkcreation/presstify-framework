@@ -12,6 +12,8 @@ class Modal extends BaseModal implements PartialFactoryContract
      */
     public function boot(): void
     {
+        parent::boot();
+
         add_action('init', function () {
             wp_register_style(
                 'PartialModal',

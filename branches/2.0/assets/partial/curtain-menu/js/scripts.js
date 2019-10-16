@@ -7,7 +7,6 @@ import 'jquery-ui/ui/widget';
 jQuery(function ($) {
   $.widget('tify.tifyCurtainMenu', {
     widgetEventPrefix: 'curtain-menu:',
-    id: undefined,
     options: {},
     _create: function () {
       this.instance = this;
