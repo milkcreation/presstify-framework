@@ -1,233 +1,192 @@
-<?php
-
-/**
- * @name Field
- * @desc Gestion de controleurs d'affichage
- * @package presstiFy
- * @namespace \tiFy\Field
- * @version 1.1
- * @subpackage Core
- * @since 1.2.596
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
+<?php declare(strict_types=1);
 
 namespace tiFy\Field;
 
-use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
-use tiFy\Components\Field\Button\Button;
-use tiFy\Components\Field\Checkbox\Checkbox;
-use tiFy\Components\Field\CheckboxCollection\CheckboxCollection;
-use tiFy\Components\Field\Colorpicker\Colorpicker;
-use tiFy\Components\Field\Crypted\Crypted;
-use tiFy\Components\Field\DatetimeJs\DatetimeJs;
-use tiFy\Components\Field\File\File;
-use tiFy\Components\Field\Hidden\Hidden;
-use tiFy\Components\Field\Label\Label;
-use tiFy\Components\Field\MediaFile\MediaFile;
-use tiFy\Components\Field\MediaImage\MediaImage;
-use tiFy\Components\Field\Number\Number;
-use tiFy\Components\Field\NumberJs\NumberJs;
-use tiFy\Components\Field\Password\Password;
-use tiFy\Components\Field\Radio\Radio;
-use tiFy\Components\Field\RadioCollection\RadioCollection;
-use tiFy\Components\Field\Repeater\Repeater;
-use tiFy\Components\Field\Select\Select;
-use tiFy\Components\Field\SelectImage\SelectImage;
-use tiFy\Components\Field\SelectJs\SelectJs;
-use tiFy\Components\Field\Submit\Submit;
-use tiFy\Components\Field\Text\Text;
-use tiFy\Components\Field\Textarea\Textarea;
-use tiFy\Components\Field\TextRemaining\TextRemaining;
-use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
+use InvalidArgumentException;
+use tiFy\Contracts\Field\{
+    Button,
+    Checkbox,
+    CheckboxCollection,
+    Colorpicker,
+    DatetimeJs,
+    Field as FieldContract,
+    FieldFactory,
+    File,
+    FileJs,
+    Hidden,
+    Label,
+    Number,
+    NumberJs,
+    Password,
+    PasswordJs,
+    Radio,
+    RadioCollection,
+    Repeater,
+    Select,
+    SelectImage,
+    SelectJs,
+    Submit,
+    Suggest,
+    Text,
+    Textarea,
+    TextRemaining,
+    Tinymce,
+    ToggleSwitch
+};
+use tiFy\Support\Manager;
 
-/**
- * Class Field
- * @package tiFy\Field
- *
- * @method static Button Button(string $id = null, array $attrs = [])
- * @method static Checkbox(string $id = null, array $attrs = [])
- * @method static CheckboxCollection(string $id = null, array $attrs = [])
- * @method static Colorpicker(string $id = null, array $attrs = [])
- * @method static Crypted(string $id = null, array $attrs = [])
- * @method static DatetimeJs(string $id = null, array $attrs = [])
- * @method static File(string $id = null, array $attrs = [])
- * @method static Hidden(string $id = null, array $attrs = [])
- * @method static Label(string $id = null, array $attrs = [])
- * @method static MediaFile(string $id = null, array $attrs = [])
- * @method static MediaImage(string $id = null, array $attrs = [])
- * @method static Number(string $id = null, array $attrs = [])
- * @method static NumberJs(string $id = null, array $attrs = [])
- * @method static Password(string $id = null, array $attrs = [])
- * @method static Radio(string $id = null, array $attrs = [])
- * @method static RadioCollection(string $id = null, array $attrs = [])
- * @method static Repeater(string $id = null, array $attrs = [])
- * @method static Select(string $id = null, array $attrs = [])
- * @method static SelectImage(string $id = null, array $attrs = [])
- * @method static SelectJs(string $id = null, array $attrs = [])
- * @method static Submit(string $id = null, array $attrs = [])
- * @method static Text(string $id = null, array $attrs = [])
- * @method static Textarea(string $id = null, array $attrs = [])
- * @method static TextRemaining(string $id = null, array $attrs = [])
- * @method static ToggleSwitch(string $id = null, array $attrs = [])
- */
-final class Field extends AppController
+class Field extends Manager implements FieldContract
 {
     /**
-     * Liste des instances de champ.
+     * Définition des déclarations des champs par défaut.
      * @var array
      */
-    protected static $instance = [];
+    protected $defaults = [
+        'button'              => Button::class,
+        'checkbox'            => Checkbox::class,
+        'checkbox-collection' => CheckboxCollection::class,
+        'colorpicker'         => Colorpicker::class,
+        'datetime-js'         => DatetimeJs::class,
+        'file'                => File::class,
+        'file-js'             => FileJs::class,
+        'hidden'              => Hidden::class,
+        'label'               => Label::class,
+        'number'              => Number::class,
+        'number-js'           => NumberJs::class,
+        'password'            => Password::class,
+        'password-js'         => PasswordJs::class,
+        'radio'               => Radio::class,
+        'radio-collection'    => RadioCollection::class,
+        'repeater'            => Repeater::class,
+        'select'              => Select::class,
+        'select-image'        => SelectImage::class,
+        'select-js'           => SelectJs::class,
+        'submit'              => Submit::class,
+        'suggest'             => Suggest::class,
+        'text'                => Text::class,
+        'textarea'            => Textarea::class,
+        'text-remaining'      => TextRemaining::class,
+        'tinymce'             => Tinymce::class,
+        'toggle-switch'       => ToggleSwitch::class,
+    ];
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * Liste des éléments déclarées.
+     * @var FieldFactory[]
      */
-    public function appBoot()
+    protected $items = [];
+
+    /**
+     * Liste des indices courant des éléments déclarées par alias de qualification.
+     * @var int[]
+     */
+    protected $indexes = [];
+
+    /**
+     * Instances des éléments par alias de qualification et indexés par identifiant de qualification.
+     * @var FieldFactory[][]
+     */
+    protected $instances = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function get(...$args): ?FieldFactory
     {
-        // Déclaration des controleurs d'affichage natifs
-        foreach (glob($this->appAbsDir() . '/Components/Field/*/', GLOB_ONLYDIR) as $filename) :
-            $name = basename($filename);
+        $alias = $args[0] ?? null;
+        if (!$alias || !isset($this->items[$alias])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    __('Aucune instance de champs correspondant à l\'alias : %s', 'tify'),
+                    $alias
+                )
+            );
+        }
 
-            $this->register($name, "tiFy\\Components\\Field\\{$name}\\{$name}::make");
-        endforeach;
+        $id = $args[1] ?? null;
+        $attrs = $args[2] ?? [];
 
-        do_action('tify_field_register');
+        if (is_array($id)) {
+            $attrs = $id;
+            $id = null;
+        } else {
+            $attrs = $attrs ?: [];
+        }
+
+        if ($id) {
+            if (!isset($this->instances[$alias][$id])) {
+                $this->indexes[$alias]++;
+                $this->instances[$alias][$id] = clone $this->items[$alias];
+            }
+            $partial = $this->instances[$alias][$id];
+        } else {
+            $this->indexes[$alias]++;
+            $partial = clone $this->items[$alias];
+        }
+
+        return $partial
+            ->setIndex($this->indexes[$alias])
+            ->setId($id ?? $alias . $this->indexes[$alias])
+            ->set($attrs)->parse();
     }
 
     /**
-     * Déclaration d'un controleur d'affichage
+     * @inheritDoc
      *
-     * @param string $name Nom de qualification du controleur d'affichage
-     * @param mixed $callable classe ou méthode ou fonction de rappel
-     *
-     * @return null|callable|\tiFy\Partial\AbstractFactory
+     * @throws InvalidArgumentException
      */
-    public function register($name, $callable)
+    public function walk(&$item, $key = null): void
     {
-        if ($this->appServiceHas($name)) :
-            return null;
-        endif;
+        if ($item instanceof FieldFactory) {
+            $item->prepare((string)$key, $this);
 
-        $alias = "tfy.field.{$name}";
-        if (is_callable($callable)) :
-            $this->appServiceAdd($alias, $callable);
-        elseif (class_exists($callable)) :
-            $this->appServiceAdd($alias, $callable);
-        else :
-            return null;
-        endif;
-
-        return $this->appServiceGet("tfy.field.{$name}");
+            $this->instances[$key] = [$item];
+            $this->indexes[$key] = 0;
+        } else {
+            throw new InvalidArgumentException(
+                sprintf(
+                    __('La déclaration du champ %s devrait être une instance de %s', 'tify'),
+                    $key,
+                    FieldFactory::class
+                )
+            );
+        }
     }
 
     /**
-     * Récupération d'un controleur d'affichage.
-     *
-     * @param string $name Nom de qualification du controleur d'affichage.
-     *
-     * @return mixed|AbstractFieldItemController
+     * @inheritDoc
      */
-    public function get($name)
+    public function registerDefaults(): FieldContract
     {
-        $alias = "tfy.field.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
-
-        return null;
-    }
-
-    /**
-     * Affichage ou récupération du contenu d'un controleur natif
-     *
-     * @param string $name Nom de qualification du controleur d'affichage
-     * @param array args Liste des variables passé en arguments
-     *
-     * @return null|object
-     */
-    public static function __callStatic($name, $args)
-    {
-        if (!$callable = self::appInstance()->get($name)) :
-            return null;
-        endif;
-
-        return call_user_func_array($callable, $args);
-    }
-
-    /**
-     * Vérification d'existance d'une instance d'un contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     *
-     * @return bool
-     */
-    public function existsInstance($classname)
-    {
-        return Arr::has(self::$instance, $classname);
-    }
-
-    /**
-     * Compte le nombre d'instance d'un contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     *
-     * @return int
-     */
-    public function countInstance($classname)
-    {
-        return count(Arr::get(self::$instance, $classname, []));
-    }
-
-    /**
-     * Définition d'une instance de contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     * @param string $hash Hashage des attributs de configuration.
-     *
-     * @return bool
-     */
-    public function setInstance($classname, $hash, $obj)
-    {
-        return Arr::set(self::$instance, "{$classname}.{$hash}", $obj);
-    }
-
-    /**
-     * Définition d'une instance de contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     * @param string $hash Hashage des attributs de configuration.
-     *
-     * @return bool
-     */
-    public function getInstance($classname, $hash)
-    {
-        return Arr::get(self::$instance, "{$classname}.{$hash}");
-    }
-
-    /**
-     * Mise en file des scripts d'un controleur d'affichage.
-     *
-     * @param string $name Nom de qualification du controleur.
-     * @param array $args Liste des variables passées en argument.
-     *
-     * @return $this
-     */
-    public function enqueue($name, $args = [])
-    {
-        if (!$callable = $this->get($name)) :
-            return null;
-        endif;
-
-        if (!is_object($callable) || !method_exists($callable, 'enqueue_scripts')) :
-            return null;
-        endif;
-
-        call_user_func_array([$callable, 'enqueue_scripts'], $args);
+        foreach ($this->defaults as $name => $alias) {
+            $this->set($name, $this->getContainer()->get($alias));
+        }
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resourcesDir(?string $path = null): string
+    {
+        $path = $path ? '/' . ltrim($path, '/') : '';
+
+        return (file_exists(__DIR__ . "/Resources{$path}"))
+            ? __DIR__ . "/Resources{$path}"
+            : '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resourcesUrl(?string $path = null): string
+    {
+        $cinfo = class_info($this);
+        $path = $path ? '/' . ltrim($path, '/') : '';
+
+        return (file_exists($cinfo->getDirname() . "/Resources{$path}"))
+            ? $cinfo->getUrl() . "/Resources{$path}"
+            : '';
     }
 }
