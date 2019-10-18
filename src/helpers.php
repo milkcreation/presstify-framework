@@ -515,20 +515,6 @@ if (!function_exists('url')) {
     }
 }
 
-if (!function_exists('url_factory')) {
-    /**
-     * Récupération de l'instance du contrôleur de traitement d'url.
-     *
-     * @param string $url Url à traiter.
-     *
-     * @return UrlFactory
-     */
-    function url_factory($url): UrlFactory
-    {
-        return app()->get('url.factory', [$url]);
-    }
-}
-
 if (!function_exists('user')) {
     /**
      * Instance du gestionnaire utilisateur.

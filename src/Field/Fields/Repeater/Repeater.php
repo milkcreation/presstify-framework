@@ -3,14 +3,15 @@
 namespace tiFy\Field\Fields\Repeater;
 
 use tiFy\Contracts\Field\{FieldFactory as FieldFactoryContract, Repeater as RepeaterContract};
+use tiFy\Contracts\Routing\Route;
 use tiFy\Field\FieldFactory;
 use tiFy\Support\{Arr, Proxy\Request, Proxy\Router};
 
 class Repeater extends FieldFactory implements RepeaterContract
 {
     /**
-     * Url de traitement de requêtes XHR.
-     * @var string
+     * Url de traitement de requête XHR.
+     * @var Route|string
      */
     protected $url = '';
 
@@ -63,9 +64,9 @@ class Repeater extends FieldFactory implements RepeaterContract
     /**
      * @inheritDoc
      */
-    public function getUrl(): string
+    public function getUrl(...$params): string
     {
-        return $this->url;
+        return $this->url instanceof Route ? $this->url->getUrl($params) : $this->url;
     }
 
     /**
@@ -156,19 +157,15 @@ class Repeater extends FieldFactory implements RepeaterContract
      */
     public function setUrl(?string $url = null): RepeaterContract
     {
-        $this->url = is_null($url)
-            ? Router::xhr(md5('FieldRepeater--' . $this->getIndex()), [$this, 'xhrResponse'])->getUrl()
-            : $url;
+        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse']) : $url;
 
         return $this;
     }
 
     /**
-     * Génération de la réponse HTTP via une requête XHR.
-     *
-     * @return array
+     * @inheritDoc
      */
-    public function xhrResponse(): array
+    public function xhrResponse(...$args): array
     {
         $max   = Request::input('max', -1);
         $index = Request::input('index', 0);

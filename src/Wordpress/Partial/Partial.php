@@ -8,6 +8,7 @@ use tiFy\Contracts\Partial\{
     CookieNotice as CookieNoticeContract,
     CurtainMenu as CurtainMenuContract,
     Dropdown as DropdownContract,
+    Downloader as DownloaderContract,
     Holder as HolderContract,
     Modal as ModalContract,
     Notice as NoticeContract,
@@ -26,6 +27,7 @@ use tiFy\Wordpress\Partial\Partials\{
     CookieNotice\CookieNotice,
     CurtainMenu\CurtainMenu,
     Dropdown\Dropdown,
+    Downloader\Downloader,
     Holder\Holder,
     Modal\Modal,
     MediaLibrary\MediaLibrary,
@@ -88,6 +90,10 @@ class Partial
 
         app()->add(DropdownContract::class, function () {
             return new Dropdown();
+        });
+
+        app()->add(DownloaderContract::class, function () {
+            return new Downloader();
         });
 
         app()->add(HolderContract::class, function () {

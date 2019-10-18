@@ -91,7 +91,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     {
         $path = $this->manager->baseUrl . '/' . $this->name();
 
-        return $absolute ? url()->root($path) : url()->rewriteBase() . '/' . $path;
+        return $absolute ? (string)url()->root($path) : url()->rewriteBase() . '/' . $path;
     }
 
     /**

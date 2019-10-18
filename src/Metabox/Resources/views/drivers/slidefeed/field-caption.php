@@ -18,7 +18,6 @@
         'class' => 'MetaboxSlidefeed-itemFieldCaptionInput',
     ],
     'options' => [
-        'branding'                => false,
         'fixed_toolbar_container' => '#MetaboxSlidefeed-itemFieldCaptionToolbar--' . $this->get('index'),
         'inline'                  => true,
         'menubar'                 => false,

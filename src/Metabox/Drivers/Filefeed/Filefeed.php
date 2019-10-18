@@ -3,17 +3,12 @@
 namespace tiFy\Metabox\Drivers\Filefeed;
 
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
+use tiFy\Contracts\Routing\Route;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\Proxy\{Request, Router};
 
 class Filefeed extends MetaboxDriver
 {
-    /**
-     * Alias de qualification.
-     * @var string
-     */
-    protected $alias = 'filefeed';
-
     /**
      * Indice de l'intance courante.
      * @var integer
@@ -21,8 +16,14 @@ class Filefeed extends MetaboxDriver
     static $instance = 0;
 
     /**
-     * Url de traitement de requêtes XHR.
+     * Alias de qualification.
      * @var string
+     */
+    protected $alias = 'filefeed';
+
+    /**
+     * Url de traitement de requête XHR.
+     * @var Route|string
      */
     protected $url = '';
 
@@ -77,17 +78,19 @@ class Filefeed extends MetaboxDriver
     }
 
     /**
-     * Récupération de l'url de traitement Xhr.
+     * Récupération de l'url de traitement de la requête XHR.
+     *
+     * @param array ...$params Liste des paramètres optionnels de formatage de l'url.
      *
      * @return string
      */
-    public function getUrl(): string
+    public function getUrl(...$params): string
     {
-        return $this->url;
+        return $this->url instanceof Route ? $this->url->getUrl($params) : $this->url;
     }
 
     /**
-     * Définition de l'url de traitement Xhr.
+     * Définition de l'url de traitement XHR.
      *
      * @param string|null $url
      *
@@ -95,9 +98,7 @@ class Filefeed extends MetaboxDriver
      */
     public function setUrl(?string $url = null): self
     {
-        $this->url = is_null($url)
-            ? Router::xhr(md5('MetaboxFilefeed--' . static::$instance), [$this, 'xhrResponse'])->getUrl()
-            : $url;
+        $this->url = is_null($url) ? Router::xhr(md5($this->alias . static::$instance), [$this, 'xhrResponse']) : $url;
 
         return $this;
     }
@@ -188,11 +189,13 @@ class Filefeed extends MetaboxDriver
     }
 
     /**
-     * Récupération des champs via Ajax.
+     * Controleur de traitement de la requête XHR.
+     *
+     * @param array ...$args Liste des arguments de requête passés dans l'url.
      *
      * @return array
      */
-    public function xhrResponse(): array
+    public function xhrResponse(...$args): array
     {
         $index = Request::input('index');
         $max = Request::input('max', 0);

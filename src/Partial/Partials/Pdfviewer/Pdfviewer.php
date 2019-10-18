@@ -44,14 +44,6 @@ class Pdfviewer extends PartialFactory implements PdfviewerContract
     /**
      * @inheritDoc
      */
-    public function display(): string
-    {
-        return (string)$this->viewer('pdfviewer', $this->all());
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function parse(): PartialFactoryContract
     {
         parent::parse();
