@@ -4,8 +4,9 @@ namespace tiFy\Field\Fields\Suggest;
 
 use tiFy\Contracts\Field\FieldFactory as FieldFactoryContract;
 use tiFy\Contracts\Field\Suggest as SuggestContract;
+use tiFy\Contracts\Routing\Route;
 use tiFy\Field\FieldFactory;
-use tiFy\Support\Proxy\{Request as req, Router as route};
+use tiFy\Support\Proxy\{Request, Router};
 
 class Suggest extends FieldFactory implements SuggestContract
 {
@@ -39,10 +40,10 @@ class Suggest extends FieldFactory implements SuggestContract
     ];
 
     /**
-     * Url de traitement.
-     * @var string Url de traitement
+     * Url de traitement de requête XHR.
+     * @var Route|string
      */
-    protected $url;
+    protected $url = '';
 
     /**
      * @inheritDoc
@@ -56,18 +57,18 @@ class Suggest extends FieldFactory implements SuggestContract
      * {@inheritDoc}
      *
      * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var string $name Clé d'indice de la valeur de soumission du champ.
-     * @var string $value Valeur courante de soumission du champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var array|bool $ajax Liste des attributs de recherche des éléments via une requête xhr.
-     * @var bool|array $alt Activation du champ alternatif de stockage du résultat de la recherche|attributs de
+     *      @var array $attrs Attributs HTML du champ.
+     *      @var string $after Contenu placé après le champ.
+     *      @var string $before Contenu placé avant le champ.
+     *      @var string $name Clé d'indice de la valeur de soumission du champ.
+     *      @var string $value Valeur courante de soumission du champ.
+     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+     *      @var array|bool $ajax Liste des attributs de recherche des éléments via une requête xhr.
+     *      @var bool|array $alt Activation du champ alternatif de stockage du résultat de la recherche|attributs de
      *      configuration du champ altérnatif. @see \tiFy\Field\Fields\Hidden\Hidden
-     * @see https://api.jquery.com/jquery.ajax/
-     * @var array $options Liste des attributs de configuration de l'autocomplétion.
-     * @see https://api.jqueryui.com/autocomplete/
+     *      @see https://api.jquery.com/jquery.ajax/
+     *      @var array $options Liste des attributs de configuration de l'autocomplétion.
+     *      @see https://api.jqueryui.com/autocomplete/
      * }
      */
     public function defaults(): array
@@ -93,9 +94,9 @@ class Suggest extends FieldFactory implements SuggestContract
     /**
      * @inheritDoc
      */
-    public function getUrl(): string
+    public function getUrl(...$params): string
     {
-        return $this->url;
+        return $this->url instanceof Route ? $this->url->getUrl($params) : $this->url;
     }
 
     /**
@@ -169,7 +170,7 @@ class Suggest extends FieldFactory implements SuggestContract
      */
     public function setUrl(?string $url = null): FieldFactoryContract
     {
-        $this->url = is_null($url) ? route::xhr(md5($this->getAlias()), [$this, 'xhrResponse'])->getUrl() : $url;
+        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse']) : $url;
 
         return $this;
     }
@@ -181,7 +182,7 @@ class Suggest extends FieldFactory implements SuggestContract
     {
         $items = collect($this->languages)
             ->filter(function ($label) {
-                return preg_match('/' . req::input('_term', '') . '/i', $label);
+                return preg_match('/' . Request::input('_term', '') . '/i', $label);
             })->map(function (&$label, $value) {
                 return [
                     'alt'   => (string)$value,

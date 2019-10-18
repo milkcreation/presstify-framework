@@ -9,6 +9,7 @@ use tiFy\Contracts\Partial\{
     CookieNotice as CookieNoticeContract,
     CurtainMenu as CurtainMenuContract,
     Dropdown as DropdownContract,
+    Downloader as DownloaderContract,
     Holder as HolderContract,
     ImageLightbox as ImageLightboxContract,
     Modal as ModalContract,
@@ -31,6 +32,7 @@ use tiFy\Partial\Partials\{
     CookieNotice\CookieNotice,
     CurtainMenu\CurtainMenu,
     Dropdown\Dropdown,
+    Downloader\Downloader,
     Holder\Holder,
     ImageLightbox\ImageLightbox,
     Modal\Modal,
@@ -114,6 +116,10 @@ class PartialServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(DropdownContract::class, function () {
             return new Dropdown();
+        });
+
+        $this->getContainer()->add(DownloaderContract::class, function () {
+            return new Downloader();
         });
 
         $this->getContainer()->add(HolderContract::class, function () {

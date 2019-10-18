@@ -3,6 +3,7 @@
 namespace tiFy\Metabox\Drivers\Postfeed;
 
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
+use tiFy\Contracts\Routing\Route;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\Proxy\{Request, Router};
 use tiFy\Wordpress\Query\QueryPost;
@@ -22,8 +23,8 @@ class Postfeed extends MetaboxDriver
     protected $alias = 'postfeed';
 
     /**
-     * Url de traitement de requêtes XHR.
-     * @var string
+     * Url de traitement de requête XHR.
+     * @var Route|string
      */
     protected $url = '';
 
@@ -82,6 +83,18 @@ class Postfeed extends MetaboxDriver
             'name'  => 'postfeed',
             'title' => __('Éléments en relation', 'tify'),
         ]);
+    }
+
+    /**
+     * Récupération de l'url de traitement de la requête XHR.
+     *
+     * @param array ...$params Liste des paramètres optionnels de formatage de l'url.
+     *
+     * @return string
+     */
+    public function getUrl(...$params): string
+    {
+        return $this->url instanceof Route ? $this->url->getUrl($params) : $this->url;
     }
 
     /**
@@ -154,16 +167,6 @@ class Postfeed extends MetaboxDriver
     }
 
     /**
-     * Récupération de l'url de traitement XHR.
-     *
-     * @return string
-     */
-    public function getUrl(): string
-    {
-        return $this->url;
-    }
-
-    /**
      * Définition de l'url de traitement XHR.
      *
      * @param string|null $url
@@ -172,15 +175,13 @@ class Postfeed extends MetaboxDriver
      */
     public function setUrl(?string $url = null): self
     {
-        $this->url = is_null($url)
-            ? Router::xhr(md5('MetaboxPostfeed--' . static::$instance), [$this, 'xhrResponse'])->getUrl()
-            : $url;
+        $this->url = is_null($url) ? Router::xhr(md5($this->alias . static::$instance), [$this, 'xhrResponse']) : $url;
 
         return $this;
     }
 
     /**
-     * Récupération d'un élément via Ajax
+     * Controleur de traitement de la requête XHR.
      *
      * @param array ...$args Liste des arguments de requête passés dans l'url.
      *

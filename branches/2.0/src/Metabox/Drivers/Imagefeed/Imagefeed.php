@@ -3,6 +3,7 @@
 namespace tiFy\Metabox\Drivers\Imagefeed;
 
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
+use tiFy\Contracts\Routing\Route;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\{Img, Proxy\Request, Proxy\Router};
 use tiFy\Validation\Validator;
@@ -22,8 +23,8 @@ class Imagefeed extends MetaboxDriver
     protected $alias = 'imagefeed';
 
     /**
-     * Url de traitement de requêtes XHR.
-     * @var string
+     * Url de traitement de requête XHR.
+     * @var Route|string
      */
     protected $url = '';
 
@@ -78,6 +79,18 @@ class Imagefeed extends MetaboxDriver
     }
 
     /**
+     * Récupération de l'url de traitement de la requête XHR.
+     *
+     * @param array ...$params Liste des paramètres optionnels de formatage de l'url.
+     *
+     * @return string
+     */
+    public function getUrl(...$params): string
+    {
+        return $this->url instanceof Route ? $this->url->getUrl($params) : $this->url;
+    }
+
+    /**
      * Définition d'un élément.
      *
      * @param int|string $index Indice de l'élément.
@@ -109,16 +122,6 @@ class Imagefeed extends MetaboxDriver
             'value' => $value,
             'src'   => $src,
         ];
-    }
-
-    /**
-     * Récupération de l'url de traitement Xhr.
-     *
-     * @return string
-     */
-    public function getUrl(): string
-    {
-        return $this->url;
     }
 
     /**
@@ -180,7 +183,7 @@ class Imagefeed extends MetaboxDriver
     }
 
     /**
-     * Définition de l'url de traitement Xhr.
+     * Définition de l'url de traitement XHR.
      *
      * @param string|null $url
      *
@@ -188,15 +191,13 @@ class Imagefeed extends MetaboxDriver
      */
     public function setUrl(?string $url = null): self
     {
-        $this->url = is_null($url)
-            ? Router::xhr(md5('MetaboxImagefeed--' . static::$instance), [$this, 'xhrResponse'])->getUrl()
-            : $url;
+        $this->url = is_null($url) ? Router::xhr(md5($this->alias . static::$instance), [$this, 'xhrResponse']) : $url;
 
         return $this;
     }
 
     /**
-     * Récupération d'un élément via Ajax
+     * Controleur de traitement de la requête XHR.
      *
      * @param array ...$args Liste des arguments de requête passés dans l'url.
      *

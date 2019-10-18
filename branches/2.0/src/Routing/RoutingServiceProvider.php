@@ -27,8 +27,7 @@ class RoutingServiceProvider extends ServiceProvider
         'router.strategy.default',
         'router.strategy.json',
         'redirect',
-        'url',
-        'url.factory',
+        'url'
     ];
 
     /**
@@ -134,7 +133,5 @@ class RoutingServiceProvider extends ServiceProvider
         $this->getContainer()->share('url', function () {
             return new Url($this->getContainer()->get('router'), request());
         });
-
-        $this->getContainer()->add('url.factory', UrlFactory::class);
     }
 }

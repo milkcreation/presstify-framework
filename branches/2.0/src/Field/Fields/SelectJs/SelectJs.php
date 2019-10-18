@@ -214,7 +214,7 @@ class SelectJs extends FieldFactory implements SelectJsContract
      *
      * @return array
      */
-    public function xhrResponse(): array
+    public function xhrResponse(...$args): array
     {
         $this->set('viewer', request()->input('_viewer', []));
 

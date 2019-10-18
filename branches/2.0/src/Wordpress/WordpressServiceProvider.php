@@ -15,7 +15,6 @@ use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
 use tiFy\Wordpress\Http\Http;
 use tiFy\Wordpress\Mail\Mail;
-use tiFy\Wordpress\Media\Download;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Media\Upload;
 use tiFy\Wordpress\Metabox\Metabox;
@@ -65,7 +64,6 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.login-redirect',
         'wp.mail',
         'wp.media',
-        'wp.media.download',
         'wp.media.upload',
         'wp.metabox',
         'wp.page-hook',
@@ -369,10 +367,6 @@ class WordpressServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('wp.media', function () {
             return new Media();
-        });
-
-        $this->getContainer()->share('wp.media.download', function () {
-            return new Download();
         });
 
         $this->getContainer()->share('wp.media.upload', function () {

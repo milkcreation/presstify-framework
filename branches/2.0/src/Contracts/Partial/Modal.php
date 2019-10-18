@@ -5,14 +5,16 @@ namespace tiFy\Contracts\Partial;
 interface Modal extends PartialFactory
 {
     /**
-     * Récupération de l'url de traitement Xhr.
+     * Récupération de l'url de traitement de la requête XHR.
+     *
+     * @param array ...$params Liste des paramètres optionnels de formatage de l'url.
      *
      * @return string
      */
-    public function getUrl(): string;
+    public function getUrl(...$params): string;
 
     /**
-     * Définition de l'url de traitement Xhr.
+     * Définition de l'url de traitement XHR.
      *
      * @param string|null $url
      *
@@ -30,9 +32,11 @@ interface Modal extends PartialFactory
     public function trigger(array $attrs = []);
 
     /**
-     * Chargement du contenu de la modale via une requête XHR.
+     * Contrôleur de traitement de la requête XHR.
      *
-     * @return void
+     * @param array ...$args Liste dynamique de variables passés en argument dans l'url de requête
+     *
+     * @return array
      */
-    public function xhrResponse();
+    public function xhrResponse(...$args): array;
 }

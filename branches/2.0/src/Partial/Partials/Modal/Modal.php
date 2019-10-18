@@ -5,14 +5,15 @@ namespace tiFy\Partial\Partials\Modal;
 use Closure;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Partial\{Modal as ModalContract, PartialFactory as PartialFactoryContract};
+use tiFy\Contracts\Routing\Route;
 use tiFy\Partial\PartialFactory;
 use tiFy\Support\Proxy\{Request, Router};
 
 class Modal extends PartialFactory implements ModalContract
 {
     /**
-     * Url de traitement de requêtes XHR.
-     * @var string
+     * Url de traitement de requête XHR.
+     * @var Route|string
      */
     protected $url = '';
 
@@ -75,9 +76,9 @@ class Modal extends PartialFactory implements ModalContract
     /**
      * @inheritDoc
      */
-    public function getUrl(): string
+    public function getUrl(...$params): string
     {
-        return $this->url;
+        return $this->url instanceof Route ? $this->url->getUrl($params) : $this->url;
     }
 
     /**
@@ -196,7 +197,7 @@ class Modal extends PartialFactory implements ModalContract
      */
     public function setUrl(?string $url = null): ModalContract
     {
-        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse'])->getUrl() : $url;
+        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse']) : $url;
 
         return $this;
     }
@@ -224,7 +225,7 @@ class Modal extends PartialFactory implements ModalContract
     /**
      * @inheritdoc
      */
-    public function xhrResponse()
+    public function xhrResponse(...$args): array
     {
         $this->set('viewer', Request::input('viewer', []))->parseViewer();
 

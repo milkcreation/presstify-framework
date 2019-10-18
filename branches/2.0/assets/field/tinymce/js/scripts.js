@@ -45,14 +45,19 @@ jQuery(function ($) {
     },
     // Initialisation des agents de control
     _initControls : function () {
-      let o = this.option();
+      let o = {branding: false};
 
-      this.el.tinymce(o);
+      if (tify.locale.language !== undefined) {
+        o.language = tify.locale.language;
+      }
+
+      this.el.tinymce($.extend(o, this.option()));
     }
   });
 
   $(document).ready(function () {
     $('[data-control="tinymce"]').tifyTinymce();
+
     $.tify.observe('[data-control="tinymce"]', function (i, target) {
       $(target).tifyTinymce();
     });
