@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Wordpress\Contracts;
+namespace tiFy\Wordpress\Contracts\Query;
 
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Support\DateTime;

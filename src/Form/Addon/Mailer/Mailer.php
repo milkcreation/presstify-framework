@@ -130,7 +130,7 @@ class Mailer extends AddonFactory
                                             $recipient . '-email_empty',
                                             __(
                                                 'L\'email du destinataire des messages de notification ne peut être vide',
-                                                'theme'
+                                                'tify'
                                             )
                                         );
                                     } elseif ( ! is_email($recip['email'])) {
@@ -140,7 +140,7 @@ class Mailer extends AddonFactory
                                             __(
                                                 'Le format de l\'email du destinataire des messages de notification' .
                                                 'n\'est pas valide',
-                                                'theme'
+                                                'tify'
                                             )
                                         );
                                     }
@@ -157,8 +157,8 @@ class Mailer extends AddonFactory
                                     'tify_options',
                                     'sender-email_empty',
                                     sprintf(
-                                        __('L\'email "%s" ne peut être vide', 'theme'),
-                                        __('Expéditeur du message de confirmation de reception', 'theme')
+                                        __('L\'email "%s" ne peut être vide', 'tify'),
+                                        __('Expéditeur du message de confirmation de reception', 'tify')
                                     )
                                 );
                             } elseif ( ! is_email($sender['email'])) {
@@ -166,8 +166,8 @@ class Mailer extends AddonFactory
                                     'tify_options',
                                     'sender-email_format',
                                     sprintf(
-                                        __('Le format de l\'email "%s" n\'est pas valide', 'theme'),
-                                        __('Expéditeur du message de confirmation de reception', 'theme')
+                                        __('Le format de l\'email "%s" n\'est pas valide', 'tify'),
+                                        __('Expéditeur du message de confirmation de reception', 'tify')
                                     )
                                 );
                             }

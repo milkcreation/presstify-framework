@@ -1,11 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Wordpress\Contracts;
+namespace tiFy\Wordpress\Contracts\Query;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus, Support\ParamsBag};
 use tiFy\Support\DateTime;
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
 use WP_Post;
+use WP_Query;
 use WP_Term;
 use WP_User;
 
@@ -44,6 +46,80 @@ interface QueryPost extends ParamsBag
      * @return static|null
      */
     public static function createFromPostdata(array $postdata): ?QueryPost;
+
+    /**
+     * Traitement d'arguments de requête de récupération des éléments.
+     *
+     * @param array $args Liste des arguments de la requête récupération des éléments.
+     *
+     * @return array
+     */
+    public static function parseQueryArgs(array $args = []): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur une instance de classe WP_Query.
+     * @see https://developer.wordpress.org/reference/classes/wp_query/
+     *
+     * @param WP_Query $wp_query
+     *
+     * @return array
+     */
+    public static function query(WP_Query $wp_query): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur des arguments de requête de récupération des éléments.
+     * @see https://developer.wordpress.org/reference/classes/wp_query/
+     *
+     * @param array $args Liste des arguments de la requête récupération des éléments.
+     *
+     * @return array
+     */
+    public static function queryFromArgs(array $args = []): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur un resultat de requête en base de données.
+     *
+     * @param EloquentCollection $collection
+     *
+     * @return array
+     */
+    public static function queryFromEloquent(EloquentCollection $collection): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur la requête de récupération globale.
+     * @see https://developer.wordpress.org/reference/classes/wp_query/
+     *
+     * @return array
+     */
+    public static function queryFromGlobals(): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur des identifiants de qualification de posts.
+     * @see https://developer.wordpress.org/reference/classes/wp_query/
+     *
+     * @param int[] $ids Liste des identifiants de qualification.
+     *
+     * @return array
+     */
+    public static function queryFromIds(array $ids): array;
+
+    /**
+     * Définition de la liste des arguments de requête de récupération des éléments.
+     *
+     * @param array $args
+     *
+     * @return void
+     */
+    public static function setDefaultArgs(array $args): void;
+
+    /**
+     * Définition du type de post ou une liste de type de posts associés.
+     *
+     * @param string|array $post_type
+     *
+     * @return void
+     */
+    public static function setPostType($post_type): void;
 
     /**
      * Indicateur d'activation de la mise en cache.
@@ -158,9 +234,9 @@ interface QueryPost extends ParamsBag
      *
      * @param array $args Liste des argument de récupération.
      *
-     * @return QueryComments|QueryComment[]|null
+     * @return QueryComment[]|null
      */
-    public function getComments(array $args = []): iterable;
+    public function getComments(array $args = []): array;
 
     /**
      * Récupération du contenu de description.

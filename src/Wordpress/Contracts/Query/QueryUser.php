@@ -1,11 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Wordpress\Contracts;
+namespace tiFy\Wordpress\Contracts\Query;
 
 use tiFy\Contracts\{Support\ParamsBag, User\RoleFactory};
 use tiFy\Wordpress\Contracts\Database\UserBuilder;
 use WP_Site;
 use WP_User;
+use WP_User_Query;
 
 interface QueryUser extends ParamsBag
 {
@@ -33,6 +34,63 @@ interface QueryUser extends ParamsBag
      * @return static|null
      */
     public static function createFromEmail(string $email): ?QueryUser;
+
+    /**
+     * Traitement d'arguments de requête de récupération des éléments.
+     *
+     * @param array $args Liste des arguments de la requête récupération des éléments.
+     *
+     * @return array
+     */
+    public static function parseQueryArgs(array $args = []): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur une instance de classe WP_User_Query.
+     * @see https://developer.wordpress.org/reference/classes/wp_user_query/
+     *
+     * @param WP_User_Query $wp_user_query
+     *
+     * @return array
+     */
+    public static function query(WP_User_Query $wp_user_query): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur des arguments de requête de récupération des éléments.
+     * @see https://developer.wordpress.org/reference/classes/wp_user_query/
+     *
+     * @param array $args Liste des arguments de la requête récupération des éléments.
+     *
+     * @return array
+     */
+    public static function queryFromArgs(array $args = []): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur des identifiants de qualification de termes.
+     * @see https://developer.wordpress.org/reference/classes/wp_user_query/
+     *
+     * @param int[] $ids Liste des identifiants de qualification.
+     *
+     * @return array
+     */
+    public static function queryFromIds(array $ids): array;
+
+    /**
+     * Définition de la liste des arguments de requête de récupération des éléments.
+     *
+     * @param array $args
+     *
+     * @return void
+     */
+    public static function setDefaultArgs(array $args): void;
+
+    /**
+     * Définition du rôle ou une liste de rôles associés.
+     *
+     * @param string $role
+     *
+     * @return void
+     */
+    public static function setRole(string $role): void;
 
     /**
      * Récupération de l'instance du modèle de base de donnée associé.

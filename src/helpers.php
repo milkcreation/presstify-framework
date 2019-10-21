@@ -311,7 +311,7 @@ if (!function_exists('partial')) {
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return null|Partial|PartialFactory
+     * @return Partial|PartialFactory|null
      */
     function partial(?string $name = null, $id = null, ?array $attrs = null)
     {

@@ -119,6 +119,19 @@ class Partial extends Manager implements PartialContract
     /**
      * @inheritDoc
      */
+    public function register($key, ...$args)
+    {
+        if (isset($args[0])) {
+            return $this->set([$key => $args[0]]);
+        }
+        throw new InvalidArgumentException(
+            sprintf(__('La déclaration de la portion d\'affichage [%s] n\'est pas conforme.', 'tify'), $key)
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function registerDefaults(): PartialContract
     {
         foreach ($this->defaults as $name => $alias) {
@@ -164,7 +177,7 @@ class Partial extends Manager implements PartialContract
         } else {
             throw new InvalidArgumentException(
                 sprintf(
-                    __('La déclaration de la protion d\'affichage %s devrait être une instance de %s', 'tify'),
+                    __('La déclaration de la portion d\'affichage [%s] devrait être une instance de [%s]', 'tify'),
                     $key,
                     PartialFactory::class
                 )

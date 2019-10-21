@@ -8,11 +8,8 @@ use tiFy\Support\Proxy\Request;
 use tiFy\Wordpress\{
     Contracts\Field\Suggest as SuggestContract,
     Query\QueryPost,
-    Query\QueryPosts,
     Query\QueryTerm,
-    Query\QueryTerms,
-    Query\QueryUser,
-    Query\QueryUsers
+    Query\QueryUser
 };
 
 class Suggest extends BaseSuggest implements SuggestContract
@@ -49,7 +46,7 @@ class Suggest extends BaseSuggest implements SuggestContract
             ['s' => Request::input('_term', '')]
         );
 
-        $posts = QueryPosts::createFromArgs($args) ?: [];
+        $posts = QueryPost::queryFromArgs($args);
 
         $items = (new Collection($posts))->map(function (QueryPost &$item) {
             return [
@@ -74,7 +71,7 @@ class Suggest extends BaseSuggest implements SuggestContract
     {
         $args = array_merge(Request::input('query_args', []), ['search' => Request::input('_term', '')]);
 
-        $terms = QueryTerms::createFromArgs($args) ?: [];
+        $terms = QueryTerm::queryFromArgs($args);
 
         $items = (new Collection($terms))->map(function (QueryTerm &$item) {
             return [
@@ -99,7 +96,7 @@ class Suggest extends BaseSuggest implements SuggestContract
     {
         $args = array_merge(Request::input('query_args', []), ['search' => Request::input('_term', '')]);
 
-        $terms = QueryUsers::createFromArgs($args) ?: [];
+        $terms = QueryUser::queryFromArgs($args);
 
         $items = (new Collection($terms))->map(function (QueryUser &$item) {
             return [

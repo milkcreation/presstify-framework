@@ -5,7 +5,7 @@ namespace tiFy\Wordpress\PageHook;
 use Closure;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Support\ParamsBag;
-use tiFy\Wordpress\Contracts\{PageHookItem as PageHookItemContract, QueryPost as QueryPostContract};
+use tiFy\Wordpress\Contracts\{PageHookItem as PageHookItemContract, Query\QueryPost as QueryPostContract};
 use tiFy\Wordpress\Query\QueryPost;
 use WP_Post;
 use WP_Query;
