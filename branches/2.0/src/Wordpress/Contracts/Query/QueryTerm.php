@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Wordpress\Contracts;
+namespace tiFy\Wordpress\Contracts\Query;
 
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\Database\TaxonomyBuilder;
 use WP_Term;
+use WP_Term_Query;
 
 interface QueryTerm extends ParamsBag
 {
@@ -21,11 +22,68 @@ interface QueryTerm extends ParamsBag
      * Récupération d'une instance basée sur le nom de qualification du terme.
      *
      * @param string $term_slug
-     * @param string $taxonomy Nom de qualification de la taxonomie associée.
+     * @param string|null $taxonomy Nom de qualification de la taxonomie associée.
      *
      * @return static|null
      */
-    public static function createFromSlug(string $term_slug, string $taxonomy): ?QueryTerm;
+    public static function createFromSlug(string $term_slug, ?string $taxonomy = null): ?QueryTerm;
+
+    /**
+     * Traitement d'arguments de requête de récupération des éléments.
+     *
+     * @param array $args Liste des arguments de la requête récupération des éléments.
+     *
+     * @return array
+     */
+    public static function parseQueryArgs(array $args = []) : array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur une instance de classe WP_Term_Query.
+     * @see https://developer.wordpress.org/reference/classes/wp_term_query/
+     *
+     * @param WP_Term_Query $wp_term_query
+     *
+     * @return array
+     */
+    public static function query(WP_Term_Query $wp_term_query): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur des arguments de requête de récupération des éléments.
+     * @see https://developer.wordpress.org/reference/classes/wp_term_query/
+     *
+     * @param array $args Liste des arguments de la requête récupération des éléments.
+     *
+     * @return array
+     */
+    public static function queryFromArgs(array $args = []): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur des identifiants de qualification de termes.
+     * @see https://developer.wordpress.org/reference/classes/wp_term_query/
+     *
+     * @param int[] $ids Liste des identifiants de qualification.
+     *
+     * @return array
+     */
+    public static function queryFromIds(array $ids): array;
+
+    /**
+     * Définition de la liste des arguments de requête de récupération des éléments.
+     *
+     * @param array $args
+     *
+     * @return void
+     */
+    public static function setDefaultArgs(array $args): void;
+
+    /**
+     * Définition de la taxonomie associée.
+     *
+     * @param string $taxonomy
+     *
+     * @return void
+     */
+    public static function setTaxonomy(string $taxonomy): void;
 
     /**
      * Récupération de l'instance du modèle de base de donnée associé.
@@ -117,7 +175,7 @@ interface QueryTerm extends ParamsBag
     /**
      * Sauvegarde des données du terme en base.
      *
-     * @param array $postdata Liste des données à enregistrer.
+     * @param array $termdata Liste des données à enregistrer.
      *
      * @return void
      */

@@ -1,7 +1,7 @@
 <?php
 /**
  * @var tiFy\Contracts\Metabox\MetaboxView $this
- * @var tiFy\Wordpress\Contracts\QueryPost $item
+ * @var tiFy\Wordpress\Contracts\Query\QueryPost $item
  */
 ?>
 <li data-control="metabox-postfeed.item">
