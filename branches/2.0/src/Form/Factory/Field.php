@@ -413,15 +413,12 @@ class Field extends ParamsBag implements FactoryField
             $this->set('validations', $this->parseValidations($validations));
         endif;
 
-        foreach ($this->addons() as $name => $addon) :
+        foreach ($this->addons() as $name => $addon) {
             $this->set(
                 "addons.{$name}",
-                array_merge(
-                    $addon->defaultsFieldOptions(),
-                    $this->get("addons.{$name}", [])
-                )
+                array_merge($addon->defaultsFieldOptions(), $this->get("addons.{$name}", []) ? : [])
             );
-        endforeach;
+        }
 
         $this->events('field.prepared.' . $this->getType(), [&$this]);
         $this->events('field.prepared', [&$this]);

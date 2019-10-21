@@ -81,6 +81,7 @@ class Column extends ParamsBag implements ColumnContract
         }
 
         $attrs = [];
+
         if ($with_id) {
             $attrs['id'] = $this->getName();
         }
@@ -140,7 +141,7 @@ class Column extends ParamsBag implements ColumnContract
      */
     public function isPrimary(): bool
     {
-        return $this->factory->columns()->getPrimary() === $this->getName();
+        return ($this->factory->columns()->getPrimary() === $this->getName());
     }
 
     /**
