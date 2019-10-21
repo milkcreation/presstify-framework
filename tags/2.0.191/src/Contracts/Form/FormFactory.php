@@ -120,4 +120,11 @@ interface FormFactory extends FactoryResolver, ParamsBag
      * @return static
      */
     public function setInstance(string $name, FormManager $manager): FormFactory;
+
+    /**
+     * Récupération du nom de qualification du formulaire dans les attributs de balises HTML.
+     *
+     * @return string
+     */
+    public function tagName(): string;
 }
