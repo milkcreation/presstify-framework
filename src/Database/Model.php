@@ -2,7 +2,7 @@
 
 namespace tiFy\Database;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as BaseModel;
 use Illuminate\Database\Query\Builder;
 use tiFy\Database\Concerns\{
     ColumnsAwareTrait,
@@ -12,7 +12,7 @@ use tiFy\Database\Concerns\{
 /**
  * @mixin Builder
  */
-abstract class AbstractModel extends Model
+abstract class Model extends BaseModel
 {
     use ColumnsAwareTrait, ConnectionAwareTrait;
 }

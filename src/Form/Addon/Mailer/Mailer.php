@@ -2,11 +2,12 @@
 
 namespace tiFy\Form\Addon\Mailer;
 
+use Closure;
 use tiFy\Contracts\{Form\FactoryField, Form\FactoryRequest, Mail\Mailer as MailerContract};
-use tiFy\Form\AddonController;
+use tiFy\Form\AddonFactory;
 use tiFy\Support\Proxy\Metabox;
 
-class Mailer extends AddonController
+class Mailer extends AddonFactory
 {
     /**
      * Définition des options de formulaire par défaut
@@ -45,29 +46,29 @@ class Mailer extends AddonController
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function boot()
+    public function boot(): void
     {
-        $this->events()
+        $this->form()->events()
              ->listen('request.submit', [$this, 'onRequestSubmit'])
              ->listen('request.success', [$this, 'onRequestSuccess']);
 
-        $prefix       = $this->get('option_name_prefix', "FormMailer_{$this->form()->name()}");
-        $option_names = $this->get('option_names', []);
+        $prefix       = $this->params('option_name_prefix', "FormMailer_{$this->form()->name()}");
+        $option_names = $this->params('option_names', []);
         foreach (['confirmation', 'sender', 'notification', 'recipients'] as $option) {
             $option_names[$option] = $option_names[$option] ?? "{$prefix}{$option}";
         }
-        $this->set('option_names', $option_names);
+        $this->params(['option_names' => $option_names]);
 
-        if ($this->get('confirmation') && get_option($option_names['confirmation'])) {
+        if ($this->params('confirmation') && get_option($option_names['confirmation'])) {
             $from = get_option($option_names['sender']) ? ! '' : ['email' => '', 'name' => ''];
 
-            $this->set('confirmation.from', [$from['email'], $from['name']]);
+            $this->params(['confirmation.from' => [$from['email'], $from['name']]]);
         }
 
         if (
-            $this->get('notification') &&
+            $this->params('notification') &&
             get_option($option_names['notification']) &&
             ($to = get_option($option_names['recipients']))
         ) {
@@ -75,28 +76,28 @@ class Mailer extends AddonController
                 $item = [$item['email'], $item['name']];
             });
 
-            $this->set('notification.to', $to);
+            $this->params(['notification.to' => $to]);
         }
 
-        if ($admin = $this->get('admin')) {
+        if ($admin = $this->params('admin')) {
             $defaultAdmin = [
                 'confirmation' => true,
                 'notification' => true,
             ];
 
-            $this->set('admin', is_array($admin) ? array_merge($defaultAdmin, $admin) : $defaultAdmin);
+            $this->params(['admin' => is_array($admin) ? array_merge($defaultAdmin, $admin) : $defaultAdmin]);
         }
 
-        if ($this->get('admin.confirmation') || $this->get('admin.notification')) {
+        if ($this->params('admin.confirmation') || $this->params('admin.notification')) {
             Metabox::add("FormAddonMailer-{$this->form()->name()}", [
                 'title' => $this->form()->getTitle(),
             ])
                    ->setScreen('tify_options@options')
                    ->setContext('tab');
 
-            if ($this->get('admin.confirmation')) {
+            if ($this->params('admin.confirmation')) {
                 Metabox::add("FormAddonMailerConfirmation-{$this->form()->name()}", [
-                    'driver'   => $this->resolve('addon.mailer.options-confirmation', [$this->form(), $this]),
+                    'driver'   => (new MailerConfirmationMetabox())->setAddon($this),
                     'parent'   => "FormAddonMailer-{$this->form()->name()}",
                     'position' => 1,
                 ])
@@ -104,9 +105,9 @@ class Mailer extends AddonController
                        ->setContext('tab');
             }
 
-            if ($this->get('admin.notification')) {
+            if ($this->params('admin.notification')) {
                 Metabox::add("FormAddonMailerNotification-{$this->form()->name()}", [
-                    'driver'   => $this->resolve('addon.mailer.options-notification', [$this->form(), $this]),
+                    'driver'   => (new MailerNotificationMetabox())->setAddon($this),
                     'parent'   => "FormAddonMailer-{$this->form()->name()}",
                     'position' => 2,
                 ])
@@ -181,9 +182,9 @@ class Mailer extends AddonController
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function defaults()
+    public function defaultsParams(): array
     {
         return [
             'notification' => [
@@ -205,7 +206,7 @@ class Mailer extends AddonController
     /**
      * @inheritdoc
      */
-    public function defaultsFieldOptions()
+    public function defaultsFieldOptions(): array
     {
         return [
             'show'  => true,
@@ -231,34 +232,34 @@ class Mailer extends AddonController
         /** @var MailerContract $mailer */
         $mailer = app('mailer');
 
-        if ($debug = $this->get('debug')) :
-            switch ($debug) :
+        if ($debug = $this->params('debug')) {
+            switch ($debug) {
                 default:
                 case 'confirmation' :
-                    if ($params = $this->parseParams($this->get('confirmation', []), 'confirmation')) :
+                    if ($params = $this->parseMail($this->params('confirmation', []), 'confirmation')) {
                         $mailer->debug($params);
-                    else :
+                    } else {
                         wp_die(
                             __('Email de confirmation non configuré.', 'tify'),
                             __('FormAddonMailer - Erreur', 'tify'),
                             500
                         );
-                    endif;
+                    }
                     break;
 
                 case 'notification' :
-                    if ($params = $this->parseParams($this->get('notification', []), 'notification')) :
+                    if ($params = $this->parseMail($this->params('notification', []), 'notification')) {
                         $mailer->debug($params);
-                    else :
+                    } else {
                         wp_die(
                             __('Email de notification non configuré.', 'tify'),
                             __('FormAddonMailer - Erreur', 'tify'),
                             500
                         );
-                    endif;
+                    }
                     break;
-            endswitch;
-        endif;
+            }
+        }
     }
 
     /**
@@ -274,11 +275,11 @@ class Mailer extends AddonController
         /** @var MailerContract $mailer */
         $mailer = app('mailer');
 
-        if ($params = $this->parseParams($this->get('confirmation', []), 'confirmation')) {
+        if ($params = $this->parseMail($this->params('confirmation', []), 'confirmation')) {
             $mailer->send($params);
         }
 
-        if ($params = $this->parseParams($this->get('notification', []), 'notification')) {
+        if ($params = $this->parseMail($this->params('notification', []), 'notification')) {
             $mailer->send($params);
         }
     }
@@ -291,11 +292,11 @@ class Mailer extends AddonController
      *
      * @return array
      */
-    public function parseParams($params, $type)
+    public function parseMail($params, $type)
     {
-        if ($params === false) :
+        if ($params === false) {
             return [];
-        endif;
+        }
 
         $params['subject'] = $params['subject']
                              ?? sprintf(__('%1$s - Demande de contact', 'tify'), get_bloginfo('name'));
@@ -305,24 +306,26 @@ class Mailer extends AddonController
 
         $params = array_map([$this, 'fieldTagValue'], $params);
 
-        $fields = $this->fields()->collect()->filter(function (FactoryField $item) {
+        $fields = $this->form()->fields()->collect()->filter(function (FactoryField $item) {
             return $item->getAddonOption('mailer', 'show') && $item->supports('request');
         });
 
         $fields->each(function (FactoryField $item) {
             $mailer_label         = $item->getAddonOption('mailer', 'label');
-            $item['mailer_label'] = $mailer_label instanceof \Closure
+            $item['mailer_label'] = $mailer_label instanceof Closure
                 ? call_user_func($mailer_label, $item)
                 : $mailer_label;
 
             $mailer_value         = $item->getAddonOption('mailer', 'value');
-            $item['mailer_value'] = $mailer_value instanceof \Closure
+            $item['mailer_value'] = $mailer_value instanceof Closure
                 ? call_user_func($mailer_value, $item)
                 : $mailer_value;
         });
 
         $params['body'] = $params['body']
-                          ?? (string)$this->viewer('addon/mailer/body', array_merge($params, compact('fields')));
+                          ?? (string)$this->form()->viewer(
+                'addon/mailer/body', array_merge($params, compact('fields'))
+            );
 
         return $params;
     }
