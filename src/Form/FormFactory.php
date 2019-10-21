@@ -42,6 +42,12 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     protected $prepared = false;
 
     /**
+     * Nom de qualification du formulaire dans les attributs de balises HTML.
+     * @var string|null
+     */
+    protected $tagName;
+
+    /**
      * @inheritDoc
      */
     public function __toString(): string
@@ -262,13 +268,13 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function renderPrepare()
     {
         if (!$this->has('attrs.id')) {
-            $this->set('attrs.id', "Form-content--{$this->name()}");
+            $this->set('attrs.id', "Form-content--{$this->tagName()}");
         }
         if (!$this->get('attrs.id')) {
             $this->pull('attrs.id');
         }
 
-        $default_class = "Form-content Form-content--{$this->name()}";
+        $default_class = "Form-content Form-content--{$this->tagName()}";
         if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $default_class);
         } else {
@@ -374,5 +380,15 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             $this->events('form.init', [&$this]);
         }
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function tagName(): string
+    {
+        return $this->tagName = is_null($this->tagName)
+            ? lcfirst(str_replace(' ', '', ucwords(str_replace(['-', '_', '.'], ' ', $this->name()))))
+            : $this->tagName;
     }
 }
