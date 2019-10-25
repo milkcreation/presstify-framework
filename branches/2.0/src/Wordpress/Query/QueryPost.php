@@ -167,7 +167,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         $args = static::parseQueryArgs(['post__in' => $ids, 'posts_per_page' => -1]);
         if(!isset($args['post_type'])) {
-            $args['post_type'] = array_keys(get_post_types());
+            $args['post_type'] = 'any';
         }
         $args['post__in'] = $ids;
         $args['posts_per_page'] = -1;

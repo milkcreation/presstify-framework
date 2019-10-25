@@ -34,7 +34,7 @@ interface MetaboxDriver extends ParamsBag
     /**
      * Liste des paramètres par défaut.
      *
-     * @return string
+     * @return array
      */
     public function defaultParams(): array;
 
@@ -94,7 +94,7 @@ interface MetaboxDriver extends ParamsBag
      *
      * @return static
      */
-    public function setScreen(string $screen): MetaboxDriver;
+    public function setScreen(string $name): MetaboxDriver;
 
     /**
      * Récupération de l'intitulé de qualification.

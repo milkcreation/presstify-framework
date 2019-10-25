@@ -35,7 +35,7 @@ class MetaboxView extends ViewController implements MetaboxViewContract
     public function __call($name, $arguments)
     {
         try {
-            $metabox = $this->engine->get('metabox');
+            $metabox = $this->engine->params('metabox');
             if (!in_array($name, $this->mixins)) {
                 throw new BadMethodCallException(sprintf(__(
                     'La méthode [%s] de boîte de saisie ne peut être appelée dans un gabarit d\'affichage.', 'tify'

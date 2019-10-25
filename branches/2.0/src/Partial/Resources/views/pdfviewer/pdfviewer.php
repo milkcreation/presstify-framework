@@ -57,4 +57,4 @@
         <?php endif; ?>
     </div>
 </div>
-<?php echo $this->after(); ?>
+<?php echo $this->after();

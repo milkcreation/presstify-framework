@@ -38,7 +38,7 @@ class Viewer extends BaseViewer
     /**
      * @inheritdoc
      */
-    public function boot()
+    public function boot(): void
     {
         parent::boot();
 

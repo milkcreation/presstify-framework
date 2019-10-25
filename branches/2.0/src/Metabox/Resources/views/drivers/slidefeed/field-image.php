@@ -8,6 +8,5 @@ echo field('media-image', [
     'name'   => "{$this->get('name')}[image]",
     'value'  => $this->get('value.image'),
     'size'   => 'thumbnail',
-    'width'  => 150,
-
+    'width'  => 150
 ]);

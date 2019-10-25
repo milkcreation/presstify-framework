@@ -2,10 +2,9 @@
 
 namespace tiFy\Contracts\Template;
 
-use Illuminate\Database\Eloquent\{Builder, Model};
+use tiFy\Database\Model;
 
 /**
- * @mixin Builder
  * @mixin Model
  */
 interface FactoryDb extends FactoryAwareTrait

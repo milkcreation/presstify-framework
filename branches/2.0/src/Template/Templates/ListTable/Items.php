@@ -3,7 +3,6 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use Illuminate\Database\Eloquent\Model;
-use tiFy\Contracts\Template\FactoryDb;
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Contracts\{Items as ItemsContract, Item as ItemContract};

@@ -2,7 +2,6 @@
 
 namespace tiFy\Template\Templates\ListTable;
 
-use Exception;
 use League\Route\Http\Exception\NotFoundException;
 use tiFy\Template\Factory\HttpXhrController as BaseHttpXhrController;
 use tiFy\Template\Templates\ListTable\Contracts\HttpXhrController as HttpXhrControllerContract;

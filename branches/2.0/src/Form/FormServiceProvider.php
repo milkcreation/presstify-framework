@@ -178,7 +178,7 @@ class FormServiceProvider extends ServiceProvider
                 ->setDirectory($directory)
                 ->setController(FactoryView::class)
                 ->setOverrideDir($override_dir)
-                ->set('form', $form);
+                ->setParam('form', $form);
         });
     }
 

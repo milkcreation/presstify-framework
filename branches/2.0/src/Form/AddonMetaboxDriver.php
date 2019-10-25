@@ -73,7 +73,7 @@ abstract class AddonMetaboxDriver extends MetaboxDriver
                 ->setDirectory($defaultDir)
                 ->setOverrideDir($fallbackDir)
                 ->setController(MetaboxView::class)
-                ->set('metabox', $this);
+                ->setParam('metabox', $this);
         }
 
         if (func_num_args() === 0) {

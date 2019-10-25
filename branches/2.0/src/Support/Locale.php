@@ -19,9 +19,7 @@ class Locale
     /**
      * Définition de l'identifiant de qualification de locale.
      *
-     * @param string $locale
-     *
-     * @return array|null
+     * @return string|null
      */
     public static function get(): ?string
     {

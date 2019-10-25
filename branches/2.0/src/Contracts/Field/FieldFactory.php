@@ -24,7 +24,7 @@ interface FieldFactory extends ParamsBag
     /**
      * Affichage de la liste des attributs de balise.
      *
-     * @return string
+     * @return void
      */
     public function attrs(): void;
 

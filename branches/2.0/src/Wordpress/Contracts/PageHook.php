@@ -9,7 +9,7 @@ interface PageHook
     /**
      * Récupération de la liste des instances des pages d'accroche déclarées.
      *
-     * @return PageHookItem[]
+     * @return PageHookItem[]|array
      */
     public function all(): array;
 
@@ -25,9 +25,16 @@ interface PageHook
      *
      * @param string $name Nom de qualification.
      *
-     * @return null|PageHookItem
+     * @return PageHookItem|null
      */
     public function get($name): ?PageHookItem;
+
+    /**
+     * Vérification d'existance d'un contenu d'accroche sur la page d'affichage courante.
+     *
+     * @return boolean
+     */
+    public function has(): bool;
 
     /**
      * Déclaration de page d'accroche.

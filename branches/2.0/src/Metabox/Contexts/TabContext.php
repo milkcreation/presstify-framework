@@ -2,7 +2,7 @@
 
 namespace tiFy\Metabox\Contexts;
 
-use tiFy\Contracts\Metabox\{MetaboxDriver, MetaboxContext as MetaboxContextContract};
+use tiFy\Contracts\Metabox\MetaboxDriver;
 use tiFy\Metabox\MetaboxContext;
 
 class TabContext extends MetaboxContext

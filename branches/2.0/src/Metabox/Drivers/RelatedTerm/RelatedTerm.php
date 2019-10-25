@@ -4,6 +4,9 @@ namespace tiFy\Metabox\Drivers\RelatedTerm;
 
 use tiFy\Metabox\MetaboxDriver;
 
+/**
+ * @todo
+ */
 class RelatedTerm extends MetaboxDriver
 {
     /**
@@ -11,7 +14,7 @@ class RelatedTerm extends MetaboxDriver
      */
     public function content(): string
     {
-        $terms = \get_terms([
+        $terms = get_terms([
             'taxonomy'   => $this->get('taxonomy'),
             'meta_query' => [
                 'relation' => 'OR',
