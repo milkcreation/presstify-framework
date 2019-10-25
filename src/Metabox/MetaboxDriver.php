@@ -260,7 +260,7 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
                 ->setDirectory($defaultDir)
                 ->setOverrideDir($fallbackDir)
                 ->setController(MetaboxView::class)
-                ->set('metabox', $this);
+                ->setParam('metabox', $this);
         }
 
         if (func_num_args() === 0) {

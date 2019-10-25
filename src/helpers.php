@@ -7,8 +7,6 @@ use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Database\Database;
-use tiFy\Contracts\Db\DbFactory;
-use tiFy\Contracts\Db\DbManager;
 use tiFy\Contracts\Field\Field;
 use tiFy\Contracts\Field\FieldFactory;
 use tiFy\Contracts\Filesystem\Filesystem;
@@ -190,26 +188,6 @@ if (!function_exists('database')) {
             return $manager;
         }
         return $manager::table($table);
-    }
-}
-
-if (!function_exists('db')) {
-    /**
-     * Récupération du gestionnaire de base de données ou d'une instance de controleur de base de données.
-     *
-     * @param null|string $name Nom de qualification du controleur de base de données.
-     *
-     * @return DbManager|DbFactory|null
-     */
-    function db(?string $name = null)
-    {
-        /* @var DbManager $manager */
-        $manager = app('db');
-
-        if (is_null($name)) {
-            return $manager;
-        }
-        return $manager->get($name);
     }
 }
 

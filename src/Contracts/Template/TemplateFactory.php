@@ -168,9 +168,11 @@ interface TemplateFactory extends ParamsBag
     /**
      * Récupération d'un fournisseur de service.
      *
+     * @param string $alias
+     *
      * @return object|callable|null
      */
-    public function provider($alias);
+    public function provider(string $alias);
 
     /**
      * Récupération de l'instance du controleur de requête Http.

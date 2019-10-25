@@ -6,7 +6,6 @@
  */
 ?>
 <?php echo $this->before(); ?>
-
     <div <?php echo $this->htmlAttrs($this->get('attrs', [])); ?>>
         <?php if ($this->get('meter')) : ?>
             <div data-control="progress.meter">
@@ -15,5 +14,4 @@
             </div>
         <?php endif; ?>
     </div>
-
 <?php echo $this->after();

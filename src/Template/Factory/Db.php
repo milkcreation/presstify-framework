@@ -40,6 +40,9 @@ class Db implements FactoryDbContract
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function delegate()
     {
         return $this->delegate;

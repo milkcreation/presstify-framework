@@ -16,6 +16,7 @@
         'width'   => 150,
     ]); ?>
 </div>
+
 <div class="MetaboxVideofeed-itemSrc">
     <?php echo field('textarea', [
         'attrs' => [
@@ -28,6 +29,7 @@
         'value' => $this->get('value.src'),
     ]); ?>
 </div>
+
 <div class="MetaboxVideofeed-itemLibrary">
     <?php echo partial('tag', [
         'attrs'   => [

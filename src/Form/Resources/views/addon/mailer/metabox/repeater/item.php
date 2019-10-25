@@ -6,29 +6,22 @@
  * @var string $value
  */
 ?>
-
 <?php $index = !is_numeric($index) ? $index : uniqid(); ?>
-
 <table class="form-table">
     <tbody>
     <tr>
         <th scope="row"><?php _e('Email (requis)', 'tify'); ?></th>
         <td>
             <div class="ThemeInput--email">
-                <?php
-                echo field(
-                    'text',
-                    [
-                        'name'  => "{$this->getName()}[{$index}][email]",
-                        'value' => $this->get("value.email", ''),
-                        'attrs' => [
-                            'placeholder'  => __('Email du destinataire', 'tify'),
-                            'size'         => 40,
-                            'autocomplete' => 'off'
-                        ]
+                <?php echo field('text', [
+                    'name'  => "{$this->getName()}[{$index}][email]",
+                    'value' => $this->get("value.email", ''),
+                    'attrs' => [
+                        'placeholder'  => __('Email du destinataire', 'tify'),
+                        'size'         => 40,
+                        'autocomplete' => 'off'
                     ]
-                );
-                ?>
+                ]); ?>
             </div>
         </td>
     </tr>
@@ -36,20 +29,15 @@
         <th scope="row"><?php _e('Nom (optionnel)', 'tify'); ?></th>
         <td>
             <div class="ThemeInput--user">
-                <?php
-                echo field(
-                    'text',
-                    [
-                        'name'  => "{$this->getName()}[{$index}][name]",
-                        'value' => $this->get("value.name", ''),
-                        'attrs' => [
-                            'placeholder'  => __('Nom du destinataire', 'tify'),
-                            'size'         => 40,
-                            'autocomplete' => 'off'
-                        ]
+                <?php echo field('text', [
+                    'name'  => "{$this->getName()}[{$index}][name]",
+                    'value' => $this->get("value.name", ''),
+                    'attrs' => [
+                        'placeholder'  => __('Nom du destinataire', 'tify'),
+                        'size'         => 40,
+                        'autocomplete' => 'off'
                     ]
-                );
-                ?>
+                ]); ?>
             </div>
         </td>
     </tr>

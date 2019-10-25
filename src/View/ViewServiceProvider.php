@@ -16,7 +16,7 @@ class ViewServiceProvider extends ServiceProvider
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function register(): void
     {

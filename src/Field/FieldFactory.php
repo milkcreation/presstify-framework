@@ -234,7 +234,7 @@ abstract class FieldFactory extends ParamsBag implements FieldFactoryContract
     public function parseViewer(): FieldFactoryContract
     {
         foreach($this->get('viewer', []) as $key => $value) {
-            $this->viewer()->set($key, $value);
+            $this->viewer()->params([$key => $value]);
         }
 
         return $this;

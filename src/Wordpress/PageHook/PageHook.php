@@ -70,6 +70,16 @@ class PageHook implements PageHookContract
     /**
      * @inheritDoc
      */
+    public function has(): bool
+    {
+        return !!$this->collect()->first(function (PageHookItemContract $hook) {
+            return $hook->exists();
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function set($name, $attrs = null): PageHookContract
     {
         $keys = is_array($name) ? $name : [$name => $attrs];

@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FieldController;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Kernel\Params\ParamsBag;
+use tiFy\Support\ParamsBag;
 
 class Field extends ParamsBag implements FactoryField
 {
@@ -107,7 +107,7 @@ class Field extends ParamsBag implements FactoryField
         $this->slug = $slug;
         $this->form = $form;
 
-        parent::__construct($attrs);
+        $this->set($attrs)->parse();
 
         $this->events('field.init.' . $this->getSlug(), [&$this]);
         $this->events('field.init', [&$this]);

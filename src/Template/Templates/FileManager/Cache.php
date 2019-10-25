@@ -11,5 +11,4 @@ class Cache extends BaseCache
      * @var FileManager
      */
     protected $factory;
-
 }

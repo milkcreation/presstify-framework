@@ -2,7 +2,7 @@
 
 namespace tiFy\Form\Addon\User;
 
-use tiFy\Contracts\Form\{AddonFactory as AddonFactoryContract, FactoryField, FactoryRequest};
+use tiFy\Contracts\Form\{FactoryField, FactoryRequest};
 use tiFy\Form\AddonFactory;
 use WP_Error;
 use WP_User;

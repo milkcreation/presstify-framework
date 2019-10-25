@@ -6,9 +6,6 @@ use tiFy\Template\Factory\Viewer as BaseViewer;
 use tiFy\Template\Templates\FileManager\Contracts\{Breadcrumb, FileCollection, FileInfo};
 
 /**
- * Class Viewer
- * @package tiFy\Template\Templates\FileManager
- *
  * @method Breadcrumb|iterable breadcrumb()
  * @method FileInfo|null getFile(?string $path = null)
  * @method FileCollection|FileInfo[] getFiles(?string $path = null, bool $recursive = false)
@@ -26,7 +23,7 @@ class Viewer extends BaseViewer
     /**
      * @inheritDoc
      */
-    public function boot()
+    public function boot(): void
     {
         parent::boot();
 

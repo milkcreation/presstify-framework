@@ -250,7 +250,7 @@ class FieldServiceProvider extends ServiceProvider
                     ? $override_dir
                     : (is_dir($directory) ? $directory : __DIR__)
                 )
-                ->set('field', $factory);
+                ->setParam('field', $factory);
         });
     }
 }

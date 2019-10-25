@@ -248,7 +248,7 @@ class OptionsPage extends ParamsBag implements OptionPageContract
                         ? $override_dir
                         : (is_dir($default_dir) ? $default_dir : $cinfo->getDirname())
                 )
-                ->set('options_page', $this);
+                ->setParam('options_page', $this);
         }
 
         if (func_num_args() === 0) {

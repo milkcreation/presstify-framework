@@ -199,7 +199,7 @@ class PartialServiceProvider extends ServiceProvider
                     ? $override_dir
                     : (is_dir($directory) ? $directory : __DIR__)
                 )
-                ->set('partial', $factory);
+                ->setParam('partial', $factory);
         });
     }
 }

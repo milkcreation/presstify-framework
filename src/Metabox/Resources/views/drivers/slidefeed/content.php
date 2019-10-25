@@ -17,11 +17,4 @@
     <?php if ($addnew = $this->params('addnew')) : ?>
         <?php echo field('button', $addnew); ?>
     <?php endif; ?>
-
-    <?php /*foreach ($this->get('options', []) as $k => $v) :
-        echo field('hidden', [
-            'name'  => "{$this->name()}[options][{$k}]",
-            'value' => $v,
-        ]);
-    endforeach;*/ ?>
 </div>

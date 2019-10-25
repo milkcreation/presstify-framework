@@ -42,7 +42,7 @@ interface UrlFactory
     /**
      * Retourne la chaîne décodée de l'url.
      *
-     * @param string $raw Activation de la sortie brute.
+     * @param boolean $raw Activation de la sortie brute.
      *
      * @return string
      */
@@ -53,7 +53,7 @@ interface UrlFactory
      *
      * @param string|UriInterface|LeagueUri $uri
      *
-     * @return
+     * @return static
      */
     public function set($uri): UrlFactory;
 
