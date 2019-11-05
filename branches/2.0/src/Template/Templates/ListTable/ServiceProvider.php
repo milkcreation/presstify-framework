@@ -479,7 +479,7 @@ class ServiceProvider extends BaseServiceProvider
                 $viewer = $params;
             }
 
-            $viewer->set('factory', $this->factory);
+            $viewer->params(['factory' => $this->factory]);
 
             return $viewer;
         });
