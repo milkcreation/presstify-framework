@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace tiFy\Contracts\User;
+namespace tiFy\Contracts\Session;
 
-use tiFy\Contracts\Db\DbFactory;
 use tiFy\Contracts\Support\ParamsBag;
 
-interface SessionStore extends ParamsBag
+interface Store extends ParamsBag
 {
     /**
      * Suppression du cookie de session
@@ -44,13 +43,6 @@ interface SessionStore extends ParamsBag
      * @return string
      */
     public function getCookieName();
-
-    /**
-     * Récupération de la classe de rappel de la table de base de données
-     *
-     * @return DbFactory
-     */
-    public function getDb();
 
     /**
      * Récupération de la liste des variables de session enregistrés en base.

@@ -1,39 +1,50 @@
-<?php
+<?php declare(strict_types=1);
+
+namespace tiFy\Session;
+
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\Session\{FlashBag as FlashBagContract, Session as SessionContract, Store as StoreContract};
+use Symfony\Component\HttpFoundation\Session\Session as BaseSession;
 
 /**
  * @see https://github.com/kloon/woocommerce-large-sessions
  */
-
-namespace tiFy\User\Session;
-
-use tiFy\Contracts\Db\DbFactory;
-use tiFy\Contracts\User\SessionManager as SessionManagerContract;
-use tiFy\Contracts\User\SessionStore;
-
-final class SessionManager implements SessionManagerContract
+class Session extends BaseSession implements SessionContract
 {
     /**
-     * Liste des élements déclarés
-     *
-     * @var SessionStore[]
+     * Instance du conteneur d'injection de dépendance.
+     * @var Container|null
      */
-    protected $items = [];
+    protected $container;
 
     /**
-     * Classe de rappel de la base de données
-     *
-     * @var DbFactory
+     * Instance du gestionnaire d'attributs de session ephémères.
+     * @var FlashbagContract
      */
-    private $db;
+    protected $flashBag;
+
+    /**
+     * Liste des élements déclarés
+     * @var StoreContract[]
+     */
+    protected $stores = [];
 
     /**
      * CONSTRUCTEUR.
      *
+     * @param Container $container Instance du conteneur d'injection de dépendances.
+     *
      * @return void
      */
-    public function __construct()
+    public function __construct(?Container $container = null)
     {
-        add_action('init', function () {
+        $this->container = $container;
+
+        parent::__construct();
+
+        $this->registerBag($this->flashBag());
+
+        /*add_action('init', function () {
             // Initialisation de la base de données
             if (!empty($this->items)) :
                 cron()->register('session.cleanup', [
@@ -53,9 +64,9 @@ final class SessionManager implements SessionManagerContract
                     },
                 ]);
             endif;
-        }, 0);
+        }, 0);*/
 
-        add_action('wp_footer', function () {
+        /* add_action('wp_footer', function () {
             if (config('user.session.debug', false)) :
                 foreach ($this->items as $item) :
                     ?>
@@ -68,20 +79,96 @@ final class SessionManager implements SessionManagerContract
                     </div><?php
                 endforeach;
             endif;
-        });
+        });*/
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function get(string $name): ?SessionStore
+    public function flash($key = null, $value = null)
     {
-        return $this->items[$name] ?? null;
+        $flash = $this->getFlashBag();
+
+        if (is_null($key)) {
+            return $flash;
+        } elseif (is_array($key)) {
+            foreach($key as $k => $v) {
+                $flash->add($k, $v);
+            }
+            return $this;
+        } elseif (is_string($key)) {
+            return $flash->get($key, is_array($value) ? $value : (array)$value);
+        }
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContainer(): ?Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return FlashbagContract
+     */
+    public function flashBag(): FlashbagContract
+    {
+        if (is_null($this->flashBag)) {
+            $this->flashBag = new FlashBag();
+        }
+
+        return $this->flashBag;
+    }
+
+    /**
+     * @inheritDoc
+     * @todo
+     */
+    public function reflash(?array $keys = null): SessionContract
+    {
+        return !is_null($keys) ? $this->flash($this->flash()->all()) : $this->flash($this->flash()->only($keys)) ;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerStore(string $name, array $attrs = []): ?StoreContract
+    {
+        if (isset($this->stores[$name])) {
+            return $this->stores[$name];
+        }
+
+        $store = ($container = $this->getContainer()) ? new Store($this) : $container->get('session.store');
+
+        return $this->stores[$name] = $store->setName($name)->set($attrs)->parse();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function store(string $name): ?StoreContract
+    {
+        return $this->stores[$name] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setContainer(Container $container): SessionContract
+    {
+        $this->container = $container;
+
+        return $this;
     }
 
     /**
      * @inheritdoc
-     */
+
     public function getDb(): DbFactory
     {
         if (is_null($this->db)) :
@@ -132,28 +219,5 @@ final class SessionManager implements SessionManagerContract
         endif;
 
         return $this->db;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function register(string $name, array $attrs = []): SessionManagerContract
-    {
-        /** @var SessionStore $factory */
-        $factory = app()->get('user.session.store', [$name, $attrs]);
-
-        $this->set($factory);
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function set(SessionStore $factory, ?string $name = null): SessionManagerContract
-    {
-        $this->items[$name ?: $factory->getName()] = $factory;
-
-        return $this;
-    }
+    }  */
 }

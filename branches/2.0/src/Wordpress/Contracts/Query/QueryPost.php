@@ -14,6 +14,16 @@ use WP_User;
 interface QueryPost extends ParamsBag
 {
     /**
+     * Création d'un instance basée sur un argument de qualification.
+     *
+     * @param int|string|WP_Post $id
+     * @param array ...$args Liste des arguments de qualification complémentaires.
+     *
+     * @return static|null
+     */
+    public static function create($id = null, ...$args): ?QueryPost;
+
+    /**
      * Récupération d'une instance basée sur le post global courant.
      *
      * @return static|null
