@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Contracts\Http;
+namespace tiFy\Contracts\Session;
 
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use tiFy\Contracts\Support\ParamsBag;
 
-interface SessionFlashBag extends ParamsBag, SessionBagInterface
+interface FlashBag extends ParamsBag, SessionBagInterface
 {
     /**
      * Ajout d'un attribut.
@@ -15,5 +15,5 @@ interface SessionFlashBag extends ParamsBag, SessionBagInterface
      *
      * @return static
      */
-    public function add($key, $value): SessionFlashBag;
+    public function add($key, $value): FlashBag;
 }

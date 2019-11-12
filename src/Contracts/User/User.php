@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\User;
 
@@ -35,13 +35,6 @@ interface User
      * @return RoleManager
      */
     public function role(): RoleManager;
-
-    /**
-     * Récupération de l'instance de traitement des session utilisateur.
-     *
-     * @return SessionManager
-     */
-    public function session(): SessionManager;
 
     /**
      * Récupération de l'instance de traitement des session utilisateur.

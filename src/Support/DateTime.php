@@ -5,9 +5,10 @@ namespace tiFy\Support;
 use Carbon\Carbon;
 use DateTime as BaseDateTime;
 use DateTimeZone;
+use tiFy\Contracts\Support\DateTime as DateTimeContract;
 use Exception;
 
-class DateTime extends Carbon
+class DateTime extends Carbon implements DateTimeContract
 {
     /**
      * Instance du fuseau horaire utilisé par défaut.
@@ -16,7 +17,7 @@ class DateTime extends Carbon
     protected static $GlobalTimeZone;
 
     /**
-     * DateTime constructor.
+     * CONSTRUCTEUR.
      *
      * @param string|null $time
      * @param null|DateTimeZone $tz
@@ -38,35 +39,26 @@ class DateTime extends Carbon
      *
      * @return BaseDateTime|static|null
      */
-    public static function createFromFormat($format, $time, $tz=null)
+    public static function createFromFormat($format, $time, $tz = null)
     {
         return parent::createFromFormat($format, $time, is_null($tz) ? self::getGlobalTimeZone() : $tz);
     }
 
     /**
-     * Récupération du fuseau horaire par défaut.
-     *
-     * @return DateTimeZone
+     * @inheritDoc
      */
-    public static function getGlobalTimeZone()
+    public static function getGlobalTimeZone(): DateTimeZone
     {
-        return self::$GlobalTimeZone ? : self::setGlobalTimeZone();
+        return self::$GlobalTimeZone ?: self::setGlobalTimeZone();
     }
 
     /**
-     * Définition du fuseau horaire par défaut.
-     *
-     * @param DateTimeZone|null $tz
-     *
-     * @return DateTimeZone
+     * @inheritDoc
      */
-    public static function setGlobalTimeZone(?DateTimeZone $tz = null)
+    public static function setGlobalTimeZone(?DateTimeZone $tz = null): DateTimeZone
     {
         return self::$GlobalTimeZone = $tz ?: new DateTimeZone(
-            getenv('APP_TIMEZONE') ? :
-                request()->server('TZ',
-                    ini_get('date.timezone') ? :'UTC'
-                )
+            getenv('APP_TIMEZONE') ?: request()->server('TZ', ini_get('date.timezone') ?: 'UTC')
         );
     }
 }

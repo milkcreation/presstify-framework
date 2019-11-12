@@ -47,7 +47,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      * Instance de post Wordpress.
      * @var WP_Post|null
      */
-    protected $wp_post;
+    protected $wpPost;
 
     /**
      * CONSTRUCTEUR.
@@ -58,8 +58,26 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function __construct(?WP_Post $wp_post = null)
     {
-        if ($this->wp_post = $wp_post instanceof WP_Post ? $wp_post : null) {
-            $this->set($this->wp_post->to_array())->parse();
+        if ($this->wpPost = $wp_post instanceof WP_Post ? $wp_post : null) {
+            $this->set($this->wpPost->to_array())->parse();
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function create($id = null, ...$args): ?QueryPostContract
+    {
+        if (is_numeric($id)) {
+            return static::createFromId($id);
+        } elseif (is_string($id)) {
+            return static::createFromName($id);
+        } elseif ($id instanceof WP_Post) {
+            return (new static($id));
+        } elseif(is_null($id)) {
+            return static::createFromGlobal();
+        } else {
+            return null;
         }
     }
 
@@ -579,7 +597,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getWpPost()
     {
-        return $this->wp_post;
+        return $this->wpPost;
     }
 
     /**

@@ -20,6 +20,7 @@ use tiFy\Contracts\Http\Request as RequestContract;
  * @method static mixed input(string|null $key = null, $default = null)
  * @method static RequestContract instance()
  * @method static boolean isMethod(string $method)
+ * @method static string|null ip()
  * @method static boolean isSecure()
  * @method static string method()
  * @method static string|array|null server(string|null $key = null, string|array|null $default = null)

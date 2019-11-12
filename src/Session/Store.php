@@ -1,16 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace tiFy\User\Session;
+namespace tiFy\Session;
 
 use Exception;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Cookie;
-use tiFy\Contracts\User\SessionStore as SessionStoreContract;
-use tiFy\Support\ParamsBag;
+use Symfony\Component\HttpFoundation\{Cookie, Response};
+use tiFy\Contracts\Session\{Session, Store as StoreContract};
+use tiFy\Support\{Arr, Str, ParamsBag};
 
-class SessionStore extends ParamsBag implements SessionStoreContract
+class Store extends ParamsBag implements StoreContract
 {
     /**
      * Indicateur de modification des variables de session.
@@ -39,7 +36,13 @@ class SessionStore extends ParamsBag implements SessionStoreContract
      * Nom de qualification de la session.
      * @var string
      */
-    protected $name;
+    protected $name = '';
+
+    /**
+     * Instance du gestionnaire de session.
+     * @var Session
+     */
+    protected $manager;
 
     /**
      * Liste des attributs de qualification de la session.
@@ -63,13 +66,12 @@ class SessionStore extends ParamsBag implements SessionStoreContract
      * CONSTRUCTEUR
      *
      * @param string $name Identifiant de qualification de la session.
-     * @param array $attrs Liste des attributs de configuration. @todo.
      *
      * @return void
      */
-    public function __construct($name, $attrs = [])
+    public function __construct(Session $session)
     {
-        $this->name = $name;
+        $this->manager = $session;
 
         add_action('init', function () {
             $this->cookieName = $this->getName() . "-" . COOKIEHASH;
@@ -104,7 +106,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
             $this->session = array_merge(['session_name' => $this->getName()], compact($this->cookieKeys));
         });
 
-        add_action('wp_loaded', function () {
+        /*add_action('wp_loaded', function () {
             // Récupération des attributs de qualification de la session
             $session = $this->getSession($this->cookieKeys);
 
@@ -116,12 +118,12 @@ class SessionStore extends ParamsBag implements SessionStoreContract
                     rawurlencode(json_encode($session)),
                     time() + 3600,
                     ((COOKIEPATH != SITECOOKIEPATH) ? SITECOOKIEPATH : COOKIEPATH),
-                    COOKIE_DOMAIN,
+                    COOKIE_DOMAIN ? : '',
                     ('https' === parse_url(home_url(), PHP_URL_SCHEME))
                 )
             );
             $response->send();
-        }, 0);
+        }, 0);*/
 
         add_action('wp_logout', [$this, 'destroy']);
 
@@ -152,11 +154,9 @@ class SessionStore extends ParamsBag implements SessionStoreContract
         $this->clearCookie();
 
         // Suppression de la session en base
-        $this->getDb()->handle()->delete(
-            [
-                'session_key' => $this->getSession('session_key'),
-            ]
-        );
+        $this->getDb()->handle()->delete([
+            'session_key' => $this->getSession('session_key'),
+        ]);
 
         // Réinitialisation des variables de classe
         $this->session = [];
@@ -169,13 +169,13 @@ class SessionStore extends ParamsBag implements SessionStoreContract
      */
     public function getCookie()
     {
-        if (!$cookie = request()->cookie($this->getCookieName(), '')) :
+        if (!$cookie = request()->cookie($this->getCookieName(), '')) {
             return false;
-        elseif(!$cookie = (array)json_decode(rawurldecode($cookie), true)) :
+        } elseif(!$cookie = (array)json_decode(rawurldecode($cookie), true)) {
             return false;
-        elseif (array_diff(array_keys($cookie), $this->cookieKeys)) :
+        } elseif (array_diff(array_keys($cookie), $this->cookieKeys)) {
             return false;
-        endif;
+        }
 
         /**
          * @var string|int $session_key
@@ -271,25 +271,29 @@ class SessionStore extends ParamsBag implements SessionStoreContract
     public function getSession($session_args = [])
     {
         // Récupération des attributs de qualification de la session
-        if (!$session = $this->session) :
+        if (!$session = $this->session) {
             return null;
-        endif;
+        }
         extract($session);
 
-        if (empty($session_args)) :
+        if (empty($session_args)) {
             $session_args = $this->sessionKeys;
-        elseif (!is_array($session_args)) :
+        } elseif (!is_array($session_args)) {
             $session_args = (array)$session_args;
-        endif;
+        }
 
         // Limitation des attributs retournés à la liste des attributs autorisés
         $session_args = array_intersect($session_args, $this->sessionKeys);
 
-        if (count($session_args) > 1) :
-            return compact($session_args);
-        else :
-            return ${reset($session_args)};
-        endif;
+        return (count($session_args) > 1) ? compact($session_args) : ${reset($session_args)};
+    }
+
+    /**
+     *
+     */
+    public function manager(): Session
+    {
+        return $this->manager;
     }
 
     /**
@@ -333,7 +337,7 @@ class SessionStore extends ParamsBag implements SessionStoreContract
      */
     public function save()
     {
-        if ($this->changed) :
+        if ($this->changed) {
             // Récupération des attributs de session
             $session = $this->getSession();
 
@@ -345,7 +349,17 @@ class SessionStore extends ParamsBag implements SessionStoreContract
             ], ['%s', '%s', '%s', '%d']);
 
             $this->changed = false;
-        endif;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setName(string $name): StoreContract
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**

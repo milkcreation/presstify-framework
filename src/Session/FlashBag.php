@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Http;
+namespace tiFy\Session;
 
-use tiFy\Contracts\Http\SessionFlashBag as SessionFlashBagContract;
+use tiFy\Contracts\Session\FlashBag as FlashBagContract;
 use tiFy\Support\ParamsBag;
 
-class SessionFlashBag extends ParamsBag implements SessionFlashBagContract
+class FlashBag extends ParamsBag implements FlashBagContract
 {
     /**
      * Nom de qualification de l'instance.
@@ -22,7 +22,7 @@ class SessionFlashBag extends ParamsBag implements SessionFlashBagContract
     /**
      * @inheritDoc
      */
-    public function add($key, $value): SessionFlashBagContract
+    public function add($key, $value): FlashBagContract
     {
         return $this->push($key, $value);
     }
