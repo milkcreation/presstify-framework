@@ -37,20 +37,6 @@ interface User
     public function role(): RoleManager;
 
     /**
-     * Récupération de l'instance de traitement des session utilisateur.
-     *
-     * @return SigninManager
-     */
-    public function signin(): SigninManager;
-
-    /**
-     * Récupération de l'instance de traitement des session utilisateur.
-     *
-     * @return SignupManager
-     */
-    public function signup(): SignupManager;
-
-    /**
      * Résolution d'un service fourni.
      *
      * @param string $alias Nom de qualification du service.

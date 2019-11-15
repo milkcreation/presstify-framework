@@ -165,7 +165,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function isAuto(): bool
     {
-        return $this->auto;
+        return $this->auto ?? false;
     }
 
     /**
