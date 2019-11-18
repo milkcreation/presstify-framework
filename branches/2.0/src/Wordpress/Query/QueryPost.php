@@ -20,9 +20,9 @@ class QueryPost extends ParamsBag implements QueryPostContract
 {
     /**
      * Nom de qualification du type de post ou liste de types de post associés.
-     * @var string|string[]
+     * @var string|string[]|null
      */
-    protected static $postType = [];
+    protected static $postType;
 
     /**
      * Liste des arguments de requête de récupération des éléments par défaut.
@@ -74,8 +74,12 @@ class QueryPost extends ParamsBag implements QueryPostContract
             return static::createFromName($id);
         } elseif ($id instanceof WP_Post) {
             return (new static($id));
-        } elseif(is_null($id)) {
-            return static::createFromGlobal();
+        } elseif (is_null($id) && ($instance = static::createFromGlobal())) {
+            if ($postType = static::$postType) {
+                return $instance->typeIn($postType) ? $instance : null;
+            } else {
+                return $instance;
+            }
         } else {
             return null;
         }
@@ -113,11 +117,12 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function createFromName(string $post_name): ?QueryPostContract
     {
-        return (($wp_post = (new WP_Query())->query([
-                'name'           => $post_name,
-                'post_type'      => 'any',
-                'posts_per_page' => 1,
-            ])) && ($wp_post[0] instanceof WP_Post)) ? new static($wp_post[0]) : null;
+        $wpQuery = new WP_Query([
+            'name'      => $post_name,
+            'post_type' => static::$postType ?: 'any',
+        ]);
+
+        return ($wpQuery->found_posts == 1) ? new static(current($wpQuery->posts)) : null;
     }
 
     /**
@@ -125,9 +130,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function parseQueryArgs(array $args = []): array
     {
-        if ($post_type = static::$postType) {
-            $args['post_type'] = $post_type;
-        }
+        $args['post_type'] = static::$postType ?? 'any';
 
         return array_merge(static::$defaultArgs, $args);
     }
@@ -162,7 +165,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         $items = $collection->toArray();
         array_walk($items, function (array &$item) {
-            $item = new static(new WP_Post((object) $item));
+            $item = new static(new WP_Post((object)$item));
         });
 
         return $items;
@@ -184,7 +187,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public static function queryFromIds(array $ids): array
     {
         $args = static::parseQueryArgs(['post__in' => $ids, 'posts_per_page' => -1]);
-        if(!isset($args['post_type'])) {
+        if (!isset($args['post_type'])) {
             $args['post_type'] = 'any';
         }
         $args['post__in'] = $ids;
@@ -278,7 +281,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function cacheHas(string $key): bool
     {
-        return $this->cacheable() && ! is_null($this->cacheGet($key, null));
+        return $this->cacheable() && !is_null($this->cacheGet($key, null));
     }
 
     /**
@@ -294,7 +297,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function db(): PostBuilder
     {
-        if ( ! $this->db) {
+        if (!$this->db) {
             $this->db = (new ModelPost())->find($this->getId());
         }
 
@@ -342,7 +345,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         $content = (string)$this->get('post_content', '');
 
-        if ( ! $raw) {
+        if (!$raw) {
             $content = apply_filters('the_content', $content);
             $content = str_replace(']]>', ']]&gt;', $content);
         }
@@ -381,7 +384,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getExcerpt(bool $raw = false)
     {
-        if ( ! $excerpt = (string)$this->get('post_excerpt', '')) {
+        if (!$excerpt = (string)$this->get('post_excerpt', '')) {
             $text = $this->get('post_content', '');
 
             // @see /wp-includes/post-template.php \get_the_excerpt()
@@ -390,8 +393,8 @@ class QueryPost extends ParamsBag implements QueryPostContract
             $text = str_replace(']]>', ']]&gt;', $text);
 
             $excerpt_length = apply_filters('excerpt_length', 55);
-            $excerpt_more   = apply_filters('excerpt_more', ' ' . '[&hellip;]');
-            $excerpt        = wp_trim_words($text, $excerpt_length, $excerpt_more);
+            $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
+            $excerpt = wp_trim_words($text, $excerpt_length, $excerpt_more);
         }
 
         return $raw ? $excerpt : ($excerpt ? apply_filters('get_the_excerpt', $excerpt) : '');
@@ -544,7 +547,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getTerms($taxonomy, array $args = [])
     {
-        $args['taxonomy']   = $taxonomy;
+        $args['taxonomy'] = $taxonomy;
         $args['object_ids'] = $this->getId();
 
         return (new WP_Term_Query($args))->terms;
@@ -613,7 +616,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function save(array $postdata): void
     {
-        $p       = (new ParamsBag())->set($postdata);
+        $p = (new ParamsBag())->set($postdata);
         $columns = $this->db()->getConnection()->getSchemaBuilder()->getColumnListing($this->db()->getTable());
 
         $update = [];
