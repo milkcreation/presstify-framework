@@ -29,7 +29,7 @@ class SessionServiceProvider extends ServiceProvider
                 $session->start();
             }
 
-            return $session->setContainer($this->getContainer());
+            return $session;
         });
 
         $this->getContainer()->add('session.flashbag', function () {

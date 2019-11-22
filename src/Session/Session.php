@@ -3,16 +3,13 @@
 namespace tiFy\Session;
 
 use Psr\Container\ContainerInterface as Container;
-use tiFy\Contracts\Session\{FlashBag as FlashBagContract, Session as SessionContract, Store as StoreContract};
 use Symfony\Component\HttpFoundation\Session\Session as BaseSession;
+use tiFy\Contracts\Session\{FlashBag as FlashBagContract, Session as SessionContract, Store as StoreContract};
 
-/**
- * @see https://github.com/kloon/woocommerce-large-sessions
- */
 class Session extends BaseSession implements SessionContract
 {
     /**
-     * Instance du conteneur d'injection de dépendance.
+     * Instance du conteneur d'injection de dépendances.
      * @var Container|null
      */
     protected $container;
@@ -24,7 +21,7 @@ class Session extends BaseSession implements SessionContract
     protected $flashBag;
 
     /**
-     * Liste des élements déclarés
+     * Liste des instances de gestionnaire de stockage de session déclarés.
      * @var StoreContract[]
      */
     protected $stores = [];
@@ -32,7 +29,7 @@ class Session extends BaseSession implements SessionContract
     /**
      * CONSTRUCTEUR.
      *
-     * @param Container $container Instance du conteneur d'injection de dépendances.
+     * @param Container|null $container Instance du conteneur d'injection de dépendances.
      *
      * @return void
      */
@@ -43,43 +40,6 @@ class Session extends BaseSession implements SessionContract
         parent::__construct();
 
         $this->registerBag($this->flashBag());
-
-        /*add_action('init', function () {
-            // Initialisation de la base de données
-            if (!empty($this->items)) :
-                cron()->register('session.cleanup', [
-                    'title'   => __('Nettoyage de sessions', 'tiFy'),
-                    'desc'    => __('Suppression de la liste des sessions arrivée à expiration.', 'tiFy'),
-                    'freq'    => 'twicedaily',
-                    'command' => function () {
-                        if (!defined('WP_SETUP_CONFIG') && !defined('WP_INSTALLING')) :
-                            $this->getDb()->handle()->query(
-                                $this->getDb()->handle()->prepare(
-                                    "DELETE FROM " .
-                                    $this->getDb()->getTableName() .
-                                    " WHERE session_expiry < %d", time()
-                                )
-                            );
-                        endif;
-                    },
-                ]);
-            endif;
-        }, 0);*/
-
-        /* add_action('wp_footer', function () {
-            if (config('user.session.debug', false)) :
-                foreach ($this->items as $item) :
-                    ?>
-                    <div style="position:fixed;right:0;bottom:0;width:300px;">
-                    <ul>
-                        <li>name : <?php echo $item->getName(); ?></li>
-                        <li>key : <?php echo $item->getSession('session_key'); ?></li>
-                        <li>datatest : <?php echo $item->get('rand_test'); ?></li>
-                    </ul>
-                    </div><?php
-                endforeach;
-            endif;
-        });*/
     }
 
     /**
@@ -104,14 +64,6 @@ class Session extends BaseSession implements SessionContract
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getContainer(): ?Container
-    {
-        return $this->container;
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @return FlashbagContract
@@ -127,6 +79,15 @@ class Session extends BaseSession implements SessionContract
 
     /**
      * @inheritDoc
+     */
+    public function getContainer(): ?Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * @inheritDoc
+     *
      * @todo
      */
     public function reflash(?array $keys = null): SessionContract
@@ -137,7 +98,7 @@ class Session extends BaseSession implements SessionContract
     /**
      * @inheritDoc
      */
-    public function registerStore(string $name, array $attrs = []): ?StoreContract
+    public function registerStore(string $name, ...$args): ?StoreContract
     {
         if (isset($this->stores[$name])) {
             return $this->stores[$name];
@@ -145,7 +106,7 @@ class Session extends BaseSession implements SessionContract
 
         $store = ($container = $this->getContainer()) ? new Store($this) : $container->get('session.store');
 
-        return $this->stores[$name] = $store->setName($name)->set($attrs)->parse();
+        return $this->stores[$name] = $store->setName($name)->prepare();
     }
 
     /**
@@ -168,9 +129,45 @@ class Session extends BaseSession implements SessionContract
 
     /**
      * @inheritdoc
-
     public function getDb(): DbFactory
     {
+        add_action('init', function () {
+            // Initialisation de la base de données
+            if (!empty($this->items)) :
+                cron()->register('session.cleanup', [
+                    'title'   => __('Nettoyage de sessions', 'tiFy'),
+                    'desc'    => __('Suppression de la liste des sessions arrivée à expiration.', 'tiFy'),
+                    'freq'    => 'twicedaily',
+                    'command' => function () {
+                        if (!defined('WP_SETUP_CONFIG') && !defined('WP_INSTALLING')) :
+                            $this->getDb()->handle()->query(
+                                $this->getDb()->handle()->prepare(
+                                    "DELETE FROM " .
+                                    $this->getDb()->getTableName() .
+                                    " WHERE session_expiry < %d", time()
+                                )
+                            );
+                        endif;
+                    },
+                ]);
+            endif;
+        }, 0);
+
+        add_action('wp_footer', function () {
+            if (config('user.session.debug', false)) :
+                foreach ($this->items as $item) :
+                    ?>
+                    <div style="position:fixed;right:0;bottom:0;width:300px;">
+                    <ul>
+                        <li>name : <?php echo $item->getName(); ?></li>
+                        <li>key : <?php echo $item->getSession('session_key'); ?></li>
+                        <li>datatest : <?php echo $item->get('rand_test'); ?></li>
+                    </ul>
+                    </div><?php
+                endforeach;
+            endif;
+        });
+
         if (is_null($this->db)) :
             if (!$this->db = db('session')) :
                 $this->db = db()->register('session', [

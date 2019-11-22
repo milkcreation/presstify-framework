@@ -5,16 +5,23 @@ namespace tiFy\Support;
 use Carbon\Carbon;
 use DateTime as BaseDateTime;
 use DateTimeZone;
-use tiFy\Contracts\Support\DateTime as DateTimeContract;
 use Exception;
+use tiFy\Contracts\Support\DateTime as DateTimeContract;
+use tiFy\Support\Proxy\Request;
 
 class DateTime extends Carbon implements DateTimeContract
 {
     /**
+     * Format de date par défaut
+     * @var string
+     */
+    protected static $defaultFormat = 'Y-m-d H:i:s';
+
+    /**
      * Instance du fuseau horaire utilisé par défaut.
      * @var DateTimeZone
      */
-    protected static $GlobalTimeZone;
+    protected static $globalTimeZone;
 
     /**
      * CONSTRUCTEUR.
@@ -29,7 +36,7 @@ class DateTime extends Carbon implements DateTimeContract
     public function __construct($time = null, $tz = null)
     {
         if (is_null($tz)) {
-            $tz = self::getGlobalTimeZone();
+            $tz = static::getGlobalTimeZone();
         }
         parent::__construct($time, $tz);
     }
@@ -41,7 +48,7 @@ class DateTime extends Carbon implements DateTimeContract
      */
     public static function createFromFormat($format, $time, $tz = null)
     {
-        return parent::createFromFormat($format, $time, is_null($tz) ? self::getGlobalTimeZone() : $tz);
+        return parent::createFromFormat($format, $time, is_null($tz) ? static::getGlobalTimeZone() : $tz);
     }
 
     /**
@@ -49,7 +56,15 @@ class DateTime extends Carbon implements DateTimeContract
      */
     public static function getGlobalTimeZone(): DateTimeZone
     {
-        return self::$GlobalTimeZone ?: self::setGlobalTimeZone();
+        return static::$globalTimeZone ?: static::setGlobalTimeZone();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function setDefaultFormat(string $format): string
+    {
+        return static::$defaultFormat = $format;
     }
 
     /**
@@ -57,8 +72,37 @@ class DateTime extends Carbon implements DateTimeContract
      */
     public static function setGlobalTimeZone(?DateTimeZone $tz = null): DateTimeZone
     {
-        return self::$GlobalTimeZone = $tz ?: new DateTimeZone(
-            getenv('APP_TIMEZONE') ?: request()->server('TZ', ini_get('date.timezone') ?: 'UTC')
+        return static::$globalTimeZone = $tz ?: new DateTimeZone(
+            getenv('APP_TIMEZONE') ?: Request::server('TZ', ini_get('date.timezone') ?: 'UTC')
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __toString(): string
+    {
+        return $this->format(static::$defaultFormat);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function local(?string $format = null): string
+    {
+        return $this->format($format ?: static::$defaultFormat);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function utc(?string $format = null): ?string
+    {
+        try {
+            return (new static(null, 'UTC'))
+                ->setTimestamp($this->getTimestamp())->format($format ?: static::$defaultFormat);
+        } catch(Exception $e) {
+            return null;
+        }
     }
 }

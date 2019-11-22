@@ -2,35 +2,36 @@
 
 namespace tiFy\Session;
 
-use Exception;
-use Symfony\Component\HttpFoundation\{Cookie, Response};
+use Illuminate\Database\Query\Builder as DbBuilder;
 use tiFy\Contracts\Session\{Session, Store as StoreContract};
-use tiFy\Support\{Arr, Str, ParamsBag};
+use tiFy\Support\{Arr, ParamsBag, Str};
+use tiFy\Support\Proxy\{Crypt, Database, Log};
 
 class Store extends ParamsBag implements StoreContract
 {
     /**
      * Indicateur de modification des variables de session.
-     * @var bool
+     * @var boolean
      */
     protected $changed = false;
 
     /**
-     * Identifiant de qualification du cookie de stockage de session.
-     * @var string
+     * Liste des attributs d'identification de stockage de session.
+     * @var array
      */
-    protected $cookieName = '';
+    protected $credentials = [];
 
     /**
-     * Listes des clés de qualification de session portés par le cookie.
+     * Listes des clés de qualification des attributs d'identification de stockage de session.
      * @var string[]
      */
-    protected $cookieKeys = [
-        'session_key',
-        'session_expiration',
-        'session_expiring',
-        'cookie_hash'
-    ];
+    protected $credentialKeys = ['key', 'expiration', 'hash'];
+
+    /**
+     * Clé d'indice de stockage de session.
+     * @var string
+     */
+    protected $key = '';
 
     /**
      * Nom de qualification de la session.
@@ -39,292 +40,176 @@ class Store extends ParamsBag implements StoreContract
     protected $name = '';
 
     /**
-     * Instance du gestionnaire de session.
+     * Indicateur d'initialisation de l'instance.
+     * @var boolean
+     */
+    private $prepared = false;
+
+    /**
+     * Instance du gestionnaire de sessions.
      * @var Session
      */
-    protected $manager;
+    protected $session;
 
-    /**
-     * Liste des attributs de qualification de la session.
-     * @var array
-     */
-    protected $session = [];
-
-    /**
-     * Liste des clés de qualification de session.
-     * @var string[]
-     */
-    protected $sessionKeys = [
-        'session_name',
-        'session_key',
-        'session_expiration',
-        'session_expiring',
-        'cookie_hash'
-    ];
+    protected $log;
 
     /**
      * CONSTRUCTEUR
      *
-     * @param string $name Identifiant de qualification de la session.
+     * @param Session $session Instance du gestionnaire de session.
      *
      * @return void
      */
     public function __construct(Session $session)
     {
-        $this->manager = $session;
-
-        add_action('init', function () {
-            $this->cookieName = $this->getName() . "-" . COOKIEHASH;
-
-            /**
-             * @var array $cookie {
-             *      Attribut de session contenu dans le cookie
-             *
-             *      @var string|int $session_key
-             *      @var int $session_expiration
-             *      @var int $session_expiring
-             *      @var string $cookie_hash
-             * }
-             */
-            if ($cookie = $this->getCookie()) :
-                extract($cookie);
-
-                if (time() > $session_expiring) :
-                    $session_expiration = $this->nextSessionExpiration();
-                    $this->updateDbExpiration($session_key, $session_expiration);
-                endif;
-
-                $this->attributes = $this->getDbDatas($session_key) ? : [];
-            else :
-                $session_key = $this->getKey();
-                $session_expiration = $this->nextSessionExpiration();
-            endif;
-
-            $session_expiring = $this->nextSessionExpiring();
-            $cookie_hash = $this->getCookieHash($session_key, $session_expiration);
-
-            $this->session = array_merge(['session_name' => $this->getName()], compact($this->cookieKeys));
-        });
-
-        /*add_action('wp_loaded', function () {
-            // Récupération des attributs de qualification de la session
-            $session = $this->getSession($this->cookieKeys);
-
-            // Définition du cookie
-            $response = new Response();
-            $response->headers->setCookie(
-                new Cookie(
-                    $this->getCookieName(),
-                    rawurlencode(json_encode($session)),
-                    time() + 3600,
-                    ((COOKIEPATH != SITECOOKIEPATH) ? SITECOOKIEPATH : COOKIEPATH),
-                    COOKIE_DOMAIN ? : '',
-                    ('https' === parse_url(home_url(), PHP_URL_SCHEME))
-                )
-            );
-            $response->send();
-        }, 0);*/
-
-        add_action('wp_logout', [$this, 'destroy']);
-
-        add_action('shutdown', [$this, 'save']);
+        $this->session = $session;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function clearCookie()
+    public function db(): DbBuilder
     {
-        $response = new Response();
-        $response->headers->clearCookie(
-            $this->getCookieName(),
-            ((COOKIEPATH != SITECOOKIEPATH) ? SITECOOKIEPATH : COOKIEPATH),
-            COOKIE_DOMAIN,
-            ('https' === parse_url(home_url(), PHP_URL_SCHEME))
-        );
-        $response->send();
+        return Database::table('tify_session');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function destroy()
+    public function destroy(): StoreContract
     {
-        // Suppression du cookie
-        $this->clearCookie();
+        $this->session()->set($this->getName(), null);
 
-        // Suppression de la session en base
-        $this->getDb()->handle()->delete([
-            'session_key' => $this->getSession('session_key'),
-        ]);
+        $this->db()->where([
+            'session_key'  => $this->getKey(),
+            'session_name' => $this->getName(),
+        ])->delete();
 
-        // Réinitialisation des variables de classe
-        $this->session = [];
         $this->attributes = [];
         $this->changed = false;
+        $this->credentials = [];
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getCookie()
-    {
-        if (!$cookie = request()->cookie($this->getCookieName(), '')) {
-            return false;
-        } elseif(!$cookie = (array)json_decode(rawurldecode($cookie), true)) {
-            return false;
-        } elseif (array_diff(array_keys($cookie), $this->cookieKeys)) {
-            return false;
-        }
-
-        /**
-         * @var string|int $session_key
-         * @var int $session_expiration
-         * @var int $session_expiring
-         * @var string $cookie_hash
-         */
-        extract($cookie);
-
-        // Contrôle de validité du cookie
-        $hash = $this->getCookieHash($session_key, $session_expiration);
-        if (empty($cookie_hash) || !hash_equals($hash, $cookie_hash)) {
-            return false;
-        }
-
-        return compact($this->cookieKeys);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCookieHash($session_key, $expiration)
-    {
-        $to_hash = $session_key . '|' . $expiration;
-
-        return hash_hmac('md5', $to_hash, wp_hash($to_hash));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCookieName()
-    {
-        return $this->cookieName;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDb()
-    {
-        try {
-            return user()->session()->getDb();
-        } catch (Exception $e) {
-            wp_die($e->getMessage(), __('ERREUR SYSTEME', 'tify'), $e->getCode());
-            exit;
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDbDatas($session_key)
-    {
-        if (defined('WP_SETUP_CONFIG')) :
-            return [];
-        endif;
-
-        if (
-        $value = $this->getDb()->select()->cell(
-            'session_value',
-            [
-                'session_name' => $this->getName(),
-                'session_key'  => $session_key
-            ]
-        )
-        ) :
-            $value = array_map('maybe_unserialize', $value);
-        endif;
-
-        return $value;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getKey()
-    {
-        return Str::random(32);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSession($session_args = [])
-    {
-        // Récupération des attributs de qualification de la session
-        if (!$session = $this->session) {
-            return null;
-        }
-        extract($session);
-
-        if (empty($session_args)) {
-            $session_args = $this->sessionKeys;
-        } elseif (!is_array($session_args)) {
-            $session_args = (array)$session_args;
-        }
-
-        // Limitation des attributs retournés à la liste des attributs autorisés
-        $session_args = array_intersect($session_args, $this->sessionKeys);
-
-        return (count($session_args) > 1) ? compact($session_args) : ${reset($session_args)};
-    }
-
-    /**
-     *
-     */
-    public function manager(): Session
-    {
-        return $this->manager;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function nextSessionExpiration()
+    public function expiration(): int
     {
         return time() + intval(60 * 60 * 48);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function nextSessionExpiring()
+    public function getCredentials($keys = null): ?array
     {
-        return time() + intval(60 * 60 * 47);
+        if (!$credentials = $this->credentials) {
+            return null;
+        }
+
+        if (is_null($keys)) {
+            return $credentials;
+        } elseif (is_string($keys)) {
+            $keys = [$keys];
+        } elseif (!is_array($keys)) {
+            return null;
+        }
+
+        $keys = array_intersect($keys, $this->credentialKeys);
+
+        return count($keys) > 1 ? compact($keys) : ($credentials[reset($keys)] ?? null);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function put($key, $value = null)
+    public function getHash(int $expire): string
     {
-        if ($value !== $this->get($key)) {
-            if (!is_array($key)) {
-                $key = [$key => $value];
+        $hash = $this->getKey() . '|' . $expire;
+
+        return hash_hmac('md5', $hash, Crypt::encrypt($hash));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStored(): array
+    {
+        $value = $this->db()->where([
+            'session_key'  => $this->getKey(),
+            'session_name' => $this->getName(),
+        ])->value('session_value');
+
+        return $value ? Str::unserialize($value) : [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function prepare(): StoreContract
+    {
+        if (!$this->prepared) {
+            register_shutdown_function([$this, 'save']);
+
+            if ($credentials = $this->session()->get($this->getName())) {
+                /**
+                 * @var string|int $key
+                 * @var int $expiration
+                 * @var string $hash
+                 */
+                extract($credentials);
+
+                $this->setKey($key);
+
+                if (time() > $expiration) {
+                    $expiration = $this->expiration();
+                    $this->updateStoredExpiration($expiration);
+                }
+
+                $this->set($this->getStored() ?: []);
+            } else {
+                $this->setKey();
+                $expiration = $this->expiration();
             }
 
-            foreach ($key as $arrayKey => $arrayValue) {
-                Arr::set($this->attributes, $arrayKey, $arrayValue);
-            }
+            $this->credentials = array_merge(compact($this->credentialKeys), [
+                'hash' => $this->getHash($expiration),
+                'key'  => $this->getKey(),
+            ]);
+
+            $this->session()->set($this->getName(), $this->credentials);
+
+            $this->prepared = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function put(string $key, $value = null): StoreContract
+    {
+        if ($value !== $this->get($key)) {
+            $this->set($key, $value);
 
             $this->changed = true;
         }
@@ -333,27 +218,55 @@ class Store extends ParamsBag implements StoreContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function save()
+    public function save(): StoreContract
     {
         if ($this->changed) {
-            // Récupération des attributs de session
-            $session = $this->getSession();
+            $this->db()->updateOrInsert([
+                'session_key'  => $this->getKey(),
+                'session_name' => $this->getName(),
+            ], [
+                'session_value'  => Arr::serialize($this->all()),
+                'session_expiry' => $this->expiration(),
+            ]);
 
-            $this->getDb()->handle()->replace([
-                'session_name'   => $session['session_name'],
-                'session_key'    => $session['session_key'],
-                'session_value'  => maybe_serialize($this->attributes),
-                'session_expiry' => $session['session_expiration']
-            ], ['%s', '%s', '%s', '%d']);
+            Log::registerChannel('session', [
+                'filename' => WP_CONTENT_DIR . '/uploads/log/session.log',
+            ])->info('prepare', [
+                'id'     => spl_object_hash($this),
+                'key'    => $this->getKey(),
+                'name'   => $this->getName(),
+                'expiry' => $this->expiration(),
+                'value'  => Arr::serialize($this->all()),
+            ]);
 
             $this->changed = false;
         }
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function session(): Session
+    {
+        return $this->session;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setKey(?string $key = null): StoreContract
+    {
+        $this->key = is_null($key) ? Str::random(32) : $key;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function setName(string $name): StoreContract
     {
@@ -363,19 +276,15 @@ class Store extends ParamsBag implements StoreContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function updateDbExpiration($session_key, $expiration)
+    public function updateStoredExpiration(int $expiration): StoreContract
     {
-        $this->getDb()->sql()->update(
-            $this->getDb()->getName(),
-            [
-                'session_expiry' => $expiration
-            ],
-            [
-                'session_name' => $this->getName(),
-                'session_key'  => $session_key
-            ]
-        );
+        $this->db()->where([
+            'session_key'  => $this->getKey(),
+            'session_name' => $this->getName(),
+        ])->update(['session_expiry' => $expiration]);
+
+        return $this;
     }
 }
