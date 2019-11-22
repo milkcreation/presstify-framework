@@ -86,7 +86,7 @@ class PostTypeStatus extends ParamsBag implements PostTypeStatusContract
      */
     public function getLabel(): string
     {
-        return $this->get('label');
+        return (string)$this->get('label');
     }
 
     /**
