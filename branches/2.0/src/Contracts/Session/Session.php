@@ -6,7 +6,6 @@ use Countable;
 use IteratorAggregate;
 use Psr\Container\ContainerInterface as Container;
 use Symfony\Component\HttpFoundation\Session\SessionInterface as BaseSession;
-use tiFy\Contracts\FlashBag;
 
 interface Session extends BaseSession, Countable, IteratorAggregate
 {
@@ -21,6 +20,13 @@ interface Session extends BaseSession, Countable, IteratorAggregate
     public function flash($key = null, $value = null);
 
     /**
+     * Récupération du gestionnaire d'injection de dépendances.
+     *
+     * @return Container|null
+     */
+    public function getContainer(): ?Container;
+
+    /**
      * Conservation des données de session éphèmere pour la requête suivante.
      *
      * @param array|null $keys Personnalisation de la liste des clé d'indices à conserver.
@@ -33,11 +39,11 @@ interface Session extends BaseSession, Countable, IteratorAggregate
      * Déclaration d'une session de stockage des données.
      *
      * @param string $name Nom de qualification de la session.
-     * @param array $attrs Liste des attributs de configuration.
+     * @param array|Store|null ...$args Liste des arguments dynamiques. (configuration|instance)
      *
      * @return Store|null
      */
-    public function registerStore(string $name, array $attrs = []): ?Store;
+    public function registerStore(string $name, ...$args): ?Store;
 
     /**
      * Définition du conteneur d'injection de dépendances.
@@ -49,9 +55,9 @@ interface Session extends BaseSession, Countable, IteratorAggregate
     public function setContainer(Container $container): Session;
 
     /**
-     * Récupération d'une session.
+     * Récupération du instance de gestionnaire de stockage de session.
      *
-     * @param string $name Nom de qualification de la session.
+     * @param string $name
      *
      * @return Store|null
      */

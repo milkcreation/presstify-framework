@@ -26,6 +26,15 @@ interface DateTime
     public static function getGlobalTimeZone(): DateTimeZone;
 
     /**
+     * Définition du format d'affichage par défault de la date.
+     *
+     * @param string $format
+     *
+     * @return string
+     */
+    public static function setDefaultFormat(string $format): string;
+
+    /**
      * Définition du fuseau horaire par défaut.
      *
      * @param DateTimeZone|null $tz
@@ -33,4 +42,22 @@ interface DateTime
      * @return DateTimeZone
      */
     public static function setGlobalTimeZone(?DateTimeZone $tz = null): DateTimeZone;
+
+    /**
+     * Récupération de la date locale pour un format donné.
+     *
+     * @param string|null $format Format d'affichage de la date. MySQL par défaut.
+     *
+     * @return string
+     */
+    public function local(?string $format = null): string;
+
+    /**
+     * Récupération de la date basée sur le temps universel pour un format donné.
+     *
+     * @param string|null $format Format d'affichage de la date. MySQL par défaut.
+     *
+     * @return string|null
+     */
+    public function utc(?string $format = null): ?string;
 }
