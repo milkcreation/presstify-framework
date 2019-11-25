@@ -3,9 +3,11 @@
 namespace tiFy\Wordpress\Contracts\Query;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus, Support\ParamsBag};
 use tiFy\Support\DateTime;
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
+use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
 use WP_Post;
 use WP_Query;
 use WP_Term;
@@ -22,6 +24,13 @@ interface QueryPost extends ParamsBag
      * @return static|null
      */
     public static function create($id = null, ...$args): ?QueryPost;
+
+    /**
+     * Récupération d'une instance basée sur un modele Laravel Eloquent
+     *
+     * @return static|null
+     */
+    public static function createFromEloquent(EloquentModel $model): ?QueryPostContract;
 
     /**
      * Récupération d'une instance basée sur le post global courant.
