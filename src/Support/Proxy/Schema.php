@@ -33,8 +33,18 @@ class Schema extends AbstractProxy
      *
      * @return SchemaBuilder
      */
+    public static function connexion(string $name = 'default')
+    {
+        return static::$container->get('database')->connection($name)->getSchemaBuilder();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return SchemaBuilder
+     */
     public static function getInstance()
     {
-        return static::$container->get('database')->connection()->getSchemaBuilder();
+        return static::connexion();
     }
 }
