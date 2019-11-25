@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\Query;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus, Support\ParamsBag as ParamsBagContract};
 use tiFy\Support\{DateTime, ParamsBag};
 use tiFy\Support\Proxy\{Cache, PostType};
@@ -89,6 +90,14 @@ class QueryPost extends ParamsBag implements QueryPostContract
         } else {
             return null;
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function createFromEloquent(EloquentModel $model): ?QueryPostContract
+    {
+        return new static(new WP_Post((object)$model->getAttributes()));
     }
 
     /**
