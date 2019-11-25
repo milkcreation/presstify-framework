@@ -190,7 +190,7 @@ class Store extends ParamsBag implements StoreContract
                 $expiration = $this->expiration();
             }
 
-            $this->credentials = array_merge(compact($this->credentialKeys), [
+            $this->credentials = array_merge(compact('expiration'), [
                 'hash' => $this->getHash($expiration),
                 'key'  => $this->getKey(),
             ]);

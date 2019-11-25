@@ -2,7 +2,7 @@
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\PostType\{PostTypeFactory, PostTypePostMeta, PostTypeStatus};
+use tiFy\Contracts\PostType\{PostType as PostTypeContract, PostTypeFactory, PostTypePostMeta, PostTypeStatus};
 
 /**
  * @method static PostTypeFactory|null get(string $name)
@@ -12,6 +12,19 @@ use tiFy\Contracts\PostType\{PostTypeFactory, PostTypePostMeta, PostTypeStatus};
  */
 class PostType extends AbstractProxy
 {
+    /**
+     * {@inheritDoc}
+     *
+     * @return PostTypeContract
+     */
+    public static function getInstance()
+    {
+        return parent::getInstance();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getInstanceIdentifier()
     {
         return 'post-type';

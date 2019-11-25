@@ -2,8 +2,7 @@
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Auth\Signin;
-use tiFy\Contracts\Auth\Signup;
+use tiFy\Contracts\Auth\{Auth as AuthContract, Signin, Signup};
 
 /**
  * @method static Signin registerSignin(string $name, array $attrs = [])
@@ -13,6 +12,19 @@ use tiFy\Contracts\Auth\Signup;
  */
 class Auth extends AbstractProxy
 {
+    /**
+     * {@inheritDoc}
+     *
+     * @return AuthContract
+     */
+    public static function getInstance()
+    {
+        return parent::getInstance();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getInstanceIdentifier()
     {
         return 'auth';
