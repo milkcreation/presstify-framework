@@ -28,6 +28,19 @@ use tiFy\Contracts\Http\Request as RequestContract;
  */
 class Request extends AbstractProxy
 {
+    /**
+     * {@inheritDoc}
+     *
+     * @return RequestContract
+     */
+    public static function getInstance()
+    {
+        return parent::getInstance();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getInstanceIdentifier()
     {
         return 'request';
