@@ -88,6 +88,12 @@ class Field extends ParamsBag implements FactoryField
     protected $default;
 
     /**
+     * Indicateur du statut d'affichage de champ en erreur.
+     * @var boolean
+     */
+    protected $error = false;
+
+    /**
      * Identifiant de qualification du champ.
      * @var string
      */
@@ -295,7 +301,8 @@ class Field extends ParamsBag implements FactoryField
      */
     public function onError()
     {
-        return $this->supports('request') && !empty($this->notices()->query('error', ['field' => $this->getSlug()]));
+        return ($this->supports('request') && !empty($this->notices()->query('error', ['field' => $this->getSlug()])))
+            || !!$this->error;
     }
 
     /**
@@ -587,6 +594,16 @@ class Field extends ParamsBag implements FactoryField
     public function setExtra($key, $value)
     {
         return $this->set("extras.{$key}", $value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setOnError(bool $status = true): FactoryField
+    {
+       $this->error = $status;
+
+       return $this;
     }
 
     /**
