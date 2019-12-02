@@ -63,7 +63,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaContract
                     $js .= "};";
                     echo '<script type="text/javascript">' . $js . '</script>';
                     echo '<script type="text/javascript"
-                                  src="https://www.google.com/recaptcha/api.js?hl=<?php echo $this->getLanguage(); ?>&onload=onloadCallback&render=explicit"
+                                  src="https://www.google.com/recaptcha/api.js?hl=' . $this->getLanguage() . '&onload=onloadCallback&render=explicit"
                                   async defer></script>';
                 }
             });
