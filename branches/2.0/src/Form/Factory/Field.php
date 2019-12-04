@@ -261,21 +261,21 @@ class Field extends ParamsBag implements FactoryField
     {
         $value = Arr::wrap($this->getValue());
 
-        if ($choices = $this->get('choices', [])) :
-            foreach ($value as &$v) :
-                if (isset($choices[$v])) :
+        if ($choices = $this->get('choices', [])) {
+            foreach ($value as &$v) {
+                if (isset($choices[$v])) {
                     $v = $choices[$v];
-                endif;
-            endforeach;
-        endif;
+                }
+            }
+        }
 
-        if (!$raw) :
+        if (!$raw) {
             $value = is_array($value) ? array_map('esc_attr', $value) : esc_attr($value);
-        endif;
+        }
 
-        if (!is_null($glue)) :
+        if (!is_null($glue)) {
             $value = join($glue, $value);
-        endif;
+        }
 
         return $value;
     }

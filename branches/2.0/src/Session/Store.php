@@ -158,7 +158,9 @@ class Store extends ParamsBag implements StoreContract
             'session_name' => $this->getName(),
         ])->value('session_value');
 
-        return $value ? Str::unserialize($value) : [];
+        $value = is_string($value) ? Str::unserialize($value) : [];
+
+        return is_array($value) ? $value : [];
     }
 
     /**
