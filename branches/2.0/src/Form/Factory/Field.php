@@ -245,7 +245,7 @@ class Field extends ParamsBag implements FactoryField
     {
         $value = $this->get('value');
 
-        $this->events('field.get.value', [&$value, $this]);
+        $this->form()->events('field.get.value', [&$value, $this]);
 
         if (!$raw) {
             $value = is_array($value) ? array_map('esc_attr', $value) : esc_attr($value);
@@ -621,6 +621,8 @@ class Field extends ParamsBag implements FactoryField
      */
     public function setValue($value)
     {
+        $this->events('field.set.value', [&$value, $this]);
+
         $this->set('value', $value);
     }
 
