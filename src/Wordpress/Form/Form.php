@@ -32,6 +32,10 @@ class Form implements FormContract
 
         add_action('wp', function () {
             foreach ($this->manager->all() as $form) {
+                $form->events()->listen('field.get.value', function(&$value) {
+                    $value = wp_unslash($value);
+                });
+
                 /* @var FormFactory $form */
                 if ($form->isAuto()) {
                     $this->manager->current($form);
@@ -51,9 +55,6 @@ class Form implements FormContract
                         $this->manager->reset();
                     }
                 }
-                $form->events()->listen('field.get.value', function(&$value) {
-                    $value = wp_unslash($value);
-                });
             }
         });
 
