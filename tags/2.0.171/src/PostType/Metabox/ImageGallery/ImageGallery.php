@@ -88,7 +88,7 @@ class ImageGallery extends MetaboxWpPostController
             wp_enqueue_style(
                 'MetaboxPostTypeImageGallery',
                 asset()->url('post-type/metabox/image-gallery/css/styles.css'),
-                ['tiFyAdmin'],
+                [],
                 180808
             );
 

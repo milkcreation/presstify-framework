@@ -17,7 +17,7 @@ class Repeater extends BaseRepeater implements FieldFactoryContract
             wp_register_style(
                 'FieldRepeater',
                 asset()->url('/field/repeater/css/styles.css'),
-                [is_admin() ? 'tiFyAdmin' : ''],
+                [],
                 170421
             );
 

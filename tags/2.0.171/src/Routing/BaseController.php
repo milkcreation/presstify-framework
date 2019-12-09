@@ -16,11 +16,11 @@ abstract class BaseController extends ParamsBag
     /**
      * CONSTRUCTEUR.
      *
-     * @param Container $container Instance de conteneur d'injection de dépendances.
+     * @param Container|null $container Instance de conteneur d'injection de dépendances.
      *
      * @return void
      */
-    public function __construct(?Container $container)
+    public function __construct(?Container $container = null)
     {
         $this->container = $container;
 
