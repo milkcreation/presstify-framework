@@ -7,27 +7,12 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2019-12-04",
+  "time": "2019-12-11",
   "authors": [
     {
       "name": "Jordy Manner",
       "email": "jordy.manner@milkcreation.fr",
       "role": "Lead Developper"
-    },
-    {
-      "name": "Julien Picard",
-      "email": "julien@tigreblanc.fr",
-      "role": "Contributing Developper"
-    },
-    {
-      "name": "Louis Dherent",
-      "email": "louis@tigreblanc.fr",
-      "role": "Contributing Developper"
-    },
-    {
-      "name": "Gaetan Thery",
-      "email": "gaetan@tigreblanc.fr",
-      "role": "Contributing Developper"
     }
   ],
   "repositories": [
