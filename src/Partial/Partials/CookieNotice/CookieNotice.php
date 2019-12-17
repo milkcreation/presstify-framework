@@ -4,12 +4,31 @@ namespace tiFy\Partial\Partials\CookieNotice;
 
 use Closure;
 use Exception;
+use tiFy\Contracts\Cookie\Cookie as CookieContract;
 use tiFy\Contracts\Partial\{CookieNotice as CookieNoticeContract, PartialFactory as PartialFactoryContract};
 use tiFy\Partial\PartialFactory;
 use tiFy\Support\Proxy\{Cookie, Request as req};
 
 class CookieNotice extends PartialFactory implements CookieNoticeContract
 {
+    /**
+     * Instance du cookie associé.
+     * @var CookieContract|null
+     */
+    protected $cookie;
+
+    /**
+     * @inheritDoc
+     */
+    public function cookie(array $args = []): CookieContract
+    {
+        if (is_null($this->cookie)) {
+            $this->cookie = Cookie::instance($this->getId(), $args);
+        }
+
+        return $this->cookie;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -50,9 +69,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
         $content = $this->get('content', '');
         $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);
 
-        $cookie = Cookie::instance($this->getId(), array_merge(['value' => '1'], $this->get('cookie', [])));
-
-        if ($cookie->get()) {
+        if ($this->cookie(array_merge(['value' => '1'], $this->get('cookie', [])))->get()) {
             $this->set('attrs.aria-hide', 'true');
         }
 
@@ -62,7 +79,7 @@ class CookieNotice extends PartialFactory implements CookieNoticeContract
         ]);
 
         if ($trigger = $this->get('trigger', [])) {
-            $this->set('content', $this->get('content', '') . $this->trigger(is_array($trigger) ?: []));
+            $this->set('content', $this->get('content', '') . $this->trigger(is_array($trigger) ? $trigger : []));
         }
 
         return $this;
