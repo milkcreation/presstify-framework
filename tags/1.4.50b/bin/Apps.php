@@ -237,7 +237,15 @@ final class Apps
             extract(self::$Registered[$classname]);
             $Config = wp_parse_args($config_attrs, $Config);
         endif;
-        
+
+        if (!isset($OverrideNamespace)) {
+            $OverrideNamespace = '';
+        }
+
+        if (!isset($Instance)) {
+            $Instance = '';
+        }
+
         // Traitement de la configuration
         return self::$Registered[$classname] = compact(
             // Définition
@@ -1106,7 +1114,10 @@ final class Apps
     {
         $attrs = self::getAttrList($classname);
 
-        switch($attrs['Type']) :
+	switch($attrs['Type']) :
+	    default:
+                $OverrideNamespace = null;
+                break;
             case 'Set' :
                 $OverrideNamespace = 'Set\\' . $attrs['Id'];
                 break;
