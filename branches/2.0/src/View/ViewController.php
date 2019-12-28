@@ -15,6 +15,9 @@ use tiFy\Contracts\View\{
 use Throwable;
 use tiFy\Support\HtmlAttrs;
 
+/**
+ * @deprecated
+ */
 class ViewController extends Template implements ViewControllerContract
 {
     /**

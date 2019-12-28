@@ -4,7 +4,7 @@ namespace tiFy\Options\Page;
 
 use tiFy\Contracts\Options\OptionsPage as OptionPageContract;
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Support\{ParamsBag, Proxy\Metabox};
+use tiFy\Support\{ParamsBag, Proxy\Metabox, Proxy\View};
 use WP_Admin_Bar;
 use WP_Screen;
 
@@ -75,7 +75,7 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __toString()
     {
@@ -83,7 +83,7 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function add($name, $attrs = [])
     {
@@ -91,17 +91,14 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function boot()
-    {
-
-    }
+    public function boot() { }
 
     /**
      * Liste des attributs de configuration par défaut.
-     * @var array {
      *
+     * @return array {
      *      @var string $hookname Identifiant de qualification de la page d'accroche d'affichage.
      *      @var string $cap Habilitation d'accès à la page.
      *      @var string $page_title Intitulé de la page.
@@ -126,7 +123,7 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function display()
     {
@@ -134,7 +131,7 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getHookname()
     {
@@ -142,7 +139,7 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getItems()
     {
@@ -150,7 +147,7 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getName()
     {
@@ -158,15 +155,12 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function load(WP_Screen $wp_current_screen)
-    {
-
-    }
+    public function load(WP_Screen $wp_current_screen) { }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse()
     {
@@ -233,27 +227,20 @@ class OptionsPage extends ParamsBag implements OptionPageContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function viewer($view = null, $data = [])
     {
         if (!$this->viewer) {
-            $cinfo = class_info($this);
-            $default_dir = $cinfo->getDirname() . '/views';
-            $this->viewer = view()
-                ->setDirectory(is_dir($default_dir) ? $default_dir : null)
-                ->setController(OptionsPageView::class)
-                ->setOverrideDir(
-                    (($override_dir = $this->get('viewer.override_dir')) && is_dir($override_dir))
-                        ? $override_dir
-                        : (is_dir($default_dir) ? $default_dir : $cinfo->getDirname())
-                )
-                ->setParam('options_page', $this);
+            $this->viewer = View::getPlatesEngine()->setDirectory(
+                class_info($this)->getDirname() . '/views'
+            );
         }
 
         if (func_num_args() === 0) {
             return $this->viewer;
         }
+
         return $this->viewer->make("_override::{$view}", $data);
     }
 }

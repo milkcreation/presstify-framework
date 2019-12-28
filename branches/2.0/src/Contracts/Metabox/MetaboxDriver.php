@@ -11,18 +11,18 @@ use tiFy\Contracts\{
 interface MetaboxDriver extends ParamsBag
 {
     /**
+     * Résolution de sortie de la classe sous forme d'une chîane de caractères.
+     *
+     * @return string
+     */
+    public function __toString(): string;
+
+    /**
      * Initialisation de la boîte de saisie.
      *
      * @return void
      */
     public function boot(): void;
-
-    /**
-     * Récupération de l'affichage du contenu de la boîte de saisie.
-     *
-     * @return string
-     */
-    public function content(): string;
 
     /**
      * Récupération de l'instance du contexte d'affichage associé.
@@ -61,6 +61,13 @@ interface MetaboxDriver extends ParamsBag
      * @return mixed
      */
     public function params($key = null, $default = null);
+
+    /**
+     * Récupération de l'affichage du contenu de la boîte de saisie.
+     *
+     * @return string
+     */
+    public function render(): string;
 
     /**
      * Récupération de l'instance de l'écran d'affichage associé.
