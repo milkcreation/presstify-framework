@@ -7,7 +7,7 @@ use tiFy\Contracts\{
     Metabox\MetaboxManager,
     View\ViewEngine
 };
-use tiFy\Support\ParamsBag;
+use tiFy\Support\{ParamsBag, Proxy\View};
 
 class MetaboxContext extends ParamsBag implements MetaboxContextContract
 {
@@ -95,12 +95,9 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     public function viewer(?string $view = null, array $data = [])
     {
         if (!$this->viewer) {
-            $defaultDir = $this->manager()->resourcesDir("/views/contexts/{$this->name}");
-            $fallbackDir = $this->get('viewer.override_dir') ? : $defaultDir;
-
-            $this->viewer = view()
-                ->setDirectory($defaultDir)
-                ->setOverrideDir($fallbackDir);
+            $this->viewer = View::getPlatesEngine()->setDirectory(
+                $this->manager()->resourcesDir("/views/context/{$this->name}")
+            );
         }
 
         if (func_num_args() === 0) {

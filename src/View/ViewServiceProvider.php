@@ -3,6 +3,7 @@
 namespace tiFy\View;
 
 use tiFy\Container\ServiceProvider;
+use tiFy\View\Engine\PlatesEngine;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -12,6 +13,9 @@ class ViewServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
+        'view',
+        'view.engine.default',
+        'view.engine.plates',
         'viewer'
     ];
 
@@ -20,6 +24,18 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->getContainer()->share('view', function () {
+            return new View($this->getContainer());
+        });
+
+        $this->getContainer()->add('view.engine.default', function () {
+            return $this->getContainer()->get('view.engine.plates');
+        });
+
+        $this->getContainer()->add('view.engine.plates', function () {
+            return new PlatesEngine($this->getContainer()->get('view'));
+        });
+
         $this->getContainer()->add('viewer', function () {
             return new ViewEngine([]);
         });

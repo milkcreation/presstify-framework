@@ -8,7 +8,7 @@ use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Database\Database;
 use tiFy\Contracts\Field\Field;
-use tiFy\Contracts\Field\FieldFactory;
+use tiFy\Contracts\Field\FieldDriver;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
 use tiFy\Contracts\Form\FormFactory;
@@ -20,7 +20,7 @@ use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\Log\LogManager;
-use tiFy\Contracts\Partial\PartialFactory;
+use tiFy\Contracts\Partial\PartialDriver;
 use tiFy\Contracts\Partial\Partial;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostType;
@@ -28,7 +28,6 @@ use tiFy\Contracts\Routing\Redirector;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Url;
-use tiFy\Contracts\Routing\UrlFactory;
 use tiFy\Contracts\Support\ClassInfo;
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;
@@ -211,7 +210,7 @@ if (!function_exists('field')) {
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return Field|FieldFactory|null
+     * @return Field|FieldDriver|null
      */
     function field($name = null, $id = null, $attrs = null)
     {
@@ -289,7 +288,7 @@ if (!function_exists('partial')) {
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return Partial|PartialFactory|null
+     * @return Partial|PartialDriver|null
      */
     function partial(?string $name = null, $id = null, ?array $attrs = null)
     {

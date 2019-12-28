@@ -7,22 +7,25 @@ use LogicException;
 use tiFy\Contracts\View\ViewEngine as ViewEngineContract;
 use tiFy\Support\ParamsBag;
 
+/**
+ * @deprecated
+ */
 class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
 {
     /**
      * Liste des attributs de configuration.
      * @var array {
-     *      @var string $directory Chemin absolu vers le répertoire par défaut des gabarits.
-     *      @var string $ext Extension des fichiers de gabarit.
-     *      @var string $controller Controleur de gabarit.
-     *      @var string $override_dir Chemin absolu vers le répertoire de surchage des gabarits.
+     * @var string $directory Chemin absolu vers le répertoire par défaut des gabarits.
+     * @var string $ext Extension des fichiers de gabarit.
+     * @var string $controller Controleur de gabarit.
+     * @var string $override_dir Chemin absolu vers le répertoire de surchage des gabarits.
      * }
      */
     protected $attributes = [
-        'directory'     => null,
-        'ext'           => 'php',
-        'controller'    => ViewController::class,
-        'override_dir'  => ''
+        'controller'   => ViewController::class,
+        'directory'    => null,
+        'ext'          => 'php',
+        'override_dir' => '',
     ];
 
     /**
@@ -41,7 +44,7 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
     public function __construct($attrs = [])
     {
         if (is_string($attrs)) {
-            $attrs = ['directory'=> $attrs];
+            $attrs = ['directory' => $attrs];
         }
 
         $this->params(array_merge($this->attributes, $attrs));
@@ -185,8 +188,8 @@ class ViewEngine extends LeaguePlatesEngine implements ViewEngineContract
 
         try {
             $this->addFolder('_override', $override_dir, true);
-        } catch(LogicException $e) {
-            if($this->getFolders()->get('_override')->getPath() !== $override_dir) {
+        } catch (LogicException $e) {
+            if ($this->getFolders()->get('_override')->getPath() !== $override_dir) {
                 $this->modifyFolder('_override', $override_dir);
             }
         }

@@ -5,7 +5,7 @@ namespace tiFy\Metabox;
 use Closure;
 use tiFy\Contracts\Metabox\{MetaboxContext, MetaboxDriver as MetaboxDriverContract, MetaboxManager, MetaboxScreen};
 use tiFy\Contracts\View\ViewEngine;
-use tiFy\Support\{Arr, ParamsBag};
+use tiFy\Support\{Arr, ParamsBag, Proxy\View};
 
 class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
 {
@@ -60,6 +60,14 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     /**
      * @inheritDoc
      */
+    public function __toString(): string
+    {
+        return $this->render();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function alias(): string
     {
         return $this->alias ?: class_info($this)->getKebabName();
@@ -69,15 +77,6 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
      * @inheritDoc
      */
     public function boot(): void { }
-
-    /**
-     * @inheritDoc
-     */
-    public function content(): string
-    {
-        return $this->viewer()->exists('content')
-            ? (string)$this->viewer('content', $this->all()) : $this->get('content', '');
-    }
 
     /**
      * @inheritDoc
@@ -178,6 +177,15 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     /**
      * @inheritDoc
      */
+    public function render(): string
+    {
+        return $this->viewer()->exists('index')
+            ? (string)$this->viewer('index', $this->all()) : $this->get('content', '');
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function screen(): ?MetaboxScreen
     {
         return $this->screen;
@@ -252,15 +260,14 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     public function viewer(?string $view = null, array $data = [])
     {
         if (!$this->viewer) {
-            $dir = $this->get('viewer.directory', $this->manager()->resourcesDir('/views/drivers/' . $this->alias()));
-            $defaultDir = file_exists($dir) ? $dir : $this->manager()->resourcesDir('/views/drivers/');
-            $fallbackDir = $this->get('viewer.override_dir') ?: $defaultDir;
+            $alias = $this->alias();
 
-            $this->viewer = view()
-                ->setDirectory($defaultDir)
-                ->setOverrideDir($fallbackDir)
-                ->setController(MetaboxView::class)
-                ->setParam('metabox', $this);
+            $this->viewer = View::register("metabox-{$alias}", array_merge([
+                'directory' => $this->manager()->resourcesDir("/views/driver/{$alias}"),
+                'engine'    => 'plates',
+                'factory'   => MetaboxView::class,
+                'metabox'   => $this
+            ], config('metabox.viewer', []), $this->get('viewer', [])));
         }
 
         if (func_num_args() === 0) {
