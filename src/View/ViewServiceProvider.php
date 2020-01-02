@@ -15,8 +15,7 @@ class ViewServiceProvider extends ServiceProvider
     protected $provides = [
         'view',
         'view.engine.default',
-        'view.engine.plates',
-        'viewer'
+        'view.engine.plates'
     ];
 
     /**
@@ -34,10 +33,6 @@ class ViewServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('view.engine.plates', function () {
             return new PlatesEngine($this->getContainer()->get('view'));
-        });
-
-        $this->getContainer()->add('viewer', function () {
-            return new ViewEngine([]);
         });
     }
 }

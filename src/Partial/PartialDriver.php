@@ -4,7 +4,7 @@ namespace tiFy\Partial;
 
 use Closure;
 use tiFy\Contracts\Partial\{Partial as Manager, PartialDriver as PartialDriverContract};
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Support\{HtmlAttrs, ParamsBag};
 
 abstract class PartialDriver extends ParamsBag implements PartialDriverContract
@@ -274,7 +274,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     /**
      * @inheritDoc
      */
-    public function viewer($view = null, $data = [])
+    public function viewer(?string $view = null, array $data = [])
     {
         if (is_null($this->viewer)) {
             $this->viewer = app()->get('partial.viewer', [$this]);
@@ -284,6 +284,6 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
             return $this->viewer;
         }
 
-        return $this->viewer->make("_override::{$view}", $data);
+        return $this->viewer->render($view, $data);
     }
 }

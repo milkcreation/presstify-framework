@@ -50,7 +50,7 @@ class CheckboxChoices extends Collection implements CheckboxChoicesContract
      */
     public function render()
     {
-        return $this->field->viewer()->make('choices', ['items' => $this->items]);
+        return $this->field->viewer('choices', ['items' => $this->items]);
     }
 
     /**

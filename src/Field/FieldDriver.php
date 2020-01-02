@@ -4,7 +4,7 @@ namespace tiFy\Field;
 
 use Closure;
 use tiFy\Contracts\Field\{Field as Manager, FieldDriver as FieldDriverContract};
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Support\HtmlAttrs;
 use tiFy\Support\Str;
 use tiFy\Support\ParamsBag;
@@ -174,7 +174,9 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
      */
     public function parse(): FieldDriverContract
     {
-        parent::parse();
+        $this->attributes = array_merge(
+            $this->defaults(), config("field.driver.{$this->alias}", []), $this->attributes
+        );
 
         $this->parseDefaults();
 
@@ -305,6 +307,6 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
             return $this->viewer;
         }
 
-        return $this->viewer->make("_override::{$view}", $data);
+        return $this->viewer->render("{$view}", $data);
     }
 }

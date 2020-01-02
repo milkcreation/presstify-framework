@@ -5,7 +5,7 @@ namespace tiFy\Metabox;
 use tiFy\Contracts\{
     Metabox\MetaboxContext as MetaboxContextContract,
     Metabox\MetaboxManager,
-    View\ViewEngine
+    View\PlatesEngine
 };
 use tiFy\Support\{ParamsBag, Proxy\View};
 
@@ -25,7 +25,7 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
 
     /**
      * Instance du gestionnaire de gabarit d'affichage.
-     * @var ViewEngine|null
+     * @var PlatesEngine|null
      */
     protected $viewer;
 
@@ -95,15 +95,15 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     public function viewer(?string $view = null, array $data = [])
     {
         if (!$this->viewer) {
-            $this->viewer = View::getPlatesEngine()->setDirectory(
-                $this->manager()->resourcesDir("/views/context/{$this->name}")
-            );
+            $this->viewer = View::getPlatesEngine([
+                'directory' => $this->manager()->resourcesDir("/views/context/{$this->name}")
+            ]);
         }
 
         if (func_num_args() === 0) {
             return $this->viewer;
         }
 
-        return $this->viewer->make("_override::{$view}", $data);
+        return $this->viewer->render($view, $data);
     }
 }

@@ -3,8 +3,8 @@
 namespace tiFy\Wordpress\Field\Driver\Findposts;
 
 use tiFy\Contracts\Field\FieldDriver as BaseFieldDriverContract;
-use tiFy\Field\FieldDriver;
 use tiFy\Wordpress\Contracts\Field\Findposts as FindpostsContract;
+use tiFy\Wordpress\Field\FieldDriver;
 use tiFy\Support\Proxy\Asset;
 use WP_Post;
 use WP_Query;

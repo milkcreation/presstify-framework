@@ -42,7 +42,6 @@ class View implements ViewContract
     /**
      * CONSTRUCTEUR
      *
-     * @param EngineContract $engine Instance du moteur de templates
      * @param Container|null $container
      *
      * @return void
@@ -98,7 +97,10 @@ class View implements ViewContract
     public function getEngine(?string $name = null): ?EngineContract
     {
         if (is_null($name)) {
-            return $this->default = $this->default ? : $this->getDefaultEngine()->setParams(config('view', []));
+            return $this->default = $this->default
+                ? : $this->getDefaultEngine()
+                    ->setParams(config('view', []))
+                    ->setDirectory($this->getDefaultDirectory());
         }
 
         return $this->engines[$name] ?? null;
@@ -107,9 +109,17 @@ class View implements ViewContract
     /**
      * @inheritDoc
      */
-    public function getPlatesEngine(): PlatesEngineContract
+    public function getPlatesEngine(array $params = []): PlatesEngineContract
     {
-        return $this->getContainer()->get("view.engine.plates");
+        return $this->getContainer()->get("view.engine.plates")->setParams($params);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function make($name)
+    {
+        return $this->getEngine()->make($name);
     }
 
     /**
@@ -140,6 +150,14 @@ class View implements ViewContract
         }
 
         return $this->engines[$name] = $engine;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render($name, array $args = [])
+    {
+        return $this->getEngine()->render($name, $args);
     }
 
     /**

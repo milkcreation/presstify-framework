@@ -9,7 +9,7 @@ interface Engine
     /**
      * @inheritDoc
      */
-    public function make($name, $args = []);
+    public function make($name);
 
     /**
      * Récupération de l'instance du gestionnaire de vue.

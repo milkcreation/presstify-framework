@@ -1,8 +1,8 @@
 <?php
 /**
  * @var tiFy\Field\FieldView $this
- * @var tiFy\Field\Fields\SelectJs\SelectJsChoices $choices
- * @var tiFy\Field\Fields\Select\SelectChoice $choice
+ * @var tiFy\Field\Driver\SelectJs\SelectJsChoices $choices
+ * @var tiFy\Field\Driver\Select\SelectChoice $choice
  */
 ?>
 <?php $this->before(); ?>

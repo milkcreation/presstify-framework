@@ -3,8 +3,7 @@
 namespace tiFy\Contracts\Partial;
 
 use tiFy\Contracts\Support\ParamsBag;
-use tiFy\Contracts\View\ViewController;
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\View\Engine as ViewEngine;
 
 interface PartialDriver extends ParamsBag
 {
@@ -165,7 +164,7 @@ interface PartialDriver extends ParamsBag
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewController|ViewEngine
+     * @return ViewEngine|string
      */
-    public function viewer($view = null, $data = []);
+    public function viewer(string $view = null, array $data = []);
 }

@@ -3,6 +3,7 @@
 namespace tiFy\Contracts\View;
 
 use League\Plates\Engine as BasePlatesEngine;
+use League\Plates\Template\Folder;
 
 /**
  * @mixin BasePlatesEngine
@@ -17,6 +18,15 @@ interface PlatesEngine extends Engine
      * @return PlatesFactory
      */
     public function getFactory(string $name): PlatesFactory;
+
+    /**
+     * Récupération de l'instance d'un répertoire déclaré de stockage des templates.
+     *
+     * @param string $name Nom de qualification
+     *
+     * @return Folder|null
+     */
+    public function getFolder(string $name): ?Folder;
 
     /**
      * Récupération du chemin absolu vers le répertoire de surchage des gabarits d'affichage.

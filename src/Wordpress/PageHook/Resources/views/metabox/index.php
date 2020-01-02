@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\View\ViewController $this
+ * @var tiFy\Contracts\View\PlatesFactory $this
  * @var tiFy\Wordpress\Contracts\PageHookItem $item
  */
 ?>

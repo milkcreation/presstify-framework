@@ -187,10 +187,9 @@ class PartialServiceProvider extends ServiceProvider
         $this->getContainer()->add('partial.viewer', function (PartialDriver $driver) {
             /** @var PartialContract $manager */
             $manager = $this->getContainer()->get('partial');
-            $alias = $driver->getAlias();
 
-            return View::register("partial-{$alias}", array_merge([
-                'directory'    => $manager->resourcesDir("/views/{$alias}"),
+            return View::getPlatesEngine(array_merge([
+                'directory'    => $manager->resourcesDir("/views/{$driver->getAlias()}"),
                 'engine'       => 'plates',
                 'factory'      => PartialView::class,
                 'partial'      => $driver,

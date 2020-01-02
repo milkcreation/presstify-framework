@@ -4,7 +4,7 @@ namespace tiFy\Metabox;
 
 use Closure;
 use tiFy\Contracts\Metabox\{MetaboxContext, MetaboxDriver as MetaboxDriverContract, MetaboxManager, MetaboxScreen};
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\View\PlatesEngine;
 use tiFy\Support\{Arr, ParamsBag, Proxy\View};
 
 class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
@@ -53,7 +53,7 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
 
     /**
      * Instance du moteur d'affichage des gabarits.
-     * @var ViewEngine
+     * @var PlatesEngine
      */
     protected $viewer;
 
@@ -167,7 +167,9 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
      */
     public function parse(): ?MetaboxDriverContract
     {
-        parent::parse();
+        $this->attributes = array_merge(
+            $this->defaults(), config("metabox.driver.{$this->alias}", []), $this->attributes
+        );
 
         $this->params(array_merge($this->defaultParams(), $this->get('params', [])));
 
@@ -260,10 +262,8 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     public function viewer(?string $view = null, array $data = [])
     {
         if (!$this->viewer) {
-            $alias = $this->alias();
-
-            $this->viewer = View::register("metabox-{$alias}", array_merge([
-                'directory' => $this->manager()->resourcesDir("/views/driver/{$alias}"),
+            $this->viewer = View::getPlatesEngine(array_merge([
+                'directory' => $this->manager()->resourcesDir("/views/driver/{$this->alias()}"),
                 'engine'    => 'plates',
                 'factory'   => MetaboxView::class,
                 'metabox'   => $this
@@ -274,6 +274,6 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
             return $this->viewer;
         }
 
-        return $this->viewer->make("_override::{$view}", $data);
+        return $this->viewer->render($view, $data);
     }
 }

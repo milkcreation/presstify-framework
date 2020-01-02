@@ -40,7 +40,7 @@ abstract class Engine implements EngineContract
     /**
      * @inheritDoc
      */
-    abstract public function make($name, $args = []);
+    abstract public function make($name);
 
     /**
      * @inheritDoc

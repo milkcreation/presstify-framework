@@ -2,7 +2,8 @@
 
 namespace tiFy\View\Engine;
 
-use League\Plates\Engine as BasePlatesEngine;
+use Exception;
+use League\Plates\{Engine as BasePlatesEngine, Template\Folder};
 use LogicException;
 use Throwable;
 use tiFy\Contracts\View\{
@@ -39,7 +40,7 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
     {
         $this->manager = $manager;
 
-        parent::__construct($this->manager()->getDefaultDirectory());
+        parent::__construct(null);
     }
 
     /**
@@ -58,6 +59,18 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
     /**
      * @inheritDoc
      */
+    public function exists($name)
+    {
+        try {
+            return parent::exists($name);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getFactory(string $name): PlatesFactoryContract
     {
         $factory = $this->params('factory', PlatesFactory::class);
@@ -68,22 +81,36 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
     /**
      * @inheritDoc
      */
+    public function getFolder(string $name): ?Folder
+    {
+        try{
+            return $this->getFolders()->get($name);
+        } catch(Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getOverrideDir(string $path = ''): ?string
     {
         return $this->getFolders()->exists('_override')
-            ? $this->getFolders()->get('_override')->getPath() . ($path ? trim($path, '/') : '')
+            ? $this->getFolder('_override')->getPath() . ($path ? trim($path, '/') : '')
             : null;
     }
 
     /**
      * @inheritDoc
      */
-    public function make($name, $args = [])
+    public function make($name)
     {
-        $factory = $this->getFactory($name);
-        $factory->data($args);
+        $regex = '\:\:';
+        if (!preg_match("/{$regex}/", $name)) {
+            $name = $this->getFolders()->exists('_override') ? "_override::{$name}" : $name;
+        }
 
-        return $factory;
+        return $this->getFactory($name);
     }
 
     /**
@@ -124,7 +151,7 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
                         $this->setOverrideDir($v);
                         break;
                     default :
-                        $this->params->set([$k => $v]);
+                        $this->params->set($k, $v);
                         break;
                 }
             }
@@ -177,13 +204,13 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
      */
     public function setDirectory($directory)
     {
-        $this->params()->set('directory', $directory);
+        if (is_dir($directory)) {
+            $this->params()->set('directory', $directory);
 
-        if (is_null($this->getOverrideDir())) {
-            $this->setOverrideDir($directory);
+            return parent::setDirectory($directory);
+        } else {
+            return $this;
         }
-
-        return parent::setDirectory($directory);
     }
 
     /**
@@ -239,15 +266,13 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
      */
     public function setOverrideDir(string $override_dir): PlatesEngineContract
     {
-        if ($override_dir) {
-            $this->params()->set('override_dir', $override_dir);
+        $this->params()->set('override_dir', $override_dir);
 
-            try {
-                $this->addFolder('_override', $override_dir, true);
-            } catch (LogicException $e) {
-                if ($this->getFolders()->get('_override')->getPath() !== $override_dir) {
-                    $this->modifyFolder('_override', $override_dir);
-                }
+        try {
+            $this->addFolder('_override', $override_dir, true);
+        } catch (LogicException $e) {
+            if ($this->getFolders()->get('_override')->getPath() !== $override_dir) {
+                $this->modifyFolder('_override', $override_dir);
             }
         }
 

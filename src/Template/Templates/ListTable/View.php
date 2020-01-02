@@ -3,7 +3,7 @@
 namespace tiFy\Template\Templates\ListTable;
 
 use tiFy\Contracts\Template\{FactoryLabels, FactoryParams};
-use tiFy\Template\Factory\Viewer as BaseViewer;
+use tiFy\Template\Factory\View as BaseViewer;
 use tiFy\Template\Templates\ListTable\Contracts\{
     BulkActions,
     Columns,
@@ -27,7 +27,7 @@ use tiFy\Template\Templates\ListTable\Contracts\{
  * @method Search search()
  * @method ViewFilters viewFilters()
  */
-class Viewer extends BaseViewer
+class View extends BaseViewer
 {
     /**
      * Instance du gabarit associé.
