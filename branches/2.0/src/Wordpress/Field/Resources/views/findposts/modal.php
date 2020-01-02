@@ -5,7 +5,6 @@
  * @var tiFy\Field\FieldView $this
  */
 ?>
-
 <div id="ajax-response"></div>
 
 <div id="find-posts" class="find-box tiFyFindPosts-box" style="display: none;">

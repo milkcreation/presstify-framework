@@ -62,23 +62,6 @@ class PlatesFactory extends BasePlatesTemplate implements PlatesFactoryContract
     /**
      * @inheritDoc
      */
-    public function fetch($name, array $data = [])
-    {
-        try {
-            return $this->engine()->render(
-                ($this->engine()->getFolders()->exists('_override') ? '_override::' : '') . $name,
-                $data
-            );
-        } catch(Exception $e) {
-            return $e->getMessage();
-        } catch(Throwable $e) {
-            return $e->getMessage();
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function get(string $key, $default = '')
     {
         return Arr::get($this->data, $key, $default);

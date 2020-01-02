@@ -237,14 +237,13 @@ class FieldServiceProvider extends ServiceProvider
         $this->getContainer()->add('field.viewer', function (FieldDriver $driver) {
             /** @var FieldContract $manager */
             $manager = $this->getContainer()->get('field');
-            $alias = $driver->getAlias();
 
-            return View::register("field-{$alias}", array_merge([
-                'directory'    => $manager->resourcesDir("/views/{$alias}"),
-                'engine'       => 'plates',
-                'factory'      => FieldView::class,
-                'field'        => $driver,
-            ], config('field.viewer', []), $driver->get('viewer')));
+            return View::getPlatesEngine(array_merge([
+                'directory' => $manager->resourcesDir("/views/{$driver->getAlias()}"),
+                'engine'    => 'plates',
+                'factory'   => FieldView::class,
+                'field'     => $driver,
+            ], config('field.viewer', []), $driver->get('viewer', [])));
         });
     }
 }

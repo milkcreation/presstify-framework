@@ -62,9 +62,11 @@ interface View
     /**
      * Récupération d'une instance de moteur de templates basé sur plates.
      *
+     * @param array $params Liste des paramètres de configuration.
+     *
      * @return PlatesEngine
      */
-    public function getPlatesEngine(): PlatesEngine;
+    public function getPlatesEngine(array $params = []): PlatesEngine;
 
     /**
      * Déclaration d'un moteur de templates.

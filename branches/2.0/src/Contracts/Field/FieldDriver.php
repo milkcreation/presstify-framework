@@ -3,7 +3,7 @@
 namespace tiFy\Contracts\Field;
 
 use tiFy\Contracts\Support\ParamsBag;
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\View\Engine as ViewEngine;
 
 interface FieldDriver extends ParamsBag
 {
@@ -185,7 +185,7 @@ interface FieldDriver extends ParamsBag
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return FieldView|ViewEngine
+     * @return ViewEngine|string
      */
     public function viewer(?string $view = null, array $data = []);
 }

@@ -36,8 +36,7 @@ use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\User;
 use tiFy\Contracts\Validation\Validator;
-use tiFy\Contracts\View\ViewController;
-use tiFy\Contracts\View\ViewEngine;
+use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\tiFy;
 
 if (!function_exists('app')) {
@@ -166,7 +165,7 @@ if (!function_exists('cron')) {
         if (is_null($name)) {
             return $manager;
         }
-        return $manager->getItem($name);
+        return $manager->get($name);
     }
 }
 
@@ -382,18 +381,6 @@ if (!function_exists('route')) {
     }
 }
 
-if (!function_exists('route_exists')) {
-    /**
-     * Vérification si la requête courante répond à une route déclarée.
-     *
-     * @return bool
-     */
-    function route_exists(): bool
-    {
-        return router()->hasCurrent();
-    }
-}
-
 if (!function_exists('router')) {
     /**
      * Routing - Récupération de l'instance du controleur de routage ou déclaration d'une nouvelle route.
@@ -525,7 +512,7 @@ if (!function_exists('view')) {
      * @param null|string view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewController|ViewEngine
+     * @return ViewEngine|string
      */
     function view($view = null, $data = [])
     {
@@ -535,6 +522,6 @@ if (!function_exists('view')) {
         if (func_num_args() === 0) {
             return $factory;
         }
-        return $factory->make($view, $data);
+        return $factory->render($view, $data);
     }
 }

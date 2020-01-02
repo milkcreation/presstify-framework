@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\View\ViewController $this
+ * @var tiFy\Contracts\View\PlatesFactory $this
  */
 ?>
 <div id="MetaboxTab-container--" class="MetaboxTab-container">
