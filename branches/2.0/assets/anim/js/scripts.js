@@ -4,7 +4,16 @@ import jQuery from 'jquery';
 let inViewport = require('presstify-framework/in-viewport/js/scripts');
 
 jQuery(function ($) {
-  let getScrollTarget = function ($el) {
+  let animScroll = function () {
+        $('[data-anim].anim-scroll:not(.animated)').each(function () {
+          let $target = getScrollTarget($(this));
+
+          if (isScrollTarget($target)) {
+            $(this).addClass('animated' + ' ' + $(this).data('anim'));
+          }
+        });
+      },
+      getScrollTarget = function ($el) {
         if (typeof $el.data('anim-target') === 'string') {
           if ($($el.data('anim-target')).length()) {
             return $($el.data('anim-target'));
@@ -32,21 +41,15 @@ jQuery(function ($) {
         return value;
       };
 
-  $(window).on('scroll', function () {
-    $('[data-anim].anim-scroll:not(.animated)').each(function () {
-      let $target = getScrollTarget($(this));
+  $(window)
+      .on('scroll', animScroll)
+      .on('load', function () {
+        $('[data-anim]:not(.anim-scroll)').each(function () {
+          $(this).addClass('animated' + ' ' + $(this).data('anim'));
+        });
 
-      if (isScrollTarget($target)) {
-        $(this).addClass('animated' + ' ' + $(this).data('anim'));
-      }
-    });
-  });
-
-  $(window).on('load', function () {
-    $('[data-anim]:not(.anim-scroll)').each(function () {
-      $(this).addClass('animated' + ' ' + $(this).data('anim'));
-    });
-  });
+        animScroll();
+      });
 
   $('[data-anim]').on('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
     $(this).removeClass($(this).data('anim'));
