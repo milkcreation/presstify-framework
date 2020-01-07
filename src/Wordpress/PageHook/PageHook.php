@@ -10,6 +10,12 @@ use WP_Screen;
 class PageHook implements PageHookContract
 {
     /**
+     * Instance de l'accroche courante.
+     * @var PageHookItemContract|null
+     */
+    protected $current;
+
+    /**
      * Liste des éléments déclarés.
      * @var PageHookItemContract[]
      */
@@ -41,6 +47,10 @@ class PageHook implements PageHookContract
                 flush_rewrite_rules();
             }
         });
+
+        add_action('init', function () {
+            add_rewrite_tag('%hookname%', '([^&]+)');
+        });
     }
 
     /**
@@ -57,6 +67,25 @@ class PageHook implements PageHookContract
     public function collect(): Collection
     {
         return new Collection($this->items);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function current(): ?PageHookItemContract
+    {
+        if (is_null($this->current)) {
+            $this->current = did_action('parse_query') ? false : null;
+
+            foreach($this->items as $item) {
+                if ($item->is()) {
+                    $this->current = $item;
+                    break;
+                }
+            }
+        }
+
+        return $this->current ? : null;
     }
 
     /**
