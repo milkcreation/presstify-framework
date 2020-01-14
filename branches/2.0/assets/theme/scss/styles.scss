@@ -431,11 +431,13 @@ div[class*="ThemeInput--"] {
 }
 
 .#{$grid-container-prefix} {
-  width: 100%;
+  width: #{$grid-container-width};
   padding-right: #{$grid-gutter};
   padding-left: #{$grid-gutter};
-  margin-right: auto;
-  margin-left: auto;
+  @if $grid-container-center {
+    margin-right: auto;
+    margin-left: auto;
+  }
 }
 
 .#{$grid-row} {

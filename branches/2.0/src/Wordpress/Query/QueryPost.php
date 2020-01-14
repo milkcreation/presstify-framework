@@ -575,7 +575,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getPath(): string
     {
-        return rtrim(str_replace(home_url(), '', $this->getPermalink()), '/');
+        return rtrim(str_replace(home_url('/'), '', $this->getPermalink()), '/');
     }
 
     /**

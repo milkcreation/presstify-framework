@@ -93,7 +93,13 @@ class PageHook implements PageHookContract
      */
     public function get($name): ?PageHookItemContract
     {
-        return $this->items[$name] ?? null;
+        $hook = $this->items[$name] ?? null;
+
+        if ($hook instanceof PageHookItemContract) {
+            $hook = $hook->exists() ? $hook : null;
+        }
+
+        return $hook ? : new PageHookFaker($name);
     }
 
     /**
