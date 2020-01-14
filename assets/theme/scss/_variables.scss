@@ -84,7 +84,9 @@ $colors: (
 }
 
 // Grid
+$grid-container-center: false !default;
 $grid-container-prefix: 'ThemeContainer' !default;
+$grid-container-width: '1024px' !default;
 $grid-row: 'ThemeRow' !default;
 $grid-col-prefix: 'ThemeCol' !default;
 $grid-no-gutters: 'ThemeNoGutters' !default;

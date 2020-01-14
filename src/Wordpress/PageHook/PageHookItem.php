@@ -3,16 +3,17 @@
 namespace tiFy\Wordpress\PageHook;
 
 use Closure;
-use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\Partial\BreadcrumbCollection as BaseBreadcrumbCollection;
+use tiFy\Contracts\Routing\Route;
 use tiFy\Support\ParamsBag;
-use tiFy\Wordpress\Contracts\{
-    PageHookItem as PageHookItemContract,
-    Query\QueryPost as QueryPostContract,
-    Partial\BreadcrumbCollection
+use tiFy\Wordpress\Contracts\{PageHookItem as PageHookItemContract,
+    Partial\BreadcrumbCollection,
+    Query\QueryPost as QueryPostContract
 };
 use tiFy\Wordpress\Query\QueryPost;
+use WP_Admin_Bar;
 use WP_Post;
+use WP_Post_Type;
 use WP_Query;
 use WP_Term;
 
@@ -89,30 +90,34 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                     $post_type = $matches[1];
 
                     if (isset($wp_post_types[$post_type])) {
+                        /** @var WP_Post_Type $obj */
                         $obj = &$wp_post_types[$post_type];
                         $obj->has_archive = true;
-                        $obj->rewrite = false;
+                        $obj->rewrite = true;
+                        $pbase = $wp_rewrite->pagination_base;
+                        $hookname = $this->getName();
+
+                        $obj->remove_rewrite_rules();
 
                         add_rewrite_rule(
-                            ltrim($this->getPath(), '/') . '/([^/]+)/?$',
-                            'index.php?post_type=' . $post_type . '&name=$matches[1]&hookname=' . $this->getName(),
+                            "{$this->getPath()}/([^/]+)/?$",
+                            'index.php?post_type=' . $post_type . '&name=$matches[1]' .
+                            '&hookname=' . $hookname,
                             'top'
                         );
 
                         if ($this->post()->typeIn(['page'])) {
                             add_rewrite_rule(
-                                ltrim($this->getPath(), '/') . '/' .
-                                $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
-                                'index.php?page_id=' . $this->post()->getId() . '&paged=$matches[1]&hookname=' .
-                                $this->getName(),
+                                "{$this->getPath()}/{$pbase}/([0-9]{1,})/?$",
+                                'index.php?page_id=' . $this->post()->getId() . '&paged=$matches[1]' .
+                                '&hookname=' . $hookname,
                                 'top'
                             );
                         } else {
                             add_rewrite_rule(
-                                ltrim($this->getPath(), '/') . '/' .
-                                $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
+                                "{$this->getPath()}/{$pbase}/([0-9]{1,})/?$",
                                 'index.php?p=' . $this->post()->getId() . '&post_type=' . $this->post()->getType() .
-                                '&paged=$matches[1]&hookname='. $this->getName(),
+                                '&paged=$matches[1]&hookname=' . $hookname,
                                 'top'
                             );
                         }
@@ -130,6 +135,18 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                                 flush_rewrite_rules();
                             }
                         }, 999999);
+
+                        add_action('admin_bar_menu', function (WP_Admin_Bar $wp_admin_bar) {
+                            if (!is_admin()) {
+                                if ($this->is()) {
+                                    $wp_admin_bar->add_menu([
+                                        'id'    => 'edit',
+                                        'title' => $this->post()->getType()->label('edit_item'),
+                                        'href'  => $this->post()->getEditLink(),
+                                    ]);
+                                }
+                            }
+                        }, 90);
                     }
                 } elseif (preg_match('/(.*)@taxonomy/', $rewrite, $matches) && taxonomy_exists($matches[1])) {
                     global $wp_rewrite, $wp_taxonomies;
@@ -138,18 +155,19 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
 
                     if (isset($wp_taxonomies[$taxonomy])) {
                         $wp_taxonomies[$taxonomy]->rewrite = false;
+                        $pbase = $wp_rewrite->pagination_base;
+                        $hookname = $this->getName();
 
                         add_rewrite_rule(
-                            ltrim($this->getPath(), '/') . '/([^/]+)/?$',
-                            'index.php?taxonomy=' . $taxonomy . '&term=$matches[1]&hookname=' . $this->getName(),
+                            "{$this->getPath()}/([^/]+)/?$",
+                            'index.php?taxonomy=' . $taxonomy . '&term=$matches[1]&hookname=' . $hookname,
                             'top'
                         );
 
                         add_rewrite_rule(
-                            ltrim($this->getPath(), '/') .
-                            '/([^/]+)/' . $wp_rewrite->pagination_base . '/([0-9]{1,})/?$',
+                            "{$this->getPath()}/([^/]+)/{$pbase}/([0-9]{1,})/?$",
                             'index.php?taxonomy=' . $taxonomy . '&term=$matches[1]&paged=$matches[2]&hookname=' .
-                            $this->getName(),
+                            $hookname,
                             'top'
                         );
 
@@ -208,15 +226,16 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                             $bc->add($pr);
                         }
 
-                        $id = get_the_ID();
-                        if ($acs = $bc->getAncestorsRender($id)) {
-                            array_walk($acs, function ($render) use ($bc) {
-                                $bc->add($render);
-                            });
-                        }
+                        if ($id = get_the_ID()) {
+                            if ($acs = $bc->getAncestorsRender($id)) {
+                                array_walk($acs, function ($render) use ($bc) {
+                                    $bc->add($render);
+                                });
+                            }
 
-                        if ($pr = $bc->getPostRender($id, false)) {
-                            $bc->add($pr);
+                            if ($pr = $bc->getPostRender($id, false)) {
+                                $bc->add($pr);
+                            }
                         }
                     }
                 }
@@ -336,8 +355,8 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                     global $wp_query;
 
                     if ($wp_query->is_main_query()) {
-                        if ($pagename = $wp_query->get('pagename','')) {
-                            $this->globalCurrent = (ltrim($this->getPath(), '/') === $pagename);
+                        if ($pagename = $wp_query->get('pagename', '')) {
+                            $this->globalCurrent = ($this->getPath() === $pagename);
                         } elseif ($page_id = $wp_query->get('page_id', 0)) {
                             $this->globalCurrent = ($this->post()->getId() === intval($page_id));
                         } else {
