@@ -1,92 +1,77 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\PostType;
 
-use tiFy\Apps\AppController;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\PostType\{
+    PostType as PostTypeContract,
+    PostTypeFactory as PostTypeFactoryContract,
+    PostTypePostMeta as PostTypePostMetaContract,
+    PostTypeStatus as PostTypeStatusContract};
 
-final class PostType extends AppController
+class PostType implements PostTypeContract
 {
     /**
-     * Liste des types de post déclarés.
-     * @var array
+     * Instance du conteneur d'injection de dépendance.
+     * @var Container|null
+     */
+    protected $container;
+
+    /**
+     * Liste des instances de type de post déclarée.
+     * @var PostTypeFactoryContract[]|array
      */
     protected $items = [];
 
     /**
-     * Initialisation du controleur.
+     * CONSTRUCTEUR.
+     *
+     * @param Container|null $container Instance du conteneur d'injection de dépendances.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct(?Container $container = null)
     {
-        $this->appAddAction('init', [$this, 'preInit'], 1);
-        $this->appAddAction('init', [$this, 'postInit'], 9999);
+        $this->container = $container;
     }
 
     /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function preInit()
+    public function get(string $name): ?PostTypeFactoryContract
     {
-        if ($post_types = $this->appConfig(null, [])) :
-            foreach ($post_types as $name => $attrs) :
-                $this->register($name, $attrs);
-            endforeach;
-        endif;
-
-        do_action('tify_post_type_register', $this);
+        return $this->items[$name] ?? null;
     }
 
     /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function postInit()
+    public function getContainer(): ?Container
     {
-        global $wp_post_types;
-
-        foreach($wp_post_types as $name => $attrs) :
-            if (!$this->get($name)) :
-                $this->register($name, get_object_vars($attrs));
-            endif;
-        endforeach;
+        return $this->container;
     }
 
     /**
-     * Création d'un type de post personnalisé.
-     *
-     * @param string $name Nom de qualification du type de post.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return null|PostTypeController
+     * @inheritDoc
      */
-    public function register($name, $attrs = [])
+    public function meta(): PostTypePostMetaContract
     {
-        $alias = "tfy.post_type.{$name}";
-        if($this->appServiceHas($alias)) :
-            return;
-        endif;
-
-        $this->appServiceShare($alias, new PostTypeItemController($name, $attrs, $this));
-
-        return $this->items[$name] = $this->appServiceGet($alias);
+        return ($c = $this->getContainer()) ? $c->get('post-type.meta') : new PostTypePostMeta();
     }
 
     /**
-     * Récupération d'un controleur de type de post.
-     *
-     * @param $name Nom de qualification du controleur.
-     *
-     * @return null|PostTypeController
+     * @inheritDoc
      */
-    public function get($name)
+    public function register(string $name, array $args = []): PostTypeFactoryContract
     {
-        $alias = "tfy.post_type.{$name}";
-        if($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
+        return $this->items[$name] = (new PostTypeFactory($name, $args))->setManager($this)->prepare();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function status(string $name, array $args = []): PostTypeStatusContract
+    {
+        return (!$args && ($exists = PostTypeStatus::instance($name))) ? $exists : PostTypeStatus::create($name, $args);
     }
 }
