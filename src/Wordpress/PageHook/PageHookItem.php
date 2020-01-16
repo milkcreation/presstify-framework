@@ -226,7 +226,10 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                             $bc->add($pr);
                         }
 
-                        if ($id = get_the_ID()) {
+                        if (is_tax()) {
+                            $id = get_queried_object_id();
+                        } elseif (is_single()) {
+                            $id = get_the_ID();
                             if ($acs = $bc->getAncestorsRender($id)) {
                                 array_walk($acs, function ($render) use ($bc) {
                                     $bc->add($render);
