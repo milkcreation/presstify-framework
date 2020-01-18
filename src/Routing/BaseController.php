@@ -56,6 +56,14 @@ abstract class BaseController extends ParamsBag
     }
 
     /**
+     *
+     */
+    public function response($content = '', int $status = 200, array $headers = []): ?ResponseContract
+    {
+        return new Response($content, $status, $headers);
+    }
+
+    /**
      * Redirection vers une route déclarée.
      *
      * @param string $name Nom de qualification de la route.
@@ -78,8 +86,8 @@ abstract class BaseController extends ParamsBag
      *
      * @return ResponseContract
      */
-    public function viewer(string $view, array $data = []): ?ResponseContract
+    public function view(string $view, array $data = []): ?ResponseContract
     {
-        return new Response(View::render($view, $data));
+        return $this->response(View::render($view, $data));
     }
 }
