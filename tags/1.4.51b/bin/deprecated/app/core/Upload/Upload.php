@@ -1,4 +1,5 @@
 <?php
+
 namespace tiFy\Core\Upload;
 
 use \tiFy\Lib\Cryptor\Cryptor;
@@ -75,7 +76,9 @@ class Upload extends \tiFy\App
             );
         endif;
 
-        $relpath = trim(preg_replace('/' . preg_quote(site_url(), '/') . '/', '', $upload_url), '/');
+        $relpath = is_multisite()
+            ? trim(preg_replace('/' . preg_quote(network_site_url(), '/') . '/', '', $upload_url), '/')
+            : trim(preg_replace('/' . preg_quote(site_url(), '/') . '/', '', $upload_url), '/');
         $abspath = ABSPATH . $relpath;
 
         // Le fichier n'existe pas
@@ -226,6 +229,8 @@ class Upload extends \tiFy\App
             endif;
         else :
             if ($relpath = preg_replace('/' . preg_quote(ABSPATH, '/') . '/', '', $file)) :
+            elseif (is_multisite()) :
+                $relpath = preg_replace('/' . preg_quote(network_site_url(), '/') . '/', '', $file);
             else :
                 $relpath = preg_replace('/' . preg_quote(site_url(), '/') . '/', '', $file);
             endif;
@@ -255,8 +260,16 @@ class Upload extends \tiFy\App
         elseif ($type === 'url') :
             if ($file = get_query_var('file_upload_url', false)) :
                 $file = Cryptor::decrypt($file);
-                $file = preg_replace('/^' . preg_quote(site_url(), '/') . '|^' . preg_quote(ABSPATH, '/') . '/', '',
-                    $file);
+                $file = is_multisite()
+                    ? preg_replace(
+                        '/^' . preg_quote(network_site_url(), '/') . '|^' . preg_quote(ABSPATH, '/') . '/',
+                        '',
+                        $file
+                    ) : preg_replace(
+                        '/^' . preg_quote(site_url(), '/') . '|^' . preg_quote(ABSPATH, '/') . '/',
+                        '',
+                        $file
+                    );
             endif;
         elseif ($type === 'media') :
             $file = (int)get_query_var('file_upload_media', 0);
