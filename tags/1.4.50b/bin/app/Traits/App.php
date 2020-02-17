@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\ServerBag;
+use tiFy\Core\Control\DropdownImages\DropdownImages;
 use tiFy\tiFy;
 use tiFy\Apps;
 

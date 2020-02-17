@@ -913,6 +913,7 @@ final class Apps
         // Enregistrement des composants système
         foreach (glob(tiFy::$AbsDir . '/core/*', GLOB_ONLYDIR) as $dirname) :
             $id = basename($dirname);
+
             $attrs = isset(self::$Config['Core'][$id]) ? self::$Config['Core'][$id] : array();
             Core::register($id, $attrs);
         endforeach;
