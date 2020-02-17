@@ -40,7 +40,7 @@ class HolderImage extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-holder_image',
-            self::tFyAppAssetsUrl('HolderImage.css', get_class()),
+            self::tFyAppRootUrl() . '/bin/assets/core/Control/HolderImage/HolderImage.css',
             [],
             160714
         );

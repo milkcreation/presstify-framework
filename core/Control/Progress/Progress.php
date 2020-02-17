@@ -41,13 +41,13 @@ class Progress extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-progress',
-            self::tFyAppAssetsUrl('Progress.css', get_class()),
+            self::tFyAppRootUrl() . '/bin/assets/core/Control/Progress/Progress.css',
             [],
             160605
         );
         \wp_register_script(
             'tify_control-progress',
-            self::tFyAppAssetsUrl('Progress.js', get_class()),
+            self::tFyAppRootUrl() . '/bin/assets/core/Control/Progress/Progress.js',
             ['jquery-ui-widget'],
             160605,
             true

@@ -43,13 +43,13 @@ class DropdownImages extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-dropdown_images',
-            self::tFyAppAssetsUrl('DropdownImages.css', get_class()),
+            self::tFyAppRootUrl() . '/bin/assets/core/Control/DropdownImages/DropdownImages.css',
             [],
             150122
         );
         \wp_register_script(
             'tify_control-dropdown_images',
-            self::tFyAppAssetsUrl('DropdownImages.js', get_class()),
+            self::tFyAppRootUrl() . '/bin/assets/core/Control/DropdownImages/DropdownImages.js',
             ['jquery'],
             150122,
             true

@@ -132,8 +132,8 @@ class   Import extends AjaxListTable
         tify_control_enqueue( 'progress' );
 
         // Chargement des scripts
-        wp_enqueue_style( 'tiFyTemplatesAdminImport', self::tFyAppAssetsUrl('Import.css', get_class()), array( ), 150607 );
-        wp_enqueue_script( 'tiFyTemplatesAdminImport', self::tFyAppAssetsUrl('Import.js', get_class()), array( 'jquery' ), 150607 );
+        wp_enqueue_style( 'tiFyTemplatesAdminImport', self::tFyAppRootUrl() . '/bin/assets/core/Templates/Admin/Model/Import/Import.css', array( ), 150607 );
+        wp_enqueue_script( 'tiFyTemplatesAdminImport', self::tFyAppRootUrl() . '/bin/assets/core/Templates/Admin/Model/Import/Import.js', array( 'jquery' ), 150607 );
         wp_localize_script( 
             'tiFyTemplatesAdminImport', 
             'tiFyTemplatesAdminImport',

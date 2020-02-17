@@ -1,6 +1,8 @@
 <?php
 namespace tiFy\Core\Templates\Admin\Model\EditForm;
 
+use tiFy\tiFy;
+
 class EditForm extends \tiFy\Core\Templates\Admin\Model\Form
 {
     /**
@@ -14,8 +16,8 @@ class EditForm extends \tiFy\Core\Templates\Admin\Model\Form
     public function _admin_enqueue_scripts()
 	{
         parent::_admin_enqueue_scripts();
-        
-        wp_enqueue_style( 'tiFyTemplatesAdminEditForm', self::tFyAppUrl( get_class() ) .'/EditForm.css', array(), 151211 );
+
+        wp_enqueue_style( 'tiFyTemplatesAdminEditForm', tiFy::$AbsUrl . '/bin/assets/core/Templates/Admin/Model/EditForm/EditForm.css', array(), 151211 );
     }
     
 }

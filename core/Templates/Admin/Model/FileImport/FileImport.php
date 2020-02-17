@@ -188,9 +188,8 @@ class FileImport extends Import
     {
         parent::_admin_enqueue_scripts();
 
-        // Chargement des scripts
-        wp_enqueue_style('tiFyTemplatesAdminFileImport', self::tFyAppAssetsUrl('FileImport.css', get_class()), [], 150607);
-        wp_enqueue_script('tiFyTemplatesAdminFileImport', self::tFyAppAssetsUrl('FileImport.js', get_class()), ['jquery'], 150607);
+        wp_enqueue_style('tiFyTemplatesAdminFileImport', self::tFyAppRootUrl() . '/bin/assets/core/Templates/Admin/Model/FileImport/FileImport.css', [], 150607);
+        wp_enqueue_script('tiFyTemplatesAdminFileImport', self::tFyAppRootUrl() . '/bin/assets/core/Templates/Admin/Model/FileImport/FileImport.js', ['jquery'], 150607);
     }
 
     /**
