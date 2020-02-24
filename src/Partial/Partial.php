@@ -1,208 +1,189 @@
-<?php
-
-/**
- * @name Partial
- * @desc Gestion de controleurs d'affichage
- * @package presstiFy
- * @namespace \tiFy\Partial
- * @version 1.1
- * @subpackage Core
- * @since 1.2.596
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
+<?php declare(strict_types=1);
 
 namespace tiFy\Partial;
 
-use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
-use tiFy\Components\Partial\Breadcrumb\Breadcrumb;
-use tiFy\Components\Partial\CookieNotice\CookieNotice;
-use tiFy\Components\Partial\HolderImage\HolderImage;
-use tiFy\Components\Partial\Modal\Modal;
-use tiFy\Components\Partial\ModalTrigger\ModalTrigger;
-use tiFy\Components\Partial\Navtabs\Navtabs;
-use tiFy\Components\Partial\Notice\Notice;
-use tiFy\Components\Partial\Sidebar\Sidebar;
-use tiFy\Components\Partial\Slider\Slider;
-use tiFy\Components\Partial\Table\Table;
-use tiFy\Components\Partial\Tag\Tag;
+use InvalidArgumentException;
+use tiFy\Contracts\Partial\{
+    Accordion,
+    Breadcrumb,
+    CookieNotice,
+    CurtainMenu,
+    Dropdown,
+    Downloader,
+    Holder,
+    ImageLightbox,
+    Modal,
+    Notice,
+    Pagination,
+    Partial as PartialContract,
+    PartialDriver,
+    Pdfviewer,
+    Progress,
+    Sidebar,
+    Slider,
+    Spinner,
+    Tab,
+    Table,
+    Tag
+};
+use tiFy\Support\Manager;
 
-/**
- * @method static Breadcrumb Breadcrumb(string $id = null, array $attrs = [])
- * @method static CookieNotice CookieNotice(string $id = null, array $attrs = [])
- * @method static HolderImage HolderImage(string $id = null,array $attrs = [])
- * @method static Modal Modal(string $id = null,array $attrs = [])
- * @method static ModalTrigger ModalTrigger(string $id = null,array $attrs = [])
- * @method static Navtabs Navtabs(string $id = null,array $attrs = [])
- * @method static Notice Notice(string $id = null,array $attrs = [])
- * @method static Sidebar Sidebar(string $id = null,array $attrs = [])
- * @method static Slider Slider(string $id = null,array $attrs = [])
- * @method static Spinner Spinner(string $id = null,array $attrs = [])
- * @method static Table Table(string $id = null,array $attrs = [])
- * @method static Tag Tag(string $id = null,array $attrs = [])
- */
-final class Partial extends AppController
+class Partial extends Manager implements PartialContract
 {
     /**
-     * Liste des instances de champ.
+     * Définition des éléments déclarées par défaut.
      * @var array
      */
-    protected static $instance = [];
+    protected $defaults = [
+        'accordion'      => Accordion::class,
+        'breadcrumb'     => Breadcrumb::class,
+        'cookie-notice'  => CookieNotice::class,
+        'curtain-menu'   => CurtainMenu::class,
+        'dropdown'       => Dropdown::class,
+        'downloader'     => Downloader::class,
+        'holder'         => Holder::class,
+        'image-lightbox' => ImageLightbox::class,
+        'modal'          => Modal::class,
+        'notice'         => Notice::class,
+        'pagination'     => Pagination::class,
+        'pdfviewer'      => Pdfviewer::class,
+        'progress'       => Progress::class,
+        'sidebar'        => Sidebar::class,
+        'slider'         => Slider::class,
+        'spinner'        => Spinner::class,
+        'tab'            => Tab::class,
+        'table'          => Table::class,
+        'tag'            => Tag::class,
+    ];
 
     /**
-     * Initialisation du controleur.
-     *
-     * @return void
+     * Liste des éléments déclarées.
+     * @var PartialDriver[]
      */
-    public function appBoot()
+    protected $items = [];
+
+    /**
+     * Liste des indices courant des éléments déclarées par alias de qualification.
+     * @var int[]
+     */
+    protected $indexes = [];
+
+    /**
+     * Instances des éléments par alias de qualification et indexés par identifiant de qualification.
+     * @var PartialDriver[][]
+     */
+    protected $instances = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function get(...$args): ?PartialDriver
     {
-        // Déclaration des controleurs d'affichage natifs
-        foreach(glob($this->appAbsDir() . '/Components/Partial/*/', GLOB_ONLYDIR) as $filename) :
-            $name = basename($filename);
+        $alias = $args[0] ?? null;
+        if (!$alias || !isset($this->items[$alias])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    __('Aucune instance de portion d\'affichage correspondant à l\'alias : %s', 'tify'),
+                    $alias
+                )
+            );
+        }
 
-            $this->register($name, "tiFy\\Components\\Partial\\{$name}\\{$name}::make");
-        endforeach;
+        $id = $args[1] ?? null;
+        $attrs = $args[2] ?? [];
 
-        do_action('tify_partial_register', $this);
+        if (is_array($id)) {
+            $attrs = $id;
+            $id = null;
+        } else {
+            $attrs = $attrs ?: [];
+        }
+
+        if ($id) {
+            if (isset($this->instances[$alias][$id])) {
+                return $this->instances[$alias][$id];
+            }
+
+            $this->indexes[$alias]++;
+            $this->instances[$alias][$id] = clone $this->items[$alias];
+            $partial = $this->instances[$alias][$id];
+        } else {
+            $this->indexes[$alias]++;
+            $partial = clone $this->items[$alias];
+        }
+
+        return $partial
+            ->setIndex($this->indexes[$alias])
+            ->setId($id ?? $alias . $this->indexes[$alias])
+            ->set($attrs)->parse();
     }
 
     /**
-     * Déclaration d'un controleur d'affichage.
-     *
-     * @param string $name Nom de qualification du controleur d'affichage.
-     * @param mixed $callable classe ou méthode ou fonction de rappel.
-     *
-     * @return null|callable|AbstractPartialController
+     * @inheritDoc
      */
-    public function register($name, $callable)
+    public function register($key, ...$args)
     {
-        if ($this->appServiceHas($name)) :
-            return null;
-        endif;
-
-        $alias = "tfy.partial.{$name}";
-
-        if (is_callable($callable)) :
-            $this->appServiceAdd($alias, $callable);
-        elseif (class_exists($callable)) :
-            $this->appServiceAdd($alias, $callable);
-        else :
-            return null;
-        endif;
-
-        return $this->appServiceGet($alias);
+        if (isset($args[0])) {
+            return $this->set([$key => $args[0]]);
+        }
+        throw new InvalidArgumentException(
+            sprintf(__('La déclaration de la portion d\'affichage [%s] n\'est pas conforme.', 'tify'), $key)
+        );
     }
 
     /**
-     * Récupération d'un controleur d'affichage.
-     *
-     * @param string $name Nom de qualification du controleur d'affichage.
-     *
-     * @return mixed|AbstractPartialController
+     * @inheritDoc
      */
-    public function get($name)
+    public function registerDefaults(): PartialContract
     {
-        $alias = "tfy.partial.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
-
-        return null;
-    }
-
-    /**
-     * Affichage ou récupération du contenu d'un controleur natif.
-     *
-     * @param string $name Nom de qualification du controleur d'affichage.
-     * @param array $args {
-     *      Liste des attributs de configuration.
-     *
-     *      @var array $attrs Attributs de configuration du champ.
-     *      @var bool $echo Activation de l'affichage du champ.
-     *
-     * @return null|callable
-     */
-    public static function __callStatic($name, $args)
-    {
-        if(! $callable = self::appInstance()->get($name)) :
-            return null;
-        endif;
-
-        return call_user_func_array($callable, $args);
-    }
-
-    /**
-     * Vérification d'existance d'une instance d'un contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     *
-     * @return bool
-     */
-    public function existsInstance($classname)
-    {
-        return Arr::has(self::$instance, $classname);
-    }
-
-    /**
-     * Compte le nombre d'instance d'un contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     *
-     * @return int
-     */
-    public function countInstance($classname)
-    {
-        return count(Arr::get(self::$instance, $classname, []));
-    }
-
-    /**
-     * Définition d'une instance de contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     * @param string $hash Hashage des attributs de configuration.
-     *
-     * @return bool
-     */
-    public function setInstance($classname, $hash, $obj)
-    {
-        return Arr::set(self::$instance, "{$classname}.{$hash}", $obj);
-    }
-
-    /**
-     * Définition d'une instance de contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     * @param string $hash Hashage des attributs de configuration.
-     *
-     * @return bool
-     */
-    public function getInstance($classname, $hash)
-    {
-        return Arr::get(self::$instance, "{$classname}.{$hash}");
-    }
-
-    /**
-     * Mise en file des scripts d'un controleur.
-     *
-     * @param string $name Nom de qualification du controleur.
-     * @param array $args Liste des variables passées en argument.
-     *
-     * @return $this
-     */
-    public function enqueue($name, $args = [])
-    {
-        if(!$callable = $this->get($name)) :
-            return null;
-        endif;
-
-        if (!is_object($callable) || !method_exists($callable, 'enqueue_scripts')) :
-            return null;
-        endif;
-
-        call_user_func_array([$callable, 'enqueue_scripts'], $args);
+        foreach ($this->defaults as $name => $alias) {
+            $this->set($name, $this->getContainer()->get($alias));
+        }
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resourcesDir(string $path = null): string
+    {
+        $path = $path ? '/' . ltrim($path, '/') : '';
+
+        return file_exists(__DIR__ . "/Resources{$path}") ? __DIR__ . "/Resources{$path}" : '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resourcesUrl(string $path = null): string
+    {
+        $cinfo = class_info($this);
+        $path = $path ? '/' . ltrim($path, '/') : '';
+
+        return file_exists($cinfo->getDirname() . "/Resources{$path}") ? $cinfo->getUrl() . "/Resources{$path}" : '';
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @throws InvalidArgumentException
+     */
+    public function walk(&$item, $key = null): void
+    {
+        if ($item instanceof PartialDriver) {
+            $item->prepare((string)$key, $this);
+
+            $this->instances[$key] = [$item];
+            $this->indexes[$key] = 0;
+        } else {
+            throw new InvalidArgumentException(
+                sprintf(
+                    __('La déclaration de la portion d\'affichage [%s] devrait être une instance de [%s]', 'tify'),
+                    $key,
+                    PartialDriver::class
+                )
+            );
+        }
     }
 }
