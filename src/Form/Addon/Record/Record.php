@@ -135,6 +135,9 @@ class Record extends AddonFactory
                         'bulk-actions' => false,
                         'columns'      => $columns,
                         'row-actions'  => false,
+                        'query_args'   => [
+                            'order' => 'DESC'
+                        ],
                         'search'       => false,
                         'view-filters' => false,
                         'wordpress'    => [
