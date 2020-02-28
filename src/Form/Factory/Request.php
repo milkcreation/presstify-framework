@@ -87,17 +87,15 @@ class Request extends ParamsBag implements FactoryRequest
     {
         $this->form()->prepare();
 
-        $attrs = call_user_func([request(), $this->form()->getMethod()]);
+        $values = call_user_func([Req::getInstance(), $this->form()->getMethod()]);
 
         foreach ($this->fields() as $field) {
-            if (isset($attrs[$field->getName()]) && ($field->getSlug() !== $field->getName())) {
-                $attrs[$field->getSlug()] = $attrs[$field->getName()];
-                unset($attrs[$field->getName()]);
+            if (isset($values[$field->getName()])) {
+                $this->set($field->getSlug(),  $values[$field->getName()]);
             }
         }
-        $this->set($attrs)->parse();
 
-        $this->events('request.prepare');
+        $this->parse()->events('request.prepare');
 
         return $this;
     }
@@ -187,6 +185,6 @@ class Request extends ParamsBag implements FactoryRequest
      */
     public function verify(): bool
     {
-        return !!wp_verify_nonce(request()->input('_token', ''), 'Form' . $this->form()->name());
+        return !!wp_verify_nonce(Req::input('_token', ''), 'Form' . $this->form()->name());
     }
 }
