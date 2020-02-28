@@ -4,7 +4,7 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Contracts\Form\FormFactory;
-use tiFy\Support\{ParamsBag, Proxy\Request as Req};
+use tiFy\Support\{ParamsBag, Proxy\Request as Req, Proxy\Url};
 
 class Request extends ParamsBag implements FactoryRequest
 {
@@ -15,6 +15,12 @@ class Request extends ParamsBag implements FactoryRequest
      * @var boolean
      */
     protected $handled = false;
+
+    /**
+     * Url de redirection.
+     * @var string
+     */
+    protected $redirect;
 
     /**
      * CONSTRUCTEUR.
@@ -33,15 +39,13 @@ class Request extends ParamsBag implements FactoryRequest
      */
     public function getRedirectUrl(): string
     {
-        $redirect = add_query_arg(['success' => $this->form()->name()], $this->get(
-            '_http_referer',
-            Req::header('referer')
-        ));
-        $redirect .= $this->option('anchor') && ($id = $this->form()->get('attrs.id')) ? "#{$id}" : '';
+        if (is_null($this->redirect)) {
+            $this->setRedirectUrl($this->get('_http_referer', Req::header('referer')));
+        }
 
-        $this->events('request.redirect', [&$redirect]);
+        $this->events('request.redirect', [&$this->redirect]);
 
-        return $redirect;
+        return $this->redirect;
     }
 
     /**
@@ -116,6 +120,24 @@ class Request extends ParamsBag implements FactoryRequest
     /**
      * @inheritDoc
      */
+    public function setRedirectUrl(string $url, bool $raw = false): FactoryRequest
+    {
+        if (!$raw) {
+            $uri = Url::set($url);
+            $uri->with(['success' => $this->form()->name()]);
+
+            $url = (string)$uri;
+            $url .= $this->option('anchor') && ($id = $this->form()->get('attrs.id')) ? "#{$id}" : '';
+        }
+
+        $this->redirect = $url;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function validate(): FactoryRequest
     {
         foreach ($this->fields() as $name => $field) {
@@ -133,7 +155,7 @@ class Request extends ParamsBag implements FactoryRequest
                     $this->notices()->add('error', sprintf($field->getRequired('message'), $field->getTitle()), [
                         'type'  => 'field',
                         'field' => $field->getSlug(),
-                        'test'  => 'required'
+                        'test'  => 'required',
                     ]);
                 }
             }
@@ -145,7 +167,7 @@ class Request extends ParamsBag implements FactoryRequest
                     foreach ($validations as $validation) {
                         if (!$this->validation()->call($validation['call'], $value, $validation['args'])) {
                             $this->notices()->add('error', sprintf($validation['message'], $field->getTitle()), [
-                                'field' => $field->getSlug()
+                                'field' => $field->getSlug(),
                             ]);
                         }
                     }
