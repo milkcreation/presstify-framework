@@ -333,6 +333,8 @@ jQuery(function ($) {
 
             this.handler.val(this.selected);
             this.el.data('value', this.selected);
+
+            this._trigger('init');
         },
 
         // SETTER
@@ -816,8 +818,10 @@ jQuery(function ($) {
             }
 
             // @todo Adminbar test
-            let $html = $('html');
-            offset.top += $html.height() - $html.outerHeight(true);
+            if( $('body:not(.wp-admin)').hasClass('admin-bar')) {
+                let $html = $('html');
+                offset.top += $html.height() - $html.outerHeight(true);
+            }
 
             if (placement === 'clever') {
                 placement = (
