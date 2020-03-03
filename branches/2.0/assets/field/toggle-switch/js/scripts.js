@@ -34,12 +34,16 @@ jQuery(function ($) {
 
       this.el = this.element;
 
+      this.el.data('value', $('input[type="radio"]:checked', this.el).val());
+
       this._initEvents();
-      this.el.data('value', $('input[type="radio"]:checked', this.el).change().val());
     },
     // Initialisation des événements déclenchement.
     _initEvents: function () {
       let self = this;
+
+      this._trigger('init');
+
       this._on(this.el, {'change input[type="radio"]': function (e) {
         self.el.data('value', $(e.target).val());
         self._trigger('change');

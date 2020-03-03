@@ -10,7 +10,7 @@ use tiFy\Kernel\KernelServiceProvider;
  * @desc PresstiFy -- Framework Milkcreation.
  * @author Jordy Manner <jordy@milkcreation.fr>
  * @package tiFy
- * @version 2.0.266
+ * @version 2.0.267
  * @copyright Milkcreation
  */
 final class tiFy extends Container
