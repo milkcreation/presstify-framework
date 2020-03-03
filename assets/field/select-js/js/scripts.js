@@ -816,8 +816,8 @@ jQuery(function ($) {
             }
 
             // @todo Adminbar test
-            // let $html = $('html');
-            //offset.top += $html.outerHeight(true) - $html.height();
+            let $html = $('html');
+            offset.top += $html.height() - $html.outerHeight(true);
 
             if (placement === 'clever') {
                 placement = (
