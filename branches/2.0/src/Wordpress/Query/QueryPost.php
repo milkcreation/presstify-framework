@@ -623,7 +623,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
         bool $use_tag = true,
         bool $uncut = true
     ): string {
-        return Str::teaser($this->getExcerpt(true), $length, $teaser, $use_tag, $uncut);
+        return Str::teaser($this->getContent(), $length, $teaser, $use_tag, $uncut);
     }
 
     /**
