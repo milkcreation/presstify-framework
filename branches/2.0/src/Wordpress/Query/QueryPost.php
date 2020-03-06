@@ -84,12 +84,8 @@ class QueryPost extends ParamsBag implements QueryPostContract
             return (new static($id));
         } elseif ($id instanceof QueryPostContract) {
             return static::createFromId($id->getId());
-        } elseif (is_null($id) && ($instance = static::createFromGlobal())) {
-            if (($postType = static::$postType) && ($postType !== 'any')) {
-                return $instance->typeIn($postType) ? $instance : null;
-            } else {
-                return $instance;
-            }
+        } elseif (is_null($id)) {
+            return static::createFromGlobal();
         } else {
             return null;
         }
@@ -110,7 +106,11 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         global $post;
 
-        return $post instanceof WP_Post ? new static($post) : null;
+        if ($post instanceof WP_Post) {
+             return static::is($instance = new static($post)) ? $instance :  null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -118,8 +118,11 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function createFromId(int $post_id): ?QueryPostContract
     {
-        return ($post_id && ($wp_post = get_post($post_id)) && ($wp_post instanceof WP_Post))
-            ? new static($wp_post) : null;
+        if ($post_id && ($wp_post = get_post($post_id)) && ($wp_post instanceof WP_Post)) {
+            return static::is($instance = new static($wp_post)) ? $instance :  null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -127,7 +130,11 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function createFromPostdata(array $postdata): ?QueryPostContract
     {
-        return isset($postdata['ID']) ? new static(new WP_Post((object)$postdata)) : null;
+        if(isset($postdata['ID'])) {
+            return static::is($instance = new static(new WP_Post((object)$postdata))) ? $instance :  null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -137,7 +144,11 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         $wpQuery = new WP_Query(static::parseQueryArgs(['name' => $name]));
 
-        return ($wpQuery->found_posts == 1) ? new static(current($wpQuery->posts)) : null;
+        if ($wpQuery->found_posts == 1) {
+            return static::is($instance = new static(current($wpQuery->posts))) ? $instance :  null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -154,6 +165,15 @@ class QueryPost extends ParamsBag implements QueryPostContract
         } else {
             return [];
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function is(QueryPostContract $instance): bool
+    {
+        return $instance instanceof static &&
+            ((($postType = static::$postType) && ($postType !== 'any')) ? $instance->typeIn($postType) : true);
     }
 
     /**
@@ -194,11 +214,15 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public static function queryFromEloquent(EloquentCollection $collection): array
     {
         $items = $collection->toArray();
-        array_walk($items, function (array &$item) {
-            $item = new static(new WP_Post((object)$item));
-        });
 
-        return $items;
+        $instances = [];
+        foreach($items as $item) {
+            if (static::is($instance = new static(new WP_Post((object)$item)))) {
+                $instances[] = $instance;
+            }
+        }
+
+        return $instances;
     }
 
     /**
@@ -244,11 +268,19 @@ class QueryPost extends ParamsBag implements QueryPostContract
             'total'    => $total,
         ]);
 
-        $data = $wp_query->posts ?? [];
+        $wp_posts = $wp_query->posts ?? [];
 
-        array_walk($data, function (WP_Post &$wp_post) {
-            $wp_post = new static($wp_post);
-        });
+        $data = [];
+        foreach($wp_posts as $wp_post) {
+            $instance = new static($wp_post);
+            if (($postType = static::$postType) && ($postType !== 'any')) {
+                if ($instance->typeIn($postType)) {
+                    $data[] = $instance;
+                }
+            } else {
+                $data[] = $instance;
+            }
+        }
 
         static::query()->set(compact('data'));
 
@@ -768,8 +800,8 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function typeIn(array $post_types): bool
+    public function typeIn($post_types): bool
     {
-        return in_array((string)$this->getType(), $post_types);
+        return in_array((string)$this->getType(), (array)$post_types);
     }
 }
