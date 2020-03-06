@@ -26,7 +26,9 @@ interface QueryPost extends ParamsBag
     public static function create($id = null, ...$args): ?QueryPost;
 
     /**
-     * Récupération d'une instance basée sur un modele Laravel Eloquent
+     * Récupération d'une instance basée sur un modèle Laravel Eloquent
+     *
+     * @param EloquentModel $model
      *
      * @return static|null
      */
@@ -74,6 +76,15 @@ interface QueryPost extends ParamsBag
      * @return QueryPost[]|array
      */
     public static function fetch($query = null): array;
+
+    /**
+     * Vérification d'intégrité d'une instance.
+     *
+     * @param QueryPostContract $instance
+     *
+     * @return bool
+     */
+    public static function is(QueryPostContract $instance): bool;
 
     /**
      * Traitement d'arguments de requête de récupération des éléments.
@@ -562,9 +573,9 @@ interface QueryPost extends ParamsBag
     /**
      * Vérification de correspondance du type de post.
      *
-     * @param array $post_types Liste des types de post à vérifier.
+     * @param array|string $post_types Liste de types de post à vérifier.
      *
      * @return bool
      */
-    public function typeIn(array $post_types): bool;
+    public function typeIn($post_types): bool;
 }
