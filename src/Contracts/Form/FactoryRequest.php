@@ -28,11 +28,11 @@ interface FactoryRequest extends FactoryResolver, ParamsBag
     public function prepare(): FactoryRequest;
 
     /**
-     * Réinitialisation des champs.
+     * Réinitialisation de la requête.
      *
      * @return static
      */
-    public function resetFields(): FactoryRequest;
+    public function reset(): FactoryRequest;
 
     /**
      * Définition de l'url de redirection.
