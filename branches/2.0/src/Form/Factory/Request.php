@@ -66,13 +66,13 @@ class Request extends ParamsBag implements FactoryRequest
         $this->prepare()->validate();
 
         if ($this->notices()->has('error')) {
-            $this->resetFields();
+            $this->reset();
             return;
         }
         $this->events('request.submit', [&$this]);
 
         if ($this->notices()->has('error')) {
-            $this->resetFields();
+            $this->reset();
             return;
         }
         $this->events('request.success', [&$this]);
@@ -103,7 +103,7 @@ class Request extends ParamsBag implements FactoryRequest
     /**
      * @inheritDoc
      */
-    public function resetFields(): FactoryRequest
+    public function reset(): FactoryRequest
     {
         foreach ($this->fields() as $field) {
             if (!$field->supports('transport')) {
