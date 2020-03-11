@@ -157,11 +157,11 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public static function fetch($query = null): array
     {
         if (is_array($query)) {
-            return static::queryFromArgs($query);
+            return static::fetchFromArgs($query);
         } elseif ($query instanceof WP_Query) {
-            return static::queryFromWpQuery($query);
+            return static::fetchFromWpQuery($query);
         } elseif (is_null($query)) {
-            return static::queryFromGlobal();
+            return static::fetchFromGlobal();
         } else {
             return [];
         }
@@ -170,48 +170,15 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public static function is(QueryPostContract $instance): bool
+    public static function fetchFromArgs(array $args = []): array
     {
-        return $instance instanceof static &&
-            ((($postType = static::$postType) && ($postType !== 'any')) ? $instance->typeIn($postType) : true);
+        return static::fetchFromWpQuery(new WP_Query(static::parseQueryArgs($args)));
     }
 
     /**
      * @inheritDoc
      */
-    public static function parseQueryArgs(array $args = []): array
-    {
-        if (!isset($args['post_type'])) {
-            $args['post_type'] = static::$postType ?: 'any';
-        }
-
-        return array_merge(static::$defaultArgs, $args);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function query(): ParamsBagContract
-    {
-        if (is_null(static::$query)) {
-            static::$query = new ParamsBag();
-        }
-
-        return static::$query;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function queryFromArgs(array $args = []): array
-    {
-        return static::queryFromWpQuery(new WP_Query(static::parseQueryArgs($args)));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function queryFromEloquent(EloquentCollection $collection): array
+    public static function fetchFromEloquent(EloquentCollection $collection): array
     {
         $items = $collection->toArray();
 
@@ -228,17 +195,17 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public static function queryFromGlobal(): array
+    public static function fetchFromGlobal(): array
     {
         global $wp_query;
 
-        return static::queryFromWpQuery($wp_query);
+        return static::fetchFromWpQuery($wp_query);
     }
 
     /**
      * @inheritDoc
      */
-    public static function queryFromIds(array $ids): array
+    public static function fetchFromIds(array $ids): array
     {
         $args = static::parseQueryArgs(['post__in' => $ids, 'posts_per_page' => -1]);
         if (!isset($args['post_type'])) {
@@ -247,13 +214,13 @@ class QueryPost extends ParamsBag implements QueryPostContract
         $args['post__in'] = $ids;
         $args['posts_per_page'] = -1;
 
-        return static::queryFromWpQuery(new WP_Query($args));
+        return static::fetchFromWpQuery(new WP_Query($args));
     }
 
     /**
      * @inheritDoc
      */
-    public static function queryFromWpQuery(WP_Query $wp_query): array
+    public static function fetchFromWpQuery(WP_Query $wp_query): array
     {
         $total = (int)$wp_query->found_posts;
         $per_page = (int)$wp_query->get('posts_per_page');
@@ -285,6 +252,89 @@ class QueryPost extends ParamsBag implements QueryPostContract
         static::query()->set(compact('data'));
 
         return $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function is($instance): bool
+    {
+        return $instance instanceof static &&
+            ((($postType = static::$postType) && ($postType !== 'any')) ? $instance->typeIn($postType) : true);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function parseQueryArgs(array $args = []): array
+    {
+        if (!isset($args['post_type'])) {
+            $args['post_type'] = static::$postType ?: 'any';
+        }
+
+        return array_merge(static::$defaultArgs, $args);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function query(): ParamsBagContract
+    {
+        if (is_null(static::$query)) {
+            static::$query = new ParamsBag();
+        }
+
+        return static::$query;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated
+     */
+    public static function queryFromArgs(array $args = []): array
+    {
+        return static::fetchFromArgs($args);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated
+     */
+    public static function queryFromEloquent(EloquentCollection $collection): array
+    {
+        return static::fetchFromEloquent($collection);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated
+     */
+    public static function queryFromGlobal(): array
+    {
+        return static::fetchFromGlobal();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated
+     */
+    public static function queryFromIds(array $ids): array
+    {
+        return static::fetchFromIds($ids);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated
+     */
+    public static function queryFromWpQuery(WP_Query $wp_query): array
+    {
+        return static::fetchFromWpQuery($wp_query);
     }
 
     /**
@@ -412,7 +462,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
             $per_page = get_option('posts_per_page');
         }
 
-        return static::queryFromArgs(array_merge($args, [
+        return static::fetchFromArgs(array_merge($args, [
             'paged'         => $page,
             'post_parent'   => $this->getId(),
             'post_status'   => 'publish',
@@ -443,7 +493,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getComments(array $args = []): array
     {
-        return QueryComment::queryFromArgs(array_merge(['post_id' => $this->getId()], $args));
+        return QueryComment::fetchFromArgs(array_merge(['post_id' => $this->getId()], $args));
     }
 
     /**
