@@ -1,32 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Partial\Driver\Pagination;
+namespace tiFy\Wordpress\Query;
 
-use tiFy\Contracts\Partial\PaginationQuery as PaginationQueryContract;
-use tiFy\Support\{ParamsBag, Traits\PaginationAwareTrait};
+use tiFy\Support\{ParamsBag, Traits\PaginationAwareTrait, Proxy\Partial};
+use tiFy\Wordpress\Contracts\Query\PaginationQuery as PaginationQueryContract;
 
 class PaginationQuery extends ParamsBag implements PaginationQueryContract
 {
     use PaginationAwareTrait;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param array|object|null $args
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct($args = null)
+    public function __toString(): string
     {
-        if (is_array($args)) {
-            $this->set($args);
-        } elseif (is_object($args)) {
-            if (($traits = class_uses($args)) && in_array(PaginationAwareTrait::class, $traits)) {
-                $this->set($args->toArray());
-            } else {
-                $this->set(get_object_vars($args));
-            }
-        }
+        return $this->render();
     }
 
     /**
@@ -38,7 +26,7 @@ class PaginationQuery extends ParamsBag implements PaginationQueryContract
     {
         parent::parse();
 
-        if ($baseUrl = $this->pull('base_url', null)) {
+        if ($baseUrl = $this->pull('base_url')) {
             $this->setBaseUrl($baseUrl);
         }
 
@@ -62,7 +50,7 @@ class PaginationQuery extends ParamsBag implements PaginationQueryContract
             $this->setPerPage($per_page);
         }
 
-        if ($segmentUrl = $this->pull('segment_url')) {
+        if ($segmentUrl = $this->pull('segment_url', false)) {
             $this->setSegmentUrl($segmentUrl);
         }
 
@@ -75,5 +63,13 @@ class PaginationQuery extends ParamsBag implements PaginationQueryContract
         }
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(): string
+    {
+        return Partial::get('pagination', ['query' => $this])->render();
     }
 }
