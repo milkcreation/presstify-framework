@@ -36,7 +36,7 @@ class HttpXhrController extends BaseHttpXhrController implements HttpXhrControll
             return [
                 'data'            => $cols,
                 'draw'            => $draw,
-                'pagenum'         => $this->factory->pagination()->getPage(),
+                'pagenum'         => $this->factory->pagination()->getCurrentPage(),
                 'pagination'      => (string)$this->factory->viewer('pagination', ['which' => 'bottom']),
                 'recordsTotal'    => $this->factory->pagination()->getTotal(),
                 'recordsFiltered' => $this->factory->pagination()->getTotal(),
