@@ -33,6 +33,10 @@
 }
 
 @media (max-width: 991px) {
+  .modal-dialog.modal-lg {
+    max-width: none;
+    margin: 1.75rem 15px;
+  }
   .modal-dialog.modal-full {
     width: auto;
     margin-left: 30px;
@@ -60,6 +64,11 @@
   pointer-events: auto;
 }
 
+.modal-backdrop-close {
+  position:fixed;
+  right:10px;
+}
+
 .ThemeButton--close.modal-backdrop-close::after,
 .ThemeButton--close.modal-backdrop-close::before {
   background-color: #FFF;
@@ -68,10 +77,15 @@
 .ThemeButton--close.modal-backdrop-close,
 .ThemeButton--close.modal-close {
   position:absolute;
-  top:15px;
-  right:15px;
+  top:10px;
+  right:10px;
   outline: none;
   z-index:1;
+}
+
+.ThemeButton--close.modal-backdrop-close {
+  position:fixed;
+  right:20px;
 }
 
 .modal-spinner {
