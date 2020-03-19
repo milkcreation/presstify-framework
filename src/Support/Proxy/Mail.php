@@ -2,18 +2,16 @@
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Mail\{Mail, Mailer as MailerContract};
+use tiFy\Contracts\Mail\{Mail as MailContract, Mailer as MailerContract};
 
 /**
- * @method static Mail create(Mail|array|null $params = null)
- * @method static void debug(Mail|array|null $params = null)
- * @method static bool send(Mail|array|null $params = null)
+ * @method static MailContract create(MailContract|array|null $params = null)
+ * @method static void debug(MailContract|array|null $params = null)
+ * @method static bool send(MailContract|array|null $params = null)
  *
  * @see \tiFy\Mail\Mailer
- *
- * @deprecated
  */
-class Mailer extends AbstractProxy
+class Mail extends AbstractProxy
 {
     /**
      * {@inheritDoc}
