@@ -184,7 +184,7 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
         $render = $this->get('render', '');
 
         if ($render instanceof Closure) {
-            $render = $render($this);
+            $render = (string) $render($this, ...$this->args);
         }
 
         return $render ? : ($this->viewer()->exists('index') ? $this->viewer('index', $this->all()) : '');

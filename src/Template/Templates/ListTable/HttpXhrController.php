@@ -22,6 +22,8 @@ class HttpXhrController extends BaseHttpXhrController implements HttpXhrControll
     public function post()
     {
         if ($draw = $this->factory->request()->input('draw')) {
+            $this->factory->prepare();
+
             $cols = [];
             if ($this->factory->items()->exists()) {
                 foreach ($this->factory->items() as $i => $item) {
@@ -42,8 +44,6 @@ class HttpXhrController extends BaseHttpXhrController implements HttpXhrControll
                 'recordsFiltered' => $this->factory->pagination()->getTotal(),
                 'search'          => (string)$this->factory->viewer('search')
             ];
-        } elseif ($action = $this->factory->request()->input('action')) {
-            return $this->factory->actions()->execute($action, func_get_args());
         } else {
             throw new NotFoundException();
         }
