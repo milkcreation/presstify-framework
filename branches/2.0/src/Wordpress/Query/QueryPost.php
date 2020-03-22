@@ -719,7 +719,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
         $args['taxonomy'] = $taxonomy;
         $args['object_ids'] = $this->getId();
 
-        return (new WP_Term_Query($args))->terms;
+        return (new WP_Term_Query($args))->terms ? : [];
     }
 
     /**
