@@ -1,69 +1,77 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Taxonomy;
 
-use tiFy\Apps\AppController;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\Taxonomy\{
+    Taxonomy as TaxonomyContract,
+    TaxonomyFactory as TaxonomyFactoryContract,
+    TaxonomyTermMeta as TaxonomyTermMetaContract
+};
 
-final class Taxonomy extends AppController
+class Taxonomy implements TaxonomyContract
 {
     /**
-     * Initialisation du controleur.
+     * Instance du conteneur d'injection de dépendance.
+     * @var Container|null
+     */
+    protected $container;
+
+    /**
+     * Liste des instances de type de post déclarée.
+     * @var TaxonomyFactoryContract[]|array
+     */
+    protected $items = [];
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param Container|null $container Instance du conteneur d'injection de dépendances.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct(?Container $container = null)
     {
-        $this->appAddAction('init', null, 0);
+        $this->container = $container;
     }
 
     /**
-     * Initialisation globale de Wordpress.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function init()
+    public function get(string $name): ?TaxonomyFactoryContract
     {
-        if ($taxonomies = $this->appConfig(null, [])) :
-            foreach ($taxonomies as $name => $attrs) :
-                $this->register($name, $attrs);
-            endforeach;
-        endif;
-
-        do_action('tify_taxonomy_register', $this);
+        return $this->items[$name] ?? null;
     }
 
     /**
-     * Création d'une taxonomie personnalisée.
-     *
-     * @param string $name Nom de qualification de la taxonomie.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return null|TaxonomyController
+     * @inheritDoc
      */
-    public function register($name, $attrs = [])
+    public function getContainer(): ?Container
     {
-        $alias = "tfy.taxonomy.{$name}";
-        if($this->appServiceHas($alias)) :
-            return;
-        endif;
-
-        $this->appServiceShare($alias, new TaxonomyController($name, $attrs, $this));
-
-        return $this->appServiceGet($alias);
+        return $this->container;
     }
 
     /**
-     * Récupération d'un controleur de taxonomie.
-     *
-     * @param $name Nom de qualification du controleur.
-     *
-     * @return null|TaxonomyController
+     * @inheritDoc
      */
-    public function get($name)
+    public function meta(): TaxonomyTermMetaContract
     {
-        $alias = "tfy.taxonomy.{$name}";
-        if($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
+        return ($c = $this->getContainer()) ? $c->get('taxonomy.term-meta') : new TaxonomyTermMeta();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function register(string $name, array $args = []): TaxonomyFactoryContract
+    {
+        return $this->items[$name] = (new TaxonomyFactory($name, $args))->setManager($this)->prepare();
+    }
+
+    /**
+     * @deprecated
+     */
+    public function term_meta(): ?TaxonomyTermMetaContract
+    {
+        return $this->getContainer()->get('term-meta');
     }
 }
