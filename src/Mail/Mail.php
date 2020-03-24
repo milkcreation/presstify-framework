@@ -12,7 +12,7 @@ class Mail implements MailContract
      * Instance des données du message.
      * @var ParamsBag
      */
-    protected $data;
+    public $data;
 
     /**
      * Instance du gestionnaire de mail.
