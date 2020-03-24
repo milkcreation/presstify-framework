@@ -27,7 +27,7 @@ class Options extends \tiFy\App\Core
         $this->tFyAppAddAction('init', null, 24);
         $this->tFyAppAddAction('tify_taboox_register_box');
         $this->tFyAppAddAction('tify_taboox_register_node');
-        $this->tFyAppAddAction('admin_menu');
+        //$this->tFyAppAddAction('admin_menu');
         $this->tFyAppAddAction('admin_enqueue_scripts');
         $this->tFyAppAddAction('admin_bar_menu');
     }

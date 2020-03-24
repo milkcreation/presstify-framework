@@ -40,13 +40,13 @@ class Checkbox extends \tiFy\Core\Control\Factory
     {
         wp_register_style(
             'tify_control-checkbox',
-            self::tFyAppAssetsUrl('Checkbox.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Checkbox/Checkbox.css',
             ['dashicons'],
             150420
         );
         wp_register_script(
             'tify_control-checkbox',
-            self::tFyAppAssetsUrl('Checkbox.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Checkbox/Checkbox.js',
             ['jquery'],
             150420,
             true

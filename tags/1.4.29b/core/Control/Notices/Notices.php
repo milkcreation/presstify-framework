@@ -41,13 +41,13 @@ class Notices extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-notices',
-            self::tFyAppAssetsUrl('Notices.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Notices/Notices.css',
             [],
             170130
         );
         \wp_register_script(
             'tify_control-notices',
-            self::tFyAppAssetsUrl('Notices.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Notices/Notices.js',
             ['jquery'],
             170130,
             true

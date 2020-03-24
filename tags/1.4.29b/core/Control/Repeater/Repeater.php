@@ -48,13 +48,13 @@ class Repeater extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-repeater',
-            self::tFyAppAssetsUrl('Repeater.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Repeater/Repeater.css',
             [],
             170421
         );
         \wp_register_script(
             'tify_control-repeater',
-            self::tFyAppAssetsUrl('Repeater.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Repeater/Repeater.js',
             ['jquery', 'jquery-ui-sortable'],
             170421,
             true
