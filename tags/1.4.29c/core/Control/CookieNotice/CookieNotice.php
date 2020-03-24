@@ -54,7 +54,7 @@ class CookieNotice extends \tiFy\Core\Control\Factory
 
         \wp_register_script(
             'tify_control-cookie_notice',
-            self::tFyAppAssetsUrl('CookieNotice.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/CookieNotice/CookieNotice.js',
             ['jquery'],
             170626,
             true

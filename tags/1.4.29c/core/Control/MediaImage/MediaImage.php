@@ -41,13 +41,13 @@ class MediaImage extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-media_image',
-            self::tFyAppAssetsUrl('MediaImage.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/MediaImage/MediaImage.css',
             [],
             141212
         );
         \wp_register_script(
             'tify_control-media_image',
-            self::tFyAppAssetsUrl('MediaImage.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/MediaImage/MediaImage.js',
             ['jquery'],
             141212,
             true

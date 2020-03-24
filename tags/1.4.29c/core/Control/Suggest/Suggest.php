@@ -61,13 +61,13 @@ class Suggest extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-suggest',
-            self::tFyAppAssetsUrl('Suggest.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Suggest/Suggest.css',
             ['tiFyTheme'],
             160222
         );
         \wp_register_script(
             'tify_control-suggest',
-            self::tFyAppAssetsUrl('Suggest.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Suggest/Suggest.js',
             ['jquery-ui-autocomplete'],
             160222,
             true

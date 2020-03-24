@@ -42,13 +42,13 @@ class MediaFile extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-media_file',
-            self::tFyAppAssetsUrl('MediaFile.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/MediaFile/MediaFile.css',
             ['dashicons'],
             160621
         );
         \wp_register_script(
             'tify_control-media_file',
-            self::tFyAppAssetsUrl('MediaFile.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/MediaFile/MediaFile.js',
             ['jquery'],
             160621,
             true
