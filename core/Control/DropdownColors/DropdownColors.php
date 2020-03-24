@@ -40,13 +40,13 @@ class DropdownColors extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-dropdown_colors',
-            self::tFyAppAssetsUrl('DropdownColors.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/DropdownColors/DropdownColors.css',
             [],
             150512
         );
         \wp_register_script(
             'tify_control-dropdown_colors',
-            self::tFyAppAssetsUrl('DropdownColors.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/DropdownColors/DropdownColors.js',
             ['jquery'],
             150512,
             true

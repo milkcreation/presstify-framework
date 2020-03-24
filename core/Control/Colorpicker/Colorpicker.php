@@ -40,7 +40,7 @@ class Colorpicker extends \tiFy\Core\Control\Factory
     {
         \wp_register_style(
             'tify_control-colorpicker',
-            self::tFyAppAssetsUrl('Colorpicker.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Colorpicker/Colorpicker.css',
             ['spectrum'],
             141216
         );
@@ -51,7 +51,7 @@ class Colorpicker extends \tiFy\Core\Control\Factory
         endif;
         \wp_register_script(
             'tify_control-colorpicker',
-            self::tFyAppAssetsUrl('Colorpicker.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Colorpicker/Colorpicker.js',
             $deps,
             141216,
             true

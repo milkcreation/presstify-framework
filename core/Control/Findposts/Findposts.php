@@ -51,12 +51,12 @@ class Findposts extends \tiFy\Core\Control\Factory
         // Déclaration des scripts
         \wp_register_style(
             'tify_control-findposts',
-            self::tFyAppAssetsUrl('Findposts.css', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Findposts/Findposts.css',
             170530
         );
         \wp_register_script(
             'tify_control-findposts',
-            self::tFyAppAssetsUrl('Findposts.js', get_class()),
+            $this->appAbsUrl() . '/bin/assets/core/Control/Findposts/Findposts.js',
             ['media'],
             170530,
             true

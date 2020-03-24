@@ -237,7 +237,9 @@ final class Apps
             extract(self::$Registered[$classname]);
             $Config = wp_parse_args($config_attrs, $Config);
         endif;
-        
+
+        $Instance = $Instance ?? null;
+
         // Traitement de la configuration
         return self::$Registered[$classname] = compact(
             // Définition
@@ -1116,6 +1118,9 @@ final class Apps
                 $OverrideNamespace = preg_replace('#^\\\?tiFy\\\#', '', $attrs['Namespace']);
                 break;
         endswitch;
+
+        $OverrideNamespace = $OverrideNamespace ?? null;
+
         self::setAttrList(compact('OverrideNamespace'), $classname);
     }
 
