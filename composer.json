@@ -7,33 +7,18 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2018-04-25",
+  "time": "2020-03-24",
   "authors": [
     {
       "name": "Jordy Manner",
       "email": "jordy.manner@milkcreation.fr",
       "role": "Lead Developper"
-    },
-    {
-      "name": "Julien Picard",
-      "email": "julien@tigreblanc.fr",
-      "role": "Contributing Developper"
-    },
-    {
-      "name": "Louis Dherent",
-      "email": "louis@tigreblanc.fr",
-      "role": "Contributing Developper"
-    },
-    {
-      "name": "Gaetan Thery",
-      "email": "gaetan@tigreblanc.fr",
-      "role": "Contributing Developper"
     }
   ],
   "repositories": [
     {
       "type": "composer",
-      "url": "http://composer.tigreblanc.fr/presstify/"
+      "url": "https://composer.tigreblanc.fr/presstify"
     }
   ],
   "require": {
@@ -63,7 +48,6 @@
     "mobiledetect/mobiledetectlib": "^2.8",
     "monolog/monolog": "^1.22",
     "mrclay/minify": "^3.0",
-    "pelago/emogrifier": "^2.0",
     "phpdocumentor/reflection-docblock": "^3.2.2",
     "phpmailer/phpmailer": "^6.0",
     "redeyeventures/geopattern": "^1.1",
