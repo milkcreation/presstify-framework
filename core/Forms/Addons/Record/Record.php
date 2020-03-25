@@ -116,10 +116,10 @@ class Record extends \tiFy\Core\Forms\Addons\Factory
         );
 
         // Déclaration des événements
-        $this->appAddAction('admin_init');
-        $this->appAddAction('tify_templates_register');
-        $this->appAddAction('tify_db_register');
-        $this->appAddAction('tify_upload_register');
+        //$this->appAddAction('admin_init');
+        //$this->appAddAction('tify_templates_register');
+        //$this->appAddAction('tify_db_register');
+        //$this->appAddAction('tify_upload_register');
     }
 
     /* = DECLENCHEURS = */
