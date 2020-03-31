@@ -96,7 +96,6 @@ class Metabox
                 if ($metaboxScreen = $this->manager->getScreen("{$post_type}@post_type")) {
                     $boxes = $metaboxScreen->getMetaboxes();
                 }
-
                 array_walk($boxes, function (MetaboxDriver $box) use ($post_type) {
                     if($box->context()->getName() === 'side') {
                         add_action('add_meta_boxes', function () use ($box) {
@@ -129,7 +128,6 @@ class Metabox
                         return $whitelist_options;
                     });
                 }
-
                 array_walk($boxes, function (MetaboxDriver $box) use ($option_page) {
                     if ($name = $box->name()) {
                         register_setting($option_page, $name);
@@ -142,7 +140,6 @@ class Metabox
                 if ($metaboxScreen = $this->manager->getScreen("{$taxonomy}@taxonomy")) {
                     $boxes = $metaboxScreen->getMetaboxes();
                 }
-
                 array_walk($boxes, function (MetaboxDriver $box) use ($taxonomy) {
                     if (($name = $box->name()) && ! in_array($name, $this->termKeys)) {
                         Taxonomy::meta()->register($taxonomy, $name, true);
@@ -153,13 +150,13 @@ class Metabox
                 $boxes = [];
 
                 /** @todo */
-                if ($metaboxScreen = $this->manager->getScreen("{$roles}@user")) {
+                if ($metaboxScreen = $this->manager->getScreen("@user")) {
                     $boxes = $metaboxScreen->getMetaboxes();
                 }
 
                 array_walk($boxes, function (MetaboxDriver $box) use ($roles) {
                     /*if (($name = $box->name()) && ! in_array($name, $this->userKeys)) {
-                        //user()->user_meta()->register($roles, $name, true);
+                       user()->user_meta()->register($roles, $name, true);
                     }*/
                 });
             }

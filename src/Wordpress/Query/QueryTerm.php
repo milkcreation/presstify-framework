@@ -33,6 +33,12 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     protected static $taxonomy = '';
 
     /**
+     * Indice de récupération des éléments non associés.
+     * @var bool
+     */
+    protected static $hideEmpty = false;
+
+    /**
      * Instance du modèle de base de données associé.
      * @var TaxonomyBuilder
      */
@@ -147,8 +153,9 @@ class QueryTerm extends ParamsBag implements QueryTermContract
      */
     public static function fetchFromWpTermQuery(WP_Term_Query $wp_term_query): array
     {
+        $terms = $wp_term_query->get_terms();
         $per_page = $wp_term_query->query_vars['number'] ?: -1;
-        $count = count($wp_term_query->terms);
+        $count = count($terms);
         $offset = $wp_term_query->query_vars['offset'] ?: 1;
 
         if ($per_page > 0) {
@@ -165,7 +172,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
         } else {
             $pages = 1;
             $page = 1;
-            $total = (int)count($wp_term_query->terms);
+            $total = (int)count($terms);
         }
 
         static::pagination()->clear()->set([
@@ -178,7 +185,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
             'total'        => $total,
         ]);
 
-        $results = $wp_term_query->terms;
+        $results = $terms ?: [];
 
         array_walk($results, function (WP_Term &$wp_term) {
             $wp_term = new static($wp_term);
@@ -208,6 +215,10 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     {
         if ($taxonomy = static::$taxonomy) {
             $args['taxonomy'] = $taxonomy;
+        }
+
+        if (!isset($args['hide_empty'])) {
+            $args['hide_empty'] = static::$hideEmpty;
         }
 
         return array_merge(static::$defaultArgs, $args);

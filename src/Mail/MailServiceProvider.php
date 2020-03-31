@@ -30,6 +30,8 @@ class MailServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        Mailer::setDefaults(config('mail', []));
+
         $this->getContainer()->add('mailer', function (): MailerContract {
             return (new Mailer())->setContainer($this->getContainer()->get('app'));
         });
