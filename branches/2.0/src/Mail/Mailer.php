@@ -150,7 +150,7 @@ class Mailer implements MailerContract
      */
     public static function setDefaults(array $attrs = []): void
     {
-        static::$defaults = $attrs;
+        static::$defaults = array_merge(static::$defaults, $attrs);
     }
 
     /**
@@ -205,7 +205,7 @@ class Mailer implements MailerContract
                 'inline_css'   => true,
                 'vars'         => [],
                 'viewer'       => [],
-            ], static::$defaults, config('mail', []), $attrs ?: []));
+            ], static::$defaults, $attrs ?: []));
 
             return $this->mail = $mail;
         }

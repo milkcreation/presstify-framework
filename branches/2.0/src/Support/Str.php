@@ -125,6 +125,7 @@ class Str extends BaseStr
         if (v::serialized()->validate($value)) {
             return @unserialize(stripslashes($value));
         }
+
         return $value;
     }
 }
