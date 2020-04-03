@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Partial;
 
-interface AccordionWalkerItems
+interface AccordionWalker
 {
     /**
      * Résolution de sortie de l'affichage du contrôleur.
@@ -12,11 +12,19 @@ interface AccordionWalkerItems
     public function __toString(): string;
 
     /**
-     * Vérification d'existance des éléments.
+     * Vérification d'existance d'éléments.
      *
      * @return bool
      */
     public function exists(): bool;
+
+    /**
+     * Déclaration de la liste des éléments ouverts à l'initialisation.
+     *
+     *
+     * @return static
+     */
+    public function registerOpened(): AccordionWalker;
 
     /**
      * Récupération du rendu d'affichage.
@@ -26,22 +34,23 @@ interface AccordionWalkerItems
     public function render(): string;
 
     /**
+     * Définition d'un élément.
+     *
+     * @param AccordionItem|array $item
+     * @param string|int $key
+     *
+     * @return AccordionItem
+     */
+    public function setItem($item, $key = null): AccordionItem;
+
+    /**
      * Définition du controleur d'affichage associé.
      *
      * @param Accordion $partial Contrôleur d'affichage associé.
      *
      * @return static
      */
-    public function setPartial(Accordion $partial): AccordionWalkerItems;
-
-    /**
-     * Définition de la liste des éléments ouverts à l'initialisation.
-     *
-     * @param mixed $opened Liste des éléments ouverts à l'initialisation.
-     *
-     * @return static
-     */
-    public function setOpened($opened = null): AccordionWalkerItems;
+    public function setPartial(Accordion $partial): AccordionWalker;
 
     /**
      * Itération d'affichage la liste des éléments.
@@ -52,5 +61,5 @@ interface AccordionWalkerItems
      *
      * @return string
      */
-    public function walker($items = [], $depth = 0, $parent = null): string;
+    public function walk($items = [], $depth = 0, $parent = null): string;
 }
