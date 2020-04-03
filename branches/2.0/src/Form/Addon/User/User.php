@@ -304,10 +304,6 @@ class User extends AddonFactory
             $userdatas[$key] = $this->form()->request()->get($slug);
         }
 
-        if (!isset($userdatas['user_login'])) {
-            $userdatas['user_login'] = md5(wp_generate_password(20). uniqid());
-        }
-
         if (isset($userdatas['show_admin_bar_front'])) {
             $userdatas['show_admin_bar_front'] = filter_var($userdatas['show_admin_bar_front'], FILTER_VALIDATE_BOOLEAN)
                 ? ''
@@ -335,6 +331,10 @@ class User extends AddonFactory
 
             $result = wp_update_user($userdatas);
         } else {
+            if (!isset($userdatas['user_login'])) {
+                $userdatas['user_login'] = md5(wp_generate_password(20). uniqid());
+            }
+
             if (!isset($userdatas['user_pass'])) {
                 $userdatas['user_pass'] = '';
             }
