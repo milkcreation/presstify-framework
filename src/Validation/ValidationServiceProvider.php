@@ -3,6 +3,7 @@
 namespace tiFy\Validation;
 
 use tiFy\Container\ServiceProvider;
+use tiFy\Validation\Rules\{Password as PasswordRule, Serialized as SerializedRule};
 
 class ValidationServiceProvider extends ServiceProvider
 {
@@ -24,8 +25,6 @@ class ValidationServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('validator', function () {
             $rules = [
-                // @todo Surchage de \Respect\Validation\Factory pour permettre la surchage  des règles existantes
-                // @see \Respect\Validation\Factory::$rulesNamespaces
                 'password'   => $this->getContainer()->get('validator.rule.password'),
                 'serialized' => $this->getContainer()->get('validator.rule.serialized'),
             ];
@@ -38,11 +37,11 @@ class ValidationServiceProvider extends ServiceProvider
         });
 
         $this->getContainer()->add('validator.rule.password', function () {
-            return new Rules\Password();
+            return new PasswordRule();
         });
 
         $this->getContainer()->add('validator.rule.serialized', function () {
-            return new Rules\Serialized();
+            return new SerializedRule();
         });
     }
 }

@@ -157,7 +157,7 @@ class CookieNotice extends PartialDriver implements CookieNoticeContract
             $cookie->set('1');
             return ['success' => true];
         } catch (Exception $e) {
-            return ['success' => false];
+            return ['success' => false, 'data' => $e->getMessage()];
         }
     }
 }
