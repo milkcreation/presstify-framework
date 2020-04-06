@@ -170,7 +170,7 @@ class Validator extends BaseValidator implements ValidatorContract
 {
     /**
      * Liste des régles personnalisées.
-     * @var Rule[]
+     * @var Rule[]|array
      */
     protected static $customs = [];
 
@@ -195,12 +195,13 @@ class Validator extends BaseValidator implements ValidatorContract
      */
     public function __call(string $ruleName, array $arguments): ValidatorContract
     {
-        $factory = isset(self::$customs[$ruleName])
-            ? Factory::getDefaultInstance()
-                ->withRuleNamespace((new ClassInfo(self::$customs[$ruleName]))->getNamespaceName())
-            : Factory::getDefaultInstance();
-
-        $this->addRule($factory->rule($ruleName, $arguments));
+        if(isset(static::$customs[$ruleName])) {
+            /** @var Validatable $rule */
+            $rule = clone static::$customs[$ruleName]->setArgs($arguments);
+            $this->addRule($rule);
+        } else {
+            $this->addRule(Factory::getDefaultInstance()->rule($ruleName, $arguments));
+        }
 
         return $this;
     }
@@ -242,6 +243,6 @@ class Validator extends BaseValidator implements ValidatorContract
      */
     public static function setCustom(string $name, Validatable $rule)
     {
-        self::$customs[$name] = $rule->setName($name);
+        static::$customs[$name] = $rule->setName($name);
     }
 }

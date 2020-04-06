@@ -68,38 +68,40 @@ class Password extends AbstractRule
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @throws ComponentException
+     * @inheritDoc
      */
     public function validate($input): bool
     {
-        if ($this->min && !(new Length($this->min))->validate($input)) {
+        try {
+            if ($this->min && !(new Length($this->min))->validate($input)) {
+                return false;
+            }
+
+            if ($this->max && !(new Length(null, $this->max))->validate($input)) {
+                return false;
+            }
+
+            $regex = "";
+
+            if ($this->digit) {
+                $regex .= "(?=(?:.*\d){" . $this->digit . ",})";
+            }
+
+            if ($this->lower) {
+                $regex .= "(?=(?:.*[a-z]){" . $this->lower . ",})";
+            }
+
+            if ($this->upper) {
+                $regex .= "(?=(?:.*[A-Z]){" . $this->upper . ",})";
+            }
+
+            if ($this->special) {
+                $regex .= "(?=(?:.*[!@#$%^&*()\[\]\-_=+{};:,<.>]){" . $this->special . ",})";
+            }
+
+            return (new Regex('/' . $regex . '/'))->validate($input);
+        } catch (ComponentException $e) {
             return false;
         }
-
-        if ($this->max && !(new Length(null, $this->max))->validate($input)) {
-            return false;
-        }
-
-        $regex = "";
-
-        if ($this->digit) {
-            $regex .= "(?=(?:.*\d){" . $this->digit . ",})";
-        }
-
-        if ($this->lower) {
-            $regex .= "(?=(?:.*[a-z]){" . $this->lower . ",})";
-        }
-
-        if ($this->upper) {
-            $regex .= "(?=(?:.*[A-Z]){" . $this->upper . ",})";
-        }
-
-        if ($this->special) {
-            $regex .= "(?=(?:.*[!@#$%^&*()\[\]\-_=+{};:,<.>]){" . $this->special . ",})";
-        }
-
-        return (new Regex('/' . $regex . '/'))->validate($input);
     }
 }
