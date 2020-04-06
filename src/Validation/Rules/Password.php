@@ -2,6 +2,8 @@
 
 namespace tiFy\Validation\Rules;
 
+use Respect\Validation\Rules\{Length, Regex};
+use Respect\Validation\Exceptions\ComponentException;
 use tiFy\Contracts\Validation\Rule;
 
 class Password extends AbstractRule
@@ -66,15 +68,17 @@ class Password extends AbstractRule
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @throws ComponentException
      */
     public function validate($input): bool
     {
-        if ($this->min && !$this->validator::length($this->min)->validate($input)) {
+        if ($this->min && !(new Length($this->min))->validate($input)) {
             return false;
         }
 
-        if ($this->max && !$this->validator::length(null, $this->max)->validate($input)) {
+        if ($this->max && !(new Length(null, $this->max))->validate($input)) {
             return false;
         }
 
@@ -96,6 +100,6 @@ class Password extends AbstractRule
             $regex .= "(?=(?:.*[!@#$%^&*()\[\]\-_=+{};:,<.>]){" . $this->special . ",})";
         }
 
-        return $this->validator::regex('/' . $regex . '/')->validate($input);
+        return (new Regex('/' . $regex . '/'))->validate($input);
     }
 }
