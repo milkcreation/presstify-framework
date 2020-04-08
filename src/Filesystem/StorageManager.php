@@ -31,15 +31,18 @@ class StorageManager extends MountManager implements StorageManagerContract
     /**
      * CONSTRUCTEUR.
      *
+     * @param FilesystemInterface[] $filesystems [:prefix => Filesystem,]
      * @param Container|null $container Instance du conteneur d'injection de dépendances.
      *
      * @return void
      */
-    public function __construct(?Container $container = null)
+    public function __construct(array $filesystems = [], ?Container $container = null)
     {
-        $this->container = $container;
+        if (!is_null($container)) {
+            $this->setContainer($container);
+        }
 
-        parent::__construct();
+        parent::__construct($filesystems);
     }
 
     /**
@@ -146,12 +149,12 @@ class StorageManager extends MountManager implements StorageManagerContract
         if ($filesystem instanceof FilesystemContract) {
             return parent::mountFilesystem($name, $filesystem);
         }
-        throw new InvalidArgumentException(
-            sprintf(
-                __('Impossible de monter le disque %s. Le gestionnaire de fichiers doit une instance de %s.', 'tify'),
-                $name,
-                FilesystemContract::class
-            )
+
+        throw new InvalidArgumentException(sprintf(
+            __(
+                'Impossible de monter le disque [%s]. Le gestionnaire de fichiers doit une instance de [%s].',
+                'tify'
+            ), $name, FilesystemContract::class)
         );
     }
 
@@ -219,5 +222,15 @@ class StorageManager extends MountManager implements StorageManagerContract
     public function set(string $name, FilesystemContract $filesystem): StorageManagerContract
     {
         return $this->mountFilesystem($name, $filesystem);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setContainer(Container $container): StorageManagerContract
+    {
+        $this->container = $container;
+
+        return $this;
     }
 }
