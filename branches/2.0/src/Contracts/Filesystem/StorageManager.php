@@ -129,4 +129,13 @@ interface StorageManager extends FilesystemInterface
      * @return $this
      */
     public function set(string $name, Filesystem $filesystem): StorageManager;
+
+    /**
+     * Définition du conteneur d'injection de dépendances.
+     *
+     * @param Container $container
+     *
+     * @return static
+     */
+    public function setContainer(Container $container): StorageManager;
 }
