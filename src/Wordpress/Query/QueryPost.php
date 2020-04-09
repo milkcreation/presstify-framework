@@ -528,7 +528,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getEditLink(): string
+    public function getEditUrl(): string
     {
         return get_edit_post_link($this->getId());
     }

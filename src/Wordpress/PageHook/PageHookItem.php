@@ -157,7 +157,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                                     $wp_admin_bar->add_menu([
                                         'id'    => 'edit',
                                         'title' => $this->post()->getType()->label('edit_item'),
-                                        'href'  => $this->post()->getEditLink(),
+                                        'href'  => $this->post()->getEditUrl(),
                                     ]);
                                 }
                             }
