@@ -225,6 +225,9 @@ class WpScreen implements WpScreenContract
         } elseif (post_type_exists($this->screen->id)) {
             $this->objectName = $this->screen->id;
             $this->objectType = 'post_type';
+        } elseif ($this->screen->id === 'users') {
+            $this->objectName = $this->screen->id;
+            $this->objectType = 'user';
         } elseif (
             ((
                 ($this->screen->base === 'user-edit') &&

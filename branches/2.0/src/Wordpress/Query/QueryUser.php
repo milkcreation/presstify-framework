@@ -6,9 +6,7 @@ use tiFy\Contracts\User\RoleFactory;
 use tiFy\Support\{ParamsBag, Proxy\Role};
 use tiFy\Wordpress\Contracts\{Database\UserBuilder, Query\QueryUser as QueryUserContract};
 use tiFy\Wordpress\Database\Model\User as UserModel;
-use WP_Site;
-use WP_User;
-use WP_User_Query;
+use WP_Site, WP_User, WP_User_Query;
 
 class QueryUser extends ParamsBag implements QueryUserContract
 {
@@ -230,6 +228,14 @@ class QueryUser extends ParamsBag implements QueryUserContract
     public function getDisplayName(): string
     {
         return (string)$this->get('display_name', '');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEditUrl(): string
+    {
+        return get_edit_user_link($this->getId());
     }
 
     /**

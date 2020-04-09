@@ -161,6 +161,13 @@ interface QueryUser extends ParamsBag
     public function getDisplayName(): string;
 
     /**
+     * Récupération de l'url d'édition de l'utilisateur.
+     *
+     * @return string
+     */
+    public function getEditUrl(): string;
+
+    /**
      * Récupération de l'email.
      *
      * @return string

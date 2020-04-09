@@ -352,7 +352,7 @@ interface QueryPost extends ParamsBag
      *
      * @return string
      */
-    public function getEditLink(): string;
+    public function getEditUrl(): string;
 
     /**
      * Récupération de la valeur brute ou formatée de l'extrait.

@@ -14,6 +14,13 @@ interface FactoryRequest extends FactoryResolver, ParamsBag
     public function getRedirectUrl(): string;
 
     /**
+     * Récupération de la valeur de la protection CSRF.
+     *
+     * @return string
+     */
+    public function getToken(): string;
+
+    /**
      * Traitement de la requête de soumission du formulaire.
      *
      * @return void

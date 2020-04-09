@@ -23,6 +23,12 @@ class Request extends ParamsBag implements FactoryRequest
     protected $redirect;
 
     /**
+     * Clé d'indice de la protection CSRF.
+     * @var string
+     */
+    protected $tokenKey = '_token';
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param FormFactory $form Instance du contrôleur de formulaire.
@@ -46,6 +52,14 @@ class Request extends ParamsBag implements FactoryRequest
         $this->events('request.redirect', [&$this->redirect]);
 
         return $this->redirect;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getToken(): string
+    {
+        return Req::input($this->tokenKey, '');
     }
 
     /**
@@ -183,6 +197,6 @@ class Request extends ParamsBag implements FactoryRequest
      */
     public function verify(): bool
     {
-        return !!wp_verify_nonce(Req::input('_token', ''), 'Form' . $this->form()->name());
+        return !!wp_verify_nonce($this->getToken(), 'Form' . $this->form()->name());
     }
 }
