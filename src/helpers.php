@@ -2,6 +2,8 @@
 
 use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
+use League\Uri\UriInterface as LeagueUri;
+use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Asset\Asset;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
@@ -471,11 +473,16 @@ if (!function_exists('url')) {
     /**
      * Récupération de l'instance du contrôleur d'url.
      *
+     * @param UriInterface|LeagueUri|string|null $uri
+     *
      * @return Url
      */
-    function url(): Url
+    function url($uri = null): Url
     {
-        return app('url');
+        /** @var Url $url */
+        $url =  app('url');
+
+        return is_null($uri) ? $url : $url->set($uri);
     }
 }
 

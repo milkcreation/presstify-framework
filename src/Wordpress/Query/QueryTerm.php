@@ -156,19 +156,19 @@ class QueryTerm extends ParamsBag implements QueryTermContract
         $terms = $wp_term_query->get_terms();
         $per_page = $wp_term_query->query_vars['number'] ?: -1;
         $count = count($terms);
-        $offset = $wp_term_query->query_vars['offset'] ?: 1;
+        $offset = $wp_term_query->query_vars['offset'] ?: 0;
 
         if ($per_page > 0) {
             $wp_term_query_count = new WP_Term_Query(array_merge($wp_term_query->query_vars, [
                 'count'  => false,
                 'number' => 0,
-                'offset' => 1,
+                'offset' => 0,
                 'fields' => 'count',
             ]));
 
             $total = (int)$wp_term_query_count->get_terms();
-            $pages = (int)ceil($total / $count);
-            $page = (int)ceil($offset / $per_page);
+            $pages = (int)ceil($total / $per_page);
+            $page = (int)ceil(($offset+1) / $per_page);
         } else {
             $pages = 1;
             $page = 1;
@@ -191,7 +191,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
             $wp_term = new static($wp_term);
         });
 
-        static::pagination()->set(compact('results'));
+        static::pagination()->set(compact('results'))->parse();
 
         return $results;
     }

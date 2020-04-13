@@ -64,14 +64,26 @@ class Template extends AppStrategy
                     }
                     $wp_query->query_vars = $wp_query->fill_query_vars([]);
                     $wp_query->is_route = true;
-
-                    add_action('wp', function () {
-                        global $wp_query;
-                        $wp_query->is_404 = false;
-                        status_header(200);
-                    });
                 }
             }, 0);
+
+            add_action('wp', function () {
+                global $wp_query;
+
+                if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
+                    $wp_query->is_404 = false;
+                    $wp_query->query = [];
+
+                    status_header(200);
+                }
+            });
+
+            add_filter('posts_pre_query', function (?array $posts, WP_Query $wp_query) {
+                if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
+                    return [];
+                }
+                return $posts;
+            }, 10, 2);
         }
 
         $controller = $route->getCallable($this->getContainer());

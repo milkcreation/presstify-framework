@@ -23,6 +23,12 @@ use WP_User;
 class QueryPost extends ParamsBag implements QueryPostContract
 {
     /**
+     * Liste des classes de rappel d'instanciation selon le type de post.
+     * @var string[][]|array
+     */
+    protected static $builtInClasses = [];
+
+    /**
      * Liste des arguments de requête de récupération des éléments par défaut.
      * @var array
      */
@@ -76,6 +82,19 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
+    public static function build(WP_Post $wp_post): QueryPostContract
+    {
+        $classes = static::$builtInClasses;
+        $type = $wp_post->post_type;
+
+        $class = isset($classes[$type]) ? $classes[$type] : static::class;
+
+        return new $class($wp_post);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function create($id = null, ...$args): ?QueryPostContract
     {
         if (is_numeric($id)) {
@@ -83,7 +102,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
         } elseif (is_string($id)) {
             return static::createFromName($id);
         } elseif ($id instanceof WP_Post) {
-            return (new static($id));
+            return static::build($id);
         } elseif ($id instanceof QueryPostContract) {
             return static::createFromId($id->getId());
         } elseif (is_null($id)) {
@@ -98,7 +117,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function createFromEloquent(EloquentModel $model): ?QueryPostContract
     {
-        return new static(new WP_Post((object)$model->getAttributes()));
+        return static::build(new WP_Post((object)$model->getAttributes()));
     }
 
     /**
@@ -109,7 +128,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
         global $post;
 
         if ($post instanceof WP_Post) {
-            return static::is($instance = new static($post)) ? $instance : null;
+            return static::is($instance = static::build($post)) ? $instance : null;
         } else {
             return null;
         }
@@ -121,7 +140,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public static function createFromId(int $post_id): ?QueryPostContract
     {
         if ($post_id && ($wp_post = get_post($post_id)) && ($wp_post instanceof WP_Post)) {
-            return static::is($instance = new static($wp_post)) ? $instance : null;
+            return static::is($instance = static::build($wp_post)) ? $instance : null;
         } else {
             return null;
         }
@@ -133,7 +152,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public static function createFromPostdata(array $postdata): ?QueryPostContract
     {
         if (isset($postdata['ID'])) {
-            return static::is($instance = new static(new WP_Post((object)$postdata))) ? $instance : null;
+            return static::is($instance = static::build(new WP_Post((object)$postdata))) ? $instance : null;
         } else {
             return null;
         }
@@ -147,7 +166,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
         $wpQuery = new WP_Query(static::parseQueryArgs(['name' => $name]));
 
         if ($wpQuery->found_posts == 1) {
-            return static::is($instance = new static(current($wpQuery->posts))) ? $instance : null;
+            return static::is($instance = static::build(current($wpQuery->posts))) ? $instance : null;
         } else {
             return null;
         }
@@ -186,7 +205,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
 
         $instances = [];
         foreach ($items as $item) {
-            if (static::is($instance = new static(new WP_Post((object)$item)))) {
+            if (static::is($instance = static::build(new WP_Post((object)$item)))) {
                 $instances[] = $instance;
             }
         }
@@ -237,7 +256,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
 
         $results = [];
         foreach ($wp_posts as $wp_post) {
-            $instance = new static($wp_post);
+            $instance = static::build($wp_post);
             if (($postType = static::$postType) && ($postType !== 'any')) {
                 if ($instance->typeIn($postType)) {
                     $results[] = $instance;

@@ -196,6 +196,7 @@ class PartialServiceProvider extends ServiceProvider
                     unset($config['override_dir']);
                 }
             }
+
             if (isset($config['override_dir'])) {
                 $config['override_dir'] = sprintf($config['override_dir'], $driver->getAlias());
 
