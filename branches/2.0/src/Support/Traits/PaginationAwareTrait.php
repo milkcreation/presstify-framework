@@ -142,16 +142,16 @@ trait PaginationAwareTrait
         $url = clone $this->getBaseUrl();
 
         if (preg_match('/%d/', $url->decoded())) {
-            return sprintf($url->decoded(), $num);
+            return urlencode(sprintf($url->decoded(), $num));
         } elseif ($this->isSegmentUrl()) {
             $url = $url->deleteSegment("/{$this->getPageIndex()}/\d+");
 
             return $num > 1
-                ? sprintf($url->appendSegment("/{$this->getPageIndex()}/%d")->decoded(), $num) : $url->decoded();
+                ? $url->appendSegment("/{$this->getPageIndex()}/{$num}")->render() : $url->render();
         } else {
             $url = $url->without([$this->getPageIndex()]);
 
-            return $num > 1 ? sprintf($url->with([$this->getPageIndex() => '%d'])->decoded(), $num) : $url->decoded();
+            return $num > 1 ? $url->with([$this->getPageIndex() => $num])->render() : $url->render();
         }
     }
 

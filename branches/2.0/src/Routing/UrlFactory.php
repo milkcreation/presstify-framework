@@ -17,7 +17,7 @@ class UrlFactory implements UrlFactoryContract
 {
     /**
      * Instance de l'url.
-     * @var LeagueUri|UriInterface
+     * @var LeagueUri|UriInterface|null
      */
     protected $uri;
 
@@ -38,7 +38,7 @@ class UrlFactory implements UrlFactoryContract
      */
     public function __toString(): string
     {
-        return (string)$this->get();
+        return $this->render();
     }
 
     /**
@@ -73,7 +73,7 @@ class UrlFactory implements UrlFactoryContract
     /**
      * @inheritDoc
      */
-    public function decoded(bool $raw = true)
+    public function decoded(bool $raw = true): string
     {
         return $raw ? rawurldecode((string)$this->uri) : urldecode((string)$this->uri);
     }
@@ -110,5 +110,13 @@ class UrlFactory implements UrlFactoryContract
         $this->uri = (new RemoveQueryParams($args))->process($this->uri);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render() : string
+    {
+        return $this->uri ? (string) $this->uri : '';
     }
 }
