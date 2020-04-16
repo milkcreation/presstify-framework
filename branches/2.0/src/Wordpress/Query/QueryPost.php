@@ -12,13 +12,11 @@ use tiFy\Wordpress\{
     Contracts\Query\PaginationQuery as PaginationQueryContract,
     Contracts\Query\QueryComment as QueryCommentContract,
     Contracts\Query\QueryPost as QueryPostContract,
+    Contracts\Query\QueryUser as QueryUserContract,
     Database\Model\Post as ModelPost,
     Proxy\Media
 };
-use WP_Post;
-use WP_Query;
-use WP_Term_Query;
-use WP_User;
+use WP_Post, WP_Query, WP_Term_Query, WP_User;
 
 class QueryPost extends ParamsBag implements QueryPostContract
 {
@@ -53,8 +51,13 @@ class QueryPost extends ParamsBag implements QueryPostContract
     protected $db;
 
     /**
+     * Instance de l'auteur associé.
+     * @var QueryUserContract
+     */
+    protected $author;
+
+    /**
      * Instance du parent.
-     * {@internal Variation uniquement}
      * @var QueryPost|false|null
      */
     protected $parent;
@@ -460,6 +463,18 @@ class QueryPost extends ParamsBag implements QueryPostContract
         }
 
         return $this->db;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAuthor(): ?QueryUserContract
+    {
+        if (is_null($this->author)) {
+            $this->author = QueryUser::create($this->getAuthorId()) ?: false;
+        }
+
+        return $this->author ?: null;
     }
 
     /**

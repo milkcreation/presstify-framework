@@ -8,17 +8,14 @@ use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus, Support\P
 use tiFy\Support\DateTime;
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
 use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
-use WP_Post;
-use WP_Query;
-use WP_Term;
-use WP_User;
+use WP_Post, WP_Query, WP_Term, WP_User;
 
 interface QueryPost extends ParamsBag
 {
     /**
      * Création d'une instance basée sur un objet post Wordpress et selon la cartographie des classes de rappel.
      *
-     * @param WP_Post
+     * @param WP_Post $wp_post
      *
      * @return static
      */
@@ -159,26 +156,54 @@ interface QueryPost extends ParamsBag
     public static function parseQueryArgs(array $args = []): array;
 
     /**
+     * @param array $args
+     *
+     * @return array
+     *
+     * @see QueryPost::fetchFromArgs()
+     *
      * @deprecated
      */
     public static function queryFromArgs(array $args = []): array;
 
     /**
+     * @param EloquentCollection $collection
+     *
+     * @return array
+     *
+     * @see QueryPost::fetchFromEloquent()
+     *
      * @deprecated
      */
     public static function queryFromEloquent(EloquentCollection $collection): array;
 
     /**
+     * @return array
+     *
+     * @see QueryPost::fetchFromGlobal()
+     *
      * @deprecated
      */
     public static function queryFromGlobal(): array;
 
     /**
+     * @param int[] $ids
+     *
+     * @return array
+     *
+     * @see QueryPost::fetchFromIds()
+     *
      * @deprecated
      */
     public static function queryFromIds(array $ids): array;
 
     /**
+     * @param WP_Query $wp_query
+     *
+     * @return array
+     *
+     * @see QueryPost::fetchFromWpQuery()
+     *
      * @deprecated
      */
     public static function queryFromWpQuery(WP_Query $wp_query): array;
@@ -272,6 +297,13 @@ interface QueryPost extends ParamsBag
      * @return PostBuilder
      */
     public function db(): PostBuilder;
+
+    /**
+     * Récupération de l'instance de l'auteur associé.
+     *
+     * @return QueryUser|null
+     */
+    public function getAuthor(): ?QueryUser;
 
     /**
      * Récupération de l'identifiant de qualification de l'auteur original.
@@ -375,7 +407,7 @@ interface QueryPost extends ParamsBag
     /**
      * Récupération de l'identifiant unique de qualification global.
      * {@internal Ne devrait pas être utilisé en tant que lien.}
-     *  @see https://developer.wordpress.org/reference/functions/the_guid/
+     * @see https://developer.wordpress.org/reference/functions/the_guid/
      *
      * @return string
      */
@@ -511,7 +543,7 @@ interface QueryPost extends ParamsBag
         bool $use_tag = true,
         bool $uncut = true
     ): string;
-    
+
     /**
      * Récupération de la liste des termes de taxonomie.
      *
