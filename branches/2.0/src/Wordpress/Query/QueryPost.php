@@ -703,8 +703,6 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @deprecated
      */
     public function getPost()
