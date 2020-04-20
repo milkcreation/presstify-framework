@@ -22,8 +22,10 @@ use tiFy\Contracts\Http\Request as RequestContract;
  * @method static boolean isMethod(string $method)
  * @method static string|null ip()
  * @method static boolean isSecure()
+ * @method static array keys()
  * @method static string method()
  * @method static string|array|null post(string|null $key = null, string|array|null $default = null)
+ * @method static string|array|null query(string|null $key = null, string|array|null $default = null)
  * @method static string|array|null server(string|null $key = null, string|array|null $default = null)
  * @method static string url()
  */

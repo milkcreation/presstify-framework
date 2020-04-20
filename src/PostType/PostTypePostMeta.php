@@ -160,8 +160,8 @@ class PostTypePostMeta implements PostTypePostMetaContract
         $request = [];
 
         foreach ($meta_keys as $key) {
-            if ($value = Request::post($key)) {
-                $request[$key] = $value;
+            if (Request::instance()->has($key)) {
+                $request[$key] = Request::post($key);
             }
         }
 

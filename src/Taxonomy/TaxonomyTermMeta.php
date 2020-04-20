@@ -165,8 +165,8 @@ class TaxonomyTermMeta implements TaxonomyTermMetaContract
 
         // Récupération des metadonnés en $_POST
         foreach ($this->metaKeys[$taxonomy] as $key) {
-            if ($value = Request::post($key)) {
-                $request[$key] = $value;
+            if (Request::instance()->has($key)) {
+                $request[$key] = Request::post($key);
             }
         }
 
