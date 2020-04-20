@@ -141,8 +141,8 @@ class UserMeta implements UserMetaContract
         $request = [];
 
         foreach ($this->metaKeys as $key) {
-            if ($value = Request::instance()->has($key)) {
-                $request[$key] = Request::input($key);
+            if (Request::instance()->has($key)) {
+                $request[$key] = Request::post($key);
             }
         }
 

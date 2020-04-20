@@ -57,13 +57,14 @@ class Template extends AppStrategy
         $route->setCurrent();
 
         if (!$route->isWpQuery()) {
-            add_action('pre_get_posts', function (WP_Query &$wp_query) {
+            add_action('pre_get_posts', function (WP_Query $wp_query) {
                 if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
                     foreach ($this->cTags as $ct) {
                         $wp_query->{$ct} = false;
                     }
                     $wp_query->query_vars = $wp_query->fill_query_vars([]);
                     $wp_query->is_route = true;
+                    unset($wp_query->query);
                 }
             }, 0);
 
@@ -78,12 +79,12 @@ class Template extends AppStrategy
                 }
             });
 
-            add_filter('posts_pre_query', function (?array $posts, WP_Query $wp_query) {
+            /*add_filter('posts_pre_query', function (?array $posts, WP_Query $wp_query) {
                 if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
                     return [];
                 }
                 return $posts;
-            }, 10, 2);
+            }, 10, 2);*/
         }
 
         $controller = $route->getCallable($this->getContainer());

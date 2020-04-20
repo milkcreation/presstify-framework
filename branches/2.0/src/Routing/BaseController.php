@@ -64,6 +64,18 @@ abstract class BaseController extends ParamsBag
     }
 
     /**
+     * Vérification d'existance d'un gabarit d'affichage.
+     *
+     * @param string $view Nom de qualification du gabarit.
+     *
+     * @return bool
+     */
+    public function hasView(string $view): bool
+    {
+        return View::exists($view);
+    }
+
+    /**
      * Récupération de l'instance du gestionnaire de redirection|Redirection vers un chemin.
      *
      * @param string|null $path url absolue|relative de redirection.
