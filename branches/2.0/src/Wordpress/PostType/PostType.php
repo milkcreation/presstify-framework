@@ -3,8 +3,8 @@
 namespace tiFy\Wordpress\PostType;
 
 use tiFy\Contracts\PostType\{PostType as PostTypeManager, PostTypeFactory};
-use tiFy\Support\Proxy\Request;
 use tiFy\Wordpress\Contracts\PostType as PostTypeContract;
+use WP_Post_Type;
 
 class PostType implements PostTypeContract
 {
@@ -62,6 +62,10 @@ class PostType implements PostTypeContract
 
             if (!isset($wp_post_types[$factory->getName()])) {
                 register_post_type($factory->getName(), $factory->all());
+            }
+
+            if ($wp_post_types[$factory->getName()] instanceof WP_Post_Type) {
+                $factory->setWpPostType($wp_post_types[$factory->getName()]);
             }
 
             add_action('init', function () use ($factory) {

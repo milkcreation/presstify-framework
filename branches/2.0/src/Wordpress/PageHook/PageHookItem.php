@@ -352,6 +352,8 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             events()->listen('partial.breadcrumb.fetch', function (BaseBreadcrumbCollection $bc) {
                 if ($bc instanceof BreadcrumbCollection) {
                     if ($this->is() || $this->isAncestor()) {
+                        $bc->clear();
+
                         $hookid = $this->post()->getId();
                         $paged = is_paged();
 
