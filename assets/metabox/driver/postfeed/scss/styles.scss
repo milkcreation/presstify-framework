@@ -20,6 +20,7 @@
 
 .MetaboxPostfeed-suggest {
   display: block;
+  width: 100%;
 }
 
 .MetaboxPostfeed-items {
@@ -116,12 +117,13 @@
 .MetaboxPostfeed-itemThumb {
   float: left;
   margin-right: 10px;
-  min-width: 80px;
+  width: 80px;
 }
 
 .MetaboxPostfeed-itemThumbImg {
-  width: auto;
-  height: 80px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .MetaboxPostfeed-itemTitle {

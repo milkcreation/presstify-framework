@@ -4,7 +4,7 @@ namespace tiFy\Wordpress\Taxonomy;
 
 use tiFy\Contracts\Taxonomy\{Taxonomy as TaxonomyManager, TaxonomyFactory};
 use tiFy\Wordpress\Contracts\Taxonomy as TaxonomyContract;
-use WP_Term_Query;
+use WP_Taxonomy, WP_Term_Query;
 
 class Taxonomy implements TaxonomyContract
 {
@@ -34,9 +34,9 @@ class Taxonomy implements TaxonomyContract
         add_action('init', function () {
             global $wp_taxonomies;
 
-            foreach ($wp_taxonomies as $name => $attrs) {
+            foreach ($wp_taxonomies as $name => $taxonomy) {
                 if (!$this->manager->get($name)) {
-                    $this->manager->register($name, get_object_vars($attrs));
+                    $this->manager->register($name, get_object_vars($taxonomy));
                 }
             }
         }, 999999);
@@ -56,6 +56,10 @@ class Taxonomy implements TaxonomyContract
 
             if (!isset($wp_taxonomies[$factory->getName()])) {
                 register_taxonomy($factory->getName(), $factory->get('object_type', []), $factory->all());
+            }
+
+            if ($wp_taxonomies[$factory->getName()] instanceof WP_Taxonomy) {
+                $factory->setWpTaxonomy($wp_taxonomies[$factory->getName()]);
             }
 
             add_action('init', function () use ($factory) {
