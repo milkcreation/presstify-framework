@@ -3,7 +3,8 @@
 namespace tiFy\Filesystem;
 
 use InvalidArgumentException;
-use League\Flysystem\{AdapterInterface,
+use League\Flysystem\{
+    AdapterInterface,
     Cached\CachedAdapter,
     Cached\CacheInterface,
     Cached\Storage\Memory as MemoryStore,
@@ -19,6 +20,7 @@ use tiFy\Contracts\Filesystem\{Filesystem as FilesystemContract,
     LocalFilesystem as LocalFilesystemContract,
     StorageManager as StorageManagerContract
 };
+use tiFy\Contracts\Kernel\Path;
 
 class StorageManager extends MountManager implements StorageManagerContract
 {
@@ -48,10 +50,10 @@ class StorageManager extends MountManager implements StorageManagerContract
     /**
      * @inheritDoc
      */
-    public function disk(string $name): ?FilesystemContract
+    public function disk(?string $name = null): ?FilesystemContract
     {
         try {
-            return $this->getFilesystem($name);
+            return is_null($name) ? $this->getDefault() : $this->getFilesystem($name);
         } catch (FilesystemNotFoundException $e) {
             return null;
         }
@@ -63,6 +65,14 @@ class StorageManager extends MountManager implements StorageManagerContract
     public function getContainer(): ?Container
     {
         return $this->container;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDefault(): ?FilesystemContract
+    {
+        return $this->system();
     }
 
     /**
@@ -232,5 +242,14 @@ class StorageManager extends MountManager implements StorageManagerContract
         $this->container = $container;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function system(?string $name = null): ?LocalFilesystemContract
+    {
+        /** @var Path $path */
+        return ($path = $this->container->get('path')) instanceof Path ? $path->disk($name) : null;
     }
 }

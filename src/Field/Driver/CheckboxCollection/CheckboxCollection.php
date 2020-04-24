@@ -56,6 +56,8 @@ class CheckboxCollection extends FieldDriver implements CheckboxCollectionContra
 
     /**
      * @inheritDoc
+     *
+     * @todo utiliser self::parseAttrName
      */
     public function getName(): string
     {

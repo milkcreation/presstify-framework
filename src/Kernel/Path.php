@@ -7,7 +7,7 @@ use League\Flysystem\{
     Cached\CacheInterface,
     Cached\Storage\Memory as MemoryStore,
     FilesystemNotFoundException};
-use tiFy\Contracts\Filesystem\LocalFilesystem as LocalFilesystemContract;
+use tiFy\Contracts\Filesystem\{Filesystem as FileSystemContract, LocalFilesystem as LocalFilesystemContract};
 use tiFy\Contracts\Kernel\Path as PathContract;
 use tiFy\Filesystem\{LocalAdapter, LocalFilesystem,  StorageManager};
 
@@ -18,6 +18,16 @@ class Path extends StorageManager implements PathContract
      * @var string
      */
     const DS = DIRECTORY_SEPARATOR;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LocalFilesystem|null
+     */
+    public function disk(?string $name = null): ?FileSystemContract
+    {
+        return parent::disk($name);
+    }
 
     /**
      * @inheritDoc
@@ -156,6 +166,16 @@ class Path extends StorageManager implements PathContract
     /**
      * {@inheritDoc}
      *
+     * @return LocalFilesystemContract|null
+     */
+    public function getDefault(): ?FilesystemContract
+    {
+        return $this->diskStorage();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return LocalFilesystem
      */
     public function getFilesystem($prefix): ?LocalFilesystemContract
@@ -248,7 +268,7 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function normalize($path): string
+    public function normalize(string $path): string
     {
         return self::DS . ltrim(rtrim($path, self::DS), self::DS);
     }
