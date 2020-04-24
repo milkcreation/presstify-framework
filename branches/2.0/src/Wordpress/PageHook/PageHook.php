@@ -4,8 +4,8 @@ namespace tiFy\Wordpress\PageHook;
 
 use Illuminate\Support\Collection;
 use tiFy\Wordpress\Contracts\{PageHook as PageHookContract, PageHookItem as PageHookItemContract};
-use tiFy\Support\Proxy\{PostType, Taxonomy, Metabox};
-use WP_Admin_Bar, WP_Screen;
+use tiFy\Support\Proxy\Metabox;
+use WP_Screen;
 
 class PageHook implements PageHookContract
 {
@@ -82,6 +82,14 @@ class PageHook implements PageHookContract
         }
 
         return $this->current ?: null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function currentName(): ?string
+    {
+        return ($current = $this->current()) ? $current->getName() : null;
     }
 
     /**

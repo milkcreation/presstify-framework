@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Query;
 
 use tiFy\Contracts\User\RoleFactory;
-use tiFy\Support\{ParamsBag, Proxy\Role};
+use tiFy\Support\{Arr, ParamsBag, Proxy\Role};
 use tiFy\Wordpress\Contracts\{Database\UserBuilder, Query\QueryUser as QueryUserContract};
 use tiFy\Wordpress\Database\Model\User as UserModel;
 use WP_Site, WP_User, WP_User_Query;
@@ -396,9 +396,9 @@ class QueryUser extends ParamsBag implements QueryUserContract
     /**
      * @inheritDoc
      */
-    public function roleIn(array $roles): bool
+    public function roleIn($roles): bool
     {
-        return !!array_intersect(array_keys($this->getRoles()), $roles);
+        return !!array_intersect(array_keys($this->getRoles()), Arr::wrap($roles));
     }
 
     /**

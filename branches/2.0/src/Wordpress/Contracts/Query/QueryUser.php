@@ -311,11 +311,11 @@ interface QueryUser extends ParamsBag
     /**
      * Vérification d'appartenance selon une liste de rôles fournis.
      *
-     * @param string[] $roles Liste des rôles parmis lequels vérifier.
+     * @param string|string[] $roles Liste des rôles parmis lequels vérifier.
      *
      * @return boolean
      */
-    public function roleIn(array $roles): bool;
+    public function roleIn($roles): bool;
 
     /**
      * Sauvegarde des données de l'utilisateur en base.

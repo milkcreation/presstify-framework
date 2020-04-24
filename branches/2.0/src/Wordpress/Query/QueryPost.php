@@ -5,7 +5,7 @@ namespace tiFy\Wordpress\Query;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus};
-use tiFy\Support\{DateTime, ParamsBag, Str};
+use tiFy\Support\{Arr, DateTime, ParamsBag, Str};
 use tiFy\Support\Proxy\{Cache, PostType};
 use tiFy\Wordpress\{
     Contracts\Database\PostBuilder,
@@ -882,6 +882,6 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function typeIn($post_types): bool
     {
-        return in_array((string)$this->getType(), (array)$post_types);
+        return in_array((string)$this->getType(), Arr::wrap($post_types));
     }
 }
