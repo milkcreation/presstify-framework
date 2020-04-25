@@ -2,7 +2,7 @@
     position: relative;
 }
 
-[data-control="findposts"] {
+input[type=text][data-control="findposts"] {
     padding-right: 30px;
     margin: 0;
     width: 100%;

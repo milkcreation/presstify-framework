@@ -9,6 +9,7 @@ use tiFy\Http\Response;
 use tiFy\Support\Proxy\Router;
 use tiFy\Routing\Strategy\App as AppStrategy;
 use tiFy\Wordpress\Contracts\Routing\Route as RouteContract;
+use tiFy\Wordpress\Proxy\PageHook;
 use Wp_Query;
 use Zend\Diactoros\Response as ZendResponse;
 
@@ -79,12 +80,12 @@ class Template extends AppStrategy
                 }
             });
 
-            /*add_filter('posts_pre_query', function (?array $posts, WP_Query $wp_query) {
-                if ($wp_query->is_main_query() && ! $wp_query->is_admin) {
+            add_filter('posts_pre_query', function (?array $posts, WP_Query $wp_query) {
+                if ($wp_query->is_main_query() && ! $wp_query->is_admin && !PageHook::current()) {
                     return [];
                 }
                 return $posts;
-            }, 10, 2);*/
+            }, 10, 2);
         }
 
         $controller = $route->getCallable($this->getContainer());
