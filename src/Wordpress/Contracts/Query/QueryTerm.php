@@ -7,6 +7,18 @@ use tiFy\Wordpress\Contracts\Database\TaxonomyBuilder;
 use WP_Term;
 use WP_Term_Query;
 
+/**
+ * @property-read int $term_id
+ * @property-read string $name
+ * @property-read string $slug
+ * @property-read string $term_group
+ * @property-read int $term_taxonomy_id
+ * @property-read string $taxonomy
+ * @property-read string $description
+ * @property-read int $parent
+ * @property-read int $count
+ * @property-read string $filter
+ */
 interface QueryTerm extends ParamsBag
 {
     /**
