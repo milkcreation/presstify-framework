@@ -76,13 +76,21 @@ $colors: (
     dark:#4B4B4B,
     darker:#2B2B2B,
     regular:#3B3B3B,
+    primary:#4B4B4B,
+    primary-alt:#5B5B5B,
+    secondary:#E4E4E4,
+    secondary:#E9E9E9,
     blue: $blue,
     gray: $gray,
     green: $green,
     red: $red,
     yellow: $yellow,
-    wp:$wp
-);
+    wp:$wp,
+    error:#e74c3c,
+    success:#1abc9c,
+    warning:#f1c40f,
+    infos:#3498db,
+) !default;
 
 @function color($color, $type:'') {
   @if map-has-key($colors, $color) {

@@ -10,6 +10,32 @@ use tiFy\Wordpress\Contracts\Database\PostBuilder;
 use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
 use WP_Post, WP_Query, WP_Term, WP_User;
 
+/**
+ * @property-read int $ID
+ * @property-read int $post_author
+ * @property-read string $post_date
+ * @property-read string $post_date_gmt
+ * @property-read string $post_content
+ * @property-read string $post_title
+ * @property-read string $post_excerpt
+ * @property-read string $post_status
+ * @property-read string $comment_status
+ * @property-read string $ping_status
+ * @property-read string $post_password
+ * @property-read string $post_name
+ * @property-read string $to_ping
+ * @property-read string $pinged
+ * @property-read string $post_modified
+ * @property-read string $post_modified_gmt
+ * @property-read string $post_content_filtered
+ * @property-read int $post_parent
+ * @property-read string $guid
+ * @property-read int $menu_order
+ * @property-read string $post_type
+ * @property-read string $post_mime_type
+ * @property-read int $comment_count
+ * @property-read string $filter
+ */
 interface QueryPost extends ParamsBag
 {
     /**
