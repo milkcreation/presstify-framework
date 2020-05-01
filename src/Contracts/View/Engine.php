@@ -11,7 +11,7 @@ interface Engine
      *
      * @param string $name
      *
-     * @return string
+     * @return bool
      */
     public function exists($name);
 

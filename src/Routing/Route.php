@@ -6,9 +6,10 @@ use FastRoute\RouteParser\Std as RouteParser;
 use InvalidArgumentException;
 use League\Route\Route as LeagueRoute;
 use LogicException;
+use tiFy\Contracts\Http\Response as HttpResponse;
 use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterContract};
 use tiFy\Routing\Concerns\{ContainerAwareTrait, StrategyAwareTrait};
-use tiFy\Support\ParamsBag;
+use tiFy\Support\{ParamsBag, Proxy\Redirect};
 
 class Route extends LeagueRoute implements RouteContract
 {
@@ -127,6 +128,16 @@ class Route extends LeagueRoute implements RouteContract
                 __('La définition ou la récupération de paramètre de route est invalide', 'tify')
             );
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function redirect(array $parameters = [], int $status = 302, array $headers = []): HttpResponse
+    {
+        $url = $this->getUrl($parameters);
+
+        return Redirect::to($url, $status, $headers);
     }
 
     /**
