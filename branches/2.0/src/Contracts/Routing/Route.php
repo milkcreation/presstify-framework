@@ -11,6 +11,7 @@ use League\Route\RouteConditionHandlerInterface;
 use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use tiFy\Contracts\Http\Response as HttpResponse;
 use tiFy\Contracts\Support\ParamsBag;
 
 /**
@@ -106,6 +107,17 @@ interface Route extends
     public function params($key = null, $default = null);
 
     /**
+     * Création d'une instance de reponse de redirection PSR.
+     *
+     * @param array $parameters Liste des paramètres passés en argument dans l'url de la route.
+     * @param int $status Code du statut de redirection.
+     * @param array $headers Liste des entêtes complémentaires.
+     *
+     * @return HttpResponse
+     */
+    public function redirect(array $parameters = [], int $status = 302, array $headers = []): HttpResponse;
+
+    /**
      * Définition de l'indicateur de route en réponse à la requête courante.
      *
      * @return void
@@ -117,7 +129,7 @@ interface Route extends
      *
      * @param RouteGroup $group
      *
-     * @return static
+     * @return LeagueRoute|static
      */
     public function setParentGroup(RouteGroup $group): LeagueRoute;
 

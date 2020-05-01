@@ -10,6 +10,7 @@ use tiFy\Contracts\Partial\{
     CurtainMenu as CurtainMenuContract,
     Dropdown as DropdownContract,
     Downloader as DownloaderContract,
+    FlashNotice as FlashNoticeContract,
     Holder as HolderContract,
     ImageLightbox as ImageLightboxContract,
     Modal as ModalContract,
@@ -33,6 +34,7 @@ use tiFy\Partial\Driver\{
     CurtainMenu\CurtainMenu,
     Dropdown\Dropdown,
     Downloader\Downloader,
+    FlashNotice\FlashNotice,
     Holder\Holder,
     ImageLightbox\ImageLightbox,
     Modal\Modal,
@@ -64,6 +66,7 @@ class PartialServiceProvider extends ServiceProvider
         CookieNoticeContract::class,
         CurtainMenuContract::class,
         DropdownContract::class,
+        FlashNoticeContract::class,
         HolderContract::class,
         ImageLightboxContract::class,
         ModalContract::class,
@@ -122,6 +125,10 @@ class PartialServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(DownloaderContract::class, function () {
             return new Downloader();
+        });
+
+        $this->getContainer()->add(FlashNoticeContract::class, function () {
+            return new FlashNotice();
         });
 
         $this->getContainer()->add(HolderContract::class, function () {

@@ -3,7 +3,7 @@
 namespace tiFy\Routing;
 
 use Psr\Container\ContainerInterface as Container;
-use tiFy\Contracts\{Http\Response as ResponseContract, Http\RedirectResponse, Routing\Redirector};
+use tiFy\Contracts\{Http\Response as ResponseContract, Http\RedirectResponse, Routing\Redirector, View\Engine};
 use tiFy\Http\Response;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\{View, Redirect};
@@ -72,7 +72,7 @@ abstract class BaseController extends ParamsBag
      */
     public function hasView(string $view): bool
     {
-        return View::exists($view);
+        return $this->viewEngine()->exists($view);
     }
 
     /**
@@ -103,7 +103,7 @@ abstract class BaseController extends ParamsBag
      */
     public function render(string $view, array $data = []): string
     {
-        return View::render($view, $data);
+        return $this->viewEngine()->render($view, $data);
     }
 
     /**
@@ -160,5 +160,15 @@ abstract class BaseController extends ParamsBag
     public function view(string $view, array $data = []): ?ResponseContract
     {
         return $this->response($this->render($view, $data));
+    }
+
+    /**
+     * Moteur d'affichage des gabarits d'affichage.
+     *
+     * @return Engine
+     */
+    public function viewEngine(): Engine
+    {
+        return View::getInstance()->getEngine();
     }
 }

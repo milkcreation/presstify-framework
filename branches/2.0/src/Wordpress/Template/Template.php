@@ -69,7 +69,8 @@ class Template
                             $factory->param('wordpress.admin_menu.menu_title'),
                             $factory->param('wordpress.admin_menu.capability'),
                             $factory->param('wordpress.admin_menu.menu_slug'),
-                            $factory->param('wordpress.admin_menu.function')
+                            $factory->param('wordpress.admin_menu.function'),
+                            $factory->param('wordpress.admin_menu.position')
                         );
 
                     add_action('current_screen', function (WP_Screen $wp_screen) use ($factory, $hookname) {
