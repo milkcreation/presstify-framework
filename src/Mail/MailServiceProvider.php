@@ -48,12 +48,12 @@ class MailServiceProvider extends ServiceProvider
             return (new MailerQueue())->setMailer($this->getContainer()->get('mailer'));
         });
 
-        $this->getContainer()->add('mail.view', function (Mailer $mailer) {
+        $this->getContainer()->add('mail.view', function (Mail $mail) {
             return View::getPlatesEngine(array_merge([
                 'directory' => __DIR__ . '/Resources/views/',
                 'factory'   => MailView::class,
-                'mailer'    => $mailer,
-            ], config('mail.viewer', []), $mailer->create()->params('viewer', [])));
+                'mail'      => $mail,
+            ], config('mail.viewer', []), $mail->params('viewer', [])));
         });
     }
 }

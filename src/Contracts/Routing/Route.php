@@ -11,7 +11,7 @@ use League\Route\RouteConditionHandlerInterface;
 use LogicException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use tiFy\Contracts\Http\Response as HttpResponse;
+use tiFy\Contracts\Http\{RedirectResponse as HttpRedirect};
 use tiFy\Contracts\Support\ParamsBag;
 
 /**
@@ -113,9 +113,9 @@ interface Route extends
      * @param int $status Code du statut de redirection.
      * @param array $headers Liste des entêtes complémentaires.
      *
-     * @return HttpResponse
+     * @return HttpRedirect
      */
-    public function redirect(array $parameters = [], int $status = 302, array $headers = []): HttpResponse;
+    public function redirect(array $parameters = [], int $status = 302, array $headers = []): HttpRedirect;
 
     /**
      * Définition de l'indicateur de route en réponse à la requête courante.
