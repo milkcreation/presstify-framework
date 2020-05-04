@@ -6,7 +6,7 @@ use FastRoute\RouteParser\Std as RouteParser;
 use InvalidArgumentException;
 use League\Route\Route as LeagueRoute;
 use LogicException;
-use tiFy\Contracts\Http\Response as HttpResponse;
+use tiFy\Contracts\Http\{RedirectResponse as HttpRedirect};
 use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterContract};
 use tiFy\Routing\Concerns\{ContainerAwareTrait, StrategyAwareTrait};
 use tiFy\Support\{ParamsBag, Proxy\Redirect};
@@ -133,7 +133,7 @@ class Route extends LeagueRoute implements RouteContract
     /**
      * @inheritDoc
      */
-    public function redirect(array $parameters = [], int $status = 302, array $headers = []): HttpResponse
+    public function redirect(array $parameters = [], int $status = 302, array $headers = []): HttpRedirect
     {
         $url = $this->getUrl($parameters);
 

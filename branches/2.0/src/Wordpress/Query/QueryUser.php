@@ -8,6 +8,18 @@ use tiFy\Wordpress\Contracts\{Database\UserBuilder, Query\QueryUser as QueryUser
 use tiFy\Wordpress\Database\Model\User as UserModel;
 use WP_Site, WP_User, WP_User_Query;
 
+/**
+ * @property-read int ID
+ * @property-read string user_login
+ * @property-read string user_pass
+ * @property-read string user_nicename
+ * @property-read string user_email
+ * @property-read string user_url
+ * @property-read string user_registered
+ * @property-read string user_activation_key
+ * @property-read string user_status
+ * @property-read string display_name
+ */
 class QueryUser extends ParamsBag implements QueryUserContract
 {
     /**
