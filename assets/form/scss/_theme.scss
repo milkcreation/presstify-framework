@@ -257,6 +257,19 @@ $form-field-radius-bl: $form-field-radius !default;
       transition: transform 200ms ease-in-out;
     }
   }
+
+  &:disabled {
+    + .FieldLabel,
+    + .Form-fieldLabel,
+    + .FieldRadioCollection-itemLabel,
+    + .FieldCheckboxCollection-itemLabel {
+      opacity:0.5;
+
+      &::before {
+        opacity:0.5;
+      }
+    }
+  }
 }
 
 .FieldRadioCollection[aria-error="true"],
@@ -313,5 +326,11 @@ $form-field-radius-bl: $form-field-radius !default;
         border-left-color: map-get($colors, error);
       }
     }
+  }
+}
+
+.Form-fieldInput--recaptcha {
+  &[aria-error=true] {
+    border-left: solid 3px map-get($colors, error);
   }
 }
