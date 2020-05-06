@@ -11,6 +11,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\{ResponseInterface as Response, ServerRequestInterface as Request};
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Container\Container;
+use tiFy\Contracts\Http\RedirectResponse as HttpRedirect;
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterContract};
 use tiFy\Http\Response as HttpResponse;
 use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait};

@@ -6,7 +6,7 @@ use FastRoute\RouteParser\Std as RouteParser;
 use InvalidArgumentException;
 use League\Route\Route as LeagueRoute;
 use LogicException;
-use tiFy\Contracts\Http\{RedirectResponse as HttpRedirect};
+use tiFy\Contracts\Http\RedirectResponse as HttpRedirect;
 use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterContract};
 use tiFy\Routing\Concerns\{ContainerAwareTrait, StrategyAwareTrait};
 use tiFy\Support\{ParamsBag, Proxy\Redirect};
