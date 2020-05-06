@@ -4,7 +4,7 @@
 // -- Variables
 $form-gutter: 15 !default;
 $form-notice-border-width: 3 !default;
-$form-field-error-border-width: $form-notice-border-width;
+$form-field-error-border-width: $form-notice-border-width !default;
 $form-field-radius: 5 !default;
 $form-field-radius-tl: $form-field-radius !default;
 $form-field-radius-tr: $form-field-radius !default;

@@ -22,7 +22,7 @@
                 <td>
                     <p>
                         <?php _e(
-                            'Si ce mail, vous est parvenu c\'est qu\'un test d\'expédition a été envoyé depuis le ' .
+                            'Si ce mail vous est parvenu c\'est qu\'un test d\'expédition a été envoyé depuis le ' .
                             'site : ', 'theme'
                         ); ?>
                     </p>
