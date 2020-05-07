@@ -96,7 +96,7 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
     public function getOverrideDir(string $path = ''): ?string
     {
         return $this->getFolders()->exists('_override')
-            ? $this->getFolder('_override')->getPath() . ($path ? trim($path, '/') : '')
+            ? rtrim($this->getFolder('_override')->getPath(), '/') . ($path ? '/' . ltrim(rtrim($path, '/'), '/') : '')
             : null;
     }
 
