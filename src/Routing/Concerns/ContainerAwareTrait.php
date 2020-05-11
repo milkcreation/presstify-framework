@@ -14,7 +14,7 @@ trait ContainerAwareTrait
     protected $container;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getContainer(): ?ContainerInterface
     {
@@ -22,7 +22,7 @@ trait ContainerAwareTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return ContainerAwareTrait
      */

@@ -131,7 +131,7 @@ class RoutingServiceProvider extends ServiceProvider
     public function registerUrl(): void
     {
         $this->getContainer()->share('url', function () {
-            return new Url($this->getContainer()->get('router'), request());
+            return new Url($this->getContainer()->get('router'));
         });
     }
 }

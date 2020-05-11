@@ -9,7 +9,7 @@ use tiFy\Routing\Middleware\Xhr;
 trait RouteCollectionAwareTrait
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return RouteContract
      */
@@ -19,7 +19,7 @@ trait RouteCollectionAwareTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return RouteContract
      */
