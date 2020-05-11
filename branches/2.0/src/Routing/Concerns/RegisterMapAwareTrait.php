@@ -5,6 +5,7 @@ namespace tiFy\Routing\Concerns;
 use Exception;
 use League\Route\Strategy\StrategyInterface;
 use tiFy\Contracts\Routing\{RegisterMapAwareTrait as RegisterMapAwareTraitContract, Route as RouteContract};
+use tiFy\Support\Proxy\Request;
 
 /**
  * Trait RegisterMapAwareTrait
@@ -15,7 +16,7 @@ use tiFy\Contracts\Routing\{RegisterMapAwareTrait as RegisterMapAwareTraitContra
 trait RegisterMapAwareTrait
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return RegisterMapAwareTrait
      */
@@ -34,8 +35,8 @@ trait RegisterMapAwareTrait
          */
         extract($attrs);
 
-        $scheme = $scheme ?? request()->getScheme();
-        $host = $host ?? request()->getHost();
+        $scheme = $scheme ?? Request::getScheme();
+        $host = $host ?? Request::getHost();
         $strategy = $strategy ?? null;
 
         /** @var RouteContract $route */

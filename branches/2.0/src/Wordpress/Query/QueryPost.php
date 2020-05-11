@@ -2,8 +2,10 @@
 
 namespace tiFy\Wordpress\Query;
 
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\{
+    Collection as EloquentCollection,
+    Model as EloquentModel
+};
 use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus};
 use tiFy\Support\{Arr, DateTime, ParamsBag, Str};
 use tiFy\Support\Proxy\{Cache, PostType};
@@ -501,6 +503,14 @@ class QueryPost extends ParamsBag implements QueryPostContract
         }
 
         return $this->author ?: null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getArchiveUrl(): ?string
+    {
+        return get_post_type_archive_link($this->getType()->getName()) ?: null;
     }
 
     /**

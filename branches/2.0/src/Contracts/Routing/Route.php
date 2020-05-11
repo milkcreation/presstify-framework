@@ -97,6 +97,15 @@ interface Route extends
     public function isCurrent(): bool;
 
     /**
+     * Définition d'un ou plusieurs middlewares associés.
+     *
+     * @param string|string[]|MiddlewareInterface|MiddlewareInterface[] $middleware
+     *
+     * @return static
+     */
+    public function middleware($middleware): MiddlewareAwareInterface;
+
+    /**
      * Définition de paramètre|Récupération de paramètres|Récupération de l'instance des paramètres.
      *
      * @param array|string|null $key Liste des définitions de paramètres|Indice de qualification du paramètres à récupérer (Syntaxe à point permise).

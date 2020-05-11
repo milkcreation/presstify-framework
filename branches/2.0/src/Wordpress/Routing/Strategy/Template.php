@@ -94,6 +94,10 @@ class Template extends AppStrategy
         array_push($args, $request);
 
         add_action('template_redirect', function () use ($controller, $args) {
+            if ( is_robots() || is_favicon() || is_feed() || is_trackback()) {
+                return;
+            }
+
             $resolved = $controller(...$args);
 
             if ($resolved instanceof PsrResponse) {

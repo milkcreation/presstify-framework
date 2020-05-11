@@ -2,7 +2,8 @@
 
 namespace tiFy\Routing;
 
-use League\Route\{Route as LeagueRoute,
+use League\Route\{Middleware\MiddlewareAwareInterface,
+    Route as LeagueRoute,
     RouteCollectionInterface as LeagueRouteCollection,
     RouteGroup as LeagueRouteGroup};
 use tiFy\Contracts\Routing\{RouteGroup as RouteGroupContract, Router as RouterContract};
@@ -45,7 +46,7 @@ class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return RouteGroupContract
      */
@@ -76,5 +77,23 @@ class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
         }
 
         return $route;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function middleware($middleware): MiddlewareAwareInterface
+    {
+        if (is_string($middleware)) {
+            $middleware = $this->collection->getNamedMiddleware($middleware);
+        } elseif (is_array($middleware)) {
+            foreach ($middleware as $item) {
+                $this->middleware($item);
+            }
+
+            return $this;
+        }
+
+        return parent::middleware($middleware);
     }
 }

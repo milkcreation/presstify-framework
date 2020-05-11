@@ -4,12 +4,13 @@ namespace tiFy\Routing;
 
 use FastRoute\RouteParser\Std as RouteParser;
 use InvalidArgumentException;
-use League\Route\Route as LeagueRoute;
+use League\Route\{Middleware\MiddlewareAwareInterface, Route as LeagueRoute};
 use LogicException;
 use tiFy\Contracts\Http\RedirectResponse as HttpRedirect;
 use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterContract};
 use tiFy\Routing\Concerns\{ContainerAwareTrait, StrategyAwareTrait};
-use tiFy\Support\{ParamsBag, Proxy\Redirect};
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\{Request, Redirect, Url};
 
 class Route extends LeagueRoute implements RouteContract
 {
@@ -53,43 +54,71 @@ class Route extends LeagueRoute implements RouteContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getUrl(array $params = [], bool $absolute = false): string
     {
         $routes = (new RouteParser())->parse($this->collection->parseRoutePath($this->getPath()));
+        $name = $this->name ?: __('Non qualifiée', 'tify');
 
-        foreach ($routes as $route) {
+        foreach ($routes as $segments) {
+            $_params = $params;
             $url = '';
             $paramIdx = 0;
-            foreach ($route as $part) {
-                if (is_string($part)) {
-                    $url .= $part;
+
+            foreach ($segments as $segment) {
+                if (is_string($segment)) {
+                    $url .= $segment;
                     continue;
-                } elseif ($paramIdx === count($params)) {
-                    throw new LogicException(__('Le nombre de paramètres fournis est insuffisant.', 'tify'));
+                } elseif (!empty($_params[$segment[0]])) {
+                    $part = $_params[$segment[0]];
+                    unset($_params[$segment[0]]);
+                } elseif (!empty($_params[$paramIdx])) {
+                    $part = $_params[$paramIdx];
+                    unset($_params[$paramIdx]);
+                    $paramIdx++;
+                } else {
+                    throw new LogicException(sprintf(__(
+                        'Url de la route invalide - Nombre de paramètres fournis insuffisants' .
+                        ' >> Fournis : %s | Requis : %s | Route : %s.',
+                        'tify'
+                    ), json_encode($params), $segment[0], $name));
                 }
 
-                $url .= $params[$paramIdx++];
+                if (!preg_match("/{$segment[1]}/", (string)$part)) {
+                    throw new LogicException(sprintf(__(
+                        'Url de la route invalide - Typage de paramètre incorrect' .
+                        ' >> Fourni: %s | Attendu: %s | Route : %s.',
+                        'tify'
+                    ), $part, $segment[1], $name));
+                } else {
+                    $url .= $part;
+                }
             }
 
-            if ($paramIdx === count($params)) {
-                if ($absolute) {
-                    $host = $this->getHost() ?: request()->getHost();
-                    $port = $this->getPort() ?: request()->getPort();
-                    $scheme = $this->getScheme() ?: request()->getScheme();
-                    if ((($port === 80) && ($scheme = 'http')) || (($port === 443) && ($scheme = 'https'))) {
-                        $port = '';
-                    }
-
-                    $url = $scheme . '://' . $host . ($port ? ':' . $port : '') . $url;
+            if ($absolute) {
+                $host = $this->getHost() ?: Request::getHost();
+                $port = $this->getPort() ?: Request::getPort();
+                $scheme = $this->getScheme() ?: Request::getScheme();
+                if ((($port === 80) && ($scheme = 'http')) || (($port === 443) && ($scheme = 'https'))) {
+                    $port = '';
                 }
 
+                $url = $scheme . '://' . $host . ($port ? ':' . $port : '') . $url;
+            }
+
+            if (!empty($_params)) {
+                return Url::set($url)->with($_params)->render();
+            } else {
                 return $url;
             }
         }
 
-        throw new LogicException(__('Le nombre de paramètres fournis est trop important.', 'tify'));
+        throw new LogicException(sprintf(__(
+            'Url de la route invalide - Génération impossible.' .
+            ' >> Paramètres: %s | Route : %s.',
+            'tify'
+        ), json_encode($params), $name));
     }
 
     /**
@@ -106,6 +135,24 @@ class Route extends LeagueRoute implements RouteContract
     public function isCurrent(): bool
     {
         return $this->current;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function middleware($middleware): MiddlewareAwareInterface
+    {
+        if (is_string($middleware)) {
+            $middleware = $this->collection->getNamedMiddleware($middleware);
+        } elseif (is_array($middleware)) {
+            foreach ($middleware as $item) {
+                $this->middleware($item);
+            }
+
+            return $this;
+        }
+
+        return parent::middleware($middleware);
     }
 
     /**

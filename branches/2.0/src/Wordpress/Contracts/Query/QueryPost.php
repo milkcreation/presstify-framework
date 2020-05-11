@@ -325,6 +325,13 @@ interface QueryPost extends ParamsBag
     public function db(): PostBuilder;
 
     /**
+     * Url de la page d'archive associé.
+     *
+     * @return string|null
+     */
+    public function getArchiveUrl(): ?string;
+
+    /**
      * Récupération de l'instance de l'auteur associé.
      *
      * @return QueryUser|null
