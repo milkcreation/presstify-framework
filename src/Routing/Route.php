@@ -70,10 +70,10 @@ class Route extends LeagueRoute implements RouteContract
                 if (is_string($segment)) {
                     $url .= $segment;
                     continue;
-                } elseif (!empty($_params[$segment[0]])) {
+                } elseif (isset($_params[$segment[0]])) {
                     $part = $_params[$segment[0]];
                     unset($_params[$segment[0]]);
-                } elseif (!empty($_params[$paramIdx])) {
+                } elseif (isset($_params[$paramIdx])) {
                     $part = $_params[$paramIdx];
                     unset($_params[$paramIdx]);
                     $paramIdx++;
@@ -85,7 +85,7 @@ class Route extends LeagueRoute implements RouteContract
                     ), json_encode($params), $segment[0], $name));
                 }
 
-                if (!preg_match("/{$segment[1]}/", (string)$part)) {
+                if (!preg_match("#{$segment[1]}+#", (string)$part)) {
                     throw new LogicException(sprintf(__(
                         'Url de la route invalide - Typage de paramètre incorrect' .
                         ' >> Fourni: %s | Attendu: %s | Route : %s.',

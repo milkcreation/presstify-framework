@@ -65,10 +65,10 @@ class User extends AddonFactory
         });
 
         $this->form()->events()
-            ->listen('request.validation.field', function (FactoryField $field) {
+            ->listen('request.validate.field', function (FactoryField $field) {
                 $this->form()->events('addon.user.field.validation', [&$field]);
             })
-            ->listen('request.submit', function () {
+            ->listen('request.proceed', function () {
                 $this->form()->events('addon.user.save');
             })
             ->listen('addon.user.field.validation', [$this, 'fieldValidation'])

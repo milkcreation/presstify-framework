@@ -2,6 +2,7 @@
 
 namespace tiFy\Contracts\Form;
 
+use tiFy\Http\RedirectResponse;
 use tiFy\Contracts\Support\ParamsBag;
 
 interface FactoryRequest extends FactoryResolver, ParamsBag
@@ -23,9 +24,9 @@ interface FactoryRequest extends FactoryResolver, ParamsBag
     /**
      * Traitement de la requête de soumission du formulaire.
      *
-     * @return void
+     * @return RedirectResponse|null
      */
-    public function handle(): void;
+    public function handle(): ?RedirectResponse;
 
     /**
      * Préparation des données de traitement de la requête.
