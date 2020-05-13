@@ -161,7 +161,7 @@ class Record extends AddonFactory
         });
 
         $this->form()->events()
-            ->listen('request.submit',  function () {
+            ->listen('request.proceed',  function () {
                 $this->form()->events('addon.record.save');
             })
             ->listen('addon.record.save', [$this, 'save']);

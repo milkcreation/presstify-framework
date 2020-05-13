@@ -2,15 +2,18 @@
 
 namespace tiFy\Wordpress\Query;
 
-use tiFy\Support\ParamsBag;
+use Illuminate\Database\Eloquent\{
+    Collection as EloquentCollection,
+    Model as EloquentModel
+};
+use tiFy\Support\{Arr, ParamsBag};
 use tiFy\Wordpress\Contracts\{
     Database\TaxonomyBuilder,
     Query\PaginationQuery as PaginationQueryContract,
     Query\QueryTerm as QueryTermContract
 };
 use tiFy\Wordpress\Database\Model\Term as Model;
-use WP_Term;
-use WP_Term_Query;
+use WP_Term, WP_Term_Query;
 
 /**
  * @property-read int $term_id
@@ -26,6 +29,18 @@ use WP_Term_Query;
  */
 class QueryTerm extends ParamsBag implements QueryTermContract
 {
+    /**
+     * Liste des classes de rappel d'instanciation selon la taxonomie.
+     * @var string[][]|array
+     */
+    protected static $builtInClasses = [];
+
+    /**
+     * Classe de rappel d'instanciation
+     * @var string|null
+     */
+    protected static $fallbackClass;
+
     /**
      * Liste des arguments de requête de récupération des éléments par défaut.
      * @var array
@@ -79,6 +94,19 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
+    public static function build(WP_Term $wp_term): QueryTermContract
+    {
+        $classes = self::$builtInClasses;
+        $taxonomy = $wp_term->taxonomy;
+
+        $class = $classes[$taxonomy] ?? (self::$fallbackClass ?: static::class);
+
+        return class_exists($class) ? new $class($wp_term) : new static($wp_term);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function create($id = null, ...$args): ?QueryTermContract
     {
         if (is_numeric($id)) {
@@ -86,7 +114,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
         } elseif (is_string($id)) {
             return static::createFromSlug($id, ...$args);
         } elseif ($id instanceof WP_Term) {
-            return (new static($id));
+            return static::build($id);
         } elseif ($id instanceof QueryTermContract) {
             return static::createFromId($id->getId());
         } elseif (is_null($id) && ($instance = static::createFromGlobal())) {
@@ -103,10 +131,9 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
-    public static function createFromId(int $term_id): ?QueryTermContract
+    public static function createFromEloquent(EloquentModel $model): ?QueryTermContract
     {
-        return (($wp_term = get_term($term_id)) && ($wp_term instanceof WP_Term))
-            ? new static($wp_term) : null;
+        return static::createFromId((new WP_Term((object)$model->getAttributes()))->term_id ?: 0);
     }
 
     /**
@@ -116,7 +143,20 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     {
         global $wp_query;
 
-        return $wp_query->is_tax() ? self::createFromId($wp_query->queried_object_id) : null;
+        return $wp_query->is_tax() || $wp_query->is_category() || $wp_query->is_tag()
+            ? self::createFromId($wp_query->queried_object_id) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function createFromId(int $term_id): ?QueryTermContract
+    {
+        if ($term_id && ($wp_term = get_term($term_id)) && ($wp_term instanceof WP_Term)) {
+            return static::is($instance = static::build($wp_term)) ? $instance : null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -124,10 +164,9 @@ class QueryTerm extends ParamsBag implements QueryTermContract
      */
     public static function createFromSlug(string $term_slug, ?string $taxonomy = null): ?QueryTermContract
     {
-        $taxonomy = $taxonomy ?? static::$taxonomy;
+        $wp_term = get_term_by('slug', $term_slug, $taxonomy ?? static::$taxonomy);
 
-        return (($wp_term = get_term_by('slug', $term_slug, $taxonomy)) && ($wp_term instanceof WP_Term))
-            ? new static($wp_term) : null;
+        return ($wp_term instanceof WP_Term) ? static::createFromId($wp_term->term_id ?? 0) : null;
     }
 
     /**
@@ -150,6 +189,21 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     public static function fetchFromArgs(array $args = []): array
     {
         return static::fetchFromWpTermQuery(new WP_Term_Query(static::parseQueryArgs($args)));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function fetchFromEloquent(EloquentCollection $collection): array
+    {
+        $instances = [];
+        foreach ($collection->toArray() as $item) {
+            if ($instance = static::createFromId((new WP_Term((object)$item))->term_id ?: 0)) {
+                $instances[] = $instance;
+            }
+        }
+
+        return $instances;
     }
 
     /**
@@ -180,7 +234,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
 
             $total = (int)$wp_term_query_count->get_terms();
             $pages = (int)ceil($total / $per_page);
-            $page = (int)ceil(($offset+1) / $per_page);
+            $page = (int)ceil(($offset + 1) / $per_page);
         } else {
             $pages = 1;
             $page = 1;
@@ -197,15 +251,31 @@ class QueryTerm extends ParamsBag implements QueryTermContract
             'total'        => $total,
         ]);
 
-        $results = $terms ?: [];
+        $results = [];
+        foreach ($terms as $wp_term) {
+            $instance = static::build($wp_term);
 
-        array_walk($results, function (WP_Term &$wp_term) {
-            $wp_term = new static($wp_term);
-        });
+            if (($taxonomy = static::$taxonomy) && ($taxonomy !== 'any')) {
+                if ($instance->taxIn($taxonomy)) {
+                    $results[] = $instance;
+                }
+            } else {
+                $results[] = $instance;
+            }
+        }
 
         static::pagination()->set(compact('results'))->parse();
 
         return $results;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function is($instance): bool
+    {
+        return $instance instanceof static &&
+            ((($taxonomy = static::$taxonomy) && ($taxonomy !== 'any')) ? $instance->taxIn($taxonomy) : true);
     }
 
     /**
@@ -269,6 +339,14 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
+    public static function setBuiltInClass(string $post_type, string $classname): void
+    {
+        self::$builtInClasses[$post_type] = $classname;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function setDefaultArgs(array $args): void
     {
         self::$defaultArgs = $args;
@@ -277,9 +355,17 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
+    public static function setFallbackClass(string $classname): void
+    {
+        self::$fallbackClass = $classname;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function setTaxonomy(string $taxonomy): void
     {
-        self::$taxonomy = $taxonomy;
+        static::$taxonomy = $taxonomy;
     }
 
     /**
@@ -313,7 +399,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
-    public function getMeta($meta_key, $single = false, $default = null)
+    public function getMeta(string $meta_key, bool $single = false, $default = null)
     {
         return get_term_meta($this->getId(), $meta_key, $single) ?: $default;
     }
@@ -321,7 +407,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
-    public function getMetaMulti($meta_key, $default = null)
+    public function getMetaMulti(string $meta_key, $default = null)
     {
         return $this->getMeta($meta_key, false, $default);
     }
@@ -329,7 +415,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
-    public function getMetaSingle($meta_key, $default = null)
+    public function getMetaSingle(string $meta_key, $default = null)
     {
         return $this->getMeta($meta_key, true, $default);
     }
@@ -377,7 +463,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
-    public function save($termdata): void
+    public function save(array $termdata): void
     {
         $p = ParamsBag::createFromAttrs($termdata);
         $columns = $this->db()->getConnection()->getSchemaBuilder()->getColumnListing($this->db()->getTable());
@@ -420,5 +506,13 @@ class QueryTerm extends ParamsBag implements QueryTermContract
         foreach ($keys as $k => $v) {
             $this->db()->saveMeta($k, $v);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function taxIn($taxonomies): bool
+    {
+        return in_array((string)$this->getTaxonomy(), Arr::wrap($taxonomies));
     }
 }

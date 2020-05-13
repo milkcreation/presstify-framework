@@ -81,7 +81,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             $this->parse();
 
             add_action('pre_get_posts', function (WP_Query $wp_query) {
-                if (($rewrite = $this->get('rewrite') ?: '') && $wp_query->is_main_query()) {
+                if (!is_admin()  && ($rewrite = $this->get('rewrite') ?: '') && $wp_query->is_main_query()) {
                     if (preg_match('/(.*)@post_type/', $rewrite, $matches) && post_type_exists($matches[1])) {
                         if ($wp_query->is_post_type_archive($matches[1])) {
                             $wp_query->set('hookname', $this->getName());
@@ -101,11 +101,9 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             }, 0);
 
             add_action('pre_get_posts', function (WP_Query $wp_query) {
-                if (!is_admin() && $wp_query->is_main_query()) {
+                if (!is_admin() && $wp_query->is_main_query() && !$this->get('rewrite')) {
                     if ($this->is()) {
-                        if (in_array(Router::currentRouteName(), $this->get('routes', []))) {
-                            $wp_query->parse_query(['page_id' => $this->post()->getId()]);
-                        } elseif  ($query_args = $this->get('wp_query')) {
+                        if  ($query_args = $this->get('wp_query')) {
                             if (is_array($query_args)) {
                                 if ($paged = $wp_query->get('paged')) {
                                     $query_args = array_merge(['paged' => $paged], $query_args);
@@ -114,6 +112,8 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                             } else {
                                 $wp_query->parse_query($wp_query->query);
                             }
+                        } elseif (in_array(Router::currentRouteName(), $this->get('routes', []))) {
+                            $wp_query->parse_query(['page_id' => $this->post()->getId()]);
                         }
                     }
                 }
@@ -349,9 +349,25 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                 }
             }, 999999);
 
-            events()->listen('partial.breadcrumb.fetch', function (BaseBreadcrumbCollection $bc) {
+            events()->listen('partial.breadcrumb.fetch', function (BaseBreadcrumbCollection $bc, $e) {
                 if ($bc instanceof BreadcrumbCollection) {
-                    if ($this->is() || $this->isAncestor()) {
+                    if (in_array(Router::currentRouteName(), $this->get('routes', []))) {
+                        $bc->clear();
+                        $bc->addRoot(null, true);
+                        $hookid = $this->post()->getId();
+
+                        if ($acs = $bc->getPostAncestorsRender($hookid)) {
+                            array_walk($acs, function ($render) use ($bc) {
+                                $bc->add($render);
+                            });
+                        }
+
+                        if ($pr = $bc->getPostRender($hookid, false)) {
+                            $bc->add($pr);
+                        }
+
+                        $e->stopPropagation();
+                    } elseif ($this->is() || $this->isAncestor()) {
                         $bc->clear();
 
                         $hookid = $this->post()->getId();
@@ -404,6 +420,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                         if ($paged) {
                             $bc->add($bc->getRender(sprintf(__('Page %d', 'tify'), get_query_var('paged'))));
                         }
+                        $e->stopPropagation();
                     }
                 }
             }, 100);
@@ -440,7 +457,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             'show_option_none'    => __('Aucune page choisie', 'tify'),
             'title'               => $this->name,
             // Requête de la page d'affichage
-            'wp_query'            => true,
+            'wp_query'            => false,
         ];
     }
 

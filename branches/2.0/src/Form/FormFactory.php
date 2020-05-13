@@ -181,7 +181,9 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function getMethod(): string
     {
-        return $this->get('method', 'post');
+        $method = strtolower($this->get('method'));
+
+        return in_array($method, ['get', 'post']) ? $method : 'post';
     }
 
     /**
@@ -221,7 +223,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function isAuto(): bool
     {
-        return $this->auto ?? false;
+        return $this->auto ?? filter_var($this->get('auto', false), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

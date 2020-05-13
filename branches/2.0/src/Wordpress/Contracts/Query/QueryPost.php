@@ -2,12 +2,13 @@
 
 namespace tiFy\Wordpress\Contracts\Query;
 
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\{
+    Collection as EloquentCollection,
+    Model as EloquentModel
+};
 use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus, Support\ParamsBag};
 use tiFy\Support\DateTime;
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
-use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
 use WP_Post, WP_Query, WP_Term, WP_User;
 
 /**
@@ -58,13 +59,13 @@ interface QueryPost extends ParamsBag
     public static function create($id = null, ...$args): ?QueryPost;
 
     /**
-     * Récupération d'une instance basée sur un modèle Laravel Eloquent
+     * Récupération d'une instance basée sur un modèle Laravel.
      *
      * @param EloquentModel $model
      *
      * @return static|null
      */
-    public static function createFromEloquent(EloquentModel $model): ?QueryPostContract;
+    public static function createFromEloquent(EloquentModel $model): ?QueryPost;
 
     /**
      * Récupération d'une instance basée sur le post global courant.
@@ -159,7 +160,7 @@ interface QueryPost extends ParamsBag
     /**
      * Vérification d'intégrité d'une instance.
      *
-     * @param QueryPostContract|mixed $instance
+     * @param QueryPost|mixed $instance
      *
      * @return bool
      */
@@ -235,6 +236,16 @@ interface QueryPost extends ParamsBag
     public static function queryFromWpQuery(WP_Query $wp_query): array;
 
     /**
+     * Définition d'une classe de rappel d'instanciation selon un type de post.
+     *
+     * @param string $post_type Nom de qualification du type de post associé.
+     * @param string $classname Nom de qualification de la classe.
+     *
+     * @return void
+     */
+    public static function setBuiltInClass(string $post_type, string $classname): void;
+
+    /**
      * Définition de la liste des arguments de requête de récupération des éléments.
      *
      * @param array $args
@@ -242,6 +253,15 @@ interface QueryPost extends ParamsBag
      * @return void
      */
     public static function setDefaultArgs(array $args): void;
+
+    /**
+     * Définition de la classe de rappel par défaut.
+     *
+     * @param string $classname Nom de qualification de la classe.
+     *
+     * @return void
+     */
+    public static function setFallbackClass(string $classname): void;
 
     /**
      * Définition du type de post ou une liste de type de posts associés.
@@ -346,15 +366,6 @@ interface QueryPost extends ParamsBag
     public function getAuthorId(): int;
 
     /**
-     * Récupération de la source base64 d'une image.
-     *
-     * @param string|array $size Taille de l'image. Nom de qualification (full|large|thumbnail|...)|taille perso [w,h].
-     *
-     * @return string|null
-     */
-    public function getThumbnailBase64Src($size = 'thumbnail'): ?string;
-
-    /**
      * Récupération de la liste des instance des enfants
      *
      * @param int|null $per_page Nombre d'élément par page. défaut -1. Si null utilise lé réglage posts_per_page.
@@ -366,7 +377,7 @@ interface QueryPost extends ParamsBag
     public function getChilds(?int $per_page = -1, int $page = 1, array $args = []): array;
 
     /**
-     * Récupération de la liste des classes associées.
+     * Récupération de la liste des classes HTML associées.
      *
      * @param string[] $classes Liste de classes complémentaires.
      * @param bool $html Activation du format de sortie de l'attribut de balise class. ex. class="post"
@@ -519,18 +530,18 @@ interface QueryPost extends ParamsBag
     public function getName(): string;
 
     /**
-     * Récupération de l'identifiant de qualification du post parent relatif.
-     *
-     * @return int
-     */
-    public function getParentId(): int;
-
-    /**
      * Récupération de l'instance tiFy du produit parent.
      *
      * @return static|null
      */
     public function getParent(): ?QueryPost;
+
+    /**
+     * Récupération de l'identifiant de qualification du post parent relatif.
+     *
+     * @return int
+     */
+    public function getParentId(): int;
 
     /**
      * Récupération du chenmin relatif vers l'affichage du post dans l'interface utilisateur.
@@ -596,6 +607,15 @@ interface QueryPost extends ParamsBag
      * @return string
      */
     public function getThumbnail($size = 'post-thumbnail', array $attrs = []): string;
+
+    /**
+     * Récupération de la source base64 d'une image.
+     *
+     * @param string|array $size Taille de l'image. Nom de qualification (full|large|thumbnail|...)|taille perso [w,h].
+     *
+     * @return string|null
+     */
+    public function getThumbnailBase64Src($size = 'thumbnail'): ?string;
 
     /**
      * Récupération de l'url de l'image représentative.
@@ -670,9 +690,9 @@ interface QueryPost extends ParamsBag
     public function saveMeta($key, $value = null): void;
 
     /**
-     * Vérification de correspondance du type de post.
+     * Vérification de correspondance de type de post.
      *
-     * @param array|string $post_types Liste de types de post à vérifier.
+     * @param array|string $post_types Type(s) de post en correspondance.
      *
      * @return bool
      */
