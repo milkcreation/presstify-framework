@@ -196,16 +196,17 @@ class PartialServiceProvider extends ServiceProvider
             $manager = $this->getContainer()->get('partial');
 
             $config = config('partial.viewer', []);
-            if (isset($config['directory'])) {
-                $config['directory'] = sprintf($config['directory'], $driver->getAlias());
 
-                if (!file_exists($config['override_dir'])) {
-                    unset($config['override_dir']);
+            if (isset($config['directory'])) {
+                $config['directory'] = rtrim($config['directory'], '/') . '/' . $driver->getAlias();
+
+                if (!file_exists($config['directory'])) {
+                    unset($config['directory']);
                 }
             }
 
             if (isset($config['override_dir'])) {
-                $config['override_dir'] = sprintf($config['override_dir'], $driver->getAlias());
+                $config['override_dir'] = rtrim($config['override_dir'], '/') . '/' . $driver->getAlias();
 
                 if (!file_exists($config['override_dir'])) {
                     unset($config['override_dir']);
