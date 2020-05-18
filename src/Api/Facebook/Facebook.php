@@ -1,42 +1,30 @@
 <?php
 
-/**
- * @see https://github.com/facebook/php-graph-sdk
- * @see https://developers.facebook.com/docs/php/howto/example_facebook_login
- */
-
 namespace tiFy\Api\Facebook;
 
-use tiFy\tiFy;
-use tiFy\Apps\AppTrait;
 use Facebook\Facebook as FacebookSdk;
 use Facebook\Authentication\AccessToken;
 use Facebook\Authentication\AccessTokenMetadata;
-use Facebook\GraphNodes\GraphUser;
-use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Exceptions\FacebookSDKException;
+use Illuminate\Support\Arr;
+use Psr\Container\ContainerInterface;
+use tiFy\Api\Facebook\Contracts\Facebook as FacebookContract;
+use WP_Error;
 
-class Facebook extends FacebookSdk
+/**
+ * Class Facebook
+ * @package tiFy\Api\Facebook
+ *
+ * @see https://github.com/facebook/php-graph-sdk
+ * @see https://developers.facebook.com/docs/php/howto/example_facebook_login
+ */
+class Facebook extends FacebookSdk implements FacebookContract
 {
-    use AppTrait;
-
     /**
      * Instance de la classe.
-     * @var Facebook
+     * @var self
      */
     private static $instance;
-
-    /**
-     * Attributs de configuration du SDK Facebook.
-     * @var array
-     */
-    protected $config = [];
-
-    /**
-     * Classe de rappel des modules actifs.
-     * @var array
-     */
-    protected $mods = [];
 
     /**
      * Classe de rappel du jeton d'accès d'un utilisateur connecté.
@@ -45,21 +33,46 @@ class Facebook extends FacebookSdk
     private $accessToken;
 
     /**
+     * Liste des attributs de configuration.
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
+     * Instance du conteneur d'injection de dépendances.
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
      * CONSTRUCTEUR.
      *
-     * @param array $args Liste des attributs de configuration.
+     * @param array $attrs {
+     *      Liste des attributs de configuration du SDK Facebook
+     *
+     *      @type string $app_id (requis)
+     *      @type string $app_secret
+     *      @type string $default_graph_version
+     *      @type bool $enable_beta_mode
+     *      @type $http_client_handler
+     *      @type $persistent_data_handler
+     *      @type $pseudo_random_string_generator
+     *      @type $url_detection_handler
+     * }
+     * @param ContainerInterface $container Instance du conteneur d'injection de dépendances.
      *
      * @return void
+     *
+     * @throws FacebookSDKException
+     * }
+     *
      */
-    public function __construct($args)
+    public function __construct(array $attrs, ContainerInterface $container)
     {
-        // Initialisation de la session
-        if (!session_id()) :
-            session_start();
-        endif;
+        $this->container = $container;
 
-        // Traitement des attributs de configuration du SDK PHP Facebook
-        $allowed = [
+        // Traitement des attributs de configuration du SDK PHP Facebook permis.
+        $this->attributes = array_intersect_key($attrs, array_flip([
             'app_id',
             'app_secret',
             'default_graph_version',
@@ -68,101 +81,46 @@ class Facebook extends FacebookSdk
             'persistent_data_handler',
             'pseudo_random_string_generator',
             'url_detection_handler',
-        ];
-        $this->config = array_intersect_key($args, array_flip($allowed));
+        ]));
 
         // Instanciation du SDK PHP Facebook
-        parent::__construct($this->config);
+        parent::__construct($this->attributes);
 
-        // Initialisation des modules
-        if (isset($args['mod'])) :
-            foreach ($args['mod'] as $mod => $callable) :
-                $Mod = $this->appUpperName($mod);
-                $ModClass = "tiFy\\Api\\Facebook\\Mod\\{$Mod}\\{$Mod}";
-                if (!class_exists($ModClass)) :
-                    continue;
-                elseif ($callable === false) :
-                    continue;
-                elseif ($callable === true) :
-                    $callable = '';
-                endif;
+        add_action('init', function (){
+            foreach(['profile', 'signin', 'signup'] as $control) {
+                $this->container->get("api.facebook.login.{$control}");
+            }
+        });
 
-                $this->appServiceShare($ModClass, new $ModClass($callable));
-            endforeach;
-        endif;
-
-        // Initialisation des événements de déclenchement
-        $this->appAddAction('wp_loaded');
+        add_action('wp_loaded', function () {
+            if ($action = request()->get('tify_api_fb', '')) {
+                return events()->trigger('api.facebook', [$action]);
+            }
+            return null;
+        });
     }
 
     /**
-     * A l'issue du chargement complet de Wordpress.
-     *
-     * @return void
+     * @inheritdoc
      */
-    public function wp_loaded()
+    public static function create(array $args, ContainerInterface $container): FacebookContract
     {
-        if (! $action = $this->appRequest()->get('tify_api_fb', '')) :
-            return;
-        endif;
-
-        return do_action_ref_array('tify_api_fb', [$action, &$this]);
+        return self::$instance = self::$instance instanceof static ? self::$instance : new static($args, $container);
     }
 
     /**
-     * Instanciation de la classe.
-     *
-     * @param array $attrs {
-     *      Liste des attributs de configuration du SDK Facebook
-     *
-     *      @var string $app_id (requis)
-     *      @var string $app_secret
-     *      @var string $default_graph_version
-     *      @var bool $enable_beta_mode
-     *      @var $http_client_handler
-     *      @var $persistent_data_handler
-     *      @var $pseudo_random_string_generator
-     *      @var $url_detection_handler
-     * }
-     * @param array $mod {
-     *      Activation/Attributs des modules Facebook tiFy
-     *
-     *      @var bool|array $login
-     * }
+     * @inheritdoc
      */
-    public static function create($args = [])
+    public function config($key, $default = null)
     {
-        if (self::$instance instanceof static) :
-            return self::$instance;
-        else :
-            return self::$instance = new static($args);
-        endif;
+        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
-     * Récupération de l'App ID.
-     *
-     * @return string
-     */
-    public function getAppId()
-    {
-        if (!empty($this->config['app_id'])) :
-            return (string)$this->config['app_id'];
-        endif;
-    }
-
-    /**
-     * Connection à Facebook.
-     *
-     * @param string $redirect_url Url de redirection OAuth valides.
-     *
-     * @return array
+     * @inheritdoc
      */
     public function connect($redirect_url = '')
     {
-        // Définition des éléments de réponse
-        $pieces = ['accessToken', 'tokenMetadata', 'error'];
-
         /**
          * Classe de rappel du jeton d'authentification
          * @var null|AccessToken $accessToken
@@ -183,32 +141,25 @@ class Facebook extends FacebookSdk
 
         // Classe de rappel de redirection
         $helper = $this->getRedirectLoginHelper();
-
+        if (isset($_GET['state'])) {
+            $helper->getPersistentDataHandler()->set('state', $_GET['state']);
+        }
         // Récupération du jeton d'accès
         try {
             $accessToken = $helper->getAccessToken($redirect_url);
-        } catch (FacebookResponseException $e) {
-            $error = new \WP_Error(
-                $e->getCode(),
-                'Graph returned an error: ' . $e->getMessage(),
-                ['title' => __('Graph returned an error', 'tify')]
-            );
-
-            return compact($pieces);
         } catch (FacebookSDKException $e) {
-            $error = new \WP_Error(
+            $error = new WP_Error(
                 401,
                 'Facebook SDK returned an error: ' . $e->getMessage(),
                 ['title' => __('Le kit de développement Facebook renvoi une erreur', 'tify')]
             );
-
-            return compact($pieces);
+            return compact('accessToken', 'tokenMetadata', 'error');
         }
 
         // Bypass - La récupération du jeton d'accès tombe en échec
-        if (!isset($accessToken)) :
-            if ($helper->getError()) :
-                $error = new \WP_Error(
+        if (!isset($accessToken)) {
+            if ($helper->getError()) {
+                $error = new WP_Error(
                     401,
                     "Error: " . $helper->getError() . "\n" .
                     "Error Code: " . $helper->getErrorCode() . "\n" .
@@ -216,13 +167,13 @@ class Facebook extends FacebookSdk
                     "Error Description: " . $helper->getErrorDescription() . "\n"
                 );
 
-                return compact($pieces);
-            else :
-                $error = new \WP_Error(400, 'Bad request');
+                return compact('accessToken', 'tokenMetadata', 'error');
+            } else {
+                $error = new WP_Error(400, 'Bad request');
 
-                return compact($pieces);
-            endif;
-        endif;
+                return compact('accessToken', 'tokenMetadata', 'error');
+            }
+        }
 
         // Classe de rappel de traitement des jetons d'accès
         $oAuth2Client = $this->getOAuth2Client();
@@ -234,64 +185,59 @@ class Facebook extends FacebookSdk
         try {
             $tokenMetadata->validateAppId($this->getAppId());
         } catch (FacebookSDKException $e) {
-            $error = new \WP_Error(
+            $error = new WP_Error(
                 $e->getCode(),
                 $e->getMessage(),
                 ['title' => __('Correspondance du jeton d\'accès en échec', 'tify')]
             );
-
-            return compact($pieces);
+            return compact('accessToken', 'tokenMetadata', 'error');
         }
 
         // Contrôle de la validité du jeton
         try {
             $tokenMetadata->validateExpiration();
         } catch (FacebookSDKException $e) {
-            $error = new \WP_Error(
+            $error = new WP_Error(
                 $e->getCode(),
                 $e->getMessage(),
                 ['title' => __('Expiration du jeton d\'accès', 'tify')]
             );
-
-            return compact($pieces);
+            return compact('accessToken', 'tokenMetadata', 'error');
         }
 
         // Tentative d'échange du jeton d'accès courte durée pour un jeton d'accès longue durée
-        if (!$accessToken->isLongLived()) :
+        if (!$accessToken->isLongLived()) {
             try {
                 $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
             } catch (FacebookSDKException $e) {
-                $error = new \WP_Error(
+                $error = new WP_Error(
                     $e->getCode(),
                     "Error getting long-lived access token: " . $e->getMessage(),
                     ['title' => __('Récupération du jeton d\'accès longue durée en échec', 'tify')]
                 );
-
-                return compact($pieces);
+                return compact('accessToken', 'tokenMetadata', 'error');
             }
-        endif;
+        }
 
         // Bypass - La classe de rappel du jeton d'authentification n'est pas conforme
-        if (!$accessToken instanceof AccessToken) :
-            $error = new \WP_Error(
+        if (!$accessToken instanceof AccessToken) {
+            $error = new WP_Error(
                 401,
                 __('Impossible de définir le jeton d\'authentification Facebook.', 'tify'),
                 ['title' => __('Récupération du jeton d\'accès en échec', 'tify')]
             );
-
-            return compact($pieces);
-        endif;
+            return compact('accessToken', 'tokenMetadata', 'error');
+        }
 
         // Bypass - La classe de rappel de traitement des métadonnées du jeton d'authentification
-        if (!$tokenMetadata instanceof AccessTokenMetadata) :
-            $error = new \WP_Error(
+        if (!$tokenMetadata instanceof AccessTokenMetadata) {
+            $error = new WP_Error(
                 401,
                 __('Impossible de définir les données du jeton d\'authentification Facebook.', 'tify'),
                 ['title' => __('Récupération des données du jeton d\'accès en échec', 'tify')]
             );
-
-            return compact($pieces);
-        endif;
+            return compact('accessToken', 'tokenMetadata', 'error');
+        }
 
         // Mise en cache de la classe de rappel du jeton d'accès
         $this->accessToken = $accessToken;
@@ -300,95 +246,66 @@ class Facebook extends FacebookSdk
         $_SESSION['fb_access_token'] = (string)$this->accessToken;
 
         // Transmission de la réponse
-        return compact($pieces);
+        return compact('accessToken', 'tokenMetadata', 'error');
     }
 
     /**
-     * Déconnection de Facebook.
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function clear()
+    public function clear(): void
     {
-        if (!$id = $this->appRequest()->get('tify_api_fb_clear', false)) :
+        if (!$id = request()->get('tify_api_fb_clear', false)) {
             return;
-        endif;
-
-        // Suppression des information de jeton dans les variables de session
+        }
         $_SESSION['fb_access_token'] = '';
     }
 
     /**
-     * Récupération d'informations utilisateur.
-     * @see https://developers.facebook.com/docs/graph-api/reference/user/
-     * @see https://developers.facebook.com/docs/php/howto/example_retrieve_user_profile
-     *
-     * @param array $fields Tableau indexés des champs à récupérer.
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function userInfos($fields = ['id'])
+    public function error(WP_Error $e): void
     {
-        // Définition des éléments de réponse
-        $pieces = ['infos', 'error'];
+        $data = $e->get_error_data();
 
-        /**
-         * Informations utilisateur
-         * @var null|GraphUser $infos
-         */
-        $infos = null;
+        wp_die(
+            $e->get_error_message(),
+            (!empty($data['title']) ? $data['title'] : __('Processus en erreur', 'tify')),
+            $e->get_error_code()
+        );
+        exit;
+    }
 
-        /**
-         * Classe de rappel des erreurs de traitement
-         * @var null|\WP_Error $error
-         */
-        $error = null;
+    /**
+     * @inheritdoc
+     */
+    public function getAppId(): string
+    {
+        return $this->config('app_id', '');
+    }
 
-        if (!$this->accessToken instanceof AccessToken) :
-            $error = new \WP_Error(
+    /**
+     * @inheritdoc
+     */
+    public function userInfos(array $fields = ['id'])
+    {
+        if (!$this->accessToken instanceof AccessToken) {
+            $error = new WP_Error(
                 401,
                 __('Impossible de définir le jeton d\'authentification Facebook.', 'tify'),
                 ['title' => __('Récupération du jeton d\'accès en échec', 'tify')]
             );
-
-            return compact($pieces);
-        endif;
-
-        // Récupération des informations
+            return compact('infos', 'error');
+        }
         try {
             $response = $this->get('/me?fields=' . join(',', $fields), (string)$this->accessToken);
             $infos = $response->getGraphUser();
-        } catch (FacebookResponseException $e) {
-            $error = new \WP_Error(
-                $e->getCode(),
-                'Graph returned an error: ' . $e->getMessage(),
-                ['title' => __('Graph returned an error', 'tify')]
-            );
         } catch (FacebookSDKException $e) {
-            $error = new \WP_Error(
-                401,
-                'Facebook SDK returned an error: ' . $e->getMessage(),
-                ['title' => __('Le kit de développement Facebook renvoi une erreur', 'tify')]
+            $error = new WP_Error(
+                $e->getCode(),
+                'Erreur: ' . $e->getMessage(),
+                ['title' => __('Erreur Facebook', 'tify')]
             );
         }
-
-        return compact($pieces);
-    }
-
-    /**
-     * Affichage de message d'erreur.
-     *
-     * @param \WP_Error $e
-     *
-     * @return string
-     */
-    public function error($e)
-    {
-        // Récupération des données
-        $data = $e->get_error_data();
-
-        // Affichage des erreurs
-        \wp_die($e->get_error_message(), (! empty($data['title']) ? $data['title'] : __('Processus en erreur', 'tify')), $e->get_error_code());
-        exit;
+        return compact('infos', 'error');
     }
 }
