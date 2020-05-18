@@ -101,7 +101,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             }, 0);
 
             add_action('pre_get_posts', function (WP_Query $wp_query) {
-                if (!is_admin() && $wp_query->is_main_query() && !$this->get('rewrite')) {
+                if (!is_admin() && $wp_query->is_main_query() /*&& !$this->get('rewrite')*/) {
                     if ($this->is()) {
                         if  ($query_args = $this->get('wp_query')) {
                             if (is_array($query_args)) {
