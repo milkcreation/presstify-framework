@@ -2,7 +2,8 @@
 
 namespace tiFy\Kernel;
 
-use tiFy\Http\{Request, Response, Session, Uri};
+use League\Uri\Http as HttpUri;
+use tiFy\Http\{Request, Response};
 use tiFy\Container\ServiceProvider;
 use tiFy\Kernel\{Events\Manager as EventsManager, Events\Listener, Notices\Notices};
 use tiFy\Support\{ClassInfo, ParamsBag};
@@ -88,7 +89,10 @@ class KernelServiceProvider extends ServiceProvider
         });
 
         $this->getContainer()->share('uri', function () {
-            return Uri::createFromRequest($this->getContainer()->get('request'));
+            /** @var Request $request */
+            $request = $this->getContainer()->get('request');
+
+            return HttpUri::createFromString($request->getUri());
         });
     }
 }

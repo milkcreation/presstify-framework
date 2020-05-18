@@ -3,7 +3,7 @@
 namespace tiFy\Support\Traits;
 
 use Psr\Http\Message\UriInterface;
-use League\Uri\UriInterface as LeagueUriInterface;
+use League\Uri\Contracts\UriInterface as LeagueUri;
 use tiFy\Contracts\Routing\UrlFactory;
 use tiFy\Support\Proxy\Url;
 
@@ -189,7 +189,7 @@ trait PaginationAwareTrait
      * Définition de l'url de base utilisé pour les liens de pagination.
      * {@internal %d représente le numéro de page.}
      *
-     * @param UrlFactory|UriInterface|LeagueUriInterface|string|null $base_url
+     * @param UrlFactory|UriInterface|LeagueUri|string|null $base_url
      *
      * @return static
      */
