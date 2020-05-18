@@ -3,7 +3,7 @@
 namespace tiFy\Support\Proxy;
 
 use Psr\Http\Message\UriInterface;
-use League\Uri\UriInterface as LeagueUri;
+use League\Uri\Contracts\UriInterface as LeagueUri;
 use tiFy\Contracts\Routing\{Url as UrlContract, UrlFactory};
 
 /**

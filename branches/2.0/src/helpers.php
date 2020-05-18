@@ -2,7 +2,7 @@
 
 use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
-use League\Uri\UriInterface as LeagueUri;
+use League\Uri\Contracts\UriInterface as LeagueUri;
 use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Asset\Asset;
 use tiFy\Contracts\Container\Container;
