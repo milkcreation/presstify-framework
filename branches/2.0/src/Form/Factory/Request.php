@@ -95,7 +95,7 @@ class Request extends ParamsBag implements FactoryRequest
 
         $this->events('request.successed', [&$this]);
 
-        return new RedirectResponse($this->getRedirectUrl());
+        return $this->redirect();
     }
 
     /**
@@ -126,6 +126,14 @@ class Request extends ParamsBag implements FactoryRequest
         $this->parse()->events('request.prepared');
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function redirect(): RedirectResponse
+    {
+        return new RedirectResponse($this->getRedirectUrl());
     }
 
     /**
