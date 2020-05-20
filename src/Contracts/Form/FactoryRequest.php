@@ -36,6 +36,13 @@ interface FactoryRequest extends FactoryResolver, ParamsBag
     public function prepare(): FactoryRequest;
 
     /**
+     * Redirection de la requête de traitement du formulaire.
+     *
+     * @return RedirectResponse
+     */
+    public function redirect(): RedirectResponse;
+
+    /**
      * Réinitialisation de la requête.
      *
      * @return static
