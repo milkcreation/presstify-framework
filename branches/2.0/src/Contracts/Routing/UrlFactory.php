@@ -49,6 +49,16 @@ interface UrlFactory
     public function decoded(bool $raw = true): string;
 
     /**
+     * Récupération de paramètres de l'url.
+     *
+     * @param string|null $key Clé d'indice du paramètre. Tous si null.
+     * @param string|null $default Valeur de retour par défaut de récupération d'un paramètre unique.
+     *
+     * @return array|string|null
+     */
+    public function params(?string $key = null, ?string $default = null);
+
+    /**
      * Définition de l'url.
      *
      * @param string|UriInterface|LeagueUri $uri

@@ -72,6 +72,7 @@ class Template
                             $factory->param('wordpress.admin_menu.function'),
                             $factory->param('wordpress.admin_menu.position')
                         );
+                    $factory->url()->setDisplayUrl(menu_page_url($factory->name(), false));
 
                     add_action('current_screen', function (WP_Screen $wp_screen) use ($factory, $hookname) {
                         if ($wp_screen->id === $hookname) {

@@ -79,6 +79,16 @@ class UrlFactory implements UrlFactoryContract
     /**
      * @inheritDoc
      */
+    public function params(?string $key = null, ?string $default = null)
+    {
+        parse_str($this->uri->getQuery(), $params);
+
+        return is_null($key) ? $params : ($params[$key] ?? $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function set($uri): UrlFactoryContract
     {
         if (!$uri instanceof UriInterface || !$uri instanceof LeagueUri) {

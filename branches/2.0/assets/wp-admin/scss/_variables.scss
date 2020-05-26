@@ -7,6 +7,10 @@ $wp: (
     highlight: $highlight-color,
     notification: $notification-color,
     body: $body-background,
+    regular:$base-color,
+    primary: $highlight-color,
+    secondary: $notification-color,
+    light:$body-background
 );
 
 $colors: (
