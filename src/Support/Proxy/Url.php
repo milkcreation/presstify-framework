@@ -12,6 +12,7 @@ use tiFy\Contracts\Routing\{Url as UrlContract, UrlFactory};
  * @method static UrlContract deleteSegment(string $segment)
  * @method static string decoded(bool $raw = true)
  * @method static LeagueUri|UriInterface get()
+ * @method static array params(string|null $key = null, string|null $default = null);
  * @method static string|null rel(string $url)
  * @method static string rewriteBase()
  * @method static UrlFactory root(string $path = '')
