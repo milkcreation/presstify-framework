@@ -40,6 +40,7 @@ class Datepicker extends FieldDriver implements DatepickerContract
 
         $this->set([
             'attrs.data-control' => 'datepicker',
+            'attrs.data-options' => $this->get('options', []),
         ]);
 
         return $this;
