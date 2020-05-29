@@ -2,11 +2,11 @@
 
 namespace tiFy\Routing\Strategy;
 
+use Laminas\Diactoros\Response;
 use League\Route\Strategy\JsonStrategy;
 use League\Route\Route;
 use Psr\Http\Message\{ResponseInterface as PsrResponse, ServerRequestInterface as PsrRequest};
 use tiFy\Contracts\Routing\Route as RouteContract;
-use Zend\Diactoros\Response;
 
 class Json extends JsonStrategy
 {

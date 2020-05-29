@@ -3,9 +3,9 @@
 namespace tiFy\Template\Factory;
 
 use Exception;
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\FactoryHttpController as FactoryHttpControllerContract;
-use Zend\Diactoros\Response;
 use tiFy\Support\Proxy\Partial;
 
 class HttpController implements FactoryHttpControllerContract
