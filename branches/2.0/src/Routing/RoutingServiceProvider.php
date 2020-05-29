@@ -2,14 +2,15 @@
 
 namespace tiFy\Routing;
 
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract};
 use tiFy\Container\ServiceProvider;
 use tiFy\Routing\{
     Middleware\Xhr,
     Strategy\App,
-    Strategy\Json};
-use Zend\Diactoros\ResponseFactory;
-use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
+    Strategy\Json
+};
 
 class RoutingServiceProvider extends ServiceProvider
 {

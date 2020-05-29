@@ -5,6 +5,7 @@ namespace tiFy\Routing;
 use ArrayIterator;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
+use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use League\Route\{Middleware\MiddlewareAwareInterface,
     Route as LeagueRoute,
     RouteGroup as LeagueRouteGroup,
@@ -19,7 +20,6 @@ use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterContract};
 use tiFy\Http\Response as HttpResponse;
 use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait};
-use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
 class Router extends LeagueRouter implements RouterContract
 {

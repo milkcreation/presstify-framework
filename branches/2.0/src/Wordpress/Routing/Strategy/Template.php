@@ -2,6 +2,7 @@
 
 namespace tiFy\Wordpress\Routing\Strategy;
 
+use Laminas\Diactoros\Response as LaminasResponse;
 use League\Route\Route;
 use Psr\Http\Message\{ResponseInterface as PsrResponse, ServerRequestInterface as PsrRequest};
 use Symfony\Component\HttpFoundation\Response as SfResponse;
@@ -11,7 +12,6 @@ use tiFy\Routing\Strategy\App as AppStrategy;
 use tiFy\Wordpress\Contracts\Routing\Route as RouteContract;
 use tiFy\Wordpress\Proxy\PageHook;
 use Wp_Query;
-use Zend\Diactoros\Response as ZendResponse;
 
 class Template extends AppStrategy
 {
@@ -116,6 +116,6 @@ class Template extends AppStrategy
             exit;
         }, 50);
 
-        return $this->applyDefaultResponseHeaders((new ZendResponse())->withStatus(100));
+        return $this->applyDefaultResponseHeaders((new LaminasResponse())->withStatus(100));
     }
 }

@@ -2,10 +2,10 @@
 
 namespace tiFy\Routing\Middleware;
 
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\{ResponseInterface,ServerRequestInterface};
 use Psr\Http\Server\{MiddlewareInterface,RequestHandlerInterface};
 use tiFy\Http\Request;
-use Zend\Diactoros\Response;
 
 class Xhr implements MiddlewareInterface
 {
