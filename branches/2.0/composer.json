@@ -34,7 +34,7 @@
     "facebook/graph-sdk": "^5.5",
     "google/apiclient": "^2.2",
     "google/recaptcha": "^1.1",
-    "guzzlehttp/guzzle": "^3.8",
+    "guzzlehttp/guzzle": "^6.5",
     "guzzlehttp/psr7": "^1.6",
     "html2text/html2text": "^4.0",
     "illuminate/http": "^5.8",
