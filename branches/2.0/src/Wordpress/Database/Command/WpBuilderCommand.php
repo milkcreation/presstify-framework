@@ -139,8 +139,20 @@ class WpBuilderCommand extends BaseCommand
             $this->setOffset($offset);
         }
 
-        $this->counter = $this->getOffset();
-        $this->total = $this->countQuery()->count();
+        if (($length = (int)$input->getOption('length')) && ($length > 0)) {
+            $maxId = $this->fetchQuery()->orderBy($this->getPrimaryKey(), 'asc')
+                ->skip($this->getOffset())->take($length)->select($this->getPrimaryKey())->get()->last()
+                ->{$this->getPrimaryKey()};
+
+            $this->total = $length;
+        } else {
+            $maxId = $this->fetchQuery()->orderBy($this->getPrimaryKey(), 'asc')
+                ->select($this->getPrimaryKey())->get()->last()
+                ->{$this->getPrimaryKey()};
+            $this->total = $this->countQuery()->count() - $this->getOffset();
+        }
+
+        $this->counter = 0;
 
         $start = DateTime::now(DateTime::getGlobalTimeZone());
 
@@ -153,7 +165,7 @@ class WpBuilderCommand extends BaseCommand
             ''
         ]);
 
-        $this->fetchQuery()->skip($this->getOffset())
+        $this->fetchQuery()->skip($this->getOffset())->where('id', '<=', $maxId)
             ->chunkById($this->getChunk(), function (BaseCollection $items) use ($output) {
                 $this->handleItems($items, $output);
             });
