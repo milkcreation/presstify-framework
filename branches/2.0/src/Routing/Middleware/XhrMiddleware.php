@@ -3,18 +3,23 @@
 namespace tiFy\Routing\Middleware;
 
 use Laminas\Diactoros\Response;
-use Psr\Http\Message\{ResponseInterface,ServerRequestInterface};
-use Psr\Http\Server\{MiddlewareInterface,RequestHandlerInterface};
+use tiFy\Routing\BaseMiddleware;
+use Psr\Http\{
+    Message\ResponseInterface as PsrResponse,
+    Message\ServerRequestInterface as PsrRequest,
+    Server\RequestHandlerInterface as RequestHandler
+};
 use tiFy\Http\Request;
 
-class Xhr implements MiddlewareInterface
+class XhrMiddleware extends BaseMiddleware
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function process(ServerRequestInterface $psrRequest, RequestHandlerInterface $handler): ResponseInterface
+    public function process(PsrRequest $psrRequest, RequestHandler $handler): PsrResponse
     {
         $request = Request::createFromPsr($psrRequest);
+
         if ($request->ajax()) {
             return $handler->handle($psrRequest);
         } else {
@@ -22,8 +27,8 @@ class Xhr implements MiddlewareInterface
 
             $psrResponse = new Response();
             $psrResponse->getBody()->write(json_encode([
-                'status_code'   => 500,
-                'reason_phrase' => $phrase
+                'status_code' => 500,
+                'reason_phrase' => $phrase,
             ]));
             $psrResponse = $psrResponse->withAddedHeader('content-type', 'application/json');
 
