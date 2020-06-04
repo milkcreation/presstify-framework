@@ -88,31 +88,24 @@ class Template extends AppStrategy
             }, 10, 2);
         }
 
-        $controller = $route->getCallable($this->getContainer());
-
-        $args = array_values($route->getVars());
-        array_push($args, $request);
-
-        add_action('template_redirect', function () use ($controller, $args) {
+        add_action('template_redirect', function () use ($route, $request) {
             if ( is_robots() || is_favicon() || is_feed() || is_trackback()) {
                 return;
             }
 
-            $resolved = $controller(...$args);
+            $controller = $route->getCallable($this->getContainer());
 
-            if ($resolved instanceof PsrResponse) {
-                $response = Response::createFromPsr($resolved);
-            } elseif ($resolved instanceof SfResponse) {
-                $response = $resolved;
-            } else {
-                $response = Response::create((string)$resolved);
+            $args = array_values($route->getVars());
+            array_push($args, $request);
+            $response = $controller(...$args);
+
+            if ($response instanceof SfResponse) {
+                $response = Response::convertToPsr($response);
+            } elseif (!$response instanceof PsrResponse) {
+                $response = is_string($response) ? Response::create($response)->psr() : (new Response())->psr();
             }
 
-            if (!$response->headers->has('content-type')) {
-                $response->headers->set('content-type', 'text/html');
-            }
-
-            Router::emit($response);
+            Router::emit($this->applyDefaultResponseHeaders($response));
             exit;
         }, 50);
 

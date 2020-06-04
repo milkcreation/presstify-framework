@@ -3,11 +3,11 @@
 namespace tiFy\Routing;
 
 use Laminas\Diactoros\ResponseFactory;
-use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract};
 use tiFy\Container\ServiceProvider;
 use tiFy\Routing\{
-    Middleware\Xhr,
+    Middleware\CookieMiddleware,
+    Middleware\XhrMiddleware,
     Strategy\App,
     Strategy\Json
 };
@@ -23,7 +23,6 @@ class RoutingServiceProvider extends ServiceProvider
         RouteContract::class,
         RouteGroupContract::class,
         'router.emitter',
-        'router.middleware.xhr',
         'router.strategy.app',
         'router.strategy.default',
         'router.strategy.json',
@@ -37,7 +36,6 @@ class RoutingServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerEmitter();
-        $this->registerMiddleware();
         $this->registerRedirect();
         $this->registerRouter();
         $this->registerStrategies();
@@ -52,19 +50,7 @@ class RoutingServiceProvider extends ServiceProvider
     public function registerEmitter(): void
     {
         $this->getContainer()->share('router.emitter', function () {
-            return new SapiEmitter();
-        });
-    }
-
-    /**
-     * Déclaration des Middlewares.
-     *
-     * @return void
-     */
-    public function registerMiddleware(): void
-    {
-        $this->getContainer()->add('router.middleware.xhr', function () {
-            return new Xhr();
+            return new Emitter($this->getContainer()->get('router'));
         });
     }
 
@@ -88,7 +74,13 @@ class RoutingServiceProvider extends ServiceProvider
     public function registerRouter(): void
     {
         $this->getContainer()->share('router', function () {
-            return (new Router())->setContainer($this->getContainer());
+            return (new Router())
+                ->setContainer($this->getContainer())
+                ->setMiddlewareStack([
+                    'cookie' =>  new CookieMiddleware(),
+                    'xhr' => new XhrMiddleware()
+                ])
+                ->middleware('cookie');
         });
 
         $this->getContainer()->add(

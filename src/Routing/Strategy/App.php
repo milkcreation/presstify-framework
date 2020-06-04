@@ -33,16 +33,14 @@ class App extends ApplicationStrategy
 
         $args = array_values($route->getVars());
         array_push($args, $request);
-        $resolved = $controller(...$args);
+        $response = $controller(...$args);
 
-        if ($resolved instanceof PsrResponse) {
-            $response = Response::createFromPsr($resolved);
-        } elseif ($resolved instanceof SfResponse) {
-            $response = $resolved;
-        } else {
-            $response = Response::create((string)$resolved);
+        if ($response instanceof SfResponse) {
+            $response = Response::convertToPsr($response);
+        } elseif (!$response instanceof PsrResponse) {
+            $response = is_string($response) ? Response::create($response)->psr() : (new Response())->psr();
         }
 
-        return $this->applyDefaultResponseHeaders(Response::convertToPsr($response));
+        return $this->applyDefaultResponseHeaders($response);
     }
 }
