@@ -8,9 +8,6 @@ use tiFy\Contracts\Routing\{RegisterMapAwareTrait as RegisterMapAwareTraitContra
 use tiFy\Support\Proxy\Request;
 
 /**
- * Trait RegisterMapAwareTrait
- * @package tiFy\Routing\Concerns
- *
  * @mixin ContainerAwareTrait
  */
 trait RegisterMapAwareTrait

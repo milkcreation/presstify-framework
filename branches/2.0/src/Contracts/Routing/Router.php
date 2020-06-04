@@ -12,7 +12,9 @@ use League\Route\RouteCollectionInterface;
 use League\Route\Route as LeagueRoute;
 use League\Route\Strategy\StrategyAwareInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
+use Psr\Http\Message\{ResponseInterface,
+    ResponseInterface as Response,
+    ServerRequestInterface};
 use Psr\Http\Server\MiddlewareInterface;
 use tiFy\Contracts\Container\Container;
 use tiFy\Routing\BaseController;
@@ -95,13 +97,20 @@ interface Router extends
     public function dispatch(ServerRequestInterface $request): ResponseInterface;
 
     /**
+     * Récupération de l'instance de la réponse HTTP.
+     *
+     * @return Response|null
+     */
+    public function getResponse(): ?Response;
+
+    /**
      * Emission de la réponse.
      *
      * @param ResponseInterface|SfResponse $response Réponse HTTP.
      *
-     * @return void
+     * @return Response
      */
-    public function emit($response): void;
+    public function emit($response): Response;
 
     /**
      * Vérification d'existance de routes déclarées.

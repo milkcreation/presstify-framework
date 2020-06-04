@@ -5,7 +5,6 @@ namespace tiFy\Routing;
 use ArrayIterator;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use League\Route\{Middleware\MiddlewareAwareInterface,
     Route as LeagueRoute,
     RouteGroup as LeagueRouteGroup,
@@ -13,7 +12,7 @@ use League\Route\{Middleware\MiddlewareAwareInterface,
 };
 use LogicException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\{ResponseInterface as Response, ServerRequestInterface as Request};
+use Psr\Http\Message\{ResponseInterface as PsrResponse, ServerRequestInterface as Request};
 use Psr\Http\Server\MiddlewareInterface;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Container\Container;
@@ -56,7 +55,13 @@ class Router extends LeagueRouter implements RouterContract
     protected $prefix;
 
     /**
-     * @inheritdoc
+     * Instance de la réponse.
+     * @var PsrResponse|null
+     */
+    protected $response;
+
+    /**
+     * @inheritDoc
      */
     public function all(): array
     {
@@ -64,7 +69,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function collect(): Collection
     {
@@ -72,7 +77,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function count(): int
     {
@@ -80,7 +85,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function current(): ?RouteContract
     {
@@ -90,7 +95,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function currentRouteName(): ?string
     {
@@ -98,38 +103,43 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function dispatch(Request $request): Response
+    public function dispatch(Request $request): PsrResponse
     {
         if (is_null($this->getStrategy())) {
             $this->setStrategy($this->getContainer()->get('router.strategy.default'));
         }
-        return parent::dispatch($request);
+
+        return $this->response = parent::dispatch($request);
     }
 
     /**
      * @inheritDoc
      */
-    public function emit($response): void
+    public function getResponse(): ?PsrResponse
     {
-        if ($response instanceof Response) {
-            /** @var EmitterInterface $emitter */
-            $emitter = $this->getContainer()->get('router.emitter');
-            $emitter->emit($response);
-
-            events()->trigger('router.emit.response', [$response]);
-        } elseif ($response instanceof SfResponse) {
-            $response->send();
-
-            events()->trigger('router.emit.response', [HttpResponse::convertToPsr($response)]);
-        } else {
-            (new HttpResponse(__('La réponse attendue n\'est pas conforme', 'tify'), 500))->send();
-        }
+        return $this->response;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     */
+    public function emit($response): PsrResponse
+    {
+        if ($response instanceof SfResponse) {
+            $response = HttpResponse::convertToPsr($response);
+        } elseif (!$response instanceof PsrResponse) {
+            $response = (new HttpResponse(__('Le format de la réponse n\'est pas conforme.', 'tify'), 500))->psr();
+        }
+
+        $emitter = $this->getContainer()->get('router.emitter') ? : new Emitter($this);
+
+        return $emitter->send($response);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function exists(): bool
     {
@@ -189,7 +199,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasCurrent(): bool
     {
@@ -197,7 +207,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasNamedRoute(string $name): bool
     {
@@ -207,7 +217,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isCurrentNamed(string $name): bool
     {
@@ -215,7 +225,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @return RouteContract
      */
@@ -267,7 +277,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parseRoutePath(string $path): string
     {
@@ -338,7 +348,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function prepRoutes(Request $request): void
     {
@@ -426,7 +436,7 @@ class Router extends LeagueRouter implements RouterContract
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function url(string $name, array $parameters = [], bool $absolute = false, bool $asserts = false): ?string
     {

@@ -2,11 +2,12 @@
 
 namespace tiFy\Routing\Strategy;
 
-use Laminas\Diactoros\Response;
 use League\Route\Strategy\JsonStrategy;
 use League\Route\Route;
 use Psr\Http\Message\{ResponseInterface as PsrResponse, ServerRequestInterface as PsrRequest};
+use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
+use tiFy\Http\Response;
 
 class Json extends JsonStrategy
 {
@@ -22,16 +23,15 @@ class Json extends JsonStrategy
 
         $args = array_values($route->getVars());
         array_push($args, $request);
-        $resolved = $controller(...$args);
+        $response = $controller(...$args);
 
-        $psrResponse = new Response();
-
-        if ($this->isJsonEncodable($resolved)){
-            $body = json_encode($resolved);
-            $psrResponse = $this->responseFactory->createResponse(200);
-            $psrResponse->getBody()->write($body);
+        if ($response instanceof SfResponse) {
+            $response = Response::convertToPsr($response);
+        } elseif (!$response instanceof PsrResponse) {
+            $response = ($this->isJsonEncodable($response))
+                ? Response::create(json_encode($response))->psr() : (new Response())->psr();
         }
 
-        return $this->applyDefaultResponseHeaders($psrResponse);
+        return $this->applyDefaultResponseHeaders($response);
     }
 }

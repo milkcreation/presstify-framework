@@ -2,21 +2,21 @@
 
 namespace tiFy\Routing\Concerns;
 
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\Routing\ContainerAwareTrait as ContainerAwareTraitContract;
 
 trait ContainerAwareTrait
 {
     /**
      * Instance du conteneur d'injection de dépendances.
-     * @var ContainerInterface
+     * @var Container
      */
     protected $container;
 
     /**
      * @inheritDoc
      */
-    public function getContainer(): ?ContainerInterface
+    public function getContainer(): ?Container
     {
         return $this->container;
     }
@@ -26,7 +26,7 @@ trait ContainerAwareTrait
      *
      * @return ContainerAwareTrait
      */
-    public function setContainer(ContainerInterface $container): ContainerAwareTraitContract
+    public function setContainer(Container $container): ContainerAwareTraitContract
     {
         $this->container = $container;
 
