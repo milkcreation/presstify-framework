@@ -1,18 +1,18 @@
-<?php
-
-/**
- * @name tiFy
- * @namespace tiFy
- * @author Jordy Manner
- * @copyright Milkcreation
- * @version 2.0.0
- */
+<?php declare(strict_types=1);
 
 namespace tiFy;
 
-use tiFy\Kernel\Container\Container;
+use App\App;
+use tiFy\Container\Container;
 use tiFy\Kernel\KernelServiceProvider;
 
+/**
+ * @desc PresstiFy -- Framework Milkcreation.
+ * @author Jordy Manner <jordy@milkcreation.fr>
+ * @package tiFy
+ * @version 2.0.308
+ * @copyright Milkcreation
+ */
 final class tiFy extends Container
 {
     /**
@@ -36,51 +36,37 @@ final class tiFy extends Container
      */
     public function __construct()
     {
-        // Bypass
-        if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) :
+        if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) {
             return;
-        endif;
+        }
 
-        if (!self::$instance) :
-            self::$instance = $this;
-        else :
+        if (self::instance()) {
             return;
-        endif;
+        }
 
-        add_action(
-            'after_setup_tify',
-            function () {
-                do_action('tify_app_boot');
-            },
-            9999
-        );
+        self::$instance = $this;
 
         parent::__construct();
 
-        add_action('plugins_loaded', [$this, 'plugins_loaded']);
-    }
+        add_action('plugins_loaded', function () {
+            load_muplugin_textdomain('tify', '/presstify/languages/');
+            do_action('tify_load_textdomain');
+        });
 
-    /**
-     * Après le chargement des plugins.
-     *
-     * @return void
-     */
-    public function plugins_loaded()
-    {
-        load_muplugin_textdomain('tify', '/presstify/languages/');
-
-        do_action('tify_load_textdomain');
+        add_action('after_setup_theme', function () {
+            if (class_exists(App::class)) {
+                $this->share('app', new App($this));
+            }
+        }, 0);
     }
 
     /**
      * Récupération de l'instance courante.
      *
-     * @return $this
+     * @return static|null
      */
-    final public static function instance()
+    public static function instance(): ?tiFy
     {
-        if (self::$instance instanceof static) :
-            return self::$instance;
-        endif;
+        return self::$instance instanceof static ? self::$instance : null;
     }
 }
