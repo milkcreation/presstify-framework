@@ -8,7 +8,7 @@ use Psr\Http\Message\{ResponseInterface as PsrResponse, ServerRequestInterface a
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Http\Response;
 use tiFy\Support\Proxy\Router;
-use tiFy\Routing\Strategy\App as AppStrategy;
+use tiFy\Routing\Strategy\AppStrategy;
 use tiFy\Wordpress\Contracts\Routing\Route as RouteContract;
 use tiFy\Wordpress\Proxy\PageHook;
 use Wp_Query;

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Http\Response;
 
-class Json extends JsonStrategy
+class ApiStrategy extends JsonStrategy
 {
     /**
      * @inheritdoc
@@ -28,8 +28,19 @@ class Json extends JsonStrategy
         if ($response instanceof SfResponse) {
             $response = Response::convertToPsr($response);
         } elseif (!$response instanceof PsrResponse) {
-            $response = ($this->isJsonEncodable($response))
-                ? Response::create(json_encode($response))->psr() : (new Response())->psr();
+            if ($this->isJsonEncodable($response)) {
+                $body = isset($response['body']) ? json_encode($response['body']) : json_encode([]);
+
+                if (isset($response['headers'])) {
+                    foreach ($response['headers'] as $name => $value) {
+                        $this->addDefaultResponseHeader("x-{$name}", (string)$value);
+                    }
+                }
+
+                $response = Response::create($body)->psr();
+            } else {
+                $response = (new Response())->psr();
+            }
         }
 
         return $this->applyDefaultResponseHeaders($response);

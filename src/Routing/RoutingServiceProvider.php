@@ -8,8 +8,9 @@ use tiFy\Container\ServiceProvider;
 use tiFy\Routing\{
     Middleware\CookieMiddleware,
     Middleware\XhrMiddleware,
-    Strategy\App,
-    Strategy\Json
+    Strategy\ApiStrategy,
+    Strategy\AppStrategy,
+    Strategy\JsonStrategy
 };
 
 class RoutingServiceProvider extends ServiceProvider
@@ -23,6 +24,7 @@ class RoutingServiceProvider extends ServiceProvider
         RouteContract::class,
         RouteGroupContract::class,
         'router.emitter',
+        'router.strategy.api',
         'router.strategy.app',
         'router.strategy.default',
         'router.strategy.json',
@@ -104,15 +106,19 @@ class RoutingServiceProvider extends ServiceProvider
     public function registerStrategies(): void
     {
         $this->getContainer()->add('router.strategy.default', function () {
-            return new App();
+            return new AppStrategy();
+        });
+
+        $this->getContainer()->add('router.strategy.api', function () {
+            return new ApiStrategy(new ResponseFactory());
         });
 
         $this->getContainer()->add('router.strategy.app', function () {
-            return new App();
+            return new AppStrategy();
         });
 
         $this->getContainer()->add('router.strategy.json', function () {
-            return new Json(new ResponseFactory());
+            return new JsonStrategy(new ResponseFactory());
         });
     }
 

@@ -23,7 +23,7 @@ class KernelServiceProvider extends ServiceProvider
         'params.bag',
         'request',
         'response',
-        'uri'
+        'uri',
     ];
 
     /**
@@ -43,9 +43,7 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->getContainer()->share('path', function () {
-            return new Path();
-        });
+        $this->getContainer()->share('path', function () { return new Path(); });
 
         $this->getContainer()->share('class-loader', new ClassLoader($this->getContainer()));
 
