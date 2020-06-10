@@ -29,11 +29,9 @@ class Application extends Container
 
         $this->delegate($container);
 
-        parent::__construct();
-
         $this->registerProxy();
 
-        $this->boot();
+        parent::__construct();
     }
 
     /**
@@ -58,7 +56,14 @@ class Application extends Container
     /**
      * @inheritDoc
      */
-    public function boot(): void {}
+    public function get($alias, array $args = [])
+    {
+        if ($alias === 'app') {
+            return $this;
+        } else {
+            return parent::get($alias, $args);
+        }
+    }
 
     /**
      * @inheritDoc

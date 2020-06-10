@@ -46,7 +46,6 @@ class WordpressServiceProvider extends ServiceProvider
      * @var array
      */
     protected $provides = [
-        'wp',
         'wp.asset',
         'wp.auth',
         'wp.column',
@@ -85,11 +84,14 @@ class WordpressServiceProvider extends ServiceProvider
     {
         require_once __DIR__ . '/helpers.php';
 
-        add_action('after_setup_theme', function () {
+        $this->getContainer()->share('wp', $wp = new Wordpress());
 
-            /* @var Wordpress $wp */
-            $wp = $this->getContainer()->get('wp');
+        add_action('plugins_loaded', function () {
+            load_muplugin_textdomain('tify', '/presstify/languages/');
+            do_action('tify_load_textdomain');
+        });
 
+        add_action('after_setup_theme', function () use ($wp) {
             if ($wp->is()) {
                 require_once(ABSPATH . 'wp-admin/includes/translation-install.php');
                 Locale::set(get_locale());
@@ -192,7 +194,6 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->registerManager();
         $this->registerAsset();
         $this->registerAuth();
         $this->registerColumn();
@@ -341,18 +342,6 @@ class WordpressServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('wp.mail', function () {
             return new Mail();
-        });
-    }
-
-    /**
-     * Déclaration du controleur de gestion de Wordpress.
-     *
-     * @return void
-     */
-    public function registerManager(): void
-    {
-        $this->getContainer()->share('wp', function () {
-            return new Wordpress();
         });
     }
 

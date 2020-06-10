@@ -60,6 +60,7 @@ if (!function_exists('app')) {
         if (is_null($abstract)) {
             return $factory;
         }
+
         return $factory->get($abstract, $args);
     }
 }

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Routing\Route as RouteContract;
 use tiFy\Http\Response;
 
-class App extends ApplicationStrategy
+class AppStrategy extends ApplicationStrategy
 {
     /**
      * CONSTRUCTEUR.
