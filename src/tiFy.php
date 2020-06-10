@@ -1,18 +1,20 @@
-<?php
-
-/**
- * @name tiFy
- * @namespace tiFy
- * @author Jordy Manner
- * @copyright Milkcreation
- * @version 2.0.0
- */
+<?php declare(strict_types=1);
 
 namespace tiFy;
 
-use tiFy\Kernel\Container\Container;
+use App\App;
+use tiFy\Contracts\Container\Container as ContainerContract;
+use tiFy\Container\Container;
+use tiFy\Kernel\Application;
 use tiFy\Kernel\KernelServiceProvider;
 
+/**
+ * @desc PresstiFy -- Framework Milkcreation.
+ * @author Jordy Manner <jordy@milkcreation.fr>
+ * @package tiFy
+ * @version 2.0.309
+ * @copyright Milkcreation
+ */
 final class tiFy extends Container
 {
     /**
@@ -20,6 +22,12 @@ final class tiFy extends Container
      * @var self
      */
     protected static $instance;
+
+    /**
+     * Instance de l'application.
+     * @var App|Application|null
+     */
+    protected $app;
 
     /**
      * Liste des fournisseurs de service.
@@ -36,51 +44,56 @@ final class tiFy extends Container
      */
     public function __construct()
     {
-        // Bypass
-        if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) :
+        /* * /
+        if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) {
             return;
-        endif;
+        }
+        /**/
 
-        if (!self::$instance) :
+        if (self::instance()) {
+            return;
+        } else {
             self::$instance = $this;
-        else :
-            return;
-        endif;
 
-        add_action(
-            'after_setup_tify',
-            function () {
-                do_action('tify_app_boot');
-            },
-            9999
-        );
-
-        parent::__construct();
-
-        add_action('plugins_loaded', [$this, 'plugins_loaded']);
+            parent::__construct();
+        }
     }
 
     /**
-     * Après le chargement des plugins.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function plugins_loaded()
+    public function boot(): ContainerContract
     {
-        load_muplugin_textdomain('tify', '/presstify/languages/');
+        parent::boot();
 
-        do_action('tify_load_textdomain');
+        if (is_null($this->app)) {
+            $this->app = class_exists(App::class) ? (new App($this)): (new Application($this));
+
+            $this->share('app', $this->app->boot());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get($alias, array $args = [])
+    {
+        if ($alias === 'app') {
+            return $this->app;
+        } else {
+            return parent::get($alias, $args);
+        }
     }
 
     /**
      * Récupération de l'instance courante.
      *
-     * @return $this
+     * @return static|null
      */
-    final public static function instance()
+    public static function instance(): ?tiFy
     {
-        if (self::$instance instanceof static) :
-            return self::$instance;
-        endif;
+        return self::$instance instanceof static ? self::$instance : null;
     }
 }
