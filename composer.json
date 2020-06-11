@@ -63,6 +63,7 @@
     "ramsey/uuid": "^4.0",
     "respect/validation": "^2.0",
     "symfony/console": "^4.2",
+    "symfony/dom-crawler": "^5.1",
     "symfony/filesystem": "^4.2",
     "symfony/finder": "^4.2",
     "symfony/framework-bundle": "^4.2",

@@ -3,10 +3,10 @@
 namespace tiFy\Mail;
 
 use Exception;
-use DOMDocument;
 use Html2Text\Html2Text;
 use Pelago\Emogrifier\CssInliner;
 use Psr\Container\ContainerInterface as Container;
+use Symfony\Component\DomCrawler\Crawler;
 use tiFy\Contracts\Mail\{
     Mail as MailContract,
     MailerDriver,
@@ -343,10 +343,7 @@ class Mailer implements MailerContract
             $text = (new Html2Text($html ?: $mail->view('text/message')))->getText();
         }
 
-        $dom = new DOMDocument();
-        $dom->loadHTML(htmlentities($html));
-
-        if (!$dom->getElementsByTagName('head')->length) {
+        if (!(new Crawler($html))->filter('head')->count()) {
             $html = $mail->view('html/wrap-html', ['html' => $html]);
         }
 
