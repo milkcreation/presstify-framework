@@ -99,14 +99,14 @@ class Routing implements RoutingContract
         $this->manager->getContainer()->add(
             BaseRouteContract::class,
             function (string $method, string $path, callable $handler, $collection) {
-                return new Route($method, $path, $handler, $collection);
+                return (new Route($method, $path, $handler, $collection))->setContainer($this->manager->getContainer());
             }
         );
 
         $this->manager->getContainer()->add(
             BaseRouteGroupContract::class,
             function (string $prefix, callable $handler, $collection) {
-                return new RouteGroup($prefix, $handler, $collection);
+                return (new RouteGroup($prefix, $handler, $collection))->setContainer($this->manager->getContainer());
             }
         );
     }

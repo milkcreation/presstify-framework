@@ -124,8 +124,8 @@ class UrlFactory implements UrlFactoryContract
     /**
      * @inheritDoc
      */
-    public function render() : string
+    public function render(): string
     {
-        return $this->uri ? (string) $this->uri : '';
+        return $this->uri ? (string)$this->uri : '';
     }
 }

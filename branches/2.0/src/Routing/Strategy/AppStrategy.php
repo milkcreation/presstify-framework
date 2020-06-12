@@ -11,15 +11,7 @@ use tiFy\Http\Response;
 
 class AppStrategy extends ApplicationStrategy
 {
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->addDefaultResponseHeader('content-type', 'text/html');
-    }
+    protected $defaultResponseHeaders = ['content-type' => 'text/html'];
 
     /**
      * @inheritDoc

@@ -13,7 +13,6 @@ use Psr\Http\Server\MiddlewareInterface;
 interface RouteGroup extends
     ContainerAwareTrait,
     MiddlewareAwareInterface,
-    RegisterMapAwareTrait,
     RouteCollectionAwareTrait,
     RouteCollectionInterface,
     RouteConditionHandlerInterface,

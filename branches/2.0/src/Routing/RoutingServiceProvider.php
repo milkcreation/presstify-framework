@@ -29,7 +29,7 @@ class RoutingServiceProvider extends ServiceProvider
         'router.strategy.default',
         'router.strategy.json',
         'redirect',
-        'url'
+        'url',
     ];
 
     /**
@@ -79,8 +79,8 @@ class RoutingServiceProvider extends ServiceProvider
             return (new Router())
                 ->setContainer($this->getContainer())
                 ->setMiddlewareStack([
-                    'cookie' =>  new CookieMiddleware(),
-                    'xhr' => new XhrMiddleware()
+                    'cookie' => new CookieMiddleware(),
+                    'xhr'    => new XhrMiddleware(),
                 ])
                 ->middleware('cookie');
         });
@@ -88,13 +88,13 @@ class RoutingServiceProvider extends ServiceProvider
         $this->getContainer()->add(
             RouteContract::class,
             function (string $method, string $path, callable $handler, $collection) {
-                return new Route($method, $path, $handler, $collection);
+                return (new Route($method, $path, $handler, $collection))->setContainer($this->getContainer());
             });
 
         $this->getContainer()->add(
             RouteGroupContract::class,
             function (string $prefix, callable $handler, $collection) {
-                return new RouteGroup($prefix, $handler, $collection);
+                return (new RouteGroup($prefix, $handler, $collection))->setContainer($this->getContainer());
             });
     }
 
