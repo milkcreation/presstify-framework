@@ -12,7 +12,7 @@ use tiFy\Kernel\KernelServiceProvider;
  * @desc PresstiFy -- Framework Milkcreation.
  * @author Jordy Manner <jordy@milkcreation.fr>
  * @package tiFy
- * @version 2.0.310
+ * @version 2.0.311
  * @copyright Milkcreation
  */
 final class tiFy extends Container
@@ -44,12 +44,6 @@ final class tiFy extends Container
      */
     public function __construct()
     {
-        /* * /
-        if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) {
-            return;
-        }
-        /**/
-
         if (self::instance()) {
             return;
         } else {
@@ -80,11 +74,7 @@ final class tiFy extends Container
      */
     public function get($alias, array $args = [])
     {
-        if ($alias === 'app') {
-            return $this->app;
-        } else {
-            return parent::get($alias, $args);
-        }
+        return ($alias === 'app') ? $this->app : parent::get($alias, $args);
     }
 
     /**

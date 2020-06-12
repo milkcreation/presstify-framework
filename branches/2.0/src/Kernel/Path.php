@@ -107,8 +107,8 @@ class Path extends StorageManager implements PathContract
     public function diskStorage(): LocalFilesystemContract
     {
         if (!$disk = $this->getFilesystem('storage')) {
-            $disk = $this->mount('storage', !$this->isWp()
-                ? $this->getBasePath('storage') : WP_CONTENT_DIR . '/uploads'
+            $disk = $this->mount(
+                'storage', !$this->isWp() ? $this->getBasePath('storage') : WP_CONTENT_DIR . '/uploads'
             );
         }
 

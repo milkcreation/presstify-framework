@@ -4,7 +4,13 @@ namespace tiFy\Wordpress\Template;
 
 use tiFy\Contracts\Template\{TemplateFactory, TemplateManager};
 use tiFy\Template\Templates\FileManager\Contracts\IconSet as IconSetContract;
-use tiFy\Wordpress\Template\Templates\FileManager\IconSet;
+use tiFy\Template\Templates\PostListTable\Contracts\DbBuilder as PostListTableDbBuilderContract;
+use tiFy\Template\Templates\UserListTable\Contracts\DbBuilder as UserListTableDbBuilderContract;
+use tiFy\Wordpress\Template\Templates\{
+    FileManager\IconSet,
+    PostListTable\DbBuilder as PostListTableDbBuilder,
+    UserListTable\DbBuilder as UserListTableDbBuilder
+};
 use WP_Screen;
 
 class Template
@@ -35,6 +41,14 @@ class Template
         // Surcharge de fournisseurs de service.
         $this->manager->getContainer()->add(IconSetContract::class, function () {
             return new IconSet();
+        });
+
+        $this->manager->getContainer()->add(PostListTableDbBuilderContract::class, function () {
+            return new PostListTableDbBuilder();
+        });
+
+        $this->manager->getContainer()->add(UserListTableDbBuilderContract::class, function () {
+            return new UserListTableDbBuilder();
         });
 
         events()->listen('template.factory.boot', function (string $name, TemplateFactory $factory) {
