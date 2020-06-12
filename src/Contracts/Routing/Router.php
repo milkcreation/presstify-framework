@@ -26,7 +26,6 @@ interface Router extends
     ContainerAwareTrait,
     IteratorAggregate,
     MiddlewareAwareInterface,
-    RegisterMapAwareTrait,
     RouteCollectionInterface,
     RouteCollectionAwareTrait,
     StrategyAwareInterface
@@ -196,15 +195,6 @@ interface Router extends
      * @return boolean
      */
     public function isCurrentNamed(string $name): bool;
-
-    /**
-     * Définition d'un ou plusieurs middlewares associés.
-     *
-     * @param string|string[]|MiddlewareInterface|MiddlewareInterface[] $middleware
-     *
-     * @return static
-     */
-    public function middleware($middleware): MiddlewareAwareInterface;
 
     /**
      * Déclaration d'un controleur qualifié.

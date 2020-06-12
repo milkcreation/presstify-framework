@@ -59,7 +59,7 @@ class Url extends UrlFactory implements UrlContract
      */
     public function rel(string $url): ?string
     {
-        $root = (string)$this->root();
+        $root = $this->root()->render();
 
         return preg_match('/^' . preg_quote($root, '/') . '/', $url)
             ? '/'. ltrim(preg_replace('/^' . preg_quote($root, '/') . '/', '', $url), '/')

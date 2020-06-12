@@ -4,21 +4,21 @@ namespace tiFy\Routing;
 
 use FastRoute\RouteParser\Std as RouteParser;
 use InvalidArgumentException;
-use League\Route\{Middleware\MiddlewareAwareInterface, Route as LeagueRoute};
+use League\Route\{Route as LeagueRoute, RouteCollectionInterface, RouteGroup};
 use LogicException;
 use tiFy\Contracts\Http\RedirectResponse as HttpRedirect;
-use tiFy\Contracts\Routing\{Route as RouteContract, Router as RouterContract};
-use tiFy\Routing\Concerns\{ContainerAwareTrait, StrategyAwareTrait};
+use tiFy\Contracts\Routing\Route as RouteContract;
+use tiFy\Routing\Concerns\{ContainerAwareTrait, MiddlewareAwareTrait, RouteCollectionAwareTrait, StrategyAwareTrait};
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\{Request, Redirect, Url};
 
 class Route extends LeagueRoute implements RouteContract
 {
-    use ContainerAwareTrait, StrategyAwareTrait;
+    use ContainerAwareTrait, MiddlewareAwareTrait, RouteCollectionAwareTrait, StrategyAwareTrait;
 
     /**
      * Instance du controleur de gestion des routes.
-     * @var RouterContract
+     * @var RouteCollectionInterface
      */
     protected $collection;
 
@@ -40,17 +40,15 @@ class Route extends LeagueRoute implements RouteContract
      * @param string $method
      * @param string $path
      * @param callable $handler
-     * @param Router $collection Instance du controleur de gestion des routes.
+     * @param RouteCollectionInterface $collection Instance du controleur de gestion des routes.
      *
      * @return void
      */
-    public function __construct(string $method, string $path, $handler, $collection)
+    public function __construct(string $method, string $path, $handler, RouteCollectionInterface $collection)
     {
         $this->collection = $collection;
 
-        parent::__construct(strtoupper($method), $path, $handler);
-
-        $this->setContainer($this->collection->getContainer());
+        parent::__construct($method, $path, $handler);
     }
 
     /**
@@ -140,24 +138,6 @@ class Route extends LeagueRoute implements RouteContract
     /**
      * @inheritDoc
      */
-    public function middleware($middleware): MiddlewareAwareInterface
-    {
-        if (is_string($middleware)) {
-            $middleware = $this->collection->getNamedMiddleware($middleware);
-        } elseif (is_array($middleware)) {
-            foreach ($middleware as $item) {
-                $this->middleware($item);
-            }
-
-            return $this;
-        }
-
-        return parent::middleware($middleware);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function params($key = null, $default = null)
     {
         if (!$this->params instanceof ParamsBag) {
@@ -193,5 +173,17 @@ class Route extends LeagueRoute implements RouteContract
     public function setCurrent()
     {
         $this->current = true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LeagueRoute
+     */
+    public function setParentGroup(RouteGroup $group): LeagueRoute
+    {
+        $this->group = $group;
+
+        return $this;
     }
 }

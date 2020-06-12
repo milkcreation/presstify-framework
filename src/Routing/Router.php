@@ -5,7 +5,7 @@ namespace tiFy\Routing;
 use ArrayIterator;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use League\Route\{Middleware\MiddlewareAwareInterface,
+use League\Route\{
     Route as LeagueRoute,
     RouteGroup as LeagueRouteGroup,
     Router as LeagueRouter
@@ -18,11 +18,11 @@ use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupContract, Router as RouterContract};
 use tiFy\Http\Response as HttpResponse;
-use tiFy\Routing\Concerns\{ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait};
+use tiFy\Routing\Concerns\{ContainerAwareTrait, MiddlewareAwareTrait, RouteCollectionAwareTrait};
 
 class Router extends LeagueRouter implements RouterContract
 {
-    use ContainerAwareTrait, RegisterMapAwareTrait, RouteCollectionAwareTrait;
+    use ContainerAwareTrait, MiddlewareAwareTrait, RouteCollectionAwareTrait;
 
     /**
      * Instance de la route associée à la requête HTTP courante.
@@ -149,22 +149,6 @@ class Router extends LeagueRouter implements RouterContract
     /**
      * {@inheritDoc}
      *
-     * @return RouteGroupContract
-     */
-    public function group(string $prefix, callable $group): LeagueRouteGroup
-    {
-        $group = $this->getContainer()
-            ? $this->getContainer()->get(RouteGroupContract::class, [$prefix, $group, $this])
-            : new RouteGroup($prefix, $group, $this);
-
-        $this->groups[] = $group;
-
-        return $group;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @return Container|null
      */
     public function getContainer(): ?ContainerInterface
@@ -196,6 +180,22 @@ class Router extends LeagueRouter implements RouterContract
     public function getNamedRoute(string $name): LeagueRoute
     {
         return parent::getNamedRoute($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return RouteGroupContract
+     */
+    public function group(string $prefix, callable $group): LeagueRouteGroup
+    {
+        $group = ($this->getContainer())
+             ? $this->getContainer()->extend(RouteGroupContract::class)->build([$prefix, $group, $this])
+             : new RouteGroup($prefix, $group, $this);
+
+        $this->groups[] = $group;
+
+        return $group;
     }
 
     /**
@@ -250,30 +250,12 @@ class Router extends LeagueRouter implements RouterContract
         }
 
         $route = $this->getContainer()
-            ? $this->getContainer()->get(RouteContract::class, [$method, $path, $handler, $this])
+            ? $this->getContainer()->extend(RouteContract::class)->build([$method, $path, $handler, $this])
             : new Route($method, $path, $handler, $this);
 
         $this->routes[] = $route;
 
         return $route;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function middleware($middleware): MiddlewareAwareInterface
-    {
-        if (is_string($middleware)) {
-            $middleware = $this->getNamedMiddleware($middleware);
-        } elseif (is_array($middleware)) {
-            foreach ($middleware as $item) {
-                $this->middleware($item);
-            }
-
-            return $this;
-        }
-
-        return parent::middleware($middleware);
     }
 
     /**
