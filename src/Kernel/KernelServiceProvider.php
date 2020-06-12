@@ -21,22 +21,11 @@ class KernelServiceProvider extends ServiceProvider
         'events.listener',
         'notices',
         'params.bag',
+        'path',
         'request',
         'response',
         'uri',
     ];
-
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        if (!defined('TIFY_CONFIG_DIR')) {
-            define('TIFY_CONFIG_DIR', get_template_directory() . '/config');
-        }
-    }
 
     /**
      * @inheritDoc
@@ -68,12 +57,15 @@ class KernelServiceProvider extends ServiceProvider
         });
 
         /**
-         * @todo deprecated Mais dépendance Form
+         * @deprecated Mais dépendance Form.
          */
         $this->getContainer()->add('notices', function () {
             return new Notices();
         });
 
+        /**
+         * @deprecated Chercher les potentielles dépendances.
+         */
         $this->getContainer()->add('params.bag', function (array $attrs = []) {
             return (new ParamsBag())->set($attrs);
         });

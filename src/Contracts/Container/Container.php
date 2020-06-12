@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Container;
 
-use League\Container\ContainerInterface as LeagueContainerInterface;
+use League\Container\ContainerInterface;
 
-interface Container extends LeagueContainerInterface
+interface Container extends ContainerInterface
 {
     /**
      * Initialisation.

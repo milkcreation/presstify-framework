@@ -27,7 +27,6 @@ use tiFy\Contracts\Partial\Partial;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\Routing\Redirector;
-use tiFy\Contracts\Routing\Route;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Url;
 use tiFy\Contracts\Support\ClassInfo;
@@ -148,6 +147,7 @@ if (!function_exists('container')) {
         if (is_null($abstract)) {
             return $factory;
         }
+
         return $factory->get($abstract);
     }
 }
@@ -352,6 +352,7 @@ if (!function_exists('redirect')) {
         if (is_null($to)) {
             return app('redirect');
         }
+
         return app('redirect')->to($to, $status, $headers, $secure);
     }
 }
@@ -380,28 +381,10 @@ if (!function_exists('route')) {
      */
     function route($name, $parameters = [], $absolute = true): ?string
     {
-        return router()->url($name, $parameters, $absolute);
-    }
-}
-
-if (!function_exists('router')) {
-    /**
-     * Routing - Récupération de l'instance du controleur de routage ou déclaration d'une nouvelle route.
-     *
-     * @param string|null $name Nom de qualification de la route.
-     * @param array $attrs Liste des attributs de configuration.
-     *
-     * @return Router|Route
-     */
-    function router(?string $name = null, ?array $attrs = [])
-    {
         /* @var Router $factory */
-        $factory = app('router');
+        $router = app('router');
 
-        if (is_null($name)) {
-            return $factory;
-        }
-        return $factory->register($name, $attrs);
+        return $router->url($name, $parameters, $absolute);
     }
 }
 
