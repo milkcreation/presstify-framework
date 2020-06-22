@@ -196,7 +196,7 @@ class Post extends CorcelPost implements PostBuilder
      */
     public static function query(): Builder
     {
-        return (new static)->newQuery();
+        return (new static())->newQuery();
     }
 
     /**
@@ -227,7 +227,6 @@ class Post extends CorcelPost implements PostBuilder
      */
     public function thumbnail()
     {
-        return $this->hasOne(PostThumbnailmeta::class, 'post_id')
-            ->where('meta_key', '_thumbnail_id');
+        return $this->hasOne(PostThumbnailmeta::class, 'post_id')->where('meta_key', '_thumbnail_id');
     }
 }
