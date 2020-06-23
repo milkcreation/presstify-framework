@@ -6,7 +6,7 @@ use Psr\Container\ContainerInterface as Container;
 use Symfony\Component\HttpFoundation\Cookie as SfCookie;
 use tiFy\Contracts\Cookie\Cookie as CookieContract;
 use tiFy\Validation\Validator as v;
-use tiFy\Support\{Arr, Str};
+use tiFy\Support\Arr;
 use tiFy\Support\Proxy\{Request, Url};
 
 class Cookie implements CookieContract
@@ -133,7 +133,9 @@ class Cookie implements CookieContract
         $value = $args[0] ?? $this->value;
 
         if (!is_null($value)) {
-            $value = Arr::serialize($value);
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
 
             if ($this->base64) {
                 $value = base64_encode($value);
@@ -170,7 +172,9 @@ class Cookie implements CookieContract
             $value = base64_decode($value);
         }
 
-        $value = Str::unserialize($value);
+        if (v::json()->validate($value)) {
+            $value = json_decode($value, true);
+        }
 
         return is_null($key) ? $value : Arr::get($value, $key, $default);
     }
