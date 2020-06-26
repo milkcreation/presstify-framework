@@ -9,7 +9,6 @@ use Psr\Http\{
     Message\ServerRequestInterface as PsrRequest,
     Server\RequestHandlerInterface as RequestHandler
 };
-use tiFy\Http\Request;
 
 class XhrMiddleware extends BaseMiddleware
 {
@@ -18,9 +17,7 @@ class XhrMiddleware extends BaseMiddleware
      */
     public function process(PsrRequest $psrRequest, RequestHandler $handler): PsrResponse
     {
-        $request = Request::createFromPsr($psrRequest);
-
-        if ($request->ajax()) {
+        if ('XMLHttpRequest' == $psrRequest->getHeaderLine('X-Requested-With')) {
             return $handler->handle($psrRequest);
         } else {
             $phrase = __('Dans cette configuration, seules les requêtes XMLHttpRequest (XHR) sont autorisées', 'tify');

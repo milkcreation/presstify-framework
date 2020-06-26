@@ -91,25 +91,6 @@ class Cookie implements CookieContract
     protected $secure = false;
 
     /**
-     * Récupération de la liste des cookies en attente de traitement dans la réponse globale.
-     *
-     * @return SfCookie[]|array
-     */
-    public static function getQueued(): array
-    {
-        $queued = [];
-
-        foreach(self::$cookies as $cookie) {
-            if ($cookie->isQueued()) {
-                $queued[] = $cookie->create();
-                $cookie->setQueued(false);
-            }
-        }
-
-        return $queued;
-    }
-
-    /**
      * Valeur d'enregistrement du cookie.
      * @var mixed
      */
@@ -162,10 +143,31 @@ class Cookie implements CookieContract
     /**
      * @inheritDoc
      */
+    public static function fetchQueued(): array
+    {
+        $queued = [];
+
+        foreach(self::$cookies as $cookie) {
+            if ($cookie->isQueued()) {
+                $queued[] = $cookie->create();
+                $cookie->setQueued(false);
+            }
+        }
+
+        return $queued;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function get(?string $key = null, $default = null)
     {
         if (!$value = Request::cookie($this->getName())) {
             return $default;
+        }
+
+        if(!$this->raw) {
+            $value = rawurldecode($value);
         }
 
         if ($this->base64 && v::base64()->validate($value)) {
@@ -265,9 +267,7 @@ class Cookie implements CookieContract
      */
     public function set($value = null, ?array ...$args): CookieContract
     {
-        $this->setArgs($value, ...$args)->setQueued();
-
-        return $this;
+        return $this->setArgs($value, ...$args)->setQueued();
     }
 
     /**
