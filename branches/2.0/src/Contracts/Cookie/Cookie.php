@@ -33,6 +33,13 @@ interface Cookie
     public function create(?array ...$args): SfCookie;
 
     /**
+     * Récupération de la liste des cookies en attente de traitement dans la réponse globale.
+     *
+     * @return SfCookie[]|array
+     */
+    public static function fetchQueued(): array;
+
+    /**
      * Récupération de la valeur d'un cookie.
      *
      * @param string|null $key Clé d'indice de la valeur. La valeur doit être un tableau. Syntaxe à point permise.
