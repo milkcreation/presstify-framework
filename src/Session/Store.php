@@ -78,6 +78,13 @@ class Store extends ParamsBag implements StoreContract
                 ),
                 'tify.session'
             );
+
+            if (is_multisite()) {
+                global $wpdb;
+
+                Database::getConnection('tify.session')->setTablePrefix($wpdb->prefix);
+            }
+
             $schema = Schema::connexion('tify.session');
 
             $schema->create('tify_session', function (Blueprint $table) {
