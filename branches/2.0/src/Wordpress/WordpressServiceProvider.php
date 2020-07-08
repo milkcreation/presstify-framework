@@ -29,6 +29,7 @@ use tiFy\Wordpress\Query\QueryUser;
 use tiFy\Wordpress\Routing\Routing;
 use tiFy\Wordpress\Routing\WpQuery;
 use tiFy\Wordpress\Routing\WpScreen;
+use tiFy\Wordpress\Session\Session;
 use tiFy\Wordpress\Taxonomy\Taxonomy;
 use tiFy\Wordpress\Template\Template;
 use tiFy\Wordpress\User\User;
@@ -69,6 +70,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.query.term',
         'wp.query.user',
         'wp.routing',
+        'wp.session',
         'wp.taxonomy',
         'wp.template',
         'wp.user',
@@ -163,6 +165,10 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('validator');
                 }
 
+                if ($this->getContainer()->has('session')) {
+                    $this->getContainer()->get('wp.session');
+                }
+
                 if ($this->getContainer()->has('storage')) {
                     $this->getContainer()->get('wp.filesystem');
                 }
@@ -212,6 +218,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->registerPostType();
         $this->registerQuery();
         $this->registerRouting();
+        $this->registerSession();
         $this->registerTaxonomy();
         $this->registerTemplate();
         $this->registerUser();
@@ -458,6 +465,18 @@ class WordpressServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('wp.wp_screen', function (?WP_Screen $wp_screen = null) {
             return new WpScreen($wp_screen);
+        });
+    }
+
+    /**
+     * Déclaration du gestionnaire de session.
+     *
+     * @return void
+     */
+    public function registerSession(): void
+    {
+        $this->getContainer()->share('wp.session', function () {
+            return new Session($this->getContainer()->get('session'));
         });
     }
 

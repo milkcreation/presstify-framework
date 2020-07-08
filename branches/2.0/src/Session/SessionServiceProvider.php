@@ -24,10 +24,7 @@ class SessionServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('session', function () {
             $session = new Session($this->getContainer());
-            if (headers_sent()) {
-                var_dump('ouch');
-                exit;
-            }
+
             if (session_status() == PHP_SESSION_NONE) {
                 $_SESSION['flag'] = TRUE;
                 $session->start();

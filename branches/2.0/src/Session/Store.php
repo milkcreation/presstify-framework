@@ -7,6 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use tiFy\Contracts\Session\{Session, Store as StoreContract};
 use tiFy\Support\{Arr, ParamsBag, Str};
 use tiFy\Support\Proxy\{Crypt, Database, Log, Schema};
+use tiFy\Validation\Validator as v;
 
 class Store extends ParamsBag implements StoreContract
 {
@@ -186,13 +187,16 @@ class Store extends ParamsBag implements StoreContract
     public function getStored(): array
     {
         $value = $this->db()->where([
-            'session_key'  => $this->getKey(),
             'session_name' => $this->getName(),
+            'session_key'  => $this->getKey()
         ])->value('session_value');
 
         $value = is_string($value) ? Str::unserialize($value) : [];
+        $value = is_array($value) ? $value : [];
 
-        return is_array($value) ? $value : [];
+        events()->trigger('session.get.stored', [&$value]);
+
+        return $value;
     }
 
     /**
