@@ -159,7 +159,7 @@ class Str extends BaseStr
     public static function unserialize(string $value)
     {
         if (v::serialized()->validate($value)) {
-            return @unserialize(stripslashes($value));
+            return @unserialize($value);
         }
 
         return $value;
