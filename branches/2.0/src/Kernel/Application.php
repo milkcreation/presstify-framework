@@ -6,7 +6,7 @@ use BadMethodCallException;
 use Exception;
 use Interop\Container\ContainerInterface;
 use tiFy\Container\Container;
-use XStatic\ProxyManager;
+use ReStatic\ProxyManager;
 
 class Application extends Container
 {
