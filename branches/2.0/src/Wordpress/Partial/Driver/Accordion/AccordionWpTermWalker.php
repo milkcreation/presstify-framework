@@ -46,9 +46,9 @@ class AccordionWpTermWalker extends BaseAccordionWalker
      *
      * @return static
      */
-    public function createFromArgs(array $args = [], bool $with_parents = true)
+    public static function createFromArgs(array $args = [], bool $with_parents = true)
     {
-        return new static(static::fetch($args));
+        return new static(static::fetch($args, $with_parents));
     }
 
     /**
@@ -72,7 +72,15 @@ class AccordionWpTermWalker extends BaseAccordionWalker
         if ($terms = $args->get_terms()) {
             if ($with_parents) {
                 foreach($terms as $term) {
-                   static::fetchParents($term, $terms);
+                    /*if (isset($args['child_of']) && ($args['child_of'] == $term->parent)) {
+                        continue;
+                    }
+
+                    if (isset($args['parent']) && ($args['parent'] == $term->parent)) {
+                        continue;
+                    }*/
+
+                    static::fetchParents($term, $terms);
                 }
 
                 return $terms;
