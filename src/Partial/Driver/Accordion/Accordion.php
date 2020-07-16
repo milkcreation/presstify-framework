@@ -60,6 +60,7 @@ class Accordion extends PartialDriver implements AccordionContract
         if (!$items instanceof AccordionWalker) {
             $items = new AccordionWalker($items);
         }
+
         $this->set('items', $items->setPartial($this)->build());
 
         return $this;
