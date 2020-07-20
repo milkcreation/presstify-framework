@@ -12,7 +12,7 @@ use League\Route\{
 };
 use LogicException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\{ResponseInterface as PsrResponse, ServerRequestInterface as Request};
+use Psr\Http\Message\{ResponseInterface as PsrResponse, ServerRequestInterface as Request, ServerRequestInterface};
 use Psr\Http\Server\MiddlewareInterface;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Container\Container;
@@ -341,27 +341,55 @@ class Router extends LeagueRouter implements RouterContract
         $this->items = $routes = array_merge(array_values($this->routes), array_values($this->namedRoutes));
 
         foreach ($routes as $key => $route) {
-            if (!is_null($route->getScheme()) && $route->getScheme() !== $request->getUri()->getScheme()) {
+            // check for scheme condition
+            $scheme = $route->getScheme();
+            if ($scheme !== null && $scheme !== $request->getUri()->getScheme()) {
                 continue;
             }
 
-            if (!is_null($route->getHost()) && $route->getHost() !== $request->getUri()->getHost()) {
+            // check for domain condition
+            $host = $route->getHost();
+            if ($host !== null && $host !== $request->getUri()->getHost()) {
                 continue;
             }
 
-            if (!is_null($route->getPort()) && $route->getPort() !== $request->getUri()->getPort()) {
+            // check for port condition
+            $port = $route->getPort();
+            if ($port !== null && $port !== $request->getUri()->getPort()) {
                 continue;
             }
 
-            if (is_null($route->getStrategy())) {
-                if (($group = $route->getParentGroup()) && !is_null($group->getStrategy())) {
+            if ($route->getStrategy() === null) {
+                $route->setStrategy($this->getStrategy());
+                /**if (($group = $route->getParentGroup()) && !is_null($group->getStrategy())) {
                     $route->setStrategy($group->getStrategy());
                 } else {
                     $route->setStrategy($this->getStrategy());
-                }
+                }*/
             }
 
             $this->addRoute($route->getMethod(), $this->parseRoutePath($route->getPath()), $route);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function processGroups(ServerRequestInterface $request): void
+    {
+        $activePath = $request->getUri()->getPath();
+
+        foreach ($this->groups as $key => $group) {
+            // we want to determine if we are technically in a group even if the
+            // route is not matched so exceptions are handled correctly
+            if ($group->getStrategy() !== null
+                && strncmp($activePath, $group->getPrefix(), strlen($group->getPrefix())) === 0
+            ) {
+                $this->setStrategy($group->getStrategy());
+            }
+
+            unset($this->groups[$key]);
+            $group();
         }
     }
 

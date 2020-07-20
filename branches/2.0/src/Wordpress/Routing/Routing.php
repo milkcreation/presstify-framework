@@ -78,8 +78,14 @@ class Routing implements RoutingContract
                             $response = HttpRedirect::createPsr($redirect_url);
                             $this->manager->emit($response);
                             exit;
+                        } else {
+                            wp_die($e->getMessage());
                         }
+                    } else {
+                        wp_die($e->getMessage());
                     }
+                } else {
+                    wp_die($e->getMessage());
                 }
             }
         }, 0);
