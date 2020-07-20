@@ -5,13 +5,15 @@ namespace tiFy\Wordpress\PageHook;
 use Closure;
 use tiFy\Contracts\Partial\BreadcrumbCollection as BaseBreadcrumbCollection;
 use tiFy\Support\{ParamsBag, Proxy\Router};
-use tiFy\Wordpress\Contracts\{
-    PageHookItem as PageHookItemContract,
+use tiFy\Wordpress\Contracts\{PageHookItem as PageHookItemContract,
     Partial\BreadcrumbCollection,
     Query\QueryPost as QueryPostContract
 };
 use tiFy\Wordpress\Query\QueryPost;
-use WP_Admin_Bar, WP_Post, WP_Query;
+use WP_Admin_Bar;
+use WP_Post;
+use WP_Query;
+use WP_Term;
 
 class PageHookItem extends ParamsBag implements PageHookItemContract
 {
@@ -81,7 +83,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             $this->parse();
 
             add_action('pre_get_posts', function (WP_Query $wp_query) {
-                if (!is_admin()  && ($rewrite = $this->get('rewrite') ?: '') && $wp_query->is_main_query()) {
+                if (!is_admin() && ($rewrite = $this->get('rewrite') ?: '') && $wp_query->is_main_query()) {
                     if (preg_match('/(.*)@post_type/', $rewrite, $matches) && post_type_exists($matches[1])) {
                         if ($wp_query->is_post_type_archive($matches[1])) {
                             $wp_query->set('hookname', $this->getName());
@@ -103,7 +105,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
             add_action('pre_get_posts', function (WP_Query $wp_query) {
                 if (!is_admin() && $wp_query->is_main_query() /*&& !$this->get('rewrite')*/) {
                     if ($this->is()) {
-                        if  ($query_args = $this->get('wp_query')) {
+                        if ($query_args = $this->get('wp_query')) {
                             if (is_array($query_args)) {
                                 if ($paged = $wp_query->get('paged')) {
                                     $query_args = array_merge(['paged' => $paged], $query_args);
@@ -273,25 +275,11 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                         $obj = &$wp_taxonomies[$taxonomy];
                         $obj->remove_rewrite_rules();
 
-                        if (!is_array($obj->rewrite)) {
-                            $obj->rewrite = [];
-                        }
-
-                        $obj->rewrite = array_merge([
-                            'with_front'   => true,
-                            'hierarchical' => false,
-                            'ep_mask'      => EP_NONE,
-                        ], $obj->rewrite);
-
-                        $obj->rewrite['slug'] = $this->getPath();
-
-                        $obj->add_rewrite_rules();
-
                         /**
-                         * Ancien.
-                         * @todo suppr.
+                         * @internal Ancienne version >> Fonctionnelle.
                          */
-                        /*
+                        $obj->rewrite = false;
+
                         global $wp_rewrite;
 
                         $pbase = $wp_rewrite->pagination_base;
@@ -344,7 +332,27 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                                     }
                                 }
                                 return $link;
-                            }, 999999, 3); */
+                            }, 999999, 3);
+                        /**/
+
+                        /**
+                         * @internal  Nouvelle version >> Ne permet pas de positionner la règle de réécriture en top.
+                         * !!GARDER!!
+                         * /
+                         * if (!is_array($obj->rewrite)) {
+                         * $obj->rewrite = [];
+                         * }
+                         *
+                         * $obj->rewrite = array_merge([
+                         * 'with_front'   => true,
+                         * 'hierarchical' => false,
+                         * 'ep_mask'      => EP_NONE,
+                         * ], $obj->rewrite);
+                         *
+                         * $obj->rewrite['slug'] = $this->getPath();
+                         *
+                         * $obj->add_rewrite_rules();
+                         * /**/
                     }
                 }
             }, 999999);
@@ -551,7 +559,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                         } elseif ($page_id = $wp_query->get('page_id', 0)) {
                             $this->globalCurrent = ($this->post()->getId() === intval($page_id));
                         } elseif ($this->objectType && $this->objectName) {
-                            switch($this->objectType) {
+                            switch ($this->objectType) {
                                 case 'post_type' :
                                     if ($this->objectName === 'post') {
                                         $this->globalCurrent = $wp_query->is_home();

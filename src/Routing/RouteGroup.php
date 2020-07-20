@@ -9,4 +9,28 @@ use tiFy\Routing\Concerns\{ContainerAwareTrait, MiddlewareAwareTrait, RouteColle
 class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
 {
     use ContainerAwareTrait, MiddlewareAwareTrait, RouteCollectionAwareTrait, StrategyAwareTrait;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param string prefix
+     * @param callable $callback
+     * @param $collection
+     *
+     * @return void
+     */
+    public function __construct(string $prefix, callable $callback, $collection)
+    {
+        parent::__construct($prefix, $callback, $collection);
+
+        ($this->callback)($this);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __invoke(): void
+    {
+
+    }
 }
