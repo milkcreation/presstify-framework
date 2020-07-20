@@ -37,9 +37,9 @@ interface AccordionItem extends ParamsBag
     /**
      * Récupération du nom de qualification du parent.
      *
-     * @return string|int|null
+     * @return string|null
      */
-    public function getParent();
+    public function getParent(): ?string;
 
     /**
      * Vérification de l'état d'ouverture de l'élément.

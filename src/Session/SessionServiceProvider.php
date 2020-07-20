@@ -14,7 +14,7 @@ class SessionServiceProvider extends ServiceProvider
     protected $provides = [
         'session',
         'session.flashbag',
-        'session.store'
+        'session.store',
     ];
 
     /**
@@ -25,9 +25,11 @@ class SessionServiceProvider extends ServiceProvider
         $this->getContainer()->share('session', function () {
             $session = new Session($this->getContainer());
 
-            if (session_status() == PHP_SESSION_NONE) {
-                $_SESSION['flag'] = TRUE;
-                $session->start();
+            if (!headers_sent()) {
+                if (session_status() == PHP_SESSION_NONE) {
+                    $_SESSION['flag'] = true;
+                    $session->start();
+                }
             }
 
             return $session;
