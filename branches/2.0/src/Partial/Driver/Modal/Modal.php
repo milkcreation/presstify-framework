@@ -196,8 +196,9 @@ class Modal extends PartialDriver implements ModalContract
             ];
 
             $this->set([
-                'attrs.data-options.ajax' => is_array($ajax) ? array_merge($defaultAjax, $ajax) : $defaultAjax,
-                'attrs.data-options.ajax_cacheable' => !!$this->get('ajax_cacheable')
+                'attrs.data-options.ajax'           => is_array($ajax)
+                    ? array_merge($defaultAjax, $ajax) : $defaultAjax,
+                'attrs.data-options.ajax_cacheable' => !!$this->get('ajax_cacheable'),
             ]);
 
             if (!$this->get('attrs.data-options.ajax.data.viewer')) {

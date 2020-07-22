@@ -263,10 +263,10 @@ $form-field-radius-bl: $form-field-radius !default;
     + .Form-fieldLabel,
     + .FieldRadioCollection-itemLabel,
     + .FieldCheckboxCollection-itemLabel {
-      opacity:0.5;
+      opacity: 0.5;
 
       &::before {
-        opacity:0.5;
+        opacity: 0.5;
       }
     }
   }
@@ -295,36 +295,22 @@ $form-field-radius-bl: $form-field-radius !default;
 }
 
 .Form-fieldInput--select-js {
-  &.FieldSelectJs[aria-arrow="true"] {
-    .FieldSelectJs-trigger {
-      border: none;
-      border-radius: #{$form-field-radius-tl}px #{$form-field-radius-tr}px #{$form-field-radius-br}px #{$form-field-radius-bl}px;
-      background-color: map-get($colors, lighter);
+  .FieldSelectJs-selectionItem {
+    border-radius: #{$form-field-radius-tl}px #{$form-field-radius-tr}px #{$form-field-radius-br}px #{$form-field-radius-bl}px;
+    width: 100%;
+    background-color: map-get($colors, lighter);
+    padding: 0.5em 1em;
+    font-size: 16px;
+    line-height: 1.4;
+  }
 
-      &::before {
-        display: none;
-      }
-
-      .FieldSelectJs-selectionItem {
-        border-radius: #{$form-field-radius-tl}px #{$form-field-radius-tr}px #{$form-field-radius-br}px #{$form-field-radius-bl}px;
-        width: 100%;
-        background-color: map-get($colors, lighter);
-        padding: 0.5em 1em;
-        font-size: 16px;
-        line-height: 1.4;
-      }
-    }
-
-    &[aria-error="true"] {
+  &[aria-error="true"] {
+    .FieldSelectJs-selectionItem {
       border-radius: 0 #{$form-field-radius-tr}px #{$form-field-radius-br}px 0;
-
-      .FieldSelectJs-selectionItem {
-        border-radius: 0 #{$form-field-radius-tr}px #{$form-field-radius-br}px 0;
-        padding-left: 1em;
-        border-left-style: solid;
-        border-left-width: #{$form-field-error-border-width}px;
-        border-left-color: map-get($colors, error);
-      }
+      padding-left: 1em;
+      border-left-style: solid;
+      border-left-width: #{$form-field-error-border-width}px;
+      border-left-color: map-get($colors, error);
     }
   }
 }
