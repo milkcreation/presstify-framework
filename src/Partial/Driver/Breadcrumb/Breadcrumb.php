@@ -115,7 +115,7 @@ class Breadcrumb extends PartialDriver implements BreadcrumbContract
     public function main(): BreadcrumbContract
     {
         if (is_null(self::$main)) {
-            self::$main = $this->manager()->get('breadcrumb');
+            self::$main = $this->manager()->get('breadcrumb', 'main');
         }
 
         return self::$main;
@@ -196,13 +196,11 @@ class Breadcrumb extends PartialDriver implements BreadcrumbContract
      */
     public function render(): string
     {
-        if ($this->get('main')) {
-            return $this->main()->render();
-        } else {
-            $this->set('parts', $this->isEnabled() ? $this->collection()->fetch() : []);
+        $obj = !is_null(self::$main) ? self::$main : $this;
 
-            return parent::render();
-        }
+        $obj->set('parts', $obj->isEnabled() ? $obj->collection()->fetch() : []);
+
+        return $obj->viewer('index', $obj->all());
     }
 
     /**
