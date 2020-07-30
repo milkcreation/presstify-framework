@@ -23,6 +23,7 @@ use tiFy\Contracts\Field\{
     Radio as RadioContract,
     RadioCollection as RadioCollectionContract,
     Repeater as RepeaterContract,
+    Required as RequiredContract,
     Select as SelectContract,
     SelectImage as SelectImageContract,
     SelectJs as SelectJsContract,
@@ -52,6 +53,7 @@ use tiFy\Field\Driver\{
     Radio\Radio,
     RadioCollection\RadioCollection,
     Repeater\Repeater,
+    Required\Required,
     Select\Select,
     SelectImage\SelectImage,
     SelectJs\SelectJs,
@@ -92,6 +94,7 @@ class FieldServiceProvider extends ServiceProvider
         RadioContract::class,
         RadioCollectionContract::class,
         RepeaterContract::class,
+        RequiredContract::class,
         SelectContract::class,
         SelectImageContract::class,
         SelectJsContract::class,
@@ -191,6 +194,10 @@ class FieldServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(RepeaterContract::class, function () {
             return new Repeater();
+        });
+
+        $this->getContainer()->add(RequiredContract::class, function () {
+            return new Required();
         });
 
         $this->getContainer()->add(SelectContract::class, function () {

@@ -137,7 +137,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      *
      * @return string
      */
-    public function fieldTagValue($tags, $raw = true)
+    public function fieldTagsValue($tags, $raw = true)
     {
         if (is_string($tags)) :
             if (preg_match_all('/([^%%]*)%%(.*?)%%([^%%]*)?/', $tags, $matches)) :
@@ -148,7 +148,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             endif;
         elseif (is_array($tags)) :
             foreach ($tags as $k => &$i) :
-                $i = $this->fieldTagValue($i, $raw);
+                $i = $this->fieldTagsValue($i, $raw);
             endforeach;
         endif;
 

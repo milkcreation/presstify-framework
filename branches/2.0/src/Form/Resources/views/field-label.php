@@ -8,6 +8,6 @@
 ?>
 <?php if ($field->hasLabel()) : ?>
     <?php if ($field->get('label.wrapper')) : $this->layout('wrapper-label', $this->all()); endif; ?>
-    <?php echo partial('tag', $field->get('label', [])); ?>
-    <?php $this->insert('field-tag', compact('field')); ?>
+    <?php echo field('label', $field->get('label', [])); ?>
+    <?php $this->insert('field-required', compact('field')); ?>
 <?php endif;

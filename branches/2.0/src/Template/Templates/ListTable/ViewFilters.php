@@ -43,7 +43,7 @@ class ViewFilters extends Collection implements ViewFiltersContract
                     ? "view-filter.{$name}"
                     : 'view-filter';
 
-                $this->items[$name] = $this->factory->resolve($alias, [$name, $attrs]);
+                $this->items[$name] = $this->factory->resolve($alias)->setName($name)->set($attrs)->parse();
             }
 
             $this->items = array_filter($this->items, function ($value) {

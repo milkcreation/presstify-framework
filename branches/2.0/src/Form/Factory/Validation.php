@@ -39,7 +39,15 @@ class Validation implements FactoryValidation
 
         if (is_string($callback)) {
             try {
-                return !empty($_args) ? v::$callback(...$_args)->validate($value) : v::$callback()->validate($value);
+                if (preg_match('/^!(.*)/', $callback, $match)) {
+                    $callback = $match[1];
+
+                    return !empty($_args)
+                        ? !v::$callback(...$_args)->validate($value) : !v::$callback()->validate($value);
+                } else {
+                    return !empty($_args)
+                        ? v::$callback(...$_args)->validate($value) : v::$callback()->validate($value);
+                }
             } catch (Exception $e) {
                 if (is_callable([$this, $callback])) {
                     return call_user_func_array([$this, $callback], $args);
@@ -47,7 +55,7 @@ class Validation implements FactoryValidation
                     return call_user_func_array($callback, $args);
                 }
             }
-        } elseif(is_callable($callback)) {
+        } elseif (is_callable($callback)) {
             return call_user_func_array($callback, $args);
         }
 
@@ -67,6 +75,6 @@ class Validation implements FactoryValidation
      */
     public function compare($value, $tags, $raw = true)
     {
-        return v::equals($this->form()->fieldTagValue($tags, $raw))->validate($value);
+        return v::equals($this->form()->fieldTagsValue($tags, $raw))->validate($value);
     }
 }

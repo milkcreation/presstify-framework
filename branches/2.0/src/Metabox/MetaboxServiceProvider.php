@@ -6,7 +6,8 @@ use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Metabox\{MetaboxContext as MetaboxContextContract,
     MetaboxDriver as MetaboxDriverContract,
     MetaboxScreen as MetaboxScreenContract,
-    MetaboxView as MetaboxViewContract};
+    MetaboxView as MetaboxViewContract
+};
 use tiFy\Metabox\Context\TabContext;
 use tiFy\Metabox\Driver\{
     Color\Color as ColorDriver,
@@ -32,6 +33,18 @@ class MetaboxServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'metabox',
+        'metabox.driver.color',
+        'metabox.driver.custom-header',
+        'metabox.driver.excerpt',
+        'metabox.driver.filefeed',
+        'metabox.driver.icon',
+        'metabox.driver.order',
+        'metabox.driver.imagefeed',
+        'metabox.driver.postfeed',
+        'metabox.driver.related-term',
+        'metabox.driver.slidefeed',
+        'metabox.driver.subtitle',
+        'metabox.driver.videofeed',
         MetaboxContextContract::class,
         MetaboxDriverContract::class,
         MetaboxScreenContract::class,
@@ -83,47 +96,47 @@ class MetaboxServiceProvider extends ServiceProvider
             return new ColorDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.custom-header", function () {
+        $this->getContainer()->add('metabox.driver.custom-header', function () {
             return new CustomHeaderDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.excerpt", function () {
+        $this->getContainer()->add('metabox.driver.excerpt', function () {
             return new ExcerptDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.filefeed", function () {
+        $this->getContainer()->add('metabox.driver.filefeed', function () {
             return new FilefeedDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.icon", function () {
+        $this->getContainer()->add('metabox.driver.icon', function () {
             return new IconDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.order", function () {
+        $this->getContainer()->add('metabox.driver.order', function () {
             return new OrderDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.imagefeed", function () {
+        $this->getContainer()->add('metabox.driver.imagefeed', function () {
             return new ImagefeedDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.postfeed", function () {
+        $this->getContainer()->add('metabox.driver.postfeed', function () {
             return new PostfeedDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.related-term", function () {
+        $this->getContainer()->add('metabox.driver.related-term', function () {
             return new RelatedTermDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.slidefeed", function () {
+        $this->getContainer()->add('metabox.driver.slidefeed', function () {
             return new SlidefeedDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.subtitle", function () {
+        $this->getContainer()->add('metabox.driver.subtitle', function () {
             return new SubtitleDriver();
         });
 
-        $this->getContainer()->add("metabox.driver.videofeed", function () {
+        $this->getContainer()->add('metabox.driver.videofeed', function () {
             return new VideofeedDriver();
         });
     }

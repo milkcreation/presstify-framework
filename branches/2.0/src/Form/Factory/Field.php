@@ -393,9 +393,7 @@ class Field extends ParamsBag implements FactoryField
 
         // Attributs de champ requis (marqueur et fonction de traitement).
         if ($required = $this->get('required', false)) :
-            $required = (is_array($required))
-                ? $required
-                : (is_string($required) ? ['message' => $required] : []);
+            $required = (is_array($required)) ? $required : (is_string($required) ? ['message' => $required] : []);
 
             $required = array_merge([
                 'tagged'     => true,
@@ -408,18 +406,16 @@ class Field extends ParamsBag implements FactoryField
                 'html5'      => false,
             ], $required);
 
-            if ($tagged = $required['tagged']) :
+            if ($tagged = $required['tagged']) {
                 $tagged = is_array($tagged) ? $tagged : (is_string($tagged) ? ['content' => $tagged] : []);
                 $required['tagged'] = array_merge([
                     'tag'     => 'span',
                     'attrs'   => [],
                     'content' => '*'
                 ], $tagged);
-            endif;
+            }
 
-            $required['call'] = !empty($required['value_none']) && empty($required['call'])
-                ? 'equals'
-                : 'notEmpty';
+            $required['call'] = !empty($required['value_none']) && empty($required['call']) ? '!equals' : 'notEmpty';
             $required['args'] = !empty($required['value_none']) && empty($required['args'])
                 ? [] + [$required['value_none']]
                 : [];
@@ -428,9 +424,9 @@ class Field extends ParamsBag implements FactoryField
         endif;
 
         // Liste des tests de validation.
-        if ($validations = $this->get('validations')) :
+        if ($validations = $this->get('validations')) {
             $this->set('validations', $this->parseValidations($validations));
-        endif;
+        }
 
         foreach ($this->addons() as $name => $addon) {
             $this->set(
@@ -549,7 +545,7 @@ class Field extends ParamsBag implements FactoryField
                 $this->pull('label.attrs.id');
             endif;
 
-            $default_class = "Form-fieldLabel Form-fieldLabel--{$this->getType()} Form-fieldLabel--{$this->getSlug()}";
+            $default_class = "%s Form-fieldLabel Form-fieldLabel--{$this->getType()} Form-fieldLabel--{$this->getSlug()}";
             if (!$this->has('label.attrs.class')) :
                 $this->set('label.attrs.class', $default_class);
             else :
@@ -584,13 +580,13 @@ class Field extends ParamsBag implements FactoryField
 
         if ($this->get('required.tagged')) :
             if (!$this->has('required.tagged.attrs.id')) :
-                $this->set('required.tagged.attrs.id', "Form{$this->form()->index()}-fieldTag--{$this->getSlug()}");
+                $this->set('required.tagged.attrs.id', "Form{$this->form()->index()}-fieldRequired--{$this->getSlug()}");
             endif;
             if (!$this->get('required.tagged.attrs.id')) :
                 $this->pull('required.tagged.attrs.id');
             endif;
 
-            $default_class = "Form-fieldTag Form-fieldTag--{$this->getType()} Form-fieldTag--{$this->getSlug()}";
+            $default_class = "%s Form-fieldRequired Form-fieldRequired--{$this->getType()} Form-fieldRequired--{$this->getSlug()}";
             if (!$this->has('required.tagged.attrs.class')) :
                 $this->set('required.tagged.attrs.class', $default_class);
             else :

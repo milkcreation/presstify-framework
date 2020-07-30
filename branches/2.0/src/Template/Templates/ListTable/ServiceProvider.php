@@ -499,13 +499,13 @@ class ServiceProvider extends BaseServiceProvider
             return $ctrl->setTemplateFactory($this->factory)->parse(is_array($attrs) ? $attrs : []);
         });
 
-        $this->getContainer()->add($this->getFactoryAlias('view-filter'), function (string $name, array $attrs = []) {
+        $this->getContainer()->add($this->getFactoryAlias('view-filter'), function () {
             $ctrl = $this->factory->provider('view-filter');
             $ctrl = $ctrl instanceof ViewFilter
                 ? clone $ctrl
                 : $this->getContainer()->get(ViewFilter::class);
 
-            return $ctrl->setTemplateFactory($this->factory)->setName($name)->set($attrs)->parse();
+            return $ctrl->setTemplateFactory($this->factory);
         });
     }
 }

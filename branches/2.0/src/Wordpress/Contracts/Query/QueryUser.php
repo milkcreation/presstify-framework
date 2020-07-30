@@ -2,14 +2,25 @@
 
 namespace tiFy\Wordpress\Contracts\Query;
 
+use Illuminate\Database\Eloquent\{
+    Collection as EloquentCollection,
+    Model as EloquentModel
+};
 use tiFy\Contracts\{Support\ParamsBag, User\RoleFactory};
 use tiFy\Wordpress\Contracts\Database\UserBuilder;
-use WP_Site;
-use WP_User;
-use WP_User_Query;
+use WP_Site, WP_User, WP_User_Query;
 
 interface QueryUser extends ParamsBag
 {
+    /**
+     * Création d'une instance basée sur un objet post Wordpress et selon la cartographie des classes de rappel.
+     *
+     * @param WP_User $wp_user
+     *
+     * @return static
+     */
+    public static function build(object $wp_user): ?QueryUser;
+
     /**
      * Création d'un instance basée sur un argument de qualification.
      *
@@ -19,6 +30,15 @@ interface QueryUser extends ParamsBag
      * @return static|null
      */
     public static function create($id = null, ...$args): ?QueryUser;
+
+    /**
+     * Récupération d'une instance basée sur un modèle Laravel.
+     *
+     * @param EloquentModel $model
+     *
+     * @return static|null
+     */
+    public static function createFromEloquent(EloquentModel $model): ?QueryUser;
 
     /**
      * Création d'un instance de la classe basée sur l'utilisateur courant.
@@ -55,23 +75,13 @@ interface QueryUser extends ParamsBag
     public static function createFromEmail(string $email): ?QueryUser;
 
     /**
-     * Traitement d'arguments de requête de récupération des éléments.
+     * Récupération d'une liste des instances des termes courants|selon une requête WP_User_Query|selon une liste d'arguments.
      *
-     * @param array $args Liste des arguments de la requête récupération des éléments.
+     * @param WP_User_Query|array $query
      *
-     * @return array
+     * @return QueryPost[]|array
      */
-    public static function parseQueryArgs(array $args = []): array;
-
-    /**
-     * Récupération d'une liste d'instances basée sur une instance de classe WP_User_Query.
-     * @see https://developer.wordpress.org/reference/classes/wp_user_query/
-     *
-     * @param WP_User_Query $wp_user_query
-     *
-     * @return array
-     */
-    public static function query(WP_User_Query $wp_user_query): array;
+    public static function fetch($query): array;
 
     /**
      * Récupération d'une liste d'instances basée sur des arguments de requête de récupération des éléments.
@@ -81,7 +91,16 @@ interface QueryUser extends ParamsBag
      *
      * @return array
      */
-    public static function queryFromArgs(array $args = []): array;
+    public static function fetchFromArgs(array $args = []): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur un resultat de requête en base de données.
+     *
+     * @param EloquentCollection $collection
+     *
+     * @return array
+     */
+    public static function fetchFromEloquent(EloquentCollection $collection): array;
 
     /**
      * Récupération d'une liste d'instances basée sur des identifiants de qualification de termes.
@@ -91,7 +110,70 @@ interface QueryUser extends ParamsBag
      *
      * @return array
      */
+    public static function fetchFromIds(array $ids): array;
+
+    /**
+     * Récupération d'une liste d'instances basée sur une instance de classe WP_Term_Query.
+     * @see https://developer.wordpress.org/reference/classes/wp_term_query/
+     *
+     * @param WP_User_Query $wp_user_query
+     *
+     * @return array
+     */
+    public static function fetchFromWpUserQuery(WP_User_Query $wp_user_query): array;
+
+    /**
+     * Vérification d'intégrité d'une instance.
+     *
+     * @param QueryUser|mixed $instance
+     *
+     * @return bool
+     */
+    public static function is($instance): bool;
+
+    /**
+     * Récupération de l'instance de pagination de la dernière requête de récupération d'une liste d'éléments.
+     *
+     * @return PaginationQuery
+     */
+    public static function pagination(): PaginationQuery;
+
+    /**
+     * Traitement d'arguments de requête de récupération des éléments.
+     *
+     * @param array $args Liste des arguments de la requête récupération des éléments.
+     *
+     * @return array
+     */
+    public static function parseQueryArgs(array $args = []): array;
+
+    /**
+     * @param array $args Liste des arguments de la requête récupération des éléments.
+     *
+     * @return array
+     *
+     * @deprecated
+     */
+    public static function queryFromArgs(array $args = []): array;
+
+    /**
+     * @param int[] $ids Liste des identifiants de qualification.
+     *
+     * @return array
+     *
+     * @deprecated
+     */
     public static function queryFromIds(array $ids): array;
+
+    /**
+     * Définition d'une classe de rappel d'instanciation selon un type de post.
+     *
+     * @param string $role Nom de qualification du role associé.
+     * @param string $classname Nom de qualification de la classe.
+     *
+     * @return void
+     */
+    public static function setBuiltInClass(string $role, string $classname): void;
 
     /**
      * Définition de la liste des arguments de requête de récupération des éléments.
@@ -101,6 +183,15 @@ interface QueryUser extends ParamsBag
      * @return void
      */
     public static function setDefaultArgs(array $args): void;
+
+    /**
+     * Définition de la classe de rappel par défaut.
+     *
+     * @param string $classname Nom de qualification de la classe.
+     *
+     * @return void
+     */
+    public static function setFallbackClass(string $classname): void;
 
     /**
      * Définition du rôle ou une liste de rôles associés.

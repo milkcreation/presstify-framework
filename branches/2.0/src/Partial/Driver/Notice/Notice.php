@@ -12,27 +12,27 @@ class Notice extends PartialDriver implements NoticeContract
      * {@inheritDoc}
      *
      * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
-     *      @var bool $dismiss Affichage du bouton de masquage de la notification.
-     *      @var int $timeout Délai d'expiration d'affichage du message. Exprimé en secondes.
-     *      @var string $type Type de notification info|warning|success|error. défaut info.
+     *  @var array $attrs Attributs HTML du champ.
+     *  @var string $after Contenu placé après le champ.
+     *  @var string $before Contenu placé avant le champ.
+     *  @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+     *  @var string|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
+     *  @var bool $dismiss Affichage du bouton de masquage de la notification.
+     *  @var int $timeout Délai d'expiration d'affichage du message. Exprimé en secondes.
+     *  @var string $type Type de notification info|warning|success|error. défaut info.
      * }
      */
     public function defaults(): array
     {
         return [
-            'attrs'         => [],
-            'after'         => '',
-            'before'        => '',
-            'viewer'        => [],
+            'attrs'   => [],
+            'after'   => '',
+            'before'  => '',
+            'viewer'  => [],
             'content' => 'Lorem ipsum dolor site amet',
             'dismiss' => false,
             'timeout' => 0,
-            'type'    => 'info'
+            'type'    => 'info',
         ];
     }
 
@@ -51,7 +51,7 @@ class Notice extends PartialDriver implements NoticeContract
         $content = $this->get('content', '');
         $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);
 
-        if($dismiss = $this->get('dismiss')) {
+        if ($dismiss = $this->get('dismiss')) {
             if (!is_array($dismiss)) {
                 $dismiss = [];
             }
@@ -59,9 +59,9 @@ class Notice extends PartialDriver implements NoticeContract
             $this->set('dismiss', partial('tag', array_merge([
                 'tag'     => 'button',
                 'attrs'   => [
-                    'data-toggle' => 'notice.dismiss'
+                    'data-toggle' => 'notice.dismiss',
                 ],
-                'content' => '&times;'
+                'content' => '&times;',
             ], $dismiss)));
         } else {
             $this->set('dismiss', '');

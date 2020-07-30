@@ -85,16 +85,61 @@ class QueryPost extends ParamsBag implements QueryPostContract
     protected $db;
 
     /**
+     * Instance des paramètres d'affichage des pages de flux.
+     * @var ParamsBag
+     */
+    protected $archiveShowParams;
+
+    /**
+     * Paramètres par défaut des pages de contenu.
+     * @var array
+     */
+    protected $archiveShowDefaults = [
+        'adjust'   => false,
+        'banner'   => true,
+        'date'     => false,
+        'excerpt'  => true,
+        'readmore' => true,
+        'subtitle' => true,
+        'title'    => true,
+    ];
+
+    /**
      * Instance de l'auteur associé.
      * @var QueryUserContract
      */
     protected $author;
 
     /**
+     * Instance des paramètres d'affichage généraux.
+     * @var ParamsBag
+     */
+    protected $globalShowParams;
+
+    /**
      * Instance du parent.
      * @var QueryPost|false|null
      */
     protected $parent;
+
+    /**
+     * Instance des paramètres d'affichage de la page de contenu.
+     * @var ParamsBag
+     */
+    protected $singleShowParams;
+
+    /**
+     * Paramètres par défaut des pages de contenu.
+     * @var array
+     */
+    protected $singleShowDefaults = [
+        'childs'   => true,
+        'content'  => true,
+        'date'     => false,
+        'subtitle' => true,
+        'title'    => true,
+        'header'   => false,
+    ];
 
     /**
      * Instance de post Wordpress.
@@ -119,8 +164,12 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public static function build(WP_Post $wp_post): QueryPostContract
+    public static function build(object $wp_post): ?QueryPostContract
     {
+        if (!$wp_post instanceof WP_Post) {
+            return null;
+        }
+
         $classes = self::$builtInClasses;
         $post_type = $wp_post->post_type;
 
@@ -279,7 +328,9 @@ class QueryPost extends ParamsBag implements QueryPostContract
 
         $results = [];
         foreach ($wp_posts as $wp_post) {
-            $instance = static::build($wp_post);
+            if (!$instance = static::createFromId($wp_post->ID)) {
+                continue;
+            }
 
             if (($postType = static::$postType) && ($postType !== 'any')) {
                 if ($instance->typeIn($postType)) {
@@ -505,6 +556,24 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
+    public function getArchiveShow(?string $key = null, $default = null): ?array
+    {
+        if (is_null($this->archiveShowParams)) {
+            $params = array_merge($this->archiveShowDefaults, $this->getMetaSingle('_archive_show', []));
+
+            array_walk($params, function (&$opt) {
+                $opt = filter_var($opt, FILTER_VALIDATE_BOOLEAN);
+            });
+
+            $this->archiveShowParams = (new ParamsBag())->set($params);
+        }
+
+        return is_null($key) ? $this->archiveShowParams->all() : $this->archiveShowParams->get($key, $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getArchiveUrl(): ?string
     {
         return get_post_type_archive_link($this->getType()->getName()) ?: null;
@@ -528,6 +597,15 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function getAuthorId(): int
     {
         return (int)$this->get('post_author', 0);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBeforeMore(): ?string
+    {
+        return $this->hasMore() && ($parts = preg_split('/<!--more(.*?)?-->/', $this->getContent(true)))
+            ? $parts[0] : null;
     }
 
     /**
@@ -631,6 +709,24 @@ class QueryPost extends ParamsBag implements QueryPostContract
         }
 
         return $raw ? $excerpt : ($excerpt ? (string)apply_filters('get_the_excerpt', $excerpt) : '');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getGlobalShow(?string $key = null, $default = null): ?array
+    {
+        if (is_null($this->globalShowParams)) {
+            $params = array_merge([], $this->getMetaSingle('_global_show', []));
+
+            array_walk($params, function (&$opt) {
+                $opt = filter_var($opt, FILTER_VALIDATE_BOOLEAN);
+            });
+
+            $this->globalShowParams = (new ParamsBag())->set($params);
+        }
+
+        return is_null($key) ? $this->globalShowParams->all() : $this->globalShowParams->get($key, $default);
     }
 
     /**
@@ -774,6 +870,24 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
+    public function getSingleShow(?string $key = null, $default = null): ?array
+    {
+        if (is_null($this->singleShowParams)) {
+            $params = array_merge($this->singleShowDefaults, $this->getMetaSingle('_single_show', []));
+
+            array_walk($params, function (&$opt) {
+                $opt = filter_var($opt, FILTER_VALIDATE_BOOLEAN);
+            });
+
+            $this->singleShowParams = (new ParamsBag())->set($params);
+        }
+
+        return is_null($key) ? $this->singleShowParams->all() : $this->singleShowParams->get($key, $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getTeaser(
         int $length = 255,
         string $teaser = ' [&hellip;]',
@@ -842,6 +956,14 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function getWpPost(): ?WP_Post
     {
         return $this->wpPost;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasMore(): bool
+    {
+        return !!preg_match('/<!--more(.*?)?-->/', $this->getContent(true));
     }
 
     /**

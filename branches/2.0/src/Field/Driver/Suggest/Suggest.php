@@ -64,8 +64,8 @@ class Suggest extends FieldDriver implements SuggestContract
      *      @var string $value Valeur courante de soumission du champ.
      *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      *      @var array|bool $ajax Liste des attributs de recherche des éléments via une requête xhr.
-     *      @var bool|array $alt Activation du champ alternatif de stockage du résultat de la recherche|attributs de
-     *      configuration du champ altérnatif. @see \tiFy\Field\Driver\Hidden\Hidden
+     *      @var bool|string|array $alt Activation du champ alternatif de stockage du résultat de la recherche|attributs de
+     *      configuration du champ alternatif. @see \tiFy\Field\Driver\Hidden\Hidden
      *      @see https://api.jquery.com/jquery.ajax/
      *      @var array $options Liste des attributs de configuration de l'autocomplétion.
      *      @see https://api.jqueryui.com/autocomplete/

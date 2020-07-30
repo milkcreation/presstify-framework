@@ -47,7 +47,7 @@ interface FormFactory extends FactoryResolver, ParamsBag
      *
      * @return string
      */
-    public function fieldTagValue($tags, $raw = true);
+    public function fieldTagsValue($tags, $raw = true);
 
     /**
      * Récupération de l'action du formulaire (url).

@@ -36,16 +36,16 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     protected static $builtInClasses = [];
 
     /**
-     * Classe de rappel d'instanciation
-     * @var string|null
-     */
-    protected static $fallbackClass;
-
-    /**
      * Liste des arguments de requête de récupération des éléments par défaut.
      * @var array
      */
     protected static $defaultArgs = [];
+
+    /**
+     * Classe de rappel d'instanciation
+     * @var string|null
+     */
+    protected static $fallbackClass;
 
     /**
      * Instance de la pagination la dernière requête de récupération d'une liste d'éléments.
@@ -94,8 +94,12 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
-    public static function build(WP_Term $wp_term): QueryTermContract
+    public static function build(object $wp_term): ?QueryTermContract
     {
+        if (!$wp_term instanceof WP_Term) {
+            return null;
+        }
+
         $classes = self::$builtInClasses;
         $taxonomy = $wp_term->taxonomy;
 
@@ -253,7 +257,7 @@ class QueryTerm extends ParamsBag implements QueryTermContract
 
         $results = [];
         foreach ($terms as $wp_term) {
-            $instance = static::build($wp_term);
+            $instance = static::createFromId($wp_term->term_id);
 
             if (($taxonomy = static::$taxonomy) && ($taxonomy !== 'any')) {
                 if ($instance->taxIn($taxonomy)) {
