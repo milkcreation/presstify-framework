@@ -97,6 +97,12 @@ jQuery(function ($) {
           this.alt = $('<input type="hidden" data-control="' + this.control.alt + '"/>').appendTo(this.wrap);
         }
 
+        let value = this.option('alt');
+        if (typeof value === 'string') {
+          this.alt.val(value);
+          this.wrap.attr('aria-selected', 'true');
+        }
+
         let name = this.el.attr('name') || undefined;
         if (name !== undefined) {
           this.alt.attr('name', name);
@@ -123,13 +129,15 @@ jQuery(function ($) {
 
       if (this.uiautocomplete === undefined) {
         if (ajax && !o.source) {
-          $.extend(o, {
+           $.extend(o, {
             source: function (request, response) {
               ajax = $.extend(true, ajax, {data: {_term: request.term}});
 
               self.wrap.attr('aria-loaded', 'true').attr('aria-selected', 'false');
 
               $.ajax(ajax).done(function (resp) {
+                console.log(resp);
+
                 if (resp.success) {
                   response(resp.data.items || []);
                 }
@@ -208,6 +216,8 @@ jQuery(function ($) {
     // Suppression de la valeur.
     reset: function () {
       this.resetted = true;
+
+      this._trigger('reset');
 
       this.value('');
     },

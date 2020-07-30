@@ -307,32 +307,31 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                             );
                         }
 
-                        add_filter('term_link',
-                            function (string $link, WP_Term $term, string $tax) use ($taxonomy) {
-                                if ($tax === $taxonomy) {
-                                    // @var WP_Taxonomy[] $wp_taxonomies
-                                    global $wp_taxonomies;
+                        add_filter('term_link', function (string $link, WP_Term $term, string $tax) use ($taxonomy) {
+                            if ($tax === $taxonomy) {
+                                // @var WP_Taxonomy[] $wp_taxonomies
+                                global $wp_taxonomies;
 
-                                    $base_url = rtrim($this->post()->getPermalink(), '/') . '/';
-                                    $slug = $term->slug;
+                                $base_url = rtrim($this->post()->getPermalink(), '/') . '/';
+                                $slug = $term->slug;
 
-                                    if ($wp_taxonomies[$tax]->hierarchical) {
-                                        $hierarchical_slugs = [];
-                                        $ancestors = get_ancestors($term->term_id, $taxonomy, 'taxonomy');
-                                        foreach ((array)$ancestors as $ancestor) {
-                                            $ancestor_term = get_term($ancestor, $taxonomy);
-                                            $hierarchical_slugs[] = $ancestor_term->slug;
-                                        }
-                                        $hierarchical_slugs = array_reverse($hierarchical_slugs);
-                                        $hierarchical_slugs[] = $slug;
-
-                                        return $base_url . implode('/', $hierarchical_slugs);
-                                    } else {
-                                        return $base_url . $slug;
+                                if ($wp_taxonomies[$tax]->hierarchical) {
+                                    $hierarchical_slugs = [];
+                                    $ancestors = get_ancestors($term->term_id, $taxonomy, 'taxonomy');
+                                    foreach ((array)$ancestors as $ancestor) {
+                                        $ancestor_term = get_term($ancestor, $taxonomy);
+                                        $hierarchical_slugs[] = $ancestor_term->slug;
                                     }
+                                    $hierarchical_slugs = array_reverse($hierarchical_slugs);
+                                    $hierarchical_slugs[] = $slug;
+
+                                    return $base_url . implode('/', $hierarchical_slugs);
+                                } else {
+                                    return $base_url . $slug;
                                 }
-                                return $link;
-                            }, 999999, 3);
+                            }
+                            return $link;
+                        }, 999999, 3);
                         /**/
 
                         /**

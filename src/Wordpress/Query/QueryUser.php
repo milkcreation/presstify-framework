@@ -2,9 +2,15 @@
 
 namespace tiFy\Wordpress\Query;
 
+use Illuminate\Database\Eloquent\{
+    Collection as EloquentCollection,
+    Model as EloquentModel
+};
 use tiFy\Contracts\User\RoleFactory;
 use tiFy\Support\{Arr, ParamsBag, Proxy\Role};
-use tiFy\Wordpress\Contracts\{Database\UserBuilder, Query\QueryUser as QueryUserContract};
+use tiFy\Wordpress\Contracts\{Database\UserBuilder,
+    Query\PaginationQuery as PaginationQueryContract,
+    Query\QueryUser as QueryUserContract};
 use tiFy\Wordpress\Database\Model\User as UserModel;
 use WP_Site, WP_User, WP_User_Query;
 
@@ -23,16 +29,34 @@ use WP_Site, WP_User, WP_User_Query;
 class QueryUser extends ParamsBag implements QueryUserContract
 {
     /**
-     * Nom de qualification ou liste de roles associés.
-     * @var string|array
+     * Liste des classes de rappel d'instanciation selon le type de post.
+     * @var string[][]|array
      */
-    protected static $role = [];
+    protected static $builtInClasses = [];
 
     /**
      * Liste des arguments de requête de récupération des éléments par défaut.
      * @var array
      */
     protected static $defaultArgs = [];
+
+    /**
+     * Classe de rappel d'instanciation.
+     * @var string|null
+     */
+    protected static $fallbackClass;
+
+    /**
+     * Instance de la pagination la dernière requête de récupération d'une liste d'éléments.
+     * @var PaginationQueryContract|null
+     */
+    protected static $pagination;
+
+    /**
+     * Nom de qualification ou liste de roles associés.
+     * @var string|array
+     */
+    protected static $role = [];
 
     /**
      * Liste des sites pour lequels l'utilisateur est habilité.
@@ -50,7 +74,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
      * Instance d'utilisateur Wordpress.
      * @var WP_User
      */
-    protected $wp_user;
+    protected $wpUser;
 
     /**
      * CONSTRUCTEUR
@@ -61,9 +85,26 @@ class QueryUser extends ParamsBag implements QueryUserContract
      */
     public function __construct(?WP_User $wp_user = null)
     {
-        if ($this->wp_user = $wp_user instanceof WP_User ? $wp_user : null) {
-            $this->set($this->wp_user->to_array())->parse();
+        if ($this->wpUser = $wp_user instanceof WP_User ? $wp_user : null) {
+            $this->set($this->wpUser->to_array())->parse();
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function build(object $wp_user): ?QueryUserContract
+    {
+        if (!$wp_user instanceof WP_User) {
+            return null;
+        }
+
+        $classes = self::$builtInClasses;
+        $role = current($wp_user->roles);
+
+        $class = $classes[$role] ?? (self::$fallbackClass ?: static::class);
+
+        return class_exists($class) ? new $class($wp_user) : new static($wp_user);
     }
 
     /**
@@ -76,7 +117,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
         } elseif (is_string($id)) {
             return (is_email($id)) ? static::createFromEmail($id) : static::createFromLogin($id);
         } elseif ($id instanceof WP_User) {
-            return (new static($id));
+            return static::build($id);
         } elseif ($id instanceof QueryUserContract) {
             return static::createFromId($id->getId());
         } elseif (is_null($id)) {
@@ -84,6 +125,14 @@ class QueryUser extends ParamsBag implements QueryUserContract
         } else {
             return null;
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function createFromEloquent(EloquentModel $model): ?QueryUserContract
+    {
+        return static::createFromId((new WP_User((object)$model->getAttributes()))->ID ?: 0);
     }
 
     /**
@@ -99,8 +148,11 @@ class QueryUser extends ParamsBag implements QueryUserContract
      */
     public static function createFromId(int $user_id): ?QueryUserContract
     {
-        return (($wp_user = new WP_User($user_id)) && ($wp_user instanceof WP_User))
-            ? new static($wp_user) : null;
+        if ($user_id && ($wp_user = new WP_User($user_id)) && ($wp_user instanceof WP_User)) {
+            return static::is($instance = static::build($wp_user)) ? $instance : null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -108,9 +160,8 @@ class QueryUser extends ParamsBag implements QueryUserContract
      */
     public static function createFromLogin(string $login): ?QueryUserContract
     {
-        return (($userdata = WP_User::get_data_by('login', $login)) &&
-            (($wp_user = new WP_User($userdata)) instanceof WP_User))
-            ? new static($wp_user) : null;
+        return (($data = WP_User::get_data_by('login', $login)) && (($wp_user = new WP_User($data)) instanceof WP_User))
+            ? static::createFromId($wp_user->ID ?? 0) : null;
     }
 
     /**
@@ -118,9 +169,129 @@ class QueryUser extends ParamsBag implements QueryUserContract
      */
     public static function createFromEmail(string $email): ?QueryUserContract
     {
-        return (($userdata = WP_User::get_data_by('email', $email)) &&
-            (($wp_user = new WP_User($userdata)) instanceof WP_User))
-            ? new static($wp_user) : null;
+        return (($data = WP_User::get_data_by('email', $email)) && (($wp_user = new WP_User($data)) instanceof WP_User))
+            ? static::createFromId($wp_user->ID ?? 0) : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function fetch($query): array
+    {
+        if (is_array($query)) {
+            return static::fetchFromArgs($query);
+        } elseif ($query instanceof WP_User_Query) {
+            return static::fetchFromWpUserQuery($query);
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function fetchFromArgs(array $args = []): array
+    {
+        return static::fetchFromWpUserQuery(new WP_User_Query(static::parseQueryArgs($args)));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function fetchFromEloquent(EloquentCollection $collection): array
+    {
+        $instances = [];
+        foreach ($collection->toArray() as $item) {
+            if ($instance = static::createFromId((new WP_User((object)$item))->ID ?: 0)) {
+                $instances[] = $instance;
+            }
+        }
+
+        return $instances;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function fetchFromIds(array $ids): array
+    {
+        return static::fetchFromWpUserQuery(new WP_User_Query(static::parseQueryArgs(['include' => $ids])));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function fetchFromWpUserQuery(WP_User_Query $wp_user_query): array
+    {
+        $users = $wp_user_query->get_results();
+        $per_page = $wp_user_query->query_vars['number'] ?: -1;
+        $count = count($users);
+        $offset = $wp_user_query->query_vars['offset'] ?: 0;
+
+        if ($per_page > 0) {
+            $wp_user_query_count = new WP_User_Query(array_merge($wp_user_query->query_vars, [
+                'count'  => false,
+                'number' => 0,
+                'offset' => 0,
+                'fields' => 'count',
+            ]));
+
+            $total = (int)$wp_user_query_count->get_results();
+            $pages = (int)ceil($total / $per_page);
+            $page = (int)ceil(($offset + 1) / $per_page);
+        } else {
+            $pages = 1;
+            $page = 1;
+            $total = (int)count($users);
+        }
+
+        static::pagination()->clear()->set([
+            'count'        => $count,
+            'current_page' => $page,
+            'last_page'    => $pages,
+            'per_page'     => $per_page,
+            'query_obj'    => $wp_user_query,
+            'results'      => [],
+            'total'        => $total,
+        ]);
+
+        $results = [];
+        foreach ($users as $wp_user) {
+            $instance = static::createFromId($wp_user->ID);
+
+            if (($role = static::$role) && ($role !== 'any')) {
+                if ($instance->roleIn($role)) {
+                    $results[] = $instance;
+                }
+            } else {
+                $results[] = $instance;
+            }
+        }
+
+        static::pagination()->set(compact('results'))->parse();
+
+        return $results;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function is($instance): bool
+    {
+        return $instance instanceof static &&
+            ((($role = static::$role) && ($role !== 'any')) ? $instance->roleIn($role) : true);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function pagination(): PaginationQueryContract
+    {
+        if (is_null(static::$pagination)) {
+            static::$pagination = new PaginationQuery();
+        }
+
+        return static::$pagination;
     }
 
     /**
@@ -130,6 +301,8 @@ class QueryUser extends ParamsBag implements QueryUserContract
     {
         if ($role = static::$role) {
             $args['role'] = $role;
+        } elseif (!isset($args['role_in'])) {
+            $args['role_in'] = [];
         }
 
         return array_merge(static::$defaultArgs, $args);
@@ -137,33 +310,30 @@ class QueryUser extends ParamsBag implements QueryUserContract
 
     /**
      * @inheritDoc
-     */
-    public static function query(WP_User_Query $wp_user_query): array
-    {
-        if ($users = $wp_user_query->get_results()) {
-            array_walk($users, function (WP_User &$wp_user) {
-                $wp_user = new static($wp_user);
-            });
-            return $users;
-        } else {
-            return [];
-        }
-    }
-
-    /**
-     * @inheritDoc
+     *
+     * @deprecated
      */
     public static function queryFromArgs(array $args = []): array
     {
-        return static::query(new WP_User_Query(static::parseQueryArgs($args)));
+        return static::fetchFromArgs($args);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @deprecated
+     */
+    public static function queryFromIds(array $ids): array
+    {
+        return static::fetchFromIds($ids);
     }
 
     /**
      * @inheritDoc
      */
-    public static function queryFromIds(array $ids): array
+    public static function setBuiltInClass(string $role, string $classname): void
     {
-        return static::query(new WP_User_Query(static::parseQueryArgs(['include' => $ids])));
+        self::$builtInClasses[$role] = $classname;
     }
 
     /**
@@ -172,6 +342,14 @@ class QueryUser extends ParamsBag implements QueryUserContract
     public static function setDefaultArgs(array $args): void
     {
         self::$defaultArgs = $args;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function setFallbackClass(string $classname): void
+    {
+        self::$fallbackClass = $classname;
     }
 
     /**
@@ -386,7 +564,7 @@ class QueryUser extends ParamsBag implements QueryUserContract
      */
     public function getWpUser(): WP_User
     {
-        return $this->wp_user;
+        return $this->wpUser;
     }
 
     /**

@@ -10,3 +10,4 @@
     <?php echo $page_title; ?>
 </h1>
 <?php endif; ?>
+<hr class="wp-header-end">

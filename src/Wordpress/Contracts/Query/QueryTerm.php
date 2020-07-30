@@ -25,11 +25,11 @@ interface QueryTerm extends ParamsBag
     /**
      * Création d'une instance basée sur un objet post Wordpress et selon la cartographie des classes de rappel.
      *
-     * @param WP_Term $wp_term
+     * @param WP_Term|object $wp_term
      *
      * @return static
      */
-    public static function build(WP_Term $wp_term): QueryTerm;
+    public static function build(object $wp_term): ?QueryTerm;
 
     /**
      * Création d'un instance basée sur un argument de qualification.

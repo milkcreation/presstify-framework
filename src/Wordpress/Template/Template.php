@@ -2,7 +2,7 @@
 
 namespace tiFy\Wordpress\Template;
 
-use tiFy\Contracts\Template\{TemplateFactory, TemplateManager};
+use tiFy\Contracts\Template\{TemplateFactory as TemplateFactoryContract, TemplateManager};
 use tiFy\Template\Templates\FileManager\Contracts\IconSet as IconSetContract;
 use tiFy\Template\Templates\PostListTable\Contracts\DbBuilder as PostListTableDbBuilderContract;
 use tiFy\Template\Templates\UserListTable\Contracts\DbBuilder as UserListTableDbBuilderContract;
@@ -51,7 +51,7 @@ class Template
             return new UserListTableDbBuilder();
         });
 
-        events()->listen('template.factory.boot', function (string $name, TemplateFactory $factory) {
+        events()->listen('template.factory.boot', function (string $name, TemplateFactoryContract $factory) {
             add_action('admin_menu', function () use ($factory) {
                 if ($admin_menu = $factory->param('wordpress.admin_menu')) {
                     $factory->param([

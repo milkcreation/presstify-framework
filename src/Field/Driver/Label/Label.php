@@ -15,7 +15,7 @@ class Label extends FieldDriver implements LabelContract
      *      @var string $after Contenu placé après le champ.
      *      @var string $before Contenu placé avant le champ.
      *      @var string $name Clé d'indice de la valeur de soumission du champ.
-     *      @var string $value Valeur courante de soumission du champ.
+     *      @var string $content
      *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
      * }
      */
@@ -26,7 +26,7 @@ class Label extends FieldDriver implements LabelContract
             'after'  => '',
             'before' => '',
             'name'   => '',
-            'value'  => '',
+            'content'  => '',
             'viewer' => []
         ];
     }

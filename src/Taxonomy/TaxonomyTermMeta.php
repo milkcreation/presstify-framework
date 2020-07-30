@@ -152,7 +152,7 @@ class TaxonomyTermMeta implements TaxonomyTermMetaContract
     {
         if (empty($this->metaKeys[$taxonomy])) {
             return;
-        } elseif (!is_admin() || !($screen = get_current_screen()) || !in_array($screen->id, ['edit-tags'])) {
+        } elseif (!is_admin() || !($screen = get_current_screen()) || !in_array($screen->base, ['edit-tags'])) {
             return;
         }
 

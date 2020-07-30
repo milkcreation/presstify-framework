@@ -42,11 +42,11 @@ interface QueryPost extends ParamsBag
     /**
      * Création d'une instance basée sur un objet post Wordpress et selon la cartographie des classes de rappel.
      *
-     * @param WP_Post $wp_post
+     * @param WP_Post|object $wp_post
      *
      * @return static
      */
-    public static function build(WP_Post $wp_post): QueryPost;
+    public static function build(object $wp_post): ?QueryPost;
 
     /**
      * Création d'une instance basée sur un argument de qualification.
@@ -345,6 +345,16 @@ interface QueryPost extends ParamsBag
     public function db(): PostBuilder;
 
     /**
+     * Récupération d'options d'affichage des pages de flux.
+     *
+     * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return array|null
+     */
+    public function getArchiveShow(?string $key = null, $default = null): ?array;
+
+    /**
      * Url de la page d'archive associé.
      *
      * @return string|null
@@ -364,6 +374,13 @@ interface QueryPost extends ParamsBag
      * @return int
      */
     public function getAuthorId(): int;
+
+    /**
+     * Récupération du texte précédent la balise <!--more-->.
+     *
+     * @return string|null
+     */
+    public function getBeforeMore(): ?string;
 
     /**
      * Récupération de la liste des instance des enfants
@@ -447,6 +464,16 @@ interface QueryPost extends ParamsBag
      * @return string
      */
     public function getExcerpt(bool $raw = false): string;
+
+    /**
+     * Récupération d'options d'affichage généraux.
+     *
+     * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return array|null
+     */
+    public function getGlobalShow(?string $key = null, $default = null): ?array;
 
     /**
      * Récupération de l'identifiant unique de qualification global.
@@ -572,6 +599,16 @@ interface QueryPost extends ParamsBag
     public function getStatus(): PostTypeStatus;
 
     /**
+     * Récupération d'options de la page de contenu.
+     *
+     * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return array|null
+     */
+    public function getSingleShow(?string $key = null, $default = null): ?array;
+
+    /**
      * Récupération d'un contenu d'accroche basé sur l'extrait.
      *
      * @param int $length Nombre maximum de caractères de la chaîne.
@@ -648,6 +685,13 @@ interface QueryPost extends ParamsBag
      * @return WP_Post|null
      */
     public function getWpPost(): ?WP_Post;
+
+    /**
+     * Vérifie le balisage de suite de lecture est actif.
+     *
+     * @return bool
+     */
+    public function hasMore(): bool;
 
     /**
      * Vérification d'existance de terme(s) de taxonomie pour le post associé.

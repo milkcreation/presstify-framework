@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\Field\Driver\Suggest;
 
 use Illuminate\Support\Collection;
+use tiFy\Contracts\Field\FieldDriver as FieldDriverContract;
 use tiFy\Field\Driver\Suggest\Suggest as BaseSuggest;
 use tiFy\Support\Proxy\Request;
 use tiFy\Wordpress\{
@@ -17,9 +18,26 @@ class Suggest extends BaseSuggest implements SuggestContract
     /**
      * @inheritDoc
      */
+    public function parse(): FieldDriverContract
+    {
+        if ($this->get('wp_query', 'post') || $this->get('ajax')) {
+            if (!$this->get('ajax')) {
+                $this->set('ajax', []);
+            }
+            $this->set('ajax.data.wp_query', $this->get('wp_query', 'post'));
+        }
+
+        parent::parse();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function xhrResponse(...$args): array
     {
-        switch ('post') {
+        switch (Request::input('wp_query')) {
             case 'post' :
             default :
                 return $this->xhrResponsePostQuery(...$args);
@@ -40,15 +58,13 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponsePostQuery(...$args): array
     {
-        $args = array_merge(
-            ['post_type' => 'any'],
-            Request::input('query_args', []),
-            ['s' => Request::input('_term', '')]
-        );
+        $query_args = array_merge(['post_type' => 'any'], Request::input('query_args', []), [
+            's' => Request::input('_term', '')
+        ]);
 
-        $posts = QueryPost::queryFromArgs($args);
+        $posts = QueryPost::fetchFromArgs($query_args);
 
-        $items = (new Collection($posts))->map(function (QueryPost &$item) {
+        $items = (new Collection($posts))->map(function (QueryPost $item) {
             return [
                 'alt'   => (string)$item->getId(),
                 'label' => (string)$item->getTitle(),
@@ -69,11 +85,11 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponseTermQuery(...$args): array
     {
-        $args = array_merge(Request::input('query_args', []), ['search' => Request::input('_term', '')]);
+        $query_args = array_merge(Request::input('query_args', []), ['search' => Request::input('_term', '')]);
 
-        $terms = QueryTerm::queryFromArgs($args);
+        $terms = QueryTerm::fetchFromArgs($query_args);
 
-        $items = (new Collection($terms))->map(function (QueryTerm &$item) {
+        $items = (new Collection($terms))->map(function (QueryTerm $item) {
             return [
                 'alt'   => (string)$item->getId(),
                 'label' => (string)$item->getName(),
@@ -94,11 +110,13 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponseUserQuery(...$args): array
     {
-        $args = array_merge(Request::input('query_args', []), ['search' => Request::input('_term', '')]);
+        $query_args = array_merge(Request::input('query_args', []), [
+            'search' => ($term = Request::input('_term', '')) ? '*' . trim($term, '*') . '*' : ''
+        ]);
 
-        $terms = QueryUser::queryFromArgs($args);
+        $users = QueryUser::fetchFromArgs($query_args);
 
-        $items = (new Collection($terms))->map(function (QueryUser &$item) {
+        $items = (new Collection($users))->map(function (QueryUser $item) {
             return [
                 'alt'   => (string)$item->getId(),
                 'label' => (string)$item->getDisplayName(),
@@ -110,6 +128,7 @@ class Suggest extends BaseSuggest implements SuggestContract
             'success' => true,
             'data'    => [
                 'items' => $items,
+                'request' => Request::all()
             ]
         ];
     }

@@ -244,6 +244,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
             $this->prepared = true;
             events()->trigger('template.factory.prepared', [$this->name(), &$this]);
         }
+
         return $this;
     }
 
