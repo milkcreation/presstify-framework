@@ -13,6 +13,10 @@ class FlashNotice extends PartialDriver implements FlashNoticeContract
      */
     public function add(string $message, string $type = 'error', array $attrs = []): FlashNoticeContract
     {
+        if (!$this->has($type)) {
+            $this->set($type, Session::flash($type, []));
+        }
+
         Session::flash([$type => compact('attrs','message')]);
 
         return $this;
@@ -26,10 +30,6 @@ class FlashNotice extends PartialDriver implements FlashNoticeContract
         parent::boot();
 
         $this->set('types', ['error', 'info', 'success', 'warning']);
-
-        foreach ($this->get('types', []) as $type) {
-            $this->set($type, Session::flash($type, []));
-        }
     }
 
     /**

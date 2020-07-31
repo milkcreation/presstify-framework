@@ -9,6 +9,12 @@ use tiFy\Contracts\Session\{FlashBag as FlashBagContract, Session as SessionCont
 class Session extends BaseSession implements SessionContract
 {
     /**
+     * Indicateur d'initialisation.
+     * @var bool
+     */
+    protected $built = false;
+
+    /**
      * Instance du conteneur d'injection de dépendances.
      * @var Container|null
      */
@@ -40,6 +46,18 @@ class Session extends BaseSession implements SessionContract
         parent::__construct();
 
         $this->registerBag($this->flashBag());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function build(): SessionContract
+    {
+        if (!$this->built) {
+            $this->built = true;
+        }
+
+        return $this;
     }
 
     /**

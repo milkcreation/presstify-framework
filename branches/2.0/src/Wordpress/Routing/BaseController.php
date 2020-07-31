@@ -2,14 +2,23 @@
 
 namespace tiFy\Wordpress\Routing;
 
+use Exception;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Http\Response as ResponseContract;
 use tiFy\Http\Response;
 use tiFy\Routing\BaseController as ParentBaseController;
-use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\{Request, Storage};
 use tiFy\Support\Str;
 
 class BaseController extends ParentBaseController
 {
+    /**
+     * Image de remplacement.
+     * @var string|null
+     */
+    protected $imagePlaceholder;
+
     /**
      * Cartographie des méthodes de récupération des gabarits d'affichage
      * @see ./wp-includes/template-loader.php
@@ -40,25 +49,29 @@ class BaseController extends ParentBaseController
      *
      * @param string $path
      *
-     * @return ResponseContract
+     * @return ResponseContract|SfResponse
      */
-    public function handle($path): ResponseContract
+    public function handle($path)
     {
-        if (config('routing.remove_trailing_slash', true)) {
+        /*if (config('routing.remove_trailing_slash', true)) {
             if (($path != '/') && (substr($path, -1) == '/') && (Request::isMethod('get'))) {
                 return $this->redirect(Request::getBaseUrl() . '/' . rtrim($path, '/'));
             }
-        }
+        }*/
 
-        foreach (array_keys($this->tagTemplates) as $tag) {
-            if (call_user_func($tag)) {
-                if ($response = $this->handleTag($tag, ...func_get_args())) {
-                    return $response;
+        if ($this->imagePlaceholder && preg_match('/^wp-content\/uploads\//', $path)) {
+            return $this->handleUpload(...func_get_args());
+        } else {
+            foreach (array_keys($this->tagTemplates) as $tag) {
+                if (call_user_func($tag)) {
+                    if ($response = $this->handleTag($tag, ...func_get_args())) {
+                        return $response;
+                    }
                 }
             }
         }
 
-        return new Response(__('Impossible de charger le gabarit d\'affichage', 'theme'), 404);
+        return $this->response(__('Impossible de charger le gabarit d\'affichage', 'theme'), 404);
     }
 
     /**
@@ -97,5 +110,64 @@ class BaseController extends ParentBaseController
 
             return null;
         }
+    }
+
+    /**
+     * Traitement de la requête HTTP de.
+     *
+     * @param mixed ...$args Liste des arguments dynamiques de requête HTTP
+     *
+     * @return mixed
+     */
+    public function handleUpload(...$args)
+    {
+        $path = $args[0];
+
+        $storage = Storage::local(WP_CONTENT_DIR . '/uploads');
+
+        if (!$storage->has($path)) {
+            try {
+                $response = new BinaryFileResponse($this->imagePlaceholder);
+                $name = basename($this->imagePlaceholder);
+
+                $disposition = $response->headers->makeDisposition('inline', $name, Str::ascii($name));
+
+                if ($mimeType = mime_content_type($this->imagePlaceholder)) {
+                    $headers['Content-Type'] = $mimeType;
+                }
+
+                if ($length = filesize($this->imagePlaceholder)) {
+                    $headers['Content-Length'] = $length;
+                }
+
+                $response->headers->replace($headers + ['Content-Disposition' => $disposition]);
+
+                return $response;
+            } catch (Exception $e) {
+                return $this->response($e->getMessage(), 404);
+            }
+        } else {
+            try {
+                return $storage->response($path)->send();
+            } catch (Exception $e) {
+                return $this->response($e->getMessage(), 404);
+            }
+        }
+    }
+
+    /**
+     * Définition de l'image de remplacement.
+     *
+     * @param string $image
+     *
+     * @return $this
+     */
+    public function setImagePlaceholder(string $image): self
+    {
+        if (file_exists($image)) {
+            $this->imagePlaceholder = $image;
+        }
+
+        return $this;
     }
 }
