@@ -7,6 +7,7 @@ use tiFy\Contracts\Routing\{Route as RouteContract, RouteGroup as RouteGroupCont
 use tiFy\Container\ServiceProvider;
 use tiFy\Routing\{
     Middleware\CookieMiddleware,
+    Middleware\SessionMiddleware,
     Middleware\XhrMiddleware,
     Strategy\ApiStrategy,
     Strategy\AppStrategy,
@@ -79,10 +80,11 @@ class RoutingServiceProvider extends ServiceProvider
             return (new Router())
                 ->setContainer($this->getContainer())
                 ->setMiddlewareStack([
-                    'cookie' => new CookieMiddleware(),
-                    'xhr'    => new XhrMiddleware(),
+                    'session' => new SessionMiddleware(),
+                    'cookie'  => new CookieMiddleware(),
+                    'xhr'     => new XhrMiddleware(),
                 ])
-                ->middleware('cookie');
+                ->middleware(['session', 'cookie']);
         });
 
         $this->getContainer()->add(

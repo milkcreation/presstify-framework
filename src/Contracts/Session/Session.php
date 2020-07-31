@@ -10,6 +10,13 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface as BaseSession;
 interface Session extends BaseSession, Countable, IteratorAggregate
 {
     /**
+     * Initialisation.
+     *
+     * @return static
+     */
+    public function build(): Session;
+
+    /**
      * Récupération de l'instance du gestionnaire de session éphémère|ajout d'attributs|récupération d'attributs.
      *
      * @param string|array|null $key

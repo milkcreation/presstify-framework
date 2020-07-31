@@ -136,8 +136,6 @@ jQuery(function ($) {
               self.wrap.attr('aria-loaded', 'true').attr('aria-selected', 'false');
 
               $.ajax(ajax).done(function (resp) {
-                console.log(resp);
-
                 if (resp.success) {
                   response(resp.data.items || []);
                 }

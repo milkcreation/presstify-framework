@@ -25,14 +25,7 @@ class SessionServiceProvider extends ServiceProvider
         $this->getContainer()->share('session', function () {
             $session = new Session($this->getContainer());
 
-            if (!headers_sent()) {
-                if (session_status() == PHP_SESSION_NONE) {
-                    $_SESSION['flag'] = true;
-                    $session->start();
-                }
-            }
-
-            return $session;
+            return $session->build();
         });
 
         $this->getContainer()->add('session.flashbag', function () {
