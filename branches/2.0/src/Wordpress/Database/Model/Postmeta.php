@@ -8,6 +8,8 @@ use tiFy\Wordpress\Database\Concerns\MetaAwareTrait;
 
 /**
  * @mixin Builder
+ * @property-read $post_id
+ * @property $meta_key
  * @property $meta_value
  */
 class Postmeta extends CorcelPostmeta

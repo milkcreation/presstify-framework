@@ -27,12 +27,4 @@ class CustomHeader extends MetaboxDriver
             'title' => __('Image d\'entête', 'tify'),
         ]);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function render(): string
-    {
-        return 'test';
-    }
 }

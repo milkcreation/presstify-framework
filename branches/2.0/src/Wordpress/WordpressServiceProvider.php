@@ -60,7 +60,6 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.login-redirect',
         'wp.mail',
         'wp.media',
-        'wp.media.upload',
         'wp.metabox',
         'wp.page-hook',
         'wp.partial',
@@ -73,6 +72,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.session',
         'wp.taxonomy',
         'wp.template',
+        'wp.upload',
         'wp.user',
         'wp.wp_query',
         'wp.wp_screen',
@@ -283,13 +283,6 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share('wp.database', function () {
             return new Database($this->getContainer()->get('database'));
         });
-        /**
-         * @todo supprimer toutes les occurences.
-         * @deprecated
-         */
-        $this->getContainer()->share('wp.db', function () {
-            return new Db($this->getContainer()->get('db'));
-        });
     }
 
     /**
@@ -363,7 +356,7 @@ class WordpressServiceProvider extends ServiceProvider
             return new Media();
         });
 
-        $this->getContainer()->share('wp.media.upload', function () {
+        $this->getContainer()->add('wp.upload', function () {
             return new Upload();
         });
     }
