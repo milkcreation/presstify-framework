@@ -5,16 +5,15 @@ namespace tiFy\Wordpress\Proxy;
 use tiFy\Support\Proxy\AbstractProxy;
 
 /**
- * @method static string|null getBase64Src(int $id)
- * @method static string|null getSrcFilename(string $src)
+ * @method static
  */
-class Media extends AbstractProxy
+class Upload extends AbstractProxy
 {
     /**
      * @inheritDoc
      */
     public static function getInstanceIdentifier()
     {
-        return 'wp.media';
+        return 'wp.upload';
     }
 }

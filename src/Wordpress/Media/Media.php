@@ -13,8 +13,6 @@ class Media
      */
     public function __construct()
     {
-        app()->get('wp.media.upload');
-
         MimeTypes::setAllowedMapping(function () {
             $mapping = [
                 'extensions' => [],

@@ -929,7 +929,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getThumbnailSrc($size = 'post-thumbnail'): string
     {
-        return get_the_post_thumbnail_url($this->getId(), $size);
+        return get_the_post_thumbnail_url($this->getId(), $size) ? : '';
     }
 
     /**

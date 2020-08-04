@@ -18,28 +18,28 @@ use tiFy\Wordpress\Database\Concerns\{BlogAwareTrait, MetaFieldsAwareTrait};
  * @method boolean saveMeta($key, $value = null)
  *
  * @property-read int $ID
- * @property-read int $post_author
+ * @property int $post_author
  * @property-read Carbon $post_date
  * @property-read Carbon $post_date_gmt
- * @property-read string $post_content
- * @property-read string $post_title
- * @property-read string $post_excerpt
- * @property-read string $post_status
- * @property-read string $comment_status
- * @property-read string $ping_status
- * @property-read string $post_password
- * @property-read string $post_name
- * @property-read string $to_ping
- * @property-read string $pinged
+ * @property string $post_content
+ * @property string $post_title
+ * @property string $post_excerpt
+ * @property string $post_status
+ * @property string $comment_status
+ * @property string $ping_status
+ * @property string $post_password
+ * @property string $post_name
+ * @property string $to_ping
+ * @property string $pinged
  * @property-read Carbon $post_modified
  * @property-read Carbon $post_modified_gmt
- * @property-read string $post_content_filtered
- * @property-read int $post_parent
- * @property-read string $guid
- * @property-read int $menu_order
- * @property-read string $post_type
- * @property-read string $post_mime_type
- * @property-read int $comment_count
+ * @property string $post_content_filtered
+ * @property int $post_parent
+ * @property string $guid
+ * @property int $menu_order
+ * @property string $post_type
+ * @property string $post_mime_type
+ * @property int $comment_count
  * @property-read string[][]|array $terms
  * @property-read Collection $taxonomies
  */
