@@ -17,11 +17,19 @@ class DbBuilder extends BaseDbBuilder implements DbBuilderContract
     /**
      * @inheritDoc
      */
+    public function deleteItem(string $key): bool
+    {
+        return ($item = $this->query()->find($key))
+            ? $item->delete() : false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getItem(string $key): ?Item
     {
-        $this->parse();
-
-        return null;
+        return ($item = $this->query()->find($key))
+            ? $this->factory->resolve('item')->set($item->attributesToArray()) : null;
     }
 
     /**

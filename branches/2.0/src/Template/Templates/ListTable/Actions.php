@@ -48,15 +48,11 @@ class Actions extends BaseActions implements ActionsContract
 
     /**
      * @inheritDoc
-     * @todo
      */
     public function executeDelete()
     {
-        if ($item = $this->factory->builder()->getItem($this->factory->request()->input('id'))) {
-            return [
-                'success' => true,
-                'data'   => $item->getKeyValue()
-            ];
+        if ($this->factory->builder()->deleteItem($this->factory->request()->input('id'))) {
+            return $this->controller()->referer();
         } else {
             throw new Exception(__('Impossible de récupérer l\'élément associé.', 'tify'));
         }

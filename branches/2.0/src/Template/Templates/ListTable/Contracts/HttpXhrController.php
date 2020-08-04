@@ -9,5 +9,5 @@ interface HttpXhrController extends FactoryHttpXhrController
     /**
      * @inheritDoc
      */
-    public function post();
+    public function handlePost();
 }

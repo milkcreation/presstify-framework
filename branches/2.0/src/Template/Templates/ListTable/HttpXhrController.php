@@ -19,7 +19,7 @@ class HttpXhrController extends BaseHttpXhrController implements HttpXhrControll
      *
      * @throws NotFoundException
      */
-    public function post()
+    public function handlePost()
     {
         if ($draw = $this->factory->request()->input('draw')) {
             $this->factory->prepare();

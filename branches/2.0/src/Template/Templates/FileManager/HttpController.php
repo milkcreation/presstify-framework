@@ -2,7 +2,6 @@
 
 namespace tiFy\Template\Templates\FileManager;
 
-use Laminas\Diactoros\Response;
 use League\Flysystem\FileNotFoundException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use tiFy\Template\Factory\HttpController as BaseHttpController;
@@ -19,7 +18,7 @@ class HttpController extends BaseHttpController implements HttpControllerContrac
     /**
      * @inheritDoc
      */
-    public function get()
+    public function handleGet()
     {
         $action = $this->factory->request()->input('action');
         $path = $this->factory->request()->input('path');
@@ -30,7 +29,7 @@ class HttpController extends BaseHttpController implements HttpControllerContrac
         }
 
         if (is_null($response)) {
-            $response = new Response('php://memory', 405);
+            $response = $this->response('php://memory', 405);
         }
 
         return $response;

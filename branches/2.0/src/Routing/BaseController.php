@@ -6,9 +6,9 @@ use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\{Http\Response as ResponseContract, Http\RedirectResponse, Routing\Redirector, View\Engine};
 use tiFy\Http\Response;
 use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\{View, Redirect};
+use tiFy\Support\Proxy\{View, Request, Redirect};
 
-abstract class BaseController extends ParamsBag
+class BaseController extends ParamsBag
 {
     /**
      * Instance de conteneur d'injection de dépendances.
@@ -91,6 +91,19 @@ abstract class BaseController extends ParamsBag
         } else {
             return Redirect::to($path, $status, $headers);
         }
+    }
+
+    /**
+     * Redirection vers la page d'origine.
+     *
+     * @param int $status Statut de redirection.
+     * @param array $headers Liste des entêtes complémentaires associées à la redirection.
+     *
+     * @return RedirectResponse
+     */
+    public function referer(int $status = 302, array $headers = []): RedirectResponse
+    {
+         return $this->redirect(Request::header('referer'), $status, $headers);
     }
 
     /**

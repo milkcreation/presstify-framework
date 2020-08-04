@@ -18,7 +18,43 @@ class HttpXhrController extends BaseHttpXhrController implements HttpXhrControll
     /**
      * @inheritDoc
      */
-    public function post()
+    public function handleGet(string $path): array
+    {
+        if ($path && ($path !== '/') && !$this->factory->filesystem()->has($path)) {
+            return [
+                'success' => false,
+                'views'   => [
+                    'notice' => $this->notice(__('Impossible de trouver l\'élément.' . $path, 'tify'), 'warning')
+                ]
+            ];
+        } else {
+            $this->factory->setPath($path);
+            $file = $this->factory->getFile($path);
+
+            if ($file->isDir()) {
+                return [
+                    'success' => true,
+                    'views'   => [
+                        'breadcrumb' => (string)$this->factory->breadcrumb(),
+                        'content'    => (string)$this->factory->getFiles(),
+                        'sidebar'    => (string)$this->factory->sidebar()
+                    ]
+                ];
+            } else {
+                return [
+                    'success' => true,
+                    'views'   => [
+                        'sidebar' => (string)$this->factory->sidebar()
+                    ]
+                ];
+            }
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function handlePost()
     {
         $action = $this->factory->request()->input('action');
         $path = rawurldecode($this->factory->request()->input('path'));
@@ -138,42 +174,6 @@ class HttpXhrController extends BaseHttpXhrController implements HttpXhrControll
                     'notice'     => $this->notice(__('L\'élément a été supprimé avec succès.', 'tify'), 'success')
                 ]
             ];
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function get(string $path): array
-    {
-        if ($path && ($path !== '/') && !$this->factory->filesystem()->has($path)) {
-            return [
-                'success' => false,
-                'views'   => [
-                    'notice' => $this->notice(__('Impossible de trouver l\'élément.' . $path, 'tify'), 'warning')
-                ]
-            ];
-        } else {
-            $this->factory->setPath($path);
-            $file = $this->factory->getFile($path);
-
-            if ($file->isDir()) {
-                return [
-                    'success' => true,
-                    'views'   => [
-                        'breadcrumb' => (string)$this->factory->breadcrumb(),
-                        'content'    => (string)$this->factory->getFiles(),
-                        'sidebar'    => (string)$this->factory->sidebar()
-                    ]
-                ];
-            } else {
-                return [
-                    'success' => true,
-                    'views'   => [
-                        'sidebar' => (string)$this->factory->sidebar()
-                    ]
-                ];
-            }
         }
     }
 

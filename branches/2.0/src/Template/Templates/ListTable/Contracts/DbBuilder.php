@@ -7,9 +7,18 @@ use tiFy\Contracts\Template\{FactoryAwareTrait, FactoryDbBuilder};
 interface DbBuilder extends FactoryAwareTrait, FactoryDbBuilder
 {
     /**
+     * Suppression d'un élément.
+     *
+     * @param string $key Indice de qualification de l'élément.
+     *
+     * @return bool
+     */
+    public function deleteItem(string $key): bool;
+
+    /**
      * Récupération de l'instance d'un élément.
      *
-     * @param string $key Indice de récupération de l'élément.
+     * @param string $key Indice de qualification de l'élément.
      *
      * @return Item|null
      */

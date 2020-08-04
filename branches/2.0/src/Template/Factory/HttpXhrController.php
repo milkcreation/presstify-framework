@@ -19,11 +19,12 @@ class HttpXhrController extends HttpController implements FactoryHttpXhrControll
 
         if ($action = $this->factory->request()->input($this->factory->actions()->getIndex())) {
             try {
-                $response = $this->factory->actions()->execute($action, func_get_args());
+                $response = $this->factory->actions()->setController($this)->execute($action, func_get_args());
             } catch (Exception $e) {
                 throw new MethodNotAllowedException([], $e->getMessage());
             }
-        } elseif (method_exists($this, $method)) {
+        } elseif (method_exists($this, 'handle' . ucfirst($method))) {
+            $method = 'handle' . ucfirst($method);
             $response = $this->{$method}($psrRequest);
         }
 

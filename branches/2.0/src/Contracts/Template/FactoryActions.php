@@ -3,15 +3,16 @@
 namespace tiFy\Contracts\Template;
 
 use Exception;
+use tiFy\Routing\BaseController;
 
 interface FactoryActions extends FactoryAwareTrait
 {
     /**
-     * Récupération de la clé d'indice de déclénchment d'une action.
+     * Instance du controleur de requête HTTP.
      *
-     * @return string
+     * @return BaseController
      */
-    public function getIndex(): string;
+    public function controller(): BaseController;
 
     /**
      * Exécution de l'action.
@@ -24,4 +25,20 @@ interface FactoryActions extends FactoryAwareTrait
      * @throws Exception
      */
     public function execute(string $name, ...$parameters);
+
+    /**
+     * Récupération de la clé d'indice de déclénchment d'une action.
+     *
+     * @return string
+     */
+    public function getIndex(): string;
+
+    /**
+     * Définition du controleur de requête HTTP associé.
+     *
+     * @param BaseController $controller
+     *
+     * @return static
+     */
+    public function setController(BaseController $controller): FactoryActions;
 }
