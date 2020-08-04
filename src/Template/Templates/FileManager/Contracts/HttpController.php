@@ -12,7 +12,7 @@ interface HttpController extends FactoryHttpController
      *
      * @return mixed
      */
-    public function get();
+    public function handleGet();
 
     /**
      * Téléchargement de fichier.
