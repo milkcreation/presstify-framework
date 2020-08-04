@@ -2,9 +2,10 @@
 
 namespace tiFy\Wordpress\Media;
 
+use tiFy\Wordpress\Contracts\Media\Media as MediaContract;
 use tiFy\Support\{Img, MimeTypes};
 
-class Media
+class Media implements MediaContract
 {
     /**
      * CONSTRUCTEUR.

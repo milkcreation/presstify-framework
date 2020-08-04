@@ -72,7 +72,6 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.session',
         'wp.taxonomy',
         'wp.template',
-        'wp.upload',
         'wp.user',
         'wp.wp_query',
         'wp.wp_screen',
@@ -354,10 +353,6 @@ class WordpressServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('wp.media', function () {
             return new Media();
-        });
-
-        $this->getContainer()->add('wp.upload', function () {
-            return new Upload();
         });
     }
 
