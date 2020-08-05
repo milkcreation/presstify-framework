@@ -2,22 +2,20 @@
 
 namespace tiFy\Partial\Driver\FlashNotice;
 
-use tiFy\Contracts\Partial\FlashNotice as FlashNoticeContract;
-use tiFy\Partial\PartialDriver;
+use tiFy\Contracts\Partial\{PartialDriver as BaseDriverContract, FlashNotice as FlashNoticeContract};
+use tiFy\Partial\PartialDriver as BaseDriver;
 use tiFy\Support\Proxy\Session;
 
-class FlashNotice extends PartialDriver implements FlashNoticeContract
+class FlashNotice extends BaseDriver implements FlashNoticeContract
 {
     /**
      * @inheritDoc
      */
     public function add(string $message, string $type = 'error', array $attrs = []): FlashNoticeContract
     {
-        if (!$this->has($type)) {
-            $this->set($type, Session::flash($type, []));
-        }
+        $key = ($namespace = $this->get('namespace')) ? "{$namespace}-{$type}" : $type;
 
-        Session::flash([$type => compact('attrs','message')]);
+        Session::flash([$key => compact('attrs', 'message', 'type')]);
 
         return $this;
     }
@@ -25,11 +23,12 @@ class FlashNotice extends PartialDriver implements FlashNoticeContract
     /**
      * @inheritDoc
      */
-    public function boot(): void
+    public function defaults(): array
     {
-        parent::boot();
-
-        $this->set('types', ['error', 'info', 'success', 'warning']);
+        return array_merge(parent::defaults(), [
+            'namespace' => '',
+            'types'     => ['error', 'info', 'success', 'warning'],
+        ]);
     }
 
     /**
@@ -46,6 +45,38 @@ class FlashNotice extends PartialDriver implements FlashNoticeContract
     public function info(string $message, array $attrs = []): FlashNoticeContract
     {
         return $this->add($message, 'info', $attrs);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parse(): BaseDriverContract
+    {
+        parent::parse();
+
+        if ($namespace = $this->get('namespace')) {
+            $types = $this->get('types');
+            foreach ($types as &$type) {
+                $type = "{$namespace}-{$type}";
+            }
+            $this->set(compact('types'));
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(): string
+    {
+        foreach ($this->get('types') as $type) {
+            if (!$this->has($type)) {
+                $this->set($type, Session::flash($type));
+            }
+        }
+
+        return parent::render();
     }
 
     /**

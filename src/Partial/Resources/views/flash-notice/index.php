@@ -7,7 +7,7 @@
 <?php foreach($types as $type) : ?>
     <?php foreach ($this->get($type, []) as $notice) : ?>
         <?php echo partial('notice', array_merge($notice['attrs'] ? : [], [
-            'type'      => $type,
+            'type'      => $notice['type'] ?? 'error',
             'content'   => $notice['message']
         ])); ?>
     <?php endforeach; ?>
