@@ -2,14 +2,17 @@
 
 namespace tiFy\Database;
 
-use Illuminate\Database\Eloquent\Model as BaseModel;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\{
+    Eloquent\Model as DbModel,
+    Eloquent\Builder as DbBuilder
+};
+use tiFy\Contracts\Database\Model as ModelContract;
 use tiFy\Database\Concerns\{ColumnsAwareTrait, ConnectionAwareTrait};
 
 /**
- * @mixin Builder
+ * @mixin DbBuilder
  */
-abstract class Model extends BaseModel
+abstract class Model extends DbModel implements ModelContract
 {
     use ColumnsAwareTrait, ConnectionAwareTrait;
 }
