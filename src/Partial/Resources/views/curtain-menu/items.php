@@ -28,7 +28,7 @@
 
                             <?php $this->insert('items', [
                                 'depth'  => $item->getDepth(),
-                                'items'  => $item->getChilds(),
+                                'items'  => $item->getChildren(),
                                 'parent' => $item,
                             ]); ?>
                         </li>

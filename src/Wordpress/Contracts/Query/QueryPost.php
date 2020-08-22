@@ -51,7 +51,7 @@ interface QueryPost extends ParamsBag
     /**
      * Création d'une instance basée sur un argument de qualification.
      *
-     * @param int|string|WP_Post $id
+     * @param int|string|WP_Post|null $id
      * @param array ...$args Liste des arguments de qualification complémentaires.
      *
      * @return static|null
@@ -350,9 +350,9 @@ interface QueryPost extends ParamsBag
      * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
      * @param mixed $default Valeur de retour par défaut.
      *
-     * @return array|null
+     * @return mixed|null
      */
-    public function getArchiveShow(?string $key = null, $default = null): ?array;
+    public function getArchiveShow(?string $key = null, $default = null);
 
     /**
      * Url de la page d'archive associé.
@@ -391,7 +391,7 @@ interface QueryPost extends ParamsBag
      *
      * @return static[]
      */
-    public function getChilds(?int $per_page = -1, int $page = 1, array $args = []): array;
+    public function getChildren(?int $per_page = -1, int $page = 1, array $args = []): array;
 
     /**
      * Récupération de la liste des classes HTML associées.
@@ -585,6 +585,16 @@ interface QueryPost extends ParamsBag
     public function getPermalink(): string;
 
     /**
+     * Récupération d'options de la page de contenu.
+     *
+     * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
+     * @param mixed $default Valeur de retour par défaut.
+     *
+     * @return mixed|null
+     */
+    public function getSingleShow(?string $key = null, $default = null);
+
+    /**
      * Récupération de l'identifiant de qualification Wordpress (post_name).
      *
      * @return string
@@ -599,14 +609,11 @@ interface QueryPost extends ParamsBag
     public function getStatus(): PostTypeStatus;
 
     /**
-     * Récupération d'options de la page de contenu.
+     * Récupération du sous-titre.
      *
-     * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return array|null
+     * @return string
      */
-    public function getSingleShow(?string $key = null, $default = null): ?array;
+    public function getSubtitle(): string;
 
     /**
      * Récupération d'un contenu d'accroche basé sur l'extrait.
@@ -702,6 +709,13 @@ interface QueryPost extends ParamsBag
      * @return boolean
      */
     public function hasTerm($term, string $taxonomy): bool;
+
+    /**
+     * Vérifie si le post est habilité à être parent.
+     *
+     * @return bool
+     */
+    public function isHierarchical(): bool;
 
     /**
      * Sauvegarde des données du post en base.

@@ -6,9 +6,8 @@ use Exception;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Contracts\Http\Response as ResponseContract;
-use tiFy\Http\Response;
 use tiFy\Routing\BaseController as ParentBaseController;
-use tiFy\Support\Proxy\{Request, Storage};
+use tiFy\Support\Proxy\Storage;
 use tiFy\Support\Str;
 
 class BaseController extends ParentBaseController
@@ -113,7 +112,7 @@ class BaseController extends ParentBaseController
     }
 
     /**
-     * Traitement de la requête HTTP de.
+     * Traitement de la requête HTTP de récupération des fichiers du répertoire d'upload.
      *
      * @param mixed ...$args Liste des arguments dynamiques de requête HTTP
      *
@@ -166,6 +165,25 @@ class BaseController extends ParentBaseController
     {
         if (file_exists($image)) {
             $this->imagePlaceholder = $image;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Définition des variables partagées à l'ensemble des vues.
+     *
+     * @param string|array $key
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function share($key, $value = null): self
+    {
+        $keys = !is_array($key) ? [$key => $value] : $key;
+
+        foreach ($keys as $k => $v) {
+            $this->viewEngine()->share($k, $v);
         }
 
         return $this;

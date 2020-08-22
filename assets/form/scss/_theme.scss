@@ -52,6 +52,8 @@ $form-color-required: $form-color-error !default;
 
 // -- Champs
 .Form-fields {
+  margin: 0 -#{$form-gutter/2}px;
+
   &::before,
   &::after {
     display: table;
@@ -64,8 +66,6 @@ $form-color-required: $form-color-error !default;
 }
 
 .Form-fieldsGroup {
-  margin: 0 -#{$form-gutter/2}px;
-
   &::before,
   &::after {
     display: table;

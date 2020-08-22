@@ -107,7 +107,7 @@ class TabItem extends ParamsBag implements TabItemContract
     /**
      * @inheritdoc
      */
-    public function getChilds(): iterable
+    public function getChildren(): iterable
     {
         return $this->manager->getGrouped($this->getName());
     }

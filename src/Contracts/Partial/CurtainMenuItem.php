@@ -41,7 +41,7 @@ interface CurtainMenuItem extends ParamsBag
      *
      * @return CurtainMenuItem[]|null
      */
-    public function getChilds(): ?array;
+    public function getChildren(): ?array;
 
     /**
      * Récupération du niveau de profondeur de l'élément.
