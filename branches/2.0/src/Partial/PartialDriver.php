@@ -5,7 +5,7 @@ namespace tiFy\Partial;
 use Closure;
 use tiFy\Contracts\Partial\{Partial as Manager, PartialDriver as PartialDriverContract};
 use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\Support\{HtmlAttrs, ParamsBag};
+use tiFy\Support\{ClassInfo, HtmlAttrs, ParamsBag};
 
 abstract class PartialDriver extends ParamsBag implements PartialDriverContract
 {
@@ -162,7 +162,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
      */
     public function parseAttrClass(): PartialDriverContract
     {
-        $base = ucfirst(preg_replace('/\./', '-', $this->getAlias()));
+        $base = (new ClassInfo($this))->getShortName();
 
         $default_class = "{$base} {$base}--" . $this->getIndex();
         if (!$this->has('attrs.class')) {

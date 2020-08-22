@@ -42,7 +42,7 @@ interface FactoryGroup extends FactoryResolver, ParamsBag
      *
      * @return FactoryGroup[]
      */
-    public function getChilds(): iterable;
+    public function getChildren(): iterable;
 
     /**
      * Récupération de la liste des champs associé au groupe.

@@ -32,7 +32,7 @@ interface TabItem extends ParamsBag
      *
      * @return TabItem[]|array
      */
-    public function getChilds(): iterable;
+    public function getChildren(): iterable;
 
     /**
      * Récupération du contenu d'affichage de l'élément.

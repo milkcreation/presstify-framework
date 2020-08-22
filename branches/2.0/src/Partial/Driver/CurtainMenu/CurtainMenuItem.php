@@ -11,7 +11,7 @@ class CurtainMenuItem extends ParamsBag implements CurtainMenuItemContract
      * Liste des éléments enfants associés.
      * @var CurtainMenuItemContract[]|null
      */
-    protected $childs;
+    protected $children;
 
     /**
      * Nom de qualification de l'élément.
@@ -62,7 +62,7 @@ class CurtainMenuItem extends ParamsBag implements CurtainMenuItemContract
      */
     public function hasChild(): bool
     {
-        return $this->getChilds() !== null;
+        return $this->getChildren() !== null;
     }
 
     /**
@@ -92,12 +92,12 @@ class CurtainMenuItem extends ParamsBag implements CurtainMenuItemContract
     /**
      * @inheritDoc
      */
-    public function getChilds(): ?array
+    public function getChildren(): ?array
     {
-        if (is_null($this->childs)) {
-            $this->childs = $this->manager->getParentItems($this->getName());
+        if (is_null($this->children)) {
+            $this->children = $this->manager->getParentItems($this->getName());
         }
-        return $this->childs ?: null;
+        return $this->children ?: null;
     }
 
     /**

@@ -108,7 +108,7 @@ class Group extends ParamsBag implements FactoryGroup
     /**
      * @inheritdoc
      */
-    public function getChilds(): iterable
+    public function getChildren(): iterable
     {
         return $this->getName() ? $this->manager->getGrouped($this->getName()) : [];
     }

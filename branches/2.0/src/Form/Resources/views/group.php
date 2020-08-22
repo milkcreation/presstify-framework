@@ -11,7 +11,7 @@
     <?php foreach ($group->getFields() as $field) : ?>
         <?php $this->insert('field', compact('field')); ?>
     <?php endforeach; ?>
-    <?php foreach ($group->getChilds() as $child) : ?>
+    <?php foreach ($group->getChildren() as $child) : ?>
         <?php $this->insert('group', ['group' => $child]); ?>
     <?php endforeach; ?>
 </div>

@@ -133,7 +133,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      * @var array
      */
     protected $singleShowDefaults = [
-        'childs'   => true,
+        'children' => true,
         'content'  => true,
         'date'     => false,
         'subtitle' => true,
@@ -277,7 +277,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     {
         $instances = [];
         foreach ($collection->toArray() as $item) {
-            if ($instance = static::createFromId((new WP_Post((object)$item))->ID ? : 0)) {
+            if ($instance = static::createFromId((new WP_Post((object)$item))->ID ?: 0)) {
                 $instances[] = $instance;
             }
         }
@@ -556,7 +556,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getArchiveShow(?string $key = null, $default = null): ?array
+    public function getArchiveShow(?string $key = null, $default = null)
     {
         if (is_null($this->archiveShowParams)) {
             $params = array_merge($this->archiveShowDefaults, $this->getMetaSingle('_archive_show', []));
@@ -611,7 +611,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getChilds(?int $per_page = -1, int $page = 1, array $args = []): array
+    public function getChildren(?int $per_page = -1, int $page = 1, array $args = []): array
     {
         if (is_null($per_page)) {
             $per_page = get_option('posts_per_page');
@@ -854,6 +854,24 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
+    public function getSingleShow(?string $key = null, $default = null)
+    {
+        if (is_null($this->singleShowParams)) {
+            $params = array_merge($this->singleShowDefaults, $this->getMetaSingle('_single_show', []));
+
+            array_walk($params, function (&$opt) {
+                $opt = filter_var($opt, FILTER_VALIDATE_BOOLEAN);
+            });
+
+            $this->singleShowParams = (new ParamsBag())->set($params);
+        }
+
+        return is_null($key) ? $this->singleShowParams->all() : $this->singleShowParams->get($key, $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getSlug(): string
     {
         return (string)$this->get('post_name', '');
@@ -868,21 +886,13 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * @inheritDoc
+     * Récupération du sous-titre.
+     *
+     * @return string
      */
-    public function getSingleShow(?string $key = null, $default = null): ?array
+    public function getSubtitle(): string
     {
-        if (is_null($this->singleShowParams)) {
-            $params = array_merge($this->singleShowDefaults, $this->getMetaSingle('_single_show', []));
-
-            array_walk($params, function (&$opt) {
-                $opt = filter_var($opt, FILTER_VALIDATE_BOOLEAN);
-            });
-
-            $this->singleShowParams = (new ParamsBag())->set($params);
-        }
-
-        return is_null($key) ? $this->singleShowParams->all() : $this->singleShowParams->get($key, $default);
+        return $this->getMetaSingle('_subtitle', '');
     }
 
     /**
@@ -929,7 +939,7 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public function getThumbnailSrc($size = 'post-thumbnail'): string
     {
-        return get_the_post_thumbnail_url($this->getId(), $size) ? : '';
+        return get_the_post_thumbnail_url($this->getId(), $size) ?: '';
     }
 
     /**
@@ -964,6 +974,14 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function hasMore(): bool
     {
         return !!preg_match('/<!--more(.*?)?-->/', $this->getContent(true));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isHierarchical(): bool
+    {
+        return $this->getType()->hierarchical;
     }
 
     /**

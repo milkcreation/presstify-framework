@@ -11,9 +11,9 @@
 <div class="Tab-content <?php echo 'Tab-content--' . $this->getTabStyle($depth); ?>" data-control="tab.content">
     <?php foreach ($this->get('items', []) as $item) : ?>
         <div <?php echo $item->getContentAttrs(); ?>>
-            <?php if ($childs = $item->getChilds()) : ?>
-                <?php $this->insert('nav', ['depth' => $item->getDepth() + 1, 'items' => $childs]); ?>
-                <?php $this->insert('content', ['depth' => $item->getDepth() + 1, 'items' => $childs]); ?>
+            <?php if ($children = $item->getChildren()) : ?>
+                <?php $this->insert('nav', ['depth' => $item->getDepth() + 1, 'items' => $children]); ?>
+                <?php $this->insert('content', ['depth' => $item->getDepth() + 1, 'items' => $children]); ?>
             <?php else : ?>
                 <?php $this->insert('content-item', compact('item')); ?>
             <?php endif; ?>
