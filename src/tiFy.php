@@ -12,7 +12,7 @@ use tiFy\Kernel\KernelServiceProvider;
  * @desc PresstiFy -- Framework Milkcreation.
  * @author Jordy Manner <jordy@milkcreation.fr>
  * @package tiFy
- * @version 2.0.329
+ * @version 2.0.330
  * @copyright Milkcreation
  */
 final class tiFy extends Container
@@ -58,6 +58,12 @@ final class tiFy extends Container
      */
     public function boot(): ContainerContract
     {
+        /**  @deprecaded */
+        if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) {
+            return $this;
+        }
+        /**/
+
         parent::boot();
 
         if (is_null($this->app)) {
