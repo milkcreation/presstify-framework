@@ -11,7 +11,10 @@ use tiFy\Contracts\User\{RoleManager, RoleFactory};
  */
 class Role extends AbstractProxy
 {
-    public static function getInstanceIdentifier()
+    /**
+     * @inheritDoc
+     */
+    public static function getInstanceIdentifier(): string
     {
         return 'user.role';
     }

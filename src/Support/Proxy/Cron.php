@@ -4,7 +4,7 @@ namespace tiFy\Support\Proxy;
 
 class Cron extends AbstractProxy
 {
-    public static function getInstanceIdentifier()
+    public static function getInstanceIdentifier(): string
     {
         return 'cron';
     }

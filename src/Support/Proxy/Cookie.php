@@ -9,7 +9,7 @@ use tiFy\Contracts\Cookie\Cookie as CookieContract;
  */
 class Cookie extends AbstractProxy
 {
-    public static function getInstanceIdentifier()
+    public static function getInstanceIdentifier(): string
     {
         return 'cookie';
     }

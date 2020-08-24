@@ -22,7 +22,7 @@ class User extends AbstractProxy
     /**
      * @inheritDoc
      */
-    public static function getInstanceIdentifier()
+    public static function getInstanceIdentifier(): string
     {
         return 'user';
     }
