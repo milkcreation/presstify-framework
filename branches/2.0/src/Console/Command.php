@@ -35,6 +35,6 @@ class Command extends BaseCommand implements CommandContract
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
+        return 0;
     }
 }
