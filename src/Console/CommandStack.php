@@ -9,7 +9,7 @@ use Symfony\Component\{
     Console\Input\InputInterface,
     Console\Input\InputOption,
     Console\Output\OutputInterface,
-    Lock\Factory,
+    Lock\LockFactory,
     Lock\LockInterface as Lock,
     Lock\Store\SemaphoreStore};
 use tiFy\Contracts\Console\CommandStack as CommandStackContract;
@@ -88,7 +88,7 @@ class CommandStack extends Command implements CommandStackContract
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if (!$this->getLock()) {
-            $factory = new Factory(new SemaphoreStore());
+            $factory = new LockFactory(new SemaphoreStore());
             $this->setLock($factory->createLock(md5($this->getName() . ($input->getOption('url') ?: ''))));
         }
 

@@ -6,7 +6,6 @@ use finfo;
 use Psr\Container\ContainerInterface as Container;
 use Respect\Validation\{Exceptions\ValidationException, Factory, Rules\AllOf as BaseValidator, Rules\Key, Validatable};
 use tiFy\Contracts\Validation\{Rule, Validator as ValidatorContract};
-use tiFy\Support\ClassInfo;
 
 /**
  * @method static Validator allOf(Validatable ...$rule)
