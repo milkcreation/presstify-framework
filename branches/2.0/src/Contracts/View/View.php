@@ -11,15 +11,6 @@ use Psr\Container\ContainerInterface as Container;
 interface View
 {
     /**
-     * Définition du répertoire par défaut des gabarits d'affichage.
-     *
-     * @param string $dir Chemin absolu vers le répertoire.
-     *
-     * @return void
-     */
-    public static function setDefaultDirectory(string $dir): void;
-
-    /**
      * Délégation d'appel des méthodes du moteur de templates.
      *
      * @param string $method Nom de qualification de la méthode
@@ -80,6 +71,15 @@ interface View
      * @throws LogicException
      */
     public function register(string $name, $attrs = null): Engine;
+
+    /**
+     * Définition du répertoire par défaut des gabarits d'affichage.
+     *
+     * @param string $dir Chemin absolu vers le répertoire.
+     *
+     * @return static
+     */
+    public function setDefaultDirectory(string $dir): View;
 
     /**
      * Définition d'un moteur de templates.

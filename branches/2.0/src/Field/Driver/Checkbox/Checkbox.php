@@ -17,7 +17,7 @@ class Checkbox extends FieldDriver implements CheckboxContract
      * @var string $name Clé d'indice de la valeur de soumission du champ.
      * @var string $value Valeur courante de soumission du champ.
      * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var null|bool $checked Activation de la selection.
+     * @var bool|string $checked Activation de la selection.
      * }
      */
     public function defaults(): array
@@ -29,7 +29,7 @@ class Checkbox extends FieldDriver implements CheckboxContract
             'name'    => '',
             'value'   => '',
             'viewer'  => [],
-            'checked' => 'on',
+            'checked' => false,
         ];
     }
 
@@ -72,8 +72,10 @@ class Checkbox extends FieldDriver implements CheckboxContract
     {
         if (($value = $this->get('checked')) && !is_bool($value)) {
             $this->set('attrs.value', $value);
-        }
 
-        return $this;
+            return $this;
+        } else {
+            return parent::parseAttrValue();
+        }
     }
 }

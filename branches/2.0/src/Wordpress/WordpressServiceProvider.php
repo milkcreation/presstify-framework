@@ -4,20 +4,17 @@ namespace tiFy\Wordpress;
 
 use tiFy\Container\ServiceProvider;
 use tiFy\Support\Locale;
-use tiFy\View\View as BaseView;
 use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Cookie\Cookie;
 use tiFy\Wordpress\Database\Database;
-use tiFy\Wordpress\Db\Db;
 use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
 use tiFy\Wordpress\Http\Http;
 use tiFy\Wordpress\Mail\Mail;
 use tiFy\Wordpress\Media\Media;
-use tiFy\Wordpress\Media\Upload;
 use tiFy\Wordpress\Metabox\Metabox;
 use tiFy\Wordpress\Option\Option;
 use tiFy\Wordpress\PageHook\PageHook;
@@ -512,8 +509,6 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerView(): void
     {
         $this->getContainer()->share('wp.view', function () {
-            BaseView::setDefaultDirectory(get_template_directory());
-
             return new View($this->getContainer()->get('view'));
         });
     }

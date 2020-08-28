@@ -2,7 +2,7 @@
 
 namespace tiFy\Wordpress\View;
 
-use tiFy\Contracts\View\View as BaseViewContract;
+use tiFy\Contracts\View\{View as BaseViewContract, PlatesEngine};
 
 class View
 {
@@ -22,5 +22,7 @@ class View
     public function __construct(BaseViewContract $manager)
     {
         $this->manager = $manager;
+
+        $manager->setDefaultDirectory(get_template_directory());
     }
 }
