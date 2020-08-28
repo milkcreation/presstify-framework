@@ -155,8 +155,10 @@ $form-color-required: $form-color-error !default;
     color: $form-color-required;
   }
 
+  .FieldEmail,
   .FieldPassword,
   .FieldSelect,
+  .FieldTel,
   .FieldText,
   .FieldTextarea {
     width: 100%;

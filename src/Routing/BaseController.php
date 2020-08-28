@@ -163,6 +163,25 @@ class BaseController extends ParamsBag
     }
 
     /**
+     * Définition des variables partagées à l'ensemble des vues.
+     *
+     * @param string|array $key
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function share($key, $value = null): self
+    {
+        $keys = !is_array($key) ? [$key => $value] : $key;
+
+        foreach ($keys as $k => $v) {
+            $this->viewEngine()->share($k, $v);
+        }
+
+        return $this;
+    }
+
+    /**
      * Génération de la reponse HTTP associé à l'affichage d'un gabarit.
      *
      * @param string $view Nom de qualification du gabarit.

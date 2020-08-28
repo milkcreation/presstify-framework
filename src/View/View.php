@@ -19,7 +19,7 @@ class View implements ViewContract
      * Définition du répertoire par défaut des gabarits d'affichage.
      * @var string
      */
-    protected static $defaultDirectory = '';
+    protected $defaultDirectory = '';
 
     /**
      * Instance du conteneur d'injection de dépendances.
@@ -54,14 +54,6 @@ class View implements ViewContract
     /**
      * @inheritDoc
      */
-    public static function setDefaultDirectory(string $dir): void
-    {
-        static::$defaultDirectory = $dir;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function __call(string $method, array $parameters)
     {
         return $this->forwardCallTo($this->getEngine(), $method, $parameters);
@@ -80,7 +72,7 @@ class View implements ViewContract
      */
     public function getDefaultDirectory(): string
     {
-        return self::$defaultDirectory;
+        return $this->defaultDirectory;
     }
 
     /**
@@ -88,7 +80,7 @@ class View implements ViewContract
      */
     public function getDefaultEngine(): EngineContract
     {
-        return $this->getContainer()->get("view.engine.default");
+        return $this->getContainer()->get('view.engine.default');
     }
 
     /**
@@ -97,10 +89,17 @@ class View implements ViewContract
     public function getEngine(?string $name = null): ?EngineContract
     {
         if (is_null($name)) {
-            return $this->default = $this->default
-                ? : $this->getDefaultEngine()
-                    ->setParams(config('view', []))
-                    ->setDirectory($this->getDefaultDirectory());
+            if ($this->default instanceof EngineContract) {
+                if(!$this->default->params()->get('directory')) {
+                    $this->default->setDirectory($this->getDefaultDirectory());
+                }
+
+                return $this->default;
+            } else {
+                return $this->default = $this->getDefaultEngine()
+                    ->setDirectory($this->getDefaultDirectory())
+                    ->setParams(config('view', []));
+            }
         }
 
         return $this->engines[$name] ?? null;
@@ -133,14 +132,14 @@ class View implements ViewContract
                     ? $this->getContainer()->get('view.engine.' . $attrs['engine']) : new $attrs['engine'];
                 unset($attrs['engine']);
             } else {
-                $engine = $this->getDefaultEngine();
+                $engine = $this->getEngine();
             }
             $engine->params($attrs);
         } elseif (is_string($attrs)) {
             $engine = $this->getContainer()->has("view.engine.{$attrs}")
                 ? $this->getContainer()->get("view.engine.{$attrs}") : new $attrs;
         } elseif(is_null($attrs)) {
-            $engine = $this->getDefaultEngine();
+            $engine = $this->getEngine();
         } else {
             $engine = $attrs;
         }
@@ -158,6 +157,16 @@ class View implements ViewContract
     public function render($name, array $args = [])
     {
         return $this->getEngine()->render($name, $args);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDefaultDirectory(string $dir): ViewContract
+    {
+        $this->defaultDirectory = $dir;
+
+        return $this;
     }
 
     /**

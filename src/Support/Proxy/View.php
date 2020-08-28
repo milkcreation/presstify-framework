@@ -8,7 +8,7 @@ use tiFy\Contracts\View\{Engine, PlatesEngine, View as ViewContract, PlatesFacto
 /**
  * @method static Engine addFolder(string $name, string $directory, bool $fallback = false)
  * @method static Folder|null getFolder(string $name)
- * @method static Engine getEngine(string $name = 'default')
+ * @method static Engine getEngine(string|null $name = null)
  * @method static bool exists(string $name)
  * @method static PlatesEngine getPlatesEngine(array $params = [])
  * @method static PlatesFactory make(string $view, array $args = [])

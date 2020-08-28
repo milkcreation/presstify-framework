@@ -29,7 +29,7 @@ class Radio extends FieldDriver implements RadioContract
             'name'    => '',
             'value'   => '',
             'viewer'  => [],
-            'checked' => 'on',
+            'checked' => false,
         ];
     }
 
@@ -72,8 +72,10 @@ class Radio extends FieldDriver implements RadioContract
     {
         if (($value = $this->get('checked')) && !is_bool($value)) {
             $this->set('attrs.value', $value);
-        }
 
-        return $this;
+            return $this;
+        } else {
+            return parent::parseAttrValue();
+        }
     }
 }

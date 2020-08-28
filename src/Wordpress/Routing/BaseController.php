@@ -128,6 +128,7 @@ class BaseController extends ParentBaseController
             try {
                 $response = new BinaryFileResponse($this->imagePlaceholder);
                 $name = basename($this->imagePlaceholder);
+                $headers = [];
 
                 $disposition = $response->headers->makeDisposition('inline', $name, Str::ascii($name));
 
@@ -165,25 +166,6 @@ class BaseController extends ParentBaseController
     {
         if (file_exists($image)) {
             $this->imagePlaceholder = $image;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Définition des variables partagées à l'ensemble des vues.
-     *
-     * @param string|array $key
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function share($key, $value = null): self
-    {
-        $keys = !is_array($key) ? [$key => $value] : $key;
-
-        foreach ($keys as $k => $v) {
-            $this->viewEngine()->share($k, $v);
         }
 
         return $this;
