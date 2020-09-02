@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2020-08-28",
+  "time": "2020-09-02",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -22,7 +22,7 @@
     }
   ],
   "require": {
-    "php": "^7.2",
+    "php": "^7.3",
     "ext-dom": "*",
     "ext-fileinfo": "*",
     "ext-json": "*",
