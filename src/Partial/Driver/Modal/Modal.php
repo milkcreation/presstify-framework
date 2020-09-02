@@ -61,7 +61,7 @@ class Modal extends PartialDriver implements ModalContract
             'ajax_cacheable' => true,
             'animated'       => true,
             'backdrop'       => [
-                'close' => true,
+                'close' => false,
             ],
             'classes'        => [],
             'close'          => true,

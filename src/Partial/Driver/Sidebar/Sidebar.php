@@ -81,10 +81,17 @@ class Sidebar extends PartialDriver implements SidebarContract
     {
         parent::parse();
 
-        $this->set(
-            'attrs.style',
-            'width:' . $this->get('width') . ';z-index:' . $this->get('z-index') . $this->get('attrs.style', '')
-        )
+        $style = $this->get('attrs.style', '');
+        if ($width = $this->get('width')) {
+            $style .= rtrim(';', $style). ";width:{$width}";
+        }
+
+        if ($zindex = $this->get('z-index')) {
+            $style .= rtrim(';', $style). ";z-index:{$zindex}";
+        }
+
+        $this
+            ->set('attrs.style', $style)
             ->set('attrs.data-control', 'sidebar')
             ->set('attrs.aria-animate', $this->get('animate') ? 'true' : 'false')
             ->set('attrs.aria-closed', $this->get('closed') ? 'true' : 'false')
