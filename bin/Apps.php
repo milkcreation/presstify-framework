@@ -928,7 +928,7 @@ final class Apps
                     $overrideClass = "{$app['namespace']}\\{$Type}\\{$Id}\\Config";
                     if (class_exists($overrideClass) && is_subclass_of($overrideClass, 'tiFy\\App\\Config')) :
                         $attrs = call_user_func("tiFy\\{$Type}::register", $Id);
-                        self::register($overrideClass, null, ['Parent' => $attrs['ClassName']]);
+                        self::register($overrideClass, null, ['Parent' => $attrs['ClassName'] ?? null]);
                         call_user_func([$overrideClass, '_ini_set']);
                     endif;
                 endforeach;
