@@ -11,7 +11,7 @@ use tiFy\Contracts\Routing\{
     Router as BaseRouterContract
 };
 use tiFy\Http\{Request as HttpRequest, RedirectResponse as HttpRedirect};
-use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\{Request, View};
 use tiFy\Wordpress\Contracts\Routing\Routing as RoutingContract;
 use tiFy\Wordpress\Routing\Strategy\Template as TemplateStrategy;
 
@@ -51,41 +51,53 @@ class Routing implements RoutingContract
                     exit;
                 }
             } catch (Exception $e) {
-                /**
-                 * Suppression du slash de fin dans l'url des routes déclarées.
-                 * {@internal Si utilisation du controleur par défaut s'y référer}
-                 *
-                 * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html
-                 * @see https://stackoverflow.com/questions/30830462/how-to-deal-with-extra-in-phpleague-route
-                 */
-                if (config('routing.remove_trailing_slash', true)) {
-                    $permalinks = get_option('permalink_structure');
-                    if (substr($permalinks, -1) == '/') {
-                        update_option('permalink_structure',  rtrim($permalinks, '/'));
+                if (wp_using_themes() && ($method = Request::getMethod()) && ($method === 'GET')) {
+                    /**
+                     * Suppression du slash de fin dans l'url des routes déclarées.
+                     * {@internal Si utilisation du controleur par défaut s'y référer}
+                     *
+                     * @see https://symfony.com/doc/current/routing/redirect_trailing_slash.html
+                     * @see https://stackoverflow.com/questions/30830462/how-to-deal-with-extra-in-phpleague-route
+                     */
+                    if (config('routing.remove_trailing_slash', true)) {
+                        $permalinks = get_option('permalink_structure');
+                        if (substr($permalinks, -1) == '/') {
+                            update_option('permalink_structure', rtrim($permalinks, '/'));
+                        }
+
+                        $path = Request::getBaseUrl() . Request::getPathInfo();
+
+                        if (($path != '/') && (substr($path, -1) == '/')) {
+                            $dispatcher = new Dispatcher($this->manager->getData());
+                            $match = $dispatcher->dispatch($method, rtrim($path, '/'));
+
+                            if ($match[0] === FastRoute::FOUND) {
+                                $redirect_url = rtrim($path, '/');
+                                $redirect_url .= ($qs = Request::getQueryString()) ? "?{$qs}" : '';
+
+                                $response = HttpRedirect::createPsr($redirect_url);
+                                $this->manager->emit($response);
+                                exit;
+                            }
+                        }
                     }
 
-                    $path = Request::getBaseUrl() . Request::getPathInfo();
-                    $method = Request::getMethod();
-
-                    if (($path != '/') && (substr($path, -1) == '/') && ($method === 'GET')) {
-                        $dispatcher = new Dispatcher($this->manager->getData());
-                        $match = $dispatcher->dispatch($method, rtrim($path, '/'));
-
-                        if ($match[0] === FastRoute::FOUND) {
-                            $redirect_url = rtrim($path, '/');
-                            $redirect_url .= ($qs = Request::getQueryString()) ? "?{$qs}" : '';
-
-                            $response = HttpRedirect::createPsr($redirect_url);
-                            $this->manager->emit($response);
-                            exit;
-                        } else {
+                    add_filter('template_include', function ($template) use ($e) {
+                        if (!$template) {
                             wp_die($e->getMessage());
                         }
-                    } else {
-                        wp_die($e->getMessage());
-                    }
-                } else {
-                    wp_die($e->getMessage());
+
+                        $dir = preg_quote(get_template_directory(), DIRECTORY_SEPARATOR);
+
+                        if (preg_match('#^' . $dir . '#', $template)) {
+                            echo View::render(pathinfo(
+                                preg_replace('#^' . $dir . '#', '', $template), PATHINFO_FILENAME
+                            ));
+                            exit;
+                        }
+
+                        return $template;
+                    });
                 }
             }
         }, 0);
