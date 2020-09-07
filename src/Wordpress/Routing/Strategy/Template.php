@@ -89,10 +89,6 @@ class Template extends AppStrategy
         }
 
         add_action('template_redirect', function () use ($route, $request) {
-            if ( is_robots() || is_favicon() || is_feed() || is_trackback()) {
-                return;
-            }
-
             $controller = $route->getCallable($this->getContainer());
 
             $args = array_values($route->getVars());
