@@ -775,10 +775,9 @@ jQuery(function ($) {
         // Mise en avant des éléments dans la liste des éléments sélectionnés.
         _doHighlight: function (value) {
             $('[data-control="select-js.selection.item"][data-value="' + value + '"]', this.selection)
+                .closest('[data-control="select-js"]')
                 .attr('aria-highlight', true)
-                .one(
-                    'webkitAnimationEnd oanimationend msAnimationEnd animationend',
-                    function () {
+                .one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function () {
                         $(this).attr('aria-highlight', false);
                     }
                 );
@@ -979,12 +978,9 @@ jQuery(function ($) {
                         e.preventDefault();
 
                         $(this).attr('aria-highlight', true)
-                            .one(
-                                'webkitAnimationEnd oanimationend msAnimationEnd animationend',
-                                function () {
-                                    $(this).attr('aria-highlight', false);
-                                }
-                            );
+                            .one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function () {
+                                $(this).attr('aria-highlight', false);
+                            });
                         self._doChange($(this).data('index'));
                     }
                 }

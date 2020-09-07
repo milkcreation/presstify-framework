@@ -356,7 +356,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                 }
             }, 999999);
 
-            events()->listen('partial.breadcrumb.fetch', function (BaseBreadcrumbCollection $bc, $e) {
+            events()->listen('partial.breadcrumb.prefetch', function (BaseBreadcrumbCollection $bc, $e) {
                 if ($bc instanceof BreadcrumbCollection) {
                     if (in_array(Router::currentRouteName(), $this->get('routes', []))) {
                         $bc->clear();
@@ -369,7 +369,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                             });
                         }
 
-                        if ($pr = $bc->getPostRender($hookid, false)) {
+                        if ($pr = $bc->getPostRender($hookid, true)) {
                             $bc->add($pr);
                         }
 

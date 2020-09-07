@@ -19,11 +19,8 @@
 /** STYLES GENERAUX */
 .FieldSelectJs {
     position: relative;
-}
-
-.FieldSelectJs-trigger {
-    position: relative;
     border: 1px solid #E4E4E4;
+    background-color: #FFF;
 }
 
 .FieldSelectJs-triggerHandler {
@@ -36,45 +33,47 @@
     cursor:inherit;
 }
 
-.FieldSelectJs[aria-arrow="true"] .FieldSelectJs-trigger {
-    padding-right: 20px;
-}
+.FieldSelectJs[aria-arrow="true"] {
+    .FieldSelectJs-trigger {
+        padding-right: 20px;
 
-.FieldSelectJs[aria-arrow="true"] .FieldSelectJs-trigger::before {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    display: block;
-    content: "";
-    width: 19px;
-    border-left: 1px solid #E4E4E4;
-    background-color: #F4F4F4;
-}
+        &::before {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            display: block;
+            content: "";
+            width: 19px;
+            border-left: 1px solid #E4E4E4;
+            background-color: #F4F4F4;
+        }
 
-.FieldSelectJs[aria-arrow="true"] .FieldSelectJs-trigger::after {
-    position: absolute;
-    top: 50%;
-    right: 5px;
-    z-index:1;
-    width: 0;
-    height: 0;
-    margin-top: -2px;
-    display: inline-block;
-    content: " ";
-    border-color: #333 transparent;
-    border-style: solid;
-    border-top-width: 4px;
-    border-right-width: 4px;
-    border-bottom-width: 0;
-    border-left-width: 4px;
-}
+        &::after {
+            position: absolute;
+            top: 50%;
+            right: 5px;
+            z-index: 1;
+            width: 0;
+            height: 0;
+            margin-top: -2px;
+            display: inline-block;
+            content: " ";
+            border-color: #333 transparent;
+            border-style: solid;
+            border-top-width: 4px;
+            border-right-width: 4px;
+            border-bottom-width: 0;
+            border-left-width: 4px;
+        }
+    }
 
-.FieldSelectJs[aria-arrow="true"][aria-open="true"] .FieldSelectJs-trigger::after {
-    border-top-width: 0;
-    border-right-width: 4px;
-    border-bottom-width: 4px;
-    border-left-width: 4px;
+    &[aria-open="true"] .FieldSelectJs-trigger::after {
+        border-top-width: 0;
+        border-right-width: 4px;
+        border-bottom-width: 4px;
+        border-left-width: 4px;
+    }
 }
 
 .FieldSelectJs-autocomplete {
@@ -91,16 +90,16 @@
     margin: 0;
     padding: 0;
     list-style-type: none;
-}
 
-.FieldSelectJs-selection::before,
-.FieldSelectJs-selection::after {
-    display: table;
-    content: "";
-}
+    &::before,
+    &::after {
+        display: table;
+        content: "";
+    }
 
-.FieldSelectJs-selection::after {
-    clear: both;
+    &::after {
+        clear: both;
+    }
 }
 
 .FieldSelectJs-selectionItem {
@@ -110,7 +109,7 @@
     margin:0;
     line-height: 1;
     white-space: nowrap;
-    background-color: #FFF;
+    background-color: transparent;
     display:none;
 }
 
@@ -129,18 +128,18 @@
     border-radius: 2px;
 }
 
-.FieldSelectJs-selectionItem[aria-highlight="true"] {
-    animation: 1s FieldSelectJs-selectionItemHighlight;
+.FieldSelectJs[aria-highlight="true"] {
+    animation: 1s FieldSelectJs-highlight;
 }
 
-@-webkit-keyframes FieldSelectJs-selectionItemHighlight {
+@-webkit-keyframes FieldSelectJs-highlight {
     25% {
         background-color: #FFFA90;
         border-color: #DAD55E;
     }
 }
 
-@keyframes FieldSelectJs-selectionItemHighlight {
+@keyframes FieldSelectJs-highlight {
     25% {
         background-color: #FFFA90;
         border-color: #DAD55E;

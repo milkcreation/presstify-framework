@@ -29,7 +29,7 @@ class Checkbox extends FieldDriver implements CheckboxContract
             'name'    => '',
             'value'   => '',
             'viewer'  => [],
-            'checked' => false,
+            'checked' => 'on',
         ];
     }
 

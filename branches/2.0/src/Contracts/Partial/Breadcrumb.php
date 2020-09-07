@@ -60,6 +60,13 @@ interface Breadcrumb extends PartialDriver
     public function main(): Breadcrumb;
 
     /**
+     * Pré-Récupération de la collection d'éléments du fil d'ariane.
+     *
+     * @return static
+     */
+    public function prefetch(): Breadcrumb;
+
+    /**
      * Ajout de la déclaration d'un élément au début de la liste.
      *
      * @param string|array|object $item

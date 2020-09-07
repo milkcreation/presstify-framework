@@ -24,6 +24,8 @@ $form-color-warning: map-get($colors, warning) !default;
 $form-color-info: map-get($colors, info) !default;
 $form-color-success: map-get($colors, success) !default;
 $form-color-required: $form-color-error !default;
+$form-color-radio: $form-color-regular !default;
+$form-color-checkbox: $form-color-regular !default;
 
 // -- Dimensions
 .Form-field--w50 {
@@ -158,6 +160,7 @@ $form-color-required: $form-color-error !default;
   .FieldEmail,
   .FieldPassword,
   .FieldSelect,
+  .FieldSelectJs,
   .FieldTel,
   .FieldText,
   .FieldTextarea {
@@ -172,6 +175,13 @@ $form-color-required: $form-color-error !default;
       border-left-style: solid;
       border-left-width: #{$form-field-error-border-width}px;
       border-left-color: $form-color-error;
+    }
+  }
+
+  .FieldSelectJs[aria-arrow="true"] {
+    .FieldSelectJs-trigger::before {
+      border-left:none;
+      background-color: transparent;
     }
   }
 
@@ -250,7 +260,6 @@ $form-color-required: $form-color-error !default;
         margin-top: -4px;
         height: 8px;
         width: 8px;
-        background-color: $form-color-regular;
         transform: scale(0);
         transition: transform 200ms ease-in-out;
       }
@@ -282,6 +291,26 @@ $form-color-required: $form-color-error !default;
     }
   }
 
+  .FieldCheckbox,
+  .FieldCheckboxCollection-itemInput {
+    + .FieldLabel,
+    + .FieldCheckboxCollection-itemLabel {
+      &::after {
+        background-color: $form-color-checkbox;
+      }
+    }
+  }
+
+  .FieldRadio,
+  .FieldRadioCollection-itemInput {
+    + .FieldLabel,
+    + .FieldRadioCollection-itemLabel {
+      &::after {
+        background-color: $form-color-radio;
+      }
+    }
+  }
+
   .FieldRadioCollection[aria-error="true"],
   .FieldCheckboxCollection[aria-error="true"] {
     .FieldRadioCollection-itemInput + .FieldRadioCollection-itemLabel::before,
@@ -300,27 +329,6 @@ $form-color-required: $form-color-error !default;
 
       &::after {
         border-radius: 50%;
-      }
-    }
-  }
-
-  .FieldSelectJs {
-    .FieldSelectJs-selectionItem {
-      border-radius: #{$form-field-radius-tl}px #{$form-field-radius-tr}px #{$form-field-radius-br}px #{$form-field-radius-bl}px;
-      width: 100%;
-      background-color: $form-color-lighter;
-      padding: 0.5em 1em;
-      font-size: 16px;
-      line-height: 1.4;
-    }
-
-    &[aria-error="true"] {
-      .FieldSelectJs-selectionItem {
-        border-radius: 0 #{$form-field-radius-tr}px #{$form-field-radius-br}px 0;
-        padding-left: 1em;
-        border-left-style: solid;
-        border-left-width: #{$form-field-error-border-width}px;
-        border-left-color: $form-color-error;
       }
     }
   }

@@ -27,6 +27,12 @@ class BreadcrumbCollection implements BreadcrumbCollectionContract
     protected $parts = [];
 
     /**
+     * Indicateur de pré-récupération des éléments.
+     * @var bool
+     */
+    protected $prefetched = false;
+
+    /**
      * CONSTRUCTEUR.
      *
      * @param Breadcrumb $manager Instance du pilote de fil d'ariane.
@@ -92,8 +98,6 @@ class BreadcrumbCollection implements BreadcrumbCollectionContract
      */
     public function fetch(): array
     {
-        events()->trigger('partial.breadcrumb.fetch', [&$this]);
-
         $this->parts = (new Collection($this->items))->sortKeys()->map(function ($item) {
             return $this->parse($item);
         })->values()->all();
@@ -190,5 +194,18 @@ class BreadcrumbCollection implements BreadcrumbCollectionContract
         ], $wrapper, ['content' => $item['render'] ?? '']);
 
         return Partial::get('tag', $tag)->render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function prefetch(): BreadcrumbCollectionContract
+    {
+        if (!$this->prefetched) {
+            events()->trigger('partial.breadcrumb.prefetch', [&$this]);
+            $this->prefetched = true;
+        }
+
+        return $this;
     }
 }

@@ -7,6 +7,6 @@
 <?php echo partial('tag', [
     'tag'     => 'div',
     'attrs'   => $this->get('attrs', []),
-    'content' => $this->get('content', '') . $this->get('dismiss', '')
+    'content' => $this->fetch('content', $this->all()) . $this->get('dismiss', '')
 ]); ?>
 <?php $this->after();

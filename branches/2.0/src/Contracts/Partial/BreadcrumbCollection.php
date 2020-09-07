@@ -93,4 +93,11 @@ interface BreadcrumbCollection
      * @return int|null
      */
     public function move(int $from, int $to): ?int;
+
+    /**
+     * Pré-récupération des éléments de la collection.
+     *
+     * @return static
+     */
+    public function prefetch(): BreadcrumbCollection;
 }
