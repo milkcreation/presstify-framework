@@ -17,7 +17,7 @@ class Radio extends FieldDriver implements RadioContract
      * @var string $name Clé d'indice de la valeur de soumission du champ.
      * @var string $value Valeur courante de soumission du champ.
      * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var bool|null $checked Activation de la selection.
+     * @var bool|string $checked Activation de la selection.
      * }
      */
     public function defaults(): array
@@ -29,7 +29,7 @@ class Radio extends FieldDriver implements RadioContract
             'name'    => '',
             'value'   => '',
             'viewer'  => [],
-            'checked' => false,
+            'checked' => 'on'
         ];
     }
 

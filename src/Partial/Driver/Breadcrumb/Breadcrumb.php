@@ -100,6 +100,18 @@ class Breadcrumb extends PartialDriver implements BreadcrumbContract
     }
 
     /**
+     * Récupération de la liste des éléments à afficher.
+     *
+     * @return static
+     */
+    protected function fetch(): BreadcrumbContract
+    {
+        $this->set('parts', $this->isEnabled() ? $this->collection()->prefetch()->fetch() : []);
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     public function flush(): BreadcrumbContract
@@ -176,6 +188,16 @@ class Breadcrumb extends PartialDriver implements BreadcrumbContract
     /**
      * @inheritDoc
      */
+    public function prefetch(): BreadcrumbContract
+    {
+        $this->collection()->prefetch();
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function prepend($item): ?int
     {
         return $this->insert(0, $item);
@@ -198,9 +220,7 @@ class Breadcrumb extends PartialDriver implements BreadcrumbContract
     {
         $obj = !is_null(self::$main) ? self::$main : $this;
 
-        $obj->set('parts', $obj->isEnabled() ? $obj->collection()->fetch() : []);
-
-        return $obj->viewer('index', $obj->all());
+        return $obj->fetch()->viewer('index', $obj->all());
     }
 
     /**

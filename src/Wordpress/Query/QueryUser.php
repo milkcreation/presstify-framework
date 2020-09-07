@@ -149,7 +149,11 @@ class QueryUser extends ParamsBag implements QueryUserContract
     public static function createFromId(int $user_id): ?QueryUserContract
     {
         if ($user_id && ($wp_user = new WP_User($user_id)) && ($wp_user instanceof WP_User)) {
-            return static::is($instance = static::build($wp_user)) ? $instance : null;
+            if (!$instance = static::build($wp_user)) {
+                return null;
+            } else {
+                return $instance::is($instance) ? $instance : null;
+            }
         } else {
             return null;
         }
