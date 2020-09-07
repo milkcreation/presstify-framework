@@ -124,7 +124,7 @@ class Download extends \tiFy\App
     public static function url($file, $query_vars = [])
     {
         $vars = [];
-        if (is_admin()) :
+        if (is_admin() && defined(DOING_AJAX) && !DOING_AJAX) :
             $baseurl = wp_nonce_url(admin_url('/'), "tiFyMediasDownload|{$file}");
             $vars['tify_medias_download'] = is_int($file) ? $file : urlencode_deep($file);
         else :
