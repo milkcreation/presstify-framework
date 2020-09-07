@@ -2,7 +2,7 @@
 
 namespace tiFy\Form\Addons;
 
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 use tiFy\Form\Addons\AddonControllerInterface;
 use tiFy\Components\Form\Addons\AjaxSubmit\AjaxSubmit;
 use tiFy\Components\Form\Addons\CookieTransport\CookieTransport;

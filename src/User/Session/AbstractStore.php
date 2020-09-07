@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
-use tiFy\Apps\AppController;
+use tiFy\App\AppController;
 
 abstract class AbstractStore extends AppController implements StoreInterface
 {
