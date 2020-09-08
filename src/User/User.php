@@ -1,40 +1,69 @@
-<?php
-
-/**
- * @name User
- * @desc Gestion des utilisateurs
- * @package presstiFy
- * @namespace tiFy\User
- * @version 1.1
- * @subpackage Core
- * @since 1.2.535
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
+<?php declare(strict_types=1);
 
 namespace tiFy\User;
 
-use tiFy\Apps\AppController;
-use tiFy\User\Role\Role;
-use tiFy\User\Session\Session;
-use tiFy\User\SignIn\SignIn;
-use tiFy\User\SignUp\SignUp;
-use tiFy\User\TakeOver\TakeOver;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\User\User as UserContract;
+use tiFy\User\Metadata\Option;
+use tiFy\Contracts\User\RoleManager;
 
-final class User extends AppController
+class User implements UserContract
 {
     /**
-     * Initialisation du controleur.
+     * Instance du conteneur d'injection de dépendances.
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * CONSTRUCTEUR.
+     *
+     * @param Container $container Conteneur d'injection de dépendances.
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct(Container $container)
     {
-        $this->appServiceShare(Role::class, new Role());
-        $this->appServiceShare(Session::class, new Session());
-        $this->appServiceShare(SignIn::class, new SignIn());
-        $this->appServiceShare(SignUp::class, new SignUp());
-        $this->appServiceShare(TakeOver::class, new TakeOver());
+        $this->container = $container;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContainer(): Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function meta(): UserMeta
+    {
+        return $this->resolve('meta');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function option(): Option
+    {
+        return $this->resolve('option');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function role(): RoleManager
+    {
+        return $this->resolve('role');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resolve($alias)
+    {
+        return $this->getContainer()->get("user.{$alias}");
     }
 }
