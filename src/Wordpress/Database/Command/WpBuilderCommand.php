@@ -183,6 +183,8 @@ class WpBuilderCommand extends BaseCommand
             sprintf(__('Achévement des opérations : %s', 'tify'), $end->format($this->dateFormat)),
             '=====================================================================================================',
         ]);
+
+        return 0;
     }
 
     /**
