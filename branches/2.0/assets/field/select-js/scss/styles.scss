@@ -336,14 +336,10 @@
 
 .FieldSelectJs-pickerSpinkit {
     margin: 0 auto !important;
-    -webkit-transform: scale(0.3);
-    -moz-transform: scale(0.3);
-    -ms-transform: scale(0.3);
-    -o-transform: scale(0.3);
     transform: scale(0.3);
 }
 
-.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-trigger {
+.FieldSelectJs[aria-disabled="true"] {
     cursor: inherit;
     background-color: #F4F4F4;
     color: #BBB;
