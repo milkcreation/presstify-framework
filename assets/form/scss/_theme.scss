@@ -19,6 +19,8 @@ $form-color-dark: map-get($colors, dark) !default;
 $form-color-darker: map-get($colors, darker) !default;
 $form-color-light: map-get($colors, light) !default;
 $form-color-lighter: map-get($colors, lighter) !default;
+$form-color-field-bkg: $form-color-lighter !default;
+$form-color-field-border: $form-color-light !default;
 $form-color-error: map-get($colors, error) !default;
 $form-color-warning: map-get($colors, warning) !default;
 $form-color-info: map-get($colors, info) !default;
@@ -165,9 +167,11 @@ $form-color-checkbox: $form-color-regular !default;
   .FieldText,
   .FieldTextarea {
     width: 100%;
-    border: none;
+    border-style: solid;
+    border-width: 1px;
+    border-color: $form-color-field-border;
     border-radius: #{$form-field-radius-tl}px #{$form-field-radius-tr}px #{$form-field-radius-br}px #{$form-field-radius-bl}px;
-    background-color: $form-color-lighter;
+    background-color: $form-color-field-bkg;
     padding: 0.5em 1em;
 
     &[aria-error="true"] {
