@@ -1,4 +1,7 @@
-@import '~presstify-framework/partial/spinner/scss/three-bounce';
+@import "~presstify-framework/theme/scss/variables";
+
+// Dépendances
+@import "~presstify-framework/partial/spinner/scss/three-bounce";
 
 /** STYLES DE CONTROLE (recommandé) */
 .FieldSelectJs,
@@ -19,8 +22,10 @@
 /** STYLES GENERAUX */
 .FieldSelectJs {
     position: relative;
-    border: 1px solid #E4E4E4;
-    background-color: #FFF;
+    border-style: solid;
+    border-width:1px;
+    border-color: $field-select-js-color-light;
+    background-color: $field-select-js-color-bkg;
 }
 
 .FieldSelectJs-triggerHandler {
@@ -45,8 +50,10 @@
             display: block;
             content: "";
             width: 19px;
-            border-left: 1px solid #E4E4E4;
-            background-color: #F4F4F4;
+            border-left-style: solid;
+            border-left-width:1px;
+            border-left-color: $field-select-js-color-light;
+            background-color: $field-select-js-color-lighter;
         }
 
         &::after {
@@ -59,7 +66,7 @@
             margin-top: -2px;
             display: inline-block;
             content: " ";
-            border-color: #333 transparent;
+            border-color: $field-select-js-color-regular transparent;
             border-style: solid;
             border-top-width: 4px;
             border-right-width: 4px;
@@ -123,8 +130,10 @@
 
 .FieldSelectJs[aria-multiple="true"] .FieldSelectJs-selectionItem {
     float: left;
-    background-color: #E4E4E4;
-    border: 1px solid #BBB;
+    background-color: $field-select-js-color-lighter;
+    border-style:solid;
+    border-width:1px;
+    border-color: $field-select-js-color-light;
     border-radius: 2px;
 }
 
@@ -134,24 +143,20 @@
 
 @-webkit-keyframes FieldSelectJs-highlight {
     25% {
-        background-color: #FFFA90;
-        border-color: #DAD55E;
+        background-color: $field-select-js-color-highlight-bkg;
+        border-color: $field-select-js-color-highlight-border;
     }
 }
 
 @keyframes FieldSelectJs-highlight {
     25% {
-        background-color: #FFFA90;
-        border-color: #DAD55E;
+        background-color: $field-select-js-color-highlight-bkg;
+        border-color: $field-select-js-color-highlight-border;
     }
 }
 
 .FieldSelectJs-selectionItem[aria-sortable="true"]  {
     padding-left: 15px;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
 }
 
@@ -193,12 +198,14 @@
     padding: 0 4px;
     overflow: hidden;
     z-index: 99998;
-    background-color: #FFF;
-    border: 1px solid #E4E4E4;
-}
+    background-color: $field-select-js-color-bkg;
+    border-style: solid;
+    border-width: 1px;
+    border-color: $field-select-js-color-light;
 
-.FieldSelectJs-picker[aria-open="true"] {
-    display: inherit;
+    &[aria-open="true"] {
+        display: inherit;
+    }
 }
 
 .FieldSelectJs-pickerFilter {
@@ -235,8 +242,8 @@
 }
 
 .FieldSelectJs-pickerItem[aria-selected="true"] {
-    background-color: DodgerBlue;
-    color: #FFF;
+    background-color: $field-select-js-color-selected-bkg;
+    color: $field-select-js-color-selected-txt;
 }
 
 .FieldSelectJs-pickerItem:not([aria-selected="true"])[aria-disabled="true"] {
@@ -350,9 +357,13 @@
     opacity: 0.5;
 }
 
-.FieldSelectJs[aria-disabled="true"] .FieldSelectJs-selectionItem {
-    color: #BBB;
+.FieldSelectJs[aria-disabled="true"] {
     background-color: #F4F4F4;
+    cursor: not-allowed;
+
+    .FieldSelectJs-selectionItem {
+        color: #BBB;
+    }
 }
 
 .FieldSelectJs[aria-disabled="true"][aria-multiple="true"] .FieldSelectJs-selectionItem {

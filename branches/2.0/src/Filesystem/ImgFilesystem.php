@@ -43,7 +43,7 @@ class ImgFilesystem extends LocalFilesystem implements ImgFilesystemContract
     /**
      * @inheritDoc
      */
-    public function render(string $path, ?array $attrs = []): ?string
+    public function render(string $path, ?array $attrs = null): ?string
     {
         if ($this->has($path)) {
             try {
@@ -57,11 +57,11 @@ class ImgFilesystem extends LocalFilesystem implements ImgFilesystemContract
                             'tag'     => 'div',
                         ])->render();
                 } elseif ($src = $this->src($path)) {
-                    return Partial::get('tag', [
+                     return Partial::get('tag', [
                         'attrs' => array_merge([
                             'alt'   => basename($filename),
                             'class' => ''
-                        ], $attrs, ['src' => $src]),
+                        ], $attrs ?? [], ['src' => $src]),
                         'tag'   => 'img',
                     ])->render();
                 } else {

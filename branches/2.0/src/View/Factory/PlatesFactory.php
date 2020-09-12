@@ -86,9 +86,9 @@ class PlatesFactory extends BasePlatesTemplate implements PlatesFactoryContract
     /**
      * @inheritDoc
      */
-    public function htmlAttrs(array $attrs, bool $linearized = true)
+    public function htmlAttrs(?array $attrs = null, bool $linearized = true)
     {
-        return HtmlAttrs::createFromAttrs($attrs, $linearized);
+        return HtmlAttrs::createFromAttrs($attrs ?? $this->get('attrs', []), $linearized);
     }
 
     /**
