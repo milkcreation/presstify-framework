@@ -1,0 +1,346 @@
+@import "../../theme/scss/variables";
+
+// Personnalisation
+// -- Variables
+$form-gutter: 15 !default;
+$form-notice-border-width: 3 !default;
+$form-field-error-border-width: $form-notice-border-width !default;
+$form-field-radius: 5 !default;
+$form-field-radius-tl: $form-field-radius !default;
+$form-field-radius-tr: $form-field-radius !default;
+$form-field-radius-br: $form-field-radius !default;
+$form-field-radius-bl: $form-field-radius !default;
+$form-color-white: map-get($colors, white) !default;
+$form-color-black: map-get($colors, black) !default;
+$form-color-regular: map-get($colors, regular) !default;
+$form-color-primary: map-get($colors, primary) !default;
+$form-color-secondary: map-get($colors, secondary) !default;
+$form-color-dark: map-get($colors, dark) !default;
+$form-color-darker: map-get($colors, darker) !default;
+$form-color-light: map-get($colors, light) !default;
+$form-color-lighter: map-get($colors, lighter) !default;
+$form-color-field-bkg: $form-color-lighter !default;
+$form-color-field-border: $form-color-light !default;
+$form-color-error: map-get($colors, error) !default;
+$form-color-warning: map-get($colors, warning) !default;
+$form-color-info: map-get($colors, info) !default;
+$form-color-success: map-get($colors, success) !default;
+$form-color-required: $form-color-error !default;
+$form-color-radio: $form-color-regular !default;
+$form-color-checkbox: $form-color-regular !default;
+
+// -- Dimensions
+.Form-field--w50 {
+  float: left;
+  width: 50%;
+}
+
+.Form-field--w66 {
+  float: left;
+  width: 66.666666%;
+}
+
+.Form-field--w33 {
+  float: left;
+  width: 33.333333%;
+}
+
+@media (max-width: 767px) {
+  .Form-field--w50,
+  .Form-field--w66,
+  .Form-field--w33 {
+    float: none;
+    width: 100%;
+  }
+}
+
+// -- Champs
+.Form-fields {
+  margin: 0 -#{$form-gutter/2}px;
+
+  &::before,
+  &::after {
+    display: table;
+    content: " ";
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+.Form-fieldsGroup {
+  &::before,
+  &::after {
+    display: table;
+    content: " ";
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+.Form-content {
+  margin-bottom: 30px;
+}
+
+.Form-field {
+  padding: 0 #{$form-gutter/2}px;
+  margin-bottom: #{$form-gutter}px;
+}
+
+/** Apparence */
+.Form {
+  // -- Notices
+  .Notice {
+    color: $form-color-regular;
+    padding: 0.625em 1em;
+    margin-bottom: 2em;
+
+    &.Notice--error,
+    &.Notice--success,
+    &.Notice--info,
+    &.Notice--warning {
+      border-left-style: solid;
+      border-left-width: #{$form-notice-border-width}px;
+    }
+
+    &.Notice--error {
+      border-left-color: $form-color-error;
+    }
+
+    &.Notice--success {
+      border-left-color: $form-color-success;
+    }
+
+    &.Notice--info {
+      border-left-color: $form-color-info;
+    }
+
+    &.Notice--warning {
+      border-left-color: $form-color-warning;
+    }
+
+    a {
+      text-decoration: underline;
+
+      &,
+      &:active,
+      &:focus,
+      &:hover,
+      &:visited {
+        color: $form-color-primary;
+      }
+    }
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    i, em {
+      font-style: italic;
+    }
+
+    .Notice-items {
+      list-style-type: none;
+      margin-bottom: 0;
+      padding: 0;
+    }
+  }
+
+  // -- Type de Champs
+  .FieldLabel {
+    font-size: 0.9em;
+    margin-bottom: 0;
+  }
+
+  .FieldRequired {
+    color: $form-color-required;
+  }
+
+  .FieldDatepicker,
+  .FieldEmail,
+  .FieldPassword,
+  .FieldSelect,
+  .FieldSelectJs,
+  .FieldTel,
+  .FieldText,
+  .FieldTextarea {
+    width: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: $form-color-field-border;
+    border-radius: #{$form-field-radius-tl}px #{$form-field-radius-tr}px #{$form-field-radius-br}px #{$form-field-radius-bl}px;
+    background-color: $form-color-field-bkg;
+    padding: 0.5em 1em;
+
+    &[aria-error="true"] {
+      border-radius: 0 #{$form-field-radius-tr}px #{$form-field-radius-br}px 0;
+      border-left-style: solid;
+      border-left-width: #{$form-field-error-border-width}px;
+      border-left-color: $form-color-error;
+    }
+  }
+
+  .FieldSelectJs[aria-arrow="true"] {
+    .FieldSelectJs-trigger::before {
+      border-left:none;
+      background-color: transparent;
+    }
+  }
+
+  .FieldTextarea {
+    height: 8em;
+    resize: none;
+  }
+
+  .FieldFile {
+    width: 100%;
+    padding: 0;
+    background-color: transparent;
+
+    &::-webkit-file-upload-button {
+      border-style: solid;
+      border-width: 1px;
+      border-color: $form-color-primary;
+      padding: 0.5em 2em;
+      background-color: $form-color-white;
+      color: $form-color-primary;
+      margin-right: 5px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $form-color-primary;
+        color: $form-color-white;
+      }
+    }
+
+    &[aria-error="true"] {
+      padding-left: 1em;
+      border-left-style: solid;
+      border-left-width: #{$form-field-error-border-width}px;
+      border-left-color: $form-color-error;
+    }
+  }
+
+  .FieldCheckbox,
+  .FieldRadio,
+  .FieldRadioCollection-itemInput,
+  .FieldCheckboxCollection-itemInput {
+    display: none;
+    cursor: pointer;
+
+    + .FieldLabel,
+    + .FieldRadioCollection-itemLabel,
+    + .FieldCheckboxCollection-itemLabel {
+      position: relative;
+      display: inline-block;
+      width: auto;
+      cursor: pointer;
+      padding: 3px 0 0 22px;
+      line-height: 1.2;
+
+      &::before {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        display: block;
+        content: " ";
+        vertical-align: middle;
+        margin-top: -7px;
+        height: 14px;
+        width: 14px;
+        margin-right: 5px;
+        border: 1px solid $form-color-regular;
+        background-color: $form-color-white;
+      }
+
+      &::after {
+        position: absolute;
+        top: 50%;
+        display: block;
+        content: " ";
+        left: 3px;
+        margin-top: -4px;
+        height: 8px;
+        width: 8px;
+        transform: scale(0);
+        transition: transform 200ms ease-in-out;
+      }
+    }
+
+    &[aria-error="true"] + .FieldLabel::before {
+      border: 1px solid $form-color-error;
+    }
+
+    &:checked {
+      + .FieldLabel::after,
+      + .FieldRadioCollection-itemLabel::after,
+      + .FieldCheckboxCollection-itemLabel::after {
+        transform: scale(1);
+        transition: transform 200ms ease-in-out;
+      }
+    }
+
+    &:disabled {
+      + .FieldLabel,
+      + .FieldRadioCollection-itemLabel,
+      + .FieldCheckboxCollection-itemLabel {
+        opacity: 0.5;
+
+        &::before {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  .FieldCheckbox,
+  .FieldCheckboxCollection-itemInput {
+    + .FieldLabel,
+    + .FieldCheckboxCollection-itemLabel {
+      &::after {
+        background-color: $form-color-checkbox;
+      }
+    }
+  }
+
+  .FieldRadio,
+  .FieldRadioCollection-itemInput {
+    + .FieldLabel,
+    + .FieldRadioCollection-itemLabel {
+      &::after {
+        background-color: $form-color-radio;
+      }
+    }
+  }
+
+  .FieldRadioCollection[aria-error="true"],
+  .FieldCheckboxCollection[aria-error="true"] {
+    .FieldRadioCollection-itemInput + .FieldRadioCollection-itemLabel::before,
+    .FieldCheckboxCollection-itemInput + .FieldCheckboxCollection-itemLabel::before {
+      border: 1px solid $form-color-error;
+    }
+  }
+
+  .FieldRadio,
+  .FieldRadioCollection-itemInput {
+    + .FieldLabel,
+    + .FieldRadioCollection-itemLabel {
+      &::before {
+        border-radius: 50%;
+      }
+
+      &::after {
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .FieldRecaptcha {
+    &[aria-error=true] {
+      border-left: solid 3px $form-color-error;
+    }
+  }
+}
