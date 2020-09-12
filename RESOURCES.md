@@ -1,6 +1,6 @@
 # Ressources complémentaires
 
-## Paquets NPM
+## Paquets NPM
 "country-flags-svg": "^0.2.12",
 "dentist": "^1.0.3",
 "flag-icon-css": "^3.2.0",
@@ -16,19 +16,20 @@
 "threesixty-slider": "^2.0.6",
 "trianglify": "^1.2.0"
 
-# jQueryUi - Ecriture de plugin
+## jQueryUi - Ecriture de plugin
 https://learn.jquery.com/plugins/stateful-plugins-with-widget-factory/
 https://api.jqueryui.com/jquery.widget
 https://blog.rodneyrehm.de/archives/11-jQuery-Hooks.html
 
-# jQuery - Héritage de plugin
+## jQuery - Héritage de plugin
 https://learn.jquery.com/jquery-ui/widget-factory/extending-widgets/
 http://github.bililite.com/extending-widgets.html
 
-# Javascript - Documentation JSDoc
+## Javascript - Documentation JSDoc
 https://devdocs.io/jsdoc/
+
 ## Typage
 https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76
 
-# Javascript - requête Xhr synchrone
+## Javascript - requête Xhr synchrone
 https://www.freecodecamp.org/news/javascript-from-callbacks-to-async-await-1cc090ddad99/

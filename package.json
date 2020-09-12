@@ -18,6 +18,7 @@
     "jquery": "^3.3.1",
     "jquery.easing": "^1.4.1",
     "jquery-bridget": "^2.0.1",
+    "jquery-blockui": "^2.7.0",
     "jquery-ui": "^1.12.1",
     "mobile-detect": "^1.4.3",
     "moment": "^2.22.2",

@@ -59,12 +59,12 @@ interface PlatesFactory
     /**
      * Linéarisation d'une liste d'attributs HTML.
      *
-     * @param array $attrs Liste des attributs HTML.
+     * @param array|null $attrs Liste des attributs HTML.
      * @param bool $linearized Activation de la linéarisation.
      *
      * @return string|array
      */
-    public function htmlAttrs(array $attrs, bool $linearized = true);
+    public function htmlAttrs(?array $attrs = null, bool $linearized = true);
 
     /**
      * Récupération et suppression d'un attribut de configuration.

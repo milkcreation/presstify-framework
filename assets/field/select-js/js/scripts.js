@@ -85,7 +85,7 @@ jQuery(function ($) {
                 ajaxQuery: false,
                 hasTrigger: true,
                 isComplete: false,
-                isDisabled: true,
+                isDisabled: false,
                 isDuplicable: false,
                 isMultiple: false,
                 isOpen: false,
@@ -670,7 +670,7 @@ jQuery(function ($) {
         },
 
         // Modification d'un élément dans la liste de selection.
-        _doChange: function (index) {
+        _doChange: function (index, highlight = true) {
             let item = this._getItem(index);
 
             if (this.flags.isMultiple) {
@@ -700,7 +700,10 @@ jQuery(function ($) {
                 this._doClose();
             }
             this._doPickerPosition();
-            this._doHighlight(item.value);
+
+            if (highlight) {
+                this._doHighlight(item.value);
+            }
 
             this.handler.val(this.selected);
             this.el.data('value', this.selected);
@@ -1077,14 +1080,15 @@ jQuery(function ($) {
          * Ajout d'une valeur à la liste de selection.
          *
          * @param value
+         * @param hightlight
          *
          * @uses $(selector).tifySelectJs('change', {value});
          */
-        change: function (value) {
+        change: function (value, hightlight = true) {
             let index = this._getItemIndex(value);
 
             if (index !== undefined) {
-                this._doChange(index);
+                this._doChange(index, !!hightlight);
             }
         },
 
