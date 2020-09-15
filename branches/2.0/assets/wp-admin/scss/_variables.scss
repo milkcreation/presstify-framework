@@ -1,36 +1,36 @@
 @import "~wp-admin/css/colors/variables";
 
-$wp: (
-    text: $text-color,
-    base: $base-color,
-    icon: $icon-color,
-    highlight: $highlight-color,
-    notification: $notification-color,
-    body: $body-background,
-    regular:$base-color,
-    primary: $highlight-color,
-    secondary: $notification-color,
-    light:$body-background
+$wp-colors: (
+        "text": $text-color,
+        "base": $base-color,
+        "icon": $icon-color,
+        "highlight": $highlight-color,
+        "notification": $notification-color,
+        "body": $body-background,
+        "regular":$base-color,
+        "primary": $highlight-color,
+        "secondary": $notification-color,
+        "light": $body-background
 );
 
 $colors: (
-    white: #FFFFFF,
-    black: #000000,
-    light: map-get($wp, body),
-    lighter:#F4F4F4,
-    dark:#4B4B4B,
-    darker:#2B2B2B,
-    regular:map-get($wp, base),
-    regular-alt:#5B5B5B,
-    primary:map-get($wp, highlight),
-    primary-alt:#5B5B5B,
-    secondary:map-get($wp, notification),
-    secondary-alt:#E9E9E9,
-    wp:$wp,
-    error:#e74c3c,
-    success:#1abc9c,
-    warning:#f1c40f,
-    infos:#3498db,
+        "white": #FFFFFF,
+        "black": #000000,
+        "light": map-get($wp-colors, "body"),
+        "lighter":#F4F4F4,
+        "dark":#4B4B4B,
+        "darker":#2B2B2B,
+        "regular":map-get($wp-colors, "base"),
+        "regular-alt":#5B5B5B,
+        "primary":map-get($wp-colors, "highlight"),
+        "primary-alt":#5B5B5B,
+        "secondary":map-get($wp-colors, "notification"),
+        "secondary-alt":#E9E9E9,
+        "wp": $wp-colors,
+        "error":#e74c3c,
+        "success":#1abc9c,
+        "warning":#f1c40f,
+        "infos":#3498db,
 ) !default;
 
 @function color($color, $type:'') {

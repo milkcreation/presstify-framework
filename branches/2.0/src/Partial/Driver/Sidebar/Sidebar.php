@@ -66,8 +66,8 @@ class Sidebar extends PartialDriver implements SidebarContract
             'outside_close' => true,
             'animate'       => true,
             'min-width'     => '991px',
-            'items'         => [],
             'header'        => true,
+            'body'          => [],
             'footer'        => true,
             'toggle'        => true,
             'theme'         => 'light',
@@ -99,16 +99,22 @@ class Sidebar extends PartialDriver implements SidebarContract
             ->set('attrs.aria-position', $this->get('pos'))
             ->set('attrs.aria-theme', $this->get('theme'));
 
-        $items = [];
-        foreach ($this->get('items', []) as $name => $item) {
-            if ($item instanceof SidebarItem) {
-                $items[] = $item;
-            } elseif (is_array($item)) {
-                $items[] = new SidebarItem((string)$name, $item);
-            } elseif (is_string($item)) {
-                $item = ['content' => $item];
-                $items[] = new SidebarItem((string)$name, $item);
+        $body = $this->get('body', []);
+        if (is_array($body)) {
+            $items = [];
+
+            foreach ($this->get('items', []) as $name => $item) {
+                if ($item instanceof SidebarItem) {
+                    $items[] = $item;
+                } elseif (is_array($item)) {
+                    $items[] = new SidebarItem((string)$name, $item);
+                } elseif (is_string($item) || ($item instanceof Closure)) {
+                    $item = ['content' => $item];
+                    $items[] = new SidebarItem((string)$name, $item);
+                }
             }
+        } elseif (is_string($body) || ($body instanceof Closure)) {
+            $items = [new SidebarItem('default', ['content' => $body])];
         }
 
         if ($header = $this->get('header')) {
