@@ -23,7 +23,7 @@ a, button, input[type="button"], input[type="submit"] {
 }
 
 .ThemeButton--primary {
-  background-color: map-get($colors, white);
+  background-color: map-get($colors, "white");
   border-radius: 2px;
   border: solid 1px #CCC;
   color: #555;

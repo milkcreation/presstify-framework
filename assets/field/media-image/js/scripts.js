@@ -1,4 +1,3 @@
-/* global wp */
 'use strict';
 
 import jQuery from 'jquery';

@@ -2,14 +2,14 @@
 
 // Personnalisation
 .FieldDatepicker-clearer {
-  color:map-get($wp, highlight);
+  color:map-get($wp-colors, "highlight");
 }
 
 .ui-datepicker {
   z-index: 99999 !important;
 
   &.ui-widget.ui-widget-content {
-    border: solid 1px map-get($wp, light);
+    border: solid 1px map-get($wp-colors, "light");
     border-radius: 0;
   }
 
@@ -24,7 +24,7 @@
 
     .ui-datepicker-next,
     .ui-datepicker-prev {
-      border: solid map-get($wp, primary);
+      border: solid map-get($wp-colors, "primary");
       border-width: 0 3px 3px 0;
       display: inline-block;
       padding: 3px;
@@ -53,8 +53,8 @@
     height: 2em;
 
     .ui-state-hover {
-      background-color: map-get($wp, light);
-      color: map-get($wp, base);
+      background-color: map-get($wp-colors, "light");
+      color: map-get($wp-colors, "base");
     }
 
     span, a {
@@ -70,24 +70,25 @@
   .ui-state-default {
     border: none;
     background-color: transparent;
-    color:map-get($wp, base);
+    color:map-get($wp-colors, "base");
   }
 
   .ui-state-active,
   .ui-state-active.ui-state-hover {
-    background-color: map-get($wp, primary);
-    color:map-get($colors, white);
+    background-color: map-get($wp-colors, "primary");
+    color:map-get($colors, "white");
   }
 
   .ui-state-highlight {
-    color:map-get($wp, primary);
+    color:map-get($wp-colors, "primary");
     font-weight: bold;
 
     &.ui-state-hover {
-      color:map-get($wp, primary);
+      color:map-get($wp-colors, "primary");
     }
+
     &.ui-state-active {
-      color:map-get($colors, white);
+      color:map-get($colors, "white");
     }
   }
 }

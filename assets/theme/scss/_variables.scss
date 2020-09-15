@@ -60,36 +60,36 @@ $blue: (
     900: #2A4365,
 ) !default;
 
-$wp : (
-    text: $text-color,
-    base: $base-color,
-    icon: $icon-color,
-    highlight: $highlight-color,
-    notification:$notification-color,
+$wp-colors : (
+    "text": $text-color,
+    "base": $base-color,
+    "icon": $icon-color,
+    "highlight": $highlight-color,
+    "notification": $notification-color,
 ) !default;
 
 $colors: (
-    white: #FFFFFF,
-    black: #000000,
-    light: #C4C4C4,
-    lighter:#F4F4F4,
-    dark:#4B4B4B,
-    darker:#2B2B2B,
-    regular:#3B3B3B,
-    primary:#4B4B4B,
-    primary-alt:#5B5B5B,
-    secondary:#E4E4E4,
-    secondary-alt:#E9E9E9,
-    blue: $blue,
-    gray: $gray,
-    green: $green,
-    red: $red,
-    yellow: $yellow,
-    wp:$wp,
-    error:#e74c3c,
-    success:#1abc9c,
-    warning:#f1c40f,
-    infos:#3498db,
+    "white": #FFFFFF,
+    "black": #000000,
+    "light": #C4C4C4,
+    "lighter":#F4F4F4,
+    "dark":#4B4B4B,
+    "darker":#2B2B2B,
+    "regular":#3B3B3B,
+    "primary":#4B4B4B,
+    "primary-alt":#5B5B5B,
+    "secondary":#E4E4E4,
+    "secondary-alt":#E9E9E9,
+    "blue": $blue,
+    "gray": $gray,
+    "green": $green,
+    "red": $red,
+    "yellow": $yellow,
+    "wp": $wp-colors,
+    "error":#e74c3c,
+    "success":#1abc9c,
+    "warning":#f1c40f,
+    "infos":#3498db,
 ) !default;
 
 @function color($color, $type:'') {
@@ -124,12 +124,12 @@ $grid-breakpoint-large: 60em !default; // 960px
 
 /** CHAMPS DE FORMULAIRE */
 // COMMUN
-$field-color-light: map-get($colors, light) !default;
-$field-color-lighter: map-get($colors, lighter) !default;
-$field-color-dark: map-get($colors, dark) !default;
-$field-color-darker: map-get($colors, darker) !default;
-$field-color-regular: map-get($colors, regular) !default;
-$field-color-bkg: map-get($colors, white) !default;
+$field-color-light: map-get($colors, "light") !default;
+$field-color-lighter: map-get($colors, "lighter") !default;
+$field-color-dark: map-get($colors, "dark") !default;
+$field-color-darker: map-get($colors, "darker") !default;
+$field-color-regular: map-get($colors, "regular") !default;
+$field-color-bkg: map-get($colors, "white") !default;
 
 // SELECT-JS
 $field-select-js-color-light: $field-color-light !default;
