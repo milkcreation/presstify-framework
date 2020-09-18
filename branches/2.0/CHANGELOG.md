@@ -1,5 +1,12 @@
 # Release Notes
 
+## [v2.0.341 (2020-09-18)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.341...v2.0.341)
+
+### Changed
+
+- `src/Console/Command.php` : Portage des méthodes de journalisation et d'affichage des message de notification de `Wordpress/Database/Command/WpBuilderCommand.php`
+
+
 ## [v2.0.340 (2020-09-15)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.340...v2.0.340)
 
 ### Added

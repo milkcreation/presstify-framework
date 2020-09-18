@@ -5,9 +5,8 @@ namespace tiFy\Wordpress\Database\Command;
 use Exception;
 use Illuminate\Database\Eloquent\{Builder, Collection as BaseCollection, Model as BaseModel};
 use Symfony\Component\Console\{Input\InputInterface, Input\InputOption, Output\OutputInterface};
-use tiFy\Contracts\Log\Logger as LoggerContract;
 use tiFy\Console\Command as BaseCommand;
-use tiFy\Support\{DateTime, MessagesBag, ParamsBag, Proxy\Log};
+use tiFy\Support\{DateTime, ParamsBag};
 
 class WpBuilderCommand extends BaseCommand
 {
@@ -46,18 +45,6 @@ class WpBuilderCommand extends BaseCommand
      * @var ParamsBag
      */
     protected $itemDatas;
-
-    /**
-     * Initialisation de la journalisation.
-     * @var bool
-     */
-    protected $logger = true;
-
-    /**
-     * Données d'enregistrement de l'élément.
-     * @var MessagesBag
-     */
-    protected $message;
 
     /**
      * Nom de la classe du modèle associé.
@@ -349,7 +336,7 @@ class WpBuilderCommand extends BaseCommand
 
             $this->handleItemAfter($item);
 
-            $this->handleMessages($output);
+            $this->handleNotices($output);
         }
     }
 
@@ -389,29 +376,6 @@ class WpBuilderCommand extends BaseCommand
     }
 
     /**
-     * Traitement des messages de notification.
-     *
-     * @param OutputInterface $output
-     * @param bool $forget Suppression des messages
-     *
-     * @return void
-     */
-    public function handleMessages(OutputInterface $output, bool $forget = true): void
-    {
-        foreach ($this->message()->all() as $level => $messages) {
-            foreach($messages as $message) {
-                $this->log($level, $message);
-            }
-
-            $output->writeln($messages);
-        }
-
-        if ($forget = true) {
-            $this->message()->flush();
-        }
-    }
-
-    /**
      * Définition de paramètres(s)|Récupération de paramètres|Récupération de l'instance des paramètres de l'élément
      * courant.
      *
@@ -432,58 +396,6 @@ class WpBuilderCommand extends BaseCommand
             return $this->itemDatas->set($key);
         } else {
             return $this->itemDatas;
-        }
-    }
-
-    /**
-     * Jornalisation.
-     *
-     * @param $level
-     * @param string $message
-     * @param array $context
-     *
-     * @return string|LoggerContract|null
-     */
-    public function log($level = null, string $message = '', array $context = [])
-    {
-        if ($this->logger === false) {
-            return null;
-        } elseif (!$this->logger instanceof LoggerContract) {
-            $this->logger = Log::registerChannel(
-                '[command]' . preg_replace('/\:/', '@', $this->getName()),
-                is_array($this->logger) ? $this->logger : []
-            );
-        }
-
-        if (is_null($level)) {
-            return $this->logger ?: null;
-        } else {
-            $this->logger->log($level, $message, $context);
-        }
-
-        return null;
-    }
-
-    /**
-     * Ajout d'un message ou récupération de l'instance du gestionnaire de message.
-     *
-     * @param string|int|null $level
-     * @param string $message
-     * @param array|null $data
-     * @param string $code
-     *
-     * @return MessagesBag|string|null
-     */
-    public function message($level = null, string $message = null, ?array $data = [], ?string $code = null)
-    {
-        if (is_null($this->message)) {
-            $this->message = new MessagesBag();
-        }
-
-        if (is_null($level)) {
-            return $this->message;
-        } else {
-            return $this->message->add($level, $message, $data, $code);
         }
     }
 
