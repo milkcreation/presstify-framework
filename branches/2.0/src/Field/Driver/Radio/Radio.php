@@ -59,7 +59,7 @@ class Radio extends FieldDriver implements RadioContract
         $this->set('attrs.type', 'radio');
 
         if ($this->isChecked()) {
-            $this->set('attrs.checked', 'checked');
+            $this->push('attrs', 'checked');
         }
 
         return $this;

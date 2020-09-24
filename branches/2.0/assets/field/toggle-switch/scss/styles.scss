@@ -59,6 +59,7 @@
 }
 
 .FieldToggleSwitch-radio--on:checked + .FieldToggleSwitch-label--on ~ .FieldToggleSwitch-handler {
+    transform: translateX(0);
     background: #0074A2;
 }
 
@@ -67,8 +68,7 @@
     background: #AAA;
 }
 
-.FieldToggleSwitch-radio--on:checked + .FieldToggleSwitch-label--on,
-.FieldToggleSwitch-radio--off:checked + .FieldToggleSwitch-label--off {
+.FieldToggleSwitch-radio:checked + .FieldToggleSwitch-label {
     font-weight: bold;
     color: #FFF;
     cursor: default;

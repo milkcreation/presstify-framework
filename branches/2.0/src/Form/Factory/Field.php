@@ -460,27 +460,30 @@ class Field extends ParamsBag implements FactoryField
      */
     public function renderPrepare()
     {
-        // Attributs HTML du champ.
-        if (!$this->has('attrs.id')) :
+        if (!$this->has('attrs.id')) {
             $this->set('attrs.id', "Form{$this->form()->index()}-fieldInput--{$this->getSlug()}");
-        endif;
-        if (!$this->get('attrs.id')) :
+        }
+
+        if (!$this->get('attrs.id')) {
             $this->pull('attrs.id');
-        endif;
+        }
 
         $default_class = "%s Form-fieldInput Form-fieldInput--{$this->getType()} Form-fieldInput--{$this->getSlug()}";
-        if (!$this->has('attrs.class')) :
-            $this->set('attrs.class', $default_class);
-        else :
-            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
-        endif;
-        if (!$this->get('attrs.class')) :
-            $this->pull('attrs.class');
-        endif;
 
-        if (!$this->has('attrs.tabindex')) :
+        if (!$this->has('attrs.class')) {
+            $this->set('attrs.class', $default_class);
+        } else {
+            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        }
+
+        if (!$this->get('attrs.class')) {
+            $this->pull('attrs.class');
+        }
+
+        if (!$this->has('attrs.tabindex')) {
             $this->set('attrs.tabindex', $this->getPosition());
-        endif;
+        }
+
         if ($this->get('attrs.tabindex') === false) :
             $this->pull('attrs.tabindex');
         endif;
@@ -528,45 +531,52 @@ class Field extends ParamsBag implements FactoryField
             endforeach;
         endif;
 
-        // Attributs HTML du libellé.
-        if ($label = $this->get('label')) :
-            $label = (is_array($label)) ? $label : [];
-            $this->set('label', array_merge([
-                'tag'       => 'label',
-                'attrs'     => [],
-                'wrapper'   => false,
-                'position'  => 'before'
-            ], $label));
+        if ($label = $this->get('label')) {
+            if (is_string($label)) {
+                $label = ['content' => $label];
+            } elseif (is_bool($label)) {
+                $label = [];
+            }
 
-            if (!$this->has('label.attrs.id')) :
+            $this->set('label', array_merge([
+                'tag'      => 'label',
+                'attrs'    => [],
+                'wrapper'  => false,
+                'position' => 'before'
+            ], is_array($label) ? $label : []));
+
+            if (!$this->has('label.attrs.id')) {
                 $this->set('label.attrs.id', "Form{$this->form()->index()}-fieldLabel--{$this->getSlug()}");
-            endif;
-            if (!$this->get('label.attrs.id')) :
+            }
+
+            if (!$this->get('label.attrs.id')) {
                 $this->pull('label.attrs.id');
-            endif;
+            }
 
             $default_class = "%s Form-fieldLabel Form-fieldLabel--{$this->getType()} Form-fieldLabel--{$this->getSlug()}";
-            if (!$this->has('label.attrs.class')) :
+            if (!$this->has('label.attrs.class')) {
                 $this->set('label.attrs.class', $default_class);
-            else :
+            } else {
                 $this->set('label.attrs.class', sprintf($this->get('label.attrs.class', ''), $default_class));
-            endif;
-            if (!$this->get('label.attrs.class')) :
+            }
+
+            if (!$this->get('label.attrs.class')) {
                 $this->pull('label.attrs.class');
-            endif;
+            }
 
-            if ($for = $this->get('attrs.id')) :
+            if ($for = $this->get('attrs.id')) {
                 $this->set('label.attrs.for', $for);
-            endif;
+            }
 
-            if (!$this->has('label.content')) :
+            if (!$this->has('label.content')) {
                 $this->set('label.content', $this->getTitle());
-            endif;
-            if (!$this->get('label.content')) :
-                $this->pull('label.content');
-            endif;
+            }
 
-            if ($this->get('label.wrapper')) :
+            if (!$this->get('label.content')) {
+                $this->pull('label.content');
+            }
+
+            if ($this->get('label.wrapper')) {
                 $this->set('label.wrapper', [
                     'tag'   => 'div',
                     'attrs' => [
@@ -575,8 +585,8 @@ class Field extends ParamsBag implements FactoryField
                             " Form-fieldLabelWrapper--{$this->getSlug()}"
                     ]
                 ]);
-            endif;
-        endif;
+            }
+        }
 
         if ($this->get('required.tagged')) :
             if (!$this->has('required.tagged.attrs.id')) :

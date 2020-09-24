@@ -2,6 +2,8 @@
 
 namespace tiFy\Contracts\PostType;
 
+use tiFy\Support\Arr;
+
 interface PostTypePostMeta
 {
     /**
@@ -68,7 +70,7 @@ interface PostTypePostMeta
         string $type,
         string $key,
         bool $single = false,
-        $callback = 'wp_unslash'
+        $callback = [Arr::class, 'stripslashes']
     ): PostTypePostMeta;
 
     /**
@@ -80,7 +82,7 @@ interface PostTypePostMeta
      *
      * @return static
      */
-    public function registerSingle(string $type, string $key, $callback = 'wp_unslash'): PostTypePostMeta;
+    public function registerSingle(string $type, string $key, $callback = [Arr::class, 'stripslashes']): PostTypePostMeta;
 
     /**
      * Déclaration d'une métadonnée à occurrence multiple.
@@ -91,7 +93,7 @@ interface PostTypePostMeta
      *
      * @return static
      */
-    public function registerMulti(string $type, string $key, $callback = 'wp_unslash'): PostTypePostMeta;
+    public function registerMulti(string $type, string $key, $callback = [Arr::class, 'stripslashes']): PostTypePostMeta;
 
     /**
      * Enregistrement de metadonnées.

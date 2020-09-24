@@ -123,12 +123,12 @@ class Metabox
 
                 if ($metaboxScreen = $this->manager->getScreen("{$option_page}@options")) {
                     $boxes = $metaboxScreen->getMetaboxes();
-                    add_filter('whitelist_options', function ($whitelist_options) use ($option_page) {
-                        if (!isset($whitelist_options[$option_page])) {
-                            $whitelist_options[$option_page] = [];
+                    add_filter('allowed_options', function ($allowed_options) use ($option_page) {
+                        if (!isset($allowed_options[$option_page])) {
+                            $allowed_options[$option_page] = [];
                         }
 
-                        return $whitelist_options;
+                        return $allowed_options;
                     });
                 }
                 array_walk($boxes, function (MetaboxDriver $box) use ($option_page) {

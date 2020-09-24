@@ -4,7 +4,7 @@ namespace tiFy\Field\Driver\SelectJs;
 
 use tiFy\Contracts\Field\{FieldDriver as FieldDriverContract, SelectJs as SelectJsContract};
 use tiFy\Field\FieldDriver;
-use tiFy\Support\ParamsBag;
+use tiFy\Support\{Arr, ParamsBag};
 
 class SelectJs extends FieldDriver implements SelectJsContract
 {
@@ -223,7 +223,7 @@ class SelectJs extends FieldDriver implements SelectJsContract
         $this->set('viewer', request()->input('_viewer', []));
 
         /** @var SelectJsChoices $choices */
-        $choices_cb = wp_unslash(request()->post('_choices_cb'));
+        $choices_cb = Arr::stripslashes(request()->post('_choices_cb'));
         $choices = new $choices_cb(ParamsBag::createFromAttrs(request()->post('args', [])));
         $choices->setField($this);
 

@@ -91,7 +91,7 @@ class UserMeta implements UserMetaContract
     /**
      * @inheritDoc
      */
-    public function register(string $key, bool $single = false, $callback = 'wp_unslash'): UserMetaContract
+    public function register(string $key, bool $single = false, $callback = [Arr::class, 'stripslashes']): UserMetaContract
     {
         $this->metaKeys[] = $key;
 
@@ -111,7 +111,7 @@ class UserMeta implements UserMetaContract
     /**
      * @inheritDoc
      */
-    public function registerSingle(string $key, $callback = 'wp_unslash'): UserMetaContract
+    public function registerSingle(string $key, $callback = [Arr::class, 'stripslashes']): UserMetaContract
     {
         return $this->register($key, true, $callback);
     }
@@ -119,7 +119,7 @@ class UserMeta implements UserMetaContract
     /**
      * @inheritDoc
      */
-    public function registerMulti(string $key, $callback = 'wp_unslash'): UserMetaContract
+    public function registerMulti(string $key, $callback = [Arr::class, 'stripslashes']): UserMetaContract
     {
         return $this->register($key, false, $callback);
     }

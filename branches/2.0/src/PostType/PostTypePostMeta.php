@@ -3,7 +3,7 @@
 namespace tiFy\PostType;
 
 use tiFy\Contracts\PostType\PostTypePostMeta as PostTypePostMetaContract;
-use tiFy\Support\{Str, Proxy\Request};
+use tiFy\Support\{Arr, Str, Proxy\Request};
 
 class PostTypePostMeta implements PostTypePostMetaContract
 {
@@ -97,7 +97,7 @@ class PostTypePostMeta implements PostTypePostMetaContract
         string $type,
         string $key,
         bool $single = false,
-        $callback = 'wp_unslash'
+        $callback = [Arr::class, 'stripslashes']
     ): PostTypePostMetaContract {
         if (empty($this->metaKeys[$type])) {
             $this->metaKeys[$type] = [];
@@ -129,7 +129,7 @@ class PostTypePostMeta implements PostTypePostMetaContract
     /**
      * @inheritDoc
      */
-    public function registerSingle(string $type, string $key, $callback = 'wp_unslash'): PostTypePostMetaContract
+    public function registerSingle(string $type, string $key, $callback = [Arr::class, 'stripslashes']): PostTypePostMetaContract
     {
         return $this->register($type, $key, true, $callback);
     }
@@ -137,7 +137,7 @@ class PostTypePostMeta implements PostTypePostMetaContract
     /**
      * @inheritDoc
      */
-    public function registerMulti(string $type, string $key, $callback = 'wp_unslash'): PostTypePostMetaContract
+    public function registerMulti(string $type, string $key, $callback = [Arr::class, 'stripslashes']): PostTypePostMetaContract
     {
         return $this->register($type, $key, false, $callback);
     }

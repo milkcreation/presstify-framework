@@ -1,10 +1,10 @@
 <?php
 /**
- * Encapsulation des champs de formulaire.
+ * Encapsulation du formulaire.
  * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Contracts\Form\FactoryView $this
  * @var tiFy\Contracts\Form\FactoryField $field
  */
-echo partial('tag', array_merge($field->get('wrapper', []), [
-    'content' => $this->section('content')
+echo partial('tag', array_merge($this->form()->get('wrapper'), [
+    'content' => $this->section('content'),
 ]));

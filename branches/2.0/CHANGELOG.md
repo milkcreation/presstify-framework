@@ -1,5 +1,53 @@
 # Release Notes
 
+## [v2.0.342 (2020-09-23)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.342...v2.0.342)
+
+### Changed
+
+- `assets/field/select-js/scss/styles.scss`: Adaptation des styles
+- `assets/field/toggle-switch/scss/styles.scss` : Adaptation des styles
+- `src/Field/Driver/Checkbox/Checkbox.php` : attributs checked="checked" >> checked
+- `src/Field/Driver/Radio/Radio.php`: attributs checked="checked" >> checked
+
+### Added
+
+- `assets/field/select/js/scripts.js` : Gestion des listes de selection (en attente de résolution)
+- `assets/field/select/scss/styles.scss` : Modification des styles d'une liste de selection
+- `assets/form/scss/_theme.scss` : Gestion des liste de selection 
+- `assets/theme/scss/_variables.scss` : Variables liste de selection
+- `src/Field/Driver/Select/Select`: Gestion d'encapsulation 'wrapper'
+- `src/Field/Resources/views/select/index.php`: wrapper en layout
+- `src/Field/Resources/views/select/wrapper.php` : template d'encapsulation
+- `src/Form/Resources/views/addon/mailer/mail/confirmation/html/body.php`: Template dédiée au mail de confirmation
+- `src/Form/Resources/views/addon/mailer/mail/notification/html/body.php`: Template dédiée au mail de notification
+- `src/Support/Arr.php`: methode stripslashes
+
+### Fixed
+
+- `assets/field/toggle-switch/js/scripts.js` : Zone commentée
+- `src/Contracts/PostType/PostTypePostMeta.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Contracts/Taxonomy/TaxonomyTermMeta.php` : Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Contracts/User/UserMeta.php` : Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Field/Driver/SelectJs/SelectJs.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Form/Addon/Record/Record.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/PostType/PostTypePostMeta.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Taxonomy/TaxonomyTermMeta.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/User/Metadata/Metadata.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/User/Metadata/Option.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/User/UserMeta.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Wordpress/Form/Form.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Wordpress/Field/Driver/Findposts/Findposts.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Wordpress/Session/Session.php`: Remplacement methode wp_unslash >> Arr::stripslashes
+- `src/Field/Resources/views/toggle-switch/index.php`: Force le typage string des valeurs
+- `src/Form/Addon/Mailer/Mailer.php` : Possibilité de personnaliser le mail via viewer 
+- `src/Form/Factory/Field.php`: Réécriture de la méthode renderPrepare if: endif; >> if {} 
+- `src/Form/Factory/Field.php`: Correctif passage de label personnalisé
+- `src/Form/Factory/Group.php`: Correctif position pour tabindex
+- `src/Form/FormFactory.php` : Gestion wrapper
+- `src/Form/FormFactory.php` : Anchor basée sur wrapper
+- `src/Form/Resources/views/index.php`: Prise en compte de l'encapsulation du formulaire
+- `src/Wordpress/Metabox/Metabox.php`: dépréciation WP 'whitelist_options' >> 'whitelist_options'
+
 ## [v2.0.341 (2020-09-18)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.341...v2.0.341)
 
 ### Changed

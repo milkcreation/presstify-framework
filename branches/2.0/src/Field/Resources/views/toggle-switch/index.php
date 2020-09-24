@@ -21,7 +21,7 @@
                 ],
                 'name'    => $this->getName(),
                 'value'   => $this->getValue(),
-                'checked' => $this->get('value_on'),
+                'checked' => (string)$this->get('value_on'),
             ]); ?>
 
             <?php echo field('radio', [
@@ -39,7 +39,7 @@
                 ],
                 'name'    => $this->getName(),
                 'value'   => $this->getValue(),
-                'checked' => $this->get('value_off'),
+                'checked' => (string)$this->get('value_off'),
             ]); ?>
 
             <span class="FieldToggleSwitch-handler"></span>
