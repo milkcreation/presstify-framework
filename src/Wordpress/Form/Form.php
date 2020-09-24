@@ -4,6 +4,7 @@ namespace tiFy\Wordpress\Form;
 
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
+use tiFy\Support\Arr;
 use tiFy\Wordpress\Contracts\Form as FormContract;
 use tiFy\Wordpress\Form\Addon\Mailer\Mailer;
 
@@ -34,7 +35,7 @@ class Form implements FormContract
             foreach ($this->manager->all() as $form) {
                 /* @var FormFactory $form */
                 $form->events()->listen('field.get.value', function(&$value) {
-                    $value = wp_unslash($value);
+                    $value = Arr::stripslashes($value);
                 });
 
                 if ($form->isAuto()) {

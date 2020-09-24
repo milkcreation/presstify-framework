@@ -1,6 +1,6 @@
 <?php
 /**
- * Encapsuleur de l'etiquette de champ de formulaire.
+ * Encapsulation de l'intitulé de champ de formulaire.
  * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Contracts\Form\FactoryView $this
  * @var tiFy\Contracts\Form\FactoryField $field

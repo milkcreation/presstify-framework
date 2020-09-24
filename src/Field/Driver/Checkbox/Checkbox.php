@@ -59,7 +59,7 @@ class Checkbox extends FieldDriver implements CheckboxContract
         $this->set('attrs.type', 'checkbox');
 
         if ($this->isChecked()) {
-            $this->set('attrs.checked', 'checked');
+            $this->push('attrs', 'checked');
         }
 
         return $this;

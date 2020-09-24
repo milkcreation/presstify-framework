@@ -2,6 +2,8 @@
 
 namespace tiFy\Contracts\Taxonomy;
 
+use tiFy\Support\Arr;
+
 interface TaxonomyTermMeta
 {
     /**
@@ -68,7 +70,7 @@ interface TaxonomyTermMeta
         string $tax,
         string $key,
         bool $single = false,
-        $callback = 'wp_unslash'
+        $callback = [Arr::class, 'stripslashes']
     ): TaxonomyTermMeta;
 
     /**
@@ -80,7 +82,7 @@ interface TaxonomyTermMeta
      *
      * @return static
      */
-    public function registerSingle(string $tax, string $key, $callback = 'wp_unslash'): TaxonomyTermMeta;
+    public function registerSingle(string $tax, string $key, $callback = [Arr::class, 'stripslashes']): TaxonomyTermMeta;
 
     /**
      * Déclaration d'une métadonnée à occurrence multiple.
@@ -91,7 +93,7 @@ interface TaxonomyTermMeta
      *
      * @return static
      */
-    public function registerMulti(string $tax, string $key, $callback = 'wp_unslash'): TaxonomyTermMeta;
+    public function registerMulti(string $tax, string $key, $callback = [Arr::class, 'stripslashes']): TaxonomyTermMeta;
 
     /**
      * Enregistrement de metadonnées.

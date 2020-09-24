@@ -31,7 +31,8 @@ class Select extends FieldDriver implements SelectContract
             'value'    => null,
             'viewer'   => [],
             'choices'  => [],
-            'multiple' => false
+            'multiple' => false,
+            'wrapper'  => false
         ];
     }
 

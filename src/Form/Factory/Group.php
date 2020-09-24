@@ -86,6 +86,7 @@ class Group extends ParamsBag implements FactoryGroup
     public function getAttrs($linearized = true)
     {
         $attrs = $this->get('attrs', []);
+
         return $linearized ? HtmlAttrs::createFromAttrs($this->get('attrs', [])) : $attrs;
     }
 
@@ -133,6 +134,7 @@ class Group extends ParamsBag implements FactoryGroup
                 $this->parent = false;
             }
         }
+
         return $this->parent ?: null;
     }
 
@@ -142,15 +144,19 @@ class Group extends ParamsBag implements FactoryGroup
     public function parse(): FactoryGroup
     {
         $class = 'Form-fieldsGroup Form-fieldsGroup--' . $this->getName();
+
         if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $class);
         } else {
             $this->set('attrs.class', sprintf($this->get('attrs.class'), $class));
         }
+
         $position = $this->getPosition();
+
         if (is_null($position)) {
             $position = $this->_index;
         }
+
         $this->set('position', intval($position));
 
         return $this;
@@ -165,6 +171,7 @@ class Group extends ParamsBag implements FactoryGroup
             $this->manager = $manager;
             $this->form = $this->manager->form();
         }
+
         $this->_index = $this->manager->getIncreasedIndex();
 
         $this->parse();

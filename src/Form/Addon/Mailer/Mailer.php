@@ -307,10 +307,16 @@ class Mailer extends AddonFactory
                 : $mailer_value;
         });
 
-        $params['content'] = $params['content'] ?? [];
 
-        $params['content']['body'] = $params['content']['body']
-            ?? (string)$this->form()->viewer('addon/mailer/body', array_merge($params, compact('fields')));
+        $form = $this->form();
+        $addon = $this;
+        $params['data'] = compact('addon', 'form', 'fields', 'params');
+
+        if (!isset($params['viewer']['override_dir'])) {
+            $params['viewer'] = array_merge([
+                'override_dir' => $this->form()->viewer()->getDirectory() . "/addon/mailer/mail/{$type}"
+            ], $params['viewer'] ?? []);
+        }
 
         return $params;
     }

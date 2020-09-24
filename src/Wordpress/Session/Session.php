@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\Session;
 
 use tiFy\Contracts\Session\Session as BaseSession;
+use tiFy\Support\Arr;
 
 class Session
 {
@@ -24,7 +25,7 @@ class Session
         $this->manager = $session;
 
         events()->listen('session.get.stored', function (&$value) {
-            $value = wp_unslash($value);
+            $value = Arr::stripslashes($value);
         });
     }
 }

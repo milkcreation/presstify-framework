@@ -6,6 +6,7 @@ use tiFy\Contracts\Field\FieldDriver as BaseFieldDriverContract;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Wordpress\Contracts\Field\{Findposts as FindpostsContract, FieldDriver as FieldDriverContract};
 use tiFy\Wordpress\Field\FieldDriver;
+use tiFy\Support\Arr;
 use tiFy\Support\Proxy\{Asset, Request, Router};
 use WP_Post, WP_Query;
 
@@ -155,7 +156,7 @@ class Findposts extends FieldDriver implements FindpostsContract
             'posts_per_page' => 50,
         ], Request::input('query_args', []));
 
-        $s = wp_unslash(Request::input('ps', ''));
+        $s = Arr::stripslashes(Request::input('ps', ''));
         if ('' !== $s) {
             $query_args['s'] = $s;
         }

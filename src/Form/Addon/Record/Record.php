@@ -5,7 +5,7 @@ namespace tiFy\Form\Addon\Record;
 use Illuminate\Database\Schema\Blueprint;
 use tiFy\Form\Addon\Record\ListTable\{Model as ListTableModel, Factory as ListTableFactory};
 use tiFy\Form\AddonFactory;
-use tiFy\Support\{DateTime, Str};
+use tiFy\Support\{Arr, DateTime, Str};
 use tiFy\Support\Proxy\{Database, Schema, Template};
 
 /**
@@ -208,7 +208,7 @@ class Record extends AddonFactory
 
             foreach ($this->form()->fields() as $field) {
                 if ($column = $field->getAddonOption('record.save')) {
-                    $record->saveMeta($field->getSlug(), wp_unslash($field->getValues()));
+                    $record->saveMeta($field->getSlug(), Arr::stripslashes($field->getValues()));
                 }
             }
         }

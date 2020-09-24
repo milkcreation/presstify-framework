@@ -48,7 +48,7 @@
             right: 0;
             bottom: 0;
             display: block;
-            content: "";
+            content: " ";
             width: 19px;
             border-left-style: solid;
             border-left-width:1px;
@@ -112,9 +112,7 @@
 .FieldSelectJs-selectionItem {
     position: relative;
     cursor: default;
-    padding: 5px;
     margin:0;
-    line-height: 1;
     white-space: nowrap;
     background-color: transparent;
     display:none;

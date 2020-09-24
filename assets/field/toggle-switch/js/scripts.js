@@ -52,11 +52,13 @@ jQuery(function ($) {
 
   });
 
-  /*$(document).on('change', '.FieldToggleSwitch-radio', function () {
+  /* * /
+  $(document).on('change', '.FieldToggleSwitch-radio', function () {
     $(this)
         .closest('.FieldToggleSwitch')
         .trigger('toggle-switch:change', $(this).val());
-  });*/
+  });
+  /**/
 
   $(document).ready(function ($) {
     $('[data-control="toggle-switch"]').tifyToggleSwitch();

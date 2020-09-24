@@ -183,9 +183,16 @@ $form-color-checkbox: $form-color-regular !default;
     }
   }
 
+  .FieldSelect-wrapper {
+    .FieldSelect-trigger {
+      border-left: none;
+      background-color: transparent;
+    }
+  }
+
   .FieldSelectJs[aria-arrow="true"] {
     .FieldSelectJs-trigger::before {
-      border-left:none;
+      border-left: none;
       background-color: transparent;
     }
   }

@@ -2,6 +2,8 @@
 
 namespace tiFy\User\Metadata;
 
+use tiFy\Support\Arr;
+
 /**
  * Class Metadata
  * @package tiFy\User\Metadata
@@ -18,7 +20,7 @@ final class Option
     private static $Single = [];
 
     /* = DECLARATION = */
-    final public static function Register($meta_key, $single = false, $sanitize_callback = 'wp_unslash')
+    final public static function Register($meta_key, $single = false, $sanitize_callback = [Arr::class, 'stripslashes'])
     {
         // Bypass
         if (!empty(self::$MetaKeys) && in_array($meta_key, self::$MetaKeys)) {

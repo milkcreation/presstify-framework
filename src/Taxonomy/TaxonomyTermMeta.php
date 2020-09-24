@@ -3,7 +3,7 @@
 namespace tiFy\Taxonomy;
 
 use tiFy\Contracts\Taxonomy\TaxonomyTermMeta as TaxonomyTermMetaContract;
-use tiFy\Support\{Str, Proxy\Request};
+use tiFy\Support\{Arr, Str, Proxy\Request};
 use WP_Term;
 
 class TaxonomyTermMeta implements TaxonomyTermMetaContract
@@ -100,7 +100,7 @@ class TaxonomyTermMeta implements TaxonomyTermMetaContract
         string $tax,
         string $key,
         bool $single = false,
-        $callback = 'wp_unslash'
+        $callback = [Arr::class, 'stripslashes']
     ): TaxonomyTermMetaContract {
         if (empty($this->metaKeys[$tax])) {
             $this->metaKeys[$tax] = [];
@@ -132,7 +132,7 @@ class TaxonomyTermMeta implements TaxonomyTermMetaContract
     /**
      * @inheritDoc
      */
-    public function registerSingle(string $tax, string $key, $callback = 'wp_unslash'): TaxonomyTermMetaContract
+    public function registerSingle(string $tax, string $key, $callback = [Arr::class, 'stripslashes']): TaxonomyTermMetaContract
     {
         return $this->register($tax, $key, true, $callback);
     }
@@ -140,7 +140,7 @@ class TaxonomyTermMeta implements TaxonomyTermMetaContract
     /**
      * @inheritDoc
      */
-    public function registerMulti(string $tax, string $key, $callback = 'wp_unslash'): TaxonomyTermMetaContract
+    public function registerMulti(string $tax, string $key, $callback = [Arr::class, 'stripslashes']): TaxonomyTermMetaContract
     {
         return $this->register($tax, $key, false, $callback);
     }

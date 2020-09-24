@@ -5,7 +5,7 @@ namespace tiFy\Form;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Form\Factory\ResolverTrait;
-use tiFy\Support\{LabelsBag, ParamsBag};
+use tiFy\Support\{LabelsBag, ParamsBag, Str};
 
 class FormFactory extends ParamsBag implements FormFactoryContract
 {
@@ -99,6 +99,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      * @var array $options Liste des options du formulaire.
      * @var string $title Intitulé de qualification du formulaire.
      * @var array $viewer Attributs de configuration du gestionnaire de gabarits d'affichage.
+     * @var array $wrapper Attributs de configuration de l'encapsulation du formulaire.
      * }
      */
     public function defaults(): array
@@ -111,7 +112,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             'auto'      => true,
             'before'    => '',
             'buttons'   => [],
-            'container' => [],
             'enctype'   => '',
             'events'    => [],
             'fields'    => [],
@@ -121,6 +121,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             'options'   => [],
             'title'     => '',
             'viewer'    => [],
+            'wrapper' => [],
         ];
     }
 
@@ -169,7 +170,9 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function getAnchor(): string
     {
         if ($anchor = $this->option('anchor')) {
-            $anchor = is_string($anchor) ? $anchor : $this->form()->get('attrs.id');
+            $anchor = is_string($anchor)
+                ? $anchor : ($this->form()->get('wrapper.attrs.id') ? : $this->form()->get('attrs.id'));
+
             return '#' . ltrim($anchor, '#');
         } else {
             return '';
@@ -361,12 +364,21 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function renderPrepare()
     {
-        $this->set('container', array_merge([
-            'attrs' => [
-                'class' => 'Form'
-            ],
-            'tag' => 'div'
-        ], $this->get('container', [])));
+        $wrapper = $this->get('wrapper');
+
+        if ($wrapper !== false) {
+            $this->set('wrapper', array_merge([
+                'tag'   => 'div'
+            ], is_array($wrapper) ? $wrapper : []));
+
+            if (!$this->has('wrapper.attrs.id')) {
+                $this->set('wrapper.attrs.id', 'Form--'. $this->tagName());
+            }
+
+            if (!$this->has('wrapper.attrs.class')) {
+                $this->set('wrapper.attrs.class', 'Form');
+            }
+        }
 
         if (!$this->has('attrs.id')) {
             $this->set('attrs.id', "Form-content--{$this->tagName()}");

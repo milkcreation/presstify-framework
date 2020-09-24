@@ -2,6 +2,8 @@
 
 namespace tiFy\Contracts\User;
 
+use tiFy\Support\Arr;
+
 interface UserMeta
 {
     /**
@@ -59,7 +61,7 @@ interface UserMeta
      *
      * @return static
      */
-    public function register(string $key, bool $single = false, $callback = 'wp_unslash'): UserMeta;
+    public function register(string $key, bool $single = false, $callback = [Arr::class, 'stripslashes']): UserMeta;
 
     /**
      * Déclaration d'une métadonnée à occurrence unique.
@@ -69,7 +71,7 @@ interface UserMeta
      *
      * @return static
      */
-    public function registerSingle(string $key, $callback = 'wp_unslash'): UserMeta;
+    public function registerSingle(string $key, $callback = [Arr::class, 'stripslashes']): UserMeta;
 
     /**
      * Déclaration d'une métadonnée à occurrence multiple.
@@ -79,7 +81,7 @@ interface UserMeta
      *
      * @return static
      */
-    public function registerMulti(string $key, $callback = 'wp_unslash'): UserMeta;
+    public function registerMulti(string $key, $callback = [Arr::class, 'stripslashes']): UserMeta;
 
     /**
      * Enregistrement des metadonnées déclarées.

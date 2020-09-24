@@ -131,15 +131,27 @@ $field-color-darker: map-get($colors, "darker") !default;
 $field-color-regular: map-get($colors, "regular") !default;
 $field-color-bkg: map-get($colors, "white") !default;
 
+// SELECT
+$field-select-color-light: $field-color-light !default;
+$field-select-color-lighter: $field-color-lighter !default;
+$field-select-color-dark: $field-color-dark !default;
+$field-select-color-darker: $field-color-darker !default;
+$field-select-color-regular: $field-color-regular !default;
+$field-select-color-bkg: $field-color-bkg !default;
+$field-select-color-selected-bkg: DodgerBlue !default;
+$field-select-color-selected-txt: #FFF !default;
+$field-select-color-highlight-bkg: #FFFA90 !default;
+$field-select-color-highlight-border: #DAD55E !default;
+
 // SELECT-JS
-$field-select-js-color-light: $field-color-light !default;
-$field-select-js-color-lighter: $field-color-lighter !default;
-$field-select-js-color-dark: $field-color-dark !default;
-$field-select-js-color-darker: $field-color-darker !default;
-$field-select-js-color-regular: $field-color-regular !default;
-$field-select-js-color-bkg: $field-color-bkg !default;
-$field-select-js-color-selected-bkg: DodgerBlue !default;
-$field-select-js-color-selected-txt: #FFF !default;
-$field-select-js-color-highlight-bkg: #FFFA90 !default;
-$field-select-js-color-highlight-border: #DAD55E !default;
+$field-select-js-color-light: $field-select-color-light !default;
+$field-select-js-color-lighter: $field-select-color-lighter !default;
+$field-select-js-color-dark: $field-select-color-dark !default;
+$field-select-js-color-darker: $field-select-color-darker !default;
+$field-select-js-color-regular: $field-select-color-regular !default;
+$field-select-js-color-bkg: $field-select-color-bkg !default;
+$field-select-js-color-selected-bkg: $field-select-color-selected-bkg !default;
+$field-select-js-color-selected-txt: $field-select-color-selected-txt !default;
+$field-select-js-color-highlight-bkg: $field-select-color-highlight-bkg !default;
+$field-select-js-color-highlight-border: $field-select-color-highlight-border !default;
 /**/
