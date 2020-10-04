@@ -1,5 +1,11 @@
 # Release Notes
 
+## [v2.0.343 (2020-10-04)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.343...v2.0.343)
+
+### Added
+
+- `package.json`: Ajout de la librarie lodash
+
 ## [v2.0.342 (2020-09-23)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.342...v2.0.342)
 
 ### Changed
