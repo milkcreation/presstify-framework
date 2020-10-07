@@ -12,7 +12,7 @@ use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Support\{DateTime, ParamsBag};
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\FileManager\Contracts\{FileManager, FileInfo as FileInfoContract, FileTag};
+use tiFy\Template\Templates\FileManager\Contracts\{Factory, FileInfo as FileInfoContract, FileTag};
 
 /**
  * @mixin SplFileInfo
@@ -23,7 +23,7 @@ class FileInfo extends ParamsBag implements FileInfoContract
 
     /**
      * Instance du gabarit d'affichage.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 
@@ -150,7 +150,7 @@ class FileInfo extends ParamsBag implements FileInfoContract
     /**
      * {@inheritDoc}
      *
-     * @return FileManager
+     * @return Factory
      */
     public function getFactory(): TemplateFactory
     {

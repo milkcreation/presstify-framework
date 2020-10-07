@@ -10,9 +10,9 @@ interface Filesystem extends tiFyFilesystem, FactoryAwareTrait
     /**
      * Définition d'une instance de la classe.
      *
-     * @param FileManager $factory
+     * @param Factory $factory
      *
      * @return static
      */
-    public static function createFromFactory(FileManager $factory): Filesystem;
+    public static function createFromFactory(Factory $factory): Filesystem;
 }

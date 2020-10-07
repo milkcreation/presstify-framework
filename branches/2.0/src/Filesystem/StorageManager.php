@@ -88,8 +88,6 @@ class StorageManager extends MountManager implements StorageManagerContract
      */
     public function img(string $root, array $config = []): ImgFilesystemContract
     {
-        $root = realpath($root);
-
         return $this->getContainer() && $this->getContainer()->has(ImgFilesystemContract::class)
             ? $this->getContainer()->get(ImgFilesystemContract::class, [$root, $config])
             : new ImgFilesystem($this->localAdapter($root, $config));
@@ -100,7 +98,6 @@ class StorageManager extends MountManager implements StorageManagerContract
      */
     public function imgAdapter(string $root, array $config = []): AdapterInterface
     {
-        $root = realpath($root);
         $permissions = $config['permissions'] ?? [];
         $links = ($config['links'] ?? null) === 'skip' ? ImgAdapter::SKIP_LINKS : ImgAdapter::DISALLOW_LINKS;
 
@@ -122,8 +119,6 @@ class StorageManager extends MountManager implements StorageManagerContract
      */
     public function local(string $root, array $config = []): LocalFilesystemContract
     {
-        $root = realpath($root);
-
         return $this->getContainer() && $this->getContainer()->has(LocalFilesystemContract::class)
             ? $this->getContainer()->get(LocalFilesystemContract::class, [$root, $config])
             : new LocalFilesystem($this->localAdapter($root, $config));
@@ -134,7 +129,6 @@ class StorageManager extends MountManager implements StorageManagerContract
      */
     public function localAdapter(string $root, array $config = []): AdapterInterface
     {
-        $root = realpath($root);
         $permissions = $config['permissions'] ?? [];
         $links = ($config['links'] ?? null) === 'skip' ? LocalAdapter::SKIP_LINKS : LocalAdapter::DISALLOW_LINKS;
 

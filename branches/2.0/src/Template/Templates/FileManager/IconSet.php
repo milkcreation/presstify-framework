@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\FileManager\Contracts\{FileManager, IconSet as IconSetContract, FileInfo};
+use tiFy\Template\Templates\FileManager\Contracts\{Factory, IconSet as IconSetContract, FileInfo};
 
 class IconSet extends ParamsBag implements IconSetContract
 {
@@ -12,7 +12,7 @@ class IconSet extends ParamsBag implements IconSetContract
 
     /**
      * Instance du gabarit d'affichage.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 

@@ -1,20 +1,20 @@
 [data-control="file-manager.content"][data-view="list"] {
   & .FileManager-contentFile:nth-child(odd) {
-    background-color: color(white);
+    background-color: tify_theme_color("white");
   }
   & .FileManager-contentFile:nth-child(even) {
-    background-color: color(gray, 100);
+    background-color: tify_theme_color("gray", 100);
   }
 
   & .FileManager-contentFileLink {
     display: block;
     padding: 5px 10px;
-    border-bottom: solid 1px color(gray, 300);
+    border-bottom: solid 1px tify_theme_color("gray", 300);
   }
 
   & .FileManager-contentFile.selected .FileManager-contentFileLink {
-    color: color(gray, 900);
-    background-color: color(gray, 300);
+    color: tify_theme_color("gray", 900);
+    background-color: tify_theme_color("gray", 300);
   }
 
   & .FileManager-contentFileAttr {

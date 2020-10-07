@@ -3,8 +3,7 @@
 namespace tiFy\Template\Templates\FileManager;
 
 use Exception;
-use League\Flysystem\AdapterInterface;
-use League\Flysystem\Util;
+use League\Flysystem\{AdapterInterface, Util};
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Template\{FactoryAjax, TemplateFactory as TemplateFactoryContract};
 use tiFy\Template\TemplateFactory;
@@ -12,19 +11,19 @@ use tiFy\Template\Templates\FileManager\Contracts\{
     Ajax,
     Breadcrumb,
     FileInfo,
-    FileManager as FileManagerContract,
+    Factory as FactoryContract,
     FileCollection,
     IconSet,
     Sidebar};
 
-class FileManager extends TemplateFactory implements FileManagerContract
+class Factory extends TemplateFactory implements FactoryContract
 {
     /**
      * Liste des fournisseurs de service.
      * @var string[]
      */
     protected $serviceProviders = [
-        FileManagerServiceProvider::class
+        ServiceProvider::class
     ];
 
     /**
@@ -133,7 +132,7 @@ class FileManager extends TemplateFactory implements FileManagerContract
     /**
      * {@inheritDoc}
      *
-     * @return FileManagerContract
+     * @return FactoryContract
      */
     public function prepare(): TemplateFactoryContract
     {
@@ -181,7 +180,7 @@ class FileManager extends TemplateFactory implements FileManagerContract
     /**
      * @inheritDoc
      */
-    public function setPath(string $path): FileManagerContract
+    public function setPath(string $path): FactoryContract
     {
         $this->path = $path;
 

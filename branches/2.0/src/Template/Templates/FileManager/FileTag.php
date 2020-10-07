@@ -3,7 +3,7 @@
 namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\FileManager\Contracts\{FileManager, FileInfo, FileTag as FileTagContract};
+use tiFy\Template\Templates\FileManager\Contracts\{Factory, FileInfo, FileTag as FileTagContract};
 
 class FileTag implements FileTagContract
 {
@@ -11,7 +11,7 @@ class FileTag implements FileTagContract
 
     /**
      * Instance du gabarit d'affichage.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 

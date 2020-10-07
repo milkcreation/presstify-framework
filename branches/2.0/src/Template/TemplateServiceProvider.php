@@ -5,12 +5,13 @@ namespace tiFy\Template;
 use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
 use tiFy\Template\Templates\FileManager\Contracts\{
+    Actions as FileManagerActionsContract,
     Ajax as FileManagerAjaxContract,
     Breadcrumb as FileManagerBreadcrumbContract,
     Cache as FileManagerCacheContract,
     FileCollection as FileManagerFileCollectionContract,
     FileInfo as FileManagerFileInfoContract,
-    FileManager as FileManagerContract,
+    Factory as FileManagerContract,
     Filesystem as FileManagerFilesystemContract,
     FileTag as FileManagerFileTagContract,
     HttpController as FileManagerHttpControllerContract,
@@ -50,6 +51,7 @@ use tiFy\Template\Templates\UserListTable\Contracts\{
     Db as UserListTableDbContract,
     Item as UserListTableItemContract};
 use tiFy\Template\Templates\FileManager\{
+    Actions as FileManagerActions,
     Ajax as FileManagerAjax,
     Breadcrumb as FileManagerBreadcrumb,
     Cache as FileManagerCache,
@@ -105,6 +107,7 @@ class TemplateServiceProvider extends ServiceProvider
         'template',
         TemplateFactoryContract::class,
         // FileManager
+        FileManagerActionsContract::class,
         FileManagerAjaxContract::class,
         FileManagerBreadcrumbContract::class,
         FileManagerCacheContract::class,
@@ -173,6 +176,10 @@ class TemplateServiceProvider extends ServiceProvider
      */
     public function registerFileManager(): void
     {
+        $this->getContainer()->add(FileManagerActionsContract::class, function () {
+            return new FileManagerActions();
+        });
+
         $this->getContainer()->add(FileManagerAjaxContract::class, function () {
             return new FileManagerAjax();
         });

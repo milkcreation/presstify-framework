@@ -159,7 +159,9 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
      */
     public function httpCacheController(string $path, ServerRequestInterface $psrRequest)
     {
-        return $cache = $this->cache() ? $this->cache()->getResponse($path, $psrRequest) : null;
+        $cache = $this->cache() ? $this->cache()->getResponse($path, $psrRequest) : null;
+
+        return $cache;
     }
 
     /**

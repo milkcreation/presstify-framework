@@ -11,7 +11,7 @@
     position:relative;
     padding: 15px 20px;
     font-size:14px;
-    box-shadow: 5px 5px 0 0 color(gray, 900);
+    box-shadow: 5px 5px 0 0 tify_theme_color("gray", 900);
   }
 
   & [data-toggle="notice.dismiss"] {
@@ -22,30 +22,30 @@
     line-height:1;
     padding: 3px 5px;
     background-color: transparent;
-    color:color(white);
+    color: tify_theme_color("white");
   }
 }
 
 .FileManager-noticeMessage--error {
-  background-color: color(red, 500);
-  color: color(white);
-  box-shadow: 5px 5px 0 0 color(red, 900);
+  background-color: tify_theme_color("red", 500);
+  color: tify_theme_color("white");
+  box-shadow: 5px 5px 0 0 tify_theme_color("red", 900);
 }
 
 .FileManager-noticeMessage--info {
-  background-color: color(blue, 500);
-  color: color(white);
-  box-shadow: 5px 5px 0 0 color(blue, 900);
+  background-color: tify_theme_color("blue", 500);
+  color: tify_theme_color("white");
+  box-shadow: 5px 5px 0 0 tify_theme_color("blue", 900);
 }
 
 .FileManager-noticeMessage--success {
-  background-color: color(green, 500);
-  color: color(white);
-  box-shadow: 5px 5px 0 0 color(green, 900);
+  background-color: tify_theme_color("green", 500);
+  color: tify_theme_color("white");
+  box-shadow: 5px 5px 0 0 tify_theme_color("green", 900);
 }
 
 .FileManager-noticeMessage--warning {
-  background-color: color(yellow, 500);
-  color: color(white);
-  box-shadow: 5px 5px 0 0 color(yellow, 900);
+  background-color: tify_theme_color("yellow", 500);
+  color: tify_theme_color("white");
+  box-shadow: 5px 5px 0 0 tify_theme_color("yellow", 900);
 }

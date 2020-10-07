@@ -13,7 +13,7 @@ interface Actions extends FactoryActions
      *
      * @throws Exception
      */
-    public function executeActivate();
+    public function doActivate();
 
     /**
      * Désactivation d'éléments.
@@ -21,7 +21,7 @@ interface Actions extends FactoryActions
      *
      * @throws Exception
      */
-    public function executeDeactivate();
+    public function doDeactivate();
 
     /**
      * Suppression d'éléments.
@@ -29,7 +29,7 @@ interface Actions extends FactoryActions
      *
      * @throws Exception
      */
-    public function executeDelete();
+    public function doDelete();
 
     /**
      * Duplication d'éléments.
@@ -37,7 +37,7 @@ interface Actions extends FactoryActions
      *
      * @throws Exception
      */
-    public function executeDuplicate();
+    public function doDuplicate();
 
     /**
      * Mise à la corbeille d'éléments.
@@ -45,7 +45,7 @@ interface Actions extends FactoryActions
      *
      * @throws Exception
      */
-    public function executeTrash();
+    public function doTrash();
 
     /**
      * Restauration d'éléments.
@@ -53,5 +53,5 @@ interface Actions extends FactoryActions
      *
      * @throws Exception
      */
-    public function executeUntrash();
+    public function doUntrash();
 }

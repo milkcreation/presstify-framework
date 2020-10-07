@@ -1,24 +1,24 @@
 .FileManager {
   position: relative;
   height: 800px;
-  background-color: color(white);
-  color: color(gray, 900);
-  border: solid 1px color(gray, 300);
+  background-color: tify_theme_color("white");
+  color: tify_theme_color("gray", 900);
+  border: solid 1px tify_theme_color("gray", 300);
   z-index:1;
 }
 
 // TITRE
 .FileManager-title {
   font-size: 18px;
-  color: color(gray, 900);
+  color: tify_theme_color("gray", 900);
 }
 
 // BOUTONS
 .FileManager-button {
   display: inline-block;
-  border: solid 2px color(gray, 900);
-  background-color: color(white);
-  color: color(gray, 900);
+  border: solid 2px tify_theme_color("gray", 900);
+  background-color: tify_theme_color("white");
+  color: tify_theme_color("gray", 900);
   font-weight: bold;
   padding: 5px 20px;
 }
@@ -26,38 +26,38 @@
 .FileManager-button:hover,
 .FileManager-button:focus,
 .FileManager-button:active {
-  background-color: color(gray, 900);
-  color: color(white);
+  background-color: tify_theme_color("gray", 900);
+  color: tify_theme_color("white");
 }
 
 .FileManager-button:hover *,
 .FileManager-button:focus *,
 .FileManager-button:active * {
-  color: color(white);
+  color: tify_theme_color("white");
 }
 
 .FileManager-button--valid {
   border: none;
-  background-color: color(green, 600);
-  color: color(white);
+  background-color: tify_theme_color("green", 600);
+  color: tify_theme_color("white");
 }
 
 .FileManager-button--valid:hover,
 .FileManager-button--valid:focus,
 .FileManager-button--valid:active {
-  background-color: color(green, 500);
+  background-color: tify_theme_color("green", 500);
 }
 
 .FileManager-button--cancel {
   border: none;
-  background-color: color(red, 600);
-  color: color(white);
+  background-color: tify_theme_color("red", 600);
+  color: tify_theme_color("white");
 }
 
 .FileManager-button--cancel:hover,
 .FileManager-button--cancel:focus,
 .FileManager-button--cancel:active {
-  background-color: color(red, 500);
+  background-color: tify_theme_color("red", 500);
 }
 
 .FileManager-button--toggle[aria-visible="true"] {
@@ -71,7 +71,7 @@
 }
 
 .FileManager-action .FileManager-title {
-  color: color(gray, 900);
+  color: tify_theme_color("gray", 900);
   font-weight: bold;
   text-align: center;
   padding: 5px 0;
@@ -92,14 +92,14 @@
   position: absolute;
   top: 0;
   right: 0;
-  color: color(gray, 900);
+  color: tify_theme_color("gray", 900);
   line-height: 1;
 }
 
 .FileManager-actionClose:active,
 .FileManager-actionClose:focus,
 .FileManager-actionClose:hover {
-  color: color(gray, 700);
+  color: tify_theme_color("gray", 700);
 }
 
 // ACTIONS > FORMULAIRE
@@ -130,8 +130,8 @@
   margin: 0;
   height: 50px;
   line-height: 50px;
-  background-color: color(white);
-  border-bottom: solid 1px color(gray, 300);
+  background-color: tify_theme_color("white");
+  border-bottom: solid 1px tify_theme_color("gray", 300);
 }
 
 .FileManager-contentHeader .FileManager-switcher {
@@ -140,7 +140,7 @@
   top: 0;
   padding: 0 10px;
   line-height: 50px;
-  border-left: solid 1px color(gray, 300);
+  border-left: solid 1px tify_theme_color("gray", 300);
 }
 
 .FileManager-contentBody {
@@ -193,13 +193,13 @@
 }
 
 .FileManager-contentFileLink {
-  color: color(gray, 900);
+  color: tify_theme_color("gray", 900);
 }
 
 .FileManager-contentFileLink:active,
 .FileManager-contentFileLink:focus,
 .FileManager-contentFileLink:hover {
-  color: color(gray, 900);
+  color: tify_theme_color("gray", 900);
 }
 
 .FileManager-contentFileLink {

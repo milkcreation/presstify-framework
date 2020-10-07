@@ -24,7 +24,7 @@ interface FactoryActions extends FactoryAwareTrait
      *
      * @throws Exception
      */
-    public function execute(string $name, ...$parameters);
+    public function do(string $name, ...$parameters);
 
     /**
      * Récupération de la clé d'indice de déclénchment d'une action.

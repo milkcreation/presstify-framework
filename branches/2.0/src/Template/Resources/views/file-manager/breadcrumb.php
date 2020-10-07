@@ -10,7 +10,7 @@
     <li class="FileManager-breadcrumbPart">
         <a href="#"
            class="FileManager-breadcrumbPartLink"
-           data-control="file-manager.action.get"
+           data-control="file-manager.action.fetch"
            data-path="/"
         >
             <?php echo $this->getIcon('home'); ?>
@@ -21,7 +21,7 @@
         <li class="FileManager-breadcrumbPart">
             <a href="#"
                class="FileManager-breadcrumbPartLink"
-               data-control="file-manager.action.get"
+               data-control="file-manager.action.fetch"
                data-path="<?php echo $path; ?>"
             >
                 <?php echo $name; ?>

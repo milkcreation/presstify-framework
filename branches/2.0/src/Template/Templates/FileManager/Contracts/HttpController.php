@@ -13,13 +13,4 @@ interface HttpController extends FactoryHttpController
      * @return mixed
      */
     public function handleGet();
-
-    /**
-     * Téléchargement de fichier.
-     *
-     * @param string $path Chemin relatif vers le fichier.
-     *
-     * @return StreamedResponse|null
-     */
-    public function download(string $path): ?StreamedResponse;
 }

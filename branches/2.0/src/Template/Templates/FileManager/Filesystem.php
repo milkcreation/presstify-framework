@@ -8,7 +8,7 @@ use tiFy\Contracts\Template\FactoryAwareTrait as FactoryAwareTraitContract;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Filesystem\Filesystem as tiFyFilesystem;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\FileManager\Contracts\{FileManager, Filesystem as FilesystemContract};
+use tiFy\Template\Templates\FileManager\Contracts\{Factory, Filesystem as FilesystemContract};
 
 class Filesystem extends tiFyFilesystem implements FilesystemContract
 {
@@ -16,18 +16,18 @@ class Filesystem extends tiFyFilesystem implements FilesystemContract
 
     /**
      * Instance du gabarit d'affichage.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 
     /**
      * Définition d'une instance.
      *
-     * @param FileManager $factory
+     * @param Factory $factory
      *
      * @return static
      */
-    public static function createFromFactory(FileManager $factory): FilesystemContract
+    public static function createFromFactory(Factory $factory): FilesystemContract
     {
         $args = $factory->param('driver', []);
         $config = [

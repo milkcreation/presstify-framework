@@ -3,13 +3,13 @@
 namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Template\Factory\Params as BaseParams;
-use tiFy\Template\Templates\FileManager\Contracts\Params as ParamsContract;
+use tiFy\Template\Templates\FileManager\Contracts\{Factory, Params as ParamsContract};
 
 class Params extends BaseParams implements ParamsContract
 {
     /**
      * Instance du gabarit associé.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 

@@ -1,9 +1,9 @@
-@import "~presstify-framework/theme/scss/variables";
+@import "variables";
 
 // Personnalisation
 .FieldSelect-wrapper {
     position: relative;
-    background-color: $field-select-color-bkg;
+    background-color: $field-select-background-hue;
 
     select {
         position: relative;
@@ -22,8 +22,8 @@
         width: 19px;
         border-left-style: solid;
         border-left-width:1px;
-        border-left-color: $field-select-color-light;
-        background-color: $field-select-color-lighter;
+        border-left-color: $field-select-light-hue;
+        background-color: $field-select-lighter-hue;
 
         &::after {
             position: absolute;
@@ -35,7 +35,7 @@
             margin-top: -2px;
             display: inline-block;
             content: " ";
-            border-color: $field-select-color-regular transparent;
+            border-color: $field-select-regular-hue transparent;
             border-style: solid;
             border-top-width: 4px;
             border-right-width: 4px;
@@ -43,6 +43,4 @@
             border-left-width: 4px;
         }
     }
-
-
 }

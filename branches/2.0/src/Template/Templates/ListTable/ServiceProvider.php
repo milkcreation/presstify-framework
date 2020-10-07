@@ -62,6 +62,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->getContainer()->share($this->getFactoryAlias('actions'), function (): ActionsContract {
             $ctrl = $this->factory->provider('actions');
+
             $ctrl = $ctrl instanceof ActionsContract
                 ? $ctrl
                 : $this->getContainer()->get(ActionsContract::class);
