@@ -3,7 +3,7 @@
 namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\FileManager\Contracts\Sidebar as SidebarContract;
+use tiFy\Template\Templates\FileManager\Contracts\{Factory, Sidebar as SidebarContract};
 
 class Sidebar implements SidebarContract
 {
@@ -11,7 +11,7 @@ class Sidebar implements SidebarContract
 
     /**
      * Instance du gabarit associé.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 

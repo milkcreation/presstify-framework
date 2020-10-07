@@ -1,5 +1,31 @@
 # Release Notes
 
+## [v2.0.344 (2020-10-07)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.344...v2.0.344)
+
+## Added
+
+- `assets/field/_variables.scss` : Gestion des variables communes des champs
+- `assets/field/select/scss/_variables.scss` : Gestion des variables field **select**
+- `assets/field/select-js/scss/_variables.scss` : Gestion des variables field **select-js**
+- `assets/partial/notice/scss/_variables.scss`: Gestion des variables partial **notice**
+
+## Changed
+
+- `assets/template/file-manager/js/scripts.js` : Adapation assets template **file-manager**
+- `assets/theme/scss/` : Réorganisation du theme
+
+# Fixed
+
+- `assets/partial/pdfviewer/js/scripts.js`: Modification de la dépendance pdfjs
+- `src/Filesystem/StaticCacheManager.php` : Correctif de l'initialisation
+- `src/Filesystem/StorageManager.php` : Suppression de prise en charge de realpath($root)
+- `src/Template/Templates/FileManager` : Adaptation code nouveaux enjeux template ActionsFactory 
+
+## Removed
+
+- `assets/form/scss`: Gestion des styles formulaires vers le thème @todo remettre en place et surcharger avec theme
+- `assets/wp-admin`: Suppression à la faveur de `assets/wordpress/admin`
+
 ## [v2.0.343 (2020-10-04)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.343...v2.0.343)
 
 ### Added

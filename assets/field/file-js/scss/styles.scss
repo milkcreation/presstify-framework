@@ -1,5 +1,6 @@
 @import "~presstify-framework/theme/scss/styles";
 
+// Personnalisation
 @-webkit-keyframes passing-through {
   0% {
     opacity: 0;
@@ -169,7 +170,7 @@
   // dropzone.css
   & {
     min-height: 150px;
-    border: 2px dashed color(gray, 300);
+    border: 2px dashed tify_theme_color("gray", 300);
     padding: 0 20px;
   }
 
@@ -295,11 +296,11 @@
   }
 
   & .dz-preview .dz-success-mark svg path {
-    fill: color(green, 500);
+    fill: tify_theme_color("green", 500);
   }
 
   & .dz-preview .dz-error-mark svg path {
-    fill: color(red, 500);
+    fill: tify_theme_color("red", 500);
   }
 
   & .dz-preview .dz-success-mark, & .dz-preview .dz-error-mark {
@@ -347,8 +348,7 @@
   }
 
   & .dz-preview .dz-progress .dz-upload {
-    background: #333;
-    background-color: color(blue, 500);
+    background-color: tify_theme_color("blue", 500);
     position: absolute;
     top: 0;
     left: 0;
@@ -426,7 +426,7 @@
   top: 50%;
   left: 50%;
   width: 75%;
-  color: color(gray, 500);
+  color: tify_theme_color("gray", 500);
   transform: translate(-50%, -50%);
   text-align: center;
   z-index: 0;

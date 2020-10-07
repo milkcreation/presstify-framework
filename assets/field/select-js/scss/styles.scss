@@ -1,4 +1,4 @@
-@import "~presstify-framework/theme/scss/variables";
+@import "variables";
 
 // Dépendances
 @import "~presstify-framework/partial/spinner/scss/three-bounce";
@@ -24,8 +24,8 @@
     position: relative;
     border-style: solid;
     border-width:1px;
-    border-color: $field-select-js-color-light;
-    background-color: $field-select-js-color-bkg;
+    border-color: $field-select-js-light-hue;
+    background-color: $field-select-js-background-hue;
 }
 
 .FieldSelectJs-triggerHandler {
@@ -52,8 +52,8 @@
             width: 19px;
             border-left-style: solid;
             border-left-width:1px;
-            border-left-color: $field-select-js-color-light;
-            background-color: $field-select-js-color-lighter;
+            border-left-color: $field-select-js-light-hue;
+            background-color: $field-select-js-lighter-hue;
         }
 
         &::after {
@@ -66,7 +66,7 @@
             margin-top: -2px;
             display: inline-block;
             content: " ";
-            border-color: $field-select-js-color-regular transparent;
+            border-color: $field-select-js-regular-hue transparent;
             border-style: solid;
             border-top-width: 4px;
             border-right-width: 4px;
@@ -128,10 +128,10 @@
 
 .FieldSelectJs[aria-multiple="true"] .FieldSelectJs-selectionItem {
     float: left;
-    background-color: $field-select-js-color-lighter;
+    background-color: $field-select-js-lighter-hue;
     border-style:solid;
     border-width:1px;
-    border-color: $field-select-js-color-light;
+    border-color: $field-select-js-light-hue;
     border-radius: 2px;
 }
 
@@ -141,15 +141,15 @@
 
 @-webkit-keyframes FieldSelectJs-highlight {
     25% {
-        background-color: $field-select-js-color-highlight-bkg;
-        border-color: $field-select-js-color-highlight-border;
+        background-color: $field-select-js-highlight-background-color;
+        border-color: $field-select-js-highlight-border-color;
     }
 }
 
 @keyframes FieldSelectJs-highlight {
     25% {
-        background-color: $field-select-js-color-highlight-bkg;
-        border-color: $field-select-js-color-highlight-border;
+        background-color: $field-select-js-highlight-background-color;
+        border-color: $field-select-js-highlight-border-color;
     }
 }
 
@@ -196,10 +196,10 @@
     padding: 0 4px;
     overflow: hidden;
     z-index: 99998;
-    background-color: $field-select-js-color-bkg;
+    background-color: $field-select-js-background-hue;
     border-style: solid;
     border-width: 1px;
-    border-color: $field-select-js-color-light;
+    border-color: $field-select-js-light-hue;
 
     &[aria-open="true"] {
         display: inherit;
@@ -240,8 +240,8 @@
 }
 
 .FieldSelectJs-pickerItem[aria-selected="true"] {
-    background-color: $field-select-js-color-selected-bkg;
-    color: $field-select-js-color-selected-txt;
+    background-color: $field-select-js-selected-background-color;
+    color: $field-select-js-selected-color;
 }
 
 .FieldSelectJs-pickerItem:not([aria-selected="true"])[aria-disabled="true"] {

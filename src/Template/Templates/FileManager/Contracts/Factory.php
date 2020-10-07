@@ -7,7 +7,7 @@ use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Template\{FactoryAjax, TemplateFactory as TemplateFactoryContract};
 use tiFy\Contracts\Template\TemplateFactory;
 
-interface FileManager extends TemplateFactory
+interface Factory extends TemplateFactory
 {
     /**
      * Récupération de l'instance du gestionnaire de fichiers en contexte.
@@ -83,7 +83,7 @@ interface FileManager extends TemplateFactory
     /**
      * {@inheritdoc}
      *
-     * @return FileManager
+     * @return Factory
      */
     public function prepare(): TemplateFactoryContract;
 
@@ -105,9 +105,9 @@ interface FileManager extends TemplateFactory
      *
      * @param string $path
      *
-     * @return FileManager
+     * @return Factory
      */
-    public function setPath(string $path): FileManager;
+    public function setPath(string $path): Factory;
 
     /**
      * Instance de la barre latérale de contrôle.

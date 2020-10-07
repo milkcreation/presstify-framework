@@ -3,7 +3,7 @@
 namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Template\Factory\{Ajax as BaseAjax, FactoryAwareTrait};
-use tiFy\Template\Templates\FileManager\Contracts\{Ajax as AjaxContract, FileManager};
+use tiFy\Template\Templates\FileManager\Contracts\{Ajax as AjaxContract, Factory};
 
 class Ajax extends BaseAjax implements AjaxContract
 {
@@ -11,7 +11,7 @@ class Ajax extends BaseAjax implements AjaxContract
 
     /**
      * Instance du gabarit associé.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 
@@ -22,7 +22,7 @@ class Ajax extends BaseAjax implements AjaxContract
     {
         parent::parse();
 
-        $this->getFactory()->param()->set('attrs.data-options.ajax', $this->all());
+        $this->getFactory()->param()->set('attrs.data-options', $this->all());
 
         return $this;
     }

@@ -2,15 +2,15 @@
 
 namespace tiFy\Template\Templates\FileManager;
 
-use League\Flysystem\Adapter\Local;
 use tiFy\Contracts\Filesystem\Filesystem as BaseFilesystem;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Template\Factory\ServiceProvider as BaseServiceProvider;
 use tiFy\Template\Templates\FileManager\Contracts\{
+    Actions as ActionsContract,
     Ajax as AjaxContract,
     Breadcrumb,
     Cache,
-    FileManager,
+    Factory,
     FileCollection,
     HttpController,
     HttpXhrController,
@@ -19,15 +19,16 @@ use tiFy\Template\Templates\FileManager\Contracts\{
     Filesystem,
     FileTag,
     Params,
-    Sidebar};
+    Sidebar
+};
 use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Support\Proxy\View as ProxyView;
 
-class FileManagerServiceProvider extends BaseServiceProvider
+class ServiceProvider extends BaseServiceProvider
 {
     /**
      * Instance du gabarit d'affichage.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 
@@ -64,6 +65,22 @@ class FileManagerServiceProvider extends BaseServiceProvider
         $this->registerFactoryIconSet();
         $this->registerFactoryParams();
         $this->registerFactorySidebar();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerFactoryActions(): void
+    {
+        $this->getContainer()->share($this->getFactoryAlias('actions'), function (): ActionsContract {
+            $ctrl = $this->factory->provider('actions');
+
+            $ctrl = $ctrl instanceof ActionsContract
+                ? $ctrl
+                : $this->getContainer()->get(ActionsContract::class);
+
+            return $ctrl->setTemplateFactory($this->factory);
+        });
     }
 
     /**
@@ -118,6 +135,7 @@ class FileManagerServiceProvider extends BaseServiceProvider
     {
         $this->getContainer()->add($this->getFactoryAlias('cache'), function () {
             $ctrl = $this->factory->provider('cache');
+
             $ctrl = $ctrl instanceof Cache
                 ? clone $ctrl
                 : $this->getContainer()->get(Cache::class);
@@ -174,7 +192,7 @@ class FileManagerServiceProvider extends BaseServiceProvider
         $this->getContainer()->share($this->getFactoryAlias('filesystem'), function () {
             $ctrl = $this->factory->provider('filesystem');
 
-            return $ctrl instanceof tiFyFilesystem
+            return $ctrl instanceof BaseFilesystem
                 ? $ctrl
                 : $this->getContainer()->get(Filesystem::class, [$this->factory]);
         });

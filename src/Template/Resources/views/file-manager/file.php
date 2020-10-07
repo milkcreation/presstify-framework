@@ -8,7 +8,7 @@
 ?>
 <a href="<?php echo $file->getUrl(); ?>"
    data-path="<?php echo $file->getRelPath(); ?>"
-   data-control="file-manager.action.get"
+   data-control="file-manager.action.fetch"
    class="FileManager-contentFileLink FileManager-contentFileLink--<?php echo($file->isDir() ? 'dir' : 'file'); ?>"
 >
     <div class="FileManager-contentFileAttr FileManager-contentFileAttr--preview">

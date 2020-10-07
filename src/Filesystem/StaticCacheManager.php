@@ -19,16 +19,17 @@ class StaticCacheManager extends StorageManager implements StaticCacheManagerCon
      * CONSTRUCTEUR.
      *
      * @param Container|null $container Instance du conteneur d'injection de dépendances.
-     * @param string| $cache_dir Chemin relatif vers le répertoire de stockage du cache.
+     * @param string|null $cache_dir Chemin relatif vers le répertoire de stockage du cache.
      *
      * @return void
      */
     public function __construct(?Container $container = null, ?string $cache_dir = null)
     {
-        parent::__construct($container);
+        parent::__construct([], $container);
 
         if ($cache_dir) {
             $path = ROOT_PATH . $cache_dir;
+
             $this->setCache($this->local($path));
         }
     }

@@ -18,7 +18,7 @@ class Actions extends BaseActions implements ActionsContract
      * @inheritDoc
      * @todo
      */
-    public function executeActivate()
+    public function doActivate()
     {
         if ($item = $this->factory->builder()->getItem($this->factory->request()->input('id'))) {
             return [
@@ -34,7 +34,7 @@ class Actions extends BaseActions implements ActionsContract
      * @inheritDoc
      * @todo
      */
-    public function executeDeactivate()
+    public function doDeactivate()
     {
         if ($item = $this->factory->builder()->getItem($this->factory->request()->input('id'))) {
             return [
@@ -49,7 +49,7 @@ class Actions extends BaseActions implements ActionsContract
     /**
      * @inheritDoc
      */
-    public function executeDelete()
+    public function doDelete()
     {
         if ($this->factory->builder()->deleteItem($this->factory->request()->input('id'))) {
             return $this->controller()->referer();
@@ -62,7 +62,7 @@ class Actions extends BaseActions implements ActionsContract
      * @inheritDoc
      * @todo
      */
-    public function executeDuplicate()
+    public function doDuplicate()
     {
         if ($item = $this->factory->builder()->getItem($this->factory->request()->input('id'))) {
             return [
@@ -78,7 +78,7 @@ class Actions extends BaseActions implements ActionsContract
      * @inheritDoc
      * @todo
      */
-    public function executeTrash()
+    public function doTrash()
     {
         if ($item = $this->factory->builder()->getItem($this->factory->request()->input('id'))) {
             return [
@@ -94,7 +94,7 @@ class Actions extends BaseActions implements ActionsContract
      * @inheritDoc
      * @todo
      */
-    public function executeUntrash()
+    public function doUntrash()
     {
         if ($item = $this->factory->builder()->getItem($this->factory->request()->input('id'))) {
             return [

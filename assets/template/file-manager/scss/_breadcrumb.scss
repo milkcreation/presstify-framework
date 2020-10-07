@@ -14,16 +14,16 @@
 .FileManager-breadcrumbPart + .FileManager-breadcrumbPart::before {
   padding: 0 1px;
   content: "/\00a0";
-  color: color(gray, 500);
+  color: tify_theme_color("gray", 500);
 }
 
 .FileManager-breadcrumbPartLink {
   text-decoration: none;
-  color: color(gray, 900);
+  color: tify_theme_color("gray", 900);
 }
 
 .FileManager-breadcrumbPartLink:active,
 .FileManager-breadcrumbPartLink:focus,
 .FileManager-breadcrumbPartLink:hover {
-  color: color(gray, 600);
+  color: tify_theme_color("gray", 600);
 }

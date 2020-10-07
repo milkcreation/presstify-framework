@@ -3,7 +3,7 @@
 namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\FileManager\Contracts\Breadcrumb as BreadcrumbContract;
+use tiFy\Template\Templates\FileManager\Contracts\{Breadcrumb as BreadcrumbContract, Factory};
 use tiFy\Support\Collection;
 
 class Breadcrumb extends Collection implements BreadcrumbContract
@@ -12,7 +12,7 @@ class Breadcrumb extends Collection implements BreadcrumbContract
 
     /**
      * Instance du gabarit associé.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 

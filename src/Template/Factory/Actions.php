@@ -36,9 +36,10 @@ class Actions implements FactoryActionsContract
     /**
      * @inheritDoc
      */
-    public function execute(string $name, ...$parameters)
+    public function do(string $name, ...$parameters)
     {
-        $method = 'execute' . Str::studly($name);
+        $method = 'do' . Str::studly($name);
+
         if (method_exists($this, $method)) {
             return $this->$method(...$parameters);
         } else {

@@ -2,14 +2,14 @@
 
 // Personnalisation
 .FieldDatepicker-clearer {
-  color:map-get($wp-colors, "highlight");
+  color: tify_theme_color("wp-admin", "highlight");
 }
 
 .ui-datepicker {
   z-index: 99999 !important;
 
   &.ui-widget.ui-widget-content {
-    border: solid 1px map-get($wp-colors, "light");
+    border: solid 1px tify_theme_color("light");
     border-radius: 0;
   }
 
@@ -24,7 +24,7 @@
 
     .ui-datepicker-next,
     .ui-datepicker-prev {
-      border: solid map-get($wp-colors, "primary");
+      border: solid tify_theme_color("primary");
       border-width: 0 3px 3px 0;
       display: inline-block;
       padding: 3px;
@@ -53,8 +53,8 @@
     height: 2em;
 
     .ui-state-hover {
-      background-color: map-get($wp-colors, "light");
-      color: map-get($wp-colors, "base");
+      background-color: tify_theme_color("light");
+      color: tify_theme_color("wp-admin", "base");
     }
 
     span, a {
@@ -70,25 +70,25 @@
   .ui-state-default {
     border: none;
     background-color: transparent;
-    color:map-get($wp-colors, "base");
+    color:tify_theme_color("wp-admin", "base");
   }
 
   .ui-state-active,
   .ui-state-active.ui-state-hover {
-    background-color: map-get($wp-colors, "primary");
-    color:map-get($colors, "white");
+    background-color: tify_theme_color("primary");
+    color:tify_theme_color("white");
   }
 
   .ui-state-highlight {
-    color:map-get($wp-colors, "primary");
+    color:tify_theme_color("primary");
     font-weight: bold;
 
     &.ui-state-hover {
-      color:map-get($wp-colors, "primary");
+      color:tify_theme_color("primary");
     }
 
     &.ui-state-active {
-      color:map-get($colors, "white");
+      color:tify_theme_color("white");
     }
   }
 }

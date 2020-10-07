@@ -3,7 +3,7 @@
 namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Template\Factory\View as BaseView;
-use tiFy\Template\Templates\FileManager\Contracts\{Breadcrumb, FileCollection, FileInfo};
+use tiFy\Template\Templates\FileManager\Contracts\{Breadcrumb, Factory, FileCollection, FileInfo};
 
 /**
  * @method Breadcrumb|iterable breadcrumb()
@@ -16,7 +16,7 @@ class View extends BaseView
 {
     /**
      * Instance du gabarit associé.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 

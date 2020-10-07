@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\FileManager;
 
 use tiFy\Support\Collection;
 use tiFy\Template\Factory\FactoryAwareTrait;
-use tiFy\Template\Templates\FileManager\Contracts\{FileManager, FileCollection as FileCollectionContract, FileInfo};
+use tiFy\Template\Templates\FileManager\Contracts\{Factory, FileCollection as FileCollectionContract, FileInfo};
 
 class FileCollection extends Collection implements FileCollectionContract
 {
@@ -12,7 +12,7 @@ class FileCollection extends Collection implements FileCollectionContract
 
     /**
      * Instance du gabarit d'affichage.
-     * @var FileManager
+     * @var Factory
      */
     protected $factory;
 

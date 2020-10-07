@@ -1,5 +1,5 @@
 .FileManager-finfo {
-  border-bottom: solid 1px color(gray, 300);
+  border-bottom: solid 1px tify_theme_color("gray", 300);
 }
 
 .FileManager-finfoPreview {
@@ -20,7 +20,7 @@
 
 .FileManager-finfoHandlers {
   margin: 5px 0;
-  border-bottom: solid 1px color(gray, 300);
+  border-bottom: solid 1px tify_theme_color("gray", 300);
   text-align:right;
 }
 
@@ -32,13 +32,13 @@
 
 .FileManager-finfoHandlerLink {
   font-size: 11px;
-  color: color(gray, 900);
+  color: tify_theme_color("gray", 900);
 }
 
 .FileManager-finfoHandlerLink:active,
 .FileManager-finfoHandlerLink:focus,
 .FileManager-finfoHandlerLink:hover {
-  color: color(gray, 700);
+  color: tify_theme_color("gray", 700);
 }
 
 
@@ -49,7 +49,7 @@
 .FileManager-finfoAttr {
   font-size: 12px;
   line-height: 1.6;
-  border-bottom: dotted 1px color(gray, 300);
+  border-bottom: dotted 1px tify_theme_color("gray", 300);
 }
 
 .FileManager-finfoAttrLabel {

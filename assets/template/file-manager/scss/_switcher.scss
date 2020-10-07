@@ -17,15 +17,15 @@
 }
 
 .FileManager-switchLink {
-  color:color(gray, 500);
+  color: tify_theme_color("gray", 500);
 }
 
 .FileManager-switchLink:active,
 .FileManager-switchLink:focus,
 .FileManager-switchLink:hover{
-  color:color(gray, 900);
+  color: tify_theme_color("gray", 900);
 }
 
 .FileManager-switch.selected  .FileManager-switchLink{
-  color:color(gray, 900);
+  color: tify_theme_color("gray", 900);
 }
