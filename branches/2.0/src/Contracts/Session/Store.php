@@ -74,14 +74,24 @@ interface Store extends ParamsBag
     public function prepare(): Store;
 
     /**
-     * Définition d'une donnée de session.
+     * Définition de données de session.
      *
-     * @param string $key Identifiant de qualification de la variable
+     * @param string|array $key Identifiant de qualification de la variable
      * @param mixed $value Valeur de la variable
      *
      * @return static
      */
-    public function put(string $key, $value = null): Store;
+    public function put($key, $value = null): Store;
+
+    /**
+     * Définition d'une donnée de session.
+     *
+     * @param string $key Clé d'indice
+     * @param mixed $value Valeur de la variable
+     *
+     * @return static
+     */
+    public function putOne(string $key, $value = null): Store;
 
     /**
      * Sauvegarde des données de session.

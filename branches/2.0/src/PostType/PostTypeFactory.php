@@ -3,9 +3,9 @@
 namespace tiFy\PostType;
 
 use LogicException;
-use tiFy\Contracts\PostType\{PostType, PostTypeFactory as PostTypeFactoryContract};
+use tiFy\Contracts\{Support\LabelsBag, PostType\PostType, PostType\PostTypeFactory as PostTypeFactoryContract};
 use tiFy\Support\ParamsBag;
-use WP_Post_Type;
+use WP_Post_Type, WP_REST_Controller;
 
 /**
  * @property-read string $label
@@ -37,7 +37,7 @@ use WP_Post_Type;
  * @property-read bool $show_in_rest
  * @property-read string|bool $rest_base
  * @property-read string|bool $rest_controller_class
- * @property-read \WP_REST_Controller $rest_controller
+ * @property-read WP_REST_Controller $rest_controller
  */
 class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
 {
@@ -46,6 +46,12 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
      * @var boolean
      */
     private $prepared = false;
+
+    /**
+     * Instance du gestionnaire d'intitulés.
+     * @var LabelsBag|null
+     */
+    protected $labelBag;
 
     /**
      * Instance du gestionnaire de taxonomie.
@@ -149,9 +155,13 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
     /**
      * @inheritDoc
      */
-    public function label(string $key, string $default = ''): string
+    public function label(?string $key = null, string $default = '')
     {
-        return $this->get("labels.{$key}", $default);
+        if (is_null($key)) {
+            return $this->labelBag;
+        }
+
+        return $this->labelBag->get($key, $default);
     }
 
     /**
@@ -192,12 +202,12 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
 
         $this->set('gender', $this->get('gender', false));
 
-        $labels = PostTypeLabelsBag::createFromAttrs(array_merge([
+        $this->labelBag = PostTypeLabelsBag::createFromAttrs(array_merge([
             'singular' => $this->get('singular'),
             'plural'   => $this->get('plural'),
             'gender'   => $this->get('gender'),
         ], $this->get('labels', [])), $this->get('label'));
-        $this->set('labels', $labels->all());
+        $this->set('labels', $this->labelBag->all());
 
         $this->set('exclude_from_search', $this->has('exclude_from_search')
             ? $this->get('exclude_from_search')

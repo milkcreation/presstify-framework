@@ -44,7 +44,7 @@ class Notices extends NoticesController implements FactoryNotices
      *
      * @return void
      */
-    public function __construct($params, FormFactory $form)
+    public function __construct(array $params, FormFactory $form)
     {
         $this->form = $form;
 

@@ -3,6 +3,7 @@
 namespace tiFy\Console;
 
 use Symfony\Component\Console\Input\InputOption;
+use tiFy\Console\Commands\UpdateCore20345;
 use tiFy\Container\ServiceProvider;
 use tiFy\Kernel\Application as App;
 
@@ -54,6 +55,8 @@ class ConsoleServiceProvider extends ServiceProvider
                     );
                 }
             }
+
+            $app->add((new UpdateCore20345())->setName('update-core:2.0.345'));
 
             return $app;
         });

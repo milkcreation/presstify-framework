@@ -65,10 +65,10 @@ class User extends AddonFactory
         });
 
         $this->form()->events()
-            ->listen('request.validate.field', function (FactoryField $field) {
+            ->listen('handle.validate.field', function (FactoryField $field) {
                 $this->form()->events('addon.user.field.validation', [&$field]);
             })
-            ->listen('request.proceed', function () {
+            ->listen('handle.validated', function () {
                 $this->form()->events('addon.user.save');
             })
             ->listen('addon.user.field.validation', [$this, 'fieldValidation'])
@@ -301,7 +301,7 @@ class User extends AddonFactory
                 continue;
             }
 
-            $userdatas[$key] = $this->form()->request()->get($slug);
+            $userdatas[$key] = $this->form()->handle()->get($slug);
         }
 
         if (isset($userdatas['show_admin_bar_front'])) {

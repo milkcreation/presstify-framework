@@ -18,9 +18,9 @@ use tiFy\Form\Factory\Field as FactoryField;
 use tiFy\Form\Factory\Fields as FactoryFields;
 use tiFy\Form\Factory\Group as FactoryGroup;
 use tiFy\Form\Factory\Groups as FactoryGroups;
+use tiFy\Form\Factory\Handle as FactoryHandle;
 use tiFy\Form\Factory\Notices as FactoryNotices;
 use tiFy\Form\Factory\Options as FactoryOptions;
-use tiFy\Form\Factory\Request as FactoryRequest;
 use tiFy\Form\Factory\Session as FactorySession;
 use tiFy\Form\Factory\Validation as FactoryValidation;
 use tiFy\Form\Factory\View as FactoryView;
@@ -51,9 +51,9 @@ class FormServiceProvider extends ServiceProvider
         'form.factory.fields',
         'form.factory.group',
         'form.factory.groups',
+        'form.factory.handle',
         'form.factory.notices',
         'form.factory.options',
-        'form.factory.request',
         'form.factory.session',
         'form.factory.validation',
         'form.field',
@@ -157,8 +157,8 @@ class FormServiceProvider extends ServiceProvider
             return new FactoryOptions($options, $form);
         });
 
-        $this->getContainer()->add('form.factory.request', function (FormFactoryContract $form) {
-            return new FactoryRequest($form);
+        $this->getContainer()->add('form.factory.handle', function (FormFactoryContract $form) {
+            return new FactoryHandle($form);
         });
 
         $this->getContainer()->add('form.factory.session', function (FormFactoryContract $form) {

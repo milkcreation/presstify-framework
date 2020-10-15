@@ -13,6 +13,8 @@ use tiFy\Contracts\Mail\{
     Mailer as MailerContract,
     MailerQueue as MailerQueueContract
 };
+use tiFy\Support\Arr;
+use tiFy\Validation\Validator as v;
 
 class Mailer implements MailerContract
 {
@@ -47,122 +49,92 @@ class Mailer implements MailerContract
     protected $queue;
 
     /**
-     * Traitement récursif d'une liste de pièces jointes.
-     *
-     * @param string|string[]|array $attachments
-     *
-     * @return array
-     */
-    private function _parseAttachments($attachments): array
-    {
-        $output = (func_num_args() === 2) ? func_get_arg(1) : [];
-
-        if (is_string($attachments)) {
-            if (is_file($attachments)) {
-                $output[] = [$attachments];
-            } elseif (is_array($attachments)) {
-                foreach ($attachments as $a) {
-                    if (is_string($a)) {
-                        $output = $this->_parseAttachments($a, $output);
-                    } elseif (is_array($a)) {
-                        $filename = $a[0] ?? null;
-
-                        if ($filename && is_file($filename)) {
-                            $output[] = $a;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $output;
-    }
-
-    /**
      * Traitement récursif d'une liste de contacts.
      *
-     * @param string|string[]|array $contacts Liste de contact.
-     * {@internal "{{ email:string }}"|"{{ name:string }} {{ email:string }}"|["{{ email1:string }}", ["{{ name2:string
-     *     }} {{ email2:string }}"]] }
+     * @param string|string[]|array $contact Liste de contact.
      *
-     * @return array
+     * @return array|null
      */
-    private function _parseContacts($contacts): array
+    public static function parseContact($contact): ?array
     {
         $output = (func_num_args() === 2) ? func_get_arg(1) : [];
 
-        if (is_string($contacts)) {
+        if (is_string($contact)) {
             $email = '';
             $name = '';
-            $bracket_pos = strpos($contacts, '<');
+            $bracket_pos = strpos($contact, '<');
             if ($bracket_pos !== false) {
                 if ($bracket_pos > 0) {
-                    $name = substr($contacts, 0, $bracket_pos - 1);
+                    $name = substr($contact, 0, $bracket_pos - 1);
                     $name = str_replace('"', '', $name);
                     $name = trim($name);
                 }
 
-                $email = substr($contacts, $bracket_pos + 1);
+                $email = substr($contact, $bracket_pos + 1);
                 $email = str_replace('>', '', $email);
                 $email = trim($email);
-            } elseif (!empty($contacts)) {
-                $email = $contacts;
+            } elseif (!empty($contact)) {
+                $email = $contact;
             }
-            if ($email && is_email($email)) {
-                $output[] = [$email, $name];
+
+            if ($email && v::email()->validate($email)) {
+                $output[] = array_filter([$email, $name]);
             }
-        } elseif (is_array($contacts)) {
-            if ((count($contacts) === 2) &&
-                isset($contacts[0]) && isset($contacts[1]) &&
-                is_string($contacts[0]) && is_string($contacts[1])
-            ) {
-                if (is_email($contacts[0]) && !is_email($contacts[1])) {
-                    $output[] = array_map('trim', $contacts);
+        } elseif (is_array($contact)) {
+            if (!Arr::isAssoc($contact)) {
+                if ((count($contact) === 2) && is_string($contact[0]) && is_string($contact[1]) &&
+                    v::email()->validate($contact[0]) && !v::email()->validate($contact[1])
+                ) {
+                    $output[] = $contact;
+                } else {
+                    foreach ($contact as $c) {
+                        if ($value = static::parseContact($c, $output)) {
+                            $output = $value;
+                        }
+                    }
                 }
             } else {
-                foreach ($contacts as $c) {
-                    if (is_string($c)) {
-                        $output = $this->_parseContacts($c, $output);
-                    } elseif (is_array($c)) {
-                        $email = $c[0] ?? null;
-                        $name = $c[1] ?? '';
+                $email = $contact['email'] ?? null;
 
-                        if ($email && is_email($email)) {
-                            $output[] = [$email, $name];
-                        }
+                if (v::email()->validate($email)) {
+                    $output[] = array_filter([$email, $contact['name'] ?? null]);
+                }
+            }
+        }
+
+        return array_filter($output) ? : null;
+    }
+
+    /**
+     * Traitement récursif d'une liste de pièces jointes.
+     *
+     * @param string|string[]|array $attachment
+     *
+     * @return array
+     */
+    public static function parseAttachment($attachment): array
+    {
+        $output = (func_num_args() === 2) ? func_get_arg(1) : [];
+
+        if (is_string($attachment)) {
+            if (is_file($attachment)) {
+                $output[] = $attachment;
+            }
+        } elseif (is_array($attachment)) {
+            foreach ($attachment as $a) {
+                if (is_string($a)) {
+                    $output = static::parseAttachment($a, $output);
+                } elseif (is_array($a)) {
+                    $filename = $a[0] ?? null;
+
+                    if ($filename && is_file($filename)) {
+                        $output[] = $a;
                     }
                 }
             }
         }
 
         return $output;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDefaults(): array
-    {
-        return array_merge([
-            'to'           => [],
-            'from'         => [],
-            'reply-to'     => [],
-            'bcc'          => [],
-            'cc'           => [],
-            'attachments'  => [],
-            'html'         => '',
-            'plain'        => '',
-            'data'         => [],
-            'content'      => [],
-            'subject'      => __('Test d\'envoi de mail', 'tify'),
-            'charset'      => 'utf-8',
-            'encoding'     => '8bit',
-            'content_type' => 'multipart/alternative',
-            'css'          => file_get_contents(__DIR__ .'/Resources/assets/css/styles.css'),
-            'inline_css'   => true,
-            'vars'         => [],
-            'viewer'       => [],
-        ], static::$defaults);
     }
 
     /**
@@ -229,6 +201,39 @@ class Mailer implements MailerContract
     /**
      * @inheritDoc
      */
+    public function getDefaults(string $key = null, $defaults = null)
+    {
+        $attrs = array_merge([
+            'to'           => [],
+            'from'         => [],
+            'reply-to'     => [],
+            'bcc'          => [],
+            'cc'           => [],
+            'attachments'  => [],
+            'html'         => '',
+            'plain'        => '',
+            'data'         => [],
+            'content'      => [],
+            'subject'      => __('Test d\'envoi de mail', 'tify'),
+            'charset'      => 'utf-8',
+            'encoding'     => '8bit',
+            'content_type' => 'multipart/alternative',
+            'css'          => file_get_contents(__DIR__ .'/Resources/assets/css/styles.css'),
+            'inline_css'   => true,
+            'vars'         => [],
+            'viewer'       => [],
+        ], static::$defaults);
+
+        if (!is_null($key)) {
+            return $attrs[$key] ?? $defaults;
+        }
+
+        return $attrs;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getDriver(): MailerDriver
     {
         if (is_null($this->driver)) {
@@ -260,40 +265,46 @@ class Mailer implements MailerContract
         $mail = $this->create();
 
         if ($from = $mail->params('from')) {
-            $contact = $this->_parseContacts($from)[0];
+            $contact = static::parseContact($from)[0];
+
             $this->getDriver()->setFrom(...$contact);
         }
 
         if ($to = $mail->params('to')) {
-            $contacts = $this->_parseContacts($to);
-            foreach ($contacts as $c) {
+            $contact = static::parseContact($to);
+
+            foreach ($contact as $c) {
                 $this->getDriver()->addTo(...$c);
             }
         }
 
         if ($replyTo = $mail->params('reply-to')) {
-            $contacts = $this->_parseContacts($replyTo);
-            foreach ($contacts as $c) {
+            $contact = static::parseContact($replyTo);
+
+            foreach ($contact as $c) {
                 $this->getDriver()->addReplyTo(...$c);
             }
         }
 
         if ($bcc = $mail->params('bcc')) {
-            $contacts = $this->_parseContacts($bcc);
-            foreach ($contacts as $c) {
+            $contact = static::parseContact($bcc);
+
+            foreach ($contact as $c) {
                 $this->getDriver()->addBcc(...$c);
             }
         }
 
         if ($cc = $mail->params('cc')) {
-            $contacts = $this->_parseContacts($cc);
-            foreach ($contacts as $c) {
+            $contact = static::parseContact($cc);
+
+            foreach ($contact as $c) {
                 $this->getDriver()->addCc(...$c);
             }
         }
 
         if ($attachments = $mail->params('attachments', [])) {
-            $files = $this->_parseAttachments($attachments);
+            $files = static::parseAttachment($attachments);
+
             foreach ($files as $path) {
                 $this->getDriver()->addAttachment($path);
             }
@@ -316,7 +327,7 @@ class Mailer implements MailerContract
         }
 
         if ($data = $mail->params('data', [])) {
-            $mail->data(array_merge(static::getDefaults()['data'] ?? [], $data));
+            $mail->data(array_merge($this->getDefaults('data', []), $data));
         }
 
         if (!$html = $mail->params('html')) {

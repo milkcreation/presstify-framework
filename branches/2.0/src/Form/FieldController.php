@@ -16,19 +16,20 @@ class FieldController implements FieldControllerContract
      */
     protected $fieldSupports = [
         'button'              => ['request', 'wrapper'],
-        'checkbox'            => ['checking', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
-        'checkbox-collection' => ['choices', 'label', 'request', 'tabindexes', 'transport', 'wrapper'],
-        'datetime-js'         => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
-        'hidden'              => ['request', 'transport'],
+        'checkbox'            => ['checking', 'label', 'request', 'wrapper', 'session', 'tabindex', 'transport'],
+        'checkbox-collection' => ['choices', 'label', 'request', 'session', 'tabindexes', 'transport', 'wrapper'],
+        'datetime-js'         => ['label', 'request', 'session', 'tabindexes', 'transport', 'wrapper'],
+        'file'                => ['label', 'request', 'tabindex', 'wrapper'],
+        'hidden'              => ['request', 'session', 'transport'],
         'label'               => ['wrapper'],
         'password'            => ['label', 'request', 'tabindex', 'wrapper'],
-        'radio'               => ['label', 'request', 'tabindex', 'wrapper', 'transport'],
-        'radio-collection'    => ['choices', 'label', 'request', 'tabindexes', 'transport', 'wrapper'],
-        'repeater'            => ['label', 'request', 'tabindexes', 'transport', 'wrapper'],
-        'select'              => ['choices', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
-        'select-js'           => ['choices', 'label', 'request', 'tabindex', 'wrapper', 'transport'],
+        'radio'               => ['label', 'request', 'session', 'tabindex', 'transport', 'wrapper'],
+        'radio-collection'    => ['choices', 'label', 'request', 'session', 'tabindexes', 'transport', 'wrapper'],
+        'repeater'            => ['label', 'request', 'session', 'tabindexes', 'transport', 'wrapper'],
+        'select'              => ['choices', 'label',  'request', 'session', 'tabindex', 'transport', 'wrapper'],
+        'select-js'           => ['choices', 'label', 'request', 'session', 'tabindex', 'transport', 'wrapper'],
         'submit'              => ['request', 'tabindex', 'wrapper'],
-        'toggle-switch'       => ['request', 'tabindex', 'transport', 'wrapper'],
+        'toggle-switch'       => ['request', 'tabindex', 'session', 'transport', 'wrapper'],
     ];
 
     /**
@@ -41,7 +42,7 @@ class FieldController implements FieldControllerContract
      * Liste des propriétés de support.
      * @var array
      */
-    protected $supports = ['label', 'request', 'tabindex', 'wrapper', 'transport'];
+    protected $supports = ['label', 'request', 'session', 'tabindex', 'transport', 'wrapper'];
 
     /**
      * CONSTRUCTEUR.

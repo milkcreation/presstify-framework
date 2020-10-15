@@ -20,7 +20,7 @@ class Validation implements FactoryValidation
     /**
      * CONSTRUCTEUR.
      *
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */

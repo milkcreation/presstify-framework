@@ -15,6 +15,8 @@ class PostTypeLabelsBag extends LabelsBag
     public function defaults(): array
     {
         return [
+            'plural'             => $this->plural(false),
+            'singular'           => $this->singular(false),
             'name'               => $this->plural(true),
             'singular_name'      => $this->singular(true),
             'add_new'            => !$this->gender()

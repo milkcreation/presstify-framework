@@ -5,7 +5,8 @@ namespace tiFy\Form;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Form\Factory\ResolverTrait;
-use tiFy\Support\{LabelsBag, ParamsBag, Str};
+use tiFy\Support\{LabelsBag, ParamsBag};
+use tiFy\Support\Proxy\Request;
 
 class FormFactory extends ParamsBag implements FormFactoryContract
 {
@@ -288,7 +289,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function onSuccess(): bool
     {
-        return !!$this->success || (request()->get('success') === $this->name());
+        return !!$this->success || (Request::instance()->get('success') === $this->name());
     }
 
     /**
@@ -317,9 +318,9 @@ class FormFactory extends ParamsBag implements FormFactoryContract
                          'buttons',
                          'fields',
                          'groups',
+                         'handle',
                          'notices',
                          'options',
-                         'request',
                          'session',
                          'validation',
                          'viewer',
@@ -472,8 +473,8 @@ class FormFactory extends ParamsBag implements FormFactoryContract
                 return $this->resolve('factory.options', [$this->get('options', []), $this]);
             });
 
-            app()->share("form.factory.request.{$this->name}", function () {
-                return $this->resolve('factory.request', [$this]);
+            app()->share("form.factory.handle.{$this->name}", function () {
+                return $this->resolve('factory.handle', [$this]);
             });
 
             app()->share("form.factory.session.{$this->name}", function () {

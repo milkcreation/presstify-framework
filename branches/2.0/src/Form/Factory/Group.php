@@ -45,6 +45,7 @@ class Group extends ParamsBag implements FactoryGroup
     public function __construct(array $attrs = [])
     {
         $this->set($attrs);
+
         if (!$this->name) {
             $this->name = strval($this->get('name'));
         }

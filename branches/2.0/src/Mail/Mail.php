@@ -64,7 +64,7 @@ class Mail implements MailContract
      */
     public function defaults(): array
     {
-        return $this->mailer()::getDefaults();
+        return $this->mailer()->getDefaults();
     }
 
     /**

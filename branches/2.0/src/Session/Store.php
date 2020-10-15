@@ -7,7 +7,6 @@ use Illuminate\Database\Schema\Blueprint;
 use tiFy\Contracts\Session\{Session, Store as StoreContract};
 use tiFy\Support\{Arr, ParamsBag, Str};
 use tiFy\Support\Proxy\{Crypt, Database, Log, Schema};
-use tiFy\Validation\Validator as v;
 
 class Store extends ParamsBag implements StoreContract
 {
@@ -118,7 +117,7 @@ class Store extends ParamsBag implements StoreContract
             'session_name' => $this->getName(),
         ])->delete();
 
-        $this->attributes = [];
+        $this->clear();
         $this->changed = false;
         $this->credentials = [];
 
@@ -244,7 +243,23 @@ class Store extends ParamsBag implements StoreContract
     /**
      * @inheritDoc
      */
-    public function put(string $key, $value = null): StoreContract
+    public function put($key, $value = null): StoreContract
+    {
+        if (! is_array($key)) {
+            $key = [$key => $value];
+        }
+
+        foreach ($key as $k => $v) {
+            $this->putOne($k, $v);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function putOne(string $key, $value = null): StoreContract
     {
         if ($value !== $this->get($key)) {
             $this->set($key, $value);

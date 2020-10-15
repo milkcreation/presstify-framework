@@ -5,8 +5,15 @@ namespace tiFy\Contracts\Form;
 use tiFy\Http\RedirectResponse;
 use tiFy\Contracts\Support\ParamsBag;
 
-interface FactoryRequest extends FactoryResolver, ParamsBag
+interface FactoryHandle extends FactoryResolver, ParamsBag
 {
+    /**
+     * Traitement de l'échec de la requête de soumission du formulaire.
+     *
+     * @return static
+     */
+    public function fail(): FactoryHandle;
+
     /**
      * Récupération de l'url de redirection.
      *
@@ -26,14 +33,14 @@ interface FactoryRequest extends FactoryResolver, ParamsBag
      *
      * @return RedirectResponse|null
      */
-    public function handle(): ?RedirectResponse;
+    public function response(): ?RedirectResponse;
 
     /**
      * Préparation des données de traitement de la requête.
      *
      * @return static
      */
-    public function prepare(): FactoryRequest;
+    public function prepare(): FactoryHandle;
 
     /**
      * Redirection de la requête de traitement du formulaire.
@@ -43,13 +50,6 @@ interface FactoryRequest extends FactoryResolver, ParamsBag
     public function redirect(): RedirectResponse;
 
     /**
-     * Réinitialisation de la requête.
-     *
-     * @return static
-     */
-    public function reset(): FactoryRequest;
-
-    /**
      * Définition de l'url de redirection.
      *
      * @param string $url
@@ -57,14 +57,21 @@ interface FactoryRequest extends FactoryResolver, ParamsBag
      *
      * @return static
      */
-    public function setRedirectUrl(string $url, bool $raw = false): FactoryRequest;
+    public function setRedirectUrl(string $url, bool $raw = false): FactoryHandle;
+
+    /**
+     * Traitement du succès de la requête de soumission du formulaire.
+     *
+     * @return static
+     */
+    public function success(): FactoryHandle;
 
     /**
      * Traitement de la validation de soumission du formulaire.
      *
      * @return static
      */
-    public function validate(): FactoryRequest;
+    public function validate(): FactoryHandle;
 
     /**
      * Vérification de l'origine de la requête.

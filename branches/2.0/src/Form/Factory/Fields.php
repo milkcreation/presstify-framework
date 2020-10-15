@@ -19,11 +19,11 @@ class Fields extends Collection implements FactoryFields
      * CONSTRUCTEUR.
      *
      * @param array $fields Liste des champs associés au formulaire.
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */
-    public function __construct($fields, FormFactory $form)
+    public function __construct(array $fields, FormFactory $form)
     {
         $this->form = $form;
 

@@ -8,11 +8,13 @@ use tiFy\Template\Templates\ListTable\{
     ServiceProvider as BaseServiceProvider
 };
 use tiFy\Template\Templates\PostListTable\Contracts\{
-    Db,
+    Db as DbContract,
     Item,
     Params,
     DbBuilder,
 };
+use Illuminate\Database\Eloquent\Model;
+use tiFy\Template\Factory\Db;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -77,12 +79,17 @@ class ServiceProvider extends BaseServiceProvider
     public function registerFactoryDb(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('db'), function () {
-            $ctrl = $this->factory->provider('db');
-            $ctrl = $ctrl instanceof Db
-                ? $ctrl
-                : $this->getContainer()->get(Db::class);
+            if ($db = $this->factory->provider('db')) {
+                if ($db instanceof Model) {
+                    $db = (new Db())->setDelegate($db);
+                } elseif (!$db instanceof DbContract) {
+                    $db = new Db();
+                }
 
-            return $ctrl->setTemplateFactory($this->factory);
+                return  $db->setTemplateFactory($this->factory);
+            } else {
+                return null;
+            }
         });
     }
 

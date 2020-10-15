@@ -11,9 +11,9 @@ use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryFields;
 use tiFy\Contracts\Form\FactoryGroup;
 use tiFy\Contracts\Form\FactoryGroups;
+use tiFy\Contracts\Form\FactoryHandle;
 use tiFy\Contracts\Form\FactoryNotices;
 use tiFy\Contracts\Form\FactoryOptions;
-use tiFy\Contracts\Form\FactoryRequest;
 use tiFy\Contracts\Form\FactorySession;
 use tiFy\Contracts\Form\FactoryValidation;
 use tiFy\Contracts\Form\FormFactory;
@@ -128,7 +128,6 @@ trait ResolverTrait
         return $this->groups()->get($name);
     }
 
-
     /**
      * {@inheritDoc}
      *
@@ -137,6 +136,16 @@ trait ResolverTrait
     public function groups()
     {
         return $this->resolve("factory.groups.{$this->form()->name()}");
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return FactoryHandle
+     */
+    public function handle()
+    {
+        return $this->resolve("factory.handle.{$this->form()->name()}");
     }
 
     /**
@@ -171,16 +180,6 @@ trait ResolverTrait
     public function options()
     {
         return $this->resolve("factory.options.{$this->form()->name()}");
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return FactoryRequest
-     */
-    public function request()
-    {
-        return $this->resolve("factory.request.{$this->form()->name()}");
     }
 
     /**

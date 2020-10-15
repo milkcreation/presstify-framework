@@ -55,9 +55,7 @@ class Record extends AddonFactory
     public function boot(): void
     {
         Database::addConnection(
-            array_merge(
-                Database::getConnection()->getConfig(), ['strict' => false]
-            ),
+            array_merge(Database::getConnection()->getConfig(), ['strict' => false]),
             'form.addon.record'
         );
 
@@ -67,14 +65,13 @@ class Record extends AddonFactory
             Database::getConnection('form.addon.record')->setTablePrefix($wpdb->prefix);
         }
 
-
         $schema = Schema::connexion('form.addon.record');
 
         if (!$schema->hasTable('tify_forms_record')) {
             $schema->create('tify_forms_record', function (Blueprint $table) {
                 $table->bigIncrements('ID');
                 $table->string('form_id', 255);
-                $table->string('session', 32);
+                $table->string('session', 255);
                 $table->string('status', 32)->default('publish');
                 $table->dateTime('created_date')->default('0000-00-00 00:00:00');
                 $table->index('form_id', 'form_id');
@@ -169,7 +166,7 @@ class Record extends AddonFactory
         });
 
         $this->form()->events()
-            ->listen('request.proceed',  function () {
+            ->listen('handle.validated',  function () {
                 $this->form()->events('addon.record.save');
             })
             ->listen('addon.record.save', [$this, 'save']);
@@ -198,7 +195,7 @@ class Record extends AddonFactory
     {
         $datas = [
             'form_id'      => $this->form()->name(),
-            'session'      => $this->form()->session()->create(),
+            'session'      => $this->form()->session()->getToken(),
             'status'       => 'publish',
             'created_date' => DateTime::now()->toDateTimeString(),
         ];
