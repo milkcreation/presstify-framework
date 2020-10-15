@@ -15,41 +15,44 @@ class Mailer extends AddonFactory
     public function boot(): void
     {
         $this->form()->events()
-            ->listen('request.proceed', function () {
+            ->listen('handle.validated', function () {
                 if ($debug = $this->params('debug')) {
                     $this->form()->events('addon.mailer.email.debug');
                 }
             })
-            ->listen('request.successed', function () {
+            ->listen('handle.successed', function () {
                 $this->form()->events('addon.mailer.email.send');
             })
             ->listen('addon.mailer.email.debug', [$this, 'emailDebug'])
             ->listen('addon.mailer.email.send', [$this, 'emailSend']);
 
-        $prefix = $this->params('option_name_prefix', "FormMailer_{$this->form()->name()}");
+        $prefix = $this->params('option_name_prefix') ? : "FormMailer_{$this->form()->name()}_";
+
         $option_names = $this->params('option_names', []);
         foreach (['confirmation', 'sender', 'notification', 'recipients'] as $option) {
             $option_names[$option] = $option_names[$option] ?? "{$prefix}{$option}";
         }
         $this->params(['option_names' => $option_names]);
 
-        if ($this->params('confirmation') && get_option($option_names['confirmation'])) {
+        if ($this->params('confirmation') && ($enabled = get_option($option_names['confirmation']))) {
+            $this->params(['enabled.confirmation' => filter_var($enabled, FILTER_VALIDATE_BOOL)]);
+
             $from = get_option($option_names['sender']);
             $from = is_array($from) ? $from : ['email' => '', 'name' => ''];
 
             $this->params(['confirmation.from' => [$from['email'], $from['name']]]);
         }
 
-        if (
-            $this->params('notification') &&
-            get_option($option_names['notification']) &&
-            ($to = get_option($option_names['recipients']))
-        ) {
-            array_walk($to, function (&$item) {
-                $item = [$item['email'], $item['name']];
-            });
+        if ($this->params('notification') && ($enabled = get_option($option_names['notification']))) {
+            $this->params(['enabled.notification' => filter_var($enabled, FILTER_VALIDATE_BOOL)]);
 
-            $this->params(['notification.to' => $to]);
+            if ($to = get_option($option_names['recipients'], [])) {
+                array_walk($to, function (&$item) {
+                    $item = [$item['email'], $item['name'] ?? ''];
+                });
+
+                $this->params(['notification.to' => $to]);
+            }
         }
 
         if ($admin = $this->params('admin')) {
@@ -229,23 +232,22 @@ class Mailer extends AddonFactory
         switch ($this->params('debug')) {
             default:
             case 'confirmation' :
-                if ($params = $this->parseMail($this->params('confirmation', []), 'confirmation')) {
-                    Mail::debug($params);
+                if ($this->params('enabled.confirmation')) {
+                    Mail::debug($this->parseMail($this->params('confirmation', []), 'confirmation'));
                 } else {
                     wp_die(
-                        __('Email de confirmation non configuré.', 'tify'),
+                        __('Email de confirmation désactivé.', 'tify'),
                         __('FormAddonMailer - Erreur', 'tify'),
                         500
                     );
                 }
                 break;
-
             case 'notification' :
-                if ($params = $this->parseMail($this->params('notification', []), 'notification')) {
-                    Mail::debug($params);
+                if ($this->params('enabled.notification')) {
+                    Mail::debug($this->parseMail($this->params('notification', []), 'notification'));
                 } else {
                     wp_die(
-                        __('Email de notification non configuré.', 'tify'),
+                        __('Email de notification désactivé.', 'tify'),
                         __('FormAddonMailer - Erreur', 'tify'),
                         500
                     );
@@ -261,12 +263,12 @@ class Mailer extends AddonFactory
      */
     public function emailSend()
     {
-        if ($params = $this->parseMail($this->params('confirmation', []), 'confirmation')) {
-            Mail::send($params);
+        if ($this->params('enabled.confirmation')) {
+            Mail::send($this->parseMail($this->params('confirmation', []), 'confirmation'));
         }
 
-        if ($params = $this->parseMail($this->params('notification', []), 'notification')) {
-            Mail::send($params);
+        if ($this->params('enabled.notification')) {
+            Mail::send($this->parseMail($this->params('notification', []), 'notification'));
         }
     }
 
@@ -280,10 +282,6 @@ class Mailer extends AddonFactory
      */
     public function parseMail($params, $type)
     {
-        if ($params === false) {
-            return [];
-        }
-
         $params['subject'] = $params['subject']
             ?? sprintf(__('%1$s - Demande de contact', 'tify'), get_bloginfo('name'));
 
@@ -307,10 +305,9 @@ class Mailer extends AddonFactory
                 : $mailer_value;
         });
 
-
         $form = $this->form();
         $addon = $this;
-        $params['data'] = compact('addon', 'form', 'fields', 'params');
+        $params['data'] = array_merge(compact('addon', 'form', 'fields', 'params'), $params['data'] ?? []);
 
         if (!isset($params['viewer']['override_dir'])) {
             $params['viewer'] = array_merge([

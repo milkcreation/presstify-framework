@@ -1,27 +1,66 @@
 # Release Notes
 
+## [v2.0.345 (2020-10-15)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.345...v2.0.345)
+
+### Added
+
+- `src/Console/Commands/UpdateCore20345.php` : Script de mise à jour vers la 2.0.345
+- `src/Contracts/Form/FactorySession` : Prise en charge des sessions de formulaire, possibilié de désactivation au niveau des champs
+
+### Changed
+
+- `assets/field/_variables.scss` : Ajout de la couleur transaprente
+- `assets/field/datepicker/scss/styles.scss` : Transposition des styles inclus dans le thème
+- `assets/theme/scss/_variables.scss` : Déplacement de wp-admin-colors
+- `assets/theme/scss/styles.scss` : Désactivation du thème des champs
+- `package.json` : Prise en charge de la librairie hamburgers CSS
+- `src/Contracts/Form/FactoryField.php` : Passage en typage strict
+- `src/Contracts/Form/FactoryHandle.php` : En remplacement de FactoryRequest + Réorganisation du code
+- `src/Contracts/Mail/Mailer` : Methode getDefault de methode static à methode d'instance + parseAttachment && parseContact en static >> réécriture incluse parseContact prend en compte \['email' => xxx, 'name' => xxx\]
+- `src/Contracts/PostType/PostTypeFactory` : Modification de la gestion des labels permet de récuperer un objet labelBag et plural+singular
+- `src/Contracts/Session/Store` : Méthode put passage array possible + putOne créée
+- `src/Form/Addon/Mailer/Mailer` : Adaptation request >> handle
+- `src/Form/Addon/Record/Record` : Table 'tify_forms_record' col session de 32 à 255 car. 
+- `src/Form/Addon/User/User` : Adaptation request >> handle
+- `src/Form/Factory/Addons.php` : Typage strict __construct
+- `src/Form/Factory/Buttons.php` : Typage strict __construct
+- `src/Form/Factory/Events.php` : Typage strict __construct
+- `src/Form/Factory/Fields.php` : Typage strict __construct
+- `src/Form/Factory/Group.php` : Typage strict __construct
+- `src/Form/Factory/Groups.php` : Typage strict __construct
+- `src/Form/Factory/Notices.php` : Typage strict __construct
+- `src/Form/Factory/Options.php` : Typage strict __construct
+- `src/Form/Field/Recaptcha/Recaptcha.php` : Adaptation request >> handle
+- `src/Form/FieldController.php` : Support session et réorganisation alpha
+- `src/Taxonomy/TaxonomyTermMeta.php` : Correctif bug unserialize value null
+- `src/User/UserMeta.php` : Correctif bug unserialize value null
+- `src/Template/Templates/PostListTable/ServiceProvider.php` : Modification de la surcharge 
+- `src/Template/Templates/UserListTable/ServiceProvider.php` : Modification de la surcharge 
+- `src/Wordpress/Template/Templates/PostListTable/DbBuilder.php` : Permet la selection de Builder Lara ou WpQuery
+- `src/Wordpress/Template/Templates/UserListTable/DbBuilder.php` : Permet la selection de Builder Lara ou WpUserQuery
+
 ## [v2.0.344 (2020-10-07)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.344...v2.0.344)
 
-## Added
+### Added
 
 - `assets/field/_variables.scss` : Gestion des variables communes des champs
 - `assets/field/select/scss/_variables.scss` : Gestion des variables field **select**
 - `assets/field/select-js/scss/_variables.scss` : Gestion des variables field **select-js**
 - `assets/partial/notice/scss/_variables.scss`: Gestion des variables partial **notice**
 
-## Changed
+### Changed
 
 - `assets/template/file-manager/js/scripts.js` : Adapation assets template **file-manager**
 - `assets/theme/scss/` : Réorganisation du theme
 
-# Fixed
+### Fixed
 
 - `assets/partial/pdfviewer/js/scripts.js`: Modification de la dépendance pdfjs
 - `src/Filesystem/StaticCacheManager.php` : Correctif de l'initialisation
 - `src/Filesystem/StorageManager.php` : Suppression de prise en charge de realpath($root)
 - `src/Template/Templates/FileManager` : Adaptation code nouveaux enjeux template ActionsFactory 
 
-## Removed
+### Removed
 
 - `assets/form/scss`: Gestion des styles formulaires vers le thème @todo remettre en place et surcharger avec theme
 - `assets/wp-admin`: Suppression à la faveur de `assets/wordpress/admin`

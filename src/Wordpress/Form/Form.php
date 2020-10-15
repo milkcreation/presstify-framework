@@ -40,8 +40,9 @@ class Form implements FormContract
 
                 if ($form->isAuto()) {
                     $this->manager->current($form);
-                    if($handle = $form->prepare()->request()->handle()) {
-                        $handle->send();
+
+                    if($response = $form->prepare()->handle()->response()) {
+                        $response->send();
                     }
 
                     $this->manager->reset();

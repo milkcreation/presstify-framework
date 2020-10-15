@@ -14,30 +14,34 @@ class DbBuilder extends BaseDbBuilder
      */
     public function fetchItems(): DbBuilderContract
     {
-        $this->parse();
+        if ($this->db()) {
+            return parent::fetchItems();
+        } else {
+            $this->parse();
 
-        $args = $this->fetchQueryVars()->all();
+            $args = $this->fetchQueryVars()->all();
 
-        $query = new WP_Query($args);
+            $query = new WP_Query($args);
 
-        $total = (int)$query->found_posts;
+            $total = (int)$query->found_posts;
 
-        $items = $query->posts;
+            $items = $query->posts;
 
-        if ($total < $this->getPerPage()) {
-            $this->setPage(1);
-        }
+            if ($total < $this->getPerPage()) {
+                $this->setPage(1);
+            }
 
-        $this->factory->items()->set($items);
+            $this->factory->items()->set($items);
 
-        if ($count = count($items)) {
-            $this->factory->pagination()
-                ->setCount($count)
-                ->setCurrentPage($this->getPage())
-                ->setPerPage($this->getPerPage())
-                ->setLastPage((int)ceil($total / $this->getPerPage()))
-                ->setTotal($total)
-                ->parse();
+            if ($count = count($items)) {
+                $this->factory->pagination()
+                    ->setCount($count)
+                    ->setCurrentPage($this->getPage())
+                    ->setPerPage($this->getPerPage())
+                    ->setLastPage((int)ceil($total / $this->getPerPage()))
+                    ->setTotal($total)
+                    ->parse();
+            }
         }
 
         return $this;

@@ -34,11 +34,11 @@ class Groups extends Collection implements FactoryGroups
      * CONSTRUCTEUR.
      *
      * @param array $groups Liste des groupes de champs associés au formulaire.
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */
-    public function __construct($groups, FormFactory $form)
+    public function __construct(array $groups, FormFactory $form)
     {
         $this->form = $form;
 

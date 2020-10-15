@@ -24,11 +24,11 @@ class Addons extends Collection implements FactoryAddons
      * CONSTRUCTEUR.
      *
      * @param array $addons Liste des addons associés au formulaire.
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */
-    public function __construct($addons, FormFactory $form)
+    public function __construct(array $addons, FormFactory $form)
     {
         $this->form = $form;
 

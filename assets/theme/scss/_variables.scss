@@ -1,14 +1,4 @@
-@import "~wp-admin/css/colors/variables";
-
-/** Couleurs d'interface d'administration Wordpress */
-$wp-admin-colors: (
-        "text": $text-color,
-        "base": $base-color,
-        "icon": $icon-color,
-        "highlight": $highlight-color,
-        "notification": $notification-color,
-) !default;
-/**/
+@import "../../wordpress/variables";
 
 /** Nuances de gris */
 $tify-theme-shade-gray: (

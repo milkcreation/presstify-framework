@@ -5,6 +5,7 @@ namespace tiFy\Form\Factory;
 use Closure;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Form\FactoryField;
+use tiFy\Contracts\Form\FactoryGroup;
 use tiFy\Contracts\Form\FieldController;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Support\ParamsBag;
@@ -47,7 +48,9 @@ class Field extends ParamsBag implements FactoryField
      * @var boolean $raw Activation du format brut de la valeur.
      * @var string $message Message de notification de retour en cas d'erreur.
      * }
-     * @var null|boolean $transport Court-circuitage (forçage) de la propriété de support du transport des données à
+     * @var null|boolean $transport Court-circuitage de la propriété de support du transport des données à
+     *                              l'issue de la soumission.
+     * @var null|boolean $session Court-circuitage de la propriété de support du stockage en session des données à
      *                              l'issue de la soumission.
      * @var array $validations {
      *      Liste des fonctions de validation d'intégrité du champ lors de la soumission.
@@ -104,11 +107,11 @@ class Field extends ParamsBag implements FactoryField
      *
      * @param string $slug Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */
-    public function __construct($slug, $attrs, FormFactory $form)
+    public function __construct(string $slug, array $attrs, FormFactory $form)
     {
         $this->slug = $slug;
         $this->form = $form;
@@ -120,9 +123,9 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }
@@ -140,7 +143,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function after(): string
     {
@@ -149,7 +152,7 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function before(): string
     {
@@ -158,9 +161,9 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function defaults()
+    public function defaults(): array
     {
         return [
             'name'  => $this->slug,
@@ -169,9 +172,9 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getAddonOption($name, $key = null, $default = null)
+    public function getAddonOption(string $name, ?string $key = null, $default = null)
     {
         return (is_null($key))
             ? $this->get("addons.{$name}", [])
@@ -179,81 +182,81 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getController()
+    public function getController(): FieldController
     {
         return $this->resolve("field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}");
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getExtras($key = null, $default = null)
+    public function getExtras(?string $key = null, $default = null)
     {
         return (is_null($key)) ? $this->get('extras', []) : $this->get("extras.{$key}", $default);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getGroup()
+    public function getGroup(): ?FactoryGroup
     {
         return $this->fromGroup($this->get('group', ''));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
-        return $this->get('name');
+        return (string)$this->get('name', '');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getPosition()
+    public function getPosition(): int
     {
-        return $this->get('position', 0);
+        return (int)$this->get('position', 0);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getRequired($key = null, $default = null)
+    public function getRequired(?string $key = null, $default = null)
     {
         return $this->get('required' . ($key ? ".{$key}" : ''), $default);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
-        return $this->get('title');
+        return (string)$this->get('title', '');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getType()
+    public function getType(): string
     {
-        return $this->get('type');
+        return (string)$this->get('type');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getValue($raw = true)
+    public function getValue(bool $raw = true)
     {
         $value = $this->get('value');
 
@@ -267,9 +270,9 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getValues($raw = true, $glue = ', ')
+    public function getValues(bool $raw = true, ?string $glue = ', ')
     {
         $value = Arr::wrap($this->getValue());
 
@@ -293,37 +296,37 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function hasLabel()
+    public function hasLabel(): bool
     {
         return $this->supports('label') && !empty($this->get('label'));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function hasWrapper()
+    public function hasWrapper(): bool
     {
         return $this->supports('wrapper') && !empty($this->get('wrapper'));
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function onError()
+    public function onError(): bool
     {
         return ($this->supports('request') && !empty($this->notices()->query('error', ['field' => $this->getSlug()])))
             || !!$this->error;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function parseValidations($validations, $results = [])
+    public function parseValidations($validations, array $results = []): array
     {
-        if (is_array($validations)) :
-            if (isset($validations['call'])) :
+        if (is_array($validations)) {
+            if (isset($validations['call'])) {
                 $results[] = array_merge(
                     [
                         'call'    => '__return_true',
@@ -333,26 +336,26 @@ class Field extends ParamsBag implements FactoryField
                     ],
                     $validations
                 );
-            else :
-                foreach ($validations as $validation) :
+            } else {
+                foreach ($validations as $validation) {
                     $results += $this->parseValidations($validation, $results);
-                endforeach;
-            endif;
-        elseif (is_string($validations)) :
+                }
+            }
+        } elseif(is_string($validations)) {
             $validations = array_map('trim', explode(',', $validations));
 
-            foreach ($validations as $call) :
+            foreach ($validations as $call) {
                 $results += $this->parseValidations(['call' => $call], $results);
-            endforeach;
-        endif;
+            }
+        }
 
         return $results;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function prepare()
+    public function prepare(): FactoryField
     {
         $this->events('field.prepare.' . $this->getType(), [&$this]);
         $this->events('field.prepare', [&$this]);
@@ -377,13 +380,25 @@ class Field extends ParamsBag implements FactoryField
         app()->share("form.field.{$this->getType()}.{$this->form()->name()}.{$this->getSlug()}", $control);
 
         // Propriétés de support.
-        if (!$this->get('supports')) :
+        if (!$this->get('supports')) {
             $this->set('supports', $control->supports());
-        endif;
+        }
 
-        if ($this->get('transport') && !in_array('transport', $this->get('supports', []))) :
+        $transport = $this->get('transport');
+        if ($transport && !in_array('transport', $this->get('supports', []))) {
             $this->push('supports', 'transport');
-        endif;
+        } elseif ($transport === false) {
+            $this->set('supports', array_diff($this->get('supports', []), ['transport']));
+        }
+
+        $session = $this->get('session');
+        if ($session && !in_array('session', $this->get('supports', []))) {
+            $this->push('supports', 'session');
+        } elseif ($session === false) {
+            $this->set('supports', array_diff($this->get('supports', []), ['session']));
+        }
+
+        $this->setSessionValue();
 
         if ($this->get('wrapper')) :
             $this->push('supports', 'wrapper');
@@ -437,28 +452,30 @@ class Field extends ParamsBag implements FactoryField
 
         $this->events('field.prepared.' . $this->getType(), [&$this]);
         $this->events('field.prepared', [&$this]);
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function resetValue()
+    public function resetValue(): FactoryField
     {
         return $this->set('value', $this->default);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function render()
+    public function render(): string
     {
         return (string)$this->getController();
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function renderPrepare()
+    public function renderPrepare(): FactoryField
     {
         if (!$this->has('attrs.id')) {
             $this->set('attrs.id', "Form{$this->form()->index()}-fieldInput--{$this->getSlug()}");
@@ -609,12 +626,14 @@ class Field extends ParamsBag implements FactoryField
                 $this->pull('required.tagged.attrs.class');
             endif;
         endif;
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setExtra($key, $value)
+    public function setExtra(string $key, $value): FactoryField
     {
         return $this->set("extras.{$key}", $value);
     }
@@ -632,7 +651,7 @@ class Field extends ParamsBag implements FactoryField
     /**
      * @inheritdoc
      */
-    public function setPosition($position = 0)
+    public function setPosition(int $position = 0): FactoryField
     {
         $this->set('position', $position);
 
@@ -640,24 +659,36 @@ class Field extends ParamsBag implements FactoryField
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setValue($value)
+    public function setSessionValue(): FactoryField
     {
-        $this->events('field.set.value', [&$value, $this]);
+        if ($this->supports('session')) {
+            $value = $this->form()->session()->get($this->getName());
 
-        $this->set('value', $value);
+            if (!is_null($value)) {
+                $this->setValue($value);
+            }
+        }
+
+        return $this;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function supports($support = null)
+    public function setValue($value): FactoryField
     {
-        if (is_null($support)) :
-            return $this->get('supports', []);
-        else :
-            return in_array($support, $this->get('supports', []));
-        endif;
+        $this->events('field.set.value', [&$value, $this]);
+
+        return $this->set('value', $value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports(?string $support = null)
+    {
+        return is_null($support) ? $this->get('supports', []) : in_array($support, $this->get('supports', []));
     }
 }

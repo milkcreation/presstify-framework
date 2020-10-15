@@ -65,7 +65,7 @@ class UserMeta implements UserMetaContract
             $metas = [];
 
             foreach ((array)$res as $args) {
-                $metas[$args->meta_id] = Str::unserialize($args->meta_value);
+                $metas[$args->meta_id] = Str::unserialize($args->meta_value ?: '');
             }
 
             return $metas;

@@ -131,6 +131,7 @@ class Metabox
                         return $allowed_options;
                     });
                 }
+
                 array_walk($boxes, function (MetaboxDriver $box) use ($option_page) {
                     if ($name = $box->name()) {
                         register_setting($option_page, $name);
@@ -143,6 +144,7 @@ class Metabox
                 if ($metaboxScreen = $this->manager->getScreen("{$tax}@taxonomy")) {
                     $boxes = $metaboxScreen->getMetaboxes();
                 }
+
                 array_walk($boxes, function (MetaboxDriver $box) use ($tax) {
                     $key = $box->name();
 
@@ -157,6 +159,7 @@ class Metabox
                 if ($metaboxScreen = $this->manager->getScreen("@user")) {
                     $boxes = $metaboxScreen->getMetaboxes();
                 }
+
                 array_walk($boxes, function (MetaboxDriver $box) {
                     $key = $box->name();
 

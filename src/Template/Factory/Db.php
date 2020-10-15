@@ -34,7 +34,7 @@ class Db implements FactoryDbContract
     public function __call($name, $arguments)
     {
         try {
-            return $this->delegate->$name(...$arguments);
+            return $this->delegate()->$name(...$arguments);
         } catch (Exception $e) {
             throw new BadMethodCallException(sprintf(__('La méthode %s n\'est pas disponible.', 'tify'), $name));
         }

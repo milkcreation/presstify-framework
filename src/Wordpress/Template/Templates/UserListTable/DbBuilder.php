@@ -14,31 +14,35 @@ class DbBuilder extends BaseDbBuilder
      */
     public function fetchItems(): DbBuilderContract
     {
-        $this->parse();
+        if ($this->db()) {
+            return parent::fetchItems();
+        } else {
+            $this->parse();
 
-        $query = new WP_User_Query($this->fetchQueryVars()->all());
+            $query = new WP_User_Query($this->fetchQueryVars()->all());
 
-        $total = $query->get_total();
+            $total = $query->get_total();
 
-        $items = $query->get_results();
+            $items = $query->get_results();
 
-        if ($total < $this->getPerPage()) {
-            $this->setPage(1);
+            if ($total < $this->getPerPage()) {
+                $this->setPage(1);
+            }
+
+            $this->factory->items()->set($items);
+
+            if ($count = count($items)) {
+                $this->factory->pagination()
+                    ->setCount($count)
+                    ->setCurrentPage($this->getPage())
+                    ->setPerPage($this->getPerPage())
+                    ->setLastPage((int)ceil($total / $this->getPerPage()))
+                    ->setTotal($total)
+                    ->parse();
+            }
+
+            return $this;
         }
-
-        $this->factory->items()->set($items);
-
-        if ($count = count($items)) {
-            $this->factory->pagination()
-                ->setCount($count)
-                ->setCurrentPage($this->getPage())
-                ->setPerPage($this->getPerPage())
-                ->setLastPage((int)ceil($total / $this->getPerPage()))
-                ->setTotal($total)
-                ->parse();
-        }
-
-        return $this;
     }
 
     /**

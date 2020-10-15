@@ -21,11 +21,11 @@ class Buttons extends Collection implements FactoryButtons
      * CONSTRUCTEUR.
      *
      * @param array Liste des boutons associés au formulaire.
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */
-    public function __construct($buttons, FormFactory $form)
+    public function __construct(array $buttons, FormFactory $form)
     {
         $this->form = $form;
 

@@ -27,11 +27,11 @@ class Options extends ParamsBag implements FactoryOptions
      * CONSTRUCTEUR.
      *
      * @param array $options Liste des options associées au formulaire.
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */
-    public function __construct($options, FormFactory $form)
+    public function __construct(array $options, FormFactory $form)
     {
         $this->form = $form;
 

@@ -13,11 +13,11 @@ class Events implements FactoryEvents
      * CONSTRUCTEUR.
      *
      * @param array $events Liste des événements associés au formulaire.
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */
-    public function __construct($events, FormFactory $form)
+    public function __construct(array $events, FormFactory $form)
     {
         $this->form = $form;
 

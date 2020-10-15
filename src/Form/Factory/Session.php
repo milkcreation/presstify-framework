@@ -1,32 +1,35 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form\Factory;
 
-use tiFy\Contracts\Form\FactorySession;
-use tiFy\Contracts\Form\FormFactory;
-use tiFy\Support\ParamsBag;
+use Exception, BadMethodCallException;
+use tiFy\Contracts\Form\{FactorySession, FormFactory};
+use tiFy\Contracts\Session\Store;
+use tiFy\Support\Proxy\{Crypt, Session as SessionProxy};
 
-class Session extends ParamsBag implements FactorySession
+/**
+ * @mixin \tiFy\Session\Store
+ */
+class Session implements FactorySession
 {
     use ResolverTrait;
 
     /**
-     * Identifiant de qualification.
-     * @var string
+     * Instance du gestionnaire de session associé.
+     * @var Store
      */
-    protected $id = '';
+    private $store;
 
     /**
-     * Délai d'expiration du cache
-     * {@internal MINUTE_IN_SECONDS|HOUR_IN_SECONDS|DAY_IN_SECONDS|WEEK_IN_SECONDS|YEAR_IN_SECONDS}
-     * @var int
+     * Jeton d'identification.
+     * @var string|null
      */
-    protected $expiration = HOUR_IN_SECONDS;
+    protected $token;
 
     /**
      * CONSTRUCTEUR.
      *
-     * @param FormFactory $form Instance du contrôleur de formulaire.
+     * @param FormFactory $form
      *
      * @return void
      */
@@ -36,58 +39,52 @@ class Session extends ParamsBag implements FactorySession
     }
 
     /**
-     * Destruction de l'identifiant de qualification.
+     * @inheritDoc
+     */
+    public function __call(string $name, array $arguments)
+    {
+        try {
+            return $this->store()->$name(...$arguments);
+        } catch (Exception $e) {
+            throw new BadMethodCallException(sprintf(
+                    __('La méthode de session [%s] n\'est pas disponible.', 'tify'), $name)
+            );
+        }
+    }
+
+    /**
+     * Génération du jeton de qualification.
      *
      * @return void
      */
-    public function clear()
+    protected function generateToken(): void
     {
-        $this->id = '';
+        $this->token = Crypt::encrypt(json_encode(['name' => $this->form()->name(), 'id' => uniqid()]));
     }
 
     /**
-     * Génération d'un identifiant de qualification.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function create()
+    public function getToken(): string
     {
-        return wp_hash(uniqid() . $this->form()->name());
+        if (is_null($this->token)) {
+            $this->generateToken();
+        }
+
+        return $this->token;
     }
 
     /**
-     * Récupération l'identifiant de session.
+     * Récupération de l'instance du gestionnaire de session associé.
      *
-     * @return string
+     * @return Store
      */
-    public function getId()
+    public function store(): Store
     {
-        return $this->id;
-    }
+        if (is_null($this->store)) {
+            $this->store = SessionProxy::registerStore("form.{$this->form()->name()}");
+        }
 
-    /**
-     * Initialisation de la session.
-     *
-     * @return string
-     */
-    public function init()
-    {
-        if ($this->getId()) :
-        elseif ($this->id = $this->request()->get('_session-' . $this->form()->name())) :
-        else :
-            $this->id = $this->create();
-        endif;
-
-        return $this->getId();
-    }
-
-    /**
-     * Préparation de la liste des attributs de session.
-     *
-     * @return void
-     */
-    public function prepare()
-    {
-        $this->attributes = get_transient("_form_session-{$this->getId()}") ? : [];
+        return $this->store;
     }
 }

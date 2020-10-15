@@ -9,13 +9,6 @@ use tiFy\Contracts\Container\Container;
 interface Mailer
 {
     /**
-     * Récupération de la liste des paramètres globaux par défaut des mails.
-     *
-     * @return
-     */
-    public static function getDefaults(): array;
-
-    /**
      * Définition de la liste des paramètres globaux par défaut des mails.
      *
      * @param array $attrs
@@ -66,6 +59,16 @@ interface Mailer
      * @return Container|ContainerInterface|null
      */
     public function getContainer(): ?ContainerInterface;
+
+    /**
+     * Récupération de paramètres par défaut.
+     *
+     * @param string|null $key Clé d'indice du paramètres.
+     * @param mixed $defaults Valeur de retour par défaut.
+     *
+     * @return mixed
+     */
+    public function getDefaults(?string $key = null, $defaults = null);
 
     /**
      * Récupération du pilote de traitement des e-mails.

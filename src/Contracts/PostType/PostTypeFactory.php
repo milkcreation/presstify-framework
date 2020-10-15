@@ -2,6 +2,7 @@
 
 namespace tiFy\Contracts\PostType;
 
+use tiFy\Contracts\Support\LabelsBag;
 use tiFy\Contracts\Support\ParamsBag;
 use WP_Post_Type;
 
@@ -74,9 +75,9 @@ interface PostTypeFactory extends ParamsBag
      * filter_items_list|items_list_navigation|items_list|name_admin_bar
      * @param string $default Valeur de retour par défaut.
      *
-     * @return string
+     * @return LabelsBag|string
      */
-    public function label(string $key, string $default = ''): string;
+    public function label(?string $key = null, string $default = '');
 
     /**
      * Définition de métadonnée de terme.
