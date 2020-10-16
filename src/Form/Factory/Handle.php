@@ -4,7 +4,7 @@ namespace tiFy\Form\Factory;
 
 use tiFy\Http\RedirectResponse;
 use tiFy\Contracts\Form\{FactoryHandle, FormFactory};
-use tiFy\Support\{ParamsBag, Proxy\Request, Proxy\Url};
+use tiFy\Support\{ParamsBag, Proxy\Request, Proxy\Session, Proxy\Url};
 
 class Handle extends ParamsBag implements FactoryHandle
 {
@@ -129,7 +129,7 @@ class Handle extends ParamsBag implements FactoryHandle
 
                 $field->setValue($value);
 
-                if ($field->supports('session')) {
+                if ($this->form()->supports('session') && $field->supports('session')) {
                     $this->form()->session()->put($field->getName(), $value);
                 }
             }
@@ -157,7 +157,19 @@ class Handle extends ParamsBag implements FactoryHandle
     {
         $this->form()->session()->destroy();
 
+        $this->form()->setSuccessed();
+
         $this->events('handle.successed', [&$this]);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSuccessMessage(string $message): FactoryHandle
+    {
+        Session::flash(['form.success.'. $this->form()->name() => $message]);
 
         return $this;
     }

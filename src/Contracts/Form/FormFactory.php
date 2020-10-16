@@ -113,13 +113,6 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function isPrepared(): bool;
 
     /**
-     * Vérifie si le formulaire a été soumis avec succès.
-     *
-     * @return bool
-     */
-    public function isSuccessed(): bool;
-
-    /**
      * Récupération d'intitulé|Définition d'intitulés|Retourne l'instance du gestionnaire d'intitulés.
      *
      * @param string|array|null $key Clé d'indexe de l'intitulé.
@@ -165,6 +158,29 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function render(): string;
 
     /**
+     * Initialisation (préparation) du rendu.
+     *
+     * @return static
+     */
+    public function renderPrepare(): FormFactory;
+
+    /**
+     * Vérifie si le formulaire a été soumis avec succès.
+     *
+     * @return bool
+     */
+    public function successed(): bool;
+
+    /**
+     * Liste des services supporté|Vérification de support d'un service.
+     *
+     * @param string|null $service
+     *
+     * @return array|bool
+     */
+    public function supports(?string $service);
+
+    /**
      * Définition de l'instance.
      *
      * @param string $name Nom de qualification du formulaire.
@@ -181,7 +197,7 @@ interface FormFactory extends FactoryResolver, ParamsBag
      *
      * @return static
      */
-    public function setOnSuccess(bool $status = true): FormFactory;
+    public function setSuccessed(bool $status = true): FormFactory;
 
     /**
      * Récupération du nom de qualification du formulaire dans les attributs de balises HTML.

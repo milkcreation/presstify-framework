@@ -4,12 +4,26 @@ namespace tiFy\Wordpress\Template;
 
 use tiFy\Contracts\Template\{TemplateFactory as TemplateFactoryContract, TemplateManager};
 use tiFy\Template\Templates\FileManager\Contracts\IconSet as IconSetContract;
-use tiFy\Template\Templates\PostListTable\Contracts\DbBuilder as PostListTableDbBuilderContract;
-use tiFy\Template\Templates\UserListTable\Contracts\DbBuilder as UserListTableDbBuilderContract;
+use tiFy\Wordpress\Template\Templates\PostListTable\Contracts\{
+    DbBuilder as PostListTableDbBuilderContract,
+    Db as PostListTableDbContract,
+    Item as PostListTableItemContract,
+    Params as PostListTableParamsContract};
+use tiFy\Wordpress\Template\Templates\UserListTable\Contracts\{
+    DbBuilder as UserListTableDbBuilderContract,
+    Db as UserListTableDbContract,
+    Item as UserListTableItemContract};
+use tiFy\Wordpress\Template\Templates\PostListTable\{
+    DbBuilder as PostListTableDbBuilder,
+    Db as PostListTableDb,
+    Item as PostListTableItem,
+    Params as PostListTableParams};
+use tiFy\Wordpress\Template\Templates\UserListTable\{
+    DbBuilder as UserListTableDbBuilder,
+    Db as UserListTableDb,
+    Item as UserListTableItem};
 use tiFy\Wordpress\Template\Templates\{
     FileManager\IconSet,
-    PostListTable\DbBuilder as PostListTableDbBuilder,
-    UserListTable\DbBuilder as UserListTableDbBuilder
 };
 use WP_Screen;
 
@@ -38,17 +52,49 @@ class Template
             $this->manager->register($name, $attrs);
         }
 
+        /**
+         * // PostTable
+        PostListTableDbContract::class,
+        PostListTableItemContract::class,
+        PostListTableParamsContract::class,
+        PostListTableDbBuilderContract::class,
+        // UserTable
+        UserListTableDbContract::class,
+        UserListTableItemContract::class,
+        UserListTableDbBuilderContract::class,
+         */
+
         // Surcharge de fournisseurs de service.
         $this->manager->getContainer()->add(IconSetContract::class, function () {
             return new IconSet();
+        });
+
+        $this->manager->getContainer()->add(PostListTableDbContract::class, function () {
+            return new PostListTableDb();
         });
 
         $this->manager->getContainer()->add(PostListTableDbBuilderContract::class, function () {
             return new PostListTableDbBuilder();
         });
 
+        $this->manager->getContainer()->add(PostListTableItemContract::class, function () {
+            return new PostListTableItem();
+        });
+
+        $this->manager->getContainer()->add(PostListTableParamsContract::class, function () {
+            return new PostListTableParams();
+        });
+
+        $this->manager->getContainer()->add(UserListTableDbContract::class, function () {
+            return new UserListTableDb();
+        });
+
         $this->manager->getContainer()->add(UserListTableDbBuilderContract::class, function () {
             return new UserListTableDbBuilder();
+        });
+
+        $this->manager->getContainer()->add(UserListTableItemContract::class, function () {
+            return new UserListTableItem();
         });
 
         events()->listen('template.factory.boot', function (string $name, TemplateFactoryContract $factory) {

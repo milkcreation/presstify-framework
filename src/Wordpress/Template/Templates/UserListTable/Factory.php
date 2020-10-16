@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\UserListTable;
+namespace tiFy\Wordpress\Template\Templates\UserListTable;
 
 use tiFy\Template\Templates\ListTable\{
     Contracts\Item as BaseItem,
     Factory as BaseFactory
 };
-use tiFy\Template\Templates\UserListTable\Contracts\Factory as FactoryContract;
+use tiFy\Wordpress\Template\Templates\UserListTable\Contracts\Factory as FactoryContract;
 
 class Factory extends BaseFactory implements FactoryContract
 {

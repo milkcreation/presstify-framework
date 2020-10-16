@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\PostListTable;
+namespace tiFy\Wordpress\Template\Templates\PostListTable;
 
 use tiFy\Template\Templates\ListTable\Params as BaseParams;
 

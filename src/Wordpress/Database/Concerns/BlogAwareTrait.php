@@ -20,6 +20,7 @@ trait BlogAwareTrait
             if (null === $blog_id) {
                 $blog_id = get_current_blog_id();
             }
+
             if (defined('MULTISITE') && (0 == $blog_id || 1 == $blog_id)) {
                 return $base_prefix;
             } else {

@@ -1,5 +1,24 @@
 # Release Notes
 
+## [v2.0.347 (2020-10-16)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.347...v2.0.347)
+
+### Changed 
+
+- `src/Contracts/Form/FormFactory.php` : isSuccessed >> successed
+- `src/Contracts/Form/FormFactory.php` : Gestion du support de session
+- `src/Form/Factory/Field` : Gestion du support de session
+- `src/Form/Factory/Handle.php` : Gestion du support de session
+- `src/Contracts/Form/FormFactory.php` : setOnSuccess >> setSuccessed
+- `src/Contracts/Template/TemplateFactory` : méthode provider ajout d'un arg de valeur par défaut
+- `src/Wordpress/Template/Templates/PostListTable` : Modification dans l'adapteur Wordpress
+- `src/Wordpress/Template/Templates/UserListTable` : Modification dans l'adapteur Wordpress
+
+### Added 
+
+- `src/Contracts/Template/FactoryDbBuilder` : methodes -> getColumns + getKeyName + setColumns + setKeyName + hasColumn
+- `src/Form/Factory/Handle.php` : Gestion du message de succes en version flashbag
+
+
 ## [v2.0.346 (2020-10-15)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.346...v2.0.346)
 
 ### Fixed

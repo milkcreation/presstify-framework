@@ -5,7 +5,7 @@ namespace tiFy\Form;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Form\Factory\ResolverTrait;
-use tiFy\Support\{LabelsBag, ParamsBag};
+use tiFy\Support\{LabelsBag, ParamsBag, Proxy\Session};
 use tiFy\Support\Proxy\Request;
 
 class FormFactory extends ParamsBag implements FormFactoryContract
@@ -52,7 +52,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      * Indicateur de statut du formulaire en succès.
      * @var boolean
      */
-    protected $success = false;
+    protected $successed = false;
 
     /**
      * Nom de qualification du formulaire dans les attributs de balises HTML.
@@ -120,6 +120,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             'method'    => 'post',
             'notices'   => [],
             'options'   => [],
+            'supports'  => ['session'],
             'title'     => '',
             'viewer'    => [],
             'wrapper' => [],
@@ -241,14 +242,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     /**
      * @inheritDoc
      */
-    public function isSuccessed(): bool
-    {
-        return $this->success;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function label($key = null, string $default = '')
     {
         if (!$this->labels instanceof LabelsBag) {
@@ -282,14 +275,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function onSetCurrent(): void
     {
         $this->events('form.set.current', [&$this]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onSuccess(): bool
-    {
-        return !!$this->success || (Request::instance()->get('success') === $this->name());
     }
 
     /**
@@ -363,7 +348,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     /**
      * @inheritDoc
      */
-    public function renderPrepare()
+    public function renderPrepare(): FormFactoryContract
     {
         $wrapper = $this->get('wrapper');
 
@@ -412,8 +397,14 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             $this->set("attrs.data-grid_gutter", $grid['gutter'] ?? 0);
         }
 
-        if ($this->onSuccess()) {
-            $this->notices()->add('success', $this->notices()->params('success.message'));
+        if ($this->successed()) {
+            if ($messages = Session::flash('form.success.'. $this->name())) {
+                foreach($messages as $message) {
+                    $this->notices()->add('success', $message);
+                }
+            } elseif ($message = $this->notices()->params('success.message')) {
+                $this->notices()->add('success', $this->notices()->params('success.message'));
+            }
 
             asset()->setInlineJs(
                 'if (window.history && window.history.replaceState){' .
@@ -427,6 +418,8 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         foreach ($this->fields() as $field) {
             $field->renderPrepare();
         }
+
+        return $this;
     }
 
     /**
@@ -497,11 +490,27 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     /**
      * @inheritDoc
      */
-    public function setOnSuccess(bool $status = true): FormFactoryContract
+    public function setSuccessed(bool $status = true): FormFactoryContract
     {
-        $this->success = $status;
+        $this->successed = $status;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function successed(): bool
+    {
+        return !!$this->successed || (Request::instance()->get('success') === $this->name());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports(?string $service = null)
+    {
+        return is_null($service) ? $this->get('supports', []) : in_array($service, $this->get('supports', []));
     }
 
     /**

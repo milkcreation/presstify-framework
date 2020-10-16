@@ -1,20 +1,21 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\PostListTable;
+namespace tiFy\Wordpress\Template\Templates\PostListTable;
 
+use tiFy\Contracts\Template\FactoryDb;
+use tiFy\Template\Factory\Db;
 use tiFy\Template\Templates\ListTable\{
     Contracts\Builder as BaseBuilderContract,
     Contracts\RowAction as BaseRowActionContract,
     ServiceProvider as BaseServiceProvider
 };
-use tiFy\Template\Templates\PostListTable\Contracts\{
-    Db as DbContract,
+use tiFy\Wordpress\Database\Model\Post as PostModel;
+use tiFy\Wordpress\Template\Templates\PostListTable\Contracts\{
     Item,
     Params,
     DbBuilder,
 };
 use Illuminate\Database\Eloquent\Model;
-use tiFy\Template\Factory\Db;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -32,7 +33,9 @@ class ServiceProvider extends BaseServiceProvider
         $this->getContainer()->share($this->getFactoryAlias('builder'), function () {
             $ctrl = $this->factory->provider('builder');
 
-            if ($this->factory->db()) {
+            if (is_null($ctrl)) {
+                $ctrl = $this->getContainer()->get(DbBuilder::class);
+            } elseif ($this->factory->db()) {
                 $ctrl = $ctrl instanceof DbBuilder
                     ? $ctrl
                     : $this->getContainer()->get(DbBuilder::class);
@@ -79,11 +82,13 @@ class ServiceProvider extends BaseServiceProvider
     public function registerFactoryDb(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('db'), function () {
-            if ($db = $this->factory->provider('db')) {
+            $db = $this->factory->provider('db', '');
+
+            if (!is_null($db)) {
                 if ($db instanceof Model) {
                     $db = (new Db())->setDelegate($db);
-                } elseif (!$db instanceof DbContract) {
-                    $db = new Db();
+                } elseif (!$db instanceof FactoryDb) {
+                    $db = (new Db())->setDelegate(new PostModel());
                 }
 
                 return  $db->setTemplateFactory($this->factory);

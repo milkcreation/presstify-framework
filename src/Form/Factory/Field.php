@@ -663,7 +663,7 @@ class Field extends ParamsBag implements FactoryField
      */
     public function setSessionValue(): FactoryField
     {
-        if ($this->supports('session')) {
+        if ($this->form()->supports('session') && $this->supports('session')) {
             $value = $this->form()->session()->get($this->getName());
 
             if (!is_null($value)) {

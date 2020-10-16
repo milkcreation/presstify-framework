@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\PostListTable;
+namespace tiFy\Wordpress\Template\Templates\PostListTable;
 
 use tiFy\Template\Templates\ListTable\{
     Contracts\Item as BaseItem,
     RowActionEdit as BaseRowActionEdit
 };
-use tiFy\Template\Templates\PostListTable\Contracts\Item;
+use tiFy\Wordpress\Template\Templates\PostListTable\Contracts\Item;
 use tiFy\Support\Proxy\Url;
 
 class RowActionEdit extends BaseRowActionEdit

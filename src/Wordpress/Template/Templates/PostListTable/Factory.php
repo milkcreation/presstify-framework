@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\PostListTable;
+namespace tiFy\Wordpress\Template\Templates\PostListTable;
 
 use tiFy\Contracts\Template\{FactoryDb, TemplateFactory};
 use tiFy\Template\Templates\ListTable\{
     Factory as BaseFactory,
     Contracts\Item as BaseItem
 };
-use tiFy\Template\Templates\PostListTable\Contracts\{Db, Item, Factory as FactoryContract};
+use tiFy\Wordpress\Template\Templates\PostListTable\Contracts\{Db, Item, Factory as FactoryContract};
 
 class Factory extends BaseFactory implements FactoryContract
 {
@@ -22,9 +22,9 @@ class Factory extends BaseFactory implements FactoryContract
     /**
      * {@inheritDoc}
      *
-     * @return Db
+     * @return Db|null
      */
-    public function db(): FactoryDb
+    public function db(): ?FactoryDb
     {
         return parent::db();
     }
