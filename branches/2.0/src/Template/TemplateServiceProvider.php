@@ -41,15 +41,6 @@ use tiFy\Template\Templates\ListTable\Contracts\{
     Search as ListTableSearchContract,
     ViewFilter as ListTableViewFilterContract,
     ViewFilters as ListTableViewFiltersContract};
-use tiFy\Template\Templates\PostListTable\Contracts\{
-    DbBuilder as PostListTableDbBuilderContract,
-    Db as PostListTableDbContract,
-    Item as PostListTableItemContract,
-    Params as PostListTableParamsContract};
-use tiFy\Template\Templates\UserListTable\Contracts\{
-    DbBuilder as UserListTableDbBuilderContract,
-    Db as UserListTableDbContract,
-    Item as UserListTableItemContract};
 use tiFy\Template\Templates\FileManager\{
     Actions as FileManagerActions,
     Ajax as FileManagerAjax,
@@ -86,15 +77,6 @@ use tiFy\Template\Templates\ListTable\{
     Search as ListTableSearch,
     ViewFilter as ListTableViewFilter,
     ViewFilters as ListTableViewFilters};
-use tiFy\Template\Templates\PostListTable\{
-    DbBuilder as PostListTableDbBuilder,
-    Db as PostListTableDb,
-    Item as PostListTableItem,
-    Params as PostListTableParams};
-use tiFy\Template\Templates\UserListTable\{
-    DbBuilder as UserListTableDbBuilder,
-    Db as UserListTableDb,
-    Item as UserListTableItem};
 
 class TemplateServiceProvider extends ServiceProvider
 {
@@ -141,15 +123,6 @@ class TemplateServiceProvider extends ServiceProvider
         ListTableSearchContract::class,
         ListTableViewFilterContract::class,
         ListTableViewFiltersContract::class,
-        // PostTable
-        PostListTableDbContract::class,
-        PostListTableItemContract::class,
-        PostListTableParamsContract::class,
-        PostListTableDbBuilderContract::class,
-        // UserTable
-        UserListTableDbContract::class,
-        UserListTableItemContract::class,
-        UserListTableDbBuilderContract::class,
     ];
 
     /**
@@ -167,8 +140,6 @@ class TemplateServiceProvider extends ServiceProvider
 
         $this->registerFileManager();
         $this->registerListTable();
-        $this->registerPostListTable();
-        $this->registerUserListTable();
     }
 
     /**
@@ -316,46 +287,6 @@ class TemplateServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(ListTableViewFiltersContract::class, function () {
             return new ListTableViewFilters();
-        });
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerPostListTable(): void
-    {
-        $this->getContainer()->add(PostListTableDbContract::class, function () {
-            return new PostListTableDb();
-        });
-
-        $this->getContainer()->add(PostListTableDbBuilderContract::class, function () {
-            return new PostListTableDbBuilder();
-        });
-
-        $this->getContainer()->add(PostListTableItemContract::class, function () {
-            return new PostListTableItem();
-        });
-
-        $this->getContainer()->add(PostListTableParamsContract::class, function () {
-            return new PostListTableParams();
-        });
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerUserListTable(): void
-    {
-        $this->getContainer()->add(UserListTableDbContract::class, function () {
-            return new UserListTableDb();
-        });
-
-        $this->getContainer()->add(UserListTableDbBuilderContract::class, function () {
-            return new UserListTableDbBuilder();
-        });
-
-        $this->getContainer()->add(UserListTableItemContract::class, function () {
-            return new UserListTableItem();
         });
     }
 }

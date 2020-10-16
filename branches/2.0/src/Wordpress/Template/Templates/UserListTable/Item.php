@@ -1,17 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\PostListTable;
+namespace tiFy\Wordpress\Template\Templates\UserListTable;
 
 use tiFy\Template\Templates\ListTable\{
-    Item as BaseItem,
-    Contracts\Item as BaseItemContract
+    Contracts\Item as BaseItemContract,
+    Item as BaseItem
 };
-use tiFy\Template\Templates\PostListTable\Contracts\Item as ItemContract;
-use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
-use tiFy\Wordpress\Query\QueryPost;
+use tiFy\Wordpress\Template\Templates\UserListTable\Contracts\Item as ItemContract;
+use tiFy\Wordpress\Contracts\Query\QueryUser as QueryUserContract;
+use tiFy\Wordpress\Query\QueryUser;
 
 /**
- * @mixin QueryPost
+ * @mixin QueryUser
  */
 class Item extends BaseItem implements ItemContract
 {
@@ -23,7 +23,7 @@ class Item extends BaseItem implements ItemContract
 
     /**
      * Objet de délégation d'appel des méthodes de la classe.
-     * @var QueryPostContract|object|null
+     * @var QueryUserContract|null
      */
     protected $delegate;
 
@@ -35,9 +35,7 @@ class Item extends BaseItem implements ItemContract
         parent::parse();
 
         if (is_null($this->delegate)) {
-            if ($post = QueryPost::createFromId($this->getKeyValue())) {
-                $this->setDelegate($post);
-            }
+            $this->setDelegate(QueryUser::createFromId($this->getKeyValue()));
         }
 
         return $this;

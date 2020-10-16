@@ -1,14 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\UserListTable;
+namespace tiFy\Wordpress\Template\Templates\UserListTable;
 
-use tiFy\Template\Templates\UserListTable\Contracts\{Db as DbContract, Item, DbBuilder};
+use Illuminate\Database\Eloquent\Model;
+use tiFy\Contracts\Template\FactoryDb;
+use tiFy\Template\Factory\Db;
 use tiFy\Template\Templates\ListTable\{
     Contracts\Builder as BaseBuilderContract,
     ServiceProvider as BaseServiceProvider
 };
-use Illuminate\Database\Eloquent\Model;
-use tiFy\Template\Factory\Db;
+use tiFy\Wordpress\Database\Model\User as UserModel;
+use tiFy\Wordpress\Template\Templates\UserListTable\Contracts\{Item, DbBuilder};
+
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -49,11 +52,13 @@ class ServiceProvider extends BaseServiceProvider
     public function registerFactoryDb(): void
     {
         $this->getContainer()->share($this->getFactoryAlias('db'), function () {
-            if ($db = $this->factory->provider('db')) {
+            $db = $this->factory->provider('db', '');
+
+            if (!is_null($db)) {
                 if ($db instanceof Model) {
                     $db = (new Db())->setDelegate($db);
-                } elseif (!$db instanceof DbContract) {
-                    $db = new Db();
+                } elseif (!$db instanceof FactoryDb) {
+                    $db = (new Db())->setDelegate(new UserModel());
                 }
 
                 return  $db->setTemplateFactory($this->factory);

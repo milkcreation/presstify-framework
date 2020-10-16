@@ -8,6 +8,18 @@ use tiFy\Contracts\Template\{FactoryDbBuilder as FactoryDbBuilderContract, Facto
 class DbBuilder extends Builder implements FactoryDbBuilderContract
 {
     /**
+     * Clé primaire.
+     * @var string|null
+     */
+    protected $keyName;
+
+    /**
+     * Liste des colonnes.
+     * @var string[]|null
+     */
+    protected $columns;
+
+    /**
      * Instance de la requête courante en base de données.
      * @var EloquentBuilder|null
      */
@@ -24,9 +36,41 @@ class DbBuilder extends Builder implements FactoryDbBuilderContract
     /**
      * @inheritDoc
      */
+    public function getColumns(): array
+    {
+        if (is_null($this->columns)) {
+            $this->columns = $this->db() ? $this->db()->getColumns() : null;
+        }
+
+        return $this->columns ?: [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getKeyName(): string
+    {
+        if (is_null($this->keyName)) {
+            $this->keyName = $this->db() ? $this->db()->getKeyName() : '';
+        }
+
+        return $this->keyName ?: '';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getOrderBy(): string
     {
-        return $this->orderby ?: $this->db()->getKeyName();
+        return $this->orderby ?: $this->getKeyName();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasColumn(string $column): bool
+    {
+        return in_array($column, $this->getColumns());
     }
 
     /**
@@ -47,7 +91,7 @@ class DbBuilder extends Builder implements FactoryDbBuilderContract
     public function queryLimit(): EloquentBuilder
     {
         return $this->getPerPage() >= 0
-            ? $this->query()->forPage($this->getPage(), $this->getPerPage()): $this->query();
+            ? $this->query()->forPage($this->getPage(), $this->getPerPage()) : $this->query();
     }
 
     /**
@@ -64,7 +108,7 @@ class DbBuilder extends Builder implements FactoryDbBuilderContract
     public function querySearch(): EloquentBuilder
     {
         if ($terms = $this->getSearch()) {
-            $this->query()->where($this->db()->getKeyName(), 'like', "%{$terms}%");
+            $this->query()->where($this->getKeyName(), 'like', "%{$terms}%");
         }
 
         return $this->query();
@@ -76,7 +120,7 @@ class DbBuilder extends Builder implements FactoryDbBuilderContract
     public function queryWhere(): EloquentBuilder
     {
         foreach ($this->all() as $k => $v) {
-            if ($this->db()->hasColumn($k)) {
+            if ($this->hasColumn($k)) {
                 is_array($v) ? $this->query()->whereIn($k, $v) : $this->query()->where($k, $v);
             }
         }
@@ -90,6 +134,26 @@ class DbBuilder extends Builder implements FactoryDbBuilderContract
     public function resetQuery(): FactoryDbBuilderContract
     {
         $this->query = null;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setColumns(array $columns): FactoryDbBuilderContract
+    {
+        $this->columns = $columns;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setKeyName(string $keyName): FactoryDbBuilderContract
+    {
+        $this->keyName = $keyName;
 
         return $this;
     }

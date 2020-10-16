@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\UserListTable\Contracts;
+namespace tiFy\Wordpress\Template\Templates\UserListTable\Contracts;
 
 use tiFy\Template\Templates\ListTable\Contracts\{Item as BaseItemContract};
 use tiFy\Wordpress\Query\QueryUser;

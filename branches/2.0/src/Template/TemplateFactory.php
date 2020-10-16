@@ -261,9 +261,9 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function provider($alias)
+    public function provider($alias, $default = null)
     {
-        return $this->get('providers', [])[$alias] ?? null;
+        return $this->get('providers', [])[$alias] ?? $default;
     }
 
     /**

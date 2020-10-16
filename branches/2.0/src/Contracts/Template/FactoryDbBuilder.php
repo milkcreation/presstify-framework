@@ -14,6 +14,20 @@ interface FactoryDbBuilder extends FactoryAwareTrait, FactoryBuilder
     public function db(): ?FactoryDb;
 
     /**
+     * Récupération de la liste des colonnes de la table de base de données.
+     *
+     * @return array
+     */
+    public function getColumns(): array;
+
+    /**
+     * Récupération du nom de la colonne de clé primaire.
+     *
+     * @return string
+     */
+    public function getKeyName(): string;
+
+    /**
      * Récupération de l'instance courante en base de données.
      *
      * @return EloquentBuilder|null
@@ -54,4 +68,22 @@ interface FactoryDbBuilder extends FactoryAwareTrait, FactoryBuilder
      * @return static
      */
     public function resetQuery(): FactoryDbBuilder;
+
+    /**
+     * Définition de la liste des colonnes de la table de base de données.
+     *
+     * @param array $columns
+     *
+     * @return static
+     */
+    public function setColumns(array $columns): FactoryDbBuilder;
+
+    /**
+     * Définition du nom de la colonne de clé primaire de la table de base de données.
+     *
+     * @param string $keyName
+     *
+     * @return static
+     */
+    public function setKeyName(string $keyName): FactoryDbBuilder;
 }

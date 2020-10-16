@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace tiFy\Template\Templates\PostListTable;
+namespace tiFy\Wordpress\Template\Templates\PostListTable;
 
 use tiFy\Contracts\Template\FactoryLabels as FactoryLabelsContract;
 use tiFy\PostType\PostTypeLabelsBag;
