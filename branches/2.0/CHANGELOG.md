@@ -1,5 +1,15 @@
 # Release Notes
 
+## [v2.0.346 (2020-10-15)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.346...v2.0.346)
+
+### Fixed
+
+- `assets/anim/js/scripts.js` : Déclenchement à l'ouverture
+
+### Removed
+
+- `assets/theme/scss/field/datepicker.scss` : Gestion déléguée au field
+
 ## [v2.0.345 (2020-10-15)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.345...v2.0.345)
 
 ### Added
