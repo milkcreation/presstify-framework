@@ -1,5 +1,15 @@
 # Release Notes
 
+## [v2.0.348 (2020-10-20)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.348...v2.0.348)
+
+### Changed 
+
+- Ajout de la dépendance JQueryMigrate aux assets intégrants jQueryUi Widget 
+
+### Added
+
+- `package.json` : Ajout de la librairie jQueryMigrate 
+
 ## [v2.0.347 (2020-10-16)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.347...v2.0.347)
 
 ### Changed 

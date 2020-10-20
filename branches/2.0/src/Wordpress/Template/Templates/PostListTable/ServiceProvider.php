@@ -89,6 +89,8 @@ class ServiceProvider extends BaseServiceProvider
                     $db = (new Db())->setDelegate($db);
                 } elseif (!$db instanceof FactoryDb) {
                     $db = (new Db())->setDelegate(new PostModel());
+                }  else {
+                    $db->setDelegate(new PostModel());
                 }
 
                 return  $db->setTemplateFactory($this->factory);

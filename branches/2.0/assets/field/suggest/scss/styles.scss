@@ -47,6 +47,7 @@ input.FieldSuggest.ui-autocomplete-loading {
   position: absolute;
   background-color: #fff;
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: 20em;
   z-index:10;
 }

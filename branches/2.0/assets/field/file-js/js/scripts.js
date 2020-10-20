@@ -1,5 +1,6 @@
 'use strict';
 
+import 'jquery-migrate';
 import jQuery from 'jquery';
 import Dropzone from 'dropzone/dist/min/dropzone.min';
 import 'jquery-ui/ui/core';
