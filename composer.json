@@ -6,8 +6,8 @@
     "presstify",
     "wordpress"
   ],
-  "homepage": "https://svn.tigreblanc.fr/presstify-framework",
-  "time": "2020-10-16",
+  "homepage": "https://svn.tigreblanc.fr/presstify-framework/",
+  "time": "2020-10-20",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -18,7 +18,7 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "https://composer.tigreblanc.fr/presstify"
+      "url": "https://composer.tigreblanc.fr/presstify/"
     }
   ],
   "require": {
