@@ -24,14 +24,14 @@ class DatabaseServiceProvider extends ServiceProvider
             $manager = new Database();
 
             $manager->addConnection([
-                'driver'    => getenv('DB_CONNECTION'),
-                'host'      => getenv('DB_HOST') . (getenv('DB_PORT') ? ':' . getenv('DB_PORT') : ''),
-                'database'  => getenv('DB_DATABASE'),
-                'username'  => getenv('DB_USERNAME'),
-                'password'  => getenv('DB_PASSWORD'),
-                'charset'   => getenv('DB_CHARSET') ?: 'utf8mb4',
-                'collation' => getenv('DB_COLLATE') ?: 'utf8mb4_unicode_ci',
-                'prefix'    => getenv('DB_PREFIX') ?: '',
+                'driver'    => env('DB_CONNECTION'),
+                'host'      => env('DB_HOST') . (env('DB_PORT') ? ':' . env('DB_PORT') : ''),
+                'database'  => env('DB_DATABASE'),
+                'username'  => env('DB_USERNAME'),
+                'password'  => env('DB_PASSWORD'),
+                'charset'   => env('DB_CHARSET') ?: 'utf8mb4',
+                'collation' => env('DB_COLLATE') ?: 'utf8mb4_unicode_ci',
+                'prefix'    => env('DB_PREFIX') ?: '',
             ]);
 
             $manager->setAsGlobal();
