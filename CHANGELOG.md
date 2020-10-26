@@ -1,6 +1,6 @@
 # Release Notes
 
-## [v2.0.349 (2020-10-20)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.349...v2.0.349)
+## [v2.0.349 (2020-10-26)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.349...v2.0.349)
 
 ### Changed 
 
