@@ -74,7 +74,7 @@ class DateTime extends Carbon implements DateTimeContract
     public static function setGlobalTimeZone(?DateTimeZone $tz = null): DateTimeZone
     {
         return static::$globalTimeZone = $tz ?: new DateTimeZone(
-            getenv('APP_TIMEZONE') ?: Request::server('TZ', ini_get('date.timezone') ?: 'UTC')
+            env('APP_TIMEZONE') ?: Request::server('TZ', ini_get('date.timezone') ?: 'UTC')
         );
     }
 

@@ -22,8 +22,8 @@ class EncryptionServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('encrypter', function () {
             return new Encrypter(
-                config('app.secret', md5(getenv('APP_URL'))),
-                config('app.private', base64_encode(md5(getenv('APP_URL')))),
+                config('app.secret', md5(env('APP_URL'))),
+                config('app.private', base64_encode(md5(env('APP_URL')))),
                 config('app.cipher', 'AES-128-CBC')
             );
         });
