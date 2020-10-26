@@ -4,7 +4,7 @@
 
 ### Changed 
 
-- Mise à jour des librairies PHP : illuminate/... : ^7.0 > ^8.0 && jgrossi/corcel: ^4.0 >> ^5.0
+- Mise à jour des librairies PHP : illuminate/... : ^7.0 > ^8.0 && jgrossi/corcel: ^4.0 >> ^5.0 && composer/composer ^1.6 > ^2.0
 
 ## [v2.0.348 (2020-10-20)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.348...v2.0.348)
 
