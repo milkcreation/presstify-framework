@@ -44,11 +44,11 @@ class LocalFilesystem extends Filesystem implements LocalFilesystemContract
 
         $disposition = $response->headers->makeDisposition('inline', $filename, Str::ascii($name));
 
-        $response->headers->replace($headers + [
-                'Content-Type'        => $this->getMimeType($path),
-                'Content-Length'      => $this->getSize($path),
-                'Content-Disposition' => $disposition,
-            ]);
+        $response->headers->replace([
+            'Content-Type'        => $this->getMimeType($path),
+            'Content-Length'      => $this->getSize($path),
+            'Content-Disposition' => $disposition,
+        ] + $headers);
 
         $response->setCache(array_merge([
             'last_modified' => (new DateTime())->setTimestamp($this->getTimestamp($path)),
@@ -77,5 +77,18 @@ class LocalFilesystem extends Filesystem implements LocalFilesystemContract
         $adapter = $this->getRealAdapter();
 
         return $adapter->applyPathPrefix($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rel(string $path = '/'): ?string
+    {
+        if (($dir = $this->path($path))) {
+            return ($rp = realpath($dir))
+                ? '/'. ltrim(preg_replace('/^' . preg_quote(getcwd(), '/') . '/', '', $rp), '/') : null;
+        }
+
+        return null;
     }
 }

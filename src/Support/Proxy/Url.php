@@ -16,6 +16,7 @@ use tiFy\Contracts\Routing\{Url as UrlContract, UrlFactory};
  * @method static string|null rel(string $url)
  * @method static string rewriteBase()
  * @method static UrlFactory root(string $path = '')
+ * @method static string scope()
  * @method static UrlContract set(UriInterface|LeagueUri|string $uri)
  * @method static string with(array $args)
  * @method static string without(string[] $args)

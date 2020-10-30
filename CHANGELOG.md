@@ -1,11 +1,26 @@
 # Release Notes
 
-## [v2.0.349 (2020-10-26)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.349...v2.0.349)
+## [v2.0.349 (2020-10-30)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.349...v2.0.349)
 
+### Added
+
+- Librairie PHP fakerphp/faker
+- Librarie JS axios
+- `src/Filesystem/LocalFilesystem.php` : Méthode rel de récupération du chemin relatif
+- `src/Routing/Url.php` : Méthode scope
+- `src/Routing/UrlFactory.php` : Methode path
+- `src/Support/Env.php` : Création du gestionnaire d'environnement
+- 
 ### Changed 
 
 - Mise à jour des librairies PHP : illuminate/... : ^7.0 > ^8.0 && jgrossi/corcel: ^4.0 >> ^5.0 && composer/composer ^1.6 > ^2.0
 - Remplacement des occurences getenv par env
+
+### Fixed 
+
+- `src/Filesystem/Filesystem.php` : headers personnalisées prioritaires pour la réponse
+- `src/Filesystem/LocalFilesystem.php` : headers personnalisées prioritaires pour la réponse
+- `src/helpers.php` : Passe de réécriture des commentaires + methode env()
 
 ## [v2.0.348 (2020-10-20)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.348...v2.0.348)
 

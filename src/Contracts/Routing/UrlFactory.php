@@ -59,6 +59,13 @@ interface UrlFactory
     public function params(?string $key = null, ?string $default = null);
 
     /**
+     * Récupération du chemin relatif
+     *
+     * @return string|null
+     */
+    public function path(): ?string;
+
+    /**
      * Définition de l'url.
      *
      * @param string|UriInterface|LeagueUri $uri

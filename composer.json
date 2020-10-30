@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework/",
-  "time": "2020-10-20",
+  "time": "2020-10-29",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -22,7 +22,7 @@
     }
   ],
   "require": {
-    "php": "^7.3",
+    "php": ">=7.3",
     "ext-dom": "*",
     "ext-fileinfo": "*",
     "ext-json": "*",
@@ -32,6 +32,7 @@
     "doctrine/dbal": "^2.9",
     "embed/embed": "^4.2",
     "facebook/graph-sdk": "^5.5",
+    "fakerphp/faker": "^1.10",
     "google/apiclient": "^2.2",
     "google/recaptcha": "^1.1",
     "guzzlehttp/guzzle": "^5.3.1|^6.2.1|^7.0",
@@ -110,13 +111,5 @@
     "optimize-autoloader": true,
     "preferred-install": "dist",
     "sort-packages": true
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "bower install --allow-root --save"
-    ],
-    "post-update-cmd": [
-      "bower install --allow-root --save"
-    ]
   }
 }
