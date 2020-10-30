@@ -37,4 +37,9 @@ interface Url extends UrlFactory
      * @return UrlFactory
      */
     public function root(string $path = ''): UrlFactory;
+
+    /**
+     * @inheritDoc
+     */
+    public function scope(): string;
 }

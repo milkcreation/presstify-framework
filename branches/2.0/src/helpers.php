@@ -38,11 +38,12 @@ use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\User;
 use tiFy\Contracts\Validation\Validator;
 use tiFy\Contracts\View\Engine as ViewEngine;
+use tiFy\Support\Env;
 use tiFy\tiFy;
 
 if (!function_exists('app')) {
     /**
-     * App - Controleur de l'application.
+     * App - Gestionnaire de l'application.
      * {@internal Si $abstract est null > Retourne l'instance de l'appication.}
      * {@internal Si $abstract est qualifié > Retourne la résolution du service qualifié.}
      *
@@ -51,7 +52,7 @@ if (!function_exists('app')) {
      *
      * @return App|mixed
      */
-    function app($abstract = null, $args = [])
+    function app(?string $abstract = null, array $args = [])
     {
         /* @var App $factory */
         $factory = container('app');
@@ -78,7 +79,7 @@ if (!function_exists('asset')) {
 
 if (!function_exists('class_info')) {
     /**
-     * ClassInfo - Controleur d'informations sur une classe.
+     * ClassInfo - Gestionnaire de classes.
      *
      * @param string|object Nom complet ou instance de la classe.
      *
@@ -92,7 +93,7 @@ if (!function_exists('class_info')) {
 
 if (!function_exists('class_loader')) {
     /**
-     * ClassLoader - Controleur de déclaration d'espaces de nom et d'inclusion de fichier automatique.
+     * ClassLoader - Gestionnaire de déclaration d'espaces de nom et d'inclusion de fichier automatique.
      *
      * @return ClassLoader
      */
@@ -104,7 +105,7 @@ if (!function_exists('class_loader')) {
 
 if (!function_exists('config')) {
     /**
-     * Controleur de configuration.
+     * Config - Gestionnaire de configuration de l'application.
      * {@internal
      * - null $key Retourne l'instance du controleur de configuration.
      * - array $key Définition d'attributs de configuration.
@@ -133,14 +134,14 @@ if (!function_exists('config')) {
 
 if (!function_exists('container')) {
     /**
-     * Container - Controleur d'injection de dépendances.
+     * Container - Gestionnaire de fournisseur de services.
      * {@internal Si $alias est null > Retourne la classe de rappel du controleur.}
      *
-     * @param string $abstract Nom de qualification du service à récupérer.
+     * @param string|null $abstract Nom de qualification du service à récupérer.
      *
      * @return Container|mixed
      */
-    function container($abstract = null)
+    function container(?string $abstract = null)
     {
         $factory = tiFy::instance();
 
@@ -154,9 +155,9 @@ if (!function_exists('container')) {
 
 if (!function_exists('cron')) {
     /**
-     * Récupération du gestionnaire de tâches planifiées ou d'une instance d'un tâche déclarée.
+     * Cron - Gestionnaire de tâches planifiées.
      *
-     * @param null|string $name Nom de qualification de la tâche déclarée.
+     * @param string|null $name Nom de qualification de la tâche déclarée.
      *
      * @return CronManager|CronJob|null
      */
@@ -174,9 +175,9 @@ if (!function_exists('cron')) {
 
 if (!function_exists('database')) {
     /**
-     * Récupération du gestionnaire de base de données ou Table de traitement de requête.
+     * Database - Gestionnaire de base de données.
      *
-     * @param string|null $table Nom de qualification de la table sur laquelle traiter les requête.
+     * @param string|null $table Nom de qualification de la table de base de données spécifique.
      *
      * @return Database|LaraDatabaseQueryBuilder|null
      */
@@ -192,9 +193,25 @@ if (!function_exists('database')) {
     }
 }
 
+if (!function_exists('env')) {
+    /**
+     * Events - Gestionnaire de variables d'environnement.
+     *
+     * @param string $key Clé d'indice d'une variable
+     * @param mixed $default Valeur de retour par défaut
+     *
+     * @return mixed
+     */
+    function env(string $key, $default = null)
+    {
+        return Env::get($key, $default);
+    }
+}
+
+
 if (!function_exists('events')) {
     /**
-     * Events - Controleur d'événements.
+     * Events - Gestionnaire d'événements.
      *
      * @return EventsManager
      */
@@ -206,7 +223,7 @@ if (!function_exists('events')) {
 
 if (!function_exists('field')) {
     /**
-     * Field - Controleur de champs.
+     * Field - Gestionnaire de champs.
      *
      * @param null|string $name Nom de qualification.
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
@@ -228,7 +245,7 @@ if (!function_exists('field')) {
 
 if (!function_exists('form')) {
     /**
-     * Formulaire - Controleur de champs.
+     * Formulaire - Gestionnaire de formulaire.
      *
      * @param null|string $name Nom de qualification du formulaire.
      *
@@ -248,7 +265,7 @@ if (!function_exists('form')) {
 
 if (! function_exists('logger')) {
     /**
-     * Logger - Controleur de journalisation des actions.
+     * Logger - Gestionnaire de journalisation des actions.
      *
      * @param  string|null  $message
      * @param  array  $context
@@ -270,7 +287,7 @@ if (! function_exists('logger')) {
 
 if (!function_exists('params')) {
     /**
-     * Instance de contrôleur de paramètres.
+     * ParamsBag - Gestionnaire de paramètres.
      *
      * @param mixed $params Liste des paramètres.
      *
@@ -284,7 +301,7 @@ if (!function_exists('params')) {
 
 if (!function_exists('partial')) {
     /**
-     * Partial - Contrôleurs d'affichage.
+     * Partial - Gestionnaire de portions d'affichage.
      *
      * @param string|null $name Nom de qualification.
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
@@ -306,7 +323,7 @@ if (!function_exists('partial')) {
 
 if (!function_exists('paths')) {
     /**
-     * Path - Controleur des chemins vers les répertoires de l'application.
+     * Path - Gestionnaire des chemins vers les répertoires de l'application.
      *
      * @return Path
      */
@@ -318,7 +335,7 @@ if (!function_exists('paths')) {
 
 if (!function_exists('post_type')) {
     /**
-     * Récupération de l'intance du controleur des types de contenu ou instance d'un type de contenu déclaré.
+     * PostType - Gestionnaire des types de contenu ou instance d'un type de contenu déclaré.
      *
      * @param string|null $name Nom de qualification du type de contenu.
      *
@@ -338,7 +355,7 @@ if (!function_exists('post_type')) {
 
 if (!function_exists('redirect')) {
     /**
-     * HTTP - Récupération d'une instance du contrôleur de redirection ou redirection vers une url.
+     * HTTP - Gestionnaire de redirection HTTP.
      *
      * @param string|null $to Url de redirection.
      * @param int $status Code de la redirection.
@@ -347,7 +364,7 @@ if (!function_exists('redirect')) {
      *
      * @return Redirector|RedirectResponse
      */
-    function redirect(?string $to = null, ?int $status = 302, ?array $headers = [], ?bool $secure = null)
+    function redirect(?string $to = null, int $status = 302, array $headers = [], ?bool $secure = null)
     {
         if (is_null($to)) {
             return app('redirect');
@@ -359,7 +376,7 @@ if (!function_exists('redirect')) {
 
 if (!function_exists('request')) {
     /**
-     * HTTP - Controleur de traitement de la requête principale.
+     * HTTP - Gestionnaire de traitement de la requête HTTP principale.
      *
      * @return Request
      */
@@ -379,7 +396,7 @@ if (!function_exists('route')) {
      *
      * @return string|null
      */
-    function route($name, $parameters = [], $absolute = true): ?string
+    function route(string $name, array $parameters = [], bool $absolute = true): ?string
     {
         /* @var Router $factory */
         $router = app('router');
@@ -390,7 +407,7 @@ if (!function_exists('route')) {
 
 if (!function_exists('storage')) {
     /**
-     * Récupération du gestionnaire de point de montage ou instance d'un point de montage.
+     * Storage - Gestionnaire de point de montage.
      *
      * @param string|null Nom de qualification du point de montage à récupéré.
      *
@@ -410,7 +427,7 @@ if (!function_exists('storage')) {
 
 if (!function_exists('taxonomy')) {
     /**
-     * Récupération de l'instance du contrôleur de taxonomies ou instance d'une taxonomie déclarée.
+     * Taxonomy - Gestionnaire de taxonomies.
      *
      * @param string|null $name Nom de qualification de la taxonomie déclarée.
      *
@@ -472,7 +489,7 @@ if (!function_exists('url')) {
 
 if (!function_exists('user')) {
     /**
-     * Instance du gestionnaire utilisateur.
+     * User - Gestionnaire d'utilisateurs.
      *
      * @return User
      */

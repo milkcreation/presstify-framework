@@ -89,11 +89,20 @@ class UrlFactory implements UrlFactoryContract
     /**
      * @inheritDoc
      */
+    public function path(): ?string
+    {
+        return ($uri = $this->get()) ? $uri->getPath() : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function set($uri): UrlFactoryContract
     {
         if (!$uri instanceof UriInterface || !$uri instanceof LeagueUri) {
             $uri = Http::createFromString($uri);
         }
+
         $this->uri = $uri;
 
         return $this;
@@ -126,6 +135,6 @@ class UrlFactory implements UrlFactoryContract
      */
     public function render(): string
     {
-        return $this->uri ? (string)$this->uri : '';
+        return ($uri = $this->get()) ? (string)$uri : '';
     }
 }

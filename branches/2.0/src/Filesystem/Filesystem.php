@@ -67,11 +67,11 @@ class Filesystem extends BaseFilesystem implements FilesystemContract
         $filename = $name ?? basename($path);
 
         $disposition = $response->headers->makeDisposition($disposition, $filename, Str::ascii($name ? : $filename));
-        $response->headers->replace($headers + [
+        $response->headers->replace([
                 'Content-Type'        => $this->getMimeType($path),
                 'Content-Length'      => $this->getSize($path),
                 'Content-Disposition' => $disposition,
-            ]);
+            ]+ $headers);
 
         $response->setCallback(function () use ($path) {
             $stream = $this->readStream($path);

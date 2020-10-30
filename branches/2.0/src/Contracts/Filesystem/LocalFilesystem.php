@@ -46,11 +46,20 @@ interface LocalFilesystem extends Filesystem
     public function getRealAdapter(): AdapterInterface;
 
     /**
-     * Récupération du chemin absolu associé à un chemin relatif.
+     * Récupération du chemin absolu associé au chemin d'une ressource de destination.
      *
      * @param string $path Chemin relatif.
      *
      * @return string|null
      */
     public function path(string $path = '/'): ?string;
+
+    /**
+     * Récupération du chemin relatif associé au chemin d'une ressource de destination.
+     *
+     * @param string $path Chemin relatif.
+     *
+     * @return string|null
+     */
+    public function rel(string $path = '/'): ?string;
 }
