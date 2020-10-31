@@ -1,5 +1,11 @@
 # Release Notes
 
+## [v2.0.350 (2020-10-31)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.350...v2.0.350)
+
+### Fixed
+
+- Rétropédalage JQueryMigrate
+
 ## [v2.0.349 (2020-10-30)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.349...v2.0.349)
 
 ### Added

@@ -1,7 +1,6 @@
 /* global tify, tinymce, tinyMCE */
 'use strict';
 
-import 'jquery-migrate';
 import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
