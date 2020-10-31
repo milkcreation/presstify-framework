@@ -1,0 +1,88 @@
+@import "variables";
+
+/** STYLES DE CONTROLE (recommandé) */
+[data-control="notice"][aria-hide="true"] {
+  display: none;
+}
+
+[data-control="notice"][aria-fade="out"],
+[data-control="notice"][aria-fade="out"] > * {
+  animation-name: themeFadeOut;
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+/** STYLES GENERAUX */
+.Notice {
+  position: relative;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  border-style: $notice-border-style-top $notice-border-style-right $notice-border-style-bottom $notice-border-style-left;
+  border-radius: #{$notice-border-radius-tl}px #{$notice-border-radius-tr}px #{$notice-border-radius-br}px #{$notice-border-radius-bl}px;
+  border-width: #{$notice-border-width-top}px #{$notice-border-width-right}px #{$notice-border-width-bottom}px #{$notice-border-width-left}px;
+
+  a {
+    text-decoration: underline;
+
+    &,
+    &:active,
+    &:focus,
+    &:hover,
+    &:visited {
+      color: $notice-text-hue;
+    }
+  }
+
+  b, strong {
+    font-weight: bold;
+  }
+
+  i, em {
+    font-style: italic;
+  }
+
+  .Notice-items {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding: 0;
+  }
+}
+
+.Notice--error {
+  color: $notice-error-color;
+  background-color: $notice-error-background-color;
+  border-color: $notice-error-border-color;
+}
+
+.Notice--info {
+  color: $notice-info-color;
+  background-color: $notice-info-background-color;
+  border-color: $notice-info-border-color;
+}
+
+.Notice--success,
+.Notice--notice {
+  color: $notice-success-color;
+  background-color: $notice-success-background-color;
+  border-color: $notice-success-border-color;
+}
+
+.Notice--warning {
+  color: $notice-warning-color;
+  background-color: $notice-info-background-color;
+  border-color: $notice-warning-border-color;
+}
+
+.Notice [data-toggle="notice.dismiss"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: 2px;
+  font-size: 16px;
+  line-height: 1;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
