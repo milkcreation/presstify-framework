@@ -6,12 +6,11 @@ use Illuminate\Support\Collection;
 use tiFy\Contracts\Field\FieldDriver as FieldDriverContract;
 use tiFy\Field\Driver\Suggest\Suggest as BaseSuggest;
 use tiFy\Support\Proxy\Request;
-use tiFy\Wordpress\{
-    Contracts\Field\Suggest as SuggestContract,
-    Query\QueryPost,
-    Query\QueryTerm,
-    Query\QueryUser
-};
+use tiFy\Wordpress\Contracts\Field\Suggest as SuggestContract;
+use tiFy\Wordpress\Query\QueryPost;
+use tiFy\Wordpress\Query\QueryTerm;
+use tiFy\Wordpress\Query\QueryUser;
+use WP_Query;
 
 class Suggest extends BaseSuggest implements SuggestContract
 {
@@ -40,17 +39,20 @@ class Suggest extends BaseSuggest implements SuggestContract
         switch (Request::input('wp_query')) {
             case 'post' :
             default :
-                return $this->xhrResponsePostQuery(...$args);
+                $response = $this->xhrResponsePostQuery(...$args);
                 break;
             case 'term' :
-                return $this->xhrResponseTermQuery(...$args);
+                $response = $this->xhrResponseTermQuery(...$args);
                 break;
             case 'user' :
-                return $this->xhrResponseUserQuery(...$args);
+                $response = $this->xhrResponseUserQuery(...$args);
+                break;
             case 'custom':
-                return parent::xhrResponse(...$args);
+                $response = parent::xhrResponse(...$args);
                 break;
         }
+
+        return $response;
     }
 
     /**
@@ -58,26 +60,49 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponsePostQuery(...$args): array
     {
+        $term = Request::input('_term', '');
+        $paged = Request::input('_paged', 1);
+        $per_page = get_option('posts_per_page');
+
+        $wpQuery = new WP_Query();
+
         $query_args = array_merge(['post_type' => 'any'], Request::input('query_args', []), [
-            's' => Request::input('_term', '')
+            's'              => $term,
+            'paged'          => $paged,
+            'posts_per_page' => $per_page,
         ]);
 
-        $posts = QueryPost::fetchFromArgs($query_args);
+        if ($ids = $wpQuery->query(array_merge($args, ['s' => $term]))) {
+            $posts = QueryPost::fetchFromIds($query_args);
+            $count = count($posts);
+            $found = $wpQuery->found_posts;
 
-        $items = (new Collection($posts))->map(function (QueryPost $item) {
+            $items = (new Collection($posts))->map(function (QueryPost $item) {
+                return [
+                    'alt'   => (string)$item->getId(),
+                    'label' => (string)$item->getTitle(),
+                    'value' => (string)$item->getTitle(true),
+                ];
+            })->all();
+
+            $more = (($count >= $per_page) && ($found > ($paged * $count))) ? [
+                'data'  => [
+                    '_paged' => ++$paged,
+                ],
+                'count' => $count,
+                'found' => $found,
+                'loader' => true,
+                'html'   => '+'
+            ] : null;
+
+
             return [
-                'alt'   => (string)$item->getId(),
-                'label' => (string)$item->getTitle(),
-                'value' => (string)$item->getTitle(true),
+                'success' => true,
+                'data'    => compact('items', 'more'),
             ];
-        })->all();
-
-        return [
-            'success' => true,
-            'data'    => [
-                'items' => $items,
-            ],
-        ];
+        } else {
+            return ['success' => false];
+        }
     }
 
     /**
@@ -111,7 +136,7 @@ class Suggest extends BaseSuggest implements SuggestContract
     public function xhrResponseUserQuery(...$args): array
     {
         $query_args = array_merge(Request::input('query_args', []), [
-            'search' => ($term = Request::input('_term', '')) ? '*' . trim($term, '*') . '*' : ''
+            'search' => ($term = Request::input('_term', '')) ? '*' . trim($term, '*') . '*' : '',
         ]);
 
         $users = QueryUser::fetchFromArgs($query_args);
@@ -128,8 +153,7 @@ class Suggest extends BaseSuggest implements SuggestContract
             'success' => true,
             'data'    => [
                 'items' => $items,
-                'request' => Request::all()
-            ]
+            ],
         ];
     }
 }

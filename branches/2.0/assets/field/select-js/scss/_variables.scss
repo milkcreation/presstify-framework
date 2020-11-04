@@ -1,5 +1,7 @@
-@import "../../select/scss/variables";
+// Variables
+@import "~presstify-framework/field/select/scss/variables";
 
+// Personnalisation
 $field-select-js-light-hue: $field-select-light-hue !default;
 $field-select-js-lighter-hue: $field-select-lighter-hue !default;
 $field-select-js-dark-hue: $field-select-dark-hue !default;

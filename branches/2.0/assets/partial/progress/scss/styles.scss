@@ -1,7 +1,12 @@
+// Variables
+@import "~presstify-framework/partial/variables";
+
+// Dépendances
 @import '~jquery-ui/themes/base/core.css';
 @import '~jquery-ui/themes/base/theme.css';
 @import '~jquery-ui/themes/base/progressbar.css';
 
+// Personnalisation
 [data-control="progress.meter"] {
   position: relative;
   height: 20px;

@@ -1,3 +1,7 @@
+// Variables
+@import "~presstify-framework/field/variables";
+
+// Personnalisation
 [data-control="findposts.wrapper"] {
     position: relative;
 }
@@ -6,7 +10,7 @@ input[type=text][data-control="findposts"] {
     padding-right: 30px;
     margin: 0;
     width: 100%;
-    background-color: #FFF;
+    background-color: fieldColor(white);
     box-shadow: none;
 }
 

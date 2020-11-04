@@ -1,10 +1,14 @@
+// Variables
+@import "~presstify-framework/partial/variables";
+
+// Personnalisation
 // Nuancier
-$notice-text-hue:#3B3B3B !default;
-$notice-background-hue: #FFF !default;
-$notice-error-hue: #DC3232;
-$notice-info-hue: #00A0D2;
-$notice-success-hue: #46B450;
-$notice-warning-hue: #FFB900;
+$notice-text-hue: partialColor(regular) !default;
+$notice-background-hue: partialColor(white) !default;
+$notice-error-hue: partialColor(error);
+$notice-info-hue: partialColor(info);
+$notice-success-hue: partialColor(success);
+$notice-warning-hue: partialColor(warning);
 
 // Styles
 $notice-border-radius: 0 !default;

@@ -1,4 +1,5 @@
-@import "~presstify-framework/theme/scss/styles";
+// Variables
+@import "~presstify-framework/field/variables";
 
 // Personnalisation
 @-webkit-keyframes passing-through {
@@ -170,7 +171,7 @@
   // dropzone.css
   & {
     min-height: 150px;
-    border: 2px dashed tify_theme_color("gray", 300);
+    border: 2px dashed fieldColor(light);
     padding: 0 20px;
   }
 
@@ -208,9 +209,8 @@
     position: relative;
     display: block;
     vertical-align: top;
-    margin: 0;
+    margin: 0 0 10px 0;
     min-height: 50px;
-    margin-bottom: 10px;
   }
 
   & .dz-preview:hover {
@@ -296,11 +296,11 @@
   }
 
   & .dz-preview .dz-success-mark svg path {
-    fill: tify_theme_color("green", 500);
+    fill: fieldColor(success);
   }
 
   & .dz-preview .dz-error-mark svg path {
-    fill: tify_theme_color("red", 500);
+    fill: fieldColor(error);
   }
 
   & .dz-preview .dz-success-mark, & .dz-preview .dz-error-mark {
@@ -348,7 +348,7 @@
   }
 
   & .dz-preview .dz-progress .dz-upload {
-    background-color: tify_theme_color("blue", 500);
+    background-color: fieldColor(highlight);
     position: absolute;
     top: 0;
     left: 0;
@@ -426,7 +426,7 @@
   top: 50%;
   left: 50%;
   width: 75%;
-  color: tify_theme_color("gray", 500);
+  color: fieldColor(light);
   transform: translate(-50%, -50%);
   text-align: center;
   z-index: 0;

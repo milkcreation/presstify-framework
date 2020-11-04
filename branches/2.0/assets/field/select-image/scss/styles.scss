@@ -1,5 +1,10 @@
+// Variables
+@import "~presstify-framework/field/variables";
+
+// Dépendances
 @import '~presstify-framework/field/select-js/scss/styles.scss';
 
+// Personnalisation
 .FieldSelectImage {
     display: inline-block;
     overflow: hidden;

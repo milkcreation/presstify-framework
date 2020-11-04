@@ -1,5 +1,7 @@
-@import '~presstify-framework/theme/scss/styles';
+// Variables
+@import "~presstify-framework/partial/variables";
 
+// Personnalisation
 .Modal {
   display:none;
 }

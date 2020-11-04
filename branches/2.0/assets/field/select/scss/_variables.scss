@@ -1,13 +1,15 @@
-@import "../../variables";
+// Variables
+@import "~presstify-framework/field/variables";
 
-$field-select-light-hue: map-get($field-colors, "light") !default;
-$field-select-lighter-hue: map-get($field-colors, "lighter") !default;
-$field-select-dark-hue: map-get($field-colors, "dark") !default;
-$field-select-darker-hue: map-get($field-colors, "darker") !default;
-$field-select-regular-hue: map-get($field-colors, "regular") !default;
-$field-select-background-hue: map-get($field-colors, "white") !default;
+// Personnalisation
+$field-select-light-hue: fieldColor(light) !default;
+$field-select-lighter-hue: fieldColor(lighter) !default;
+$field-select-dark-hue: fieldColor(dark) !default;
+$field-select-darker-hue: fieldColor(darker) !default;
+$field-select-regular-hue: fieldColor(regular) !default;
+$field-select-background-hue: fieldColor(white) !default;
 
-$field-select-selected-background-color: map-get($field-colors, "link") !default;
-$field-select-selected-color: map-get($field-colors, "white") !default;
-$field-select-highlight-background-color: map-get($field-colors, "hightlight") !default;
-$field-select-highlight-border-color: map-get($field-colors, "hightlight-alt") !default;
+$field-select-selected-background-color: fieldColor(link) !default;
+$field-select-selected-color: fieldColor(white) !default;
+$field-select-highlight-background-color: fieldColor(hightlight) !default;
+$field-select-highlight-border-color: fieldColor(hightlight-alt) !default;

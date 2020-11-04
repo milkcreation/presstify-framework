@@ -1,4 +1,3 @@
-/* global tify */
 'use strict';
 
 import jQuery from 'jquery';
