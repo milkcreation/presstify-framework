@@ -1,5 +1,10 @@
+// Variables
+@import "~presstify-framework/field/variables";
+
+// Dépendances
 @import '~wp-includes/css/dashicons.css';
 
+// Personnalisation
 .FieldMediaFile-wrap.ThemeInput--media {
   position: relative;
   display: block;

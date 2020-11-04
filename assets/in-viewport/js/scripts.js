@@ -1,7 +1,7 @@
 /**
  * USAGE :
  * ---------------------------------------------------------------------------------------------------------------------
- * let inViewport = require('presstify-framework/in-viewport/js/scripts');
+ * import * as inViewport from 'presstify-framework/in-viewport/js/scripts';
  *
  * inViewport('#target', 100, '#viewport');
  */
@@ -41,14 +41,11 @@
       return false;
     }
 
-    let lBound = $viewport.scrollTop(),
-        uBound = lBound + $viewport.height(),
-        top = offset.top + threshold,
-        bottom = top + $target.outerHeight(true);
+    let elTop = $target[0].offsetTop,
+        eBottom = elTop + $target[0].clientHeight,
+        viewScrollTop = $viewport[0].scrollTop,
+        viewScrollBottom = viewScrollTop + $viewport[0].clientHeight;
 
-    return (top > lBound && top < uBound) ||
-        (bottom > lBound && bottom < uBound) ||
-        (lBound >= top && lBound <= bottom) ||
-        (uBound >= top && uBound <= bottom);
+    return viewScrollBottom > elTop && viewScrollTop < eBottom;
   };
 });

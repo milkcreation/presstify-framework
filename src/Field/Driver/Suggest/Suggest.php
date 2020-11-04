@@ -2,11 +2,13 @@
 
 namespace tiFy\Field\Driver\Suggest;
 
+use Illuminate\Support\Collection;
 use tiFy\Contracts\Field\FieldDriver as FieldDriverContract;
 use tiFy\Contracts\Field\Suggest as SuggestContract;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Field\FieldDriver;
-use tiFy\Support\Proxy\{Request, Router};
+use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\Router;
 
 class Suggest extends FieldDriver implements SuggestContract
 {
@@ -14,7 +16,7 @@ class Suggest extends FieldDriver implements SuggestContract
      * Jeu de données d'exemple.
      * @var string[]
      */
-    protected $languages = [
+    protected $sample = [
         "ActionScript",
         "AppleScript",
         "Asp",
@@ -135,7 +137,7 @@ class Suggest extends FieldDriver implements SuggestContract
             ];
             $options['ajax'] = is_array($ajax) ? array_merge($defaults, $ajax) : $defaults;
         } elseif (!$this->has('autocomplete.source')) {
-            $options['autocomplete']['source'] = $this->languages;
+            $options['autocomplete']['source'] = $this->sample;
         }
 
         $this->set([
@@ -161,10 +163,10 @@ class Suggest extends FieldDriver implements SuggestContract
      */
     public function xhrResponse(...$args): array
     {
-        $items = collect($this->languages)
+        $items = (new Collection($this->sample))
             ->filter(function ($label) {
                 return preg_match('/' . Request::input('_term', '') . '/i', $label);
-            })->map(function (&$label, $value) {
+            })->map(function ($label, $value) {
                 return [
                     'alt'   => (string)$value,
                     'label' => (string)$this->viewer('item-label', compact('label', 'value')),

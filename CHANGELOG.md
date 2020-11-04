@@ -1,5 +1,16 @@
 # Release Notes
 
+## [v2.0.351 (2020-11-04)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.351...v2.0.351)
+
+### Fixed
+
+- Suppression de l'appel de assets/theme en dépendance pour éviter les doublons
+
+### Added
+
+- Pagination du partial Suggest
+- Gestion des variables partial
+
 ## [v2.0.350 (2020-10-31)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.350...v2.0.350)
 
 ### Fixed

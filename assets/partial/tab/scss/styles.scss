@@ -1,3 +1,7 @@
+// Variables
+@import "~presstify-framework/partial/variables";
+
+// Personnalisation
 [data-control="tab"]::before,
 [data-control="tab"]::after {
   display: table;

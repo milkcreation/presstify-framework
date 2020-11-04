@@ -1,3 +1,7 @@
+// Variables
+@import "~presstify-framework/partial/variables";
+
+// Personnalisation
 body[data-sidebar="true"] {
   overflow-x: hidden;
 }

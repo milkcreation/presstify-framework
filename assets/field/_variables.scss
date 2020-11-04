@@ -1,4 +1,4 @@
-@import "../wordpress/variables";
+@use "sass:map";
 
 $field-colors: (
   "transparent": transparent,
@@ -17,3 +17,11 @@ $field-colors: (
   "warning": #F1C40F,
   "info": #3498DB
 ) !default;
+
+@function fieldColor($alias) {
+  @if type-of($alias) != string {
+    $alias : "#{$alias}";
+  }
+
+  @return map.get($field-colors, #{$alias});
+}

@@ -6,6 +6,7 @@ import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/position';
 import 'jquery-ui/ui/widgets/menu';
 import 'jquery-ui/ui/widgets/autocomplete';
+import * as inViewport from 'presstify-framework/in-viewport/js/scripts';
 
 jQuery(function ($) {
   // Attribution de la valeur à l'élément.
@@ -34,6 +35,7 @@ jQuery(function ($) {
         input: 'FieldSuggest-input',
         item: 'FieldSuggest-pickerItem',
         items: 'FieldSuggest-picker',
+        more: 'FieldSuggest-more',
         reset: 'FieldSuggest-reset',
         spinner: 'FieldSuggest-spinner',
         wrap: 'FieldSuggest-wrap',
@@ -42,10 +44,15 @@ jQuery(function ($) {
     control: {
       alt: 'suggest.alt',
       input: 'suggest',
+      more: 'suggest.more',
       reset: 'suggest.reset',
       spinner: 'suggest.spinner',
       wrap: 'suggest.wrap',
     },
+    more: undefined,
+    items: [],
+    closable: true,
+
     // Instanciation de l'élément.
     _create: function () {
       this.instance = this;
@@ -129,15 +136,37 @@ jQuery(function ($) {
 
       if (this.uiautocomplete === undefined) {
         if (ajax && !o.source) {
-           $.extend(o, {
+          $.extend(o, {
             source: function (request, response) {
-              ajax = $.extend(true, ajax, {data: {_term: request.term}});
+              let _ajax = $.extend(true, {}, ajax, {data: {_term: request.term}});
+
+              if (self.more !== undefined) {
+                _ajax = $.extend(true, _ajax, {data: self.more.data || {}});
+              }
 
               self.wrap.attr('aria-loaded', 'true').attr('aria-selected', 'false');
 
-              $.ajax(ajax).done(function (resp) {
+              $.ajax(_ajax).done(function (resp) {
                 if (resp.success) {
-                  response(resp.data.items || []);
+                  let items = resp.data.items;
+
+                  if (!self.more) {
+                    self.items = [];
+                  }
+
+                  $.each(items, function (u, v) {
+                    self.items.push(v);
+                  });
+
+                  if (typeof resp.data.more === 'object' && resp.data.more !== null) {
+                    self.more = resp.data.more;
+                  } else {
+                    self.more = undefined;
+                  }
+
+                  response(self.items || []);
+                } else {
+                  self.more = undefined;
                 }
               }).always(function () {
                 self.wrap.attr('aria-loaded', 'false');
@@ -151,10 +180,35 @@ jQuery(function ($) {
         let handler = this.uiautocomplete.data('ui-autocomplete');
         handler._renderMenu = function (ul, items) {
           let that = this;
+
           $.each(items, function (index, item) {
             that._renderItemData(ul, item, index);
           });
           ul.addClass(self.option('classes.items'));
+
+          if (self.more !== undefined) {
+            let value = that.term || '';
+
+            ul.addClass('hasMore');
+
+            let $moreLink = $('<li data-control="' + self.control.more + '"/>')
+                .html(self.more.html || '+')
+                .appendTo(ul)
+                .data('ui-autocomplete-item', {more: true, value: value})
+                .addClass(self.option('classes.more'))
+                .click(function () {
+                  self._doloadMore($(this), ul);
+                });
+
+            ul.off('scroll').on('scroll', function () {
+              self._onScrollLoadMore($moreLink, ul);
+            });
+            self._onScrollLoadMore($moreLink, ul);
+          } else {
+            $('<li data-control="' + self.control.more + '"/>').remove();
+            ul.removeClass('hasMore');
+            ul.off('scroll');
+          }
         };
 
         handler._renderItemData = function (ul, item, index) {
@@ -165,22 +219,47 @@ jQuery(function ($) {
               .attr("data-index", index)
               .attr("data-value", item.value)
               .addClass(self.option('classes.item') + ' ' + self.option('classes.item') + '--' + index)
-              .append(render)
+              .html(render)
               .appendTo(ul)
               .data("ui-autocomplete-item", item);
         };
 
+        handler.close = function () {
+          if (self.closable) {
+            self.el.autocomplete('widget').hide();
+          } else {
+            self.el.autocomplete('widget').show();
+          }
+        }
+
         this.uiautocomplete
+            .on('autocompletefocus', function (e) {
+              e.preventDefault();
+
+              self.el.autocomplete('widget').show();
+            })
             .on('autocompletesearch', function () {
               self.resetted = false;
             })
-            .on('autocompleteselect', function (event, ui) {
-              if (self.resetted === false) {
+            .on('autocompleteselect', function (e, ui) {
+              e.preventDefault();
+
+              if (ui.item.more) {
+                self.closable = false;
+
+                return false;
+              } else if (self.resetted === false) {
                 self.value(self.flags.isAlt ? ui.item.alt || ui.item.value : ui.item.value);
               }
-            })
-            .on('autocompletefocus', function (event) {
-              event.preventDefault();
+
+              let $link = $(ui.item.label).find('a');
+              if ($link.length) {
+                window.location.href = $link.attr('href');
+              }
+
+              self.more = undefined;
+
+              return true;
             });
 
         // Délégation d'appel des événements d'autocomplete.
@@ -202,11 +281,32 @@ jQuery(function ($) {
       this._on(this.wrap, {'click [data-control="suggest.reset"]': this.reset});
       this._on(this.uiautocomplete, {'keyup': this._onKeyUp});
     },
+    // ACTIONS
+    // -----------------------------------------------------------------------------------------------------------------
+    _doloadMore: function (more, ul) {
+      let loader = this.more.loader;
+
+      if (loader !== false) {
+        more.html(loader || '<span class="ThemeSpinner" />');
+      }
+      ul.off('scroll');
+
+      this._trigger('more');
+      this.uiautocomplete.autocomplete('search');
+      this.uiautocomplete.data('ui-autocomplete').menu.element.show();
+    },
     // EVENEMENTS.
     // -----------------------------------------------------------------------------------------------------------------
     _onKeyUp: function () {
+      this.more = undefined;
+
       if (this.wrap.attr('aria-selected') === 'true') {
         this.reset();
+      }
+    },
+    _onScrollLoadMore: function (more, ul) {
+      if (inViewport(more, 0, ul)) {
+        this._doloadMore(more, ul);
       }
     },
     // ACCESSEURS.

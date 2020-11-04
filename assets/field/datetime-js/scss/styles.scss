@@ -1,3 +1,7 @@
+// Variables
+@import "~presstify-framework/field/variables";
+
+// Personnalisation
 .FieldDatetimeJs * {
     vertical-align: middle;
 }
@@ -18,5 +22,5 @@ select.FieldDatetimeJs-field--month {
 }
 
 .FieldDatetimeJs.invalid .FieldDatetimeJs-field {
-    border-color: red;
+    border-color: fieldColor(error);
 }
