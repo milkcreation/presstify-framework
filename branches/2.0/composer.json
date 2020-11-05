@@ -32,7 +32,7 @@
     "doctrine/dbal": "^2.9",
     "embed/embed": "^4.2",
     "facebook/graph-sdk": "^5.5",
-    "fakerphp/faker" : "^1.9.1|^1.10",
+    "fakerphp/faker" : "^1.9.1",
     "google/apiclient": "^2.2",
     "google/recaptcha": "^1.1",
     "guzzlehttp/guzzle": "^5.3.1|^6.2.1|^7.0",
