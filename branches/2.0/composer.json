@@ -32,7 +32,6 @@
     "doctrine/dbal": "^2.9",
     "embed/embed": "^4.2",
     "facebook/graph-sdk": "^5.5",
-    "fakerphp/faker" : "1.9.1",
     "google/apiclient": "^2.2",
     "google/recaptcha": "^1.1",
     "guzzlehttp/guzzle": "^5.3.1|^6.2.1|^7.0",
@@ -97,9 +96,6 @@
     "wp-cli/media-command": "Commandes WP Cli des médias (dépréciation composer 2.0)",
     "wp-cli/search-replace-command": "Commandes WP Cli de base de données (dépréciation composer 2.0)",
     "wp-cli/wp-cli": "Commandes WP Cli (dépréciation composer 2.0)"
-  },
-  "replace" : {
-    "fzaninotto/faker": "1.9.1"
   },
   "autoload": {
     "files": [
