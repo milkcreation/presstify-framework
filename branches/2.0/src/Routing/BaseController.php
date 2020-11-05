@@ -3,10 +3,15 @@
 namespace tiFy\Routing;
 
 use Psr\Container\ContainerInterface as Container;
-use tiFy\Contracts\{Http\Response as ResponseContract, Http\RedirectResponse, Routing\Redirector, View\Engine};
+use tiFy\Contracts\Http\Response as ResponseContract;
+use tiFy\Contracts\Http\RedirectResponse;
+use tiFy\Contracts\Routing\Redirector;
+use tiFy\Contracts\View\Engine;
 use tiFy\Http\Response;
 use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\{View, Request, Redirect};
+use tiFy\Support\Proxy\View;
+use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\Redirect;
 
 class BaseController extends ParamsBag
 {

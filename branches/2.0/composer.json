@@ -7,7 +7,7 @@
     "wordpress"
   ],
   "homepage": "https://svn.tigreblanc.fr/presstify-framework/",
-  "time": "2020-11-04",
+  "time": "2020-11-05",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -32,6 +32,7 @@
     "doctrine/dbal": "^2.9",
     "embed/embed": "^4.2",
     "facebook/graph-sdk": "^5.5",
+    "fakerphp/faker": "^1.9",
     "google/apiclient": "^2.2",
     "google/recaptcha": "^1.1",
     "guzzlehttp/guzzle": "^5.3.1|^6.2.1|^7.0",
@@ -72,6 +73,9 @@
     "symfony/psr-http-message-bridge": "^2.0",
     "symfony/security-csrf": "^5.0",
     "symfony/serializer": "^5.0"
+  },
+  "replace" : {
+    "fzaninotto/faker": "self.version"
   },
   "suggest": {
     "bshaffer/oauth2-server-php": "Serveur OAuth 2.0",
