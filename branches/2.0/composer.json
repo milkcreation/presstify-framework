@@ -75,7 +75,7 @@
     "symfony/serializer": "^5.0"
   },
   "replace" : {
-    "fzaninotto/faker": "1.9.1"
+    "fzaninotto/faker": "^1.9"
   },
   "suggest": {
     "bshaffer/oauth2-server-php": "Serveur OAuth 2.0",
