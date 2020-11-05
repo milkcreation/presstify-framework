@@ -99,7 +99,7 @@
     "wp-cli/wp-cli": "Commandes WP Cli (dépréciation composer 2.0)"
   },
   "replace" : {
-    "fzaninotto/faker": "self.version"
+    "fzaninotto/faker": "^1.9"
   },
   "autoload": {
     "files": [
