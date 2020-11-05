@@ -250,6 +250,7 @@ jQuery(function ($) {
                 return false;
               } else if (self.resetted === false) {
                 self.value(self.flags.isAlt ? ui.item.alt || ui.item.value : ui.item.value);
+                self.el.prop('value', ui.item.value);
               }
 
               let $link = $(ui.item.label).find('a');
@@ -318,15 +319,17 @@ jQuery(function ($) {
       this._trigger('reset');
 
       this.value('');
+      this.el.prop('value', '');
     },
     // Définition ou récupération de la valeur.
     value: function (value) {
       if (value !== undefined) {
-        this.el.prop('value', value);
         this.el.data('value', value);
 
         if (this.flags.isAlt) {
           this.alt.val(value);
+        } else {
+          this.el.prop('value', value);
         }
 
         if (value) {

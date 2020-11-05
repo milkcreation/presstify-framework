@@ -1,5 +1,16 @@
 # Release Notes
 
+## [v2.0.352 (2020-11-05)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.352...v2.0.352)
+
+### Fixed
+
+- Suppression des oldies
+- Test de remplacement de fzaninotto/faker par fakerphp/faker
+
+### Added
+
+- `src/Support/Filesystem.php` : Gestionnaire de système de fichiers
+
 ## [v2.0.351 (2020-11-04)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.351...v2.0.351)
 
 ### Fixed
