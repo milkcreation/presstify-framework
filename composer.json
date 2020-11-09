@@ -39,7 +39,7 @@
             "tiFy\\Core\\": "./core",
             "tiFy\\Components\\": "./components",
             "tiFy\\Lib\\": ["./bin/lib", "./bin/deprecated/lib"],
-            "tiFy\\Inherits": ["./bin/lib/Inherits"],
+            "tiFy\\Inherits\\": ["./bin/lib/Inherits"],
             "tiFy\\Environment\\": "./bin/deprecated/env",
             "tiFy\\Plugins\\": "./plugins",
             "tiFy\\Set\\": "./set"
