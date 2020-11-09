@@ -1,4 +1,26 @@
 {
+    "name": "presstify/framework",
+    "description": "Framework PresstiFy",
+    "keywords": [
+        "framework",
+        "presstify",
+        "wordpress"
+    ],
+    "homepage": "https://svn.tigreblanc.fr/presstify-framework/",
+    "time": "2020-11-09",
+    "authors": [
+        {
+            "name": "Jordy Manner",
+            "email": "jordy.manner@milkcreation.fr",
+            "role": "Developper"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://composer.tigreblanc.fr/presstify/"
+        }
+    ],
     "require": {
         "monolog/monolog": "^1.22",
         "league/csv": "^8.2",
@@ -51,5 +73,12 @@
             "tiFy\\Set\\": "./set",
             "tiFy\\Statics\\": "./bin/lib/Statics"
         }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
     }
 }
