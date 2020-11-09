@@ -32,7 +32,7 @@
         "codeitnowin/barcode": "^2.1"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "tiFy\\": "",
             "tiFy\\App\\": "./bin/app",
             "tiFy\\Core\\": "./core",
