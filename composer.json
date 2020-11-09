@@ -32,13 +32,15 @@
         "codeitnowin/barcode": "^2.1"
     },
     "autoload": {
-        "psr-4": {
+        "psr-0": {
             "tiFy\\": "",
-	    "tiFy\\Core\\": "./core",
-	    "tiFy\\Components\\": "./components",
-	    "tiFy\\Lib\\": "./bin/lib",
-	    "tiFy\\Plugins\\": "./plugins",
-	    "tiFy\\Set\\": "./set"
+            "tiFy\\App\\": "./bin/app",
+            "tiFy\\Core\\": "./core",
+            "tiFy\\Components\\": "./components",
+            "tiFy\\Environment": "./bin/env",
+            "tiFy\\Lib\\": "./bin/lib",
+            "tiFy\\Plugins\\": "./plugins",
+            "tiFy\\Set\\": "./set"
         }
     }
 }
