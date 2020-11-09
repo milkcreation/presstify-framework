@@ -1,0 +1,10 @@
+[data-tiFyPluginSocialNetwork="facebook"]{
+	position:relative;
+	display:inline-block;
+	width:24px; height:24px;
+	color:#3C5A99;
+}
+[data-tiFyPluginSocialNetwork="facebook"] > svg{
+	position:absolute;
+	top:0; right:0; bottom:0; left:0;
+}

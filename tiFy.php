@@ -1,10 +1,10 @@
 <?php
 /**
- * @name tiFy
+ * @name PresstiFy
  * @namespace tiFy
  * @author Jordy Manner
  * @copyright Tigre Blanc Digital
- * @version 1.2.1
+ * @version 1.2.420
  */
 namespace tiFy;
 
@@ -76,6 +76,10 @@ final class tiFy
         // Instanciation des librairies proriétaires
         new Libraries;
 
+        // Chargement des librairies tierces
+        if (file_exists(tiFy::$AbsDir .'/vendor/autoload.php'))
+            require_once tiFy::$AbsDir .'/vendor/autoload.php';
+        
         // Instanciation des fonctions d'aides au développement
         self::classLoad('tiFy\Helpers', __DIR__ .'/helpers');
         

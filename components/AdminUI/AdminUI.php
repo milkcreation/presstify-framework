@@ -11,7 +11,7 @@
  */
 namespace tiFy\Components\AdminUI; 
 
-class AdminUI extends \tiFy\App\Component
+class AdminUI extends \tiFy\Environment\Component
 {
     /**
      * Liste des actions à déclencher
@@ -51,7 +51,7 @@ class AdminUI extends \tiFy\App\Component
             else :
                 $value = self::tFyAppConfigDefault( $prop );
             endif;
-            self::tFyAppConfigSetAttr($prop, $value);
+            self::tFyAppConfigSet( $prop, $value );
         endforeach;
         
         if( self::tFyAppConfig( 'disable_post' ) ) :

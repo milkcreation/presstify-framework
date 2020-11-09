@@ -3,7 +3,7 @@ namespace tiFy\Core\Router\Taboox\Admin;
 
 use tiFy\Core\Router\Router;
 
-class ContentHook extends \tiFy\Core\Taboox\Options\Admin
+class ContentHook extends \tiFy\Core\Taboox\Option\Admin
 {
     /**
      * DECLENCHEURS
@@ -38,21 +38,15 @@ class ContentHook extends \tiFy\Core\Taboox\Options\Admin
             <th><?php echo $inst->getTitle(); ?></th>
             <td>
             <?php
-            if ($dropdown = \wp_dropdown_pages(
+                wp_dropdown_pages(
                     [
                         'name'             => $inst->getOptionName(),
                         'post_type'        => $inst->getObjectName(),
                         'selected'         => $inst->getSelected(),
                         'sort_column'      => $inst->getAttr('listorder'),
                         'show_option_none' => $inst->getAttr('show_option_none'),
-                        'echo'             => 0
                     ]
-                )
-            ) :
-                echo $dropdown;
-            else :
-                _e('Aucune page publiée sur ce site.', 'tify');
-            endif;
+                );
             ?>
             </td>
         </tr>

@@ -11,63 +11,57 @@ class Schedule
      * Identifiant unique de la tâche planifiée
      */
     protected $Id           = null;
-
+    
     /**
      * Intitulé de la tâche planifiée
      */
     protected $Title        = '';
-
+    
     /**
      * Description de la tâche planifiée
      */
     protected $Desc         = '';
-
+    
     /**
      * Date d'exécution de la tâche planifiée
      */
     protected $Timestamp    = null;
-
+    
     /**
      * Identifiant d'accorche de la tâche planifiée
      */
     private $Hook           = null;
-
+    
     /**
      * Fréquence d'exécution de la tâche planifiée
      */
     private $Recurrence     = null;
-
+    
     /**
      * Arguments passés dans la tâche planifiée
      */
     protected $Args         = null;
-
+    
     /**
      * Activation de la journalisation
      */
-    protected $Log          = [];
-
+    protected $Log          = array();
+    
     /**
      * Classe de rappel de journalisation
-     * @var \Monolog\Logger
      */
     private $Logger         = null;
-
+    
     /**
      * CONSTRUCTEUR
-     *
-     * @return void
      */
-    public function __construct($attrs = [])
+    public function __construct( $attrs = array() )
     {
         // Définition des paramètres
-        foreach (['id', 'title', 'desc', 'timestamp', 'hook', 'recurrence', 'args', 'log'] as $attr) :
+        foreach( array( 'id', 'title', 'desc', 'timestamp', 'hook', 'recurrence', 'args', 'log' ) as $attr ) :
             $Attr = ucfirst($attr);
             $this->{$Attr} = $attrs[$attr];
         endforeach;
-
-        // Initialisation de la journalisation
-        $this->initLogger();
     }
 
     /**
@@ -80,7 +74,7 @@ class Schedule
     {
         return $this->Id;
     }
-
+    
     /**
      * Récupération de l'intitulé de la tâche planifiée
      */
@@ -122,53 +116,23 @@ class Schedule
     }
 
     /**
-     * Récupération des attributs de configuration de la planification
-     */
-    final public function getLog()
-    {
-        return $this->Log;
-    }
-
-    /**
      * Récupération des arguments de tâche planifiée
      */
     final public function getArgs()
     {
         return $this->Args;
     }
-
+    
     /**
      * Récupération de la date de la prochaine date d'exécution
      */
     final public function nextTask()
     {
-        return wp_next_scheduled($this->getHook());
+        return wp_next_scheduled( $this->getHook() );
     }
-
-    /**
-     * Initialisation de la journalisation
-     */
-    final public function initLogger()
-    {
-        if (!$attrs = $this->getLog()) :
-            return;
-        endif;
-
-        $output = $attrs['format'];
-        $formatter = new LineFormatter($output);
-        $stream = new RotatingFileHandler($attrs['basedir'] . '/' . $attrs['name'] . '.log', $attrs['rotate']);
-        $stream->setFormatter($formatter);
-        $this->Logger = new Logger($this->getId());
-        if ($timezone = get_option('timezone_string')) :
-            $this->Logger->setTimezone(new \DateTimeZone($timezone));
-        endif;
-        $this->Logger->pushHandler($stream);
-    }
-
+    
     /**
      * Récupération de la classe de rappel de journalisation
-     *
-     * @return \Monolog\Logger
      */
     final public function getLogger()
     {
@@ -178,15 +142,12 @@ class Schedule
     /**
      * 
      */
-    final public function loggerAddExtras($extras)
+    final public function loggerAddExtras( $extras )
     {
-        if ($this->Logger->getProcessors()) :
+        if( $this->Logger->getProcessors() )
             $this->Logger->popProcessor();
-        endif;
-
-        $this->Logger->pushProcessor(function ($record) use ($extras) {
+        $this->Logger->pushProcessor(function ( $record ) use ( $extras ) {
             $record['extra'] = $extras;
-
             return $record;
         });
     }
@@ -194,25 +155,25 @@ class Schedule
     /**
      * Pré-traitement de la tâche
      */
-    final public static function _handle()
+    final public function _handle()
     {
-        // Instanciation de la classe
-        $Inst = new static(func_get_arg(0));
-
         // Désactivation de la limitation d'exécution PHP
         set_time_limit(0);
-
-        /**
-         * Verrouillage
-         * @todo
-         */
-
-        /**
-         * Rapport
-         * @todo
-         */
+        
+        // Initialisation de la journalisation
+        $output = $this->Log['format'];
+        $formatter = new LineFormatter( $output );
+        $stream = new RotatingFileHandler(WP_CONTENT_DIR . '/uploads/tFyLogs/'. $this->Log['name'] .'.log', $this->Log['rotate']);
+        $stream->setFormatter( $formatter );
+        $this->Logger = new Logger( $this->getId() );
+        $this->Logger->pushHandler( $stream );
+        
+        // Vérrouillage
+        
+        // Rapport
+        // @todo
         /*\add_option( 
-            'tFy_cronrep-'. $Inst->getId(),
+            'tFy_cronrep-'. $this->getId(), 
             array( 
                 'start'     => current_time('timestamp'),
                 'end'       => '',
@@ -225,14 +186,14 @@ class Schedule
             ),
             HOUR_IN_SECONDS
         );*/
-
-        return call_user_func([$Inst, 'handle']);
+        
+        return call_user_func_array( array( $this, 'task'), func_get_args() );
     }
 
     /**
-     * Traitement de la tâche planifiée
+     * Tache planifiée
      */
-    public function handle()
+    public function task()
     {
         return true;
     }

@@ -1,8 +1,22 @@
 <?php
 namespace tiFy\Core\Templates;
 
-final class Templates extends \tiFy\App\Core
+final class Templates extends \tiFy\Environment\Core
 {
+    /**
+     * Liste des actions à déclencher
+     */
+    protected $tFyAppActions              = array(
+        'init'    
+    );
+    
+    /**
+     * Ordres de priorité d'exécution des actions
+     */
+    protected $tFyAppActionsPriority   = array(
+        'init'                              => 9
+    );
+    
     /**
      * Classe de rappel des templates déclarés
      */
@@ -15,8 +29,6 @@ final class Templates extends \tiFy\App\Core
     
     /**
      * CONSTRUCTEUR
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -25,8 +37,6 @@ final class Templates extends \tiFy\App\Core
         // Instanciation des contrôleurs
         new Admin\Admin;
         new Front\Front;
-
-        $this->tFyAppActionAdd('init', null, 9);
     }    
     
     /**

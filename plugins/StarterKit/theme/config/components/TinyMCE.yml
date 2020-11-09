@@ -1,0 +1,43 @@
+init :
+  # @see https://www.tinymce.com/docs/configure/editor-appearance/#toolbarn
+  toolbar1: 'bold italic underline strikethrough blockquote | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link unlink hr jumpline | dfw wp_adv'
+  toolbar2: 'undo redo | pastetext | styleselect formatselect | fontselect fontsizeselect  forecolor backcolor | removeformat | subscript superscript charmap'
+  # @see https://www.tinymce.com/docs/plugins/textcolor/#textcolor_map
+  textcolor_map: [ 
+      "000000", "Noir",
+      "FFFFFF", "Blanc"
+    ]
+  # @see https://www.tinymce.com/docs/configure/content-formatting/#block_formats  
+  block_formats: 'Paragraphe=p;Paragraphe sans espace=div;Titre 3=h3;Titre 4=h4;Titre 5=h5;Titre 6=h6'
+  # @see https://www.tinymce.com/docs/configure/content-formatting/#font_formats
+  font_formats: "OpenSans=OpenSans,sans-serif"
+  # @see https://www.tinymce.com/docs/configure/content-formatting/#fontsize_formats
+  fontsize_formats: "75% 80% 95% 100% 115% 120% 150% 170% 200% 230% 260% 290% 350% 400% 450% 500% 1000% 2000%"
+  # @see https://www.tinymce.com/docs/configure/content-formatting/#formatparameters
+  # @see https://www.tinymce.com/docs/configure/content-formatting/#style_formats
+  style_formats: [
+      { title: 'Alignement à Gauche', selector: 'p, span, img, a', classes: 'alignleft' },
+      { title: 'Alignement au Centre', selector: 'p, span, img, a', classes: 'aligncenter' },
+      { title: 'Alignement à Droite', selector: 'p, span, img, a', classes: 'alignright' },
+      { title: 'Alignement vertical en haut', selector: 'p, span, img, a', classes: 'aligntop' },
+      { title: 'Alignement vertical au milieu', selector: 'p, span, img, a', classes: 'alignmiddle' },
+      { title: 'Alignement vertical en bas', selector: 'p, span, img, a', classes: 'alignbottom' },
+      { title: 'Texte en majuscules', inline: 'span', classes: 'uppercase' },
+      { title: 'Bouton 1', selector: 'a', classes: 'Button Button--primary Button--1' },
+      { title: 'Bouton 2', selector: 'a', classes: 'Button Button--secondary Button--2' },
+      { title: 'Label 1', inline: 'span', classes: 'Label Label--primary Label--1' },
+      { title: 'Label 2', inline: 'span', classes: 'Label Label--secondary Label--2' }
+    ]
+
+# Activation des plugins externes
+external_plugins:
+  # Selecteur de glyphs Dashicons (native à Wordpress)
+  dashicons:
+  # Selecteur de glyphs Font Awesome
+  fontawesome:  
+  # Gestion des gabarits
+  template:
+  # Affichage/Masquage des blocks
+  visualblocks:
+  # Gestionnaire de saut de ligne
+  jumpline:

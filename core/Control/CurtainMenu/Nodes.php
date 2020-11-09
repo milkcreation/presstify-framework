@@ -9,7 +9,7 @@ class Nodes extends \tiFy\Lib\Nodes\Base
     /**
      * Ordre d'éxecution des méthodes de surchage des greffons
      */
-    public $MethodsMapOrder = ['parent', 'link', 'content', 'class'];
+    public $MethodsMapOrder = ['parent', 'has_children', 'link', 'content', 'class'];
 
     /**
      * Attribut "title" du greffon de terme lié à une taxonomie
@@ -17,7 +17,7 @@ class Nodes extends \tiFy\Lib\Nodes\Base
      * @param array $node Attributs du greffon
      * @param obj $term Attributs du terme courant
      * @param array $query_args Argument de requête de récupération des termes de taxonomie
-     * @param array $extras Liste des arguments globaux complémentaires (ex: selected)
+     * @param array $extras Données complémentaires (ex: selected)
      *
      * @return string
      */
@@ -32,7 +32,7 @@ class Nodes extends \tiFy\Lib\Nodes\Base
      * @param array $node Attributs du greffon
      * @param obj $term Attributs du terme courant
      * @param array $query_args Argument de requête de récupération des termes de taxonomie
-     * @param array $extras Liste des arguments globaux complémentaires (ex: selected)
+     * @param array $extras Données complémentaires (ex: selected)
      *
      * @return string
      */
@@ -47,7 +47,7 @@ class Nodes extends \tiFy\Lib\Nodes\Base
      * @param array $node Attributs du greffon
      * @param obj $term Attributs du terme courant
      * @param array $query_args Argument de requête de récupération des termes de taxonomie
-     * @param array $extras Liste des arguments globaux complémentaires (ex: selected)
+     * @param array $extras Données complémentaires (ex: selected)
      *
      * @return string
      */
@@ -58,13 +58,19 @@ class Nodes extends \tiFy\Lib\Nodes\Base
             $classes[] = 'tiFyControlCurtainMenu-item--hasChildren';
         endif;
 
-        if (!empty($node['is_ancestor'])) :
+        /*
+        if (!empty($node['ancestor'])) :
             $classes[] = 'tiFyControlCurtainMenu-item--ancestor';
         endif;
 
         if (!empty($node['current'])) :
             $classes[] = 'tiFyControlCurtainMenu-item--current';
         endif;
+
+        if(!empty($node['ancestor']) || !empty($node['current'])) :
+            $classes[] = 'tiFyControlCurtainMenu-item--open';
+        endif;
+        */
 
         return implode(' ', $classes);
     }

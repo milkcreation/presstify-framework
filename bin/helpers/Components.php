@@ -5,7 +5,7 @@ namespace
     /** == Déclaration dynamique d'un composant == **/
     function tify_component_register($component)
     {
-        add_action( "tify_components_register", function() use ($component)
+        add_action( "tify_component_register", function() use ($component)
         {
             return tiFy\Components::register($component);
         });
@@ -45,7 +45,7 @@ namespace
     /** == Déclaration d'une colonne personnalisée == **/
     function tify_custom_columns_register( $cb, $args = array(), $env, $type )
     {
-        return tiFy\Components\CustomColumns\CustomColumns::register( $cb, $args, $env, $type );
+        return tiFy\Components\CustomColumns\CustomColumns::Register( $cb, $args, $env, $type );
     }
     
     // --------------------------------------------------------------------------------------------------------------------------
@@ -144,65 +144,35 @@ namespace
     }
     
     // --------------------------------------------------------------------------------------------------------------------------
-    /**
-     * LOGIN
-     */
-    /**
-     * Déclaration
-     * @deprecated \tiFy\Components\Login\README.md
-     *
-     * @param string $id Identifiant de qualification de l'interface d'authentification
-     * @param string $callback Classe de rappel de l'interface d'authentification
-     * @param array $attrs Attributs de configuration de l'interface d'authentification
-     *
-     * @return \tiFy\Components\Login\Factory
-     */
-    function tify_login_register($id, $callback, $attrs = [])
+    /* = LOGIN = */
+    /** == Affichage d'un élément de template == **/
+    function tify_login_register( $id, $callback, $attrs = array() )
     {
-        return tiFy\Components\Login\Login::register($id, $callback, $attrs);
+        return tiFy\Components\Login\Login::register( $id, $callback, $attrs );
     }
-
-    /**
-     * Affichage du formulaire d'authentification
-     *
-     * @param string $id Identifiant de qualification de l'interface d'authentification
-     * @param array $attrs Attributs de configuration personnalisés
-     * @param bool $echo Activation de l'affichage de la valeur de retour
-     *
-     * @return string
-     */
-    function tify_login_form($id, $attrs = [], $echo = true)
+    
+    /** == Affichage d'un élément de template == **/
+    function tify_login_display( $id, $args = array(), $echo = true )
     {
-        return tiFy\Components\Login\Login::display( $id, 'login_form', $attrs, $echo);
+        return tiFy\Components\Login\Login::display( $id, 'display', $args, $echo );
     }
-
-    /**
-     * Affichage des erreurs de traitement du formulaire d'authentification
-     *
-     * @param string $id Identifiant de qualification de l'interface d'authentification
-     * @param array $attrs Attributs de configuration personnalisés
-     * @param bool $echo Activation de l'affichage de la valeur de retour
-     *
-     * @return string
-     */
-    function tify_login_form_errors($id, $attrs = [], $echo = true)
+    
+    /** == Affichage du formulaire d'authentification == **/
+    function tify_login_form( $id, $args = array() )
     {
-        return tiFy\Components\Login\Login::display( $id, 'login_form_errors', $attrs, $echo);
+        return tiFy\Components\Login\Login::display( $id, 'form', $args );
     }
-
-    /**
-     * Affichage du lien de déconnection
-     *
-     * @param string $id Identifiant de qualification de l'interface d'authentification
-     * @param array $attrs Attributs de configuration personnalisés
-     * @param bool $echo Activation de l'affichage de la valeur de retour
-     *
-     * @return string
-     */
+    
     /** == Affichage des erreurs de traitement de formulaire == **/
-    function tify_login_logout_link($id, $attrs = [], $echo = true)
+    function tify_login_errors( $id, $args = array() )
     {
-        return tiFy\Components\Login\Login::display( $id, 'logout_link', $attrs, $echo);
+        return tiFy\Components\Login\Login::display( $id, 'errors', $args );
+    }
+    
+    /** == Affichage des erreurs de traitement de formulaire == **/
+    function tify_login_logout_link( $id, $args = array() )
+    {
+        return tiFy\Components\Login\Login::display( $id, 'logout_link', $args );
     }
     
     // --------------------------------------------------------------------------------------------------------------------------

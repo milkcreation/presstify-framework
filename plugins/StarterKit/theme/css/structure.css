@@ -1,0 +1,55 @@
+/* = GLOBAL = */
+/** == BALISES == **/
+body, h1, h2, h3, h4, h5, h6{}
+
+/* = STRUCTURE = */
+/** == GLOBAL == **/
+.Site{}
+
+/* = ENTÊTE = */
+/** == GLOBAL == **/
+.Site-header{}
+
+/** == MENU DE NAVIGATION PRINCIPAL == **/
+.Site-header .PrimaryNavigation{}	
+.Site-header .PrimaryNavigation-Menu > ul{}
+.Site-header .PrimaryNavigation-Menu > ul > li{}
+
+/** == MENU DE NAVIGATION SECONDAIRE == **/
+.Site-header .SecondaryNavigation{}
+.Site-header .SecondaryNavigation-Menu > ul{}
+.Site-header .SecondaryNavigation-Menu > ul > li{}
+
+/* = CORPS DE PAGE = */
+/** == GLOBAL == **/
+.Site-body{}
+
+/** == JUMBOTRON == **/
+.Site-body .Jumbotron{}
+
+/** == FIL D'ARIANE == **/
+.Site-body .Breadcrumb{}
+
+/** == CONTENU DU SITE == **/
+/*** === GLOBAL === ***/
+.Site-bodyContent{ }
+
+/*** === ARTICLES - MISE EN FORME STANDARD === ***/
+.Article{}
+
+/*** === ARTICLE - CONTENU SIMPLE === ***/
+.Article--singular{}
+
+/*** === ARTICLE - CONTENU ARCHIVE === ***/
+.Article--archive{}
+
+/** == SIDEBAR == **/
+/*** === GLOBAL === ***/
+.Sidebar{}
+
+/*** === ELEMENTS === ***/
+.SidebarItem{}
+
+/* = FOOTER = */
+/** == GLOBAL == **/
+.Site-footer{}

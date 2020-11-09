@@ -1,7 +1,7 @@
 <?php
 namespace tiFy\Components\Lightbox;
 
-final class Lightbox extends \tiFy\App\Component
+final class Lightbox extends \tiFy\Environment\Component
 {
     /**
      * Liste des Actions à déclencher

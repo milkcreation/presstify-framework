@@ -1,154 +1,158 @@
 <?php
 namespace tiFy\Core\Templates\Admin\Model\FileImport;
 
+use tiFy\Inherits\Csv;
+
 class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
-{
+{                
     /**
      * Fichier d'import interne
-     * @var string
      */
-    protected $Filename         = '';
-
+    protected $Filename; 
+    
     /**
      * Colonnes du fichier d'import
-     * @var array
      */
-    protected $FileColumns      = [];
-
+    protected $FileColumns      = array();
+    
+    /**
+     * Délimiteur de colonnes du fichier CSV
+     */
+    protected $Delimiter        = ',';    
+    
     /**
      * Habilitation de téléchargement de fichier externe
-     * @var bool
      */
-    protected $Uploadable       = true;
-
+    protected $Uploadable; 
+    
     /**
      * Répertoire d'upload
-     * @var string
      */
-    protected $UploadDir        = '';
+    protected $UploadDir;
 
     /**
-     * Activation du déboguage de l'import
-     * @var bool|int (false: désactivé, true: activé sur le premier élément, int: numéro de ligne de l'élément à traité)
+     * Données complémentaires d'import
      */
-    protected $ImportDebug      = false;
+    protected $ImportMisc       = [];
 
     /**
      * PARAMETRAGE
      */    
     /** 
      * Définition de la cartographie des paramètres autorisés
-     *
-     * @return array
      */
     public function set_params_map()
     {
         $params = parent::set_params_map();
-        array_push($params, 'Filename', 'FileColumns', 'Uploadable', 'UploadDir', 'ImportDebug');
+        array_push( $params, 'Filename', 'FileColumns', 'Delimiter', 'Utf8Encode', 'Uploadable', 'UploadDir', 'ImportMisc' );
         
         return $params;
     }
-
+    
     /**
      * Définition de la clé primaire d'un élément
-     *
-     * @return string
      */
     public function set_item_index()
     {
         return '_import_row_index';
     }
-
+        
     /**
      * Définition du fichier d'import interne
-     *
-     * @return string
-     */
+     */ 
     public function set_filename()
     {
         return '';
     }
-
+        
     /**
      * Définition des colonnes du fichier d'import
-     *
-     * @return array
-     */
+     */ 
     public function set_file_columns()
     {
         return [];
     }
-
+    
     /**
-     * Définition si l'utilisateur est habilité à télécharger un fichier externe
-     *
-     * @return bool
-     */
+     * Définition du délimiteur de colonnes du fichier d'import
+     */ 
+    public function set_delimiter()
+    {
+        return ',';
+    }
+    
+    /**
+     * Définition du repertoire d'upload
+     */ 
+    public function set_upload_dir()
+    {
+        return '';
+    } 
+        
+    /**
+     * Définition si l'utilisateur est habilité à télécharger un fichier externe 
+     */ 
     public function set_uploadable()
     {
         return true;
     }
 
     /**
-     * Définition du repertoire d'upload
-     *
-     * @return string
+     * Définition des données complémentaires d'import
      */
-    public function set_upload_dir()
+    public function set_import_misc()
     {
-        return '';
+        return [];
     }
-
+        
     /**
      * Initialisation du fichier d'import externe
-     *
-     * @return string
      */
     public function initParamFilename()
-    {
+    {               
         return $this->Filename = $this->set_filename();
     }
-
+     
     /**
      * Initialisation des colonnes du fichier d'import
-     *
-     * @return array
      */
     public function initParamFileColumns()
-    {
+    {               
         return $this->FileColumns = $this->set_file_columns();
     }
-
+    
     /**
-     * Initialisation de l'habilitation à télécharger un fichier externe
-     *
-     * @return bool
+     * Initialisation du délimiteur du fichier d'import
      */
-    public function initParamUploadable()
-    {
-        return $this->Uploadable = $this->set_uploadable();
+    public function initParamDelimiter()
+    {               
+        return $this->Delimiter = $this->set_delimiter();
     }
-
+    
     /**
      * Initialisation du répertoire d'upload
-     *
-     * @return string
      */
     public function initParamUploadDir()
     {
-        if ($this->UploadDir = $this->set_upload_dir()) :
+        if( $this->UploadDir = $this->set_upload_dir() ) :
         else :
             $upload_dir = wp_upload_dir();
             $this->UploadDir = $upload_dir['basedir'];
         endif;
-
+        
         return $this->UploadDir;
     }
-
+    
+    /**
+     * Initialisation de l'habilitation à télécharger un fichier externe
+     */
+    public function initParamUploadable()
+    {               
+        return $this->Uploadable = $this->set_uploadable();
+    }
+    
     /**
      * Données passées dans la requête de récupération Ajax de Datatables
-     *
-     * @return array
      */
     public function getAjaxDatatablesData()
     {
@@ -159,7 +163,7 @@ class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
             parent::getAjaxDatatablesData()
         );
     }
-
+    
     /**
      * DECLENCHEURS
      */
@@ -173,7 +177,7 @@ class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
         parent::_admin_init();
 
         // Actions Ajax
-        add_action('wp_ajax_' . $this->template()->getID() . '_' . self::classShortName() . '_fileimport_upload', [$this, 'wp_ajax_upload']);
+        add_action( 'wp_ajax_'. $this->template()->getID() .'_'. self::classShortName() .'_fileimport_upload', array( $this, 'wp_ajax_upload' ) );  
     }
     
     /**
@@ -186,87 +190,70 @@ class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
         parent::_admin_enqueue_scripts();
 
         // Chargement des scripts
-        wp_enqueue_style('tiFyTemplatesAdminFileImport', self::tFyAppAssetsUrl('FileImport.css', get_class()), [], 150607);
-        wp_enqueue_script('tiFyTemplatesAdminFileImport', self::tFyAppAssetsUrl('FileImport.js', get_class()), ['jquery'], 150607);
-    }
-
+        wp_enqueue_style( 'tiFyTemplatesAdminFileImport', self::tFyAppAssetsUrl('FileImport.css', get_class()), array( ), 150607 );
+        wp_enqueue_script( 'tiFyTemplatesAdminFileImport', self::tFyAppAssetsUrl('FileImport.js', get_class()), array( 'jquery' ), 150607 );
+    } 
+    
     /**
      * Affichage la page courante
-     *
-     * @return void
      */
-    public function _current_screen($current_screen = null)
+    public function _current_screen( $current_screen = null )
     {
-        if ($this->ImportDebug !== false) :
-            $row_import = ($this->ImportDebug === true) ? 0 : (int) $this->ImportDebug;
-        endif;
-
-        if (isset($row_import)) :
-            $_REQUEST['_import_row_index'] = $row_import;
-        endif;
-
+        //$_REQUEST['_import_row_index'] = 0;
+        
         parent::_current_screen($current_screen);
         
         // DEBUG - Tester la fonctionnalité d'import > Décommenter $_REQUEST['_import_row_index'] et commenter le return (ligne suivante)
-        if (!isset($row_import)) :
-            return;
-        endif;
+        return;
 
-        if (!$this->Importer) :
+        if (! $this->Importer)
             return;
-        endif;
 
         if (isset($this->items[$_REQUEST['_import_row_index']])) :
-            $res = call_user_func($this->Importer . '::import', (array)$this->items[$_REQUEST['_import_row_index']]);
+            $res = call_user_func($this->Importer .'::import', (array) $this->items[$_REQUEST['_import_row_index']]);
         elseif ($this->items) :
-            $res = call_user_func($this->Importer . '::import', (array)current($this->items));
+            $res = call_user_func($this->Importer .'::import', (array) current($this->items));
         else :
-            $res = [
-                'insert_id' => 0,
-                'success'   => false,
-                'notices'   => [
-                    'error' => [
-                        'tiFyTemplatesAdminImport-UnavailableContent' => [
-                            'message'   => __('Le contenu à importer est indisponible', 'tify')
-                        ]
-                    ]
-                ]
-            ];
+            $res = array('insert_id' => 0, 'errors' => new \WP_Error( 'tiFyTemplatesAdminImport-UnavailableContent', __( 'Le contenu à importer est indisponible', 'Theme' ) ) );
         endif;
-
-        wp_send_json($res);
+            
+        if (! empty($res['errors']) && is_wp_error($res['errors'])) :
+            wp_send_json_error( array( 'message' => $res['errors']->get_error_message() ) );
+        else :
+            wp_send_json_success( array( 'message' => __( 'Le contenu a été importé avec succès', 'tify' ), 'insert_id' => $res['insert_id'] ) );
+        endif;
+        
+        exit;
     }
     
     /**
      * Traitement Ajax de téléchargement du fichier d'import
-     *
-     * @return string
      */
     public function wp_ajax_upload()
-    {
+    {        
         // Initialisation des paramètres de configuration de la table
         $this->initParams();
 
         // Récupération des variables de requête
-        $file = current($_FILES);
-        $filename = sanitize_file_name(basename($file['name']));
-
-        $response = [];
-        if (!@ move_uploaded_file($file['tmp_name'], $this->UploadDir . "/" . $filename)) :
-            $response = [
-                'success' => false,
-                'data'    => sprintf(__('Impossible de déplacer le fichier "%s" dans le dossier d\'import', 'tify'), basename($file['name']))
-            ];
+        $file         = current($_FILES);
+        $filename     = sanitize_file_name( basename( $file['name'] ) );
+    
+        $response = array();
+        if( ! @ move_uploaded_file( $file['tmp_name'],  $this->UploadDir . "/" . $filename  ) ) :
+            $response = array( 
+                'success'       => false, 
+                'data'          => sprintf( __( 'Impossible de déplacer le fichier "%s" dans le dossier d\'import', 'tify' ), basename( $file['name'] ) )
+            );
         else :
-            $response = [
-                'success' => false,
-                'data'    => ['filename' => $this->UploadDir . "/" . $filename]
-            ];
+            $response = array( 
+                'success'       => false, 
+                'data'          => array( 'filename' => $this->UploadDir . "/" . $filename )
+            );    
         endif;
-
-        wp_send_json($response);
+        
+        wp_send_json( $response );
     }
-
+	    
     /**
      * TRAITEMENT
      */
@@ -277,15 +264,15 @@ class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
     {
         // Arguments par défaut
         parent::parse_query_args();
-
-        if (isset($_REQUEST['filename'])) :
+        
+        if( isset( $_REQUEST['filename'] ) ) :
             $this->QueryArgs['filename'] = $_REQUEST['filename'];
-        elseif ($this->Filename) :
-            $this->QueryArgs['filename'] = is_array($this->Filename) ? current($this->Filename) : (string)$this->Filename;
+        elseif( $this->Filename ) :
+            $this->QueryArgs['filename'] = is_array( $this->Filename ) ? current( $this->Filename ) : (string) $this->Filename;
         else :
             $this->QueryArgs['filename'] = '';
-        endif;
-
+        endif;        
+        
         return $this->QueryArgs;
     }
     
@@ -296,11 +283,54 @@ class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
     {
         $params = $this->parse_query_args();
         
-        if (empty($params['filename'])) :
+        if (empty( $params['filename']))
             return;
-        endif;
 
-        $items = [];
+        // Attributs de récupération des données CSV
+        if ($this->current_item()) :
+            $attrs = array(
+                'filename'      => $params['filename'],
+                'columns'       => $this->FileColumns,
+                'delimiter'     => $this->Delimiter
+            );
+            $Csv = Csv::getRow(current($this->current_item()), $attrs);
+        else :
+            $attrs = array(
+                'filename'      => $params['filename'],
+                'columns'       => $this->FileColumns,
+                'delimiter'     => $this->Delimiter,
+                'query_args'    => array(
+                    'paged'         => isset( $params['paged'] ) ? (int) $params['paged'] : 1,
+                    'per_page'      => $this->PerPage
+                ),            
+            );
+            
+            /// Trie
+            if (! empty($params['orderby'])) :
+                $attrs['orderby'] = $params['orderby'];
+            endif;
+            
+            /// Recherche
+            if (! empty($params['search'])) :
+                $attrs['search'] = array(
+                    array(
+                        'term'      => $params['search']
+                    )
+                );
+            endif;
+            // Traitement du fichier d'import
+            $Csv = Csv::getResults( $attrs );
+        endif;
+                
+        $items = array();
+        
+        foreach($Csv->getItems() as $import_index => $item) :
+            $item['_import_row_index'] = $import_index;
+            $items[] = (object) $item;
+        endforeach;
+                
+        $this->TotalItems = $Csv->getTotalItems();
+        $this->TotalPages = $Csv->getTotalPages();
 
         return $items;
     }
@@ -312,9 +342,9 @@ class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
      * Vues
      */
     public function views()
-    {
+    {   
         // Import de fichier personnel
-        if( $this->Uploadable ) :
+        if( $this->Uploadable ) :        
 ?>
 <form class="tiFyTemplatesFileImport-Form tiFyTemplatesFileImport-Form--upload" method="post" action="" enctype="multipart/form-data" data-id="<?php echo $this->template()->getID() .'_'. self::classShortName();?>">              
     <strong><?php _e( 'Import de fichier personnel :', 'tify' );?></strong><br>
@@ -349,10 +379,18 @@ class FileImport extends \tiFy\Core\Templates\Admin\Model\Import\Import
 </div>
 <?php         
         endif;
+?>
+<div class="tiFyTemplatesFileImport-options">
+    <strong class="tiFyTemplatesFileImport-optionsLabel"><?php _e( 'Options d\'import :', 'tify' );?></strong>
+    <div class="tiFyTemplatesFileImport-optionsForm">
 
+
+    </div>
+</div>
+<?php
         parent::views();
     }
-
+    
     /**
      * Champs cachés
      */

@@ -207,7 +207,7 @@ class Export extends \tiFy\Core\Templates\Admin\Model\Table
                         </div>
                     </div>    
                     <div class="major_actions">
-                        <button type="submit" id="tiFyTemplatesExport-Submit" class="button-primary"><?php _e( 'Lancer l\'export', 'tify' );?></button>
+                        <button type="submit" id="tiFyTemplatesExport-Submit" class="button-primary"><?php _e( 'Lancer l\'export', 'tify' );?></a>
                     </div>    
                 </div>
             </div>                    

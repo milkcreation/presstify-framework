@@ -1,0 +1,64 @@
+# CLE D'API GOOGLE (requis)
+## @see https://developers.google.com/maps/documentation/javascript/get-api-key?hl=fr
+ApiKey:
+
+# -------------------------------------------------------------------------------------------------------------------------------
+# DEFINITION DU MARQUEUR
+## Adresse du marqueur (conseillé)
+#Address:         'Tour Eiffel, Paris'
+
+## OPTIONS DU MARQUEUR (laisser vide pour court-circuiter)
+## @see : https://developers.google.com/maps/documentation/javascript/reference?hl=fr#MarkerOptions
+MarkerOptions:
+  ### Latitude/Longitude (si adresse non définie ou introuvable)
+  position:      { lat: 48.85837009999999, lng: 2.2944813000000295 }
+  ### Titre de survol 
+  title:         'La tour Eiffel'
+  ### Visibilité du marqueur
+  visible:        true
+  
+  ## PERSONNALISATION DE L'ICONE (url requise) - format recommandé png 32x32
+  #icon:
+  
+# -------------------------------------------------------------------------------------------------------------------------------
+# OPTIONS DE LA CARTE
+# @see https://developers.google.com/maps/documentation/javascript/reference?hl=fr#MapOptions
+MapOptions:
+  ## COULEUR DE FOND
+  backgroundColor:          'none'
+  
+  ## POSITION DU CENTRE DE LA CARTE (requis si pas aucune adresse n'est définie & Tour Eiffel par défaut)
+  center:                   { lat: 48.85837009999999, lng: 2.2944813000000295 }
+
+  ## ZOOM (requis)
+  zoom:                     12
+
+  ## STYLES DE LA CARTE (en mode litteral)
+  ## @see https://snazzymaps.com/
+  ## ex: https://snazzymaps.com/style/15/subtle-grayscale
+  #styles:                  '[{"featureType":"landscape","stylers":[{"saturation":-100},{"lightness":65},{"visibility":"on"}]},{"featureType":"poi","stylers":[{"saturation":-100},{"lightness":51},{"visibility":"simplified"}]},{"featureType":"road.highway","stylers":[{"saturation":-100},{"visibility":"simplified"}]},{"featureType":"road.arterial","stylers":[{"saturation":-100},{"lightness":30},{"visibility":"on"}]},{"featureType":"road.local","stylers":[{"saturation":-100},{"lightness":40},{"visibility":"on"}]},{"featureType":"transit","stylers":[{"saturation":-100},{"visibility":"simplified"}]},{"featureType":"administrative.province","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":-25},{"saturation":-100}]},{"featureType":"water","elementType":"geometry","stylers":[{"hue":"#ffff00"},{"lightness":-25},{"saturation":-97}]}]'
+
+  ## MODIFICATION DES INTERFACES UTILISATEUR 
+  ### Activation/Désactivation de toutes les interfaces (elles peuvent être réactivées indépendemment)
+  #disableDefaultUI:         false
+  ### Activation/Désactivation du centrage et du zoom au double click
+  #disableDoubleClickZoom:   false
+  ### Activation/Désactivation du parcours de la carte 
+  #draggable:                true
+  ### Activation/Désactivation de l'affichage plein écran
+  #fullscreenControl:        true
+  ### Activation/Désactivation des raccourcis clavier de contrôle de la carte 
+  #keyboardShortcuts:        true
+  ### Activation/Désactivation du choix de type de carte
+  #mapTypeControl:           true  
+  ### Activation/Désactivation de l'echelle  
+  #scaleControl:             true
+  ### Activation/Désactivation du zoom au défilement (recommandé :false)
+  scrollwheel:              false
+  ### Activation/Désactivation de controleur d'affichage StreetView  
+  #streetViewControl:        true
+  ### Activation/Désactivation du controleur de zoom
+  #zoomControl:              true 
+  
+  ## CONFIGURATION DES INTERFACES UTILISATEUR (en mode litteral)
+  #mapTypeControlOptions:  '{ style: google.maps.MapTypeControlStyle.DROPDOWN_MENU, mapTypeIds: [ "hybrid", "roadmap", "terrain"] }'  

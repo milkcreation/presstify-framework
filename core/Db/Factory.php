@@ -1,4 +1,5 @@
 <?php
+
 namespace tiFy\Core\Db;
 
 use tiFy\Core\Db\Make;
@@ -8,8 +9,9 @@ use tiFy\Core\Db\Parse;
 use tiFy\Core\Db\Query;
 use tiFy\Core\Db\Select;
 
-class Factory extends \tiFy\App\FactoryConstructor
+class Factory
 {
+
     /**
      * Identifiant unique de la table
      * @var string
@@ -41,7 +43,7 @@ class Factory extends \tiFy\App\FactoryConstructor
     public $ColPrefix = '';
 
     /**
-     * Liste des noms de colonnes préfixés
+     * Liste des noms de colonne de la table
      * @var array
      */
     public $ColNames = [];
@@ -82,10 +84,7 @@ class Factory extends \tiFy\App\FactoryConstructor
      */
     public $MetaType = null;
 
-    /**
-     * Variables de requête privées
-     * @var array
-     */
+    //
     public $PrivateQueryVars = [
         'include',
         /** @todo deprecated alias item__in * */
@@ -96,7 +95,6 @@ class Factory extends \tiFy\App\FactoryConstructor
         'search',
         /** @todo deprecated alias s * */
         's',
-        'fields',
         'per_page',
         'paged',
         'order',
@@ -108,34 +106,26 @@ class Factory extends \tiFy\App\FactoryConstructor
     // Classe de rappel
     public $Handle, $Meta, $Parse, $Query, $Select;
 
+    // Liste des attributs accessibles
+    public $GetAttrs = [
+        'ID',
+        'Name',
+        'ColPrefix',
+        'ColNames',
+        'Primary',
+        'IndexKeys',
+        'SearchColNames',
+        'MetaType',
+    ];
+
     /**
      * CONSTRUCTEUR
      *
-     * @param $id Identifiant unique de qualification
+     * @param       $id     Identifiant unique de qualification de la table de
+     *                      base de données
      * @param array $attrs  {
-     *      Attributs de la table de base de données
-     *
-     *      @param bool $install Activation de l'installation de la table de base de données
-     *      @param int $version Numéro de version de la table
-     *      @param string $name Nom de la base de données (hors préfixe)
-     *      @param string $primary Colonne de clé primaire
-     *      @param string $col_prefix Prefixe des colonnes de la table
-     *      @param array $columns {
-     *          Liste des attributs de configuration des colonnes
-     *
-     *
-     *      }
-     *      @param array $keys {
-     *          Liste des attributs de configuration des clefs d'index
-     *
-     *      }
-     *      @param string[] $seach {
-     *          Liste des colonnes ouvertes à la recherche
-     *
-     *      }
-     *      @param bool|string $meta Activation ou nom de la table de stockage des metadonnées
-     *      @param \wpdb|object $sql_engine Moteur (ORM) de requête en base de données
-     * }
+     *                      Attributs de la table de base de données
+     *                      }
      *
      * @return void
      */
@@ -147,9 +137,11 @@ class Factory extends \tiFy\App\FactoryConstructor
         // Définition des attributs de la classe
         $defaults = [
             'install'    => false,
-            'version'    => 1,
+            /** @todo Dans le cas où la table n'ai pas pour nom de l'ID */
             'name'       => '',
+            /** @todo Cas où la colonne de clé primaire n'est pas la première colonne */
             'primary'    => '',
+            'version'    => 1,
             'col_prefix' => '',
             'columns'    => [],
             'keys'       => [],
@@ -167,7 +159,7 @@ class Factory extends \tiFy\App\FactoryConstructor
         // Définition du moteur de requête SQL
         $this->setSQLEngine($sql_engine);
 
-        // Définition du préfixe par défaut des noms de colonnes
+        /// Définition du préfixe par défaut des noms de colonnes
         $this->setColPrefix($col_prefix);
 
         /// Traitement des attributs de colonnes
@@ -175,36 +167,31 @@ class Factory extends \tiFy\App\FactoryConstructor
             $this->setColAttrs($col_name, $attrs);
         endforeach;
 
-        // Définition de la clé primaire
-        $this->setPrimary($primary);
+        /// Définition de la clé primaire
+        $this->setPrimary();
 
-        // Définition des clés d'index
+        /// Définition des clés d'index
         $this->setIndexKeys($keys);
 
-        // Définition des colonnes ouvertes à la recherche de termes
+        /// Définition des colonnes ouvertes à la recherche de termes
         $this->setSearchColNames($search);
 
-        // Définition du nom de la table en base de données
+        /// Définition du nom de la table en base de données
         $this->setName($name);
 
-        // Définition de nom de la table de metadonnées en base
+        /// Définition de nom de la table de metadonnées en base
         $this->setMeta($meta);
 
-        if ($install) :
-            $this->install();
-        endif;
+        if ($install) {
+            new Make($this);
+        }
     }
 
-    /**
-     * Définition du moteur (ORM) de requête en base de données
-     *
-     * @param \wpdb|object $sql_engine Moteur (ORM) de base de données
-     *
-     * @return \wpdb|object
-     */
+    /* = PARAMETRAGE = */
+    /** == Définition du prefixe des colonnes == **/
     private function setSQLEngine($sql_engine = null)
     {
-        if (is_null($sql_engine) || !($sql_engine instanceof \wpdb)) :
+        if (is_null($sql_engine) || ! ($sql_engine instanceof \wpdb)) :
             global $wpdb;
 
             return $this->SQLEngine = $wpdb;
@@ -213,65 +200,40 @@ class Factory extends \tiFy\App\FactoryConstructor
         return $this->SQLEngine = $sql_engine;
     }
 
-    /**
-     * Définition du préfixe des colonnes
-     *
-     * @param string $col_prefix Intitulé du préfixe des colonnes
-     *
-     * @return array
-     */
+    /** == Définition du prefixe des colonnes == **/
     private function setColPrefix($col_prefix = '')
     {
         return $this->ColPrefix = $col_prefix;
     }
 
-    /**
-     * Définition des atttributs de configuration d'un colonne (prefixage + cartographie)
-     *
-     * @param string $name Nom de déclaration de la colonne (hors préfixe)
-     * @param array $attrs Attributs de configuration de la colonne
-     *
-     * @return array
-     */
-    private function setColAttrs($name, $attrs = [])
+    /** == Traitement des arguments de colonne == **/
+    private function setColAttrs($col_name, $attrs = [])
     {
         $defaults = [
             'prefix' => true,
         ];
-        $attrs = \wp_parse_args($attrs, $defaults);
+        $attrs    = wp_parse_args($attrs, $defaults);
 
-        $_name = $attrs['prefix'] ? $this->ColPrefix . $name : $name;
+        $_col_name = $attrs['prefix'] ? $this->ColPrefix . $col_name : $col_name;
+        array_push($this->ColNames, $_col_name);
+        $this->ColMap[$col_name] = $_col_name;
 
-        // Ajout à la liste des colonnes
-        array_push($this->ColNames, $_name);
-
-        // Ajout à la cartographie des colonnes
-        $this->ColMap[$name] = $_name;
-
-        // Déclaration de la variable des stockage des attributs de colonne
-        $col = "col_{$_name}";
+        $col = "col_{$_col_name}";
 
         return $this->{$col} = $attrs;
     }
 
-    /**
-     * Définition de la clé primaire
-     *
-     * @param string Nom de la colonne de clé primaire
-     *
-     * @return string
-     */
-    private function setPrimary($primary_col = '')
+    /** == Définition de la clé primaire == **/
+    private function setPrimary()
     {
-        if (empty($this->ColNames)) :
+        // Bypass
+        if (empty($this->ColNames)) {
             return;
-        endif;
+        }
 
-        if ($primary_col && in_array($primary_col, $this->ColNames)) :
-            return $this->Primary = $primary_col;
-        else :
-            return $this->Primary = reset($this->ColNames);
-        endif;
+        reset($this->ColNames);
+
+        return $this->Primary = $this->ColNames[0];
     }
 
     /** == Définition des clés d'index == **/
@@ -328,138 +290,58 @@ class Factory extends \tiFy\App\FactoryConstructor
         return $this->MetaType = $meta_type;
     }
 
-    /**
-     * Récupération de la clé primaire
-     *
-     * @return string
-     */
+    /* = PARAMETRES = */
+    /** == Récupération de la primaire == **/
     final public function getPrimary()
     {
         return $this->Primary;
     }
 
-    /**
-     * Vérification si une colonne est la colonne déclarée comme primaire
-     *
-     * @param string $name Identifiant de qualification de la colonne ou nom réel (préfixé) de la colonne
-     *
-     * @return bool
-     */
-    final public function isPrimary($name)
-    {
-        if (!$name = $this->isCol($name)) :
-            return false;
-        endif;
-
-        return ($this->getPrimary() === $name);
-    }
-
-    /**
-     * Récupération du nom de la table préfixée
-     *
-     * @return string
-     */
+    /** == Récupération du nom de la table préfixée == **/
     final public function getName()
     {
         return $this->Name;
     }
 
-    /**
-     * Récupération de la liste des noms de colonnes réels (préfixés)
-     *
-     * @return string[]
-     */
-    final public function getColNames()
+    /** == Récupération d'un attribut de colonne selon son nom == **/
+    final public function getColAttrs($col_name)
     {
-        return $this->ColNames;
+        if ( ! $col_name = $this->isCol($col_name)) {
+            return null;
+        }
+        $col = "col_{$col_name}";
+        if (isset($this->{$col})) {
+            ;
+        }
+
+        return $this->{$col};
     }
 
-    /**
-     * Récupération du nom préfixé d'une colonne selon son identifiant de qualification
-     *
-     * @param string $id Identifiant de qualification d'une colonne
-     *
-     * @return string
-     */
-    final public function getColMap($id)
+    /** == Récupération d'un attribut de colonne selon son nom == **/
+    final public function getColAttr($col_name, $attr)
     {
-        if (isset($this->ColMap[$id])) :
-            return $this->ColMap[$id];
-        endif;
+        if (($column_attrs = $this->getColAttrs(
+                $col_name
+            )) && isset($column_attrs[$attr])) {
+            ;
+        }
 
-        return '';
+        return $column_attrs[$attr];
     }
 
-    /**
-     * Vérification d'existance d'une colonne
-     *
-     * @param string $name Identifiant de qualification de la colonne ou nom réel (préfixé) de la colonne
-     *
-     * @return bool|string Nom de la colonne préfixée
-     */
-    final public function isCol($name)
+    /* = VERIFICATION DE DONNÉES = */
+    /** == Vérification de l'existance d'une colonne == **/
+    final public function isCol($col_name)
     {
-        if ($this->isPrivateQueryVar($name)) :
+        if ($this->isPrivateQueryVar($col_name)) {
             return false;
-        elseif (in_array($name, $this->getColNames())) :
-            return $name;
-        elseif ($_name = $this->getColMap($name)) :
-            return $_name;
-        endif;
+        } elseif (in_array($col_name, $this->ColNames)) {
+            return $col_name;
+        } elseif (in_array($this->ColPrefix . $col_name, $this->ColNames)) {
+            return $this->ColPrefix . $col_name;
+        }
 
         return false;
-    }
-
-    /**
-     * Récupération des attributs de configuration d'une colonne
-     *
-     * @param string $name Identifiant de qualification de la colonne ou nom réel (préfixé) de la colonne
-     *
-     * @return array
-     */
-    final public function getColAttrs($name)
-    {
-        if (!$name = $this->isCol($name)) :
-            return [];
-        endif;
-
-        $col_var = "col_{$name}";
-        if (!isset($this->{$col_var})) :
-            return [];
-        endif;
-
-        return $this->{$col_var};
-    }
-
-    /**
-     * Récupération d'un attribut de configuration de colonne
-     *
-     * @param string $name Identifiant de qualification de la colonne ou nom réel (préfixé) de la colonne
-     * @param string $key Identifiant de quaalification de l'attribut
-     * @param mixed $default Valeur de retour par défaut
-     *
-     * @return mixed
-     */
-    final public function getColAttr($name, $key, $default = '')
-    {
-        if(!$attrs =  $this->getColAttrs($name)) :
-            return $default;
-        endif;
-        if (!isset($attrs[$key])) :
-            return $default;
-        endif;
-
-        return $attrs[$key];
-    }
-
-    /**
-     * Récupération des clés d'index
-     *
-     * @return array
-     */
-    final public function getIndexKeys()
-    {
-        return $this->IndexKeys;
     }
 
     /** == Vérifie si une variable de requête est une variable reservée au système == **/
@@ -480,24 +362,10 @@ class Factory extends \tiFy\App\FactoryConstructor
         return ! empty($this->SearchColNames);
     }
 
-    /**
-     * Moteur de requête SQL
-     *
-     * @return \wpdb
-     */
+    /* = FONCTIONS DE RAPPELS = */
     public function sql()
     {
         return $this->SQLEngine;
-    }
-
-    /**
-     * Installation de la base de données
-     *
-     * @return \wpdb
-     */
-    public function install()
-    {
-        return (new Make($this))->install();
     }
 
     /** == Traitement des éléments en base == **/

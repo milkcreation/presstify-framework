@@ -3,7 +3,7 @@ namespace tiFy\Core\Forms;
 
 use tiFy\tiFy;
 
-class Forms extends \tiFy\App\Core
+class Forms extends \tiFy\Environment\Core
 {
     /* = ARGUMENTS = */
     // Liste des actions à déclencher

@@ -29,7 +29,7 @@ class tiFy_devtools_debugbar{
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		if( isset( $_REQUEST['debugbar'] ) ) :
-			add_action( 'wp_head', function() {echo "<base target=\"_parent\" />";}, 1 );
+			add_action( 'wp_head', create_function( '', 'echo "<base target=\"_parent\" />";'), 1 );
 		else :
 			add_action( 'wp_footer', array( $this, 'wp_footer' ), 99 );
 			add_filter( 'body_class', array( $this, 'body_class' ), 10, 2 );			

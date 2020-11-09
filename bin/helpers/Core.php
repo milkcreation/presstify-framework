@@ -94,7 +94,7 @@ namespace
     /** == Affichage d'un formulaire == **/
     function tify_form_display( $form = null, $echo = true )
     {
-        if ($echo) :
+        if($echo) :
             echo do_shortcode('[formulaire id="'. $form .'"]');
         else :
             return do_shortcode('[formulaire id="'. $form .'"]');
@@ -172,13 +172,13 @@ namespace
     /** == Déclaration d'une metadonnée de post == **/
     function tify_meta_post_register( $post_type, $meta_key, $single = false, $sanitize_callback = 'wp_unslash' )
     {
-        return tiFy\Core\Meta\Post::register( $post_type, $meta_key, $single, $sanitize_callback );
+        return tiFy\Core\Meta\Post::Register( $post_type, $meta_key, $single, $sanitize_callback );    
     }
     
     /** == Récupération de métadonnée en mode avancée (gestion de l'ordre) == **/
     function tify_meta_post_get( $post_id, $meta_key )
     {
-        return tiFy\Core\Meta\Post::get( $post_id, $meta_key );
+        return tiFy\Core\Meta\Post::Get( $post_id, $meta_key );    
     }
     
     /** == TERM == **/
@@ -282,12 +282,8 @@ namespace
     /** == Affichage de la boîte à onglet de l'écran courant == **/
     function tify_taboox_display()
     {
-        if (!$display = tiFy\Core\Taboox\Taboox::display()) :
-            echo 'Rien à voir';
-            return;
-        endif;
-
-        echo $display->render(func_get_args());
+        if( $screen = tiFy\Core\Taboox\Taboox::$Screen )
+            return call_user_func_array( array( $screen, 'box_render' ), func_get_args() );
     }
     
     // --------------------------------------------------------------------------------------------------------------------------
@@ -300,29 +296,5 @@ namespace
     function tify_templates_current( )
     {
         return tiFy\Core\Templates\Templates::$Current;
-    }
-
-    // --------------------------------------------------------------------------------------------------------------------------
-    /* = ROUTER = */
-    /**
-     * Déclaration d'une route
-     *
-     * @uses \tiFy\Core\Router\Router::register()
-     * @return \tiFy\Core\Router\Factory
-     */
-    function tify_router_register($id, $attrs = [])
-    {
-        return tiFy\Core\Router\Router::register($id, $attrs = []);
-    }
-
-    /**
-     * Récupération de l'identifiant du contenu accroché à une route
-     *
-     * @uses \tiFy\Core\Router\Router::get()
-     * @return int
-     */
-    function tify_router_get_selected($id)
-    {
-        return tiFy\Core\Router\Router::get($id)->getSelected();
     }
 }
