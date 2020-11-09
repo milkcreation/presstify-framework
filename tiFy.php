@@ -87,16 +87,16 @@ final class tiFy
         self::$AbsUrl = \tiFy\Lib\File::getFilenameUrl(self::$AbsDir, self::$AbsPath);
 
         // Instanciation des composants natifs
-        self::classLoad('tiFy\Core', __DIR__ . '/core');
+        //self::classLoad('tiFy\Core', __DIR__ . '/core');
         
         // Instanciation des composants dynamiques
-        self::classLoad('tiFy\Components', __DIR__ . '/components');
+        //self::classLoad('tiFy\Components', __DIR__ . '/components');
         
         // Instanciation des extensions
-        self::classLoad('tiFy\Plugins', TIFY_PLUGINS_DIR);
+        //self::classLoad('tiFy\Plugins', TIFY_PLUGINS_DIR);
         
         // Instanciation des jeux de fonctionnalités complémentaires
-        self::classLoad('tiFy\Set', tiFy::$AbsDir . '/set');
+        //self::classLoad('tiFy\Set', tiFy::$AbsDir . '/set');
         
         // Instanciation des fonctions d'aide au développement
         new Helpers;
