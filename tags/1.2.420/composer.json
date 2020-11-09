@@ -38,11 +38,12 @@
             "tiFy\\App\\": "./bin/app",
             "tiFy\\Core\\": "./core",
             "tiFy\\Components\\": "./components",
-            "tiFy\\Lib\\": ["./bin/lib", "./bin/deprecated/lib"],
+            "tiFy\\Lib\\": ["./bin/lib", "./bin/lib/Checker", "./bin/lib/Country", "./bin/lib/Facebook", "./bin/lib/File", "./bin/lib/QrCode", "./bin/deprecated/lib"],
             "tiFy\\Inherits\\": ["./bin/lib/Inherits"],
             "tiFy\\Environment\\": "./bin/deprecated/env",
             "tiFy\\Plugins\\": "./plugins",
-            "tiFy\\Set\\": "./set"
+            "tiFy\\Set\\": "./set",
+            "tiFy\\Statics\\": "./bin/lib/Statics"
         }
     }
 }
