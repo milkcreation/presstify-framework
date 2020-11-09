@@ -48,13 +48,13 @@ class Callbacks
 	/** == Définition des fonctions de rappel des addons == **/
 	public function setAddons( $hookname, $addon_id, $callback, $priority = 10 )
 	{
-	 	$this->_set( $hookname, $addon_id, $callback, $priority, 'addons' );	 	
+	 	$this->_set( $hookname, $addon_id, $callback, $priority, 'addons' );
 	}
 	
 	/** == Définition des fonctions de rappel des contrôleurs == **/
 	public function setCore( $hookname, $controller_id, $callback, $priority = 10 )
 	{
-	 	$this->_set( $hookname, $controller_id, $callback, $priority, 'core' );	 	
+	 	$this->_set( $hookname, $controller_id, $callback, $priority, 'core' );
 	}
 	 
 	/** == Définition des fonctions de rappel des types de champ == **/
