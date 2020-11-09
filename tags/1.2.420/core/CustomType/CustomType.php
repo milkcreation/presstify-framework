@@ -1,7 +1,7 @@
 <?php
 namespace tiFy\Core\CustomType;
 
-class CustomType extends \tiFy\App\Core
+class CustomType extends \tiFy\Environment\Core
 {
     /**
      * Liste des arguments de déclaration des taxonomies personnalisées
@@ -15,8 +15,6 @@ class CustomType extends \tiFy\App\Core
 
     /**
      * CONSTRUCTEUR
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -50,11 +48,11 @@ class CustomType extends \tiFy\App\Core
      * Déclaration des taxonomies personnalisées
      */
     final public function register_taxonomy()
-    {
-        do_action('tify_custom_taxonomy_register');
+    {        
+        do_action( 'tify_custom_taxonomy_register' );
 
-        foreach ((array)self::$Taxonomies as $taxonomy => $attrs) :
-            self::createTaxonomy($taxonomy, $attrs);
+        foreach( (array) self::$Taxonomies as $taxonomy => $attrs ) :
+            self::createTaxonomy( $taxonomy, $attrs );
         endforeach;
     }
 
@@ -63,10 +61,10 @@ class CustomType extends \tiFy\App\Core
      */
     final public function register_post_type()
     {
-        do_action('tify_custom_post_type_register');
+        do_action( 'tify_custom_post_type_register' );
 
-        foreach ((array)self::$PostTypes as $post_type => $attrs) :
-            self::createPostType($post_type, $attrs);
+        foreach( (array) self::$PostTypes as $post_type => $attrs ) :
+           self::createPostType( $post_type, $attrs );
         endforeach;
     }
     
@@ -74,25 +72,20 @@ class CustomType extends \tiFy\App\Core
      * Déclaration des taxonomies par type de post
      */
     final public function register_taxonomy_for_object_type()
-    {
-        if (!empty(self::$Taxonomies)) :
-            foreach (self::$Taxonomies as $taxonomy => $args) :
-                if (!isset($args['object_type'])) :
-                    continue;
-                endif;
-                $post_types = !is_string($args['object_type']) ? $args['object_type'] : array_map('trim', explode(',', $args['object_type']));
-
-                foreach ($post_types as $post_type) :
-                    \register_taxonomy_for_object_type($taxonomy, $post_type);
-                endforeach;
+    {        
+        foreach( (array) self::$Taxonomies as $taxonomy => $args ) :            
+            if( ! isset( $args['object_type'] ) )
+                continue;                  
+            $post_types = ! is_string( $args['object_type'] ) ? $args['object_type'] : array_map( 'trim', explode( ',', $args['object_type'] ) );
+            
+            foreach( $post_types as $post_type ) :
+                \register_taxonomy_for_object_type( $taxonomy, $post_type );
             endforeach;
-        endif;
-
+        endforeach;
+        
         foreach( (array) self::$PostTypes as $post_type => $args ) :
             if( ! isset( $args['taxonomies'] ) )
-                continue;
-
-            exit;
+                continue;        
             $taxonomies = ! is_string( $args['taxonomies'] ) ? $args['taxonomies'] : array_map( 'trim', explode( ',', $args['taxonomies'] ) );
             
             foreach( $taxonomies as $taxonomy ) :
@@ -136,34 +129,31 @@ class CustomType extends \tiFy\App\Core
     /**
      * Déclaration de taxonomie personnalisée
      */
-    public static function registerTaxonomy($taxonomy, $args = [])
+    public static function registerTaxonomy( $taxonomy, $args )
     {
-        if (!isset(self::$Taxonomies[$taxonomy])) :
-            return self::$Taxonomies[$taxonomy] = $args;
-        endif;
+        if( ! isset( self::$Taxonomies[$taxonomy] ) )
+            self::$Taxonomies[$taxonomy] = $args;
     }
-
+    
     /**
      * Déclaration de type de post personnalisé
      */
-    public static function registerPostType($post_type, $args = [])
+    public static function registerPostType( $post_type, $args )
     {
-        if (!isset(self::$PostTypes[$post_type])) :
-            return self::$PostTypes[$post_type] = $args;
-        endif;
+        if( ! isset( self::$PostTypes[$post_type] ) )
+            self::$PostTypes[$post_type] = $args;
     }
     
     /**
      * Création de la taxonomie personnalisée
      */
-    public static function createTaxonomy($taxonomy, $args = [])
+    public static function createTaxonomy( $taxonomy, $args )
     {
         // Déclaration des taxonomies non enregistrés
-        if (!isset(self::$Taxonomies[$taxonomy])) :
+        if( ! isset( self::$Taxonomies[$taxonomy] ) )
             self::$Taxonomies[$taxonomy] = $args;
-        endif;
         
-        $args = self::parseTaxonomyAttrs( $taxonomy, $args );
+        $args = self::parseTaxonomyAttrs( $taxonomy, $args );        
                 
         $allowed_args = array(
             'label', 'labels', 'public', 'show_ui', 'show_in_menu', 'show_in_nav_menus', 'show_tagcloud' , 'show_in_quick_edit', 
@@ -178,7 +168,7 @@ class CustomType extends \tiFy\App\Core
         
         \register_taxonomy(
             $taxonomy,
-            [],
+            array(),
             $taxonomy_args
         );       
     }    
@@ -186,7 +176,7 @@ class CustomType extends \tiFy\App\Core
     /**
      * Création du type de post personnalisé
      */
-    public static function createPostType($post_type, $args = [])
+    public static function createPostType( $post_type, $args )
     {
         // Déclaration des types de post non enregistrés
         if( ! isset( self::$PostTypes[$post_type] ) )
@@ -233,31 +223,31 @@ class CustomType extends \tiFy\App\Core
         if( ! isset( $args['labels'] ) )
             $args['labels'] = array();    
         $labels = new \tiFy\Core\Labels\Factory( wp_parse_args( $args['labels'], array( 'singular' => $singular, 'plural' => $plural, 'gender' => $gender ) ) );
-        $args['labels'] = $labels->get();
-
-        $defaults['public'] = true;
-        $defaults['show_ui'] = true;
-        $defaults['show_in_menu'] = true;
-        $defaults['show_in_nav_menus'] = false;
-        $defaults['show_tagcloud'] = false;
-        $defaults['show_in_quick_edit'] = false;
-        $defaults['meta_box_cb'] = null;
-        $defaults['show_admin_column'] = true;
-        $defaults['description'] = '';
-        $defaults['hierarchical'] = false;
+        $args['labels'] = $labels->Get();
+        
+        $defaults['public']                 = true;
+        $defaults['show_ui']                 = true;
+        $defaults['show_in_menu']             = true;
+        $defaults['show_in_nav_menus']         = false;
+        $defaults['show_tagcloud']             = false;
+        $defaults['show_in_quick_edit']     = false;
+        $defaults['meta_box_cb']             = null;
+        $defaults['show_admin_column']         = true;
+        $defaults['description']             = '';
+        $defaults['hierarchical']             = false;
         //$defaults['update_count_callback'] = '';
-        $defaults['query_var'] = true;
-        $defaults['rewrite'] = [
-            'slug'         => $taxonomy,
-            'with_front'   => false,
-            'hierarchical' => false
-        ];
+        $defaults['query_var']                 = true;
+        $defaults['rewrite']                 = array(
+            'slug'             => $taxonomy, 
+            'with_front'    => false, 
+            'hierarchical'     => false        
+        );
         //$defaults['capabilities'] = '';
-        $defaults['sort'] = true;
-
-        return wp_parse_args($args, $defaults);
+        $defaults['sort']     = true;
+        
+        return wp_parse_args( $args, $defaults );
     }
-
+    
     /**
      * Traitement des arguments par défaut de type de post personnalisé
      */
@@ -278,46 +268,47 @@ class CustomType extends \tiFy\App\Core
         
         if( ! isset( $args['labels'] ) )
             $args['labels'] = array();    
-
-        $labels = new \tiFy\Core\Labels\Factory(\wp_parse_args($args['labels'], ['singular' => $singular, 'plural' => $plural, 'gender' => $gender]));
-        $args['labels'] = $labels->get();
-
+        
+        $labels = new \tiFy\Core\Labels\Factory( wp_parse_args( $args['labels'], array( 'singular' => $singular, 'plural' => $plural, 'gender' => $gender ) ) );
+        
+        $args['labels'] = $labels->Get();
+        
         // Définition des arguments du type de post
         /// Description
         $defaults['description'] = '';
-
+        
         /// Autres arguments
-        $defaults['public'] = true;
-        $defaults['exclude_from_search'] = false;
-        $defaults['publicly_queryable'] = true;
-        $defaults['show_ui'] = true;
-        $defaults['show_in_nav_menus'] = true;
-        $defaults['show_in_menu'] = true;
-        $defaults['show_in_admin_bar'] = true;
-        $defaults['menu_position'] = null;
-        $defaults['menu_icon'] = false;
-        $defaults['capability_type'] = 'page';
+        $defaults['public']                 = true;
+        $defaults['exclude_from_search']    = false;
+        $defaults['publicly_queryable']     = true;
+        $defaults['show_ui']                 = true;
+        $defaults['show_in_nav_menus']        = true;
+        $defaults['show_in_menu']             = true;
+        $defaults['show_in_admin_bar']        = true;
+        $defaults['menu_position']             = null;
+        $defaults['menu_icon']                 = false;
+        $defaults['capability_type']         = 'page';
         //$args['capabilities']            = array();
-        $defaults['map_meta_cap'] = null;
-        $defaults['hierarchical'] = false;
-        $defaults['supports'] = ['title', 'editor', 'thumbnail'];
-        $defaults['register_meta_box_cb'] = '';
-        $defaults['taxonomies'] = [];
-        $defaults['has_archive'] = true;
-        $defaults['permalink_epmask'] = EP_PERMALINK;
-        $defaults['rewrite'] = [
-            'slug'       => $post_type,
-            'with_front' => false,
-            'feeds'      => true,
-            'pages'      => true,
-            'ep_mask'    => EP_PERMALINK
-        ];
-        $defaults['query_var'] = true;
-        $defaults['can_export'] = true;
-        $defaults['show_in_rest'] = true;
-        $defaults['rest_base'] = $post_type;
-        $defaults['rest_controller_class'] = 'WP_REST_Posts_Controller';
-
-        return wp_parse_args($args, $defaults);
+        $defaults['map_meta_cap']            = null;
+        $defaults['hierarchical']             = false;
+        $defaults['supports']                 = array( 'title', 'editor', 'thumbnail' );
+        $defaults['register_meta_box_cb']    = '';
+        $defaults['taxonomies']                = array();
+        $defaults['has_archive']             = true;
+        $defaults['permalink_epmask']        = EP_PERMALINK;
+        $defaults['rewrite']                 = array( 
+            'slug'             => $post_type, 
+            'with_front'    => false, 
+            'feeds'         => true, 
+            'pages'         => true,
+            'ep_mask'        => EP_PERMALINK
+        );            
+        $defaults['query_var']                 = true;
+        $defaults['can_export']                = true;
+        $defaults['show_in_rest']            = true;
+        $defaults['rest_base']                = $post_type;
+        $defaults['rest_controller_class']    = 'WP_REST_Posts_Controller';        
+                        
+        return wp_parse_args( $args, $defaults );
     }
 }

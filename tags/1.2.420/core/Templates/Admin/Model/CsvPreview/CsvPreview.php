@@ -1,7 +1,7 @@
 <?php
 namespace tiFy\Core\Templates\Admin\Model\CsvPreview;
 
-use tiFy\Lib\Csv\Csv;
+use tiFy\Inherits\Csv;
 
 class CsvPreview extends \tiFy\Core\Templates\Admin\Model\AjaxListTable\AjaxListTable
 {  

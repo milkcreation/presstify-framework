@@ -1,0 +1,30 @@
+/**
+ * @see https://uigradients.com/#Firewatch
+ * @colors  Color 1: #cb2d3e Color 2: #ef473a
+ */
+ 
+/* = HACK BOOTSTRAP = */
+.btn{
+    background-color: #ef473a;
+    border-color: #cb2d3e;  
+}
+.btn-primary:hover, .btn-primary:focus, .btn-group.open .dropdown-toggle.btn-primary {
+    background-color: #cb2d3e;
+    border-color: #ef473a;
+} 
+ 
+/* = JUMBOTRON = */
+.Site-body .Jumbotron-Title,
+.Site-body .Jumbotron-Subtitle{
+    color:#FFF;
+}
+.Site-body .Jumbotron-Title{
+    font-weight:900;
+    margin-bottom:0.2em;
+}
+.Site-body .Jumbotron-Subtitle{
+    font-weight:100;
+}
+.Site-body .Jumbotron-Icon > svg{
+    fill:#FFF;
+}

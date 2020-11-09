@@ -58,22 +58,19 @@ abstract class Factory extends \tiFy\App\Factory
     
     /**
      * CONSTRUCTEUR
-     *
-     * @param string $id Identifiant de qualification du template
-     * @param array $attrs Attributs de configuration du template
-     *
-     * @return void
+     * @param string $id identifiant du template
+     * @param array $attrs attributs de configuration du template
      */
-    public function __construct($id, $attrs = array())
+    public function __construct( $id, $attrs = array() )
     {
         parent::__construct();
-
+        
         // Définition de la cartographie des modèles prédéfinis
-        if (!empty(static::$Models) && empty(static::$ModelsMap)) :
+        if( ! empty( static::$Models ) && empty( static::$ModelsMap ) ) :
             $context = $this->getContext();
-            static::$ModelsMap = array_map(
-                function ($model) use ($context) {
-                    return "tiFy\\Core\\Templates\\" . ucfirst($context) . "\\Model\\{$model}\\{$model}";
+            static::$ModelsMap = array_map( 
+                function( $model ) use ( $context ) {
+                    return "tiFy\\Core\\Templates\\". ucfirst( $context ) ."\\Model\\{$model}\\{$model}";
                 },
                 static::$Models
             );
@@ -145,7 +142,7 @@ abstract class Factory extends \tiFy\App\Factory
      */
     final public function getModel()
     {
-        return $this->Model;
+        return $this->Model;    
     }
     
     /**

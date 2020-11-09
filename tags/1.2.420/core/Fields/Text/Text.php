@@ -4,39 +4,36 @@ namespace tiFy\Core\Fields\Text;
 class Text extends \tiFy\Core\Fields\Factory
 {
     /**
+     * Instance
+     * @var int
+     */
+    protected static $Instance = 0;
+
+    /**
      * Affichage
      *
-     * @param string $id Identifiant de qualification du champ
-     * @param array $args {
-     *      Liste des attributs de configuration du champ
+     * @param array $attrs
+     * @param bool $echo
      *
-     *      @param string $before Contenu placé avant le champ
-     *      @param string $after Contenu placé après le champ
-     *      @param array $attrs {
-     *          Liste des attributs de balise
-     *
-     *      }
-     * }
-     *
-     * @return string
+     * return string
      */
-    public static function display($id = null, $args = [])
+    public static function display($attrs = [])
     {
-        static::$Instance++;
+        ++static::$Instance;
 
         $defaults = [
-            'before'  => '',
-            'after'   => '',
-            'attrs'        => [
-                'id'    => 'tiFyCoreFields-Text--' . static::$Instance,
-            ]
+            'id'                => 'tiFyCoreFieldsText-' . static::$Instance,
+            'container_id'      => 'tiFyCoreFieldsText--' . static::$Instance,
+            'container_class'   => '',
+            'html_attrs'        => [],
+            'name'              => '',
+            'value'             => ''
         ];
-        $args = \wp_parse_args($args, $defaults);
+        $attrs = \wp_parse_args($attrs, $defaults);
 
-        // Instanciation
-        $field = new static($id, $args);
-        $field->setHtmlAttr('type', 'text');
-
-        ?><?php $field->before(); ?><input <?php $field->htmlAttrs(); ?>/><?php $field->after(); ?><?php
+        $Field = new static($attrs);
+?>
+<input type="text" name="<?php echo $Field->getName();?>" value="<?php echo $Field->getValue();?>" />
+<?php
     }
 }

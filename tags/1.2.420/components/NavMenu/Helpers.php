@@ -16,7 +16,6 @@
     );
  * @see wp_list_categories 
  */
-function tify_nav_menu_category( $args = array() )
-{
+function tify_nav_menu_category( $args = array() ) {
     return \tiFy\Components\NavMenu\GeneralTemplate::categoryNavMenu( $args );
 }

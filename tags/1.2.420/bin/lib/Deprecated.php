@@ -63,6 +63,7 @@ function tify_excerpt( $string, $args = array() ){
 }
 endif;
 
+
 if( ! function_exists( 'mk_multisort' ) ) :
 /**
  * Trie selon une valeur d'un tableau

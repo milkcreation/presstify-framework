@@ -1,0 +1,323 @@
+/************************************************************
+ * 	(A FAIRE CORRESPONDRE AVEC EDITOR-STYLES.CSS) 
+ ************************************************************/
+.Article-content--editor{
+    color: #333;
+    font-family: "Libre Franklin", "Helvetica Neue", helvetica, arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    vertical-align: baseline;
+    font-weight:400;
+}
+
+/* = TITRES = */
+.Article-content--editor h3, .Article-content--editor h4, .Article-content--editor h5, .Article-content--editor h6 {
+    font-family: "Libre Franklin", "Helvetica Neue", helvetica, arial, sans-serif;
+    margin: 0 0 0.5em;
+    text-transform: normal;
+    line-height:1;
+}
+.Article-content--editor h3{
+	display:inline-block;
+    font-size: 32px;
+    line-height: 1.2;
+    padding-bottom:10px;
+}
+.Article-content--editor h4 {
+  	font-size: 20px;
+    margin-bottom: 20px;
+}
+.Article-content--editor h5{
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+.Article-content--editor h6 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+.Article-content--editor hr {
+    background-color: transparent;
+    border: 0;
+    height: 1px;
+    margin: 1em 0;
+    clear:both;
+}
+
+/* = PARAGRAPHES = */
+.Article-content--editor p, .Article-content--editor ul, .Article-content--editor ol, .Article-content--editor dl, .Article-content--editor div{
+    font-weight: 400;
+}
+.Article-content--editor div:not(.gallery) {
+    margin: 0;
+}
+.Article-content--editor p {
+    margin-top: 0;
+    margin-bottom: 1.5em;
+}
+
+/* = LISTES = */
+.Article-content--editor ul, .Article-content--editor ol {
+    margin: 0 0 1.625em 2.5em;
+    padding: 0;
+}
+.Article-content--editor ul {
+    list-style: none;
+    padding:0; margin:0;
+    margin-bottom: 1.625em;
+}
+.Article-content--editor ul li {
+    padding-left: 1.5em;
+    text-indent: -.7em;
+}
+.Article-content--editor ul li:before {
+	display:inline-block;
+   	content: "\25CF";
+    color:#CCC;
+    margin-right:1em;
+    line-height:21.5px;
+    vertical-align:top;
+    height:9px;
+}
+.Article-content--editor ol {
+    list-style-type: decimal;
+}
+.Article-content--editor ol ol {
+    list-style: upper-alpha;
+}
+.Article-content--editor ol ol ol {
+    list-style: lower-roman;
+}
+.Article-content--editor ol ol ol ol {
+    list-style: lower-alpha;
+}
+.Article-content--editor ul ul, .Article-content--editor ol ol, .Article-content--editor ul ol, .Article-content--editor ol ul {
+    margin-bottom: 0;
+}
+.Article-content--editor dl {
+    margin: 0 1.625em;
+}
+.Article-content--editor dt {
+    font-size: 15px;
+    font-weight: bold;
+}
+.Article-content--editor dd {
+    margin: 0 0 1.625em;
+}
+
+/* = CITATIONS = */
+.Article-content--editor blockquote{
+    clear:both;
+    color: #686868;
+    padding:0.2em 1em; 
+    margin:20px 0 20px;
+    border-left:solid 6px #DDD;
+    line-height:1.5em;
+	font-size:14px;
+}
+.Article-content--editor blockquote h3, .Article-content--editor blockquote h4, .Article-content--editor blockquote h5, .Article-content--editor blockquote h6{
+    color:#FFF;
+}
+.Article-content--editor blockquote p{
+    font-weight: normal;
+    margin:0;
+    font-size:14px;
+}
+.Article-content--editor blockquote em,
+.Article-content--editor blockquote i,
+.Article-content--editor blockquote cite {
+    font-style: normal;
+}
+.Article-content--editor blockquote cite {
+    color: #666;
+    font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* = ELEMENTS DE STYLES = */
+.Article-content--editor strong {
+    font-weight: bold;
+}
+.Article-content--editor cite, .Article-content--editor em, .Article-content--editor i {
+    font-style: italic;
+}
+.Article-content--editor cite {
+    border: none;
+}
+.Article-content--editor big {
+    font-size: 131.25%;
+}
+.Article-content--editor pre {
+    background: #f4f4f4;
+    font: 13px "Courier 10 Pitch", Courier, monospace;
+    line-height: 1.5;
+    margin-bottom: 1.625em;
+    padding: 0.75em 1.625em;
+}
+.Article-content--editor code, .Article-content--editor kbd, .Article-content--editor samp, .Article-content--editor var {
+    font: 13px Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+}
+.Article-content--editor abbr, .Article-content--editor acronym, .Article-content--editor dfn {
+    border-bottom: 1px dotted #666;
+    cursor: help;
+}
+.Article-content--editor address {
+    display: block;
+    margin: 0 0 1.625em;
+}
+.Article-content--editor del {
+    color: #333;
+}
+.Article-content--editor ins {
+    background: #fff9c0;
+    border: none;
+    color: #333;
+    text-decoration: none;
+}
+.Article-content--editor sup,
+.Article-content--editor sub {
+    font-size: 10px;
+    height: 0;
+    line-height: 1;
+    position: relative;
+    vertical-align: baseline;
+}
+.Article-content--editor sup {
+    bottom: 1ex;
+}
+.Article-content--editor sub {
+    top: .5ex;
+}
+.Article-content--editor h1 sup, .Article-content--editor h1 sub,
+.Article-content--editor h2 sup, .Article-content--editor h2 sub,
+.Article-content--editor h3 sup, .Article-content--editor h3 sub,
+.Article-content--editor h4 sup, .Article-content--editor h4 sub,
+.Article-content--editor h5 sup, .Article-content--editor h5 sub,
+.Article-content--editor h6 sup, .Article-content--editor h6 sub{
+	font-size:12px;
+}
+
+/* = LIENS = */
+.Article-content--editor a:not(.Button),
+.Article-content--editor a:not(.Button) em,
+.Article-content--editor a:not(.Button) strong,
+.Article-content--editor a:not(.Button):visited,
+.Article-content--editor a:not(.Button):visited em,
+.Article-content--editor a:not(.Button):visited strong{
+	color: #3E98C5;
+	text-decoration: none;
+}
+.Article-content--editor a:not(.Button):focus,
+.Article-content--editor a:not(.Button):active,
+.Article-content--editor a:not(.Button):hover{
+	color: #327A9E;
+	text-decoration: none;
+}
+
+/* = TABLEAU = */
+.Article-content--editor table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	text-align: left;
+	margin: 0 0 1.625em;
+	width: 100%;
+}
+.Article-content--editor table td {
+	padding: 6px;
+	font-size:13px;
+	color:#777777;
+}
+.Article-content--editor table thead td,
+.Article-content--editor table thead th,
+.Article-content--editor table tfoot td,
+.Article-content--editor table tfoot th{
+	color:#FFF;
+	background-color: #26A2EC;
+	font-size:14px;
+	font-weight:300;
+	text-transform:uppercase;
+	padding: 8px 6px;
+}
+.Article-content--editor table tbody tr:nth-child(2n) td{
+	background-color:#F4F4F4;
+}
+
+/* = BOUTONS = */
+.Article-content--editor .Button{
+	display:inline-block;
+	font-weight:bold;
+	font-size:12px;
+	padding:15px;
+	text-align:center;
+	text-transform:uppercase;
+	cursor:pointer;
+}
+.Article-content--editor .Button,
+.Article-content--editor .Button:hover,
+.Article-content--editor .Button:active,
+.Article-content--editor .Button:focus,
+.Article-content--editor .Button:hover a,
+.Article-content--editor .Button a,
+.Article-content--editor .Button a:hover,
+.Article-content--editor .Button a:active,
+.Article-content--editor .Button a:focus{
+	text-decoration:none;
+    -webkit-transition: 	background-color 300ms ease-in-out, color 300ms ease-in-out;
+    -moz-transition: 		background-color 300ms ease-in-out, color 300ms ease-in-out;
+    -ms-transition: 		background-color 300ms ease-in-out, color 300ms ease-in-out;
+    -o-transition: 			background-color 300ms ease-in-out, color 300ms ease-in-out;
+    transition: 			background-color 300ms ease-in-out, color 300ms ease-in-out;
+}
+.Article-content--editor .Button a{
+	margin:-15px; padding:15px;
+}
+.Article-content--editor .Button--1{
+	background-color:#F05F2A;
+	border:1px solid #F05F2A;
+    color:#FFF;
+}
+.Article-content--editor .Button--1 a{
+ 	color:#FFF;
+}
+.Article-content--editor .Button--1:hover,
+.Article-content--editor .Button--1:active,
+.Article-content--editor .Button--1:focus{
+    background-color:#FFF;
+    color:#F05F2A;
+}
+.Article-content--editor .Button--2{
+	background-color:#FFF;
+	border:1px solid #F05F2A;
+    color:#F05F2A;
+}
+.Article-content--editor .Button--2 a{
+	color:#000;
+}
+.Article-content--editor .Button--2:hover,
+.Article-content--editor .Button--2:active,
+.Article-content--editor .Button--2:focus{
+    background-color:#F05F2A;
+	color:#FFF;
+}
+
+/* = ETIQUETTES = */
+.Article-content--editor .Label{
+	display:inline-block;
+	font-weight:bold;
+	font-size:12px;
+	padding:15px;
+	text-align:center;
+	text-transform:uppercase;
+}
+.Article-content--editor .Label--1{
+	background-color:#F05F2A;
+	border:1px solid #F05F2A;
+    color:#FFF;
+}
+.Article-content--editor .Label--2{
+	background-color:#FFF;
+	border:1px solid #F05F2A;
+    color:#F05F2A;
+}

@@ -11,7 +11,7 @@
  */
 namespace tiFy\Core\Update;
 
-class Update extends \tiFy\App\Core
+class Update extends \tiFy\Environment\Core
 {
     /**
      * Liste des actions à déclencher
@@ -38,10 +38,6 @@ class Update extends \tiFy\App\Core
      */
     final public function init()
     {
-        foreach(self::tFyAppConfig() as $id => $attrs) :
-            self::register($id, $attrs);
-        endforeach;
-
         do_action('tify_update_register');
     }
 
@@ -53,13 +49,12 @@ class Update extends \tiFy\App\Core
      * @param string $id Identifiant unique
      * @param mixed $attrs Attributs de mise à jour
      * 
-     * @return \tiFy\Core\Update\Factory
+     * @return object \tiFy\Core\Update\Factory
      */
     final public static function register($id, $attrs = array())
     {
-        if( isset(self::$Factories[$id])) :
+        if( isset(self::$Factories[$id]))
             return;
-        endif;
         
         $path = self::getOverridePath("\\tiFy\\Core\\Update\\". self::sanitizeControllerName($id));
         $FactoryClass = self::getOverride('\tiFy\Core\Update\Factory', $path);

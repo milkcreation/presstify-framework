@@ -14,7 +14,6 @@
  *          @param string $value Valeur saisie dans le champs
  *      }
  * }
- * @var \tiFy\Core\Forms\Form\Form $form Object Formulaire
  */
 ?>
 <table cellpadding="0" cellspacing="10" border="0" align="center">

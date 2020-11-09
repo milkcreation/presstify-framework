@@ -4,7 +4,7 @@
  */
 namespace tiFy\Core\Control\Tabs;
 
-class Walker extends \tiFy\Lib\Walkers\Tabs
-{
+class Walker extends \tiFy\Abstracts\TabWalker
+{        
 
 }

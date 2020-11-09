@@ -1,0 +1,48 @@
+/**
+ * BOOTSTRAP >= LG
+ */
+@media (min-width: 1200px){ 
+
+}
+
+/**
+ * BOOTSTRAP MD
+ */
+@media (max-width: 1199px){ 
+
+}
+
+/**
+ * BOOTSTRAP SM 
+ */
+@media (max-width: 991px){ 
+
+}
+
+/**
+ * BOOTSTRAP XS 
+ */
+@media (max-width: 767px){ 
+
+}
+
+/**
+ * CUSTOM 640 
+ */
+@media (max-width: 640px){ 
+
+}
+
+/**
+ * WP ADMINBAR RESPONSIVE 
+ */
+@media (max-width: 600px){ 
+
+}
+
+/**
+ * CUSTOM 480 
+ */
+@media screen and (max-width: 480px){ 
+
+}

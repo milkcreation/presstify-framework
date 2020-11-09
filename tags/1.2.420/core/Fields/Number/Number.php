@@ -4,57 +4,53 @@ namespace tiFy\Core\Fields\Number;
 class Number extends \tiFy\Core\Fields\Factory
 {
     /**
+     * Instance
+     * @var int
+     */
+    protected static $Instance = 0;
+
+    /**
      * Liste des attributs HTML autorisés
-     * @see https://www.w3schools.com/html/html_form_input_types.asp
      * @var array
      */
     protected $AllowedHtmlAttrs = [
-        'disabled',
-        'max', /** HTML5 */
-        'maxlength',
-        'min', /** HTML5 */
-        'pattern', /** HTML5 */
         'readonly',
-        'required', /** HTML5 */
+        'disabled',
+        'max',
+        'maxlength',
+        'min',
+        'pattern',
+        'readonly',
+        'required',
         'size',
-        'step',
-        'value'
+        'step'
     ];
 
     /**
      * Affichage
      *
-     * @param string $id Identifiant de qualification du champ
-     * @param array $args {
-     *      Liste des attributs de configuration du champ
+     * @param array $attrs
+     * @param bool $echo
      *
-     *      @param string $before Contenu placé avant le champ
-     *      @param string $after Contenu placé après le champ
-     *      @param array $attrs {
-     *          Liste des attributs de balise
-     *
-     *      }
-     * }
-     *
-     * @return string
+     * return string
      */
-    public static function display($id = null, $args = [])
+    public static function display($attrs = [])
     {
-        static::$Instance++;
+        ++static::$Instance;
 
         $defaults = [
-            'before'       => '',
-            'after'        => '',
-            'attrs'        => [
-                'id'    => 'tiFyCoreFields-Number--' . static::$Instance
-            ]
+            'id'                => 'tiFyCoreFieldsInputText-' . static::$Instance,
+            'container_id'      => 'tiFyCoreFieldsInputText--' . static::$Instance,
+            'container_class'   => '',
+            'html_attrs'        => [],
+            'name'              => '',
+            'value'             => ''
         ];
-        $args = \wp_parse_args($args, $defaults);
+        $attrs = \wp_parse_args($attrs, $defaults);
 
-        // Instanciation
-        $field = new static($id, $args);
-        $field->setHtmlAttr('type', 'number');
-
-        ?><?php $field->before(); ?><input <?php $field->htmlAttrs(); ?>/><?php $field->after(); ?><?php
+        $Field = new static($attrs);
+?>
+<input type="number" name="<?php echo $Field->getName();?>" value="<?php echo $Field->getValue();?>" <?php echo $Field->getHtmlAttrs(); ?>/>
+<?php
     }
 }

@@ -525,9 +525,9 @@ class ScriptLoader extends \tiFy\App\Factory
         // FontAwesome
         self::$CssLib['font-awesome']               = array(
             'src'           => array(
-                'local'         => '/vendor/fortawesome/font-awesome/css/font-awesome'. $min .'.css',
+                'local'         => tiFy::$AbsUrl .'/vendor/fortawesome/font-awesome/css/font-awesome'. $min .'.css',
                 'cdn'           => '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css',
-                'dev'           => '/vendor/fortawesome/font-awesome/css/font-awesome.css',
+                'dev'           => tiFy::$AbsUrl .'/vendor/fortawesome/font-awesome/css/font-awesome.css',
             ),
             'deps'          => array(),
             'version'       => '4.4.0',
@@ -675,16 +675,6 @@ class ScriptLoader extends \tiFy\App\Factory
             'deps'          => array( 'jquery' ),
             'version'       => '2.0.5',
             'in_footer'     => true 
-        );
-
-        // Url Parser
-        self::$JsLib['url']                  = array(
-            'src'           => array(
-                'local'         => tiFy::$AbsUrl . '/bin/assets/vendor/url.min.js',
-            ),
-            'deps'          => ['jquery'],
-            'version'       => '2.5.2',
-            'in_footer'     => true
         );
     }
     

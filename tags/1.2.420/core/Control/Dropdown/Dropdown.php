@@ -4,7 +4,7 @@ namespace tiFy\Core\Control\Dropdown;
 class Dropdown extends \tiFy\Core\Control\Factory
 {
     /* = ARGUMENTS = */    
-    // Identifiant de la classe
+    // Identifiant de la classe        
     protected $ID = 'dropdown';
     
     // Instance Courante
@@ -104,7 +104,7 @@ class Dropdown extends \tiFy\Core\Control\Factory
         elseif( ! $selected ) :
           $selected = current( $choices );
         endif;
-
+        
         // Selecteur de traitement
         $output  = "";
         $output .= "\t<select id=\"{$handler['id']}\" name=\"{$name}\" class=\"tify_control_dropdown-handler". ( $handler['class'] ? ' '. $handler['class'] : '' ) ."\" data-tify_control=\"dropdown-handler\" data-selector=\"#{$id}\" data-picker=\"#{$picker['id']}\"". ( $disabled ? " disabled=\"disabled\"" : "" ) .">";

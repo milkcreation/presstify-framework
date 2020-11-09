@@ -1,0 +1,191 @@
+/**
+ * BOUTONS
+ */
+[class*=" Button--"],
+[class^="Button--"]{
+    position:relative;
+    display:inline-block;
+    padding:15px 25px;
+    
+    border:none;
+    border-radius:3px;
+    font-size:14px;
+    outline:none;
+}
+[class*=" Button--"]::before,
+[class^="Button--"]::before{
+   position:absolute;
+   top:0; right:0; bottom:0; left:0;
+   content:""; display:block;
+   
+   border-radius:3px;
+   border-style: solid;
+   border-width:1px; 
+}
+.Button--1{    
+    color:#36BCEE;
+    background-color:#FFF;
+}
+.Button--1::before{    
+    border-color:#36BCEE;
+}
+.Button--1.Button--inverted{
+    color:#FFF;
+    background-color:#36BCEE;
+}
+.Button--2{    
+    color:#848484;
+    background-color:#FFF;
+}
+.Button--2::before{    
+    border-color:#848484;
+}
+.Button--2.Button--inverted{
+    color:#FFF;
+    background-color:#848484;
+}
+.Button--3{    
+    color:#00EB9A;
+    background-color:#FFF;
+}
+.Button--3::before{    
+    border-color:#00EB9A;
+}
+.Button--3.Button--inverted{
+    color:#FFF;
+    background-color:#00EB9A;
+}
+.Button--inverted{
+    font-weight:700;
+}
+.Button--inverted::before{
+    opacity:0;
+    transform:scale(0);
+}
+.Button--ico{
+    padding-left:60px;
+}
+
+/** = ANIMATION = **/
+[class*=" Button--"],
+[class^="Button--"]{
+    -moz-transition:        color 300ms cubic-bezier(0.42, 0, 1.0, 1.0), background-color 300ms cubic-bezier(0.42, 0, 1.0, 1.0);
+    -ms-transition:         color 300ms cubic-bezier(0.42, 0, 1.0, 1.0), background-color 300ms cubic-bezier(0.42, 0, 1.0, 1.0);
+    -o-transition:          color 300ms cubic-bezier(0.42, 0, 1.0, 1.0), background-color 300ms cubic-bezier(0.42, 0, 1.0, 1.0);
+    -webkit-transition:     color 300ms cubic-bezier(0.42, 0, 1.0, 1.0), background-color 300ms cubic-bezier(0.42, 0, 1.0, 1.0);
+    transition:             color 300ms cubic-bezier(0.42, 0, 1.0, 1.0), background-color 300ms cubic-bezier(0.42, 0, 1.0, 1.0);    
+}
+[class*=" Button--"]::before,
+[class^="Button--"]::before{
+    -moz-transition:        transform 300ms cubic-bezier(0.42, 0, 1.0, 1.0), opacity 300ms cubic-bezier(0.42, 0, 1.0, 1.0);
+    -ms-transition:         transform 300ms cubic-bezier(0.42, 0, 1.0, 1.0), opacity 300ms cubic-bezier(0.42, 0, 1.0, 1.0);
+    -o-transition:          transform 300ms cubic-bezier(0.42, 0, 1.0, 1.0), opacity 300ms cubic-bezier(0.42, 0, 1.0, 1.0);
+    -webkit-transition:     transform 300ms cubic-bezier(0.42, 0, 1.0, 1.0), opacity 300ms cubic-bezier(0.42, 0, 1.0, 1.0);
+    transition:             transform 300ms cubic-bezier(0.42, 0, 1.0, 1.0), opacity 300ms cubic-bezier(0.42, 0, 1.0, 1.0); 
+}
+[class*=" Button--"]:hover::before,
+[class^="Button--"]:hover::before{
+    opacity:0;
+    transform:scale(0);
+}
+.Button--1:hover{
+    color:#FFF;
+    background-color:#36BCEE;
+}
+.Button--1.Button--inverted:hover{
+    color:#36BCEE;
+    background-color:#FFF;
+}
+.Button--2:hover{
+    color:#FFF;
+    background-color:#848484;
+}
+.Button--2.Button--inverted:hover{
+    color:#848484;
+    background-color:#FFF;
+}
+.Button--3:hover{
+    color:#FFF;
+    background-color:#00EB9A;
+}
+.Button--3.Button--inverted:hover{
+    color:#00EB9A;
+    background-color:#FFF;
+}
+.Button--inverted:hover::before{
+    opacity:1;
+    transform:scale(1);
+}
+
+/**
+ * LABEL
+ */
+[class*=" Label--"],
+[class^="Label--"]{
+    position:relative;
+    display:inline-block;
+    padding:15px 25px;
+    
+    border:none;
+    font-size:14px;
+}
+[class*=" Label--"]::before,
+[class^="Label--"]::before{
+   position:absolute;
+   top:0; right:0; bottom:0; left:0;
+   content:""; display:block;
+   
+   border-style: solid;
+   border-width:1px; 
+}
+.Label--1{    
+    color:#36BCEE;
+    background-color:#FFF;
+}
+.Label--1::before{    
+    border-color:#36BCEE;
+}
+.Label--1.Label--inverted{
+    color:#FFF;
+    background-color:#36BCEE;
+}
+.Label--2{    
+    color:#848484;
+    background-color:#FFF;
+}
+.Label--2::before{    
+    border-color:#848484;
+}
+.Label--2.Label--inverted{
+    color:#FFF;
+    background-color:#848484;
+}
+.Label--3{    
+    color:#00EB9A;
+    background-color:#FFF;
+}
+.Label--3::before{    
+    border-color:#00EB9A;
+}
+.Label--3.Label--inverted{
+    color:#FFF;
+    background-color:#00EB9A;
+}
+.Label--4{    
+    color:#ffac18;
+    background-color:#FFF;
+}
+.Label--4::before{    
+    border-color:#ffac18;
+}
+.Label--4.Label--inverted{
+    color:#FFF;
+    background-color:#ffac18;
+}
+.Label--inverted{
+    font-weight:700;
+}
+.Label--inverted::before{
+    opacity:0;
+    transform:scale(0);
+}

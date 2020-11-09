@@ -12,14 +12,14 @@ final class Apps
     /**
      * Attributs de configuration
      */
-    private static $Config = [
-        'Core'       => [],
-        'Components' => [],
-        'Plugins'    => [],
-        'Set'        => [],
-        'Schema'     => []
-    ];
-
+    private static $Config              = array(
+        'Core'          => array(),
+        'Components'    => array(),
+        'Plugins'       => array(),
+        'Set'           => array(),
+        'Schema'        => array()
+    );
+    
     /**
      * Liste des applicatifs déclarés
      * 
@@ -92,12 +92,12 @@ final class Apps
      *                  @var \WP_Error $error Message d'erreur d'accessibilité aux chemins
      *              }
      *          }
-     *          @var null|string $Parent Nom complet de la classe parente (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
+     *          @var null|string $ParentClassname Nom complet de la classe parente (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
      *          @var null|string $ChildNamespace Espace de nom enfant (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
      *      }
      * }
      */
-    public static $Registered = [];
+    public static $Registered          = array();
 
     /**
      * CONTROLEURS
@@ -110,8 +110,8 @@ final class Apps
      * @param array $attrs {
      *      Attributs de paramétrage de l'applicatif
      *      
-     *      @var string $Id Identifiant qualificatif de l'applicatif
-     *      @var array $Config Attributs de configuration
+     *      @type string $Id Identifiant qualificatif de l'applicatif
+     *      @type array $Config Attributs de configuration
      * }
      * 
      * @return null|array {
@@ -168,7 +168,7 @@ final class Apps
      *              @var string $basedir Chemin absolu vers le repertoire
      *          }
      *      }
-     *      @var string $Parent Nom complet de la classe parente (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
+     *      @var string $ParentClassname Nom complet de la classe parente (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
      *      @var null|string $ChildNamespace Espace de nom enfant (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
      */
     public static function register($classname, $type = null, $attrs = array())
@@ -182,7 +182,7 @@ final class Apps
             return;
         endif;
 
-        $config_attrs = isset($attrs['Config']) ? $attrs['Config'] : [];
+        $config_attrs = isset($attrs['Config']) ? $attrs['Config'] : array();
 
         if (! isset(self::$Registered[$classname])) :
             $ReflectionClass = new \ReflectionClass($classname);
@@ -223,14 +223,11 @@ final class Apps
             $OverridePath = [];
 
             //Nom complet de la classe parente
-            $Parent = (isset($attrs['Parent'])) ? $attrs['Parent'] : null;
+            $ParentClassname = null;
 
             //Espace de nom enfant
             $ChildNamespace = null;
         else :
-            /**
-             * @var mixed $Config Attributs de configuration actifs
-             */
             extract(self::$Registered[$classname]);
             $Config = wp_parse_args($config_attrs, $Config);
         endif;
@@ -259,7 +256,7 @@ final class Apps
             // Chemins de surcharge
             'OverridePath',
             // Nom complet de la classe parente
-            'Parent',
+            'ParentClassname',
             // Espace de nom enfant
             'ChildNamespace',
             // Instance de la classe de l'application
@@ -360,6 +357,37 @@ final class Apps
     public static function isAppCustom($classname)
     {
         return self::is($classname, 'Customs');
+    }
+
+    /**
+     * Recupération des attributs de l'application parente si elle est trouvée dans les types passés en arguments
+     *
+     * @param object|string $classname Objet ou Nom de la classe de l'application
+     * @param string[] $types Liste des types parmis lequels recherchés l'application parente. Core|Components|Plugins|Set|Customs
+     *
+     * @return false|array
+     */
+    public static function queryAppParentAttrs($classname, $types = ['Core', 'Components', 'Plugins', 'Set', 'Customs'])
+    {
+        if (is_object($classname)) :
+            $classname = get_class($classname);
+        endif;
+
+        foreach ((array)$types as $type) :
+            if (!in_array($type, ['Core', 'Components', 'Plugins', 'Set', 'Customs'])) :
+                continue;
+            endif;
+
+            $QueryClass = "self::query{$type}";
+            $QueryApps = call_user_func($QueryClass);
+            foreach ((array)$QueryApps as $_classname => $_attrs) :
+                if(preg_match('#' . preg_quote($_attrs['Namespace'], '\\') . '#', $classname)) :
+                    return $_attrs;
+                endif;
+            endforeach;
+        endforeach;
+
+        return false;
     }
 
     /**
@@ -485,92 +513,42 @@ final class Apps
      *              @var string $basedir Chemin absolu vers le repertoire
      *          }
      *      }
-     *      @var null|string $Parent Nom complet de la classe parente (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
+     *      @var null|string $ParentClassname Nom complet de la classe parente (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
      *      @var null|string $ChildClassname Espace de nom enfant (Dans le cas où l'application ferait partie d'un composant natif ou dynamique ou d'une extension ou d'un jeu de fonctionnalité)
      *  }
      */
-    public static function getAttrList($classname)
+    public static function getAttrs($classname)
     {
-        if (is_object($classname)) :
+        if (is_object($classname))
             $classname = get_class($classname);
-        endif;
                 
-        if (isset(self::$Registered[$classname])) :
+        if (isset(self::$Registered[$classname]))
             return self::$Registered[$classname];
-        endif;
-    }
-
-    /**
-     * Récupération d'un attribut d'application déclarée
-     *
-     * @param $name
-     * @param string $default Valeur de retour par défaut
-     * @param object|string $classname Instance (objet) ou Nom de la classe de l'applicatif
-     *
-     * @return mixed|string
-     */
-    public static function getAttr($name, $default = '', $classname)
-    {
-        if (!$attrs = self::getAttrList($classname)) :
-            return $default;
-        endif;
-
-        if (isset($attrs[$name])) :
-            return $attrs[$name];
-        else :
-            return $default;
-        endif;
     }
     
     /**
-     * Définition d'attributs pour une application déclarée
+     * Définition d'attributs d'un applicatif déclaré
      * 
      * @param mixed $attrs Attributs de l'applicatif 
      * @param object|string $classname Objet ou Nom de la classe de l'applicatif
      * 
      * @return bool
      */
-    public static function setAttrList($attrs = array(), $classname)
+    public static function setAttrs($attrs = array(), $classname)
     {
-        if (is_object($classname)) :
+        if (is_object($classname))
             $classname = get_class($classname);
-        endif;
         
-        if (! isset(self::$Registered[$classname])) :
+        if (! isset(self::$Registered[$classname]))
             return false;
-        endif;
         
         self::$Registered[$classname] = wp_parse_args($attrs,self::$Registered[$classname]);
         
         return true;
     }
-
-    /**
-     * Définition de la liste des attributs de configuration d'une application déclarée
-     *
-     * @param string $name Qualification de l'attribut de configuration
-     * @param mixed $value Valeur de l'attribut de configuration
-     * @param object|string $classname Objet ou Nom de la classe de l'applicatif
-     *
-     * @return bool
-     */
-    public static function setConfigAttrList($attrs, $classname)
-    {
-        if (is_object($classname)) :
-            $classname = get_class($classname);
-        endif;
-
-        if (! isset(self::$Registered[$classname])) :
-            return false;
-        endif;
-
-        self::$Registered[$classname]['Config'] = $attrs;
-
-        return true;
-    }
     
     /**
-     * Définition d'un attributs de configuration d'une application déclarée
+     * Définition d'un attributs de configuration d'un applicatif déclaré
      * 
      * @param string $name Qualification de l'attribut de configuration
      * @param mixed $value Valeur de l'attribut de configuration
@@ -580,14 +558,12 @@ final class Apps
      */
     public static function setConfigAttr($name, $value = '', $classname)
     {
-        if (is_object($classname)) :
+        if (is_object($classname))
             $classname = get_class($classname);
-        endif;
-
-        if (! isset(self::$Registered[$classname])) :
+        
+        if (! isset(self::$Registered[$classname]))
             return false;
-        endif;
-
+        
         self::$Registered[$classname]['Config'][$name] = $value;
         
         return true;
@@ -634,13 +610,13 @@ final class Apps
     /**
      * Traitement du fichier de configuration
      * 
-     * @param string $filename
+     * @param unknown $filename
      * 
      * @return mixed|NULL|\Symfony\Component\Yaml\Tag\TaggedValue|string|\stdClass|NULL[]|\Symfony\Component\Yaml\Tag\TaggedValue[]|string[]|unknown[]|mixed[]
      */
-    public static function parseFile($filename)
+    public static function parseFile( $filename )
     {
-        $output = Yaml::parse(file_get_contents($filename));
+        $output = Yaml::parse( file_get_contents( $filename ) );
 
         return $output;
     }
@@ -893,9 +869,8 @@ final class Apps
                     $Id = basename(dirname($filename));
                     $overrideClass = "{$app['namespace']}\\{$Type}\\{$Id}\\Config";
                     if (class_exists($overrideClass) && is_subclass_of($overrideClass, 'tiFy\\App\\Config')) :
-                        $attrs = call_user_func("tiFy\\{$Type}::register", $Id);
-                        self::register($overrideClass, null, ['Parent' => $attrs['ClassName']]);
-                        call_user_func([$overrideClass, '_ini_set']);
+                        $attrs = call_user_func("tiFy\\{$Type}::register",$Id);
+                        new $overrideClass($attrs['ClassName']);
                     endif;
                 endforeach;
             endforeach;
@@ -978,10 +953,10 @@ final class Apps
 
             foreach($apps as $classname => $attrs) :
                 // Définition des attributs de l'application parente
-                self::setParent($classname);
+                self::setAppParent($classname);
 
                 // Définition des espaces de nom de surcharge
-                self::setOverrideNamespace($classname);
+                self::setAppOverrideNamespace($classname);
 
                 // Définition de la liste des chemins vers les repertoires de surcharge
                 self::setOverridePath($classname);
@@ -990,77 +965,34 @@ final class Apps
             endforeach;
         endforeach;
 
+        //var_dump(self::$Registered); exit;
         // Déclenchement des actions post-paramétrage
         do_action('after_setup_tify');
     }
 
     /**
-     * Définition de l'application parente
      *
      * @param $classname
      *
      * @return void
      */
-    public static function setParent($classname)
+    public static function setAppParent($classname)
     {
-        $attrs = self::getAttrList($classname);
+        $attrs = self::getAttrs($classname);
 
         if ($attrs['Type'] !== 'Customs') :
             return;
         endif;
-        if (!$ParentAttrList = self::_smartAppParentAttrList($attrs['ClassName'])) :
+        if (!$AppParentAttrs = self::queryAppParentAttrs($attrs['ClassName'], ['Core', 'Components', 'Plugins', 'Set'])) :
             return;
         endif;
 
-        if(! preg_match('#' . preg_quote($ParentAttrList['OverrideNamespace'], '\\') .'\\\(.*)#', $attrs['Namespace'], $matches) || ! isset($matches[1]) ) :
-            return;
-        endif;
+        $ChildNamespace = preg_replace('#' . preg_quote($AppParentAttrs['Namespace'], '\\') .'#', '', $attrs['Namespace']);
+        $ChildNamespace = ltrim($ChildNamespace, '\\');
+        $OverrideNamespace = $AppParentAttrs['OverrideNamespace'] . '\\'. $ChildNamespace;
+        $ParentClassname = $AppParentAttrs['ClassName'];
 
-        $Parent = $ParentAttrList['ClassName'];
-        $ChildNamespace = $matches[1];
-        $OverrideNamespace = $ParentAttrList['OverrideNamespace'] . '\\'. $ChildNamespace;
-
-        self::setAttrList(compact('OverrideNamespace', 'Parent', 'ChildNamespace'), $attrs['ClassName']);
-    }
-
-    /**
-     * Recupération intelligente des attributs de l'application parente
-     *
-     * @param object|string $classname Objet ou Nom de la classe de l'application
-     *
-     * @return false|array
-     */
-    private static function _smartAppParentAttrList($classname)
-    {
-        if (is_object($classname)) :
-            $classname = get_class($classname);
-        endif;
-
-        // Recherche parmis
-        foreach (['Core', 'Components', 'Plugins', 'Set'] as $type) :
-            $QueryClass = "self::query{$type}";
-            $QueryApps = call_user_func($QueryClass);
-            foreach ((array)$QueryApps as $_classname => $_attrs) :
-                if(preg_match('#^' . preg_quote($_attrs['Namespace'], '\\') . '#', $classname)) :
-                    return $_attrs;
-                endif;
-            endforeach;
-        endforeach;
-
-        // Recherche de parentalité dans les surchages
-        if(($ReflectionClass = self::getAttr('ReflectionClass', '', $classname)) && ($parent = $ReflectionClass->getParentClass())) :
-            foreach (['Core', 'Components', 'Plugins', 'Set'] as $type) :
-                $QueryClass = "self::query{$type}";
-                $QueryApps = call_user_func($QueryClass);
-                foreach ((array)$QueryApps as $_classname => $_attrs) :
-                    if(preg_match('#^' . preg_quote($_attrs['Namespace'], '\\') . '#', $parent->getName())) :
-                        return $_attrs;
-                    endif;
-                endforeach;
-            endforeach;
-        endif;
-
-        return false;
+        self::setAttrs(compact('OverrideNamespace', 'ParentClassname', 'ChildNamespace'), $attrs['ClassName']);
     }
 
     /**
@@ -1070,9 +1002,9 @@ final class Apps
      *
      * @return void
      */
-    public static function setOverrideNamespace($classname)
+    public static function setAppOverrideNamespace($classname)
     {
-        $attrs = self::getAttrList($classname);
+        $attrs = self::getAttrs($classname);
 
         switch($attrs['Type']) :
             case 'Set' :
@@ -1084,7 +1016,7 @@ final class Apps
                 $OverrideNamespace = preg_replace('#^\\\?tiFy\\\#', '', $attrs['Namespace']);
                 break;
         endswitch;
-        self::setAttrList(compact('OverrideNamespace'), $classname);
+        self::setAttrs(compact('OverrideNamespace'), $classname);
     }
 
     /**
@@ -1096,11 +1028,11 @@ final class Apps
      */
     public static function setOverridePath($classname)
     {
-        $attrs = self::getAttrList($classname);
+        $attrs = self::getAttrs($classname);
 
         if (in_array($attrs['Type'], ['Set', 'Plugins'])) :
             // Attributs du repertoire de surchage des applications connexes (là où l'application peut surcharger les controleurs des autres applications).
-            $OverridePath['override_apps'] = [
+            $OverridePath['app'] = [
                 'path'    => $attrs['Dirname'] . '/app',
                 'url'     => $attrs['Url'] . '/app',
                 'subdir'  => '',
@@ -1108,8 +1040,8 @@ final class Apps
                 'baseurl' => $attrs['Url'] . '/app',
                 'error'   => false
             ];
-            // Attributs du repertoire de surchage des gabarits connexes (là où l'application peut surcharger les gabarits des autres applications).
-            $OverridePath['override_apps_templates'] = [
+            //Attributs du repertoire de surchage des gabarits connexes (là où l'application peut surcharger les gabarits des autres applications).
+            $OverridePath['templates'] = [
                 'path'    => $attrs['Dirname'] . '/templates',
                 'url'     => $attrs['Url'] . '/templates',
                 'subdir'  => '',
@@ -1118,28 +1050,29 @@ final class Apps
                 'error'   => false
             ];
         else :
-            $OverridePath['override_apps']       = [
+            $OverridePath['app']       = [
                 'path'    => '',
                 'url'     => '',
                 'subdir'  => '',
                 'basedir' => '',
                 'baseurl' => '',
-                'error'   => new \WP_Error('OverridePathAppsUnavailable',
+                'error'   => new \WP_Error('OverridePathAppInvalidType',
                     __('Seules les extensions (plugins) et les jeux de fonctionnalités (set) sont en mesure de surcharger les controleurs des autres applications',
                         'tify'))
             ];
-            $OverridePath['override_apps_templates'] = [
+            $OverridePath['templates'] = [
                 'path'    => '',
                 'url'     => '',
                 'subdir'  => '',
                 'basedir' => '',
                 'baseurl' => '',
-                'error'   => new \WP_Error('OverridePathAppsTemplatesUnavailable',
+                'error'   => new \WP_Error('OverridePathTemplatesInvalidType',
                     __('Seules les extensions (plugins) et les jeux de fonctionnalités (set) sont en mesure de surcharger les gabarits des autres applications',
                         'tify'))
             ];
         endif;
 
+        // Chemins de gabarits de surchage du thème
         $subdir  = \wp_normalize_path($attrs['OverrideNamespace']);
         $_subdir  = preg_replace_callback('#^(Core|Components|Plugins|Set)\/(.*)#',
             function ($m) use($subdir) {
@@ -1148,31 +1081,7 @@ final class Apps
         $subdir  = \untrailingslashit($_subdir);
         $_subdir = $subdir ? '/' . $subdir : '';
 
-        // Chemins vers le repertoire de stockage des ressources commplémentaires (assets)
-        if (in_array($attrs['Type'], ['Core', 'Components','Set', 'Plugins']) || $attrs['Parent']) :
-            $OverridePath['assets'] = [
-                'path'    => tiFy::$AbsDir . '/bin/assets' . $_subdir,
-                'url'     => tiFy::$AbsUrl . '/bin/assets' . $_subdir,
-                'subdir'  => $subdir,
-                'basedir' => tiFy::$AbsDir . '/bin/assets',
-                'baseurl' => tiFy::$AbsUrl . '/bin/assets',
-                'error'   => false
-            ];
-        else :
-            $OverridePath['assets'] = [
-                'path'    => $attrs['Dirname'],
-                'url'     => $attrs['Url'],
-                'subdir'  => '',
-                'basedir' => $attrs['Dirname'],
-                'baseurl' => $attrs['Url'],
-                'error'   => new \WP_Error('OverridePathAssetsUnavailable',
-                    __('Seules les composants natifs (core), dynamiques (components), les extensions (plugins) et les jeux de fonctionnalités (set) et leurs héritiers sont en mesure de charger des assets',
-                        'tify'))
-            ];
-        endif;
-
-        // Chemins de gabarits de surchage du thème
-        if (in_array($attrs['Type'], ['Core', 'Components','Set', 'Plugins']) || $attrs['Parent']) :
+        if (in_array($attrs['Type'], ['Core', 'Components','Set', 'Plugins']) || $attrs['ParentClassname']) :
             $OverridePath['theme_app']       = [
                 'path'    => get_template_directory() . '/app' . $_subdir,
                 'url'     => get_template_directory_uri() . '/app' . $_subdir,
@@ -1188,7 +1097,7 @@ final class Apps
                 'subdir'  => '',
                 'basedir' => '',
                 'baseurl' => '',
-                'error'   => new \WP_Error('OverridePathThemeAppUnavailable',
+                'error'   => new \WP_Error('OverridePathThemeAppInvalidType',
                     __('Seules les composants natifs (core), dynamiques (components), les extensions (plugins) et les jeux de fonctionnalités (set) et leurs héritiers sont en mesure d\'être surchargés dans le thème',
                         'tify'))
             ];
@@ -1203,31 +1112,28 @@ final class Apps
             'error'   => false
         ];
 
-        if (($parent = $attrs['Parent']) && ($ParentAttrList = self::getAttrList($parent))) :
-            $subdir  = \wp_normalize_path($attrs['ChildNamespace']);
-            $_subdir = $subdir ? '/' . $subdir : '';
-
-            $OverridePath['parent_templates'] = [
-                'path'    => $ParentAttrList['Dirname'] . "{$_subdir}/templates",
-                'url'     => $ParentAttrList['Url'] . "{$_subdir}/templates",
-                'subdir'  => "{$subdir}/templates",
-                'basedir' => $ParentAttrList['Dirname'],
-                'baseurl' => $ParentAttrList['Url'],
+        if (in_array($attrs['Type'], ['Core', 'Components','Set', 'Plugins']) || $attrs['ParentClassname']) :
+            $OverridePath['assets'] = [
+                'path'    => tiFy::$AbsDir . '/bin/assets' . $_subdir,
+                'url'     => tiFy::$AbsUrl . '/bin/assets' . $_subdir,
+                'subdir'  => $subdir,
+                'basedir' => tiFy::$AbsDir . '/bin/assets',
+                'baseurl' => tiFy::$AbsUrl . '/bin/assets',
                 'error'   => false
             ];
         else :
-            $OverridePath['parent_templates'] = [
-                'path'    => '',
-                'url'     => '',
+            $OverridePath['assets'] = [
+                'path'    => $attrs['Dirname'],
+                'url'     => $attrs['Url'],
                 'subdir'  => '',
-                'basedir' => '',
-                'baseurl' => '',
-                'error'   => new \WP_Error('OverridePathParentTemplateUnavailable',
-                    __('Seuls les applications héritières sont en mesure de charger les gabarits dans le repertoire de l\'application parente',
+                'basedir' => $attrs['Dirname'],
+                'baseurl' => $attrs['Url'],
+                'error'   => new \WP_Error('OverridePathAssetsInvalidType',
+                    __('Seules les composants natifs (core), dynamiques (components), les extensions (plugins) et les jeux de fonctionnalités (set) et leurs héritiers sont en mesure de charger des assets',
                         'tify'))
             ];
         endif;
 
-        self::setAttrList(compact('OverridePath'), $classname);
+        self::setAttrs(compact('OverridePath'), $classname);
     }
 }

@@ -1,0 +1,10 @@
+set:
+  TigreBlanc :
+    namespace:    '\TigreBlanc\Set'
+    base_dir:     '<?php echo get_template_directory() ."/vendor/tigreblanc.fr/set";?>'
+    bootstrap:    'Autoload'
+    
+  PresstiFy :
+    namespace:    '\PresstiFy\Set'
+    base_dir:     '<?php echo get_template_directory() ."/vendor/presstify.com/set";?>'
+    bootstrap:    'Autoload'

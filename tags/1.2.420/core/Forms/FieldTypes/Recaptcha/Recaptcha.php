@@ -78,7 +78,7 @@ class Recaptcha extends \tiFy\Core\Forms\FieldTypes\Factory
         
         $resp = $recaptcha->verify( $_POST['g-recaptcha-response'], $_SERVER["REMOTE_ADDR"] );
             
-        if ( ! $resp->isSuccess() )                   
+        if ( ! $resp->isSuccess() )
             $errors[] = array( 
                 'message'    => __( "La saisie de la protection antispam est incorrecte.", 'tify' ),
                 'type'       => 'field',

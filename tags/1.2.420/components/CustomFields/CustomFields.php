@@ -1,7 +1,10 @@
 <?php
 namespace tiFy\Components\CustomFields;
 
-final class CustomFields extends \tiFy\App\Component
+use \tiFy\Environment\Component;
+
+/** @Autoload */
+final class CustomFields extends Component
 {
 	/* = ARGUMENTS = */
 	/** == ACTIONS == **/
