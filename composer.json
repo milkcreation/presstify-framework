@@ -36,6 +36,7 @@
             "tiFy\\": "",
 	    "tiFy\\Core\\": "./core",
 	    "tiFy\\Components\\": "./components",
+	    "tiFy\\Lib\\": "./bin/lib",
 	    "tiFy\\Plugins\\": "./plugins",
 	    "tiFy\\Set\\": "./set"
         }
