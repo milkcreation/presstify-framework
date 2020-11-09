@@ -34,6 +34,10 @@
     "autoload": {
         "psr-4": {
             "tiFy\\": ""
+	    "tiFy\\Core\\": "./core",
+	    "tiFy\\Components\\": "./components",
+	    "tiFy\\Plugins\\": "./plugins",
+	    "tiFy\\Set\\": "./set"
         }
     }
 }
