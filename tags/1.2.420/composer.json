@@ -30,5 +30,10 @@
         "dompdf/dompdf": "^0.8.0",
         "phpdocumentor/reflection-docblock": "^3.2.2",
         "codeitnowin/barcode": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "tiFy\\": ""
+        }
     }
 }
