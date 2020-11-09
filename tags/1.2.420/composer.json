@@ -37,7 +37,7 @@
             "tiFy\\App\\": "./bin/app",
             "tiFy\\Core\\": "./core",
             "tiFy\\Components\\": "./components",
-            "tiFy\\Environment": "./bin/env",
+            "tiFy\\Environment\\": "./bin/env",
             "tiFy\\Lib\\": "./bin/lib",
             "tiFy\\Plugins\\": "./plugins",
             "tiFy\\Set\\": "./set"
