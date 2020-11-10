@@ -4,17 +4,23 @@ namespace tiFy\Session;
 
 use Illuminate\Database\Query\Builder as DbBuilder;
 use Illuminate\Database\Schema\Blueprint;
-use tiFy\Contracts\Session\{Session, Store as StoreContract};
-use tiFy\Support\{Arr, ParamsBag, Str};
-use tiFy\Support\Proxy\{Crypt, Database, Log, Schema};
+use tiFy\Contracts\Log\Logger;
+use tiFy\Contracts\Session\Session;
+use tiFy\Contracts\Session\Store as StoreContract;
+use tiFy\Support\Arr;
+use tiFy\Support\Proxy\Crypt;
+use tiFy\Support\Proxy\Database;
+use tiFy\Support\Proxy\Log;
+use tiFy\Support\Proxy\Schema;
+use tiFy\Support\Str;
 
-class Store extends ParamsBag implements StoreContract
+class Store implements StoreContract
 {
     /**
-     * Indicateur de modification des variables de session.
-     * @var boolean
+     * Liste des attributs de session.
+     * @var array
      */
-    protected $changed = false;
+    protected $attributes = [];
 
     /**
      * Liste des attributs d'identification de stockage de session.
@@ -29,6 +35,12 @@ class Store extends ParamsBag implements StoreContract
     protected $credentialKeys = ['key', 'expiration', 'hash'];
 
     /**
+     * Liste des attributs de session stockés.
+     * @var array
+     */
+    private $data = [];
+
+    /**
      * Clé d'indice de stockage de session.
      * @var string
      */
@@ -41,18 +53,22 @@ class Store extends ParamsBag implements StoreContract
     protected $name = '';
 
     /**
-     * Indicateur d'initialisation de l'instance.
-     * @var boolean
-     */
-    private $prepared = false;
-
-    /**
      * Instance du gestionnaire de sessions.
      * @var Session
      */
     protected $session;
 
-    protected $log;
+    /**
+     * Indicateur d'initialisation.
+     * @var boolean
+     */
+    private $started = false;
+
+    /**
+     * Instance du gestionnaire de journalisation.
+     * @var Logger|null
+     */
+    private $logger;
 
     /**
      * CONSTRUCTEUR
@@ -69,9 +85,17 @@ class Store extends ParamsBag implements StoreContract
     /**
      * @inheritDoc
      */
+    public function all(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function db(): DbBuilder
     {
-        if (! Database::schema()->hasTable('tify_session')) {
+        if (!Database::schema()->hasTable('tify_session')) {
             Database::addConnection(
                 array_merge(
                     Database::getConnection()->getConfig(), ['strict' => false]
@@ -117,8 +141,7 @@ class Store extends ParamsBag implements StoreContract
             'session_name' => $this->getName(),
         ])->delete();
 
-        $this->clear();
-        $this->changed = false;
+        $this->flush();
         $this->credentials = [];
 
         return $this;
@@ -130,6 +153,30 @@ class Store extends ParamsBag implements StoreContract
     public function expiration(): int
     {
         return time() + intval(60 * 60 * 48);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function flush(): void
+    {
+        $this->attributes = [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function forget($keys): void
+    {
+        Arr::forget($this->attributes, $keys);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get(string $key, $default = null)
+    {
+        return Arr::get($this->attributes, $key, $default);
     }
 
     /**
@@ -183,61 +230,53 @@ class Store extends ParamsBag implements StoreContract
     /**
      * @inheritDoc
      */
-    public function getStored(): array
+    public function has(string $key): bool
     {
-        $value = $this->db()->where([
-            'session_name' => $this->getName(),
-            'session_key'  => $this->getKey()
-        ])->value('session_value');
-
-        $value = is_string($value) ? Str::unserialize($value) : [];
-        $value = is_array($value) ? $value : [];
-
-        events()->trigger('session.get.stored', [&$value]);
-
-        return $value;
+        return Arr::has($this->attributes, $key);
     }
 
     /**
      * @inheritDoc
      */
-    public function prepare(): StoreContract
+    public function logger(): Logger
     {
-        if (!$this->prepared) {
-            register_shutdown_function([$this, 'save']);
-
-            if ($credentials = $this->session()->get($this->getName())) {
-                /**
-                 * @var string|int $key
-                 * @var int $expiration
-                 * @var string $hash
-                 */
-                extract($credentials);
-
-                $this->setKey($key);
-
-                if (time() > $expiration) {
-                    $expiration = $this->expiration();
-                    $this->updateStoredExpiration($expiration);
-                }
-
-                $this->set($this->getStored() ?: []);
-            } else {
-                $this->setKey();
-                $expiration = $this->expiration();
-            }
-
-            $this->credentials = array_merge(compact('expiration'), [
-                'hash' => $this->getHash($expiration),
-                'key'  => $this->getKey(),
-            ]);
-
-            $this->session()->set($this->getName(), $this->credentials);
-
-            $this->prepared = true;
+        if (is_null($this->logger)) {
+            $this->logger = Log::registerChannel('session');
         }
 
-        return $this;
+        return $this->logger;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function only(array $keys): array
+    {
+        return Arr::only($this->attributes, $keys);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function pull(string $key, $default = null)
+    {
+        return Arr::pull($this->attributes, $key, $default);
+    }
+
+    /**
+     * Push a value onto a session array.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function push(string $key, $value): void
+    {
+        $array = $this->get($key, []);
+
+        $array[] = $value;
+
+        $this->put($key, $array);
     }
 
     /**
@@ -245,7 +284,7 @@ class Store extends ParamsBag implements StoreContract
      */
     public function put($key, $value = null): StoreContract
     {
-        if (! is_array($key)) {
+        if (!is_array($key)) {
             $key = [$key => $value];
         }
 
@@ -262,9 +301,7 @@ class Store extends ParamsBag implements StoreContract
     public function putOne(string $key, $value = null): StoreContract
     {
         if ($value !== $this->get($key)) {
-            $this->set($key, $value);
-
-            $this->changed = true;
+            Arr::set($this->attributes, $key, $value);
         }
 
         return $this;
@@ -273,9 +310,27 @@ class Store extends ParamsBag implements StoreContract
     /**
      * @inheritDoc
      */
+    public function read(): array
+    {
+        $data = $this->db()->where([
+            'session_name' => $this->getName(),
+            'session_key'  => $this->getKey(),
+        ])->value('session_value');
+
+        $data = is_string($data) ? Str::unserialize($data) : [];
+        $data = is_array($data) ? $data : [];
+
+        events()->trigger('session.read', [&$data]);
+
+        return $this->data = $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function save(): StoreContract
     {
-        if ($this->changed) {
+        if ($this->credentials && ($this->data !== $this->attributes)) {
             $this->db()->updateOrInsert([
                 'session_key'  => $this->getKey(),
                 'session_name' => $this->getName(),
@@ -284,17 +339,13 @@ class Store extends ParamsBag implements StoreContract
                 'session_expiry' => $this->expiration(),
             ]);
 
-            Log::registerChannel('session', [
-                'filename' => WP_CONTENT_DIR . '/uploads/log/session.log',
-            ])->info('prepare', [
+            $this->logger()->info('prepare', [
                 'id'     => spl_object_hash($this),
                 'key'    => $this->getKey(),
                 'name'   => $this->getName(),
                 'expiry' => $this->expiration(),
                 'value'  => Arr::serialize($this->all()),
             ]);
-
-            $this->changed = false;
         }
 
         return $this;
@@ -321,9 +372,61 @@ class Store extends ParamsBag implements StoreContract
     /**
      * @inheritDoc
      */
+    public function setLogger(Logger $logger): StoreContract
+    {
+        $this->logger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setName(string $name): StoreContract
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function start(): StoreContract
+    {
+        if (!$this->started) {
+            register_shutdown_function([$this, 'save']);
+
+            if ($credentials = $this->session()->get($this->getName())) {
+                /**
+                 * @var string|int $key
+                 * @var int $expiration
+                 * @var string $hash
+                 */
+                extract($credentials);
+
+                $this->setKey($key);
+
+                if (time() > $expiration) {
+                    $expiration = $this->expiration();
+                    $this->updateStoredExpiration($expiration);
+                }
+
+                $this->attributes = $this->read() ?: [];
+            } else {
+                $this->setKey();
+                $expiration = $this->expiration();
+            }
+
+            $this->credentials = array_merge(compact('expiration'), [
+                'hash' => $this->getHash($expiration),
+                'key'  => $this->getKey(),
+            ]);
+
+            $this->session()->set($this->getName(), $this->credentials);
+
+            $this->started = true;
+        }
 
         return $this;
     }

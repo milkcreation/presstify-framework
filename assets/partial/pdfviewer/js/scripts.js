@@ -13,7 +13,7 @@ import 'presstify-framework/observer/js/scripts';
  * @typedef {Object} pdfjs.GlobalWorkerOptions
  * @property {string} pdfjs.GlobalWorkerOptions.workerSrc
  */
-pdfjs.GlobalWorkerOptions.workerSrc = '/./'+ tify.rewrite_base +'/node_modules/pdfjs-dist/build/pdf.worker.js';
+pdfjs.GlobalWorkerOptions.workerSrc = '/./'+ tify.scope +'/node_modules/pdfjs-dist/build/pdf.worker.js';
 
 jQuery(function ($) {
   $.widget('tify.tifyPdfviewer', {

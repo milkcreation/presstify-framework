@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
@@ -7,7 +7,7 @@ interface FactoryValidation
     /**
      * Appel d'un test d'intégrité de valeur.
      *
-     * @param string|callable $cb Fonction de traitement de vérification.
+     * @param string|callable $callback Fonction de traitement de vérification.
      * @param mixed $value Valeur à vérifier.
      * @param array $args Liste des variables passées en argument.
      *

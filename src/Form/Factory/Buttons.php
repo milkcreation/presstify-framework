@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form\Factory;
 
@@ -55,16 +55,16 @@ class Buttons extends Collection implements FactoryButtons
                 return $button->getPosition();
             }
         );
-        if ($max) :
+        if ($max) {
             $pad = 0;
             $this->collect()->each(
                 function (ButtonController $button) use (&$pad, $max) {
-                    $position = $button->getPosition() ? : ++$pad+$max;
+                    $position = $button->getPosition() ?: ++$pad + $max;
 
                     return $button->set('position', absint($position));
                 }
             );
-        endif;
+        }
 
         $this->items = $this->byPosition();
 

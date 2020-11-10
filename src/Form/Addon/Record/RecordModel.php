@@ -2,7 +2,8 @@
 
 namespace tiFy\Form\Addon\Record;
 
-use tiFy\Database\{Concerns\WithMetaTrait, Model as BaseModel};
+use tiFy\Database\Concerns\WithMetaTrait;
+use tiFy\Database\Model as BaseModel;
 
 class RecordModel extends BaseModel
 {

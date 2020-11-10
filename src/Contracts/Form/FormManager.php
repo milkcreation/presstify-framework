@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
@@ -24,12 +24,12 @@ interface FormManager extends Manager
      *
      * @return $this
      */
-    public function buttonRegister($name, $concrete): FormManager;
+    public function buttonRegister(string $name, $concrete): FormManager;
 
     /**
      * Récupération ou définition du formulaire courant.
      *
-     * @param string|FormFactory $form Nom de qualification ou instance du formulaire.
+     * @param string|FormFactory|null $form Nom de qualification ou instance du formulaire.
      *
      * @return FormFactory|null
      */
@@ -43,7 +43,7 @@ interface FormManager extends Manager
      *
      * @return $this
      */
-    public function fieldRegister($name, $concrete): FormManager;
+    public function fieldRegister(string $name, $concrete): FormManager;
 
     /**
      * Récupération du numéro d'indice d'un formulaire déclaré.
@@ -52,13 +52,13 @@ interface FormManager extends Manager
      *
      * @return int|null
      */
-    public function index($name): ?int;
+    public function index(string $name): ?int;
 
     /**
      * Déclaration d'un formulaire.
      *
      * @param string $name Nom de qualification.
-     * @param array $attrs Attributs de configuration.
+     * @param array $args Attributs de configuration.
      *
      * @return FormManager
      */
@@ -78,7 +78,7 @@ interface FormManager extends Manager
      *
      * @return string
      */
-    public function resourcesDir($path = ''): string;
+    public function resourcesDir(string $path = ''): string;
 
     /**
      * Récupération de l'url absolue vers le répertoire des ressources.
@@ -87,5 +87,5 @@ interface FormManager extends Manager
      *
      * @return string
      */
-    public function resourcesUrl($path = ''): string;
+    public function resourcesUrl(string $path = ''): string;
 }

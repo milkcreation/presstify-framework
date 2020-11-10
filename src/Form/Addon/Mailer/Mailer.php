@@ -5,7 +5,8 @@ namespace tiFy\Form\Addon\Mailer;
 use Closure;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Form\AddonFactory;
-use tiFy\Support\Proxy\{Mail, Metabox};
+use tiFy\Support\Proxy\Mail;
+use tiFy\Support\Proxy\Metabox;
 
 class Mailer extends AddonFactory
 {
@@ -280,7 +281,7 @@ class Mailer extends AddonFactory
      *
      * @return array
      */
-    public function parseMail($params, $type)
+    public function parseMail(array $params, string $type)
     {
         $params['subject'] = $params['subject']
             ?? sprintf(__('%1$s - Demande de contact', 'tify'), get_bloginfo('name'));

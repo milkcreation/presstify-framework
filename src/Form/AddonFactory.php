@@ -4,10 +4,8 @@ namespace tiFy\Form;
 
 use InvalidArgumentException;
 use LogicException;
-use tiFy\Contracts\Form\{
-    AddonFactory as AddonFactoryContract,
-    FormFactory
-};
+use tiFy\Contracts\Form\AddonFactory as AddonFactoryContract;
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Support\ParamsBag;
 
 class AddonFactory implements AddonFactoryContract
@@ -33,7 +31,7 @@ class AddonFactory implements AddonFactoryContract
     /**
      * @inheritDoc
      */
-    public function boot(): void {}
+    public function boot(): void { }
 
     /**
      * @inheritDoc
@@ -76,7 +74,7 @@ class AddonFactory implements AddonFactoryContract
      */
     public function name(): string
     {
-        return $this->name ? : class_info($this)->getKebabName();
+        return $this->name ?: class_info($this)->getKebabName();
     }
 
     /**
@@ -105,7 +103,7 @@ class AddonFactory implements AddonFactoryContract
     /**
      * @inheritDoc
      */
-    public function parseParams(): void {}
+    public function parseParams(): void { }
 
     /**
      * @inheritDoc

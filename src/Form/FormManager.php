@@ -2,9 +2,10 @@
 
 namespace tiFy\Form;
 
-use Closure;
-use Exception;
-use tiFy\Contracts\Form\{AddonFactory as AddonFactoryContract, FormFactory, FormManager as FormManagerContract,};
+use Closure, Exception;
+use tiFy\Contracts\Form\AddonFactory as AddonFactoryContract;
+use tiFy\Contracts\Form\FormFactory;
+use tiFy\Contracts\Form\FormManager as FormManagerContract;
 use tiFy\Support\Manager;
 
 class FormManager extends Manager implements FormManagerContract

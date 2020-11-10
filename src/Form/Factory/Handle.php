@@ -3,8 +3,11 @@
 namespace tiFy\Form\Factory;
 
 use tiFy\Http\RedirectResponse;
-use tiFy\Contracts\Form\{FactoryHandle, FormFactory};
-use tiFy\Support\{ParamsBag, Proxy\Request, Proxy\Session, Proxy\Url};
+use tiFy\Contracts\Form\FactoryHandle;
+use tiFy\Contracts\Form\FormFactory;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\Url;
 
 class Handle extends ParamsBag implements FactoryHandle
 {
@@ -50,6 +53,13 @@ class Handle extends ParamsBag implements FactoryHandle
                 $field->resetValue();
             }
         }
+
+        $this->session()->forget('notices');
+
+        foreach($this->notices()->all() as $type => $notices) {
+            $this->session()->put("notices.{$type}", $notices);
+        }
+        $this->notices()->clear();
 
         $this->events('handle.failed', [&$this]);
 
@@ -107,6 +117,9 @@ class Handle extends ParamsBag implements FactoryHandle
      */
     public function prepare(): FactoryHandle
     {
+        $this->session()->forget(['notices', 'request']);
+        $this->notices()->clear();
+
         $this->form()->prepare();
 
         switch ($method = $this->form()->getMethod()) {
@@ -130,7 +143,7 @@ class Handle extends ParamsBag implements FactoryHandle
                 $field->setValue($value);
 
                 if ($this->form()->supports('session') && $field->supports('session')) {
-                    $this->form()->session()->put($field->getName(), $value);
+                    $this->form()->session()->put("request.{$field->getName()}", $value);
                 }
             }
         }
@@ -155,21 +168,12 @@ class Handle extends ParamsBag implements FactoryHandle
      */
     public function success(): FactoryHandle
     {
-        $this->form()->session()->destroy();
+        $this->form()->session()->flush();
+        $this->form()->setSuccessed()->session()->put('successed', true);
 
-        $this->form()->setSuccessed();
+        $this->notices()->add('success', $this->notices()->params('success.message'));
 
         $this->events('handle.successed', [&$this]);
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setSuccessMessage(string $message): FactoryHandle
-    {
-        Session::flash(['form.success.'. $this->form()->name() => $message]);
 
         return $this;
     }
@@ -190,9 +194,7 @@ class Handle extends ParamsBag implements FactoryHandle
                 $uri = $uri->without($without);
             }
 
-            $uri = $uri->with(['success' => $this->form()->name()]);
-
-            $url = $uri->render() . $this->form()->getAnchor();
+            $url = $uri->withFragment($this->form()->getAnchor())->render();
         }
 
         $this->redirect = $url;

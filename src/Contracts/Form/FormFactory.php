@@ -47,7 +47,7 @@ interface FormFactory extends FactoryResolver, ParamsBag
      *
      * @return string
      */
-    public function fieldTagsValue($tags, $raw = true);
+    public function fieldTagsValue($tags, bool $raw = true);
 
     /**
      * Récupération de l'action du formulaire (url).
@@ -99,18 +99,18 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function index();
 
     /**
-     * Vérification d'activation automatisée.
-     *
-     * @return boolean
-     */
-    public function isAuto(): bool;
-
-    /**
      * Vérification de préparation active.
      *
      * @return boolean
      */
     public function isPrepared(): bool;
+
+    /**
+     * Vérifie si le formulaire a été soumis avec succès.
+     *
+     * @return bool
+     */
+    public function isSuccessed(): bool;
 
     /**
      * Récupération d'intitulé|Définition d'intitulés|Retourne l'instance du gestionnaire d'intitulés.
@@ -158,18 +158,47 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function render(): string;
 
     /**
-     * Initialisation (préparation) du rendu.
+     * Initialisation du rendu.
      *
      * @return static
      */
-    public function renderPrepare(): FormFactory;
+    public function renderBuild(): FormFactory;
+
 
     /**
-     * Vérifie si le formulaire a été soumis avec succès.
+     * Initialisation du rendu des attributrs HTML.
      *
-     * @return bool
+     * @return static
      */
-    public function successed(): bool;
+    public function renderBuildAttrs(): FormFactory;
+
+    /**
+     * Initialisation du rendu des champs.
+     *
+     * @return static
+     */
+    public function renderBuildFields(): FormFactory;
+
+    /**
+     * Initialisation du rendu de l'identifiant de qualification HTML.
+     *
+     * @return static
+     */
+    public function renderBuildId(): FormFactory;
+
+    /**
+     * Initialisation du rendu des messages de notification.
+     *
+     * @return static
+     */
+    public function renderBuildNotices(): FormFactory;
+
+    /**
+     * Initialisation du rendu de l'encapsulation.
+     *
+     * @return static
+     */
+    public function renderBuildWrapper(): FormFactory;
 
     /**
      * Liste des services supporté|Vérification de support d'un service.

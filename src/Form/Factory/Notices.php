@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form\Factory;
 
@@ -22,22 +22,22 @@ class Notices extends NoticesController implements FactoryNotices
      *
      * @param array $params {
      *      Liste des paramètres.
-     *      @var array $error {
+     *      @type array $error {
      *          Liste des attributs de configuration des messages d'erreurs
      *
-     *          @var string $title Titre de l'intitulés d'affichage la liste princial des erreurs.
-     *          @var int $show Affichage de la liste principale des erreurs. -1(toutes, par défaut)|
+     *          @type string $title Titre de l'intitulés d'affichage la liste princial des erreurs.
+     *          @type int $show Affichage de la liste principale des erreurs. -1(toutes, par défaut)|
      *                         0(masquer)|n(nombre maximum).
-     *          @var string $teaser Indicateur d'affichage de la liste de message incomplète.
+     *          @type string $teaser Indicateur d'affichage de la liste de message incomplète.
      *                              '...' par défaut.
-     *          @var bool $field Affichage des erreurs au niveau des champs de formulaire.
+     *          @type bool $field Affichage des erreurs au niveau des champs de formulaire.
      *                           Force le masquage de l'affichage principal si vrai.
-     *          @var bool $dismissible Affichage d'un bouton de masquage.
+     *          @type bool $dismissible Affichage d'un bouton de masquage.
      *      }
-     *      @var array $success {
+     *      @type array $success {
      *          Liste des attributs de configuration du message de succès
      *
-     *          @var string $message Message par défaut.
+     *          @type string $message Message par défaut.
      *      }
      * }
      * @param FormFactory $form Instance du contrôleur de formulaire.

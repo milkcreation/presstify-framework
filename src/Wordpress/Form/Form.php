@@ -37,22 +37,12 @@ class Form implements FormContract
                 $form->events()->listen('field.get.value', function(&$value) {
                     $value = Arr::stripslashes($value);
                 });
-
-                if ($form->isAuto()) {
-                    $this->manager->current($form);
-
-                    if($response = $form->prepare()->handle()->response()) {
-                        $response->send();
-                    }
-
-                    $this->manager->reset();
-                }
             }
         });
 
         add_action('init', function () {
-            foreach ($this->manager->all() as $form) {
-                if (is_admin()) {
+            if(is_admin()) {
+                foreach ($this->manager->all() as $form) {
                     /* @var FormFactory $form */
                     $this->manager->current($form);
                     $form->prepare();

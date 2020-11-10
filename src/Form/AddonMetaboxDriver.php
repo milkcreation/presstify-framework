@@ -3,8 +3,10 @@
 namespace tiFy\Form;
 
 use LogicException;
-use tiFy\Contracts\{Form\FormFactory, Form\AddonFactory};
-use tiFy\Metabox\{MetaboxDriver, MetaboxView};
+use tiFy\Contracts\Form\AddonFactory;
+use tiFy\Contracts\Form\FormFactory;
+use tiFy\Metabox\MetaboxDriver;
+use tiFy\Metabox\MetaboxView;
 use tiFy\Support\Proxy\View;
 
 abstract class AddonMetaboxDriver extends MetaboxDriver
@@ -70,7 +72,7 @@ abstract class AddonMetaboxDriver extends MetaboxDriver
             $this->viewer = View::getPlatesEngine(array_merge([
                 'directory' => "{$this->form()->viewer()->getDirectory()}/addon/{$this->addon()->name()}/metabox",
                 'factory'   => MetaboxView::class,
-                'metabox'   => $this
+                'metabox'   => $this,
             ], $this->get('viewer', [])));
         }
 

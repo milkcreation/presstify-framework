@@ -2,7 +2,9 @@
 
 namespace tiFy\Form\Factory;
 
-use tiFy\Contracts\Form\{FactoryField, FactoryFields, FormFactory};
+use tiFy\Contracts\Form\FactoryField;
+use tiFy\Contracts\Form\FactoryFields;
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Support\Collection;
 
 class Fields extends Collection implements FactoryFields
