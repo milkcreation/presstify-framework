@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Kernel\ParamsBag;
 use tiFy\Contracts\Kernel\Notices;
+use tiFy\Support\ParamsBag;
 
 interface FactoryNotices extends FactoryResolver, Notices
 {

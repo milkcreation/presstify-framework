@@ -5,8 +5,9 @@ namespace tiFy\Form;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Form\Factory\ResolverTrait;
-use tiFy\Support\{LabelsBag, ParamsBag, Proxy\Session};
-use tiFy\Support\Proxy\Request;
+use tiFy\Support\LabelsBag;
+use tiFy\Support\ParamsBag;
+use tiFY\Support\Proxy\Asset;
 
 class FormFactory extends ParamsBag implements FormFactoryContract
 {
@@ -17,12 +18,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      * @var FormFactory[]
      */
     private static $instance = [];
-
-    /**
-     * Indicateur de traitement automatique.
-     * @var boolean|null
-     */
-    protected $auto;
 
     /**
      * Instance de gestion des intitulés.
@@ -53,6 +48,12 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      * @var boolean
      */
     protected $successed = false;
+
+    /**
+     * Indicateur d'initialisation de rendu.
+     * @var array
+     */
+    protected $renderBuild = [];
 
     /**
      * Nom de qualification du formulaire dans les attributs de balises HTML.
@@ -88,7 +89,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      * @var array $addons Liste des attributs des addons actifs.
      * @var array $attrs Liste des attributs complémentaires de la balise <form/>.
      * @var string $after Post-affichage, après la balise <form/>.
-     * @var boolean $auto Indicateur de traitement automatisé de la requête de soumission du formulaire. true par défaut
      * @var string $before Pré-affichage, avant la balise <form/>.
      * @var array $buttons Liste des attributs des boutons actifs.
      * @var string $enctype Propriété 'enctype' de la balise <form/>.
@@ -106,24 +106,23 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function defaults(): array
     {
         return [
-            'action'    => '',
-            'addons'    => [],
-            'after'     => '',
-            'attrs'     => [],
-            'auto'      => true,
-            'before'    => '',
-            'buttons'   => [],
-            'enctype'   => '',
-            'events'    => [],
-            'fields'    => [],
-            'grid'      => false,
-            'method'    => 'post',
-            'notices'   => [],
-            'options'   => [],
-            'supports'  => ['session'],
-            'title'     => '',
-            'viewer'    => [],
-            'wrapper' => [],
+            'action'   => '',
+            'addons'   => [],
+            'after'    => '',
+            'attrs'    => [],
+            'before'   => '',
+            'buttons'  => [],
+            'enctype'  => '',
+            'events'   => [],
+            'fields'   => [],
+            'grid'     => false,
+            'method'   => 'post',
+            'notices'  => [],
+            'options'  => [],
+            'supports' => ['session'],
+            'title'    => '',
+            'viewer'   => [],
+            'wrapper'  => [],
         ];
     }
 
@@ -142,18 +141,18 @@ class FormFactory extends ParamsBag implements FormFactoryContract
      */
     public function fieldTagsValue($tags, $raw = true)
     {
-        if (is_string($tags)) :
+        if (is_string($tags)) {
             if (preg_match_all('/([^%%]*)%%(.*?)%%([^%%]*)?/', $tags, $matches)) :
                 $tags = '';
-                foreach ($matches[2] as $i => $slug) :
+                foreach ($matches[2] as $i => $slug) {
                     $tags .= $matches[1][$i] . (($field = $this->field($slug)) ? $field->getValue($raw) : $matches[2][$i]) . $matches[3][$i];
-                endforeach;
+                }
             endif;
-        elseif (is_array($tags)) :
-            foreach ($tags as $k => &$i) :
+        } elseif (is_array($tags)) {
+            foreach ($tags as $k => &$i) {
                 $i = $this->fieldTagsValue($i, $raw);
-            endforeach;
-        endif;
+            }
+        }
 
         return $tags;
     }
@@ -172,13 +171,22 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function getAnchor(): string
     {
         if ($anchor = $this->option('anchor')) {
-            $anchor = is_string($anchor)
-                ? $anchor : ($this->form()->get('wrapper.attrs.id') ? : $this->form()->get('attrs.id'));
+            if (!is_string($anchor)) {
+                if ($this->renderBuildWrapper() && ($exists = $this->get('wrapper.attrs.id'))) {
+                    $anchor = $exists;
+                } elseif ($this->renderBuildId() && ($exists = $this->get('attrs.id'))) {
+                    $anchor = $exists;
+                } else {
+                    $anchor = '';
+                }
+            }
 
-            return '#' . ltrim($anchor, '#');
-        } else {
-            return '';
+            if ($anchor) {
+                return ltrim($anchor, '#');
+            }
         }
+
+        return '';
     }
 
     /**
@@ -226,17 +234,17 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     /**
      * @inheritDoc
      */
-    public function isAuto(): bool
+    public function isPrepared(): bool
     {
-        return $this->auto ?? filter_var($this->get('auto', false), FILTER_VALIDATE_BOOLEAN);
+        return $this->prepared;
     }
 
     /**
      * @inheritDoc
      */
-    public function isPrepared(): bool
+    public function isSuccessed(): bool
     {
-        return $this->prepared;
+        return $this->successed;
     }
 
     /**
@@ -297,23 +305,28 @@ class FormFactory extends ParamsBag implements FormFactoryContract
 
             $this->parse();
 
-            foreach ([
-                         'events',
-                         'addons',
-                         'buttons',
-                         'fields',
-                         'groups',
-                         'handle',
-                         'notices',
-                         'options',
-                         'session',
-                         'validation',
-                         'viewer',
-                     ] as $service) {
+            $services = [
+                'events',
+                'addons',
+                'buttons',
+                'fields',
+                'groups',
+                'handle',
+                'notices',
+                'options',
+                'session',
+                'validation',
+                'viewer',
+            ];
+
+            foreach ($services as $service) {
                 $this->resolve("factory.{$service}." . $this->name());
             }
 
+            $this->setSuccessed(!!$this->session()->pull('successed', false));
+
             $this->groups()->prepare();
+
             foreach ($this->fields() as $field) {
                 $field->prepare();
             }
@@ -335,7 +348,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             $this->prepare();
         }
 
-        $this->renderPrepare();
+        $this->renderBuild();
 
         $groups = $this->groups()->getGrouped();
         $fields = $this->fields();
@@ -348,75 +361,147 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     /**
      * @inheritDoc
      */
-    public function renderPrepare(): FormFactoryContract
+    public function renderBuild(): FormFactoryContract
     {
-        $wrapper = $this->get('wrapper');
+        return $this
+            ->renderBuildId()
+            ->renderBuildWrapper()
+            ->renderBuildAttrs()
+            ->renderBuildFields()
+            ->renderBuildNotices();
+    }
 
-        if ($wrapper !== false) {
-            $this->set('wrapper', array_merge([
-                'tag'   => 'div'
-            ], is_array($wrapper) ? $wrapper : []));
-
-            if (!$this->has('wrapper.attrs.id')) {
-                $this->set('wrapper.attrs.id', 'Form--'. $this->tagName());
+    /**
+     * @inheritDoc
+     */
+    public function renderBuildAttrs(): FormFactoryContract
+    {
+        if (($this->renderBuild['attrs'] ?? false) !== true) {
+            $default_class = "Form-content Form-content--{$this->tagName()}";
+            if (!$this->has('attrs.class')) {
+                $this->set('attrs.class', $default_class);
+            } else {
+                $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+            }
+            if (!$this->get('attrs.class')) {
+                $this->pull('attrs.class');
             }
 
-            if (!$this->has('wrapper.attrs.class')) {
-                $this->set('wrapper.attrs.class', 'Form');
+            $this->set('attrs.action', $this->getAction());
+
+            $this->set('attrs.method', $this->getMethod());
+            if ($enctype = $this->get('enctype')) {
+                $this->set('attrs.enctype', $enctype);
             }
+
+            if ($grid = $this->get('grid')) {
+                $grid = is_array($grid) ? $grid : [];
+
+                $this->set("attrs.data-grid", 'true');
+                $this->set("attrs.data-grid_gutter", $grid['gutter'] ?? 0);
+            }
+
+            $this->renderBuild['attrs'] = true;
         }
 
-        if (!$this->has('attrs.id')) {
-            $this->set('attrs.id', "Form-content--{$this->tagName()}");
-        }
-        if (!$this->get('attrs.id')) {
-            $this->pull('attrs.id');
-        }
+        return $this;
+    }
 
-        $default_class = "Form-content Form-content--{$this->tagName()}";
-        if (!$this->has('attrs.class')) {
-            $this->set('attrs.class', $default_class);
-        } else {
-            $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
-        }
-        if (!$this->get('attrs.class')) {
-            $this->pull('attrs.class');
-        }
+    /**
+     * @inheritDoc
+     */
+    public function renderBuildId(): FormFactoryContract
+    {
+        if (($this->renderBuild['id'] ?? false) !== true) {
+            if (!$this->has('attrs.id')) {
+                $this->set('attrs.id', "Form-content--{$this->tagName()}");
+            }
+            if (!$this->get('attrs.id')) {
+                $this->pull('attrs.id');
+            }
 
-        $this->set('attrs.action', $this->getAction() . $this->getAnchor());
-
-        $this->set('attrs.method', $this->getMethod());
-        if ($enctype = $this->get('enctype')) {
-            $this->set('attrs.enctype', $enctype);
+            $this->renderBuild['id'] = true;
         }
 
-        if ($grid = $this->get('grid')) {
-            $grid = is_array($grid) ? $grid : [];
+        return $this;
+    }
 
-            $this->set("attrs.data-grid", 'true');
-            $this->set("attrs.data-grid_gutter", $grid['gutter'] ?? 0);
+    /**
+     * @inheritDoc
+     */
+    public function renderBuildFields(): FormFactoryContract
+    {
+        if (($this->renderBuild['fields'] ?? false) !== true) {
+            foreach ($this->fields() as $field) {
+                $field->renderPrepare();
+            }
+
+            $this->renderBuild['fields'] = true;
         }
 
-        if ($this->successed()) {
-            if ($messages = Session::flash('form.success.'. $this->name())) {
-                foreach($messages as $message) {
-                    $this->notices()->add('success', $message);
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function renderBuildNotices(): FormFactoryContract
+    {
+        if ((($this->renderBuild['notices'] ?? false) !== true)) {
+            if ($notices = $this->session()->pull('notices')) {
+                foreach ($notices as $type => $items) {
+                    foreach ($items as $item) {
+                        $this->notices()->add($type, $item['message'] ?? '', $item['datas'] ?? []);
+                    }
                 }
-            } elseif ($message = $this->notices()->params('success.message')) {
-                $this->notices()->add('success', $this->notices()->params('success.message'));
             }
 
-            asset()->setInlineJs(
-                'if (window.history && window.history.replaceState){' .
-                'let anchor=window.location.href.split("#")[1],' .
-                'location=window.location.href.split("?")[0] + (anchor ? "#" + anchor : "");' .
-                'window.history.pushState("", document.title, location);};',
-                true
-            );
+            if ($this->isSuccessed()) {
+                if (!$this->notices()->has('success')) {
+                    $this->notices()->add('success', $this->notices()->params('success.message'));
+                }
+
+                $this->session()->destroy();
+            } else {
+                $this->session()->forget('notices');
+            }
+
+            Asset::setInlineJs(
+                'window.addEventListener("load", (event) => {' .
+                'if(window.location.href.split("#")[1] === "' . $this->getAnchor() . '"){' .
+                'window.history.pushState("", document.title, window.location.pathname + window.location.search);' .
+                '}});', true);
+
+
+            $this->renderBuild['successed'] = true;
         }
 
-        foreach ($this->fields() as $field) {
-            $field->renderPrepare();
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function renderBuildWrapper(): FormFactoryContract
+    {
+        if (($this->renderBuild['wrapper'] ?? false) !== true) {
+            $wrapper = $this->get('wrapper');
+
+            if ($wrapper !== false) {
+                $this->set('wrapper', array_merge([
+                    'tag' => 'div',
+                ], is_array($wrapper) ? $wrapper : []));
+
+                if (!$this->has('wrapper.attrs.id')) {
+                    $this->set('wrapper.attrs.id', 'Form--' . $this->tagName());
+                }
+
+                if (!$this->has('wrapper.attrs.class')) {
+                    $this->set('wrapper.attrs.class', 'Form');
+                }
+            }
+
+            $this->renderBuild['wrapper'] = true;
         }
 
         return $this;
@@ -433,10 +518,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
             $this->name = $name;
             $this->manager = $manager;
             $this->form = $this;
-
-            if (is_null($this->auto)) {
-                $this->auto = (bool)$this->get('auto', true);
-            }
 
             app()->share("form.factory.events.{$this->name}", function () {
                 return $this->resolve('factory.events', [$this->get('events', []), $this]);
@@ -495,14 +576,6 @@ class FormFactory extends ParamsBag implements FormFactoryContract
         $this->successed = $status;
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function successed(): bool
-    {
-        return !!$this->successed || (Request::instance()->get('success') === $this->name());
     }
 
     /**

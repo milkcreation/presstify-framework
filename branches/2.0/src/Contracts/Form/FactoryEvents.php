@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
@@ -15,7 +15,7 @@ interface FactoryEvents extends FactoryResolver
      *
      * @return $this
      */
-    public function listen($name, $listener, $priority = 0);
+    public function listen(string $name, $listener, int $priority = 0);
 
     /**
      * Déclenchement d'un événement.
@@ -25,5 +25,5 @@ interface FactoryEvents extends FactoryResolver
      *
      * @return void
      */
-    public function trigger($name, $args = []);
+    public function trigger(string $name, array $args = []);
 }

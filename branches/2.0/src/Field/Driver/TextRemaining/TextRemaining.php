@@ -18,7 +18,8 @@ class TextRemaining extends FieldDriver implements TextRemainingContract
      * @var string $name Clé d'indice de la valeur de soumission du champ.
      * @var string $value Valeur courante de soumission du champ.
      * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var string $selector Type de selecteur. textarea (défaut)|input.
+     * @deprecated  string $selector Type de selecteur. textarea (défaut)|text.
+     * @var string $type string $selector Type de selecteur. textarea (défaut)|text.
      * @var int $max Nombre maximum de caractères attendus. 150 par défaut.
      * @var boolean $limit Activation de la limite de saisie selon le nombre maximum de caractères.
      *  }
@@ -34,7 +35,7 @@ class TextRemaining extends FieldDriver implements TextRemainingContract
             'viewer'   => [],
             'limit'    => false,
             'max'      => 150,
-            'selector' => 'textarea',
+            'type'      => 'textarea',
         ];
     }
 
@@ -45,12 +46,14 @@ class TextRemaining extends FieldDriver implements TextRemainingContract
     {
         parent::parse();
 
+        $type = $this->get('type', /** compat */$this->get('selector'));
+
         $this->set(
             'attrs.class',
             trim(
                 sprintf(
                     $this->get('attrs.class', '%s'),
-                    ' FieldTextRemaining FieldTextRemaining--' . $this->get('selector')
+                    ' FieldTextRemaining FieldTextRemaining--' . $type
                 )
             )
         );
@@ -59,7 +62,11 @@ class TextRemaining extends FieldDriver implements TextRemainingContract
 
         $this->set('attrs.data-control', 'text-remaining');
 
-        $this->set('tag', $this->get('selector'));
+        $this->set('tag', $type === 'textarea' ? 'textarea' : 'input');
+
+        if($type !== 'textarea') {
+            $this->set('attrs.type', $type);
+        }
 
         $this->set('attrs.data-options', [
             'infos' => [
@@ -75,7 +82,7 @@ class TextRemaining extends FieldDriver implements TextRemainingContract
             case 'textarea' :
                 $this->set('content', Str::br2nl($this->get('value') ?: ''));
                 break;
-            case 'input' :
+            default:
                 $this->set('attrs.value', $this->get('value') ?: '');
                 break;
         }

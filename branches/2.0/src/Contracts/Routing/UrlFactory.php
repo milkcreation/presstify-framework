@@ -84,6 +84,15 @@ interface UrlFactory
     public function with(array $args): UrlFactory;
 
     /**
+     * Ajout|Remplacement|Suppression du fragment (ancre).
+     *
+     * @param string $fragment
+     *
+     * @return static
+     */
+    public function withFragment(string $fragment): UrlFactory;
+
+    /**
      * Suppression d'arguments de l'url.
      *
      * @param string[] $args Liste des arguments de requête à exclure.

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form;
 
@@ -41,7 +41,7 @@ class ButtonController extends ParamsBag implements ButtonControllerContract
      *
      * @void
      */
-    public function __construct($name, $attrs, FormFactory $form)
+    public function __construct(string $name, array $attrs, FormFactory $form)
     {
         $this->name = $name;
         $this->form = $form;

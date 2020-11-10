@@ -24,7 +24,7 @@ class Session
     {
         $this->manager = $session;
 
-        events()->listen('session.get.stored', function (&$value) {
+        events()->listen('session.read', function (&$value) {
             $value = Arr::stripslashes($value);
         });
     }

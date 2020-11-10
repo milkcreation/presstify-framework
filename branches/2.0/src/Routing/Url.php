@@ -2,12 +2,10 @@
 
 namespace tiFy\Routing;
 
-use tiFy\Contracts\{
-    Http\Request as RequestContract,
-    Routing\Router as RouterContract,
-    Routing\Url as UrlContract,
-    Routing\UrlFactory as UrlFactoryContract
-};
+use tiFy\Contracts\Http\Request as RequestContract;
+use tiFy\Contracts\Routing\Router as RouterContract;
+use tiFy\Contracts\Routing\Url as UrlContract;
+use tiFy\Contracts\Routing\UrlFactory as UrlFactoryContract;
 use tiFy\Http\Request;
 
 class Url extends UrlFactory implements UrlContract
@@ -62,7 +60,7 @@ class Url extends UrlFactory implements UrlContract
         $root = $this->root()->render();
 
         return preg_match('/^' . preg_quote($root, '/') . '/', $url)
-            ? '/'. ltrim(preg_replace('/^' . preg_quote($root, '/') . '/', '', $url), '/')
+            ? '/' . ltrim(preg_replace('/^' . preg_quote($root, '/') . '/', '', $url), '/')
             : null;
     }
 

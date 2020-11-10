@@ -1,5 +1,23 @@
 # Release Notes
 
+## [v2.0.353 (2020-11-10)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.353...v2.0.353)
+
+### Changed
+
+- `src/Asset/AssetServiceProvider.php` : rewrite_base >> scope
+- `src/Contracts/Form/FormFactory.php` : Mode de fonctionnement en session pour les formulaires non "controllés" + successed >> isSuccessed + partitionnement de la construction du rendu
+- `src/Contracts/Routing/UrlFactory.php` : Gestion du fragment d'URL
+- `src/Contracts/Session/Store.php` : Réécriture sans ParamsBag
+- `src/Field/Driver/TextRemaining/TextRemaining.php` : selector >> type
+- `src/Form/Factory/Handle.php` : Mode de fonctionnement en session 
+
+### Fixed
+
+- `assets/field/text-remaining/scss/styles.scss`: Correctif CSS
+- `assets/field/tinymce/js/scripts.js` : Correctif compat tinyMce
+- `assets/partial/pdfviewer/js/scripts.js`: rewrite_base >> scope
+
+
 ## [v2.0.352 (2020-11-05)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.352...v2.0.352)
 
 ### Fixed

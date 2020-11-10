@@ -2,13 +2,12 @@
 
 namespace tiFy\Routing;
 
+use BadMethodCallException, Exception;
 use Psr\Http\Message\UriInterface;
-use League\Uri\{
-    Contracts\UriInterface as LeagueUri,
-    Http,
-    Components\Query,
-    UriModifier,
-};
+use League\Uri\Contracts\UriInterface as LeagueUri;
+use League\Uri\Http;
+use League\Uri\Components\Query;
+use League\Uri\UriModifier;
 use tiFy\Contracts\Routing\UrlFactory as UrlFactoryContract;
 
 class UrlFactory implements UrlFactoryContract
@@ -116,6 +115,16 @@ class UrlFactory implements UrlFactoryContract
         $this->without(array_keys($args));
 
         $this->uri = UriModifier::appendQuery($this->uri, Query::createFromParams($args));
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withFragment(string $fragment): UrlFactoryContract
+    {
+        $this->uri = $this->uri->withFragment($fragment);
 
         return $this;
     }

@@ -2,11 +2,9 @@
 
 namespace tiFy\Form\Factory;
 
-use tiFy\Contracts\Form\{
-    AddonFactory as AddonFactoryContract,
-    FactoryAddons,
-    FormFactory
-};
+use tiFy\Contracts\Form\AddonFactory as AddonFactoryContract;
+use tiFy\Contracts\Form\FactoryAddons;
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Form\AddonFactory;
 use tiFy\Support\Collection;
 

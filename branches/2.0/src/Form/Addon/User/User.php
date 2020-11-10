@@ -5,8 +5,7 @@ namespace tiFy\Form\Addon\User;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Form\AddonFactory;
 use tiFy\Validation\Validator as v;
-use WP_Error;
-use WP_User;
+use WP_Error, WP_User;
 
 class User extends AddonFactory
 {
@@ -82,7 +81,7 @@ class User extends AddonFactory
      *
      * @return bool
      */
-    public function canRole($name)
+    public function canRole(string $name)
     {
         return get_role($name) && in_array($name, $this->params('roles', []));
     }
@@ -170,11 +169,9 @@ class User extends AddonFactory
      *
      * @return void
      */
-    public function fieldValidation(FactoryField &$field): void
+    public function fieldValidation(FactoryField $field): void
     {
-        if (!$userdata = $field->getAddonOption($this->name(), 'userdata', false)) {
-            return;
-        } else {
+        if ($userdata = $field->getAddonOption($this->name(), 'userdata', false)) {
             if (!in_array($userdata, ['user_login', 'user_email', 'role'])) {
                 return;
             } else {

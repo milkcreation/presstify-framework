@@ -3,10 +3,17 @@
 namespace tiFy\Contracts\Session;
 
 use Illuminate\Database\Query\Builder as DbBuilder;
-use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\Log\Logger;
 
-interface Store extends ParamsBag
+interface Store
 {
+    /**
+     * Récupération de la liste des attributs de session.
+     *
+     * @return array
+     */
+    public function all(): array;
+
     /**
      * @inheritDoc
      */
@@ -25,6 +32,22 @@ interface Store extends ParamsBag
      * @return int
      */
     public function expiration(): int;
+
+    /**
+     * Suppression de la liste des attributs de session.
+     *
+     * @return void
+     */
+    public function flush(): void;
+
+    /**
+     * Récupération d'un attribut de session.
+     *
+     * @param  string $key Clé d'indice d'un attribut.
+     * @param  mixed  $default Valeur de retour par défaut.
+     * @return mixed
+     */
+    public function get(string $key, $default = null);
 
     /**
      * Récupération d'attributs d'identification de session.
@@ -60,18 +83,55 @@ interface Store extends ParamsBag
     public function getName(): string;
 
     /**
-     * Récupération de la liste des variables de session enregistrés en base.
+     * Suppression d'attributs de session.
      *
-     * @return array
+     * @param  string|string[]  $keys
+     * @return void
      */
-    public function getStored(): array;
+    public function forget($keys): void;
 
     /**
-     * Préparation de l'instance.
+     * Vérification d'existance d'un attribut de session.
      *
-     * @return static
+     * @param string $key Clé d'indice de l'attribut
+     *
+     * @return bool
      */
-    public function prepare(): Store;
+    public function has(string $key): bool;
+
+    /**
+     * Récupération de l'instance du gestionnaire de journalisation.
+     *
+     * @return Logger
+     */
+    public function logger(): Logger;
+
+    /**
+     * Récupération d'une liste d'attributs de session basée sur un jeu de clés d'indices.
+     *
+     * @param string[] $keys
+     * @return array
+     */
+    public function only(array $keys): array;
+
+    /**
+     * Récupération d'un attribut et suppression.
+     *
+     * @param string $key Clé d'indice
+     * @param  mixed  $default Valeur de retour par défaut
+     *
+     * @return mixed
+     */
+    public function pull(string $key, $default = null);
+
+    /**
+     * Insertion d'une valeur d'attribut complémentaire.
+     *
+     * @param string $key Clé d'indice
+     * @param  mixed $value Valeur d'affectation
+     * @return void
+     */
+    public function push(string $key, $value): void;
 
     /**
      * Définition de données de session.
@@ -92,6 +152,13 @@ interface Store extends ParamsBag
      * @return static
      */
     public function putOne(string $key, $value = null): Store;
+
+    /**
+     * Récupération de la liste des variables de session enregistrés en base.
+     *
+     * @return array
+     */
+    public function read(): array;
 
     /**
      * Sauvegarde des données de session.
@@ -117,6 +184,15 @@ interface Store extends ParamsBag
     public function setKey(?string $key = null): Store;
 
     /**
+     * Définition du gestionnaire de journalisation.
+     *
+     * @param Logger $logger
+     *
+     * @return static
+     */
+    public function setLogger(Logger $logger): Store;
+
+    /**
      * Définition du nom de qualification de la session.
      *
      * @param string $name
@@ -124,6 +200,14 @@ interface Store extends ParamsBag
      * @return static
      */
     public function setName(string $name): Store;
+
+    /**
+     * Initialisation de l'instance.
+     *
+     * @return static
+     */
+    public function start(): Store;
+
 
     /**
      * Mise à jour de la date d'expiration de la session en base.

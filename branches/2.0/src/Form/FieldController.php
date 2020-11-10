@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form;
 
@@ -52,7 +52,7 @@ class FieldController implements FieldControllerContract
      *
      * @void
      */
-    public function __construct($name, FactoryField $field)
+    public function __construct(string $name, FactoryField $field)
     {
         $this->name = $name;
         $this->field = $field;
@@ -90,7 +90,7 @@ class FieldController implements FieldControllerContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function render()
     {

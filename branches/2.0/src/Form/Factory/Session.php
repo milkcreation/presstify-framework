@@ -3,9 +3,11 @@
 namespace tiFy\Form\Factory;
 
 use Exception, BadMethodCallException;
-use tiFy\Contracts\Form\{FactorySession, FormFactory};
+use tiFy\Contracts\Form\FactorySession;
+use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Session\Store;
-use tiFy\Support\Proxy\{Crypt, Session as SessionProxy};
+use tiFy\Support\Proxy\Crypt;
+use tiFy\Support\Proxy\Session as SessionProxy;
 
 /**
  * @mixin \tiFy\Session\Store

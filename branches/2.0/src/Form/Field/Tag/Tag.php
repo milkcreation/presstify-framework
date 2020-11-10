@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form\Field\Tag;
 
@@ -13,7 +13,7 @@ class Tag extends FieldController
     protected $supports = ['wrapper'];
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function render()
     {

@@ -9,6 +9,8 @@ interface FactoryGroups extends FactoryResolver, Collection
     /**
      * Récupération de la liste des groupes rangés par parent.
      *
+     * @param string $parent
+     *
      * @return FactoryGroup[]|null
      */
     public function getGrouped(string $parent = ''): ?iterable;

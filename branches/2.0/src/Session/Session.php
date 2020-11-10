@@ -4,7 +4,9 @@ namespace tiFy\Session;
 
 use Psr\Container\ContainerInterface as Container;
 use Symfony\Component\HttpFoundation\Session\Session as BaseSession;
-use tiFy\Contracts\Session\{FlashBag as FlashBagContract, Session as SessionContract, Store as StoreContract};
+use tiFy\Contracts\Session\FlashBag as FlashBagContract;
+use tiFy\Contracts\Session\Session as SessionContract;
+use tiFy\Contracts\Session\Store as StoreContract;
 
 class Session extends BaseSession implements SessionContract
 {
@@ -125,7 +127,7 @@ class Session extends BaseSession implements SessionContract
 
         $store = ($container = $this->getContainer()) ? new Store($this) : $container->get('session.store');
 
-        return $this->stores[$name] = $store->setName($name)->prepare();
+        return $this->stores[$name] = $store->setName($name)->start();
     }
 
     /**

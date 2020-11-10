@@ -24,11 +24,11 @@ interface FactoryGroup extends FactoryResolver, ParamsBag
     /**
      * Récupération de la liste des attributs de balise HTML.
      *
-     * @param string $linearized Linératisation des valeurs.
+     * @param bool $linearized Linératisation des valeurs.
      *
      * @return string|array
      */
-    public function getAttrs($linearized = true);
+    public function getAttrs(bool $linearized = true);
 
     /**
      * Récupération du nom de qualification du groupe.
@@ -67,6 +67,8 @@ interface FactoryGroup extends FactoryResolver, ParamsBag
 
     /**
      * Préparation du groupe.
+     *
+     * @param FactoryGroups $manager
      *
      * @return static
      */

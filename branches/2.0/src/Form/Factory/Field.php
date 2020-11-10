@@ -1,13 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Form\Factory;
 
 use Closure;
-use Illuminate\Support\Arr;
 use tiFy\Contracts\Form\FactoryField;
 use tiFy\Contracts\Form\FactoryGroup;
 use tiFy\Contracts\Form\FieldController;
 use tiFy\Contracts\Form\FormFactory;
+use tiFy\Support\Arr;
 use tiFy\Support\ParamsBag;
 
 class Field extends ParamsBag implements FactoryField
@@ -202,7 +202,7 @@ class Field extends ParamsBag implements FactoryField
      */
     public function getGroup(): ?FactoryGroup
     {
-        return $this->fromGroup($this->get('group', ''));
+        return $this->fromGroup((string)$this->get('group', ''));
     }
 
     /**
@@ -362,9 +362,9 @@ class Field extends ParamsBag implements FactoryField
 
         // Nom de qualification d'enregistrement de la requête.
         $name = $this->get('name', '');
-        if (!is_null($name)) :
+        if (!is_null($name)) {
             $this->set('name', $name ? esc_attr($name) : esc_attr($this->getSlug()));
-        endif;
+        }
 
         // Valeur par défaut.
         $this->default = $this->get('value', null);
@@ -400,14 +400,14 @@ class Field extends ParamsBag implements FactoryField
 
         $this->setSessionValue();
 
-        if ($this->get('wrapper')) :
+        if ($this->get('wrapper')) {
             $this->push('supports', 'wrapper');
-        elseif (in_array('wrapper', $this->get('supports', []))) :
+        } elseif (in_array('wrapper', $this->get('supports', []))) {
             $this->set('wrapper', true);
-        endif;
+        }
 
         // Attributs de champ requis (marqueur et fonction de traitement).
-        if ($required = $this->get('required', false)) :
+        if ($required = $this->get('required', false)) {
             $required = (is_array($required)) ? $required : (is_string($required) ? ['message' => $required] : []);
 
             $required = array_merge([
@@ -436,7 +436,7 @@ class Field extends ParamsBag implements FactoryField
                 : [];
 
             $this->set('required', $required);
-        endif;
+        }
 
         // Liste des tests de validation.
         if ($validations = $this->get('validations')) {
@@ -501,39 +501,39 @@ class Field extends ParamsBag implements FactoryField
             $this->set('attrs.tabindex', $this->getPosition());
         }
 
-        if ($this->get('attrs.tabindex') === false) :
+        if ($this->get('attrs.tabindex') === false) {
             $this->pull('attrs.tabindex');
-        endif;
+        }
 
-        if ($this->onError()) :
+        if ($this->onError()) {
             $this->set('attrs.aria-error', 'true');
-        endif;
+        }
 
         // Attributs HTML de l'encapsuleur de champ.
-        if ($wrapper = $this->get('wrapper')) :
+        if ($wrapper = $this->get('wrapper')) {
             $wrapper = (is_array($wrapper)) ? $wrapper : [];
             $this->set('wrapper', array_merge(['tag' => 'div', 'attrs' => []], $wrapper));
 
-            if (!$this->has('wrapper.attrs.id')) :
+            if (!$this->has('wrapper.attrs.id')) {
                 $this->set('wrapper.attrs.id', "Form{$this->form()->index()}-field--{$this->getSlug()}");
-            endif;
-            if (!$this->get('wrapper.attrs.id')) :
+            }
+            if (!$this->get('wrapper.attrs.id')) {
                 $this->pull('wrapper.attrs.id');
-            endif;
+            }
 
             $default_class = "Form-field Form-field--{$this->getType()} Form-field--{$this->getSlug()}";
-            if (!$this->has('wrapper.attrs.class')) :
+            if (!$this->has('wrapper.attrs.class')) {
                 $this->set('wrapper.attrs.class', $default_class);
-            else :
+            } else {
                 $this->set('wrapper.attrs.class', sprintf($this->get('wrapper.attrs.class', ''), $default_class));
-            endif;
-            if (!$this->get('wrapper.attrs.class')) :
+            }
+            if (!$this->get('wrapper.attrs.class')) {
                 $this->pull('wrapper.attrs.class');
-            endif;
-        endif;
+            }
+        }
 
         // Activation de l'agencement des éléments.
-        if ($this->form()->hasGrid()) :
+        if ($this->form()->hasGrid()) {
             $grid = $this->get('grid', []);
             $prefix = $this->hasWrapper() ? 'wrapper.' : '';
 
@@ -543,10 +543,10 @@ class Field extends ParamsBag implements FactoryField
                 $grid
             );
 
-            foreach ($grid as $k => $v) :
+            foreach ($grid as $k => $v) {
                 $this->set("{$prefix}attrs.data-grid_{$k}", filter_var($v, FILTER_SANITIZE_STRING));
-            endforeach;
-        endif;
+            }
+        }
 
         if ($label = $this->get('label')) {
             if (is_string($label)) {
@@ -605,27 +605,28 @@ class Field extends ParamsBag implements FactoryField
             }
         }
 
-        if ($this->get('required.tagged')) :
-            if (!$this->has('required.tagged.attrs.id')) :
-                $this->set('required.tagged.attrs.id', "Form{$this->form()->index()}-fieldRequired--{$this->getSlug()}");
-            endif;
-            if (!$this->get('required.tagged.attrs.id')) :
+        if ($this->get('required.tagged')) {
+            if (!$this->has('required.tagged.attrs.id')) {
+                $this->set('required.tagged.attrs.id',
+                    "Form{$this->form()->index()}-fieldRequired--{$this->getSlug()}");
+            }
+            if (!$this->get('required.tagged.attrs.id')) {
                 $this->pull('required.tagged.attrs.id');
-            endif;
+            }
 
             $default_class = "%s Form-fieldRequired Form-fieldRequired--{$this->getType()} Form-fieldRequired--{$this->getSlug()}";
-            if (!$this->has('required.tagged.attrs.class')) :
+            if (!$this->has('required.tagged.attrs.class')) {
                 $this->set('required.tagged.attrs.class', $default_class);
-            else :
+            } else {
                 $this->set(
                     'required.tagged.attrs.class',
                     sprintf($this->get('required.tagged.attrs.class', ''), $default_class)
                 );
-            endif;
-            if (!$this->get('required.tagged.attrs.class')) :
+            }
+            if (!$this->get('required.tagged.attrs.class')) {
                 $this->pull('required.tagged.attrs.class');
-            endif;
-        endif;
+            }
+        }
 
         return $this;
     }
@@ -664,7 +665,7 @@ class Field extends ParamsBag implements FactoryField
     public function setSessionValue(): FactoryField
     {
         if ($this->form()->supports('session') && $this->supports('session')) {
-            $value = $this->form()->session()->get($this->getName());
+            $value = $this->form()->session()->get("request.{$this->getName()}");
 
             if (!is_null($value)) {
                 $this->setValue($value);

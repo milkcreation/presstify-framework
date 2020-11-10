@@ -3,9 +3,12 @@
 namespace tiFy\Form\Addon\Record;
 
 use Illuminate\Database\Schema\Blueprint;
-use tiFy\Form\Addon\Record\ListTable\{Model as ListTableModel, Factory as ListTableFactory};
+use tiFy\Form\Addon\Record\ListTable\Model as ListTableModel;
+use tiFy\Form\Addon\Record\ListTable\Factory as ListTableFactory;
 use tiFy\Form\AddonFactory;
-use tiFy\Support\{Arr, DateTime, Str};
+use tiFy\Support\Arr;
+use tiFy\Support\DateTime;
+use tiFy\Support\Str;
 use tiFy\Support\Proxy\{Database, Schema, Template};
 
 /**
@@ -200,8 +203,8 @@ class Record extends AddonFactory
             'created_date' => DateTime::now()->toDateTimeString(),
         ];
 
-        if ($id = RecordModel::insertGetId($datas)) {
-            $record = RecordModel::find($id);
+        if ($id = RecordModel::on()->insertGetId($datas)) {
+            $record = RecordModel::on()->find($id);
 
             foreach ($this->form()->fields() as $field) {
                 if ($column = $field->getAddonOption('record.save')) {

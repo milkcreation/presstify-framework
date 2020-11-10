@@ -3,10 +3,9 @@
 namespace tiFy\Form;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Form\{
-    AddonFactory as AddonFactoryContract,
-    FactoryField as FactoryFieldContract,
-    FormFactory as FormFactoryContract};
+use tiFy\Contracts\Form\AddonFactory as AddonFactoryContract;
+use tiFy\Contracts\Form\FactoryField as FactoryFieldContract;
+use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Form\Addon\Mailer\Mailer as AddonMailer;
 use tiFy\Form\Addon\Record\Record as AddonRecord;
 use tiFy\Form\Addon\User\User as AddonUser;

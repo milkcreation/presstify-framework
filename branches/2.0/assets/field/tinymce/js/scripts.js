@@ -54,9 +54,13 @@ jQuery(function ($) {
       }
       this.el.addClass('tifyTinymce'+ this.uuid);
 
-      o.icons_url = tify.base_url + '/node_modules/tinymce/icons/default/icons.js';
+      // @see https://www.tiny.cloud/docs/configure/integration-and-setup/
+      o = $.extend(true, {
+        base_url:  tify.base_url + '/node_modules/tinymce/',
+        selector: '.tifyTinymce'+ this.uuid
+      }, o, this.option());
 
-      tinymce.init($.extend({selector: '.tifyTinymce'+ this.uuid}, o, this.option()));
+      tinymce.init(o);
     }
   });
 

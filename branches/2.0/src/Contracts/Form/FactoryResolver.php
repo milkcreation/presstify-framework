@@ -3,6 +3,7 @@
 namespace tiFy\Contracts\Form;
 
 use tiFy\Contracts\View\Engine as ViewEngine;
+use tiFy\Contracts\View\PlatesEngine;
 
 interface FactoryResolver
 {
@@ -13,7 +14,7 @@ interface FactoryResolver
      *
      * @return AddonFactory
      */
-    public function addon($name);
+    public function addon(string $name);
 
     /**
      * Récupération de l'instance du gestionnaire d'addons.
@@ -32,21 +33,21 @@ interface FactoryResolver
     /**
      * Récupération de l'instance du gestionnaire d'événements|déclenchement d'un événement.
      *
-     * @param string $name Nom de qualification de l'événement.
+     * @param string|null $name Nom de qualification de l'événement.
      * @param array $args Liste des arguments complémentaires de déclenchement
      *
      * @return mixed|FactoryEvents
      */
-    public function events($name = null, array $args = []);
+    public function events(string $name = null, array $args = []);
 
     /**
      * Récupération de l'instance d'un champ.
      *
-     * @param null|string $slug Identifiant de qualification du champ.
+     * @param string|null $slug Identifiant de qualification du champ.
      *
      * @return FactoryField
      */
-    public function field($slug = null);
+    public function field(?string $slug = null);
 
     /**
      * Récupération de l'instance du gestionnaire de champs.
@@ -86,12 +87,12 @@ interface FactoryResolver
     /**
      * Récupération d'une option|Liste complète des options.
      *
-     * @param null|string $key Clé d'indice de l'option.
+     * @param string|null $key Clé d'indice de l'option.
      * @param mixed $default Valeur de retour par défaut.
      *
      * @return mixed
      */
-    public function option($key = null, $default = null);
+    public function option(?string $key = null, $default = null);
 
     /**
      * Récupération de l'instance du gestionnaire d'options.
@@ -108,7 +109,7 @@ interface FactoryResolver
      *
      * @return mixed
      */
-    public function resolve($alias, $args = []);
+    public function resolve(string $alias, array $args = []);
 
     /**
      * Récupération de l'instance du gestionnaire de session.
@@ -134,7 +135,7 @@ interface FactoryResolver
      * @param null|string $view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewEngine|string
+     * @return ViewEngine|PlatesEngine|string
      */
     public function viewer(?string $view = null, array $data = []);
 }

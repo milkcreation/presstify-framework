@@ -91,9 +91,9 @@ trait ResolverTrait
      */
     public function field($slug = null)
     {
-        if (is_null($slug)) :
+        if (is_null($slug)) {
             return $this->field;
-        endif;
+        }
 
         return $this->fields()->get($slug);
     }
@@ -165,9 +165,9 @@ trait ResolverTrait
      */
     public function option($key = null, $default = null)
     {
-        if (is_null($key)) :
+        if (is_null($key)) {
             return $this->options()->all();
-        endif;
+        }
 
         return $this->options()->get($key, $default);
     }

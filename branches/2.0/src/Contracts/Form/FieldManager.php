@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
@@ -11,5 +11,5 @@ interface FieldManager
      *
      * @return array
      */
-    public function supports($type);
+    public function supports(string $type);
 }
