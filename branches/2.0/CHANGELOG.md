@@ -1,5 +1,14 @@
 # Release Notes
 
+## [v2.0.354 (2020-11-11)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.354...v2.0.354)
+
+### Fixed
+
+- `assets/partial/pdfviewer/js/scripts.js`: pdfjs >> pdfjsLib
+- `src/Field/Driver/Suggest/Suggest.php` : Gestion des attributs ajax + timeout 5s par défaut
+- `src/Template/Templates/ListTable/Item.php` : BadMethodCall sans __()
+- `src/Wordpress/Query/QueryPost.php` : Evite boucle infinie fetchFromIds >> test exist $ids + count($ids)
+
 ## [v2.0.353 (2020-11-10)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.353...v2.0.353)
 
 ### Changed

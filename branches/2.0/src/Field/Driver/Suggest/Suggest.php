@@ -59,37 +59,37 @@ class Suggest extends FieldDriver implements SuggestContract
      * {@inheritDoc}
      *
      * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var string $name Clé d'indice de la valeur de soumission du champ.
-     *      @var string $value Valeur courante de soumission du champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var array|bool $ajax Liste des attributs de recherche des éléments via une requête xhr.
-     *      @var bool|string|array $alt Activation du champ alternatif de stockage du résultat de la recherche|attributs de
+     * @var array $attrs Attributs HTML du champ.
+     * @var string $after Contenu placé après le champ.
+     * @var string $before Contenu placé avant le champ.
+     * @var string $name Clé d'indice de la valeur de soumission du champ.
+     * @var string $value Valeur courante de soumission du champ.
+     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+     * @var array|bool $ajax Liste des attributs de recherche des éléments via une requête xhr.
+     * @var bool|string|array $alt Activation du champ alternatif de stockage du résultat de la recherche|attributs de
      *      configuration du champ alternatif. @see \tiFy\Field\Driver\Hidden\Hidden
-     *      @see https://api.jquery.com/jquery.ajax/
-     *      @var array $options Liste des attributs de configuration de l'autocomplétion.
-     *      @see https://api.jqueryui.com/autocomplete/
+     * @see https://api.jquery.com/jquery.ajax/
+     * @var array $options Liste des attributs de configuration de l'autocomplétion.
+     * @see https://api.jqueryui.com/autocomplete/
      * }
      */
     public function defaults(): array
     {
         return [
-            'attrs'     => [],
-            'after'     => '',
-            'before'    => '',
-            'name'      => '',
-            'value'     => '',
-            'viewer'    => [],
-            'ajax'      => false,
-            'alt'       => false,
-            'classes'   => [],
-            'options'   => [
+            'attrs'   => [],
+            'after'   => '',
+            'before'  => '',
+            'name'    => '',
+            'value'   => '',
+            'viewer'  => [],
+            'ajax'    => false,
+            'alt'     => false,
+            'classes' => [],
+            'options' => [
                 'minLength' => 2,
             ],
-            'spinner'   => true,
-            'reset'     => true
+            'spinner' => true,
+            'reset'   => true,
         ];
     }
 
@@ -131,9 +131,11 @@ class Suggest extends FieldDriver implements SuggestContract
 
         if ($ajax = $this->get('ajax')) {
             $defaults = [
-                'url'  => $this->getUrl(),
-                'type' => 'post',
-                'data' => [],
+                'url'      => $this->getUrl(),
+                'type'     => 'post',
+                'data'     => [],
+                'dataType' => 'json',
+                'timeout'  => 5000,
             ];
             $options['ajax'] = is_array($ajax) ? array_merge($defaults, $ajax) : $defaults;
         } elseif (!$this->has('autocomplete.source')) {
@@ -141,8 +143,8 @@ class Suggest extends FieldDriver implements SuggestContract
         }
 
         $this->set([
-            'attrs.data-control'           => $this->get('attrs.data-control', 'suggest'),
-            'attrs.data-options'           => $options
+            'attrs.data-control' => $this->get('attrs.data-control', 'suggest'),
+            'attrs.data-options' => $options,
         ]);
 
         return $this;

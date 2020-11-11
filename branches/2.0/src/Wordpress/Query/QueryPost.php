@@ -304,9 +304,13 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function fetchFromIds(array $ids): array
     {
-        $args = static::parseQueryArgs(['post__in' => $ids, 'posts_per_page' => -1]);
+        if (!empty($ids)) {
+            $args = static::parseQueryArgs(['post__in' => $ids, 'posts_per_page' => count($ids)]);
 
-        return static::fetchFromWpQuery(new WP_Query($args));
+            return static::fetchFromWpQuery(new WP_Query($args));
+        } else {
+            return [];
+        }
     }
 
     /**
