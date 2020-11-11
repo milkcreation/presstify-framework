@@ -4,16 +4,16 @@
 import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
-import * as  pdfjs from 'pdfjs-dist';
+import * as pdfjsLib from 'pdfjs-dist';
 import 'presstify-framework/partial/modal/js/scripts';
 import 'presstify-framework/observer/js/scripts';
 
 /**
- * @typedef {Object} pdfjs
- * @typedef {Object} pdfjs.GlobalWorkerOptions
- * @property {string} pdfjs.GlobalWorkerOptions.workerSrc
+ * @typedef {Object} pdfjsLib
+ * @typedef {Object} pdfjsLib.GlobalWorkerOptions
+ * @property {string} pdfjsLib.GlobalWorkerOptions.workerSrc
  */
-pdfjs.GlobalWorkerOptions.workerSrc = '/./'+ tify.scope +'/node_modules/pdfjs-dist/build/pdf.worker.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/./' + tify.scope + '/node_modules/pdfjs-dist/build/pdf.worker.js';
 
 jQuery(function ($) {
   $.widget('tify.tifyPdfviewer', {
@@ -227,7 +227,7 @@ jQuery(function ($) {
       if (src !== undefined) {
         this._doSpinnerDisplay('show');
 
-        pdfjs.getDocument(src).promise.then(function (pdf) {
+        pdfjsLib.getDocument(src).promise.then(function (pdf) {
           self.pdfDoc = pdf;
           self.total = pdf.numPages;
           self._doPageRender(page ? page : self.pageNum);
@@ -406,7 +406,7 @@ jQuery(function ($) {
       _create: function () {
         this._super();
 
-        this.el.on('modal:show', function() {
+        this.el.on('modal:show', function () {
           $('[data-control="pdfviewer"]', $(this)).tifyPdfviewer('load');
         });
       }

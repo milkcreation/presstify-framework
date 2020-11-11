@@ -36,9 +36,11 @@ class Item extends ParamsBag implements ItemContract
     public function __call($name, $args)
     {
         try {
-            return $this->delegate->$name(...$args);
+            return $this->delegate->{$name}(...$args);
         } catch (Exception $e) {
-            throw new BadMethodCallException(sprintf(__('La méthode %s n\'est pas disponible.', 'tify'), $name));
+            throw new BadMethodCallException(sprintf(
+              __CLASS__ . ' return exception on method call [%s] with message : %s', $name, $e->getMessage()
+            ));
         }
     }
 
