@@ -2,22 +2,23 @@
 
 namespace tiFy\Wordpress\Query;
 
-use Illuminate\Database\Eloquent\{
-    Collection as EloquentCollection,
-    Model as EloquentModel
-};
-use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus};
-use tiFy\Support\{Arr, DateTime, ParamsBag, Str};
-use tiFy\Support\Proxy\{Cache, PostType};
-use tiFy\Wordpress\{
-    Contracts\Database\PostBuilder,
-    Contracts\Query\PaginationQuery as PaginationQueryContract,
-    Contracts\Query\QueryComment as QueryCommentContract,
-    Contracts\Query\QueryPost as QueryPostContract,
-    Contracts\Query\QueryUser as QueryUserContract,
-    Database\Model\Post as ModelPost,
-    Proxy\Media
-};
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+use tiFy\Contracts\PostType\PostTypeFactory;
+use tiFy\Contracts\PostType\PostTypeStatus;
+use tiFy\Support\Arr;
+use tiFy\Support\DateTime;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Str;
+use tiFy\Support\Proxy\Cache;
+use tiFy\Support\Proxy\PostType;
+use tiFy\Wordpress\Contracts\Database\PostBuilder;
+use tiFy\Wordpress\Contracts\Query\PaginationQuery as PaginationQueryContract;
+use tiFy\Wordpress\Contracts\Query\QueryComment as QueryCommentContract;
+use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
+use tiFy\Wordpress\Contracts\Query\QueryUser as QueryUserContract;
+use tiFy\Wordpress\Database\Model\Post as ModelPost;
+use tiFy\Wordpress\Proxy\Media;
 use WP_Post, WP_Query, WP_Term_Query, WP_User;
 
 /**
@@ -442,7 +443,11 @@ class QueryPost extends ParamsBag implements QueryPostContract
      */
     public static function setBuiltInClass(string $post_type, string $classname): void
     {
-        self::$builtInClasses[$post_type] = $classname;
+        if ($post_type === 'any') {
+            self::setFallbackClass($classname);
+        } else {
+            self::$builtInClasses[$post_type] = $classname;
+        }
     }
 
     /**

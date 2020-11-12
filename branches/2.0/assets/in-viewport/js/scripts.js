@@ -33,19 +33,31 @@
     let $viewport = viewport || $(window),
         offset = $target.offset();
 
-    if ((typeof $viewport === 'string' || (typeof $viewport === 'object' && !$viewport.jquery))) {
-      $viewport = $($viewport);
-    }
-
     if (!offset) {
       return false;
     }
 
-    let elTop = $target[0].offsetTop,
-        eBottom = elTop + $target[0].clientHeight,
-        viewScrollTop = $viewport[0].scrollTop,
-        viewScrollBottom = viewScrollTop + $viewport[0].clientHeight;
+    if ((typeof $viewport === 'string' || (typeof $viewport === 'object' && !$viewport.jquery))) {
+      $viewport = $($viewport);
+    }
 
-    return viewScrollBottom > elTop && viewScrollTop < eBottom;
+    if ($viewport.find($target).length) {
+      let elTop = $target[0].offsetTop,
+          eBottom = elTop + $target[0].clientHeight,
+          viewScrollTop = $viewport[0].scrollTop,
+          viewScrollBottom = viewScrollTop + $viewport[0].clientHeight;
+
+      return viewScrollBottom > elTop && viewScrollTop < eBottom;
+    } else {
+      let lBound = $viewport.scrollTop(),
+          uBound = lBound + $viewport.height(),
+          top = offset.top + threshold,
+          bottom = top + $target.outerHeight(true);
+
+      return (top > lBound && top < uBound) ||
+          (bottom > lBound && bottom < uBound) ||
+          (lBound >= top && lBound <= bottom) ||
+          (uBound >= top && uBound <= bottom);
+    }
   };
 });
