@@ -47,4 +47,27 @@ class Arr extends BaseArr
 
         return $data;
     }
+
+    /**
+     * Insertion d'un tableau après une clé d'indice
+     * @see https://gist.github.com/wpscholar/0deadce1bbfa4adb4e4c
+     *
+     * @param array $array
+     * @param mixed $new
+     * @param string|int $key
+     *
+     * @return array
+     */
+    public static function insertAfter(array $array, $new, $key): array
+    {
+        $keys = array_keys($array);
+        $index = array_search($key, $keys);
+        $pos = false === $index ? count($array) : $index;
+
+        return array_merge(
+            array_slice($array, 0, $pos, true),
+            [$pos => $new],
+            array_slice($array, $pos, null, true)
+        );
+    }
 }

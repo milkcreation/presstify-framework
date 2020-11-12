@@ -2,16 +2,13 @@
 
 namespace tiFy\Wordpress\Query;
 
-use Illuminate\Database\Eloquent\{
-    Collection as EloquentCollection,
-    Model as EloquentModel
-};
-use tiFy\Support\{Arr, ParamsBag};
-use tiFy\Wordpress\Contracts\{
-    Database\TaxonomyBuilder,
-    Query\PaginationQuery as PaginationQueryContract,
-    Query\QueryTerm as QueryTermContract
-};
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+use tiFy\Support\Arr;
+use tiFy\Support\ParamsBag;
+use tiFy\Wordpress\Contracts\Database\TaxonomyBuilder;
+use tiFy\Wordpress\Contracts\Query\PaginationQuery as PaginationQueryContract;
+use tiFy\Wordpress\Contracts\Query\QueryTerm as QueryTermContract;
 use tiFy\Wordpress\Database\Model\Term as Model;
 use WP_Term, WP_Term_Query;
 
@@ -347,9 +344,13 @@ class QueryTerm extends ParamsBag implements QueryTermContract
     /**
      * @inheritDoc
      */
-    public static function setBuiltInClass(string $post_type, string $classname): void
+    public static function setBuiltInClass(string $taxonomy, string $classname): void
     {
-        self::$builtInClasses[$post_type] = $classname;
+        if ($taxonomy === 'any') {
+            self::setFallbackClass($classname);
+        } else {
+            self::$builtInClasses[$taxonomy] = $classname;
+        }
     }
 
     /**

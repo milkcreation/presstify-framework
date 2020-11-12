@@ -8,8 +8,7 @@ use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
 use tiFy\Wordpress\Contracts\Query\QueryUser as QueryUserContract;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\DateTime;
-use WP_Comment;
-use WP_Comment_Query;
+use WP_Comment, WP_Comment_Query;
 
 class QueryComment extends ParamsBag implements QueryCommentContract
 {

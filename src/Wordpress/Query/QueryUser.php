@@ -2,15 +2,15 @@
 
 namespace tiFy\Wordpress\Query;
 
-use Illuminate\Database\Eloquent\{
-    Collection as EloquentCollection,
-    Model as EloquentModel
-};
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use tiFy\Contracts\User\RoleFactory;
-use tiFy\Support\{Arr, ParamsBag, Proxy\Role};
-use tiFy\Wordpress\Contracts\{Database\UserBuilder,
-    Query\PaginationQuery as PaginationQueryContract,
-    Query\QueryUser as QueryUserContract};
+use tiFy\Support\Arr;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Role;
+use tiFy\Wordpress\Contracts\Database\UserBuilder;
+use tiFy\Wordpress\Contracts\Query\PaginationQuery as PaginationQueryContract;
+use tiFy\Wordpress\Contracts\Query\QueryUser as QueryUserContract;
 use tiFy\Wordpress\Database\Model\User as UserModel;
 use WP_Site, WP_User, WP_User_Query;
 
@@ -337,7 +337,11 @@ class QueryUser extends ParamsBag implements QueryUserContract
      */
     public static function setBuiltInClass(string $role, string $classname): void
     {
-        self::$builtInClasses[$role] = $classname;
+        if ($role === 'any') {
+            self::setFallbackClass($classname);
+        } else {
+            self::$builtInClasses[$role] = $classname;
+        }
     }
 
     /**

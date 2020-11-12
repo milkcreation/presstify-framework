@@ -2,7 +2,9 @@
 
 namespace tiFy\Wordpress\Query;
 
-use tiFy\Support\{ParamsBag, Traits\PaginationAwareTrait, Proxy\Partial};
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Traits\PaginationAwareTrait;
+use tiFy\Support\Proxy\Partial;
 use tiFy\Wordpress\Contracts\Query\PaginationQuery as PaginationQueryContract;
 
 class PaginationQuery extends ParamsBag implements PaginationQueryContract

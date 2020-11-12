@@ -1,5 +1,17 @@
 # Release Notes
 
+## [v2.0.355 (2020-11-12)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.355...v2.0.355)
+
+### Added
+
+- `src/Support/Arr.php` : methode insertAfter à tester ...
+
+### Fixed 
+
+- `assets/in-viewport/js/scripts.js` : Gestion des viewport parent de target et externe
+- QueryPost && QueryTerm && QueryUser : buildIn 'any'
+
+
 ## [v2.0.354 (2020-11-11)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.354...v2.0.354)
 
 ### Fixed
