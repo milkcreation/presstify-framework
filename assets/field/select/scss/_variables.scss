@@ -1,0 +1,15 @@
+// Variables
+@import "~presstify-framework/field/variables";
+
+// Personnalisation
+$field-select-light-hue: fieldColor(light) !default;
+$field-select-lighter-hue: fieldColor(lighter) !default;
+$field-select-dark-hue: fieldColor(dark) !default;
+$field-select-darker-hue: fieldColor(darker) !default;
+$field-select-regular-hue: fieldColor(regular) !default;
+$field-select-background-hue: fieldColor(white) !default;
+
+$field-select-selected-background-color: fieldColor(link) !default;
+$field-select-selected-color: fieldColor(white) !default;
+$field-select-highlight-background-color: fieldColor(hightlight) !default;
+$field-select-highlight-border-color: fieldColor(hightlight-alt) !default;
