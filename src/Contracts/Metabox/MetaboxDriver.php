@@ -36,6 +36,13 @@ interface MetaboxDriver extends ParamsBag
     public function defaultParams(): array;
 
     /**
+     * Récupération de l'identifiant de qualification dans le gestionnaire.
+     *
+     * @return string
+     */
+    public function getAlias(): string;
+
+    /**
      * Traitement
      *
      * @param array $args Liste des arguments de traitement

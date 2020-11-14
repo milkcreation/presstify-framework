@@ -5,7 +5,8 @@ namespace tiFy\Metabox;
 use Closure;
 use tiFy\Contracts\Metabox\{MetaboxContext, MetaboxDriver as MetaboxDriverContract, MetaboxManager, MetaboxScreen};
 use tiFy\Contracts\View\PlatesEngine;
-use tiFy\Support\{Arr, ParamsBag, Proxy\View};
+use tiFy\Support\Arr;
+use tiFy\Support\ParamsBag;
 
 class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
 {
@@ -68,14 +69,6 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     /**
      * @inheritDoc
      */
-    public function alias(): string
-    {
-        return $this->alias ?: class_info($this)->getKebabName();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function boot(): void { }
 
     /**
@@ -109,6 +102,14 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
             'render'   => '',
             'viewer'   => [],
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAlias(): string
+    {
+        return $this->alias ?: class_info($this)->getKebabName();
     }
 
     /**
@@ -184,10 +185,10 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
         $render = $this->get('render', '');
 
         if ($render instanceof Closure) {
-            $render = (string) $render($this, ...$this->args);
+            $render = (string)$render($this, ...$this->args);
         }
 
-        return $render ? : ($this->viewer()->exists('index') ? $this->viewer('index', $this->all()) : '');
+        return $render ?: ($this->viewer()->exists('index') ? $this->viewer('index', $this->all()) : '');
     }
 
     /**
@@ -267,11 +268,7 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     public function viewer(?string $view = null, array $data = [])
     {
         if (!$this->viewer) {
-            $this->viewer = View::getPlatesEngine(array_merge([
-                'directory' => $this->manager()->resourcesDir("/views/driver/{$this->alias()}"),
-                'factory'   => MetaboxView::class,
-                'metabox'   => $this
-            ], config('metabox.viewer', []), $this->get('viewer', [])));
+            $this->viewer = app()->get('metabox.viewer', [$this]);
         }
 
         if (func_num_args() === 0) {

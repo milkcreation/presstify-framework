@@ -86,61 +86,16 @@ class QueryPost extends ParamsBag implements QueryPostContract
     protected $db;
 
     /**
-     * Instance des paramètres d'affichage des pages de flux.
-     * @var ParamsBag
-     */
-    protected $archiveShowParams;
-
-    /**
-     * Paramètres par défaut des pages de contenu.
-     * @var array
-     */
-    protected $archiveShowDefaults = [
-        'adjust'   => false,
-        'banner'   => true,
-        'date'     => false,
-        'excerpt'  => true,
-        'readmore' => true,
-        'subtitle' => true,
-        'title'    => true,
-    ];
-
-    /**
      * Instance de l'auteur associé.
      * @var QueryUserContract
      */
     protected $author;
 
     /**
-     * Instance des paramètres d'affichage généraux.
-     * @var ParamsBag
-     */
-    protected $globalShowParams;
-
-    /**
      * Instance du parent.
      * @var QueryPost|false|null
      */
     protected $parent;
-
-    /**
-     * Instance des paramètres d'affichage de la page de contenu.
-     * @var ParamsBag
-     */
-    protected $singleShowParams;
-
-    /**
-     * Paramètres par défaut des pages de contenu.
-     * @var array
-     */
-    protected $singleShowDefaults = [
-        'children' => true,
-        'content'  => true,
-        'date'     => false,
-        'subtitle' => true,
-        'title'    => true,
-        'header'   => false,
-    ];
 
     /**
      * Instance de post Wordpress.
@@ -569,24 +524,6 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getArchiveShow(?string $key = null, $default = null)
-    {
-        if (is_null($this->archiveShowParams)) {
-            $params = array_merge($this->archiveShowDefaults, $this->getMetaSingle('_archive_show', []));
-
-            array_walk($params, function (&$opt) {
-                $opt = filter_var($opt, FILTER_VALIDATE_BOOLEAN);
-            });
-
-            $this->archiveShowParams = (new ParamsBag())->set($params);
-        }
-
-        return is_null($key) ? $this->archiveShowParams->all() : $this->archiveShowParams->get($key, $default);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getArchiveUrl(): ?string
     {
         return get_post_type_archive_link($this->getType()->getName()) ?: null;
@@ -727,24 +664,6 @@ class QueryPost extends ParamsBag implements QueryPostContract
     /**
      * @inheritDoc
      */
-    public function getGlobalShow(?string $key = null, $default = null): ?array
-    {
-        if (is_null($this->globalShowParams)) {
-            $params = array_merge([], $this->getMetaSingle('_global_show', []));
-
-            array_walk($params, function (&$opt) {
-                $opt = filter_var($opt, FILTER_VALIDATE_BOOLEAN);
-            });
-
-            $this->globalShowParams = (new ParamsBag())->set($params);
-        }
-
-        return is_null($key) ? $this->globalShowParams->all() : $this->globalShowParams->get($key, $default);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getGuid(): string
     {
         return (string)$this->get('guid', '');
@@ -862,24 +781,6 @@ class QueryPost extends ParamsBag implements QueryPostContract
     public function getPost()
     {
         return $this->getWpPost();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getSingleShow(?string $key = null, $default = null)
-    {
-        if (is_null($this->singleShowParams)) {
-            $params = array_merge($this->singleShowDefaults, $this->getMetaSingle('_single_show', []));
-
-            array_walk($params, function (&$opt) {
-                $opt = filter_var($opt, FILTER_VALIDATE_BOOLEAN);
-            });
-
-            $this->singleShowParams = (new ParamsBag())->set($params);
-        }
-
-        return is_null($key) ? $this->singleShowParams->all() : $this->singleShowParams->get($key, $default);
     }
 
     /**

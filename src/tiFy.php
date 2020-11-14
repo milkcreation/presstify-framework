@@ -8,13 +8,6 @@ use tiFy\Container\Container;
 use tiFy\Kernel\Application;
 use tiFy\Kernel\KernelServiceProvider;
 
-/**
- * @desc PresstiFy -- Framework Milkcreation.
- * @author Jordy Manner <jordy@milkcreation.fr>
- * @package tiFy
- * @version 2.0.355
- * @copyright Milkcreation
- */
 final class tiFy extends Container
 {
     /**

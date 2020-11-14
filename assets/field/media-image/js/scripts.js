@@ -62,12 +62,16 @@ jQuery(function ($) {
       e.preventDefault();
 
       this.open();
+
+      this._trigger('open');
     },
     // Au clic sur le bouton de suppression.
     _onClickRemove: function (e) {
       e.preventDefault();
 
       this.remove();
+
+      this._trigger('remove');
     },
     // ACCESSEURS.
     // -----------------------------------------------------------------------------------------------------------------
@@ -85,7 +89,7 @@ jQuery(function ($) {
         let def = $('[data-control="' + self.control.preview + '"]', self.el).data('default');
 
         $(this).css('background-image', def ? 'url('+def+')' : '').fadeIn();
-        $('[data-control="' + self.control.input + '"]', self.el).val('');
+        $('[data-control="' + self.control.input + '"]', self.el).val('-1');
       });
     }
   });

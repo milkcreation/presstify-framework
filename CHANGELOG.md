@@ -1,5 +1,15 @@
 # Release Notes
 
+## [v2.0.356 (2020-11-14)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.356...v2.0.356)
+
+### Changed
+
+- `assets/field/media-image/js/scripts.js` : value default -1 pour compatibilité _thumbnail_id
+- `src/Contracts/Metabox/MetaboxDriver.php` : Méthode alias() >> getAlias()
+- `src/Metabox/MetaboxServiceProvider.php` : Déclaration du viewer
+- `src/Wordpress/Contracts/Query/QueryPost.php` : Suppression des méthodes associé à la composition d'affichage >> ThemeSuite
+
+
 ## [v2.0.355 (2020-11-12)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.355...v2.0.355)
 
 ### Added

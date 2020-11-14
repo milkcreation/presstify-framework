@@ -39,7 +39,8 @@ class Item extends ParamsBag implements ItemContract
             return $this->delegate->{$name}(...$args);
         } catch (Exception $e) {
             throw new BadMethodCallException(sprintf(
-              __CLASS__ . ' return exception on method call [%s] with message : %s', $name, $e->getMessage()
+               __CLASS__ . ' throws an exception during the method call [%s] with message : %s',
+               $name, $e->getMessage()
             ));
         }
     }
