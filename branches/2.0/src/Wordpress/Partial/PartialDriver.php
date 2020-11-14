@@ -8,7 +8,7 @@ use tiFy\Partial\PartialDriver as BasePartialDriver;
 abstract class PartialDriver extends BasePartialDriver
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * @return $this
      */

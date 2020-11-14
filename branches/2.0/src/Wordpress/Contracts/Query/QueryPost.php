@@ -2,11 +2,11 @@
 
 namespace tiFy\Wordpress\Contracts\Query;
 
-use Illuminate\Database\Eloquent\{
-    Collection as EloquentCollection,
-    Model as EloquentModel
-};
-use tiFy\Contracts\{PostType\PostTypeFactory, PostType\PostTypeStatus, Support\ParamsBag};
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+use tiFy\Contracts\PostType\PostTypeFactory;
+use tiFy\Contracts\PostType\PostTypeStatus;
+use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Support\DateTime;
 use tiFy\Wordpress\Contracts\Database\PostBuilder;
 use WP_Post, WP_Query, WP_Term, WP_User;
@@ -345,16 +345,6 @@ interface QueryPost extends ParamsBag
     public function db(): PostBuilder;
 
     /**
-     * Récupération d'options d'affichage des pages de flux.
-     *
-     * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed|null
-     */
-    public function getArchiveShow(?string $key = null, $default = null);
-
-    /**
      * Url de la page d'archive associé.
      *
      * @return string|null
@@ -466,16 +456,6 @@ interface QueryPost extends ParamsBag
     public function getExcerpt(bool $raw = false): string;
 
     /**
-     * Récupération d'options d'affichage généraux.
-     *
-     * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return array|null
-     */
-    public function getGlobalShow(?string $key = null, $default = null): ?array;
-
-    /**
      * Récupération de l'identifiant unique de qualification global.
      * {@internal Ne devrait pas être utilisé en tant que lien.}
      * @see https://developer.wordpress.org/reference/functions/the_guid/
@@ -583,16 +563,6 @@ interface QueryPost extends ParamsBag
      * @return string
      */
     public function getPermalink(): string;
-
-    /**
-     * Récupération d'options de la page de contenu.
-     *
-     * @param string|null $key Clé d'indice de la valeur à récupérer. Syntaxe à point permise. null pour tous.
-     * @param mixed $default Valeur de retour par défaut.
-     *
-     * @return mixed|null
-     */
-    public function getSingleShow(?string $key = null, $default = null);
 
     /**
      * Récupération de l'identifiant de qualification Wordpress (post_name).

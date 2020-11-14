@@ -3,8 +3,10 @@
 namespace tiFy\Metabox;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Metabox\{MetaboxContext as MetaboxContextContract,
+use tiFy\Contracts\Metabox\{
+    MetaboxContext as MetaboxContextContract,
     MetaboxDriver as MetaboxDriverContract,
+    MetaboxManager as MetaboxManagerContract,
     MetaboxScreen as MetaboxScreenContract,
     MetaboxView as MetaboxViewContract
 };
@@ -23,6 +25,7 @@ use tiFy\Metabox\Driver\{
     Subtitle\Subtitle as SubtitleDriver,
     Videofeed\Videofeed as VideofeedDriver
 };
+use tiFy\Support\Proxy\View;
 
 class MetaboxServiceProvider extends ServiceProvider
 {
@@ -49,6 +52,7 @@ class MetaboxServiceProvider extends ServiceProvider
         MetaboxDriverContract::class,
         MetaboxScreenContract::class,
         MetaboxViewContract::class,
+        'metabox.viewer'
     ];
 
     /**
@@ -75,10 +79,14 @@ class MetaboxServiceProvider extends ServiceProvider
         $this->registerContext();
 
         $this->registerDriver();
+
+        $this->registerViewer();
     }
 
     /**
-     * @inheritDoc
+     * Déclaration des services de contexte d'affichage.
+     *
+     * @return void
      */
     public function registerContext(): void
     {
@@ -88,7 +96,9 @@ class MetaboxServiceProvider extends ServiceProvider
     }
 
     /**
-     * @inheritDoc
+     * Déclaration de la collection de pilote d'affichage.
+     *
+     * @return void
      */
     public function registerDriver(): void
     {
@@ -138,6 +148,43 @@ class MetaboxServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('metabox.driver.videofeed', function () {
             return new VideofeedDriver();
+        });
+    }
+
+    /**
+     * Déclaration du gestionnaire d'affichage.
+     *
+     * @return void
+     */
+    public function registerViewer(): void
+    {
+        $this->getContainer()->add('metabox.viewer', function (MetaboxDriver $driver) {
+            /** @var MetaboxManagerContract $manager */
+            $manager = $this->getContainer()->get('metabox');
+
+            $config = config('metabox.viewer', []);
+
+            if (isset($config['directory'])) {
+                $config['directory'] = rtrim($config['directory'], '/') . '/' . $driver->getAlias();
+
+                if (!file_exists($config['directory'])) {
+                    unset($config['directory']);
+                }
+            }
+
+            if (isset($config['override_dir'])) {
+                $config['override_dir'] = rtrim($config['override_dir'], '/') . '/' . $driver->getAlias();
+
+                if (!file_exists($config['override_dir'])) {
+                    unset($config['override_dir']);
+                }
+            }
+
+            return View::getPlatesEngine(array_merge([
+                'directory'    => $manager->resourcesDir("/views/driver/{$driver->getAlias()}"),
+                'factory'      => MetaboxView::class,
+                'metabox'      => $driver,
+            ], $config, $driver->get('viewer', [])));
         });
     }
 }

@@ -1,13 +1,14 @@
 {
   "name": "presstify/framework",
   "description": "Framework PresstiFy",
+  "homepage": "https://svn.tigreblanc.fr/presstify-framework/",
   "keywords": [
     "framework",
     "presstify",
     "wordpress"
   ],
-  "homepage": "https://svn.tigreblanc.fr/presstify-framework/",
-  "time": "2020-11-12",
+  "license": "MIT",
+  "time": "2020-11-14",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -73,6 +74,22 @@
     "symfony/security-csrf": "^5.0",
     "symfony/serializer": "^5.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0"
+  },
+  "autoload": {
+    "files": [
+      "src/helpers.php"
+    ],
+    "psr-4": {
+      "tiFy\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "tiFy\\Test\\": "tests"
+    }
+  },
   "suggest": {
     "bshaffer/oauth2-server-php": "Serveur OAuth 2.0",
     "codeitnowin/barcode": "Bibliothèque de création de code barre dynamique",
@@ -96,14 +113,6 @@
     "wp-cli/media-command": "Commandes WP Cli des médias (dépréciation composer 2.0)",
     "wp-cli/search-replace-command": "Commandes WP Cli de base de données (dépréciation composer 2.0)",
     "wp-cli/wp-cli": "Commandes WP Cli (dépréciation composer 2.0)"
-  },
-  "autoload": {
-    "files": [
-      "src/helpers.php"
-    ],
-    "psr-4": {
-      "tiFy\\": "src"
-    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
