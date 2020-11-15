@@ -4,11 +4,21 @@
 
 ### Changed
 
-- `assets/field/media-image/js/scripts.js` : value default -1 pour compatibilité _thumbnail_id
+- `assets/field/media-image/js/scripts.js` : value default -1 pour compatibilité \_thumbnail\_id
 - `src/Contracts/Metabox/MetaboxDriver.php` : Méthode alias() >> getAlias()
 - `src/Metabox/MetaboxServiceProvider.php` : Déclaration du viewer
 - `src/Wordpress/Contracts/Query/QueryPost.php` : Suppression des méthodes associé à la composition d'affichage >> ThemeSuite
+- `src/Field/FieldServiceProvider.php` : Gestion de la surcharge de config \_default + alias
+- `src/Metabox/MetaboxServiceProvider.php` : Gestion de la surcharge de config \_default + alias
+- `src/Partial/PartialServiceProvider.php` : Gestion de la surcharge de config \_default + alias
 
+### Fixed
+
+- `src/Wordpress/Query/QueryPost.php` : Gestion du subtitle déléguée à theme-suite
+
+### Added
+
+- Librairies spatie/menu en vue de l'utilisation pour les partials Breadcrumb Pagination et Menu
 
 ## [v2.0.355 (2020-11-12)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.355...v2.0.355)
 

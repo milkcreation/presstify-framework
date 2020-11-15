@@ -800,16 +800,6 @@ class QueryPost extends ParamsBag implements QueryPostContract
     }
 
     /**
-     * Récupération du sous-titre.
-     *
-     * @return string
-     */
-    public function getSubtitle(): string
-    {
-        return $this->getMetaSingle('_subtitle', '');
-    }
-
-    /**
      * @inheritDoc
      */
     public function getTeaser(

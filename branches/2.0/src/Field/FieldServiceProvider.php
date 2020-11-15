@@ -252,11 +252,31 @@ class FieldServiceProvider extends ServiceProvider
             /** @var FieldContract $manager */
             $manager = $this->getContainer()->get('field');
 
+            $defaultConfig = config('field._default.viewer', []);
+
+            if (isset($defaultConfig['directory'])) {
+                $defaultConfig['directory'] = rtrim($defaultConfig['directory'], '/') . '/' . $driver->getAlias();
+
+                if (!file_exists($defaultConfig['directory'])) {
+                    unset($defaultConfig['directory']);
+                }
+            }
+
+            if (isset($defaultConfig['override_dir'])) {
+                $defaultConfig['override_dir'] = rtrim($defaultConfig['override_dir'], '/') . '/' . $driver->getAlias();
+
+                if (!file_exists($defaultConfig['override_dir'])) {
+                    unset($defaultConfig['override_dir']);
+                }
+            }
+
+            $config = config('field.' . $driver->getAlias() . '.viewer', []);
+
             return View::getPlatesEngine(array_merge([
                 'directory' => $manager->resourcesDir("/views/{$driver->getAlias()}"),
                 'factory'   => FieldView::class,
                 'field'     => $driver,
-            ], config('field.viewer', []), $driver->get('viewer', [])));
+            ], $defaultConfig, $config, $driver->get('viewer', [])));
         });
     }
 }

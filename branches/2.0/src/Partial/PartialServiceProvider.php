@@ -192,32 +192,34 @@ class PartialServiceProvider extends ServiceProvider
     public function registerViewer(): void
     {
         $this->getContainer()->add('partial.viewer', function (PartialDriver $driver) {
-            /** @var PartialContract $manager */
+              /** @var PartialContract $manager */
             $manager = $this->getContainer()->get('partial');
 
-            $config = config('partial.viewer', []);
+            $defaultConfig = config('partial._default.viewer', []);
 
-            if (isset($config['directory'])) {
-                $config['directory'] = rtrim($config['directory'], '/') . '/' . $driver->getAlias();
+            if (isset($defaultConfig['directory'])) {
+                $defaultConfig['directory'] = rtrim($defaultConfig['directory'], '/') . '/' . $driver->getAlias();
 
-                if (!file_exists($config['directory'])) {
-                    unset($config['directory']);
+                if (!file_exists($defaultConfig['directory'])) {
+                    unset($defaultConfig['directory']);
                 }
             }
 
-            if (isset($config['override_dir'])) {
-                $config['override_dir'] = rtrim($config['override_dir'], '/') . '/' . $driver->getAlias();
+            if (isset($defaultConfig['override_dir'])) {
+                $defaultConfig['override_dir'] = rtrim($defaultConfig['override_dir'], '/') . '/' . $driver->getAlias();
 
-                if (!file_exists($config['override_dir'])) {
-                    unset($config['override_dir']);
+                if (!file_exists($defaultConfig['override_dir'])) {
+                    unset($defaultConfig['override_dir']);
                 }
             }
+
+            $config = config('partial.' . $driver->getAlias() . '.viewer', []);
 
             return View::getPlatesEngine(array_merge([
                 'directory'    => $manager->resourcesDir("/views/{$driver->getAlias()}"),
                 'factory'      => PartialView::class,
                 'partial'      => $driver,
-            ], $config, $driver->get('viewer', [])));
+            ], $defaultConfig, $config, $driver->get('viewer', [])));
         });
     }
 }

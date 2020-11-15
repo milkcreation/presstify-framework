@@ -579,13 +579,6 @@ interface QueryPost extends ParamsBag
     public function getStatus(): PostTypeStatus;
 
     /**
-     * Récupération du sous-titre.
-     *
-     * @return string
-     */
-    public function getSubtitle(): string;
-
-    /**
      * Récupération d'un contenu d'accroche basé sur l'extrait.
      *
      * @param int $length Nombre maximum de caractères de la chaîne.
