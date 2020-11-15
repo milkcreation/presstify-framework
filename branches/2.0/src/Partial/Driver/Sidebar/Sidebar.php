@@ -180,6 +180,6 @@ class Sidebar extends PartialDriver implements SidebarContract
             Arr::set($attrs, 'attrs.data-target', "#{$id}");
         }
 
-        return $this->viewer('toggle', compact('attrs'));
+        return $this->view('toggle', compact('attrs'));
     }
 }

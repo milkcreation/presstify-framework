@@ -2,40 +2,55 @@
 
 namespace tiFy\Partial;
 
+use Exception;
 use InvalidArgumentException;
-use tiFy\Contracts\Partial\{
-    Accordion,
-    Breadcrumb,
-    CookieNotice,
-    CurtainMenu,
-    Dropdown,
-    Downloader,
-    FlashNotice,
-    Holder,
-    ImageLightbox,
-    Modal,
-    Notice,
-    Pagination,
-    Partial as PartialContract,
-    PartialDriver,
-    Pdfviewer,
-    Progress,
-    Sidebar,
-    Slider,
-    Spinner,
-    Tab,
-    Table,
-    Tag
-};
-use tiFy\Support\Manager;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\Filesystem\LocalFilesystem;
+use tiFy\Contracts\Partial\Accordion;
+use tiFy\Contracts\Partial\Breadcrumb;
+use tiFy\Contracts\Partial\CookieNotice;
+use tiFy\Contracts\Partial\CurtainMenu;
+use tiFy\Contracts\Partial\Dropdown;
+use tiFy\Contracts\Partial\Downloader;
+use tiFy\Contracts\Partial\FlashNotice;
+use tiFy\Contracts\Partial\Holder;
+use tiFy\Contracts\Partial\ImageLightbox;
+use tiFy\Contracts\Partial\MenuDriver;
+use tiFy\Contracts\Partial\Modal;
+use tiFy\Contracts\Partial\Notice;
+use tiFy\Contracts\Partial\Pagination;
+use tiFy\Contracts\Partial\Partial as PartialContract;
+use tiFy\Contracts\Partial\PartialDriver;
+use tiFy\Contracts\Partial\Pdfviewer;
+use tiFy\Contracts\Partial\Progress;
+use tiFy\Contracts\Partial\Sidebar;
+use tiFy\Contracts\Partial\Slider;
+use tiFy\Contracts\Partial\Spinner;
+use tiFy\Contracts\Partial\Tab;
+use tiFy\Contracts\Partial\Table;
+use tiFy\Contracts\Partial\Tag;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Storage;
 
-class Partial extends Manager implements PartialContract
+class Partial implements PartialContract
 {
     /**
-     * Définition des éléments déclarées par défaut.
+     * Instance de la classe.
+     * @var static|null
+     */
+    private static $instance;
+
+    /**
+     * Indicateur d'initialisation.
+     * @var bool
+     */
+    private $booted = false;
+
+    /**
+     * Définition des pilotes par défaut.
      * @var array
      */
-    protected $defaults = [
+    private $defaultDrivers = [
         'accordion'      => Accordion::class,
         'breadcrumb'     => Breadcrumb::class,
         'cookie-notice'  => CookieNotice::class,
@@ -45,6 +60,7 @@ class Partial extends Manager implements PartialContract
         'flash-notice'   => FlashNotice::class,
         'holder'         => Holder::class,
         'image-lightbox' => ImageLightbox::class,
+        'menu'           => MenuDriver::class,
         'modal'          => Modal::class,
         'notice'         => Notice::class,
         'pagination'     => Pagination::class,
@@ -55,50 +71,126 @@ class Partial extends Manager implements PartialContract
         'spinner'        => Spinner::class,
         'tab'            => Tab::class,
         'table'          => Table::class,
-        'tag'            => Tag::class,
+        'tag'            => Tag::class
     ];
 
     /**
      * Liste des éléments déclarées.
      * @var PartialDriver[]
      */
-    protected $items = [];
+    private $drivers = [];
 
     /**
-     * Liste des indices courant des éléments déclarées par alias de qualification.
+     * Instance du gestionnaire des ressources
+     * @var LocalFilesystem|null
+     */
+    private $resources;
+
+    /**
+     * Instance du gestionnaire de configuration.
+     * @var ParamsBag
+     */
+    protected $config;
+
+    /**
+     * Instance du conteneur d'injection de dépendances.
+     * @var Container|null
+     */
+    protected $container;
+
+    /**
+     * Liste des indices courant des pilotes déclarées par alias de qualification.
      * @var int[]
      */
     protected $indexes = [];
 
     /**
-     * Instances des éléments par alias de qualification et indexés par identifiant de qualification.
+     * Instances des pilotes initiés par alias de qualification et indexés par identifiant de qualification.
      * @var PartialDriver[][]
      */
     protected $instances = [];
 
     /**
-     * @inheritDoc
+     * @param array $config
+     * @param Container|null $container
+     *
+     * @return void
      */
-    public function get(...$args): ?PartialDriver
+    public function __construct(array $config = [], Container $container = null)
     {
-        $alias = $args[0] ?? null;
-        if (!$alias || !isset($this->items[$alias])) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    __('Aucune instance de portion d\'affichage correspondant à l\'alias : %s', 'tify'),
-                    $alias
-                )
-            );
+        $this->setConfig($config);
+
+        if (!is_null($container)) {
+            $this->setContainer($container);
         }
 
-        $id = $args[1] ?? null;
-        $attrs = $args[2] ?? [];
+        if (!self::$instance instanceof static) {
+            self::$instance = $this;
+        }
+    }
 
-        if (is_array($id)) {
-            $attrs = $id;
+    /**
+     * @inheritDoc
+     */
+    public static function instance(): PartialContract
+    {
+        if (self::$instance instanceof self) {
+            return self::$instance;
+        }
+
+        throw new Exception('Unavailable Partial instance');
+    }
+
+    /**
+     * Déclaration d'un pilote.
+     *
+     * @param string $alias
+     * @param PartialDriver $driver
+     *
+     * @throws Exception
+     */
+    private function _registerDriver(string $alias, PartialDriver $driver): void
+    {
+        if ($alias === '_default') {
+            throw new Exception('Alias [_default] not allowed');
+        } elseif (isset($this->drivers[$alias]) || isset($this->instances[$alias]) || isset($this->indexes[$alias])) {
+            throw new Exception('Alias [%s] already assigned');
+        }
+
+        $this->drivers[$alias] = $driver->build($alias, $this);
+        $this->instances[$alias] = [$driver];
+        $this->indexes[$alias] = 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): PartialContract
+    {
+        if (!$this->booted) {
+            $this->registerDefaultDrivers();
+
+            $this->booted = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get(string $alias, $idOrAttrs = null, ?array $attrs = null): ?PartialDriver
+    {
+        if (!isset($this->drivers[$alias])) {
+            throw new InvalidArgumentException(sprintf('Partial with alias [%s] unavailable', $alias));
+        }
+
+        if (is_array($idOrAttrs)) {
+            $attrs = $idOrAttrs;
             $id = null;
         } else {
             $attrs = $attrs ?: [];
+            $id = $idOrAttrs;
         }
 
         if ($id) {
@@ -107,11 +199,11 @@ class Partial extends Manager implements PartialContract
             }
 
             $this->indexes[$alias]++;
-            $this->instances[$alias][$id] = clone $this->items[$alias];
+            $this->instances[$alias][$id] = clone $this->drivers[$alias];
             $partial = $this->instances[$alias][$id];
         } else {
             $this->indexes[$alias]++;
-            $partial = clone $this->items[$alias];
+            $partial = clone $this->drivers[$alias];
         }
 
         return $partial
@@ -123,23 +215,46 @@ class Partial extends Manager implements PartialContract
     /**
      * @inheritDoc
      */
-    public function register($key, ...$args)
+    public function config($key = null, $default = null)
     {
-        if (isset($args[0])) {
-            return $this->set([$key => $args[0]]);
+        if (!isset($this->config) || is_null($this->config)) {
+            $this->config = new ParamsBag();
         }
-        throw new InvalidArgumentException(
-            sprintf(__('La déclaration de la portion d\'affichage [%s] n\'est pas conforme.', 'tify'), $key)
-        );
+
+        if (is_string($key)) {
+            return $this->config->get($key, $default);
+        } elseif (is_array($key)) {
+            return $this->config->set($key);
+        } else {
+            return $this->config;
+        }
     }
 
     /**
      * @inheritDoc
      */
-    public function registerDefaults(): PartialContract
+    public function getContainer(): ?Container
     {
-        foreach ($this->defaults as $name => $alias) {
-            $this->set($name, $this->getContainer()->get($alias));
+        return $this->container;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function register(string $alias, PartialDriver $driver): PartialDriver
+    {
+        $this->_registerDriver($alias, $driver);
+
+        return $driver;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerDefaultDrivers(): PartialContract
+    {
+        foreach ($this->defaultDrivers as $name => $alias) {
+            $this->_registerDriver($name, $this->getContainer()->get($alias));
         }
 
         return $this;
@@ -148,44 +263,48 @@ class Partial extends Manager implements PartialContract
     /**
      * @inheritDoc
      */
-    public function resourcesDir(string $path = null): string
+    public function resolve(string $alias)
     {
-        $path = $path ? '/' . ltrim($path, '/') : '';
-
-        return file_exists(__DIR__ . "/Resources{$path}") ? __DIR__ . "/Resources{$path}" : '';
+        return ($container = $this->getContainer()) ? $container->get("partial.{$alias}") : null;
     }
 
     /**
      * @inheritDoc
      */
-    public function resourcesUrl(string $path = null): string
+    public function resolvable(string $alias): bool
     {
-        $cinfo = class_info($this);
-        $path = $path ? '/' . ltrim($path, '/') : '';
-
-        return file_exists($cinfo->getDirname() . "/Resources{$path}") ? $cinfo->getUrl() . "/Resources{$path}" : '';
+        return ($container = $this->getContainer()) && $container->has("partial.{$alias}");
     }
 
     /**
      * @inheritDoc
-     *
-     * @throws InvalidArgumentException
      */
-    public function walk(&$item, $key = null): void
+    public function resources(?string $path = null)
     {
-        if ($item instanceof PartialDriver) {
-            $item->prepare((string)$key, $this);
-
-            $this->instances[$key] = [$item];
-            $this->indexes[$key] = 0;
-        } else {
-            throw new InvalidArgumentException(
-                sprintf(
-                    __('La déclaration de la portion d\'affichage [%s] devrait être une instance de [%s]', 'tify'),
-                    $key,
-                    PartialDriver::class
-                )
-            );
+        if (!isset($this->resources) ||is_null($this->resources)) {
+            $this->resources = Storage::local(__DIR__ . '/Resources');
         }
+
+        return is_null($path) ? $this->resources : $this->resources->path($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setConfig(array $attrs): PartialContract
+    {
+        $this->config($attrs);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setContainer(Container $container): PartialContract
+    {
+        $this->container = $container;
+
+        return $this;
     }
 }

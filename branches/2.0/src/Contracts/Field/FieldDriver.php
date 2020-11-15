@@ -15,6 +15,16 @@ interface FieldDriver extends ParamsBag
     public function __toString(): string;
 
     /**
+     * Construction du pilote.
+     *
+     * @param string $alias
+     * @param Field $field
+     *
+     * @return static
+     */
+    public function build(string $alias, Field $field): FieldDriver;
+
+    /**
      * Post-affichage.
      *
      * @return void
@@ -50,6 +60,13 @@ interface FieldDriver extends ParamsBag
     public function content(): void;
 
     /**
+     * Récupération du gestionnaire de champs.
+     *
+     * @return Field|null
+     */
+    public function field(): ?Field;
+
+    /**
      * Récupération de l'identifiant de qualification dans le gestionnaire.
      *
      * @return string
@@ -80,16 +97,9 @@ interface FieldDriver extends ParamsBag
     /**
      * Récupération de la valeur dans la requête HTTP de soumission.
      *
-     * @return string
+     * @return mixed|null
      */
     public function getValue();
-
-    /**
-     * Récupération du gestionnaire de champs.
-     *
-     * @return Field|null
-     */
-    public function manager(): ?Field;
 
     /**
      * {@inheritDoc}
@@ -99,28 +109,28 @@ interface FieldDriver extends ParamsBag
     public function parse(): FieldDriver;
 
     /**
-     * Traitement de l'attribut "class" de la balise HTML du champ.
+     * Traitement de l'attribut "class" de la balise HTML.
      *
      * @return static
      */
     public function parseAttrClass(): FieldDriver;
 
     /**
-     * Traitement de l'attribut "id" de la balise HTML du champ.
+     * Traitement de l'attribut "id" de la balise HTML.
      *
      * @return static
      */
     public function parseAttrId(): FieldDriver;
 
     /**
-     * Traitement de l'attribut "name" de la balise HTML du champ.
+     * Traitement de l'attribut "name" de la balise HTML.
      *
      * @return static
      */
     public function parseAttrName(): FieldDriver;
 
     /**
-     * Traitement de l'attribut "value" de la balise HTML du champ.
+     * Traitement de l'attribut "value" de la balise HTML.
      *
      * @return static
      */
@@ -139,16 +149,6 @@ interface FieldDriver extends ParamsBag
      * @return $this
      */
     public function parseViewer(): FieldDriver;
-
-    /**
-     * Définition de l'instance de l'élément.
-     *
-     * @param string $alias Alias de qualification de l'instance dans le gestionnaire.
-     * @param Field $manager Instance du gestionnaire.
-     *
-     * @return static
-     */
-    public function prepare(string $alias, Field $manager): FieldDriver;
 
     /**
      * Affichage.
@@ -191,7 +191,7 @@ interface FieldDriver extends ParamsBag
      *
      * @return static
      */
-    public function setViewer(ViewEngine $viewer): FieldDriver;
+    public function setViewEngine(ViewEngine $viewer): FieldDriver;
 
     /**
      * Instance du gestionnaire de gabarits d'affichage ou rendu du gabarit d'affichage.
@@ -201,5 +201,12 @@ interface FieldDriver extends ParamsBag
      *
      * @return ViewEngine|string
      */
-    public function viewer(?string $view = null, array $data = []);
+    public function view(?string $view = null, array $data = []);
+
+    /**
+     * Chemin absolu du répertoire des gabarits d'affichage.
+     *
+     * @return string
+     */
+    public function viewDirectory(): string;
 }

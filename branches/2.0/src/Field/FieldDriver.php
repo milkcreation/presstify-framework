@@ -3,29 +3,44 @@
 namespace tiFy\Field;
 
 use Closure;
-use tiFy\Contracts\Field\{Field as Manager, FieldDriver as FieldDriverContract};
+use tiFy\Contracts\Field\Field;
+use tiFy\Contracts\Field\FieldDriver as FieldDriverContract;
 use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\Support\{HtmlAttrs, ParamsBag, Str};
+use tiFy\Support\HtmlAttrs;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Str;
 
 abstract class FieldDriver extends ParamsBag implements FieldDriverContract
 {
     /**
-     * Liste des attributs par défaut.
-     * @var array
+     * Alias de qualification.
+     * @var string|null
      */
-    protected static $defaults = [];
+    private $alias;
 
     /**
      * Indicateur d'initialisation.
      * @var string
      */
-    private $booted = false;
+    private $built = false;
 
     /**
-     * Alias de qualification dans le gestionnaire.
-     * @var string
+     * Instance du gestionnaire.
+     * @var Field
      */
-    private $alias = false;
+    private $field;
+
+    /**
+     * Indice de l'instance dans le gestionnaire.
+     * @var int
+     */
+    private $index = 0;
+
+    /**
+     * Liste des attributs par défaut.
+     * @var array
+     */
+    protected static $defaults = [];
 
     /**
      * Identifiant de qualification.
@@ -35,29 +50,36 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
     protected $id = '';
 
     /**
-     * Indice de l'instance dans le gestionnaire.
-     * @var int
-     */
-    protected $index = 0;
-
-    /**
-     * Instance du gestionnaire de portions d'affichage.
-     * @var Manager
-     */
-    protected $manager;
-
-    /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewEngine
+     * @var ViewEngine
      */
-    protected $viewer;
+    protected $viewEngine;
 
     /**
      * @inheritDoc
      */
     public function __toString(): string
     {
-        return (string)$this->render();
+        return $this->render();
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return $this
+     */
+    public function build(string $alias, Field $field): FieldDriverContract
+    {
+        if (!$this->built) {
+            $this->alias = $alias;
+            $this->field = $field;
+
+            $this->boot();
+
+            $this->built = true;
+        }
+
+        return $this;
     }
 
     /**
@@ -65,7 +87,7 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
      */
     public function after(): void
     {
-        echo ($after = $this->get('after', '')) instanceof Closure ? call_user_func($after) : $after;
+        echo ($after = $this->get('after', '')) instanceof Closure ? $after($this) : $after;
     }
 
     /**
@@ -81,20 +103,20 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
      */
     public function before(): void
     {
-        echo ($before = $this->get('before', '')) instanceof Closure ? call_user_func($before) : $before;
+        echo ($before = $this->get('before', '')) instanceof Closure ? $before($this) : $before;
     }
 
     /**
      * @inheritDoc
      */
-    public function boot(): void {}
+    public function boot(): void { }
 
     /**
      * @inheritDoc
      */
     public function content(): void
     {
-        echo ($content = $this->get('content', '')) instanceof Closure ? call_user_func($content) : $content;
+        echo ($content = $this->get('content', '')) instanceof Closure ? $content($this) : $content;
     }
 
     /**
@@ -105,6 +127,14 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
     public function defaults(): array
     {
         return array_merge(static::$defaults, []);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function field(): ?Field
+    {
+        return $this->field;
     }
 
     /**
@@ -136,7 +166,7 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
      */
     public function getName(): string
     {
-        return $this->get('attrs.name', '') ? : $this->get('name');
+        return $this->get('attrs.name', '') ?: $this->get('name');
     }
 
     /**
@@ -148,14 +178,6 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
     }
 
     /**
-     * @inheritDoc
-     */
-    public function manager(): ?Manager
-    {
-        return $this->manager;
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @return $this
@@ -163,7 +185,7 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
     public function parse(): FieldDriverContract
     {
         $this->attributes = array_merge(
-            $this->defaults(), config("field.driver.{$this->alias}", []), $this->attributes
+            $this->defaults(), $this->field()->config($this->getAlias(), []), $this->attributes
         );
 
         $this->parseDefaults();
@@ -183,6 +205,10 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
             $this->set('attrs.class', $default_class);
         } else {
             $this->set('attrs.class', sprintf($this->get('attrs.class', ''), $default_class));
+        }
+
+        if (!$this->get('attrs.class')) {
+            $this->forget('attrs.class');
         }
 
         return $this;
@@ -239,25 +265,8 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
      */
     public function parseViewer(): FieldDriverContract
     {
-        foreach($this->get('viewer', []) as $key => $value) {
-            $this->viewer()->params([$key => $value]);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function prepare(string $alias, Manager $manager): FieldDriverContract
-    {
-        if (!$this->booted) {
-            $this->alias = $alias;
-            $this->manager = $manager;
-
-            $this->boot();
-
-            $this->booted = true;
+        foreach ($this->get('viewer', []) as $key => $value) {
+            $this->view()->params([$key => $value]);
         }
 
         return $this;
@@ -268,7 +277,7 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
      */
     public function render(): string
     {
-        return (string)$this->viewer('index', $this->all());
+        return $this->view('index', $this->all());
     }
 
     /**
@@ -302,9 +311,9 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
     /**
      * @inheritDoc
      */
-    public function setViewer(ViewEngine $viewer): FieldDriverContract
+    public function setViewEngine(ViewEngine $viewer): FieldDriverContract
     {
-        $this->viewer = $viewer;
+        $this->viewEngine = $viewer;
 
         return $this;
     }
@@ -312,16 +321,52 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
     /**
      * @inheritDoc
      */
-    public function viewer(?string $view = null, array $data = [])
+    public function view(?string $view = null, array $data = [])
     {
-        if (is_null($this->viewer)) {
-            $this->viewer = app()->get('field.viewer', [$this]);
+        if (is_null($this->viewEngine)) {
+            $this->viewEngine = $this->field()->resolve('view-engine');
+
+            $defaultConfig = $this->field()->config('_default.viewer', []);
+
+            if (isset($defaultConfig['directory'])) {
+                $defaultConfig['directory'] = rtrim($defaultConfig['directory'], '/') . '/' . $this->getAlias();
+
+                if (!file_exists($defaultConfig['directory'])) {
+                    unset($defaultConfig['directory']);
+                }
+            }
+
+            if (isset($defaultConfig['override_dir'])) {
+                $defaultConfig['override_dir'] = rtrim($defaultConfig['override_dir'], '/') . '/' . $this->getAlias();
+
+                if (!file_exists($defaultConfig['override_dir'])) {
+                    unset($defaultConfig['override_dir']);
+                }
+            }
+
+            $config = $this->field()->config("{$this->getAlias()}.viewer", []);
+
+            $this->viewEngine->params(array_merge([
+                'directory'    => $this->viewDirectory(),
+                'factory'      => FieldView::class,
+                'field'      => $this
+            ], $defaultConfig, $config, $this->get('viewer', [])));
         }
 
         if (func_num_args() === 0) {
-            return $this->viewer;
+            return $this->viewEngine;
         }
 
-        return $this->viewer->render("{$view}", $data);
+        return $this->viewEngine->render($view, $data);
+    }
+
+    /**
+     * Chemin absolu du répertoire des gabarits d'affichage.
+     *
+     * @return string
+     */
+    public function viewDirectory(): string
+    {
+        return $this->field()->resources("/views/{$this->getAlias()}");
     }
 }

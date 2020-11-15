@@ -181,7 +181,7 @@ class Repeater extends FieldDriver implements RepeaterContract
         } else {
             return [
                 'success' => true,
-                'data'    => (string)$this->viewer('item-wrap', Request::all()),
+                'data'    => $this->view('item-wrap', Request::all()),
             ];
         }
     }

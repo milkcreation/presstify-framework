@@ -120,7 +120,7 @@ class RadioWalker implements RadioWalkerContract
      */
     public function render(): string
     {
-        return $this->field->viewer('choices', ['items' => $this->items]);
+        return $this->field->view('choices', ['items' => $this->items]);
     }
 
     /**

@@ -75,20 +75,20 @@ class Tab extends PartialDriver implements TabContract
         /* @var TabItemsContract $items */
         $items = $this->get('items');
 
-        return (string)$this->viewer('index', ['attrs' => $this->get('attrs', []), 'items' => $items->getGrouped()]);
+        return (string)$this->view('index', ['attrs' => $this->get('attrs', []), 'items' => $items->getGrouped()]);
     }
 
     /**
      * @inheritDoc
      */
-    public function viewer(?string $view = null, $data = [])
+    public function view(?string $view = null, $data = [])
     {
-        if (is_null($this->viewer)) {
-            $this->viewer = app()->get('partial.viewer', [$this]);
-            $this->viewer->setFactory(TabView::class);
+        if (is_null($this->viewEngine)) {
+            $viewEngine = parent::view();
+            $viewEngine->setFactory(TabView::class);
         }
 
-        return parent::viewer($view, $data);
+        return parent::view($view, $data);
     }
 
     /**

@@ -60,6 +60,15 @@ interface Breadcrumb extends PartialDriver
     public function main(): Breadcrumb;
 
     /**
+     * Traitemenent d'un élément
+     *
+     * @param string|array|object $item
+     *
+     * @return array|null
+     */
+    public function parseItem($item): ?array;
+
+    /**
      * Pré-Récupération de la collection d'éléments du fil d'ariane.
      *
      * @return static
@@ -106,7 +115,6 @@ interface Breadcrumb extends PartialDriver
      * Supprime un élément déclaré selon sa position.
      *
      * @param int $position
-     * @param string|array|object $item
      *
      * @return Breadcrumb
      */

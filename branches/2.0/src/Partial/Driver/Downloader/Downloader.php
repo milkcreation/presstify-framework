@@ -54,7 +54,7 @@ class Downloader extends PartialDriver implements DownloaderContract
             'viewer'  => [],
             'basedir' => ROOT_PATH,
             'content' => __('Télécharger', 'tify'),
-            'src'     => $this->manager->resourcesDir('/sample/sample.txt'),
+            'src'     => $this->partial()->resources('/sample/sample.txt'),
             'tag'     => 'a',
             'types'   => null,
         ];

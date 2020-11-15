@@ -82,7 +82,7 @@ class Select extends FieldDriver implements SelectContract
     /**
      * @inheritDoc
      */
-    public function parseName(): FieldDriverContract
+    public function parseAttrName(): FieldDriverContract
     {
         if ($name = $this->get('name')) {
             $this->set('attrs.name', $this->get('multiple') ? "{$name}[]" : $name);

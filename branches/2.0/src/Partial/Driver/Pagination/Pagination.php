@@ -117,7 +117,7 @@ class Pagination extends PartialDriver implements PaginationContract
             $this->parseNumbers();
         }
 
-        $this->viewer()->setFactory(PaginationView::class);
+        $this->view()->setFactory(PaginationView::class);
 
         return $this;
     }

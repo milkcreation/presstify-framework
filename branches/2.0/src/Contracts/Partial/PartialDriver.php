@@ -15,6 +15,16 @@ interface PartialDriver extends ParamsBag
     public function __toString(): string;
 
     /**
+     * Construction du pilote.
+     *
+     * @param string $alias
+     * @param Partial $partial
+     *
+     * @return static
+     */
+    public function build(string $alias, Partial $partial): PartialDriver;
+
+    /**
      * Post-affichage.
      *
      * @return void
@@ -36,7 +46,7 @@ interface PartialDriver extends ParamsBag
     public function before(): void;
 
     /**
-     * Initialisation du controleur.
+     * Initialisation.
      *
      * @return void
      */
@@ -57,7 +67,7 @@ interface PartialDriver extends ParamsBag
     public function getAlias(): string;
 
     /**
-     * Récupération de l'identifiant de qualification.
+     * Récupération de l'identifiant de qualification local.
      *
      * @return string
      */
@@ -71,13 +81,6 @@ interface PartialDriver extends ParamsBag
     public function getIndex(): int;
 
     /**
-     * Récupération du gestionnaire de champs.
-     *
-     * @return Partial|null
-     */
-    public function manager(): ?Partial;
-
-    /**
      * {@inheritDoc}
      *
      * @return static
@@ -85,14 +88,14 @@ interface PartialDriver extends ParamsBag
     public function parse(): PartialDriver;
 
     /**
-     * Traitement de l'attribut "class" de la balise HTML du champ.
+     * Traitement de l'attribut "class" de la balise HTML.
      *
      * @return static
      */
     public function parseAttrClass(): PartialDriver;
 
     /**
-     * Traitement de l'attribut "id" de la balise HTML du champ.
+     * Traitement de l'attribut "id" de la balise HTML.
      *
      * @return static
      */
@@ -113,14 +116,11 @@ interface PartialDriver extends ParamsBag
     public function parseViewer(): PartialDriver;
 
     /**
-     * Définition de l'instance de l'élément.
+     * Récupération du gestionnaire.
      *
-     * @param string $alias Alias de qualification de l'instance dans le gestionnaire.
-     * @param Partial $manager Instance du gestionnaire.
-     *
-     * @return static
+     * @return Partial|null
      */
-    public function prepare(string $alias, Partial $manager): PartialDriver;
+    public function partial(): ?Partial;
 
     /**
      * Affichage.
@@ -163,15 +163,22 @@ interface PartialDriver extends ParamsBag
      *
      * @return static
      */
-    public function setViewer(ViewEngine $viewer): PartialDriver;
+    public function setViewEngine(ViewEngine $viewer): PartialDriver;
 
     /**
      * Instance du gestionnaire de gabarits d'affichage ou rendu du gabarit d'affichage.
      *
-     * @param null|string view Nom de qualification du gabarit.
+     * @param string|null view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
      * @return ViewEngine|string
      */
-    public function viewer(string $view = null, array $data = []);
+    public function view(?string $view = null, array $data = []);
+
+    /**
+     * Chemin absolu du répertoire des gabarits d'affichage.
+     *
+     * @return string
+     */
+    public function viewDirectory(): string;
 }

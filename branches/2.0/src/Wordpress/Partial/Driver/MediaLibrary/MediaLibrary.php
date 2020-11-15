@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Partial\Driver\MediaLibrary;
 
 use tiFy\Contracts\Partial\PartialDriver as BasePartialDriverContract;
-use tiFy\Wordpress\Contracts\Partial\{MediaLibrary as MediaLibraryContract, PartialDriver as PartialDriverContract};
+use tiFy\Wordpress\Contracts\Partial\MediaLibrary as MediaLibraryContract;
 use tiFy\Wordpress\Partial\PartialDriver;
 
 class MediaLibrary extends PartialDriver implements MediaLibraryContract

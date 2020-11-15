@@ -5,7 +5,7 @@ namespace tiFy\Field\Driver\SelectJs;
 use Illuminate\Support\Arr;
 use tiFy\Contracts\Field\Select;
 use tiFy\Contracts\Field\SelectChoice as SelectChoiceContract;
-use tiFy\Contracts\Kernel\ParamsBag;
+use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Field\Driver\Select\SelectChoice;
 use tiFy\Field\Driver\Select\SelectChoices;
 use WP_Query;
@@ -98,8 +98,8 @@ class SelectJsChoices extends SelectChoices
      */
     public function setItem(SelectChoice $item)
     {
-        $item->set('picker', $this->field->viewer('picker-item', compact('item')));
-        $item->set('selection', $this->field->viewer('selection-item', compact('item')));
+        $item->set('picker', $this->field->view('picker-item', compact('item')));
+        $item->set('selection', $this->field->view('selection-item', compact('item')));
 
         return $this;
     }
