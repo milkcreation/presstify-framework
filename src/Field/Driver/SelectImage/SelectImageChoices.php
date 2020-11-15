@@ -30,7 +30,7 @@ class SelectImageChoices extends SelectJsChoices
 
             $items = [];
             if ($field->get('none')) {
-                $items[''] = Img::getBase64Src($field->manager()->resourcesDir('/views/select-image/none.jpg'));
+                $items[''] = Img::getBase64Src($field->field()->resources('/views/select-image/none.jpg'));
             }
 
             foreach ($finder as $file) {

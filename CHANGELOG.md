@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.0.357 (2020-11-15)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.357...v2.0.357)
+
+- Réécriture Optimisation Field + Partial
+
 ## [v2.0.356 (2020-11-14)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.356...v2.0.356)
 
 ### Changed

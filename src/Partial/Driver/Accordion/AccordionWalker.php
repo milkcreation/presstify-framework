@@ -174,7 +174,7 @@ class AccordionWalker implements AccordionWalkerContract
             ];
 
             $output .= "<li " . HtmlAttrs::createFromAttrs($attrs) . ">";
-            $output .= $this->partial->viewer('item', compact('item'));
+            $output .= $this->partial->view('item', compact('item'));
             $output .= $this->walk($items, ($depth + 1), (string)$item->getId());
             $output .= "</li>";
         }

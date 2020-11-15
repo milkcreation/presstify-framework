@@ -3,68 +3,62 @@
 namespace tiFy\Field;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Field\{
-    Button as ButtonContract,
-    Checkbox as CheckboxContract,
-    CheckboxCollection as CheckboxCollectionContract,
-    Colorpicker as ColorpickerContract,
-    Datepicker as DatepickerContract,
-    DatetimeJs as DatetimeJsContract,
-    Field as FieldContract,
-    FieldDriver,
-    File as FileContract,
-    FileJs as FileJsContract,
-    Hidden as HiddenContract,
-    Label as LabelContract,
-    Number as NumberContract,
-    NumberJs as NumberJsContract,
-    Password as PasswordContract,
-    PasswordJs as PasswordJsContract,
-    Radio as RadioContract,
-    RadioCollection as RadioCollectionContract,
-    Repeater as RepeaterContract,
-    Required as RequiredContract,
-    Select as SelectContract,
-    SelectImage as SelectImageContract,
-    SelectJs as SelectJsContract,
-    Submit as SubmitContract,
-    Suggest as SuggestContract,
-    Text as TextContract,
-    Textarea as TextareaContract,
-    TextRemaining as TextRemainingContract,
-    Tinymce as TinymceContract,
-    ToggleSwitch as ToggleSwitchContract
-};
-use tiFy\Field\Driver\{
-    Button\Button,
-    Checkbox\Checkbox,
-    CheckboxCollection\CheckboxCollection,
-    Colorpicker\Colorpicker,
-    Datepicker\Datepicker,
-    DatetimeJs\DatetimeJs,
-    File\File,
-    FileJs\FileJs,
-    Hidden\Hidden,
-    Label\Label,
-    Number\Number,
-    NumberJs\NumberJs,
-    Password\Password,
-    PasswordJs\PasswordJs,
-    Radio\Radio,
-    RadioCollection\RadioCollection,
-    Repeater\Repeater,
-    Required\Required,
-    Select\Select,
-    SelectImage\SelectImage,
-    SelectJs\SelectJs,
-    Submit\Submit,
-    Suggest\Suggest,
-    Text\Text,
-    Textarea\Textarea,
-    TextRemaining\TextRemaining,
-    Tinymce\Tinymce,
-    ToggleSwitch\ToggleSwitch
-};
+use tiFy\Contracts\Field\Button as ButtonContract;
+use tiFy\Contracts\Field\Checkbox as CheckboxContract;
+use tiFy\Contracts\Field\CheckboxCollection as CheckboxCollectionContract;
+use tiFy\Contracts\Field\Colorpicker as ColorpickerContract;
+use tiFy\Contracts\Field\Datepicker as DatepickerContract;
+use tiFy\Contracts\Field\DatetimeJs as DatetimeJsContract;
+use tiFy\Contracts\Field\File as FileContract;
+use tiFy\Contracts\Field\FileJs as FileJsContract;
+use tiFy\Contracts\Field\Hidden as HiddenContract;
+use tiFy\Contracts\Field\Label as LabelContract;
+use tiFy\Contracts\Field\Number as NumberContract;
+use tiFy\Contracts\Field\NumberJs as NumberJsContract;
+use tiFy\Contracts\Field\Password as PasswordContract;
+use tiFy\Contracts\Field\PasswordJs as PasswordJsContract;
+use tiFy\Contracts\Field\Radio as RadioContract;
+use tiFy\Contracts\Field\RadioCollection as RadioCollectionContract;
+use tiFy\Contracts\Field\Repeater as RepeaterContract;
+use tiFy\Contracts\Field\Required as RequiredContract;
+use tiFy\Contracts\Field\Select as SelectContract;
+use tiFy\Contracts\Field\SelectImage as SelectImageContract;
+use tiFy\Contracts\Field\SelectJs as SelectJsContract;
+use tiFy\Contracts\Field\Submit as SubmitContract;
+use tiFy\Contracts\Field\Suggest as SuggestContract;
+use tiFy\Contracts\Field\Text as TextContract;
+use tiFy\Contracts\Field\Textarea as TextareaContract;
+use tiFy\Contracts\Field\TextRemaining as TextRemainingContract;
+use tiFy\Contracts\Field\Tinymce as TinymceContract;
+use tiFy\Contracts\Field\ToggleSwitch as ToggleSwitchContract;
+use tiFy\Field\Driver\Button\Button;
+use tiFy\Field\Driver\Checkbox\Checkbox;
+use tiFy\Field\Driver\CheckboxCollection\CheckboxCollection;
+use tiFy\Field\Driver\Colorpicker\Colorpicker;
+use tiFy\Field\Driver\Datepicker\Datepicker;
+use tiFy\Field\Driver\DatetimeJs\DatetimeJs;
+use tiFy\Field\Driver\File\File;
+use tiFy\Field\Driver\FileJs\FileJs;
+use tiFy\Field\Driver\Hidden\Hidden;
+use tiFy\Field\Driver\Label\Label;
+use tiFy\Field\Driver\Number\Number;
+use tiFy\Field\Driver\NumberJs\NumberJs;
+use tiFy\Field\Driver\Password\Password;
+use tiFy\Field\Driver\PasswordJs\PasswordJs;
+use tiFy\Field\Driver\Radio\Radio;
+use tiFy\Field\Driver\RadioCollection\RadioCollection;
+use tiFy\Field\Driver\Repeater\Repeater;
+use tiFy\Field\Driver\Required\Required;
+use tiFy\Field\Driver\Select\Select;
+use tiFy\Field\Driver\SelectImage\SelectImage;
+use tiFy\Field\Driver\SelectJs\SelectJs;
+use tiFy\Field\Driver\Submit\Submit;
+use tiFy\Field\Driver\Suggest\Suggest;
+use tiFy\Field\Driver\Text\Text;
+use tiFy\Field\Driver\Textarea\Textarea;
+use tiFy\Field\Driver\TextRemaining\TextRemaining;
+use tiFy\Field\Driver\Tinymce\Tinymce;
+use tiFy\Field\Driver\ToggleSwitch\ToggleSwitch;
 use tiFy\Support\Proxy\View;
 
 class FieldServiceProvider extends ServiceProvider
@@ -76,7 +70,7 @@ class FieldServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'field',
-        'field.viewer',
+        'field.view-engine',
         ButtonContract::class,
         CheckboxContract::class,
         CheckboxCollectionContract::class,
@@ -113,20 +107,20 @@ class FieldServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->getContainer()->share('field', function () {
-            return new Field($this->getContainer());
+            return new Field(config('field', []), $this->getContainer());
         });
 
-        $this->registerFactories();
+        $this->registerDefaultDrivers();
 
-        $this->registerViewer();
+        $this->registerViewEngine();
     }
 
     /**
-     * Déclaration des controleurs de portions d'affichage.
+     * Déclaration des pilotes par défaut.
      *
      * @return void
      */
-    public function registerFactories(): void
+    public function registerDefaultDrivers(): void
     {
         $this->getContainer()->add(ButtonContract::class, function () {
             return new Button();
@@ -242,41 +236,14 @@ class FieldServiceProvider extends ServiceProvider
     }
 
     /**
-     * Déclaration du controleur d'affichage.
+     * Déclaration du moteur d'affichage.
      *
      * @return void
      */
-    public function registerViewer(): void
+    public function registerViewEngine(): void
     {
-        $this->getContainer()->add('field.viewer', function (FieldDriver $driver) {
-            /** @var FieldContract $manager */
-            $manager = $this->getContainer()->get('field');
-
-            $defaultConfig = config('field._default.viewer', []);
-
-            if (isset($defaultConfig['directory'])) {
-                $defaultConfig['directory'] = rtrim($defaultConfig['directory'], '/') . '/' . $driver->getAlias();
-
-                if (!file_exists($defaultConfig['directory'])) {
-                    unset($defaultConfig['directory']);
-                }
-            }
-
-            if (isset($defaultConfig['override_dir'])) {
-                $defaultConfig['override_dir'] = rtrim($defaultConfig['override_dir'], '/') . '/' . $driver->getAlias();
-
-                if (!file_exists($defaultConfig['override_dir'])) {
-                    unset($defaultConfig['override_dir']);
-                }
-            }
-
-            $config = config('field.' . $driver->getAlias() . '.viewer', []);
-
-            return View::getPlatesEngine(array_merge([
-                'directory' => $manager->resourcesDir("/views/{$driver->getAlias()}"),
-                'factory'   => FieldView::class,
-                'field'     => $driver,
-            ], $defaultConfig, $config, $driver->get('viewer', [])));
+        $this->getContainer()->add('field.view-engine', function () {
+            return View::getPlatesEngine();
         });
     }
 }

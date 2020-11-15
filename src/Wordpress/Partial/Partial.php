@@ -2,50 +2,62 @@
 
 namespace tiFy\Wordpress\Partial;
 
-use tiFy\Contracts\Partial\{
-    Accordion as AccordionContract,
-    Breadcrumb as BreadcrumbContract,
-    CookieNotice as CookieNoticeContract,
-    CurtainMenu as CurtainMenuContract,
-    Dropdown as DropdownContract,
-    Downloader as DownloaderContract,
-    Holder as HolderContract,
-    ImageLightbox as ImageLightboxContract,
-    Modal as ModalContract,
-    Notice as NoticeContract,
-    Pagination as PaginationContract,
-    Partial as Manager,
-    Pdfviewer as PdfviewerContract,
-    Sidebar as SidebarContract,
-    Slider as SliderContract,
-    Spinner as SpinnerContract,
-    Tab as TabContract,
-    Table as TableContract
-};
+use Exception;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\Partial\Accordion as AccordionContract;
+use tiFy\Contracts\Partial\Breadcrumb as BreadcrumbContract;
+use tiFy\Contracts\Partial\CookieNotice as CookieNoticeContract;
+use tiFy\Contracts\Partial\CurtainMenu as CurtainMenuContract;
+use tiFy\Contracts\Partial\Dropdown as DropdownContract;
+use tiFy\Contracts\Partial\Downloader as DownloaderContract;
+use tiFy\Contracts\Partial\Holder as HolderContract;
+use tiFy\Contracts\Partial\ImageLightbox as ImageLightboxContract;
+use tiFy\Contracts\Partial\Modal as ModalContract;
+use tiFy\Contracts\Partial\Notice as NoticeContract;
+use tiFy\Contracts\Partial\Pagination as PaginationContract;
+use tiFy\Contracts\Partial\Partial as Manager;
+use tiFy\Contracts\Partial\Pdfviewer as PdfviewerContract;
+use tiFy\Contracts\Partial\Sidebar as SidebarContract;
+use tiFy\Contracts\Partial\Slider as SliderContract;
+use tiFy\Contracts\Partial\Spinner as SpinnerContract;
+use tiFy\Contracts\Partial\Tab as TabContract;
+use tiFy\Contracts\Partial\Table as TableContract;
 use tiFy\Wordpress\Contracts\Partial\MediaLibrary as MediaLibraryContract;
-use tiFy\Wordpress\Partial\Driver\{
-    Accordion\Accordion,
-    Breadcrumb\Breadcrumb,
-    CookieNotice\CookieNotice,
-    CurtainMenu\CurtainMenu,
-    Dropdown\Dropdown,
-    Downloader\Downloader,
-    Holder\Holder,
-    ImageLightbox\ImageLightbox,
-    Modal\Modal,
-    MediaLibrary\MediaLibrary,
-    Notice\Notice,
-    Pagination\Pagination,
-    Pdfviewer\Pdfviewer,
-    Sidebar\Sidebar,
-    Slider\Slider,
-    Spinner\Spinner,
-    Tab\Tab,
-    Table\Table,
-};
+use tiFy\Wordpress\Partial\Driver\Accordion\Accordion;
+use tiFy\Wordpress\Partial\Driver\Breadcrumb\Breadcrumb;
+use tiFy\Wordpress\Partial\Driver\CookieNotice\CookieNotice;
+use tiFy\Wordpress\Partial\Driver\CurtainMenu\CurtainMenu;
+use tiFy\Wordpress\Partial\Driver\Dropdown\Dropdown;
+use tiFy\Wordpress\Partial\Driver\Downloader\Downloader;
+use tiFy\Wordpress\Partial\Driver\Holder\Holder;
+use tiFy\Wordpress\Partial\Driver\ImageLightbox\ImageLightbox;
+use tiFy\Wordpress\Partial\Driver\Modal\Modal;
+use tiFy\Wordpress\Partial\Driver\MediaLibrary\MediaLibrary;
+use tiFy\Wordpress\Partial\Driver\Notice\Notice;
+use tiFy\Wordpress\Partial\Driver\Pagination\Pagination;
+use tiFy\Wordpress\Partial\Driver\Pdfviewer\Pdfviewer;
+use tiFy\Wordpress\Partial\Driver\Sidebar\Sidebar;
+use tiFy\Wordpress\Partial\Driver\Slider\Slider;
+use tiFy\Wordpress\Partial\Driver\Spinner\Spinner;
+use tiFy\Wordpress\Partial\Driver\Tab\Tab;
+use tiFy\Wordpress\Partial\Driver\Table\Table;
 
 class Partial
 {
+    /**
+     * Instance du conteneur d'injection de dépendances.
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * Définition des pilotes spécifiques à Wordpress.
+     * @var array
+     */
+    protected $drivers = [
+        'media-library' => MediaLibraryContract::class,
+    ];
+
     /**
      * Instance du gestionnaire des portions d'affichage.
      * @var Manager
@@ -53,20 +65,46 @@ class Partial
     protected $manager;
 
     /**
-     * CONSTRUCTEUR
-     *
      * @param Manager $manager Instance du gestionnaire des portions d'affichage.
      *
      * @return void
+     *
+     * @throws Exception
      */
     public function __construct(Manager $manager)
     {
         $this->manager = $manager;
+        $this->container = $this->manager->getContainer();
 
+        $this->registerDrivers();
         $this->registerOverride();
 
-        $this->manager->registerDefaults();
-        $this->manager->set('media-library', app()->get(MediaLibraryContract::class));
+        $this->manager->boot();
+        foreach ($this->drivers as $name => $alias) {
+            $this->manager->register($name, $this->getContainer()->get($alias));
+        }
+    }
+
+    /**
+     * Récupération du conteneur d'injection de dépendance.
+     *
+     * @return Container
+     */
+    protected function getContainer(): Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * Déclaration des pilotes spécifiques à Wordpress.
+     *
+     * @return void
+     */
+    public function registerDrivers(): void
+    {
+        $this->getContainer()->add(MediaLibraryContract::class, function () {
+            return new MediaLibrary();
+        });
     }
 
     /**
@@ -76,75 +114,71 @@ class Partial
      */
     public function registerOverride(): void
     {
-        app()->add(AccordionContract::class, function () {
+        $this->getContainer()->add(AccordionContract::class, function () {
             return new Accordion();
         });
 
-        app()->add(BreadcrumbContract::class, function () {
+        $this->getContainer()->add(BreadcrumbContract::class, function () {
             return new Breadcrumb();
         });
 
-        app()->add(CookieNoticeContract::class, function () {
+        $this->getContainer()->add(CookieNoticeContract::class, function () {
             return new CookieNotice();
         });
 
-        app()->add(CurtainMenuContract::class, function () {
+        $this->getContainer()->add(CurtainMenuContract::class, function () {
             return new CurtainMenu();
         });
 
-        app()->add(DropdownContract::class, function () {
+        $this->getContainer()->add(DropdownContract::class, function () {
             return new Dropdown();
         });
 
-        app()->add(DownloaderContract::class, function () {
+        $this->getContainer()->add(DownloaderContract::class, function () {
             return new Downloader();
         });
 
-        app()->add(HolderContract::class, function () {
+        $this->getContainer()->add(HolderContract::class, function () {
             return new Holder();
         });
 
-        app()->add(ImageLightboxContract::class, function () {
+        $this->getContainer()->add(ImageLightboxContract::class, function () {
             return new ImageLightbox();
         });
 
-        app()->add(MediaLibraryContract::class, function () {
-            return new MediaLibrary();
-        });
-
-        app()->add(ModalContract::class, function () {
+        $this->getContainer()->add(ModalContract::class, function () {
             return new Modal();
         });
 
-        app()->add(NoticeContract::class, function () {
+        $this->getContainer()->add(NoticeContract::class, function () {
             return new Notice();
         });
 
-        app()->add(PaginationContract::class, function () {
+        $this->getContainer()->add(PaginationContract::class, function () {
             return new Pagination();
         });
 
-        app()->add(PdfviewerContract::class, function () {
+        $this->getContainer()->add(PdfviewerContract::class, function () {
             return new Pdfviewer();
         });
 
-        app()->add(SidebarContract::class, function () {
+        $this->getContainer()->add(SidebarContract::class, function () {
             return new Sidebar();
         });
 
-        app()->add(SliderContract::class, function () {
+        $this->getContainer()->add(SliderContract::class, function () {
             return new Slider();
         });
 
-        app()->add(SpinnerContract::class, function () {
+        $this->getContainer()->add(SpinnerContract::class, function () {
             return new Spinner();
         });
 
-        app()->add(TabContract::class, function () {
+        $this->getContainer()->add(TabContract::class, function () {
             return new Tab();
         });
 
-        app()->add(TableContract::class, function () {
+        $this->getContainer()->add(TableContract::class, function () {
             return new Table();
         });
     }

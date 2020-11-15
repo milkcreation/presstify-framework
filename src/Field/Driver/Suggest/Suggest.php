@@ -171,7 +171,7 @@ class Suggest extends FieldDriver implements SuggestContract
             })->map(function ($label, $value) {
                 return [
                     'alt'   => (string)$value,
-                    'label' => (string)$this->viewer('item-label', compact('label', 'value')),
+                    'label' => (string)$this->view('item-label', compact('label', 'value')),
                     'value' => (string)$value,
                 ];
             })->all();

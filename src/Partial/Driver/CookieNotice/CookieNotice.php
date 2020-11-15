@@ -141,7 +141,7 @@ class CookieNotice extends PartialDriver implements CookieNoticeContract
 
         $args['attrs']['data-toggle'] = 'notice.trigger';
 
-        return (string)$this->manager->get('tag', $args);
+        return (string)$this->partial()->get('tag', $args);
     }
 
     /**

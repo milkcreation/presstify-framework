@@ -9,12 +9,8 @@ abstract class FieldDriver extends BaseFieldDriver
     /**
      * @inheritDoc
      */
-    public function viewer(?string $view = null, array $data = [])
+    public function viewDirectory(): string
     {
-        if (!$this->viewer && !$this->get('viewer.directory')) {
-            $this->set('viewer.directory', __DIR__ . '/Resources/views/' . $this->getAlias());
-        }
-
-        return func_num_args() === 0 ? parent::viewer() : parent::viewer($view, $data);
+        return __DIR__ . '/Resources/views/' . $this->getAlias();
     }
 }

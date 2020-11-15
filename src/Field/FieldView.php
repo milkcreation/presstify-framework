@@ -39,21 +39,21 @@ class FieldView extends PlatesFactory implements FieldViewContract
     /**
      * @inheritDoc
      */
-    public function __call($method, $parameters)
+    public function __call($name, $args)
     {
-        if (in_array($method, $this->mixins)) {
+        if (in_array($name, $this->mixins)) {
             try {
-                return call_user_func_array([$this->engine->params('field'), $method], $parameters);
+                $field = $this->engine->params('field');
+
+                return $field->{$name}(...$args);
             } catch (Exception $e) {
-                throw new BadMethodCallException(
-                    sprintf(
-                        __('La méthode [%s] du champ n\'est pas disponible.', 'tify'),
-                        $method
-                    )
-                );
+                throw new BadMethodCallException(sprintf(
+                    __CLASS__ . ' throws an exception during the method call [%s] with message : %s',
+                    $name, $e->getMessage()
+                ));
             }
         } else {
-            return parent::__call($method, $parameters);
+            return parent::__call($name, $args);
         }
     }
 }

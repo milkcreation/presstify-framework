@@ -137,7 +137,7 @@ class Modal extends PartialDriver implements ModalContract
             } elseif (is_string($bkClose)) {
                 $this->set('backdrop.close', $bkClose);
             } else {
-                $this->set('backdrop.close', (string)$this->viewer('backdrop-close', $this->all()));
+                $this->set('backdrop.close', (string)$this->view('backdrop-close', $this->all()));
             }
         }
 
@@ -147,7 +147,7 @@ class Modal extends PartialDriver implements ModalContract
             } elseif (is_string($close)) {
                 $this->set('close', $close);
             } else {
-                $this->set('close', (string)$this->viewer('close', $this->all()));
+                $this->set('close', (string)$this->view('close', $this->all()));
             }
         }
 
@@ -164,13 +164,13 @@ class Modal extends PartialDriver implements ModalContract
                         } elseif (is_string(${$item})) {
                             $this->set("content.{$item}", ${$item});
                         } else {
-                            $this->set("content.{$item}", (string)$this->viewer("content-{$item}", $this->all()));
+                            $this->set("content.{$item}", (string)$this->view("content-{$item}", $this->all()));
                         }
                     }
                 }
             }
         } else {
-            $this->get('content', (string)$this->viewer('content', $this->all()));
+            $this->get('content', (string)$this->view('content', $this->all()));
         }
 
         $this->set([
@@ -245,7 +245,7 @@ class Modal extends PartialDriver implements ModalContract
             $params->set('attrs.data-options', $options);
         }
 
-        return $this->viewer('trigger', $params->all());
+        return $this->view('trigger', $params->all());
     }
 
     /**
@@ -257,7 +257,7 @@ class Modal extends PartialDriver implements ModalContract
 
         return [
             'success' => true,
-            'data'    => $this->viewer('ajax-content'),
+            'data'    => $this->view('ajax-content'),
         ];
     }
 }

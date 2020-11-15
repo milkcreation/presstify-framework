@@ -2,7 +2,8 @@
 
 namespace tiFy\Partial\Driver\Breadcrumb;
 
-use tiFy\Contracts\Partial\{Breadcrumb as BreadcrumbContract, BreadcrumbCollection as BreadcrumbCollectionContract};
+use tiFy\Contracts\Partial\Breadcrumb as BreadcrumbContract;
+use tiFy\Contracts\Partial\BreadcrumbCollection as BreadcrumbCollectionContract;
 use tiFy\Partial\PartialDriver;
 
 class Breadcrumb extends PartialDriver implements BreadcrumbContract
@@ -126,11 +127,11 @@ class Breadcrumb extends PartialDriver implements BreadcrumbContract
      */
     public function main(): BreadcrumbContract
     {
-        if (is_null(self::$main)) {
-            self::$main = $this->manager()->get('breadcrumb', 'main');
+        if (is_null(static::$main)) {
+            static::$main = $this;
         }
 
-        return self::$main;
+        return static::$main;
     }
 
     /**
@@ -218,9 +219,9 @@ class Breadcrumb extends PartialDriver implements BreadcrumbContract
      */
     public function render(): string
     {
-        $obj = !is_null(self::$main) ? self::$main : $this;
+        $obj = !is_null(static::$main) ? static::$main : $this;
 
-        return $obj->fetch()->viewer('index', $obj->all());
+        return $obj->fetch()->view('index', $obj->all());
     }
 
     /**

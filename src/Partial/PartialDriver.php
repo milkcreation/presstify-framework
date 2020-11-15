@@ -3,29 +3,44 @@
 namespace tiFy\Partial;
 
 use Closure;
-use tiFy\Contracts\Partial\{Partial as Manager, PartialDriver as PartialDriverContract};
+use tiFy\Contracts\Partial\Partial;
+use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
 use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\Support\{HtmlAttrs, ParamsBag, Str};
+use tiFy\Support\HtmlAttrs;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Str;
 
 abstract class PartialDriver extends ParamsBag implements PartialDriverContract
 {
     /**
-     * Liste des attributs par défaut.
-     * @var array
+     * Alias de qualification.
+     * @var string|null
      */
-    protected static $defaults = [];
+    private $alias;
 
     /**
      * Indicateur d'initialisation.
      * @var string
      */
-    private $booted = false;
+    private $built = false;
 
     /**
-     * Alias de qualification dans le gestionnaire.
-     * @var string
+     * Indice de l'instance dans le gestionnaire.
+     * @var int
      */
-    private $alias = false;
+    private $index = 0;
+
+    /**
+     * Instance du gestionnaire.
+     * @var Partial
+     */
+    private $partial;
+
+    /**
+     * Liste des attributs par défaut.
+     * @var array
+     */
+    protected static $defaults = [];
 
     /**
      * Identifiant de qualification.
@@ -35,29 +50,36 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     protected $id = '';
 
     /**
-     * Indice de l'instance dans le gestionnaire.
-     * @var int
-     */
-    protected $index = 0;
-
-    /**
-     * Instance du gestionnaire de portions d'affichage.
-     * @var Manager
-     */
-    protected $manager;
-
-    /**
      * Instance du moteur de gabarits d'affichage.
      * @var ViewEngine
      */
-    protected $viewer;
+    protected $viewEngine;
 
     /**
      * @inheritDoc
      */
     public function __toString(): string
     {
-        return (string)$this->render();
+        return $this->render();
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return $this
+     */
+    public function build(string $alias, Partial $partial): PartialDriverContract
+    {
+        if (!$this->built) {
+            $this->alias = $alias;
+            $this->partial = $partial;
+
+            $this->boot();
+
+            $this->built = true;
+        }
+
+        return $this;
     }
 
     /**
@@ -65,7 +87,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
      */
     public function after(): void
     {
-        echo ($after = $this->get('after', '')) instanceof Closure ? call_user_func($after) : $after;
+        echo ($after = $this->get('after', '')) instanceof Closure ? $after($this) : $after;
     }
 
     /**
@@ -81,20 +103,20 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
      */
     public function before(): void
     {
-        echo ($before = $this->get('before', '')) instanceof Closure ? call_user_func($before) : $before;
+        echo ($before = $this->get('before', '')) instanceof Closure ? $before($this) : $before;
     }
 
     /**
      * @inheritDoc
      */
-    public function boot(): void {}
+    public function boot(): void { }
 
     /**
      * @inheritDoc
      */
     public function content(): void
     {
-        echo ($content = $this->get('content', '')) instanceof Closure ? call_user_func($content) : $content;
+        echo ($content = $this->get('content', '')) instanceof Closure ? $content($this) : $content;
     }
 
     /**
@@ -133,21 +155,13 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
 
     /**
      * @inheritDoc
-     */
-    public function manager(): ?Manager
-    {
-        return $this->manager;
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * @return $this
      */
     public function parse(): PartialDriverContract
     {
         $this->attributes = array_merge(
-            $this->defaults(), config("partial.driver.{$this->alias}", []), $this->attributes
+            $this->defaults(), $this->partial()->config($this->getAlias(), []), $this->attributes
         );
 
         $this->parseDefaults();
@@ -156,9 +170,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function parseAttrClass(): PartialDriverContract
     {
@@ -179,9 +191,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function parseAttrId(): PartialDriverContract
     {
@@ -193,9 +203,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function parseDefaults(): PartialDriverContract
     {
@@ -203,33 +211,12 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function parseViewer(): PartialDriverContract
     {
-        foreach($this->get('viewer', []) as $key => $value) {
-            $this->viewer()->params([$key => $value]);
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return $this
-     */
-    public function prepare(string $alias, Manager $manager): PartialDriverContract
-    {
-        if (!$this->booted) {
-            $this->alias = $alias;
-            $this->manager = $manager;
-
-            $this->boot();
-
-            $this->booted = true;
+        foreach ($this->get('viewer', []) as $key => $value) {
+            $this->view()->params([$key => $value]);
         }
 
         return $this;
@@ -238,9 +225,17 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     /**
      * @inheritDoc
      */
+    public function partial(): ?Partial
+    {
+        return $this->partial;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function render(): string
     {
-        return (string)$this->viewer('index', $this->all());
+        return $this->view('index', $this->all());
     }
 
     /**
@@ -252,9 +247,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function setId(string $id): PartialDriverContract
     {
@@ -264,9 +257,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function setIndex(int $index): PartialDriverContract
     {
@@ -278,9 +269,9 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     /**
      * @inheritDoc
      */
-    public function setViewer(ViewEngine $viewer): PartialDriverContract
+    public function setViewEngine(ViewEngine $viewer): PartialDriverContract
     {
-        $this->viewer = $viewer;
+        $this->viewEngine = $viewer;
 
         return $this;
     }
@@ -288,16 +279,52 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     /**
      * @inheritDoc
      */
-    public function viewer(?string $view = null, array $data = [])
+    public function view(?string $view = null, array $data = [])
     {
-        if (is_null($this->viewer)) {
-            $this->viewer = app()->get('partial.viewer', [$this]);
+        if (is_null($this->viewEngine)) {
+            $this->viewEngine = $this->partial()->resolve('view-engine');
+
+            $defaultConfig = $this->partial()->config('_default.viewer', []);
+
+            if (isset($defaultConfig['directory'])) {
+                $defaultConfig['directory'] = rtrim($defaultConfig['directory'], '/') . '/' . $this->getAlias();
+
+                if (!file_exists($defaultConfig['directory'])) {
+                    unset($defaultConfig['directory']);
+                }
+            }
+
+            if (isset($defaultConfig['override_dir'])) {
+                $defaultConfig['override_dir'] = rtrim($defaultConfig['override_dir'], '/') . '/' . $this->getAlias();
+
+                if (!file_exists($defaultConfig['override_dir'])) {
+                    unset($defaultConfig['override_dir']);
+                }
+            }
+
+            $config = $this->partial()->config("{$this->getAlias()}.viewer", []);
+
+            $this->viewEngine->params(array_merge([
+                'directory'    => $this->viewDirectory(),
+                'factory'      => PartialView::class,
+                'partial'      => $this
+            ], $defaultConfig, $config, $this->get('viewer', [])));
         }
 
         if (func_num_args() === 0) {
-            return $this->viewer;
+            return $this->viewEngine;
         }
 
-        return $this->viewer->render($view, $data);
+        return $this->viewEngine->render($view, $data);
+    }
+
+    /**
+     * Chemin absolu du répertoire des gabarits d'affichage.
+     *
+     * @return string
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partial()->resources("/views/{$this->getAlias()}");
     }
 }
