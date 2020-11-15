@@ -3,28 +3,24 @@
 namespace tiFy\Metabox;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Metabox\{
-    MetaboxContext as MetaboxContextContract,
-    MetaboxDriver as MetaboxDriverContract,
-    MetaboxManager as MetaboxManagerContract,
-    MetaboxScreen as MetaboxScreenContract,
-    MetaboxView as MetaboxViewContract
-};
+use tiFy\Contracts\Metabox\MetaboxContext as MetaboxContextContract;
+use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
+use tiFy\Contracts\Metabox\MetaboxManager as MetaboxManagerContract;
+use tiFy\Contracts\Metabox\MetaboxScreen as MetaboxScreenContract;
+use tiFy\Contracts\Metabox\MetaboxView as MetaboxViewContract;
 use tiFy\Metabox\Context\TabContext;
-use tiFy\Metabox\Driver\{
-    Color\Color as ColorDriver,
-    CustomHeader\CustomHeader as CustomHeaderDriver,
-    Excerpt\Excerpt as ExcerptDriver,
-    Filefeed\Filefeed as FilefeedDriver,
-    Icon\Icon as IconDriver,
-    Imagefeed\Imagefeed as ImagefeedDriver,
-    Order\Order as OrderDriver,
-    Postfeed\Postfeed as PostfeedDriver,
-    RelatedTerm\RelatedTerm as RelatedTermDriver,
-    Slidefeed\Slidefeed as SlidefeedDriver,
-    Subtitle\Subtitle as SubtitleDriver,
-    Videofeed\Videofeed as VideofeedDriver
-};
+use tiFy\Metabox\Driver\Color\Color as ColorDriver;
+use tiFy\Metabox\Driver\CustomHeader\CustomHeader as CustomHeaderDriver;
+use tiFy\Metabox\Driver\Excerpt\Excerpt as ExcerptDriver;
+use tiFy\Metabox\Driver\Filefeed\Filefeed as FilefeedDriver;
+use tiFy\Metabox\Driver\Icon\Icon as IconDriver;
+use tiFy\Metabox\Driver\Imagefeed\Imagefeed as ImagefeedDriver;
+use tiFy\Metabox\Driver\Order\Order as OrderDriver;
+use tiFy\Metabox\Driver\Postfeed\Postfeed as PostfeedDriver;
+use tiFy\Metabox\Driver\RelatedTerm\RelatedTerm as RelatedTermDriver;
+use tiFy\Metabox\Driver\Slidefeed\Slidefeed as SlidefeedDriver;
+use tiFy\Metabox\Driver\Subtitle\Subtitle as SubtitleDriver;
+use tiFy\Metabox\Driver\Videofeed\Videofeed as VideofeedDriver;
 use tiFy\Support\Proxy\View;
 
 class MetaboxServiceProvider extends ServiceProvider
@@ -162,29 +158,31 @@ class MetaboxServiceProvider extends ServiceProvider
             /** @var MetaboxManagerContract $manager */
             $manager = $this->getContainer()->get('metabox');
 
-            $config = config('metabox.viewer', []);
+            $defaultConfig = config('metabox._default.viewer', []);
 
-            if (isset($config['directory'])) {
-                $config['directory'] = rtrim($config['directory'], '/') . '/' . $driver->getAlias();
+            if (isset($defaultConfig['directory'])) {
+                $defaultConfig['directory'] = rtrim($defaultConfig['directory'], '/') . '/' . $driver->getAlias();
 
-                if (!file_exists($config['directory'])) {
-                    unset($config['directory']);
+                if (!file_exists($defaultConfig['directory'])) {
+                    unset($defaultConfig['directory']);
                 }
             }
 
-            if (isset($config['override_dir'])) {
-                $config['override_dir'] = rtrim($config['override_dir'], '/') . '/' . $driver->getAlias();
+            if (isset($defaultConfig['override_dir'])) {
+                $defaultConfig['override_dir'] = rtrim($defaultConfig['override_dir'], '/') . '/' . $driver->getAlias();
 
-                if (!file_exists($config['override_dir'])) {
-                    unset($config['override_dir']);
+                if (!file_exists($defaultConfig['override_dir'])) {
+                    unset($defaultConfig['override_dir']);
                 }
             }
+
+            $config = config('metabox.' . $driver->getAlias() . '.viewer', []);
 
             return View::getPlatesEngine(array_merge([
                 'directory'    => $manager->resourcesDir("/views/driver/{$driver->getAlias()}"),
                 'factory'      => MetaboxView::class,
                 'metabox'      => $driver,
-            ], $config, $driver->get('viewer', [])));
+            ], $defaultConfig, $config, $driver->get('viewer', [])));
         });
     }
 }
