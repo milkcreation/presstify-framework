@@ -2,10 +2,14 @@
 
 ## [v2.0.358 (2020-11-16)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.358...v2.0.358)
 
+### Fixed
+
 - Correctifs réécriture Field + Partial
 
 
 ## [v2.0.357 (2020-11-15)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.357...v2.0.357)
+
+### Changed 
 
 - Réécriture Optimisation Field + Partial
 
