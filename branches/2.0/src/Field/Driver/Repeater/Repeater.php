@@ -145,8 +145,6 @@ class Repeater extends FieldDriver implements RepeaterContract
      */
     public function parseDefaults(): FieldDriverContract
     {
-        $this->parseViewer();
-
         return $this;
     }
 

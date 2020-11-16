@@ -207,19 +207,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
      */
     public function parseDefaults(): PartialDriverContract
     {
-        return $this->parseAttrId()->parseAttrClass()->parseViewer();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parseViewer(): PartialDriverContract
-    {
-        foreach ($this->get('viewer', []) as $key => $value) {
-            $this->view()->params([$key => $value]);
-        }
-
-        return $this;
+        return $this->parseAttrId()->parseAttrClass();
     }
 
     /**

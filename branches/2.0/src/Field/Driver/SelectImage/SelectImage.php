@@ -62,8 +62,6 @@ class SelectImage extends FieldDriver implements SelectImageContract
      */
     public function parseDefaults(): FieldDriverContract
     {
-        $this->parseViewer();
-
         return $this;
     }
 }

@@ -253,7 +253,11 @@ class Modal extends PartialDriver implements ModalContract
      */
     public function xhrResponse(...$args): array
     {
-        $this->set('viewer', Request::input('viewer', []))->parseViewer();
+        $viewer = Request::input('viewer', []);
+
+        foreach ($viewer as $key => $value) {
+            $this->view()->params([$key => $value]);
+        }
 
         return [
             'success' => true,
