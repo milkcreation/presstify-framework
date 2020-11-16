@@ -257,19 +257,7 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
      */
     public function parseDefaults(): FieldDriverContract
     {
-        return $this->parseAttrId()->parseAttrClass()->parseAttrName()->parseAttrValue()->parseViewer();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parseViewer(): FieldDriverContract
-    {
-        foreach ($this->get('viewer', []) as $key => $value) {
-            $this->view()->params([$key => $value]);
-        }
-
-        return $this;
+        return $this->parseAttrId()->parseAttrClass()->parseAttrName()->parseAttrValue();
     }
 
     /**

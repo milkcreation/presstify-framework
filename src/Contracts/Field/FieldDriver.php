@@ -144,13 +144,6 @@ interface FieldDriver extends ParamsBag
     public function parseDefaults(): FieldDriver;
 
     /**
-     * Traitement des attributs de configuration du pilote d'affichage.
-     *
-     * @return $this
-     */
-    public function parseViewer(): FieldDriver;
-
-    /**
      * Affichage.
      *
      * @return string

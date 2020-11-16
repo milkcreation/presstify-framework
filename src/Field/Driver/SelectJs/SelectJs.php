@@ -206,8 +206,6 @@ class SelectJs extends FieldDriver implements SelectJsContract
      */
     public function parseDefaults(): FieldDriverContract
     {
-        $this->parseViewer();
-
         return $this;
     }
 

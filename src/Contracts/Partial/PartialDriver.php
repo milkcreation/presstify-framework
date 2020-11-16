@@ -109,13 +109,6 @@ interface PartialDriver extends ParamsBag
     public function parseDefaults(): PartialDriver;
 
     /**
-     * Traitement des attributs de configuration du pilote d'affichage.
-     *
-     * @return $this
-     */
-    public function parseViewer(): PartialDriver;
-
-    /**
      * Récupération du gestionnaire.
      *
      * @return Partial|null
