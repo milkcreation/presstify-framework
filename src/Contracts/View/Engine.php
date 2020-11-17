@@ -7,6 +7,13 @@ use tiFy\Contracts\Support\ParamsBag;
 interface Engine
 {
     /**
+     * Ajout d'un répertoire de stockage des gabarits d'affichage.
+     *
+     * @return static
+     */
+    public function addPath(string $path, ?string $name = null): Engine;
+
+    /**
      * Vérification d'existance d'un gabarit d'affichage.
      *
      * @param string $name

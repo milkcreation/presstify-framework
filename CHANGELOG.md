@@ -1,5 +1,26 @@
 # Release Notes
 
+## [v2.0.359 (2020-11-17)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.359...v2.0.359)
+
+### Changed
+
+- `assets/field/suggest/scss/styles.scss` : Style du picker item Post
+- `assets/form/scss/_variables.scss` : Réécriture logique des variables
+- `assets/partial/notice/scss/_variables.scss` : Correspondance avec les variables de form
+- `src/Support/Proxy/Partial.php` : Methode config de surchage de configuration
+
+### Added
+
+- `assets/form` : Déplacement depuis theme
+- `src/Contracts/View/Engine.php` : Ajout de la méthode addPath
+- `src/Wordpress/Field/Resources/views/suggest/post-picker_item.php` : Affichage du picker par défaut des recherches suggest post
+
+### Fixed 
+
+- `assets/metabox/driver/postfeed/js/scripts.js` : Réinitialisation de la valeur de recherche à la selection
+- `src/Metabox/Resources/views/driver/postfeed/item.php` : Stockage des éléments dans un sous-ensemble items pour permettre l'enregistrement de valeur complémentaires
+- `src/Wordpress/Field/Driver/Suggest/Suggest.php` : Correctif de post + test && term non testé + user non testé
+
 ## [v2.0.358 (2020-11-16)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.358...v2.0.358)
 
 ### Fixed

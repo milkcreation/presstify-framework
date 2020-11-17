@@ -2,16 +2,13 @@
 
 namespace tiFy\View\Engine;
 
-use Exception;
-use League\Plates\{Engine as BasePlatesEngine, Template\Folder};
-use LogicException;
-use Throwable;
-use tiFy\Contracts\View\{
-    Engine as BaseEngineContract,
-    PlatesEngine as PlatesEngineContract,
-    PlatesFactory as PlatesFactoryContract,
-    View as ViewContract
-};
+use Exception, LogicException, Throwable;
+use League\Plates\Engine as BasePlatesEngine;
+use League\Plates\Template\Folder;
+use tiFy\Contracts\View\Engine as BaseEngineContract;
+use tiFy\Contracts\View\PlatesEngine as PlatesEngineContract;
+use tiFy\Contracts\View\PlatesFactory as PlatesFactoryContract;
+use tiFy\Contracts\View\View as ViewContract;
 use tiFy\View\Factory\PlatesFactory;
 use tiFy\Support\ParamsBag;
 
@@ -41,6 +38,20 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
         $this->manager = $manager;
 
         parent::__construct(null);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function addPath(string $path, ?string $name = null): BaseEngineContract
+    {
+        if (!$name) {
+            $this->addFolder('_override', $path, true);
+        } else {
+            $this->addFolder($name, $path);
+        }
+
+        return $this;
     }
 
     /**
@@ -83,9 +94,9 @@ class PlatesEngine extends BasePlatesEngine implements PlatesEngineContract
      */
     public function getFolder(string $name): ?Folder
     {
-        try{
+        try {
             return $this->getFolders()->get($name);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }

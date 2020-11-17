@@ -10,7 +10,7 @@ use tiFy\Wordpress\Contracts\Field\Suggest as SuggestContract;
 use tiFy\Wordpress\Query\QueryPost;
 use tiFy\Wordpress\Query\QueryTerm;
 use tiFy\Wordpress\Query\QueryUser;
-use WP_Query;
+use WP_Post, WP_Query, WP_Term, WP_Term_Query, WP_User, WP_User_Query;
 
 class Suggest extends BaseSuggest implements SuggestContract
 {
@@ -66,35 +66,39 @@ class Suggest extends BaseSuggest implements SuggestContract
 
         $wpQuery = new WP_Query();
 
-        $query_args = array_merge(['post_type' => 'any'], Request::input('query_args', []), [
-            's'              => $term,
-            'paged'          => $paged,
+        $query_args = array_merge([
+            'post_type'      => 'any',
             'posts_per_page' => $per_page,
+        ], Request::input('query_args', []), [
+            's'     => $term,
+            'paged' => $paged,
         ]);
 
-        if ($ids = $wpQuery->query(array_merge($args, ['s' => $term]))) {
-            $posts = QueryPost::fetchFromIds($query_args);
+        if ($posts = $wpQuery->query($query_args)) {
             $count = count($posts);
             $found = $wpQuery->found_posts;
 
-            $items = (new Collection($posts))->map(function (QueryPost $item) {
+            $this->view()->addPath(dirname(dirname(__DIR__)) . '/Resources/views/' . $this->getAlias());
+
+            $items = (new Collection($posts))->map(function (WP_Post $wp_post) {
+                $post = QueryPost::create($wp_post);
+
                 return [
-                    'alt'   => (string)$item->getId(),
-                    'label' => (string)$item->getTitle(),
-                    'value' => (string)$item->getTitle(true),
+                    'alt'   => (string)$post->getId(),
+                    'label' => $this->view('post-picker_item', compact('post')),
+                    'value' => (string)$post->getTitle(true),
                 ];
             })->all();
 
-            $more = (($count >= $per_page) && ($found > ($paged * $count))) ? [
-                'data'  => [
+            $more = (($per_page > 0) && ($count >= $per_page) && ($found > ($paged * $count))) ? [
+                'data'   => [
                     '_paged' => ++$paged,
                 ],
-                'count' => $count,
-                'found' => $found,
+                'count'  => $count,
+                'found'  => $found,
                 'loader' => true,
-                'html'   => '+'
+                'html'   => '+',
             ] : null;
-
 
             return [
                 'success' => true,
@@ -110,24 +114,55 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponseTermQuery(...$args): array
     {
-        $query_args = array_merge(Request::input('query_args', []), ['search' => Request::input('_term', '')]);
+        $term = Request::input('_term', '');
+        $paged = Request::input('_paged', 1);
+        $per_page = 20;
 
-        $terms = QueryTerm::fetchFromArgs($query_args);
+        $wpTermQuery = new WP_Term_Query();
 
-        $items = (new Collection($terms))->map(function (QueryTerm $item) {
+        $query_args = array_merge([
+            'number' => $per_page,
+        ], Request::input('query_args', []), [
+            'search' => '*' . $term . '*',
+            'offset' => ($paged - 1) * $per_page,
+        ]);
+
+        if ($terms = $wpTermQuery->query($query_args)) {
+            $count = count($terms);
+            $found = new WP_Term_Query(array_merge($query_args, [
+                'count'  => false,
+                'number' => 0,
+                'offset' => 0,
+                'fields' => 'count',
+            ]));
+
+            $items = (new Collection($terms))->map(function (WP_Term $wp_term) {
+                $term = QueryTerm::create($wp_term);
+
+                return [
+                    'alt'   => (string)$term->getId(),
+                    'label' => (string)$term->getName(),
+                    'value' => (string)$term->getName(),
+                ];
+            })->all();
+
+            $more = (($per_page > 0) && ($count >= $per_page) && ($found > ($paged * $count))) ? [
+                'data'   => [
+                    '_paged' => ++$paged,
+                ],
+                'count'  => $count,
+                'found'  => $found,
+                'loader' => true,
+                'html'   => '+',
+            ] : null;
+
             return [
-                'alt'   => (string)$item->getId(),
-                'label' => (string)$item->getName(),
-                'value' => (string)$item->getName(),
+                'success' => true,
+                'data'    => compact('items', 'more'),
             ];
-        })->all();
-
-        return [
-            'success' => true,
-            'data'    => [
-                'items' => $items,
-            ],
-        ];
+        } else {
+            return ['success' => false];
+        }
     }
 
     /**
@@ -135,25 +170,49 @@ class Suggest extends BaseSuggest implements SuggestContract
      */
     public function xhrResponseUserQuery(...$args): array
     {
-        $query_args = array_merge(Request::input('query_args', []), [
-            'search' => ($term = Request::input('_term', '')) ? '*' . trim($term, '*') . '*' : '',
+        $term = Request::input('_term', '');
+        $paged = Request::input('_paged', 1);
+        $per_page = 20;
+
+        $query_args = array_merge([
+            'number' => $per_page,
+        ], Request::input('query_args', []), [
+            'search' => '*' . $term . '*',
+            'offset' => ($paged - 1) * $per_page,
         ]);
 
-        $users = QueryUser::fetchFromArgs($query_args);
+        $wpUserQuery = new WP_User_Query($query_args);
 
-        $items = (new Collection($users))->map(function (QueryUser $item) {
+        if ($users = $wpUserQuery->get_results()) {
+            $count = count($users);
+            $found = $wpUserQuery->get_total();
+
+            $items = (new Collection($users))->map(function (WP_User $wp_user) {
+                $user = QueryUser::create($wp_user);
+
+                return [
+                    'alt'   => (string)$user->getId(),
+                    'label' => (string)$user->getDisplayName(),
+                    'value' => (string)$user->getDisplayName(),
+                ];
+            })->all();
+
+            $more = (($per_page > 0) && ($count >= $per_page) && ($found > ($paged * $count))) ? [
+                'data'   => [
+                    '_paged' => ++$paged,
+                ],
+                'count'  => $count,
+                'found'  => $found,
+                'loader' => true,
+                'html'   => '+',
+            ] : null;
+
             return [
-                'alt'   => (string)$item->getId(),
-                'label' => (string)$item->getDisplayName(),
-                'value' => (string)$item->getDisplayName(),
+                'success' => true,
+                'data'    => compact('items', 'more'),
             ];
-        })->all();
-
-        return [
-            'success' => true,
-            'data'    => [
-                'items' => $items,
-            ],
-        ];
+        } else {
+            return ['success' => false];
+        }
     }
 }

@@ -18,6 +18,6 @@
     'attrs' => [
         'data-control' => 'metabox-postfeed.item.input',
     ],
-    'name'  => $this->name() . '[]',
+    'name'  => $this->name() . '[items][]',
     'value' => $item->getId()
 ]);
