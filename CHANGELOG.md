@@ -1,5 +1,16 @@
 # Release Notes
 
+## [v2.0.360 (2020-11-17)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.360...v2.0.360)
+
+### Changed
+
+- `src/Support/Proxy/Field.php` : Methode config de surcharge de configuration
+
+### Added
+
+- Creation du partial BurgerButton
+
+
 ## [v2.0.359 (2020-11-17)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.359...v2.0.359)
 
 ### Changed

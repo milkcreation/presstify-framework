@@ -5,6 +5,7 @@ namespace tiFy\Partial;
 use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Partial\Accordion as AccordionContract;
 use tiFy\Contracts\Partial\Breadcrumb as BreadcrumbContract;
+use tiFy\Contracts\Partial\BurgerButton as BurgerButtonContract;
 use tiFy\Contracts\Partial\CookieNotice as CookieNoticeContract;
 use tiFy\Contracts\Partial\CurtainMenu as CurtainMenuContract;
 use tiFy\Contracts\Partial\Dropdown as DropdownContract;
@@ -26,6 +27,7 @@ use tiFy\Contracts\Partial\Table as TableContract;
 use tiFy\Contracts\Partial\Tag as TagContract;
 use tiFy\Partial\Driver\Accordion\Accordion;
 use tiFy\Partial\Driver\Breadcrumb\Breadcrumb;
+use tiFy\Partial\Driver\BurgerButton\BurgerButton;
 use tiFy\Partial\Driver\CookieNotice\CookieNotice;
 use tiFy\Partial\Driver\CurtainMenu\CurtainMenu;
 use tiFy\Partial\Driver\Dropdown\Dropdown;
@@ -59,6 +61,7 @@ class PartialServiceProvider extends ServiceProvider
         'partial.view-engine',
         AccordionContract::class,
         BreadcrumbContract::class,
+        BurgerButton::class,
         CookieNoticeContract::class,
         CurtainMenuContract::class,
         DropdownContract::class,
@@ -106,6 +109,10 @@ class PartialServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(BreadcrumbContract::class, function () {
             return new Breadcrumb();
+        });
+
+        $this->getContainer()->add(BurgerButtonContract::class, function () {
+            return new BurgerButton();
         });
 
         $this->getContainer()->add(CookieNoticeContract::class, function () {

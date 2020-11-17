@@ -8,6 +8,7 @@ use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Partial\Accordion;
 use tiFy\Contracts\Partial\Breadcrumb;
+use tiFy\Contracts\Partial\BurgerButton;
 use tiFy\Contracts\Partial\CookieNotice;
 use tiFy\Contracts\Partial\CurtainMenu;
 use tiFy\Contracts\Partial\Dropdown;
@@ -53,6 +54,7 @@ class Partial implements PartialContract
     private $defaultDrivers = [
         'accordion'      => Accordion::class,
         'breadcrumb'     => Breadcrumb::class,
+        'burger-button'  => BurgerButton::class,
         'cookie-notice'  => CookieNotice::class,
         'curtain-menu'   => CurtainMenu::class,
         'dropdown'       => Dropdown::class,
