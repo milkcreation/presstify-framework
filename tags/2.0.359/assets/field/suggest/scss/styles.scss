@@ -1,0 +1,129 @@
+// Variables
+@import "~presstify-framework/field/variables";
+
+// Dépendances
+@import "~jquery-ui/themes/base/core.css";
+@import "~jquery-ui/themes/base/theme.css";
+@import "~jquery-ui/themes/base/menu.css";
+@import "~jquery-ui/themes/base/autocomplete.css";
+
+.FieldSuggest-wrap {
+  position:relative;
+}
+
+.FieldSuggest {
+  width:100%;
+  padding-right:25px;
+}
+
+input.FieldSuggest.ui-autocomplete-loading {
+  background-image: none;
+}
+
+.ThemeButton--close.FieldSuggest-reset,
+.ThemeSpinner.FieldSuggest-spinner {
+  position: absolute;
+  top:50%;
+  right:5px;
+  margin-top:-8px;
+  width:16px;
+  height:16px;
+}
+
+[aria-selected="false"] > .FieldSuggest-reset {
+  display:none;
+}
+
+[aria-selected="true"] > .FieldSuggest-reset {
+  display:inherit;
+}
+
+[aria-loaded="false"] > .FieldSuggest-spinner {
+  display:none;
+}
+
+[aria-loaded="true"] > .FieldSuggest-spinner {
+  display:inherit;
+}
+
+.FieldSuggest-picker {
+  position: absolute;
+  background-color: fieldColor(white);
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 20em;
+  z-index:10;
+
+  &.hasMore {
+    .FieldSuggest-more {
+      position: relative;
+      right:0;
+      bottom:0;
+      left:0;
+      font-size:24px;
+      font-weight: bold;
+      line-height: 32px;
+      height: 32px;
+      text-align: center;
+      background-color: fieldColor(lighter);
+      z-index:5;
+
+      .ThemeSpinner {
+        width:16px;
+        height:16px;
+      }
+    }
+  }
+}
+
+.FieldSuggest-pickerItem {
+  position: relative;
+  padding: 0.5em;
+  font-size: 14px;
+  display: block;
+  line-height: 1.1;
+  cursor:pointer;
+  border-bottom: 1px solid fieldColor(light);
+
+  &::after,
+  &::before {
+    display: table;
+    content: " ";
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+.FieldSuggest-pickerItemWrapper {
+  &::before,
+  &::after {
+    display: block;
+    content: " ";
+  }
+
+  &:after {
+    clear: both;
+  }
+}
+
+.FieldSuggest-pickerItemThumbnail {
+  float: left;
+  margin-right: 10px;
+  width: 50px;
+  height: 50px;
+  display: block;
+  content: " ";
+
+  .Holder-content {
+    font-size:11px;
+  }
+}
+
+.FieldSuggest-pickerItemTitle {
+  float: left;
+  text-transform: uppercase;
+  font-size: 16px;
+  margin-bottom:5px;
+}
