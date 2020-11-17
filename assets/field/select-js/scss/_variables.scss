@@ -1,0 +1,15 @@
+// Variables
+@import "~presstify-framework/field/select/scss/variables";
+
+// Personnalisation
+$field-select-js-light-hue: $field-select-light-hue !default;
+$field-select-js-lighter-hue: $field-select-lighter-hue !default;
+$field-select-js-dark-hue: $field-select-dark-hue !default;
+$field-select-js-darker-hue: $field-select-darker-hue !default;
+$field-select-js-regular-hue: $field-select-regular-hue !default;
+$field-select-js-background-hue: $field-select-background-hue !default;
+
+$field-select-js-selected-background-color: $field-select-selected-background-color !default;
+$field-select-js-selected-color: $field-select-selected-color !default;
+$field-select-js-highlight-background-color: $field-select-highlight-background-color !default;
+$field-select-js-highlight-border-color: $field-select-highlight-border-color !default;
