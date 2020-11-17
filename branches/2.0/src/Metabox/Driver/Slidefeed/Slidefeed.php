@@ -89,7 +89,7 @@ class Slidefeed extends MetaboxDriver
         return [
             'fields' => $this->get('params.fields', []),
             'index'  => $index,
-            'name'   => $this->get('params.max', -1) === 1 ? "{$name}[]" : "{$name}[{$index}]",
+            'name'   => $this->get('params.max', -1) === 1 ? "{$name}[items][]" : "{$name}[items][{$index}]",
             'value'  => $value,
         ];
     }
@@ -164,12 +164,12 @@ class Slidefeed extends MetaboxDriver
      */
     public function render(): string
     {
-        if ($values = $this->value()) {
+        if ($values = $this->value('items')) {
             $items = [];
             array_walk($values, function ($value, $index) use (&$items) {
                 $items[] = $this->item($index, $value);
             });
-            $this->set('items', $items);
+            $this->set(compact('items'));
         }
 
         return parent::render();
