@@ -46,7 +46,7 @@ class Postfeed extends MetaboxDriver
             'classes'     => [],
             'max'         => -1,
             'suggest'     => [],
-            'placeholder' => __('Rechercher un contenu en relation', 'tify'),
+            'placeholder' => __('Recherche de contenu associé ...', 'tify'),
             'post_type'   => 'any',
             'post_status' => 'publish',
             'query_args'  => [],
@@ -110,7 +110,7 @@ class Postfeed extends MetaboxDriver
             'suggest' => [
                 'ajax'  => [
                     'data' => [
-                        'query_args' => array_merge(['posts_per_page' => -1], $this->params('query_args', []), [
+                        'query_args' => array_merge($this->params('query_args', []), [
                             'post_type'   => $this->params('post_type', 'any'),
                             'post_status' => $this->params('post_status', 'publish'),
                         ]),
@@ -120,6 +120,7 @@ class Postfeed extends MetaboxDriver
                 'attrs' => [
                     'placeholder' => $this->params('placeholder'),
                 ],
+                'reset'   => false
             ],
         ]);
 
@@ -154,8 +155,8 @@ class Postfeed extends MetaboxDriver
     {
         $items = [];
 
-        if (is_array($this->value())) {
-            foreach ($this->value() as $id) {
+        if (is_array($this->value('items'))) {
+            foreach ($this->value('items') as $id) {
                 if ($item = QueryPost::createFromId((int)$id)) {
                     $items[] = $item;
                 }

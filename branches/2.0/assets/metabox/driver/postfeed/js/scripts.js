@@ -95,7 +95,7 @@ jQuery(function ($) {
             alert(resp.data);
           } else {
             let $item = self._setItem($(resp.data).appendTo($('[data-control="' + self.control.items + '"]', self.el)));
-
+            suggest.tifySuggest('reset');
             self._trigger('add', null, $item);
           }
         });

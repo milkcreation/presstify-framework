@@ -2,7 +2,8 @@
 
 namespace tiFy\View\Engine;
 
-use tiFy\Contracts\View\{Engine as EngineContract, View as ViewContract};
+use tiFy\Contracts\View\Engine as EngineContract;
+use tiFy\Contracts\View\View as ViewContract;
 use tiFy\Support\ParamsBag;
 
 abstract class Engine implements EngineContract
@@ -18,6 +19,11 @@ abstract class Engine implements EngineContract
      * @var ViewContract|null
      */
     protected $manager;
+
+    /**
+     * @inheritDoc
+     */
+    abstract public function addPath(string $path, ?string $name = null): EngineContract;
 
     /**
      * @inheritDoc
