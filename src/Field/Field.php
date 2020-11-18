@@ -1,232 +1,323 @@
-<?php
-
-/**
- * @name Field
- * @desc Gestion de controleurs d'affichage
- * @package presstiFy
- * @namespace \tiFy\Field
- * @version 1.1
- * @subpackage Core
- * @since 1.2.596
- *
- * @author Jordy Manner <jordy@tigreblanc.fr>
- * @copyright Milkcreation
- */
+<?php declare(strict_types=1);
 
 namespace tiFy\Field;
 
-use Illuminate\Support\Arr;
-use tiFy\Apps\AppController;
-use tiFy\Components\Field\Button\Button;
-use tiFy\Components\Field\Checkbox\Checkbox;
-use tiFy\Components\Field\CheckboxCollection\CheckboxCollection;
-use tiFy\Components\Field\Colorpicker\Colorpicker;
-use tiFy\Components\Field\Crypted\Crypted;
-use tiFy\Components\Field\DatetimeJs\DatetimeJs;
-use tiFy\Components\Field\File\File;
-use tiFy\Components\Field\Hidden\Hidden;
-use tiFy\Components\Field\Label\Label;
-use tiFy\Components\Field\MediaFile\MediaFile;
-use tiFy\Components\Field\MediaImage\MediaImage;
-use tiFy\Components\Field\Number\Number;
-use tiFy\Components\Field\NumberJs\NumberJs;
-use tiFy\Components\Field\Password\Password;
-use tiFy\Components\Field\Radio\Radio;
-use tiFy\Components\Field\RadioCollection\RadioCollection;
-use tiFy\Components\Field\Repeater\Repeater;
-use tiFy\Components\Field\Select\Select;
-use tiFy\Components\Field\SelectImage\SelectImage;
-use tiFy\Components\Field\SelectJs\SelectJs;
-use tiFy\Components\Field\Submit\Submit;
-use tiFy\Components\Field\Text\Text;
-use tiFy\Components\Field\Textarea\Textarea;
-use tiFy\Components\Field\TextRemaining\TextRemaining;
-use tiFy\Components\Field\ToggleSwitch\ToggleSwitch;
+use Exception;
+use InvalidArgumentException;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\Field\Button;
+use tiFy\Contracts\Field\Checkbox;
+use tiFy\Contracts\Field\CheckboxCollection;
+use tiFy\Contracts\Field\Colorpicker;
+use tiFy\Contracts\Field\Datepicker;
+use tiFy\Contracts\Field\DatetimeJs;
+use tiFy\Contracts\Field\Field as FieldContract;
+use tiFy\Contracts\Field\FieldDriver;
+use tiFy\Contracts\Field\File;
+use tiFy\Contracts\Field\FileJs;
+use tiFy\Contracts\Field\Hidden;
+use tiFy\Contracts\Field\Label;
+use tiFy\Contracts\Field\Number;
+use tiFy\Contracts\Field\NumberJs;
+use tiFy\Contracts\Field\Password;
+use tiFy\Contracts\Field\PasswordJs;
+use tiFy\Contracts\Field\Radio;
+use tiFy\Contracts\Field\RadioCollection;
+use tiFy\Contracts\Field\Repeater;
+use tiFy\Contracts\Field\Required;
+use tiFy\Contracts\Field\Select;
+use tiFy\Contracts\Field\SelectImage;
+use tiFy\Contracts\Field\SelectJs;
+use tiFy\Contracts\Field\Submit;
+use tiFy\Contracts\Field\Suggest;
+use tiFy\Contracts\Field\Text;
+use tiFy\Contracts\Field\TextRemaining;
+use tiFy\Contracts\Field\Textarea;
+use tiFy\Contracts\Field\Tinymce;
+use tiFy\Contracts\Field\ToggleSwitch;
+use tiFy\Contracts\Filesystem\LocalFilesystem;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Storage;
 
-/**
- * Class Field
- * @package tiFy\Field
- *
- * @method static Button Button(string $id = null, array $attrs = [])
- * @method static Checkbox(string $id = null, array $attrs = [])
- * @method static CheckboxCollection(string $id = null, array $attrs = [])
- * @method static Colorpicker(string $id = null, array $attrs = [])
- * @method static Crypted(string $id = null, array $attrs = [])
- * @method static DatetimeJs(string $id = null, array $attrs = [])
- * @method static File(string $id = null, array $attrs = [])
- * @method static Hidden(string $id = null, array $attrs = [])
- * @method static Label(string $id = null, array $attrs = [])
- * @method static MediaFile(string $id = null, array $attrs = [])
- * @method static MediaImage(string $id = null, array $attrs = [])
- * @method static Number(string $id = null, array $attrs = [])
- * @method static NumberJs(string $id = null, array $attrs = [])
- * @method static Password(string $id = null, array $attrs = [])
- * @method static Radio(string $id = null, array $attrs = [])
- * @method static RadioCollection(string $id = null, array $attrs = [])
- * @method static Repeater(string $id = null, array $attrs = [])
- * @method static Select(string $id = null, array $attrs = [])
- * @method static SelectImage(string $id = null, array $attrs = [])
- * @method static SelectJs(string $id = null, array $attrs = [])
- * @method static Submit(string $id = null, array $attrs = [])
- * @method static Text(string $id = null, array $attrs = [])
- * @method static Textarea(string $id = null, array $attrs = [])
- * @method static TextRemaining(string $id = null, array $attrs = [])
- * @method static ToggleSwitch(string $id = null, array $attrs = [])
- */
-final class Field extends AppController
+class Field implements FieldContract
 {
     /**
-     * Liste des instances de champ.
-     * @var array
+     * Instance de la classe.
+     * @var static|null
      */
-    protected static $instance = [];
+    private static $instance;
 
     /**
-     * Initialisation du controleur.
+     * Indicateur d'initialisation.
+     * @var bool
+     */
+    private $booted = false;
+
+    /**
+     * Définition des pilotes par défaut.
+     * @var array
+     */
+    private $defaultDrivers = [
+        'button'              => Button::class,
+        'checkbox'            => Checkbox::class,
+        'checkbox-collection' => CheckboxCollection::class,
+        'colorpicker'         => Colorpicker::class,
+        'datepicker'          => Datepicker::class,
+        'datetime-js'         => DatetimeJs::class,
+        'file'                => File::class,
+        'file-js'             => FileJs::class,
+        'hidden'              => Hidden::class,
+        'label'               => Label::class,
+        'number'              => Number::class,
+        'number-js'           => NumberJs::class,
+        'password'            => Password::class,
+        'password-js'         => PasswordJs::class,
+        'radio'               => Radio::class,
+        'radio-collection'    => RadioCollection::class,
+        'repeater'            => Repeater::class,
+        'required'            => Required::class,
+        'select'              => Select::class,
+        'select-image'        => SelectImage::class,
+        'select-js'           => SelectJs::class,
+        'submit'              => Submit::class,
+        'suggest'             => Suggest::class,
+        'text'                => Text::class,
+        'textarea'            => Textarea::class,
+        'text-remaining'      => TextRemaining::class,
+        'tinymce'             => Tinymce::class,
+        'toggle-switch'       => ToggleSwitch::class,
+    ];
+
+    /**
+     * Liste des éléments déclarées.
+     * @var FieldDriver[]
+     */
+    private $drivers = [];
+
+    /**
+     * Instance du gestionnaire des ressources
+     * @var LocalFilesystem|null
+     */
+    private $resources;
+
+    /**
+     * Instance du gestionnaire de configuration.
+     * @var ParamsBag
+     */
+    protected $config;
+
+    /**
+     * Instance du conteneur d'injection de dépendances.
+     * @var Container|null
+     */
+    protected $container;
+
+    /**
+     * Liste des indices courant des pilotes déclarées par alias de qualification.
+     * @var int[]
+     */
+    protected $indexes = [];
+
+    /**
+     * Instances des pilotes initiés par alias de qualification et indexés par identifiant de qualification.
+     * @var FieldDriver[][]
+     */
+    protected $instances = [];
+
+    /**
+     * @param array $config
+     * @param Container|null $container
      *
      * @return void
      */
-    public function appBoot()
+    public function __construct(array $config = [], Container $container = null)
     {
-        // Déclaration des controleurs d'affichage natifs
-        foreach (glob($this->appAbsDir() . '/Components/Field/*/', GLOB_ONLYDIR) as $filename) :
-            $name = basename($filename);
+        $this->setConfig($config);
 
-            $this->register($name, "tiFy\\Components\\Field\\{$name}\\{$name}::make");
-        endforeach;
+        if (!is_null($container)) {
+            $this->setContainer($container);
+        }
 
-        do_action('tify_field_register');
+        if (!self::$instance instanceof static) {
+            self::$instance = $this;
+        }
     }
 
     /**
-     * Déclaration d'un controleur d'affichage
-     *
-     * @param string $name Nom de qualification du controleur d'affichage
-     * @param mixed $callable classe ou méthode ou fonction de rappel
-     *
-     * @return null|callable|\tiFy\Partial\AbstractFactory
+     * @inheritDoc
      */
-    public function register($name, $callable)
+    public static function instance(): FieldContract
     {
-        if ($this->appServiceHas($name)) :
-            return null;
-        endif;
+        if (self::$instance instanceof self) {
+            return self::$instance;
+        }
 
-        $alias = "tfy.field.{$name}";
-        if (is_callable($callable)) :
-            $this->appServiceAdd($alias, $callable);
-        elseif (class_exists($callable)) :
-            $this->appServiceAdd($alias, $callable);
-        else :
-            return null;
-        endif;
-
-        return $this->appServiceGet("tfy.field.{$name}");
+        throw new Exception('Unavailable Field instance');
     }
 
     /**
-     * Récupération d'un controleur d'affichage.
+     * Déclaration d'un pilote.
      *
-     * @param string $name Nom de qualification du controleur d'affichage.
+     * @param string $alias
+     * @param FieldDriver $driver
      *
-     * @return mixed|AbstractFieldItemController
+     * @throws Exception
      */
-    public function get($name)
+    private function _registerDriver(string $alias, FieldDriver $driver): void
     {
-        $alias = "tfy.field.{$name}";
-        if ($this->appServiceHas($alias)) :
-            return $this->appServiceGet($alias);
-        endif;
+        if ($alias === '_default') {
+            throw new Exception('Alias [_default] not allowed');
+        } elseif (isset($this->drivers[$alias]) || isset($this->instances[$alias]) || isset($this->indexes[$alias])) {
+            throw new Exception('Alias [%s] already assigned');
+        }
 
-        return null;
+        $this->drivers[$alias] = $driver->build($alias, $this);
+        $this->instances[$alias] = [$driver];
+        $this->indexes[$alias] = 0;
     }
 
     /**
-     * Affichage ou récupération du contenu d'un controleur natif
-     *
-     * @param string $name Nom de qualification du controleur d'affichage
-     * @param array args Liste des variables passé en arguments
-     *
-     * @return null|object
+     * @inheritDoc
      */
-    public static function __callStatic($name, $args)
+    public function boot(): FieldContract
     {
-        if (!$callable = self::appInstance()->get($name)) :
-            return null;
-        endif;
+        if (!$this->booted) {
+            $this->registerDefaultDrivers();
 
-        return call_user_func_array($callable, $args);
+            $this->booted = true;
+        }
+
+        return $this;
     }
 
     /**
-     * Vérification d'existance d'une instance d'un contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     *
-     * @return bool
+     * @inheritDoc
      */
-    public function existsInstance($classname)
+    public function get(string $alias, $idOrAttrs = null, ?array $attrs = null): ?FieldDriver
     {
-        return Arr::has(self::$instance, $classname);
+        if (!isset($this->drivers[$alias])) {
+            throw new InvalidArgumentException(sprintf('Field with alias [%s] unavailable', $alias));
+        }
+
+        if (is_array($idOrAttrs)) {
+            $attrs = $idOrAttrs;
+            $id = null;
+        } else {
+            $attrs = $attrs ?: [];
+            $id = $idOrAttrs;
+        }
+
+        if ($id) {
+            if (isset($this->instances[$alias][$id])) {
+                return $this->instances[$alias][$id];
+            }
+
+            $this->indexes[$alias]++;
+            $this->instances[$alias][$id] = clone $this->drivers[$alias];
+            $field = $this->instances[$alias][$id];
+        } else {
+            $this->indexes[$alias]++;
+            $field = clone $this->drivers[$alias];
+        }
+
+        return $field
+            ->setIndex($this->indexes[$alias])
+            ->setId($id ?? $alias . $this->indexes[$alias])
+            ->set($attrs)->parse();
     }
 
     /**
-     * Compte le nombre d'instance d'un contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     *
-     * @return int
+     * @inheritDoc
      */
-    public function countInstance($classname)
+    public function config($key = null, $default = null)
     {
-        return count(Arr::get(self::$instance, $classname, []));
+        if (!isset($this->config) || is_null($this->config)) {
+            $this->config = new ParamsBag();
+        }
+
+        if (is_string($key)) {
+            return $this->config->get($key, $default);
+        } elseif (is_array($key)) {
+            return $this->config->set($key);
+        } else {
+            return $this->config;
+        }
     }
 
     /**
-     * Définition d'une instance de contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     * @param string $hash Hashage des attributs de configuration.
-     *
-     * @return bool
+     * @inheritDoc
      */
-    public function setInstance($classname, $hash, $obj)
+    public function getContainer(): ?Container
     {
-        return Arr::set(self::$instance, "{$classname}.{$hash}", $obj);
+        return $this->container;
     }
 
     /**
-     * Définition d'une instance de contrôleur de champ.
-     *
-     * @param string $classname Nom de la classe de rappel du controleur.
-     * @param string $hash Hashage des attributs de configuration.
-     *
-     * @return bool
+     * @inheritDoc
      */
-    public function getInstance($classname, $hash)
+    public function register(string $alias, FieldDriver $driver): FieldDriver
     {
-        return Arr::get(self::$instance, "{$classname}.{$hash}");
+        $this->_registerDriver($alias, $driver);
+
+        return $driver;
     }
 
     /**
-     * Mise en file des scripts d'un controleur d'affichage.
-     *
-     * @param string $name Nom de qualification du controleur.
-     * @param array $args Liste des variables passées en argument.
-     *
-     * @return $this
+     * @inheritDoc
      */
-    public function enqueue($name, $args = [])
+    public function registerDefaultDrivers(): FieldContract
     {
-        if (!$callable = $this->get($name)) :
-            return null;
-        endif;
+        foreach ($this->defaultDrivers as $name => $alias) {
+            $this->_registerDriver($name, $this->getContainer()->get($alias));
+        }
 
-        if (!is_object($callable) || !method_exists($callable, 'enqueue_scripts')) :
-            return null;
-        endif;
+        return $this;
+    }
 
-        call_user_func_array([$callable, 'enqueue_scripts'], $args);
+    /**
+     * @inheritDoc
+     */
+    public function resolve(string $alias)
+    {
+        return ($container = $this->getContainer()) ? $container->get("field.{$alias}") : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resolvable(string $alias): bool
+    {
+        return ($container = $this->getContainer()) && $container->has("field.{$alias}");
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resources(?string $path = null)
+    {
+        if (!isset($this->resources) || is_null($this->resources)) {
+            $this->resources = Storage::local(__DIR__ . '/Resources');
+        }
+
+        return is_null($path) ? $this->resources : $this->resources->path($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setConfig(array $attrs): FieldContract
+    {
+        $this->config($attrs);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setContainer(Container $container): FieldContract
+    {
+        $this->container = $container;
 
         return $this;
     }
