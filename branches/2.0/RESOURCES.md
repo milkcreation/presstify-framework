@@ -33,3 +33,8 @@ https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76
 
 ## Javascript - requête Xhr synchrone
 https://www.freecodecamp.org/news/javascript-from-callbacks-to-async-await-1cc090ddad99/
+
+## Optimisation
+
+- [Defer non critical CSS](https://web.dev/defer-non-critical-css/)
+- [Chrome Coverage Tab](https://developers.google.com/web/updates/2017/04/devtools-release-notes#coverage)

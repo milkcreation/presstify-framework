@@ -2,7 +2,7 @@
 
 import jQuery from 'jquery';
 import 'spectrum-colorpicker/spectrum';
-import 'presstify-framework/observer/js/scripts';
+import '../../../observer/js/scripts';
 
 /*
 if (tify.locale.iso[1] !== undefined) {

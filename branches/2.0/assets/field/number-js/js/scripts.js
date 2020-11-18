@@ -5,7 +5,7 @@ import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/button';
 import 'jquery-ui/ui/widgets/spinner';
-import 'presstify-framework/observer/js/scripts';
+import '../../../observer/js/scripts';
 
 jQuery(function ($) {
   // Attribution de la valeur à l'élément.

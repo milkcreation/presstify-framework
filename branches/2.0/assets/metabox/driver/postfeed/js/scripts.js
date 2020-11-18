@@ -4,7 +4,7 @@ import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable';
-import 'presstify-framework/field/suggest/js/scripts';
+import '../../../../field/suggest/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyMetaboxPostfeed', {

@@ -4,10 +4,10 @@ import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable';
-import 'presstify-framework/field/media-image/js/scripts';
-import 'presstify-framework/field/suggest/js/scripts';
-import 'presstify-framework/field/tinymce/js/scripts';
-import 'presstify-framework/partial/media-library/js/scripts';
+import '../../../../field/media-image/js/scripts';
+import '../../../../field/suggest/js/scripts';
+import '../../../../field/tinymce/js/scripts';
+import '../../../../partial/media-library/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyMetaboxSlidefeed', {

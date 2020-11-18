@@ -93,8 +93,12 @@ class BurgerButton extends PartialDriver implements BurgerButtonContract
             'attrs.data-control' => 'burger-button',
             'attrs.data-options' => [
                 'handler' => (array)$this->get('handler')
-            ],
+            ]
         ]);
+
+        if (!$this->has('attrs.aria-label')) {
+            $this->set('attrs.aria-label', sprintf(__('Bouton de bascule #%d', 'tify'), $this->getIndex()));
+        }
 
         return $this;
     }

@@ -18,7 +18,7 @@ $form-colors: (
 
 @function formColor($alias) {
   @if type-of($alias) != string {
-    $alias : "#{$alias}";
+    $alias: "#{$alias}";
   }
 
   @return map.get($form-colors, #{$alias});
@@ -66,6 +66,14 @@ $form-notice-warning-background-color: $notice-warning-background-color !default
 $form-notice-warning-border-color: $notice-warning-border-color !default;
 
 /** CHAMPS */
+$form-fields: (
+    checkbox,
+    checkbox-collection,
+    input-email,
+    input-text,
+    radio,
+    radio-collection
+) !default;
 $form-field-color: $form-regular-color !default;
 $form-field-background-color: formColor(lighter) !default;
 $form-field-border-color: formColor(light) !default;
@@ -94,8 +102,10 @@ $form-required-color: $form-regular-color !default;
 
 // RADIO
 $form-field-radio-color: $form-regular-color !default;
-$form-field-radio-background-color: $form-regular-color !default;
+$form-field-radio-checked-color: $form-regular-color !default;
+$form-field-radio-background-color: $form-field-background-color !default;
 
 // CHECKBOX
 $form-field-checkbox-color: $form-regular-color !default;
-$form-field-checkbox-background-color: $form-regular-color !default;
+$form-field-checkbox-checked-color: $form-regular-color !default;
+$form-field-checkbox-background-color: $form-field-background-color !default;

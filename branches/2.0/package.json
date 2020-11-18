@@ -30,7 +30,7 @@
     "pdfjs-dist": "^2.0.943",
     "popper.js": "^1.12.9",
     "spectrum-colorpicker": "^1.8.0",
-    "slick-carousel": "^1.8.1",
+    "slick-carousel": "github:nicolaskopp/slick",
     "spinkit": "^1.2.5",
     "tinymce": "^5.0.14",
     "tinymce-i18n": "^19.5.15",

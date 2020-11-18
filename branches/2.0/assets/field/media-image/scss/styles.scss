@@ -1,8 +1,8 @@
 // Variables
-@import "~presstify-framework/field/variables";
+@import "../../../field/variables";
 
 // Dépendances
-@import "~presstify-framework/partial/media-library/scss/styles";
+@import "../../../partial/media-library/scss/styles";
 
 // Personnalisation
 [aria-selected="false"] > [data-control="media-image.remove"] {

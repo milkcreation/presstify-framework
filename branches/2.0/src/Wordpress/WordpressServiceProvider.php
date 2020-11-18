@@ -421,15 +421,15 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerQuery(): void
     {
         $this->getContainer()->add('wp.query.post', function (?WP_Post $wp_post = null) {
-            return !is_null($wp_post) ? new QueryPost($wp_post) : QueryPost::createFromGlobal();
+            return !is_null($wp_post) ? QueryPost::create($wp_post) : QueryPost::createFromGlobal();
         });
 
-        $this->getContainer()->add('wp.query.term', function (WP_Term $wp_term) {
-            return new QueryTerm($wp_term);
+        $this->getContainer()->add('wp.query.term', function (?WP_Term $wp_term) {
+            return !is_null($wp_term) ? QueryTerm::create($wp_term) : QueryTerm::createFromGlobal();
         });
 
         $this->getContainer()->add('wp.query.user', function (?WP_User $wp_user = null) {
-            return !is_null($wp_user) ? new QueryUser($wp_user) : QueryUser::createFromGlobal();
+            return !is_null($wp_user) ? QueryUser::create($wp_user) : QueryUser::createFromGlobal();
         });
     }
 

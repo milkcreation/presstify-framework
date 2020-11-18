@@ -4,6 +4,21 @@
 
 ### Changed
 
+- Partitionnement des styles des formulaires
+- Form : champs requis peut être encapsulé dans le label
+- Pagination : Passage des styles principaux en variable
+- Mise en conformité lié à l'accessibilité
+- Form : Modification des classes de Form-xxx > FormXxx
+
+### Fixed
+
+- Correctif Recaptcha selon les nouvelles spécification de field
+
+
+## [v2.0.360 (2020-11-17)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.360...v2.0.360)
+
+### Changed
+
 - `src/Support/Proxy/Field.php` : Methode config de surcharge de configuration
 
 ### Added

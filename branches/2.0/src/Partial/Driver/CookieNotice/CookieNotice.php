@@ -93,7 +93,7 @@ class CookieNotice extends PartialDriver implements CookieNoticeContract
         $this->set('content', $content instanceof Closure ? call_user_func($content) : $content);
 
         if ($this->cookie()->get()) {
-            $this->set('attrs.aria-hide', 'true');
+            $this->set('attrs.aria-hidden', 'true');
         }
 
         $this->set('attrs.data-options', [

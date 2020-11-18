@@ -104,13 +104,13 @@ class ButtonController extends ParamsBag implements ButtonControllerContract
             $this->set('wrapper', array_merge(['tag' => 'div', 'attrs' => []], $wrapper));
 
             if (!$this->has('wrapper.attrs.id')) :
-                $this->set('wrapper.attrs.id', "Form{$this->form()->index()}-button--{$this->getName()}");
+                $this->set('wrapper.attrs.id', "FormButton--{$this->getName()}_{$this->form()->index()}");
             endif;
             if (!$this->get('wrapper.attrs.id')) :
                 $this->pull('wrapper.attrs.id');
             endif;
 
-            $default_class = "Form-button Form-button--{$this->getName()}";
+            $default_class = "FormButton FormButton--{$this->getName()}";
             if (!$this->has('wrapper.attrs.class')) :
                 $this->set('wrapper.attrs.class', $default_class);
             else :

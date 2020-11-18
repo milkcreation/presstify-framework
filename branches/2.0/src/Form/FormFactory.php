@@ -377,7 +377,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function renderBuildAttrs(): FormFactoryContract
     {
         if (($this->renderBuild['attrs'] ?? false) !== true) {
-            $default_class = "Form-content Form-content--{$this->tagName()}";
+            $default_class = "FormContent FormContent--{$this->tagName()}";
             if (!$this->has('attrs.class')) {
                 $this->set('attrs.class', $default_class);
             } else {
@@ -414,7 +414,7 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     {
         if (($this->renderBuild['id'] ?? false) !== true) {
             if (!$this->has('attrs.id')) {
-                $this->set('attrs.id', "Form-content--{$this->tagName()}");
+                $this->set('attrs.id', "FormContent--{$this->tagName()}");
             }
             if (!$this->get('attrs.id')) {
                 $this->pull('attrs.id');

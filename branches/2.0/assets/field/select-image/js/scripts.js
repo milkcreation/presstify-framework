@@ -1,3 +1,3 @@
 'use strict';
 
-import 'presstify-framework/field/select-js/js/scripts';
+import '../../../field/select-js/js/scripts';

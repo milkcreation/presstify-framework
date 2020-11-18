@@ -3,25 +3,25 @@
 
 // Personnalisation
 /** Dimensions des champs */
-.Form-field--w50 {
+.FormField--w50 {
   float: left;
   width: 50%;
 }
 
-.Form-field--w66 {
+.FormField--w66 {
   float: left;
   width: 66.666666%;
 }
 
-.Form-field--w33 {
+.FormField--w33 {
   float: left;
   width: 33.333333%;
 }
 
 @media (max-width: 767px) {
-  .Form-field--w50,
-  .Form-field--w66,
-  .Form-field--w33 {
+  .FormField--w50,
+  .FormField--w66,
+  .FormField--w33 {
     float: none;
     width: 100%;
   }
@@ -29,7 +29,7 @@
 /**/
 
 // -- Champs
-.Form-fields {
+.FormFields {
   margin: 0 -#{$form-gutter/2}px;
 
   &::before,
@@ -43,7 +43,7 @@
   }
 }
 
-.Form-fieldsGroup {
+.FormFieldsGroup {
   &::before,
   &::after {
     display: table;
@@ -55,11 +55,11 @@
   }
 }
 
-.Form-content {
+.FormContent {
   margin-bottom: 30px;
 }
 
-.Form-field {
+.FormField {
   padding: 0 #{$form-gutter/2}px;
   margin-bottom: #{$form-gutter}px;
 }
@@ -297,7 +297,7 @@
     + .FieldLabel,
     + .FieldCheckboxCollection-itemLabel {
       &::after {
-        background-color: $form-field-checkbox-background-color;
+        background-color: $form-field-checkbox-checked-color;
       }
     }
   }
@@ -307,7 +307,7 @@
     + .FieldLabel,
     + .FieldRadioCollection-itemLabel {
       &::after {
-        background-color: $form-field-radio-background-color;
+        background-color: $form-field-radio-checked-color;
       }
     }
   }

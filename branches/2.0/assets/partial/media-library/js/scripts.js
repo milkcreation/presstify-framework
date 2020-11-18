@@ -2,7 +2,7 @@
 'use strict';
 
 import jQuery from 'jquery';
-import 'presstify-framework/observer/js/scripts';
+import '../../../observer/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyMediaLibrary', {

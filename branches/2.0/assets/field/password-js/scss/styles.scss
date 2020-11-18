@@ -1,5 +1,5 @@
 // Variables
-@import "~presstify-framework/field/variables";
+@import "../../../field/variables";
 
 // Personnalisation
 [data-control="password-js"] {
@@ -19,7 +19,7 @@
     z-index: 1;
 }
 
-[data-control="password-js"][aria-hide="true"] [data-control="password-js.toggle"]::before {
+[data-control="password-js"][aria-hidden="true"] [data-control="password-js.toggle"]::before {
     content: "\f177";
 }
 

@@ -1,5 +1,5 @@
 // Variables
-@import "~presstify-framework/partial/variables";
+@import "../../../partial/variables";
 
 // Personnalisation
 .Pdfviewer {
@@ -14,7 +14,7 @@
   display:none;
 }
 
-.Pdfviewer-spinner[aria-hide="false"] {
+.Pdfviewer-spinner[aria-hidden="false"] {
   display:inherit;
 }
 
@@ -28,7 +28,7 @@
   display:none;
 }
 
-.Pdfviewer-nav[aria-hide="false"] {
+.Pdfviewer-nav[aria-hidden="false"] {
   display:inherit;
 }
 

@@ -2,7 +2,7 @@
 
 import jQuery from 'jquery';
 
-let inViewport = require('presstify-framework/in-viewport/js/scripts');
+let inViewport = require('../../in-viewport/js/scripts');
 
 jQuery(function ($) {
     let animScroll = function () {

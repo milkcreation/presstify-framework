@@ -2,10 +2,10 @@
 
 namespace tiFy\Api\Recaptcha\Field;
 
-use tiFy\Api\Recaptcha\Contracts\{FieldRecaptcha, Recaptcha as RecaptchaContract};
+use tiFy\Api\Recaptcha\Contracts\FieldRecaptcha;
+use tiFy\Api\Recaptcha\Contracts\Recaptcha as RecaptchaContract;
 use tiFy\Contracts\Field\FieldDriver as FieldDriverContract;
-use tiFy\Field\{FieldDriver, FieldView};
-use tiFy\Support\Proxy\View;
+use tiFy\Field\FieldDriver;
 
 class Recaptcha extends FieldDriver implements FieldRecaptcha
 {
@@ -21,15 +21,15 @@ class Recaptcha extends FieldDriver implements FieldRecaptcha
      * @see https://developers.google.com/recaptcha/docs/display
      *
      * @return array {
-     *      @var string $before Contenu placé avant le champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $name Clé d'indice de la valeur de soumission du champ.
-     *      @var string $value Valeur courante de soumission du champ.
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
-     *      @var string $theme Couleur d'affichage du captcha. light|dark.
-     *      @var string $sitekey Clé publique. Optionnel si l'API $recaptcha est active.
-     *      @var string $secretkey Clé publique. Optionnel si l'API $recaptcha est active.
+     * @var string $before Contenu placé avant le champ.
+     * @var string $after Contenu placé après le champ.
+     * @var string $name Clé d'indice de la valeur de soumission du champ.
+     * @var string $value Valeur courante de soumission du champ.
+     * @var array $attrs Attributs HTML du champ.
+     * @var array $viewer Liste des attributs de configuration du controleur de gabarit d'affichage.
+     * @var string $theme Couleur d'affichage du captcha. light|dark.
+     * @var string $sitekey Clé publique. Optionnel si l'API $recaptcha est active.
+     * @var string $secretkey Clé publique. Optionnel si l'API $recaptcha est active.
      * }
      */
     public function defaults(): array
@@ -44,7 +44,7 @@ class Recaptcha extends FieldDriver implements FieldRecaptcha
             'sitekey'   => '',
             'secretkey' => '',
             'theme'     => 'light',
-            'tabindex'  => 0
+            'tabindex'  => 0,
         ];
     }
 
@@ -55,7 +55,7 @@ class Recaptcha extends FieldDriver implements FieldRecaptcha
     {
         $this->recaptcha->addWidgetRender($this->get('attrs.id'), [
             'sitekey' => $this->get('sitekey'),
-            'theme'   => $this->get('theme')
+            'theme'   => $this->get('theme'),
         ]);
 
         return parent::render();
@@ -83,19 +83,8 @@ class Recaptcha extends FieldDriver implements FieldRecaptcha
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function viewer(?string $view = null, array $data = [])
+    public function viewDirectory(): string
     {
-        if (!$this->viewer) {
-            $this->viewer = View::getPlatesEngine([
-                'directory' => class_info($this)->getDirname() . '/views/',
-                'factory' => FieldView::class,
-                'field'   => $this
-            ]);
-        }
-
-        return parent::viewer($view, $data);
+        return class_info($this)->getDirname() . '/views/';
     }
 }
