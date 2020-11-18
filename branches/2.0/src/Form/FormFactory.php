@@ -7,7 +7,7 @@ use tiFy\Contracts\Form\FormManager;
 use tiFy\Form\Factory\ResolverTrait;
 use tiFy\Support\LabelsBag;
 use tiFy\Support\ParamsBag;
-use tiFY\Support\Proxy\Asset;
+use tiFy\Support\Proxy\Asset;
 
 class FormFactory extends ParamsBag implements FormFactoryContract
 {
