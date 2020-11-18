@@ -5,7 +5,7 @@ import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'bootstrap/js/dist/util';
 import 'bootstrap/js/dist/modal';
-import 'presstify-framework/observer/js/scripts';
+import '../../../observer/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyModal', {
@@ -153,7 +153,7 @@ jQuery(function ($) {
         if (!this.spin.length) {
           this.spin = $('<span data-control="' + this.control.spinner + '"/>').appendTo(this.content);
         }
-        this.spin.addClass(this.option('classes.spinner')).attr('aria-hide', 'true');
+        this.spin.addClass(this.option('classes.spinner')).attr('aria-hidden', 'true');
       }
 
       this.el.modal();
@@ -320,17 +320,17 @@ jQuery(function ($) {
       if (this.flags.hasSpinner) {
         switch (status) {
           default:
-            if (this.spin.attr('aria-hide') === 'true') {
-              this.spin.attr('aria-hide', 'false');
+            if (this.spin.attr('aria-hidden') === 'true') {
+              this.spin.attr('aria-hidden', 'false');
             } else {
-              this.spin.attr('aria-hide', 'true');
+              this.spin.attr('aria-hidden', 'true');
             }
             break;
           case 'hide' :
-            this.spin.attr('aria-hide', 'true');
+            this.spin.attr('aria-hidden', 'true');
             break;
           case 'show' :
-            this.spin.attr('aria-hide', 'false');
+            this.spin.attr('aria-hidden', 'false');
             break;
         }
       }

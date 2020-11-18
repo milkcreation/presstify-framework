@@ -4,16 +4,13 @@ namespace tiFy\Wordpress\PageHook;
 
 use Closure;
 use tiFy\Contracts\Partial\BreadcrumbCollection as BaseBreadcrumbCollection;
-use tiFy\Support\{ParamsBag, Proxy\Router};
-use tiFy\Wordpress\Contracts\{PageHookItem as PageHookItemContract,
-    Partial\BreadcrumbCollection,
-    Query\QueryPost as QueryPostContract
-};
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Router;
+use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;
+use tiFy\Wordpress\Contracts\Partial\BreadcrumbCollection;
+use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
 use tiFy\Wordpress\Query\QueryPost;
-use WP_Admin_Bar;
-use WP_Post;
-use WP_Query;
-use WP_Term;
+use WP_Admin_Bar, WP_Post, WP_Query, WP_Term;
 
 class PageHookItem extends ParamsBag implements PageHookItemContract
 {
@@ -627,7 +624,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                 $this->set('id', $post_id = (int)get_option($this->getOptionName(), 0));
             }
 
-            $this->post = ($post_id && ($post = get_post($post_id))) ? new QueryPost($post) : null;
+            $this->post = ($post_id && ($post = get_post($post_id))) ? QueryPost::create($post) : null;
         }
 
         return $this->post;

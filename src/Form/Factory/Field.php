@@ -478,14 +478,14 @@ class Field extends ParamsBag implements FactoryField
     public function renderPrepare(): FactoryField
     {
         if (!$this->has('attrs.id')) {
-            $this->set('attrs.id', "Form{$this->form()->index()}-fieldInput--{$this->getSlug()}");
+            $this->set('attrs.id', "FormField-input--{$this->getSlug()}_{$this->form()->index()}");
         }
 
         if (!$this->get('attrs.id')) {
             $this->pull('attrs.id');
         }
 
-        $default_class = "%s Form-fieldInput Form-fieldInput--{$this->getType()} Form-fieldInput--{$this->getSlug()}";
+        $default_class = "%s FormField-input FormField-input--{$this->getType()} FormField-input--{$this->getSlug()}";
 
         if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $default_class);
@@ -515,13 +515,13 @@ class Field extends ParamsBag implements FactoryField
             $this->set('wrapper', array_merge(['tag' => 'div', 'attrs' => []], $wrapper));
 
             if (!$this->has('wrapper.attrs.id')) {
-                $this->set('wrapper.attrs.id', "Form{$this->form()->index()}-field--{$this->getSlug()}");
+                $this->set('wrapper.attrs.id', "FormField--{$this->getSlug()}_{$this->form()->index()}");
             }
             if (!$this->get('wrapper.attrs.id')) {
                 $this->pull('wrapper.attrs.id');
             }
 
-            $default_class = "Form-field Form-field--{$this->getType()} Form-field--{$this->getSlug()}";
+            $default_class = "FormField FormField--{$this->getType()} FormField--{$this->getSlug()}";
             if (!$this->has('wrapper.attrs.class')) {
                 $this->set('wrapper.attrs.class', $default_class);
             } else {
@@ -548,6 +548,29 @@ class Field extends ParamsBag implements FactoryField
             }
         }
 
+        if ($this->get('required.tagged')) {
+            if (!$this->has('required.tagged.attrs.id')) {
+                $this->set('required.tagged.attrs.id',
+                    "FormField-required--{$this->getSlug()}_{$this->form()->index()}");
+            }
+            if (!$this->get('required.tagged.attrs.id')) {
+                $this->pull('required.tagged.attrs.id');
+            }
+
+            $default_class = "%s FormField-required FormField-required--{$this->getType()} FormField-required--{$this->getSlug()}";
+            if (!$this->has('required.tagged.attrs.class')) {
+                $this->set('required.tagged.attrs.class', $default_class);
+            } else {
+                $this->set(
+                    'required.tagged.attrs.class',
+                    sprintf($this->get('required.tagged.attrs.class', ''), $default_class)
+                );
+            }
+            if (!$this->get('required.tagged.attrs.class')) {
+                $this->pull('required.tagged.attrs.class');
+            }
+        }
+
         if ($label = $this->get('label')) {
             if (is_string($label)) {
                 $label = ['content' => $label];
@@ -559,18 +582,19 @@ class Field extends ParamsBag implements FactoryField
                 'tag'      => 'label',
                 'attrs'    => [],
                 'wrapper'  => false,
-                'position' => 'before'
+                'position' => 'before',
+                'require'  => true
             ], is_array($label) ? $label : []));
 
             if (!$this->has('label.attrs.id')) {
-                $this->set('label.attrs.id', "Form{$this->form()->index()}-fieldLabel--{$this->getSlug()}");
+                $this->set('label.attrs.id', "FormField-label--{$this->getSlug()}_{$this->form()->index()}");
             }
 
             if (!$this->get('label.attrs.id')) {
                 $this->pull('label.attrs.id');
             }
 
-            $default_class = "%s Form-fieldLabel Form-fieldLabel--{$this->getType()} Form-fieldLabel--{$this->getSlug()}";
+            $default_class = "%s FormField-label FormField-label--{$this->getType()} FormField-label--{$this->getSlug()}";
             if (!$this->has('label.attrs.class')) {
                 $this->set('label.attrs.class', $default_class);
             } else {
@@ -593,38 +617,23 @@ class Field extends ParamsBag implements FactoryField
                 $this->pull('label.content');
             }
 
+            if (($require = $this->pull('label.require')) && $this->get('required.tagged')) {
+                $content = $this->get('label.content', '');
+
+                $this->set('label.content', $content . $this->viewer('field-required', ['field' => $this]));
+
+                $this->forget('required.tagged');
+            }
+
             if ($this->get('label.wrapper')) {
                 $this->set('label.wrapper', [
                     'tag'   => 'div',
                     'attrs' => [
-                        'id'    => "Form{$this->form()->index()}-fieldLabelWrapper--{$this->getSlug()}",
-                        'class' => "Form-fieldLabelWrapper Form-fieldLabelWrapper--{$this->getType()}" .
-                            " Form-fieldLabelWrapper--{$this->getSlug()}"
+                        'id'    => "FormField-labelWrapper--{$this->getSlug()}_{$this->form()->index()}",
+                        'class' => "FormField-labelWrapper FormField-labelWrapper--{$this->getType()}" .
+                            " FormField-labelWrapper--{$this->getSlug()}"
                     ]
                 ]);
-            }
-        }
-
-        if ($this->get('required.tagged')) {
-            if (!$this->has('required.tagged.attrs.id')) {
-                $this->set('required.tagged.attrs.id',
-                    "Form{$this->form()->index()}-fieldRequired--{$this->getSlug()}");
-            }
-            if (!$this->get('required.tagged.attrs.id')) {
-                $this->pull('required.tagged.attrs.id');
-            }
-
-            $default_class = "%s Form-fieldRequired Form-fieldRequired--{$this->getType()} Form-fieldRequired--{$this->getSlug()}";
-            if (!$this->has('required.tagged.attrs.class')) {
-                $this->set('required.tagged.attrs.class', $default_class);
-            } else {
-                $this->set(
-                    'required.tagged.attrs.class',
-                    sprintf($this->get('required.tagged.attrs.class', ''), $default_class)
-                );
-            }
-            if (!$this->get('required.tagged.attrs.class')) {
-                $this->pull('required.tagged.attrs.class');
             }
         }
 

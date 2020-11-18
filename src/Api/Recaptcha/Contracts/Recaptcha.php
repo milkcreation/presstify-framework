@@ -2,7 +2,8 @@
 
 namespace tiFy\Api\Recaptcha\Contracts;
 
-use ReCaptcha\{ReCaptcha as ReCaptchaSdk, Response as ReCaptchaResponse};
+use ReCaptcha\ReCaptcha as ReCaptchaSdk;
+use ReCaptcha\Response as ReCaptchaResponse;
 
 /**
  * @mixin ReCaptchaSdk

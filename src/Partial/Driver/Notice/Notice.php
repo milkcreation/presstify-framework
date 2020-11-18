@@ -46,8 +46,6 @@ class Notice extends PartialDriver implements NoticeContract
         $this->set('attrs.data-control', 'notice');
         $this->set('attrs.data-timeout', $this->get('timeout', 0));
 
-        $this->set('attrs.aria-type', $this->get('type'));
-
         $this->set(
             'content',
             ($content = $this->get('content', '')) instanceof Closure ? call_user_func($content) : $content

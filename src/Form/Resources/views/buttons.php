@@ -7,7 +7,7 @@
  */
 ?>
 <?php if ($buttons) : ?>
-    <div class="Form-buttons">
+    <div class="FormButtons">
         <?php foreach ($buttons as $button) : ?>
             <?php $this->insert('button', compact('button')); ?>
         <?php endforeach; ?>

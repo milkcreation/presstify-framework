@@ -39,7 +39,7 @@ jQuery(function ($) {
           $input = $('[data-control="password-js.input"]', $target),
           cypher = $input.attr('data-cypher');
 
-      if ($target.attr('aria-hide') === 'true') {
+      if ($target.attr('aria-hidden') === 'true') {
         ajax = $.extend(true, ajax, {data: {action: 'decrypt', cypher: cypher}});
         $target.addClass('loading');
         $input.prop('disabled', true);
@@ -52,7 +52,7 @@ jQuery(function ($) {
                 .attr('type', 'text');
           }
 
-          $target.removeClass('loading').attr('aria-hide', 'false');
+          $target.removeClass('loading').attr('aria-hidden', 'false');
         });
       } else {
         $input
@@ -60,7 +60,7 @@ jQuery(function ($) {
             .prop('disabled', false)
             .attr('type', 'password');
 
-        $target.attr('aria-hide', 'true');
+        $target.attr('aria-hidden', 'true');
       }
     }
   });

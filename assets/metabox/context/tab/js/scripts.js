@@ -1,3 +1,3 @@
 'use strict';
 
-import 'presstify-framework/partial/tab/js/scripts';
+import '../../../../partial/tab/js/scripts';

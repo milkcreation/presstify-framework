@@ -74,6 +74,10 @@ class ImageLightboxItem extends ParamsBag implements ImageLightboxItemContract
             $this->set('attrs.href', $this->get('src') ?: '#');
         }
 
+        if (!$this->has('attrs.title')) {
+            $this->set('attrs.title', basename($this->get('src')));
+        }
+
         if ($group = $this->get('group')) {
             $this->set('attrs.data-group', $group);
         }

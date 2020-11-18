@@ -1,5 +1,5 @@
 // Variables
-@import "~presstify-framework/partial/variables";
+@import "../../../partial/variables";
 
 // Personnalisation
 .Modal {
@@ -98,11 +98,11 @@
   margin-left:-12px;
 }
 
-.modal-spinner[aria-hide="true"] {
+.modal-spinner[aria-hidden="true"] {
   display:none;
 }
 
-.modal-spinner[aria-hide="false"] {
+.modal-spinner[aria-hidden="false"] {
   display:inherit;
 }
 

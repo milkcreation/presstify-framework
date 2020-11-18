@@ -1,13 +1,13 @@
 'use strict';
 
 import jQuery from 'jquery';
-import 'presstify-framework/observer/js/scripts';
+import '../../../observer/js/scripts';
 
 jQuery(function ($) {
   $(document).on('click', '[data-control="notice"] [data-toggle="notice.dismiss"]', function (e) {
     e.preventDefault();
 
-    $(this).closest('[data-control="notice"]').attr('aria-hide', 'true');
+    $(this).closest('[data-control="notice"]').attr('aria-hidden', 'true');
   });
 
   $('[data-control="notice"][data-timeout]').each(function () {
@@ -16,7 +16,7 @@ jQuery(function ($) {
 
     if (time !== 0) {
       setTimeout(function () {
-        $el.attr('aria-hide', 'true');
+        $el.attr('aria-hidden', 'true');
       }, time);
     }
   });
@@ -27,7 +27,7 @@ jQuery(function ($) {
 
     if (time !== 0) {
       setTimeout(function () {
-        $el.attr('aria-hide', 'true');
+        $el.attr('aria-hidden', 'true');
       }, time);
     }
   });

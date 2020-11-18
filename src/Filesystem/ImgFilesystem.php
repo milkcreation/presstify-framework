@@ -4,6 +4,7 @@ namespace tiFy\Filesystem;
 
 use Exception;
 use tiFy\Contracts\Filesystem\ImgFilesystem as ImgFilesystemContract;
+use tiFy\Support\HtmlAttrs;
 use tiFy\Support\MimeTypes;
 use tiFy\Support\Proxy\Partial;
 
@@ -57,13 +58,9 @@ class ImgFilesystem extends LocalFilesystem implements ImgFilesystemContract
                             'tag'     => 'div',
                         ])->render();
                 } elseif ($src = $this->src($path)) {
-                     return Partial::get('tag', [
-                        'attrs' => array_merge([
-                            'alt'   => basename($filename),
-                            'class' => ''
-                        ], $attrs ?? [], ['src' => $src]),
-                        'tag'   => 'img',
-                    ])->render();
+                     return '<img ' . HtmlAttrs::createFromAttrs(array_merge([
+                             'alt'   => basename($filename)
+                         ], $attrs ?? [], ['src' => $src])) . '/>';
                 } else {
                     return null;
                 }

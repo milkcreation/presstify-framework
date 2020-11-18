@@ -1,3 +1,3 @@
 'use strict';
 
-import 'presstify-framework/field/colorpicker/js/scripts';
+import '../../../../field/colorpicker/js/scripts';

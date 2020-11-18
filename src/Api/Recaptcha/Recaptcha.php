@@ -2,11 +2,14 @@
 
 namespace tiFy\Api\Recaptcha;
 
-use ReCaptcha\{ReCaptcha as ReCaptchaSdk, Response as ReCaptchaResponse, RequestMethod\SocketPost as ReCaptchaSocket};
+use ReCaptcha\ReCaptcha as ReCaptchaSdk;
+use ReCaptcha\Response as ReCaptchaResponse;
+use ReCaptcha\RequestMethod\SocketPost as ReCaptchaSocket;
 use RuntimeException;
 use tiFy\Api\Recaptcha\Field\Recaptcha as RecaptchaField;
 use tiFy\Api\Recaptcha\Contracts\Recaptcha as RecaptchaContract;
-use tiFy\Support\Proxy\{Field, Request};
+use tiFy\Support\Proxy\Field;
+use tiFy\Support\Proxy\Request;
 
 class Recaptcha extends ReCaptchaSdk implements RecaptchaContract
 {
@@ -19,9 +22,9 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaContract
     /**
      * Liste des attributs de configuration.
      * @var array {
-     *      @var string $secretkey Clé secrète, requise pour la communication entre le site et Google.
+     * @var string $secretkey Clé secrète, requise pour la communication entre le site et Google.
      *                             Veillez a ne surtout jamais divulger cette clé.
-     *      @var string $sitekey Clé du site, utilisée dans le code HTML
+     * @var string $sitekey Clé du site, utilisée dans le code HTML
      * }
      */
     protected $attributes = [];
@@ -52,7 +55,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaContract
 
             $this->attributes = $attrs;
 
-            Field::set('recaptcha', new RecaptchaField());
+            Field::register('recaptcha', new RecaptchaField());
 
             add_action('wp_print_footer_scripts', function () {
                 if (!static::$built) {
@@ -86,7 +89,7 @@ class Recaptcha extends ReCaptchaSdk implements RecaptchaContract
     public static function instance(array $attrs = []): RecaptchaContract
     {
         return self::$instance = !is_null(self::$instance)
-            ? self::$instance : new static(array_merge(['secretkey' => '', 'sitekey'   => ''], $attrs));
+            ? self::$instance : new static(array_merge(['secretkey' => '', 'sitekey' => ''], $attrs));
     }
 
     /**

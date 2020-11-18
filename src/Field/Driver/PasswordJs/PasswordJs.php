@@ -109,7 +109,7 @@ class PasswordJs extends FieldDriver implements PasswordJsContract
         }
 
         $this->set([
-            'container.attrs.aria-hide'    => $this->get('hide') ? 'true' : 'false',
+            'container.attrs.aria-hidden'    => $this->get('hide') ? 'true' : 'false',
             'container.attrs.data-control' => 'password-js',
             'container.attrs.data-id'      => 'FieldPasswordJs--' . $this->getIndex(),
             'container.attrs.data-options' => $options

@@ -4,7 +4,7 @@ import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable';
-import 'presstify-framework/observer/js/scripts';
+import '../../../observer/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyTextRemaining', {

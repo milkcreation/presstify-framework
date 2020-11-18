@@ -1,3 +1,3 @@
 'use strict';
 
-import 'presstify-framework/template/list-table/js/scripts';
+import '../../../template/list-table/js/scripts';

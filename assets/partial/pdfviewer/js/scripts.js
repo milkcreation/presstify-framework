@@ -5,8 +5,8 @@ import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import * as pdfjsLib from 'pdfjs-dist';
-import 'presstify-framework/partial/modal/js/scripts';
-import 'presstify-framework/observer/js/scripts';
+import '../../../partial/modal/js/scripts';
+import '../../../observer/js/scripts';
 
 /**
  * @typedef {Object} pdfjsLib
@@ -166,7 +166,7 @@ jQuery(function ($) {
       if (!this.nav.length) {
         this.nav = $('<div data-control="' + this.control.nav + '"/>').appendTo(this.el);
       }
-      this.nav.addClass(this.option('classes.nav')).attr('aria-hide', 'true');
+      this.nav.addClass(this.option('classes.nav')).attr('aria-hidden', 'true');
 
       if (this.flags.hasNavFirst) {
         let $first = $('[data-control="' + this.control.first + '"]', this.nav);
@@ -237,9 +237,9 @@ jQuery(function ($) {
     // Mise à jour de la pagination.
     _doNavUpdate: function () {
       if (this.total <= 1) {
-        this.nav.attr('aria-hide', 'true');
+        this.nav.attr('aria-hidden', 'true');
       } else {
-        this.nav.attr('aria-hide', 'false');
+        this.nav.attr('aria-hidden', 'false');
       }
 
       $('[data-control="' + this.control.current + '"]', this.nav).text(this.pageNum);
@@ -315,17 +315,17 @@ jQuery(function ($) {
     _doSpinnerDisplay: function (display = 'toggle') {
       switch (display) {
         default:
-          if ($('[data-control="' + this.control.spinner + '"]', this.el).attr('aria-hide') === 'false') {
+          if ($('[data-control="' + this.control.spinner + '"]', this.el).attr('aria-hidden') === 'false') {
             this._doSpinnerDisplay('hide');
           } else {
             this._doSpinnerDisplay('show');
           }
           break;
         case 'hide' :
-          $('[data-control="' + this.control.spinner + '"]', this.el).attr('aria-hide', 'true');
+          $('[data-control="' + this.control.spinner + '"]', this.el).attr('aria-hidden', 'true');
           break;
         case 'show' :
-          $('[data-control="' + this.control.spinner + '"]', this.el).attr('aria-hide', 'false');
+          $('[data-control="' + this.control.spinner + '"]', this.el).attr('aria-hidden', 'false');
           break;
       }
     },
