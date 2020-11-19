@@ -2,13 +2,14 @@
 
 namespace tiFy\Metabox\Driver\Imagefeed;
 
+use tiFy\Contracts\Metabox\ImagefeedDriver as ImagefeedDriverContract;
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\{Img, Proxy\Request, Proxy\Router};
 use tiFy\Validation\Validator;
 
-class Imagefeed extends MetaboxDriver
+class Imagefeed extends MetaboxDriver implements ImagefeedDriverContract
 {
     /**
      * Indice de l'intance courante.
@@ -31,10 +32,14 @@ class Imagefeed extends MetaboxDriver
     /**
      * @inheritDoc
      */
-    public function boot(): void
+    public function boot(): MetaboxDriverContract
     {
+        parent::boot();
+
         static::$instance++;
         $this->setUrl();
+
+        return $this;
     }
 
     /**
@@ -225,7 +230,7 @@ class Imagefeed extends MetaboxDriver
 
             return [
                 'success' => true,
-                'data'    => (string)$this->viewer('item-wrap', $this->item($index, $value)),
+                'data'    => (string)$this->view('item-wrap', $this->item($index, $value)),
             ];
         }
     }

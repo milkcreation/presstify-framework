@@ -161,7 +161,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
     public function parse(): PartialDriverContract
     {
         $this->attributes = array_merge(
-            $this->defaults(), $this->partial()->config($this->getAlias(), []), $this->attributes
+            $this->defaults(), $this->partial()->config("driver.{$this->getAlias()}", []), $this->attributes
         );
 
         $this->parseDefaults();
@@ -272,7 +272,7 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
         if (is_null($this->viewEngine)) {
             $this->viewEngine = $this->partial()->resolve('view-engine');
 
-            $defaultConfig = $this->partial()->config('_default.viewer', []);
+            $defaultConfig = $this->partial()->config('default.driver.viewer', []);
 
             if (isset($defaultConfig['directory'])) {
                 $defaultConfig['directory'] = rtrim($defaultConfig['directory'], '/') . '/' . $this->getAlias();
@@ -290,12 +290,12 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
                 }
             }
 
-            $config = $this->partial()->config("{$this->getAlias()}.viewer", []);
+            $config = $this->get('viewer', []);
 
             $this->viewEngine->params(array_merge([
-                'directory'    => $this->viewDirectory(),
-                'factory'      => PartialView::class,
-                'partial'      => $this
+                'directory' => $this->viewDirectory(),
+                'factory'   => PartialView::class,
+                'driver'    => $this,
             ], $defaultConfig, $config, $this->get('viewer', [])));
         }
 

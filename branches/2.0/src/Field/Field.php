@@ -165,10 +165,8 @@ class Field implements FieldContract
      */
     private function _registerDriver(string $alias, FieldDriver $driver): void
     {
-        if ($alias === '_default') {
-            throw new Exception('Alias [_default] not allowed');
-        } elseif (isset($this->drivers[$alias]) || isset($this->instances[$alias]) || isset($this->indexes[$alias])) {
-            throw new Exception('Alias [%s] already assigned');
+        if (isset($this->drivers[$alias]) || isset($this->instances[$alias]) || isset($this->indexes[$alias])) {
+            throw new Exception(sprintf('Field alias [%s] already registered', $alias));
         }
 
         $this->drivers[$alias] = $driver->build($alias, $this);

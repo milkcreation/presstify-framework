@@ -43,9 +43,9 @@ class FieldView extends PlatesFactory implements FieldViewContract
     {
         if (in_array($name, $this->mixins)) {
             try {
-                $field = $this->engine->params('field');
+                $driver = $this->engine->params('driver');
 
-                return $field->{$name}(...$args);
+                return $driver->{$name}(...$args);
             } catch (Exception $e) {
                 throw new BadMethodCallException(sprintf(
                     __CLASS__ . ' throws an exception during the method call [%s] with message : %s',

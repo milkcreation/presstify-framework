@@ -29,6 +29,13 @@ interface FactoryHandle extends FactoryResolver, ParamsBag
     public function getToken(): string;
 
     /**
+     * Vérification du succes de validation de la soumission du formulaire.
+     *
+     * @return bool
+     */
+    public function isValidated(): bool;
+
+    /**
      * Traitement de la requête de soumission du formulaire.
      *
      * @return RedirectResponse|null

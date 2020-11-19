@@ -1,6 +1,18 @@
 # Release Notes
 
-## [v2.0.360 (2020-11-17)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.360...v2.0.360)
+## [v2.0.362 (2020-11-19)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.362...v2.0.362)
+
+### Changed 
+
+- Metabox : Passe de réécriture profonde
+- Partial & Field : Modification de la config ['default' => ..., 'driver' => [..., ...]]
+
+### Fixed
+
+- Form : événement de validation non exécutée
+
+
+## [v2.0.361 (2020-11-18)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.361...v2.0.361)
 
 ### Changed
 

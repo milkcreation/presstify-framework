@@ -2,10 +2,12 @@
 
 namespace tiFy\Metabox\Context;
 
+use tiFy\Contracts\Metabox\TabContext as TabContextContract;
+use tiFy\Contracts\Metabox\MetaboxContext as MetaboxContextContract;
 use tiFy\Contracts\Metabox\MetaboxDriver;
 use tiFy\Metabox\MetaboxContext;
 
-class TabContext extends MetaboxContext
+class TabContext extends MetaboxContext implements TabContextContract
 {
     /**
      * @inheritDoc
@@ -20,7 +22,7 @@ class TabContext extends MetaboxContext
     /**
      * @inheritDoc
      */
-    public function parse()
+    public function parse(): MetaboxContextContract
     {
         parent::parse();
 

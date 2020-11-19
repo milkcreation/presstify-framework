@@ -2,9 +2,10 @@
 
 namespace tiFy\Metabox\Driver\CustomHeader;
 
+use tiFy\Contracts\Metabox\CustomHeaderDriver as CustomHeaderDriverContract;
 use tiFy\Metabox\MetaboxDriver;
 
-class CustomHeader extends MetaboxDriver
+class CustomHeader extends MetaboxDriver implements CustomHeaderDriverContract
 {
     /**
      * @inheritDoc

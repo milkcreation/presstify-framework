@@ -2,7 +2,8 @@
 
 namespace tiFy\Contracts\Metabox;
 
-use tiFy\Contracts\{Support\ParamsBag, View\PlatesEngine};
+use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\View\PlatesEngine;
 
 interface MetaboxContext extends ParamsBag
 {
@@ -14,25 +15,39 @@ interface MetaboxContext extends ParamsBag
     public function __toString(): string;
 
     /**
-     * Récupération du nom de qualification.
+     * Chargement.
+     *
+     * @return static
+     */
+    public function boot(): MetaboxContext;
+
+    /**
+     * Initialisation.
+     *
+     * @return static
+     */
+    public function build(): MetaboxContext;
+
+    /**
+     * Récupération de l'alias de qualification.
      *
      * @return string
      */
-    public function getName(): string;
+    public function getAlias(): string;
 
     /**
      * Récupération de l'instance du gestionnaire.
      *
-     * @return MetaboxManager|null
+     * @return Metabox|null
      */
-    public function manager(): ?MetaboxManager;
+    public function metabox(): ?Metabox;
 
     /**
      * {@inheritDoc}
      *
-     * @return MetaboxContext
+     * @return static
      */
-    public function parse();
+    public function parse(): MetaboxContext;
 
     /**
      * Récupération du rendu d'affichage du contexte.
@@ -44,20 +59,20 @@ interface MetaboxContext extends ParamsBag
     /**
      * Définition de l'instance du gestionnaire.
      *
-     * @param MetaboxManager $manager
+     * @param Metabox $metabox
      *
      * @return static
      */
-    public function setManager(MetaboxManager $manager): MetaboxContext;
+    public function setMetabox(Metabox $metabox): MetaboxContext;
 
     /**
-     * Définition du nom de qualification.
+     * Définition de l'alias de qualification.
      *
-     * @param string $name
+     * @param string $alias
      *
      * @return static
      */
-    public function setName(string $name): MetaboxContext;
+    public function setAlias(string $alias): MetaboxContext;
 
     /**
      * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
@@ -69,5 +84,5 @@ interface MetaboxContext extends ParamsBag
      *
      * @return PlatesEngine|string
      */
-    public function viewer(?string $view = null, array $data = []);
+    public function view(?string $view = null, array $data = []);
 }

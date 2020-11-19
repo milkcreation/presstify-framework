@@ -69,12 +69,8 @@ class PageHookMetabox extends MetaboxDriver
     /**
      * @inheritDoc
      */
-    public function viewer(?string $view = null, array $data = [])
+    public function viewDirectory(): string
     {
-        if (!$this->viewer && !$this->get('viewer.directory')) {
-            $this->set('viewer.directory', class_info($this->pageHook())->getDirname() . '/Resources/views/metabox');
-        }
-
-        return func_num_args() === 0 ? parent::viewer() : parent::viewer($view, $data);
+        return class_info($this->pageHook())->getDirname() . '/Resources/views/metabox';
     }
 }

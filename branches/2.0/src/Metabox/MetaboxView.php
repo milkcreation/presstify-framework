@@ -27,21 +27,21 @@ class MetaboxView extends PlatesFactory implements MetaboxViewContract
     /**
      * @inheritDoc
      */
-    public function __call($method, $parameters)
+    public function __call($name, $args)
     {
-        if (in_array($method, $this->mixins)) {
+        if (in_array($name, $this->mixins)) {
             try {
-                return call_user_func_array([$this->engine->params('metabox'), $method], $parameters);
+                $driver = $this->engine->params('driver');
+
+                return $driver->{$name}(...$args);
             } catch (Exception $e) {
-                throw new BadMethodCallException(
-                    sprintf(
-                        __('La méthode [%s] de la boîte de saisie n\'est pas disponible.', 'tify'),
-                        $method
-                    )
-                );
+                throw new BadMethodCallException(sprintf(
+                    __CLASS__ . ' throws an exception during the method call [%s] with message : %s',
+                    $name, $e->getMessage()
+                ));
             }
         } else {
-            return parent::__call($method, $parameters);
+            return parent::__call($name, $args);
         }
     }
 }

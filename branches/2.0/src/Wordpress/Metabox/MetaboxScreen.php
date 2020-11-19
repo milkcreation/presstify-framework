@@ -32,7 +32,8 @@ class MetaboxScreen extends BaseMetaboxScreen
      */
     public function isCurrentWpScreen(): bool
     {
-        $screen = (preg_match('/(.*)@(post_type|taxonomy|user)/', $this->name)) ? "edit::{$this->name}" : $this->name;
+        $screen = (preg_match('/(.*)@(post_type|taxonomy|user)/', $this->getAlias()))
+            ? "edit::{$this->getAlias()}" : $this->getAlias();
 
         return (WpScreen::get($screen))->isCurrent();
     }

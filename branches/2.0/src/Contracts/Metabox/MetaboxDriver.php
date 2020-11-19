@@ -2,8 +2,9 @@
 
 namespace tiFy\Contracts\Metabox;
 
-use Closure;
-use tiFy\Contracts\{Support\ParamsBag, View\PlatesEngine};
+use Closure, Exception;
+use tiFy\Contracts\Support\ParamsBag;
+use tiFy\Contracts\View\View as ViewEngine;
 
 interface MetaboxDriver extends ParamsBag
 {
@@ -15,18 +16,18 @@ interface MetaboxDriver extends ParamsBag
     public function __toString(): string;
 
     /**
-     * Initialisation de la boîte de saisie.
+     * Chargement.
      *
-     * @return void
+     * @return static
      */
-    public function boot(): void;
+    public function boot(): MetaboxDriver;
 
     /**
-     * Récupération de l'instance du contexte d'affichage associé.
+     * Initialisation.
      *
-     * @return MetaboxContext|null
+     * @return static
      */
-    public function context(): ?MetaboxContext;
+    public function build(): MetaboxDriver;
 
     /**
      * Liste des paramètres par défaut.
@@ -43,6 +44,20 @@ interface MetaboxDriver extends ParamsBag
     public function getAlias(): string;
 
     /**
+     * Récupération de l'instance du contexte d'affichage associé.
+     *
+     * @return MetaboxContext|null
+     */
+    public function getContext(): ?MetaboxContext;
+
+    /**
+     * Récupération de l'instance de l'écran d'affichage associé.
+     *
+     * @return MetaboxScreen|null
+     */
+    public function getScreen(): ?MetaboxScreen;
+
+    /**
      * Traitement
      *
      * @param array $args Liste des arguments de traitement
@@ -54,9 +69,9 @@ interface MetaboxDriver extends ParamsBag
     /**
      * Récupération de l'instance du gestionnaire.
      *
-     * @return MetaboxManager|null
+     * @return Metabox|null
      */
-    public function manager(): ?MetaboxManager;
+    public function metabox(): ?Metabox;
 
     /**
      * Récupération du nom de qualification dans la requête d'enregistrement des données.
@@ -76,6 +91,13 @@ interface MetaboxDriver extends ParamsBag
     public function params($key = null, $default = null);
 
     /**
+     * {@inheritDoc}
+     *
+     * @return static
+     */
+    public function parse(): ?MetaboxDriver;
+
+    /**
      * Récupération de l'affichage du contenu de la boîte de saisie.
      *
      * @return string
@@ -83,20 +105,24 @@ interface MetaboxDriver extends ParamsBag
     public function render(): string;
 
     /**
-     * Récupération de l'instance de l'écran d'affichage associé.
+     * Définition de l'alias de qualification.
      *
-     * @return MetaboxScreen|null
+     * @param string $alias
+     *
+     * @return static
      */
-    public function screen(): ?MetaboxScreen;
+    public function setAlias(string $alias): MetaboxDriver;
 
     /**
      * Définition de l'instance du contexte d'affichage.
      *
-     * @param string $context
+     * @param string $alias
      *
      * @return static
+     *
+     * @throws Exception
      */
-    public function setContext(string $context): MetaboxDriver;
+    public function setContext(string $alias): MetaboxDriver;
 
     /**
      * Définition d'une fonction de traitement.
@@ -110,20 +136,22 @@ interface MetaboxDriver extends ParamsBag
     /**
      * Définition de l'instance du gestionnaire.
      *
-     * @param MetaboxManager $manager
+     * @param Metabox $metabox
      *
      * @return static
      */
-    public function setManager(MetaboxManager $manager): MetaboxDriver;
+    public function setMetabox(Metabox $metabox): MetaboxDriver;
 
     /**
      * Définition de l'instance de l'écran d'affichage.
      *
-     * @param string $name Nom de qualification
+     * @param string $alias
      *
      * @return static
+     *
+     * @throws Exception
      */
-    public function setScreen(string $name): MetaboxDriver;
+    public function setScreen(string $alias): MetaboxDriver;
 
     /**
      * Récupération de l'intitulé de qualification.
@@ -150,7 +178,14 @@ interface MetaboxDriver extends ParamsBag
      * @param string|null view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return PlatesEngine|string
+     * @return ViewEngine|string
      */
-    public function viewer(?string $view = null, array $data = []);
+    public function view(?string $view = null, array $data = []);
+
+    /**
+     * Chemin absolu du répertoire des gabarits d'affichage.
+     *
+     * @return string
+     */
+    public function viewDirectory(): string;
 }

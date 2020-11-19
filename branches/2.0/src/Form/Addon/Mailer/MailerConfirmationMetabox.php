@@ -51,6 +51,6 @@ class MailerConfirmationMetabox extends AddonMetaboxDriver
             ],
         ]);
 
-        return (string)$this->viewer('confirmation', $this->all());
+        return parent::render();
     }
 }

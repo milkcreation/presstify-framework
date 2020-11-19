@@ -2,9 +2,10 @@
 
 namespace tiFy\Metabox\Driver\Excerpt;
 
+use tiFy\Contracts\Metabox\ExcerptDriver as ExcerptDriverContract;
 use tiFy\Metabox\MetaboxDriver;
 
-class Excerpt extends MetaboxDriver
+class Excerpt extends MetaboxDriver implements ExcerptDriverContract
 {
     /**
      * Alias de qualification.

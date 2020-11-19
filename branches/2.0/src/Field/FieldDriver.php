@@ -185,7 +185,7 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
     public function parse(): FieldDriverContract
     {
         $this->attributes = array_merge(
-            $this->defaults(), $this->field()->config($this->getAlias(), []), $this->attributes
+            $this->defaults(), $this->field()->config("driver.{$this->getAlias()}", []), $this->attributes
         );
 
         $this->parseDefaults();
@@ -314,7 +314,7 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
         if (is_null($this->viewEngine)) {
             $this->viewEngine = $this->field()->resolve('view-engine');
 
-            $defaultConfig = $this->field()->config('_default.viewer', []);
+            $defaultConfig = $this->field()->config('default.driver.viewer', []);
 
             if (isset($defaultConfig['directory'])) {
                 $defaultConfig['directory'] = rtrim($defaultConfig['directory'], '/') . '/' . $this->getAlias();
@@ -332,12 +332,12 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
                 }
             }
 
-            $config = $this->field()->config("{$this->getAlias()}.viewer", []);
+            $config = $this->get('viewer', []);
 
             $this->viewEngine->params(array_merge([
-                'directory'    => $this->viewDirectory(),
-                'factory'      => FieldView::class,
-                'field'      => $this
+                'directory' => $this->viewDirectory(),
+                'factory'   => FieldView::class,
+                'driver'    => $this,
             ], $defaultConfig, $config, $this->get('viewer', [])));
         }
 
@@ -349,9 +349,7 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
     }
 
     /**
-     * Chemin absolu du répertoire des gabarits d'affichage.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function viewDirectory(): string
     {
