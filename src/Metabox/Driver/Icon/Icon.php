@@ -2,9 +2,10 @@
 
 namespace tiFy\Metabox\Driver\Icon;
 
+use tiFy\Contracts\Metabox\IconDriver as IconDriverContract;
 use tiFy\Metabox\MetaboxDriver;
 
-class Icon extends MetaboxDriver
+class Icon extends MetaboxDriver implements IconDriverContract
 {
     /**
      * Alias de qualification.

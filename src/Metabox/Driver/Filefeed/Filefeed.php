@@ -2,12 +2,14 @@
 
 namespace tiFy\Metabox\Driver\Filefeed;
 
+use tiFy\Contracts\Metabox\FilefeedDriver as FilefeedDriverContract;
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Metabox\MetaboxDriver;
-use tiFy\Support\Proxy\{Request, Router};
+use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\Router;
 
-class Filefeed extends MetaboxDriver
+class Filefeed extends MetaboxDriver implements FilefeedDriverContract
 {
     /**
      * Indice de l'intance courante.
@@ -30,10 +32,14 @@ class Filefeed extends MetaboxDriver
     /**
      * @inheritDoc
      */
-    public function boot(): void
+    public function boot(): MetaboxDriverContract
     {
+        parent::boot();
+
         static::$instance++;
         $this->setUrl();
+
+        return $this;
     }
 
     /**
@@ -217,7 +223,7 @@ class Filefeed extends MetaboxDriver
 
             return [
                 'success' => true,
-                'data'    => (string)$this->viewer('item-wrap', $this->item($index, $value)),
+                'data'    => $this->view('item-wrap', $this->item($index, $value)),
             ];
         }
     }

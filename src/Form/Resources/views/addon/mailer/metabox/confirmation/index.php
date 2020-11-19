@@ -1,33 +1,34 @@
 <?php
 /**
- * Options du message de confirmation de réception de la demande de contact.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
+ * @var tiFy\Contracts\Metabox\MetaboxView $this
  */
 ?>
+<em>
+    <span class="dashicons dashicons-info-outline"></span>
+    <?php _e('Message de confirmation d\'abonnement à destination d\'un nouvel abonné.', 'tify'); ?>
+</em>
+<hr>
 <table class="form-table">
     <tbody>
     <tr>
         <th scope="row"><?php _e('Activation', 'tify'); ?></th>
         <td>
             <?php echo field('toggle-switch', [
-                'name'  => $this->get('option_names.confirmation'),
-                'value' => $this->get('option_values.confirmation')
+                'name'  => $this->name() . '[enabled]',
+                'value' => $this->value('enabled')
             ]); ?>
         </td>
     </tr>
     </tbody>
 </table>
 
+<h3><?php _e('Expéditeur de la confirmation', 'tify'); ?></h3>
 <em>
-    <span class="dashicons dashicons-flag"></span>
-    <?php
-    _e('Message de confirmation de réception de la demande de contact, envoyé à l\'émetteur de la demande.', 'tify');
-    ?>
+    <?php printf(
+        __('Par défaut : <b>%s</b>, si aucun expéditeur n\'est renseigné.', 'tify'),
+        join(' - ', $$this->get('default_email', []))
+    ); ?>
 </em>
-
-<h3><?php _e('Expéditeur de l\'email envoyé à l\'émetteur', 'tify'); ?></h3>
-
 <table class="form-table">
     <tbody>
     <tr>
@@ -35,10 +36,9 @@
         <td>
             <div class="ThemeInput--email">
                 <?php echo field('text', [
-                    'name'  => $this->get('option_names.sender') . '[email]',
-                    'value' => $this->get('option_values.sender.email'),
+                    'name'  => $this->name() . '[sender][email]',
+                    'value' => $this->value('sender.email'),
                     'attrs' => [
-                        'placeholder'  => __('Email (requis)', 'tify'),
                         'size'         => 40,
                         'autocomplete' => 'off'
                     ]
@@ -51,10 +51,9 @@
         <td>
             <div class="ThemeInput--user">
                 <?php echo field('text', [
-                    'name'  => $this->get('option_names.sender') . '[name]',
-                    'value' => $this->get('option_values.sender.name'),
+                    'name'  => $this->name() . '[sender][name]',
+                    'value' => $this->value('sender.name'),
                     'attrs' => [
-                        'placeholder'  => __('Nom (optionnel)', 'tify'),
                         'size'         => 40,
                         'autocomplete' => 'off'
                     ]

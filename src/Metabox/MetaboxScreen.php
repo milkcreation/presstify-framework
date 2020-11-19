@@ -3,28 +3,88 @@
 namespace tiFy\Metabox;
 
 use Illuminate\Support\Collection;
-use tiFy\Contracts\Metabox\{MetaboxDriver, MetaboxManager, MetaboxScreen as MetaboxScreenContract};
-use tiFy\Support\{ParamsBag, Proxy\Request, Proxy\Router};
+use tiFy\Contracts\Metabox\Metabox;
+use tiFy\Contracts\Metabox\MetaboxDriver;
+use tiFy\Contracts\Metabox\MetaboxScreen as MetaboxScreenContract;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\Router;
 
 class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
 {
     /**
-     * Nom de qualification.
-     * @var string
+     * Indicateur de chargement.
+     * @var bool
      */
-    protected $name;
+    private $booted = false;
+
+    /**
+     * Indicateur d'initialisation.
+     * @var bool
+     */
+    private $built = false;
 
     /**
      * Instance du gestionnaire de metaboxes.
-     * @var MetaboxManager|null
+     * @var Metabox|null
      */
-    protected $manager;
+    private $metabox;
+
+    /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = '';
 
     /**
      * Indicateur d'écran d'affichage courant.
      * @var boolean|null
      */
     protected $current;
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): MetaboxScreenContract
+    {
+        if (!$this->booted) {
+            $this->parse();
+
+            $this->booted = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function build(): MetaboxScreenContract
+    {
+        if (!$this->built) {
+            $this->built = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAlias(): string
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDrivers(): array
+    {
+        return (new Collection($this->metabox()->all()))->filter(function (MetaboxDriver $box) {
+            return $box->getScreen() === $this;
+        })->all();
+    }
 
     /**
      * @inheritDoc
@@ -49,7 +109,7 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
      */
     public function isCurrentRoute(): bool
     {
-        return Router::hasCurrent() && (Router::currentRouteName() === $this->name);
+        return Router::hasCurrent() && (Router::currentRouteName() === $this->alias);
     }
 
     /**
@@ -57,33 +117,27 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
      */
     public function isCurrentRequest(): bool
     {
-        return ltrim(rtrim(Request::getPathInfo(), '/'), '/') === ltrim(rtrim($this->name, '/'), '/');
+        return ltrim(rtrim(Request::getPathInfo(), '/'), '/') === ltrim(rtrim($this->alias, '/'), '/');
     }
 
     /**
      * @inheritDoc
      */
-    public function getMetaboxes(): array
+    public function metabox(): ?Metabox
     {
-        return (new Collection($this->manager()->all()))->filter(function (MetaboxDriver $box) {
-            return $box->screen() === $this;
-        })->all();
+        return $this->metabox;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return $this
      */
-    public function manager(): ?MetaboxManager
+    public function parse(): MetaboxScreenContract
     {
-        return $this->manager;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setManager(MetaboxManager $manager): MetaboxScreenContract
-    {
-        $this->manager = $manager;
+        $this->attributes = array_merge(
+            $this->defaults(), $this->metabox()->config("screen.{$this->getAlias()}", []), $this->attributes
+        );
 
         return $this;
     }
@@ -91,9 +145,19 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
     /**
      * @inheritDoc
      */
-    public function setName(string $name): MetaboxScreenContract
+    public function setMetabox(Metabox $metabox): MetaboxScreenContract
     {
-        $this->name = $name;
+        $this->metabox = $metabox;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setAlias(string $alias): MetaboxScreenContract
+    {
+        $this->alias = $alias;
 
         return $this;
     }

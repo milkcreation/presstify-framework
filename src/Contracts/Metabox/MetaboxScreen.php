@@ -7,11 +7,32 @@ use tiFy\Contracts\Support\ParamsBag;
 interface MetaboxScreen extends ParamsBag
 {
     /**
+     * Chargement.
+     *
+     * @return static
+     */
+    public function boot(): MetaboxScreen;
+
+    /**
+     * Initialisation.
+     *
+     * @return static
+     */
+    public function build(): MetaboxScreen;
+
+    /**
+     * Récupération de l'alias de qualification.
+     *
+     * @return string
+     */
+    public function getAlias(): string;
+
+    /**
      * Récupération de la liste des boîtes de saisie associées à l'écran.
      *
      * @return MetaboxDriver[]|array
      */
-    public function getMetaboxes(): array;
+    public function getDrivers(): array;
 
     /**
      * Vérifie si la page courante correspond à l'écran.
@@ -37,25 +58,32 @@ interface MetaboxScreen extends ParamsBag
     /**
      * Récupération de l'instance du gestionnaire.
      *
-     * @return MetaboxManager|null
+     * @return Metabox|null
      */
-    public function manager(): ?MetaboxManager;
+    public function metabox(): ?Metabox;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return static
+     */
+    public function parse(): MetaboxScreen;
 
     /**
      * Définition de l'instance du gestionnaire.
      *
-     * @param MetaboxManager $manager
+     * @param Metabox $metabox
      *
      * @return static
      */
-    public function setManager(MetaboxManager $manager): MetaboxScreen;
+    public function setMetabox(Metabox $metabox): MetaboxScreen;
 
     /**
      * Définition du nom de qualification.
      *
-     * @param string $name
+     * @param string $alias
      *
      * @return static
      */
-    public function setName(string $name): MetaboxScreen;
+    public function setAlias(string $alias): MetaboxScreen;
 }

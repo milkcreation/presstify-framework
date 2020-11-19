@@ -2,12 +2,13 @@
 
 namespace tiFy\Metabox\Driver\Videofeed;
 
+use tiFy\Contracts\Metabox\VideofeedDriver as VideofeedDriverContract;
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\Proxy\{Request, Router};
 
-class Videofeed extends MetaboxDriver
+class Videofeed extends MetaboxDriver implements VideofeedDriverContract
 {
     /**
      * Indice de l'instance courante.
@@ -30,10 +31,14 @@ class Videofeed extends MetaboxDriver
     /**
      * @inheritDoc
      */
-    public function boot(): void
+    public function boot(): MetaboxDriverContract
     {
+        parent::boot();
+
         static::$instance++;
         $this->setUrl();
+
+        return $this;
     }
 
     /**
@@ -219,7 +224,7 @@ class Videofeed extends MetaboxDriver
 
             return [
                 'success' => true,
-                'data'    => (string)$this->viewer('item-wrap', $this->item($index)),
+                'data'    => (string)$this->view('item-wrap', $this->item($index)),
             ];
         }
     }

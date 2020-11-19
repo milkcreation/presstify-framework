@@ -2,9 +2,10 @@
 
 namespace tiFy\Metabox\Driver\Color;
 
+use tiFy\Contracts\Metabox\ColorDriver as ColorDriverContract;
 use tiFy\Metabox\MetaboxDriver;
 
-class Color extends MetaboxDriver
+class Color extends MetaboxDriver implements ColorDriverContract
 {
     /**
      * Alias de qualification.

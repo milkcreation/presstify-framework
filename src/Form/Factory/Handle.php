@@ -91,6 +91,20 @@ class Handle extends ParamsBag implements FactoryHandle
     /**
      * @inheritDoc
      */
+    public function isValidated(): bool
+    {
+        if (!$this->notices()->has('error')) {
+            $this->events('handle.validated', [&$this]);
+
+            return !$this->notices()->has('error');
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function response(): ?RedirectResponse
     {
         if (!$this->verify()) {
@@ -100,7 +114,7 @@ class Handle extends ParamsBag implements FactoryHandle
 
             $this->validate();
 
-            if ($this->notices()->has('error')) {
+            if (!$this->isValidated()) {
                 $this->fail();
 
                 return null;
@@ -241,10 +255,6 @@ class Handle extends ParamsBag implements FactoryHandle
 
             $this->events('handle.validate.field.' . $field->getType(), [&$field]);
             $this->events('handle.validate.field', [&$field]);
-        }
-
-        if (!$this->notices()->has('error')) {
-            $this->events('handle.validated', [&$this]);
         }
 
         return $this;

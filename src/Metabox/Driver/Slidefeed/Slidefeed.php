@@ -2,12 +2,13 @@
 
 namespace tiFy\Metabox\Driver\Slidefeed;
 
+use tiFy\Contracts\Metabox\SlidefeedDriver as SlidefeedDriverContract;
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\Proxy\{Request, Router};
 
-class Slidefeed extends MetaboxDriver
+class Slidefeed extends MetaboxDriver implements SlidefeedDriverContract
 {
     /**
      * Indice de l'intance courante.
@@ -30,10 +31,14 @@ class Slidefeed extends MetaboxDriver
     /**
      * @inheritDoc
      */
-    public function boot(): void
+    public function boot(): MetaboxDriverContract
     {
+        parent::boot();
+
         static::$instance++;
         $this->setUrl();
+
+        return $this;
     }
 
     /**
@@ -81,7 +86,7 @@ class Slidefeed extends MetaboxDriver
      *
      * @return array
      */
-    public function item($index, $value): array
+    public function item($index, array $value): array
     {
         $name = $this->get('name');
         $index = !is_numeric($index) ? $index : uniqid();
@@ -219,7 +224,7 @@ class Slidefeed extends MetaboxDriver
 
             return [
                 'success' => true,
-                'data'    => (string)$this->viewer('item-wrap', $this->item($index, $value)),
+                'data'    => (string)$this->view('item-wrap', $this->item($index, $value)),
             ];
         }
     }

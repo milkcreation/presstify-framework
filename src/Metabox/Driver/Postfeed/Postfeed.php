@@ -2,13 +2,14 @@
 
 namespace tiFy\Metabox\Driver\Postfeed;
 
+use tiFy\Contracts\Metabox\PostfeedDriver as PostfeedDriverContract;
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
 use tiFy\Contracts\Routing\Route;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\Proxy\{Request, Router};
 use tiFy\Wordpress\Query\QueryPost;
 
-class Postfeed extends MetaboxDriver
+class Postfeed extends MetaboxDriver implements PostfeedDriverContract
 {
     /**
      * Indice de l'intance courante.
@@ -31,10 +32,14 @@ class Postfeed extends MetaboxDriver
     /**
      * @inheritDoc
      */
-    public function boot(): void
+    public function boot(): MetaboxDriverContract
     {
+        parent::boot();
+
         static::$instance++;
         $this->setUrl();
+
+        return $this;
     }
 
     /**
@@ -209,7 +214,7 @@ class Postfeed extends MetaboxDriver
 
             return [
                 'success' => true,
-                'data'    => (string)$this->viewer('item-wrap', [
+                'data'    => (string)$this->view('item-wrap', [
                     'item' => $item,
                 ]),
             ];

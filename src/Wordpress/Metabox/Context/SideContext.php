@@ -15,14 +15,4 @@ class SideContext extends MetaboxContext
 
         ]);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function parse()
-    {
-        parent::parse();
-
-        return $this;
-    }
 }

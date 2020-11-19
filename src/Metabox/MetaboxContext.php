@@ -2,32 +2,42 @@
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\{
-    Metabox\MetaboxContext as MetaboxContextContract,
-    Metabox\MetaboxManager,
-    View\PlatesEngine
-};
-use tiFy\Support\{ParamsBag, Proxy\View};
+use tiFy\Contracts\Metabox\MetaboxContext as MetaboxContextContract;
+use tiFy\Contracts\Metabox\Metabox;
+use tiFy\Contracts\View\Engine as ViewEngine;
+use tiFy\Support\ParamsBag;
 
 class MetaboxContext extends ParamsBag implements MetaboxContextContract
 {
     /**
-     * Nom de qualification.
-     * @var string
+     * Indicateur de chargement.
+     * @var bool
      */
-    protected $name;
+    private $booted = false;
+
+    /**
+     * Indicateur d'initialisation.
+     * @var bool
+     */
+    private $built = false;
 
     /**
      * Instance du gestionnaire de metaboxes.
-     * @var MetaboxManager|null
+     * @var Metabox|null
      */
-    protected $manager;
+    private $metabox;
+
+    /**
+     * Alias de qualification.
+     * @var string
+     */
+    protected $alias = '';
 
     /**
      * Instance du gestionnaire de gabarit d'affichage.
-     * @var PlatesEngine|null
+     * @var ViewEngine|null
      */
-    protected $viewer;
+    protected $viewEngine;
 
     /**
      * @inheritDoc
@@ -40,9 +50,35 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     /**
      * @inheritDoc
      */
-    public function getName(): string
+    public function boot(): MetaboxContextContract
     {
-        return $this->name;
+        if (!$this->booted) {
+            $this->parse();
+
+            $this->booted = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function build(): MetaboxContextContract
+    {
+        if (!$this->built) {
+            $this->built = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAlias(): string
+    {
+        return $this->alias;
     }
 
     /**
@@ -51,16 +87,30 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     public function defaults(): array
     {
         return [
-            'items' => []
+            'items' => [],
         ];
     }
 
     /**
      * @inheritDoc
      */
-    public function manager(): ?MetaboxManager
+    public function metabox(): ?Metabox
     {
-        return $this->manager;
+        return $this->metabox;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return $this
+     */
+    public function parse(): MetaboxContextContract
+    {
+        $this->attributes = array_merge(
+            $this->defaults(), $this->metabox()->config("context.{$this->getAlias()}", []), $this->attributes
+        );
+
+        return $this;
     }
 
     /**
@@ -69,18 +119,18 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     public function render(): string
     {
         $this->set([
-            'items' => $this->manager()->getRenderItems($this->name)
+            'items' => $this->metabox()->getRenderedDrivers($this->getAlias()),
         ]);
 
-        return (string)$this->viewer('index', $this->parse()->all());
+        return $this->view('index', $this->parse()->all());
     }
 
     /**
      * @inheritDoc
      */
-    public function setManager(MetaboxManager $manager): MetaboxContextContract
+    public function setAlias(string $alias): MetaboxContextContract
     {
-        $this->manager = $manager;
+        $this->alias = $alias;
 
         return $this;
     }
@@ -88,9 +138,9 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     /**
      * @inheritDoc
      */
-    public function setName(string $name): MetaboxContextContract
+    public function setMetabox(Metabox $metabox): MetaboxContextContract
     {
-        $this->name = $name;
+        $this->metabox = $metabox;
 
         return $this;
     }
@@ -98,18 +148,20 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     /**
      * @inheritDoc
      */
-    public function viewer(?string $view = null, array $data = [])
+    public function view(?string $view = null, array $data = [])
     {
-        if (!$this->viewer) {
-            $this->viewer = View::getPlatesEngine([
-                'directory' => $this->manager()->resourcesDir("/views/context/{$this->name}")
+        if (!$this->viewEngine) {
+            $this->viewEngine = $this->metabox()->resolve('view-engine.context');
+
+            $this->viewEngine->params([
+                'directory' => $this->metabox()->resources("/views/context/{$this->getAlias()}")
             ]);
         }
 
         if (func_num_args() === 0) {
-            return $this->viewer;
+            return $this->viewEngine;
         }
 
-        return $this->viewer->render($view, $data);
+        return $this->viewEngine->render($view, $data);
     }
 }

@@ -2,10 +2,11 @@
 
 namespace tiFy\Metabox\Driver\Subtitle;
 
+use tiFy\Contracts\Metabox\SubtitleDriver as SubtitleDriverContract;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\Proxy\Field;
 
-class Subtitle extends MetaboxDriver
+class Subtitle extends MetaboxDriver implements SubtitleDriverContract
 {
     /**
      * Alias de qualification.
@@ -44,9 +45,9 @@ class Subtitle extends MetaboxDriver
      */
     public function render(): string
     {
-        return (string)Field::get('text', array_merge($this->params(), [
+        return Field::get('text', array_merge($this->params(), [
             'name'  => $this->name(),
             'value' => $this->value()
-        ]));
+        ]))->render();
     }
 }

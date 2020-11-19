@@ -2,9 +2,10 @@
 
 namespace tiFy\Metabox\Driver\Order;
 
+use tiFy\Contracts\Metabox\OrderDriver as OrderDriverContract;
 use tiFy\Metabox\MetaboxDriver;
 
-class Order extends MetaboxDriver
+class Order extends MetaboxDriver implements OrderDriverContract
 {
     /**
      * Alias de qualification.

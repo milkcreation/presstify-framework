@@ -2,12 +2,13 @@
 
 namespace tiFy\Metabox\Driver\RelatedTerm;
 
+use tiFy\Contracts\Metabox\RelatedTermDriver as RelatedTermDriverContract;
 use tiFy\Metabox\MetaboxDriver;
 
 /**
  * @todo
  */
-class RelatedTerm extends MetaboxDriver
+class RelatedTerm extends MetaboxDriver implements RelatedTermDriverContract
 {
     /**
      * @inheritDoc
@@ -56,9 +57,9 @@ class RelatedTerm extends MetaboxDriver
             'get'        => 'all',
         ]);
 
-        if (is_wp_error($terms)) :
-            return;
-        endif;
+        if (is_wp_error($terms)) {
+            return '';
+        }
 
         $this->set('taxonomy', (array)$this->get('taxonomy'));
         $checked = wp_get_object_terms($post->ID, $this->get('taxonomy'), array_merge($args, ['fields' => 'ids']));

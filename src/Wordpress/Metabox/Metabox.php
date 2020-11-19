@@ -2,23 +2,29 @@
 
 namespace tiFy\Wordpress\Metabox;
 
-use tiFy\Contracts\Metabox\{MetaboxDriver, MetaboxManager, MetaboxScreen as MetaboxScreenContract};
+use tiFy\Contracts\Metabox\MetaboxDriver;
+use tiFy\Contracts\Metabox\FilefeedDriver as FilefeedDriverContract;
+use tiFy\Contracts\Metabox\ImagefeedDriver as ImagefeedDriverContract;
+use tiFy\Contracts\Metabox\Metabox as MetaboxContract;
+use tiFy\Contracts\Metabox\VideofeedDriver as VideofeedDriverContract;
 use tiFy\Wordpress\Metabox\Context\SideContext;
-use tiFy\Wordpress\Metabox\Driver\{Filefeed\Filefeed, Imagefeed\Imagefeed, Videofeed\Videofeed};
+use tiFy\Wordpress\Metabox\Driver\Filefeed\Filefeed;
+use tiFy\Wordpress\Metabox\Driver\Imagefeed\Imagefeed;
+use tiFy\Wordpress\Metabox\Driver\Videofeed\Videofeed;
 use tiFy\Wordpress\Routing\WpScreen;
-use tiFy\Support\Proxy\{PostType, Request, Taxonomy, User};
-use WP_Post;
-use WP_Screen;
-use WP_Term;
-use WP_User;
+use tiFy\Support\Proxy\PostType;
+use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\Taxonomy;
+use tiFy\Support\Proxy\User;
+use WP_Post, WP_Screen, WP_Term, WP_User;
 
 class Metabox
 {
     /**
      * Instance du gestionnaire utilisateur.
-     * @var MetaboxManager
+     * @var MetaboxContract
      */
-    protected $manager;
+    private $manager;
 
     /**
      * Liste des indices de qualification de données de post.
@@ -74,55 +80,53 @@ class Metabox
     ];
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param MetaboxManager $manager Instance du gestionnaire de boîtes de saisie.
+     * @param MetaboxContract $manager Instance du gestionnaire de boîtes de saisie.
      *
      * @return void
      */
-    public function __construct(MetaboxManager $manager)
+    public function __construct(MetaboxContract $manager)
     {
         $this->manager = $manager;
 
         $this->registerOverride();
-
+        
         add_action('current_screen', function (WP_Screen $wp_screen) {
             $screen = new WpScreen($wp_screen);
 
             if ($screen->getObjectType() === 'post_type') {
                 $type = $screen->getObjectName();
-                $boxes     = [];
+                $drivers = [];
 
                 if ($metaboxScreen = $this->manager->getScreen("{$type}@post_type")) {
-                    $boxes = $metaboxScreen->getMetaboxes();
+                    $drivers = $metaboxScreen->getDrivers();
                 }
 
-                array_walk($boxes, function (MetaboxDriver $box) use ($type) {
-                    if($box->context()->getName() === 'side') {
-                        add_action('add_meta_boxes', function () use ($box) {
+                array_walk($drivers, function (MetaboxDriver $driver) use ($type) {
+                    if ($driver->getContext()->getAlias() === 'side') {
+                        add_action('add_meta_boxes', function () use ($driver) {
                             add_meta_box(
-                                $box->name(),
-                                $box->title(), function (...$args) use ($box) {
-                                    echo $box->handle($args)->render();
-                                },
+                                $driver->getAlias(),
+                                $driver->title(), function (...$args) use ($driver) {
+                                echo $driver->handle($args)->render();
+                            },
                                 null,
                                 'side'
                             );
                         });
                     }
 
-                    $key = $box->name();
+                    $key = $driver->name();
 
-                    if ($key && ! in_array($key, $this->postKeys) && !PostType::meta()->exists($type, $key)) {
+                    if ($key && !in_array($key, $this->postKeys) && !PostType::meta()->exists($type, $key)) {
                         PostType::meta()->registerSingle($type, $key);
                     }
                 });
             } elseif (($screen->getHookname() === 'options')) {
                 $option_page = Request::input('option_page', '');
-                $boxes       = [];
+                $drivers = [];
 
                 if ($metaboxScreen = $this->manager->getScreen("{$option_page}@options")) {
-                    $boxes = $metaboxScreen->getMetaboxes();
+                    $drivers = $metaboxScreen->getDrivers();
                     add_filter('allowed_options', function ($allowed_options) use ($option_page) {
                         if (!isset($allowed_options[$option_page])) {
                             $allowed_options[$option_page] = [];
@@ -132,45 +136,45 @@ class Metabox
                     });
                 }
 
-                array_walk($boxes, function (MetaboxDriver $box) use ($option_page) {
-                    if ($name = $box->name()) {
+                array_walk($drivers, function (MetaboxDriver $driver) use ($option_page) {
+                    if ($name = $driver->name()) {
                         register_setting($option_page, $name);
                     }
                 });
             } elseif ($screen->getObjectType() === 'taxonomy') {
                 $tax = $screen->getObjectName();
-                $boxes    = [];
+                $drivers = [];
 
                 if ($metaboxScreen = $this->manager->getScreen("{$tax}@taxonomy")) {
-                    $boxes = $metaboxScreen->getMetaboxes();
+                    $drivers = $metaboxScreen->getDrivers();
                 }
 
-                array_walk($boxes, function (MetaboxDriver $box) use ($tax) {
-                    $key = $box->name();
+                array_walk($drivers, function (MetaboxDriver $driver) use ($tax) {
+                    $key = $driver->name();
 
-                    if ($key && ! in_array($key, $this->termKeys) && !Taxonomy::meta()->exists($tax, $key)) {
+                    if ($key && !in_array($key, $this->termKeys) && !Taxonomy::meta()->exists($tax, $key)) {
                         Taxonomy::meta()->registerSingle($tax, $key);
                     }
                 });
             } elseif ($screen->getObjectType() === 'user') {
                 //$roles = $screen->getObjectName();
-                $boxes = [];
+                $drivers = [];
 
                 if ($metaboxScreen = $this->manager->getScreen("@user")) {
-                    $boxes = $metaboxScreen->getMetaboxes();
+                    $drivers = $metaboxScreen->getDrivers();
                 }
 
-                array_walk($boxes, function (MetaboxDriver $box) {
-                    $key = $box->name();
+                array_walk($drivers, function (MetaboxDriver $driver) {
+                    $key = $driver->name();
 
-                    if ($key && ! in_array($key, $this->userKeys) && !User::meta()->exists($key)) {
+                    if ($key && !in_array($key, $this->userKeys) && !User::meta()->exists($key)) {
                         User::meta()->registerSingle($key);
                     }
                 });
             }
 
             if ($screen->getObjectType()) {
-                $boxes  = $this->manager->all();
+                $drivers = $this->manager->all();
                 $tabRdr = function (...$args) {
                     echo $this->manager->render('tab', $args);
                 };
@@ -195,16 +199,16 @@ class Metabox
                             );
                         }
 
-                        array_walk($boxes, function (MetaboxDriver $box) {
-                            $box->setHandler(function (MetaboxDriver $box, WP_Post $wp_post) {
-                                $box->set('wp_post', $wp_post);
+                        array_walk($drivers, function (MetaboxDriver $driver) {
+                            $driver->setHandler(function (MetaboxDriver $driver, WP_Post $wp_post) {
+                                $driver->set('wp_post', $wp_post);
 
-                                if (is_null($box['value'])) {
-                                    if ($name = $box->name()) {
+                                if (is_null($driver['value'])) {
+                                    if ($name = $driver->name()) {
                                         if (in_array($name, $this->postKeys)) {
                                             $box['value'] = $wp_post->{$name};
                                         } else {
-                                            $box['value'] = get_post_meta($wp_post->ID, $box->name(), true);
+                                            $box['value'] = get_post_meta($wp_post->ID, $driver->name(), true);
                                         }
                                     }
                                 }
@@ -214,10 +218,10 @@ class Metabox
                     case 'options' :
                         add_settings_section('navtab', null, $tabRdr, $screen->getObjectName());
 
-                        array_walk($boxes, function (MetaboxDriver $box) {
-                            $box->setHandler(function (MetaboxDriver $box) {
-                                if (is_null($box['value']) && ($name = $box->name())) {
-                                    $box['value'] = get_option($name);
+                        array_walk($drivers, function (MetaboxDriver $driver) {
+                            $driver->setHandler(function (MetaboxDriver $driver) {
+                                if (is_null($driver['value']) && ($name = $driver->name())) {
+                                    $driver['value'] = get_option($name);
                                 }
                             });
                         });
@@ -225,15 +229,15 @@ class Metabox
                     case 'taxonomy' :
                         add_action($screen->getObjectName() . '_edit_form', $tabRdr, 10, 2);
 
-                        array_walk($boxes, function (MetaboxDriver $box) {
-                            $box->setHandler(function (MetaboxDriver $box, WP_Term $wp_term) {
-                                $box->set('wp_term', $wp_term);
+                        array_walk($drivers, function (MetaboxDriver $driver) {
+                            $driver->setHandler(function (MetaboxDriver $driver, WP_Term $wp_term) {
+                                $driver->set('wp_term', $wp_term);
 
-                                if ($name = $box->name()) {
+                                if ($name = $driver->name()) {
                                     if (in_array($name, $this->termKeys)) {
                                         $box['value'] = $wp_term->{$name};
                                     } else {
-                                        $box['value'] = get_term_meta($wp_term->term_id, $box->name(), true);
+                                        $box['value'] = get_term_meta($wp_term->term_id, $driver->name(), true);
                                     }
                                 }
                             });
@@ -243,15 +247,15 @@ class Metabox
                         add_action('show_user_profile', $tabRdr);
                         add_action('edit_user_profile', $tabRdr);
 
-                        array_walk($boxes, function (MetaboxDriver $box) {
-                            $box->setHandler(function (MetaboxDriver $box, WP_User $wp_user) {
-                                $box->set('wp_user', $wp_user);
+                        array_walk($drivers, function (MetaboxDriver $driver) {
+                            $driver->setHandler(function (MetaboxDriver $driver, WP_User $wp_user) {
+                                $driver->set('wp_user', $wp_user);
 
-                                if ($name = $box->name()) {
+                                if ($name = $driver->name()) {
                                     if (in_array($name, $this->userKeys)) {
                                         $box['value'] = $wp_user->{$name};
                                     } else {
-                                        $box['value'] = get_user_meta($wp_user->ID, $box->name(), true);
+                                        $box['value'] = get_user_meta($wp_user->ID, $driver->name(), true);
                                     }
                                 }
                             });
@@ -307,23 +311,23 @@ class Metabox
      */
     public function registerOverride(): void
     {
-        app()->add(MetaboxScreenContract::class, function () {
-            return (new MetaboxScreen())->setManager($this->manager);
+        app()->add('metabox.screen', function () {
+            return new MetaboxScreen();
         });
 
         app()->add('metabox.context.side', function () {
             return new SideContext();
         });
 
-        app()->add('metabox.driver.filefeed', function () {
+        app()->add(FilefeedDriverContract::class, function () {
             return new Filefeed();
         });
 
-        app()->add('metabox.driver.imagefeed', function () {
+        app()->add(ImagefeedDriverContract::class, function () {
             return new Imagefeed();
         });
 
-        app()->add('metabox.driver.videofeed', function () {
+        app()->add(VideofeedDriverContract::class, function () {
             return new Videofeed();
         });
     }
