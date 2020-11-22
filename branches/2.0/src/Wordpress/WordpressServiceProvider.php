@@ -13,7 +13,7 @@ use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
 use tiFy\Wordpress\Http\Http;
-use tiFy\Wordpress\Mail\Mail;
+use tiFy\Wordpress\Mail\Mailer;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Metabox\Metabox;
 use tiFy\Wordpress\Option\Option;
@@ -55,7 +55,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.form',
         'wp.http',
         'wp.login-redirect',
-        'wp.mail',
+        'wp.mailer',
         'wp.media',
         'wp.metabox',
         'wp.page-hook',
@@ -136,7 +136,7 @@ class WordpressServiceProvider extends ServiceProvider
                 $this->getContainer()->get('wp.http');
 
                 if ($this->getContainer()->has('mailer')) {
-                    $this->getContainer()->get('wp.mail');
+                    $this->getContainer()->get('wp.mailer');
                 }
 
                 $this->getContainer()->get('wp.media');
@@ -187,6 +187,8 @@ class WordpressServiceProvider extends ServiceProvider
                 if ($this->getContainer()->has('view')) {
                     $this->getContainer()->get('wp.view');
                 }
+
+                events()->trigger('wp.booted', []);
             }
         }, 1);
     }
@@ -205,7 +207,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->registerField();
         $this->registerForm();
         $this->registerHttp();
-        $this->registerMail();
+        $this->registerMailer();
         $this->registerMedia();
         $this->registerMetabox();
         $this->registerOptions();
@@ -334,10 +336,10 @@ class WordpressServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerMail(): void
+    public function registerMailer(): void
     {
-        $this->getContainer()->share('wp.mail', function () {
-            return new Mail();
+        $this->getContainer()->share('wp.mailer', function () {
+            return new Mailer($this->getContainer()->get('mailer'));
         });
     }
 

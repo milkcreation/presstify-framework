@@ -152,7 +152,7 @@ class Field implements FieldContract
             return self::$instance;
         }
 
-        throw new Exception('Unavailable Field instance');
+        throw new Exception(sprintf('Unavailable %s instance', __CLASS__));
     }
 
     /**

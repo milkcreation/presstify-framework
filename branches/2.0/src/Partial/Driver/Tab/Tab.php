@@ -2,50 +2,141 @@
 
 namespace tiFy\Partial\Driver\Tab;
 
-use tiFy\Contracts\Partial\{PartialDriver as PartialDriverContract, Tab as TabContract};
-use tiFy\Contracts\Partial\TabItems as TabItemsContract;
+use Exception;
+use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
+use tiFy\Contracts\Partial\Tab as TabContract;
+use tiFy\Contracts\Partial\TabCollection as TabCollectionContract;
+use tiFy\Contracts\Routing\Route;
 use tiFy\Partial\PartialDriver;
+use tiFy\Support\Proxy\Url;
+use tiFy\Support\Proxy\Request;
+use tiFy\Support\Proxy\Router;
+use tiFy\Support\Proxy\Session;
 
 class Tab extends PartialDriver implements TabContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var string $active Nom de qualification de l'élément actif.
-     *      @var array $items {
-     *          Liste des onglets de navigation.
-     *
-     *          @var string $name Nom de qualification.
-     *          @var string $parent Nom de qualification de l'élément parent.
-     *          @var string|callable $content
-     *          @var int $position Ordre d'affichage dans le
-     *      }
-     *      @var array $rotation Rotation des styles d'onglet.
+     * Url de traitement de requête XHR.
+     * @var Route|string
      */
-    public function defaults(): array
+    private $xhrUrl = '';
+
+    /**
+     * Collection des éléments déclaré.
+     * @var TabCollectionContract
+     */
+    private $tabCollection;
+
+    /**
+     * @inheritDoc
+     */
+    public function addItem($def): TabContract
     {
-        return [
-            'attrs'    => [],
-            'after'    => '',
-            'before'   => '',
-            'viewer'   => [],
-            'active'   => null,
-            'items'    => [],
-            'rotation' => [],
-        ];
+        $this->getTabCollection()->add($def);
+
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function getTabStyle(int $depth = 0)
+    public function boot(): void
     {
-        return $this->get("rotation.{$depth}") ? : 'default';
+        parent::boot();
+        $this->setXhrUrl();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defaults(): array
+    {
+        return [
+            /**
+             * @var array $attrs Attributs HTML du champ.
+             */
+            'attrs'    => [],
+            /**
+             * @var string $after Contenu placé après le champ.
+             */
+            'after'    => '',
+            /**
+             * @var string $before Contenu placé avant le champ.
+             */
+            'before'   => '',
+            /**
+             * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+             */
+            'viewer'   => [],
+            /**
+             * @var string|null $active Nom de qualification de l'élément actif.
+             */
+            'active'   => null,
+            /**
+             * @var array $items {
+             * Liste des onglets de navigation.
+             * @type string $name Nom de qualification.
+             * @type string $parent Nom de qualification de l'élément parent.
+             * @type string|callable $content
+             * @type int $position Ordre d'affichage dans le
+             * }
+             */
+            'items'    => [],
+            /**
+             * @var array $rotation Rotation des styles d'onglet. left|top|default|pills.
+             */
+            'rotation' => [],
+            /**
+             * Activation du traitement de la requête HTML XHR
+             */
+            'ajax'     => true,
+        ];
+    }
+
+    /**
+     * Récupération de l'élément actif.
+     *
+     * @return string
+     */
+    protected function getActive(): string
+    {
+        if (!$active = $this->get('active', '')) {
+            $sessionName = md5(Url::current()->path() . $this->getId());
+            if ($this->get('ajax') && ($store = Session::registerStore($sessionName))) {
+                $active = $store->get('active', '');
+                $this->set('attrs.data-options.ajax.data.session', $sessionName);
+            }
+        }
+
+        return $active;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTabCollection(): TabCollectionContract
+    {
+        if (is_null($this->tabCollection)) {
+            $this->tabCollection = (new TabCollection([]))->setTabManager($this);
+        }
+
+        return $this->tabCollection;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTabStyle(int $depth = 0): string
+    {
+        return $this->get("rotation.{$depth}") ?: 'default';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getXhrUrl(...$params): string
+    {
+        return $this->xhrUrl instanceof Route ? (string)$this->xhrUrl->getUrl($params) : $this->xhrUrl;
     }
 
     /**
@@ -55,14 +146,15 @@ class Tab extends PartialDriver implements TabContract
     {
         parent::parse();
 
-        $this->set('attrs.data-control', 'tab');
+        $items = $this->pull('items', []);
 
-        $items = $this->get('items', []);
-        if (!$items instanceof TabItemsContract) {
-            $items = new TabItems($items, $this->get('active'));
+        if ($items instanceof TabCollectionContract) {
+            $this->setTabCollection($items);
+        } elseif (is_array($items)) {
+            foreach ($items as $item) {
+                $this->addItem($item);
+            }
         }
-        /* @var TabItemsContract $items */
-        $this->set('items', $items->prepare($this));
 
         return $this;
     }
@@ -72,10 +164,49 @@ class Tab extends PartialDriver implements TabContract
      */
     public function render(): string
     {
-        /* @var TabItemsContract $items */
-        $items = $this->get('items');
+        if ($ajax = $this->get('ajax', false)) {
+            $defaultsAjax = [
+                'data'     => [],
+                'dataType' => 'json',
+                'method'   => 'post',
+                'url'      => $this->getXhrUrl(),
+            ];
+            $this->set('attrs.data-options.ajax', is_array($ajax) ? array_merge($defaultsAjax, $ajax) : $defaultsAjax);
+        }
 
-        return (string)$this->view('index', ['attrs' => $this->get('attrs', []), 'items' => $items->getGrouped()]);
+        $this->set([
+            'attrs.data-control' => 'tab',
+            'attrs.data-options.active' => $this->getActive() ?: ''
+        ]);
+
+        try {
+            $items = $this->getTabCollection()->boot()->getGrouped();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        $this->set(compact('items'));
+
+        return $this->view('index', $this->all());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTabCollection(TabCollectionContract $tabCollection): TabContract
+    {
+        $this->tabCollection = $tabCollection->setTabManager($this);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setXhrUrl(?string $url = null): TabContract
+    {
+        $this->xhrUrl = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse']) : $url;
+
+        return $this;
     }
 
     /**
@@ -94,8 +225,14 @@ class Tab extends PartialDriver implements TabContract
     /**
      * @inheritDoc
      */
-    public function xhrSetTab()
+    public function xhrResponse(...$args): array
     {
-        return ['success' => true];
+        if (($sessionName = Request::input('session')) && $store = Session::registerStore($sessionName)) {
+            $store->put('active', Request::input('active'));
+
+            return ['success' => true];
+        } else {
+            return ['success' => false];
+        }
     }
 }

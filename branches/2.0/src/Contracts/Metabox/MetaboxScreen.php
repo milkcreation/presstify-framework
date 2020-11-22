@@ -70,15 +70,6 @@ interface MetaboxScreen extends ParamsBag
     public function parse(): MetaboxScreen;
 
     /**
-     * Définition de l'instance du gestionnaire.
-     *
-     * @param Metabox $metabox
-     *
-     * @return static
-     */
-    public function setMetabox(Metabox $metabox): MetaboxScreen;
-
-    /**
      * Définition du nom de qualification.
      *
      * @param string $alias
@@ -86,4 +77,22 @@ interface MetaboxScreen extends ParamsBag
      * @return static
      */
     public function setAlias(string $alias): MetaboxScreen;
+
+    /**
+     * Définition d'un pilote associé.
+     *
+     * @param MetaboxDriver $driver
+     *
+     * @return static
+     */
+    public function setDriver(MetaboxDriver $driver): MetaboxScreen;
+
+    /**
+     * Définition de l'instance du gestionnaire.
+     *
+     * @param Metabox $metabox
+     *
+     * @return static
+     */
+    public function setMetabox(Metabox $metabox): MetaboxScreen;
 }

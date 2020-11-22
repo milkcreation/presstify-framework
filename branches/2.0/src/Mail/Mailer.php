@@ -7,28 +7,54 @@ use Html2Text\Html2Text;
 use Pelago\Emogrifier\CssInliner;
 use Psr\Container\ContainerInterface as Container;
 use Symfony\Component\DomCrawler\Crawler;
-use tiFy\Contracts\Mail\{
-    Mail as MailContract,
-    MailerDriver,
-    Mailer as MailerContract,
-    MailerQueue as MailerQueueContract
-};
+use tiFy\Contracts\Filesystem\LocalFilesystem;
+use tiFy\Contracts\Mail\Mailable as MailableContract;
+use tiFy\Contracts\Mail\MailerDriver;
+use tiFy\Contracts\Mail\Mailer as MailerContract;
+use tiFy\Contracts\Mail\MailerQueue as MailerQueueContract;
 use tiFy\Support\Arr;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Metabox;
+use tiFy\Support\Proxy\Storage;
 use tiFy\Validation\Validator as v;
 
 class Mailer implements MailerContract
 {
     /**
+     * Instance de la classe.
+     * @var static|null
+     */
+    private static $instance;
+
+    /**
+     * Indicateur d'initialisation.
+     * @var bool
+     */
+    private $booted = false;
+
+    /**
+     * Instance du gestionnaire des ressources
+     * @var LocalFilesystem|null
+     */
+    private $resources;
+
+    /**
+     * Instance du gestionnaire de configuration.
+     * @var ParamsBag
+     */
+    protected $config;
+
+    /**
+     * Instance du conteneur d'injection de dépendances.
+     * @var Container|null
+     */
+    protected $container;
+
+    /**
      * Liste des attributs de configuration par défaut.
      * @var array
      */
     protected static $defaults = [];
-
-    /**
-     * Instance du conteneur d'injection de dépendance.
-     * @var Container|null
-     */
-    protected $container;
 
     /**
      * Instance du pilote d'expédition des mails.
@@ -38,15 +64,46 @@ class Mailer implements MailerContract
 
     /**
      * Instance de l'email
-     * @var Mail|null
+     * @var MailableContract|null
      */
-    protected $mail;
+    protected $mailable;
 
     /**
      * Instance du gestionnaire de mise en file.
      * @var MailerQueueContract
      */
     protected $queue;
+
+    /**
+     * @param array $config
+     * @param Container|null $container
+     *
+     * @return void
+     */
+    public function __construct(array $config = [], Container $container = null)
+    {
+        $this->setConfig($config);
+
+        if (!is_null($container)) {
+            $this->setContainer($container);
+        }
+
+        if (!self::$instance instanceof static) {
+            self::$instance = $this;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function instance(): MailerContract
+    {
+        if (self::$instance instanceof self) {
+            return self::$instance;
+        }
+
+        throw new Exception(sprintf('Unavailable %s instance', __CLASS__));
+    }
 
     /**
      * Traitement récursif d'une liste de contacts.
@@ -148,9 +205,23 @@ class Mailer implements MailerContract
     /**
      * @inheritDoc
      */
-    public function addQueue(MailContract $mail, $date = 'now', array $params = []): int
+    public function addQueue(MailableContract $mailable, $date = 'now', array $params = []): int
     {
-        return $this->getDriver()->prepare() ? $this->getQueue()->add($mail, $date, $params) : 0;
+        return $this->getDriver()->prepare() ? $this->getQueue()->add($mailable, $date, $params) : 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): MailerContract
+    {
+        if (!$this->booted) {
+            Metabox::registerDriver('mail-config', $this->resolve('metabox.mail-config'));
+
+            $this->booted = true;
+        }
+
+        return $this;
     }
 
     /**
@@ -166,18 +237,38 @@ class Mailer implements MailerContract
     /**
      * @inheritDoc
      */
-    public function create($attrs = null): MailContract
+    public function config($key = null, $default = null)
     {
-        if (is_null($attrs) && $this->mail instanceof Mail) {
-            $attrs = $this->mail;
+        if (!isset($this->config) || is_null($this->config)) {
+            $this->config = (new ParamsBag())->set($this->getDefaults());
         }
 
-        if ($attrs instanceof Mail) {
-            return $this->mail = $attrs->setMailer($this);
+        if (is_string($key)) {
+            return $this->config->get($key, $default);
+        } elseif (is_array($key)) {
+            return $this->config->set($key);
+        } else {
+            return $this->config;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function create($attrs = null): MailableContract
+    {
+        if (is_null($attrs) && $this->mailable instanceof Mailable) {
+            $attrs = $this->mailable;
+        }
+
+        if ($attrs instanceof Mailable) {
+            return $this->mailable = $attrs->setMailer($this);
         } else {
             $this->clearDriver();
 
-            return $this->mail = (new Mail())->setMailer($this)->setParams($attrs);
+            return $this->mailable = $this->resolve('mailable')->setParams(array_merge(
+                $this->config()->all(), $attrs ?: []
+            ));
         }
     }
 
@@ -237,8 +328,7 @@ class Mailer implements MailerContract
     public function getDriver(): MailerDriver
     {
         if (is_null($this->driver)) {
-            $driver = !is_null($this->getContainer()) ? $this->getContainer()->get('mailer.driver') : null;
-            $this->driver = $driver ?: new Driver\PhpMailerDriver();
+            $this->driver = $this->resolve('driver');
         }
 
         return $this->driver;
@@ -250,11 +340,10 @@ class Mailer implements MailerContract
     public function getQueue(): MailerQueueContract
     {
         if (is_null($this->queue)) {
-            $queue = !is_null($this->getContainer()) ? $this->getContainer()->get('mailer.queue') : null;
-            $this->queue = $queue ?: new MailerQueue();
+            $this->queue = $this->resolve('queue');
         }
 
-        return $this->queue->setMailer($this);
+        return $this->queue;
     }
 
     /**
@@ -327,7 +416,7 @@ class Mailer implements MailerContract
         }
 
         if ($data = $mail->params('data', [])) {
-            $mail->data(array_merge($this->getDefaults('data', []), $data));
+            $mail->data($data);
         }
 
         if (!$html = $mail->params('html')) {
@@ -397,9 +486,47 @@ class Mailer implements MailerContract
     /**
      * @inheritDoc
      */
+    public function resolve(string $alias)
+    {
+        return ($container = $this->getContainer()) ? $container->get("mail.{$alias}") : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resolvable(string $alias): bool
+    {
+        return ($container = $this->getContainer()) && $container->has("mail.{$alias}");
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resources(?string $path = null)
+    {
+        if (!isset($this->resources) || is_null($this->resources)) {
+            $this->resources = Storage::local(__DIR__ . '/Resources');
+        }
+
+        return is_null($path) ? $this->resources : $this->resources->path($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function send($attrs = null): bool
     {
         return $this->create($attrs)->send();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setConfig(array $attrs): MailerContract
+    {
+        $this->config($attrs);
+
+        return $this;
     }
 
     /**

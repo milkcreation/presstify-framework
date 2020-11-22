@@ -71,7 +71,7 @@ class MetaboxServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->getContainer()->share('metabox', function (): MetaboxContract {
-            return (new Metabox(config('metabox', []), $this->getContainer()))->boot();
+            return (new Metabox(config('metabox', []), $this->getContainer()));
         });
 
         $this->getContainer()->add('metabox.context', function (): MetaboxContextContract {
@@ -111,51 +111,51 @@ class MetaboxServiceProvider extends ServiceProvider
      */
     public function registerDrivers(): void
     {
-        $this->getContainer()->add(ColorDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(ColorDriverContract::class, function (): MetaboxDriverContract {
             return new ColorDriver();
         });
 
-        $this->getContainer()->add(CustomHeaderContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(CustomHeaderContract::class, function (): MetaboxDriverContract {
             return new CustomHeaderDriver();
         });
 
-        $this->getContainer()->add(ExcerptDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(ExcerptDriverContract::class, function (): MetaboxDriverContract {
             return new ExcerptDriver();
         });
 
-        $this->getContainer()->add(FilefeedContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(FilefeedContract::class, function (): MetaboxDriverContract {
             return new FilefeedDriver();
         });
 
-        $this->getContainer()->add(IconDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(IconDriverContract::class, function (): MetaboxDriverContract {
             return new IconDriver();
         });
 
-        $this->getContainer()->add(OrderDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(OrderDriverContract::class, function (): MetaboxDriverContract {
             return new OrderDriver();
         });
 
-        $this->getContainer()->add(ImagefeedDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(ImagefeedDriverContract::class, function (): MetaboxDriverContract {
             return new ImagefeedDriver();
         });
 
-        $this->getContainer()->add(PostfeedDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(PostfeedDriverContract::class, function (): MetaboxDriverContract {
             return new PostfeedDriver();
         });
 
-        $this->getContainer()->add(RelatedTermDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(RelatedTermDriverContract::class, function (): MetaboxDriverContract {
             return new RelatedTermDriver();
         });
 
-        $this->getContainer()->add(SlidefeedDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(SlidefeedDriverContract::class, function (): MetaboxDriverContract {
             return new SlidefeedDriver();
         });
 
-        $this->getContainer()->add(SubtitleDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(SubtitleDriverContract::class, function (): MetaboxDriverContract {
             return new SubtitleDriver();
         });
 
-        $this->getContainer()->add(VideofeedDriverContract::class, function (): MetaboxDriverContract {
+        $this->getContainer()->share(VideofeedDriverContract::class, function (): MetaboxDriverContract {
             return new VideofeedDriver();
         });
     }

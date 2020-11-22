@@ -5,8 +5,6 @@ namespace tiFy\Partial\Driver\Tab;
 use tiFy\Partial\PartialView;
 
 /**
- * Class TabView
- *
  * @method string after()
  * @method string attrs()
  * @method string before()

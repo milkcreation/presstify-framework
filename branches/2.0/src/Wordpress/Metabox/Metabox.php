@@ -2,6 +2,7 @@
 
 namespace tiFy\Wordpress\Metabox;
 
+use Exception;
 use tiFy\Contracts\Metabox\MetaboxDriver;
 use tiFy\Contracts\Metabox\FilefeedDriver as FilefeedDriverContract;
 use tiFy\Contracts\Metabox\ImagefeedDriver as ImagefeedDriverContract;
@@ -83,13 +84,17 @@ class Metabox
      * @param MetaboxContract $manager Instance du gestionnaire de boîtes de saisie.
      *
      * @return void
+     *
+     * @throws Exception
      */
     public function __construct(MetaboxContract $manager)
     {
         $this->manager = $manager;
 
         $this->registerOverride();
-        
+
+        $this->manager->boot();
+
         add_action('current_screen', function (WP_Screen $wp_screen) {
             $screen = new WpScreen($wp_screen);
 
@@ -203,13 +208,11 @@ class Metabox
                             $driver->setHandler(function (MetaboxDriver $driver, WP_Post $wp_post) {
                                 $driver->set('wp_post', $wp_post);
 
-                                if (is_null($driver['value'])) {
-                                    if ($name = $driver->name()) {
-                                        if (in_array($name, $this->postKeys)) {
-                                            $box['value'] = $wp_post->{$name};
-                                        } else {
-                                            $box['value'] = get_post_meta($wp_post->ID, $driver->name(), true);
-                                        }
+                                if (is_null($driver->value()) && ($name = $driver->name())) {
+                                    if (in_array($name, $this->postKeys)) {
+                                        $driver['value'] = $wp_post->{$name};
+                                    } else {
+                                        $driver['value'] = get_post_meta($wp_post->ID, $driver->name(), true);
                                     }
                                 }
                             });
@@ -220,7 +223,7 @@ class Metabox
 
                         array_walk($drivers, function (MetaboxDriver $driver) {
                             $driver->setHandler(function (MetaboxDriver $driver) {
-                                if (is_null($driver['value']) && ($name = $driver->name())) {
+                                if (is_null($driver->value()) && ($name = $driver->name())) {
                                     $driver['value'] = get_option($name);
                                 }
                             });
@@ -235,9 +238,9 @@ class Metabox
 
                                 if ($name = $driver->name()) {
                                     if (in_array($name, $this->termKeys)) {
-                                        $box['value'] = $wp_term->{$name};
+                                        $driver['value'] = $wp_term->{$name};
                                     } else {
-                                        $box['value'] = get_term_meta($wp_term->term_id, $driver->name(), true);
+                                        $driver['value'] = get_term_meta($wp_term->term_id, $driver->name(), true);
                                     }
                                 }
                             });
@@ -253,9 +256,9 @@ class Metabox
 
                                 if ($name = $driver->name()) {
                                     if (in_array($name, $this->userKeys)) {
-                                        $box['value'] = $wp_user->{$name};
+                                        $driver['value'] = $wp_user->{$name};
                                     } else {
-                                        $box['value'] = get_user_meta($wp_user->ID, $driver->name(), true);
+                                        $driver['value'] = get_user_meta($wp_user->ID, $driver->name(), true);
                                     }
                                 }
                             });
@@ -319,15 +322,15 @@ class Metabox
             return new SideContext();
         });
 
-        app()->add(FilefeedDriverContract::class, function () {
+        app()->share(FilefeedDriverContract::class, function () {
             return new Filefeed();
         });
 
-        app()->add(ImagefeedDriverContract::class, function () {
+        app()->share(ImagefeedDriverContract::class, function () {
             return new Imagefeed();
         });
 
-        app()->add(VideofeedDriverContract::class, function () {
+        app()->share(VideofeedDriverContract::class, function () {
             return new Videofeed();
         });
     }

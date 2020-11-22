@@ -36,6 +36,13 @@ interface MetaboxContext extends ParamsBag
     public function getAlias(): string;
 
     /**
+     * Récupération de la liste des pilotes associés.
+     *
+     * @return MetaboxDriver[]|array
+     */
+    public function getDrivers(): array;
+
+    /**
      * Récupération de l'instance du gestionnaire.
      *
      * @return Metabox|null
@@ -55,6 +62,15 @@ interface MetaboxContext extends ParamsBag
      * @return string
      */
     public function render(): string;
+
+    /**
+     * Définition d'un pilote associé.
+     *
+     * @param MetaboxDriver $driver
+     *
+     * @return static
+     */
+    public function setDriver(MetaboxDriver $driver): MetaboxContext;
 
     /**
      * Définition de l'instance du gestionnaire.

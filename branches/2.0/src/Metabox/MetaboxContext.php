@@ -4,6 +4,7 @@ namespace tiFy\Metabox;
 
 use tiFy\Contracts\Metabox\MetaboxContext as MetaboxContextContract;
 use tiFy\Contracts\Metabox\Metabox;
+use tiFy\Contracts\Metabox\MetaboxDriver;
 use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Support\ParamsBag;
 
@@ -32,6 +33,12 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
      * @var string
      */
     protected $alias = '';
+
+    /**
+     * Liste des pilotes déclarés.
+     * @var MetaboxDriver[]|array
+     */
+    protected $drivers = [];
 
     /**
      * Instance du gestionnaire de gabarit d'affichage.
@@ -84,6 +91,14 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     /**
      * @inheritDoc
      */
+    public function getDrivers(): array
+    {
+        return $this->drivers;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function defaults(): array
     {
         return [
@@ -131,6 +146,16 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     public function setAlias(string $alias): MetaboxContextContract
     {
         $this->alias = $alias;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDriver(MetaboxDriver $driver): MetaboxContextContract
+    {
+        $this->drivers[$driver->getUuid()] = $driver;
 
         return $this;
     }

@@ -260,6 +260,14 @@ class PostTypeFactory extends ParamsBag implements PostTypeFactoryContract
     /**
      * @inheritDoc
      */
+    public function supports(string $feature): bool
+    {
+        return post_type_supports($this->getName(), $feature);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setManager(PostType $manager): PostTypeFactoryContract
     {
         $this->manager = $manager;

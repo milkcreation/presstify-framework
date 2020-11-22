@@ -1,9 +1,7 @@
 <?php
 /**
- * Tab - Onglet de navigation
- * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Partial\Driver\Tab\TabView $this
- * @var tiFy\Contracts\Partial\TabItem $item
+ * @var tiFy\Contracts\Partial\TabFactory $item
  */
 ?>
 <a <?php echo $item->getNavAttrs(); ?>>

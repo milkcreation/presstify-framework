@@ -6,6 +6,14 @@
 
 - Metabox : Passe de réécriture profonde
 - Partial & Field : Modification de la config ['default' => ..., 'driver' => [..., ...]]
+- Field MediaImage : Ajout de la spécification value_none pour pb thumbnail_id
+- asset/partial/tab : Réécriture complète
+- Mail : Réécriture profonde ex. Mail >> Mailable
+- Metabox : Réécriture profonde
+- Field Tab : Réécriture profonde
+- PostType : methode supports
+- Form/Addon/Mailer : Réécriture profonde
+- Form evenements  wp-admin.form.boot wp-admin.form.booted
 
 ### Fixed
 

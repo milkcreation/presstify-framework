@@ -106,6 +106,15 @@ interface PostTypeFactory extends ParamsBag
     public function setManager(PostType $manager): PostTypeFactory;
 
     /**
+     * Vérification de support d'une fonctionnalité.
+     *
+     * @param string $feature
+     *
+     * @return bool
+     */
+    public function supports(string $feature);
+
+    /**
      * Définition de l'instance de la taxonomie Wordpress associée.
      *
      * @param WP_Post_Type $post_type

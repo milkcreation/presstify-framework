@@ -6,8 +6,6 @@ use LogicException;
 use tiFy\Contracts\Form\AddonFactory;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Metabox\MetaboxDriver;
-use tiFy\Metabox\MetaboxView;
-use tiFy\Support\Proxy\View;
 
 abstract class AddonMetaboxDriver extends MetaboxDriver
 {
@@ -66,20 +64,8 @@ abstract class AddonMetaboxDriver extends MetaboxDriver
     /**
      * @inheritDoc
      */
-    public function viewer(?string $view = null, array $data = [])
+    public function viewDirectory(): string
     {
-        if (!$this->viewer) {
-            $this->viewer = View::getPlatesEngine(array_merge([
-                'directory' => "{$this->form()->viewer()->getDirectory()}/addon/{$this->addon()->name()}/metabox",
-                'factory'   => MetaboxView::class,
-                'metabox'   => $this,
-            ], $this->get('viewer', [])));
-        }
-
-        if (func_num_args() === 0) {
-            return $this->viewer;
-        }
-
-        return $this->viewer->render($view, $data);
+        return "{$this->form()->viewer()->getDirectory()}/addon/{$this->addon()->name()}/metabox";
     }
 }

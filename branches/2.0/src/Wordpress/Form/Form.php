@@ -41,15 +41,19 @@ class Form implements FormContract
         });
 
         add_action('init', function () {
-            if(is_admin()) {
+            if (is_admin()) {
+                events()->trigger('wp-admin.form.boot', []);
+
                 foreach ($this->manager->all() as $form) {
                     /* @var FormFactory $form */
                     $this->manager->current($form);
                     $form->prepare();
                     $this->manager->reset();
                 }
+
+                events()->trigger('wp-admin.form.booted', []);
             }
-        });
+        }, 999999);
 
         $this->registerOverride();
     }

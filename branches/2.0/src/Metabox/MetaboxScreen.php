@@ -2,7 +2,6 @@
 
 namespace tiFy\Metabox;
 
-use Illuminate\Support\Collection;
 use tiFy\Contracts\Metabox\Metabox;
 use tiFy\Contracts\Metabox\MetaboxDriver;
 use tiFy\Contracts\Metabox\MetaboxScreen as MetaboxScreenContract;
@@ -29,6 +28,12 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
      * @var Metabox|null
      */
     private $metabox;
+
+    /**
+     * Liste des pilotes déclarés.
+     * @var MetaboxDriver[]|array
+     */
+    protected $drivers = [];
 
     /**
      * Alias de qualification.
@@ -81,9 +86,7 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
      */
     public function getDrivers(): array
     {
-        return (new Collection($this->metabox()->all()))->filter(function (MetaboxDriver $box) {
-            return $box->getScreen() === $this;
-        })->all();
+        return $this->drivers;
     }
 
     /**
@@ -145,9 +148,9 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
     /**
      * @inheritDoc
      */
-    public function setMetabox(Metabox $metabox): MetaboxScreenContract
+    public function setAlias(string $alias): MetaboxScreenContract
     {
-        $this->metabox = $metabox;
+        $this->alias = $alias;
 
         return $this;
     }
@@ -155,9 +158,19 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
     /**
      * @inheritDoc
      */
-    public function setAlias(string $alias): MetaboxScreenContract
+    public function setDriver(MetaboxDriver $driver): MetaboxScreenContract
     {
-        $this->alias = $alias;
+        $this->drivers[$driver->getUuid()] = $driver;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setMetabox(Metabox $metabox): MetaboxScreenContract
+    {
+        $this->metabox = $metabox;
 
         return $this;
     }

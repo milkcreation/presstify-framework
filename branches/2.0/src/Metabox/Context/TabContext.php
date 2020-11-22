@@ -10,6 +10,12 @@ use tiFy\Metabox\MetaboxContext;
 class TabContext extends MetaboxContext implements TabContextContract
 {
     /**
+     * Onglet actif.
+     * @var string
+     */
+    protected $active = '';
+
+    /**
      * @inheritDoc
      */
     public function defaults(): array
@@ -39,6 +45,16 @@ class TabContext extends MetaboxContext implements TabContextContract
 
             $this->set('items', $items);
         }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setActive(string $tab): TabContextContract
+    {
+        $this->active = $tab;
 
         return $this;
     }

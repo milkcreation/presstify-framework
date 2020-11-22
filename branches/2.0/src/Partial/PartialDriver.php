@@ -290,13 +290,11 @@ abstract class PartialDriver extends ParamsBag implements PartialDriverContract
                 }
             }
 
-            $config = $this->get('viewer', []);
-
             $this->viewEngine->params(array_merge([
                 'directory' => $this->viewDirectory(),
                 'factory'   => PartialView::class,
                 'driver'    => $this,
-            ], $defaultConfig, $config, $this->get('viewer', [])));
+            ], $defaultConfig, $this->get('viewer', [])));
         }
 
         if (func_num_args() === 0) {

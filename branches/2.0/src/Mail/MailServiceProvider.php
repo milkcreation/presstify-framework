@@ -2,13 +2,13 @@
 
 namespace tiFy\Mail;
 
-use tiFy\Contracts\Mail\{
-    Mailer as MailerContract,
-    MailerDriver as MailerDriverContract,
-    MailerQueue as MailerQueueContract
-};
+use tiFy\Contracts\Mail\Mailer as MailerContract;
+use tiFy\Contracts\Mail\Mailable as MailableContract;
+use tiFy\Contracts\Mail\MailerDriver as MailerDriverContract;
+use tiFy\Contracts\Mail\MailerQueue as MailerQueueContract;
 use tiFy\Container\ServiceProvider;
 use tiFy\Mail\Driver\PhpMailerDriver;
+use tiFy\Mail\Metabox\MailConfigMetabox;
 use PHPMailer\PHPMailer\PHPMailer;
 use tiFy\Support\Proxy\View;
 
@@ -19,10 +19,12 @@ class MailServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'mail.view',
         'mailer',
-        'mailer.driver',
-        'mailer.queue',
+        'mail.driver',
+        'mail.mailable.view-engine',
+        'mail.mailable',
+        'mail.metabox.mail-config',
+        'mail.queue'
     ];
 
     /**
@@ -30,30 +32,34 @@ class MailServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Mailer::setDefaults(config('mail', []));
-
-        $this->getContainer()->add('mailer', function (): MailerContract {
-            return (new Mailer())->setContainer($this->getContainer()->get('app'));
+        $this->getContainer()->share('mailer', function (): MailerContract {
+            return (new Mailer(config('mail', []), $this->getContainer()));
         });
 
-        $this->getContainer()->add('mailer.driver', function (): MailerDriverContract {
-            if (!($driver = config('mail.driver', null)) instanceof MailerDriverContract) {
+        $this->getContainer()->add('mail.driver', function (): MailerDriverContract {
+            $driver = config('mail.driver', null);
+
+            if (!$driver instanceof MailerDriverContract) {
                 $driver = new PhpMailerDriver(new PHPMailer(env('APP_DEBUG')));
             }
 
             return $driver;
         });
 
-        $this->getContainer()->share('mailer.queue', function (): MailerQueueContract {
+        $this->getContainer()->share('mail.mailable', function (): MailableContract {
+            return (new Mailable())->setMailer($this->getContainer()->get('mailer'));
+        });
+
+        $this->getContainer()->share('mail.queue', function (): MailerQueueContract {
             return (new MailerQueue())->setMailer($this->getContainer()->get('mailer'));
         });
 
-        $this->getContainer()->add('mail.view', function (Mail $mail) {
-            return View::getPlatesEngine(array_merge([
-                'directory' => __DIR__ . '/Resources/views/',
-                'factory'   => MailView::class,
-                'mail'      => $mail,
-            ], config('mail.viewer', []), $mail->params('viewer', [])));
+        $this->getContainer()->share('mail.metabox.mail-config', function () {
+            return (new MailConfigMetabox())->setMailer($this->getContainer()->get('mailer'));
+        });
+
+        $this->getContainer()->add('mail.mailable.view-engine', function () {
+            return View::getPlatesEngine();
         });
     }
 }

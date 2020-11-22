@@ -2,12 +2,39 @@
 
 namespace tiFy\Contracts\Mail;
 
-use DateTime;
-use Psr\Container\ContainerInterface;
-use tiFy\Contracts\Container\Container;
+use DateTime, Exception;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\Filesystem\LocalFilesystem;
+use tiFy\Contracts\Support\ParamsBag;
 
 interface Mailer
 {
+    /**
+     * Récupération de l'instance courante.
+     *
+     * @return static
+     *
+     * @throws Exception
+     */
+    public static function instance(): Mailer;
+
+    /**
+     * Chargement.
+     *
+     * @return static
+     */
+    public function boot(): Mailer;
+
+    /**
+     * Récupération de paramètre|Définition de paramètres|Instance du gestionnaire de paramètre.
+     *
+     * @param string|array|null $key Clé d'indice du paramètre à récupérer|Liste des paramètre à définir.
+     * @param mixed $default Valeur de retour par défaut lorsque la clé d'indice est une chaine de caractère.
+     *
+     * @return mixed|ParamsBag
+     */
+    public function config($key = null, $default = null);
+
     /**
      * Définition de la liste des paramètres globaux par défaut des mails.
      *
@@ -20,13 +47,13 @@ interface Mailer
     /**
      * Mise en file d'un email dans la queue d'expedition de mail.
      *
-     * @param Mail $mail Instance de l'email.
+     * @param Mailable $mail Instance de l'email.
      * @param DateTime|string $date Date d'expédition.
      * @param array $params Liste des paramètres d'expédition complémentaire.
      *
      * @return int
      */
-    public function addQueue(Mail $mail, $date = 'now', array $params = []): int;
+    public function addQueue(Mailable $mail, $date = 'now', array $params = []): int;
 
     /**
      * Réinitialisation du pilote d'expédition des emails.
@@ -38,27 +65,27 @@ interface Mailer
     /**
      * Création de l'email.
      *
-     * @param Mail|array|null $attrs Instance de l'email|Liste des paramètres de configuration|Email courant si null.
+     * @param Mailable|array|null $attrs Instance de l'email|Liste des paramètres de configuration|Email courant si null.
      *
-     * @return Mail
+     * @return Mailable
      */
-    public function create($attrs = null): Mail;
+    public function create($attrs = null): Mailable;
 
     /**
      * Affichage du message en mode déboguage.
      *
-     * @param Mail|array|null $attrs Instance de l'email|Liste des paramètres de configuration|Email courant si null.
+     * @param Mailable|array|null $attrs Instance de l'email|Liste des paramètres de configuration|Email courant si null.
      *
      * @return void
      */
     public function debug($attrs = null): void;
 
     /**
-     * Récupération du conteneur d'injection de dépendance.
+     * Récupération de l'instance du gestionnaire d'injection de dépendances.
      *
-     * @return Container|ContainerInterface|null
+     * @return Container|null
      */
-    public function getContainer(): ?ContainerInterface;
+    public function getContainer(): ?Container;
 
     /**
      * Récupération de paramètres par défaut.
@@ -96,7 +123,7 @@ interface Mailer
     /**
      * Mise en file du message.
      *
-     * @param Mail|array|null $attrs Instance de l'email|Liste des paramètres de configuration|Email courant si null.
+     * @param Mailable|array|null $attrs Instance de l'email|Liste des paramètres de configuration|Email courant si null.
      * @param string|DateTime $date Date de programmation d'expédition du mail. Par defaut, envoi immédiat.
      * @param array $extras Données complémentaires.
      *
@@ -107,20 +134,56 @@ interface Mailer
     public function queue($attrs = null, $date = 'now', array $extras = []): int;
 
     /**
+     * Résolution de service fourni par le gestionnaire.
+     *
+     * @param string $alias
+     *
+     * @return object|mixed|null
+     */
+    public function resolve(string $alias);
+
+    /**
+     * Vérification de résolution possible d'un service fourni par le gestionnaire.
+     *
+     * @param string $alias
+     *
+     * @return bool
+     */
+    public function resolvable(string $alias): bool;
+
+    /**
+     * Chemin absolu vers une ressources (fichier|répertoire).
+     *
+     * @param string|null $path Chemin relatif vers la ressource.
+     *
+     * @return LocalFilesystem|string|null
+     */
+    public function resources(?string $path = null);
+
+    /**
      * Envoi d'un message.
      *
-     * @param Mail|array|null $attrs Instance de l'email|Liste des paramètres de configuration|Email courant si null.
+     * @param Mailable|array|null $attrs Instance de l'email|Liste des paramètres de configuration|Email courant si null.
      *
      * @return boolean
      */
     public function send($attrs = null): bool;
 
     /**
-     * Définition du conteneur d'injection de dépendance.
+     * Définition des paramètres de configuration.
      *
-     * @param ContainerInterface $container
+     * @param array $attrs Liste des attributs de configuration.
      *
      * @return static
      */
-    public function setContainer(ContainerInterface $container): Mailer;
+    public function setConfig(array $attrs): Mailer;
+
+    /**
+     * Définition du conteneur d'injection de dépendances.
+     *
+     * @param Container $container
+     *
+     * @return static
+     */
+    public function setContainer(Container $container): Mailer;
 }
