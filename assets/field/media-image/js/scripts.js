@@ -89,7 +89,7 @@ jQuery(function ($) {
         let def = $('[data-control="' + self.control.preview + '"]', self.el).data('default');
 
         $(this).css('background-image', def ? 'url('+def+')' : '').fadeIn();
-        $('[data-control="' + self.control.input + '"]', self.el).val('-1');
+        $('[data-control="' + self.control.input + '"]', self.el).val(self.option('value_none') || '');
       });
     }
   });

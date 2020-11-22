@@ -2,13 +2,14 @@
 
 namespace tiFy\Mail;
 
-// use DateTime;
-use tiFy\Contracts\Mail\{Mail, Mailer, MailerQueue as MailerQueueContract};
+use tiFy\Contracts\Mail\Mailable;
+use tiFy\Contracts\Mail\Mailer;
+use tiFy\Contracts\Mail\MailerQueue as MailerQueueContract;
 
 class MailerQueue implements MailerQueueContract
 {
     /**
-     * Instance du gestionnaire de mails.
+     * Instance du gestionnaire.
      * @return Mailer
      */
     protected $mailer;
@@ -96,7 +97,7 @@ class MailerQueue implements MailerQueueContract
     /**
      * @inheritDoc
      */
-    public function add(Mail $mail, $date = 'now', array $params = []): int
+    public function add(Mailable $mailable, $date = 'now', array $params = []): int
     {
         /*if ($queue = db('mail.queue')) {
             $id = 0;

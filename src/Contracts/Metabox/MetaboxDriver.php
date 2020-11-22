@@ -2,7 +2,7 @@
 
 namespace tiFy\Contracts\Metabox;
 
-use Closure, Exception;
+use Closure;
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\View\View as ViewEngine;
 
@@ -37,6 +37,13 @@ interface MetaboxDriver extends ParamsBag
     public function defaultParams(): array;
 
     /**
+     * Valeur(s) par défaut.
+     *
+     * @return mixed
+     */
+    public function defaultValue();
+
+    /**
      * Récupération de l'identifiant de qualification dans le gestionnaire.
      *
      * @return string
@@ -56,6 +63,13 @@ interface MetaboxDriver extends ParamsBag
      * @return MetaboxScreen|null
      */
     public function getScreen(): ?MetaboxScreen;
+
+    /**
+     * Récupération de l'identifiant de qualification unique.
+     *
+     * @return string
+     */
+    public function getUuid(): string;
 
     /**
      * Traitement
@@ -119,10 +133,17 @@ interface MetaboxDriver extends ParamsBag
      * @param string $alias
      *
      * @return static
-     *
-     * @throws Exception
      */
     public function setContext(string $alias): MetaboxDriver;
+
+    /**
+     * Définition de valeur(s) par défaut.
+     *
+     * @param mixed $value
+     *
+     * @return static
+     */
+    public function setDefaultValue($value = null): MetaboxDriver;
 
     /**
      * Définition d'une fonction de traitement.
@@ -148,8 +169,6 @@ interface MetaboxDriver extends ParamsBag
      * @param string $alias
      *
      * @return static
-     *
-     * @throws Exception
      */
     public function setScreen(string $alias): MetaboxDriver;
 

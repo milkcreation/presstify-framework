@@ -34,7 +34,7 @@ interface Metabox
      * Ajout d'un contexte.
      *
      * @param string $alias
-     * @param string|array|MetaboxScreen|null $context Alias de qualification|Attributs de configuration|Instance
+     * @param string|array|MetaboxContext|null $context Alias de qualification|Attributs de configuration|Instance
      *
      * @return MetaboxContext
      *
@@ -65,6 +65,8 @@ interface Metabox
      * Initialisation.
      *
      * @return static
+     *
+     * @throws Exception
      */
     public function boot(): Metabox;
 
@@ -255,11 +257,11 @@ interface Metabox
      *
      * @param string $screen Nom de qualification de l'écran d'affichage.
      * @param string $context Nom de qualification du contexte de l'écran d'affichage.
-     * @param string[][]|array[][]|MetaboxDriver[][] $metaboxes Liste des boîtes de saisie.
+     * @param string[][]|array[][]|MetaboxDriver[][] $driversDef Liste des boîtes de saisie.
      *
      * @return static
      *
      * @throws Exception
      */
-    public function stack(string $screen, string $context, array $metaboxes): Metabox;
+    public function stack(string $screen, string $context, array $driversDef): Metabox;
 }

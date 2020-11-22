@@ -1,9 +1,6 @@
 <?php
 /**
- * Tab - Contenus d'un élément.
- * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Partial\Driver\Tab\TabView $this
- * @var tiFy\Contracts\Partial\TabItem $item
+ * @var tiFy\Contracts\Partial\TabFactory $item
  */
-?>
-<?php echo $item->getContent();
+echo $item->getContent();

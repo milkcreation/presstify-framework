@@ -332,13 +332,11 @@ abstract class FieldDriver extends ParamsBag implements FieldDriverContract
                 }
             }
 
-            $config = $this->get('viewer', []);
-
             $this->viewEngine->params(array_merge([
                 'directory' => $this->viewDirectory(),
                 'factory'   => FieldView::class,
                 'driver'    => $this,
-            ], $defaultConfig, $config, $this->get('viewer', [])));
+            ], $defaultConfig, $this->get('viewer', [])));
         }
 
         if (func_num_args() === 0) {

@@ -140,7 +140,7 @@ class Partial implements PartialContract
             return self::$instance;
         }
 
-        throw new Exception('Unavailable Partial instance');
+        throw new Exception(sprintf('Unavailable %s instance', __CLASS__));
     }
 
     /**

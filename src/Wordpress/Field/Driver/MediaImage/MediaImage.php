@@ -43,20 +43,21 @@ class MediaImage extends FieldDriver implements MediaImageContract
     public function defaults(): array
     {
         return [
-            'attrs'     => [],
-            'before'    => '',
-            'after'     => '',
-            'name'      => '',
-            'value'     => '',
-            'viewer'    => [],
-            'content'   => __('Cliquez sur la zone', 'tify'),
-            'default'   => null,
-            'format'    => 'cover',
-            'height'    => 100,
-            'infos'     => true,
-            'removable' => true,
-            'size'      => 'large',
-            'width'     => 100,
+            'attrs'      => [],
+            'before'     => '',
+            'after'      => '',
+            'name'       => '',
+            'value'      => '',
+            'viewer'     => [],
+            'content'    => __('Cliquez sur la zone', 'tify'),
+            'default'    => null,
+            'format'     => 'cover',
+            'height'     => 100,
+            'infos'      => true,
+            'removable'  => true,
+            'size'       => 'large',
+            'width'      => 100,
+            'value_none' => '',
         ];
     }
 
@@ -85,18 +86,18 @@ class MediaImage extends FieldDriver implements MediaImageContract
                 if ($img = wp_get_attachment_image_src($default, $this->get('size'))) {
                     $this->set([
                         'preview.attrs.data-default' => $img[0],
-                        'preview.attrs.style' => "background-image:url({$img[0]})",
+                        'preview.attrs.style'        => "background-image:url({$img[0]})",
                     ]);
                 }
             } elseif (is_string($default)) {
                 $this->set([
                     'preview.attrs.data-default' => $default,
-                    'preview.attrs.style' => "background-image:url({$default})",
+                    'preview.attrs.style'        => "background-image:url({$default})",
                 ]);
             }
         }
 
-        if ($value = $this->getValue()) {
+        if (($value = $this->getValue()) && ($value !== $this->get('value_none'))) {
             if (is_numeric($value)) {
                 if ($img = wp_get_attachment_image_src($value, $this->get('size'))) {
                     $this->set([
@@ -115,6 +116,9 @@ class MediaImage extends FieldDriver implements MediaImageContract
         $this->set([
             'attrs.data-control'         => 'media-image',
             'attrs.data-format'          => $this->get('format'),
+            'attrs.data-options'         => [
+                'value_none' => $this->get('value_none')
+            ],
             'preview.attrs.class'        => 'FieldMediaImage-preview',
             'preview.attrs.data-control' => 'media-image.preview',
             'sizer'                      => [

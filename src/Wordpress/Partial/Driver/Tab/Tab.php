@@ -9,8 +9,8 @@ class Tab extends BaseTab implements PartialDriverContract
 {
     /**
      * @inheritDoc
-     */
-    public function xhrSetTab()
+
+    public function xhrResponse(...$args): array
     {
         check_ajax_referer('tiFyPartialTab');
 
@@ -28,5 +28,5 @@ class Tab extends BaseTab implements PartialDriverContract
         $success = update_user_meta(get_current_user_id(), 'tab' . $raw_key['_screen_id'], $raw_key['name']);
 
         wp_send_json(compact('success'));
-    }
+    }  */
 }

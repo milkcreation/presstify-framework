@@ -5,9 +5,63 @@ namespace tiFy\Contracts\Partial;
 interface Tab extends PartialDriver
 {
     /**
-     * Mise à jour de l'onglet courant via une requête XHR.
+     * Ajout d'un élément.
      *
-     * @return void
+     * @param TabFactory|array $def
+     *
+     * @return static
      */
-    public function xhrSetTab();
+    public function addItem($def): Tab;
+
+    /**
+     * Récupération du gestionnaire des éléments déclarés.
+     *
+     * @return TabCollection
+     */
+    public function getTabCollection(): TabCollection;
+
+    /**
+     * Récupération du style de l'onglet.
+     *
+     * @param int $depth
+     *
+     * @return string
+     */
+    public function getTabStyle(int $depth = 0): string;
+
+    /**
+     * Récupération de l'url de traitement de la requête HTML XHR.
+     *
+     * @param array ...$params Liste des paramètres optionnels de formatage de l'url.
+     *
+     * @return string
+     */
+    public function getXhrUrl(...$params): string;
+
+    /**
+     * Définition du gestionnaire des éléments déclarés.
+     *
+     * @param TabCollection $tabCollection
+     *
+     * @return static
+     */
+    public function setTabCollection(TabCollection $tabCollection): Tab;
+
+    /**
+     * Définition de l'url de traitement de requête HTML XHR.
+     *
+     * @param string|null $url
+     *
+     * @return static
+     */
+    public function setXhrUrl(?string $url = null): Tab;
+
+    /**
+     * Contrôleur de traitement de la requête XHR.
+     *
+     * @param array ...$args Liste dynamique de variables passés en argument dans l'url de requête
+     *
+     * @return array
+     */
+    public function xhrResponse(...$args): array;
 }

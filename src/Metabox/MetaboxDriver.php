@@ -2,7 +2,8 @@
 
 namespace tiFy\Metabox;
 
-use Closure;
+use Closure, Exception;
+use Ramsey\Uuid\Uuid;
 use tiFy\Contracts\Metabox\MetaboxContext;
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
 use tiFy\Contracts\Metabox\Metabox;
@@ -44,6 +45,12 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     private $screen;
 
     /**
+     * Identifiant de qualification unique.
+     * @var string;
+     */
+    private $uuid;
+
+    /**
      * Alias de qualification.
      * @var string
      */
@@ -60,6 +67,12 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
      * @var Closure[]
      */
     protected $handlers = [];
+
+    /**
+     * Valeur par défaut.
+     * @var mixed
+     */
+    protected $defaultValue;
 
     /**
      * Valeur courante.
@@ -87,6 +100,8 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     public function boot(): MetaboxDriverContract
     {
         if (!$this->booted) {
+            $this->uuid = Uuid::uuid1()->__toString();
+
             $this->parse();
 
             $this->booted = true;
@@ -113,6 +128,14 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     public function defaultParams(): array
     {
         return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function defaultValue()
+    {
+        return $this->defaultValue;
     }
 
     /**
@@ -159,6 +182,14 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
     /**
      * @inheritDoc
      */
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function handle(array $args = []): MetaboxDriverContract
     {
         $this->args = $args;
@@ -169,6 +200,13 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
 
         $value = $this->get('value');
         $this->value = ($value instanceof Closure) ? $value($this, ...$this->args) : $value;
+
+        $default = $this->defaultValue();
+        if (is_array($default)) {
+            $this->value = array_merge($default, $this->value ?: []);
+        } elseif (is_null($this->value)) {
+            $this->value = $default;
+        }
 
         return $this;
     }
@@ -252,8 +290,25 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
      */
     public function setContext(string $alias): MetaboxDriverContract
     {
-        $this->context = ($context = $this->metabox()->getRegisteredContext($alias))
-            ? $this->metabox()->addContext($alias, $context) : $this->metabox()->addContext($alias);
+        try {
+            $this->context = ($context = $this->metabox()->getRegisteredContext($alias))
+                ? $this->metabox()->addContext($alias, $context) : $this->metabox()->addContext($alias);
+
+            $this->context->setDriver($this);
+        } catch (Exception $e) {
+            unset($e);
+            $this->context = null;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDefaultValue($value = null): MetaboxDriverContract
+    {
+        $this->defaultValue = $value;
 
         return $this;
     }
@@ -283,8 +338,15 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
      */
     public function setScreen(string $alias): MetaboxDriverContract
     {
-        $this->screen = ($screen = $this->metabox()->getScreen($alias))
-            ? $this->metabox()->addScreen($alias, $screen) : $this->metabox()->addScreen($alias);
+        try {
+            $this->screen = ($screen = $this->metabox()->getScreen($alias))
+                ? $this->metabox()->addScreen($alias, $screen) : $this->metabox()->addScreen($alias);
+
+            $this->screen->setDriver($this);
+        } catch (Exception $e) {
+            unset($e);
+            $this->screen = null;
+        }
 
         return $this;
     }
@@ -337,13 +399,11 @@ class MetaboxDriver extends ParamsBag implements MetaboxDriverContract
                 }
             }
 
-            $config = $this->get('viewer', []);
-
             $this->viewEngine->params(array_merge([
                 'directory' => $this->viewDirectory(),
                 'factory'   => MetaboxView::class,
                 'driver'    => $this,
-            ], $defaultConfig, $config, $this->get('viewer', [])));
+            ], $defaultConfig, $this->get('viewer', [])));
         }
 
         if (func_num_args() === 0) {

@@ -1,9 +1,9 @@
 <?php
 /**
- * @var tiFy\Mail\MailView $this
- * @var tiFy\Form\Addon\Mailer\Mailer $addon
  * @var tiFy\Contracts\Form\FormFactory $form
  * @var tiFy\Contracts\Form\FactoryField $field
+ * @var tiFy\Contracts\Mail\MailableView $this
+ * @var tiFy\Form\Addon\Mailer\Mailer $addon
  * @var array $params
  */
 ?>
