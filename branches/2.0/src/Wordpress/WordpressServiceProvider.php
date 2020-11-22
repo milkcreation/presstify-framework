@@ -188,7 +188,7 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('wp.view');
                 }
 
-                events()->trigger('wp.booted', []);
+                events()->trigger('wp.booted');
             }
         }, 1);
     }

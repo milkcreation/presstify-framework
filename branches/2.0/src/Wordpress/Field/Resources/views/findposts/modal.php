@@ -65,10 +65,6 @@
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <?php echo field('hidden', [
-                    'name'  => 'available_post_types',
-                    'value' => array_values($available_post_types),
-                ]); ?>
             <?php endif; ?>
 
             <span class="spinner" data-control="findposts.modal.spinner"></span>

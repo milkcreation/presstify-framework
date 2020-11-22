@@ -30,6 +30,11 @@ class Manager extends Emitter implements EventsManager
      */
     public function trigger($event, $args = [])
     {
-        return call_user_func_array([$this, 'emit'], func_get_args());
+        if(func_num_args() === 1) {
+            $_args = func_get_args();
+            array_push($_args, []);
+        }
+
+        return call_user_func_array([$this, 'emit'], $_args ?? func_get_args());
     }
 }
