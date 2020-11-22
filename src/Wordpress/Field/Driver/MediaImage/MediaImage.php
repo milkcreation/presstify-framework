@@ -117,7 +117,7 @@ class MediaImage extends FieldDriver implements MediaImageContract
             'attrs.data-control'         => 'media-image',
             'attrs.data-format'          => $this->get('format'),
             'attrs.data-options'         => [
-                'value_none' => $this->get('value_none')
+                'value_none' => $this->get('value_none'),
             ],
             'preview.attrs.class'        => 'FieldMediaImage-preview',
             'preview.attrs.data-control' => 'media-image.preview',

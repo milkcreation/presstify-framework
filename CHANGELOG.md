@@ -1,5 +1,13 @@
 # Release Notes
 
+## [v2.0.363 (2020-11-22)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.363...v2.0.363)
+
+### Fixed
+
+- Findposts => post_type any > allowed
+- Events : trigger sans arguments + suppr [] dans les déclarations
+
+
 ## [v2.0.362 (2020-11-19)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.362...v2.0.362)
 
 ### Changed 

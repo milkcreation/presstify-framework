@@ -101,8 +101,16 @@ jQuery(function ($) {
     _doSearch: function (e) {
       e.preventDefault();
 
+      let searchParams = new URLSearchParams(this.form.serialize())
+      if (searchParams.get('post_type') === 'any') {
+        let post_type = this.option('post_types') || 'any'
+
+        searchParams.set('post_type', post_type)
+      }
+      let data = searchParams.toString()
+
       let self = this,
-          ajax = $.extend(true, {}, this.option('ajax') || {}, {data: this.form.serialize()});
+          ajax = $.extend(true, {}, this.option('ajax') || {}, {data: data});
 
       this.spinner.show();
 
@@ -152,49 +160,3 @@ jQuery(function ($) {
     });
   });
 });
-
-/*scripts = {
-    open: function (af_name, af_val) {
-        if (af_name && af_val) {
-            $('#affected').attr('name', af_name).val(af_val);
-        }
-
-        $('#find-posts-input').focus().keyup(function (event) {
-            if (event.which === 27) {
-                scripts.close();
-            }
-        });
-
-        return false;
-    },
-};
-
-$(document).ready(function () {
-    $('#find-posts-submit').on('click', function (event) {
-        if (!$('#find-posts-response input[type="radio"]:checked').length) {
-            event.preventDefault();
-        }
-    });
-    $('#find-posts .find-box-search :input').keypress(function (event) {
-        if (13 === event.which) {
-            scripts.send();
-            return false;
-        }
-    });
-    $('#doaction, #doaction2').on('click',function (event) {
-        $('select[name^="action"]').each(function () {
-            if ($(this).val() === 'attach') {
-                event.preventDefault();
-                scripts.open();
-            }
-        });
-    });
-});
-
-$(document).ready(function () {
-    $(document).on('click', '[data-control="findposts"] > button', function() {
-        scripts
-            .open('target', '#' + $('> input[type="text"]', $(this).closest('[data-control="findposts"]'))
-            .attr('id'));
-    });
-}); */

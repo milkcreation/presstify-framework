@@ -97,6 +97,7 @@ class Findposts extends FieldDriver implements FindpostsContract
                     'method'   => 'POST',
                 ],
                 'uniqid' => $uniqid,
+                'post_types' => join(',', $post_types)
             ],
             'attrs.id'             => "FieldFindposts--{$uniqid}",
             'available_post_types' => $available_post_types,
@@ -151,7 +152,7 @@ class Findposts extends FieldDriver implements FindpostsContract
         }
 
         $query_args = wp_parse_args([
-            'post_type'      => Request::post('post_type', 'any'),
+            'post_type'      => explode(',', Request::post('post_type', 'any')),
             'post_status'    => 'any',
             'posts_per_page' => 50,
         ], Request::input('query_args', []));
