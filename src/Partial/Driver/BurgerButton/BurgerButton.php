@@ -77,10 +77,8 @@ class BurgerButton extends PartialDriver implements BurgerButtonContract
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function render(): string
     {
-        parent::parse();
-
         $type = $this->get('type');
         if (!in_array($type, $this->types)) {
             $type = 'spring';
@@ -90,7 +88,6 @@ class BurgerButton extends PartialDriver implements BurgerButtonContract
 
         $this->set([
             'attrs.class'        => ($class = $this->get('attrs.class')) ? "{$class} {$burgerClass}" : $burgerClass,
-            'attrs.data-control' => 'burger-button',
             'attrs.data-options' => [
                 'handler' => (array)$this->get('handler')
             ]
@@ -100,6 +97,10 @@ class BurgerButton extends PartialDriver implements BurgerButtonContract
             $this->set('attrs.aria-label', sprintf(__('Bouton de bascule #%d', 'tify'), $this->getIndex()));
         }
 
-        return $this;
+        if (!$this->has('attrs.data-control')) {
+            $this->set('attrs.data-control', 'burger-button');
+        }
+
+        return parent::render();
     }
 }
