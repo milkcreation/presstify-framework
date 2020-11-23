@@ -1,0 +1,30 @@
+@use "sass:map";
+
+$partial-colors: (
+    "transparent": transparent,
+    "white": #FFF,
+    "black": #000,
+    "light": #C4C4C4,
+    "lighter": #F4F4F4,
+    "medium-light": #BBBBBB,
+    "medium": #999999,
+    "medium-dark": #666666,
+    "dark": #4B4B4B,
+    "darker": #2B2B2B,
+    "regular": #3B3B3B,
+    "highlight": #FFFA90,
+    "highlight-alt": #DAD55E,
+    "link": DodgerBlue,
+    "error": #E74C3C,
+    "success": #1ABC9C,
+    "warning": #F1C40F,
+    "info": #3498DB
+) !default;
+
+@function partialColor($alias) {
+  @if type-of($alias) != string {
+    $alias : "#{$alias}";
+  }
+
+  @return map.get($partial-colors, #{$alias});
+}
