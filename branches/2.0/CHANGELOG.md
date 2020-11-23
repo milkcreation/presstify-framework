@@ -1,5 +1,11 @@
 # Release Notes
 
+## [v2.0.364 (2020-11-23)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.364...v2.0.364)
+
+### Fixed
+
+- BurgerButton : Désactivation possible du data-control
+
 ## [v2.0.363 (2020-11-22)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.363...v2.0.363)
 
 ### Fixed
