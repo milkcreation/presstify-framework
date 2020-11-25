@@ -1,5 +1,12 @@
 # Release Notes
 
+## [v2.0.365 (2020-11-25)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.365...v2.0.365)
+
+### Fixed
+
+- Console : correctif conflit wp
+
+
 ## [v2.0.364 (2020-11-23)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.364...v2.0.364)
 
 ### Fixed
