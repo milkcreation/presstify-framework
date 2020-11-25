@@ -1,0 +1,23 @@
+/** Récupération de couleur */
+@function tify_theme_color($color, $type:'') {
+  @if map-has-key($tify-theme-colors, $color) {
+    $curr_color: map-get($tify-theme-colors, $color);
+
+    @if (type-of($curr_color) != 'map') {
+      @return $curr_color;
+    }
+
+    @if $type != '' {
+      @if map-has-key($curr_color, $type) {
+        @return map-get($curr_color, $type);
+      }
+    } @else {
+      @return $curr_color;
+    }
+  }
+
+  @warn "Unknown `#{$color}` - `#{$type}` in $tify-theme-colors.";
+
+  @return null;
+}
+/**/
