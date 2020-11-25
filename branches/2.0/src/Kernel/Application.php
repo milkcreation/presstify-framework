@@ -84,7 +84,7 @@ class Application extends Container
             return true;
         }
 
-        return php_sapi_name() === 'cli' || php_sapi_name() === 'phpdbg';
+        return isset($argv[0]) && ($argv[0] === 'console') && (php_sapi_name() === 'cli' || php_sapi_name() === 'phpdbg');
     }
 
     /**
