@@ -3,7 +3,7 @@
  * @var tiFy\Mail\MailableView $this
  */
 ?>
-<?php if ($logo = $this->get('infos.logo')) : ?>
+<?php if ($logo = $this->param('infos.logo')) : ?>
     <tr class="rowHeaderContent">
         <td>
             <?php echo is_array($logo) ? partial('tag', [

@@ -1,5 +1,11 @@
 # Release Notes
 
+## [v2.0.366 (2020-11-26)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.366...v2.0.366)
+
+### Fixed
+
+- Mail : Correctif de l'affichage des infos de contact de get >> param
+
 ## [v2.0.365 (2020-11-25)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.365...v2.0.365)
 
 ### Fixed
