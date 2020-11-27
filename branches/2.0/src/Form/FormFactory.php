@@ -448,7 +448,9 @@ class FormFactory extends ParamsBag implements FormFactoryContract
     public function renderBuildNotices(): FormFactoryContract
     {
         if ((($this->renderBuild['notices'] ?? false) !== true)) {
-            if ($notices = $this->session()->pull('notices')) {
+            if ($this->notices()->all()) {
+                $this->session()->forget('notices');
+            } elseif ($notices = $this->session()->pull('notices')) {
                 foreach ($notices as $type => $items) {
                     foreach ($items as $item) {
                         $this->notices()->add($type, $item['message'] ?? '', $item['datas'] ?? []);

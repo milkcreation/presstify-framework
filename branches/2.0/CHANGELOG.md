@@ -1,5 +1,16 @@
 # Release Notes
 
+## [v2.0.367 (2020-11-27)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.367...v2.0.367)
+
+### Changed
+
+- assets/form : Réécriture affichage variables
+
+### Fixed
+
+- Form : Correctif Handle suppression des messages d'erreurs et session
+- Partial\Field : Réf register
+
 ## [v2.0.366 (2020-11-26)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.366...v2.0.366)
 
 ### Fixed

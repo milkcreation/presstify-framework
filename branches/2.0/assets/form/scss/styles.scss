@@ -1,359 +1,141 @@
+@use "sass:map";
+
 // Variables
 @import "variables";
 
+//Dépendances
+@import "clearfix";
+@import "grid";
+@import "gutters";
+@import "label";
+@import "notice";
+@import "required";
+@import "width";
+@import "fields/checkbox";
+@import "fields/checkbox-collection";
+@import "fields/datepicker";
+@import "fields/input-email";
+@import "fields/input-file";
+@import "fields/input-password";
+@import "fields/input-tel";
+@import "fields/input-text";
+@import "fields/radio";
+@import "fields/radio-collection";
+@import "fields/select";
+@import "fields/select-js";
+@import "fields/textarea";
+
 // Personnalisation
-/** Dimensions des champs */
-.FormField--w50 {
-  float: left;
-  width: 50%;
-}
-
-.FormField--w66 {
-  float: left;
-  width: 66.666666%;
-}
-
-.FormField--w33 {
-  float: left;
-  width: 33.333333%;
-}
-
-@media (max-width: 767px) {
-  .FormField--w50,
-  .FormField--w66,
-  .FormField--w33 {
-    float: none;
-    width: 100%;
-  }
-}
-/**/
-
-// -- Champs
-.FormFields {
-  margin: 0 -#{$form-gutter/2}px;
-
-  &::before,
-  &::after {
-    display: table;
-    content: " ";
-  }
-
-  &::after {
-    clear: both;
-  }
-}
-
-.FormFieldsGroup {
-  &::before,
-  &::after {
-    display: table;
-    content: " ";
-  }
-
-  &::after {
-    clear: both;
-  }
-}
-
-.FormContent {
-  margin-bottom: 30px;
-}
-
-.FormField {
-  padding: 0 #{$form-gutter/2}px;
-  margin-bottom: #{$form-gutter}px;
-}
-
-/** Apparence */
 .Form {
-  // -- Notices
-  .Notice {
-    color: $form-notice-color;
-    padding: 0.625em 1em;
-    margin-bottom: 2em;
-
-    &.Notice--error,
-    &.Notice--success,
-    &.Notice--info,
-    &.Notice--warning {
-      border-style: $form-notice-border-style-top $form-notice-border-style-right $form-notice-border-style-bottom $form-notice-border-style-left;
-      border-radius: #{$form-notice-border-radius-tl}px #{$form-notice-border-radius-tr}px #{$form-notice-border-radius-br}px #{$form-notice-border-radius-bl}px;
-      border-width: #{$form-notice-border-width-top}px #{$form-notice-border-width-right}px #{$form-notice-border-width-bottom}px #{$form-notice-border-width-left}px;
-    }
-
-    &.Notice--error {
-      background-color: $form-notice-error-background-color;
-      border-color: $form-notice-error-border-color;
-    }
-
-    &.Notice--success {
-      background-color: $form-notice-success-background-color;
-      border-color: $form-notice-success-border-color;
-    }
-
-    &.Notice--info {
-      background-color: $form-notice-info-background-color;
-      border-color: $form-notice-info-border-color;
-    }
-
-    &.Notice--warning {
-      background-color: $form-notice-info-background-color;
-      border-color: $form-notice-warning-border-color;
-    }
-
-    a {
-      text-decoration: underline;
-
-      &,
-      &:active,
-      &:focus,
-      &:hover,
-      &:visited {
-        color: formColor(link);
-      }
-    }
-
-    b, strong {
-      font-weight: bold;
-    }
-
-    i, em {
-      font-style: italic;
-    }
-
-    .Notice-items {
-      list-style-type: none;
-      margin-bottom: 0;
-      padding: 0;
-    }
+  /**
+   * Largeurs de champs
+   */
+  @if map.get($form-styles-enabled, width) {
+    @include form_width;
   }
 
-  // -- Type de Champs
-  .FieldLabel {
-    font-size: 0.9em;
-    margin-bottom: 0;
-    color: $form-label-color;
+  /**
+   * Zones flottantes
+   */
+  @if map.get($form-styles-enabled, clearfix) {
+    @include form_clearfix;
   }
 
-  .FieldRequired {
-    color: $form-required-color;
+  /**
+   * Goutières
+   */
+  @if map.get($form-styles-enabled, gutters) {
+    @include form_gutters;
   }
 
-  .FieldDatepicker,
-  .FieldEmail,
-  .FieldPassword,
-  .FieldSelect,
-  .FieldSelectJs,
-  .FieldTel,
-  .FieldText,
-  .FieldTextarea {
-    background-color: $form-field-background-color;
-    border-color: $form-field-border-color;
-    border-style: $form-field-border-style-top $form-field-border-style-right $form-field-border-style-bottom $form-field-border-style-left;
-    border-radius: #{$form-field-border-radius-tl}px #{$form-field-border-radius-tr}px #{$form-field-border-radius-br}px #{$form-field-border-radius-bl}px;
-    border-width: #{$form-field-border-width-top}px #{$form-field-border-width-right}px #{$form-field-border-width-bottom}px #{$form-field-border-width-left}px;
-    padding: 0.5em 1em;
-    width: 100%;
-
-    &[aria-error="true"] {
-      border-radius: 0 #{$form-field-border-radius-tr}px #{$form-field-border-radius-br}px 0;
-      border-left-style: solid;
-      border-left-width: #{$form-field-error-border-width}px;
-      border-left-color: $form-notice-error-color;
-    }
+  /**
+   * Notice
+   */
+  @if map.get($form-styles-enabled, notice) {
+    @include form_notice;
   }
 
-  .FieldDatepicker,
-  .FieldEmail,
-  .FieldPassword,
-  .FieldTel,
-  .FieldText,
-  .FieldTextarea {
-    &::placeholder {
-      color:$form-field-placeholder-color;
-    }
+  /**
+   * Etiquette
+   */
+  @if map.get($form-styles-enabled, label) {
+    @include form_label;
   }
 
-  .FieldSelect-wrapper {
-    .FieldSelect-trigger {
-      border-left: none;
-      background-color: transparent;
-    }
+  /**
+   * Indicateur de champ requis
+   */
+  @if map.get($form-styles-enabled, required) {
+    @include form_required;
   }
 
-  .FieldSelectJs[aria-arrow="true"] {
-    .FieldSelectJs-trigger::before {
-      border-left: none;
-      background-color: transparent;
-    }
-  }
-
-  .FieldTextarea {
-    height: 8em;
-    resize: none;
-  }
-
-  .FieldFile {
-    width: 100%;
-    padding: 0;
-    background-color: transparent;
-
-    &::-webkit-file-upload-button {
-      border-style: solid;
-      border-width: 1px;
-      border-color: $form-field-border-color;
-      padding: 0.5em 2em;
-      background-color: $form-field-background-color;
-      color: $form-field-color;
-      margin-right: 5px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: $form-field-color;
-        color: $form-field-background-color;
-      }
+  /**
+   * Champs
+   */
+  @if map.get($form-styles-enabled, fields) {
+    // Case à cocher
+    @if map.get($form-field_types-enabled, checkbox) {
+      @include form_field_checkbox;
     }
 
-    &[aria-error="true"] {
-      padding-left: 1em;
-      border-left-style: solid;
-      border-left-width: #{$form-field-error-border-width}px;
-      border-left-color: $form-notice-error-border-color;
-    }
-  }
-
-  .FieldCheckbox,
-  .FieldCheckboxCollection-itemInput,
-  .FieldRadio,
-  .FieldRadioCollection-itemInput {
-    display: none;
-    cursor: pointer;
-
-    + .FieldLabel,
-    + .FieldRadioCollection-itemLabel,
-    + .FieldCheckboxCollection-itemLabel {
-      position: relative;
-      display: inline-block;
-      width: auto;
-      cursor: pointer;
-      padding: 3px 0 0 22px;
-      line-height: 1.2;
-
-      &::before {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        display: block;
-        content: " ";
-        vertical-align: middle;
-        margin-top: -7px;
-        height: 14px;
-        width: 14px;
-        margin-right: 5px;
-      }
-
-      &::after {
-        position: absolute;
-        top: 50%;
-        display: block;
-        content: " ";
-        left: 3px;
-        margin-top: -4px;
-        height: 8px;
-        width: 8px;
-        transform: scale(0);
-        transition: transform 200ms ease-in-out;
-      }
+    // Collection de cases à cocher
+    @if map.get($form-field_types-enabled, checkbox-collection) {
+      @include form_field_checkbox-collection;
     }
 
-    &[aria-error="true"] + .FieldLabel::before {
-      border: 1px solid $form-notice-error-border-color;
+    // Selecteur de date
+    @if map.get($form-field_types-enabled, datepicker) {
+      @include form_field_datepicker;
     }
 
-    &:checked {
-      + .FieldLabel::after,
-      + .FieldRadioCollection-itemLabel::after,
-      + .FieldCheckboxCollection-itemLabel::after {
-        transform: scale(1);
-        transition: transform 200ms ease-in-out;
-      }
+    // Champ email
+    @if map.get($form-field_types-enabled, input-email) {
+      @include form_field_input-email;
     }
 
-    &:disabled {
-      + .FieldLabel,
-      + .FieldRadioCollection-itemLabel,
-      + .FieldCheckboxCollection-itemLabel {
-        opacity: 0.5;
-
-        &::before {
-          opacity: 0.5;
-        }
-      }
+    // Champ de téléchargement de fichiers
+    @if map.get($form-field_types-enabled, input-file) {
+      @include form_field_input-file;
     }
-  }
 
-  .FieldCheckbox,
-  .FieldCheckboxCollection-itemInput {
-    + .FieldLabel,
-    + .FieldCheckboxCollection-itemLabel {
-      &::after {
-        background-color: $form-field-checkbox-checked-color;
-      }
+    //  Champ mot de passe
+    @if map.get($form-field_types-enabled, input-password) {
+      @include form_field_input-password;
     }
-  }
 
-  .FieldRadio,
-  .FieldRadioCollection-itemInput {
-    + .FieldLabel,
-    + .FieldRadioCollection-itemLabel {
-      &::after {
-        background-color: $form-field-radio-checked-color;
-      }
+    //  Champ téléphone
+    @if map.get($form-field_types-enabled, input-tel) {
+      @include form_field_input-tel;
     }
-  }
 
-  .FieldRadioCollection[aria-error="true"],
-  .FieldCheckboxCollection[aria-error="true"] {
-    .FieldRadioCollection-itemInput + .FieldRadioCollection-itemLabel::before,
-    .FieldCheckboxCollection-itemInput + .FieldCheckboxCollection-itemLabel::before {
-      border: 1px solid $form-notice-error-border-color;
+    //  Champ texte
+    @if map.get($form-field_types-enabled, input-text) {
+      @include form_field_input-text;
     }
-  }
 
-  .FieldRadio,
-  .FieldRadioCollection-itemInput {
-    + .FieldLabel,
-    + .FieldRadioCollection-itemLabel {
-      &::before {
-        border-radius: 50%;
-      }
-
-      &::after {
-        border-radius: 50%;
-      }
+    // Bouton radio
+    @if map.get($form-field_types-enabled, radio) {
+      @include form_field-radio;
     }
-  }
 
-  .FieldCheckbox,
-  .FieldCheckboxCollection-itemInput {
-    + .FieldLabel,
-    + .FieldCheckboxCollection-itemLabel {
-      &::before {
-        border: 1px solid $form-field-checkbox-color;
-        background-color: $form-field-checkbox-background-color;
-      }
+    // Collection de boutons radio
+    @if map.get($form-field_types-enabled, radio-collection) {
+      @include form_field_radio-collection;
     }
-  }
 
+    // Liste de selection
+    @if map.get($form-field_types-enabled, select) {
+      @include form_field_select;
+    }
 
-  .FieldRadio,
-  .FieldRadioCollection-itemInput {
-    + .FieldLabel,
-    + .FieldRadioCollection-itemLabel {
-      &::before {
-        border: 1px solid $form-field-radio-color;
-        background-color: $form-field-radio-background-color;
-      }
+    // Liste de selection JS
+    @if map.get($form-field_types-enabled, select-js) {
+      @include form_field_select-js;
+    }
+
+    // Zone de texte libre
+    @if map.get($form-field_types-enabled, textarea) {
+      @include form_field_textarea;
     }
   }
 
