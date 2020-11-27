@@ -506,7 +506,7 @@ class Field extends ParamsBag implements FactoryField
         }
 
         if ($this->onError()) {
-            $this->set('attrs.aria-error', 'true');
+            $this->set('attrs.aria-invalid', 'true');
         }
 
         // Attributs HTML de l'encapsuleur de champ.
