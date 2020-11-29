@@ -79,7 +79,7 @@
   }
 
   .FieldRadioCollection-itemInput + .FieldRadioCollection-itemLabel::before {
-    border: 1px solid $form-field-radio-collection-color;
+    border: 1px solid $form-field-radio-collection-border-color;
     background-color: $form-field-radio-collection-background-color;
   }
 }

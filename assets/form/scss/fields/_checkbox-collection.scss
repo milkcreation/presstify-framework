@@ -69,7 +69,7 @@
   }
 
   .FieldCheckboxCollection-itemInput + .FieldCheckboxCollection-itemLabel::before {
-    border: 1px solid $form-field-checkbox-collection-color;
+    border: 1px solid $form-field-checkbox-collection-border-color;
     background-color: $form-field-checkbox-collection-background-color;
   }
 }
