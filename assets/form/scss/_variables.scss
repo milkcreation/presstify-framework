@@ -162,7 +162,7 @@ $form-field-checkbox-collection-background-color: $form-field-checkbox-backgroun
 
 // - Configuration Selecteur de date
 $form-field-datepicker-color: $form-field-color !default;
-$form-field-datepicker-background-color: formColor(lighter) !default;
+$form-field-datepicker-background-color: $form-field-background-color !default;
 $form-field-datepicker-border-color: $form-field-border-color !default;
 $form-field-datepicker-border-radius: $form-field-border-radius !default;
 $form-field-datepicker-border-radius-tl: $form-field-border-radius-tl !default;
@@ -190,7 +190,7 @@ $form-field-datepicker-placeholder-color: $form-field-placeholder-color !default
 
 // - Configuration Champ email
 $form-field-input-email-color: $form-field-color !default;
-$form-field-input-email-background-color: formColor(lighter) !default;
+$form-field-input-email-background-color: $form-field-background-color !default;
 $form-field-input-email-border-color: $form-field-border-color !default;
 $form-field-input-email-border-radius: $form-field-border-radius !default;
 $form-field-input-email-border-radius-tl: $form-field-border-radius-tl !default;
@@ -218,7 +218,7 @@ $form-field-input-email-placeholder-color: $form-field-placeholder-color !defaul
 
 // - Configuration Champ de téléchargement de fichier
 $form-field-input-file-color: $form-field-color !default;
-$form-field-input-file-background-color: formColor(lighter) !default;
+$form-field-input-file-background-color: $form-field-background-color !default;
 $form-field-input-file-border-color: $form-field-border-color !default;
 $form-field-input-file-border-radius: $form-field-border-radius !default;
 $form-field-input-file-border-radius-tl: $form-field-border-radius-tl !default;
@@ -246,7 +246,7 @@ $form-field-input-file-placeholder-color: $form-field-placeholder-color !default
 
 // - Configuration Champ mot de passe
 $form-field-input-password-color: $form-field-color !default;
-$form-field-input-password-background-color: formColor(lighter) !default;
+$form-field-input-password-background-color: $form-field-background-color !default;
 $form-field-input-password-border-color: $form-field-border-color !default;
 $form-field-input-password-border-radius: $form-field-border-radius !default;
 $form-field-input-password-border-radius-tl: $form-field-border-radius-tl !default;
@@ -274,7 +274,7 @@ $form-field-input-password-placeholder-color: $form-field-placeholder-color !def
 
 // - Configuration Champ téléphone
 $form-field-input-tel-color: $form-field-color !default;
-$form-field-input-tel-background-color: formColor(lighter) !default;
+$form-field-input-tel-background-color: $form-field-background-color !default;
 $form-field-input-tel-border-color: $form-field-border-color !default;
 $form-field-input-tel-border-radius: $form-field-border-radius !default;
 $form-field-input-tel-border-radius-tl: $form-field-border-radius-tl !default;
@@ -302,7 +302,7 @@ $form-field-input-tel-placeholder-color: $form-field-placeholder-color !default;
 
 // - Configuration Champ text
 $form-field-input-text-color: $form-field-color !default;
-$form-field-input-text-background-color: formColor(lighter) !default;
+$form-field-input-text-background-color: $form-field-background-color!default;
 $form-field-input-text-border-color: $form-field-border-color !default;
 $form-field-input-text-border-radius: $form-field-border-radius !default;
 $form-field-input-text-border-radius-tl: $form-field-border-radius-tl !default;
@@ -330,7 +330,7 @@ $form-field-input-text-placeholder-color: $form-field-placeholder-color !default
 
 // - Configuration Liste de selection
 $form-field-select-color: $form-field-color !default;
-$form-field-select-background-color: formColor(lighter) !default;
+$form-field-select-background-color: $form-field-background-color !default;
 $form-field-select-border-color: $form-field-border-color !default;
 $form-field-select-border-radius: $form-field-border-radius !default;
 $form-field-select-border-radius-tl: $form-field-border-radius-tl !default;
@@ -357,7 +357,7 @@ $form-field-select-error-border-color: $form-field-error-border-color !default;
 
 // - Configuration Liste de selection JS
 $form-field-select-js-color: $form-field-color !default;
-$form-field-select-js-background-color: formColor(lighter) !default;
+$form-field-select-js-background-color: $form-field-background-color !default;
 $form-field-select-js-border-color: $form-field-border-color !default;
 $form-field-select-js-border-radius: $form-field-border-radius !default;
 $form-field-select-js-border-radius-tl: $form-field-border-radius-tl !default;
@@ -384,7 +384,7 @@ $form-field-select-js-error-border-color: $form-field-error-border-color !defaul
 
 // - Configuration Zone de saisie libre
 $form-field-textarea-color: $form-field-color !default;
-$form-field-textarea-background-color: formColor(lighter) !default;
+$form-field-textarea-background-color: $form-field-background-color !default;
 $form-field-textarea-border-color: $form-field-border-color !default;
 $form-field-textarea-border-radius: $form-field-border-radius !default;
 $form-field-textarea-border-radius-tl: $form-field-border-radius-tl !default;
