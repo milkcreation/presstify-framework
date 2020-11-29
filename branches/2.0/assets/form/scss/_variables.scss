@@ -154,11 +154,13 @@ $form-field-error-border-color: $form-notice-error-border-color !default;
 $form-field-checkbox-color: $form-global-color !default;
 $form-field-checkbox-checked-color: $form-global-color !default;
 $form-field-checkbox-background-color: $form-field-background-color !default;
+$form-field-checkbox-border-color: $form-field-border-color !default;
 
 // - Configuration Collection de cases à cocher
 $form-field-checkbox-collection-color: $form-field-checkbox-color !default;
 $form-field-checkbox-collection-checked-color: $form-field-checkbox-checked-color !default;
 $form-field-checkbox-collection-background-color: $form-field-checkbox-background-color !default;
+$form-field-checkbox-collection-border-color: $form-field-checkbox-border-color !default;
 
 // - Configuration Selecteur de date
 $form-field-datepicker-color: $form-field-color !default;
@@ -414,9 +416,11 @@ $form-field-textarea-placeholder-color: $form-field-placeholder-color !default;
 $form-field-radio-color: $form-global-color !default;
 $form-field-radio-checked-color: $form-global-color !default;
 $form-field-radio-background-color: $form-field-background-color !default;
+$form-field-radio-border-color: $form-field-border-color !default;
 
 // - Configuration Collection de boutons radio
 $form-field-radio-collection-color: $form-field-radio-color !default;
 $form-field-radio-collection-checked-color: $form-field-radio-checked-color !default;
 $form-field-radio-collection-background-color: $form-field-radio-background-color !default;
+$form-field-radio-collection-border-color: $form-field-radio-border-color !default;
 

@@ -1,6 +1,13 @@
 # Release Notes
 
-## [v2.0.369 (2020-11-29)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.368...v2.0.368
+## [v2.0.369 (2020-11-29)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.369...v2.0.369
+
+### Fixed
+
+- assets/form : Border checkbox + Radio
+
+
+## [v2.0.368 (2020-11-29)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.368...v2.0.368
 
 ### Fixed
 

@@ -65,7 +65,7 @@
   }
 
   .FieldCheckbox + .FieldLabel::before {
-    border: 1px solid $form-field-checkbox-color;
+    border: 1px solid $form-field-checkbox-border-color;
     background-color: $form-field-checkbox-background-color;
   }
 }
