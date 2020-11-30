@@ -110,10 +110,8 @@ class Videofeed extends MetaboxDriver implements VideofeedDriverContract
     /**
      * @inheritDoc
      */
-    public function parse(): MetaboxDriverContract
+    public function render(): string
     {
-        parent::parse();
-
         $defaultClasses = [
             'addnew'  => 'MetaboxVideofeed-addnew ThemeButton--primary ThemeButton--normal',
             'down'    => 'MetaboxVideofeed-itemSortDown ThemeFeed-itemSortDown',
@@ -163,14 +161,6 @@ class Videofeed extends MetaboxDriver implements VideofeedDriverContract
             ],
         ]);
 
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function render(): string
-    {
         if ($values = $this->value()) {
             $items = [];
             array_walk($values, function ($value, $index) use (&$items) {
