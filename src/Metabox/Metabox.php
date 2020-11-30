@@ -23,7 +23,6 @@ use tiFy\Contracts\Metabox\SlidefeedDriver;
 use tiFy\Contracts\Metabox\SubtitleDriver;
 use tiFy\Contracts\Metabox\TabContext;
 use tiFy\Contracts\Metabox\VideofeedDriver;
-use tiFy\Support\ClassInfo;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\Storage;
 
@@ -204,10 +203,6 @@ class Metabox implements MetaboxContract
             $exists = $this->getRegisteredDriver($driver);
             $driver = clone $exists;
         } elseif (is_object($driver) && $driver instanceof MetaboxDriver) {
-            if (!$alias = $driver->getAlias()) {
-                $alias = (new ClassInfo($driver))->getKebabName();
-            }
-
             if (!$this->getRegisteredDriver($alias)) {
                 try {
                     $this->registerDriver($alias, $driver);
@@ -262,10 +257,12 @@ class Metabox implements MetaboxContract
             } elseif (is_string($context)) {
                 $context = $this->getRegisteredContext($context);
             } elseif (is_object($context) && $context instanceof MetaboxContext) {
-                $context->setAlias($alias);
-
                 if (!$this->getRegisteredContext($alias)) {
-                    $this->registerContext($alias, $context);
+                    try {
+                        $this->registerContext($alias, $context);
+                    } catch (Exception $e) {
+                        throw $e;
+                    }
                 }
             }
         } catch (Exception $e) {
@@ -314,8 +311,6 @@ class Metabox implements MetaboxContract
         } elseif (is_string($screen)) {
             $screen = $this->getRegisteredScreen($screen);
         } elseif (is_object($screen) && $screen instanceof MetaboxScreen) {
-            $screen->setAlias($alias);
-
             if (!$this->getRegisteredScreen($alias)) {
                 try {
                     $this->registerScreen($alias, $screen);
@@ -388,8 +383,19 @@ class Metabox implements MetaboxContract
             $screens = [$screen];
         }
 
-        return (new Collection($this->all()))->filter(function (MetaboxDriver $driver) use ($context, $screens) {
+        $driversCollect = (new Collection($this->all()))->filter(function (MetaboxDriver $driver) use ($context, $screens) {
             return ($driver->getContext() === $context) && in_array($driver->getScreen(), array_values($screens));
+        });
+
+        $max = $driversCollect->max(function (MetaboxDriver $driver) {
+            return (int)$driver->get('position', 0);
+        });
+
+        $pad = 0;
+        return $driversCollect->each(function (MetaboxDriver $driver) use (&$pad, $max) {
+            $pos = (int)$driver->get('position', 0);
+
+            return $driver->set('position', $pos ?  : ++$pad+$max);
         })->all();
     }
 
