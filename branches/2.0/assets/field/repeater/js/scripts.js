@@ -4,6 +4,7 @@ import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import 'jquery-ui/ui/widgets/sortable';
+import '../../../observer/js/scripts';
 
 jQuery(function ($) {
   $.widget('tify.tifyRepeater', {
@@ -254,5 +255,9 @@ jQuery(function ($) {
 
   $(document).ready(function () {
     $('[data-control="repeater"]').tifyRepeater();
+
+    $.tify.observe('[data-control="repeater"]', function (i, target) {
+      $(target).tifyRepeater();
+    });
   });
 });

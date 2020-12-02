@@ -186,17 +186,14 @@ class SelectJs extends FieldDriver implements SelectJsContract
         ]);
         $this->set('attrs.data-options', $this->get('datas.options', []));
 
-        $this->set('handler', [
+        $this->set('handler', array_merge($this->get('handler') ?: [], [
             'name'      => $this->getName(),
             'disabled'  => $this->get('disabled'),
             'removable' => $this->get('removable'),
             'multiple'  => $this->get('multiple'),
-            'attrs'     => [
-                'class'        => '',
-                'data-control' => 'select-js.handler',
-            ],
             'choices'   => $choices,
-        ]);
+        ]));
+        $this->set('handler.attrs.data-control', 'select-js.handler');
 
         return $this;
     }

@@ -8,6 +8,7 @@ use tiFy\Support\{Arr, Str};
  * @mixin \Corcel\Concerns\MetaFields
  * @mixin \Illuminate\Database\Eloquent\Model
  * @property $meta_value
+ * @property-read object $meta
  */
 trait MetaFieldsAwareTrait
 {

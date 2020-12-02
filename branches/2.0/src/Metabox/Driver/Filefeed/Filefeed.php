@@ -119,10 +119,8 @@ class Filefeed extends MetaboxDriver implements FilefeedDriverContract
     /**
      * @inheritDoc
      */
-    public function parse(): MetaboxDriverContract
+    public function render(): string
     {
-        parent::parse();
-
         $defaultClasses = [
             'addnew' => 'MetaboxFilefeed-addnew ThemeButton--primary ThemeButton--normal',
             'down'   => 'MetaboxFilefeed-itemSortDown ThemeFeed-itemSortDown',
@@ -155,13 +153,14 @@ class Filefeed extends MetaboxDriver implements FilefeedDriverContract
         $this->params([
             'attrs.data-options' => [
                 'ajax'      => array_merge([
-                    'data'   => [
+                    'data'     => [
                         'max'    => $this->params('max', -1),
                         'name'   => $this->get('name'),
                         'viewer' => $this->get('viewer', []),
                     ],
-                    'method' => 'post',
-                    'url'    => $this->getUrl(),
+                    'dataType' => 'json',
+                    'method'   => 'post',
+                    'url'      => $this->getUrl(),
                 ]),
                 'classes'   => $this->params('classes', []),
                 'media'     => [
@@ -175,14 +174,6 @@ class Filefeed extends MetaboxDriver implements FilefeedDriverContract
             ],
         ]);
 
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function render(): string
-    {
         if ($values = $this->value()) {
             $items = [];
             array_walk($values, function ($value, $index) use (&$items) {

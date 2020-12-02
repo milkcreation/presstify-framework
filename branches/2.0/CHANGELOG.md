@@ -1,5 +1,13 @@
 # Release Notes
 
+## [v2.0.370 (2020-12-02)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.370...v2.0.370
+
+### Fixed
+
+- form\_notice.scss : Pb Fond warning
+- SelectJs: Passe corrective
+- Metabox\Filefeed : Remise en service
+
 ## [v2.0.369 (2020-11-29)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.369...v2.0.369
 
 ### Fixed
