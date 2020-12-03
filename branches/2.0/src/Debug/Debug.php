@@ -66,8 +66,11 @@ class Debug implements DebugContract
         }
 
         if (Env::isDev()) {
+            $handler = new ErrorHandlerRenderer();
+            $handler->setEditor('phpstorm');
+
             (new ErrorHandler())
-                ->pushHandler(new ErrorHandlerRenderer())
+                ->pushHandler($handler)
                 ->register();
         }
 

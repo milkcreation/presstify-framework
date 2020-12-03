@@ -23,7 +23,6 @@ class ApiServiceProvider extends ServiceProvider
         'api.facebook.login.profile',
         'api.facebook.login.signin',
         'api.facebook.login.signup',
-        'api.recaptcha',
         'api.youtube',
     ];
 
@@ -63,10 +62,6 @@ class ApiServiceProvider extends ServiceProvider
         $this->getContainer()->share('api.facebook.login.signup', function () {
             $concrete = config('api.facebook.signup', FacebookLoginSignup::class);
             return new $concrete($this->getContainer()->get('api.facebook'));
-        });
-
-        $this->getContainer()->share('api.recaptcha', function () {
-            return Recaptcha::instance(config('api.recaptcha', []));
         });
 
         $this->getContainer()->share('api.youtube', function () {
