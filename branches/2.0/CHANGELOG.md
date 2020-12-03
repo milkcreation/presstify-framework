@@ -1,5 +1,11 @@
 # Release Notes
 
+## [v2.0.371 (2020-12-03)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.371...v2.0.371
+
+### Added
+
+- Composant Debug > debugBar + errorHandler 
+
 ## [v2.0.370 (2020-12-02)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.370...v2.0.370
 
 ### Fixed

@@ -3,10 +3,14 @@
 namespace tiFy\Kernel;
 
 use League\Uri\Http as HttpUri;
-use tiFy\Http\{Request, Response};
+use tiFy\Http\Request;
+use tiFy\Http\Response;
 use tiFy\Container\ServiceProvider;
-use tiFy\Kernel\{Events\Manager as EventsManager, Events\Listener, Notices\Notices};
-use tiFy\Support\{ClassInfo, ParamsBag};
+use tiFy\Kernel\Events\Manager as EventsManager;
+use tiFy\Kernel\Events\Listener;
+use tiFy\Kernel\Notices\Notices;
+use tiFy\Support\ClassInfo;
+use tiFy\Support\ParamsBag;
 
 class KernelServiceProvider extends ServiceProvider
 {
