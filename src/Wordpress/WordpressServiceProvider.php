@@ -3,12 +3,14 @@
 namespace tiFy\Wordpress;
 
 use tiFy\Container\ServiceProvider;
+use tiFy\Contracts\Debug\Debug as DebugManagerContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Cookie\Cookie;
 use tiFy\Wordpress\Database\Database;
+use tiFy\Wordpress\Debug\Debug;
 use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
@@ -32,10 +34,7 @@ use tiFy\Wordpress\Template\Template;
 use tiFy\Wordpress\User\User;
 use tiFy\Wordpress\User\Role\RoleFactory;
 use tiFy\Wordpress\View\View;
-use WP_Post;
-use WP_Screen;
-use WP_Term;
-use WP_User;
+use WP_Post, WP_Screen, WP_Term, WP_User;
 
 class WordpressServiceProvider extends ServiceProvider
 {
@@ -50,6 +49,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.cookie',
         'wp.database',
         'wp.db',
+        'wp.debug',
         'wp.filesystem',
         'wp.field',
         'wp.form',
@@ -94,6 +94,10 @@ class WordpressServiceProvider extends ServiceProvider
                 require_once(ABSPATH . 'wp-admin/includes/translation-install.php');
                 Locale::set(get_locale());
                 Locale::setLanguages(wp_get_available_translations() ?: []);
+
+                if ($this->getContainer()->has(DebugManagerContract::class)) {
+                    $this->getContainer()->get('wp.debug');
+                }
 
                 if ($this->getContainer()->has('router')) {
                     $this->getContainer()->get('wp.routing');
@@ -203,6 +207,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->registerColumn();
         $this->registerCookie();
         $this->registerDatabase();
+        $this->registerDebug();
         $this->registerFilesystem();
         $this->registerField();
         $this->registerForm();
@@ -280,6 +285,18 @@ class WordpressServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('wp.database', function () {
             return new Database($this->getContainer()->get('database'));
+        });
+    }
+
+    /**
+     * Déclaration du gestionnaire de deboguage.
+     *
+     * @return void
+     */
+    public function registerDebug(): void
+    {
+        $this->getContainer()->share('wp.debug', function () {
+            return new Debug($this->getContainer()->get(DebugManagerContract::class));
         });
     }
 

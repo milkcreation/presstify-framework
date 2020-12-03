@@ -3,14 +3,16 @@
 namespace tiFy\Kernel;
 
 use Psr\Container\ContainerInterface as Container;
-use Symfony\Component\Finder\{Finder, SplFileInfo};
-use tiFy\Contracts\Kernel\{Config as ConfigContract, Path};
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+use tiFy\Contracts\Kernel\Config as ConfigContract;
+use tiFy\Contracts\Kernel\Path;
 use tiFy\Support\ParamsBag;
 
 class Config extends ParamsBag implements ConfigContract
 {
     /**
-     * Instancedu conteneur d'injection de dépendances.
+     * Instance du conteneur d'injection de dépendances.
      * @var Container
      */
     protected $container;

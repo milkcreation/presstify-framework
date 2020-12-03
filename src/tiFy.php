@@ -27,8 +27,14 @@ final class tiFy extends Container
      * @var string[]
      */
     protected $serviceProviders = [
-        KernelServiceProvider::class
+        KernelServiceProvider::class,
     ];
+
+    /**
+     * Heure de démarrage.
+     * @var int
+     */
+    protected $startTime;
 
     /**
      * CONSTRUCTEUR.
@@ -37,9 +43,7 @@ final class tiFy extends Container
      */
     public function __construct()
     {
-        if (self::instance()) {
-            return;
-        } else {
+        if (!self::instance()) {
             self::$instance = $this;
 
             parent::__construct();
@@ -51,7 +55,7 @@ final class tiFy extends Container
      */
     public function boot(): ContainerContract
     {
-        /**  @deprecaded */
+        /** @deprecaded */
         if (defined('WP_INSTALLING') && (WP_INSTALLING === true)) {
             return $this;
         }
@@ -59,8 +63,10 @@ final class tiFy extends Container
 
         parent::boot();
 
+        $this->startTime = defined('START_TIME') ? START_TIME : microtime(true);
+
         if (is_null($this->app)) {
-            $this->app = class_exists(App::class) ? (new App($this)): (new Application($this));
+            $this->app = class_exists(App::class) ? (new App($this)) : (new Application($this));
 
             $this->share('app', $this->app->boot());
         }
@@ -73,7 +79,17 @@ final class tiFy extends Container
      */
     public function get($alias, array $args = [])
     {
-        return ($alias === 'app') ? $this->app : parent::get($alias, $args);
+        return $alias === 'app' ? $this->app : parent::get($alias, $args);
+    }
+
+    /**
+     * Récupération de l'heure de démarrage de la requête.
+     *
+     * @return float
+     */
+    public function getStartTime(): ?float
+    {
+        return $this->startTime;
     }
 
     /**
