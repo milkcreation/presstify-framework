@@ -1,0 +1,78 @@
+// Variables
+@import "../../../partial/variables";
+
+$pagination-background-color: partialColor(transparent) !default;
+$pagination-border-color: partialColor(light) !default;
+$pagination-border-style: solid !default;
+$pagination-border-width: 0 !default;
+$pagination-color: partialColor(regular) !default;
+$pagination-current-background-color: $pagination-background-color !default;
+$pagination-current-border-color: $pagination-border-color !default;
+$pagination-current-color: $pagination-color !default;
+$pagination-hover-background-color: $pagination-current-background-color !default;
+$pagination-hover-border-color: $pagination-current-border-color !default;
+$pagination-hover-color: $pagination-current-color !default;
+
+// Personnalisation
+.Pagination {
+  width: 100%;
+  text-align: center;
+}
+
+.Pagination-item {
+  display: inline-block;
+  text-indent: 0;
+}
+
+a, span {
+  &.Pagination-itemPage {
+    position: relative;
+    display: block;
+    padding: 6px 12px;
+    text-align: center;
+    background-color: $pagination-background-color;
+    border-color: $pagination-border-color;
+    border-style: $pagination-border-style;
+    border-width: #{$pagination-border-width}px;
+    transition: background-color 300ms cubic-bezier(0.77, 0, 0.175, 1),
+    border-color 300ms cubic-bezier(0.77, 0, 0.175, 1),
+    color 300ms cubic-bezier(0.77, 0, 0.175, 1), transform 300ms cubic-bezier(0.77, 0, 0.175, 1);
+
+    &,
+    &:active,
+    &:focus,
+    &:visited {
+      color: $pagination-color;
+    }
+
+    &:hover {
+      background-color: $pagination-hover-background-color;
+      border-color: $pagination-hover-border-color;
+      color: $pagination-hover-color;
+    }
+
+    &[aria-current="true"] {
+      font-weight: bold;
+      background-color: $pagination-current-background-color;
+      border-color: $pagination-current-border-color;
+      color: $pagination-current-color;
+
+      &::before {
+        position: absolute;
+        display: block;
+        content: " ";
+        bottom: 4px;
+        left: 40%;
+        right: 40%;
+        height: 2px;
+        background-color: $pagination-color;
+      }
+    }
+  }
+}
+
+a.Pagination-itemPage--link {
+  text-decoration: none;
+
+
+}
