@@ -19,7 +19,7 @@ interface Debug
     public static function instance(): Debug;
 
     /**
-     * Initialisation.
+     * Chargement.
      *
      * @return static
      *
@@ -33,7 +33,7 @@ interface Debug
      * @param string|array|null $key Clé d'indice du paramètre à récupérer|Liste des paramètre à définir.
      * @param mixed $default Valeur de retour par défaut lorsque la clé d'indice est une chaine de caractère.
      *
-     * @return mixed|ParamsBag
+     * @return ParamsBag|int|string|array|object
      */
     public function config($key = null, $default = null);
 
@@ -77,9 +77,9 @@ interface Debug
      *
      * @param string $alias
      *
-     * @return object|mixed|null
+     * @return object|null
      */
-    public function resolve(string $alias);
+    public function resolve(string $alias): ?object;
 
     /**
      * Vérification de résolution possible d'un service fourni par le gestionnaire.

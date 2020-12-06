@@ -1,13 +1,11 @@
 <?php
 /**
- * Etiquette de champ de formulaire.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
- * @var tiFy\Contracts\Form\FactoryField $field
+ * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FieldDriver $field
  */
 ?>
 <?php if ($field->hasLabel()) : ?>
-    <?php if ($field->get('label.wrapper')) : $this->layout('wrapper-label', $this->all()); endif; ?>
-    <?php echo field('label', $field->get('label', [])); ?>
+    <?php if ($field->params('label.wrapper')) : $this->layout('wrapper-label', $this->all()); endif; ?>
+    <?php echo field('label', $field->params('label', [])); ?>
     <?php $this->insert('field-required', compact('field')); ?>
 <?php endif;

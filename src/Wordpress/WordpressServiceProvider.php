@@ -4,6 +4,7 @@ namespace tiFy\Wordpress;
 
 use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Debug\Debug as DebugManagerContract;
+use tiFy\Contracts\Form\FormManager as FormManagerContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Auth\Auth;
@@ -133,7 +134,7 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('wp.field');
                 }
 
-                if ($this->getContainer()->has('form')) {
+                if ($this->getContainer()->has(FormManagerContract::class)) {
                     $this->getContainer()->get('wp.form');
                 }
 
@@ -332,7 +333,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerForm(): void
     {
         $this->getContainer()->share('wp.form', function () {
-            return new Form($this->getContainer()->get('form'));
+            return new Form($this->getContainer()->get(FormManagerContract::class), $this->getContainer());
         });
     }
 

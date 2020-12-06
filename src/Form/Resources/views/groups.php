@@ -1,12 +1,11 @@
 <?php
 /**
- * Liste des groupes de champs.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
- * @var tiFy\Contracts\Form\FactoryGroup[] $groups
- * @var tiFy\Contracts\Form\FactoryGroup $group
+ * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FieldGroupDriver $group
  */
 ?>
-<?php foreach ($groups as $name => $group) : ?>
-    <?php $this->insert('group', compact('group')); ?>
-<?php endforeach; ?>
+<?php if ($groups = $this->get('groups')) : ?>
+    <?php foreach ($groups as $name => $group) : ?>
+        <?php $this->insert('group', compact('group')); ?>
+    <?php endforeach; ?>
+<?php endif;

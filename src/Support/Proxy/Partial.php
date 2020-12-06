@@ -15,7 +15,7 @@ class Partial extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return PartialContract
+     * @return mixed|object|PartialContract
      */
     public static function getInstance()
     {

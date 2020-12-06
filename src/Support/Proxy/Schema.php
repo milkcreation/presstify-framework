@@ -41,7 +41,7 @@ class Schema extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return SchemaBuilder
+     * @return mixed|object|SchemaBuilder
      */
     public static function getInstance()
     {

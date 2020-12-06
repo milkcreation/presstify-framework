@@ -45,7 +45,7 @@ interface MessagesBag extends ArrayAccess, Countable, IteratorAggregate, JsonSer
     /**
      * Récupération de la liste complète des messages ou uniquement ceux associés à un type de notification.
      *
-     * @param int $level Niveau de notification.
+     * @param int|null $level Niveau de notification.
      *
      * @return array
      */
@@ -145,6 +145,15 @@ interface MessagesBag extends ArrayAccess, Countable, IteratorAggregate, JsonSer
     public function fetch(?int $level = null, $code = null): array;
 
     /**
+     * Retrouve la liste des messages formatés
+     *
+     * @param array $levelMap Cartographie de formatage des niveaux d'erreurs.
+     *
+     * @return string[][]
+     */
+    public function fetchRenderMessages(array $levelMap = []): array;
+
+    /**
      * Réinitialisation de la liste complète des messages ou ceux associés à un type de notification.
      *
      * @param int|null $level Niveau de notification.
@@ -165,7 +174,16 @@ interface MessagesBag extends ArrayAccess, Countable, IteratorAggregate, JsonSer
     public function get(int $level, $code = null, string $default = '');
 
     /**
-     * Vérification d'existance d'un niveau de notification déclaré.
+     * Vérification d'existance selon niveau de notification déclaré.
+     *
+     * @param int|string $level Niveau de notification.
+     *
+     * @return bool
+     */
+    public function has(int $level): bool;
+
+    /**
+     * Vérification d'existance selon un niveau de notification déclaré.
      *
      * @param int $level Niveau de notification.
      *
@@ -192,7 +210,7 @@ interface MessagesBag extends ArrayAccess, Countable, IteratorAggregate, JsonSer
      *
      * @return string
      */
-    public function json($options = 0);
+    public function json($options = 0): string;
 
     /**
      * Récupération de la liste des niveaux de notification déclarés.

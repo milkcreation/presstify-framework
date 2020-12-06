@@ -8,7 +8,6 @@ use tiFy\Http\Response;
 use tiFy\Container\ServiceProvider;
 use tiFy\Kernel\Events\Manager as EventsManager;
 use tiFy\Kernel\Events\Listener;
-use tiFy\Kernel\Notices\Notices;
 use tiFy\Support\ClassInfo;
 use tiFy\Support\ParamsBag;
 
@@ -23,7 +22,6 @@ class KernelServiceProvider extends ServiceProvider
         'class-info',
         'events',
         'events.listener',
-        'notices',
         'params.bag',
         'path',
         'request',
@@ -58,20 +56,6 @@ class KernelServiceProvider extends ServiceProvider
 
         $this->getContainer()->add('events.listener', function (callable $callback) {
             return new Listener($callback);
-        });
-
-        /**
-         * @deprecated Mais dépendance Form.
-         */
-        $this->getContainer()->add('notices', function () {
-            return new Notices();
-        });
-
-        /**
-         * @deprecated Chercher les potentielles dépendances.
-         */
-        $this->getContainer()->add('params.bag', function (array $attrs = []) {
-            return (new ParamsBag())->set($attrs);
         });
 
         $this->getContainer()->share('request', function () {

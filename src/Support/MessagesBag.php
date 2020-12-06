@@ -3,6 +3,7 @@
 namespace tiFy\Support;
 
 use ArrayIterator;
+use Illuminate\Support\Collection;
 use tiFy\Contracts\Support\MessagesBag as MessagesBagContract;
 
 /**
@@ -155,7 +156,7 @@ class MessagesBag implements MessagesBagContract
      *
      * @return bool
      */
-    public function __isset(int $level)
+    public function __isset(int $level): bool
     {
         return $this->offsetExists($level);
     }
@@ -285,17 +286,36 @@ class MessagesBag implements MessagesBagContract
             }
         } elseif (is_null($code)) {
             foreach ($this->code($level) as $code) {
-                $message = $this->messages($level, $code, '');
+                $message = $this->messages($level, $code);
                 $data = $this->datas($level, $code, []);
                 $items[] = compact('code', 'data', 'level', 'message');
             }
         } else {
-            $message = $this->messages($level, $code, '');
+            $message = $this->messages($level, $code);
             $data = $this->datas($level, $code, []);
             $items[] = compact('code', 'data', 'level', 'message');
         }
 
         return $items;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchRenderMessages(array $levelMap = []): array
+    {
+        if (empty($levelMap)) {
+            $levelMap = self::$levels;
+        }
+
+        $renderMessages = [];
+        foreach ($this->messages as $level => $messages) {
+            if (isset($levelMap[$level])) {
+                $renderMessages[$levelMap[$level]] = array_values($messages);
+            }
+        }
+
+        return $renderMessages;
     }
 
     /**
@@ -332,9 +352,42 @@ class MessagesBag implements MessagesBagContract
     /**
      * @inheritDoc
      */
+    public function has($level): bool
+    {
+        return $this->hasLevel(self::convertLevel($level));
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function hasLevel(int $level): bool
     {
         return in_array($level, $this->levels());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasMessages(?int $level = null, $datas = []): bool
+    {
+        if ($datas) {
+            return !!(new Collection($this->datas))->first(function ($value, $key) use ($level, $datas) {
+                if ($level !== null && ($level !== $key)) {
+                    return false;
+                } else {
+                    foreach ($value as $i => $j) {
+                        if(!!@array_intersect($j, $datas)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
+        } elseif ($level) {
+            return $this->messages[$level] ? true : false;
+        } else {
+            return !!$this->count();
+        }
     }
 
     /**
@@ -348,7 +401,7 @@ class MessagesBag implements MessagesBagContract
     /**
      * @inheritDoc
      */
-    public function json($options = 0)
+    public function json($options = 0): string
     {
         return json_encode($this->all(), $options);
     }
@@ -356,7 +409,7 @@ class MessagesBag implements MessagesBagContract
     /**
      * @inheritDoc
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->all();
     }
@@ -412,7 +465,7 @@ class MessagesBag implements MessagesBagContract
     /**
      * @inheritDoc
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->messages[$offset]);
     }
@@ -456,7 +509,7 @@ class MessagesBag implements MessagesBagContract
      */
     public function success(string $message = '', ?array $datas = null, ?string $code = null): ?string
     {
-        return $this->add(self::NOTICE, $message, $datas, $code);
+        return $this->notice($message, $datas, $code);
     }
 
     /**

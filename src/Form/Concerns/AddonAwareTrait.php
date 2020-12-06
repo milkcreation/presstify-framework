@@ -3,14 +3,14 @@
 namespace tiFy\Form\Concerns;
 
 use LogicException;
-use tiFy\Contracts\Form\AddonFactory;
+use tiFy\Contracts\Form\AddonDriver;
 use tiFy\Contracts\Form\FormFactory;
 
 trait AddonAwareTrait
 {
     /**
      * Instance de l'addon de formulaire associé.
-     * @var AddonFactory|null
+     * @var AddonDriver|null
      */
     protected $addon;
 
@@ -23,20 +23,15 @@ trait AddonAwareTrait
     /**
      * Récupération de l'instance de l'addon associé.
      *
-     * @return AddonFactory
+     * @return AddonDriver
      */
-    public function addon(): AddonFactory
+    public function addon(): AddonDriver
     {
-        if ($this->addon instanceof AddonFactory) {
+        if ($this->addon instanceof AddonDriver) {
             return $this->addon;
         }
 
-        throw new LogicException(
-            sprintf(
-                __('Aucun addon de formulaire n\'est associé à la classe [%s].', 'tify'),
-                class_info($this)->getShortName()
-            )
-        );
+        throw new LogicException('Unavailable related addon');
     }
 
     /**
@@ -52,11 +47,11 @@ trait AddonAwareTrait
     /**
      * Définition de l'addon associé.
      *
-     * @param AddonFactory $addon
+     * @param AddonDriver $addon
      *
      * @return $this
      */
-    public function setAddon(AddonFactory $addon): self
+    public function setAddon(AddonDriver $addon): self
     {
         $this->addon = $addon;
 

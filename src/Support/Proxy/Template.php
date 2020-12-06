@@ -18,7 +18,7 @@ class Template extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return TemplateManager
+     * @return mixed|object|TemplateManager
      */
     public static function getInstance()
     {

@@ -30,7 +30,6 @@ use tiFy\Contracts\Routing\Redirector;
 use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Url;
 use tiFy\Contracts\Support\ClassInfo;
-use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;
 use tiFy\Contracts\Taxonomy\Taxonomy;
 use tiFy\Contracts\Template\TemplateFactory;
@@ -254,7 +253,7 @@ if (!function_exists('form')) {
     function form($name = null)
     {
         /* @var FormManager $factory */
-        $factory = app('form');
+        $factory = app(FormManager::class);
 
         if (is_null($name)) {
             return $factory;
@@ -282,20 +281,6 @@ if (! function_exists('logger')) {
         }
 
         $manager->debug($message, $context);
-    }
-}
-
-if (!function_exists('params')) {
-    /**
-     * ParamsBag - Gestionnaire de paramètres.
-     *
-     * @param mixed $params Liste des paramètres.
-     *
-     * @return ParamsBag
-     */
-    function params($params = []): ParamsBag
-    {
-        return app('params.bag', [$params]);
     }
 }
 

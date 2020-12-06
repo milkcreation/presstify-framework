@@ -13,7 +13,7 @@ class Redirect extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return Redirector
+     * @return mixed|object|Redirector
      */
     public static function getInstance()
     {

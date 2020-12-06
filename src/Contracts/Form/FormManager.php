@@ -2,90 +2,236 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Support\Manager;
+use Exception;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\Filesystem\LocalFilesystem;
+use tiFy\Contracts\Support\ParamsBag;
 
-interface FormManager extends Manager
+interface FormManager
 {
     /**
-     * Déclaration d'un addon.
+     * Récupération de l'instance courante.
      *
-     * @param string $name Nom de qualification.
-     * @param callable|object|string|null $concrete Fonction anonyme|Instance|Nom de classe du contrôleur.
+     * @return static
      *
-     * @return $this
+     * @throws Exception
      */
-    public function addonRegister(string $name, $concrete = null): FormManager;
+    public static function instance(): FormManager;
 
     /**
-     * Déclaration d'un bouton.
+     * Récupération de la liste des formulaires déclarés.
      *
-     * @param string $name Nom de qualification.
-     * @param callable|object|string $concrete Fonction anonyme|Instance|Nom de classe du contrôleur.
-     *
-     * @return $this
+     * @return FormFactory[]|array
      */
-    public function buttonRegister(string $name, $concrete): FormManager;
+    public function all(): array;
 
     /**
-     * Récupération ou définition du formulaire courant.
+     * Chargement.
      *
-     * @param string|FormFactory|null $form Nom de qualification ou instance du formulaire.
+     * @return static
+     */
+    public function boot(): FormManager;
+
+    /**
+     * Récupération de paramètre|Définition de paramètres|Instance du gestionnaire de paramètre.
+     *
+     * @param string|array|null $key Clé d'indice du paramètre à récupérer|Liste des paramètre à définir.
+     * @param mixed $default Valeur de retour par défaut lorsque la clé d'indice est une chaine de caractère.
+     *
+     * @return ParamsBag|int|string|array|object
+     */
+    public function config($key = null, $default = null);
+
+    /**
+     * Récupération|Définition du formulaire courant.
+     *
+     * @param string|FormFactory|null $formDefinition Nom de qualification ou instance du formulaire.
      *
      * @return FormFactory|null
      */
-    public function current($form = null): ?FormFactory;
+    public function current($formDefinition = null): ?FormFactory;
 
     /**
-     * Déclaration d'un champ.
+     * Récupération d'une instance de formulaire associé à son alias de qualification.
      *
-     * @param string $name Nom de qualification.
-     * @param callable|object|string $concrete Fonction anonyme|Instance|Nom de classe du contrôleur.
+     * @param string $alias
      *
-     * @return $this
+     * @return FormFactory|null
      */
-    public function fieldRegister(string $name, $concrete): FormManager;
+    public function get(string $alias): ?FormFactory;
 
     /**
-     * Récupération du numéro d'indice d'un formulaire déclaré.
+     * Récupération d'un pilote d'addon déclaré.
      *
-     * @param string $name Nom de qualification du formulaire.
+     * @param string $alias
      *
-     * @return int|null
+     * @return AddonDriver
      */
-    public function index(string $name): ?int;
+    public function getAddonDriver(string $alias): ?AddonDriver;
+
+    /**
+     * Récupération d'un pilote de bouton déclaré.
+     *
+     * @param string $alias
+     *
+     * @return ButtonDriver
+     */
+    public function getButtonDriver(string $alias): ?ButtonDriver;
+
+    /**
+     * Récupération de l'instance du gestionnaire d'injection de dépendances.
+     *
+     * @return Container|null
+     */
+    public function getContainer(): ?Container;
+
+    /**
+     * Récupération d'un pilote de champ déclaré.
+     *
+     * @param string $alias
+     *
+     * @return FieldDriver
+     */
+    public function getFieldDriver(string $alias): ?FieldDriver;
+
+    /**
+     * Récupération de l'indice de déclaration d'un formulaire.
+     *
+     * @param string $alias.
+     *
+     * @return int
+     */
+    public function getIndex(string $alias): int;
 
     /**
      * Déclaration d'un formulaire.
      *
-     * @param string $name Nom de qualification.
-     * @param array $args Attributs de configuration.
+     * @param string $alias
+     * @param array|FormFactory $formDefinition
      *
-     * @return FormManager
+     * @return FormFactory
      */
-    public function register($name, ...$args): FormManager;
+    public function register(string $alias, $formDefinition = []): FormFactory;
+
+    /**
+     * Déclaration d'un pilote d'addon.
+     *
+     * @param string $alias
+     * @param AddonDriver|array $addonDefinition
+     *
+     * @return AddonDriver
+     */
+    public function registerAddonDriver(string $alias, $addonDefinition = []): AddonDriver;
+
+    /**
+     * Déclaration d'un pilote d'addon.
+     *
+     * @param string $alias
+     * @param ButtonDriver|array $buttonDefinition
+     *
+     * @return ButtonDriver
+     */
+    public function registerButtonDriver(string $alias, $buttonDefinition = []): ButtonDriver;
+
+    /**
+     * Déclaration d'un pilote d'addon.
+     *
+     * @param string $alias
+     * @param FieldDriver|array $fieldDefinition
+     *
+     * @return FieldDriver
+     */
+    public function registerFieldDriver(string $alias, $fieldDefinition = []): FieldDriver;
 
     /**
      * Réinitialisation du formulaire courant.
      *
-     * @return FormManager
+     * @return static
      */
     public function reset(): FormManager;
 
     /**
-     * Récupération du chemin absolu vers le répertoire des ressources.
+     * Résolution de service fourni par le gestionnaire.
      *
-     * @param string $path Chemin relatif du sous-repertoire.
+     * @param string $alias
      *
-     * @return string
+     * @return object|null
      */
-    public function resourcesDir(string $path = ''): string;
+    public function resolve(string $alias): ?object;
 
     /**
-     * Récupération de l'url absolue vers le répertoire des ressources.
+     * Vérification de résolution possible d'un service fourni par le gestionnaire.
      *
-     * @param string $path Chemin relatif du sous-repertoire.
+     * @param string $alias
      *
-     * @return string
+     * @return bool
      */
-    public function resourcesUrl(string $path = ''): string;
+    public function resolvable(string $alias): bool;
+
+    /**
+     * Chemin absolu vers une ressources (fichier|répertoire).
+     *
+     * @param string|null $path Chemin relatif vers la ressource.
+     *
+     * @return LocalFilesystem|string|null
+     */
+    public function resources(?string $path = null);
+
+    /**
+     * Définition d'un pilote d'addon.
+     *
+     * @param string $alias
+     * @param AddonDriver $driver
+     *
+     * @return $this
+     */
+    public function setAddonDriver(string $alias, AddonDriver $driver): FormManager;
+
+    /**
+     * Définition d'un pilote de bouton.
+     *
+     * @param string $alias
+     * @param ButtonDriver $driver
+     *
+     * @return $this
+     */
+    public function setButtonDriver(string $alias, ButtonDriver $driver): FormManager;
+
+    /**
+     * Définition des paramètres de configuration.
+     *
+     * @param array $attrs Liste des attributs de configuration.
+     *
+     * @return static
+     */
+    public function setConfig(array $attrs): FormManager;
+
+    /**
+     * Définition du conteneur d'injection de dépendances.
+     *
+     * @param Container $container
+     *
+     * @return static
+     */
+    public function setContainer(Container $container): FormManager;
+
+    /**
+     * Définition d'un pilote de champ.
+     *
+     * @param string $alias
+     * @param FieldDriver $driver
+     *
+     * @return $this
+     */
+    public function setFieldDriver(string $alias, FieldDriver $driver): FormManager;
+
+    /**
+     * Définition d'un formulaire.
+     *
+     * @param string $alias
+     * @param FormFactory $factory
+     *
+     * @return $this
+     */
+    public function setForm(string $alias, FormFactory $factory): FormManager;
 }

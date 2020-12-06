@@ -15,7 +15,7 @@ class PostType extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return PostTypeContract
+     * @return mixed|object|PostTypeContract
      */
     public static function getInstance()
     {

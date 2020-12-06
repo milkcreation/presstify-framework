@@ -14,7 +14,7 @@ class Taxonomy extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return TaxonomyContract
+     * @return mixed|object|TaxonomyContract
      */
     public static function getInstance()
     {

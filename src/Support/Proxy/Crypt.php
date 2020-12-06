@@ -15,7 +15,7 @@ class Crypt extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return EncrypterContract
+     * @return mixed|object|EncrypterContract
      */
     public static function getInstance()
     {

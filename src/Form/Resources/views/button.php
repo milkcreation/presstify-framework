@@ -1,13 +1,11 @@
 <?php
 /**
- * Bouton de formulaire.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
- * @var tiFy\Contracts\Form\ButtonController $button
+ * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\ButtonDriver $button
  */
 ?>
 <?php if ($button->hasWrapper()) : $this->layout('wrapper-button', $this->all()); endif; ?>
 
-<?php echo $button->get('before'); ?>
+<?php echo $button->params('before'); ?>
 <?php echo $button; ?>
-<?php echo $button->get('after'); ?>
+<?php echo $button->params('after'); ?>

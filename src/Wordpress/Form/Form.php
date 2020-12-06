@@ -2,37 +2,39 @@
 
 namespace tiFy\Wordpress\Form;
 
+use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
+use tiFy\Contracts\Form\MailerAddonDriver as MailerAddonDriverContract;
 use tiFy\Support\Arr;
 use tiFy\Wordpress\Contracts\Form as FormContract;
-use tiFy\Wordpress\Form\Addon\Mailer\Mailer;
+use tiFy\Wordpress\Form\AddonDrivers\MailerAddonDriver;
 
 class Form implements FormContract
 {
     /**
+     * Instance du conteneur d'injection de dépendances.
+     * @var Container
+     */
+    protected $container;
+
+    /**
      * Instance du controleur de gestion des formulaires.
      * @var FormManager
      */
-    protected $manager;
+    protected $formManager;
 
     /**
-     * CONSTRUCTEUR.
-     *
-     * @param FormManager $manager Instance du controleur de gestion des formulaires.
-     *
-     * @return void
+     * @param FormManager $formManager Instance du controleur de gestion des formulaires.
+     * @param Container $container
      */
-    public function __construct(FormManager $manager)
+    public function __construct(FormManager $formManager, Container $container)
     {
-        $this->manager = $manager;
-
-        foreach (config('form', []) as $name => $attrs) {
-            $this->manager->register($name, $attrs);
-        }
+        $this->formManager = $formManager->boot();
+        $this->container = $container;
 
         add_action('wp', function () {
-            foreach ($this->manager->all() as $form) {
+            foreach ($this->formManager->all() as $form) {
                 /* @var FormFactory $form */
                 $form->events()->listen('field.get.value', function(&$value) {
                     $value = Arr::stripslashes($value);
@@ -44,11 +46,11 @@ class Form implements FormContract
             if (is_admin()) {
                 events()->trigger('wp-admin.form.boot');
 
-                foreach ($this->manager->all() as $form) {
+                foreach ($this->formManager->all() as $form) {
                     /* @var FormFactory $form */
-                    $this->manager->current($form);
-                    $form->prepare();
-                    $this->manager->reset();
+                    $this->formManager->current($form);
+                    $form->boot();
+                    $this->formManager->reset();
                 }
 
                 events()->trigger('wp-admin.form.booted');
@@ -65,8 +67,8 @@ class Form implements FormContract
      */
     public function registerOverride(): void
     {
-        app()->add('form.addon.mailer', function () {
-            return new Mailer();
+        $this->container->add(MailerAddonDriverContract::class, function (): MailerAddonDriverContract {
+            return new MailerAddonDriver();
         });
     }
 }

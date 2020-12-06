@@ -1,10 +1,8 @@
 <?php
 /**
- * Encapsulation des champs de formulaire.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
- * @var tiFy\Contracts\Form\FactoryField $field
+ * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FieldDriver $field
  */
-echo partial('tag', array_merge($field->get('wrapper', []), [
+echo partial('tag', array_merge($field->params('wrapper', []), [
     'content' => $this->section('content')
 ]));

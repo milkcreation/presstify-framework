@@ -16,7 +16,7 @@ class Database extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return DatabaseContract
+     * @return mixed|object|DatabaseContract
      */
     public static function getInstance()
     {

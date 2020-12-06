@@ -1,5 +1,21 @@
 # Release Notes
 
+## [v2.0.372 (2020-12-06)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.372...v2.0.372
+
+### Addded
+
+- LabelsBagTrait + MessagesBagTrait + ParamsBagTrait
+
+### Changed
+
+- Form : Réécriture complète
+
+### Fixed
+
+- Kernel\Notices : Suppression + adaptations collatérales (Form & Template)
+- Kernel param.bag : Suppression + adaptations collatérales (helpers ...) 
+- Proxy\... : getInstance modif commentaire correspondance inspecteur 
+
 ## [v2.0.371 (2020-12-03)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.371...v2.0.371
 
 ### Added
