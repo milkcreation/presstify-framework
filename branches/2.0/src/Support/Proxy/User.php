@@ -12,7 +12,7 @@ class User extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return UserContract
+     * @return mixed|object|UserContract
      */
     public static function getInstance()
     {

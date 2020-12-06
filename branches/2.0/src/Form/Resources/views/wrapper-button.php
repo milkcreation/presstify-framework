@@ -1,10 +1,8 @@
 <?php
 /**
- * Bouton de formulaire.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
- * @var tiFy\Contracts\Form\ButtonController $button
+ * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\ButtonDriver $button
  */
-echo partial('tag', array_merge($button->get('wrapper', []), [
+echo partial('tag', array_merge($button->params('wrapper', []), [
     'content' => $this->section('content')
 ]));

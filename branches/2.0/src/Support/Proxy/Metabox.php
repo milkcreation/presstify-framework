@@ -26,7 +26,7 @@ class Metabox extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return MetaboxContract
+     * @return mixed|object|MetaboxContract
      */
     public static function getInstance()
     {

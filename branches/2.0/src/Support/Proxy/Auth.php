@@ -15,7 +15,7 @@ class Auth extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return AuthContract
+     * @return mixed|object|AuthContract
      */
     public static function getInstance()
     {

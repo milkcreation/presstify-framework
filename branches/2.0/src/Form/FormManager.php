@@ -2,126 +2,384 @@
 
 namespace tiFy\Form;
 
-use Closure, Exception;
-use tiFy\Contracts\Form\AddonFactory as AddonFactoryContract;
-use tiFy\Contracts\Form\FormFactory;
+use Exception, LogicException;
+use Psr\Container\ContainerInterface as Container;
+use tiFy\Contracts\Filesystem\LocalFilesystem;
+use tiFy\Contracts\Form\AddonDriver as AddonDriverContract;
+use tiFy\Contracts\Form\ButtonDriver as ButtonDriverContract;
+use tiFy\Contracts\Form\FieldDriver as FieldDriverContract;
+use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Contracts\Form\FormManager as FormManagerContract;
-use tiFy\Support\Manager;
+use tiFy\Contracts\Form\HtmlFieldDriver as HtmlFieldDriverContract;
+use tiFy\Contracts\Form\MailerAddonDriver as MailerAddonDriverContract;
+use tiFy\Contracts\Form\RecordAddonDriver as RecordAddonDriverContract;
+use tiFy\Contracts\Form\SubmitButtonDriver as SubmitButtonDriverContract;
+use tiFy\Contracts\Form\TagFieldDriver as TagFieldDriverContract;
+use tiFy\Contracts\Form\UserAddonDriver as UserAddonDriverContract;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Storage;
 
-class FormManager extends Manager implements FormManagerContract
+class FormManager implements FormManagerContract
 {
     /**
+     * Instance de la classe.
+     * @var static|null
+     */
+    private static $instance;
+
+    /**
+     * Indicateur d'initialisation.
+     * @var bool
+     */
+    private $booted = false;
+
+    /**
+     * Liste des pilotes d'addons par défaut.
+     * @var string[]
+     */
+    private $defaultAddonDrivers = [
+        'mailer' => MailerAddonDriverContract::class,
+        'record' => RecordAddonDriverContract::class,
+        'user'   => UserAddonDriverContract::class
+    ];
+
+    /**
+     * Liste des pilotes de boutons par défaut.
+     * @var string[]
+     */
+    private $defaultButtonDrivers = [
+        'submit' => SubmitButtonDriverContract::class
+    ];
+
+    /**
+     * Liste des pilotes de champs par défaut.
+     * @var string[]
+     */
+    private $defaultFieldDrivers = [
+        'html' => HtmlFieldDriverContract::class,
+        'tag'  => TagFieldDriverContract::class,
+    ];
+
+    /**
+     * Instance du gestionnaire des ressources
+     * @var LocalFilesystem|null
+     */
+    private $resources;
+
+    /**
+     * Instance du gestionnaire de configuration.
+     * @var ParamsBag
+     */
+    protected $config;
+
+    /**
+     * Instance du conteneur d'injection de dépendances.
+     * @var Container|null
+     */
+    protected $container;
+
+    /**
      * Liste des formulaires déclarés.
-     * @var FormFactory[]
+     * @var AddonDriverContract[]|array
      */
-    protected $items = [];
+    protected $registeredAddonDrivers = [];
 
     /**
-     * Formulaire courant.
-     * @var FormFactory
+     * Liste des formulaires déclarés.
+     * @var ButtonDriverContract[]|array
      */
-    protected $current;
+    protected $registeredButtonDrivers = [];
 
     /**
-     * @inheritDoc
+     * Liste des formulaires déclarés.
+     * @var FieldDriverContract[]|array
      */
-    public function addonRegister(string $name, $controller = null): FormManagerContract
+    protected $registeredFieldDrivers = [];
+
+    /**
+     * Liste des formulaires déclarés.
+     * @var FormFactoryContract[]
+     */
+    protected $registeredForms = [];
+
+    /**
+     * Instance du formulaire courant.
+     * @var FormFactoryContract|null
+     */
+    protected $currentForm;
+
+    /**
+     * @param array $config
+     * @param Container|null $container
+     *
+     * @return void
+     */
+    public function __construct(array $config = [], Container $container = null)
     {
-        $this->getContainer()->add("form.addon.{$name}", function () use ($name, $controller) : AddonFactoryContract {
-            if (is_object($controller) || $controller instanceof Closure) {
-                $addon = call_user_func($controller);
-            } elseif (class_exists($controller)) {
-                $addon = new $controller();
-            } else {
-                $addon = new AddonFactory();
-            }
+        $this->setConfig($config);
 
-            return $addon->setName($name);
-        });
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function buttonRegister($name, $controller): FormManagerContract
-    {
-        $this->getContainer()->add(
-            "form.button.{$name}",
-            function ($name, $attrs, FormFactory $form) use ($controller) {
-                if (is_object($controller) || $controller instanceof Closure) {
-                    return call_user_func_array($controller, [$name, $attrs, $form]);
-                } elseif (class_exists($controller)) {
-                    return new $controller($name, $attrs, $form);
-                } else {
-                    return app()->get('form.button', [$name, $attrs, $form]);
-                }
-            }
-        );
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function current($form = null): ?FormFactory
-    {
-        if (is_null($form)) {
-            return $this->current;
-        } elseif (is_string($form)) {
-            $form = $this->get($form);
+        if (!is_null($container)) {
+            $this->setContainer($container);
         }
 
-        if (!$form instanceof FormFactory) {
+        if (!self::$instance instanceof static) {
+            self::$instance = $this;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function instance(): FormManagerContract
+    {
+        if (self::$instance instanceof self) {
+            return self::$instance;
+        }
+
+        throw new Exception(sprintf('Unavailable %s instance', __CLASS__));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function all(): array
+    {
+        return $this->registeredForms;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(): FormManagerContract
+    {
+        if ($this->booted === false) {
+            foreach ($this->defaultAddonDrivers as $alias => $abstract) {
+                if ($this->resolvable($abstract)) {
+                    /** @var AddonDriverContract $driver  */
+                    $driver = $this->resolve($abstract);
+                    $this->setAddonDriver($alias, $driver);
+                }
+            }
+
+            foreach ($this->defaultButtonDrivers as $alias => $abstract) {
+                if ($this->resolvable($abstract)) {
+                    /** @var ButtonDriverContract $driver  */
+                    $driver = $this->resolve($abstract);
+                    $this->setButtonDriver($alias, $driver);
+                }
+            }
+
+            foreach ($this->defaultFieldDrivers as $alias => $abstract) {
+                if ($this->resolvable($abstract)) {
+                    /** @var FieldDriverContract $driver  */
+                    $driver = $this->resolve($abstract);
+                    $this->setFieldDriver($alias, $driver);
+                }
+            }
+
+            $this->booted = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function config($key = null, $default = null)
+    {
+        if (!isset($this->config) || is_null($this->config)) {
+            $this->config = new ParamsBag();
+        }
+
+        if (is_string($key)) {
+            return $this->config->get($key, $default);
+        } elseif (is_array($key)) {
+            return $this->config->set($key);
+        } else {
+            return $this->config;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function current($formDefinition = null): ?FormFactoryContract
+    {
+        if (is_null($formDefinition)) {
+            return $this->currentForm;
+        } elseif (is_string($formDefinition)) {
+            $formDefinition = $this->get($formDefinition);
+        }
+
+        if (!$formDefinition instanceof FormFactoryContract) {
             return null;
         }
 
-        $this->current = $form;
+        $this->currentForm = $formDefinition;
 
-        $this->current->onSetCurrent();
+        $this->currentForm->onSetCurrent();
 
-        return $this->current;
+        return $this->currentForm;
     }
 
     /**
      * @inheritDoc
      */
-    public function fieldRegister($name, $controller): FormManagerContract
+    public function get(string $alias): ?FormFactoryContract
     {
-        $this->getContainer()->add(
-            "form.field.{$name}",
-            function ($name, $attrs, FormFactory $form) use ($controller) {
-                if (is_object($controller) || $controller instanceof Closure) {
-                    return call_user_func_array($controller, [$name, $attrs, $form]);
-                } elseif (class_exists($controller)) {
-                    return new $controller($name, $attrs, $form);
-                } else {
-                    return app()->get('form.field', [$name, $attrs, $form]);
-                }
-            }
-        );
-
-        return $this;
+        return $this->registeredForms[$alias] ?? null;
     }
 
     /**
      * @inheritDoc
      */
-    public function index($name): ?int
+    public function getAddonDriver(string $alias): ?AddonDriverContract
     {
-        $index = array_search($name, array_keys($this->items));
-
-        return ($index !== false) ? $index : null;
+        return $this->registeredAddonDrivers[$alias] ?? null;
     }
 
     /**
      * @inheritDoc
      */
-    public function register($name, ...$args): FormManagerContract
+    public function getButtonDriver(string $alias): ?ButtonDriverContract
     {
-        return $this->set([$name => $args[0] ?? []]);
+        return $this->registeredButtonDrivers[$alias] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContainer(): ?Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFieldDriver(string $alias): ?FieldDriverContract
+    {
+        return $this->registeredFieldDrivers[$alias] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIndex(string $alias): int
+    {
+        $index = array_search($alias, array_keys($this->registeredForms));
+
+        if ($index !== false) {
+            return $index;
+        }
+
+        throw new LogicException('Unable to retreive registeredForm index');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function register(string $alias, $formDefinition = []): FormFactoryContract
+    {
+        $params = [];
+
+        if (!$formDefinition instanceof FormFactoryContract) {
+            $params = $formDefinition;
+
+            $form = $this->resolvable(FormFactoryContract::class)
+                ? $this->resolve(FormFactoryContract::class) : new BaseFormFactory();
+        } else {
+            $form = $formDefinition;
+        }
+
+        if (!$form instanceof FormFactoryContract) {
+            throw new LogicException('Invalid Form Declaration');
+        }
+
+        return $this->registeredForms[$alias] = $form
+            ->setAlias($alias)
+            ->setFormManager($this)
+            ->setParams($params)
+            ->build();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerAddonDriver(string $alias, $addonDefinition = []): AddonDriverContract
+    {
+        $params = [];
+
+        if (!$addonDefinition instanceof AddonDriverContract) {
+            $params = $addonDefinition;
+
+            $addon = $this->resolvable(AddonDriverContract::class)
+                ? $this->resolve(AddonDriverContract::class) : new AddonDriver();
+        } else {
+            $addon = $addonDefinition;
+        }
+
+        if (!$addon instanceof AddonDriverContract) {
+            throw new LogicException('Invalid AddonDriver Declaration');
+        }
+
+        return $this->registeredAddonDrivers[$alias] = $addon
+            ->setAlias($alias)
+            ->setParams($params)
+            ->build();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerButtonDriver(string $alias, $buttonDefinition = []): ButtonDriverContract
+    {
+        $params = [];
+
+        if (!$buttonDefinition instanceof ButtonDriverContract) {
+            $params = $buttonDefinition;
+
+            $button = $this->resolvable(ButtonDriverContract::class)
+                ? $this->resolve(ButtonDriverContract::class) : new ButtonDriver();
+        } else {
+            $button = $buttonDefinition;
+        }
+
+        if (!$button instanceof ButtonDriverContract) {
+            throw new LogicException('Invalid ButtonDriver Declaration');
+        }
+
+        return $this->registeredButtonDrivers[$alias] = $button
+            ->setAlias($alias)
+            ->setParams($params)
+            ->build();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerFieldDriver(string $alias, $fieldDefinition = []): FieldDriverContract
+    {
+        $params = [];
+
+        if (!$fieldDefinition instanceof FieldDriverContract) {
+            $params = $fieldDefinition;
+
+            $field = $this->resolvable(FieldDriverContract::class)
+                ? $this->resolve(FieldDriverContract::class) : new AddonDriver();
+        } else {
+            $field = $fieldDefinition;
+        }
+
+        if (!$field instanceof FieldDriverContract) {
+            throw new LogicException('Invalid FieldDriver Declaration');
+        }
+
+        return $this->registeredFieldDrivers[$alias] = $field
+            ->setAlias($alias)
+            ->setParams($params)
+            ->build();
     }
 
     /**
@@ -129,10 +387,11 @@ class FormManager extends Manager implements FormManagerContract
      */
     public function reset(): FormManagerContract
     {
-        if ($this->current instanceof FormFactory) {
-            $this->current->onResetCurrent();
+        if ($this->currentForm instanceof FormFactoryContract) {
+            $this->currentForm->onResetCurrent();
         }
-        $this->current = null;
+
+        $this->currentForm = null;
 
         return $this;
     }
@@ -140,58 +399,88 @@ class FormManager extends Manager implements FormManagerContract
     /**
      * @inheritDoc
      */
-    public function resourcesDir($path = ''): string
+    public function resolve(string $alias): ?object
     {
-        $path = $path ? '/' . ltrim($path, '/') : '';
-
-        return file_exists(__DIR__ . "/Resources{$path}") ? __DIR__ . "/Resources{$path}" : '';
+        return ($container = $this->getContainer()) ? $container->get($alias) : null;
     }
 
     /**
      * @inheritDoc
      */
-    public function resourcesUrl($path = ''): string
+    public function resolvable(string $alias): bool
     {
-        $cinfo = class_info($this);
-        $path = $path ? '/' . ltrim($path, '/') : '';
-
-        return (file_exists($cinfo->getDirname() . "/Resources{$path}"))
-            ? $cinfo->getUrl() . "/Resources{$path}"
-            : '';
+        return ($container = $this->getContainer()) && $container->has($alias);
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @throws Exception
+     * @inheritDoc
      */
-    public function walk(&$item, $name = null): void
+    public function resources(?string $path = null)
     {
-        $name = strval($name);
-        $attrs = [];
-
-        if (is_string($item)) {
-            $item = new $item();
-        } elseif (is_array($item)) {
-            $attrs = $item;
-            if (isset($attrs['factory'])) {
-                $factory = $attrs['factory'];
-                unset($attrs['factory']);
-
-                $item = new $factory();
-            } else {
-                $item = $this->getContainer()->get('form.factory');
-            }
+        if (!isset($this->resources) || is_null($this->resources)) {
+            $this->resources = Storage::local(__DIR__ . '/Resources');
         }
 
-        if (!$item instanceof FormFactory) {
-            throw new Exception(sprintf(
-                __('Déclaration de [%s] en erreur, le formulaire devrait être une instance de [%s]', 'tify'),
-                $name,
-                FormFactory::class
-            ));
-        } else {
-            $item->set($attrs)->setInstance($name, $this);
-        }
+        return is_null($path) ? $this->resources : $this->resources->path($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setAddonDriver(string $alias, AddonDriverContract $driver): FormManagerContract
+    {
+        $this->registerAddonDriver($alias, $driver);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setButtonDriver(string $alias, ButtonDriverContract $driver): FormManagerContract
+    {
+        $this->registerButtonDriver($alias, $driver);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setConfig(array $attrs): FormManagerContract
+    {
+        $this->config($attrs);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setContainer(Container $container): FormManagerContract
+    {
+        $this->container = $container;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setFieldDriver(string $alias, FieldDriverContract $driver): FormManagerContract
+    {
+        $this->registerFieldDriver($alias, $driver);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setForm(string $alias, FormFactoryContract $factory): FormManagerContract
+    {
+        $this->register($alias, $factory);
+
+        return $this;
     }
 }

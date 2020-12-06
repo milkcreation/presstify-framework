@@ -13,7 +13,7 @@ class Console extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return ConsoleContract
+     * @return mixed|object|ConsoleContract
      */
     public static function getInstance()
     {

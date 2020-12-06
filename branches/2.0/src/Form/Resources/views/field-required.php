@@ -1,11 +1,9 @@
 <?php
 /**
- * Marqueur de champ de formulaire requis.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
- * @var tiFy\Contracts\Form\FactoryField $field
+ * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FieldDriver $field
  */
 ?>
-<?php if ($required = $field->get('required.tagged')) : ?>
+<?php if ($required = $field->params('required.tagged')) : ?>
     <?php echo field('required', $required); ?>
 <?php endif; ?>

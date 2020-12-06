@@ -46,7 +46,7 @@ class Request extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return RequestContract
+     * @return mixed|object|RequestContract
      */
     public static function getInstance()
     {

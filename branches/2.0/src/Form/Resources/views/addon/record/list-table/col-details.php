@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Contracts\Form\FactoryView $this
+ * @var tiFy\Contracts\Form\FormView $this
  * @var tiFy\Template\Templates\ListTable\Contracts\Item $item
  */
 ?>

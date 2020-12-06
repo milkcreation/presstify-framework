@@ -19,7 +19,7 @@ class Mail extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return MailerContract
+     * @return mixed|object|MailerContract
      */
     public static function getInstance()
     {

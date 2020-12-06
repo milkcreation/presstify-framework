@@ -2,9 +2,16 @@
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Support\{LabelsBag, ParamsBag};
+use tiFy\Contracts\Http\Request;
+use tiFy\Contracts\View\Engine as ViewEngine;
 
-interface FormFactory extends FactoryResolver, ParamsBag
+/**
+ * @mixin \tiFy\Form\Concerns\FactoryBagTrait
+ * @mixin \tiFy\Support\Concerns\LabelsBagTrait
+ * @mixin \tiFy\Support\Concerns\MessagesBagTrait
+ * @mixin \tiFy\Support\Concerns\ParamsBagTrait
+ */
+interface FormFactory
 {
     /**
      * Résolution de sortie de l'affichage du formulaire.
@@ -14,11 +21,18 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function __toString(): string;
 
     /**
-     * Initialisation du contrôleur.
+     * Chargement.
      *
-     * @return void
+     * @return FormFactory
      */
-    public function boot(): void;
+    public function boot(): FormFactory;
+
+    /**
+     * Initialisation.
+     *
+     * @return FormFactory
+     */
+    public function build(): FormFactory;
 
     /**
      * Récupération de la chaîne de sécurisation du formulaire (CSRF).
@@ -38,16 +52,11 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function error(string $message, array $datas = []): string;
 
     /**
-     * Récupération de valeur(s) de champ(s) basée(s) sur leurs variables d'identifiant de qualification.
+     * Récupération de l'instance du gestionnaire de formulaire.
      *
-     * @param mixed $tags Variables de qualification de champs.
-     * string ex. "%%{{slug#1}}%% %%{{slug#2}}%%"
-     * array ex ["%%{{slug#1}}%%", "%%{{slug#2}}%%"]
-     * @param boolean $raw Activation de la valeur de retour au format brut.
-     *
-     * @return string
+     * @return FormManager|null
      */
-    public function fieldTagsValue($tags, bool $raw = true);
+    public function formManager(): ?FormManager;
 
     /**
      * Récupération de l'action du formulaire (url).
@@ -57,6 +66,13 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function getAction(): string;
 
     /**
+     * Récupération de l'alias de qualification du champ.
+     *
+     * @return string
+     */
+    public function getAlias(): string;
+
+    /**
      * Récupération de l'ancre du formulaire.
      *
      * @return string
@@ -64,11 +80,25 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function getAnchor(): string;
 
     /**
+     * Récupération de l'indice du formulaire.
+     *
+     * @return int
+     */
+    public function getIndex(): int;
+
+    /**
      * Récupération de la méthode de soumission du formulaire.
      *
      * @return string
      */
     public function getMethod(): string;
+
+    /**
+     * Récupération de la liste des attributs de support.
+     *
+     * @return string[]
+     */
+    public function getSupports(): array;
 
     /**
      * Récupération de l'intitulé de qualification du formulaire.
@@ -85,25 +115,25 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function hasError(): bool;
 
     /**
-     * Vérification d'activation de l'agencement des éléments.
+     * Vérification de l'indicateur de chargement.
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasGrid();
+    public function isBooted(): bool;
 
     /**
-     * Récupération du numéro d'indice du formulaire.
+     * Vérification de l'indicateur d'initialisation.
      *
-     * @return int|null
+     * @return bool
      */
-    public function index();
+    public function isBuilt(): bool;
 
     /**
-     * Vérification de préparation active.
+     * Vérification de soumission du formulaire.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isPrepared(): bool;
+    public function isSubmitted(): bool;
 
     /**
      * Vérifie si le formulaire a été soumis avec succès.
@@ -111,23 +141,6 @@ interface FormFactory extends FactoryResolver, ParamsBag
      * @return bool
      */
     public function isSuccessed(): bool;
-
-    /**
-     * Récupération d'intitulé|Définition d'intitulés|Retourne l'instance du gestionnaire d'intitulés.
-     *
-     * @param string|array|null $key Clé d'indexe de l'intitulé.
-     * @param string $default Valeur de retour par défaut.
-     *
-     * @return LabelsBag|string
-     */
-    public function label($key = null, string $default = '');
-
-    /**
-     * Récupération du nom de qualification du formulaire.
-     *
-     * @return string
-     */
-    public function name(): string;
 
     /**
      * Evénement de déclenchement à l'initialisation du formulaire en tant que formulaire courant.
@@ -144,13 +157,6 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function onResetCurrent(): void;
 
     /**
-     * Initialisation (préparation) du champ.
-     *
-     * @return static
-     */
-    public function prepare(): FormFactory;
-
-    /**
      * Affichage.
      *
      * @return string
@@ -164,20 +170,12 @@ interface FormFactory extends FactoryResolver, ParamsBag
      */
     public function renderBuild(): FormFactory;
 
-
     /**
      * Initialisation du rendu des attributrs HTML.
      *
      * @return static
      */
     public function renderBuildAttrs(): FormFactory;
-
-    /**
-     * Initialisation du rendu des champs.
-     *
-     * @return static
-     */
-    public function renderBuildFields(): FormFactory;
 
     /**
      * Initialisation du rendu de l'identifiant de qualification HTML.
@@ -201,23 +199,29 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function renderBuildWrapper(): FormFactory;
 
     /**
-     * Liste des services supporté|Vérification de support d'un service.
+     * Instance de la requête de traitement du formulaire.
      *
-     * @param string|null $service
-     *
-     * @return array|bool
+     * @return Request
      */
-    public function supports(?string $service);
+    public function request(): Request;
 
     /**
-     * Définition de l'instance.
+     * Définition de l'alias de qualification.
      *
-     * @param string $name Nom de qualification du formulaire.
-     * @param FormManager $manager Instance du gestionnaire de formulaires.
+     * @param string $alias
      *
      * @return static
      */
-    public function setInstance(string $name, FormManager $manager): FormFactory;
+    public function setAlias(string $alias): FormFactory;
+
+    /**
+     * Définition du gestionnaire de formulaire.
+     *
+     * @param FormManager $formManager
+     *
+     * @return static
+     */
+    public function setFormManager(FormManager $formManager): FormFactory;
 
     /**
      * Définition de l'indicateur de statut de formulaire en succès.
@@ -229,9 +233,37 @@ interface FormFactory extends FactoryResolver, ParamsBag
     public function setSuccessed(bool $status = true): FormFactory;
 
     /**
+     * Définition de la requête de traitement du formulaire.
+     *
+     * @param Request $request
+     *
+     * @return static
+     */
+    public function setHandleRequest(Request $request): FormFactory;
+
+    /**
+     * Vérification de support.
+     *
+     * @param string $support
+     *
+     * @return array|bool
+     */
+    public function supports(string $support);
+
+    /**
      * Récupération du nom de qualification du formulaire dans les attributs de balises HTML.
      *
      * @return string
      */
     public function tagName(): string;
+
+    /**
+     * Instance du gestionnaire de gabarits d'affichage ou rendu du gabarit d'affichage.
+     *
+     * @param string|null view Nom de qualification du gabarit.
+     * @param array $data Liste des variables passées en argument.
+     *
+     * @return ViewEngine|string
+     */
+    public function view(?string $view = null, array $data = []);
 }

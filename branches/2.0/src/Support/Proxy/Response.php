@@ -15,7 +15,7 @@ class Response extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return ResponseContract
+     * @return mixed|object|ResponseContract
      */
     public static function getInstance()
     {

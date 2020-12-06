@@ -26,7 +26,7 @@ class Url extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return UrlContract
+     * @return mixed|object|UrlContract
      */
     public static function getInstance()
     {

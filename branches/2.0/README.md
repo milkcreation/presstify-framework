@@ -1,6 +1,6 @@
 # PresstiFy Framework
 
-[![Latest Version](https://img.shields.io/badge/release-2.0.371-blue?style=for-the-badge)](https://svn.tigreblanc.fr/presstify/framework/tags/2.0.371)
+[![Latest Version](https://img.shields.io/badge/release-2.0.372-blue?style=for-the-badge)](https://svn.tigreblanc.fr/presstify/framework/tags/2.0.372)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE.md)
 
 ## Installation

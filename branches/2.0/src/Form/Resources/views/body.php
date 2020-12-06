@@ -1,12 +1,10 @@
 <?php
 /**
- * Corps du formulaire.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
- * @var tiFy\Contracts\Form\FactoryFields $fields
+ * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FieldsFactory $fields
  */
 ?>
-<?php if ($fields->exists()) : ?>
+<?php if ($fields->count()) : ?>
     <div class="FormFields">
         <?php $this->insert('groups', $this->all()); ?>
     </div>

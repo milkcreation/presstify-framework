@@ -2,9 +2,9 @@
 
 namespace tiFy\Contracts\Template;
 
-use tiFy\Contracts\Kernel\Notices;
+use tiFy\Contracts\Support\MessagesBag;
 
-interface FactoryNotices extends FactoryAwareTrait, Notices
+interface FactoryNotices extends FactoryAwareTrait, MessagesBag
 {
 
 }

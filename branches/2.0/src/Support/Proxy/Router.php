@@ -51,7 +51,7 @@ class Router extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return RouterContract
+     * @return mixed|object|RouterContract
      */
     public static function getInstance()
     {

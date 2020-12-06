@@ -17,7 +17,7 @@ class Session extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return SessionContract
+     * @return mixed|object|SessionContract
      */
     public static function getInstance()
     {

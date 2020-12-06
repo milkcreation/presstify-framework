@@ -20,7 +20,7 @@ class Asset extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return AssetContract
+     * @return mixed|object|AssetContract
      */
     public static function getInstance()
     {

@@ -13,7 +13,7 @@ class Column extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return ColumnContract
+     * @return mixed|object|ColumnContract
      */
     public static function getInstance()
     {

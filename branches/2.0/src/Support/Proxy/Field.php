@@ -15,7 +15,7 @@ class Field extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return FieldContract
+     * @return mixed|object|FieldContract
      */
     public static function getInstance()
     {

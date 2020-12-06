@@ -4,9 +4,9 @@ namespace tiFy\Template\Factory;
 
 use tiFy\Contracts\Template\FactoryNotices as FactoryNoticesContract;
 use tiFy\Contracts\Template\TemplateFactory;
-use tiFy\Kernel\Notices\Notices as BaseNotices;
+use tiFy\Support\MessagesBag;
 
-class Notices extends BaseNotices implements FactoryNoticesContract
+class Notices extends MessagesBag implements FactoryNoticesContract
 {
     use FactoryAwareTrait;
 

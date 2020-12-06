@@ -1,9 +1,7 @@
 <?php
 /**
- * Liste des groupes de champs.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
- * @var tiFy\Contracts\Form\FactoryGroup $group
+ * @var tiFy\Contracts\Form\FormView $this
+ * @var tiFy\Contracts\Form\FieldGroupDriver $group
  */
 ?>
 <?php echo $group->before(); ?>
@@ -11,8 +9,5 @@
     <?php foreach ($group->getFields() as $field) : ?>
         <?php $this->insert('field', compact('field')); ?>
     <?php endforeach; ?>
-    <?php foreach ($group->getChildren() as $child) : ?>
-        <?php $this->insert('group', ['group' => $child]); ?>
-    <?php endforeach; ?>
 </div>
-<?php echo $group->after(); ?>
+<?php echo $group->after();

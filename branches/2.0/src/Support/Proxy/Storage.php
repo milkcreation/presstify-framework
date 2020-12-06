@@ -20,7 +20,7 @@ class Storage extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return StorageManager
+     * @return mixed|object|StorageManager
      */
     public static function getInstance()
     {

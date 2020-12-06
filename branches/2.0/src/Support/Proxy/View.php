@@ -22,7 +22,7 @@ class View extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return ViewContract
+     * @return mixed|object|ViewContract
      */
     public static function getInstance()
     {

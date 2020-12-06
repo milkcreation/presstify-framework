@@ -1,9 +1,9 @@
 <?php
 /**
  * @var tiFy\Contracts\Form\FormFactory $form
- * @var tiFy\Contracts\Form\FactoryField $field
+ * @var tiFy\Contracts\Form\FieldDriver $field
+ * @var tiFy\Contracts\Form\MailerAddonDriver $addon
  * @var tiFy\Contracts\Mail\MailableView $this
- * @var tiFy\Form\Addon\Mailer\Mailer $addon
  * @var array $params
  */
 ?>
@@ -24,16 +24,16 @@
                         <table cellspacing="0" cellpadding="0" border="0" width="100%">
                             <?php foreach ($fields as $field) : ?>
                                 <tr>
-                                    <?php if ($label = $field->get('mailer_label')) : ?>
+                                    <?php if ($label = $field->params('addons.mailer.label')) : ?>
                                         <td width="40%" valign="top">
                                             <b><?php echo $label; ?></b>
                                         </td>
                                         <td width="60%" valign="top">
-                                            <?php echo $field->get('mailer_value'); ?>
+                                            <?php echo $field->params('addons.mailer.value'); ?>
                                         </td>
                                     <?php else : ?>
                                         <td colspan="2" width="100%" valign="top">
-                                            <?php echo $field->get('mailer_value'); ?>
+                                            <?php echo $field->params('addon.mailer.value'); ?>
                                         </td>
                                     <?php endif; ?>
                                 </tr>

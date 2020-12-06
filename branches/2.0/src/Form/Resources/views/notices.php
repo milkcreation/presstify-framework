@@ -1,8 +1,6 @@
 <?php
 /**
- * Affichage des messages de notification.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Contracts\Form\FactoryView $this
+ * @var tiFy\Contracts\Form\FormView $this
  */
 if ($errors = $this->get('notices.error', [])) :
     echo partial('notice', [
@@ -12,7 +10,7 @@ if ($errors = $this->get('notices.error', [])) :
         'type'    => 'error',
         'content' => $this->fetch('notices-error', ['messages' => $errors])
     ]);
-elseif ($success = $this->get('notices.success', [])) :
+elseif (($success = $this->get('notices.success', [])) || ($success = $this->get('notices.notice', []))) :
     echo partial('notice', [
         'attrs'   => [
             'class' => '%s FormNotice FormNotice--success'
