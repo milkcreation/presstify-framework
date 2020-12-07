@@ -1,8 +1,14 @@
 # Release Notes
 
+## [v2.0.373 (2020-12-07)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.373...v2.0.373
+
+### Added
+
+- ContainerAwareTrait, BootableTrait, BuildableTrait
+
 ## [v2.0.372 (2020-12-06)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.372...v2.0.372
 
-### Addded
+### Added
 
 - LabelsBagTrait + MessagesBagTrait + ParamsBagTrait
 
