@@ -6,8 +6,6 @@ use tiFy\Api\Facebook\Facebook;
 use tiFy\Api\Facebook\FacebookLoginProfile;
 use tiFy\Api\Facebook\FacebookLoginSignin;
 use tiFy\Api\Facebook\FacebookLoginSignup;
-use tiFy\Api\Recaptcha\Recaptcha;
-use tiFy\Api\Youtube\Youtube;
 use tiFy\Container\ServiceProvider;
 
 class ApiServiceProvider extends ServiceProvider
@@ -23,7 +21,6 @@ class ApiServiceProvider extends ServiceProvider
         'api.facebook.login.profile',
         'api.facebook.login.signin',
         'api.facebook.login.signup',
-        'api.youtube',
     ];
 
     /**
@@ -62,10 +59,6 @@ class ApiServiceProvider extends ServiceProvider
         $this->getContainer()->share('api.facebook.login.signup', function () {
             $concrete = config('api.facebook.signup', FacebookLoginSignup::class);
             return new $concrete($this->getContainer()->get('api.facebook'));
-        });
-
-        $this->getContainer()->share('api.youtube', function () {
-            return Youtube::create(config('api.youtube', []));
         });
     }
 }
