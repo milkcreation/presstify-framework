@@ -37,7 +37,7 @@ class AddonDriver implements AddonDriverContract
     {
         if (!$this->isBooted()) {
             if (!$this->form() instanceof FormFactoryContract) {
-                throw new LogicException('Missing valid FormFactory');
+                throw new LogicException('Invalid related FormFactory');
             }
 
             $this->parseParams();
@@ -55,7 +55,7 @@ class AddonDriver implements AddonDriverContract
     {
         if (!$this->isBuilt()) {
             if ($this->alias === null) {
-                throw new LogicException('Missing valid alias');
+                throw new LogicException('Missing alias');
             }
 
             $this->built = true;

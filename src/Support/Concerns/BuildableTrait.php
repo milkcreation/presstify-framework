@@ -18,4 +18,18 @@ trait BuildableTrait
     {
         return $this->built;
     }
+
+    /**
+     * Définition de l'état de chargement.
+     *
+     * @param bool $built
+     *
+     * @return static
+     */
+    public function setBuilt(bool $built = true): self
+    {
+        $this->built = $built;
+
+        return $this;
+    }
 }
