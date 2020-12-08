@@ -4,7 +4,8 @@ namespace tiFy\Support\Proxy;
 
 use Psr\Http\Message\UriInterface;
 use League\Uri\Contracts\UriInterface as LeagueUri;
-use tiFy\Contracts\Routing\{Url as UrlContract, UrlFactory};
+use tiFy\Contracts\Routing\Url as UrlContract;
+use tiFy\Contracts\Routing\UrlFactory;
 
 /**
  * @method static UrlContract appendSegment(string $segment)
@@ -18,8 +19,8 @@ use tiFy\Contracts\Routing\{Url as UrlContract, UrlFactory};
  * @method static UrlFactory root(string $path = '')
  * @method static string scope()
  * @method static UrlContract set(UriInterface|LeagueUri|string $uri)
- * @method static string with(array $args)
- * @method static string without(string[] $args)
+ * @method static UrlContract with(array $args)
+ * @method static UrlContract without(string[] $args)
  */
 class Url extends AbstractProxy
 {

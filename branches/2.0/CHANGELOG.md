@@ -6,6 +6,10 @@
 
 - ContainerAwareTrait, BootableTrait, BuildableTrait
 
+### Fixed 
+
+- Suppression d'Api >> pollen-solutions components
+
 ## [v2.0.372 (2020-12-06)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.372...v2.0.372
 
 ### Added

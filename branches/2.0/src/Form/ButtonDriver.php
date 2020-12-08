@@ -77,7 +77,7 @@ class ButtonDriver implements ButtonDriverContract
     {
         if (!$this->isBuilt()) {
             if ($this->alias === null) {
-                throw new LogicException('Missing valid alias');
+                throw new LogicException('Missing alias');
             }
 
             $this->built = true;

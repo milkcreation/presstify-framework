@@ -100,7 +100,7 @@ class FieldDriver implements FieldDriverContract
     {
         if (!$this->isBooted()) {
            if (!$this->form() instanceof FormFactoryContract) {
-                throw new LogicException('Invalid related FactoryField');
+                throw new LogicException('Invalid related FormFactory');
             }
 
             $this->form()->event('field.boot.' . $this->getType(), [&$this]);
@@ -124,7 +124,7 @@ class FieldDriver implements FieldDriverContract
     {
         if (!$this->isBuilt()) {
             if ($this->alias === null) {
-                throw new LogicException('Missing formFieldDriver alias');
+                throw new LogicException('Missing alias');
             }
 
             $this->built = true;
