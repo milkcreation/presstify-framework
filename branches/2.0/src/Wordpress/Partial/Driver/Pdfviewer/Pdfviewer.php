@@ -10,9 +10,9 @@ class Pdfviewer extends BasePdfviewer
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $src = $this->get('src');
         if (is_numeric($src) && ($src = wp_get_attachment_url($src))) {

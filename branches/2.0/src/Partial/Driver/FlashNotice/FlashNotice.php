@@ -23,9 +23,9 @@ class FlashNotice extends BaseDriver implements FlashNoticeContract
     /**
      * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return array_merge(parent::defaults(), [
+        return array_merge(parent::defaultParams(), [
             'namespace' => '',
             'types'     => ['error', 'info', 'success', 'warning'],
         ]);
@@ -50,9 +50,9 @@ class FlashNotice extends BaseDriver implements FlashNoticeContract
     /**
      * @inheritDoc
      */
-    public function parse(): BaseDriverContract
+    public function parseParams(): BaseDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         if ($namespace = $this->get('namespace')) {
             $types = $this->get('types');

@@ -2,8 +2,9 @@
 
 namespace tiFy\Partial;
 
-use Exception;
-use InvalidArgumentException;
+use Closure;
+use Exception, InvalidArgumentException, RuntimeException;
+use League\Route\Http\Exception\NotFoundException;
 use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Partial\Accordion;
@@ -20,7 +21,7 @@ use tiFy\Contracts\Partial\MenuDriver;
 use tiFy\Contracts\Partial\Modal;
 use tiFy\Contracts\Partial\Notice;
 use tiFy\Contracts\Partial\Pagination;
-use tiFy\Contracts\Partial\Partial as PartialContract;
+use tiFy\Contracts\Partial\Partial as PartialManagerContract;
 use tiFy\Contracts\Partial\PartialDriver;
 use tiFy\Contracts\Partial\Pdfviewer;
 use tiFy\Contracts\Partial\Progress;
@@ -30,22 +31,22 @@ use tiFy\Contracts\Partial\Spinner;
 use tiFy\Contracts\Partial\Tab;
 use tiFy\Contracts\Partial\Table;
 use tiFy\Contracts\Partial\Tag;
+use tiFy\Contracts\Routing\Route;
+use tiFy\Support\Concerns\BootableTrait;
+use tiFy\Support\Concerns\ContainerAwareTrait;
 use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Router;
 use tiFy\Support\Proxy\Storage;
 
-class Partial implements PartialContract
+class Partial implements PartialManagerContract
 {
+    use ContainerAwareTrait, BootableTrait;
+
     /**
      * Instance de la classe.
      * @var static|null
      */
     private static $instance;
-
-    /**
-     * Indicateur d'initialisation.
-     * @var bool
-     */
-    private $booted = false;
 
     /**
      * Définition des pilotes par défaut.
@@ -77,10 +78,16 @@ class Partial implements PartialContract
     ];
 
     /**
-     * Liste des éléments déclarées.
-     * @var PartialDriver[]
+     * Liste des instance de pilote chargés.
+     * @var PartialDriver[][]
      */
     private $drivers = [];
+
+    /**
+     * Liste des pilotes déclarés.
+     * @var PartialDriver[][]|Closure[][]|string[][]|array
+     */
+    protected $driverDefinitions = [];
 
     /**
      * Instance du gestionnaire des ressources
@@ -89,28 +96,16 @@ class Partial implements PartialContract
     private $resources;
 
     /**
+     * Route de traitement des requêtes XHR.
+     * @var Route|null
+     */
+    private $xhrRoute;
+
+    /**
      * Instance du gestionnaire de configuration.
      * @var ParamsBag
      */
     protected $config;
-
-    /**
-     * Instance du conteneur d'injection de dépendances.
-     * @var Container|null
-     */
-    protected $container;
-
-    /**
-     * Liste des indices courant des pilotes déclarées par alias de qualification.
-     * @var int[]
-     */
-    protected $indexes = [];
-
-    /**
-     * Instances des pilotes initiés par alias de qualification et indexés par identifiant de qualification.
-     * @var PartialDriver[][]
-     */
-    protected $instances = [];
 
     /**
      * @param array $config
@@ -134,82 +129,32 @@ class Partial implements PartialContract
     /**
      * @inheritDoc
      */
-    public static function instance(): PartialContract
+    public static function instance(): PartialManagerContract
     {
         if (self::$instance instanceof self) {
             return self::$instance;
         }
 
-        throw new Exception(sprintf('Unavailable %s instance', __CLASS__));
-    }
-
-    /**
-     * Déclaration d'un pilote.
-     *
-     * @param string $alias
-     * @param PartialDriver $driver
-     *
-     * @throws Exception
-     */
-    private function _registerDriver(string $alias, PartialDriver $driver): void
-    {
-        if (isset($this->drivers[$alias]) || isset($this->instances[$alias]) || isset($this->indexes[$alias])) {
-            throw new Exception(sprintf('Partial alias [%s] already registered', $alias));
-        }
-
-        $this->drivers[$alias] = $driver->build($alias, $this);
-        $this->instances[$alias] = [$driver];
-        $this->indexes[$alias] = 0;
+        throw new RuntimeException(sprintf('Unavailable %s instance', __CLASS__));
     }
 
     /**
      * @inheritDoc
      */
-    public function boot(): PartialContract
+    public function boot(): PartialManagerContract
     {
-        if (!$this->booted) {
+        if (!$this->isBooted()) {
+            $this->xhrRoute = Router::xhr(
+                md5('PartialManager') . '/{partial}/{controller}',
+                [$this, 'xhrResponseDispatcher']
+            );
+
             $this->registerDefaultDrivers();
 
-            $this->booted = true;
+            $this->setBooted();
         }
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function get(string $alias, $idOrAttrs = null, ?array $attrs = null): ?PartialDriver
-    {
-        if (!isset($this->drivers[$alias])) {
-            throw new InvalidArgumentException(sprintf('Partial with alias [%s] unavailable', $alias));
-        }
-
-        if (is_array($idOrAttrs)) {
-            $attrs = $idOrAttrs;
-            $id = null;
-        } else {
-            $attrs = $attrs ?: [];
-            $id = $idOrAttrs;
-        }
-
-        if ($id) {
-            if (isset($this->instances[$alias][$id])) {
-                return $this->instances[$alias][$id];
-            }
-
-            $this->indexes[$alias]++;
-            $this->instances[$alias][$id] = clone $this->drivers[$alias];
-            $partial = $this->instances[$alias][$id];
-        } else {
-            $this->indexes[$alias]++;
-            $partial = clone $this->drivers[$alias];
-        }
-
-        return $partial
-            ->setIndex($this->indexes[$alias])
-            ->setId($id ?? $alias . $this->indexes[$alias])
-            ->set($attrs)->parse();
     }
 
     /**
@@ -233,28 +178,83 @@ class Partial implements PartialContract
     /**
      * @inheritDoc
      */
-    public function getContainer(): ?Container
+    public function get(string $alias, $idOrParams = null, array $params = []): ?PartialDriver
     {
-        return $this->container;
+        if (is_array($idOrParams)) {
+            $params = $idOrParams;
+            $id = null;
+        } else {
+            $id = $idOrParams;
+        }
+
+        if ($id && isset($this->drivers[$alias][$id])) {
+            return $this->drivers[$alias][$id];
+        } elseif (!$driver = $this->getDriverFromDefinition($alias)) {
+            return null;
+        }
+
+        $this->drivers[$alias] = $this->drivers[$alias] ?? [];
+        $index = count($this->drivers[$alias]);
+        $id = $id ?? $alias . $index;
+        if (!$driver->getAlias()) {
+            $driver->setAlias($alias);
+        }
+        $params = array_merge($driver->defaultParams(), $this->config("driver.{$alias}", []), $params);
+
+        $driver->setIndex($index)->setId($id)->setParams($params)->boot();
+
+        return $this->drivers[$alias][$id] = $driver;
+    }
+
+    /**
+     * Récupération d'une instance de pilote depuis une définition.
+     *
+     * @param string $alias
+     *
+     * @return PartialDriver|null
+     */
+    protected function getDriverFromDefinition(string $alias): ?PartialDriver
+    {
+        if (!$def = $this->driverDefinitions[$alias] ?? null) {
+            throw new InvalidArgumentException(sprintf('Partial with alias [%s] unavailable', $alias));
+        }
+
+        if ($def instanceof PartialDriver) {
+            return clone $def;
+        } elseif (is_string($def) && $this->containerHas($def)) {
+            if ($this->containerHas($def)) {
+                return $this->containerGet($def);
+            }
+        } elseif(is_string($def) && class_exists($def)) {
+            return new $def($this);
+        }
+
+        return null;
     }
 
     /**
      * @inheritDoc
      */
-    public function register(string $alias, PartialDriver $driver): PartialDriver
+    public function getXhrRouteUrl(string $partial, ?string $controller = null, array $params = []): string
     {
-        $this->_registerDriver($alias, $driver);
+        $controller = $controller ?? 'xhrResponse';
 
-        return $driver;
+        return $this->xhrRoute->getUrl(array_merge($params, compact('partial', 'controller')));
     }
 
     /**
      * @inheritDoc
      */
-    public function registerDefaultDrivers(): PartialContract
+    public function register(string $alias, $driverDefinition, ?Closure $callback = null): PartialManagerContract
     {
-        foreach ($this->defaultDrivers as $name => $alias) {
-            $this->_registerDriver($name, $this->getContainer()->get($alias));
+        if (isset($this->driverDefinitions[$alias])) {
+            throw new RuntimeException(sprintf('Another PartialDriver with alias [%s] already registered', $alias));
+        }
+
+        $this->driverDefinitions[$alias] = $driverDefinition;
+
+        if ($callback !== null) {
+            $callback($this);
         }
 
         return $this;
@@ -263,17 +263,13 @@ class Partial implements PartialContract
     /**
      * @inheritDoc
      */
-    public function resolve(string $alias)
+    public function registerDefaultDrivers(): PartialManagerContract
     {
-        return ($container = $this->getContainer()) ? $container->get("partial.{$alias}") : null;
-    }
+        foreach ($this->defaultDrivers as $name => $alias) {
+            $this->register($name, $alias);
+        }
 
-    /**
-     * @inheritDoc
-     */
-    public function resolvable(string $alias): bool
-    {
-        return ($container = $this->getContainer()) && $container->has("partial.{$alias}");
+        return $this;
     }
 
     /**
@@ -291,7 +287,7 @@ class Partial implements PartialContract
     /**
      * @inheritDoc
      */
-    public function setConfig(array $attrs): PartialContract
+    public function setConfig(array $attrs): PartialManagerContract
     {
         $this->config($attrs);
 
@@ -301,10 +297,22 @@ class Partial implements PartialContract
     /**
      * @inheritDoc
      */
-    public function setContainer(Container $container): PartialContract
+    public function xhrResponseDispatcher(string $partial, string $controller, ...$args): array
     {
-        $this->container = $container;
+        try {
+            $driver = $this->get($partial);
+        } catch(Exception $e) {
+            throw new NotFoundException(
+                sprintf('PartialDriver [%s] return exception : %s', $partial, $e->getMessage())
+            );
+        }
 
-        return $this;
+        try {
+            return $driver->{$controller}(...$args);
+        } catch(Exception $e) {
+            throw new NotFoundException(
+                sprintf('PartialDriver [%s] Controller [%s] call return exception', $controller, $partial)
+            );
+        }
     }
 }

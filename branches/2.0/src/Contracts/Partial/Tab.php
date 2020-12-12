@@ -30,15 +30,6 @@ interface Tab extends PartialDriver
     public function getTabStyle(int $depth = 0): string;
 
     /**
-     * Récupération de l'url de traitement de la requête HTML XHR.
-     *
-     * @param array ...$params Liste des paramètres optionnels de formatage de l'url.
-     *
-     * @return string
-     */
-    public function getXhrUrl(...$params): string;
-
-    /**
      * Définition du gestionnaire des éléments déclarés.
      *
      * @param TabCollection $tabCollection
@@ -46,15 +37,6 @@ interface Tab extends PartialDriver
      * @return static
      */
     public function setTabCollection(TabCollection $tabCollection): Tab;
-
-    /**
-     * Définition de l'url de traitement de requête HTML XHR.
-     *
-     * @param string|null $url
-     *
-     * @return static
-     */
-    public function setXhrUrl(?string $url = null): Tab;
 
     /**
      * Contrôleur de traitement de la requête XHR.

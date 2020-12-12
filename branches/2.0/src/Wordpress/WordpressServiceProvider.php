@@ -3,8 +3,9 @@
 namespace tiFy\Wordpress;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Debug\Debug as DebugManagerContract;
-use tiFy\Contracts\Form\FormManager as FormManagerContract;
+use tiFy\Contracts\Debug\Debug as DebugManager;
+use tiFy\Contracts\Form\FormManager;
+use tiFy\Contracts\Partial\Partial as PartialManager;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Auth\Auth;
@@ -96,7 +97,7 @@ class WordpressServiceProvider extends ServiceProvider
                 Locale::set(get_locale());
                 Locale::setLanguages(wp_get_available_translations() ?: []);
 
-                if ($this->getContainer()->has(DebugManagerContract::class)) {
+                if ($this->getContainer()->has(DebugManager::class)) {
                     $this->getContainer()->get('wp.debug');
                 }
 
@@ -134,7 +135,7 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('wp.field');
                 }
 
-                if ($this->getContainer()->has(FormManagerContract::class)) {
+                if ($this->getContainer()->has(FormManager::class)) {
                     $this->getContainer()->get('wp.form');
                 }
 
@@ -154,7 +155,7 @@ class WordpressServiceProvider extends ServiceProvider
 
                 $this->getContainer()->get('wp.option');
 
-                if ($this->getContainer()->has('partial')) {
+                if ($this->getContainer()->has(PartialManager::class)) {
                     $this->getContainer()->get('wp.partial');
                 }
 
@@ -297,7 +298,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerDebug(): void
     {
         $this->getContainer()->share('wp.debug', function () {
-            return new Debug($this->getContainer()->get(DebugManagerContract::class));
+            return new Debug($this->getContainer()->get(DebugManager::class));
         });
     }
 
@@ -333,7 +334,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerForm(): void
     {
         $this->getContainer()->share('wp.form', function () {
-            return new Form($this->getContainer()->get(FormManagerContract::class), $this->getContainer());
+            return new Form($this->getContainer()->get(FormManager::class), $this->getContainer());
         });
     }
 
@@ -417,7 +418,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerPartial(): void
     {
         $this->getContainer()->share('wp.partial', function () {
-            return new Partial($this->getContainer()->get('partial'));
+            return new Partial($this->getContainer()->get(PartialManager::class), $this->getContainer());
         });
     }
 

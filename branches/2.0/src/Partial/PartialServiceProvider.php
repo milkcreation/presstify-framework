@@ -17,6 +17,7 @@ use tiFy\Contracts\Partial\MenuDriver as MenuDriverContract;
 use tiFy\Contracts\Partial\Modal as ModalContract;
 use tiFy\Contracts\Partial\Notice as NoticeContract;
 use tiFy\Contracts\Partial\Pagination as PaginationContract;
+use tiFy\Contracts\Partial\Partial as PartialManagerContract;
 use tiFy\Contracts\Partial\Pdfviewer as PdfviewerContract;
 use tiFy\Contracts\Partial\Progress as ProgressContract;
 use tiFy\Contracts\Partial\Sidebar as SidebarContract;
@@ -57,8 +58,7 @@ class PartialServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'partial',
-        'partial.view-engine',
+        PartialManagerContract::class,
         AccordionContract::class,
         BreadcrumbContract::class,
         BurgerButton::class,
@@ -80,6 +80,7 @@ class PartialServiceProvider extends ServiceProvider
         TabContract::class,
         TableContract::class,
         TagContract::class,
+        'partial.view-engine'
     ];
 
     /**
@@ -87,12 +88,11 @@ class PartialServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->getContainer()->share('partial', function () {
+        $this->getContainer()->share(PartialManagerContract::class, function (): PartialManagerContract {
             return new Partial(config('partial', []), $this->getContainer());
         });
 
         $this->registerDefaultDrivers();
-
         $this->registerViewEngine();
     }
 
@@ -103,92 +103,92 @@ class PartialServiceProvider extends ServiceProvider
      */
     public function registerDefaultDrivers(): void
     {
-        $this->getContainer()->add(AccordionContract::class, function () {
-            return new Accordion();
+        $this->getContainer()->add(AccordionContract::class, function (): AccordionContract {
+            return new Accordion($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(BreadcrumbContract::class, function () {
-            return new Breadcrumb();
+        $this->getContainer()->add(BreadcrumbContract::class, function (): BreadcrumbContract {
+            return new Breadcrumb($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(BurgerButtonContract::class, function () {
-            return new BurgerButton();
+        $this->getContainer()->add(BurgerButtonContract::class, function (): BurgerButtonContract {
+            return new BurgerButton($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(CookieNoticeContract::class, function () {
-            return new CookieNotice();
+        $this->getContainer()->add(CookieNoticeContract::class, function (): CookieNoticeContract {
+            return new CookieNotice($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(CurtainMenuContract::class, function () {
-            return new CurtainMenu();
+        $this->getContainer()->add(CurtainMenuContract::class, function (): CurtainMenuContract {
+            return new CurtainMenu($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(DropdownContract::class, function () {
-            return new Dropdown();
+        $this->getContainer()->add(DropdownContract::class, function (): DropdownContract {
+            return new Dropdown($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(DownloaderContract::class, function () {
-            return new Downloader();
+        $this->getContainer()->add(DownloaderContract::class, function (): DownloaderContract {
+            return new Downloader($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(FlashNoticeContract::class, function () {
-            return new FlashNotice();
+        $this->getContainer()->add(FlashNoticeContract::class, function (): FlashNoticeContract {
+            return new FlashNotice($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(HolderContract::class, function () {
-            return new Holder();
+        $this->getContainer()->add(HolderContract::class, function (): HolderContract {
+            return new Holder($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(ImageLightboxContract::class, function () {
-            return new ImageLightbox();
+        $this->getContainer()->add(ImageLightboxContract::class, function (): ImageLightboxContract {
+            return new ImageLightbox($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(MenuDriverContract::class, function () {
-            return new MenuDriver();
+        $this->getContainer()->add(MenuDriverContract::class, function (): MenuDriverContract {
+            return new MenuDriver($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(ModalContract::class, function () {
-            return new Modal();
+        $this->getContainer()->add(ModalContract::class, function (): ModalContract {
+            return new Modal($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(NoticeContract::class, function () {
-            return new Notice();
+        $this->getContainer()->add(NoticeContract::class, function (): NoticeContract {
+            return new Notice($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(PaginationContract::class, function () {
-            return new Pagination();
+        $this->getContainer()->add(PaginationContract::class, function (): PaginationContract {
+            return new Pagination($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(PdfviewerContract::class, function () {
-            return new Pdfviewer();
+        $this->getContainer()->add(PdfviewerContract::class, function (): PdfviewerContract {
+            return new Pdfviewer($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(ProgressContract::class, function () {
-            return new Progress();
+        $this->getContainer()->add(ProgressContract::class, function (): ProgressContract {
+            return new Progress($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(SidebarContract::class, function () {
-            return new Sidebar();
+        $this->getContainer()->add(SidebarContract::class, function (): SidebarContract {
+            return new Sidebar($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(SliderContract::class, function () {
-            return new Slider();
+        $this->getContainer()->add(SliderContract::class, function (): SliderContract {
+            return new Slider($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(SpinnerContract::class, function () {
-            return new Spinner();
+        $this->getContainer()->add(SpinnerContract::class, function (): SpinnerContract {
+            return new Spinner($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(TabContract::class, function () {
-            return new Tab();
+        $this->getContainer()->add(TabContract::class, function (): TabContract {
+            return new Tab($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(TableContract::class, function () {
-            return new Table();
+        $this->getContainer()->add(TableContract::class, function (): TableContract {
+            return new Table($this->getContainer()->get(PartialManagerContract::class));
         });
 
-        $this->getContainer()->add(TagContract::class, function () {
-            return new Tag();
+        $this->getContainer()->add(TagContract::class, function (): TagContract {
+            return new Tag($this->getContainer()->get(PartialManagerContract::class));
         });
     }
 

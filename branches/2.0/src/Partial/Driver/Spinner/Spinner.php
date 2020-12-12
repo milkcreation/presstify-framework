@@ -2,7 +2,8 @@
 
 namespace tiFy\Partial\Driver\Spinner;
 
-use tiFy\Contracts\Partial\{PartialDriver as PartialDriverContract, Spinner as SpinnerContract};
+use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
+use tiFy\Contracts\Partial\Spinner as SpinnerContract;
 use tiFy\Partial\PartialDriver;
 
 class Spinner extends PartialDriver implements SpinnerContract
@@ -22,41 +23,32 @@ class Spinner extends PartialDriver implements SpinnerContract
         'chasing-dots',
         'three-bounce',
         'circle',
-        'cube-grid'
+        'cube-grid',
     ];
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var string $spinner Choix de l'indicateur de préchargement. 'rotating-plane|fading-circle|folding-cube|
-     *                           double-bounce|wave|wandering-cubes|spinner-pulse|chasing-dots|three-bounce|circle|
-     *                           cube-grid. @see http://tobiasahlin.com/spinkit/
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'         => [],
-            'after'         => '',
-            'before'        => '',
-            'viewer'        => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var string $spinner Choix de l'indicateur de préchargement. 'rotating-plane|fading-circle|folding-cube|
+             * double-bounce|wave|wandering-cubes|spinner-pulse|chasing-dots|three-bounce|circle|cube-grid.
+             * @see http://tobiasahlin.com/spinkit/
+             */
             'spinner' => 'spinner-pulse',
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
-        switch($spinner = $this->get('spinner')) {
+        switch ($spinner = $this->get('spinner')) {
             default :
                 $spinner_class = "sk-{$spinner}";
                 break;
@@ -66,8 +58,7 @@ class Spinner extends PartialDriver implements SpinnerContract
         }
 
         $this->set('attrs.class', ($exists = $this->get('attrs.class'))
-            ? "{$exists} {$spinner_class}"
-            : $spinner_class
+            ? "{$exists} {$spinner_class}" : $spinner_class
         );
 
         return $this;

@@ -2,9 +2,9 @@
 
 namespace tiFy\Partial\Driver\Tag;
 
-use tiFy\Contracts\Partial\{PartialDriver as PartialDriverContract, Tag as TagContract};
+use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
+use tiFy\Contracts\Partial\Tag as TagContract;
 use tiFy\Partial\PartialDriver;
-use tiFy\Support\Str;
 
 class Tag extends PartialDriver implements TagContract
 {
@@ -14,42 +14,48 @@ class Tag extends PartialDriver implements TagContract
      * @var string[]
      */
     protected $singleton = [
-        'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source'
+        'area',
+        'base',
+        'br',
+        'col',
+        'embed',
+        'hr',
+        'img',
+        'input',
+        'link',
+        'meta',
+        'param',
+        'source',
     ];
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var string $tag Balise HTML div|span|a|... défaut div.
-     *      @var string|callable $content Contenu de la balise HTML.
-     *      @var boolean $singleton Activation de balise de type singleton. ex <{tag}/>. Usage avancé, cet attributon
-     *                              se fait automatiquement pour les balises connues.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'before'    => '',
-            'after'     => '',
-            'attrs'     => [],
-            'viewer'    => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var string $tag Balise HTML div|span|a|... défaut div.
+             */
             'tag'       => 'div',
+            /**
+             * @var string|callable $content Contenu de la balise HTML.
+             */
             'content'   => '',
+            /**
+             * @var boolean $singleton Activation de balise de type singleton. ex <{tag}/>. Usage avancé, cet
+             * attributon se fait automatiquement pour les balises connues.
+             */
             'singleton' => false,
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         if (in_array($this->get('tag'), $this->singleton)) {
             $this->set('singleton', true);

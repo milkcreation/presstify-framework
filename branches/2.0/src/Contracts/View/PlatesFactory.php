@@ -70,7 +70,7 @@ interface PlatesFactory
      * Récupération et suppression d'un attribut de configuration.
      *
      * @param string $key Clé d'indexe de l'attribut. Syntaxe à point permise.
-     * @param mixed $default Valeur de retour par défaut.
+     * @param mixed $defaults Valeur de retour par défaut.
      *
      * @return mixed
      */

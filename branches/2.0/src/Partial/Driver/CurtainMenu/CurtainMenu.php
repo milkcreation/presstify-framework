@@ -8,37 +8,32 @@ use tiFy\Partial\PartialDriver;
 class CurtainMenu extends PartialDriver implements CurtainMenuContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var array $items Liste des éléments.
-     *      @var mixed $selected
-     *      @var string $theme Theme d'affichage. light|dark.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'     => [],
-            'after'     => '',
-            'before'    => '',
-            'viewer'    => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var array $items Liste des éléments.
+             */
             'items'     => [],
+            /**
+             * @var mixed $selected
+             */
             'selected'  => null,
-            'theme'     => 'light',
-        ];
+            /**
+             * @var string $theme Theme d'affichage. light|dark.
+             */
+            'theme'     => 'light'
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         if ($theme = $this->get('theme')) {
             $this->set('attrs.class', trim($this->get('attrs.class') . " CurtainMenu--{$theme}"));

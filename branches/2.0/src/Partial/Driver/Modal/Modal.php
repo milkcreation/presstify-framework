@@ -3,94 +3,83 @@
 namespace tiFy\Partial\Driver\Modal;
 
 use Closure;
-use tiFy\Contracts\Partial\{Modal as ModalContract, PartialDriver as PartialDriverContract};
-use tiFy\Contracts\Routing\Route;
+use tiFy\Contracts\Partial\Modal as ModalContract;
 use tiFy\Partial\PartialDriver;
-use tiFy\Support\{ParamsBag, Proxy\Request, Proxy\Router};
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Request;
 
 class Modal extends PartialDriver implements ModalContract
 {
     /**
-     * Url de traitement de requête XHR.
-     * @var Route|string
-     */
-    protected $url = '';
-
-    /**
      * @inheritDoc
      */
-    public function boot(): void
+    public function defaultParams(): array
     {
-        parent::boot();
-        $this->setUrl();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
-     *                                   attributs de récupération Ajax.
-     * @var bool $ajax_cacheable Conservation en cache du contenu récupéré via Ajax.
-     * @var bool|string $animated Activation de l'animation.
-     * @var bool|array $backdrop .
-     * @var bool|string|array|callable $content {
-     * @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à afficher ou
-     *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
-     * @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à afficher ou booléen
-     *                                      pour activer désactiver ou fonction/méthode d'affichage.
-     * @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à afficher ou
-     *                                        booléen pour activer désactiver ou fonction/méthode d'affichage.
-     *      }
-     * @var array $options Liste des options d'affichage.
-     * @var string $size Taille d'affichage de la fenêtre de dialogue sm|lg|xl|full|flex.
-     * }
-     */
-    public function defaults(): array
-    {
-        return [
-            'attrs'          => [],
-            'after'          => '',
-            'before'         => '',
-            'viewer'         => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var bool|string|array $ajax Activation du chargement du contenu Ajax ou Contenu a charger ou liste des
+             * attributs de récupération Ajax
+             */
             'ajax'           => false,
+            /**
+             * @var bool $ajax_cacheable Conservation en cache du contenu récupéré via Ajax
+             */
             'ajax_cacheable' => true,
+            /**
+             * @var bool|string $animated Activation de l'animation.
+             */
             'animated'       => true,
+            /**
+             * @var bool|array $backdrop
+             */
             'backdrop'       => [
                 'close' => false,
             ],
+            /**
+             *
+             */
             'classes'        => [],
+            /**
+             *
+             */
             'close'          => true,
+            /**
+             * @var bool|string|array|callable $content
+             */
             'content'        => [
+                /**
+                 * @var bool|string|callable $body Affichage du corps de la fenêtre. Chaine de caractère à
+                 * afficher|booléen pour activer désactiver ou fonction/méthode d'affichage.
+                 */
                 'body'    => true,
+                /**
+                 * @var bool|string|callable $header Affichage de l'entête de la fenêtre. Chaine de caractère à
+                 * afficher|booléen pour activer désactiver ou fonction/méthode d'affichage.
+                 */
                 'header'  => true,
+                /**
+                 * @var bool|string|callable $footer Affichage d'un bouton fermeture externe. Chaine de caractère à
+                 * afficher|booléen pour activer désactiver ou fonction/méthode d'affichage.
+                 */
                 'footer'  => true,
                 'spinner' => true,
             ],
+            /**
+             * @var array $options Liste des options d'affichage.
+             */
             'options'        => [],
+            /**
+             * @var string $size Taille d'affichage de la fenêtre de dialogue sm|lg|xl|full|flex.
+             */
             'size'           => '',
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function getUrl(...$params): string
+    public function render(): string
     {
-        return $this->url instanceof Route ? (string)$this->url->getUrl($params) : $this->url;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parse(): PartialDriverContract
-    {
-        parent::parse();
-
         $defaultClasses = [
             'bkclose' => 'modal-backdrop-close ThemeButton--close',
             'body'    => 'modal-body',
@@ -192,7 +181,7 @@ class Modal extends PartialDriver implements ModalContract
                 'data'     => [],
                 'dataType' => 'json',
                 'method'   => 'post',
-                'url'      => $this->getUrl(),
+                'url'      => $this->partialManager()->getXhrRouteUrl('modal'),
             ];
 
             $this->set([
@@ -206,17 +195,7 @@ class Modal extends PartialDriver implements ModalContract
             }
         }
 
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setUrl(?string $url = null): ModalContract
-    {
-        $this->url = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse']) : $url;
-
-        return $this;
+        return parent::render();
     }
 
     /**

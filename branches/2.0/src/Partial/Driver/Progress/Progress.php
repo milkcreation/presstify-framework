@@ -8,37 +8,26 @@ use tiFy\Partial\PartialDriver;
 class Progress extends PartialDriver implements ProgressContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'before'      => '',
-            'after'       => '',
-            'attrs'       => [],
-            'viewer'      => [],
+        return array_merge(parent::defaultParams(), [
             // @todo 'infos'       => true,
             'label'       => '',
             'max'         => 100,
             'meter-bar'   => true,
             'meter-label' => true,
             'value'       => 0,
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $meterBar = $this->get('meter-bar');
         if ($meterBar !== false) {

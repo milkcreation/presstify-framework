@@ -3,7 +3,6 @@
 namespace tiFy\Partial\Driver\BurgerButton;
 
 use tiFy\Contracts\Partial\BurgerButton as BurgerButtonContract;
-use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
 use tiFy\Partial\PartialDriver;
 
 class BurgerButton extends PartialDriver implements BurgerButtonContract
@@ -47,31 +46,28 @@ class BurgerButton extends PartialDriver implements BurgerButtonContract
     ];
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var bool $active Statut d'affichage à l'intialisation
-     * @var string $tag Balise HTML d'encapsulation
-     * @var string $type Type de bouton
-     * @var string|array $handler Evenenement de bascule. click|hover
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'   => [],
-            'after'   => '',
-            'before'  => '',
-            'viewer'  => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var bool $active Statut d'affichage à l'intialisation
+             */
             'active'  => false,
-            'type'    => 'spring',
-            'tag'     => 'button',
+            /**
+             * @var string|array $handler Evenenement de bascule. click|hover
+             */
             'handler' => 'click',
-        ];
+            /**
+             * @var string $tag Balise HTML d'encapsulation
+             */
+            'tag'     => 'button',
+            /**
+             * @var string $type Type de bouton
+             */
+            'type'    => 'spring',
+        ]);
     }
 
     /**

@@ -18,48 +18,43 @@ class Pagination extends PartialDriver implements PaginationContract
     protected $query;
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var string|array|null $url Url de pagination {
-     *      @var string|null $base l'url peux contenir %d en remplacement du numéro de page. Si null, url courante.
-     *      @var bool $segment Activation de la réécriture depuis un segment de l'url|depuis des arguments de requête.
-     *      @var string $index Indice de qualification d'une page
-     * }
-     * @var array $links {
-     *      @var boolean|array $first Activation du lien vers la première page|Liste d'attributs.
-     *      @var boolean|array $last Activation du lien vers la dernière page|Liste d'attributs.
-     *      @var boolean|array $previous Activation du lien vers la page précédente|Liste d'attributs.
-     *      @var boolean|array $next Activation du lien vers la page suivante|Liste d'attributs.
-     *      @var boolean|array $numbers Activation de l'affichage de la numérotation des pages|Liste d'attributs {
-     *          @var int $range
-     *          @var int $anchor
-     *          @var int $gap
-     *      }
-     * }
-     * @var array|PaginationQuery|object $query
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'  => [],
-            'after'  => '',
-            'before' => '',
-            'viewer' => [],
-            'url'    => null,
-            'links'  => [
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var string|array|null $url Url de pagination {
+             * @var string|null $base l'url peux contenir %d en remplacement du numéro de page. Si null, url courante.
+             * @var bool $segment Activation de la réécriture depuis un segment de l'url|depuis des arguments de requête.
+             * @var string $index Indice de qualification d'une page
+             * }
+             */
+            'url'   => null,
+            /**
+             * @var array $links {
+             * @var boolean|array $first Activation du lien vers la première page|Liste d'attributs.
+             * @var boolean|array $last Activation du lien vers la dernière page|Liste d'attributs.
+             * @var boolean|array $previous Activation du lien vers la page précédente|Liste d'attributs.
+             * @var boolean|array $next Activation du lien vers la page suivante|Liste d'attributs.
+             * @var boolean|array $numbers Activation de l'affichage de la numérotation des pages|Liste d'attributs {
+             * @var int $range
+             * @var int $anchor
+             * @var int $gap
+             * }
+             */
+            'links' => [
                 'first'    => true,
                 'last'     => true,
                 'previous' => true,
                 'next'     => true,
                 'numbers'  => true,
             ],
-            'query'  => null,
-        ];
+            /**
+             * @var array|PaginationQuery|object $query
+             */
+            'query' => null,
+        ]);
     }
 
     /**
@@ -103,9 +98,9 @@ class Pagination extends PartialDriver implements PaginationContract
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $this->parseQuery()->parseUrl();
 

@@ -8,33 +8,29 @@ use tiFy\Partial\PartialDriver;
 class Table extends PartialDriver implements  TableContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var bool $header Activation de l'entête de table.
-     *      @var bool $footer Activation du pied de table.
-     *      @var string[] $columns Intitulé des colonnes.
-     *      @var array[] $datas Données de la table.
-     *      @var string $none Intitulé de la table lorsque la table ne contient aucune donnée.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'   => [],
-            'after'   => '',
-            'before'  => '',
-            'viewer'  => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var bool $header Activation de l'entête de table.
+             */
             'header'  => true,
+            /**
+             * @var bool $footer Activation du pied de table.
+             */
             'footer'  => true,
+            /**
+             * @var string[] $columns Intitulé des colonnes.
+             */
             'columns' => [
                 'Lorem',
                 'Ipsum',
             ],
+            /**
+             * @var array[] $datas Données de la table.
+             */
             'datas'   => [
                 [
                     'lorem dolor',
@@ -45,16 +41,19 @@ class Table extends PartialDriver implements  TableContract
                     'ipsum amet',
                 ],
             ],
+            /**
+             * @var string $none Intitulé de la table lorsque la table ne contient aucune donnée.
+             */
             'none'    => __('Aucun élément à afficher dans le tableau', 'tify'),
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $this->set('count', count($this->get('columns', [])));
 
