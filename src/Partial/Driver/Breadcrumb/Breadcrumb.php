@@ -59,25 +59,16 @@ class Breadcrumb extends PartialDriver implements BreadcrumbContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var string[]|array[]|object[]|callable[] $items Liste des élements du fil d'ariane.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'  => [],
-            'after'  => '',
-            'before' => '',
-            'viewer' => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var string[]|array[]|object[]|callable[] $items Liste des élements du fil d'ariane.
+             */
             'items'  => [],
-        ];
+        ]);
     }
 
     /**

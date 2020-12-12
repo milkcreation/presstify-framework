@@ -2,29 +2,28 @@
 
 namespace tiFy\Contracts\Partial;
 
-use Exception;
-use InvalidArgumentException;
-use Psr\Container\ContainerInterface as Container;
+use Closure;
+use League\Route\Http\Exception\NotFoundException;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Support\ParamsBag;
 
+/**
+ * @mixin \tiFy\Support\Concerns\BootableTrait
+ * @mixin \tiFy\Support\Concerns\ContainerAwareTrait
+ */
 interface Partial
 {
     /**
      * Récupération de l'instance courante.
      *
      * @return static
-     *
-     * @throws Exception
      */
     public static function instance(): Partial;
 
     /**
-     * Initialisation.
+     * Chargement.
      *
      * @return static
-     *
-     * @throws Exception
      */
     public function boot(): Partial;
 
@@ -42,60 +41,41 @@ interface Partial
      * Récupération d'une portion d'affichage déclarée.
      *
      * @param string $alias Alias de qualification.
-     * @param string|array|null $idOrAttrs Identifiant de qualification ou attributs de configuration.
-     * @param array|null $attrs Liste des attributs de configuration.
+     * @param string|array|null $idOrParams Identifiant de qualification ou paramètres de configuration.
+     * @param array $params Liste des paramètres de configuration.
      *
      * @return PartialDriver|null
-     *
-     * @throws InvalidArgumentException
      */
-    public function get(string $alias, $idOrAttrs = null, ?array $attrs = null): ?PartialDriver;
+    public function get(string $alias, $idOrParams = null, array $params = []): ?PartialDriver;
 
     /**
-     * Récupération de l'instance du gestionnaire d'injection de dépendances.
+     * Récupération de l'url de traitement des requêtes XHR.
      *
-     * @return Container|null
+     * @param string $partial Alias de qualification du pilote associé.
+     * @param string|null $controller Nom de qualification du controleur de traitement de la requête XHR.
+     * @param array $params Liste de paramètres complémentaire transmis dans l'url
+     *
+     * @return string
      */
-    public function getContainer(): ?Container;
+    public function getXhrRouteUrl(string $partial, ?string $controller = null, array $params = []): string;
 
     /**
      * Déclaration d'un pilote.
      *
      * @param string $alias
-     * @param PartialDriver $driver
+     * @param string|PartialDriver|Closure $driverDefinition
+     * @param Closure|null $callback
      *
-     * @return PartialDriver
-     *
-     * @throws Exception
+     * @return static
      */
-    public function register(string $alias, PartialDriver $driver): PartialDriver;
+    public function register(string $alias, PartialDriver $driverDefinition, ?Closure $callback = null): Partial;
 
     /**
      * Déclaration des instances de pilotes par défaut.
      *
      * @return static
-     *
-     * @throws Exception
      */
     public function registerDefaultDrivers(): Partial;
-
-    /**
-     * Résolution de service fourni par le gestionnaire.
-     *
-     * @param string $alias
-     *
-     * @return object|mixed|null
-     */
-    public function resolve(string $alias);
-
-    /**
-     * Vérification de résolution possible d'un service fourni par le gestionnaire.
-     *
-     * @param string $alias
-     *
-     * @return bool
-     */
-    public function resolvable(string $alias): bool;
 
     /**
      * Chemin absolu vers une ressources (fichier|répertoire).
@@ -116,11 +96,15 @@ interface Partial
     public function setConfig(array $attrs): Partial;
 
     /**
-     * Définition du conteneur d'injection de dépendances.
+     * Répartiteur de traitement d'une requête XHR.
      *
-     * @param Container $container
+     * @param string $partial Alias de qualification du pilote associé.
+     * @param string $controller Nom de qualification du controleur de traitement de la requête.
+     * @param mixed ...$args Liste des arguments passés au controleur
      *
-     * @return static
+     * @return array
+     *
+     * @throws NotFoundException
      */
-    public function setContainer(Container $container): Partial;
+    public function xhrResponseDispatcher(string $partial, string $controller, ...$args): array;
 }

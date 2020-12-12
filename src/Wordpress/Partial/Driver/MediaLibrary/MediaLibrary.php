@@ -19,22 +19,11 @@ class MediaLibrary extends PartialDriver implements MediaLibraryContract
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'   => [],
-            'after'   => '',
-            'before'  => '',
-            'viewer'  => [],
+        return array_merge(parent::defaultParams(), [
             'button'  => [
                 'tag'     => 'button',
                 'content' => __('Ajouter un média', 'tify'),
@@ -45,15 +34,15 @@ class MediaLibrary extends PartialDriver implements MediaLibraryContract
                 'multiple' => true,
                 'library'  => [],
             ],
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): BasePartialDriverContract
+    public function parseParams(): BasePartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $this->set([
             'attrs.data-control'        => 'media-library',

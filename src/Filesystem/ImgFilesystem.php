@@ -6,7 +6,6 @@ use Exception;
 use tiFy\Contracts\Filesystem\ImgFilesystem as ImgFilesystemContract;
 use tiFy\Support\HtmlAttrs;
 use tiFy\Support\MimeTypes;
-use tiFy\Support\Proxy\Partial;
 
 class ImgFilesystem extends LocalFilesystem implements ImgFilesystemContract
 {
@@ -52,11 +51,9 @@ class ImgFilesystem extends LocalFilesystem implements ImgFilesystemContract
                 $content = $this->read($path);
 
                 if (MimeTypes::inType($filename, 'svg')) {
-                    return is_null($attrs) ? $content : Partial::get('tag', [
-                            'attrs'   => array_merge(['class' => ''], $attrs),
-                            'content' => $content,
-                            'tag'     => 'div',
-                        ])->render();
+                    return is_null($attrs)
+                        ? $content : '<div ' . HtmlAttrs::createFromAttrs(array_merge(['class' => ''], $attrs)) . '>' .
+                            $content . '</div>';
                 } elseif ($src = $this->src($path)) {
                      return '<img ' . HtmlAttrs::createFromAttrs(array_merge([
                              'alt'   => basename($filename)

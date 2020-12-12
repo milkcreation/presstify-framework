@@ -6,21 +6,13 @@ use Exception;
 use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
 use tiFy\Contracts\Partial\Tab as TabContract;
 use tiFy\Contracts\Partial\TabCollection as TabCollectionContract;
-use tiFy\Contracts\Routing\Route;
 use tiFy\Partial\PartialDriver;
 use tiFy\Support\Proxy\Url;
 use tiFy\Support\Proxy\Request;
-use tiFy\Support\Proxy\Router;
 use tiFy\Support\Proxy\Session;
 
 class Tab extends PartialDriver implements TabContract
 {
-    /**
-     * Url de traitement de requête XHR.
-     * @var Route|string
-     */
-    private $xhrUrl = '';
-
     /**
      * Collection des éléments déclaré.
      * @var TabCollectionContract
@@ -40,34 +32,9 @@ class Tab extends PartialDriver implements TabContract
     /**
      * @inheritDoc
      */
-    public function boot(): void
+    public function defaultParams(): array
     {
-        parent::boot();
-        $this->setXhrUrl();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function defaults(): array
-    {
-        return [
-            /**
-             * @var array $attrs Attributs HTML du champ.
-             */
-            'attrs'    => [],
-            /**
-             * @var string $after Contenu placé après le champ.
-             */
-            'after'    => '',
-            /**
-             * @var string $before Contenu placé avant le champ.
-             */
-            'before'   => '',
-            /**
-             * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-             */
-            'viewer'   => [],
+        return array_merge(parent::defaultParams(), [
             /**
              * @var string|null $active Nom de qualification de l'élément actif.
              */
@@ -90,7 +57,7 @@ class Tab extends PartialDriver implements TabContract
              * Activation du traitement de la requête HTML XHR
              */
             'ajax'     => true,
-        ];
+        ]);
     }
 
     /**
@@ -100,7 +67,7 @@ class Tab extends PartialDriver implements TabContract
      */
     protected function getActive(): string
     {
-        if (!$active = $this->get('active', '')) {
+        if (!$active = $this->get('active')) {
             $sessionName = md5(Url::current()->path() . $this->getId());
             if ($this->get('ajax') && ($store = Session::registerStore($sessionName))) {
                 $active = $store->get('active', '');
@@ -134,17 +101,9 @@ class Tab extends PartialDriver implements TabContract
     /**
      * @inheritDoc
      */
-    public function getXhrUrl(...$params): string
+    public function parseParams(): PartialDriverContract
     {
-        return $this->xhrUrl instanceof Route ? (string)$this->xhrUrl->getUrl($params) : $this->xhrUrl;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parse(): PartialDriverContract
-    {
-        parent::parse();
+        parent::parseParams();
 
         $items = $this->pull('items', []);
 
@@ -169,7 +128,7 @@ class Tab extends PartialDriver implements TabContract
                 'data'     => [],
                 'dataType' => 'json',
                 'method'   => 'post',
-                'url'      => $this->getXhrUrl(),
+                'url'      => $this->partialManager()->getXhrRouteUrl('tab'),
             ];
             $this->set('attrs.data-options.ajax', is_array($ajax) ? array_merge($defaultsAjax, $ajax) : $defaultsAjax);
         }
@@ -195,16 +154,6 @@ class Tab extends PartialDriver implements TabContract
     public function setTabCollection(TabCollectionContract $tabCollection): TabContract
     {
         $this->tabCollection = $tabCollection->setTabManager($this);
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setXhrUrl(?string $url = null): TabContract
-    {
-        $this->xhrUrl = is_null($url) ? Router::xhr(md5($this->getAlias()), [$this, 'xhrResponse']) : $url;
 
         return $this;
     }

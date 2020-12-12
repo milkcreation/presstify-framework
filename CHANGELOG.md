@@ -1,6 +1,10 @@
 # Release Notes
 
-## [v2.0.373 (2020-12-07)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.373...v2.0.373
+## [v2.0.373 (2020-12-12)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.373...v2.0.373
+
+### Changed
+
+- Réécriture Partial pour chargement via container (allègement mémoire)
 
 ### Added
 

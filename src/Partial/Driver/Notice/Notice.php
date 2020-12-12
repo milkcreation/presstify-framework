@@ -9,39 +9,36 @@ use tiFy\Partial\PartialDriver;
 class Notice extends PartialDriver implements NoticeContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var string|array|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
-     * @var bool $dismiss Affichage du bouton de masquage de la notification.
-     * @var int $timeout Délai d'expiration d'affichage du message. Exprimé en secondes.
-     * @var string $type Type de notification info|warning|success|error. défaut info.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'   => [],
-            'after'   => '',
-            'before'  => '',
-            'viewer'  => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var string|array|callable $content Texte du message de notification. défaut 'Lorem ipsum dolor site amet'.
+             */
             'content' => 'Lorem ipsum dolor site amet',
+            /**
+             * @var bool $dismiss Affichage du bouton de masquage de la notification.
+             */
             'dismiss' => false,
+            /**
+             * @var int $timeout Délai d'expiration d'affichage du message. Exprimé en secondes.
+             */
             'timeout' => 0,
+            /**
+             * @var string $type Type de notification info|warning|success|error. défaut info.
+             */
             'type'    => 'info',
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $this->set('attrs.data-control', 'notice');
         $this->set('attrs.data-timeout', $this->get('timeout', 0));

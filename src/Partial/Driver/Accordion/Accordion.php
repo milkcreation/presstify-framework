@@ -8,40 +8,44 @@ use tiFy\Partial\PartialDriver;
 class Accordion extends PartialDriver implements AccordionContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var string $theme Theme d'affichage. light|dark.
-     * @var array|AccordionItem[]|AccordionWalker $items Liste des éléments.
-     * @var mixed $opened Définition de la liste des éléments ouverts à l'initialisation.
-     * @var boolean $multiple Activation de l'ouverture multiple d'éléments.
-     * @var boolean $triggered Activation de l'ouverture et la fermeture du volet par un déclencheur dédié.
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'     => [],
-            'after'     => '',
-            'before'    => '',
-            'viewer'    => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var array|AccordionItem[]|AccordionWalker $items Liste des éléments.
+             */
             'items'     => [],
+            /**
+             * @var boolean $multiple Activation de l'ouverture multiple d'éléments.
+             */
             'multiple'  => false,
+            /**
+             *
+             */
             'parent'    => null,
+            /**
+             * @var mixed $opened Définition de la liste des éléments ouverts à l'initialisation.
+             */
             'opened'    => null,
+            /**
+             * @var string $theme Theme d'affichage. light|dark.
+             */
             'theme'     => 'light',
+            /**
+             * @var boolean $triggered Activation de l'ouverture et la fermeture du volet par un déclencheur dédié.
+             */
             'triggered' => false,
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         if ($theme = $this->get('theme')) {
             $this->set('attrs.class', trim($this->get('attrs.class') . " Accordion--{$theme}"));

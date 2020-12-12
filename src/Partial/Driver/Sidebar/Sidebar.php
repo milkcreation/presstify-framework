@@ -19,75 +19,86 @@ use tiFy\Support\{Arr, ParamsBag};
 class Sidebar extends PartialDriver implements SidebarContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     *      @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée
-     *                             l'unité par défault est le px.
-     *      @var int $z -index Profondeur de champs.
-     *      @var array $attrs Liste des attributs HTML.
-     *      @var string $pos Position de l'interface left (default)|right.
-     *      @var bool $closed Etat de fermeture initial de l'interface.
-     *      @var bool $outside_close Fermeture au clic en dehors de l'interface.
-     *      @var bool $animate Activation de l'animation à l'ouverture et la fermeture.
-     *      @var bool|string|array $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active ou
-     *                               désactive le bouton; la valeur chaîne de caractère active et affiche la chaîne.
-     *                               ex : <span>X</span>.
-     *      @var string|int $min-width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle l'interface
-     *                                 est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le
-     *                                 px.
-     *      @var SidebarItem[]|array $items {
-     *          Liste des élements.
-     *          @var string $name Nom de qualification
-     *          @var string|callable $content Contenu
-     *          @var array $attrs Liste des attributs HTML du conteneur.
-     *          @var int $position Position de l'élément.
-     *      }
-     *      @var boolean|string $header Contenu de l'entête de l'interface.
-     *      @var boolean|string $footer Contenu du pied de l'interface.
-     *      @var string $theme Theme couleur de l'interface light|dark.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'         => [],
-            'after'         => '',
-            'before'        => '',
-            'viewer'        => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var string|int $width Largeur de l'interface en px ou en %. Si l'unité de valeur n'est pas renseignée
+             * l'unité par défault est le px.
+             */
             'width'         => '300px',
+            /**
+             * @var int $z-index Profondeur de champs.
+             */
             'z-index'       => 99990,
+            /**
+             * @var string $pos Position de l'interface left (default)|right.
+             */
             'pos'           => 'left',
+            /**
+             * @var bool $closed Etat de fermeture initial de l'interface.
+             */
             'closed'        => true,
+            /**
+             * @var bool $outside_close Fermeture au clic en dehors de l'interface.
+             */
             'outside_close' => true,
+            /**
+             * @var bool $animate Activation de l'animation à l'ouverture et la fermeture.
+             */
             'animate'       => true,
+            /**
+             * @var string|int $min-width Largeur de la fenêtre du navigateur en px ou %, à partir de laquelle
+             * l'interface est active. Si l'unité de valeur n'est pas renseignée l'unité par défault est le px.
+             */
             'min-width'     => '991px',
+            /**
+             * @var boolean|string $header Contenu de l'entête de l'interface.
+             */
             'header'        => true,
+            /**
+             * @var SidebarItem[]|array $body {
+             * Liste des élements.
+             * @var string $name Nom de qualification
+             * @var string|callable $content Contenu
+             * @var array $attrs Liste des attributs HTML du conteneur.
+             * @var int $position Position de l'élément.
+             * }
+             */
             'body'          => [],
+            /**
+             * @var boolean|string $footer Contenu du pied de l'interface.
+             */
             'footer'        => true,
+            /**
+             * @var bool|string|array $toggle Activation et contenu de bouton de bascule. Si la valeur booléene active
+             * ou désactive le bouton; la valeur chaîne de caractère active et affiche la chaîne.
+             * ex : <span>X</span>.
+             */
             'toggle'        => true,
+            /**
+             * @var string $theme Theme couleur de l'interface light|dark.
+             */
             'theme'         => 'light',
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $style = $this->get('attrs.style', '');
         if ($width = $this->get('width')) {
-            $style .= rtrim(';', $style). ";width:{$width}";
+            $style .= rtrim(';', $style) . ";width:{$width}";
         }
 
         if ($zindex = $this->get('z-index')) {
-            $style .= rtrim(';', $style). ";z-index:{$zindex}";
+            $style .= rtrim(';', $style) . ";z-index:{$zindex}";
         }
 
         $this
@@ -130,7 +141,7 @@ class Sidebar extends PartialDriver implements SidebarContract
         $this->set('items', (new Collection($items))->sortBy('position')->all());
 
         if ($toggle = $this->get('toggle')) {
-            if(is_string($toggle)) {
+            if (is_string($toggle)) {
                 $attrs = ['content' => $toggle];
             } elseif (is_array($toggle)) {
                 $attrs = $toggle;
@@ -138,7 +149,7 @@ class Sidebar extends PartialDriver implements SidebarContract
                 $attrs = [];
             }
 
-            if ($class = Arr::get($attrs, 'attrs.class', '') ? : '%s') {
+            if ($class = Arr::get($attrs, 'attrs.class', '') ?: '%s') {
                 Arr::set($attrs, 'attrs.class', sprintf($class, 'Sidebar-toggle'));
             }
 
@@ -160,14 +171,14 @@ class Sidebar extends PartialDriver implements SidebarContract
         $id = $this->get('attrs.id');
         $attrs = array_merge([
             'attrs'   => [
-                'class' => 'Sidebar-toggle'
+                'class' => 'Sidebar-toggle',
             ],
             'tag'     => 'a',
             'content' => "<svg xmlns=\"http://www.w3.org/2000/svg\"" .
                 "viewBox=\"0 0 50 50\" xml:space=\"preserve\" class=\"Sidebar-toggleSvg\">" .
                 "<rect width=\"50\" height=\"5\" x=\"0\" y=\"5\" ry=\"0\"/>" .
                 "<rect width=\"50\" height=\"5\" x=\"0\" y=\"22.5\" ry=\"0\"/>" .
-                "<rect width=\"50\" height=\"5\" x=\"0\" y=\"40\" ry=\"0\"/></svg>"
+                "<rect width=\"50\" height=\"5\" x=\"0\" y=\"40\" ry=\"0\"/></svg>",
         ], $attrs);
 
         if ((Arr::get($attrs, 'tag') === 'a') && !Arr::has($attrs, 'attrs.href')) {

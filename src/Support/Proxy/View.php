@@ -3,7 +3,10 @@
 namespace tiFy\Support\Proxy;
 
 use League\Plates\Template\Folder;
-use tiFy\Contracts\View\{Engine, PlatesEngine, View as ViewContract, PlatesFactory};
+use tiFy\Contracts\View\Engine;
+use tiFy\Contracts\View\PlatesEngine;
+use tiFy\Contracts\View\View as ViewContract;
+use tiFy\Contracts\View\PlatesFactory;
 
 /**
  * @method static Engine addFolder(string $name, string $directory, bool $fallback = false)

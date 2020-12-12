@@ -2,10 +2,13 @@
 
 namespace tiFy\Contracts\Partial;
 
-use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\View\Engine as ViewEngine;
 
-interface PartialDriver extends ParamsBag
+/**
+ * @mixin \tiFy\Support\Concerns\ParamsBagTrait
+ * @mixin \tiFy\Support\ParamsBag
+ */
+interface PartialDriver
 {
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
@@ -15,14 +18,23 @@ interface PartialDriver extends ParamsBag
     public function __toString(): string;
 
     /**
-     * Construction du pilote.
+     * Récupération des paramètres.
      *
-     * @param string $alias
-     * @param Partial $partial
+     * @param string $key
      *
-     * @return static
+     * @return mixed
      */
-    public function build(string $alias, Partial $partial): PartialDriver;
+    public function __get(string $key);
+
+    /**
+     * Délégation d'appel des méthodes du ParamBag.
+     *
+     * @param string $method
+     * @param array $arguments
+     *
+     * @return mixed
+     */
+    public function __call(string $method, array $arguments);
 
     /**
      * Post-affichage.
@@ -46,7 +58,7 @@ interface PartialDriver extends ParamsBag
     public function before(): void;
 
     /**
-     * Initialisation.
+     * Chargement.
      *
      * @return void
      */
@@ -81,13 +93,6 @@ interface PartialDriver extends ParamsBag
     public function getIndex(): int;
 
     /**
-     * {@inheritDoc}
-     *
-     * @return static
-     */
-    public function parse(): PartialDriver;
-
-    /**
      * Traitement de l'attribut "class" de la balise HTML.
      *
      * @return static
@@ -102,18 +107,11 @@ interface PartialDriver extends ParamsBag
     public function parseAttrId(): PartialDriver;
 
     /**
-     * Traitement de la liste des attributs par défaut.
-     *
-     * @return static
-     */
-    public function parseDefaults(): PartialDriver;
-
-    /**
      * Récupération du gestionnaire.
      *
-     * @return Partial|null
+     * @return Partial
      */
-    public function partial(): ?Partial;
+    public function partialManager(): Partial;
 
     /**
      * Affichage.
@@ -130,6 +128,15 @@ interface PartialDriver extends ParamsBag
      * @return void
      */
     public static function setDefaults(array $defaults = []): void;
+
+    /**
+     * Définition de l'alias de qualification.
+     *
+     * @param string $alias
+     *
+     * @return static
+     */
+    public function setAlias(string $alias): PartialDriver;
 
     /**
      * Définition de l'identifiant de qualification.

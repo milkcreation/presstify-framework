@@ -9,42 +9,35 @@ use tiFy\Validation\Validator as v;
 class Slider extends PartialDriver implements SliderContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var string[]|callable[] $items Liste des éléments. Liste de sources d'image|Liste de contenu HTML|Liste de
-     *                                      fonctions. défaut : @see https://picsum.photos/images
-     * @var array $options Liste des attributs de configuration du pilote d'affichage.
-     * @see http://kenwheeler.github.io/slick/#settings
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'   => [],
-            'after'   => '',
-            'before'  => '',
-            'viewer'  => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var string[]|callable[] $items Liste des éléments. Liste de sources d'image|Liste de contenu HTML|Liste
+             * de fonctions. défaut : @see https://picsum.photos/images
+             */
             'items'   => [
                 'https://picsum.photos/800/800/?image=768',
                 'https://picsum.photos/800/800/?image=669',
                 'https://picsum.photos/800/800/?image=646',
                 'https://picsum.photos/800/800/?image=883',
             ],
+            /**
+             * @var array $options Liste des attributs de configuration du pilote d'affichage.
+             * @see http://kenwheeler.github.io/slick/#settings
+             */
             'options' => [],
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $items = $this->get('items', []);
         foreach ($items as &$item) {

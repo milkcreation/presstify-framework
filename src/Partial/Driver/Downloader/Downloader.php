@@ -31,33 +31,32 @@ class Downloader extends PartialDriver implements DownloaderContract
 
     /**
      * @inheritDoc
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * @var string $basedir Chemin absolu de resolution de récupération du fichier source.
-     * @var string $content Contenu d'affichage HTML du déclencheur de téléchargement.
-     * @var string $src Fichier à télécharger. Chemin absolu|relatif au basedir|Url du site.
-     * @var string $tag Balise HTML d'encapsulation du déclencheur de téléchargement
-     * @var string|array|null Liste des extensions|mime-type|type de fichiers permis.
-     *                             ex ['ppt', 'video/mp4', 'image]
-     * }
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'   => [],
-            'after'   => '',
-            'before'  => '',
-            'viewer'  => [],
+        return array_merge(parent::defaultParams(), [
+            /**
+             * @var string $basedir Chemin absolu de resolution de récupération du fichier source.
+             */
             'basedir' => ROOT_PATH,
+            /**
+             * @var string $content Contenu d'affichage HTML du déclencheur de téléchargement.
+             */
             'content' => __('Télécharger', 'tify'),
-            'src'     => $this->partial()->resources('/sample/sample.txt'),
+            /**
+             * @var string $src Fichier à télécharger. Chemin absolu|relatif au basedir|Url du site.
+             */
+            'src'     => $this->partialManager()->resources('/sample/sample.txt'),
+            /**
+             * @var string $tag Balise HTML d'encapsulation du déclencheur de téléchargement
+             */
             'tag'     => 'a',
+            /**
+             * @var string|array|null Liste des extensions|mime-type|type de fichiers permis.
+             * ex ['ppt', 'video/mp4', 'image]
+             */
             'types'   => null,
-        ];
+        ]);
     }
 
     /**
@@ -71,9 +70,9 @@ class Downloader extends PartialDriver implements DownloaderContract
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $path = base64_encode(json_encode([
             'basedir' => $this->get('basedir'),

@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Partial\Driver\CookieNotice;
 
 use tiFy\Partial\Driver\CookieNotice\CookieNotice as BaseCookieNotice;
-use tiFy\Wordpress\Contracts\Partial\{CookieNotice as CookieNoticeContract, PartialDriver as PartialDriverContract};
+use tiFy\Wordpress\Contracts\Partial\CookieNotice as CookieNoticeContract;
 
 class CookieNotice extends BaseCookieNotice implements CookieNoticeContract
 {

@@ -2,29 +2,19 @@
 
 namespace tiFy\Partial\Driver\Pdfviewer;
 
-use tiFy\Contracts\Partial\{PartialDriver as PartialDriverContract, Modal, Pdfviewer as PdfviewerContract};
+use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
+use tiFy\Contracts\Partial\Modal;
+use tiFy\Contracts\Partial\Pdfviewer as PdfviewerContract;
 use tiFy\Partial\PartialDriver;
-use tiFy\Support\Proxy\Partial;
 
 class Pdfviewer extends PartialDriver implements PdfviewerContract
 {
     /**
      * @inheritDoc
-     *
-     * @return array {
-     * @var array $attrs Attributs HTML du champ.
-     * @var string $after Contenu placé après le champ.
-     * @var string $before Contenu placé avant le champ.
-     * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * }
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'   => [],
-            'after'   => '',
-            'before'  => '',
-            'viewer'  => [],
+        return array_merge(parent::defaultParams(), [
             'defer'   => false,
             'content' => [
                 'footer' => false,
@@ -39,7 +29,7 @@ class Pdfviewer extends PartialDriver implements PdfviewerContract
             ],
             'spinner' => true,
             'src'     => 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf',
-        ];
+        ]);
     }
 
     /**
@@ -59,7 +49,7 @@ class Pdfviewer extends PartialDriver implements PdfviewerContract
         $args['attrs']['data-control'] = 'modal-pdf';
 
         /** @var Modal $modal */
-        $modal = Partial::get('modal', $args);
+        $modal = $this->partialManager()->get('modal', $args);
 
         return $modal;
     }
@@ -67,9 +57,9 @@ class Pdfviewer extends PartialDriver implements PdfviewerContract
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $defaultClasses = [
             'body'    => 'Pdfviewer-contentBody',

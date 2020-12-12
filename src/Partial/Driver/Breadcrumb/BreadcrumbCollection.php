@@ -3,7 +3,8 @@
 namespace tiFy\Partial\Driver\Breadcrumb;
 
 use Illuminate\Support\Collection;
-use tiFy\Contracts\Partial\{Breadcrumb, BreadcrumbCollection as BreadcrumbCollectionContract};
+use tiFy\Contracts\Partial\Breadcrumb;
+use tiFy\Contracts\Partial\BreadcrumbCollection as BreadcrumbCollectionContract;
 use tiFy\Support\Proxy\Partial;
 
 class BreadcrumbCollection implements BreadcrumbCollectionContract
@@ -190,7 +191,7 @@ class BreadcrumbCollection implements BreadcrumbCollectionContract
         $wrapper['attrs']['class'] = sprintf($wrapper['attrs']['class'] ?? '%s', 'Breadcrumb-item');
 
         $tag = array_merge([
-            'tag' => 'li'
+            'tag' => 'li',
         ], $wrapper, ['content' => $item['render'] ?? '']);
 
         return Partial::get('tag', $tag)->render();

@@ -14,24 +14,6 @@ interface CookieNotice extends PartialDriver
     public function cookie(): Cookie;
 
     /**
-     * Récupération de l'url de traitement de la requête XHR.
-     *
-     * @param array ...$params Liste des paramètres optionnels de formatage de l'url.
-     *
-     * @return string
-     */
-    public function getUrl(...$params): string;
-
-    /**
-     * Définition de l'url de traitement de la requête XHR.
-     *
-     * @param string|null $url
-     *
-     * @return static
-     */
-    public function setUrl(?string $url = null): PartialDriver;
-
-    /**
      * Élement de validation du cookie.
      *
      * @param array $args Liste des attributs de configuration.

@@ -23,7 +23,7 @@ use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\Log\LogManager;
 use tiFy\Contracts\Partial\PartialDriver;
-use tiFy\Contracts\Partial\Partial;
+use tiFy\Contracts\Partial\Partial as PartialManager;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\Routing\Redirector;
@@ -289,20 +289,20 @@ if (!function_exists('partial')) {
      * Partial - Gestionnaire de portions d'affichage.
      *
      * @param string|null $name Nom de qualification.
-     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
-     * @param mixed $attrs Liste des attributs de configuration.
+     * @param mixed $idOrParams Identifiant de qualification|Liste des attributs de configuration.
+     * @param array $params Liste des attributs de configuration.
      *
-     * @return Partial|PartialDriver|null
+     * @return PartialManager|PartialDriver|null
      */
-    function partial(?string $name = null, $id = null, ?array $attrs = null)
+    function partial(?string $name = null, $idOrParams = null, array $params = [])
     {
-        /* @var Partial $manager */
-        $manager = app('partial');
+        /* @var PartialManager $manager */
+        $manager = app(PartialManager::class);
 
         if (is_null($name)) {
             return $manager;
         }
-        return $manager->get($name, $id, $attrs);
+        return $manager->get($name, $idOrParams, $params);
     }
 }
 

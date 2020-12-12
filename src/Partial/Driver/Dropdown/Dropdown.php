@@ -9,35 +9,24 @@ use tiFy\Partial\PartialDriver;
 class Dropdown extends PartialDriver implements DropdownContract
 {
     /**
-     * {@inheritDoc}
-     *
-     * @return array {
-     *      @var array $attrs Attributs HTML du champ.
-     *      @var string $after Contenu placé après le champ.
-     *      @var string $before Contenu placé avant le champ.
-     *      @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-     * }
+     * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return [
-            'attrs'         => [],
-            'after'         => '',
-            'before'        => '',
-            'viewer'        => [],
+        return array_merge(parent::defaultParams(), [
             'button'    => '',
             'items'     => [],
             'open'      => false,
             'trigger'   => false
-        ];
+        ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): PartialDriverContract
+    public function parseParams(): PartialDriverContract
     {
-        parent::parse();
+        parent::parseParams();
 
         $this->set('attrs.data-control', 'dropdown');
         $this->set('attrs.data-id', $this->getId());

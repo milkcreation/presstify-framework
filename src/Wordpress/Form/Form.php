@@ -2,21 +2,18 @@
 
 namespace tiFy\Wordpress\Form;
 
-use tiFy\Contracts\Container\Container;
+use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Form\MailerAddonDriver as MailerAddonDriverContract;
 use tiFy\Support\Arr;
+use tiFy\Support\Concerns\ContainerAwareTrait;
 use tiFy\Wordpress\Contracts\Form as FormContract;
 use tiFy\Wordpress\Form\AddonDrivers\MailerAddonDriver;
 
 class Form implements FormContract
 {
-    /**
-     * Instance du conteneur d'injection de dépendances.
-     * @var Container
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
      * Instance du controleur de gestion des formulaires.
@@ -31,7 +28,7 @@ class Form implements FormContract
     public function __construct(FormManager $formManager, Container $container)
     {
         $this->formManager = $formManager->boot();
-        $this->container = $container;
+        $this->setContainer($container);
 
         add_action('wp', function () {
             foreach ($this->formManager->all() as $form) {
@@ -67,7 +64,7 @@ class Form implements FormContract
      */
     public function registerOverride(): void
     {
-        $this->container->add(MailerAddonDriverContract::class, function (): MailerAddonDriverContract {
+        $this->getContainer()->add(MailerAddonDriverContract::class, function (): MailerAddonDriverContract {
             return new MailerAddonDriver();
         });
     }
