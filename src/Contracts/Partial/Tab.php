@@ -37,13 +37,4 @@ interface Tab extends PartialDriver
      * @return static
      */
     public function setTabCollection(TabCollection $tabCollection): Tab;
-
-    /**
-     * Contrôleur de traitement de la requête XHR.
-     *
-     * @param array ...$args Liste dynamique de variables passés en argument dans l'url de requête
-     *
-     * @return array
-     */
-    public function xhrResponse(...$args): array;
 }

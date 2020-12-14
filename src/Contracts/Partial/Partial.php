@@ -21,6 +21,13 @@ interface Partial
     public static function instance(): Partial;
 
     /**
+     * Récupération de la liste des pilote déclarés.
+     *
+     * @return PartialDriver[][]
+     */
+    public function all(): array;
+
+    /**
      * Chargement.
      *
      * @return static

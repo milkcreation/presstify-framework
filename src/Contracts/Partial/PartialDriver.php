@@ -181,4 +181,13 @@ interface PartialDriver
      * @return string
      */
     public function viewDirectory(): string;
+
+    /**
+     * Contrôleur de traitement des requêtes XHR.
+     *
+     * @param array ...$args
+     *
+     * @return array
+     */
+    public function xhrResponse(...$args): array;
 }

@@ -10,8 +10,8 @@
 
 .#{$grid-container-prefix} {
   width: #{$grid-container-width};
-  padding-right: #{$grid-gutter};
-  padding-left: #{$grid-gutter};
+  //padding-right: #{$grid-gutter};
+  //padding-left: #{$grid-gutter};
   @if $grid-container-center {
     margin-right: auto;
     margin-left: auto;
