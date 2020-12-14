@@ -1,5 +1,11 @@
 # Release Notes
 
+## [v2.0.374 (2020-12-14)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.374...v2.0.374
+
+### Changed
+
+- PartialDriver : Methode xhrResponse en natif 
+
 ## [v2.0.373 (2020-12-12)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.373...v2.0.373
 
 ### Changed

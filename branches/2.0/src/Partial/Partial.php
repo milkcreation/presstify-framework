@@ -141,6 +141,14 @@ class Partial implements PartialManagerContract
     /**
      * @inheritDoc
      */
+    public function all(): array
+    {
+        return $this->drivers;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function boot(): PartialManagerContract
     {
         if (!$this->isBooted()) {

@@ -21,13 +21,4 @@ interface CookieNotice extends PartialDriver
      * @return string
      */
     public function trigger($args = []): string;
-
-    /**
-     * Contrôleur de traitement de la requête XHR.
-     *
-     * @param array ...$args Liste dynamique de variables passés en argument dans l'url de requête
-     *
-     * @return array
-     */
-    public function xhrResponse(...$args): array;
 }

@@ -350,4 +350,18 @@ class PartialDriver implements PartialDriverContract
     {
         return $this->partialManager()->resources("/views/{$this->getAlias()}");
     }
+
+    /**
+     * Contrôleur de traitement des requêtes XHR.
+     *
+     * @param array ...$args
+     *
+     * @return array
+     */
+    public function xhrResponse(...$args): array
+    {
+        return [
+            'success' => true
+        ];
+    }
 }
