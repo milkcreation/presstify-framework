@@ -197,6 +197,14 @@ class PartialDriver implements PartialDriverContract
 
     /**
      * @inheritDoc
+     */
+    public function getXhrUrl(array $params = []): string
+    {
+        return $this->partialManager()->getXhrRouteUrl($this->getAlias(), null, $params);
+    }
+
+    /**
+     * @inheritDoc
      *
      * @return $this
      */

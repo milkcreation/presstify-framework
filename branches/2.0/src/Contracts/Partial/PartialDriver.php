@@ -93,6 +93,15 @@ interface PartialDriver
     public function getIndex(): int;
 
     /**
+     * Récupération de l'url de traitement des requêtes XHR.
+     *
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getXhrUrl(array $params = []): string;
+
+    /**
      * Traitement de l'attribut "class" de la balise HTML.
      *
      * @return static
