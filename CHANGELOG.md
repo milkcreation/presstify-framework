@@ -1,5 +1,19 @@
 # Release Notes
 
+## [v2.0.375 (2020-12-15)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.375...v2.0.375
+
+### Changed
+
+- Partial Driver : getXhrUrl
+
+### Fixed
+
+- assets\themes grid : Décalage container
+
+### Added
+
+- assets\materials : spinner 
+
 ## [v2.0.374 (2020-12-14)](https://svn.tigreblanc.fr/presstify-framework/tags/2.0.374...v2.0.374
 
 ### Changed
