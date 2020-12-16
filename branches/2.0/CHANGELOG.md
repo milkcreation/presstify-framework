@@ -9,6 +9,7 @@
 ### Fixed
 
 - assets\themes grid : Décalage container
+- Form : metatagsValue >> string|array|null
 
 ### Added
 

@@ -59,9 +59,9 @@ interface FieldsFactory extends ArrayAccess, Countable, IteratorAggregate
      * array ex ["%%{{slug#1}}%%", "%%{{slug#2}}%%"]
      * @param boolean $raw Activation de la valeur de retour au format brut.
      *
-     * @return string|null
+     * @return mixed
      */
-    public function metatagsValue($tags, bool $raw = true): ?string;
+    public function metatagsValue($tags, bool $raw = true);
 
     /**
      * Pré-traitement de la liste des champs en vue d'un affichage du rendu.
