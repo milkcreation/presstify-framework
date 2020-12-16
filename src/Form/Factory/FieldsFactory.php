@@ -117,7 +117,7 @@ class FieldsFactory implements FieldsFactoryContract
     /**
      * @inheritDoc
      */
-    public function metatagsValue($tags, $raw = true): ?string
+    public function metatagsValue($tags, $raw = true)
     {
         if (is_string($tags)) {
             if (preg_match_all('/([^%%]*)%%(.*?)%%([^%%]*)?/', $tags, $matches)) {
