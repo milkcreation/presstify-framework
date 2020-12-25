@@ -1,0 +1,46 @@
+@import "variables";
+
+// Personnalisation
+.FieldSelect-wrapper {
+    position: relative;
+    background-color: $field-select-background-hue;
+
+    select {
+        position: relative;
+        appearance: none;
+        background-color: transparent !important;
+        z-index: 1;
+    }
+
+    .FieldSelect-trigger {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        display: block;
+        content: " ";
+        width: 19px;
+        border-left-style: solid;
+        border-left-width:1px;
+        border-left-color: $field-select-light-hue;
+        background-color: $field-select-lighter-hue;
+
+        &::after {
+            position: absolute;
+            top: 50%;
+            right: 5px;
+            z-index: 0;
+            width: 0;
+            height: 0;
+            margin-top: -2px;
+            display: inline-block;
+            content: " ";
+            border-color: $field-select-regular-hue transparent;
+            border-style: solid;
+            border-top-width: 4px;
+            border-right-width: 4px;
+            border-bottom-width: 0;
+            border-left-width: 4px;
+        }
+    }
+}
