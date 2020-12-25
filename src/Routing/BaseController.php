@@ -8,6 +8,7 @@ use tiFy\Contracts\Http\RedirectResponse;
 use tiFy\Contracts\Routing\Redirector;
 use tiFy\Contracts\View\Engine;
 use tiFy\Http\Response;
+use tiFy\Support\Concerns\ContainerAwareTrait;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\View;
 use tiFy\Support\Proxy\Request;
@@ -15,11 +16,7 @@ use tiFy\Support\Proxy\Redirect;
 
 class BaseController extends ParamsBag
 {
-    /**
-     * Instance de conteneur d'injection de dépendances.
-     * @var Container|null
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
      * Indicateur d'activation du mode de déboguage.
@@ -28,15 +25,13 @@ class BaseController extends ParamsBag
     protected $debug;
 
     /**
-     * CONSTRUCTEUR.
-     *
      * @param Container|null $container Instance de conteneur d'injection de dépendances.
-     *
-     * @return void
      */
     public function __construct(?Container $container = null)
     {
-        $this->container = $container;
+        if ($container !== null) {
+            $this->setContainer($container);
+        }
 
         $this->boot();
     }
@@ -46,7 +41,9 @@ class BaseController extends ParamsBag
      *
      * @return void
      */
-    public function boot(): void { }
+    public function boot(): void
+    {
+    }
 
     /**
      * Vérification d'activation du mode de deboguage.
@@ -56,16 +53,6 @@ class BaseController extends ParamsBag
     protected function debug(): bool
     {
         return is_null($this->debug) ? env('APP_DEBUG', false) : $this->debug;
-    }
-
-    /**
-     * Récupération de l'instance du conteneur d'injection de dépendances.
-     *
-     * @return Container|null
-     */
-    public function getContainer(): ?Container
-    {
-        return $this->container;
     }
 
     /**
@@ -148,7 +135,7 @@ class BaseController extends ParamsBag
      *
      * @return RedirectResponse
      */
-    public function route(string $name, array $params= [], int $status = 302, array $headers = []): RedirectResponse
+    public function route(string $name, array $params = [], int $status = 302, array $headers = []): RedirectResponse
     {
         return Redirect::route($name, $params, $status, $headers);
     }
