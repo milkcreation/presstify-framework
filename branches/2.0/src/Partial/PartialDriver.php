@@ -3,7 +3,8 @@
 namespace tiFy\Partial;
 
 use Closure;
-use BadMethodCallException, Exception;
+use BadMethodCallException, 
+use Exception;
 use tiFy\Contracts\Partial\Partial as PartialManager;
 use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
 use tiFy\Contracts\View\Engine as ViewEngine;
@@ -83,7 +84,9 @@ class PartialDriver implements PartialDriverContract
         } catch(Exception $e) {
             throw new BadMethodCallException(sprintf(
                 'Partial [%s] method call [%s] throws an exception: %s',
-                $this->getAlias(), $method, $e->getMessage()
+		$this->getAlias(), 
+		$method, 
+		$e->getMessage()
             ));
         }
     }

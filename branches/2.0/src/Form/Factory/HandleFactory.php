@@ -8,19 +8,14 @@ use tiFy\Contracts\Form\HandleFactory as HandleFactoryContract;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Form\Concerns\FormAwareTrait;
 use tiFy\Form\FieldValidateException;
+use tiFy\Support\Concerns\BootableTrait;
 use tiFy\Support\Concerns\ParamsBagTrait;
 use tiFy\Support\Proxy\Request;
 use tiFy\Support\Proxy\Url;
 
 class HandleFactory implements HandleFactoryContract
 {
-    use FormAwareTrait, ParamsBagTrait;
-
-    /**
-     * Indicateur de chargement.
-     * @var bool
-     */
-    private $booted = false;
+    use BootableTrait, FormAwareTrait, ParamsBagTrait;
 
     /**
      * Indicateur de soumission du formulaire.
@@ -45,7 +40,7 @@ class HandleFactory implements HandleFactoryContract
      */
     public function boot(): HandleFactoryContract
     {
-        if ($this->booted === false) {
+        if (!$this->isBooted()) {
             if (!$this->form() instanceof FormFactoryContract) {
                 throw new LogicException('Missing valid FormFactory');
             }
@@ -56,10 +51,10 @@ class HandleFactory implements HandleFactoryContract
             $this->form()->messages()->flush();
 
             switch ($method = $this->form()->getMethod()) {
-                case 'get' :
+                case 'get':
                     $method = 'query';
                     break;
-                case 'post' :
+                case 'post':
                     $method = 'post';
                     break;
             }
@@ -78,7 +73,7 @@ class HandleFactory implements HandleFactoryContract
                 }
             }
 
-            $this->booted = true;
+            $this->setBooted();
 
             $this->form()->event('handle.booted', [&$this]);
         }
@@ -99,7 +94,7 @@ class HandleFactory implements HandleFactoryContract
 
         $this->form()->session()->forget('notices');
 
-        foreach($this->form()->messages()->all() as $type => $notices) {
+        foreach ($this->form()->messages()->all() as $type => $notices) {
             $this->form()->session()->put("notices.{$type}", $notices);
         }
 
@@ -236,7 +231,7 @@ class HandleFactory implements HandleFactoryContract
         foreach ($this->form()->fields() as $name => $field) {
             try {
                 $field->validate();
-            } catch(FieldValidateException $e) {
+            } catch (FieldValidateException $e) {
                 $field->error($e->getMessage());
             }
         }
