@@ -3,7 +3,7 @@
 namespace tiFy\Partial;
 
 use Closure;
-use BadMethodCallException, 
+use BadMethodCallException;
 use Exception;
 use tiFy\Contracts\Partial\Partial as PartialManager;
 use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
