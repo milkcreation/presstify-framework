@@ -4,8 +4,8 @@ namespace tiFy\Asset;
 
 use Psr\Container\ContainerInterface;
 use Illuminate\Support\Collection;
-use MatthiasMullie\Minify\CSS;
-use MatthiasMullie\Minify\JS;
+//use MatthiasMullie\Minify\CSS;
+//use MatthiasMullie\Minify\JS;
 use tiFy\Contracts\Asset\Asset as AssetContract;
 use tiFy\Support\ParamsBag;
 
@@ -47,7 +47,7 @@ class Asset extends ParamsBag implements AssetContract
             }
         }
         return $js
-            ? "<script type=\"text/javascript\">/* <![CDATA[ */" . ((new JS($js))->minify()) . "/* ]]> */</script>"
+            ? "<script type=\"text/javascript\">/* <![CDATA[ */" . $js/*((new JS($js))->minify())*/ . "/* ]]> */</script>"
             : '';
     }
 
@@ -72,7 +72,7 @@ class Asset extends ParamsBag implements AssetContract
                 $css .= $v;
             }
             if ($css) {
-                $output .= "<style type=\"text/css\">" . ((new CSS($css))->minify()) . "</style>";
+                $output .= "<style type=\"text/css\">" . $css /*((new CSS($css))->minify())*/ . "</style>";
             }
         }
 
@@ -91,7 +91,7 @@ class Asset extends ParamsBag implements AssetContract
 
         if ($js) {
             $js = "let tify={};{$js}";
-            $output .= "<script type=\"text/javascript\">/* <![CDATA[ */" . ((new JS($js))->minify()) . "/* ]]> */</script>";
+            $output .= "<script type=\"text/javascript\">/* <![CDATA[ */" . $js/*((new JS($js))->minify())*/ . "/* ]]> */</script>";
         }
 
         return $output;

@@ -1,13 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Partial;
 
 use Closure;
 use BadMethodCallException;
 use Exception;
-use tiFy\Contracts\Partial\Partial as PartialManager;
-use tiFy\Contracts\Partial\PartialDriver as PartialDriverContract;
 use tiFy\Contracts\View\Engine as ViewEngine;
+use tiFy\Partial\Contracts\PartialContract;
 use tiFy\Support\Concerns\BootableTrait;
 use tiFy\Support\Concerns\ParamsBagTrait;
 use tiFy\Support\HtmlAttrs;
@@ -17,9 +18,10 @@ use tiFy\Support\Str;
 /**
  * @mixin \tiFy\Support\ParamsBag
  */
-class PartialDriver implements PartialDriverContract
+class PartialDriver implements PartialDriverInterface
 {
-    use BootableTrait, ParamsBagTrait;
+    use BootableTrait;
+    use ParamsBagTrait;
 
     /**
      * Indice de l'instance dans le gestionnaire.
@@ -29,7 +31,7 @@ class PartialDriver implements PartialDriverContract
 
     /**
      * Instance du gestionnaire.
-     * @var Partial
+     * @var PartialContract
      */
     private $partialManager;
 
@@ -59,9 +61,9 @@ class PartialDriver implements PartialDriverContract
     protected $viewEngine;
 
     /**
-     * @param PartialManager $partialManager
+     * @param PartialContract $partialManager
      */
-    public function __construct(PartialManager $partialManager)
+    public function __construct(PartialContract $partialManager)
     {
         $this->partialManager = $partialManager;
     }
@@ -81,13 +83,15 @@ class PartialDriver implements PartialDriverContract
     {
         try {
             return $this->params()->{$method}(...$arguments);
-        } catch(Exception $e) {
-            throw new BadMethodCallException(sprintf(
-                'Partial [%s] method call [%s] throws an exception: %s',
-		$this->getAlias(), 
-		$method, 
-		$e->getMessage()
-            ));
+        } catch (Exception $e) {
+            throw new BadMethodCallException(
+                sprintf(
+                    'Partial [%s] method call [%s] throws an exception: %s',
+                    $this->getAlias(),
+                    $method,
+                    $e->getMessage()
+                )
+            );
         }
     }
 
@@ -129,9 +133,13 @@ class PartialDriver implements PartialDriverContract
     public function boot(): void
     {
         if (!$this->isBooted()) {
+            events()->trigger('partial.driver.booting', [$this->getAlias(), $this]);
+
             $this->parseParams();
 
             $this->setBooted();
+
+            events()->trigger('partial.driver.booted', [$this->getAlias(), $this]);
         }
     }
 
@@ -150,28 +158,31 @@ class PartialDriver implements PartialDriverContract
      */
     public function defaultParams(): array
     {
-        return array_merge(static::$defaults, [
-            /**
-             * @var array $attrs Attributs HTML du champ.
-             */
-            'attrs'    => [],
-            /**
-             * @var string $after Contenu placé après le champ.
-             */
-            'after'    => '',
-            /**
-             * @var string $before Contenu placé avant le champ.
-             */
-            'before'   => '',
-            /**
-             * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
-             */
-            'viewer'   => [],
-            /**
-             * @var Closure|array|string|null
-             */
-            'render'   => null
-        ]);
+        return array_merge(
+            static::$defaults,
+            [
+                /**
+                 * @var array $attrs Attributs HTML du champ.
+                 */
+                'attrs'  => [],
+                /**
+                 * @var string $after Contenu placé après le champ.
+                 */
+                'after'  => '',
+                /**
+                 * @var string $before Contenu placé avant le champ.
+                 */
+                'before' => '',
+                /**
+                 * @var array $viewer Liste des attributs de configuration du pilote d'affichage.
+                 */
+                'viewer' => [],
+                /**
+                 * @var Closure|array|string|null
+                 */
+                'render' => null,
+            ]
+        );
     }
 
     /**
@@ -208,10 +219,8 @@ class PartialDriver implements PartialDriverContract
 
     /**
      * @inheritDoc
-     *
-     * @return $this
      */
-    public function parseParams(): PartialDriverContract
+    public function parseParams(): PartialDriverInterface
     {
         return $this->parseAttrId()->parseAttrClass();
     }
@@ -219,7 +228,7 @@ class PartialDriver implements PartialDriverContract
     /**
      * @inheritDoc
      */
-    public function parseAttrClass(): PartialDriverContract
+    public function parseAttrClass(): PartialDriverInterface
     {
         $base = Str::studly($this->getAlias());
 
@@ -233,26 +242,24 @@ class PartialDriver implements PartialDriverContract
         if (!$this->get('attrs.class')) {
             $this->forget('attrs.class');
         }
-
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function parseAttrId(): PartialDriverContract
+    public function parseAttrId(): PartialDriverInterface
     {
         if (!$this->get('attrs.id')) {
             $this->forget('attrs.id');
         }
-
         return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function partialManager(): PartialManager
+    public function partialManager(): PartialContract
     {
         return $this->partialManager;
     }
@@ -268,25 +275,7 @@ class PartialDriver implements PartialDriverContract
     /**
      * @inheritDoc
      */
-    public static function setDefaults(array $defaults = []): void
-    {
-        static::$defaults = $defaults;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setId(string $id): PartialDriverContract
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setAlias(string $alias): PartialDriverContract
+    public function setAlias(string $alias): PartialDriverInterface
     {
         $this->alias = $alias;
 
@@ -296,7 +285,25 @@ class PartialDriver implements PartialDriverContract
     /**
      * @inheritDoc
      */
-    public function setIndex(int $index): PartialDriverContract
+    public static function setDefaults(array $defaults = []): void
+    {
+        static::$defaults = $defaults;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setId(string $id): PartialDriverInterface
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setIndex(int $index): PartialDriverInterface
     {
         $this->index = $index;
 
@@ -306,9 +313,9 @@ class PartialDriver implements PartialDriverContract
     /**
      * @inheritDoc
      */
-    public function setViewEngine(ViewEngine $viewer): PartialDriverContract
+    public function setViewEngine(ViewEngine $viewEngine): PartialDriverInterface
     {
-        $this->viewEngine = $viewer;
+        $this->viewEngine = $viewEngine;
 
         return $this;
     }
@@ -340,11 +347,17 @@ class PartialDriver implements PartialDriverContract
                 }
             }
 
-            $this->viewEngine->params(array_merge([
-                'directory' => $this->viewDirectory(),
-                'factory'   => PartialView::class,
-                'driver'    => $this,
-            ], $defaultConfig, $this->get('viewer', [])));
+            $this->viewEngine->params(
+                array_merge(
+                    [
+                        'directory' => $this->viewDirectory(),
+                        'factory'   => PartialView::class,
+                        'driver'    => $this,
+                    ],
+                    $defaultConfig,
+                    $this->get('viewer', [])
+                )
+            );
         }
 
         if (func_num_args() === 0) {
@@ -363,16 +376,12 @@ class PartialDriver implements PartialDriverContract
     }
 
     /**
-     * Contrôleur de traitement des requêtes XHR.
-     *
-     * @param array ...$args
-     *
-     * @return array
+     * @inheritDoc
      */
     public function xhrResponse(...$args): array
     {
         return [
-            'success' => true
+            'success' => true,
         ];
     }
 }

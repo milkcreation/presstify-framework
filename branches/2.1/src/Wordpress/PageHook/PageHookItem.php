@@ -3,11 +3,11 @@
 namespace tiFy\Wordpress\PageHook;
 
 use Closure;
-use tiFy\Contracts\Partial\BreadcrumbCollection as BaseBreadcrumbCollection;
+use tiFy\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface as BaseBreadcrumbCollectionInterface;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\Router;
 use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;
-use tiFy\Wordpress\Contracts\Partial\BreadcrumbCollection;
+use tiFy\Wordpress\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface;
 use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
 use tiFy\Wordpress\Query\QueryPost;
 use WP_Admin_Bar, WP_Post, WP_Query, WP_Term;
@@ -353,8 +353,8 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                 }
             }, 999999);
 
-            events()->listen('partial.breadcrumb.prefetch', function (BaseBreadcrumbCollection $bc, $e) {
-                if ($bc instanceof BreadcrumbCollection) {
+            events()->listen('partial.breadcrumb.prefetch', function (BaseBreadcrumbCollectionInterface $bc, $e) {
+                if ($bc instanceof BreadcrumbCollectionInterface) {
                     if (in_array(Router::currentRouteName(), $this->get('routes', []))) {
                         $bc->clear();
                         $bc->addRoot(null, true);

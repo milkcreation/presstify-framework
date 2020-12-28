@@ -2,7 +2,8 @@
 
 namespace tiFy\Metabox;
 
-use Closure, Exception;
+use Closure;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use tiFy\Contracts\Metabox\MetaboxContext;
 use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;

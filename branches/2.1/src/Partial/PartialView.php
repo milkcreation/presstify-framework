@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Partial;
 
 use BadMethodCallException;
 use Exception;
-use tiFy\Contracts\Partial\PartialView as PartialViewContract;
 use tiFy\View\Factory\PlatesFactory;
 
 /**
@@ -16,7 +17,7 @@ use tiFy\View\Factory\PlatesFactory;
  * @method string getId()
  * @method string getIndex()
  */
-class PartialView extends PlatesFactory implements PartialViewContract
+class PartialView extends PlatesFactory implements PartialViewInterface
 {
     /**
      * Liste des méthodes héritées.
@@ -43,10 +44,13 @@ class PartialView extends PlatesFactory implements PartialViewContract
 
                 return $delegate->{$name}(...$arguments);
             } catch (Exception $e) {
-                throw new BadMethodCallException(sprintf(
-                    __CLASS__ . ' throws an exception during the method call [%s] with message : %s',
-                    $name, $e->getMessage()
-                ));
+                throw new BadMethodCallException(
+                    sprintf(
+                        __CLASS__ . ' throws an exception during the method call [%s] with message : %s',
+                        $name,
+                        $e->getMessage()
+                    )
+                );
             }
         } else {
             return parent::__call($name, $arguments);

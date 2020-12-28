@@ -9,8 +9,6 @@ use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Database\Database;
-use tiFy\Contracts\Field\Field;
-use tiFy\Contracts\Field\FieldDriver;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
 use tiFy\Contracts\Form\FormFactory;
@@ -22,8 +20,6 @@ use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\Log\LogManager;
-use tiFy\Contracts\Partial\PartialDriver;
-use tiFy\Contracts\Partial\Partial as PartialManager;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\Routing\Redirector;
@@ -37,6 +33,10 @@ use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\User;
 use tiFy\Contracts\Validation\Validator;
 use tiFy\Contracts\View\Engine as ViewEngine;
+use tiFy\Field\Contracts\FieldContract;
+use tiFy\Field\FieldDriverInterface;
+use tiFy\Partial\Contracts\PartialContract;
+use tiFy\Partial\PartialDriverInterface;
 use tiFy\Support\Env;
 use tiFy\tiFy;
 
@@ -228,12 +228,12 @@ if (!function_exists('field')) {
      * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
      * @param mixed $attrs Liste des attributs de configuration.
      *
-     * @return Field|FieldDriver|null
+     * @return FieldContract|FieldDriverInterface|null
      */
     function field($name = null, $id = null, $attrs = null)
     {
-        /* @var Field $manager */
-        $manager = app('field');
+        /* @var FieldContract $manager */
+        $manager = app(FieldContract::class);
 
         if (is_null($name)) {
             return $manager;
@@ -292,12 +292,12 @@ if (!function_exists('partial')) {
      * @param mixed $idOrParams Identifiant de qualification|Liste des attributs de configuration.
      * @param array $params Liste des attributs de configuration.
      *
-     * @return PartialManager|PartialDriver|null
+     * @return PartialContract|PartialDriverInterface|null
      */
     function partial(?string $name = null, $idOrParams = null, array $params = [])
     {
-        /* @var PartialManager $manager */
-        $manager = app(PartialManager::class);
+        /* @var PartialContract $manager */
+        $manager = app(PartialContract::class);
 
         if (is_null($name)) {
             return $manager;

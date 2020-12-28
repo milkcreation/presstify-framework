@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Field;
 
 use Exception;
 use BadMethodCallException;
-use tiFy\Contracts\Field\FieldView as FieldViewContract;
 use tiFy\View\Factory\PlatesFactory;
 
 /**
@@ -18,7 +19,7 @@ use tiFy\View\Factory\PlatesFactory;
  * @method string getName()
  * @method string getValue()
  */
-class FieldView extends PlatesFactory implements FieldViewContract
+class FieldView extends PlatesFactory implements FieldViewInterface
 {
     /**
      * Liste des méthodes héritées.
@@ -33,27 +34,30 @@ class FieldView extends PlatesFactory implements FieldViewContract
         'getId',
         'getIndex',
         'getName',
-        'getValue'
+        'getValue',
     ];
 
     /**
      * @inheritDoc
      */
-    public function __call($name, $args)
+    public function __call($name, $arguments)
     {
         if (in_array($name, $this->mixins)) {
             try {
-                $driver = $this->engine->params('driver');
+                $delegate = $this->engine->params('driver');
 
-                return $driver->{$name}(...$args);
+                return $delegate->{$name}(...$arguments);
             } catch (Exception $e) {
-                throw new BadMethodCallException(sprintf(
-                    __CLASS__ . ' throws an exception during the method call [%s] with message : %s',
-                    $name, $e->getMessage()
-                ));
+                throw new BadMethodCallException(
+                    sprintf(
+                        __CLASS__ . ' throws an exception during the method call [%s] with message : %s',
+                        $name,
+                        $e->getMessage()
+                    )
+                );
             }
         } else {
-            return parent::__call($name, $args);
+            return parent::__call($name, $arguments);
         }
     }
 }
