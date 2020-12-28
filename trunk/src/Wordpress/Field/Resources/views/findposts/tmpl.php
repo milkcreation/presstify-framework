@@ -1,8 +1,6 @@
 <?php
 /**
- * Field Findposts - Réponse AJAX.
  * {@internal type="x-tmpl-mustache" est requis.}
- * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Field\FieldView $this
  */
 ?>

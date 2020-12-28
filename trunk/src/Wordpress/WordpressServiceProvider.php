@@ -5,7 +5,8 @@ namespace tiFy\Wordpress;
 use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Debug\Debug as DebugManager;
 use tiFy\Contracts\Form\FormManager;
-use tiFy\Contracts\Partial\Partial as PartialManager;
+use tiFy\Field\Contracts\FieldContract;
+use tiFy\Partial\Contracts\PartialContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Auth\Auth;
@@ -131,7 +132,7 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('wp.db');
                 }
 
-                if ($this->getContainer()->has('field')) {
+                if ($this->getContainer()->has(FieldContract::class)) {
                     $this->getContainer()->get('wp.field');
                 }
 
@@ -155,7 +156,7 @@ class WordpressServiceProvider extends ServiceProvider
 
                 $this->getContainer()->get('wp.option');
 
-                if ($this->getContainer()->has(PartialManager::class)) {
+                if ($this->getContainer()->has(PartialContract::class)) {
                     $this->getContainer()->get('wp.partial');
                 }
 
@@ -322,7 +323,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerField(): void
     {
         $this->getContainer()->share('wp.field', function () {
-            return new Field($this->getContainer()->get('field'));
+            return new Field($this->getContainer()->get(FieldContract::class), $this->getContainer());
         });
     }
 
@@ -418,7 +419,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerPartial(): void
     {
         $this->getContainer()->share('wp.partial', function () {
-            return new Partial($this->getContainer()->get(PartialManager::class), $this->getContainer());
+            return new Partial($this->getContainer()->get(PartialContract::class), $this->getContainer());
         });
     }
 
