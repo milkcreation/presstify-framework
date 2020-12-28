@@ -1,7 +1,5 @@
 <?php
 /**
- * Field Findposts - Fenêtre modale.
- * ---------------------------------------------------------------------------------------------------------------------
  * @var tiFy\Field\FieldView $this
  * @var array $post_types
  * @var array $query_args

@@ -27,13 +27,13 @@ class MetaboxView extends PlatesFactory implements MetaboxViewContract
     /**
      * @inheritDoc
      */
-    public function __call($name, $args)
+    public function __call($name, $arguments)
     {
         if (in_array($name, $this->mixins)) {
             try {
                 $driver = $this->engine->params('driver');
 
-                return $driver->{$name}(...$args);
+                return $driver->{$name}(...$arguments);
             } catch (Exception $e) {
                 throw new BadMethodCallException(sprintf(
                     __CLASS__ . ' throws an exception during the method call [%s] with message : %s',
@@ -41,7 +41,7 @@ class MetaboxView extends PlatesFactory implements MetaboxViewContract
                 ));
             }
         } else {
-            return parent::__call($name, $args);
+            return parent::__call($name, $arguments);
         }
     }
 }

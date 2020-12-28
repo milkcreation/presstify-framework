@@ -3,20 +3,20 @@
 namespace tiFy\Support\Proxy;
 
 use Closure;
-use tiFy\Contracts\Partial\Partial as PartialManager;
-use tiFy\Contracts\Partial\PartialDriver;
+use tiFy\Partial\Contracts\PartialContract;
+use tiFy\Partial\PartialDriverInterface;
 
 /**
- * @method static PartialDriver|null get(string $alias, array|string|null $idOrParams = null, array $params = [])
+ * @method static PartialDriverInterface|null get(string $alias, array|string|null $idOrParams = null, array $params = [])
  * @method static mixed config(string|array|null $key = null, $default = null)
- * @method static PartialManager register(string $alias, PartialDriver|Closure|string| $driverDefinition)
+ * @method static PartialContract register(string $alias, PartialDriverInterface|Closure|string $driverDefinition)
  */
 class Partial extends AbstractProxy
 {
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|PartialManager
+     * @return mixed|object|PartialContract
      */
     public static function getInstance()
     {
@@ -28,6 +28,6 @@ class Partial extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return PartialManager::class;
+        return PartialContract::class;
     }
 }

@@ -1,94 +1,54 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Field;
 
-use Exception;
 use Psr\Container\ContainerInterface as Container;
-use tiFy\Contracts\Field\Colorpicker as ColorpickerContract;
-use tiFy\Contracts\Field\Field as Manager;
-use tiFy\Contracts\Field\DatetimeJs as DatetimeJsContract;
-use tiFy\Contracts\Field\FileJs as FileJsContract;
-use tiFy\Contracts\Field\NumberJs as NumberJsContract;
-use tiFy\Contracts\Field\PasswordJs as PasswordJsContract;
-use tiFy\Contracts\Field\Repeater as RepeaterContract;
-use tiFy\Contracts\Field\SelectImage as SelectImageContract;
-use tiFy\Contracts\Field\SelectJs as SelectJsContract;
-use tiFy\Contracts\Field\Suggest as SuggestContract;
-use tiFy\Contracts\Field\TextRemaining as TextRemainingContract;
-use tiFy\Contracts\Field\Tinymce as TinymceContract;
-use tiFy\Contracts\Field\ToggleSwitch as ToggleSwitchContract;
-use tiFy\Wordpress\Contracts\Field\Findposts as FindpostsContract;
-use tiFy\Wordpress\Contracts\Field\MediaFile as MediaFileContract;
-use tiFy\Wordpress\Contracts\Field\MediaImage as MediaImageContract;
-use tiFy\Wordpress\Field\Driver\Colorpicker\Colorpicker;
-use tiFy\Wordpress\Field\Driver\DatetimeJs\DatetimeJs;
-use tiFy\Wordpress\Field\Driver\FileJs\FileJs;
-use tiFy\Wordpress\Field\Driver\Findposts\Findposts;
-use tiFy\Wordpress\Field\Driver\MediaFile\MediaFile;
-use tiFy\Wordpress\Field\Driver\MediaImage\MediaImage;
-use tiFy\Wordpress\Field\Driver\NumberJs\NumberJs;
-use tiFy\Wordpress\Field\Driver\PasswordJs\PasswordJs;
-use tiFy\Wordpress\Field\Driver\Repeater\Repeater;
-use tiFy\Wordpress\Field\Driver\SelectImage\SelectImage;
-use tiFy\Wordpress\Field\Driver\SelectJs\SelectJs;
-use tiFy\Wordpress\Field\Driver\Suggest\Suggest;
-use tiFy\Wordpress\Field\Driver\TextRemaining\TextRemaining;
-use tiFy\Wordpress\Field\Driver\Tinymce\Tinymce;
-use tiFy\Wordpress\Field\Driver\ToggleSwitch\ToggleSwitch;
+use tiFy\Field\Contracts\FieldContract;
+use tiFy\Support\Concerns\ContainerAwareTrait;
+use tiFy\Wordpress\Field\Drivers\FileJsDriver;
+use tiFy\Wordpress\Field\Drivers\FindpostsDriver;
+use tiFy\Wordpress\Field\Drivers\MediaFileDriver;
+use tiFy\Wordpress\Field\Drivers\MediaImageDriver;
+use tiFy\Wordpress\Field\Drivers\SuggestDriver;
 
 class Field
 {
-    /**
-     * Instance du conteneur d'injection de dépendances.
-     * @var Container
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
      * Définition des pilotes spécifiques à Wordpress.
      * @var array
      */
     protected $drivers = [
-        'findposts'   => FindpostsContract::class,
-        'media-file'  => MediaFileContract::class,
-        'media-image' => MediaImageContract::class,
+        'findposts'   => FindpostsDriver::class,
+        'media-file'  => MediaFileDriver::class,
+        'media-image' => MediaImageDriver::class,
     ];
 
     /**
      * Instance du gestionnaire des champs.
-     * @var Manager
+     * @var FieldContract
      */
-    protected $manager;
+    protected $fieldManager;
 
     /**
-     * @param Manager $manager Instance du gestionnaire des champs.
-     *
-     * @return void
-     *
-     * @throws Exception
+     * @param FieldContract $fieldManager Instance du gestionnaire des champs.
+     * @param Container $container
      */
-    public function __construct(Manager $manager)
+    public function __construct(FieldContract $fieldManager, Container $container)
     {
-        $this->manager = $manager;
-        $this->container = $this->manager->getContainer();
+        $this->fieldManager = $fieldManager;
+        $this->setContainer($container);
 
         $this->registerDrivers();
         $this->registerOverride();
 
-        $this->manager->boot();
+        $this->fieldManager->boot();
         foreach ($this->drivers as $name => $alias) {
-            $this->manager->register($name, $this->getContainer()->get($alias));
+            $this->fieldManager->register($name, $this->getContainer()->get($alias));
         }
-    }
-
-    /**
-     * Récupération du conteneur d'injection de dépendance.
-     *
-     * @return Container
-     */
-    protected function getContainer(): Container
-    {
-        return $this->container;
     }
 
     /**
@@ -98,17 +58,20 @@ class Field
      */
     public function registerDrivers(): void
     {
-        $this->getContainer()->add(FindpostsContract::class, function () {
-            return new Findposts();
-        });
-
-        $this->getContainer()->add(MediaFileContract::class, function () {
-            return new MediaFile();
-        });
-
-        $this->getContainer()->add(MediaImageContract::class, function () {
-            return new MediaImage();
-        });
+        $this->getContainer()->add(
+            FindpostsDriver::class,
+            function () {
+                return new FindpostsDriver($this->getContainer()->get(FieldContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            MediaFileDriver::class,
+            new MediaFileDriver($this->getContainer()->get(FieldContract::class))
+        );
+        $this->getContainer()->add(
+            MediaImageDriver::class,
+            new MediaImageDriver($this->getContainer()->get(FieldContract::class))
+        );
     }
 
     /**
@@ -118,52 +81,17 @@ class Field
      */
     public function registerOverride(): void
     {
-        $this->getContainer()->add(ColorpickerContract::class, function () {
-            return new Colorpicker();
-        });
-
-        $this->getContainer()->add(DatetimeJsContract::class, function () {
-            return new DatetimeJs();
-        });
-
-        $this->getContainer()->add(FileJsContract::class, function () {
-            return new FileJs();
-        });
-
-        $this->getContainer()->add(NumberJsContract::class, function () {
-            return new NumberJs();
-        });
-
-        $this->getContainer()->add(PasswordJsContract::class, function () {
-            return new PasswordJs();
-        });
-
-        $this->getContainer()->add(RepeaterContract::class, function () {
-            return new Repeater();
-        });
-
-        $this->getContainer()->add(SelectImageContract::class, function () {
-            return new SelectImage();
-        });
-
-        $this->getContainer()->add(SelectJsContract::class, function () {
-            return new SelectJs();
-        });
-
-        $this->getContainer()->add(SuggestContract::class, function () {
-            return new Suggest();
-        });
-
-        $this->getContainer()->add(TextRemainingContract::class, function () {
-            return new TextRemaining();
-        });
-
-        $this->getContainer()->add(TinymceContract::class, function () {
-            return new Tinymce();
-        });
-
-        $this->getContainer()->add(ToggleSwitchContract::class, function () {
-            return new ToggleSwitch();
-        });
+        $this->getContainer()->add(
+            FileJsDriver::class,
+            function () {
+                return new FileJsDriver($this->getContainer()->get(FieldContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            SuggestDriver::class,
+            function () {
+                return new SuggestDriver($this->getContainer()->get(FieldContract::class));
+            }
+        );
     }
 }
