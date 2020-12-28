@@ -2,13 +2,14 @@
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Field\Field as FieldContract;
-use tiFy\Contracts\Field\FieldDriver;
+use Closure;
+use tiFy\Field\Contracts\FieldContract;
+use tiFy\Field\FieldDriverInterface;
 
 /**
- * @method static FieldDriver|null get(string $name, array|string|null $id = null, array $attrs = [])
+ * @method static FieldDriverInterface|null get(string $name, array|string|null $id = null, array $attrs = [])
  * @method static mixed config(string|array|null $key = null, $default = null)
- * @method static FieldDriver register(string $name, FieldDriver $partial)
+ * @method static FieldDriverInterface register(string $name, FieldDriverInterface|Closure|string $partial)
  */
 class Field extends AbstractProxy
 {
@@ -27,6 +28,6 @@ class Field extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'field';
+        return FieldContract::class;
     }
 }

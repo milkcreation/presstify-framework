@@ -1,25 +1,25 @@
 {
   "name": "presstify/framework",
   "description": "Framework PresstiFy",
-  "homepage": "https://svn.tigreblanc.fr/presstify-framework/",
+  "homepage": "https://www.presstify.com/pollen-solutions/framework/",
   "keywords": [
     "framework",
     "presstify",
     "wordpress"
   ],
   "license": "MIT",
-  "time": "2020-12-25",
+  "time": "2020-12-28",
   "authors": [
     {
       "name": "Jordy Manner",
-      "email": "jordy.manner@milkcreation.fr",
+      "email": "jordy@presstify.com",
       "role": "Developper"
     }
   ],
   "repositories": [
     {
       "type": "composer",
-      "url": "https://composer.tigreblanc.fr/presstify/"
+      "url": "https://composer.presstify.com/presstify/"
     }
   ],
   "require": {

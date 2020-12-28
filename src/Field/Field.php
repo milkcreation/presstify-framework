@@ -1,46 +1,57 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Field;
 
+use Closure;
 use Exception;
 use InvalidArgumentException;
+use RuntimeException;
+use League\Route\Http\Exception\NotFoundException;
 use Psr\Container\ContainerInterface as Container;
-use tiFy\Contracts\Field\Button;
-use tiFy\Contracts\Field\Checkbox;
-use tiFy\Contracts\Field\CheckboxCollection;
-use tiFy\Contracts\Field\Colorpicker;
-use tiFy\Contracts\Field\Datepicker;
-use tiFy\Contracts\Field\DatetimeJs;
-use tiFy\Contracts\Field\Field as FieldContract;
-use tiFy\Contracts\Field\FieldDriver;
-use tiFy\Contracts\Field\File;
-use tiFy\Contracts\Field\FileJs;
-use tiFy\Contracts\Field\Hidden;
-use tiFy\Contracts\Field\Label;
-use tiFy\Contracts\Field\Number;
-use tiFy\Contracts\Field\NumberJs;
-use tiFy\Contracts\Field\Password;
-use tiFy\Contracts\Field\PasswordJs;
-use tiFy\Contracts\Field\Radio;
-use tiFy\Contracts\Field\RadioCollection;
-use tiFy\Contracts\Field\Repeater;
-use tiFy\Contracts\Field\Required;
-use tiFy\Contracts\Field\Select;
-use tiFy\Contracts\Field\SelectImage;
-use tiFy\Contracts\Field\SelectJs;
-use tiFy\Contracts\Field\Submit;
-use tiFy\Contracts\Field\Suggest;
-use tiFy\Contracts\Field\Text;
-use tiFy\Contracts\Field\TextRemaining;
-use tiFy\Contracts\Field\Textarea;
-use tiFy\Contracts\Field\Tinymce;
-use tiFy\Contracts\Field\ToggleSwitch;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
+use tiFy\Contracts\Routing\Route;
+use tiFy\Field\Contracts\FieldContract;
+use tiFy\Field\Drivers\ButtonDriver;
+use tiFy\Field\Drivers\CheckboxCollectionDriver;
+use tiFy\Field\Drivers\CheckboxDriver;
+use tiFy\Field\Drivers\ColorpickerDriver;
+use tiFy\Field\Drivers\DatepickerDriver;
+use tiFy\Field\Drivers\DatetimeJsDriver;
+use tiFy\Field\Drivers\FileDriver;
+use tiFy\Field\Drivers\FileJsDriver;
+use tiFy\Field\Drivers\HiddenDriver;
+use tiFy\Field\Drivers\LabelDriver;
+use tiFy\Field\Drivers\NumberDriver;
+use tiFy\Field\Drivers\NumberJsDriver;
+use tiFy\Field\Drivers\PasswordDriver;
+use tiFy\Field\Drivers\PasswordJsDriver;
+use tiFy\Field\Drivers\RadioCollectionDriver;
+use tiFy\Field\Drivers\RadioDriver;
+use tiFy\Field\Drivers\RepeaterDriver;
+use tiFy\Field\Drivers\RequiredDriver;
+use tiFy\Field\Drivers\SelectDriver;
+use tiFy\Field\Drivers\SelectImageDriver;
+use tiFy\Field\Drivers\SelectJsDriver;
+use tiFy\Field\Drivers\SubmitDriver;
+use tiFy\Field\Drivers\SuggestDriver;
+use tiFy\Field\Drivers\TextareaDriver;
+use tiFy\Field\Drivers\TextDriver;
+use tiFy\Field\Drivers\TextRemainingDriver;
+use tiFy\Field\Drivers\TinymceDriver;
+use tiFy\Field\Drivers\ToggleSwitchDriver;
+use tiFy\Support\Concerns\BootableTrait;
+use tiFy\Support\Concerns\ContainerAwareTrait;
 use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Router;
 use tiFy\Support\Proxy\Storage;
 
 class Field implements FieldContract
 {
+    use ContainerAwareTrait;
+    use BootableTrait;
+
     /**
      * Instance de la classe.
      * @var static|null
@@ -48,44 +59,44 @@ class Field implements FieldContract
     private static $instance;
 
     /**
-     * Indicateur d'initialisation.
-     * @var bool
+     * Instance du gestionnaire de configuration.
+     * @var ParamsBag
      */
-    private $booted = false;
+    private $configBag;
 
     /**
      * Définition des pilotes par défaut.
      * @var array
      */
     private $defaultDrivers = [
-        'button'              => Button::class,
-        'checkbox'            => Checkbox::class,
-        'checkbox-collection' => CheckboxCollection::class,
-        'colorpicker'         => Colorpicker::class,
-        'datepicker'          => Datepicker::class,
-        'datetime-js'         => DatetimeJs::class,
-        'file'                => File::class,
-        'file-js'             => FileJs::class,
-        'hidden'              => Hidden::class,
-        'label'               => Label::class,
-        'number'              => Number::class,
-        'number-js'           => NumberJs::class,
-        'password'            => Password::class,
-        'password-js'         => PasswordJs::class,
-        'radio'               => Radio::class,
-        'radio-collection'    => RadioCollection::class,
-        'repeater'            => Repeater::class,
-        'required'            => Required::class,
-        'select'              => Select::class,
-        'select-image'        => SelectImage::class,
-        'select-js'           => SelectJs::class,
-        'submit'              => Submit::class,
-        'suggest'             => Suggest::class,
-        'text'                => Text::class,
-        'textarea'            => Textarea::class,
-        'text-remaining'      => TextRemaining::class,
-        'tinymce'             => Tinymce::class,
-        'toggle-switch'       => ToggleSwitch::class,
+        'button'              => ButtonDriver::class,
+        'checkbox'            => CheckboxDriver::class,
+        'checkbox-collection' => CheckboxCollectionDriver::class,
+        'colorpicker'         => ColorpickerDriver::class,
+        'datepicker'          => DatepickerDriver::class,
+        'datetime-js'         => DatetimeJsDriver::class,
+        'file'                => FileDriver::class,
+        'file-js'             => FileJsDriver::class,
+        'hidden'              => HiddenDriver::class,
+        'label'               => LabelDriver::class,
+        'number'              => NumberDriver::class,
+        'number-js'           => NumberJsDriver::class,
+        'password'            => PasswordDriver::class,
+        'password-js'         => PasswordJsDriver::class,
+        'radio'               => RadioDriver::class,
+        'radio-collection'    => RadioCollectionDriver::class,
+        'repeater'            => RepeaterDriver::class,
+        'required'            => RequiredDriver::class,
+        'select'              => SelectDriver::class,
+        'select-image'        => SelectImageDriver::class,
+        'select-js'           => SelectJsDriver::class,
+        'submit'              => SubmitDriver::class,
+        'suggest'             => SuggestDriver::class,
+        'text'                => TextDriver::class,
+        'textarea'            => TextareaDriver::class,
+        'text-remaining'      => TextRemainingDriver::class,
+        'tinymce'             => TinymceDriver::class,
+        'toggle-switch'       => ToggleSwitchDriver::class,
     ];
 
     /**
@@ -101,28 +112,16 @@ class Field implements FieldContract
     private $resources;
 
     /**
-     * Instance du gestionnaire de configuration.
-     * @var ParamsBag
+     * Route de traitement des requêtes XHR.
+     * @var Route|null
      */
-    protected $config;
+    private $xhrRoute;
 
     /**
-     * Instance du conteneur d'injection de dépendances.
-     * @var Container|null
+     * Liste des pilotes déclarés.
+     * @var FieldDriver[][]|Closure[][]|string[][]|array
      */
-    protected $container;
-
-    /**
-     * Liste des indices courant des pilotes déclarées par alias de qualification.
-     * @var int[]
-     */
-    protected $indexes = [];
-
-    /**
-     * Instances des pilotes initiés par alias de qualification et indexés par identifiant de qualification.
-     * @var FieldDriver[][]
-     */
-    protected $instances = [];
+    protected $driverDefinitions = [];
 
     /**
      * @param array $config
@@ -152,26 +151,15 @@ class Field implements FieldContract
             return self::$instance;
         }
 
-        throw new Exception(sprintf('Unavailable %s instance', __CLASS__));
+        throw new RuntimeException(sprintf('Unavailable %s instance', __CLASS__));
     }
 
     /**
-     * Déclaration d'un pilote.
-     *
-     * @param string $alias
-     * @param FieldDriver $driver
-     *
-     * @throws Exception
+     * @inheritDoc
      */
-    private function _registerDriver(string $alias, FieldDriver $driver): void
+    public function all(): array
     {
-        if (isset($this->drivers[$alias]) || isset($this->instances[$alias]) || isset($this->indexes[$alias])) {
-            throw new Exception(sprintf('Field alias [%s] already registered', $alias));
-        }
-
-        $this->drivers[$alias] = $driver->build($alias, $this);
-        $this->instances[$alias] = [$driver];
-        $this->indexes[$alias] = 0;
+        return $this->drivers;
     }
 
     /**
@@ -179,49 +167,21 @@ class Field implements FieldContract
      */
     public function boot(): FieldContract
     {
-        if (!$this->booted) {
+        if (!$this->isBooted()) {
+            events()->trigger('field.booting', [$this]);
+
+            $this->xhrRoute = Router::xhr(
+                md5('FieldManager') . '/{field}/{controller}',
+                [$this, 'xhrResponseDispatcher']
+            );
+
             $this->registerDefaultDrivers();
 
-            $this->booted = true;
-        }
+            $this->setBooted();
 
+            events()->trigger('field.booted', [$this]);
+        }
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function get(string $alias, $idOrAttrs = null, ?array $attrs = null): ?FieldDriver
-    {
-        if (!isset($this->drivers[$alias])) {
-            throw new InvalidArgumentException(sprintf('Field with alias [%s] unavailable', $alias));
-        }
-
-        if (is_array($idOrAttrs)) {
-            $attrs = $idOrAttrs;
-            $id = null;
-        } else {
-            $attrs = $attrs ?: [];
-            $id = $idOrAttrs;
-        }
-
-        if ($id) {
-            if (isset($this->instances[$alias][$id])) {
-                return $this->instances[$alias][$id];
-            }
-
-            $this->indexes[$alias]++;
-            $this->instances[$alias][$id] = clone $this->drivers[$alias];
-            $field = $this->instances[$alias][$id];
-        } else {
-            $this->indexes[$alias]++;
-            $field = clone $this->drivers[$alias];
-        }
-
-        return $field
-            ->setIndex($this->indexes[$alias])
-            ->setId($id ?? $alias . $this->indexes[$alias])
-            ->set($attrs)->parse();
     }
 
     /**
@@ -229,35 +189,102 @@ class Field implements FieldContract
      */
     public function config($key = null, $default = null)
     {
-        if (!isset($this->config) || is_null($this->config)) {
-            $this->config = new ParamsBag();
+        if (!isset($this->configBag) || is_null($this->configBag)) {
+            $this->configBag = new ParamsBag();
         }
 
         if (is_string($key)) {
-            return $this->config->get($key, $default);
+            return $this->configBag->get($key, $default);
         } elseif (is_array($key)) {
-            return $this->config->set($key);
+            return $this->configBag->set($key);
         } else {
-            return $this->config;
+            return $this->configBag;
         }
     }
 
     /**
      * @inheritDoc
      */
-    public function getContainer(): ?Container
+    public function get(string $alias, $idOrParams = null, ?array $params = []): ?FieldDriverInterface
     {
-        return $this->container;
+        if (is_array($idOrParams)) {
+            $params = $idOrParams;
+            $id = null;
+        } else {
+            $id = $idOrParams;
+        }
+
+        if ($id && isset($this->drivers[$alias][$id])) {
+            return $this->drivers[$alias][$id];
+        } elseif (!$driver = $this->getDriverFromDefinition($alias)) {
+            return null;
+        }
+
+        $this->drivers[$alias] = $this->drivers[$alias] ?? [];
+        $index = count($this->drivers[$alias]);
+        $id = $id ?? $alias . $index;
+        if (!$driver->getAlias()) {
+            $driver->setAlias($alias);
+        }
+        $params = array_merge($driver->defaultParams(), $this->config("driver.{$alias}", []), $params);
+
+        $driver->setIndex($index)->setId($id)->setParams($params)->boot();
+
+        return $this->drivers[$alias][$id] = $driver;
+    }
+
+    /**
+     * Récupération d'une instance de pilote depuis une définition.
+     *
+     * @param string $alias
+     *
+     * @return FieldDriver|null
+     */
+    protected function getDriverFromDefinition(string $alias): ?FieldDriver
+    {
+        if (!$def = $this->driverDefinitions[$alias] ?? null) {
+            throw new InvalidArgumentException(sprintf('Field with alias [%s] unavailable', $alias));
+        }
+
+        if ($def instanceof FieldDriver) {
+            return clone $def;
+        } elseif (is_string($def) && $this->containerHas($def)) {
+            if ($this->containerHas($def)) {
+                return $this->containerGet($def);
+            }
+        } elseif(is_string($def) && class_exists($def)) {
+            return new $def($this);
+        }
+
+        return null;
     }
 
     /**
      * @inheritDoc
      */
-    public function register(string $alias, FieldDriver $driver): FieldDriver
+    public function getXhrRouteUrl(string $field, ?string $controller = null, array $params = []): string
     {
-        $this->_registerDriver($alias, $driver);
+        $controller = $controller ?? 'xhrResponse';
 
-        return $driver;
+        return $this->xhrRoute->getUrl(array_merge($params, compact('field', 'controller')));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function register(string $alias, $driverDefinition, ?Closure $callback = null): FieldContract
+    {
+        if (isset($this->driverDefinitions[$alias])) {
+            throw new RuntimeException(sprintf('Another FieldDriver with alias [%s] already registered', $alias));
+        }
+
+        $this->driverDefinitions[$alias] = $driverDefinition;
+
+        if ($callback !== null) {
+            $callback($this);
+        }
+
+        return $this;
     }
 
     /**
@@ -266,26 +293,10 @@ class Field implements FieldContract
     public function registerDefaultDrivers(): FieldContract
     {
         foreach ($this->defaultDrivers as $name => $alias) {
-            $this->_registerDriver($name, $this->getContainer()->get($alias));
+            $this->register($name, $alias);
         }
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function resolve(string $alias)
-    {
-        return ($container = $this->getContainer()) ? $container->get("field.{$alias}") : null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function resolvable(string $alias): bool
-    {
-        return ($container = $this->getContainer()) && $container->has("field.{$alias}");
     }
 
     /**
@@ -313,10 +324,22 @@ class Field implements FieldContract
     /**
      * @inheritDoc
      */
-    public function setContainer(Container $container): FieldContract
+    public function xhrResponseDispatcher(string $field, string $controller, ...$args): array
     {
-        $this->container = $container;
+        try {
+            $driver = $this->get($field);
+        } catch(Exception $e) {
+            throw new NotFoundException(
+                sprintf('FieldDriver [%s] return exception : %s', $field, $e->getMessage())
+            );
+        }
 
-        return $this;
+        try {
+            return $driver->{$controller}(...$args);
+        } catch(Exception $e) {
+            throw new NotFoundException(
+                sprintf('FieldDriver [%s] Controller [%s] call return exception', $controller, $field)
+            );
+        }
     }
 }

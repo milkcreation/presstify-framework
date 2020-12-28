@@ -1,53 +1,33 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Partial;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Partial\Accordion as AccordionContract;
-use tiFy\Contracts\Partial\Breadcrumb as BreadcrumbContract;
-use tiFy\Contracts\Partial\BurgerButton as BurgerButtonContract;
-use tiFy\Contracts\Partial\CookieNotice as CookieNoticeContract;
-use tiFy\Contracts\Partial\CurtainMenu as CurtainMenuContract;
-use tiFy\Contracts\Partial\Dropdown as DropdownContract;
-use tiFy\Contracts\Partial\Downloader as DownloaderContract;
-use tiFy\Contracts\Partial\FlashNotice as FlashNoticeContract;
-use tiFy\Contracts\Partial\Holder as HolderContract;
-use tiFy\Contracts\Partial\ImageLightbox as ImageLightboxContract;
-use tiFy\Contracts\Partial\MenuDriver as MenuDriverContract;
-use tiFy\Contracts\Partial\Modal as ModalContract;
-use tiFy\Contracts\Partial\Notice as NoticeContract;
-use tiFy\Contracts\Partial\Pagination as PaginationContract;
-use tiFy\Contracts\Partial\Partial as PartialManagerContract;
-use tiFy\Contracts\Partial\Pdfviewer as PdfviewerContract;
-use tiFy\Contracts\Partial\Progress as ProgressContract;
-use tiFy\Contracts\Partial\Sidebar as SidebarContract;
-use tiFy\Contracts\Partial\Slider as SliderContract;
-use tiFy\Contracts\Partial\Spinner as SpinnerContract;
-use tiFy\Contracts\Partial\Tab as TabContract;
-use tiFy\Contracts\Partial\Table as TableContract;
-use tiFy\Contracts\Partial\Tag as TagContract;
-use tiFy\Partial\Driver\Accordion\Accordion;
-use tiFy\Partial\Driver\Breadcrumb\Breadcrumb;
-use tiFy\Partial\Driver\BurgerButton\BurgerButton;
-use tiFy\Partial\Driver\CookieNotice\CookieNotice;
-use tiFy\Partial\Driver\CurtainMenu\CurtainMenu;
-use tiFy\Partial\Driver\Dropdown\Dropdown;
-use tiFy\Partial\Driver\Downloader\Downloader;
-use tiFy\Partial\Driver\FlashNotice\FlashNotice;
-use tiFy\Partial\Driver\Holder\Holder;
-use tiFy\Partial\Driver\ImageLightbox\ImageLightbox;
-use tiFy\Partial\Driver\Menu\MenuDriver;
-use tiFy\Partial\Driver\Modal\Modal;
-use tiFy\Partial\Driver\Notice\Notice;
-use tiFy\Partial\Driver\Pagination\Pagination;
-use tiFy\Partial\Driver\Pdfviewer\Pdfviewer;
-use tiFy\Partial\Driver\Progress\Progress;
-use tiFy\Partial\Driver\Sidebar\Sidebar;
-use tiFy\Partial\Driver\Slider\Slider;
-use tiFy\Partial\Driver\Spinner\Spinner;
-use tiFy\Partial\Driver\Tab\Tab;
-use tiFy\Partial\Driver\Table\Table;
-use tiFy\Partial\Driver\Tag\Tag;
+use tiFy\Partial\Contracts\PartialContract;
+use tiFy\Partial\Drivers\AccordionDriver;
+use tiFy\Partial\Drivers\BreadcrumbDriver;
+use tiFy\Partial\Drivers\BurgerButtonDriver;
+use tiFy\Partial\Drivers\CookieNoticeDriver;
+use tiFy\Partial\Drivers\CurtainMenuDriver;
+use tiFy\Partial\Drivers\DropdownDriver;
+use tiFy\Partial\Drivers\DownloaderDriver;
+use tiFy\Partial\Drivers\FlashNoticeDriver;
+use tiFy\Partial\Drivers\HolderDriver;
+use tiFy\Partial\Drivers\ImageLightboxDriver;
+use tiFy\Partial\Drivers\MenuDriver;
+use tiFy\Partial\Drivers\ModalDriver;
+use tiFy\Partial\Drivers\NoticeDriver;
+use tiFy\Partial\Drivers\PaginationDriver;
+use tiFy\Partial\Drivers\PdfViewerDriver;
+use tiFy\Partial\Drivers\ProgressDriver;
+use tiFy\Partial\Drivers\SidebarDriver;
+use tiFy\Partial\Drivers\SliderDriver;
+use tiFy\Partial\Drivers\SpinnerDriver;
+use tiFy\Partial\Drivers\TabDriver;
+use tiFy\Partial\Drivers\TableDriver;
+use tiFy\Partial\Drivers\TagDriver;
 use tiFy\Support\Proxy\View;
 
 class PartialServiceProvider extends ServiceProvider
@@ -58,29 +38,29 @@ class PartialServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        PartialManagerContract::class,
-        AccordionContract::class,
-        BreadcrumbContract::class,
-        BurgerButton::class,
-        CookieNoticeContract::class,
-        CurtainMenuContract::class,
-        DropdownContract::class,
-        FlashNoticeContract::class,
-        HolderContract::class,
-        ImageLightboxContract::class,
-        MenuDriverContract::class,
-        ModalContract::class,
-        NoticeContract::class,
-        PaginationContract::class,
-        PdfviewerContract::class,
-        ProgressContract::class,
-        SidebarContract::class,
-        SliderContract::class,
-        SpinnerContract::class,
-        TabContract::class,
-        TableContract::class,
-        TagContract::class,
-        'partial.view-engine'
+        PartialContract::class,
+        AccordionDriver::class,
+        BreadcrumbDriver::class,
+        BurgerButtonDriver::class,
+        CookieNoticeDriver::class,
+        CurtainMenuDriver::class,
+        DropdownDriver::class,
+        FlashNoticeDriver::class,
+        HolderDriver::class,
+        ImageLightboxDriver::class,
+        MenuDriver::class,
+        ModalDriver::class,
+        NoticeDriver::class,
+        PaginationDriver::class,
+        PdfViewerDriver::class,
+        ProgressDriver::class,
+        SidebarDriver::class,
+        SliderDriver::class,
+        SpinnerDriver::class,
+        TabDriver::class,
+        TableDriver::class,
+        TagDriver::class,
+        'partial.view-engine',
     ];
 
     /**
@@ -88,11 +68,13 @@ class PartialServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->getContainer()->share(PartialManagerContract::class, function (): PartialManagerContract {
-            return new Partial(config('partial', []), $this->getContainer());
-        });
-
-        $this->registerDefaultDrivers();
+        $this->getContainer()->share(
+            PartialContract::class,
+            function () {
+                return new Partial(config('partial', []), $this->getContainer());
+            }
+        );
+        $this->registerDrivers();
         $this->registerViewEngine();
     }
 
@@ -101,95 +83,140 @@ class PartialServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerDefaultDrivers(): void
+    public function registerDrivers(): void
     {
-        $this->getContainer()->add(AccordionContract::class, function (): AccordionContract {
-            return new Accordion($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(BreadcrumbContract::class, function (): BreadcrumbContract {
-            return new Breadcrumb($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(BurgerButtonContract::class, function (): BurgerButtonContract {
-            return new BurgerButton($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(CookieNoticeContract::class, function (): CookieNoticeContract {
-            return new CookieNotice($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(CurtainMenuContract::class, function (): CurtainMenuContract {
-            return new CurtainMenu($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(DropdownContract::class, function (): DropdownContract {
-            return new Dropdown($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(DownloaderContract::class, function (): DownloaderContract {
-            return new Downloader($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(FlashNoticeContract::class, function (): FlashNoticeContract {
-            return new FlashNotice($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(HolderContract::class, function (): HolderContract {
-            return new Holder($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(ImageLightboxContract::class, function (): ImageLightboxContract {
-            return new ImageLightbox($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(MenuDriverContract::class, function (): MenuDriverContract {
-            return new MenuDriver($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(ModalContract::class, function (): ModalContract {
-            return new Modal($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(NoticeContract::class, function (): NoticeContract {
-            return new Notice($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(PaginationContract::class, function (): PaginationContract {
-            return new Pagination($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(PdfviewerContract::class, function (): PdfviewerContract {
-            return new Pdfviewer($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(ProgressContract::class, function (): ProgressContract {
-            return new Progress($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(SidebarContract::class, function (): SidebarContract {
-            return new Sidebar($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(SliderContract::class, function (): SliderContract {
-            return new Slider($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(SpinnerContract::class, function (): SpinnerContract {
-            return new Spinner($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(TabContract::class, function (): TabContract {
-            return new Tab($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(TableContract::class, function (): TableContract {
-            return new Table($this->getContainer()->get(PartialManagerContract::class));
-        });
-
-        $this->getContainer()->add(TagContract::class, function (): TagContract {
-            return new Tag($this->getContainer()->get(PartialManagerContract::class));
-        });
+        $this->getContainer()->add(
+            AccordionDriver::class,
+            function () {
+                return new AccordionDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            BreadcrumbDriver::class,
+            function () {
+                return new BreadcrumbDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            BurgerButtonDriver::class,
+            function () {
+                return new BurgerButtonDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            CookieNoticeDriver::class,
+            function () {
+                return new CookieNoticeDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            CurtainMenuDriver::class,
+            function () {
+                return new CurtainMenuDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            DropdownDriver::class,
+            function () {
+                return new DropdownDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            DownloaderDriver::class,
+            function () {
+                return new DownloaderDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            FlashNoticeDriver::class,
+            function () {
+                return new FlashNoticeDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            HolderDriver::class,
+            function () {
+                return new HolderDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            ImageLightboxDriver::class,
+            function () {
+                return new ImageLightboxDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            MenuDriver::class,
+            function () {
+                return new MenuDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            ModalDriver::class,
+            function () {
+                return new ModalDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            NoticeDriver::class,
+            function () {
+                return new NoticeDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            PaginationDriver::class,
+            function () {
+                return new PaginationDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            PdfviewerDriver::class,
+            function () {
+                return new PdfViewerDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            ProgressDriver::class,
+            function () {
+                return new ProgressDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            SidebarDriver::class,
+            function () {
+                return new SidebarDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            SliderDriver::class,
+            function () {
+                return new SliderDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            SpinnerDriver::class,
+            function () {
+                return new SpinnerDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            TabDriver::class,
+            function () {
+                return new TabDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            TableDriver::class,
+            function () {
+                return new TableDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            TagDriver::class,
+            function () {
+                return new TagDriver($this->getContainer()->get(PartialContract::class));
+            }
+        );
     }
 
     /**
@@ -199,8 +226,11 @@ class PartialServiceProvider extends ServiceProvider
      */
     public function registerViewEngine(): void
     {
-        $this->getContainer()->add('partial.view-engine', function () {
-            return View::getPlatesEngine();
-        });
+        $this->getContainer()->add(
+            'partial.view-engine',
+            function () {
+                return View::getPlatesEngine();
+            }
+        );
     }
 }
