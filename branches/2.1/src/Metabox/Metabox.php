@@ -1,33 +1,42 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
 use Exception;
 use Illuminate\Support\Collection;
+use League\Route\Http\Exception\NotFoundException;
 use Psr\Container\ContainerInterface as Container;
+use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
-use tiFy\Contracts\Metabox\MetaboxContext;
-use tiFy\Contracts\Metabox\MetaboxDriver;
-use tiFy\Contracts\Metabox\Metabox as MetaboxContract;
-use tiFy\Contracts\Metabox\MetaboxScreen;
-use tiFy\Contracts\Metabox\ColorDriver;
-use tiFy\Contracts\Metabox\CustomHeaderDriver;
-use tiFy\Contracts\Metabox\ExcerptDriver;
-use tiFy\Contracts\Metabox\FilefeedDriver;
-use tiFy\Contracts\Metabox\IconDriver;
-use tiFy\Contracts\Metabox\ImagefeedDriver;
-use tiFy\Contracts\Metabox\OrderDriver;
-use tiFy\Contracts\Metabox\PostfeedDriver;
-use tiFy\Contracts\Metabox\RelatedTermDriver;
-use tiFy\Contracts\Metabox\SlidefeedDriver;
-use tiFy\Contracts\Metabox\SubtitleDriver;
-use tiFy\Contracts\Metabox\TabContext;
-use tiFy\Contracts\Metabox\VideofeedDriver;
+use tiFy\Contracts\Routing\Route;
+use tiFy\Metabox\Contexts\TabContext;
+use tiFy\Metabox\Drivers\ColorDriver;
+use tiFy\Metabox\Drivers\CustomHeaderDriver;
+use tiFy\Metabox\Drivers\ExcerptDriver;
+use tiFy\Metabox\Drivers\FilefeedDriver;
+use tiFy\Metabox\Drivers\IconDriver;
+use tiFy\Metabox\Drivers\ImagefeedDriver;
+use tiFy\Metabox\Drivers\OrderDriver;
+use tiFy\Metabox\Drivers\PostfeedDriver;
+use tiFy\Metabox\Drivers\RelatedTermDriver;
+use tiFy\Metabox\Drivers\SlidefeedDriver;
+use tiFy\Metabox\Drivers\SubtitleDriver;
+use tiFy\Metabox\Drivers\VideofeedDriver;
+use tiFy\Metabox\Contracts\MetaboxContract;
+use tiFy\Support\Concerns\BootableTrait;
+use tiFy\Support\Concerns\ContainerAwareTrait;
 use tiFy\Support\ParamsBag;
+use tiFy\Support\Proxy\Router;
 use tiFy\Support\Proxy\Storage;
 
 class Metabox implements MetaboxContract
 {
+    use ContainerAwareTrait;
+    use BootableTrait;
+
     /**
      * Instance de la classe.
      * @var static|null
@@ -35,28 +44,10 @@ class Metabox implements MetaboxContract
     private static $instance;
 
     /**
-     * Indicateur d'initialisation.
-     * @var bool
+     * Instance du gestionnaire de configuration.
+     * @var ParamsBag
      */
-    private $booted = false;
-
-    /**
-     * Liste des contextes assignés.
-     * @var MetaboxContext[]
-     */
-    private $assignedContexts = [];
-
-    /**
-     * Liste des pilotes assignés.
-     * @var MetaboxDriver[]
-     */
-    private $assignedDrivers = [];
-
-    /**
-     * Liste des écrans assignés.
-     * @var MetaboxScreen[]
-     */
-    private $assignedScreens = [];
+    private $configBag;
 
     /**
      * Définition des pilotes par défaut.
@@ -86,58 +77,86 @@ class Metabox implements MetaboxContract
     ];
 
     /**
-     * Définition des écrans par défaut.
-     * @var array
-     */
-    private $defaultScreens = [];
-
-    /**
-     * Liste des contextes déclarés.
-     * @var MetaboxContext[]
-     */
-    private $registeredContexts = [];
-
-    /**
-     * Liste des pilotes déclarées.
-     * @var MetaboxDriver[]
-     */
-    private $registeredDrivers = [];
-
-    /**
-     * Liste des écrans déclarées.
-     * @var MetaboxScreen[]
-     */
-    private $registeredScreens = [];
-
-    /**
-     * Liste des instances de pilotes affichés selon leur contexte d'affichage.
-     * @var MetaboxDriver[][]
-     */
-    private $renderedDrivers = [];
-
-    /**
      * Instance du gestionnaire des ressources
      * @var LocalFilesystem|null
      */
     private $resources;
 
     /**
-     * Instance du gestionnaire de configuration.
-     * @var ParamsBag
+     * Route de traitement des requêtes XHR.
+     * @var Route|null
      */
-    protected $config;
+    private $xhrRoute;
 
     /**
-     * Instance du conteneur d'injection de dépendances.
-     * @var Container|null
+     * Définition du contexte de base.
+     * @var MetaboxContextInterface
      */
-    protected $container;
+    protected $baseContext = MetaboxContext::class;
+
+    /**
+     * Définition du pilote de base.
+     * @var MetaboxDriverInterface
+     */
+    protected $baseDriver = MetaboxDriver::class;
+
+    /**
+     * Définition de l'écran de base.
+     * @var MetaboxScreenInterface
+     */
+    protected $baseScreen = MetaboxScreen::class;
+
+    /**
+     * Liste des contextes assignés.
+     * @var MetaboxContext[]
+     */
+    protected $contexts = [];
+
+    /**
+     * Liste des contextes déclarés.
+     * @var MetaboxContextInterface[]|string[]|array
+     */
+    protected $contextDefinitions = [];
+
+    /**
+     * Instance de l'écran courant.
+     * @var string|null
+     */
+    protected $currentScreen;
+
+    /**
+     * Liste des pilotes assignés.
+     * @var MetaboxDriver[]
+     */
+    protected $drivers = [];
+
+    /**
+     * Liste des pilotes déclarées.
+     * @var MetaboxDriverInterface[]|string[]|array
+     */
+    protected $driverDefinitions = [];
+
+    /**
+     * Cartographie des pilotes déclarés.
+     * @var MetaboxDriverInterface[]
+     */
+    public $driversMap = [];
+
+    /**
+     * Liste des écrans assignés.
+     * @var MetaboxScreen[]
+     */
+    protected $screens = [];
+
+    /**
+     * Liste des écrans déclarées.
+     * @var MetaboxScreenInterface[]|string[]|array
+     */
+    protected $screenDefinitions = [];
 
     /**
      * @param array $config
      * @param Container|null $container
-     *
-     * @return void
      */
     public function __construct(array $config = [], Container $container = null)
     {
@@ -146,7 +165,6 @@ class Metabox implements MetaboxContract
         if (!is_null($container)) {
             $this->setContainer($container);
         }
-
         if (!self::$instance instanceof static) {
             self::$instance = $this;
         }
@@ -160,180 +178,41 @@ class Metabox implements MetaboxContract
         if (self::$instance instanceof self) {
             return self::$instance;
         }
-
-        throw new Exception(sprintf('Unavailable %s instance', __CLASS__));
+        throw new RuntimeException(sprintf('Unavailable %s instance', __CLASS__));
     }
 
     /**
      * @inheritDoc
      */
-    public function add(string $alias, $driver = null, ?string $screen = null, ?string $context = null): MetaboxDriver
+    public function add(string $alias, $driverDefinition, string $screen, string $context): MetaboxContract
     {
-        $attrs = [];
-
-        if ($this->get($alias)) {
-            throw new Exception(sprintf('Metabox Driver with alias [%s] already assigned', $alias));
+        $driverMapKey = $this->getDriverMapKey($alias, $context, $screen);
+        if (isset($this->driversMap[$driverMapKey])) {
+            throw new RuntimeException(
+                sprintf(
+                    'Another MetaboxDriver [%alias] already exists for screen [%s] and context [%s]',
+                    $alias,
+                    $screen,
+                    $context
+                )
+            );
+        } else {
+            $this->driversMap[$driverMapKey] = [
+                'alias'   => $alias,
+                'context' => $context,
+                'driver'  => $driverDefinition,
+                'screen'  => $screen,
+            ];
         }
-
-        if (is_array($driver)) {
-            $attrs = $driver;
-
-            $driver = $attrs['driver'] ?? '';
-            unset($attrs['driver']);
-        }
-
-        if (!$driver) {
-            $driver = $this->resolve('driver');
-
-            try {
-                $this->registerDriver(md5($alias . json_encode($attrs)), $driver);
-            } catch (Exception $e) {
-                throw $e;
-            }
-        } elseif (is_string($driver) && class_exists($driver)) {
-            $alias = $driver;
-            $driver = new $driver();
-
-            try {
-                $this->registerDriver($alias, $driver);
-            } catch (Exception $e) {
-                throw $e;
-            }
-        } elseif (is_string($driver)) {
-            $exists = $this->getRegisteredDriver($driver);
-            $driver = clone $exists;
-        } elseif (is_object($driver) && $driver instanceof MetaboxDriver) {
-            if (!$this->getRegisteredDriver($alias)) {
-                try {
-                    $this->registerDriver($alias, $driver);
-                } catch (Exception $e) {
-                    throw $e;
-                }
-            }
-        }
-
-        if (!is_object($driver) || !($driver instanceof MetaboxDriver)) {
-            throw new Exception(sprintf('Unable to define Metabox driver with alias [%s]', $alias));
-        }
-
-        $driver = $driver->set($attrs)->boot();
-
-        if ($screen) {
-            $driver->setScreen($screen);
-        }
-
-        if ($context) {
-            $driver->setContext($context);
-        }
-
-        return $this->assignedDrivers[$alias] = $driver;
+        return $this;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function addContext(string $alias, $context = null): MetaboxContext
-    {
-        if ($exists = $this->getContext($alias)) {
-            return $exists;
-        }
-
-        $attrs = [];
-        if (is_array($context)) {
-            $attrs = $context;
-            $context = null;
-        }
-
-        try {
-            if (!$context) {
-                $context = $this->resolve('context');
-                $this->registerContext($alias, $context);
-            } elseif (is_string($context) && class_exists($context)) {
-                $alias = $context;
-                $context = new $context();
-
-                $this->registerContext($alias, $context);
-
-            } elseif (is_string($context)) {
-                $context = $this->getRegisteredContext($context);
-            } elseif (is_object($context) && $context instanceof MetaboxContext) {
-                if (!$this->getRegisteredContext($alias)) {
-                    try {
-                        $this->registerContext($alias, $context);
-                    } catch (Exception $e) {
-                        throw $e;
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            throw $e;
-        }
-
-        if (!is_object($context) || !($context instanceof MetaboxContext)) {
-            throw new Exception(sprintf('Unable to define Metabox context with alias [%s]', $alias));
-        }
-
-        return $this->assignedContexts[$alias] = $context->set($attrs)->boot();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function addScreen(string $alias, $screen = null): MetaboxScreen
-    {
-        if ($exists = $this->getScreen($alias)) {
-            return $exists;
-        }
-
-        $attrs = [];
-        if (is_array($screen)) {
-            $attrs = $screen;
-            $screen = null;
-        }
-
-        if (!$screen) {
-            $screen = $this->resolve('screen');
-
-            try {
-                $this->registerScreen($alias, $screen);
-            } catch (Exception $e) {
-                throw $e;
-            }
-        } elseif (is_string($screen) && class_exists($screen)) {
-            $alias = $screen;
-            $screen = new $screen();
-
-            try {
-                $this->registerScreen($alias, $screen);
-            } catch (Exception $e) {
-                throw $e;
-            }
-        } elseif (is_string($screen)) {
-            $screen = $this->getRegisteredScreen($screen);
-        } elseif (is_object($screen) && $screen instanceof MetaboxScreen) {
-            if (!$this->getRegisteredScreen($alias)) {
-                try {
-                    $this->registerScreen($alias, $screen);
-                } catch (Exception $e) {
-                    throw $e;
-                }
-            }
-        }
-
-        if (!is_object($screen) || !($screen instanceof MetaboxScreen)) {
-            throw new Exception(sprintf('Unable to define Metabox screen with alias [%s]', $alias));
-        }
-
-        return $this->assignedScreens[$alias] = $screen->set($attrs)->boot();
-    }
-
 
     /**
      * @inheritDoc
      */
     public function all(): array
     {
-        return $this->assignedDrivers;
+        return $this->drivers;
     }
 
     /**
@@ -341,62 +220,38 @@ class Metabox implements MetaboxContract
      */
     public function boot(): MetaboxContract
     {
-        if (!$this->booted) {
+        if (!$this->isBooted()) {
+            events()->trigger('metabox.booting', [$this]);
+
+            $this->xhrRoute = Router::xhr(
+                md5('metabox') . '/{metabox}/{controller}',
+                [$this, 'xhrResponseDispatcher']
+            );
+
             try {
                 foreach ($this->defaultDrivers as $alias => $abstract) {
                     if ($this->getContainer()->has($abstract)) {
-                        $this->registerDriver($alias, $this->getContainer()->get($abstract));
+                        $this->registerDriver($alias, $abstract);
+                    } elseif (class_exists($abstract)) {
+                        $this->registerDriver($alias, new $abstract($this));
                     }
                 }
-
                 foreach ($this->defaultContexts as $alias => $abstract) {
                     if ($this->getContainer()->has($abstract)) {
-                        $this->registerContext($alias, $this->getContainer()->get($abstract));
-                    }
-                }
-
-                foreach ($this->defaultScreens as $alias => $abstract) {
-                    if ($this->getContainer()->has($abstract)) {
-                        $this->registerScreen($alias, $this->getContainer()->get($abstract));
+                        $this->registerContext($alias, $abstract);
+                    } elseif (class_exists($abstract)) {
+                        $this->registerContext($alias, new $abstract($this));
                     }
                 }
             } catch (Exception $e) {
-                throw $e;
+                throw new RuntimeException($e->getMessage());
             }
 
-            $this->booted = true;
-        }
+            $this->setBooted();
 
+            events()->trigger('metabox.booted', [$this]);
+        }
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fetchRender(MetaboxContext $context, ?MetaboxScreen $screen = null): array
-    {
-        if (is_null($screen)) {
-            $screens = (new Collection($this->assignedScreens))->filter(function (MetaboxScreen $screen) {
-                return $screen->isCurrent();
-            })->all();
-        } else {
-            $screens = [$screen];
-        }
-
-        $driversCollect = (new Collection($this->all()))->filter(function (MetaboxDriver $driver) use ($context, $screens) {
-            return ($driver->getContext() === $context) && in_array($driver->getScreen(), array_values($screens));
-        });
-
-        $max = $driversCollect->max(function (MetaboxDriver $driver) {
-            return (int)$driver->get('position', 0);
-        });
-
-        $pad = 0;
-        return $driversCollect->each(function (MetaboxDriver $driver) use (&$pad, $max) {
-            $pos = (int)$driver->get('position', 0);
-
-            return $driver->set('position', $pos ?  : ++$pad+$max);
-        })->all();
     }
 
     /**
@@ -404,157 +259,229 @@ class Metabox implements MetaboxContract
      */
     public function config($key = null, $default = null)
     {
-        if (!isset($this->config) || is_null($this->config)) {
-            $this->config = new ParamsBag();
+        if (!isset($this->configBag) || is_null($this->configBag)) {
+            $this->configBag = new ParamsBag();
         }
-
         if (is_string($key)) {
-            return $this->config->get($key, $default);
+            return $this->configBag->get($key, $default);
         } elseif (is_array($key)) {
-            return $this->config->set($key);
+            return $this->configBag->set($key);
         } else {
-            return $this->config;
+            return $this->configBag;
         }
     }
 
     /**
      * @inheritDoc
      */
-    public function get(string $alias): ?MetaboxDriver
+    public function dispatch(?string $screenAlias = null): MetaboxContract
     {
-        return $this->assignedDrivers[$alias] ?? null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getContainer(): ?Container
-    {
-        return $this->container;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getContext(string $alias): ?MetaboxContext
-    {
-        return $this->assignedContexts[$alias] ?? null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRegisteredContext(string $alias): ?MetaboxContext
-    {
-        return $this->registeredContexts[$alias] ?? null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRegisteredDriver(string $alias): ?MetaboxDriver
-    {
-        return $this->registeredDrivers[$alias] ?? null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRegisteredScreen(string $alias): ?MetaboxScreen
-    {
-        return $this->registeredScreens[$alias] ?? null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRenderedDrivers(string $context): array
-    {
-        return $this->renderedDrivers[$context] ?? [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getScreen(string $alias): ?MetaboxScreen
-    {
-        return $this->assignedScreens[$alias] ?? null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerContext(string $alias, MetaboxContext $context): MetaboxContract
-    {
-        if (isset($this->registeredDrivers[$alias])) {
-            throw new Exception(sprintf('Metabox context with alias [%s] already registered', $alias));
+        if ($screenAlias !== null) {
+            $screen = $this->getScreen($screenAlias);
+        } elseif ($this->currentScreen !== null) {
+            $screen = $this->getScreen($this->currentScreen);
         } else {
-            $this->registeredContexts[$alias] = $context->setMetabox($this)->setAlias($alias)->build();
+            $screen = null;
+        }
+        if (!$screen instanceof MetaboxScreenInterface) {
+            throw new RuntimeException('MetaboxScreen not found');
         }
 
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerDriver(string $alias, MetaboxDriver $driver): MetaboxContract
-    {
-        if (isset($this->registeredDrivers[$alias])) {
-            throw new Exception(sprintf('Metabox driver with alias [%s] already registered', $alias));
-        } else {
-            $this->registeredDrivers[$alias] = $driver->setMetabox($this)->setAlias($alias)->build();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerScreen(string $alias, MetaboxScreen $screen): MetaboxContract
-    {
-        if (isset($this->registeredScreens[$alias])) {
-            throw new Exception(sprintf('Metabox screen with alias [%s] already registered', $alias));
-        } else {
-            $this->registeredScreens[$alias] = $screen->setMetabox($this)->setAlias($alias)->build();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function render(string $context, $args = []): string
-    {
-        if ($ctx = $this->getContext($context)) {
-            if ($this->renderedDrivers[$context] = $items = $this->fetchRender($ctx)) {
-                foreach ($items as $item) {
-                    $item->handle($args);
-                }
+        $driversCollect = (new Collection($this->driversMap))->filter(
+            function (array $map) use ($screen) {
+                return $map['screen'] === $screen->getAlias();
             }
+        );
 
-            return $ctx->render();
+        $contexts = [];
+        $contextAliases = $driversCollect->unique('context')->pluck('context');
+        foreach ($contextAliases as $contextAlias) {
+            $contexts[$contextAlias] = $this->getContext($contextAlias);
+        }
+
+        foreach ($driversCollect as $uuid => $map) {
+            $driver = $this->_fetchDriver($uuid);
+            $context = $contexts[$map['context']];
+            $this->drivers[$uuid] = $driver->setScreen($screen)->setContext($context);
+            $context->setDriver($driver);
+        }
+
+        $driversOrderCollect = new Collection($this->drivers);
+        $max = $driversOrderCollect->max(
+            function (MetaboxDriverInterface $driver) {
+                return $driver->getPosition();
+            }
+        );
+        $pad = 0;
+        $driversOrderCollect->each(
+            function (MetaboxDriver $driver) use (&$pad, $max) {
+                return $driver->setPosition($driver->getPosition() ?: ++$pad + $max);
+            }
+        );
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContext(string $alias): ?MetaboxContextInterface
+    {
+        if ($exists = $this->contexts[$alias] ?? null) {
+            return $exists;
+        }
+        $def = $this->contextDefinitions[$alias] ?? null;
+
+        $params = [];
+        if (is_array($def)) {
+            $params = $def;
+            $def = null;
+        }
+        try {
+            if ($def === null) {
+                $abstract = $this->baseContext;
+                $context = $this->containerHas($abstract) ? $this->containerGet($abstract) : new $abstract($this);
+            } elseif ($def instanceof MetaboxContextInterface) {
+                $context = $def;
+            } elseif (is_string($def) && $this->containerHas($def)) {
+                $context = $this->containerGet($def);
+            } elseif (is_string($def) && class_exists($def)) {
+                $context = new $def($this);
+            }
+        } catch (Exception $e) {
+            throw new RuntimeException($e->getMessage());
+        }
+        if (!isset($context) || !is_object($context) || !($context instanceof MetaboxContextInterface)) {
+            throw new RuntimeException(sprintf('Unable to define MetaboxContext with alias [%s]', $alias));
+        }
+        return $this->contexts[$alias] = $context->setAlias($alias)->setParams(
+            array_merge($context->defaultParams(), $this->config("context.{$alias}", []), $params)
+        )->boot();
+    }
+
+    /**
+     * @param string $driver
+     * @param string $screen
+     * @param string $context
+     *
+     * @return string
+     */
+    public function getDriverMapKey(string $driver, string $screen, string $context): string
+    {
+        return Uuid::uuid5(Uuid::NAMESPACE_URL, $driver . $screen . $context)->__toString();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getScreen(string $alias): ?MetaboxScreenInterface
+    {
+        if ($exists = $this->screens[$alias] ?? null) {
+            return $exists;
+        } elseif (!$this->hasScreen($alias)) {
+            return null;
+        }
+        $def = $this->screenDefinitions[$alias] ?? null;
+
+        $params = [];
+        if (is_array($def)) {
+            $params = $def;
+            $def = null;
+        }
+        try {
+            if ($def === null) {
+                $abstract = $this->baseScreen;
+                $screen = $this->containerHas($abstract) ? $this->containerGet($abstract) : new $abstract($this);
+            } elseif ($def instanceof MetaboxScreenInterface) {
+                $screen = $def;
+            } elseif (is_string($def) && $this->containerHas($def)) {
+                $screen = $this->containerGet($def);
+            } elseif (is_string($def) && class_exists($def)) {
+                $screen = new $def($this);
+            }
+        } catch (Exception $e) {
+            throw new RuntimeException($e->getMessage());
+        }
+        if (!isset($screen) || !is_object($screen) || !($screen instanceof MetaboxScreenInterface)) {
+            throw new RuntimeException(sprintf('Unable to define MetaboxScreen with alias [%s]', $alias));
+        }
+        return $this->screens[$alias] = $screen->setAlias($alias)->setParams(
+            array_merge($screen->defaultParams(), $this->config("screen.{$alias}", []), $params)
+        )->boot();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getXhrRouteUrl(string $metabox, ?string $controller = null, array $params = []): string
+    {
+        $controller = $controller ?? 'xhrResponse';
+
+        return $this->xhrRoute->getUrl(array_merge($params, compact('metabox', 'controller')));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasScreen(string $alias): bool
+    {
+        return !!(new Collection($this->driversMap))->first(function($map) use ($alias) {
+            return $alias === $map['screen'];
+        });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerContext(string $alias, $contextDefinition = null): MetaboxContract
+    {
+        if (array_key_exists($alias, $this->contextDefinitions)) {
+            throw new RuntimeException(sprintf('MetaboxContext with alias [%s] already registered', $alias));
+        }
+        $this->contextDefinitions[$alias] = $contextDefinition;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerDriver(string $alias, $driverDefinition = null): MetaboxContract
+    {
+        if (array_key_exists($alias, $this->driverDefinitions)) {
+            throw new RuntimeException(sprintf('MetaboxDriver with alias [%s] already registered', $alias));
+        }
+        $this->driverDefinitions[$alias] = $driverDefinition;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerScreen(string $alias, $screenDefinition = null): MetaboxContract
+    {
+        if (array_key_exists($alias, $this->screenDefinitions)) {
+            throw new RuntimeException(sprintf('MetaboxScreen with alias [%s] already registered', $alias));
+        }
+        $this->screenDefinitions[$alias] = $screenDefinition;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(string $contextAlias, ...$args): string
+    {
+        if ($context = $this->getContext($contextAlias)) {
+            foreach ($context->getDrivers() as $driver) {
+                $driver->setArgs($args)->handle();
+            }
+            return $context->render();
         } else {
             return '';
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function resolve(string $alias)
-    {
-        return ($container = $this->getContainer()) ? $container->get("metabox.{$alias}") : null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function resolvable(string $alias): bool
-    {
-        return ($container = $this->getContainer()) && $container->has("metabox.{$alias}");
     }
 
     /**
@@ -565,8 +492,37 @@ class Metabox implements MetaboxContract
         if (!isset($this->resources) || is_null($this->resources)) {
             $this->resources = Storage::local(__DIR__ . '/Resources');
         }
-
         return is_null($path) ? $this->resources : $this->resources->path($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBaseContext(string $baseContext): MetaboxContract
+    {
+        $this->baseContext = $baseContext;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBaseDriver(string $baseDriver): MetaboxContract
+    {
+        $this->baseDriver = $baseDriver;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBaseScreen(string $baseScreen): MetaboxContract
+    {
+        $this->baseScreen = $baseScreen;
+
+        return $this;
     }
 
     /**
@@ -582,9 +538,9 @@ class Metabox implements MetaboxContract
     /**
      * @inheritDoc
      */
-    public function setContainer(Container $container): MetaboxContract
+    public function setCurrentScreen(string $screen): MetaboxContract
     {
-        $this->container = $container;
+        $this->currentScreen = $screen;
 
         return $this;
     }
@@ -592,16 +548,87 @@ class Metabox implements MetaboxContract
     /**
      * @inheritDoc
      */
-    public function stack(string $screen, string $context, array $driversDef): MetaboxContract
+    public function stack(string $screen, string $context, array $driversDefinitions): MetaboxContract
     {
-        foreach ($driversDef as $alias => $driverDef) {
+        foreach ($driversDefinitions as $alias => $driversDefinition) {
             try {
-                $this->add($alias, $driverDef, $screen, $context);
+                $this->add($alias, $driversDefinition, $screen, $context);
             } catch (Exception $e) {
-                throw new Exception($e->getMessage());
+                throw new RuntimeException($e->getMessage());
             }
         }
-
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function xhrResponseDispatcher(string $metabox, string $controller, ...$args): array
+    {
+        try {
+            $driver = $this->_fetchDriver($metabox);
+        } catch (Exception $e) {
+            throw new NotFoundException(
+                sprintf('MetaboxDriver [%s] return exception : %s', $metabox, $e->getMessage())
+            );
+        }
+        try {
+            return $driver->{$controller}(...$args);
+        } catch (Exception $e) {
+            throw new NotFoundException(
+                sprintf('MetaboxDriver [%s] Controller [%s] call return exception', $controller, $metabox)
+            );
+        }
+    }
+
+    /**
+     * Retrouve l'instance d'un pilote.
+     *
+     * @param string $uuid
+     *
+     * @return MetaboxDriverInterface
+     */
+    private function _fetchDriver(string $uuid): MetaboxDriverInterface
+    {
+        if ($exists = $this->drivers[$uuid] ?? null) {
+            return $exists;
+        } elseif (!$map = $this->driversMap[$uuid] ?? null) {
+            throw new RuntimeException('Any MetaboxDriver [%s] mapped');
+        }
+        $alias = $map['alias'];
+        $driverDef = $map['driver'];
+
+        $config = [];
+        if (is_array($driverDef)) {
+            $config = $driverDef;
+            $driverDef = $config['driver'] ?? null;
+            unset($config['driver']);
+        }
+        if (is_string($driverDef) && isset($this->driverDefinitions[$driverDef])) {
+            $driverDef = $this->driverDefinitions[$driverDef];
+        }
+        try {
+            if ($driverDef === null) {
+                $abstract = $this->baseDriver;
+                $driver = $this->containerHas($abstract) ? $this->containerGet($abstract) : new $abstract($this);
+            } elseif ($driverDef instanceof MetaboxDriverInterface) {
+                $driver = clone $driverDef;
+            } elseif (is_string($driverDef) && $this->containerHas($driverDef)) {
+                $driver = $this->containerGet($driverDef);
+            } elseif (is_string($driverDef) && class_exists($driverDef)) {
+                $driver = new $driverDef($this);
+            }
+        } catch (Exception $e) {
+            throw new RuntimeException($e->getMessage());
+        }
+        if (!isset($driver) || !is_object($driver) || !($driver instanceof MetaboxDriverInterface)) {
+            throw new RuntimeException(sprintf('Unable to define MetaboxDriver with alias [%s]', $alias));
+        }
+
+        return $driver
+            ->setAlias($alias)
+            ->setUuid($uuid)
+            ->setConfig(array_merge($this->config("driver.{$alias}", []), $config))
+            ->boot();
     }
 }

@@ -1,9 +1,7 @@
 <?php
 /**
- * Sidebar
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
- * @var tiFy\Partial\Driver\Sidebar\SidebarItem[] $items
+ * @var tiFy\Partial\PartialViewInterface $this
+ * @var tiFy\Partial\Drivers\Sidebar\SidebarItem[] $items
  */
 ?>
 <?php $this->before(); ?>

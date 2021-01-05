@@ -1,22 +1,22 @@
 <?php
 /**
- * @var tiFy\Contracts\Metabox\MetaboxView $this
+ * @var tiFy\Metabox\MetaboxViewInterface $this
  */
 ?>
-<?php if ($info = $this->params('info', true)) : ?>
+<?php if ($info = $this->get('info', true)) : ?>
     <em><?php echo $info; ?></em>
     <hr>
 <?php endif; ?>
 
-<?php if ($this->params('enabled.activation', true)) : ?>
+<?php if ($this->get('enabled.activation', true)) : ?>
     <table class="form-table">
         <tbody>
         <tr>
             <th scope="row"><?php _e('Activation', 'tify'); ?></th>
             <td>
                 <?php echo field('toggle-switch', [
-                    'name'  => $this->name() . '[enabled]',
-                    'value' => filter_var($this->value('enabled'), FILTER_VALIDATE_BOOL) ? 'on' : 'off',
+                    'name'  => $this->getName() . '[enabled]',
+                    'value' => filter_var($this->getValue('enabled'), FILTER_VALIDATE_BOOL) ? 'on' : 'off',
                 ]); ?>
             </td>
         </tr>
@@ -24,10 +24,10 @@
     </table>
 <?php endif; ?>
 
-<?php if ($this->params('enabled.sender', true)) : ?>
-    <h3><?php echo $this->params('sender.title'); ?></h3>
+<?php if ($this->get('enabled.sender', true)) : ?>
+    <h3><?php echo $this->get('sender.title'); ?></h3>
 
-    <?php if ($info = $this->params('sender.info')) : ?>
+    <?php if ($info = $this->get('sender.info')) : ?>
         <em><?php echo $info; ?></em>
     <?php endif; ?>
 
@@ -37,8 +37,8 @@
             <th scope="row"><?php _e('Email (requis)', 'tify'); ?></th>
             <td>
                 <?php echo field('text', [
-                    'name'  => $this->name() . '[sender][email]',
-                    'value' => $this->value('sender.email'),
+                    'name'  => $this->getName() . '[sender][email]',
+                    'value' => $this->getValue('sender.email'),
                     'attrs' => [
                         'size'         => 40,
                         'autocomplete' => 'off',
@@ -50,8 +50,8 @@
             <th scope="row"><?php _e('Nom (optionnel)', 'tify'); ?></th>
             <td>
                 <?php echo field('text', [
-                    'name'  => $this->name() . '[sender][name]',
-                    'value' => $this->value('sender.name'),
+                    'name'  => $this->getName() . '[sender][name]',
+                    'value' => $this->getValue('sender.name'),
                     'attrs' => [
                         'size'         => 40,
                         'autocomplete' => 'off',
@@ -63,10 +63,10 @@
     </table>
 <?php endif; ?>
 
-<?php if ($this->params('enabled.recipients', true)) : ?>
-    <h3><?php echo $this->params('recipients.title'); ?></h3>
+<?php if ($this->get('enabled.recipients', true)) : ?>
+    <h3><?php echo $this->get('recipients.title'); ?></h3>
 
-    <?php if ($info = $this->params('recipients.info')) : ?>
+    <?php if ($info = $this->get('recipients.info')) : ?>
         <em><?php echo $info; ?></em>
     <?php endif; ?>
 
@@ -74,8 +74,8 @@
         'button' => [
             'content' => __('Ajouter un destinataire', 'tify'),
         ],
-        'name'   => $this->name() . '[recipients]',
-        'value'  => $this->value('recipients'),
+        'name'   => $this->getName() . '[recipients]',
+        'value'  => $this->getValue('recipients'),
         'viewer' => [
             'override_dir' => dirname($this->path()) . '/repeater',
         ],

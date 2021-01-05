@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\PartialViewInterface $this
  */
 ?>
 <?php $this->before(); ?>
@@ -10,4 +10,4 @@
 <?php else : ?>
 ><?php $this->content(); ?></<?php echo $this->get('tag'); ?>>
 <?php endif; ?>
-<?php $this->after(); ?>
+<?php $this->after();

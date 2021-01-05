@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Mail;
 
@@ -9,6 +11,7 @@ use tiFy\Contracts\Mail\MailerQueue as MailerQueueContract;
 use tiFy\Container\ServiceProvider;
 use tiFy\Mail\Driver\PhpMailerDriver;
 use tiFy\Mail\Metabox\MailConfigMetabox;
+use tiFy\Metabox\Contracts\MetaboxContract;
 use PHPMailer\PHPMailer\PHPMailer;
 use tiFy\Support\Proxy\View;
 
@@ -23,8 +26,8 @@ class MailServiceProvider extends ServiceProvider
         'mail.driver',
         'mail.mailable.view-engine',
         'mail.mailable',
-        'mail.metabox.mail-config',
-        'mail.queue'
+        MailConfigMetabox::class,
+        'mail.queue',
     ];
 
     /**
@@ -32,34 +35,55 @@ class MailServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->getContainer()->share('mailer', function (): MailerContract {
-            return (new Mailer(config('mail', []), $this->getContainer()));
-        });
-
-        $this->getContainer()->add('mail.driver', function (): MailerDriverContract {
-            $driver = config('mail.driver', null);
-
-            if (!$driver instanceof MailerDriverContract) {
-                $driver = new PhpMailerDriver(new PHPMailer(env('APP_DEBUG')));
+        $this->getContainer()->share(
+            'mailer',
+            function (): MailerContract {
+                return (new Mailer(config('mail', []), $this->getContainer()));
             }
+        );
 
-            return $driver;
-        });
+        $this->getContainer()->add(
+            'mail.driver',
+            function (): MailerDriverContract {
+                $driver = config('mail.driver', null);
 
-        $this->getContainer()->share('mail.mailable', function (): MailableContract {
-            return (new Mailable())->setMailer($this->getContainer()->get('mailer'));
-        });
+                if (!$driver instanceof MailerDriverContract) {
+                    $driver = new PhpMailerDriver(new PHPMailer(env('APP_DEBUG')));
+                }
 
-        $this->getContainer()->share('mail.queue', function (): MailerQueueContract {
-            return (new MailerQueue())->setMailer($this->getContainer()->get('mailer'));
-        });
+                return $driver;
+            }
+        );
 
-        $this->getContainer()->share('mail.metabox.mail-config', function () {
-            return (new MailConfigMetabox())->setMailer($this->getContainer()->get('mailer'));
-        });
+        $this->getContainer()->share(
+            'mail.mailable',
+            function (): MailableContract {
+                return (new Mailable())->setMailer($this->getContainer()->get('mailer'));
+            }
+        );
 
-        $this->getContainer()->add('mail.mailable.view-engine', function () {
-            return View::getPlatesEngine();
-        });
+        $this->getContainer()->share(
+            'mail.queue',
+            function (): MailerQueueContract {
+                return (new MailerQueue())->setMailer($this->getContainer()->get('mailer'));
+            }
+        );
+
+        $this->getContainer()->add(
+            MailConfigMetabox::class,
+            function () {
+                return new MailConfigMetabox(
+                    $this->getContainer()->get('mailer'),
+                    $this->getContainer()->get(MetaboxContract::class)
+                );
+            }
+        );
+
+        $this->getContainer()->add(
+            'mail.mailable.view-engine',
+            function () {
+                return View::getPlatesEngine();
+            }
+        );
     }
 }

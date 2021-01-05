@@ -1,7 +1,5 @@
 <?php
 /**
- * Bouton de bascule
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\PartialViewInterface $this
  */
 echo partial('tag', $this->get('attrs', []));

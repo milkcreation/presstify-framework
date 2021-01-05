@@ -149,6 +149,14 @@ class WpScreen implements WpScreenContract
     /**
      * @inheritDoc
      */
+    public function getAlias(): string
+    {
+        return $this->getObjectName() . '@' . $this->getObjectType();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getHookname(): string
     {
         return $this->getScreen()->id;

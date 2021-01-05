@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Debug;
 
@@ -35,7 +37,16 @@ class Debug
             add_action('wp_footer', function () {
                 echo $this->debugManager->render();
             }, 999999);
-        }
 
+            add_action('admin_head', function () {
+                echo "<!-- Debug -->";
+                echo $this->debugManager->boot()->getHead();
+                echo "<!-- / Debug -->";
+            }, 999999);
+
+            add_action('admin_footer', function () {
+                echo $this->debugManager->render();
+            }, 999999);
+        }
     }
 }

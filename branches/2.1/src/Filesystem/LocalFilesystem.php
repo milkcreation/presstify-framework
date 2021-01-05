@@ -5,8 +5,11 @@ namespace tiFy\Filesystem;
 use Exception;
 use League\Flysystem\AdapterInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use tiFy\Contracts\Filesystem\{LocalAdapter, LocalFilesystem as LocalFilesystemContract};
-use tiFy\Support\{DateTime, Str};
+use tiFy\Contracts\Filesystem\LocalAdapter;
+use tiFy\Contracts\Filesystem\LocalFilesystem as LocalFilesystemContract;
+use tiFy\Support\DateTime;
+use tiFy\Support\Str;
+use tiFy\Support\Proxy\Url;
 
 class LocalFilesystem extends Filesystem implements LocalFilesystemContract
 {
@@ -86,9 +89,23 @@ class LocalFilesystem extends Filesystem implements LocalFilesystemContract
     {
         if (($dir = $this->path($path))) {
             return ($rp = realpath($dir))
-                ? '/'. ltrim(preg_replace('/^' . preg_quote(getcwd(), '/') . '/', '', $rp), '/') : null;
+                ? '/'. ltrim(
+                    preg_replace('/^' . preg_quote(/*getcwd()*/ ROOT_PATH, DIRECTORY_SEPARATOR) . '/', '', $rp),
+                    '/'
+                )
+                : null;
         }
+        return null;
+    }
 
+    /**
+     * @inheritDoc
+     */
+    public function url(string $path = '/'): ?string
+    {
+        if ($rel = $this->rel($path)) {
+            return Url::root($rel)->render();
+        }
         return null;
     }
 }

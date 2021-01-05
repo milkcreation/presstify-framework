@@ -1,8 +1,6 @@
 <?php
 /**
- * Pagination - Lien vers la page suivante.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\Driver\Pagination\PaginationView $this
+ * @var tiFy\Partial\Drivers\Pagination\PaginationView $this
  */
 ?>
 <?php if ($this->getCurrentPage() < $this->getLastPage()) : ?>
