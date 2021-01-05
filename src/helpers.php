@@ -59,7 +59,6 @@ if (!function_exists('app')) {
         if (is_null($abstract)) {
             return $factory;
         }
-
         return $factory->get($abstract, $args);
     }
 }
@@ -147,7 +146,6 @@ if (!function_exists('container')) {
         if (is_null($abstract)) {
             return $factory;
         }
-
         return $factory->get($abstract);
     }
 }
@@ -224,21 +222,21 @@ if (!function_exists('field')) {
     /**
      * Field - Gestionnaire de champs.
      *
-     * @param null|string $name Nom de qualification.
-     * @param mixed $id Nom de qualification ou Liste des attributs de configuration.
-     * @param mixed $attrs Liste des attributs de configuration.
+     * @param string|null $alias Alias de qualification.
+     * @param mixed $idOrParams Identifiant de qualification|Liste des attributs de configuration.
+     * @param array $params Liste des attributs de configuration.
      *
      * @return FieldContract|FieldDriverInterface|null
      */
-    function field($name = null, $id = null, $attrs = null)
+    function field(?string $alias = null, $idOrParams = null, array $params = [])
     {
         /* @var FieldContract $manager */
         $manager = app(FieldContract::class);
 
-        if (is_null($name)) {
+        if (is_null($alias)) {
             return $manager;
         }
-        return $manager->get($name, $id, $attrs);
+        return $manager->get($alias, $idOrParams, $params);
     }
 }
 
@@ -279,7 +277,6 @@ if (! function_exists('logger')) {
         if (is_null($message)) {
             return $manager;
         }
-
         $manager->debug($message, $context);
     }
 }
@@ -288,21 +285,21 @@ if (!function_exists('partial')) {
     /**
      * Partial - Gestionnaire de portions d'affichage.
      *
-     * @param string|null $name Nom de qualification.
+     * @param string|null $alias Alias de qualification.
      * @param mixed $idOrParams Identifiant de qualification|Liste des attributs de configuration.
      * @param array $params Liste des attributs de configuration.
      *
      * @return PartialContract|PartialDriverInterface|null
      */
-    function partial(?string $name = null, $idOrParams = null, array $params = [])
+    function partial(?string $alias = null, $idOrParams = null, array $params = [])
     {
         /* @var PartialContract $manager */
         $manager = app(PartialContract::class);
 
-        if (is_null($name)) {
+        if (is_null($alias)) {
             return $manager;
         }
-        return $manager->get($name, $idOrParams, $params);
+        return $manager->get($alias, $idOrParams, $params);
     }
 }
 
@@ -354,7 +351,6 @@ if (!function_exists('redirect')) {
         if (is_null($to)) {
             return app('redirect');
         }
-
         return app('redirect')->to($to, $status, $headers, $secure);
     }
 }

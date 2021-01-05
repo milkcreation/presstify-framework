@@ -2,7 +2,7 @@
 
 namespace tiFy\Wordpress\PageHook;
 
-use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
+use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Wordpress\Contracts\PageHook;
 use tiFy\Wordpress\Proxy\PageHook as ProxyPageHook;
@@ -16,20 +16,38 @@ class PageHookMetabox extends MetaboxDriver
     protected $pageHook;
 
     /**
+     * @param PageHook $pageHookManager
+     * @param MetaboxContract $metaboxManager
+     */
+    public function __construct(PageHook $pageHookManager, MetaboxContract $metaboxManager)
+    {
+        $this->setPageHook($pageHookManager);
+
+        parent::__construct($metaboxManager);
+    }
+
+    /**
      * @inheritDoc
      */
-    public function defaults(): array
+    public function defaultParams(): array
     {
-        return array_merge(parent::defaults(), [
+        return array_merge(parent::defaultParams(), [
             'items' => [],
-            'title' => __('Pages d\'accroche', 'tify'),
         ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): MetaboxDriverContract
+    public function getTitle(): string
+    {
+        return $this->title ?? __('Pages d\'accroche', 'tify');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(): string
     {
         parent::parse();
 
@@ -38,8 +56,7 @@ class PageHookMetabox extends MetaboxDriver
                 'items' => $this->pageHook() ? $this->pageHook()->collect()->where('admin', true)->all() : [],
             ]);
         }
-
-        return $this;
+        return parent::render();
     }
 
     /**

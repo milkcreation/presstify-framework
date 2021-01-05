@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Form\AddonDrivers;
 
@@ -22,45 +24,58 @@ class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverCont
             parent::boot();
 
             $this->form()->events()
-                ->listen('handle.validated', function () {
-                    if ($debug = $this->params('debug')) {
-                        $this->form()->event('addon.mailer.email.debug');
+                ->listen(
+                    'handle.validated',
+                    function () {
+                        if ($debug = $this->params('debug')) {
+                            $this->form()->event('addon.mailer.email.debug');
+                        }
                     }
-                })
-                ->listen('handle.successed', function () {
-                    $this->form()->event('addon.mailer.email.send');
-                })
+                )
+                ->listen(
+                    'handle.successed',
+                    function () {
+                        $this->form()->event('addon.mailer.email.send');
+                    }
+                )
                 ->listen('addon.mailer.email.debug', [$this, 'emailDebug'])
                 ->listen('addon.mailer.email.send', [$this, 'emailSend'])
-                ->listen('fields.booted', function () {
-                    if ($this->form()->field('mail')) {
-                        $emitter = '%%mail%%';
-                    } elseif ($this->form()->field('email')) {
-                        $emitter = '%%email%%';
-                    } else {
-                        $emitter = null;
-                    }
+                ->listen(
+                    'fields.booted',
+                    function () {
+                        if ($this->form()->field('mail')) {
+                            $emitter = '%%mail%%';
+                        } elseif ($this->form()->field('email')) {
+                            $emitter = '%%email%%';
+                        } else {
+                            $emitter = null;
+                        }
 
-                    if ($notification = $this->params('notification')) {
-                        $defaults = [
-                            'reply-to' => $emitter,
-                        ];
-                        $this->params([
-                            'notification' => is_array($notification)
-                                ? array_merge($defaults, $notification) : $defaults,
-                        ]);
-                    }
+                        if ($notification = $this->params('notification')) {
+                            $defaults = [
+                                'reply-to' => $emitter,
+                            ];
+                            $this->params(
+                                [
+                                    'notification' => is_array($notification)
+                                        ? array_merge($defaults, $notification) : $defaults,
+                                ]
+                            );
+                        }
 
-                    if ($confirmation = $this->params('confirmation')) {
-                        $defaults = [
-                            'to' => $emitter,
-                        ];
-                        $this->params([
-                            'confirmation' => is_array($confirmation)
-                                ? array_merge($defaults, $confirmation) : $defaults,
-                        ]);
+                        if ($confirmation = $this->params('confirmation')) {
+                            $defaults = [
+                                'to' => $emitter,
+                            ];
+                            $this->params(
+                                [
+                                    'confirmation' => is_array($confirmation)
+                                        ? array_merge($defaults, $confirmation) : $defaults,
+                                ]
+                            );
+                        }
                     }
-                });
+                );
 
             if ($admin = $this->params('admin')) {
                 $defaultAdmin = [
@@ -73,70 +88,97 @@ class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverCont
             if ($this->params('admin.confirmation') || $this->params('admin.notification')) {
                 $optionNamesBase = $this->params('option_names_base', '') ?: "mail_{$this->form()->getAlias()}";
 
-                Metabox::add("FormAddonMailer-{$this->form()->getAlias()}", [
-                    'title' => $this->form()->getTitle(),
-                ])->setScreen('tify_options@options')->setContext('tab');
+                Metabox::add(
+                    md5("FormAddonMailer-{$this->form()->getAlias()}"),
+                    [
+                        'title' => $this->form()->getTitle(),
+                    ],
+                    'tify_options@options',
+                    'tab'
+                );
 
                 if ($this->params('admin.notification')) {
                     $optionName = $optionNamesBase . '_notif';
 
-                    register_setting('tify_options@options', $optionName, function ($value) {
-                        $sender = $value['sender'] ?? null;
+                    register_setting(
+                        'tify_options@options',
+                        $optionName,
+                        function ($value) {
+                            $sender = $value['sender'] ?? null;
 
-                        if (!empty($sender['email']) && !v::email()->validate($sender['email'])) {
-                            add_settings_error("mail_{$this->form()->getAlias()}_notif_sender", 'invalid_email', __(
-                                'Adresse de messagerie d\'expédition de la notification non valide.', 'tify'
-                            ));
-                        }
-                        if ($recipients = $value['recipients'] ?? null) {
-                            foreach ($recipients as $k => $recip) {
-                                if (empty($recip['email'])) {
-                                    add_settings_error("mail_{$this->form()->getAlias()}_notif_recep{$k}",
-                                        'empty_email',
-                                        __(
-                                            'Adresse de messagerie de destination de la notification non renseignée.',
-                                            'tify'
-                                        ));
-                                } elseif (!is_email($recip['email'])) {
-                                    add_settings_error("mail_{$this->form()->getAlias()}_notif_recep{$k}",
-                                        'invalid_email',
-                                        __(
-                                            'Adresse de messagerie de destination de la notification non valide.',
-                                            'tify'
-                                        ));
+                            if (!empty($sender['email']) && !v::email()->validate($sender['email'])) {
+                                add_settings_error(
+                                    "mail_{$this->form()->getAlias()}_notif_sender",
+                                    'invalid_email',
+                                    __(
+                                        'Adresse de messagerie d\'expédition de la notification non valide.',
+                                        'tify'
+                                    )
+                                );
+                            }
+                            if ($recipients = $value['recipients'] ?? null) {
+                                foreach ($recipients as $k => $recip) {
+                                    if (empty($recip['email'])) {
+                                        add_settings_error(
+                                            "mail_{$this->form()->getAlias()}_notif_recep{$k}",
+                                            'empty_email',
+                                            __(
+                                                'Adresse de messagerie de destination de la notification non renseignée.',
+                                                'tify'
+                                            )
+                                        );
+                                    } elseif (!is_email($recip['email'])) {
+                                        add_settings_error(
+                                            "mail_{$this->form()->getAlias()}_notif_recep{$k}",
+                                            'invalid_email',
+                                            __(
+                                                'Adresse de messagerie de destination de la notification non valide.',
+                                                'tify'
+                                            )
+                                        );
+                                    }
                                 }
                             }
+                            return $value;
                         }
-                        return $value;
-                    });
+                    );
 
-                    Metabox::add("FormAddonMailerNotification-{$this->form()->getAlias()}", [
-                        'driver'   => 'mail-config',
-                        'name'     => $optionName,
-                        'params'   => [
-                            'info' => '<span class="dashicons dashicons-info-outline"></span>&nbsp;' .
-                                __('Message de notification à destination des gestionnaires de demandes.', 'tify'),
+                    Metabox::add(
+                        md5("FormAddonMailerNotification-{$this->form()->getAlias()}"),
+                        [
+                            'driver'   => 'mail-config',
+                            'name'     => $optionName,
+                            'params'   => [
+                                'info' => '<span class="dashicons dashicons-info-outline"></span>&nbsp;' .
+                                    __('Message de notification à destination des gestionnaires de demandes.', 'tify'),
+                            ],
+                            'parent'   => md5("FormAddonMailer-{$this->form()->getAlias()}"),
+                            'position' => 1,
+                            'title'    => __('Message(s) de notification(s)', 'tify'),
                         ],
-                        'parent'   => "FormAddonMailer-{$this->form()->getAlias()}",
-                        'position' => 1,
-                        'title'    => __('Message(s) de notification(s)', 'tify'),
-                    ])->setScreen('tify_options@options')->setContext('tab');
+                        'tify_options@options',
+                        'tab'
+                    );
 
                     $optionValues = get_option($optionName);
                     if ($optionValues !== false) {
                         if (filter_var($optionValues['enabled'], FILTER_VALIDATE_BOOL)) {
                             if (!empty($optionValues['sender']['email'])) {
-                                $this->params([
-                                    'notification.from' => [
-                                        $optionValues['sender']['email'],
-                                        $optionValues['sender']['name'] ?? '',
-                                    ],
-                                ]);
+                                $this->params(
+                                    [
+                                        'notification.from' => [
+                                            $optionValues['sender']['email'],
+                                            $optionValues['sender']['name'] ?? '',
+                                        ],
+                                    ]
+                                );
                             }
                             if (!empty($optionValues['recipients'])) {
-                                $this->params([
-                                    'notification.to' => $optionValues['recipients'],
-                                ]);
+                                $this->params(
+                                    [
+                                        'notification.to' => $optionValues['recipients'],
+                                    ]
+                                );
                             }
                         }
                     }
@@ -145,42 +187,58 @@ class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverCont
                 if ($this->params('admin.confirmation')) {
                     $optionName = $optionNamesBase . '_conf';
 
-                    register_setting('tify_options@options', $optionName, function ($value) {
-                        $sender = $value['sender'] ?? null;
+                    register_setting(
+                        'tify_options@options',
+                        $optionName,
+                        function ($value) {
+                            $sender = $value['sender'] ?? null;
 
-                        if (!empty($sender['email']) && !v::email()->validate($sender['email'])) {
-                            add_settings_error("mail_{$this->form()->getAlias()}_notif_sender", 'invalid_email', __(
-                                'Adresse de messagerie d\'expédition de la confirmation n\'est pas valide.', 'tify'
-                            ));
+                            if (!empty($sender['email']) && !v::email()->validate($sender['email'])) {
+                                add_settings_error(
+                                    "mail_{$this->form()->getAlias()}_notif_sender",
+                                    'invalid_email',
+                                    __(
+                                        'Adresse de messagerie d\'expédition de la confirmation n\'est pas valide.',
+                                        'tify'
+                                    )
+                                );
+                            }
+                            return $value;
                         }
-                        return $value;
-                    });
+                    );
 
-                    Metabox::add("FormAddonMailerConfirmation-{$this->form()->getAlias()}", [
-                        'driver'   => 'mail-config',
-                        'name'     => $optionName,
-                        'params'   => [
-                            'enabled' => [
-                                'recipients' => false,
+                    Metabox::add(
+                        md5("FormAddonMailerConfirmation-{$this->form()->getAlias()}"),
+                        [
+                            'driver'   => 'mail-config',
+                            'name'     => $optionName,
+                            'params'   => [
+                                'enabled' => [
+                                    'recipients' => false,
+                                ],
+                                'info'    => '<span class="dashicons dashicons-info-outline"></span>&nbsp;' .
+                                    __('Message de confirmation à destination de l\'emetteur de la demande.', 'tify'),
                             ],
-                            'info'    => '<span class="dashicons dashicons-info-outline"></span>&nbsp;' .
-                                __('Message de confirmation à destination de l\'emetteur de la demande.', 'tify'),
+                            'parent'   => md5("FormAddonMailer-{$this->form()->getAlias()}"),
+                            'position' => 2,
+                            'title'    => __('Message de confirmation', 'tify'),
                         ],
-                        'parent'   => "FormAddonMailer-{$this->form()->getAlias()}",
-                        'position' => 2,
-                        'title'    => __('Message de confirmation', 'tify'),
-                    ])->setScreen('tify_options@options')->setContext('tab');
+                        'tify_options@options',
+                        'tab'
+                    );
 
                     $optionValues = get_option($optionName);
                     if ($optionValues !== false) {
                         if (filter_var($optionValues['enabled'], FILTER_VALIDATE_BOOL)) {
                             if (!empty($optionValues['sender']['email'])) {
-                                $this->params([
-                                    'confirmation.from' => [
-                                        $optionValues['sender']['email'],
-                                        $optionValues['sender']['name'] ?? '',
-                                    ],
-                                ]);
+                                $this->params(
+                                    [
+                                        'confirmation.from' => [
+                                            $optionValues['sender']['email'],
+                                            $optionValues['sender']['name'] ?? '',
+                                        ],
+                                    ]
+                                );
                             }
                         }
                     }
@@ -326,28 +384,37 @@ class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverCont
         $params['to'] = $params['to'] ?? Mail::getDefaults('to');
         $params['from'] = $params['from'] ?? Mail::getDefaults('from');
 
-        $fields = $this->form()->fields()->collect()->filter(function (FieldDriverContract $field) {
-            return $field->getAddonOption('mailer', 'show') && $field->supports('request');
-        });
+        $fields = $this->form()->fields()->collect()->filter(
+            function (FieldDriverContract $field) {
+                return $field->getAddonOption('mailer', 'show') && $field->supports('request');
+            }
+        );
 
-        $fields->each(function (FieldDriverContract $field) {
-            $label = $field->getAddonOption('mailer', 'label');
-            $field->params(['addons.mailer.label' => $label instanceof Closure ? $label($field) : $label]);
+        $fields->each(
+            function (FieldDriverContract $field) {
+                $label = $field->getAddonOption('mailer', 'label');
+                $field->params(['addons.mailer.label' => $label instanceof Closure ? $label($field) : $label]);
 
-            $value = $field->getAddonOption('mailer', 'value');
-            $field->params(['addons.mailer.value' => $value instanceof Closure ? $value($field) : $value]);
-        });
+                $value = $field->getAddonOption('mailer', 'value');
+                $field->params(['addons.mailer.value' => $value instanceof Closure ? $value($field) : $value]);
+            }
+        );
 
         $form = $this->form();
         $addon = $this;
         $params['data'] = array_merge(
-            Mail::config('data', []), compact('addon', 'form', 'fields', 'params'), $params['data'] ?? []
+            Mail::config('data', []),
+            compact('addon', 'form', 'fields', 'params'),
+            $params['data'] ?? []
         );
 
         if (!isset($params['viewer']['override_dir'])) {
-            $params['viewer'] = array_merge([
-                'override_dir' => $this->form()->formManager()->resources("/views/addon/mailer/mail/{$type}"),
-            ], $params['viewer'] ?? []);
+            $params['viewer'] = array_merge(
+                [
+                    'override_dir' => $this->form()->formManager()->resources("/views/addon/mailer/mail/{$type}"),
+                ],
+                $params['viewer'] ?? []
+            );
         }
 
         return $params;

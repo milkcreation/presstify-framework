@@ -6,7 +6,7 @@ namespace tiFy\Field;
 
 use Closure;
 use BadMethodCallException;
-use Exception;
+use Error;
 use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Field\Contracts\FieldContract;
 use tiFy\Support\Concerns\BootableTrait;
@@ -83,10 +83,10 @@ class FieldDriver implements FieldDriverInterface
     {
         try {
             return $this->params()->{$method}(...$arguments);
-        } catch (Exception $e) {
+        } catch (Error $e) {
             throw new BadMethodCallException(
                 sprintf(
-                    'Field [%s] method call [%s] throws an exception: %s',
+                    'FieldDriver [%s] method call [%s] throws an exception: %s',
                     $this->getAlias(),
                     $method,
                     $e->getMessage()

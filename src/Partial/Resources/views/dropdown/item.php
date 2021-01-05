@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
- * @var tiFy\Partial\Driver\Dropdown\DropdownItem $item
+ * @var tiFy\Partial\PartialViewInterface $this
+ * @var tiFy\Partial\Drivers\Dropdown\DropdownItemInterface $item
  */
 echo $item;

@@ -84,7 +84,7 @@ class Partial implements PartialContract
         'spinner'        => SpinnerDriver::class,
         'tab'            => TabDriver::class,
         'table'          => TableDriver::class,
-        'tag'            => TagDriver::class
+        'tag'            => TagDriver::class,
     ];
 
     /**
@@ -114,8 +114,6 @@ class Partial implements PartialContract
     /**
      * @param array $config
      * @param Container|null $container
-     *
-     * @return void
      */
     public function __construct(array $config = [], Container $container = null)
     {
@@ -124,7 +122,6 @@ class Partial implements PartialContract
         if (!is_null($container)) {
             $this->setContainer($container);
         }
-
         if (!self::$instance instanceof static) {
             self::$instance = $this;
         }
@@ -138,7 +135,6 @@ class Partial implements PartialContract
         if (self::$instance instanceof self) {
             return self::$instance;
         }
-
         throw new RuntimeException(sprintf('Unavailable %s instance', __CLASS__));
     }
 
@@ -159,7 +155,7 @@ class Partial implements PartialContract
             events()->trigger('partial.booting', [$this]);
 
             $this->xhrRoute = Router::xhr(
-                md5('PartialManager') . '/{partial}/{controller}',
+                md5('partial') . '/{partial}/{controller}',
                 [$this, 'xhrResponseDispatcher']
             );
 
@@ -237,13 +233,10 @@ class Partial implements PartialContract
         if ($def instanceof PartialDriverInterface) {
             return clone $def;
         } elseif (is_string($def) && $this->containerHas($def)) {
-            if ($this->containerHas($def)) {
-                return $this->containerGet($def);
-            }
-        } elseif(is_string($def) && class_exists($def)) {
+            return $this->containerGet($def);
+        } elseif (is_string($def) && class_exists($def)) {
             return new $def($this);
         }
-
         return null;
     }
 
@@ -265,13 +258,11 @@ class Partial implements PartialContract
         if (isset($this->driverDefinitions[$alias])) {
             throw new RuntimeException(sprintf('Another PartialDriver with alias [%s] already registered', $alias));
         }
-
         $this->driverDefinitions[$alias] = $driverDefinition;
 
         if ($callback !== null) {
             $callback($this);
         }
-
         return $this;
     }
 
@@ -280,10 +271,9 @@ class Partial implements PartialContract
      */
     public function registerDefaultDrivers(): PartialContract
     {
-        foreach ($this->defaultDrivers as $name => $alias) {
-            $this->register($name, $alias);
+        foreach ($this->defaultDrivers as $alias => $driverDefinition) {
+            $this->register($alias, $driverDefinition);
         }
-
         return $this;
     }
 
@@ -292,10 +282,9 @@ class Partial implements PartialContract
      */
     public function resources(?string $path = null)
     {
-        if (!isset($this->resources) ||is_null($this->resources)) {
+        if (!isset($this->resources) || is_null($this->resources)) {
             $this->resources = Storage::local(__DIR__ . '/Resources');
         }
-
         return is_null($path) ? $this->resources : $this->resources->path($path);
     }
 
@@ -316,15 +305,14 @@ class Partial implements PartialContract
     {
         try {
             $driver = $this->get($partial);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             throw new NotFoundException(
                 sprintf('PartialDriver [%s] return exception : %s', $partial, $e->getMessage())
             );
         }
-
         try {
             return $driver->{$controller}(...$args);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             throw new NotFoundException(
                 sprintf('PartialDriver [%s] Controller [%s] call return exception', $controller, $partial)
             );

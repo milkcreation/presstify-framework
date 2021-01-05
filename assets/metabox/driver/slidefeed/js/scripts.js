@@ -156,11 +156,10 @@ jQuery(function ($) {
 
         this.xhr = $.ajax(ajax)
             .done(function (resp) {
-              if (!resp.success) {
+             if (!resp.success) {
                 alert(resp.data);
               } else {
                 let $item = self._setItem($(resp.data).appendTo(self.items));
-
                 self._trigger('add', null, $item);
               }
             })

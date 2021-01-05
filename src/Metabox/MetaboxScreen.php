@@ -1,39 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\Metabox;
-use tiFy\Contracts\Metabox\MetaboxDriver;
-use tiFy\Contracts\Metabox\MetaboxScreen as MetaboxScreenContract;
-use tiFy\Support\ParamsBag;
+use tiFy\Metabox\Contracts\MetaboxContract;
+use tiFy\Support\Concerns\BootableTrait;
+use tiFy\Support\Concerns\ParamsBagTrait;
 use tiFy\Support\Proxy\Request;
 use tiFy\Support\Proxy\Router;
 
-class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
+class MetaboxScreen implements MetaboxScreenInterface
 {
-    /**
-     * Indicateur de chargement.
-     * @var bool
-     */
-    private $booted = false;
-
-    /**
-     * Indicateur d'initialisation.
-     * @var bool
-     */
-    private $built = false;
-
-    /**
-     * Instance du gestionnaire de metaboxes.
-     * @var Metabox|null
-     */
-    private $metabox;
-
-    /**
-     * Liste des pilotes déclarés.
-     * @var MetaboxDriver[]|array
-     */
-    protected $drivers = [];
+    use BootableTrait;
+    use ParamsBagTrait;
+    use MetaboxAwareTrait;
 
     /**
      * Alias de qualification.
@@ -43,33 +24,32 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
 
     /**
      * Indicateur d'écran d'affichage courant.
-     * @var boolean|null
+     * @var bool|null
      */
     protected $current;
 
     /**
-     * @inheritDoc
+     * @param MetaboxContract $metaboxManager
      */
-    public function boot(): MetaboxScreenContract
+    public function __construct(MetaboxContract $metaboxManager)
     {
-        if (!$this->booted) {
-            $this->parse();
-
-            $this->booted = true;
-        }
-
-        return $this;
+        $this->setMetaboxManager($metaboxManager);
     }
 
     /**
      * @inheritDoc
      */
-    public function build(): MetaboxScreenContract
+    public function boot(): MetaboxScreenInterface
     {
-        if (!$this->built) {
-            $this->built = true;
-        }
+        if (!$this->isBooted()) {
+            events()->trigger('metabox.screen.booted', [$this->getAlias(), $this]);
 
+            $this->parseParams();
+
+            $this->setBooted();
+
+            events()->trigger('metabox.driver.booting', [$this->getAlias(), $this]);
+        }
         return $this;
     }
 
@@ -79,14 +59,6 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
     public function getAlias(): string
     {
         return $this->alias;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDrivers(): array
-    {
-        return $this->drivers;
     }
 
     /**
@@ -103,7 +75,6 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
                 $this->current = false;
             }
         }
-
         return $this->current;
     }
 
@@ -126,51 +97,9 @@ class MetaboxScreen extends ParamsBag implements MetaboxScreenContract
     /**
      * @inheritDoc
      */
-    public function metabox(): ?Metabox
-    {
-        return $this->metabox;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return $this
-     */
-    public function parse(): MetaboxScreenContract
-    {
-        $this->attributes = array_merge(
-            $this->defaults(), $this->metabox()->config("screen.{$this->getAlias()}", []), $this->attributes
-        );
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setAlias(string $alias): MetaboxScreenContract
+    public function setAlias(string $alias): MetaboxScreenInterface
     {
         $this->alias = $alias;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setDriver(MetaboxDriver $driver): MetaboxScreenContract
-    {
-        $this->drivers[$driver->getUuid()] = $driver;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setMetabox(Metabox $metabox): MetaboxScreenContract
-    {
-        $this->metabox = $metabox;
 
         return $this;
     }
