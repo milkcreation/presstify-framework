@@ -16,6 +16,13 @@ interface WpScreen
     public static function get($screen = ''): ?WPScreen;
 
     /**
+     * Récupération de l'alias de qualification.
+     *
+     * @return string
+     */
+    public function getAlias(): string;
+
+    /**
      * Récupération de l'identifiant de qualification de l'accroche de l'écran Wordpress.
      *
      * @return string

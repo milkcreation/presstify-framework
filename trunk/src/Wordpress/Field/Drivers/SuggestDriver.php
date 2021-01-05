@@ -31,10 +31,7 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
             }
             $this->set('ajax.data.wp_query', $this->get('wp_query', 'post'));
         }
-
-        parent::parse();
-
-        return $this;
+        return parent::parseParams();
     }
 
     /**
@@ -88,7 +85,9 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
             $count = count($posts);
             $found = $wpQuery->found_posts;
 
-            $this->view()->addPath(dirname(dirname(__DIR__)) . '/Resources/views/' . $this->getAlias());
+            if ($this->view()->getOverrideDir() === null) {
+                $this->view()->setOverrideDir(dirname(__DIR__) . '/Resources/views/suggest');
+            }
 
             $items = (new Collection($posts))->map(
                 function (WP_Post $wp_post) {

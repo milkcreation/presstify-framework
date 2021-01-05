@@ -1,8 +1,6 @@
 <?php
 /**
- * Entête.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\PartialViewInterface $this
  */
 ?>
 <div class="Sidebar-header" data-control="sidebar.header">

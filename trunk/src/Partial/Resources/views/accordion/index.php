@@ -1,7 +1,7 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
- * @var tiFy\Partial\Driver\Accordion\AccordionWalker $items
+ * @var tiFy\Partial\PartialViewInterface $this
+ * @var tiFy\Partial\Drivers\Accordion\AccordionCollectionInterface $items
  */
 ?>
 <?php $this->before(); ?>

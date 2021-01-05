@@ -1,8 +1,6 @@
 <?php
 /**
- * Pied de page
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\PartialViewInterface $this
  */
 ?>
 <div class="Sidebar-footer" data-control="sidebar.footer">

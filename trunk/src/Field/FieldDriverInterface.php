@@ -14,13 +14,6 @@ use tiFy\Field\Contracts\FieldContract;
 interface FieldDriverInterface
 {
     /**
-     * Résolution de sortie de la classe en tant que chaîne de caractère.
-     *
-     * @return string
-     */
-    public function __toString(): string;
-
-    /**
      * Récupération des paramètres.
      *
      * @param string $key
@@ -38,6 +31,13 @@ interface FieldDriverInterface
      * @return mixed
      */
     public function __call(string $method, array $arguments);
+
+    /**
+     * Résolution de sortie de la classe en tant que chaîne de caractère.
+     *
+     * @return string
+     */
+    public function __toString(): string;
 
     /**
      * Post-affichage.

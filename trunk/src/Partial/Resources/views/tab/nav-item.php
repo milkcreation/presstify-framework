@@ -1,7 +1,7 @@
 <?php
 /**
- * @var tiFy\Partial\Driver\Tab\TabView $this
- * @var tiFy\Contracts\Partial\TabFactory $item
+ * @var tiFy\Partial\PartialViewInterface $this
+ * @var tiFy\Partial\Drivers\Tab\TabFactoryInterface $item
  */
 ?>
 <a <?php echo $item->getNavAttrs(); ?>>

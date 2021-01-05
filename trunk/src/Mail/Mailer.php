@@ -12,6 +12,7 @@ use tiFy\Contracts\Mail\Mailable as MailableContract;
 use tiFy\Contracts\Mail\MailerDriver;
 use tiFy\Contracts\Mail\Mailer as MailerContract;
 use tiFy\Contracts\Mail\MailerQueue as MailerQueueContract;
+use tiFy\Mail\Metabox\MailConfigMetabox;
 use tiFy\Support\Arr;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\Metabox;
@@ -216,7 +217,7 @@ class Mailer implements MailerContract
     public function boot(): MailerContract
     {
         if (!$this->booted) {
-            Metabox::registerDriver('mail-config', $this->resolve('metabox.mail-config'));
+            Metabox::registerDriver('mail-config', MailConfigMetabox::class);
 
             $this->booted = true;
         }

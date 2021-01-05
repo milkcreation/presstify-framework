@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\PartialViewInterface $this
  */
 ?>
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam nec nibh arcu. In laoreet justo a aliquet vulputate.

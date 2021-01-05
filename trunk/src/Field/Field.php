@@ -126,8 +126,6 @@ class Field implements FieldContract
     /**
      * @param array $config
      * @param Container|null $container
-     *
-     * @return void
      */
     public function __construct(array $config = [], Container $container = null)
     {
@@ -136,7 +134,6 @@ class Field implements FieldContract
         if (!is_null($container)) {
             $this->setContainer($container);
         }
-
         if (!self::$instance instanceof static) {
             self::$instance = $this;
         }
@@ -150,7 +147,6 @@ class Field implements FieldContract
         if (self::$instance instanceof self) {
             return self::$instance;
         }
-
         throw new RuntimeException(sprintf('Unavailable %s instance', __CLASS__));
     }
 
@@ -171,7 +167,7 @@ class Field implements FieldContract
             events()->trigger('field.booting', [$this]);
 
             $this->xhrRoute = Router::xhr(
-                md5('FieldManager') . '/{field}/{controller}',
+                md5('field') . '/{field}/{controller}',
                 [$this, 'xhrResponseDispatcher']
             );
 
@@ -249,13 +245,10 @@ class Field implements FieldContract
         if ($def instanceof FieldDriver) {
             return clone $def;
         } elseif (is_string($def) && $this->containerHas($def)) {
-            if ($this->containerHas($def)) {
-                return $this->containerGet($def);
-            }
-        } elseif(is_string($def) && class_exists($def)) {
+            return $this->containerGet($def);
+        } elseif (is_string($def) && class_exists($def)) {
             return new $def($this);
         }
-
         return null;
     }
 
@@ -283,7 +276,6 @@ class Field implements FieldContract
         if ($callback !== null) {
             $callback($this);
         }
-
         return $this;
     }
 
@@ -292,10 +284,9 @@ class Field implements FieldContract
      */
     public function registerDefaultDrivers(): FieldContract
     {
-        foreach ($this->defaultDrivers as $name => $alias) {
-            $this->register($name, $alias);
+        foreach ($this->defaultDrivers as $alias => $driverDefinition) {
+            $this->register($alias, $driverDefinition);
         }
-
         return $this;
     }
 
@@ -307,7 +298,6 @@ class Field implements FieldContract
         if (!isset($this->resources) || is_null($this->resources)) {
             $this->resources = Storage::local(__DIR__ . '/Resources');
         }
-
         return is_null($path) ? $this->resources : $this->resources->path($path);
     }
 
@@ -328,7 +318,7 @@ class Field implements FieldContract
     {
         try {
             $driver = $this->get($field);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             throw new NotFoundException(
                 sprintf('FieldDriver [%s] return exception : %s', $field, $e->getMessage())
             );
@@ -336,7 +326,7 @@ class Field implements FieldContract
 
         try {
             return $driver->{$controller}(...$args);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             throw new NotFoundException(
                 sprintf('FieldDriver [%s] Controller [%s] call return exception', $controller, $field)
             );

@@ -1,14 +1,19 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\PageHook;
 
 use Illuminate\Support\Collection;
-use tiFy\Wordpress\Contracts\{PageHook as PageHookContract, PageHookItem as PageHookItemContract};
-use tiFy\Support\Proxy\Metabox;
+use tiFy\Wordpress\Contracts\PageHook as PageHookContract;
+use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;
+use tiFy\Support\Concerns\MetaboxManagerAwareTrait;
 use WP_Screen;
 
 class PageHook implements PageHookContract
 {
+    use MetaboxManagerAwareTrait;
+
     /**
      * Instance de l'accroche courante.
      * @var PageHookItemContract|null
@@ -30,23 +35,36 @@ class PageHook implements PageHookContract
     {
         $this->set(config('page-hook', []));
 
-        add_action('admin_init', function () {
-            if ($this->collect()->firstWhere('admin', '=', true)) {
-                Metabox::add('PageHook-optionsNode', (new PageHookMetabox())->setPageHook($this))
-                    ->setScreen('tify_options@options')
-                    ->setContext('tab');
-            }
-        }, 999999);
+        add_action(
+            'admin_init',
+            function () {
+                if ($this->collect()->firstWhere('admin', '=', true)) {
+                    $this->metaboxManager()->add(
+                        md5('PageHookMetabox'),
+                        PageHookMetabox::class,
+                        'tify_options@options',
+                        'tab'
+                    );
+                }
+            },
+            999999
+        );
 
-        add_action('current_screen', function (WP_Screen $wp_screen) {
-            if ($wp_screen->id === 'settings_page_tify_options') {
-                flush_rewrite_rules();
+        add_action(
+            'current_screen',
+            function (WP_Screen $wp_screen) {
+                if ($wp_screen->id === 'settings_page_tify_options') {
+                    flush_rewrite_rules();
+                }
             }
-        });
+        );
 
-        add_action('init', function () {
-            add_rewrite_tag('%hookname%', '([^&]+)');
-        });
+        add_action(
+            'init',
+            function () {
+                add_rewrite_tag('%hookname%', '([^&]+)');
+            }
+        );
     }
 
     /**
@@ -107,9 +125,11 @@ class PageHook implements PageHookContract
      */
     public function has(): bool
     {
-        return !!$this->collect()->first(function (PageHookItemContract $hook) {
-            return $hook->exists();
-        });
+        return !!$this->collect()->first(
+            function (PageHookItemContract $hook) {
+                return $hook->exists();
+            }
+        );
     }
 
     /**

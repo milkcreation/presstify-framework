@@ -6,6 +6,7 @@ use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Debug\Debug as DebugManager;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Field\Contracts\FieldContract;
+use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Partial\Contracts\PartialContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Asset\Asset;
@@ -23,6 +24,7 @@ use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Metabox\Metabox;
 use tiFy\Wordpress\Option\Option;
 use tiFy\Wordpress\PageHook\PageHook;
+use tiFy\Wordpress\PageHook\PageHookMetabox;
 use tiFy\Wordpress\Partial\Partial;
 use tiFy\Wordpress\PostType\PostType;
 use tiFy\Wordpress\Query\QueryPost;
@@ -62,6 +64,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.media',
         'wp.metabox',
         'wp.page-hook',
+        PageHookMetabox::class,
         'wp.partial',
         'wp.option',
         'wp.post-type',
@@ -148,7 +151,7 @@ class WordpressServiceProvider extends ServiceProvider
 
                 $this->getContainer()->get('wp.media');
 
-                if ($this->getContainer()->has('metabox')) {
+                if ($this->getContainer()->has(MetaboxContract::class)) {
                     $this->getContainer()->get('wp.metabox');
                 }
 
@@ -383,7 +386,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerMetabox(): void
     {
         $this->getContainer()->share('wp.metabox', function () {
-            return new Metabox($this->getContainer()->get('metabox'));
+            return new Metabox($this->getContainer()->get(MetaboxContract::class), $this->getContainer());
         });
     }
 
@@ -408,6 +411,12 @@ class WordpressServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('wp.page-hook', function () {
             return new PageHook();
+        });
+        $this->getContainer()->add(PageHookMetabox::class, function () {
+            return new PageHookMetabox(
+                $this->getContainer()->get('wp.page-hook'),
+                $this->getContainer()->get(MetaboxContract::class)
+            );
         });
     }
 
