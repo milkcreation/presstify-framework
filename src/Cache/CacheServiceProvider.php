@@ -26,7 +26,6 @@ class CacheServiceProvider extends ServiceProvider
                     'database' => []
                 ], config('cache.stores', []))
             ]);
-
             return new Cache($this->getContainer()->get('app'));
         });
     }

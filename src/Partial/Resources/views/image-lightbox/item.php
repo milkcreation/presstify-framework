@@ -1,7 +1,7 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
- * @var tiFy\Contracts\Partial\ImageLightboxItem $item
+ * @var tiFy\Partial\PartialViewInterface $this
+ * @var tiFy\Partial\Drivers\ImageLightbox\ImageLightboxItemInterface $item
  */
 ?>
 <a <?php echo $item->getAttrs(); ?>>

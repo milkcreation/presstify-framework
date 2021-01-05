@@ -7,6 +7,7 @@ namespace tiFy\Wordpress\Field;
 use Psr\Container\ContainerInterface as Container;
 use tiFy\Field\Contracts\FieldContract;
 use tiFy\Support\Concerns\ContainerAwareTrait;
+use tiFy\Field\Drivers\SuggestDriver as BaseSuggestDriver;
 use tiFy\Wordpress\Field\Drivers\FileJsDriver;
 use tiFy\Wordpress\Field\Drivers\FindpostsDriver;
 use tiFy\Wordpress\Field\Drivers\MediaFileDriver;
@@ -88,7 +89,7 @@ class Field
             }
         );
         $this->getContainer()->add(
-            SuggestDriver::class,
+            BaseSuggestDriver::class,
             function () {
                 return new SuggestDriver($this->getContainer()->get(FieldContract::class));
             }

@@ -4,7 +4,8 @@ namespace tiFy\Cache;
 
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface as Container;
-use tiFy\Contracts\Cache\{Cache as CacheContract, Store};
+use tiFy\Contracts\Cache\Cache as CacheContract;
+use tiFy\Contracts\Cache\Store;
 use tiFy\Support\Proxy\Database;
 
 class Cache implements CacheContract

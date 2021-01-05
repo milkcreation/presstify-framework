@@ -1,7 +1,7 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
- * @var tiFy\Contracts\Partial\AccordionItem $item
+ * @var tiFy\Partial\PartialViewInterface $this
+ * @var tiFy\Partial\Drivers\Accordion\AccordionItemInterface $item
  */
 ?>
 <div <?php echo $this->htmlAttrs($item->get('attrs', [])); ?>>

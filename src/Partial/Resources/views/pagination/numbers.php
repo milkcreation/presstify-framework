@@ -1,8 +1,6 @@
 <?php
 /**
- * Pagination - Liste des numéros de page.
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\Driver\Pagination\PaginationView $this
+ * @var tiFy\Partial\Drivers\Pagination\PaginationView $this
  */
 ?>
 <?php foreach ($this->get('numbers', []) as $number) : ?>

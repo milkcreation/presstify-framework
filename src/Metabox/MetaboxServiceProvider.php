@@ -1,66 +1,49 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Metabox\Metabox as MetaboxContract;
-use tiFy\Contracts\Metabox\MetaboxContext as MetaboxContextContract;
-use tiFy\Contracts\Metabox\MetaboxDriver as MetaboxDriverContract;
-use tiFy\Contracts\Metabox\MetaboxScreen as MetaboxScreenContract;
-use tiFy\Contracts\Metabox\ColorDriver as ColorDriverContract;
-use tiFy\Contracts\Metabox\CustomHeaderDriver as CustomHeaderContract;
-use tiFy\Contracts\Metabox\ExcerptDriver as ExcerptDriverContract;
-use tiFy\Contracts\Metabox\FilefeedDriver as FilefeedContract;
-use tiFy\Contracts\Metabox\IconDriver as IconDriverContract;
-use tiFy\Contracts\Metabox\ImagefeedDriver as ImagefeedDriverContract;
-use tiFy\Contracts\Metabox\OrderDriver as OrderDriverContract;
-use tiFy\Contracts\Metabox\PostfeedDriver as PostfeedDriverContract;
-use tiFy\Contracts\Metabox\RelatedTermDriver as RelatedTermDriverContract;
-use tiFy\Contracts\Metabox\SlidefeedDriver as SlidefeedDriverContract;
-use tiFy\Contracts\Metabox\SubtitleDriver as SubtitleDriverContract;
-use tiFy\Contracts\Metabox\TabContext as TabContextContract;
-use tiFy\Contracts\Metabox\VideofeedDriver as VideofeedDriverContract;
-use tiFy\Contracts\View\Engine as ViewEngineContract;
-use tiFy\Metabox\Context\TabContext;
-use tiFy\Metabox\Driver\Color\Color as ColorDriver;
-use tiFy\Metabox\Driver\CustomHeader\CustomHeader as CustomHeaderDriver;
-use tiFy\Metabox\Driver\Excerpt\Excerpt as ExcerptDriver;
-use tiFy\Metabox\Driver\Filefeed\Filefeed as FilefeedDriver;
-use tiFy\Metabox\Driver\Icon\Icon as IconDriver;
-use tiFy\Metabox\Driver\Imagefeed\Imagefeed as ImagefeedDriver;
-use tiFy\Metabox\Driver\Order\Order as OrderDriver;
-use tiFy\Metabox\Driver\Postfeed\Postfeed as PostfeedDriver;
-use tiFy\Metabox\Driver\RelatedTerm\RelatedTerm as RelatedTermDriver;
-use tiFy\Metabox\Driver\Slidefeed\Slidefeed as SlidefeedDriver;
-use tiFy\Metabox\Driver\Subtitle\Subtitle as SubtitleDriver;
-use tiFy\Metabox\Driver\Videofeed\Videofeed as VideofeedDriver;
+use tiFy\Metabox\Contexts\TabContext;
+use tiFy\Metabox\Contracts\MetaboxContract;
+use tiFy\Metabox\Drivers\ColorDriver;
+use tiFy\Metabox\Drivers\CustomHeaderDriver;
+use tiFy\Metabox\Drivers\ExcerptDriver;
+use tiFy\Metabox\Drivers\FilefeedDriver;
+use tiFy\Metabox\Drivers\IconDriver;
+use tiFy\Metabox\Drivers\ImagefeedDriver;
+use tiFy\Metabox\Drivers\OrderDriver;
+use tiFy\Metabox\Drivers\PostfeedDriver;
+use tiFy\Metabox\Drivers\RelatedTermDriver;
+use tiFy\Metabox\Drivers\SlidefeedDriver;
+use tiFy\Metabox\Drivers\SubtitleDriver;
+use tiFy\Metabox\Drivers\VideofeedDriver;
 use tiFy\Support\Proxy\View;
 
 class MetaboxServiceProvider extends ServiceProvider
 {
     /**
-     * Liste des noms de qualification des services fournis.
-     * {@internal Permet un chargement différé des services.}
-     * @var string[]
+     * @inheritDoc
      */
     protected $provides = [
-        'metabox',
-        'metabox.driver',
-        ColorDriverContract::class,
-        CustomHeaderContract::class,
-        ExcerptDriverContract::class,
-        FilefeedContract::class,
-        IconDriverContract::class,
-        ImagefeedDriverContract::class,
-        OrderDriverContract::class,
-        PostfeedDriverContract::class,
-        RelatedTermDriverContract::class,
-        SlidefeedDriverContract::class,
-        SubtitleDriverContract::class,
-        TabContextContract::class,
-        VideofeedDriverContract::class,
-        'metabox.context',
-        'metabox.screen',
+        MetaboxContract::class,
+        MetaboxContext::class,
+        MetaboxDriver::class,
+        MetaboxScreen::class,
+        ColorDriver::class,
+        CustomHeaderDriver::class,
+        ExcerptDriver::class,
+        FilefeedDriver::class,
+        IconDriver::class,
+        ImagefeedDriver::class,
+        OrderDriver::class,
+        PostfeedDriver::class,
+        RelatedTermDriver::class,
+        SlidefeedDriver::class,
+        SubtitleDriver::class,
+        TabContext::class,
+        VideofeedDriver::class,
         'metabox.view-engine.context',
         'metabox.view-engine.driver',
     ];
@@ -70,21 +53,33 @@ class MetaboxServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->getContainer()->share('metabox', function (): MetaboxContract {
-            return (new Metabox(config('metabox', []), $this->getContainer()));
-        });
+        $this->getContainer()->share(
+            MetaboxContract::class,
+            function () {
+                return new Metabox(config('metabox', []), $this->getContainer());
+            }
+        );
 
-        $this->getContainer()->add('metabox.context', function (): MetaboxContextContract {
-            return new MetaboxContext();
-        });
+        $this->getContainer()->add(
+            MetaboxContext::class,
+            function () {
+                return new MetaboxContext($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
 
-        $this->getContainer()->add('metabox.driver', function (): MetaboxDriverContract {
-            return new MetaboxDriver();
-        });
+        $this->getContainer()->add(
+            MetaboxDriver::class,
+            function () {
+                return new MetaboxDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
 
-        $this->getContainer()->add('metabox.screen', function (): MetaboxScreenContract {
-            return new MetaboxScreen();
-        });
+        $this->getContainer()->add(
+            MetaboxScreen::class,
+            function () {
+                return new MetaboxScreen($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
 
         $this->registerContexts();
         $this->registerDrivers();
@@ -93,71 +88,99 @@ class MetaboxServiceProvider extends ServiceProvider
     }
 
     /**
-     * Déclaration des contextes d'affichage.
+     * Déclaration des contextes.
      *
      * @return void
      */
     public function registerContexts(): void
     {
-        $this->getContainer()->add(TabContextContract::class, function (): MetaboxContextContract {
-            return new TabContext();
-        });
+        $this->getContainer()->add(
+            TabContext::class,
+            function () {
+                return new TabContext($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
     }
 
     /**
-     * Déclaration des pilotes d'affichage.
+     * Déclaration des pilotes.
      *
      * @return void
      */
     public function registerDrivers(): void
     {
-        $this->getContainer()->share(ColorDriverContract::class, function (): MetaboxDriverContract {
-            return new ColorDriver();
-        });
-
-        $this->getContainer()->share(CustomHeaderContract::class, function (): MetaboxDriverContract {
-            return new CustomHeaderDriver();
-        });
-
-        $this->getContainer()->share(ExcerptDriverContract::class, function (): MetaboxDriverContract {
-            return new ExcerptDriver();
-        });
-
-        $this->getContainer()->share(FilefeedContract::class, function (): MetaboxDriverContract {
-            return new FilefeedDriver();
-        });
-
-        $this->getContainer()->share(IconDriverContract::class, function (): MetaboxDriverContract {
-            return new IconDriver();
-        });
-
-        $this->getContainer()->share(OrderDriverContract::class, function (): MetaboxDriverContract {
-            return new OrderDriver();
-        });
-
-        $this->getContainer()->share(ImagefeedDriverContract::class, function (): MetaboxDriverContract {
-            return new ImagefeedDriver();
-        });
-
-        $this->getContainer()->share(PostfeedDriverContract::class, function (): MetaboxDriverContract {
-            return new PostfeedDriver();
-        });
-
-        $this->getContainer()->share(RelatedTermDriverContract::class, function (): MetaboxDriverContract {
-            return new RelatedTermDriver();
-        });
-
-        $this->getContainer()->share(SlidefeedDriverContract::class, function (): MetaboxDriverContract {
-            return new SlidefeedDriver();
-        });
-
-        $this->getContainer()->share(SubtitleDriverContract::class, function (): MetaboxDriverContract {
-            return new SubtitleDriver();
-        });
-
-        $this->getContainer()->share(VideofeedDriverContract::class, function (): MetaboxDriverContract {
-            return new VideofeedDriver();
-        });
+        $this->getContainer()->add(
+            ColorDriver::class,
+            function () {
+                return new ColorDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            CustomHeaderDriver::class,
+            function () {
+                return new CustomHeaderDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            ExcerptDriver::class,
+            function () {
+                return new ExcerptDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            FilefeedDriver::class,
+            function () {
+                return new FilefeedDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            IconDriver::class,
+            function () {
+                return new IconDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            OrderDriver::class,
+            function () {
+                return new OrderDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            ImagefeedDriver::class,
+            function () {
+                return new ImagefeedDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            PostfeedDriver::class,
+            function () {
+                return new PostfeedDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            RelatedTermDriver::class,
+            function () {
+                return new RelatedTermDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            SlidefeedDriver::class,
+            function () {
+                return new SlidefeedDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            SubtitleDriver::class,
+            function () {
+                return new SubtitleDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
+        $this->getContainer()->add(
+            VideofeedDriver::class,
+            function () {
+                return new VideofeedDriver($this->getContainer()->get(MetaboxContract::class));
+            }
+        );
     }
 
     /**
@@ -167,9 +190,12 @@ class MetaboxServiceProvider extends ServiceProvider
      */
     public function registerContextViewEngine(): void
     {
-        $this->getContainer()->add('metabox.view-engine.context', function (): ViewEngineContract {
-            return View::getPlatesEngine();
-        });
+        $this->getContainer()->add(
+            'metabox.view-engine.context',
+            function () {
+                return View::getPlatesEngine();
+            }
+        );
     }
 
     /**
@@ -179,8 +205,11 @@ class MetaboxServiceProvider extends ServiceProvider
      */
     public function registerDriverViewEngine(): void
     {
-        $this->getContainer()->add('metabox.view-engine.driver', function (): ViewEngineContract {
-            return View::getPlatesEngine();
-        });
+        $this->getContainer()->add(
+            'metabox.view-engine.driver',
+            function () {
+                return View::getPlatesEngine();
+            }
+        );
     }
 }

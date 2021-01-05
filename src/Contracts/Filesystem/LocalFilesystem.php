@@ -62,4 +62,13 @@ interface LocalFilesystem extends Filesystem
      * @return string|null
      */
     public function rel(string $path = '/'): ?string;
+
+    /**
+     * Récupération de l'url associée au chemin d'une ressource de destination.
+     *
+     * @param string $path Chemin relatif.
+     *
+     * @return string|null
+     */
+    public function url(string $path = '/'): ?string;
 }

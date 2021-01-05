@@ -6,6 +6,7 @@ namespace tiFy\Partial\Drivers;
 
 use Closure;
 use tiFy\Partial\PartialDriver;
+use tiFy\Partial\PartialDriverInterface;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\Request;
 
@@ -74,6 +75,17 @@ class ModalDriver extends PartialDriver implements ModalDriverInterface
              */
             'size'           => '',
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parseParams(): PartialDriverInterface
+    {
+        $this->set([
+           'attrs.data-id'      => $this->get('attrs.id', $this->getId())
+        ]);
+        return parent::parseParams();
     }
 
     /**
@@ -238,7 +250,6 @@ class ModalDriver extends PartialDriver implements ModalDriverInterface
         foreach ($viewer as $key => $value) {
             $this->view()->params([$key => $value]);
         }
-
         return [
             'success' => true,
             'data'    => $this->view('ajax-content'),

@@ -1,8 +1,6 @@
 <?php
 /**
- * Progress
- * ---------------------------------------------------------------------------------------------------------------------
- * @var tiFy\Partial\PartialView $this
+ * @var tiFy\Partial\PartialViewInterface $this
  */
 ?>
 <?php echo $this->before(); ?>

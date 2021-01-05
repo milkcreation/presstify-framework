@@ -1,32 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
-use tiFy\Contracts\Metabox\MetaboxContext as MetaboxContextContract;
-use tiFy\Contracts\Metabox\Metabox;
-use tiFy\Contracts\Metabox\MetaboxDriver;
+use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\Support\ParamsBag;
+use tiFy\Support\Concerns\BootableTrait;
+use tiFy\Support\Concerns\ParamsBagTrait;
+use tiFy\Support\Proxy\View;
 
-class MetaboxContext extends ParamsBag implements MetaboxContextContract
+class MetaboxContext implements MetaboxContextInterface
 {
-    /**
-     * Indicateur de chargement.
-     * @var bool
-     */
-    private $booted = false;
-
-    /**
-     * Indicateur d'initialisation.
-     * @var bool
-     */
-    private $built = false;
-
-    /**
-     * Instance du gestionnaire de metaboxes.
-     * @var Metabox|null
-     */
-    private $metabox;
+    use BootableTrait;
+    use ParamsBagTrait;
+    use MetaboxAwareTrait;
 
     /**
      * Alias de qualification.
@@ -36,7 +24,7 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
 
     /**
      * Liste des pilotes déclarés.
-     * @var MetaboxDriver[]|array
+     * @var MetaboxDriverInterface[]|array
      */
     protected $drivers = [];
 
@@ -45,6 +33,20 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
      * @var ViewEngine|null
      */
     protected $viewEngine;
+
+    /**
+     * Instance de l'écran associé.
+     * @var MetaboxScreenInterface|null
+     */
+    protected $screen = null;
+
+    /**
+     * @param MetaboxContract $metaboxManager
+     */
+    public function __construct(MetaboxContract $metaboxManager)
+    {
+        $this->setMetaboxManager($metaboxManager);
+    }
 
     /**
      * @inheritDoc
@@ -57,26 +59,17 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     /**
      * @inheritDoc
      */
-    public function boot(): MetaboxContextContract
+    public function boot(): MetaboxContextInterface
     {
-        if (!$this->booted) {
-            $this->parse();
+        if (!$this->isBooted()) {
+            events()->trigger('metabox.context.booting', [$this->getAlias(), $this]);
 
-            $this->booted = true;
+            $this->parseParams();
+
+            $this->setBooted();
+
+            events()->trigger('metabox.context.booted', [$this->getAlias(), $this]);
         }
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function build(): MetaboxContextContract
-    {
-        if (!$this->built) {
-            $this->built = true;
-        }
-
         return $this;
     }
 
@@ -99,51 +92,15 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     /**
      * @inheritDoc
      */
-    public function defaults(): array
-    {
-        return [
-            'items' => [],
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function metabox(): ?Metabox
-    {
-        return $this->metabox;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return $this
-     */
-    public function parse(): MetaboxContextContract
-    {
-        $this->attributes = array_merge(
-            $this->defaults(), $this->metabox()->config("context.{$this->getAlias()}", []), $this->attributes
-        );
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function render(): string
     {
-        $this->set([
-            'items' => $this->metabox()->getRenderedDrivers($this->getAlias()),
-        ]);
-
-        return $this->view('index', $this->parse()->all());
+        return $this->view('index', $this->params()->all());
     }
 
     /**
      * @inheritDoc
      */
-    public function setAlias(string $alias): MetaboxContextContract
+    public function setAlias(string $alias): MetaboxContextInterface
     {
         $this->alias = $alias;
 
@@ -153,7 +110,7 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     /**
      * @inheritDoc
      */
-    public function setDriver(MetaboxDriver $driver): MetaboxContextContract
+    public function setDriver(MetaboxDriverInterface $driver): MetaboxContextInterface
     {
         $this->drivers[$driver->getUuid()] = $driver;
 
@@ -163,9 +120,9 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     /**
      * @inheritDoc
      */
-    public function setMetabox(Metabox $metabox): MetaboxContextContract
+    public function setScreen(MetaboxScreenInterface $screen): MetaboxContextInterface
     {
-        $this->metabox = $metabox;
+        $this->screen = $screen;
 
         return $this;
     }
@@ -176,11 +133,14 @@ class MetaboxContext extends ParamsBag implements MetaboxContextContract
     public function view(?string $view = null, array $data = [])
     {
         if (!$this->viewEngine) {
-            $this->viewEngine = $this->metabox()->resolve('view-engine.context');
+            $this->viewEngine = $this->metaboxManager()->containerHas('metabox.view-engine.context') ?
+                $this->metaboxManager()->containerGet('metabox.view-engine.context') : View::getPlatesEngine();
 
-            $this->viewEngine->params([
-                'directory' => $this->metabox()->resources("/views/context/{$this->getAlias()}")
-            ]);
+            $this->viewEngine->params(
+                [
+                    'directory' => $this->metaboxManager()->resources("/views/contexts/{$this->getAlias()}"),
+                ]
+            );
         }
 
         if (func_num_args() === 0) {

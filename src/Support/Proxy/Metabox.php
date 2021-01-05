@@ -2,24 +2,27 @@
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Metabox\Metabox as MetaboxContract;
-use tiFy\Contracts\Metabox\MetaboxContext as Context;
-use tiFy\Contracts\Metabox\MetaboxDriver as Driver;
-use tiFy\Contracts\Metabox\MetaboxScreen as Screen;
+use tiFy\Metabox\Contracts\MetaboxContract;
+use tiFy\Metabox\MetaboxContextInterface;
+use tiFy\Metabox\MetaboxDriverInterface;
+use tiFy\Metabox\MetaboxScreenInterface;
 
 /**
- * @method static Driver add(string $alias, string|array|Driver|null $driverDef, string|null $screen = null, string|null $context = null)
- * @method static Screen addContext(string $alias, string|array|Context $contextDef)
- * @method static Screen addScreen(string $alias, string|array|Screen $screenDef)
+ * @method static MetaboxDriverInterface add(string $alias, string|array|MetaboxDriverInterface|null $driverDefinition = null, string|null $screen = null, string|null $context = null)
+ * @method static MetaboxContextInterface addContext(string $alias, string|array|MetaboxContextInterface $contextDefinition)
+ * @method static MetaboxDriverInterface addDriver(string $alias, string|array|MetaboxDriverInterface|null $driverDefinition = null, string|null $screen = null, string|null $context = null)
+ * @method static MetaboxScreenInterface addScreen(string $alias, string|array|MetaboxScreenInterface $screenDefinition)
  * @method static mixed config(string|array|null $key = null, $default = null)
- * @method static Driver|null get(string $alias)
- * @method static Context|null getContext(string $alias)
- * @method static Screen|null getScreen(string $alias)
- * @method static MetaboxContract registerContext(string $alias, Context $context)
- * @method static MetaboxContract registerDriver(string $alias, Driver $driver)
- * @method static MetaboxContract registerScreen(string $alias, Screen $screen)
+ * @method static MetaboxDriverInterface|null get(string $alias)
+ * @method static MetaboxContextInterface|null getContext(string $alias)
+ * @method static MetaboxDriverInterface|null getDriver(string $alias)
+ * @method static MetaboxScreenInterface|null getScreen(string $alias)
+ * @method static MetaboxContract register(string $alias, string|array|MetaboxDriverInterface $driverDefinition)
+ * @method static MetaboxContract registerContext(string $alias, string|array|MetaboxContextInterface $contextDefinition)
+ * @method static MetaboxContract registerDriver(string $alias, string|array|MetaboxDriverInterface $driverDefinition)
+ * @method static MetaboxContract registerScreen(string $alias, string|array|MetaboxScreenInterface $screenDefinition)
  * @method static string render(string $context)
- * @method static MetaboxContract stack(string|Screen $screen, string|Context $context, Driver[]|array[]|string[] $driversDef = [])
+ * @method static MetaboxContract stack(string $screen, string $context, string[][]|array[][]|MetaboxDriverInterface[][] $driversDefinitions)
  */
 class Metabox extends AbstractProxy
 {
@@ -38,6 +41,6 @@ class Metabox extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'metabox';
+        return MetaboxContract::class;
     }
 }
