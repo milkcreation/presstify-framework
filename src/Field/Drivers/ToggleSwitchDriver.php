@@ -43,10 +43,26 @@ class ToggleSwitchDriver extends FieldDriver implements ToggleSwitchDriverInterf
     /**
      * @inheritDoc
      */
+    public function getName(): string
+    {
+        return $this->get('attrs.name') ?: $this->get('name', md5($this->getId()));
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function render(): string
     {
         $this->set('attrs.data-control', 'toggle-switch');
 
         return parent::render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/toggle-switch');
     }
 }

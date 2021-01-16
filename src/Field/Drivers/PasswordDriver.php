@@ -17,4 +17,13 @@ class PasswordDriver extends FieldDriver implements PasswordDriverInterface
 
         return parent::render();
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/password');
+    }
 }

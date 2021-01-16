@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace tiFy\Partial\Drivers;
 
 use tiFy\Partial\PartialDriver;
-use tiFy\Partial\PartialDriverInterface;
 
 class TagDriver extends PartialDriver implements TagDriverInterface
 {
@@ -54,14 +53,19 @@ class TagDriver extends PartialDriver implements TagDriverInterface
     /**
      * @inheritDoc
      */
-    public function parseParams(): PartialDriverInterface
+    public function render(): string
     {
-        parent::parseParams();
-
         if (in_array($this->get('tag'), $this->singleton)) {
             $this->set('singleton', true);
         }
+        return parent::render();
+    }
 
-        return $this;
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/tag");
     }
 }

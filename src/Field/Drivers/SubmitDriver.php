@@ -33,4 +33,12 @@ class SubmitDriver extends FieldDriver implements SubmitDriverInterface
 
         return parent::render();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/submit');
+    }
 }

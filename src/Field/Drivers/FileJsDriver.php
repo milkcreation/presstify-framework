@@ -112,4 +112,13 @@ class FileJsDriver extends FieldDriver implements FileJsDriverInterface
             'success' => true,
         ];
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/file-js');
+    }
 }

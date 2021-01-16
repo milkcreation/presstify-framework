@@ -37,4 +37,13 @@ class DatepickerDriver extends FieldDriver implements DatepickerDriverInterface
         );
         return parent::render();
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/datepicker');
+    }
 }

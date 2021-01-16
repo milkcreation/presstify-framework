@@ -216,6 +216,14 @@ class SelectJsDriver extends FieldDriver implements SelectJsDriverInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/select-js');
+    }
+
+    /**
      * Génération de réponse HTTP via un requête XHR.
      *
      * @param array ...$args Liste de variables passées en arguments à la requête.

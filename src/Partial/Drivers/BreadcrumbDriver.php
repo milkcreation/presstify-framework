@@ -230,4 +230,12 @@ class BreadcrumbDriver extends PartialDriver implements BreadcrumbDriverInterfac
 
         return null;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/breadcrumb");
+    }
 }

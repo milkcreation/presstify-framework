@@ -142,6 +142,14 @@ class RepeaterDriver extends FieldDriver implements RepeaterDriverInterface
     /**
      * @inheritDoc
      */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/repeater');
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function xhrResponse(...$args): array
     {
         $max = Request::input('max', -1);

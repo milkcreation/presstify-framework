@@ -76,4 +76,13 @@ class NumberJsDriver extends FieldDriver implements NumberJsDriverInterface
 
         return parent::render();
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/number-js');
+    }
 }

@@ -50,4 +50,13 @@ class FileDriver extends FieldDriver implements FileDriverInterface
         }
         return parent::render();
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/file');
+    }
 }

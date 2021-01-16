@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers;
 
-use tiFy\Wordpress\Partial\WordpressPartialDriverInterface;
+use tiFy\Partial\PartialDriverInterface;
 
-interface MediaLibraryDriverInterface extends WordpressPartialDriverInterface
+interface MediaLibraryDriverInterface extends PartialDriverInterface
 {
 }

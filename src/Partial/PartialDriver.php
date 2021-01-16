@@ -18,7 +18,7 @@ use tiFy\Support\Str;
 /**
  * @mixin \tiFy\Support\ParamsBag
  */
-class PartialDriver implements PartialDriverInterface
+abstract class PartialDriver implements PartialDriverInterface
 {
     use BootableTrait;
     use ParamsBagTrait;
@@ -196,6 +196,14 @@ class PartialDriver implements PartialDriverInterface
     /**
      * @inheritDoc
      */
+    public function getBaseClass(): string
+    {
+        return Str::studly($this->getAlias());
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getId(): string
     {
         return $this->id;
@@ -230,7 +238,7 @@ class PartialDriver implements PartialDriverInterface
      */
     public function parseAttrClass(): PartialDriverInterface
     {
-        $base = Str::studly($this->getAlias());
+        $base = $this->getBaseClass();
 
         $default_class = "{$base} {$base}--" . $this->getIndex();
         if (!$this->has('attrs.class')) {
@@ -370,10 +378,7 @@ class PartialDriver implements PartialDriverInterface
     /**
      * @inheritDoc
      */
-    public function viewDirectory(): string
-    {
-        return $this->partialManager()->resources("/views/{$this->getAlias()}");
-    }
+    abstract public function viewDirectory(): string;
 
     /**
      * @inheritDoc

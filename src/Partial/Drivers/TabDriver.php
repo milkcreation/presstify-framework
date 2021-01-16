@@ -177,6 +177,14 @@ class TabDriver extends PartialDriver implements TabDriverInterface
     /**
      * @inheritDoc
      */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/tab");
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function xhrResponse(...$args): array
     {
         if (($sessionName = Request::input('session')) && $store = Session::registerStore($sessionName)) {
