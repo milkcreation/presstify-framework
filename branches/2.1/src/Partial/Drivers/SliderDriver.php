@@ -58,4 +58,12 @@ class SliderDriver extends PartialDriver implements SliderDriverInterface
 
         return $this;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/slider");
+    }
 }

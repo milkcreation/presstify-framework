@@ -44,4 +44,13 @@ class ColorpickerDriver extends FieldDriver implements ColorpickerDriverInterfac
         );
         return parent::render();
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/colorpicker');
+    }
 }

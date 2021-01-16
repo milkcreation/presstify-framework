@@ -83,4 +83,12 @@ class TextRemainingDriver extends FieldDriver implements TextRemainingDriverInte
         }
         return parent::render();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/text-remaining');
+    }
 }

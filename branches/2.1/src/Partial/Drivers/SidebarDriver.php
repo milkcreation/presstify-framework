@@ -114,21 +114,20 @@ class SidebarDriver extends PartialDriver implements SidebarDriverInterface
             ->set('attrs.aria-theme', $this->get('theme'));
 
         $body = $this->get('body', []);
+        $bodyItems = [];
         if (is_array($body)) {
-            $items = [];
-
-            foreach ($this->get('items', []) as $name => $item) {
+            foreach ($this->get('body', []) as $name => $item) {
                 if ($item instanceof SidebarItem) {
-                    $items[] = $item;
+                    $bodyItems[] = $item;
                 } elseif (is_array($item)) {
-                    $items[] = new SidebarItem((string)$name, $item);
+                    $bodyItems[] = new SidebarItem((string)$name, $item);
                 } elseif (is_string($item) || ($item instanceof Closure)) {
                     $item = ['content' => $item];
-                    $items[] = new SidebarItem((string)$name, $item);
+                    $bodyItems[] = new SidebarItem((string)$name, $item);
                 }
             }
         } elseif (is_string($body) || ($body instanceof Closure)) {
-            $items = [new SidebarItem('default', ['content' => $body])];
+            $bodyItems = [new SidebarItem('default', ['content' => $body])];
         }
 
         if ($header = $this->get('header')) {
@@ -141,7 +140,7 @@ class SidebarDriver extends PartialDriver implements SidebarDriverInterface
                 ? call_user_func($footer) : (is_string($footer) ? $footer : '&nbsp;'));
         }
 
-        $this->set('items', (new Collection($items))->sortBy('position')->all());
+        $this->set('items', (new Collection($bodyItems))->sortBy('position')->all());
 
         if ($toggle = $this->get('toggle')) {
             if (is_string($toggle)) {
@@ -195,5 +194,13 @@ class SidebarDriver extends PartialDriver implements SidebarDriverInterface
         }
 
         return $this->view('toggle', compact('attrs'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/sidebar");
     }
 }

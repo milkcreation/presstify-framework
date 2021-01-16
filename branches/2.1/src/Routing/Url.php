@@ -81,7 +81,7 @@ class Url extends UrlFactory implements UrlContract
     /**
      * @inheritDoc
      */
-    public function root(string $path = ''): UrlFactoryContract
+    public function root(?string $path = null): UrlFactoryContract
     {
         return new UrlFactory(config('app_url', $this->request->root()) . ($path ? '/' . ltrim($path, '/') : ''));
     }

@@ -261,4 +261,12 @@ class PaginationDriver extends PartialDriver implements PaginationDriverInterfac
     {
         return $this->query;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/pagination");
+    }
 }

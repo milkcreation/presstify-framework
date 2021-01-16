@@ -17,4 +17,13 @@ class HiddenDriver extends FieldDriver implements HiddenDriverInterface
 
         return parent::render();
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/hidden');
+    }
 }

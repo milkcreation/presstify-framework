@@ -38,4 +38,12 @@ class ButtonDriver extends FieldDriver implements ButtonDriverInterface
         }
         return parent::render();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/button');
+    }
 }

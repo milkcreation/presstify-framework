@@ -108,19 +108,19 @@ class RoutingServiceProvider extends ServiceProvider
     public function registerStrategies(): void
     {
         $this->getContainer()->add('router.strategy.default', function () {
-            return new AppStrategy();
+            return (new AppStrategy())->setContainer($this->getContainer());
         });
 
         $this->getContainer()->add('router.strategy.api', function () {
-            return new ApiStrategy(new ResponseFactory());
+            return (new ApiStrategy(new ResponseFactory()))->setContainer($this->getContainer());
         });
 
         $this->getContainer()->add('router.strategy.app', function () {
-            return new AppStrategy();
+            return (new AppStrategy())->setContainer($this->getContainer());
         });
 
         $this->getContainer()->add('router.strategy.json', function () {
-            return new JsonStrategy(new ResponseFactory());
+            return (new JsonStrategy(new ResponseFactory()))->setContainer($this->getContainer());
         });
     }
 

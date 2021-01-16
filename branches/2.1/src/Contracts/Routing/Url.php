@@ -32,11 +32,11 @@ interface Url extends UrlFactory
     /**
      * Récupération de l'url vers la racine du site.
      *
-     * @param string $path Chemin relatif vers une ressource du site.
+     * @param string|null $path Chemin relatif vers une ressource du site.
      *
      * @return UrlFactory
      */
-    public function root(string $path = ''): UrlFactory;
+    public function root(?string $path = null): UrlFactory;
 
     /**
      * @inheritDoc

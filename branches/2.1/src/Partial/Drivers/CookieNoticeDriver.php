@@ -114,6 +114,14 @@ class CookieNoticeDriver extends PartialDriver implements CookieNoticeDriverInte
     /**
      * @inheritDoc
      */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/cookie-notice");
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function xhrResponse(...$args): array
     {
         $id = Request::input('_id') ?: 'test';

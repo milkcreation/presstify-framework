@@ -88,7 +88,14 @@ class NoticeDriver extends PartialDriver implements NoticeDriverInterface
         if (!$this->get('attrs.class')) {
             $this->forget('attrs.class');
         }
-
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/notice");
     }
 }

@@ -241,6 +241,14 @@ class ModalDriver extends PartialDriver implements ModalDriverInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/modal");
+    }
+
+    /**
      * @inheritdoc
      */
     public function xhrResponse(...$args): array

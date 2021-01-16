@@ -18,7 +18,7 @@ use tiFy\Support\Str;
 /**
  * @mixin \tiFy\Support\ParamsBag
  */
-class FieldDriver implements FieldDriverInterface
+abstract class FieldDriver implements FieldDriverInterface
 {
     use BootableTrait;
     use ParamsBagTrait;
@@ -411,10 +411,7 @@ class FieldDriver implements FieldDriverInterface
     /**
      * @inheritDoc
      */
-    public function viewDirectory(): string
-    {
-        return $this->fieldManager()->resources("/views/{$this->getAlias()}");
-    }
+    abstract public function viewDirectory(): string;
 
     /**
      * @inheritDoc

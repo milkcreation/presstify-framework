@@ -192,4 +192,12 @@ class DownloaderDriver extends PartialDriver implements DownloaderDriverInterfac
             return new Response($e->getMessage(), 500);
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/downloader");
+    }
 }
