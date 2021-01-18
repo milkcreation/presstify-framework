@@ -92,6 +92,6 @@ class SelectDriver extends FieldDriver implements SelectDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->fieldManager()->resources('/views/selected');
+        return $this->fieldManager()->resources('/views/select');
     }
 }

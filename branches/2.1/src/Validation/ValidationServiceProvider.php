@@ -28,11 +28,9 @@ class ValidationServiceProvider extends ServiceProvider
                 'password'   => $this->getContainer()->get('validator.rule.password'),
                 'serialized' => $this->getContainer()->get('validator.rule.serialized'),
             ];
-
             foreach ($rules as $name => $rule) {
                 Validator::setCustom($name, $rule);
             }
-
             return new Validator();
         });
 
