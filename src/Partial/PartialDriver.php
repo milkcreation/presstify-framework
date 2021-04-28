@@ -244,7 +244,8 @@ abstract class PartialDriver implements PartialDriverInterface
         if (!$this->has('attrs.class')) {
             $this->set('attrs.class', $default_class);
         } else {
-            $this->set('attrs.class', sprintf($this->get('attrs.class'), $default_class));
+            $this->set('attrs.class', sprintf(
+                is_string($this->get('attrs.class')) ? $this->get('attrs.class') : '%s', $default_class));
         }
 
         if (!$this->get('attrs.class')) {

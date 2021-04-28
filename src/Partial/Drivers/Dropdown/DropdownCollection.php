@@ -45,7 +45,7 @@ class DropdownCollection extends Collection implements DropdownCollectionInterfa
     public function walk($item, $key = null): DropdownItemInterface
     {
         if(!$item instanceof DropdownItemInterface) {
-            $item = new DropdownItem($key, $item);
+            $item = new DropdownItem((string)$key, $item);
         }
 
         return $this->items[$key] = $item;

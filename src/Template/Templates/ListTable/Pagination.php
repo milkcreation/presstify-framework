@@ -5,7 +5,7 @@ namespace tiFy\Template\Templates\ListTable;
 use tiFy\Support\ParamsBag;
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Contracts\Pagination as PaginationContract;
-use tiFy\Support\Traits\PaginationAwareTrait;
+use tiFy\Support\Concerns\PaginationAwareTrait;
 
 class Pagination extends ParamsBag implements PaginationContract
 {
