@@ -127,24 +127,24 @@ class MessagesBag implements MessagesBagContract
     /**
      * Récupération d'un élément d'itération.
      *
-     * @param int $level Niveau de notification.
+     * @param int|string $level Niveau de notification.
      *
      * @return mixed
      */
-    public function __get(int $level)
+    public function __get($level)
     {
-        return $this->get($level);
+        return $this->get(static::convertLevel($level));
     }
 
     /**
      * Définition d'un élément d'itération.
      *
-     * @param int $level Niveau de notification.
+     * @param string $level Niveau de notification.
      * @param mixed $value Valeur.
      *
      * @return void
      */
-    public function __set(int $level, $value)
+    public function __set($level, $value)
     {
         $this->offsetSet($level, $value);
     }
@@ -152,11 +152,11 @@ class MessagesBag implements MessagesBagContract
     /**
      * Vérification d'existance d'un élément d'itération.
      *
-     * @param int $level Niveau de notification.
+     * @param string $level Niveau de notification.
      *
      * @return bool
      */
-    public function __isset(int $level): bool
+    public function __isset($level): bool
     {
         return $this->offsetExists($level);
     }
@@ -164,11 +164,11 @@ class MessagesBag implements MessagesBagContract
     /**
      * Suppression d'un élément d'itération.
      *
-     * @param int $level Niveau de notification.
+     * @param string $level Niveau de notification.
      *
      * @return void
      */
-    public function __unset(int $level)
+    public function __unset($level)
     {
         $this->offsetUnset($level);
     }
@@ -236,9 +236,8 @@ class MessagesBag implements MessagesBagContract
     {
         if (is_null($code)) {
             return $this->datas->get($level, []);
-        } else {
-            return $this->datas->get("{$level}.{$code}", $default);
         }
+        return $this->datas->get("{$level}.{$code}", $default);
     }
 
     /**
@@ -336,9 +335,9 @@ class MessagesBag implements MessagesBagContract
     {
         if (is_null($code)) {
             return $this->messages->get($level, []);
-        } else {
-            return $this->messages->get("{$level}.{$code}", $default);
         }
+
+        return $this->messages->get("{$level}.{$code}", $default);
     }
 
     /**
@@ -371,18 +370,20 @@ class MessagesBag implements MessagesBagContract
     public function hasMessages(?int $level = null, $datas = []): bool
     {
         if ($datas) {
-            return !!(new Collection($this->datas))->first(function ($value, $key) use ($level, $datas) {
-                if ($level !== null && ($level !== $key)) {
-                    return false;
-                } else {
-                    foreach ($value as $i => $j) {
-                        if(!!@array_intersect($j, $datas)) {
-                            return true;
+            return !!(new Collection($this->datas))->first(
+                function ($value, $key) use ($level, $datas) {
+                    if ($level !== null && ($level !== $key)) {
+                        return false;
+                    } else {
+                        foreach ($value as $i => $j) {
+                            if (!!@array_intersect($j, $datas)) {
+                                return true;
+                            }
                         }
                     }
+                    return false;
                 }
-                return false;
-            });
+            );
         } elseif ($level) {
             return $this->messages[$level] ? true : false;
         } else {
@@ -421,13 +422,13 @@ class MessagesBag implements MessagesBagContract
     {
         if ($level) {
             return array_keys($this->messages->get($level));
-        } else {
-            $codes = [];
-            foreach ($this->levels() as $level) {
-                $codes += $this->code($level);
-            }
-            return $codes;
         }
+
+        $codes = [];
+        foreach ($this->levels() as $level) {
+            $codes += $this->code($level);
+        }
+        return $codes;
     }
 
     /**

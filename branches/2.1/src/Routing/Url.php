@@ -71,7 +71,7 @@ class Url extends UrlFactory implements UrlContract
     {
         if (is_null($this->rewriteBase)) {
             $this->rewriteBase = preg_replace(
-                '/^' . preg_quote($this->request->getSchemeAndHttpHost(), '/') . '/', '', $this->root()
+                '/^' . preg_quote($this->request->getSchemeAndHttpHost(), '/') . '/', '', $this->root()->render()
             );
         }
 

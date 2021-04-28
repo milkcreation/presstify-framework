@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Contracts\Query;
 
 use tiFy\Contracts\Support\ParamsBag;
-use tiFy\Support\Traits\PaginationAwareTrait;
+use tiFy\Support\Concerns\PaginationAwareTrait;
 
 /**
  * @mixin PaginationAwareTrait

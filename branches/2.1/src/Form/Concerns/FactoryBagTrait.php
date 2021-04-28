@@ -15,6 +15,7 @@ use tiFy\Contracts\Form\HandleFactory as HandleFactoryContract;
 use tiFy\Contracts\Form\OptionsFactory as OptionsFactoryContract;
 use tiFy\Contracts\Form\SessionFactory as SessionFactoryContract;
 use tiFy\Contracts\Form\ValidateFactory as ValidateFactoryContract;
+use tiFy\Form\Exception\FieldMissingException;
 
 trait FactoryBagTrait
 {
@@ -146,9 +147,12 @@ trait FactoryBagTrait
      *
      * @return FieldDriverContract
      */
-    public function field(string $slug): ?FieldDriverContract
+    public function field(string $slug): FieldDriverContract
     {
-        return $this->fields()->get($slug);
+        if ($field = $this->fields()->get($slug)) {
+            return $field;
+        }
+        throw new FieldMissingException($slug);
     }
 
     /**

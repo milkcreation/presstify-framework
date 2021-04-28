@@ -1,13 +1,18 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Form;
 
-use Closure, LogicException;
+use Closure;
+use LogicException;
 use tiFy\Contracts\Form\FieldDriver as FieldDriverContract;
 use tiFy\Contracts\Form\FieldGroupDriver as FieldGroupDriverContract;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Form\Concerns\FormAwareTrait;
+use tiFy\Form\Exception\FieldValidateException;
 use tiFy\Support\Arr;
+use tiFy\Support\Html;
 use tiFy\Support\Concerns\ParamsBagTrait;
 use tiFy\Support\Proxy\Field;
 
@@ -60,7 +65,7 @@ class FieldDriver implements FieldDriverContract
      * @bool
      */
     protected $renderable = false;
-    
+
     /**
      * Alias de qualification.
      * @var string
@@ -99,7 +104,7 @@ class FieldDriver implements FieldDriverContract
     public function boot(): FieldDriverContract
     {
         if (!$this->isBooted()) {
-           if (!$this->form() instanceof FormFactoryContract) {
+            if (!$this->form() instanceof FormFactoryContract) {
                 throw new LogicException('Invalid related FormFactory');
             }
 
@@ -150,7 +155,7 @@ class FieldDriver implements FieldDriverContract
     {
         $after = $this->params('after');
 
-        return $after instanceof Closure ? $after($this) : strval($after);
+        return $after instanceof Closure ? $after($this) : (string)$after;
     }
 
     /**
@@ -160,7 +165,7 @@ class FieldDriver implements FieldDriverContract
     {
         $before = $this->params('before');
 
-        return $before instanceof Closure ? $before($this) : strval($before);
+        return $before instanceof Closure ? $before($this) : (string)$before;
     }
 
     /**
@@ -281,7 +286,7 @@ class FieldDriver implements FieldDriverContract
      */
     public function getAddonOption(string $alias, ?string $key = null, $default = null)
     {
-        return is_null($key) ? $this->params("addons.{$alias}", []) : $this->params("addons.{$alias}.{$key}", $default);
+        return is_null($key) ? $this->params("addons.$alias", []) : $this->params("addons.$alias.$key", $default);
     }
 
     /**
@@ -297,7 +302,7 @@ class FieldDriver implements FieldDriverContract
      */
     public function getDefault()
     {
-       return ($default = $this->default) instanceof Closure ? $default($this): $default;
+        return ($default = $this->default) instanceof Closure ? $default($this) : $default;
     }
 
     /**
@@ -305,7 +310,7 @@ class FieldDriver implements FieldDriverContract
      */
     public function getExtras(?string $key = null, $default = null)
     {
-        return is_null($key) ? $this->params('extras', []) : $this->params("extras.{$key}", $default);
+        return is_null($key) ? $this->params('extras', []) : $this->params("extras.$key", $default);
     }
 
     /**
@@ -345,7 +350,7 @@ class FieldDriver implements FieldDriverContract
      */
     public function getRequired(?string $key = null, $default = null)
     {
-        return $this->params('required' . ($key ? ".{$key}" : ''), $default);
+        return $this->params('required' . ($key ? ".$key" : ''), $default);
     }
 
     /**
@@ -392,7 +397,7 @@ class FieldDriver implements FieldDriverContract
         $this->form()->event('field.get.value', [&$value, $this]);
 
         if (!$raw) {
-            $value = is_array($value) ? array_map('esc_attr', $value) : esc_attr($value);
+            $value = is_array($value) ? array_map('esc_attr', $value) : Html::e($value);
         }
 
         return $value;
@@ -411,14 +416,15 @@ class FieldDriver implements FieldDriverContract
                     $v = $choices[$v];
                 }
             }
+            unset($v);
         }
 
         if (!$raw) {
-            $value = is_array($value) ? array_map('esc_attr', $value) : esc_attr($value);
+            $value = is_array($value) ? array_map('esc_attr', $value) : Html::e($value);
         }
 
         if (!is_null($glue)) {
-            $value = join($glue, $value);
+            $value = implode($glue, $value);
         }
 
         return $value;
@@ -487,7 +493,7 @@ class FieldDriver implements FieldDriverContract
 
         $name = $param->get('name', null);
         if (!is_null($name)) {
-            $param->set(['name' => $name ? esc_attr($name) : esc_attr($this->getSlug())]);
+            $param->set(['name' => $name ? Html::e($name) : Html::e($this->getSlug())]);
         }
 
         if (!$param->get('supports')) {
@@ -495,14 +501,14 @@ class FieldDriver implements FieldDriverContract
         }
 
         $transport = $param->get('transport');
-        if ($transport && !in_array('transport', $param->get('supports', []))) {
+        if ($transport && !in_array('transport', $param->get('supports', []), true)) {
             $param->push('supports', 'transport');
         } elseif ($transport === false) {
             $param->set('supports', array_diff($param->get('supports', []), ['transport']));
         }
 
         $session = $param->get('session');
-        if ($session && !in_array('session', $param->get('supports', []))) {
+        if ($session && !in_array('session', $param->get('supports', []), true)) {
             $param->push('supports', 'session');
         } elseif ($session === false) {
             $param->set('supports', array_diff($param->get('supports', []), ['session']));
@@ -512,30 +518,41 @@ class FieldDriver implements FieldDriverContract
 
         if ($param->get('wrapper')) {
             $param->push('supports', 'wrapper');
-        } elseif (in_array('wrapper', $param->get('supports', []))) {
+        } elseif (in_array('wrapper', $param->get('supports', []), true)) {
             $param->set('wrapper', true);
         }
 
         if ($required = $param->get('required', false)) {
-            $required = (is_array($required)) ? $required : (is_string($required) ? ['message' => $required] : []);
-            $required = array_merge([
-                'tagged'     => true,
-                'check'      => true,
-                'value_none' => '',
-                'call'       => '',
-                'args'       => [],
-                'raw'        => true,
-                'message'    => __('Le champ "%s" doit être renseigné.', 'tify'),
-                'html5'      => false,
-            ], $required);
+            if (!is_array($required)) {
+                $required = is_string($required) ? ['message' => $required] : [];
+            }
+
+            $required = array_merge(
+                [
+                    'tagged'     => true,
+                    'check'      => true,
+                    'value_none' => '',
+                    'call'       => '',
+                    'args'       => [],
+                    'raw'        => true,
+                    'message'    => 'Le champ "%s" doit être renseigné.',
+                    'html5'      => false,
+                ],
+                $required
+            );
 
             if ($tagged = $required['tagged']) {
-                $tagged = is_array($tagged) ? $tagged : (is_string($tagged) ? ['content' => $tagged] : []);
-                $required['tagged'] = array_merge([
-                    'tag'     => 'span',
-                    'attrs'   => [],
-                    'content' => '*',
-                ], $tagged);
+                if (!is_array($tagged)) {
+                    $tagged = is_string($tagged) ? ['content' => $tagged] : [];
+                }
+                $required['tagged'] = array_merge(
+                    [
+                        'tag'     => 'span',
+                        'attrs'   => [],
+                        'content' => '*',
+                    ],
+                    $tagged
+                );
             }
 
             $required['call'] = !empty($required['value_none']) && empty($required['call']) ? '!equals' : 'notEmpty';
@@ -551,9 +568,13 @@ class FieldDriver implements FieldDriverContract
         }
 
         foreach ($this->form()->addons() as $alias => $addon) {
-            $param->set("addons.{$alias}", array_merge(
-                $addon->defaultFieldOptions(), $param->get("addons.{$alias}", []) ?: []
-            ));
+            $param->set(
+                "addons.$alias",
+                array_merge(
+                    $addon->defaultFieldOptions(),
+                    $param->get("addons.$alias", []) ?: []
+                )
+            );
         }
 
         return $this;
@@ -566,13 +587,16 @@ class FieldDriver implements FieldDriverContract
     {
         if (is_array($validations)) {
             if (isset($validations['call'])) {
-                $results[] = array_merge([
-                    'alias'   => '',
-                    'args'    => [],
-                    'call'    => '__return_true',
-                    'message' => __('Le format du champ "%s" est invalide', 'tify'),
-                    'raw'     => false,
-                ], $validations);
+                $results[] = array_merge(
+                    [
+                        'alias'   => '',
+                        'args'    => [],
+                        'call'    => '__return_true',
+                        'message' => 'Le format du champ "%s" est invalide',
+                        'raw'     => false,
+                    ],
+                    $validations
+                );
             } else {
                 foreach ($validations as $validation) {
                     $results += $this->parseValidations($validation, $results);
@@ -595,7 +619,6 @@ class FieldDriver implements FieldDriverContract
     public function preRender(): FieldDriverContract
     {
         if (!$this->isRenderable()) {
-
             $param = $this->params();
 
             if (!$param->has('attrs.id')) {
@@ -654,8 +677,10 @@ class FieldDriver implements FieldDriverContract
 
             if ($param->get('required.tagged')) {
                 if (!$param->has('required.tagged.attrs.id')) {
-                    $param->set('required.tagged.attrs.id',
-                        "FormField-required--{$this->getSlug()}_{$this->form()->getIndex()}");
+                    $param->set(
+                        'required.tagged.attrs.id',
+                        "FormField-required--{$this->getSlug()}_{$this->form()->getIndex()}"
+                    );
                 }
                 if (!$param->get('required.tagged.attrs.id')) {
                     $param->pull('required.tagged.attrs.id');
@@ -682,13 +707,19 @@ class FieldDriver implements FieldDriverContract
                     $label = [];
                 }
 
-                $param->set('label', array_merge([
-                    'tag'      => 'label',
-                    'attrs'    => [],
-                    'wrapper'  => false,
-                    'position' => 'before',
-                    'require'  => true,
-                ], is_array($label) ? $label : []));
+                $param->set(
+                    'label',
+                    array_merge(
+                        [
+                            'tag'      => 'label',
+                            'attrs'    => [],
+                            'wrapper'  => false,
+                            'position' => 'before',
+                            'require'  => true,
+                        ],
+                        is_array($label) ? $label : []
+                    )
+                );
 
                 if (!$param->has('label.attrs.id')) {
                     $param->set('label.attrs.id', "FormField-label--{$this->getSlug()}_{$this->form()->getIndex()}");
@@ -721,7 +752,7 @@ class FieldDriver implements FieldDriverContract
                     $param->pull('label.content');
                 }
 
-                if (($require = $param->pull('label.require')) && $param->get('required.tagged')) {
+                if ($param->pull('label.require') && $param->get('required.tagged')) {
                     $content = $param->get('label.content');
 
                     $param->set('label.content', $content . $this->form()->view('field-required', ['field' => $this]));
@@ -730,14 +761,17 @@ class FieldDriver implements FieldDriverContract
                 }
 
                 if ($param->get('label.wrapper')) {
-                    $param->set('label.wrapper', [
-                        'tag'   => 'div',
-                        'attrs' => [
-                            'id'    => "FormField-labelWrapper--{$this->getSlug()}_{$this->form()->getIndex()}",
-                            'class' => "FormField-labelWrapper FormField-labelWrapper--{$this->getType()}" .
-                                " FormField-labelWrapper--{$this->getSlug()}",
-                        ],
-                    ]);
+                    $param->set(
+                        'label.wrapper',
+                        [
+                            'tag'   => 'div',
+                            'attrs' => [
+                                'id'    => "FormField-labelWrapper--{$this->getSlug()}_{$this->form()->getIndex()}",
+                                'class' => "FormField-labelWrapper FormField-labelWrapper--{$this->getType()}" .
+                                    " FormField-labelWrapper--{$this->getSlug()}",
+                            ],
+                        ]
+                    );
                 }
             }
 
@@ -752,10 +786,13 @@ class FieldDriver implements FieldDriverContract
      */
     public function render(): string
     {
-        $args = array_merge($this->getExtras(), [
-            'name'  => $this->getName(),
-            'attrs' => $this->params('attrs', []),
-        ]);
+        $args = array_merge(
+            $this->getExtras(),
+            [
+                'name'  => $this->getName(),
+                'attrs' => $this->params('attrs', []),
+            ]
+        );
 
         if ($this->supports('choices')) {
             $args['choices'] = $this->params('choices', []);
@@ -771,7 +808,7 @@ class FieldDriver implements FieldDriverContract
      */
     public function resetValue(): FieldDriverContract
     {
-       $this->params(['value' => $this->default]);
+        $this->params(['value' => $this->default]);
 
         return $this;
     }
@@ -801,7 +838,7 @@ class FieldDriver implements FieldDriverContract
      */
     public function setExtra(string $key, $value): FieldDriverContract
     {
-        return $this->params(["extras.{$key}" => $value]);
+        return $this->params(["extras.$key" => $value]);
     }
 
     /**
@@ -819,7 +856,7 @@ class FieldDriver implements FieldDriverContract
      */
     public function setSessionValue(): FieldDriverContract
     {
-        if ($this->form()->supports('session') && $this->supports('session')) {
+        if ($this->supports('session') && $this->form()->supports('session')) {
             $value = $this->form()->session()->get("request.{$this->getName()}");
 
             if (!is_null($value)) {
@@ -857,7 +894,7 @@ class FieldDriver implements FieldDriverContract
      */
     public function supports(string $support): bool
     {
-        return in_array($support, $this->getSupports());
+        return in_array($support, $this->getSupports(), true);
     }
 
     /**
@@ -874,26 +911,26 @@ class FieldDriver implements FieldDriverContract
             $value = $this->getValue($this->getRequired('raw', true));
 
             if (!$check = $this->form()->validate()->call(
-                $this->getRequired('call'), $value,
-                $this->getRequired('args', []))
+                $this->getRequired('call'),
+                $value,
+                $this->getRequired('args', [])
+            )
             ) {
-                 throw (new FieldValidateException(sprintf($this->getRequired('message'), $this->getTitle())))
-                    ->setField($this)->setAlias('_required');
+                throw (new FieldValidateException($this, sprintf($this->getRequired('message'), $this->getTitle())))
+                    ->setAlias('_required');
             }
         }
 
-        if ($check) {
-            if ($validations = $this->params('validations', [])) {
-                $value = $this->getValue($this->getRequired('raw', true));
+        if ($check && ($validations = $this->params('validations', []))) {
+            $value = $this->getValue($this->getRequired('raw', true));
 
-                foreach ($validations as $i => $validation) {
-                    if (!$this->form()->validate()->call($validation['call'], $value, $validation['args'])) {
-                        if (!$alias = $validation['alias'] ?: null) {
-                            $alias = (is_string($validation['call'])) ? $validation['call'] : $i;
-                        }
-                        throw (new FieldValidateException(sprintf($validation['message'], $this->getTitle())))
-                            ->setField($this)->setAlias($alias);
+            foreach ($validations as $i => $validation) {
+                if (!$this->form()->validate()->call($validation['call'], $value, $validation['args'])) {
+                    if (!$alias = $validation['alias'] ?: null) {
+                        $alias = (is_string($validation['call'])) ? $validation['call'] : $i;
                     }
+                    throw (new FieldValidateException($this, sprintf($validation['message'], $this->getTitle())))
+                        ->setAlias($alias);
                 }
             }
         }

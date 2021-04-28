@@ -1,11 +1,14 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tiFy\Form;
+declare(strict_types=1);
+
+namespace tiFy\Form\Exception;
 
 use InvalidArgumentException;
 use tiFy\Contracts\Form\FieldDriver;
+use Throwable;
 
-class FieldValidateException extends InvalidArgumentException
+class FieldValidateException extends InvalidArgumentException implements FormException
 {
     /**
      * Alias de qualification.
@@ -18,6 +21,20 @@ class FieldValidateException extends InvalidArgumentException
      * @var FieldDriver|null
      */
     private $field;
+
+    /**
+     * @param FieldDriver $field
+     * @param string $message
+     * @param int $code
+     * @param Throwable|null $previous
+     */
+    public function __construct(FieldDriver $field, string $message = "", int $code = 0, Throwable $previous = null)
+    {
+        if ($field !== null) {
+            $this->setField($field);
+        }
+        parent::__construct($message, $code, $previous);
+    }
 
     /**
      * Récupération de l'alias de qualification.
