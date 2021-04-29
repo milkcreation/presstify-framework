@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Kernel;
 
@@ -17,8 +19,6 @@ class Application extends Container
     protected $container;
 
     /**
-     * CONSTRUCTEUR.
-     *
      * @param ContainerInterface $container
      *
      * @return void
@@ -80,11 +80,13 @@ class Application extends Container
 
         if (isset($_ENV['APP_RUNNING_IN_CONSOLE'])) {
             return $_ENV['APP_RUNNING_IN_CONSOLE'] === 'true';
-        } elseif(isset($argv[0]) && preg_match('/vendor\/bin\/bee$/', $argv[0])) {
+        }
+
+        if(isset($argv[0]) && preg_match('/vendor\/bin\/bee$/', $argv[0])) {
             return true;
         }
 
-        return isset($argv[0]) && ($argv[0] === 'console') && (php_sapi_name() === 'cli' || php_sapi_name() === 'phpdbg');
+        return isset($argv[0]) && ($argv[0] === 'console') && (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
     }
 
     /**

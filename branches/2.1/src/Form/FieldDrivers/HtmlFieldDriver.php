@@ -21,6 +21,6 @@ class HtmlFieldDriver extends FieldDriver implements HtmlFieldDriverContract
     {
         $value = $this->getValue();
 
-        return !$value instanceof Closure ? (string)$value : call_user_func($value);
+        return !$value instanceof Closure ? (string)$value : $value();
     }
 }
