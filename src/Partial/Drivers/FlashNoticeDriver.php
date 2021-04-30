@@ -96,4 +96,12 @@ class FlashNoticeDriver extends PartialDriver implements FlashNoticeDriverInterf
     {
         return $this->add($message, 'warning', $attrs);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/flash-notice");
+    }
 }

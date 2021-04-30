@@ -35,7 +35,7 @@ class EventsFactory implements EventsFactoryContract
                     $priority = 10;
                 } elseif (isset($event['call']) && is_callable($event['call'])) {
                     $listener = $event['call'];
-                    $priority = isset($event['priority']) ? $event['priority'] : 10;
+                    $priority = $event['priority'] ?? 10;
                 } else {
                     continue;
                 }

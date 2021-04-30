@@ -124,4 +124,12 @@ class ImageLightboxDriver extends PartialDriver implements ImageLightboxDriverIn
 
         return $this->set('items', $items);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/image-lightbox");
+    }
 }

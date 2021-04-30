@@ -54,4 +54,12 @@ class CheckboxCollectionDriver extends FieldDriver implements CheckboxCollection
 
         return parent::render();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/checkbox-collection');
+    }
 }

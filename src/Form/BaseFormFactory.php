@@ -31,6 +31,7 @@ use tiFy\Support\Concerns\LabelsBagTrait;
 use tiFy\Support\Concerns\MessagesBagTrait;
 use tiFy\Support\Concerns\ParamsBagTrait;
 use tiFy\Support\LabelsBag;
+use tiFy\Support\MessagesBag;
 use tiFy\Support\Proxy\Asset;
 use tiFy\Support\Proxy\View;
 use tiFy\Support\Proxy\Request;
@@ -134,7 +135,6 @@ class BaseFormFactory implements FormFactoryContract
                 'fields',
                 'groups',
                 'buttons',
-                'handle',
                 'options',
                 'session',
                 'validate'
@@ -144,7 +144,9 @@ class BaseFormFactory implements FormFactoryContract
                 $this->{$service}->boot();
             }
 
-            $this->setSuccessed(!!$this->session()->pull('successed', false));
+            if ($successed = filter_var($this->session()->pull('successed', false), FILTER_VALIDATE_BOOL)) {
+                $this->setSuccessed($successed);
+            }
 
             $this->booted = true;
 
@@ -573,7 +575,9 @@ class BaseFormFactory implements FormFactoryContract
             } elseif ($notices = $this->session()->pull('notices')) {
                 foreach ($notices as $type => $items) {
                     foreach ($items as $item) {
-                        $this->messages()->add($type, $item['message'] ?? '', $item['datas'] ?? []);
+                        $this->messages()->add(
+                            MessagesBag::convertLevel($type), $item['message'] ?? '', $item['datas'] ?? []
+                        );
                     }
                 }
             }
@@ -687,7 +691,7 @@ class BaseFormFactory implements FormFactoryContract
      */
     public function supports(string $support)
     {
-        return in_array($support, $this->getSupports());
+        return in_array($support, $this->getSupports(), true);
     }
 
     /**

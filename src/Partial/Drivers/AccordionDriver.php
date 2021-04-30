@@ -77,4 +77,12 @@ class AccordionDriver extends PartialDriver implements AccordionDriverInterface
 
         return $this;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/accordion");
+    }
 }

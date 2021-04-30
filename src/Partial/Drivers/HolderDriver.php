@@ -28,4 +28,12 @@ class HolderDriver extends PartialDriver implements HolderDriverInterface
             'height'           => 100,
         ]);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/holder");
+    }
 }

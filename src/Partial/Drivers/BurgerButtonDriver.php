@@ -100,4 +100,12 @@ class BurgerButtonDriver extends PartialDriver implements BurgerButtonDriverInte
 
         return parent::render();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/burger-button");
+    }
 }

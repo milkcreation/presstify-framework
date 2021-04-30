@@ -71,7 +71,7 @@ class Url extends UrlFactory implements UrlContract
     {
         if (is_null($this->rewriteBase)) {
             $this->rewriteBase = preg_replace(
-                '/^' . preg_quote($this->request->getSchemeAndHttpHost(), '/') . '/', '', $this->root()
+                '/^' . preg_quote($this->request->getSchemeAndHttpHost(), '/') . '/', '', $this->root()->render()
             );
         }
 
@@ -81,7 +81,7 @@ class Url extends UrlFactory implements UrlContract
     /**
      * @inheritDoc
      */
-    public function root(string $path = ''): UrlFactoryContract
+    public function root(?string $path = null): UrlFactoryContract
     {
         return new UrlFactory(config('app_url', $this->request->root()) . ($path ? '/' . ltrim($path, '/') : ''));
     }

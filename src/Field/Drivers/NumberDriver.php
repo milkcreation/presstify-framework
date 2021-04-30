@@ -33,4 +33,13 @@ class NumberDriver extends FieldDriver implements NumberDriverInterface
 
         return parent::render();
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/number');
+    }
 }

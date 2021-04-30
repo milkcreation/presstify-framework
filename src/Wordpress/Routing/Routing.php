@@ -111,19 +111,19 @@ class Routing implements RoutingContract
     public function registerOverride(): void
     {
         $this->manager->getContainer()->add('router.strategy.default', function () {
-            return new TemplateStrategy();
+            return (new TemplateStrategy())->setContainer($this->manager->getContainer());
         });
 
         $this->manager->getContainer()->add(
             BaseRouteContract::class,
-            function (string $method, string $path, callable $handler, $collection) {
+            function (string $method, string $path, $handler, $collection) {
                 return (new Route($method, $path, $handler, $collection))->setContainer($this->manager->getContainer());
             }
         );
 
         $this->manager->getContainer()->add(
             BaseRouteGroupContract::class,
-            function (string $prefix, callable $handler, $collection) {
+            function (string $prefix, $handler, $collection) {
                 return (new RouteGroup($prefix, $handler, $collection))->setContainer($this->manager->getContainer());
             }
         );

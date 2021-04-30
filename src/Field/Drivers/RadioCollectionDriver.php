@@ -46,4 +46,12 @@ class RadioCollectionDriver extends FieldDriver implements RadioCollectionDriver
 
         return parent::render();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/radio-collection');
+    }
 }

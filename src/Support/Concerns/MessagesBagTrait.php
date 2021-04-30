@@ -32,10 +32,9 @@ trait MessagesBagTrait
             $this->messagesBag = new MessagesBag();
         }
 
-        if (is_null($message)) {
+        if ($message === null) {
             return $this->messagesBag;
-        } else {
-            return $this->messagesBag->add($level, $message, $datas);
         }
+        return $this->messagesBag->add($level, $message, $datas);
     }
 }

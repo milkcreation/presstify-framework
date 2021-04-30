@@ -61,7 +61,14 @@ class SpinnerDriver extends PartialDriver implements SpinnerDriverInterface
         $this->set('attrs.class', ($exists = $this->get('attrs.class'))
             ? "{$exists} {$spinner_class}" : $spinner_class
         );
-
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/spinner");
     }
 }

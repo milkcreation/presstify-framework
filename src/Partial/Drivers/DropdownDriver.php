@@ -59,4 +59,12 @@ class DropdownDriver extends PartialDriver implements DropdownDriverInterface
 
         return $this;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/dropdown");
+    }
 }

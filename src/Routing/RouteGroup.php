@@ -1,14 +1,22 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Routing;
 
 use League\Route\RouteGroup as LeagueRouteGroup;
 use tiFy\Contracts\Routing\RouteGroup as RouteGroupContract;
-use tiFy\Routing\Concerns\{ContainerAwareTrait, MiddlewareAwareTrait, RouteCollectionAwareTrait, StrategyAwareTrait};
+use tiFy\Routing\Concerns\ContainerAwareTrait;
+use tiFy\Routing\Concerns\MiddlewareAwareTrait;
+use tiFy\Routing\Concerns\RouteCollectionAwareTrait;
+use tiFy\Routing\Concerns\StrategyAwareTrait;
 
 class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
 {
-    use ContainerAwareTrait, MiddlewareAwareTrait, RouteCollectionAwareTrait, StrategyAwareTrait;
+    use ContainerAwareTrait;
+    use MiddlewareAwareTrait;
+    use RouteCollectionAwareTrait;
+    use StrategyAwareTrait;
 
     /**
      * CONSTRUCTEUR.
@@ -31,6 +39,5 @@ class RouteGroup extends LeagueRouteGroup implements RouteGroupContract
      */
     public function __invoke(): void
     {
-
     }
 }

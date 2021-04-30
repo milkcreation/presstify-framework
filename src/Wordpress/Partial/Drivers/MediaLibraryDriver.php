@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers;
 
-use tiFy\Wordpress\Partial\WordpressPartialDriver;
+use tiFy\Partial\PartialDriver;
 use tiFy\Partial\PartialDriverInterface;
 
-class MediaLibraryDriver extends WordpressPartialDriver implements MediaLibraryDriverInterface
+class MediaLibraryDriver extends PartialDriver implements MediaLibraryDriverInterface
 {
     /**
      * @inheritDoc
@@ -52,5 +52,13 @@ class MediaLibraryDriver extends WordpressPartialDriver implements MediaLibraryD
         ]);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return dirname(__DIR__) . '/Resources/views/media-library';
     }
 }

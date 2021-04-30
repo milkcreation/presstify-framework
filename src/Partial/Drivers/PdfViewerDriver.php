@@ -92,7 +92,14 @@ class PdfViewerDriver extends PartialDriver implements PdfViewerDriverInterface
                 'src'     => $this->get('src'),
             ],
         ]);
-
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/pdf-viewer");
     }
 }

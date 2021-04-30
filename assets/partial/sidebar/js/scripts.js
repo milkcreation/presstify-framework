@@ -7,9 +7,9 @@ jQuery(function ($) {
 
   $(window).resize(function () {
     $('[data-control="sidebar"]').each(function () {
-      let headerHeight = $('[data-control="sidebar.header"]', $(this)).height() || 0,
-          footerHeight = $('[data-control="sidebar.footer"]', $(this)).height() || 0,
-          sidebarHeight = $(this).height() || 0;
+      let headerHeight = $('[data-control="sidebar.header"]', $(this)).outerHeight() || 0,
+          footerHeight = $('[data-control="sidebar.footer"]', $(this)).outerHeight() || 0,
+          sidebarHeight = $(this).outerHeight() || 0;
 
       $('[data-control="sidebar.body"]').height(sidebarHeight - (headerHeight + footerHeight));
     });

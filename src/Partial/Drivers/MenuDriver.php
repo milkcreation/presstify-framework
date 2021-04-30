@@ -11,5 +11,11 @@ use tiFy\Partial\PartialDriver;
  */
 class MenuDriver extends PartialDriver implements MenuDriverInterface
 {
-
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/menu");
+    }
 }

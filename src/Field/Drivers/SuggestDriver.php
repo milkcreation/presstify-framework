@@ -131,6 +131,14 @@ class SuggestDriver extends FieldDriver implements SuggestDriverInterface
     /**
      * @inheritDoc
      */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/suggest');
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function xhrResponse(...$args): array
     {
         $items = (new Collection($this->sample))

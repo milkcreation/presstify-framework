@@ -23,4 +23,13 @@ class LabelDriver extends FieldDriver implements LabelDriverInterface
             ]
         );
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->fieldManager()->resources('/views/label');
+    }
 }

@@ -67,4 +67,12 @@ class CurtainMenuDriver extends PartialDriver implements CurtainMenuDriverInterf
 
         return $this;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewDirectory(): string
+    {
+        return $this->partialManager()->resources("/views/curtain-menu");
+    }
 }

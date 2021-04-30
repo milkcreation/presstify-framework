@@ -4,7 +4,7 @@ namespace tiFy\Template\Templates\ListTable\Contracts;
 
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Contracts\Template\FactoryAwareTrait;
-use tiFy\Support\Traits\PaginationAwareTrait;
+use tiFy\Support\Concerns\PaginationAwareTrait;
 
 /**
  * @mixin PaginationAwareTrait
