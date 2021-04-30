@@ -4,6 +4,7 @@ namespace tiFy\Contracts\Form;
 
 /**
  * @mixin \tiFy\Form\Concerns\FormAwareTrait
+ * @mixin \tiFy\Support\ParamsBag
  * @mixin \tiFy\Support\Concerns\ParamsBagTrait
  */
 interface OptionsFactory

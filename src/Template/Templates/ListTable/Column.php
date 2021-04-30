@@ -98,7 +98,7 @@ class Column extends ParamsBag implements ColumnContract
             $current_orderby = $this->factory->request()->input('orderby');
             $current_order = ($this->factory->request()->input('order') === 'desc') ? 'desc' : 'asc';
 
-            list($orderby, $desc_first) = $this->get('sortable');
+            [$orderby, $desc_first] = $this->get('sortable');
 
             if ($current_orderby === $orderby) {
                 $order = 'asc' === $current_order ? 'desc' : 'asc';
@@ -110,22 +110,28 @@ class Column extends ParamsBag implements ColumnContract
                 $class[] = $desc_first ? 'asc' : 'desc';
             }
 
-            $content = (string)partial('tag', [
-                'tag'     => 'a',
-                'attrs'   => [
-                    'href' => esc_url(add_query_arg(compact('orderby', 'order'), $current_url)),
-                ],
-                'content' => "<span>{$content}</span><span class=\"sorting-indicator\"></span></a>",
-            ]);
+            $content = (string)partial(
+                'tag',
+                [
+                    'tag'     => 'a',
+                    'attrs'   => [
+                        'href' => esc_url(add_query_arg(compact('orderby', 'order'), $current_url)),
+                    ],
+                    'content' => "<span>{$content}</span><span class=\"sorting-indicator\"></span></a>",
+                ]
+            );
         }
 
         $name = $this->factory->viewer()->exists('thead-col_' . $this->getName())
             ? 'thead-col_' . $this->getName() : 'thead-col';
 
-        return (string)$this->factory->viewer($name, [
-            'attrs'   => HtmlAttrs::createFromAttrs($attrs),
-            'content' => $content,
-        ]);
+        return (string)$this->factory->viewer(
+            $name,
+            [
+                'attrs'   => HtmlAttrs::createFromAttrs($attrs),
+                'content' => $content,
+            ]
+        );
     }
 
     /**
@@ -189,13 +195,14 @@ class Column extends ParamsBag implements ColumnContract
             ];
 
             if (($content = $this->get('content')) instanceof Closure) {
-                return (string)call_user_func_array($content, $args);
-            } else {
-                return (string)$this->factory->viewer($this->getTemplate(), $args);
+                $args = array_values($args);
+
+                return (string)$content(...$args);
             }
-        } else {
-            return '';
+
+            return (string)$this->factory->viewer($this->getTemplate(), $args);
         }
+        return '';
     }
 
     /**

@@ -45,7 +45,7 @@ class DbBuilder extends BaseDbBuilder implements DbBuilderContract
         'menu_order',
         'post_type',
         'post_mime_type',
-        'comment_count'
+        'comment_count',
     ];
 
     /**
@@ -71,32 +71,31 @@ class DbBuilder extends BaseDbBuilder implements DbBuilderContract
     {
         if ($this->db()) {
             return parent::fetchItems();
-        } else {
-            $this->parse();
+        }
+        $this->parse();
 
-            $args = $this->fetchWpQueryVars()->all();
+        $args = $this->fetchWpQueryVars()->all();
 
-            $query = new WP_Query($args);
+        $query = new WP_Query($args);
 
-            $total = (int)$query->found_posts;
+        $total = (int)$query->found_posts;
 
-            $items = $query->posts;
+        $items = $query->posts;
 
-            if ($total < $this->getPerPage()) {
-                $this->setPage(1);
-            }
+        if ($total < $this->getPerPage()) {
+            $this->setPage(1);
+        }
 
-            $this->factory->items()->set($items);
+        $this->factory->items()->set($items);
 
-            if ($count = count($items)) {
-                $this->factory->pagination()
-                    ->setCount($count)
-                    ->setCurrentPage($this->getPage())
-                    ->setPerPage($this->getPerPage())
-                    ->setLastPage((int)ceil($total / $this->getPerPage()))
-                    ->setTotal($total)
-                    ->parse();
-            }
+        if ($count = count($items)) {
+            $this->factory->pagination()
+                ->setCount($count)
+                ->setCurrentPage($this->getPage())
+                ->setPerPage($this->getPerPage())
+                ->setLastPage((int)ceil($total / $this->getPerPage()))
+                ->setTotal($total)
+                ->parse();
         }
 
         return $this;
@@ -186,24 +185,32 @@ class DbBuilder extends BaseDbBuilder implements DbBuilderContract
         if ($term = $this->getSearch()) {
             $terms = is_string($term) ? explode(' ', $term) : $term;
 
-            $terms = collect($terms)->map(function ($term) {
-                return trim(str_replace('%', '', $term));
-            })->filter()->map(function ($term) {
-                return '%' . $term . '%';
-            });
+            $terms = collect($terms)->map(
+                function ($term) {
+                    return trim(str_replace('%', '', $term));
+                }
+            )->filter()->map(
+                function ($term) {
+                    return '%' . $term . '%';
+                }
+            );
 
             if ($terms->isEmpty()) {
                 return $this->query();
             }
 
-            return $this->query()->where(function (EloquentBuilder $query) use ($terms) {
-                $terms->each(function ($term) use ($query) {
-                    /** @var PostBuilder $query */
-                    $query->orWhere('post_title', 'like', $term)
-                        ->orWhere('post_excerpt', 'like', $term)
-                        ->orWhere('post_content', 'like', $term);
-                });
-            });
+            return $this->query()->where(
+                function (EloquentBuilder $query) use ($terms) {
+                    $terms->each(
+                        function ($term) use ($query) {
+                            /** @var PostBuilder $query */
+                            $query->orWhere('post_title', 'like', $term)
+                                ->orWhere('post_excerpt', 'like', $term)
+                                ->orWhere('post_content', 'like', $term);
+                        }
+                    );
+                }
+            );
         }
 
         return $this->query();
@@ -222,11 +229,14 @@ class DbBuilder extends BaseDbBuilder implements DbBuilderContract
             }
         }
 
-        foreach($this->get('meta', []) as $k => $v) {
+        foreach ($this->get('meta', []) as $k => $v) {
             if (!is_null($v)) {
-                $this->query()->whereHas('meta', function (EloquentBuilder $query) use ($k, $v) {
-                    $query->where('meta_key', $k)->whereIn('meta_value', is_array($v) ? $v : [$v]);
-                });
+                $this->query()->whereHas(
+                    'meta',
+                    function (EloquentBuilder $query) use ($k, $v) {
+                        $query->where('meta_key', $k)->whereIn('meta_value', is_array($v) ? $v : [$v]);
+                    }
+                );
             }
         }
 
@@ -234,11 +244,17 @@ class DbBuilder extends BaseDbBuilder implements DbBuilderContract
             if (!is_null($terms)) {
                 $this->query()
                     ->where('taxonomy', $taxonomy)
-                    ->whereHas('taxonomies', function (EloquentBuilder $query) use ($taxonomy, $terms) {
-                        $query->whereHas('term', function (EloquentBuilder $query) use ($terms) {
-                            $query->whereIn('slug', is_array($terms) ? $terms : [$terms]);
-                        });
-                    });
+                    ->whereHas(
+                        'taxonomies',
+                        function (EloquentBuilder $query) use ($taxonomy, $terms) {
+                            $query->whereHas(
+                                'term',
+                                function (EloquentBuilder $query) use ($terms) {
+                                    $query->whereIn('slug', is_array($terms) ? $terms : [$terms]);
+                                }
+                            );
+                        }
+                    );
             }
         }
 

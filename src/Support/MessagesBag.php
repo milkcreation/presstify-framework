@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support;
 
@@ -28,6 +30,12 @@ class MessagesBag implements MessagesBagContract
      * @var int
      */
     public const NOTICE = 250;
+
+    /**
+     * Niveau de notification d'événement normal méritant d'être signalé.
+     * @var int
+     */
+    public const SUCCESS = 250;
 
     /**
      * Niveau de notification d'avertissement (une erreur peut intervenir si aucune action n'est prise).

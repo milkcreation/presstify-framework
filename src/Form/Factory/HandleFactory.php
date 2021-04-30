@@ -179,6 +179,10 @@ class HandleFactory implements HandleFactoryContract
                 && $this->form()->request()->isMethod($this->form()->getMethod());
         }
 
+        if ($this->submitted) {
+            $this->boot();
+        }
+
         return $this->submitted;
     }
 
@@ -234,7 +238,15 @@ class HandleFactory implements HandleFactoryContract
         $this->form()->session()->flush();
         $this->form()->setSuccessed()->session()->put('successed', true);
 
-        $this->form()->messages()->success($this->form()->option('success.message', ''));
+        $message = $this->form()->option('success.message', '');
+
+        $this->form()->session()->put('notices.success', [
+            [
+                'message' => $message
+            ]
+        ]);
+
+        $this->form()->messages()->success($message);
 
         $this->form()->event('handle.successed', [&$this]);
 

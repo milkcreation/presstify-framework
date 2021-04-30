@@ -64,8 +64,12 @@ class ButtonsFactory implements ButtonsFactoryContract
                 }
 
                 if ($params !== false) {
-                    $_buttons[$alias] = $this->form()->formManager()->getButtonDriver($alias)
-                        ? : new ButtonDriver();
+                    if ($driver = $this->form()->formManager()->getButtonDriver($alias)) {
+                        $_buttons[$alias] = $driver;
+                    } else {
+                        $_buttons[$alias] = new ButtonDriver();
+                    }
+
                     $_buttons[$alias]->setForm($this->form())->setParams($params)->boot();
                 }
             }

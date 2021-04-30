@@ -59,8 +59,11 @@ class AddonsFactory implements AddonsFactoryContract
                 }
 
                 if ($params !== false) {
-                    $this->addonDrivers[$alias] = $this->form()->formManager()->getAddonDriver($alias)
-                        ?: $this->form()->formManager()->registerAddonDriver($alias);
+                    if ($driver = $this->form()->formManager()->getAddonDriver($alias)) {
+                        $this->addonDrivers[$alias] = $driver;
+                    } else {
+                        $this->addonDrivers[$alias] = $this->form()->formManager()->registerAddonDriver($alias);
+                    }
 
                     $this->addonDrivers[$alias]->setForm($this->form())->setParams($params)->boot();
                 }
