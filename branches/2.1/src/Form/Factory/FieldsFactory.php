@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Form\Factory;
 
@@ -54,13 +56,19 @@ class FieldsFactory implements FieldsFactoryContract
                         throw new LogicException('Missing type in FormField declaration');
                     }
 
-                    $this->fieldDrivers[$slug] = $this->form()->formManager()->getFieldDriver($alias)
-                        ?: (new FieldDriver())->setAlias($alias);
-                    $this->fieldDrivers[$slug]->setSlug($slug)->setForm($this->form())->setParams($params)->boot();
-
-                    if (!$this->fieldDrivers[$slug]->getGroup()) {
-                        $this->form()->groups()->setDriver((string)$this->fieldDrivers[$slug]->params('group'), []);
+                    if ($driver = $this->form()->formManager()->getFieldDriver($alias)) {
+                        $field = $driver;
+                    } else {
+                        $field = (new FieldDriver())->setAlias($alias);
                     }
+
+                    $field->setSlug($slug)->setForm($this->form())->setParams($params);
+
+                    if (!$field->getGroup()) {
+                        $this->form()->groups()->setDriver((string)$field->params('group'), []);
+                    }
+
+                    $this->fieldDrivers[$slug] = $field->boot();
                 }
             }
 

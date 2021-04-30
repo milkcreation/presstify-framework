@@ -40,7 +40,7 @@ class FormManager implements FormManagerContract
     private $defaultAddonDrivers = [
         'mailer' => MailerAddonDriverContract::class,
         'record' => RecordAddonDriverContract::class,
-        'user'   => UserAddonDriverContract::class
+        'user'   => UserAddonDriverContract::class,
     ];
 
     /**
@@ -48,7 +48,7 @@ class FormManager implements FormManagerContract
      * @var string[]
      */
     private $defaultButtonDrivers = [
-        'submit' => SubmitButtonDriverContract::class
+        'submit' => SubmitButtonDriverContract::class,
     ];
 
     /**
@@ -155,7 +155,7 @@ class FormManager implements FormManagerContract
         if ($this->booted === false) {
             foreach ($this->defaultAddonDrivers as $alias => $abstract) {
                 if ($this->resolvable($abstract)) {
-                    /** @var AddonDriverContract $driver  */
+                    /** @var AddonDriverContract $driver */
                     $driver = $this->resolve($abstract);
                     $this->setAddonDriver($alias, $driver);
                 }
@@ -163,7 +163,7 @@ class FormManager implements FormManagerContract
 
             foreach ($this->defaultButtonDrivers as $alias => $abstract) {
                 if ($this->resolvable($abstract)) {
-                    /** @var ButtonDriverContract $driver  */
+                    /** @var ButtonDriverContract $driver */
                     $driver = $this->resolve($abstract);
                     $this->setButtonDriver($alias, $driver);
                 }
@@ -171,7 +171,7 @@ class FormManager implements FormManagerContract
 
             foreach ($this->defaultFieldDrivers as $alias => $abstract) {
                 if ($this->resolvable($abstract)) {
-                    /** @var FieldDriverContract $driver  */
+                    /** @var FieldDriverContract $driver */
                     $driver = $this->resolve($abstract);
                     $this->setFieldDriver($alias, $driver);
                 }
@@ -194,11 +194,11 @@ class FormManager implements FormManagerContract
 
         if (is_string($key)) {
             return $this->config->get($key, $default);
-        } elseif (is_array($key)) {
-            return $this->config->set($key);
-        } else {
-            return $this->config;
         }
+        if (is_array($key)) {
+            return $this->config->set($key);
+        }
+        return $this->config;
     }
 
     /**
@@ -208,7 +208,9 @@ class FormManager implements FormManagerContract
     {
         if (is_null($formDefinition)) {
             return $this->currentForm;
-        } elseif (is_string($formDefinition)) {
+        }
+
+        if (is_string($formDefinition)) {
             $formDefinition = $this->get($formDefinition);
         }
 
@@ -236,7 +238,10 @@ class FormManager implements FormManagerContract
      */
     public function getAddonDriver(string $alias): ?AddonDriverContract
     {
-        return $this->registeredAddonDrivers[$alias] ?? null;
+        if (!empty($this->registeredAddonDrivers[$alias])) {
+            return clone $this->registeredAddonDrivers[$alias];
+        }
+        return null;
     }
 
     /**
@@ -244,7 +249,10 @@ class FormManager implements FormManagerContract
      */
     public function getButtonDriver(string $alias): ?ButtonDriverContract
     {
-        return $this->registeredButtonDrivers[$alias] ?? null;
+        if (!empty($this->registeredButtonDrivers[$alias])) {
+            return clone $this->registeredButtonDrivers[$alias];
+        }
+        return null;
     }
 
     /**
@@ -260,7 +268,10 @@ class FormManager implements FormManagerContract
      */
     public function getFieldDriver(string $alias): ?FieldDriverContract
     {
-        return $this->registeredFieldDrivers[$alias] ?? null;
+        if (!empty($this->registeredFieldDrivers[$alias])) {
+            return clone $this->registeredFieldDrivers[$alias];
+        }
+        return null;
     }
 
     /**
@@ -268,7 +279,7 @@ class FormManager implements FormManagerContract
      */
     public function getIndex(string $alias): int
     {
-        $index = array_search($alias, array_keys($this->registeredForms));
+        $index = array_search($alias, array_keys($this->registeredForms), true);
 
         if ($index !== false) {
             return $index;
@@ -367,7 +378,7 @@ class FormManager implements FormManagerContract
             $params = $fieldDefinition;
 
             $field = $this->resolvable(FieldDriverContract::class)
-                ? $this->resolve(FieldDriverContract::class) : new AddonDriver();
+                ? $this->resolve(FieldDriverContract::class) : new FieldDriver();
         } else {
             $field = $fieldDefinition;
         }
