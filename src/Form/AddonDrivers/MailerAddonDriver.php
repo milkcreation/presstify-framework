@@ -27,7 +27,7 @@ class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverCont
                 ->listen(
                     'handle.validated',
                     function () {
-                        if ($debug = $this->params('debug')) {
+                        if ($this->params('debug')) {
                             $this->form()->event('addon.mailer.email.debug');
                         }
                     }

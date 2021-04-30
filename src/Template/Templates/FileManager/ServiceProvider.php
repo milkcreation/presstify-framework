@@ -2,6 +2,7 @@
 
 namespace tiFy\Template\Templates\FileManager;
 
+use Pollen\Event\TriggeredEventInterface;
 use tiFy\Contracts\Filesystem\Filesystem as BaseFilesystem;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Template\Factory\ServiceProvider as BaseServiceProvider;
@@ -39,11 +40,14 @@ class ServiceProvider extends BaseServiceProvider
     {
         parent::boot();
 
-        events()->listen('template.factory.prepared', function ($event, string $name) {
-            if ($name === $this->factory->name()) {
-                $this->factory->ajax()->parse();
+        events()->listen(
+            'template.factory.prepared',
+            function (TriggeredEventInterface $event, string $name) {
+                if ($name === $this->factory->name()) {
+                    $this->factory->ajax()->parse();
+                }
             }
-        });
+        );
     }
 
     /**
@@ -72,15 +76,18 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryActions(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('actions'), function (): ActionsContract {
-            $ctrl = $this->factory->provider('actions');
+        $this->getContainer()->share(
+            $this->getFactoryAlias('actions'),
+            function (): ActionsContract {
+                $ctrl = $this->factory->provider('actions');
 
-            $ctrl = $ctrl instanceof ActionsContract
-                ? $ctrl
-                : $this->getContainer()->get(ActionsContract::class);
+                $ctrl = $ctrl instanceof ActionsContract
+                    ? $ctrl
+                    : $this->getContainer()->get(ActionsContract::class);
 
-            return $ctrl->setTemplateFactory($this->factory);
-        });
+                return $ctrl->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -90,23 +97,26 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryAjax(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('ajax'), function () {
-            $ctrl = $this->factory->provider('ajax');
-            $ctrl = $ctrl instanceof AjaxContract
-                ? $ctrl
-                : $this->getContainer()->get(AjaxContract::class);
+        $this->getContainer()->share(
+            $this->getFactoryAlias('ajax'),
+            function () {
+                $ctrl = $this->factory->provider('ajax');
+                $ctrl = $ctrl instanceof AjaxContract
+                    ? $ctrl
+                    : $this->getContainer()->get(AjaxContract::class);
 
-            $attrs = $this->factory->param('ajax', []);
-            if (is_string($attrs)) {
-                $attrs = [
-                    'url'      => $attrs,
-                    'dataType' => 'json',
-                    'type'     => 'POST'
-                ];
+                $attrs = $this->factory->param('ajax', []);
+                if (is_string($attrs)) {
+                    $attrs = [
+                        'url'      => $attrs,
+                        'dataType' => 'json',
+                        'type'     => 'POST',
+                    ];
+                }
+
+                return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
             }
-
-            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
-        });
+        );
     }
 
     /**
@@ -116,14 +126,17 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryBreadcrumb(): void
     {
-        $this->getContainer()->add($this->getFactoryAlias('breadcrumb'), function () {
-            $ctrl = $this->factory->provider('breadcrumb');
-            $ctrl = $ctrl instanceof Breadcrumb
-                ? clone $ctrl
-                : $this->getContainer()->get(Breadcrumb::class);
+        $this->getContainer()->add(
+            $this->getFactoryAlias('breadcrumb'),
+            function () {
+                $ctrl = $this->factory->provider('breadcrumb');
+                $ctrl = $ctrl instanceof Breadcrumb
+                    ? clone $ctrl
+                    : $this->getContainer()->get(Breadcrumb::class);
 
-            return $ctrl->setTemplateFactory($this->factory)->setPath();
-        });
+                return $ctrl->setTemplateFactory($this->factory)->setPath();
+            }
+        );
     }
 
     /**
@@ -133,19 +146,22 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryCache(): void
     {
-        $this->getContainer()->add($this->getFactoryAlias('cache'), function () {
-            $ctrl = $this->factory->provider('cache');
+        $this->getContainer()->add(
+            $this->getFactoryAlias('cache'),
+            function () {
+                $ctrl = $this->factory->provider('cache');
 
-            $ctrl = $ctrl instanceof Cache
-                ? clone $ctrl
-                : $this->getContainer()->get(Cache::class);
+                $ctrl = $ctrl instanceof Cache
+                    ? clone $ctrl
+                    : $this->getContainer()->get(Cache::class);
 
-            $root = paths()->getCachePath('Template/' . $this->factory->name());
-            $repo = $this->getContainer()->get(LocalFilesystem::class, [$root]);
+                $root = paths()->getCachePath('Template/' . $this->factory->name());
+                $repo = $this->getContainer()->get(LocalFilesystem::class, [$root]);
 
-            return $ctrl->setTemplateFactory($this->factory)
-                ->setSource($this->factory->filesystem())->setCache($repo);
-        });
+                return $ctrl->setTemplateFactory($this->factory)
+                    ->setSource($this->factory->filesystem())->setCache($repo);
+            }
+        );
     }
 
     /**
@@ -155,14 +171,17 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryFileCollection(): void
     {
-        $this->getContainer()->add($this->getFactoryAlias('file-collection'), function (array $files = []) {
-            $ctrl = $this->factory->provider('file-collection');
-            $ctrl = $ctrl instanceof FileCollection
-                ? clone $ctrl
-                : $this->getContainer()->get(FileCollection::class);
+        $this->getContainer()->add(
+            $this->getFactoryAlias('file-collection'),
+            function (array $files = []) {
+                $ctrl = $this->factory->provider('file-collection');
+                $ctrl = $ctrl instanceof FileCollection
+                    ? clone $ctrl
+                    : $this->getContainer()->get(FileCollection::class);
 
-            return $ctrl->setTemplateFactory($this->factory)->set($files);
-        });
+                return $ctrl->setTemplateFactory($this->factory)->set($files);
+            }
+        );
     }
 
     /**
@@ -172,14 +191,17 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryFileInfo(): void
     {
-        $this->getContainer()->add($this->getFactoryAlias('file-info'), function (array $infos) {
-            $ctrl = $this->factory->provider('file-info');
-            $ctrl = $ctrl instanceof FileInfo
-                ? clone $ctrl
-                : $this->getContainer()->get(FileInfo::class, [$infos]);
+        $this->getContainer()->add(
+            $this->getFactoryAlias('file-info'),
+            function (array $infos) {
+                $ctrl = $this->factory->provider('file-info');
+                $ctrl = $ctrl instanceof FileInfo
+                    ? clone $ctrl
+                    : $this->getContainer()->get(FileInfo::class, [$infos]);
 
-            return $ctrl->setTemplateFactory($this->factory);
-        });
+                return $ctrl->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -189,13 +211,16 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryFilesystem(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('filesystem'), function () {
-            $ctrl = $this->factory->provider('filesystem');
+        $this->getContainer()->share(
+            $this->getFactoryAlias('filesystem'),
+            function () {
+                $ctrl = $this->factory->provider('filesystem');
 
-            return $ctrl instanceof BaseFilesystem
-                ? $ctrl
-                : $this->getContainer()->get(Filesystem::class, [$this->factory]);
-        });
+                return $ctrl instanceof BaseFilesystem
+                    ? $ctrl
+                    : $this->getContainer()->get(Filesystem::class, [$this->factory]);
+            }
+        );
     }
 
     /**
@@ -205,12 +230,15 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryFileTag(): void
     {
-        $this->getContainer()->add($this->getFactoryAlias('file-tag'), function (FileInfo $file) {
-            $ctrl = $this->factory->provider('file-tag');
-            $ctrl = $ctrl instanceof FileTag ? clone $ctrl : $this->getContainer()->get(FileTag::class);
+        $this->getContainer()->add(
+            $this->getFactoryAlias('file-tag'),
+            function (FileInfo $file) {
+                $ctrl = $this->factory->provider('file-tag');
+                $ctrl = $ctrl instanceof FileTag ? clone $ctrl : $this->getContainer()->get(FileTag::class);
 
-            return $ctrl->setTemplateFactory($this->factory)->setFile($file);
-        });
+                return $ctrl->setTemplateFactory($this->factory)->setFile($file);
+            }
+        );
     }
 
     /**
@@ -218,14 +246,17 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryHttpController(): void
     {
-        $this->getContainer()->add($this->getFactoryAlias('controller'), function () {
-            $ctrl = $this->factory->provider('controller');
-            $ctrl = $ctrl instanceof HttpController
-                ? clone $ctrl
-                : $this->getContainer()->get(HttpController::class);
+        $this->getContainer()->add(
+            $this->getFactoryAlias('controller'),
+            function () {
+                $ctrl = $this->factory->provider('controller');
+                $ctrl = $ctrl instanceof HttpController
+                    ? clone $ctrl
+                    : $this->getContainer()->get(HttpController::class);
 
-            return $ctrl->setTemplateFactory($this->factory);
-        });
+                return $ctrl->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -233,14 +264,17 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryHttpXhrController(): void
     {
-        $this->getContainer()->add($this->getFactoryAlias('xhr'), function () {
-            $ctrl = $this->factory->provider('xhr');
-            $ctrl = $ctrl instanceof HttpXhrController
-                ? clone $ctrl
-                : $this->getContainer()->get(HttpXhrController::class);
+        $this->getContainer()->add(
+            $this->getFactoryAlias('xhr'),
+            function () {
+                $ctrl = $this->factory->provider('xhr');
+                $ctrl = $ctrl instanceof HttpXhrController
+                    ? clone $ctrl
+                    : $this->getContainer()->get(HttpXhrController::class);
 
-            return $ctrl->setTemplateFactory($this->factory);
-        });
+                return $ctrl->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -250,14 +284,17 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryIconSet(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('icon-set'), function () {
-            $ctrl = $this->factory->provider('icon-set');
-            $ctrl = $ctrl instanceof IconSet
-                ? $ctrl
-                : $this->getContainer()->get(IconSet::class);
+        $this->getContainer()->share(
+            $this->getFactoryAlias('icon-set'),
+            function () {
+                $ctrl = $this->factory->provider('icon-set');
+                $ctrl = $ctrl instanceof IconSet
+                    ? $ctrl
+                    : $this->getContainer()->get(IconSet::class);
 
-            return $ctrl->setTemplateFactory($this->factory)->set($this->factory->param('icon', []))->parse();
-        });
+                return $ctrl->setTemplateFactory($this->factory)->set($this->factory->param('icon', []))->parse();
+            }
+        );
     }
 
     /**
@@ -265,16 +302,19 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryParams(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            $ctrl = $this->factory->provider('params');
-            $ctrl = $ctrl instanceof Params
-                ? $ctrl
-                : $this->getContainer()->get(Params::class);
+        $this->getContainer()->share(
+            $this->getFactoryAlias('params'),
+            function () {
+                $ctrl = $this->factory->provider('params');
+                $ctrl = $ctrl instanceof Params
+                    ? $ctrl
+                    : $this->getContainer()->get(Params::class);
 
-            $attrs = $this->factory->get('params', []);
+                $attrs = $this->factory->get('params', []);
 
-            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : [])->parse();
-        });
+                return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : [])->parse();
+            }
+        );
     }
 
     /**
@@ -284,14 +324,17 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactorySidebar(): void
     {
-        $this->getContainer()->add($this->getFactoryAlias('sidebar'), function () {
-            $ctrl = $this->factory->provider('sidebar');
-            $ctrl = $ctrl instanceof Sidebar
-                ? clone $ctrl
-                : $this->getContainer()->get(Sidebar::class);
+        $this->getContainer()->add(
+            $this->getFactoryAlias('sidebar'),
+            function () {
+                $ctrl = $this->factory->provider('sidebar');
+                $ctrl = $ctrl instanceof Sidebar
+                    ? clone $ctrl
+                    : $this->getContainer()->get(Sidebar::class);
 
-            return $ctrl->setTemplateFactory($this->factory);
-        });
+                return $ctrl->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -299,21 +342,29 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerFactoryViewer(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('viewer'), function () {
-            $params = $this->factory->get('viewer', []);
+        $this->getContainer()->share(
+            $this->getFactoryAlias('viewer'),
+            function () {
+                $params = $this->factory->get('viewer', []);
 
-            if (!$params instanceof ViewEngine) {
-                $viewer = ProxyView::getPlatesEngine(array_merge([
-                    'directory' => template()->resourcesDir('/views/file-manager'),
-                    'factory'   => View::class
-                ], (array) $params));
-            } else {
-                $viewer = $params;
+                if (!$params instanceof ViewEngine) {
+                    $viewer = ProxyView::getPlatesEngine(
+                        array_merge(
+                            [
+                                'directory' => template()->resourcesDir('/views/file-manager'),
+                                'factory'   => View::class,
+                            ],
+                            (array)$params
+                        )
+                    );
+                } else {
+                    $viewer = $params;
+                }
+
+                $viewer->params(['template' => $this->factory]);
+
+                return $viewer;
             }
-
-            $viewer->params(['template' => $this->factory]);
-
-            return $viewer;
-        });
+        );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace tiFy\Wordpress\Form;
 
+use Pollen\Event\TriggeredEventInterface;
 use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
@@ -30,29 +31,39 @@ class Form implements FormContract
         $this->formManager = $formManager->boot();
         $this->setContainer($container);
 
-        add_action('wp', function () {
-            foreach ($this->formManager->all() as $form) {
-                /* @var FormFactory $form */
-                $form->events()->listen('field.get.value', function($event, &$value) {
-                    $value = Arr::stripslashes($value);
-                });
-            }
-        });
-
-        add_action('init', function () {
-            if (is_admin()) {
-                events()->trigger('wp-admin.form.boot');
-
+        add_action(
+            'wp',
+            function () {
                 foreach ($this->formManager->all() as $form) {
                     /* @var FormFactory $form */
-                    $this->formManager->current($form);
-                    $form->boot();
-                    $this->formManager->reset();
+                    $form->events()->listen(
+                        'field.get.value',
+                        function (TriggeredEventInterface $event, &$value) {
+                            $value = Arr::stripslashes($value);
+                        }
+                    );
                 }
-
-                events()->trigger('wp-admin.form.booted');
             }
-        }, 999999);
+        );
+
+        add_action(
+            'init',
+            function () {
+                if (is_admin()) {
+                    events()->trigger('wp-admin.form.boot');
+
+                    foreach ($this->formManager->all() as $form) {
+                        /* @var FormFactory $form */
+                        $this->formManager->current($form);
+                        $form->boot();
+                        $this->formManager->reset();
+                    }
+
+                    events()->trigger('wp-admin.form.booted');
+                }
+            },
+            999999
+        );
 
         $this->registerOverride();
     }
@@ -64,8 +75,11 @@ class Form implements FormContract
      */
     public function registerOverride(): void
     {
-        $this->getContainer()->add(MailerAddonDriverContract::class, function (): MailerAddonDriverContract {
-            return new MailerAddonDriver();
-        });
+        $this->getContainer()->add(
+            MailerAddonDriverContract::class,
+            function (): MailerAddonDriverContract {
+                return new MailerAddonDriver();
+            }
+        );
     }
 }

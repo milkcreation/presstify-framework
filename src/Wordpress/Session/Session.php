@@ -2,6 +2,7 @@
 
 namespace tiFy\Wordpress\Session;
 
+use Pollen\Event\TriggeredEventInterface;
 use tiFy\Contracts\Session\Session as BaseSession;
 use tiFy\Support\Arr;
 
@@ -24,7 +25,7 @@ class Session
     {
         $this->manager = $session;
 
-        events()->listen('session.read', function ($event, &$value) {
+        events()->listen('session.read', function (TriggeredEventInterface $event, &$value) {
             $value = Arr::stripslashes($value);
         });
     }
