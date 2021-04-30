@@ -3,6 +3,7 @@
 use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use League\Uri\Contracts\UriInterface as LeagueUri;
+use Pollen\Event\EventDispatcherInterface;
 use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Asset\Asset;
 use tiFy\Contracts\Container\Container;
@@ -121,11 +122,11 @@ if (!function_exists('config')) {
 
         if (is_null($key)) {
             return $factory;
-        } elseif (is_array($key)) {
-            return $factory->set($key);
-        } else {
-            return $factory->get($key, $default);
         }
+        if (is_array($key)) {
+            return $factory->set($key);
+        }
+        return $factory->get($key, $default);
     }
 }
 
@@ -207,9 +208,9 @@ if (!function_exists('env')) {
 
 if (!function_exists('events')) {
     /**
-     * Events - Gestionnaire d'événements.
+     * Répartiteur d'événements.
      *
-     * @return EventsManager
+     * @return EventDispatcherInterface
      */
     function events()
     {
@@ -259,12 +260,12 @@ if (!function_exists('form')) {
     }
 }
 
-if (! function_exists('logger')) {
+if (!function_exists('logger')) {
     /**
      * Logger - Gestionnaire de journalisation des actions.
      *
-     * @param  string|null  $message
-     * @param  array  $context
+     * @param string|null $message
+     * @param array $context
      *
      * @return LogManager|void
      */
@@ -461,7 +462,7 @@ if (!function_exists('url')) {
     function url($uri = null): Url
     {
         /** @var Url $url */
-        $url =  app('url');
+        $url = app('url');
 
         return is_null($uri) ? $url : $url->set($uri);
     }

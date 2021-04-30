@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\PageHook;
 
 use Closure;
+use Pollen\Event\TriggeredEventInterface;
 use tiFy\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface as BaseBreadcrumbCollectionInterface;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\Router;
@@ -79,355 +80,405 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
         if (!$this->built) {
             $this->parse();
 
-            add_action('pre_get_posts', function (WP_Query $wp_query) {
-                if (!is_admin() && ($rewrite = $this->get('rewrite') ?: '') && $wp_query->is_main_query()) {
-                    if (preg_match('/(.*)@post_type/', $rewrite, $matches) && post_type_exists($matches[1])) {
-                        if ($wp_query->is_post_type_archive($matches[1])) {
-                            $wp_query->set('hookname', $this->getName());
-                        } elseif ($wp_query->is_single() && ($wp_query->get('post_type') === $matches[1])) {
-                            $wp_query->set('hookname', $this->getName());
-                        }
-                    } elseif (preg_match('/(.*)@taxonomy/', $rewrite, $matches) && taxonomy_exists($matches[1])) {
-                        if (
-                            $wp_query->is_tax($matches[1]) ||
-                            (($matches[1] === 'category') && $wp_query->is_category()) ||
-                            (($matches[1] === 'post_tag') && $wp_query->is_tag())
-                        ) {
-                            $wp_query->set('hookname', $this->getName());
+            add_action(
+                'pre_get_posts',
+                function (WP_Query $wp_query) {
+                    if (!is_admin() && ($rewrite = $this->get('rewrite') ?: '') && $wp_query->is_main_query()) {
+                        if (preg_match('/(.*)@post_type/', $rewrite, $matches) && post_type_exists($matches[1])) {
+                            if ($wp_query->is_post_type_archive($matches[1])) {
+                                $wp_query->set('hookname', $this->getName());
+                            } elseif ($wp_query->is_single() && ($wp_query->get('post_type') === $matches[1])) {
+                                $wp_query->set('hookname', $this->getName());
+                            }
+                        } elseif (preg_match('/(.*)@taxonomy/', $rewrite, $matches) && taxonomy_exists($matches[1])) {
+                            if (
+                                $wp_query->is_tax($matches[1]) ||
+                                (($matches[1] === 'category') && $wp_query->is_category()) ||
+                                (($matches[1] === 'post_tag') && $wp_query->is_tag())
+                            ) {
+                                $wp_query->set('hookname', $this->getName());
+                            }
                         }
                     }
-                }
-            }, 0);
+                },
+                0
+            );
 
-            add_action('pre_get_posts', function (WP_Query $wp_query) {
-                if (!is_admin() && $wp_query->is_main_query() /*&& !$this->get('rewrite')*/) {
-                    if ($this->is()) {
-                        if ($query_args = $this->get('wp_query')) {
-                            if (is_array($query_args)) {
-                                if ($paged = $wp_query->get('paged')) {
-                                    $query_args = array_merge(['paged' => $paged], $query_args);
+            add_action(
+                'pre_get_posts',
+                function (WP_Query $wp_query) {
+                    if (!is_admin() && $wp_query->is_main_query() /*&& !$this->get('rewrite')*/) {
+                        if ($this->is()) {
+                            if ($query_args = $this->get('wp_query')) {
+                                if (is_array($query_args)) {
+                                    if ($paged = $wp_query->get('paged')) {
+                                        $query_args = array_merge(['paged' => $paged], $query_args);
+                                    }
+                                    $wp_query->parse_query($query_args);
+                                } else {
+                                    $wp_query->parse_query($wp_query->query);
                                 }
-                                $wp_query->parse_query($query_args);
-                            } else {
-                                $wp_query->parse_query($wp_query->query);
-                            }
-                        } elseif (in_array(Router::currentRouteName(), $this->get('routes', []))) {
-                            $wp_query->parse_query(['page_id' => $this->post()->getId()]);
-                        }
-                    }
-                }
-            });
-
-            add_action('init', function () {
-                register_setting('tify_options', $this->getOptionName());
-
-                if (!$this->exists()) {
-                    return;
-                }
-
-                add_filter('display_post_states', function (array $post_states, WP_Post $post) {
-                    if (($label = $this->get('display_post_states')) && $this->is($post)) {
-                        if (!is_string($label)) {
-                            $label = $this->getTitle();
-                        }
-                        $post_states[] = $label;
-                    }
-                    return $post_states;
-                }, 10, 2);
-
-                add_action('edit_form_top', function (WP_Post $post) {
-                    if (($label = $this->get('edit_form_notice')) && $this->is($post)) {
-                        if (!is_string($label)) {
-                            $label = sprintf(__('Vous éditez actuellement : %s.', 'tify'), $this->getTitle());
-                        }
-                        echo "<div class=\"notice notice-info inline\">\n\t<p>{$label}</p>\n</div>";
-                    }
-                });
-
-                $rewrite = $this->get('rewrite') ?: '';
-
-                $post_type = preg_match('/(.*)@post_type/', $rewrite, $matches) ? $matches[1] : null;
-                if (($post_type === 'post') && ($id = get_option('page_for_posts'))) {
-                    $this->set(compact('id'));
-                }
-
-                if (preg_match('/(.*)@post_type/', $rewrite, $matches) && post_type_exists($post_type)) {
-                    global $wp_post_types;
-
-                    if (isset($wp_post_types[$post_type])) {
-                        $this->objectType = 'post_type';
-                        $this->objectName = $post_type;
-
-                        $obj = &$wp_post_types[$post_type];
-                        $obj->has_archive = true;
-                        $obj->remove_rewrite_rules();
-
-                        if (!is_array($obj->rewrite)) {
-                            $obj->rewrite = [];
-                        }
-
-                        $obj->rewrite['slug'] = $this->getPath();
-
-                        if (!isset($obj->rewrite['with_front'])) {
-                            $obj->rewrite['with_front'] = true;
-                        }
-
-                        if (!isset($obj->rewrite['pages'])) {
-                            $obj->rewrite['pages'] = true;
-                        }
-
-                        if (!isset($obj->rewrite['feeds']) || !$obj->has_archive) {
-                            $obj->rewrite['feeds'] = (bool)$obj->has_archive;
-                        }
-
-                        if (!isset($obj->rewrite['ep_mask'])) {
-                            if (isset($obj->permalink_epmask)) {
-                                $obj->rewrite['ep_mask'] = $obj->permalink_epmask;
-                            } else {
-                                $obj->rewrite['ep_mask'] = EP_PERMALINK;
+                            } elseif (in_array(Router::currentRouteName(), $this->get('routes', []))) {
+                                $wp_query->parse_query(['page_id' => $this->post()->getId()]);
                             }
                         }
+                    }
+                }
+            );
 
-                        $obj->add_rewrite_rules();
+            add_action(
+                'init',
+                function () {
+                    register_setting('tify_options', $this->getOptionName());
 
-                        /**
-                         * Ancien.
-                         * @todo suppr.
-                         */
-                        /*
-                        global $wp_rewrite;
+                    if (!$this->exists()) {
+                        return;
+                    }
 
-                        $obj->rewrite = true;
-                        $pbase = $wp_rewrite->pagination_base;
-                        $hookname = $this->getName();
+                    add_filter(
+                        'display_post_states',
+                        function (array $post_states, WP_Post $post) {
+                            if (($label = $this->get('display_post_states')) && $this->is($post)) {
+                                if (!is_string($label)) {
+                                    $label = $this->getTitle();
+                                }
+                                $post_states[] = $label;
+                            }
+                            return $post_states;
+                        },
+                        10,
+                        2
+                    );
 
-                        $obj->remove_rewrite_rules();
+                    add_action(
+                        'edit_form_top',
+                        function (WP_Post $post) {
+                            if (($label = $this->get('edit_form_notice')) && $this->is($post)) {
+                                if (!is_string($label)) {
+                                    $label = sprintf(__('Vous éditez actuellement : %s.', 'tify'), $this->getTitle());
+                                }
+                                echo "<div class=\"notice notice-info inline\">\n\t<p>{$label}</p>\n</div>";
+                            }
+                        }
+                    );
 
-                        add_rewrite_rule(
-                            "{$this->getPath()}/([^/]+)/?$",
-                            'index.php?post_type=' . $post_type . '&name=$matches[1]' .
-                            '&hookname=' . $hookname,
-                            'top'
-                        );
+                    $rewrite = $this->get('rewrite') ?: '';
 
-                        if ($this->post()->typeIn(['page'])) {
+                    $post_type = preg_match('/(.*)@post_type/', $rewrite, $matches) ? $matches[1] : null;
+                    if (($post_type === 'post') && ($id = get_option('page_for_posts'))) {
+                        $this->set(compact('id'));
+                    }
+
+                    if (preg_match('/(.*)@post_type/', $rewrite, $matches) && post_type_exists($post_type)) {
+                        global $wp_post_types;
+
+                        if (isset($wp_post_types[$post_type])) {
+                            $this->objectType = 'post_type';
+                            $this->objectName = $post_type;
+
+                            $obj = &$wp_post_types[$post_type];
+                            $obj->has_archive = true;
+                            $obj->remove_rewrite_rules();
+
+                            if (!is_array($obj->rewrite)) {
+                                $obj->rewrite = [];
+                            }
+
+                            $obj->rewrite['slug'] = $this->getPath();
+
+                            if (!isset($obj->rewrite['with_front'])) {
+                                $obj->rewrite['with_front'] = true;
+                            }
+
+                            if (!isset($obj->rewrite['pages'])) {
+                                $obj->rewrite['pages'] = true;
+                            }
+
+                            if (!isset($obj->rewrite['feeds']) || !$obj->has_archive) {
+                                $obj->rewrite['feeds'] = (bool)$obj->has_archive;
+                            }
+
+                            if (!isset($obj->rewrite['ep_mask'])) {
+                                if (isset($obj->permalink_epmask)) {
+                                    $obj->rewrite['ep_mask'] = $obj->permalink_epmask;
+                                } else {
+                                    $obj->rewrite['ep_mask'] = EP_PERMALINK;
+                                }
+                            }
+
+                            $obj->add_rewrite_rules();
+
+                            /**
+                             * Ancien.
+                             * @todo suppr.
+                             */
+                            /*
+                            global $wp_rewrite;
+
+                            $obj->rewrite = true;
+                            $pbase = $wp_rewrite->pagination_base;
+                            $hookname = $this->getName();
+
+                            $obj->remove_rewrite_rules();
+
                             add_rewrite_rule(
-                                "{$this->getPath()}/{$pbase}/([0-9]{1,})/?$",
-                                'index.php?page_id=' . $this->post()->getId() . '&paged=$matches[1]' .
+                                "{$this->getPath()}/([^/]+)/?$",
+                                'index.php?post_type=' . $post_type . '&name=$matches[1]' .
                                 '&hookname=' . $hookname,
                                 'top'
                             );
-                        } else {
-                            add_rewrite_rule(
-                                "{$this->getPath()}/{$pbase}/([0-9]{1,})/?$",
-                                'index.php?p=' . $this->post()->getId() . '&post_type=' . $this->post()->getType() .
-                                '&paged=$matches[1]&hookname=' . $hookname,
-                                'top'
-                            );
-                        }
 
-                        add_filter('post_type_link', function (string $link, WP_Post $post) use ($post_type) {
-                            if ($post->post_type === $post_type) {
-                                return rtrim($this->post()->getPermalink(), '/') . '/' . $post->post_name;
+                            if ($this->post()->typeIn(['page'])) {
+                                add_rewrite_rule(
+                                    "{$this->getPath()}/{$pbase}/([0-9]{1,})/?$",
+                                    'index.php?page_id=' . $this->post()->getId() . '&paged=$matches[1]' .
+                                    '&hookname=' . $hookname,
+                                    'top'
+                                );
+                            } else {
+                                add_rewrite_rule(
+                                    "{$this->getPath()}/{$pbase}/([0-9]{1,})/?$",
+                                    'index.php?p=' . $this->post()->getId() . '&post_type=' . $this->post()->getType() .
+                                    '&paged=$matches[1]&hookname=' . $hookname,
+                                    'top'
+                                );
                             }
-                            return $link;
-                        }, 999999, 2);
-                        */
 
-                        add_action('save_post', function (int $post_id) {
-                            $post = get_post($post_id);
-
-                            if ($this->is($post)) {
-                                if (get_option('page_for_posts') == $post_id) {
-                                    update_option('permalink_structure',
-                                        '/' . rtrim(ltrim($this->post()->getPath(), '/'), '/') . '/%postname%'
-                                    );
+                            add_filter('post_type_link', function (string $link, WP_Post $post) use ($post_type) {
+                                if ($post->post_type === $post_type) {
+                                    return rtrim($this->post()->getPermalink(), '/') . '/' . $post->post_name;
                                 }
+                                return $link;
+                            }, 999999, 2);
+                            */
 
-                                flush_rewrite_rules();
-                            }
-                        }, 999999);
+                            add_action(
+                                'save_post',
+                                function (int $post_id) {
+                                    $post = get_post($post_id);
 
-                        add_action('admin_bar_menu', function (WP_Admin_Bar $wp_admin_bar) {
-                            if (!is_admin()) {
-                                if ($this->is()) {
-                                    $wp_admin_bar->add_menu([
-                                        'id'    => 'edit',
-                                        'title' => $this->post()->getType()->label('edit_item'),
-                                        'href'  => $this->post()->getEditUrl(),
-                                    ]);
-                                }
-                            }
-                        }, 90);
-                    }
-                } elseif (preg_match('/(.*)@taxonomy/', $rewrite, $matches) && taxonomy_exists($matches[1])) {
-                    global $wp_taxonomies;
+                                    if ($this->is($post)) {
+                                        if (get_option('page_for_posts') == $post_id) {
+                                            update_option(
+                                                'permalink_structure',
+                                                '/' . rtrim(ltrim($this->post()->getPath(), '/'), '/') . '/%postname%'
+                                            );
+                                        }
 
-                    $taxonomy = $matches[1];
-
-                    if (isset($wp_taxonomies[$taxonomy])) {
-                        $this->objectType = 'taxonomy';
-                        $this->objectName = $taxonomy;
-
-                        $obj = &$wp_taxonomies[$taxonomy];
-                        $obj->remove_rewrite_rules();
-
-                        /**
-                         * @internal Ancienne version >> Fonctionnelle.
-                         */
-                        $obj->rewrite = false;
-
-                        global $wp_rewrite;
-
-                        $pbase = $wp_rewrite->pagination_base;
-                        $hookname = $this->getName();
-
-                        if ($obj->hierarchical) {
-                            $obj->rewrite = [
-                                'slug'         => $this->getPath(),
-                                'with_front'   => false,
-                                'hierarchical' => true,
-                            ];
-                            $obj->add_rewrite_rules();
-                        } else {
-                            add_rewrite_rule(
-                                "{$this->getPath()}/([^/]+)/?$",
-                                'index.php?taxonomy=' . $taxonomy . '&term=$matches[1]&hookname=' . $hookname,
-                                'top'
-                            );
-
-                            add_rewrite_rule(
-                                "{$this->getPath()}/([^/]+)/{$pbase}/([0-9]{1,})/?$",
-                                'index.php?taxonomy=' . $taxonomy . '&term=$matches[1]&paged=$matches[2]&hookname=' .
-                                $hookname,
-                                'top'
-                            );
-                        }
-
-                        add_filter('term_link', function (string $link, WP_Term $term, string $tax) use ($taxonomy) {
-                            if ($tax === $taxonomy) {
-                                // @var WP_Taxonomy[] $wp_taxonomies
-                                global $wp_taxonomies;
-
-                                $base_url = rtrim($this->post()->getPermalink(), '/') . '/';
-                                $slug = $term->slug;
-
-                                if ($wp_taxonomies[$tax]->hierarchical) {
-                                    $hierarchical_slugs = [];
-                                    $ancestors = get_ancestors($term->term_id, $taxonomy, 'taxonomy');
-                                    foreach ((array)$ancestors as $ancestor) {
-                                        $ancestor_term = get_term($ancestor, $taxonomy);
-                                        $hierarchical_slugs[] = $ancestor_term->slug;
+                                        flush_rewrite_rules();
                                     }
-                                    $hierarchical_slugs = array_reverse($hierarchical_slugs);
-                                    $hierarchical_slugs[] = $slug;
+                                },
+                                999999
+                            );
 
-                                    return $base_url . implode('/', $hierarchical_slugs);
-                                } else {
-                                    return $base_url . $slug;
-                                }
+                            add_action(
+                                'admin_bar_menu',
+                                function (WP_Admin_Bar $wp_admin_bar) {
+                                    if (!is_admin()) {
+                                        if ($this->is()) {
+                                            $wp_admin_bar->add_menu(
+                                                [
+                                                    'id'    => 'edit',
+                                                    'title' => $this->post()->getType()->label('edit_item'),
+                                                    'href'  => $this->post()->getEditUrl(),
+                                                ]
+                                            );
+                                        }
+                                    }
+                                },
+                                90
+                            );
+                        }
+                    } elseif (preg_match('/(.*)@taxonomy/', $rewrite, $matches) && taxonomy_exists($matches[1])) {
+                        global $wp_taxonomies;
+
+                        $taxonomy = $matches[1];
+
+                        if (isset($wp_taxonomies[$taxonomy])) {
+                            $this->objectType = 'taxonomy';
+                            $this->objectName = $taxonomy;
+
+                            $obj = &$wp_taxonomies[$taxonomy];
+                            $obj->remove_rewrite_rules();
+
+                            /**
+                             * @internal Ancienne version >> Fonctionnelle.
+                             */
+                            $obj->rewrite = false;
+
+                            global $wp_rewrite;
+
+                            $pbase = $wp_rewrite->pagination_base;
+                            $hookname = $this->getName();
+
+                            if ($obj->hierarchical) {
+                                $obj->rewrite = [
+                                    'slug'         => $this->getPath(),
+                                    'with_front'   => false,
+                                    'hierarchical' => true,
+                                ];
+                                $obj->add_rewrite_rules();
+                            } else {
+                                add_rewrite_rule(
+                                    "{$this->getPath()}/([^/]+)/?$",
+                                    'index.php?taxonomy=' . $taxonomy . '&term=$matches[1]&hookname=' . $hookname,
+                                    'top'
+                                );
+
+                                add_rewrite_rule(
+                                    "{$this->getPath()}/([^/]+)/{$pbase}/([0-9]{1,})/?$",
+                                    'index.php?taxonomy=' . $taxonomy . '&term=$matches[1]&paged=$matches[2]&hookname=' .
+                                    $hookname,
+                                    'top'
+                                );
                             }
-                            return $link;
-                        }, 999999, 3);
-                        /**/
 
-                        /**
-                         * @internal  Nouvelle version >> Ne permet pas de positionner la règle de réécriture en top.
-                         * !!GARDER!!
-                         * /
-                         * if (!is_array($obj->rewrite)) {
-                         * $obj->rewrite = [];
-                         * }
-                         *
-                         * $obj->rewrite = array_merge([
-                         * 'with_front'   => true,
-                         * 'hierarchical' => false,
-                         * 'ep_mask'      => EP_NONE,
-                         * ], $obj->rewrite);
-                         *
-                         * $obj->rewrite['slug'] = $this->getPath();
-                         *
-                         * $obj->add_rewrite_rules();
-                         * /**/
+                            add_filter(
+                                'term_link',
+                                function (string $link, WP_Term $term, string $tax) use ($taxonomy) {
+                                    if ($tax === $taxonomy) {
+                                        // @var WP_Taxonomy[] $wp_taxonomies
+                                        global $wp_taxonomies;
+
+                                        $base_url = rtrim($this->post()->getPermalink(), '/') . '/';
+                                        $slug = $term->slug;
+
+                                        if ($wp_taxonomies[$tax]->hierarchical) {
+                                            $hierarchical_slugs = [];
+                                            $ancestors = get_ancestors($term->term_id, $taxonomy, 'taxonomy');
+                                            foreach ((array)$ancestors as $ancestor) {
+                                                $ancestor_term = get_term($ancestor, $taxonomy);
+                                                $hierarchical_slugs[] = $ancestor_term->slug;
+                                            }
+                                            $hierarchical_slugs = array_reverse($hierarchical_slugs);
+                                            $hierarchical_slugs[] = $slug;
+
+                                            return $base_url . implode('/', $hierarchical_slugs);
+                                        } else {
+                                            return $base_url . $slug;
+                                        }
+                                    }
+                                    return $link;
+                                },
+                                999999,
+                                3
+                            );
+                            /**/
+                            /**
+                             * @internal  Nouvelle version >> Ne permet pas de positionner la règle de réécriture en top.
+                             * !!GARDER!!
+                             * /
+                             * if (!is_array($obj->rewrite)) {
+                             * $obj->rewrite = [];
+                             * }
+                             *
+                             * $obj->rewrite = array_merge([
+                             * 'with_front'   => true,
+                             * 'hierarchical' => false,
+                             * 'ep_mask'      => EP_NONE,
+                             * ], $obj->rewrite);
+                             *
+                             * $obj->rewrite['slug'] = $this->getPath();
+                             *
+                             * $obj->add_rewrite_rules();
+                             * /**/
+                        }
                     }
-                }
-            }, 999999);
+                },
+                999999
+            );
 
-            events()->listen('partial.breadcrumb.prefetch', function ($event, BaseBreadcrumbCollectionInterface $bc, $e) {
-                if ($bc instanceof BreadcrumbCollectionInterface) {
-                    if (in_array(Router::currentRouteName(), $this->get('routes', []))) {
-                        $bc->clear();
-                        $bc->addRoot(null, true);
-                        $hookid = $this->post()->getId();
+            events()->listen(
+                'partial.breadcrumb.prefetch',
+                function (TriggeredEventInterface $event, BaseBreadcrumbCollectionInterface $bc, $e) {
+                    if ($bc instanceof BreadcrumbCollectionInterface) {
+                        if (in_array(Router::currentRouteName(), $this->get('routes', []))) {
+                            $bc->clear();
+                            $bc->addRoot(null, true);
+                            $hookid = $this->post()->getId();
 
-                        if ($acs = $bc->getPostAncestorsRender($hookid)) {
-                            array_walk($acs, function ($render) use ($bc) {
-                                $bc->add($render);
-                            });
-                        }
-
-                        if ($pr = $bc->getPostRender($hookid, true)) {
-                            $bc->add($pr);
-                        }
-
-                        $e->stopPropagation();
-                    } elseif ($this->is() || $this->isAncestor()) {
-                        $bc->clear();
-
-                        $hookid = $this->post()->getId();
-                        $paged = is_paged();
-
-                        $bc->addRoot(null, true);
-
-                        if ($acs = $bc->getPostAncestorsRender($hookid)) {
-                            array_walk($acs, function ($render) use ($bc) {
-                                $bc->add($render);
-                            });
-                        }
-
-                        if ($this->is()) {
-                            if ($pr = $bc->getPostRender($hookid, $paged)) {
-                                $bc->add($pr);
+                            if ($acs = $bc->getPostAncestorsRender($hookid)) {
+                                array_walk(
+                                    $acs,
+                                    function ($render) use ($bc) {
+                                        $bc->add($render);
+                                    }
+                                );
                             }
-                        } else {
+
                             if ($pr = $bc->getPostRender($hookid, true)) {
                                 $bc->add($pr);
                             }
 
-                            if (is_tax() || is_tag() || is_category()) {
-                                $id = get_queried_object_id();
+                            $e->stopPropagation();
+                        } elseif ($this->is() || $this->isAncestor()) {
+                            $bc->clear();
 
-                                if ($acs = $bc->getTermAncestorsRender($id)) {
-                                    array_walk($acs, function ($render) use ($bc) {
+                            $hookid = $this->post()->getId();
+                            $paged = is_paged();
+
+                            $bc->addRoot(null, true);
+
+                            if ($acs = $bc->getPostAncestorsRender($hookid)) {
+                                array_walk(
+                                    $acs,
+                                    function ($render) use ($bc) {
                                         $bc->add($render);
-                                    });
-                                }
+                                    }
+                                );
+                            }
 
-                                if ($tr = $bc->getTermRender($id, $paged)) {
-                                    $bc->add($tr);
-                                }
-                            } elseif (is_single()) {
-                                $id = get_the_ID();
-
-                                if ($acs = $bc->getPostAncestorsRender($id)) {
-                                    array_walk($acs, function ($render) use ($bc) {
-                                        $bc->add($render);
-                                    });
-                                }
-
-                                if ($pr = $bc->getPostRender($id, $paged)) {
+                            if ($this->is()) {
+                                if ($pr = $bc->getPostRender($hookid, $paged)) {
                                     $bc->add($pr);
                                 }
-                            }
-                        }
+                            } else {
+                                if ($pr = $bc->getPostRender($hookid, true)) {
+                                    $bc->add($pr);
+                                }
 
-                        if ($paged) {
-                            $bc->add($bc->getRender(sprintf(__('Page %d', 'tify'), get_query_var('paged'))));
+                                if (is_tax() || is_tag() || is_category()) {
+                                    $id = get_queried_object_id();
+
+                                    if ($acs = $bc->getTermAncestorsRender($id)) {
+                                        array_walk(
+                                            $acs,
+                                            function ($render) use ($bc) {
+                                                $bc->add($render);
+                                            }
+                                        );
+                                    }
+
+                                    if ($tr = $bc->getTermRender($id, $paged)) {
+                                        $bc->add($tr);
+                                    }
+                                } elseif (is_single()) {
+                                    $id = get_the_ID();
+
+                                    if ($acs = $bc->getPostAncestorsRender($id)) {
+                                        array_walk(
+                                            $acs,
+                                            function ($render) use ($bc) {
+                                                $bc->add($render);
+                                            }
+                                        );
+                                    }
+
+                                    if ($pr = $bc->getPostRender($id, $paged)) {
+                                        $bc->add($pr);
+                                    }
+                                }
+                            }
+
+                            if ($paged) {
+                                $bc->add($bc->getRender(sprintf(__('Page %d', 'tify'), get_query_var('paged'))));
+                            }
+                            $e->stopPropagation();
                         }
-                        $e->stopPropagation();
                     }
-                }
-            }, 100);
+                },
+                100
+            );
 
             $this->built = true;
         }

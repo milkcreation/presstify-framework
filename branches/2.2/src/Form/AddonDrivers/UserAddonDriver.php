@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Form\AddonDrivers;
 
+use Pollen\Event\TriggeredEventInterface;
 use tiFy\Contracts\Form\AddonDriver as AddonDriverContract;
 use tiFy\Contracts\Form\FieldDriver as FieldDriverContract;
 use tiFy\Contracts\Form\UserAddonDriver as UserAddonDriverContract;
@@ -43,24 +46,33 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
     public function boot(): AddonDriverContract
     {
         if (!$this->isBooted()) {
-            $this->form()->events()->listen('field.booted', function ($event, FieldDriverContract $field) {
-                if ($field->getAddonOption($this->getAlias(), 'userdata') === 'user_pass') {
-                    if (!$field->params()->has('attrs.onpaste')) {
-                        $field->params(['attrs.onpaste' => 'off']);
-                    }
-                    if (!$field->params()->has('attrs.autocomplete')) {
-                        $field->params(['attrs.autocomplete' => 'new-password']);
+            $this->form()->events()->listen(
+                'field.booted',
+                function (TriggeredEventInterface $event, FieldDriverContract $field) {
+                    if ($field->getAddonOption($this->getAlias(), 'userdata') === 'user_pass') {
+                        if (!$field->params()->has('attrs.onpaste')) {
+                            $field->params(['attrs.onpaste' => 'off']);
+                        }
+                        if (!$field->params()->has('attrs.autocomplete')) {
+                            $field->params(['attrs.autocomplete' => 'new-password']);
+                        }
                     }
                 }
-            });
+            );
 
             $this->form()->events()
-                ->listen('field.validated', function ($event, FieldDriverContract $field) {
-                    $this->form()->event('addon.user.field.validation', [&$field]);
-                })
-                ->listen('handle.validated', function () {
-                    $this->form()->event('addon.user.save');
-                })
+                ->listen(
+                    'field.validated',
+                    function (TriggeredEventInterface $event, FieldDriverContract $field) {
+                        $this->form()->event('addon.user.field.validation', [&$field]);
+                    }
+                )
+                ->listen(
+                    'handle.validated',
+                    function () {
+                        $this->form()->event('addon.user.save');
+                    }
+                )
                 ->listen('addon.user.field.validation', [$this, 'fieldValidation'])
                 ->listen('addon.user.save', [$this, 'save']);
         }
@@ -85,13 +97,16 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
      */
     public function defaultParams(): array
     {
-        return array_merge(parent::defaultParams(), [
-            'user_id'                    => 0,
-            'roles'                      => ['subscriber'],
-            'send_password_change_email' => false,
-            'send_email_change_email'    => false,
-            'auto_auth'                  => false,
-        ]);
+        return array_merge(
+            parent::defaultParams(),
+            [
+                'user_id'                    => 0,
+                'roles'                      => ['subscriber'],
+                'send_password_change_email' => false,
+                'send_email_change_email'    => false,
+                'auto_auth'                  => false,
+            ]
+        );
     }
 
     /**
@@ -175,11 +190,12 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
     /**
      * Vérification d'intégrité d'un champ.
      *
+     * @param TriggeredEventInterface $event
      * @param FieldDriverContract $field Instance du champ.
      *
      * @return void
      */
-    public function fieldValidation($event, FieldDriverContract $field): void
+    public function fieldValidation(TriggeredEventInterface $event, FieldDriverContract $field): void
     {
         if ($userdata = $field->getAddonOption($this->getAlias(), 'userdata', false)) {
             if (!in_array($userdata, ['user_login', 'user_email', 'role'])) {
@@ -199,7 +215,8 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
 
                             if ($user_name != $orig_username || preg_match('/[^a-z0-9]/', $user_name)) {
                                 $field->error(
-                                    __('L\'identifiant de connexion ne devrait contenir que des lettres minuscules (a-z)' .
+                                    __(
+                                        'L\'identifiant de connexion ne devrait contenir que des lettres minuscules (a-z)' .
                                         ' et des chiffres.',
                                         'tify'
                                     )
@@ -318,13 +335,19 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
                 unset($userdatas['role']);
             }
 
-            add_filter('send_password_change_email', function () {
-                return $this->params('send_password_change_email', false);
-            });
+            add_filter(
+                'send_password_change_email',
+                function () {
+                    return $this->params('send_password_change_email', false);
+                }
+            );
 
-            add_filter('send_email_change_email', function () {
-                return $this->params('send_email_change_email', false);
-            });
+            add_filter(
+                'send_email_change_email',
+                function () {
+                    return $this->params('send_email_change_email', false);
+                }
+            );
 
             $result = wp_update_user($userdatas);
         } else {

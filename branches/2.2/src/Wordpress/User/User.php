@@ -3,6 +3,7 @@
 namespace tiFy\Wordpress\User;
 
 use Illuminate\Support\Collection;
+use Pollen\Event\TriggeredEventInterface;
 use tiFy\Contracts\User\RoleFactory;
 use tiFy\Contracts\User\User as UserManager;
 use tiFy\Wordpress\Contracts\User as UserContract;
@@ -29,66 +30,84 @@ class User implements UserContract
     {
         $this->manager = $manager;
 
-        add_action('init', function () {
-            foreach (config('user.role', []) as $name => $attrs) {
-                $this->manager->role()->register($name, $attrs);
+        add_action(
+            'init',
+            function () {
+                foreach (config('user.role', []) as $name => $attrs) {
+                    $this->manager->role()->register($name, $attrs);
+                }
+            },
+            0
+        );
+
+        add_action(
+            'init',
+            function () {
+                global $wp_roles;
+
+                foreach ($wp_roles->roles as $role => $data) {
+                    if (!$this->manager->role()->get($role)) {
+                        $this->manager->role()->register(
+                            $role,
+                            ['display_name' => $data['name'], 'capabilities' => $data['capabilities']]
+                        );
+                    }
+                }
+            },
+            999998
+        );
+
+        add_action(
+            'profile_update',
+            function (int $user_id) {
+                if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+                    return;
+                } elseif (defined('DOING_AJAX') && DOING_AJAX) {
+                    return;
+                }
+
+                $this->manager->meta()->save($user_id);
+                $this->manager->option()->Save($user_id);
             }
-        }, 0);
+        );
 
-        add_action('init', function () {
-            global $wp_roles;
+        add_action(
+            'user_register',
+            function (int $user_id) {
+                if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+                    return;
+                } elseif (defined('DOING_AJAX') && DOING_AJAX) {
+                    return;
+                }
 
-            foreach ($wp_roles->roles as $role => $data) {
-                if (!$this->manager->role()->get($role)) {
-                    $this->manager->role()->register(
-                        $role, ['display_name' => $data['name'], 'capabilities' => $data['capabilities']]
-                    );
+                $this->manager->meta()->save($user_id);
+                $this->manager->option()->Save($user_id);
+            }
+        );
+
+        events()->listen(
+            'user.role.factory.boot',
+            function (TriggeredEventInterface $event, RoleFactory $factory) {
+                /* @var WP_Roles $wp_roles */
+                global $wp_roles;
+
+                $name = $factory->getName();
+
+                /** @var WP_Role $role */
+                if (!$role = $wp_roles->get_role($name)) {
+                    $role = $wp_roles->add_role($name, $factory->get('display_name'));
+                } elseif (($names = $wp_roles->get_names()) && ($names[$name] !== $factory->get('display_name'))) {
+                    $wp_roles->remove_role($name);
+                    $role = $wp_roles->add_role($name, $factory->get('display_name'));
+                }
+
+                foreach ($factory->get('capabilities', []) as $cap => $grant) {
+                    if (!isset($role->capabilities[$cap]) || ($role->capabilities[$cap] !== $grant)) {
+                        $role->add_cap($cap, $grant);
+                    }
                 }
             }
-        }, 999998);
-
-        add_action('profile_update', function (int $user_id) {
-            if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-                return;
-            } elseif (defined('DOING_AJAX') && DOING_AJAX) {
-                return;
-            }
-
-            $this->manager->meta()->save($user_id);
-            $this->manager->option()->Save($user_id);
-        });
-
-        add_action('user_register', function (int $user_id) {
-            if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-                return;
-            } elseif (defined('DOING_AJAX') && DOING_AJAX) {
-                return;
-            }
-
-            $this->manager->meta()->save($user_id);
-            $this->manager->option()->Save($user_id);
-        });
-
-        events()->on('user.role.factory.boot', function ($event, RoleFactory $factory) {
-            /* @var WP_Roles $wp_roles */
-            global $wp_roles;
-
-            $name = $factory->getName();
-
-            /** @var WP_Role $role */
-            if (!$role = $wp_roles->get_role($name)) {
-                $role = $wp_roles->add_role($name, $factory->get('display_name'));
-            } elseif (($names = $wp_roles->get_names()) && ($names[$name] !== $factory->get('display_name'))) {
-                $wp_roles->remove_role($name);
-                $role = $wp_roles->add_role($name, $factory->get('display_name'));
-            }
-
-            foreach ($factory->get('capabilities', []) as $cap => $grant) {
-                if (!isset($role->capabilities[$cap]) || ($role->capabilities[$cap] !== $grant)) {
-                    $role->add_cap($cap, $grant);
-                }
-            }
-        });
+        );
     }
 
     /**
