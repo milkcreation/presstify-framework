@@ -9,10 +9,7 @@ use tiFy\Http\Request;
 use tiFy\Http\Response;
 use tiFy\Container\ServiceProvider;
 use tiFy\Event\EventDispatcher;
-use tiFy\Kernel\Events\Manager as EventsManager;
-use tiFy\Kernel\Events\Listener;
 use tiFy\Support\ClassInfo;
-
 
 class KernelServiceProvider extends ServiceProvider
 {
@@ -24,9 +21,6 @@ class KernelServiceProvider extends ServiceProvider
     protected $provides = [
         'class-info',
         'events',
-        'events.listener',
-        'params.bag',
-        'path',
         'request',
         'response',
         'uri',
@@ -55,10 +49,6 @@ class KernelServiceProvider extends ServiceProvider
 
         $this->getContainer()->share('events', function () {
             return new EventDispatcher();
-        });
-
-        $this->getContainer()->add('events.listener', function (callable $callback) {
-            return new Listener($callback);
         });
 
         $this->getContainer()->share('request', function () {
