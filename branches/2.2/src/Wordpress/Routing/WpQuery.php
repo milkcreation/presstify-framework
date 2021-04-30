@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Routing;
 
@@ -34,7 +36,7 @@ class WpQuery implements WpQueryContract
         'tax'               => 'is_tax',
         'template'          => 'is_template',
         'time'              => 'is_time',
-        'year'              => 'is_year'
+        'year'              => 'is_year',
     ];
 
     /**
@@ -44,18 +46,21 @@ class WpQuery implements WpQueryContract
      */
     public function __construct()
     {
-        add_action('pre_get_posts', function (WP_Query &$wp_query) {
-            if ($wp_query->is_main_query()) {
-                foreach (config('wp.query', []) as $ctag => $query_args) {
-                    if (in_array($ctag, $this->ctags) && call_user_func([$wp_query, $ctag])) {
-                        foreach ($query_args as $query_arg => $value) {
-                            $wp_query->set($query_arg, $value);
+        add_action(
+            'pre_get_posts',
+            function (WP_Query &$wp_query) {
+                if ($wp_query->is_main_query()) {
+                    foreach (config('wp.query', []) as $ctag => $query_args) {
+                        if (in_array($ctag, $this->ctags, true) && $wp_query->$ctag()) {
+                            foreach ($query_args as $query_arg => $value) {
+                                $wp_query->set($query_arg, $value);
+                            }
                         }
                     }
                 }
+                events()->trigger('wp.query', [&$wp_query]);
             }
-            events()->trigger('wp.query', [&$wp_query]);
-        });
+        );
     }
 
     /**
@@ -76,36 +81,49 @@ class WpQuery implements WpQueryContract
     {
         if (is_404()) {
             return '404';
-        } elseif (is_search()) {
-            return 'search';
-        } elseif (is_front_page()) {
-            return 'front';
-        } elseif (is_home()) {
-            return 'home';
-        } elseif (is_post_type_archive()) {
-            return 'post_type_archive';
-        } elseif (is_tax()) {
-            return 'tax';
-        } elseif (is_attachment()) {
-            return 'attachment';
-        } elseif (is_single()) {
-            return 'single';
-        } elseif (is_page()) {
-            return 'page';
-        } elseif (is_singular()) {
-            return 'singular';
-        } elseif (is_category()) {
-            return 'category';
-        } elseif (is_tag()) {
-            return 'tag';
-        } elseif (is_author()) {
-            return 'author';
-        } elseif (is_date()) {
-            return 'date';
-        } elseif (is_archive()) {
-            return 'archive';
-        } else {
-            return null;
         }
+        if (is_search()) {
+            return 'search';
+        }
+        if (is_front_page()) {
+            return 'front';
+        }
+        if (is_home()) {
+            return 'home';
+        }
+        if (is_post_type_archive()) {
+            return 'post_type_archive';
+        }
+        if (is_tax()) {
+            return 'tax';
+        }
+        if (is_attachment()) {
+            return 'attachment';
+        }
+        if (is_single()) {
+            return 'single';
+        }
+        if (is_page()) {
+            return 'page';
+        }
+        if (is_singular()) {
+            return 'singular';
+        }
+        if (is_category()) {
+            return 'category';
+        }
+        if (is_tag()) {
+            return 'tag';
+        }
+        if (is_author()) {
+            return 'author';
+        }
+        if (is_date()) {
+            return 'date';
+        }
+        if (is_archive()) {
+            return 'archive';
+        }
+        return null;
     }
 }
