@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Routing;
 
 use tiFy\Support\Proxy\Request;
 use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
-use tiFy\Wordpress\{Proxy\Option, Query\QueryUser};
+use tiFy\Wordpress\Proxy\Option;
+use tiFy\Wordpress\Query\QueryUser;
 use WP_Screen;
 
 class WpScreen implements WpScreenContract
@@ -19,7 +22,7 @@ class WpScreen implements WpScreenContract
      * Nom de qualification de l'objet Wordpress associé.
      * @var string|null
      */
-    protected $hookName = null;
+    protected $hookName;
 
     /**
      * Nom de qualification de l'objet Wordpress associé.
@@ -54,9 +57,11 @@ class WpScreen implements WpScreenContract
     {
         if ($screen instanceof WpScreenContract) {
             return $screen;
-        } elseif ($screen instanceof WP_Screen) {
+        }
+        if ($screen instanceof WP_Screen) {
             return new static($screen);
-        } elseif (is_string($screen)) {
+        }
+        if (is_string($screen)) {
             if (preg_match('/(edit|list)::(.*)@(post_type|taxonomy|user)/', $screen, $matches)) {
                 $attrs = [];
                 if ($matches[1] === 'edit') {
@@ -237,11 +242,11 @@ class WpScreen implements WpScreenContract
             $this->objectName = $this->screen->id;
             $this->objectType = 'user';
         } elseif (
-            ((
+        ((
                 ($this->screen->base === 'user-edit') &&
                 ($user_id = (int)Request::input('user_id', 0)) &&
                 ($user = QueryUser::createFromId($user_id))) ||
-                (($this->screen->base === 'profile') && ($user = QueryUser::createFromId(get_current_user_id()))
+            (($this->screen->base === 'profile') && ($user = QueryUser::createFromId(get_current_user_id()))
             ))
         ) {
             $this->objectName = join('|', array_keys($user->getRoles()));
