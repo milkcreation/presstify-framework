@@ -18,7 +18,7 @@ class BreadcrumbCollection extends BaseBreadcrumbCollection implements Breadcrum
     {
         parent::__construct($manager);
 
-        events()->listen('partial.breadcrumb.prefetch', function (BreadcrumbCollectionInterface $bc) {
+        events()->listen('partial.breadcrumb.prefetch', function ($event, BreadcrumbCollectionInterface $bc) {
             if (!$this->all()) {
                 $this->addRoot(null, true);
 

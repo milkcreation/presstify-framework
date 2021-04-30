@@ -69,7 +69,7 @@ class User implements UserContract
             $this->manager->option()->Save($user_id);
         });
 
-        events()->on('user.role.factory.boot', function (RoleFactory $factory) {
+        events()->on('user.role.factory.boot', function ($event, RoleFactory $factory) {
             /* @var WP_Roles $wp_roles */
             global $wp_roles;
 

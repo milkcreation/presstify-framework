@@ -51,7 +51,7 @@ class Taxonomy implements TaxonomyContract
             $this->manager->meta()->save($term_id, $taxonomy);
         }, 10, 3);
 
-        events()->on('taxonomy.factory.boot', function (TaxonomyFactory $factory) {
+        events()->on('taxonomy.factory.boot', function ($event, TaxonomyFactory $factory) {
             global $wp_taxonomies;
 
             if (!isset($wp_taxonomies[$factory->getName()])) {

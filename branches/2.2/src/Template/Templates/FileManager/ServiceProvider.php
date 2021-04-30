@@ -39,7 +39,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         parent::boot();
 
-        events()->listen('template.factory.prepared', function (string $name) {
+        events()->listen('template.factory.prepared', function ($event, string $name) {
             if ($name === $this->factory->name()) {
                 $this->factory->ajax()->parse();
             }

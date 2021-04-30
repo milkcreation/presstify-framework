@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Kernel;
 
@@ -6,10 +8,11 @@ use League\Uri\Http as HttpUri;
 use tiFy\Http\Request;
 use tiFy\Http\Response;
 use tiFy\Container\ServiceProvider;
+use tiFy\Event\EventDispatcher;
 use tiFy\Kernel\Events\Manager as EventsManager;
 use tiFy\Kernel\Events\Listener;
 use tiFy\Support\ClassInfo;
-use tiFy\Support\ParamsBag;
+
 
 class KernelServiceProvider extends ServiceProvider
 {
@@ -51,7 +54,7 @@ class KernelServiceProvider extends ServiceProvider
         });
 
         $this->getContainer()->share('events', function () {
-            return new EventsManager();
+            return new EventDispatcher();
         });
 
         $this->getContainer()->add('events.listener', function (callable $callback) {

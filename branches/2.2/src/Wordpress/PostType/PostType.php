@@ -57,7 +57,7 @@ class PostType implements PostTypeContract
             $this->manager->meta()->save($post_id, $post->post_type);
         });
 
-        events()->listen('post-type.factory.boot', function (PostTypeFactory $factory) {
+        events()->listen('post-type.factory.boot', function ($event, PostTypeFactory $factory) {
             global $wp_post_types;
 
             if (!isset($wp_post_types[$factory->getName()])) {
