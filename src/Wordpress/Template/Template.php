@@ -97,7 +97,7 @@ class Template
             return new UserListTableItem();
         });
 
-        events()->listen('template.factory.boot', function (string $name, TemplateFactoryContract $factory) {
+        events()->listen('template.factory.boot', function ($event, string $name, TemplateFactoryContract $factory) {
             add_action('admin_menu', function () use ($factory) {
                 if ($admin_menu = $factory->param('wordpress.admin_menu')) {
                     $factory->param([

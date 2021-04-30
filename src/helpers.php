@@ -17,7 +17,6 @@ use tiFy\Contracts\Http\RedirectResponse;
 use tiFy\Contracts\Http\Request;
 use tiFy\Contracts\Kernel\ClassLoader;
 use tiFy\Contracts\Kernel\Config;
-use tiFy\Contracts\Kernel\EventsManager;
 use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\Log\LogManager;
 use tiFy\Contracts\PostType\PostTypeFactory;
@@ -212,7 +211,7 @@ if (!function_exists('events')) {
      *
      * @return EventsManager
      */
-    function events(): EventsManager
+    function events()
     {
         return app('events');
     }

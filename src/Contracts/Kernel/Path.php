@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Contracts\Kernel;
 
-use tiFy\Contracts\Filesystem\{Filesystem, LocalFilesystem};
+use tiFy\Contracts\Filesystem\Filesystem;
+use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
 
 interface Path extends StorageManager
@@ -26,7 +29,7 @@ interface Path extends StorageManager
      *
      * @return LocalFilesystem|null
      */
-    public function getFilesystem($prefix): ?LocalFilesystem;
+    public function getFilesystem($name): ?LocalFilesystem;
 
     /**
      * Récupération de l'instance du gestionnaire de dossier racine.
@@ -177,9 +180,9 @@ interface Path extends StorageManager
 
     /**
      * Vérification du type d'arborescence du projet.
+     * @return boolean
      * @internal Vraie si les répertoires de Wordpress sont à la racine du projet.
      *
-     * @return boolean
      */
     public function isWp(): bool;
 

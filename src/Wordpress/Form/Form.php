@@ -33,7 +33,7 @@ class Form implements FormContract
         add_action('wp', function () {
             foreach ($this->formManager->all() as $form) {
                 /* @var FormFactory $form */
-                $form->events()->listen('field.get.value', function(&$value) {
+                $form->events()->listen('field.get.value', function($event, &$value) {
                     $value = Arr::stripslashes($value);
                 });
             }

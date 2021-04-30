@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
-
-use tiFy\Contracts\Kernel\EventsListener;
 
 /**
  * @mixin \tiFy\Form\Concerns\FormAwareTrait
@@ -20,12 +20,12 @@ interface EventsFactory
      * Déclaration d'un événement.
      *
      * @param string $name Identifiant de qualification de l'événement.
-     * @param callable|EventsListener $listener Fonction anonyme ou Classe de traitement de l'événement.
+     * @param callable $listener Fonction anonyme ou Classe de traitement de l'événement.
      * @param int $priority Priorité de traitement.
      *
      * @return static
      */
-    public function listen(string $name, $listener, int $priority = 0): EventsFactory;
+    public function listen(string $name, callable $listener, int $priority = 0): EventsFactory;
 
     /**
      * Déclenchement d'un événement.

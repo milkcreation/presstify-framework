@@ -43,7 +43,7 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
     public function boot(): AddonDriverContract
     {
         if (!$this->isBooted()) {
-            $this->form()->events()->listen('field.booted', function (FieldDriverContract $field) {
+            $this->form()->events()->listen('field.booted', function ($event, FieldDriverContract $field) {
                 if ($field->getAddonOption($this->getAlias(), 'userdata') === 'user_pass') {
                     if (!$field->params()->has('attrs.onpaste')) {
                         $field->params(['attrs.onpaste' => 'off']);
@@ -55,7 +55,7 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
             });
 
             $this->form()->events()
-                ->listen('field.validated', function (FieldDriverContract $field) {
+                ->listen('field.validated', function ($event, FieldDriverContract $field) {
                     $this->form()->event('addon.user.field.validation', [&$field]);
                 })
                 ->listen('handle.validated', function () {
@@ -179,7 +179,7 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
      *
      * @return void
      */
-    public function fieldValidation(FieldDriverContract $field): void
+    public function fieldValidation($event, FieldDriverContract $field): void
     {
         if ($userdata = $field->getAddonOption($this->getAlias(), 'userdata', false)) {
             if (!in_array($userdata, ['user_login', 'user_email', 'role'])) {

@@ -353,7 +353,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                 }
             }, 999999);
 
-            events()->listen('partial.breadcrumb.prefetch', function (BaseBreadcrumbCollectionInterface $bc, $e) {
+            events()->listen('partial.breadcrumb.prefetch', function ($event, BaseBreadcrumbCollectionInterface $bc, $e) {
                 if ($bc instanceof BreadcrumbCollectionInterface) {
                     if (in_array(Router::currentRouteName(), $this->get('routes', []))) {
                         $bc->clear();
