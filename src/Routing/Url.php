@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Routing;
 
+use Pollen\Routing\RouterInterface;
 use tiFy\Contracts\Http\Request as RequestContract;
-use tiFy\Contracts\Routing\Router as RouterContract;
 use tiFy\Contracts\Routing\Url as UrlContract;
 use tiFy\Contracts\Routing\UrlFactory as UrlFactoryContract;
 use tiFy\Http\Request;
@@ -23,20 +25,18 @@ class Url extends UrlFactory implements UrlContract
     protected $rewriteBase;
 
     /**
-     * Instance du routage.
-     * @var RouterContract
+     * Instance du router.
+     * @var RouterInterface
      */
     protected $router;
 
     /**
-     * CONSTRUCTEUR
-     *
-     * @param RouterContract $router
+     * @param RouterInterface $router
      * @param RequestContract|null $request
      *
      * @return void
      */
-    public function __construct(RouterContract $router, ?RequestContract $request = null)
+    public function __construct(RouterInterface $router, ?RequestContract $request = null)
     {
         $this->router = $router;
         $this->request = $request ?? Request::createFromGlobals();

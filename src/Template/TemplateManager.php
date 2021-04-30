@@ -78,7 +78,7 @@ class TemplateManager extends Manager implements TemplateManagerContract
             Router::$method($this->basePath . '/{name}', [$this, 'httpController']);
             Router::xhr($this->basePath . '/{name}/xhr', [$this, 'httpXhrController'], $method);
         }
-        Router::get($this->basePath . '/{name}/cache/{path:.*}', [$this, 'httpCacheController'])->strategy('app');
+        Router::get($this->basePath . '/{name}/cache/{path:.*}', [$this, 'httpCacheController']);
 
         return $this;
     }
