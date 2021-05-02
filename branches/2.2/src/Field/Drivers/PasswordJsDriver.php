@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace tiFy\Field\Drivers;
 
-use tiFy\Contracts\Encryption\Encrypter;
+use Pollen\Encryption\EncrypterProxy;
 use tiFy\Field\FieldDriver;
 
 class PasswordJsDriver extends FieldDriver implements PasswordJsDriverInterface
 {
-    /**
-     * Instance du contrôleur d'encryptage.
-     * @var Encrypter
-     */
-    protected $encrypter;
+    use EncrypterProxy;
 
     /**
      * @inheritDoc
@@ -52,22 +48,10 @@ class PasswordJsDriver extends FieldDriver implements PasswordJsDriverInterface
     /**
      * @inheritDoc
      */
-    public function getEncrypter(): Encrypter
-    {
-        if (is_null($this->encrypter)) {
-            $this->encrypter = app('encrypter');
-        }
-
-        return $this->encrypter;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function render(): string
     {
         if ($container_class = $this->get('container.attrs.class')) {
-            $this->set('container.attrs.class', "FieldPasswordJs {$container_class}");
+            $this->set('container.attrs.class', "FieldPasswordJs $container_class");
         } else {
             $this->set('container.attrs.class', 'FieldPasswordJs');
         }
@@ -109,7 +93,7 @@ class PasswordJsDriver extends FieldDriver implements PasswordJsDriverInterface
         $this->set(
             [
                 'attrs.data-control' => 'password-js.input',
-                'attrs.data-cypher'  => $cypher = $this->getEncrypter()->encrypt($this->getValue()),
+                'attrs.data-cypher'  => $cypher = $this->encrypt($this->getValue()),
                 'attrs.value'        => $this->get('hide') ? $cypher : $this->get('attrs.value'),
             ]
         );
@@ -133,7 +117,7 @@ class PasswordJsDriver extends FieldDriver implements PasswordJsDriverInterface
     {
         return [
             'success' => true,
-            'data'    => $this->getEncrypter()->decrypt(request()->input('cypher')),
+            'data'    => $this->decrypt(request()->input('cypher')),
         ];
     }
 }

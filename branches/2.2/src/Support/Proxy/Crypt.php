@@ -1,23 +1,23 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Encryption\Encrypter as EncrypterContract;
+use Pollen\Encryption\EncrypterInterface;
 
 /**
- * @method static string encrypt(string $plain)
  * @method static mixed decrypt(string $hash)
- *
- * @see \tiFy\Encryption\Encrypter
+ * @method static string encrypt(string $plain)
  */
 class Crypt extends AbstractProxy
 {
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|EncrypterContract
+     * @return EncrypterInterface
      */
-    public static function getInstance()
+    public static function getInstance(): EncrypterInterface
     {
         return parent::getInstance();
     }
@@ -27,6 +27,6 @@ class Crypt extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'encrypter';
+        return EncrypterInterface::class;
     }
 }

@@ -1,13 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use League\Uri\Contracts\UriInterface as LeagueUri;
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
+use Pollen\Log\LogManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Psr\Http\Message\UriInterface;
-use tiFy\Contracts\Asset\Asset;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
@@ -21,11 +23,9 @@ use tiFy\Contracts\Http\Request;
 use tiFy\Contracts\Kernel\ClassLoader;
 use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\Path;
-use tiFy\Contracts\Log\LogManager;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\Routing\Redirector;
-use tiFy\Contracts\Routing\Router;
 use tiFy\Contracts\Routing\Url;
 use tiFy\Contracts\Support\ClassInfo;
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;
@@ -143,6 +143,7 @@ if (!function_exists('container')) {
      */
     function container(?string $abstract = null)
     {
+        /** @var tiFy $factory */
         $factory = tiFy::instance();
 
         if (is_null($abstract)) {
@@ -250,7 +251,7 @@ if (!function_exists('form')) {
      *
      * @return null|FormManager|FormFactory
      */
-    function form($name = null)
+    function form(?string $name = null)
     {
         /* @var FormManager $factory */
         $factory = app(FormManager::class);
@@ -264,19 +265,19 @@ if (!function_exists('form')) {
 
 if (!function_exists('logger')) {
     /**
-     * Logger - Gestionnaire de journalisation des actions.
+     * Gestionnaire de journalisation|Déclaration d'un message de journalisation.
      *
      * @param string|null $message
      * @param array $context
      *
-     * @return LogManager|void
+     * @return LogManagerInterface|void
      */
-    function logger($message = null, array $context = []): ?LogManager
+    function logger(?string $message = null, array $context = []): ?LogManagerInterface
     {
-        /* @var LogManager $manager */
-        $manager = app('log');
+        /* @var LogManagerInterface $manager */
+        $manager = app(LogManagerInterface::class);
 
-        if (is_null($message)) {
+        if ($message === null) {
             return $manager;
         }
         $manager->debug($message, $context);
@@ -325,7 +326,7 @@ if (!function_exists('post_type')) {
      *
      * @return PostType|PostTypeFactory
      */
-    function post_type($name = null)
+    function post_type(?string $name = null)
     {
         /* @var PostType $manager */
         $manager = app('post-type');
@@ -444,12 +445,13 @@ if (!function_exists('template')) {
 
         if (is_null($name)) {
             return $manager;
-        } elseif ($template = $manager->get($name)) {
+        }
+
+        if ($template = $manager->get($name)) {
             $template->param($params);
             return $template;
-        } else {
-            return null;
         }
+        return null;
     }
 }
 
@@ -505,7 +507,7 @@ if (!function_exists('view')) {
      *
      * @return ViewEngine|string
      */
-    function view($view = null, $data = [])
+    function view($view = null, array $data = [])
     {
         /* @var ViewEngine $factory */
         $factory = app('view');

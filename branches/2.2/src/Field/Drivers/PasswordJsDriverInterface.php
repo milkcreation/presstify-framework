@@ -4,18 +4,10 @@ declare(strict_types=1);
 
 namespace tiFy\Field\Drivers;
 
-use tiFy\Contracts\Encryption\Encrypter;
 use tiFy\Field\FieldDriverInterface;
 
 interface PasswordJsDriverInterface extends FieldDriverInterface
 {
-    /**
-     * Récupération du controleur d'encryptage.
-     *
-     * @return Encrypter
-     */
-    public function getEncrypter(): Encrypter;
-
     /**
      * Contrôleur de traitement de la requête XHR.
      *
