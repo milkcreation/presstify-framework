@@ -22,7 +22,6 @@ use tiFy\Contracts\Form\HtmlFieldDriver as HtmlFieldDriverContract;
 use tiFy\Contracts\Form\MailerAddonDriver as MailerAddonDriverContract;
 use tiFy\Contracts\Form\OptionsFactory as OptionsFactoryContract;
 use tiFy\Contracts\Form\RecordAddonDriver as RecordAddonDriverContract;
-use tiFy\Contracts\Form\SessionFactory as SessionFactoryContract;
 use tiFy\Contracts\Form\SubmitButtonDriver as SubmitButtonDriverContract;
 use tiFy\Contracts\Form\TagFieldDriver as TagFieldDriverContract;
 use tiFy\Contracts\Form\UserAddonDriver as UserAddonDriverContract;
@@ -39,7 +38,6 @@ use tiFy\Form\Factory\FieldsFactory;
 use tiFy\Form\Factory\FieldGroupsFactory;
 use tiFy\Form\Factory\HandleFactory;
 use tiFy\Form\Factory\OptionsFactory;
-use tiFy\Form\Factory\SessionFactory;
 use tiFy\Form\Factory\ValidateFactory;
 use tiFy\Form\FieldDrivers\HtmlFieldDriver;
 use tiFy\Form\FieldDrivers\TagFieldDriver;
@@ -71,7 +69,6 @@ class FormServiceProvider extends ServiceProvider
         MailerAddonDriverContract::class,
         OptionsFactoryContract::class,
         RecordAddonDriverContract::class,
-        SessionFactoryContract::class,
         SubmitButtonDriverContract::class,
         TagFieldDriverContract::class,
         UserAddonDriverContract::class,
@@ -183,10 +180,6 @@ class FormServiceProvider extends ServiceProvider
 
         $this->getContainer()->add(HandleFactoryContract::class, function (): HandleFactoryContract {
             return new HandleFactory();
-        });
-
-        $this->getContainer()->add(SessionFactoryContract::class, function (): SessionFactoryContract {
-            return new SessionFactory();
         });
 
         $this->getContainer()->add(ValidateFactoryContract::class, function (): ValidateFactoryContract {

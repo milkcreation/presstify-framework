@@ -6,7 +6,7 @@ use tiFy\Contracts\Column\ColumnDisplayInterface;
 use tiFy\Contracts\Column\ColumnItem as ColumnItemContract;
 use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
-use tiFy\Wordpress\Routing\WpScreen;
+use tiFy\Wordpress\WpScreen;
 use WP_Screen;
 
 class ColumnItemController extends ParamsBag implements ColumnItemContract

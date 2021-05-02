@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Wordpress\Routing;
+namespace tiFy\Wordpress;
 
 use League\Route\Http\Exception\HttpExceptionInterface as BaseHttpExceptionInterface;
 use League\Route\Http\Exception\NotFoundException as BaseNotFoundException;

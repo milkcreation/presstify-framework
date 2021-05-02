@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Wordpress\Routing;
+namespace tiFy\Wordpress;
 
 use tiFy\Support\Proxy\Request;
 use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;

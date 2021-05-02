@@ -219,7 +219,7 @@ class BaseFormFactory implements FormFactoryContract
 
             if ($this->session === null) {
                 $this->setSessionFactory($fM->resolvable(SessionFactoryContract::class)
-                    ? $fM->resolve(SessionFactoryContract::class) : new SessionFactory()
+                    ? $fM->resolve(SessionFactoryContract::class) : new SessionFactory(md5('Form' . $this->getAlias()))
                 );
             }
             $this->session()->setForm($this);
@@ -571,7 +571,7 @@ class BaseFormFactory implements FormFactoryContract
     {
         if ($this->renderBuild['notices'] === false) {
             if ($this->messages()->count()) {
-                $this->session()->forget('notices');
+                $this->session()->forget(['notices']);
             } elseif ($notices = $this->session()->pull('notices')) {
                 foreach ($notices as $type => $items) {
                     foreach ($items as $item) {
@@ -587,9 +587,9 @@ class BaseFormFactory implements FormFactoryContract
                     $this->messages()->success($this->option('success.message', ''));
                 }
 
-                $this->session()->destroy();
+                $this->session()->clear();
             } else {
-                $this->session()->forget('notices');
+                $this->session()->forget(['notices']);
             }
 
             Asset::addInlineJs(
