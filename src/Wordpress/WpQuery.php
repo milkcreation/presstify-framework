@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Wordpress\Routing;
+namespace tiFy\Wordpress;
 
 use tiFy\Wordpress\Contracts\WpQuery as WpQueryContract;
 use WP_Query;
@@ -66,7 +66,7 @@ class WpQuery implements WpQueryContract
     /**
      * @inheritdoc
      */
-    public function is($ctag): bool
+    public function is(string $ctag): bool
     {
         if (preg_match('/^([\w]+)@wp$/', $ctag, $matches)) {
             $ctag = $matches[1];

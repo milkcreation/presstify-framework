@@ -7,7 +7,6 @@ namespace tiFy\Wordpress;
 use Pollen\Support\Proxy\HttpRequestProxy;
 use Pollen\Routing\RouterInterface;
 use Pollen\Routing\UrlMatcher;
-use tiFy\Wordpress\Routing\WpFallbackController;
 use WP_Query;
 
 class WpRouting

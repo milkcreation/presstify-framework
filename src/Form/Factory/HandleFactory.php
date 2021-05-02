@@ -80,7 +80,7 @@ class HandleFactory implements HandleFactoryContract
                     $field->setValue($value);
 
                     if ($field->supports('session') && $this->form()->supports('session')) {
-                        $this->form()->session()->put("request.{$field->getName()}", $value);
+                        $this->form()->session()->set("request.{$field->getName()}", $value);
                     }
                 }
             }
@@ -136,10 +136,10 @@ class HandleFactory implements HandleFactoryContract
             }
         }
 
-        $this->form()->session()->forget('notices');
+        $this->form()->session()->forget(['notices']);
 
         foreach ($this->form()->messages()->all() as $type => $notices) {
-            $this->form()->session()->put("notices.$type", $notices);
+            $this->form()->session()->set("notices.$type", $notices);
         }
 
         $this->form()->event('handle.failed', [&$this]);
@@ -235,12 +235,12 @@ class HandleFactory implements HandleFactoryContract
      */
     public function success(): HandleFactoryContract
     {
-        $this->form()->session()->flush();
-        $this->form()->setSuccessed()->session()->put('successed', true);
+        $this->form()->session()->clear();
+        $this->form()->setSuccessed()->session()->set('successed', true);
 
         $message = $this->form()->option('success.message', '');
 
-        $this->form()->session()->put('notices.success', [
+        $this->form()->session()->set('notices.success', [
             [
                 'message' => $message
             ]

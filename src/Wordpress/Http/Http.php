@@ -3,7 +3,7 @@
 namespace tiFy\Wordpress\Http;
 
 use tiFy\Contracts\Http\Request;
-use tiFy\Wordpress\Routing\WpScreen;
+use tiFy\Wordpress\WpScreen;
 use WP_Screen;
 
 class Http

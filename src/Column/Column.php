@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use tiFy\Contracts\Column\Column as ColumnContract;
 use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
-use tiFy\Wordpress\Routing\WpScreen;
+use tiFy\Wordpress\WpScreen;
 use WP_Screen;
 
 final class Column implements ColumnContract

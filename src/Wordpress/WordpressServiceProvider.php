@@ -7,6 +7,7 @@ namespace tiFy\Wordpress;
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Debug\DebugManagerInterface;
 use Pollen\Routing\RouterInterface;
+use Pollen\Session\SessionManagerInterface;
 use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Field\Contracts\FieldContract;
@@ -32,9 +33,6 @@ use tiFy\Wordpress\PostType\PostType;
 use tiFy\Wordpress\Query\QueryPost;
 use tiFy\Wordpress\Query\QueryTerm;
 use tiFy\Wordpress\Query\QueryUser;
-use tiFy\Wordpress\Routing\WpQuery;
-use tiFy\Wordpress\Routing\WpScreen;
-use tiFy\Wordpress\Session\Session;
 use tiFy\Wordpress\Taxonomy\Taxonomy;
 use tiFy\Wordpress\Template\Template;
 use tiFy\Wordpress\User\User;
@@ -168,7 +166,7 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('wp.post-type');
                 }
 
-                if ($this->getContainer()->has('session')) {
+                if ($this->getContainer()->has(SessionManagerInterface::class)) {
                     $this->getContainer()->get('wp.session');
                 }
 
@@ -489,7 +487,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerSession(): void
     {
         $this->getContainer()->share('wp.session', function () {
-            return new Session($this->getContainer()->get('session'));
+            return new WpSession($this->getContainer()->get(SessionManagerInterface::class));
         });
     }
 

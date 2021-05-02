@@ -1,20 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Session;
 
+use Pollen\Session\SessionManagerInterface;
+use Pollen\Support\Env;
 use tiFy\Container\ServiceProvider;
 
 class SessionServiceProvider extends ServiceProvider
 {
     /**
-     * Liste des noms de qualification des services fournis.
-     * {@internal Permet le chargement différé des services qualifié.}
      * @var string[]
      */
     protected $provides = [
-        'session',
-        'session.flashbag',
-        'session.store',
+        SessionManagerInterface::class
     ];
 
     /**
@@ -22,18 +22,14 @@ class SessionServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->getContainer()->share('session', function () {
-            $session = new Session($this->getContainer());
+        $this->getContainer()->share(SessionManagerInterface::class, function () {
+            $sessionManager = new SessionManager([], $this->getContainer());
 
-            return $session->build();
-        });
+            if ($tokenID = Env::get('APP_KEY')) {
+                $sessionManager->setTokenID($tokenID);
+            }
 
-        $this->getContainer()->add('session.flashbag', function () {
-            return new FlashBag();
-        });
-
-        $this->getContainer()->add('session.store', function () {
-            return new Store($this->getContainer()->get('session'));
+            return $sessionManager;
         });
     }
 }

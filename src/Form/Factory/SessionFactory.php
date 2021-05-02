@@ -1,21 +1,22 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Form\Factory;
 
-use Exception, BadMethodCallException, LogicException;
+use LogicException;
+use Pollen\Encryption\EncrypterProxy;
+use Pollen\Session\AttributeKeyBag;
+use Pollen\Support\Proxy\SessionProxy;
 use tiFy\Contracts\Form\SessionFactory as SessionFactoryContract;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
-use tiFy\Contracts\Session\Store as SessionStore;
 use tiFy\Form\Concerns\FormAwareTrait;
-use tiFy\Support\Proxy\Crypt;
-use tiFy\Support\Proxy\Session;
 
-/**
- * @mixin \tiFy\Session\Store
- */
-class SessionFactory implements SessionFactoryContract
+class SessionFactory extends AttributeKeyBag implements SessionFactoryContract
 {
+    use EncrypterProxy;
     use FormAwareTrait;
+    use SessionProxy;
 
     /**
      * Indicateur de chargement.
@@ -24,31 +25,10 @@ class SessionFactory implements SessionFactoryContract
     private $booted = false;
 
     /**
-     * Instance du gestionnaire de session associé.
-     * @var SessionStore
-     */
-    private $store;
-
-    /**
      * Jeton d'identification.
      * @var string|null
      */
     protected $token;
-
-    /**
-     * @inheritDoc
-     */
-    public function __call(string $name, array $arguments)
-    {
-        try {
-            return $this->store()->$name(...$arguments);
-        } catch (Exception $e) {
-            throw new BadMethodCallException(sprintf(
-                'SessionFactory throws an exception during the method call [%s] with message : %s',
-                $name, $e->getMessage()
-            ));
-        }
-    }
 
     /**
      * @inheritDoc
@@ -61,6 +41,8 @@ class SessionFactory implements SessionFactoryContract
             }
 
             $this->form()->event('session.boot', [&$this]);
+
+            $this->session()->addAttributeKeyBag($this->getKey(), $this);
 
             $this->booted = true;
 
@@ -77,7 +59,7 @@ class SessionFactory implements SessionFactoryContract
      */
     protected function generateToken(): void
     {
-        $this->token = Crypt::encrypt(json_encode(['name' => $this->form()->getAlias(), 'id' => uniqid()]));
+        $this->token = $this->encrypt(json_encode(['name' => $this->form()->getAlias(), 'id' => uniqid('', true)]));
     }
 
     /**
@@ -89,18 +71,5 @@ class SessionFactory implements SessionFactoryContract
             $this->generateToken();
         }
         return $this->token;
-    }
-
-    /**
-     * Récupération de l'instance du gestionnaire de session associé.
-     *
-     * @return SessionStore
-     */
-    public function store(): SessionStore
-    {
-        if (is_null($this->store)) {
-            $this->store = Session::registerStore("form.{$this->form()->getAlias()}");
-        }
-        return $this->store;
     }
 }
