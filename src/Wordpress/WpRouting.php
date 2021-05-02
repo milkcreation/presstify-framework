@@ -2,19 +2,17 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Wordpress\Routing;
+namespace tiFy\Wordpress;
 
 use Pollen\Support\Proxy\HttpRequestProxy;
-
 use Pollen\Routing\RouterInterface;
 use Pollen\Routing\UrlMatcher;
+use tiFy\Wordpress\Routing\WpFallbackController;
 use WP_Query;
 
-class Routing
+class WpRouting
 {
     use HttpRequestProxy;
-
-    //use WpHookerProxy;
 
     /**
      * @var RouterInterface
@@ -62,9 +60,9 @@ class Routing
     {
         $this->router = $router;
 
-        /*if ($fallback = $this->app->config('router.fallback')) {
-            $this->router->setFallback($fallback);
-        }*/
+        if (!$this->router->hasFallback()) {
+            $this->router->setFallback(WpFallbackController::class);
+        }
 
         if (is_admin()) {
             add_action(

@@ -9,6 +9,7 @@ use Pollen\Asset\AssetManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
 use Pollen\Log\LogManagerInterface;
 use Pollen\Routing\RouterInterface;
+use Pollen\Validation\ValidatorInterface;
 use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
@@ -33,7 +34,6 @@ use tiFy\Contracts\Taxonomy\Taxonomy;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\User;
-use tiFy\Contracts\Validation\Validator;
 use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Field\Contracts\FieldContract;
 use tiFy\Field\FieldDriverInterface;
@@ -486,13 +486,13 @@ if (!function_exists('user')) {
 
 if (!function_exists('validator')) {
     /**
-     * Récupération d'un instance du contrôleur de validation.
+     * Instance du gestionnaire de validation.
      *
-     * @return Validator
+     * @return ValidatorInterface
      */
-    function validator(): Validator
+    function validator(): ValidatorInterface
     {
-        return app('validator');
+        return app(ValidatorInterface::class);
     }
 }
 

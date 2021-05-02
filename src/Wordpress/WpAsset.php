@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Wordpress\Asset;
+namespace tiFy\Wordpress;
 
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Support\Proxy\HttpRequestProxy;
 
-class Asset
+class WpAsset
 {
     use HttpRequestProxy;
 
     /**
-     * Instance du gestionnaire d'asset.
      * @var AssetManagerInterface $asset
      */
     protected $asset;
 
+    /**
+     * @param AssetManagerInterface $asset
+     */
     public function __construct(AssetManagerInterface $asset)
     {
         $this->asset = $asset;
