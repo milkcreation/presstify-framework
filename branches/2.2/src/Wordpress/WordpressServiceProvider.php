@@ -1,7 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
+use Pollen\Asset\AssetManagerInterface;
+use Pollen\Routing\RouterInterface;
 use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Debug\Debug as DebugManager;
 use tiFy\Contracts\Form\FormManager;
@@ -105,11 +109,11 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('wp.debug');
                 }
 
-                if ($this->getContainer()->has('router')) {
+                if ($this->getContainer()->has(RouterInterface::class)) {
                     $this->getContainer()->get('wp.routing');
                 }
 
-                if ($this->getContainer()->has('asset')) {
+                if ($this->getContainer()->has(AssetManagerInterface::class)) {
                     $this->getContainer()->get('wp.asset');
                 }
 
@@ -242,7 +246,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerAsset(): void
     {
         $this->getContainer()->share('wp.asset', function () {
-            return new Asset($this->getContainer()->get('asset'));
+            return new Asset($this->getContainer()->get(AssetManagerInterface::class));
         });
     }
     /**
@@ -472,7 +476,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerRouting(): void
     {
         $this->getContainer()->share('wp.routing', function () {
-            return new Routing($this->getContainer()->get('router'));
+            return new Routing($this->getContainer()->get(RouterInterface::class));
         });
 
         $this->getContainer()->share('wp.wp_query', function () {

@@ -3,7 +3,9 @@
 use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use League\Uri\Contracts\UriInterface as LeagueUri;
+use Pollen\Asset\AssetManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
+use Pollen\Routing\RouterInterface;
 use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Asset\Asset;
 use tiFy\Contracts\Container\Container;
@@ -65,13 +67,13 @@ if (!function_exists('app')) {
 
 if (!function_exists('asset')) {
     /**
-     * Assets - Gestionnaire des assets.
+     * Instance du gestionnaire des assets.
      *
-     * @return Asset
+     * @return AssetManagerInterface
      */
-    function asset(): Asset
+    function asset(): AssetManagerInterface
     {
-        return app('asset');
+        return app(AssetManagerInterface::class);
     }
 }
 
@@ -214,7 +216,7 @@ if (!function_exists('events')) {
      */
     function events()
     {
-        return app('events');
+        return app(EventDispatcherInterface::class);
     }
 }
 
@@ -379,10 +381,10 @@ if (!function_exists('route')) {
      */
     function route(string $name, array $parameters = [], bool $absolute = true): ?string
     {
-        /* @var Router $factory */
-        $router = app('router');
+        /* @var RouterInterface $router */
+        $router = app(RouterInterface::class);
 
-        return $router->url($name, $parameters, $absolute);
+        return $router->getNamedRouteUrl($name, $parameters, $absolute);
     }
 }
 

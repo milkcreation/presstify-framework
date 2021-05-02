@@ -1,47 +1,74 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Asset;
 
-use tiFy\Contracts\Asset\Asset as AssetManager;
+use Pollen\Asset\AssetManagerInterface;
+use Pollen\Support\Proxy\HttpRequestProxy;
 
 class Asset
 {
+    use HttpRequestProxy;
+
     /**
-     * Instance du gestionnaire d'assets.
-     * @var AssetManager
+     * Instance du gestionnaire d'asset.
+     * @var AssetManagerInterface $asset
      */
-    protected $manager;
+    protected $asset;
 
-    public function __construct(AssetManager $manager)
+    public function __construct(AssetManagerInterface $asset)
     {
-        $this->manager = $manager;
+        $this->asset = $asset;
 
-        $this->manager->setDataJs('ajax_url', admin_url('admin-ajax.php', 'relative'));
+        $this->asset
+            ->setBaseDir(ABSPATH)
+            ->setBaseUrl(site_url('/'))
+            ->setRelPrefix($this->httpRequest()->getRewriteBase());
 
-        add_action('admin_head', function () {
-            echo $this->manager->header();
-        }, 9.999999);
+        $this->asset->addGlobalJsVar('abspath', ABSPATH);
+        $this->asset->addGlobalJsVar('url', site_url('/'));
+        $this->asset->addGlobalJsVar('rel', $this->httpRequest()->getRewriteBase());
 
-        add_action('admin_footer', function () {
-            echo $this->manager->footer();
-        }, 9.999999);
+        global $locale;
+        $this->asset->addGlobalJsVar('locale', $locale);
 
-        add_action('init', function () {
-            $lib = require_once(__DIR__ . '/Resources/config/third-party.php');
-            foreach ($lib['css'] as $handle => $attrs) {
-                wp_register_style($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
+        add_action(
+            'wp_head',
+            function () {
+                echo $this->asset->headerStyles();
+                echo $this->asset->headerScripts();
+            },
+            5
+        );
+
+        add_action(
+            'wp_footer',
+            function () {
+                echo $this->asset->footerScripts();
+            },
+            5
+        );
+
+        add_action(
+            'admin_print_styles',
+            function () {
+                echo $this->asset->headerStyles();
             }
-            foreach ($lib['js'] as $handle => $attrs) {
-                wp_register_script($handle, $attrs[0], $attrs[1], $attrs[2], $attrs[3]);
+        );
+
+        add_action(
+            'admin_print_scripts',
+            function () {
+                echo $this->asset->headerScripts();
             }
-        });
+        );
 
-        add_action('wp_head', function () {
-            echo $this->manager->header();
-        }, 5);
-
-        add_action('wp_footer', function () {
-            echo $this->manager->footer();
-        }, 5);
+        add_action(
+            'admin_print_footer_scripts',
+            function () {
+                echo $this->asset->footerScripts();
+            }
+        );
     }
 }

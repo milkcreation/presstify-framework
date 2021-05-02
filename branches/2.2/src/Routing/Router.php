@@ -8,5 +8,4 @@ use Pollen\Routing\Router as BaseRouter;
 
 class Router extends BaseRouter
 {
-
 }
