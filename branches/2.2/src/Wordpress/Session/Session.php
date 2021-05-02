@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Session;
 
@@ -15,8 +17,6 @@ class Session
     protected $manager;
 
     /**
-     * CONSTRUCTEUR.
-     *
      * @param BaseSession $session
      *
      * @return void

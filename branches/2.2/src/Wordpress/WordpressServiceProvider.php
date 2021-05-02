@@ -5,20 +5,18 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Asset\AssetManagerInterface;
+use Pollen\Debug\DebugManagerInterface;
 use Pollen\Routing\RouterInterface;
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Debug\Debug as DebugManager;
 use tiFy\Contracts\Form\FormManager;
 use tiFy\Field\Contracts\FieldContract;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Partial\Contracts\PartialContract;
 use tiFy\Support\Locale;
-use tiFy\Wordpress\Asset\Asset;
 use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Cookie\Cookie;
 use tiFy\Wordpress\Database\Database;
-use tiFy\Wordpress\Debug\Debug;
 use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
@@ -34,7 +32,6 @@ use tiFy\Wordpress\PostType\PostType;
 use tiFy\Wordpress\Query\QueryPost;
 use tiFy\Wordpress\Query\QueryTerm;
 use tiFy\Wordpress\Query\QueryUser;
-use tiFy\Wordpress\Routing\Routing;
 use tiFy\Wordpress\Routing\WpQuery;
 use tiFy\Wordpress\Routing\WpScreen;
 use tiFy\Wordpress\Session\Session;
@@ -105,7 +102,7 @@ class WordpressServiceProvider extends ServiceProvider
                 Locale::set(get_locale());
                 Locale::setLanguages(wp_get_available_translations() ?: []);
 
-                if ($this->getContainer()->has(DebugManager::class)) {
+                if ($this->getContainer()->has(DebugManagerInterface::class)) {
                     $this->getContainer()->get('wp.debug');
                 }
 
@@ -169,10 +166,6 @@ class WordpressServiceProvider extends ServiceProvider
 
                 if ($this->getContainer()->has('post-type')) {
                     $this->getContainer()->get('wp.post-type');
-                }
-
-                if ($this->getContainer()->has('validator')) {
-                    $this->getContainer()->get('validator');
                 }
 
                 if ($this->getContainer()->has('session')) {
@@ -246,7 +239,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerAsset(): void
     {
         $this->getContainer()->share('wp.asset', function () {
-            return new Asset($this->getContainer()->get(AssetManagerInterface::class));
+            return new WpAsset($this->getContainer()->get(AssetManagerInterface::class));
         });
     }
     /**
@@ -306,7 +299,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerDebug(): void
     {
         $this->getContainer()->share('wp.debug', function () {
-            return new Debug($this->getContainer()->get(DebugManager::class));
+            return new WpDebug($this->getContainer()->get(DebugManagerInterface::class));
         });
     }
 
@@ -476,7 +469,7 @@ class WordpressServiceProvider extends ServiceProvider
     public function registerRouting(): void
     {
         $this->getContainer()->share('wp.routing', function () {
-            return new Routing($this->getContainer()->get(RouterInterface::class));
+            return new WpRouting($this->getContainer()->get(RouterInterface::class));
         });
 
         $this->getContainer()->share('wp.wp_query', function () {
