@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Validation;
+namespace tiFy\Container\Services;
 
+use Pollen\Validation\Validator;
 use Pollen\Validation\ValidatorInterface;
 use tiFy\Container\ServiceProvider;
 

@@ -35,7 +35,7 @@ class WpSession
         }
 
         /*
-        events()->listen('session.read', function (TriggeredEventInterface $event, &$value) {
+        events()->on('session.read', function (TriggeredEventInterface $event, &$value) {
             $value = Arr::stripslashes($value);
         });
         */

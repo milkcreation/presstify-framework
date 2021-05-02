@@ -1,12 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Form\Factory;
 
-use Exception, LogicException;
+use Exception;
+use LogicException;
+use Pollen\Validation\Validator as v;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Contracts\Form\ValidateFactory as ValidateFactoryContract;
 use tiFy\Form\Concerns\FormAwareTrait;
-use tiFy\Validation\Validator as v;
 
 class ValidateFactory implements ValidateFactoryContract
 {

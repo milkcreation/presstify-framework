@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace tiFy\Form\AddonDrivers;
 
 use Pollen\Event\TriggeredEventInterface;
+use Pollen\Validation\Validator as v;
 use tiFy\Contracts\Form\AddonDriver as AddonDriverContract;
 use tiFy\Contracts\Form\FieldDriver as FieldDriverContract;
 use tiFy\Contracts\Form\UserAddonDriver as UserAddonDriverContract;
 use tiFy\Form\AddonDriver as BaseAddonDriver;
-use tiFy\Validation\Validator as v;
-use WP_Error, WP_User;
+use WP_Error;
+use WP_User;
 
 class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
 {
@@ -46,7 +47,7 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
     public function boot(): AddonDriverContract
     {
         if (!$this->isBooted()) {
-            $this->form()->events()->listen(
+            $this->form()->events()->on(
                 'field.booted',
                 function (TriggeredEventInterface $event, FieldDriverContract $field) {
                     if ($field->getAddonOption($this->getAlias(), 'userdata') === 'user_pass') {
@@ -61,20 +62,20 @@ class UserAddonDriver extends BaseAddonDriver implements UserAddonDriverContract
             );
 
             $this->form()->events()
-                ->listen(
+                ->on(
                     'field.validated',
                     function (TriggeredEventInterface $event, FieldDriverContract $field) {
                         $this->form()->event('addon.user.field.validation', [&$field]);
                     }
                 )
-                ->listen(
+                ->on(
                     'handle.validated',
                     function () {
                         $this->form()->event('addon.user.save');
                     }
                 )
-                ->listen('addon.user.field.validation', [$this, 'fieldValidation'])
-                ->listen('addon.user.save', [$this, 'save']);
+                ->on('addon.user.field.validation', [$this, 'fieldValidation'])
+                ->on('addon.user.save', [$this, 'save']);
         }
 
         return $this;

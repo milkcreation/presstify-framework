@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Log;
+namespace tiFy\Container\Services;
 
+use Pollen\Log\LogManager;
 use Pollen\Log\LogManagerInterface;
 use tiFy\Container\ServiceProvider;
 

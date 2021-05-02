@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers;
 
+use Pollen\Validation\Validator as v;
 use tiFy\Partial\Drivers\ImageLightbox\ImageLightboxItem;
 use tiFy\Partial\Drivers\ImageLightbox\ImageLightboxItemInterface;
 use tiFy\Partial\Drivers\ImageLightboxDriver as BaseImageLightboxDriver;
-use tiFy\Validation\Validator as v;
 
 class ImageLightboxDriver extends BaseImageLightboxDriver
 {

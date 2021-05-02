@@ -126,7 +126,7 @@ class Template
             }
         );
 
-        events()->listen(
+        events()->on(
             'template.factory.boot',
             function (TriggeredEventInterface $event, string $name, TemplateFactoryContract $factory) {
                 add_action(

@@ -67,7 +67,7 @@ class Taxonomy implements TaxonomyContract
             3
         );
 
-        events()->listen(
+        events()->on(
             'taxonomy.factory.boot',
             function (TriggeredEventInterface $event, TaxonomyFactory $factory) {
                 global $wp_taxonomies;

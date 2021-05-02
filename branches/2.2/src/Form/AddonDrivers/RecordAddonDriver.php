@@ -90,7 +90,7 @@ class RecordAddonDriver extends BaseAddonDriver implements RecordAddonDriverCont
         if (!$this->isBooted()) {
             parent::boot();
 
-            $this->form()->events()->listen('form.booted', function () {
+            $this->form()->events()->on('form.booted', function () {
                 $columns = [
                     '__record' => [
                         'content' => function ($item) {
@@ -152,10 +152,10 @@ class RecordAddonDriver extends BaseAddonDriver implements RecordAddonDriverCont
             });
 
             $this->form()->events()
-                ->listen('handle.validated', function () {
+                ->on('handle.validated', function () {
                     $this->form()->event('addon.record.save');
                 })
-                ->listen('addon.record.save', [$this, 'save']);
+                ->on('addon.record.save', [$this, 'save']);
         }
 
         return $this;

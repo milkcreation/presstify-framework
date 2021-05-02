@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support;
 
 use Illuminate\Support\Str as BaseStr;
-use tiFy\Validation\Validator as v;
+use Pollen\Validation\Validator as v;
 
 class Str extends BaseStr
 {

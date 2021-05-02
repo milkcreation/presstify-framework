@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Asset;
+namespace tiFy\Container\Services;
 
+use Pollen\Asset\AssetManager;
 use Pollen\Asset\AssetManagerInterface;
 use tiFy\Container\ServiceProvider;
 

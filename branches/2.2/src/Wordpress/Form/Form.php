@@ -36,7 +36,7 @@ class Form implements FormContract
             function () {
                 foreach ($this->formManager->all() as $form) {
                     /* @var FormFactory $form */
-                    $form->events()->listen(
+                    $form->events()->on(
                         'field.get.value',
                         function (TriggeredEventInterface $event, &$value) {
                             $value = Arr::stripslashes($value);

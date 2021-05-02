@@ -1,27 +1,32 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Mail\Mailable as MailableContract;
-use tiFy\Contracts\Mail\Mailer as MailerContract;
+use Pollen\Mail\MailableInterface;
+use Pollen\Mail\MailerDriverInterface;
+use Pollen\Mail\MailManagerInterface;
 
 /**
- * @method static MailableContract create(MailableContract|array|null $params = null)
- * @method static mixed config(string|array|null $key = null, $default = null)
- * @method static void debug(MailableContract|array|null $params = null)
- * @method static mixed getDefaults(?string $key = null, $defaults = null)
- * @method static bool send(MailableContract|array|null $params = null)
- *
- * @see \tiFy\Mail\Mailer
+ * @method static void debug(MailableInterface|array|null $mailableDef = null)
+ * @method static mixed defaults(array|string|null $key = null, $default = null)
+ * @method static MailableInterface getMailable(?string $name = null)
+ * @method static MailerDriverInterface getMailer()
+ * @method static bool hasMailable()
+ * @method static bool send(MailableInterface|array|null $mailableDef = null)
+ * @method static MailManagerInterface setDefaults(array $attrs)
+ * @method static MailManagerInterface setMailable(MailableInterface|array|null $mailableDef = null)
+ * @method static MailManagerInterface setMailerConfigCallback(callable $mailerConfigCallback)
  */
 class Mail extends AbstractProxy
 {
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|MailerContract
+     * @return MailManagerInterface
      */
-    public static function getInstance()
+    public static function getInstance(): MailManagerInterface
     {
         return parent::getInstance();
     }
@@ -31,6 +36,6 @@ class Mail extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'mailer';
+        return MailManagerInterface::class;
     }
 }

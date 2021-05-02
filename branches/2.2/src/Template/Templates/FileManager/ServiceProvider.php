@@ -40,7 +40,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         parent::boot();
 
-        events()->listen(
+        events()->on(
             'template.factory.prepared',
             function (TriggeredEventInterface $event, string $name) {
                 if ($name === $this->factory->name()) {

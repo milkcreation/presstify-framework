@@ -3,7 +3,7 @@
 namespace tiFy\Support;
 
 use Illuminate\Support\Arr as BaseArr;
-use tiFy\Validation\Validator as v;
+use Pollen\Validation\Validator as v;
 
 class Arr extends BaseArr
 {

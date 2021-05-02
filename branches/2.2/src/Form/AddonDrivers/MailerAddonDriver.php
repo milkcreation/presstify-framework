@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace tiFy\Form\AddonDrivers;
 
 use Closure;
+use Pollen\Validation\Validator as v;
 use tiFy\Contracts\Form\AddonDriver as AddonDriverContract;
 use tiFy\Contracts\Form\FieldDriver as FieldDriverContract;
 use tiFy\Contracts\Form\MailerAddonDriver as MailerAddonDriverContract;
 use tiFy\Form\AddonDriver as BaseAddonDriver;
 use tiFy\Support\Proxy\Mail;
 use tiFy\Support\Proxy\Metabox;
-use tiFy\Validation\Validator as v;
 
 class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverContract
 {
@@ -24,7 +24,7 @@ class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverCont
             parent::boot();
 
             $this->form()->events()
-                ->listen(
+                ->on(
                     'handle.validated',
                     function () {
                         if ($this->params('debug')) {
@@ -32,15 +32,15 @@ class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverCont
                         }
                     }
                 )
-                ->listen(
+                ->on(
                     'handle.successed',
                     function () {
                         $this->form()->event('addon.mailer.email.send');
                     }
                 )
-                ->listen('addon.mailer.email.debug', [$this, 'emailDebug'])
-                ->listen('addon.mailer.email.send', [$this, 'emailSend'])
-                ->listen(
+                ->on('addon.mailer.email.debug', [$this, 'emailDebug'])
+                ->on('addon.mailer.email.send', [$this, 'emailSend'])
+                ->on(
                     'fields.booted',
                     function () {
                         if ($this->form()->field('mail')) {
@@ -268,13 +268,11 @@ class MailerAddonDriver extends BaseAddonDriver implements MailerAddonDriverCont
             'debug'             => false,
             /**
              * Paramètres du message de notification.
-             * @see \tiFy\Mail\Mailer
              * @var bool|array true: Activer défaut|false: Désactiver
              */
             'notification'      => true,
             /**
              * Paramètres du message de notification.
-             * @see \tiFy\Mail\Mailer
              * @var bool|array
              */
             'confirmation'      => true,

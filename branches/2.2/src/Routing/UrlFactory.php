@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Routing;
 
-use BadMethodCallException, Exception;
 use Psr\Http\Message\UriInterface;
 use League\Uri\Contracts\UriInterface as LeagueUri;
 use League\Uri\Http;

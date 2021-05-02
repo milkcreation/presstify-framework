@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Session;
+namespace tiFy\Container\Services;
 
+use Pollen\Session\SessionManager;
 use Pollen\Session\SessionManagerInterface;
 use Pollen\Support\Env;
 use tiFy\Container\ServiceProvider;
