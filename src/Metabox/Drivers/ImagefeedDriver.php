@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace tiFy\Metabox\Drivers;
 
+use Pollen\Validation\Validator as v;
 use tiFy\Metabox\MetaboxDriver;
 use tiFy\Support\Img;
 use tiFy\Support\Proxy\Request;
-use tiFy\Validation\Validator as v;
 
 class ImagefeedDriver extends MetaboxDriver implements ImagefeedDriverInterface
 {

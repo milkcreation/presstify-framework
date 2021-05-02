@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace tiFy\Partial\Drivers;
 
+use Pollen\Validation\Validator as v;
 use tiFy\Partial\Drivers\ImageLightbox\ImageLightboxItem;
 use tiFy\Partial\Drivers\ImageLightbox\ImageLightboxItemInterface;
 use tiFy\Partial\PartialDriver;
 use tiFy\Partial\PartialDriverInterface;
-use tiFy\Validation\Validator as v;
 
 /**
  * @see https://github.com/marekdedic/imagelightbox

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace tiFy\Partial\Drivers;
 
 use Exception;
-use Symfony\Component\HttpFoundation\Response as SfResponse;
 use Pollen\Http\Response;
+use Pollen\Validation\Validator as v;
+use Symfony\Component\HttpFoundation\Response as SfResponse;
 use tiFy\Partial\PartialDriver;
 use tiFy\Partial\PartialDriverInterface;
 use tiFy\Support\MimeTypes;
@@ -15,7 +16,6 @@ use tiFy\Support\Proxy\Crypt;
 use tiFy\Support\Proxy\Router;
 use tiFy\Support\Proxy\Storage;
 use tiFy\Support\Proxy\Url;
-use tiFy\Validation\Validator as v;
 
 class DownloaderDriver extends PartialDriver implements DownloaderDriverInterface
 {

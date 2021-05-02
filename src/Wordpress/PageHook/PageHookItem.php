@@ -388,7 +388,7 @@ class PageHookItem extends ParamsBag implements PageHookItemContract
                 999999
             );
 
-            events()->listen(
+            events()->on(
                 'partial.breadcrumb.prefetch',
                 function (TriggeredEventInterface $event, BaseBreadcrumbCollectionInterface $bc, $e) {
                     if ($bc instanceof BreadcrumbCollectionInterface) {

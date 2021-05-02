@@ -26,7 +26,6 @@ use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostType;
-use tiFy\Contracts\Routing\Redirector;
 use tiFy\Contracts\Routing\Url;
 use tiFy\Contracts\Support\ClassInfo;
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;

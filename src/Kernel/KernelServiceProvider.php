@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace tiFy\Kernel;
 
 use League\Uri\Http as HttpUri;
-use Pollen\Event\EventDispatcherInterface;
 use Pollen\Http\Request;
 use Pollen\Http\RequestInterface;
-use Psr\Http\Message\ServerRequestInterface as PsrRequestInterface;
 use tiFy\Container\ServiceProvider;
-use tiFy\Event\EventDispatcher;
 use tiFy\Support\ClassInfo;
 
 class KernelServiceProvider extends ServiceProvider
@@ -22,9 +19,6 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'class-info',
-        EventDispatcherInterface::class,
-        PsrRequestInterface::class,
-        RequestInterface::class,
         'uri',
     ];
 
@@ -47,18 +41,6 @@ class KernelServiceProvider extends ServiceProvider
     {
         $this->getContainer()->add('class-info', function ($class) {
             return new ClassInfo($class);
-        });
-
-        $this->getContainer()->share(EventDispatcherInterface::class, function () {
-            return new EventDispatcher();
-        });
-
-        $this->getContainer()->share(RequestInterface::class, function () {
-            return Request::getFromGlobals();
-        });
-
-        $this->getContainer()->share(PsrRequestInterface::class, function () {
-            return Request::createPsr();
         });
 
         $this->getContainer()->share('uri', function () {

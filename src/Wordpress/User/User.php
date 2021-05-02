@@ -85,7 +85,7 @@ class User implements UserContract
             }
         );
 
-        events()->listen(
+        events()->on(
             'user.role.factory.boot',
             function (TriggeredEventInterface $event, RoleFactory $factory) {
                 /* @var WP_Roles $wp_roles */

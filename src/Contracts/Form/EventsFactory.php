@@ -25,7 +25,7 @@ interface EventsFactory
      *
      * @return static
      */
-    public function listen(string $name, callable $listener, int $priority = 0): EventsFactory;
+    public function on(string $name, callable $listener, int $priority = 0): EventsFactory;
 
     /**
      * Déclenchement d'un événement.

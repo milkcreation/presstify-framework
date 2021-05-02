@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Partial\Drivers;
 
 use Exception;
+use Pollen\Validation\Validator as v;
 use tiFy\Partial\Drivers\DownloaderDriver as BaseDownloaderDriver;
 use tiFy\Support\MimeTypes;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\Crypt;
 use tiFy\Support\Proxy\Url;
-use tiFy\Validation\Validator as v;
 
 class DownloaderDriver extends BaseDownloaderDriver
 {

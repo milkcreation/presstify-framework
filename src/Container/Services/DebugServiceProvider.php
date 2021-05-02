@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Debug;
+namespace tiFy\Container\Services;
 
 use Pollen\Debug\DebugBarInterface;
+use Pollen\Debug\DebugManager;
 use Pollen\Debug\DebugManagerInterface;
 use Pollen\Debug\ErrorHandlerInterface;
 use Pollen\Debug\PhpDebugBarDriver;

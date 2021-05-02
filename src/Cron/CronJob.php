@@ -1,17 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Cron;
 
 use Exception;
-use tiFy\Contracts\{
-    Cron\CronJob as CronJobContract,
-    Log\Logger as LoggerContract
-};
-use tiFy\Log\Logger;
-use tiFy\Support\{
-    DateTime,
-    ParamsBag
-};
+use tiFy\Contracts\Cron\CronJob as CronJobContract;
+use tiFy\Support\DateTime;
+use tiFy\Support\ParamsBag;
 
 class CronJob extends ParamsBag implements CronJobContract
 {

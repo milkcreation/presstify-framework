@@ -69,7 +69,7 @@ class PostType implements PostTypeContract
             }
         );
 
-        events()->listen(
+        events()->on(
             'post-type.factory.boot',
             function (TriggeredEventInterface $event, PostTypeFactory $factory) {
                 global $wp_post_types;

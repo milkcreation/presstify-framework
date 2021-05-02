@@ -41,7 +41,7 @@ class EventsFactory implements EventsFactoryContract
                 } else {
                     continue;
                 }
-                $this->listen($name, $listener, $priority);
+                $this->on($name, $listener, $priority);
             }
 
             $this->booted = true;
@@ -53,9 +53,9 @@ class EventsFactory implements EventsFactoryContract
     /**
      * @inheritDoc
      */
-    public function listen($name, $listener, $priority = 0): EventsFactoryContract
+    public function on($name, $listener, $priority = 0): EventsFactoryContract
     {
-        events()->listen("form.factory.events.{$this->form()->getAlias()}.{$name}", $listener, $priority);
+        events()->on("form.factory.events.{$this->form()->getAlias()}.{$name}", $listener, $priority);
 
         return $this;
     }

@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Cookie;
 
+use Pollen\Validation\Validator as v;
 use Psr\Container\ContainerInterface as Container;
 use Symfony\Component\HttpFoundation\Cookie as SfCookie;
 use tiFy\Contracts\Cookie\Cookie as CookieContract;
-use tiFy\Validation\Validator as v;
 use tiFy\Support\Arr;
 use tiFy\Support\Proxy\{Request, Url};
 

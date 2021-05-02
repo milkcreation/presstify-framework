@@ -30,7 +30,7 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function boot(): void
     {
-        events()->listen(
+        events()->on(
             'template.factory.boot',
             function () {
                 $this->registerFactories();

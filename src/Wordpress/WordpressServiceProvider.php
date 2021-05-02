@@ -7,6 +7,7 @@ namespace tiFy\Wordpress;
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Debug\DebugManagerInterface;
 use Pollen\Http\RequestInterface;
+use Pollen\Mail\MailManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Session\SessionManagerInterface;
 use tiFy\Container\ServiceProvider;
@@ -22,7 +23,6 @@ use tiFy\Wordpress\Database\Database;
 use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
-use tiFy\Wordpress\Mail\Mailer;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Metabox\Metabox;
 use tiFy\Wordpress\Option\Option;
@@ -59,7 +59,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.form',
         'wp.http.request',
         'wp.login-redirect',
-        'wp.mailer',
+        'wp.mail',
         'wp.media',
         'wp.metabox',
         'wp.page-hook',
@@ -144,8 +144,8 @@ class WordpressServiceProvider extends ServiceProvider
 
                 $this->getContainer()->get('wp.http.request');
 
-                if ($this->getContainer()->has('mailer')) {
-                    $this->getContainer()->get('wp.mailer');
+                if ($this->getContainer()->has(MailManagerInterface::class)) {
+                    $this->getContainer()->get('wp.mail');
                 }
 
                 $this->getContainer()->get('wp.media');
@@ -350,14 +350,14 @@ class WordpressServiceProvider extends ServiceProvider
     }
 
     /**
-     * Déclaration du controleur de gestion de Wordpress.
+     * Déclaration du gestionnaire de mail.
      *
      * @return void
      */
     public function registerMailer(): void
     {
-        $this->getContainer()->share('wp.mailer', function () {
-            return new Mailer($this->getContainer()->get('mailer'));
+        $this->getContainer()->share('wp.mail', function () {
+            return new WpMail($this->getContainer()->get(MailManagerInterface::class));
         });
     }
 

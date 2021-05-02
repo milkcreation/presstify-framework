@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Encryption;
+namespace tiFy\Container\Services;
 
 use Pollen\Encryption\Encrypter;
 use Pollen\Encryption\EncrypterInterface;
