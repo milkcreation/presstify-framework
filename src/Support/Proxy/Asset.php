@@ -10,7 +10,7 @@ use Pollen\Asset\AssetManagerInterface;
 /**
  * @method static AssetManagerInterface addGlobalJsVar(string $key, $value, bool $inFooter = false, ?string $namespace = 'app')
  * @method static AssetManagerInterface addInlineCss(string $css)
- * @method static AssetManagerInterface addInlineJs(string $css)
+ * @method static AssetManagerInterface addInlineJs(string $js, bool $inFooter = false)
  * @method static AssetInterface[]|array all()
  * @method static AssetManagerInterface enableMinifyCss(bool $minify = true)
  * @method static AssetManagerInterface enableMinifyJs(bool $minify = true)

@@ -47,7 +47,7 @@ class Thumbnail extends AbstractColumnDisplayTaxonomyController
             $h = $this->item->get('attrs.height', 80);
             $col = "column-{$this->item->getName()}";
 
-            asset()->setInlineCss(
+            asset()->addInlineCss(
                 ".wp-list-table th.{$col},.wp-list-table td.{$col}{width:{$w}px;text-align:center;}" .
                 ".wp-list-table td.{$col} img{max-width:{$w}px;max-height:{$h}px;}"
             );
