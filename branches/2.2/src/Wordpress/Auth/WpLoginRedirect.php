@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Auth;
 
-use tiFy\Http\RedirectResponse;
+use Pollen\Http\RedirectResponse;
 use tiFy\Support\Proxy\Request as req;
 
 /**

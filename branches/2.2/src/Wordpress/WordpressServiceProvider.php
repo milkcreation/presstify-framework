@@ -6,6 +6,7 @@ namespace tiFy\Wordpress;
 
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Debug\DebugManagerInterface;
+use Pollen\Http\RequestInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Session\SessionManagerInterface;
 use tiFy\Container\ServiceProvider;
@@ -21,7 +22,6 @@ use tiFy\Wordpress\Database\Database;
 use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
-use tiFy\Wordpress\Http\Http;
 use tiFy\Wordpress\Mail\Mailer;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Metabox\Metabox;
@@ -57,7 +57,7 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.filesystem',
         'wp.field',
         'wp.form',
-        'wp.http',
+        'wp.http.request',
         'wp.login-redirect',
         'wp.mailer',
         'wp.media',
@@ -142,7 +142,7 @@ class WordpressServiceProvider extends ServiceProvider
                     $this->getContainer()->get('wp.form');
                 }
 
-                $this->getContainer()->get('wp.http');
+                $this->getContainer()->get('wp.http.request');
 
                 if ($this->getContainer()->has('mailer')) {
                     $this->getContainer()->get('wp.mailer');
@@ -344,8 +344,8 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerHttp(): void
     {
-        $this->getContainer()->share('wp.http', function () {
-            return new Http($this->getContainer()->get('request'));
+        $this->getContainer()->share('wp.http.request', function () {
+            return new WpHttpRequest($this->getContainer()->get(RequestInterface::class));
         });
     }
 

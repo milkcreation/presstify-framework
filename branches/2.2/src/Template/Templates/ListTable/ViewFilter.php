@@ -67,7 +67,7 @@ class ViewFilter extends ParamsBag implements ViewFilterContract
         parent::parse();
 
         if (!$this->get('attrs.href')) {
-            $this->set('attrs.href', $this->factory->param('page_url', $this->factory->request()->fullUrl()));
+            $this->set('attrs.href', $this->factory->param('page_url', $this->factory->request()->getUri()));
         }
 
         if ($query_args = $this->get('query_args', [])) {

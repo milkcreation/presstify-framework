@@ -30,9 +30,13 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function boot(): void
     {
-        events()->listen('template.factory.boot', function () {
-            $this->registerFactories();
-        }, 100);
+        events()->listen(
+            'template.factory.boot',
+            function () {
+                $this->registerFactories();
+            },
+            100
+        );
     }
 
     /**
@@ -72,9 +76,12 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryActions(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('actions'), function (): FactoryActionsContract {
-            return (new Actions())->setTemplateFactory($this->factory);
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('actions'),
+            function (): FactoryActionsContract {
+                return (new Actions())->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -84,24 +91,26 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryAjax(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('ajax'), function () {
-            if ($attrs = $this->factory->param('ajax')) {
-                $ajax = $this->factory->provider('ajax');
-                $ajax = $ajax instanceof FactoryAjaxContract ? $ajax : new Ajax();
+        $this->getContainer()->share(
+            $this->getFactoryAlias('ajax'),
+            function () {
+                if ($attrs = $this->factory->param('ajax')) {
+                    $ajax = $this->factory->provider('ajax');
+                    $ajax = $ajax instanceof FactoryAjaxContract ? $ajax : new Ajax();
 
-                if (is_string($attrs)) {
-                    $attrs = [
-                        'url'      => $attrs,
-                        'dataType' => 'json',
-                        'type'     => 'POST',
-                    ];
+                    if (is_string($attrs)) {
+                        $attrs = [
+                            'url'      => $attrs,
+                            'dataType' => 'json',
+                            'type'     => 'POST',
+                        ];
+                    }
+
+                    return $ajax->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
                 }
-
-                return $ajax->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
-            } else {
                 return null;
             }
-        });
+        );
     }
 
     /**
@@ -111,9 +120,12 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryAssets(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('assets'), function () {
-            return (new Assets())->setTemplateFactory($this->factory);
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('assets'),
+            function () {
+                return (new Assets())->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -123,13 +135,16 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryBuilder(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('builder'), function () {
-            $attrs = $this->factory->param('query_args', []);
+        $this->getContainer()->share(
+            $this->getFactoryAlias('builder'),
+            function () {
+                $attrs = $this->factory->param('query_args', []);
 
-            $ctrl =  $this->factory->db() ? new DbBuilder() : new Builder();
+                $ctrl = $this->factory->db() ? new DbBuilder() : new Builder();
 
-            return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
-        });
+                return $ctrl->setTemplateFactory($this->factory)->set(is_array($attrs) ? $attrs : []);
+            }
+        );
     }
 
     /**
@@ -139,9 +154,12 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryCache(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('cache'), function () {
-            return (new Cache())->setTemplateFactory($this->factory);
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('cache'),
+            function () {
+                return (new Cache())->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -151,11 +169,14 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryForm(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('form'), function () {
-            return (new Form())->setTemplateFactory($this->factory)->setHidden(
-                ProxyUrl::set($this->factory->url()->display())->params()
-            );
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('form'),
+            function () {
+                return (new Form())->setTemplateFactory($this->factory)->setHidden(
+                    ProxyUrl::set($this->factory->url()->display())->params()
+                );
+            }
+        );
     }
 
     /**
@@ -165,19 +186,21 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryDb(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('db'), function (): ?FactoryDbContract {
-            if ($db = $this->factory->provider('db')) {
-                if ($db instanceof Model) {
-                    $db = (new Db())->setDelegate($db);
-                } elseif (!$db instanceof FactoryDbContract) {
-                    $db = new Db();
-                }
+        $this->getContainer()->share(
+            $this->getFactoryAlias('db'),
+            function (): ?FactoryDbContract {
+                if ($db = $this->factory->provider('db')) {
+                    if ($db instanceof Model) {
+                        $db = (new Db())->setDelegate($db);
+                    } elseif (!$db instanceof FactoryDbContract) {
+                        $db = new Db();
+                    }
 
-                return  $db->setTemplateFactory($this->factory);
-            } else {
+                    return $db->setTemplateFactory($this->factory);
+                }
                 return null;
             }
-        });
+        );
     }
 
     /**
@@ -187,9 +210,12 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryHttpController(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('controller'), function () {
-            return (new HttpController())->setTemplateFactory($this->factory);
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('controller'),
+            function () {
+                return (new HttpController())->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -199,9 +225,12 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryHttpXhrController(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('xhr'), function () {
-            return (new HttpXhrController())->setTemplateFactory($this->factory);
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('xhr'),
+            function () {
+                return (new HttpXhrController())->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -211,12 +240,15 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryLabels(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('labels'), function () {
-            return (new Labels())->setTemplateFactory($this->factory)
-                ->setName($this->factory->name())
-                ->set($this->factory->get('labels', []))
-                ->parse();
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('labels'),
+            function () {
+                return (new Labels())->setTemplateFactory($this->factory)
+                    ->setName($this->factory->name())
+                    ->set($this->factory->get('labels', []))
+                    ->parse();
+            }
+        );
     }
 
     /**
@@ -226,9 +258,12 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryNotices(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('notices'), function () {
-            return (new Notices())->setTemplateFactory($this->factory);
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('notices'),
+            function () {
+                return (new Notices())->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -238,12 +273,15 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryParams(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('params'), function () {
-            $attrs = $this->factory->get('params', []);
+        $this->getContainer()->share(
+            $this->getFactoryAlias('params'),
+            function () {
+                $attrs = $this->factory->get('params', []);
 
-            return (new Params())->setTemplateFactory($this->factory)
-                ->set(is_array($attrs) ? $attrs : [])->parse();
-        });
+                return (new Params())->setTemplateFactory($this->factory)
+                    ->set(is_array($attrs) ? $attrs : [])->parse();
+            }
+        );
     }
 
     /**
@@ -253,9 +291,12 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryRequest(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('request'), function () {
-            return Request::capture()->setTemplateFactory($this->factory);
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('request'),
+            function () {
+                return Request::createFromBase(Request::getFromGlobals())->setTemplateFactory($this->factory);
+            }
+        );
     }
 
     /**
@@ -265,11 +306,14 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryUrl(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('url'), function () {
-            return (new Url())
-                ->setTemplateFactory($this->factory)
-                ->setBasePath($this->factory->manager()->basePath . '/' . $this->factory->name());
-        });
+        $this->getContainer()->share(
+            $this->getFactoryAlias('url'),
+            function () {
+                return (new Url())
+                    ->setTemplateFactory($this->factory)
+                    ->setBasePath($this->factory->manager()->basePath . '/' . $this->factory->name());
+            }
+        );
     }
 
     /**
@@ -279,21 +323,29 @@ class ServiceProvider extends BaseServiceProvider implements FactoryServiceProvi
      */
     public function registerFactoryViewer(): void
     {
-        $this->getContainer()->share($this->getFactoryAlias('viewer'), function () {
-            $params = $this->factory->get('viewer', []);
+        $this->getContainer()->share(
+            $this->getFactoryAlias('viewer'),
+            function () {
+                $params = $this->factory->get('viewer', []);
 
-            if (!$params instanceof ViewEngine) {
-                $viewer = ProxyView::getPlatesEngine(array_merge([
-                    'directory' => template()->resourcesDir('/views'),
-                    'factory'   => View::class
-                ], (array)$params));
-            } else {
-                $viewer = $params;
+                if (!$params instanceof ViewEngine) {
+                    $viewer = ProxyView::getPlatesEngine(
+                        array_merge(
+                            [
+                                'directory' => template()->resourcesDir('/views'),
+                                'factory'   => View::class,
+                            ],
+                            (array)$params
+                        )
+                    );
+                } else {
+                    $viewer = $params;
+                }
+
+                $viewer->params(['template' => $this->factory]);
+
+                return $viewer;
             }
-
-            $viewer->params(['template' => $this->factory]);
-
-            return $viewer;
-        });
+        );
     }
 }

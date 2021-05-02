@@ -6,8 +6,7 @@ namespace tiFy\Partial\Drivers;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Response as SfResponse;
-use tiFy\Contracts\Routing\Route;
-use tiFy\Http\Response;
+use Pollen\Http\Response;
 use tiFy\Partial\PartialDriver;
 use tiFy\Partial\PartialDriverInterface;
 use tiFy\Support\MimeTypes;
