@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace tiFy\Kernel;
 
 use League\Uri\Http as HttpUri;
+use Pollen\Event\EventDispatcherInterface;
 use tiFy\Http\Request;
 use tiFy\Http\Response;
 use tiFy\Container\ServiceProvider;
@@ -20,7 +21,7 @@ class KernelServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'class-info',
-        'events',
+        EventDispatcherInterface::class,
         'request',
         'response',
         'uri',
@@ -47,7 +48,7 @@ class KernelServiceProvider extends ServiceProvider
             return new ClassInfo($class);
         });
 
-        $this->getContainer()->share('events', function () {
+        $this->getContainer()->share(EventDispatcherInterface::class, function () {
             return new EventDispatcher();
         });
 

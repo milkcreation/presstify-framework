@@ -6,6 +6,7 @@ namespace tiFy\Routing;
 
 use Laminas\Diactoros\ResponseFactory;
 use Pollen\Routing\Middleware\XhrMiddleware;
+use Pollen\Routing\RouterInterface;
 use Pollen\Routing\Strategy\ApplicationStrategy;
 use Pollen\Routing\Strategy\JsonStrategy;
 use tiFy\Container\ServiceProvider;
@@ -13,7 +14,7 @@ use tiFy\Container\ServiceProvider;
 class RoutingServiceProvider extends ServiceProvider
 {
     protected $provides = [
-        'router',
+        RouterInterface::class,
         'routing.middleware.xhr',
         'routing.strategy.app',
         'routing.strategy.json',
@@ -25,12 +26,12 @@ class RoutingServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->getContainer()->share('router', function () {
-            return new Router([], $this->getContainer());
+        $this->getContainer()->share(RouterInterface::class, function () {
+            return new Router(config('router', []), $this->getContainer());
         });
 
         $this->getContainer()->share('url', function () {
-            return new Url($this->getContainer()->get('router'));
+            return new Url($this->getContainer()->get(RouterInterface::class));
         });
 
         $this->registerMiddlewares();

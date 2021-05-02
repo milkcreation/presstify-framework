@@ -1,59 +1,50 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
-use Closure;
-use Psr\Http\Message\{ResponseInterface as Response};
+use Pollen\Http\RedirectResponseInterface;
+use Pollen\Http\RequestInterface;
+use Pollen\Routing\RouteInterface;
+use Pollen\Routing\RouteGroupInterface;
+use Pollen\Routing\RouterInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Psr\Container\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response as SfResponse;
-use tiFy\Contracts\Routing\{
-    Route as RouteContract,
-    RouteGroup as RouteGroupContract,
-    Router as RouterContract
-};
-use tiFy\Routing\BaseController;
+
 /**
- * @method static array all()
- * @method static int count()
- * @method static RouteContract|null current()
+ * @method static RouterInterface addRoute(RouteInterface $route)
+ * @method static RouteInterface|null current()
  * @method static string|null currentRouteName()
- * @method static RouteContract delete(string $path, callable $handler)
- * @method static Response emit(Response|SfResponse $response)
- * @method static bool exists()
- * @method static RouteContract get(string $path, callable $handler)
- * @method static ContainerInterface getContainer()
- * @method static string|array|Closure|callable|BaseController|null getNamedController(string $name)
- * @method static MiddlewareInterface|null getNamedMiddleware(string $name)
- * @method static RouteContract getNamedRoute(string $name)
- * @method static Response getResponse()
- * @method static RouteGroupContract group(string $prefix, callable $group)
- * @method static RouteContract head(string $path, callable $handler)
- * @method static bool hasCurrent()
- * @method static bool hasNamedRoute(string $name)
- * @method static bool isCurrentNamed(string $name)
- * @method static RouteContract map(string $method, string $path, callable $handler)
- * @method static RouterContract middleware(MiddlewareInterface $middleware)
- * @method static RouteContract patch(string $path, callable $handler)
- * @method static RouteContract post(string $path, callable $handler)
- * @method static RouteContract put(string $path, callable $handler)
- * @method static RouteContract options(string $path, callable $handler)
- * @method static BaseController registerController(string $name, string|array|Closure|callable|BaseController $controller)
- * @method static MiddlewareInterface registerMiddleware(string $name, MiddlewareInterface $middleware)
- * @method static RouteContract setControllerStack(string[]|array[]|Closure[]|callable[]|BaseController[] $controllers)
- * @method static RouteContract setMiddlewareStack(MiddlewareInterface[] $middlewares)
- * @method static RouteContract setPrefix(?string $prefix)
- * @method static string url(string $name, array $parameters = [], bool $absolute = true)
- * @method static RouteContract xhr(string $path, callable $handler, string $method = 'POST')
+ * @method static RouteInterface delete(string $path, callable $handler)
+ * @method static RouteInterface get(string $path, callable $handler)
+ * @method static string getBasePrefix()
+ * @method static RequestInterface getHandleRequest()
+ * @method static RouteInterface getNamedRoute(string $name)
+ * @method static RedirectResponseInterface getNamedRouteRedirect(string $name, array $args = [], bool $isAbsolute = false, int $status = 302, array $headers = [])
+ * @method static string|null getNamedRouteUrl(string $name, array $args = [], bool $isAbsolute = false)
+ * @method static RedirectResponseInterface getRouteRedirect(RouteInterface $route, array $args = [], bool $isAbsolute = false, int $status = 302, array $headers = [])
+ * @@method static string|null getRouteUrl(RouteInterface $route, array $args = [], bool $isAbsolute = false)
+ * @method static RouteGroupInterface group(string $prefix, callable $group)
+ * @method static RouteInterface head(string $path, callable $handler)
+ * @method static RouteInterface map(string $method, string $path, callable $handler)
+ * @method static RouteInterface middleware(MiddlewareInterface $middleware)
+ * @method static RouteInterface patch(string $path, callable $handler)
+ * @method static RouteInterface post(string $path, callable $handler)
+ * @method static RouteInterface put(string $path, callable $handler)
+ * @method static RouteInterface options(string $path, callable $handler)
+ * @method static RouterInterface setBasePrefix(?string $prefix)
+ * @method static RouterInterface setCurrentRoute(RouterInterface $route)
+ * @method static RouterInterface setFallback(callable|string $fallaback)
+ * @method static RouterInterface setHandleRequest(RequestInterface $handleRequest)
  */
 class Router extends AbstractProxy
 {
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|RouterContract
+     * @return RouterInterface
      */
-    public static function getInstance()
+    public static function getInstance(): RouterInterface
     {
         return parent::getInstance();
     }
@@ -63,6 +54,6 @@ class Router extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'router';
+        return RouterInterface::class;
     }
 }

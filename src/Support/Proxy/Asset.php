@@ -1,28 +1,41 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
-use Psr\Container\ContainerInterface;
-use tiFy\Contracts\Asset\Asset as AssetContract;
+use Pollen\Asset\AssetInterface;
+use Pollen\Asset\AssetManagerInterface;
 
 /**
- * @method static string footer()
- * @method static string header()
- * @method static ContainerInterface getContainer()
- * @method static string normalize(string $string)
- * @method static AssetContract setDataJs(string $key, mixed $value, $footer = false)
- * @method static AssetContract setInlineCss(string $css)
- * @method static AssetContract setInlineJs(string $js, bool $footer = false)
- * @method static string url(string $path)
+ * @method static AssetManagerInterface addGlobalJsVar(string $key, $value, bool $inFooter = false, ?string $namespace = 'app')
+ * @method static AssetManagerInterface addInlineCss(string $css)
+ * @method static AssetManagerInterface addInlineJs(string $css)
+ * @method static AssetInterface[]|array all()
+ * @method static AssetManagerInterface enableMinifyCss(bool $minify = true)
+ * @method static AssetManagerInterface enableMinifyJs(bool $minify = true)
+ * @method static bool exists()
+ * @method static string footerScripts()
+ * @method static AssetInterface|null get(string $name)
+ * @method static string getBaseDir()
+ * @method static string getBaseUrl()
+ * @method static string getRelPrefix()
+ * @method static string headerStyles()
+ * @method static string headerScripts()
+ * @method static AssetManagerInterface setAsset(string $name, string $path)
+ * @method static AssetManagerInterface setBaseDir(string $baseDir)
+ * @method static AssetManagerInterface setBaseUrl(string $baseUrl)
+ * @method static AssetManagerInterface setManifestJson(string $manifestJson, callable $fallback = null)
+ * @method static AssetManagerInterface setRelPrefix(string $relPrefix)
  */
 class Asset extends AbstractProxy
 {
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|AssetContract
+     * @return AssetManagerInterface
      */
-    public static function getInstance()
+    public static function getInstance(): AssetManagerInterface
     {
         return parent::getInstance();
     }
@@ -32,6 +45,6 @@ class Asset extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'asset';
+        return AssetManagerInterface::class;
     }
 }
