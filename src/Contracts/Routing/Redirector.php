@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Contracts\Routing;
 
-use tiFy\Contracts\Http\Response;
+use Pollen\Http\RedirectResponseInterface;
 
 interface Redirector
 {
@@ -16,9 +16,9 @@ interface Redirector
      * @param int $status Code du statut de redirection.
      * @param array $headers Liste des entêtes complémentaires.
      *
-     * @return Response
+     * @return RedirectResponseInterface
      */
-    public function to(string $path, int $status = 302, array $headers = []): Response;
+    public function to(string $path, int $status = 302, array $headers = []): RedirectResponseInterface;
 
     /**
      * Création d'une instance de reponse de redirection PSR basé sur le nom de qualification d'une route nommée.
@@ -28,7 +28,12 @@ interface Redirector
      * @param int $status Code du statut de redirection.
      * @param array $headers Liste des entêtes complémentaires.
      *
-     * @return Response
+     * @return RedirectResponseInterface
      */
-    public function route(string $name, array $parameters = [], int $status = 302, array $headers = []): Response;
+    public function route(
+        string $name,
+        array $parameters = [],
+        int $status = 302,
+        array $headers = []
+    ): RedirectResponseInterface;
 }

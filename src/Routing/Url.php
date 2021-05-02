@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace tiFy\Routing;
 
+use Pollen\Http\Request;
 use Pollen\Routing\RouterInterface;
-use tiFy\Contracts\Http\Request as RequestContract;
 use tiFy\Contracts\Routing\Url as UrlContract;
 use tiFy\Contracts\Routing\UrlFactory as UrlFactoryContract;
-use tiFy\Http\Request;
 
 class Url extends UrlFactory implements UrlContract
 {
     /**
      * Instance des requêtes HTTP.
-     * @var RequestContract
+     * @var Request
      */
     protected $request;
 
@@ -32,16 +31,16 @@ class Url extends UrlFactory implements UrlContract
 
     /**
      * @param RouterInterface $router
-     * @param RequestContract|null $request
+     * @param Request|null $request
      *
      * @return void
      */
-    public function __construct(RouterInterface $router, ?RequestContract $request = null)
+    public function __construct(RouterInterface $router, ?Request $request = null)
     {
         $this->router = $router;
         $this->request = $request ?? Request::createFromGlobals();
 
-        parent::__construct(app()->runningInConsole() ? (string)$this->root() : $this->request->fullUrl());
+        parent::__construct(app()->runningInConsole() ? (string)$this->root() : $this->request->getUri());
     }
 
     /**
@@ -49,7 +48,7 @@ class Url extends UrlFactory implements UrlContract
      */
     public function current(bool $full = true): UrlFactoryContract
     {
-        return new UrlFactory($full ? $this->request->fullUrl() : $this->request->url());
+        return new UrlFactory($full ? $this->request->getUri() : $this->request->getUriForPath(''));
     }
 
     /**
@@ -83,7 +82,7 @@ class Url extends UrlFactory implements UrlContract
      */
     public function root(?string $path = null): UrlFactoryContract
     {
-        return new UrlFactory(config('app_url', $this->request->root()) . ($path ? '/' . ltrim($path, '/') : ''));
+        return new UrlFactory(config('app_url', $this->request->getUriForPath('')) . ($path ? '/' . ltrim($path, '/') : ''));
     }
 
     /**

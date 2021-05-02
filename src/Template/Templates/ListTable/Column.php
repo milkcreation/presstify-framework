@@ -93,7 +93,7 @@ class Column extends ParamsBag implements ColumnContract
         $content = $this->getTitle();
 
         if ($this->isSortable()) {
-            $current_url = $this->factory->request()->fullUrl();
+            $current_url = $this->factory->request()->getUri();
             $current_url = remove_query_arg('paged', $current_url);
             $current_orderby = $this->factory->request()->input('orderby');
             $current_order = ($this->factory->request()->input('order') === 'desc') ? 'desc' : 'asc';

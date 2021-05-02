@@ -99,7 +99,7 @@ class Builder extends ParamsBag implements FactoryBuilderContract
     {
         parent::parse();
 
-        $this->set($this->factory->request()->all());
+        $this->set($this->factory->request()->input()->all());
 
         if (is_null($this->search)) {
             $this->setSearch((string)$this->get('s', ''));

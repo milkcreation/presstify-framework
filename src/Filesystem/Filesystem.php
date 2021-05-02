@@ -6,7 +6,6 @@ use League\Flysystem\{AdapterInterface, Cached\CachedAdapter, Filesystem as Base
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use SplFileInfo;
 use tiFy\Contracts\Filesystem\Filesystem as FilesystemContract;
-use tiFy\Http\UploadedFile;
 use tiFy\Support\Str;
 
 class Filesystem extends BaseFilesystem implements FilesystemContract
@@ -33,7 +32,7 @@ class Filesystem extends BaseFilesystem implements FilesystemContract
      * Enregistrement d'un fichier téléchargé.
      *
      * @param string  $path
-     * @param UploadedFile $file
+     * @param SplFileInfo $file
      * @param string  $name
      * @param array  $options
      *

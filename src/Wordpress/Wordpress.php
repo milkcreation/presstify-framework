@@ -1,11 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
 use tiFy\Wordpress\Contracts\Wordpress as WordpressContract;
 use tiFy\Wordpress\Contracts\PostType;
 use tiFy\Wordpress\Contracts\Taxonomy;
-use tiFy\Wordpress\Contracts\Routing\Routing;
 use tiFy\Wordpress\Contracts\User;
 use tiFy\Wordpress\Contracts\WpQuery;
 use tiFy\Wordpress\Contracts\WpScreen;
@@ -60,14 +61,6 @@ class Wordpress implements WordpressContract
     public function taxonomy(): ?Taxonomy
     {
         return $this->_resolve('taxonomy');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function routing(): ?Routing
-    {
-        return $this->_resolve('routing');
     }
 
     /**

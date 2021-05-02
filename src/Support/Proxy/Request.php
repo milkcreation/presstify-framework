@@ -1,18 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Http\Request as RequestContract;
-use tiFy\Http\UploadedFile;
+use Pollen\Http\RequestInterface;
 
 /**
  * @method static boolean ajax()
  * @method static mixed all(array|mixed|null $keys = null)
- * @method static UploadedFile[]|array allFiles()
  * @method static string|array|null cookie(string|null $key = null, string|array|null $default = null)
  * @method static array except(array|mixed $keys)
  * @method static bool exists(string|array $key)
- * @method static UploadedFile|UploadedFile[]|array|null file(string|null $key = null, mixed $default = null)
  * @method static bool filled(string|array $key)
  * @method static string getBaseUrl()
  * @method static string getBasePath()
@@ -29,7 +28,6 @@ use tiFy\Http\UploadedFile;
  * @method static bool hasFile(string $key)
  * @method static string|array|null header(string|null $key = null, string|array|null $default = null)
  * @method static mixed input(string|null $key = null, $default = null)
- * @method static RequestContract instance()
  * @method static boolean isMethod(string $method)
  * @method static string|null ip()
  * @method static boolean isSecure()
@@ -44,11 +42,11 @@ use tiFy\Http\UploadedFile;
 class Request extends AbstractProxy
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
-     * @return mixed|object|RequestContract
+     * @return RequestInterface
      */
-    public static function getInstance()
+    public static function getInstance(): RequestInterface
     {
         return parent::getInstance();
     }
@@ -58,6 +56,6 @@ class Request extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'request';
+        return RequestInterface::class;
     }
 }

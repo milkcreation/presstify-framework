@@ -1,13 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Mail;
 
 use Exception;
-use tiFy\Contracts\Http\Response as ResponseContract;
+use Pollen\Http\Response;
 use tiFy\Contracts\Mail\Mailable as MailableContract;
 use tiFy\Contracts\Mail\Mailer;
 use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\Http\Response;
 use tiFy\Support\ParamsBag;
 
 class Mailable implements MailableContract
@@ -138,7 +139,7 @@ class Mailable implements MailableContract
     /**
      * @inheritDoc
      */
-    public function response(): ResponseContract
+    public function response(): Response
     {
         return new Response($this->render());
     }

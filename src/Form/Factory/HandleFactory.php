@@ -6,7 +6,7 @@ namespace tiFy\Form\Factory;
 
 use InvalidArgumentException;
 use LogicException;
-use tiFy\Http\RedirectResponse;
+use Pollen\Http\RedirectResponse;
 use tiFy\Contracts\Form\HandleFactory as HandleFactoryContract;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;
 use tiFy\Form\Concerns\FormAwareTrait;

@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Contracts;
 
-use tiFy\Wordpress\Contracts\Routing\Routing;
 use WP_Screen;
 
 interface Wordpress
@@ -27,13 +28,6 @@ interface Wordpress
      * @return Taxonomy|null
      */
     public function taxonomy(): ?Taxonomy;
-
-    /**
-     * Récupération de l'instance du gestionnaire de taxonomies.
-     *
-     * @return Routing|null
-     */
-    public function routing(): ?Routing;
 
     /**
      * Récupération de l'instance du gestionnaire utilisateurs.

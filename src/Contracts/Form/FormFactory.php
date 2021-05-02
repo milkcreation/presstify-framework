@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
-use tiFy\Contracts\Http\Request;
+use Pollen\Http\RequestInterface;
+use Pollen\Support\Proxy\HttpRequestProxyInterface;
 use tiFy\Contracts\View\Engine as ViewEngine;
 
 /**
@@ -11,7 +14,7 @@ use tiFy\Contracts\View\Engine as ViewEngine;
  * @mixin \tiFy\Support\Concerns\MessagesBagTrait
  * @mixin \tiFy\Support\Concerns\ParamsBagTrait
  */
-interface FormFactory
+interface FormFactory extends HttpRequestProxyInterface
 {
     /**
      * Résolution de sortie de l'affichage du formulaire.
@@ -199,13 +202,6 @@ interface FormFactory
     public function renderBuildWrapper(): FormFactory;
 
     /**
-     * Instance de la requête de traitement du formulaire.
-     *
-     * @return Request
-     */
-    public function request(): Request;
-
-    /**
      * Définition de l'alias de qualification.
      *
      * @param string $alias
@@ -235,11 +231,11 @@ interface FormFactory
     /**
      * Définition de la requête de traitement du formulaire.
      *
-     * @param Request $request
+     * @param RequestInterface $request
      *
      * @return static
      */
-    public function setHandleRequest(Request $request): FormFactory;
+    public function setHandleRequest(RequestInterface $request): FormFactory;
 
     /**
      * Vérification de support.

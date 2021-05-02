@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Form;
 
 use LogicException;
+use Pollen\Http\RequestInterface;
+use Pollen\Support\Proxy\HttpRequestProxy;
 use tiFy\Contracts\Form\AddonsFactory as AddonsFactoryContract;
 use tiFy\Contracts\Form\ButtonsFactory as ButtonsFactoryContract;
 use tiFy\Contracts\Form\EventsFactory as EventsFactoryContract;
@@ -15,7 +19,6 @@ use tiFy\Contracts\Form\HandleFactory as HandleFactoryContract;
 use tiFy\Contracts\Form\OptionsFactory as OptionsFactoryContract;
 use tiFy\Contracts\Form\SessionFactory as SessionFactoryContract;
 use tiFy\Contracts\Form\ValidateFactory as ValidateFactoryContract;
-use tiFy\Contracts\Http\Request as RequestContract;
 use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Form\Concerns\FactoryBagTrait;
 use tiFy\Form\Factory\AddonsFactory;
@@ -30,15 +33,17 @@ use tiFy\Form\Factory\ValidateFactory;
 use tiFy\Support\Concerns\LabelsBagTrait;
 use tiFy\Support\Concerns\MessagesBagTrait;
 use tiFy\Support\Concerns\ParamsBagTrait;
-use tiFy\Support\LabelsBag;
 use tiFy\Support\MessagesBag;
 use tiFy\Support\Proxy\Asset;
 use tiFy\Support\Proxy\View;
-use tiFy\Support\Proxy\Request;
 
 class BaseFormFactory implements FormFactoryContract
 {
-    use FactoryBagTrait, LabelsBagTrait, MessagesBagTrait, ParamsBagTrait;
+    use FactoryBagTrait;
+    use HttpRequestProxy;
+    use LabelsBagTrait;
+    use MessagesBagTrait;
+    use ParamsBagTrait;
 
     /**
      * Indicateur d'initialisation.
@@ -82,14 +87,8 @@ class BaseFormFactory implements FormFactoryContract
     protected $alias = '';
 
     /**
-     * Instance de gestion des intitulés.
-     * @var LabelsBag|null
-     */
-    protected $labelsBag;
-
-    /**
      * Instance de la requête de traitement .
-     * @var RequestContract|null
+     * @var RequestInterface|null
      */
     protected $request;
 
@@ -637,18 +636,6 @@ class BaseFormFactory implements FormFactoryContract
     /**
      * @inheritDoc
      */
-    public function request(): RequestContract
-    {
-        if ($this->request === null) {
-            $this->request = Request::instance();
-        }
-
-        return $this->request;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function setAlias(string $alias): FormFactoryContract
     {
         $this->alias = $alias;
@@ -669,7 +656,7 @@ class BaseFormFactory implements FormFactoryContract
     /**
      * @inheritDoc
      */
-    public function setHandleRequest(RequestContract $request): FormFactoryContract
+    public function setHandleRequest(RequestInterface $request): FormFactoryContract
     {
         $this->request = $request;
 

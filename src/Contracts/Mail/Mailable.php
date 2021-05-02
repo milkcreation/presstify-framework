@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Contracts\Mail;
 
 use DateTime;
-use tiFy\Contracts\Http\Response;
+use Pollen\Http\ResponseInterface;
 use tiFy\Contracts\Support\ParamsBag;
 
 interface Mailable
@@ -77,9 +79,9 @@ interface Mailable
     /**
      * Récupération de la reponse HTTP.
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function response(): Response;
+    public function response(): ResponseInterface;
 
     /**
      * Expédition de l'email

@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Contracts\Template;
 
-use tiFy\Contracts\Http\Request;
+use Pollen\Http\RequestInterface;
 
-interface FactoryRequest extends FactoryAwareTrait, Request
+interface FactoryRequest extends FactoryAwareTrait, RequestInterface
 {
 
 }

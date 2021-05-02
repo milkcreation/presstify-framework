@@ -7,6 +7,8 @@ use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use League\Uri\Contracts\UriInterface as LeagueUri;
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
+use Pollen\Http\RedirectResponseInterface;
+use Pollen\Http\RequestInterface;
 use Pollen\Log\LogManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Validation\ValidatorInterface;
@@ -19,8 +21,6 @@ use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
 use tiFy\Contracts\Form\FormFactory;
 use tiFy\Contracts\Form\FormManager;
-use tiFy\Contracts\Http\RedirectResponse;
-use tiFy\Contracts\Http\Request;
 use tiFy\Contracts\Kernel\ClassLoader;
 use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\Path;
@@ -347,7 +347,7 @@ if (!function_exists('redirect')) {
      * @param array $headers Liste des entête HTTP
      * @param bool $secure Activation de la sécurisation
      *
-     * @return Redirector|RedirectResponse
+     * @return RedirectResponseInterface
      */
     function redirect(?string $to = null, int $status = 302, array $headers = [], ?bool $secure = null)
     {
@@ -362,11 +362,11 @@ if (!function_exists('request')) {
     /**
      * HTTP - Gestionnaire de traitement de la requête HTTP principale.
      *
-     * @return Request
+     * @return RequestInterface
      */
-    function request(): Request
+    function request(): RequestInterface
     {
-        return app('request');
+        return app(RequestInterface::class);
     }
 }
 

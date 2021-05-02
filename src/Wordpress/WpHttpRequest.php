@@ -1,16 +1,16 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tiFy\Wordpress\Http;
+declare(strict_types=1);
 
-use tiFy\Contracts\Http\Request;
-use tiFy\Wordpress\WpScreen;
+namespace tiFy\Wordpress;
+
+use Pollen\Http\RequestInterface;
 use WP_Screen;
 
-class Http
+class WpHttpRequest
 {
     /**
-     * Instance de la requête Http Globale.
-     * @var Request
+     * @var RequestInterface
      */
     protected $request;
 
@@ -19,7 +19,7 @@ class Http
      *
      * @return void
      */
-    public function __construct(Request $request)
+    public function __construct(RequestInterface $request)
     {
         $this->request = $request;
 
