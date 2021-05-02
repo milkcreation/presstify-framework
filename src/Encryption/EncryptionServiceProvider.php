@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace tiFy\Encryption;
 
+use Pollen\Encryption\Encrypter;
+use Pollen\Encryption\EncrypterInterface;
+use Pollen\Support\Env;
 use tiFy\Container\ServiceProvider;
 
 class EncryptionServiceProvider extends ServiceProvider
 {
     /**
-     * Liste des noms de qualification des services fournis.
-     * {@internal Permet le chargement différé des services qualifié.}
      * @var string[]
      */
     protected $provides = [
-        'encrypter'
+        EncrypterInterface::class
     ];
 
     /**
@@ -22,12 +23,11 @@ class EncryptionServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->getContainer()->share('encrypter', function () {
-            return new Encrypter(
-                config('app.secret', md5(env('APP_URL'))),
-                config('app.private', base64_encode(md5(env('APP_URL')))),
-                config('app.cipher', 'AES-128-CBC')
-            );
+        $this->getContainer()->share(EncrypterInterface::class, function () {
+            $cipher = Env::get('APP_CIPHER', 'AES-256-CBC');
+            $key = Env::get('APP_KEY', Encrypter::generateKey($cipher));
+
+            return new Encrypter($key, $cipher);
         });
     }
 }
