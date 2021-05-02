@@ -592,7 +592,7 @@ class BaseFormFactory implements FormFactoryContract
                 $this->session()->forget('notices');
             }
 
-            Asset::setInlineJs(
+            Asset::addInlineJs(
                 'window.addEventListener("load", (event) => {' .
                 'if(window.location.href.split("#")[1] === "' . $this->getAnchor() . '"){' .
                 'window.history.pushState("", document.title, window.location.pathname + window.location.search);' .

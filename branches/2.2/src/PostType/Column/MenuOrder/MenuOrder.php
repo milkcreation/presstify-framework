@@ -22,7 +22,7 @@ class MenuOrder extends AbstractColumnDisplayPostTypeController
     public function admin_enqueue_scripts()
     {
         $column_name = "column-{$this->item->getName()}";
-        asset()->setInlineCss(".wp-list-table th.{$column_name},.wp-list-table td.{$column_name}{width:120px;}");
+        asset()->addInlineCss(".wp-list-table th.{$column_name},.wp-list-table td.{$column_name}{width:120px;}");
     }
 
     /**
