@@ -71,7 +71,7 @@ interface Actions extends FactoryActions
 
     /**
      * Message de notification.
-     * @see \tiFy\Partial\Driver\Notice\Notice
+     * @see \Pollen\Partial\Drivers\NoticeDriver
      *
      * @param string $message Message de notification
      * @param string $type Type de message. error|info|success|warning.

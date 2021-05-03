@@ -1,7 +1,7 @@
 <?php
 /**
  * {@internal type="x-tmpl-mustache" est requis.}
- * @var tiFy\Field\FieldView $this
+ * @var Pollen\Field\FieldViewLoaderInterface $this
  */
 ?>
 <script <?php echo $this->htmlAttrs($this->get('tmpl.attrs', [])); ?> type="x-tmpl-mustache">

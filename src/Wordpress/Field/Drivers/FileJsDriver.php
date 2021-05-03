@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Field\Drivers;
 
-use tiFy\Field\Drivers\FileJsDriver as BaseFileJsDriver;
+use Pollen\Field\Drivers\FileJsDriver as BaseFileJsDriver;
 
 class FileJsDriver extends BaseFileJsDriver
 {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
+ * @var Pollen\Partial\PartialViewLoader $this
  */
 ?>
 <?php $this->before(); ?>

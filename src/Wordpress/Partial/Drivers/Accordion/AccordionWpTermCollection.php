@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Partial\Drivers\Accordion;
 
 use Illuminate\Support\Collection;
-use tiFy\Partial\Drivers\Accordion\AccordionCollection;
+use Pollen\Partial\Drivers\Accordion\AccordionCollection;
 use WP_Term;
 use WP_Term_Query;
 

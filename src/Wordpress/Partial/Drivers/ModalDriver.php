@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers;
 
-use tiFy\Partial\Drivers\ModalDriver as BaseModalDriver;
+use Pollen\Partial\Drivers\ModalDriver as BaseModalDriver;
 
 class ModalDriver extends BaseModalDriver
 {
@@ -39,8 +39,7 @@ class ModalDriver extends BaseModalDriver
             );
 
             return '';
-        } else {
-            return parent::render();
         }
+        return parent::render();
     }
 }

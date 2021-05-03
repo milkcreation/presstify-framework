@@ -1,5 +1,5 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
+ * @var Pollen\Partial\PartialViewLoader $this
  */
 echo partial('tag', $this->get('button', []));

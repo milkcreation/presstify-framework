@@ -4,7 +4,7 @@ namespace tiFy\Wordpress\PageHook;
 
 use Closure;
 use Pollen\Event\TriggeredEventInterface;
-use tiFy\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface as BaseBreadcrumbCollectionInterface;
+use Pollen\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface as BaseBreadcrumbCollectionInterface;
 use tiFy\Support\ParamsBag;
 use tiFy\Support\Proxy\Router;
 use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;

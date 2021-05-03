@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Partial\Drivers\Breadcrumb;
 
 use Pollen\Event\TriggeredEventInterface;
-use tiFy\Partial\Drivers\BreadcrumbDriverInterface;
-use tiFy\Partial\Drivers\Breadcrumb\BreadcrumbCollection as BaseBreadcrumbCollection;
+use Pollen\Partial\Drivers\BreadcrumbDriverInterface;
+use Pollen\Partial\Drivers\Breadcrumb\BreadcrumbCollection as BaseBreadcrumbCollection;
 use tiFy\Support\Proxy\Url;
 use WP_Term;
 
@@ -375,7 +375,7 @@ class BreadcrumbCollection extends BaseBreadcrumbCollection implements Breadcrum
      * } */
 
     /**
-     * @return \tiFy\Partial\Driver\Tag\Tag
+     * @return \Pollen\Partial\Drivers\TagDriver
      * @todo Suppression des redondances current précédentes
      *
      *
@@ -385,7 +385,7 @@ class BreadcrumbCollection extends BaseBreadcrumbCollection implements Breadcrum
      * }  */
 
     /**
-     * @return \tiFy\Partial\Driver\Tag\Tag
+     * @return \Pollen\Partial\Drivers\TagDriver
      * @todo Suppression des redondances link précédentes
      *
      *

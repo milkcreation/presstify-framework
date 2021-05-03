@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Field\FieldView $this
+ * @var Pollen\Field\FieldViewLoaderInterface $this
  */
 ?>
 <?php $this->before(); ?>

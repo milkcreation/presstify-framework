@@ -1,24 +1,27 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
 use Closure;
-use tiFy\Field\Contracts\FieldContract;
-use tiFy\Field\FieldDriverInterface;
+use Pollen\Field\FieldDriverInterface;
+use Pollen\Field\FieldManagerInterface;
 
 /**
- * @method static FieldDriverInterface|null get(string $name, array|string|null $id = null, array $attrs = [])
- * @method static mixed config(string|array|null $key = null, $default = null)
- * @method static FieldDriverInterface register(string $name, FieldDriverInterface|Closure|string $partial)
+ * @method static FieldDriverInterface[] all()
+ * @method static FieldDriverInterface|null get(string $alias, $idOrParams = null, array|null $params = [])
+ * @method static string|null getXhrRouteUrl(string $field, ?string $controller = null, array $params = [])
+ * @method static FieldManagerInterface register(string $alias, $driverDefinition, Closure|null $registerCallback = null)
  */
 class Field extends AbstractProxy
 {
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|FieldContract
+     * @return FieldManagerInterface
      */
-    public static function getInstance()
+    public static function getInstance(): FieldManagerInterface
     {
         return parent::getInstance();
     }
@@ -28,6 +31,6 @@ class Field extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return FieldContract::class;
+        return FieldManagerInterface::class;
     }
 }

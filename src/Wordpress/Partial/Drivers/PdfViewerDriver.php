@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers;
 
-use tiFy\Partial\Drivers\PdfViewerDriver as BasePdfViewerDriver;
-use tiFy\Partial\PartialDriverInterface;
+use Pollen\Partial\Drivers\PdfViewerDriver as BasePdfViewerDriver;
+use Pollen\Partial\PartialDriverInterface;
 
 class PdfViewerDriver extends BasePdfViewerDriver
 {

@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Partial\Drivers;
 
 use Exception;
+use Pollen\Partial\Drivers\DownloaderDriver as BaseDownloaderDriver;
+use Pollen\Support\ParamsBag;
+use Pollen\Support\Proxy\EncrypterProxy;
 use Pollen\Validation\Validator as v;
-use tiFy\Partial\Drivers\DownloaderDriver as BaseDownloaderDriver;
 use tiFy\Support\MimeTypes;
-use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\Crypt;
 use tiFy\Support\Proxy\Url;
 
 class DownloaderDriver extends BaseDownloaderDriver
 {
+    use EncrypterProxy;
+
     /**
      * @inheritDoc
      *
@@ -21,7 +23,7 @@ class DownloaderDriver extends BaseDownloaderDriver
      */
     public function getFilename(...$args): string
     {
-        if ($decrypt = Crypt::decrypt($args[0])) {
+        if ($decrypt = $this->decrypt((string)$args[0])) {
             $var = (new ParamsBag())->set(json_decode(base64_decode($decrypt), true));
         } else {
             throw new Exception(

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers\Breadcrumb;
 
-use tiFy\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface as BaseBreadcrumbCollectionInterface;
+use Pollen\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface as BaseBreadcrumbCollectionInterface;
 use WP_Post;
 
 interface BreadcrumbCollectionInterface extends BaseBreadcrumbCollectionInterface

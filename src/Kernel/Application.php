@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Kernel;
 
-use Pollen\Support\StaticProxy;
+use Pollen\Support\ProxyResolver;
 use BadMethodCallException;
 use Exception;
 use Interop\Container\ContainerInterface;
@@ -27,7 +27,7 @@ class Application extends Container
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        StaticProxy::setProxyContainer($this);
+        ProxyResolver::setContainer($this);
 
         $this->delegate($container);
 

@@ -7,6 +7,10 @@ use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use League\Uri\Contracts\UriInterface as LeagueUri;
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
+use Pollen\Field\FieldDriverInterface;
+use Pollen\Field\FieldManagerInterface;
+use Pollen\Partial\PartialDriverInterface;
+use Pollen\Partial\PartialManagerInterface;
 use Pollen\Http\RedirectResponseInterface;
 use Pollen\Http\RequestInterface;
 use Pollen\Log\LogManagerInterface;
@@ -34,10 +38,6 @@ use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\User;
 use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\Field\Contracts\FieldContract;
-use tiFy\Field\FieldDriverInterface;
-use tiFy\Partial\Contracts\PartialContract;
-use tiFy\Partial\PartialDriverInterface;
 use tiFy\Support\Env;
 use tiFy\tiFy;
 
@@ -228,12 +228,12 @@ if (!function_exists('field')) {
      * @param mixed $idOrParams Identifiant de qualification|Liste des attributs de configuration.
      * @param array $params Liste des attributs de configuration.
      *
-     * @return FieldContract|FieldDriverInterface|null
+     * @return FieldManagerInterface|FieldDriverInterface|null
      */
     function field(?string $alias = null, $idOrParams = null, array $params = [])
     {
-        /* @var FieldContract $manager */
-        $manager = app(FieldContract::class);
+        /* @var FieldManagerInterface $manager */
+        $manager = app(FieldManagerInterface::class);
 
         if (is_null($alias)) {
             return $manager;
@@ -291,12 +291,12 @@ if (!function_exists('partial')) {
      * @param mixed $idOrParams Identifiant de qualification|Liste des attributs de configuration.
      * @param array $params Liste des attributs de configuration.
      *
-     * @return PartialContract|PartialDriverInterface|null
+     * @return PartialManagerInterface|PartialDriverInterface|null
      */
     function partial(?string $alias = null, $idOrParams = null, array $params = [])
     {
-        /* @var PartialContract $manager */
-        $manager = app(PartialContract::class);
+        /* @var PartialManagerInterface $manager */
+        $manager = app(PartialManagerInterface::class);
 
         if (is_null($alias)) {
             return $manager;

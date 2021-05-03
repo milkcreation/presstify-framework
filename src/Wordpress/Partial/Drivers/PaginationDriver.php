@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers;
 
-use tiFy\Partial\Drivers\PaginationDriver as BasePaginationDriver;
-use tiFy\Partial\Drivers\PaginationDriverInterface as BasePaginationDriverInterface;
+use Pollen\Partial\Drivers\PaginationDriver as BasePaginationDriver;
+use Pollen\Partial\Drivers\PaginationDriverInterface as BasePaginationDriverInterface;
 use tiFy\Wordpress\Partial\Drivers\Pagination\PaginationQuery;
 use tiFy\Wordpress\Partial\Drivers\Pagination\PaginationQueryInterface;
 
