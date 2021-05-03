@@ -1,7 +1,7 @@
 @import '~font-awesome/scss/font-awesome.scss';
-@import '../../../partial/notice/scss/styles';
-@import '../../../partial/pdfviewer/scss/styles';
-@import '../../../partial/spinner/scss/styles';
+@import '~@pollen-solutions/partial/resources/assets/src/scss/notice';
+@import '~@pollen-solutions/partial/resources/assets/src/scss/spinner';
+@import '~@pollen-solutions/pdf/resources/assets/src/scss/partial/pdf-viewer';
 @import 'main';
 @import 'action-rename';
 @import 'action-upload';

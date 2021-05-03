@@ -36,10 +36,10 @@
     "url-search-params-polyfill": "^8.0.0"
   },
   "dependencies": {
-    "@pollen-solutions/field": "file:../pollen-solutions/field/",
-    "@pollen-solutions/form": "file:../pollen-solutions/form/",
-    "@pollen-solutions/mail": "file:../pollen-solutions/mail/",
-    "@pollen-solutions/partial": "file:../pollen-solutions/partial/",
-    "@pollen-solutions/support": "file:../pollen-solutions/support/"
+    "@pollen-solutions/field": "file:../../pollen-solutions/field/",
+    "@pollen-solutions/form": "file:../../pollen-solutions/form/",
+    "@pollen-solutions/mail": "file:../../pollen-solutions/mail/",
+    "@pollen-solutions/partial": "file:../../pollen-solutions/partial/",
+    "@pollen-solutions/support": "file:../../pollen-solutions/support/"
   }
 }

@@ -4,37 +4,38 @@ declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Form\AddonDriver;
-use tiFy\Contracts\Form\ButtonDriver;
-use tiFy\Contracts\Form\FieldDriver;
-use tiFy\Contracts\Form\FormFactory;
-use tiFy\Contracts\Form\FormManager;
+use Closure;
+use Pollen\Form\AddonDriverInterface;
+use Pollen\Form\ButtonDriverInterface;
+use Pollen\Form\FormBuilderInterface;
+use Pollen\Form\FormFieldDriverInterface;
+use Pollen\Form\FormInterface;
+use Pollen\Form\FormManagerInterface;
 
 /**
- * @method static FormFactory[]|array all()
- * @method static FormFactory|null current($formDefinition = null)
- * @method static FormFactory|null get(string $alias)
- * @method static AddonDriver|null getAddonDriver(string $alias)
- * @method static ButtonDriver|null getButtonDriver(string $alias)
- * @method static FieldDriver|null getFieldDriver(string $alias)
- * @method static FormManager register(string $alias, FormFactory|array $formDefinition = [])
- * @method static FormManager registerAddonDriver(string $alias, AddonDriver|array $addonDefinition = [])
- * @method static FormManager registerButtonDriver(string $alias, ButtonDriver|array $buttonDefinition = [])
- * @method static FormManager registerFieldDriver(string $alias, FieldDriver|array $fieldDefinition = [])
- * @method static FormManager setAddonDriver(string $alias, AddonDriver $driver)
- * @method static FormManager setButtonDriver(string $alias, ButtonDriver $driver)
- * @method static FormManager setConfig(array $attrs)
- * @method static FormManager setFieldDriver(string $alias, FieldDriver $driver)
- * @method static FormFactory setForm(string $alias, FormFactory $factory)
+ * @method static FormInterface[]|array all()
+ * @method static FormBuilderInterface buildForm(string|array|FormInterface $definition)
+ * @method static FormInterface get(string $alias)
+ * @method static AddonDriverInterface getAddonDriver(string $alias)
+ * @method static ButtonDriverInterface getButtonDriver(string $alias)
+ * @method static FormInterface|null getCurrentForm()
+ * @method static FormFieldDriverInterface getFormFieldDriver(string $alias)
+ * @method static int getFormIndex(FormInterface $form)
+ * @method static FormManagerInterface registerAddonDriver(string $alias, string|array|AddonDriverInterface $addonDriverDefinition, ?Closure $registerCallback = null)
+ * @method static FormManagerInterface registerButtonDriver(string $alias, string|array|ButtonDriverInterface $buttonDriverDefinition, ?Closure $registerCallback = null)
+ * @method static FormManagerInterface registerFormFieldDriver(string $alias, string|array|FormFieldDriverInterface $fieldDriverDefinition, ?Closure $registerCallback = null)
+ * @method static FormManagerInterface registerForm(string $alias, string|array|FormInterface $formDefinition):
+ * @method static FormManagerInterface resetCurrentForm()
+ * @method static FormManagerInterface setCurrentForm(FormInterface $form)
  */
 class Form extends AbstractProxy
 {
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|FormManager
+     * @return FormManagerInterface
      */
-    public static function getInstance()
+    public static function getInstance(): FormManagerInterface
     {
         return parent::getInstance();
     }
@@ -44,6 +45,6 @@ class Form extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return FormManager::class;
+        return FormManagerInterface::class;
     }
 }

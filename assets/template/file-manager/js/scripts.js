@@ -4,8 +4,8 @@ import jQuery from 'jquery';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import Dropzone from 'dropzone/dist/min/dropzone.min';
-import '../../../partial/notice/js/scripts';
-import '../../../partial/pdfviewer/js/scripts';
+import 'pollen-solutions/partial/resources/assets/src/js/notice'
+import 'pollen-solutions/pdf/resources/assets/src/js/partial/pdf-viewer';
 
 jQuery(function ($) {
     $.widget('tify.tifyFileManager', {

@@ -13,6 +13,8 @@ use Pollen\Partial\PartialDriverInterface;
 use Pollen\Partial\PartialManagerInterface;
 use Pollen\Http\RedirectResponseInterface;
 use Pollen\Http\RequestInterface;
+use Pollen\Form\FormManagerInterface;
+use Pollen\Form\FormInterface;
 use Pollen\Log\LogManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Validation\ValidatorInterface;
@@ -23,8 +25,6 @@ use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Database\Database;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
-use tiFy\Contracts\Form\FormFactory;
-use tiFy\Contracts\Form\FormManager;
 use tiFy\Contracts\Kernel\ClassLoader;
 use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\Path;
@@ -244,21 +244,21 @@ if (!function_exists('field')) {
 
 if (!function_exists('form')) {
     /**
-     * Formulaire - Gestionnaire de formulaire.
+     * Gestionnaire de formulaire|Instance d'un formulaire selon son nom de qualification.
      *
-     * @param null|string $name Nom de qualification du formulaire.
+     * @param string|null $name
      *
-     * @return null|FormManager|FormFactory
+     * @return FormManagerInterface|FormInterface|null
      */
     function form(?string $name = null)
     {
-        /* @var FormManager $factory */
-        $factory = app(FormManager::class);
+        /* @var FormManagerInterface $manager */
+        $manager = app(FormManagerInterface::class);
 
-        if (is_null($name)) {
-            return $factory;
+        if ($name === null) {
+            return $manager;
         }
-        return $factory->get($name);
+        return $manager->get($name);
     }
 }
 
