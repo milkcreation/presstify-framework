@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Partial\Drivers;
 
-use tiFy\Contracts\Cookie\Cookie;
+use Pollen\Cookie\CookieInterface;
 use tiFy\Partial\PartialDriverInterface;
 
 interface CookieNoticeDriverInterface extends PartialDriverInterface
@@ -12,9 +12,9 @@ interface CookieNoticeDriverInterface extends PartialDriverInterface
     /**
      * Récupération de l'instance du cookie associé.
      * 
-     * @return Cookie
+     * @return CookieInterface
      */
-    public function cookie(): Cookie;
+    public function cookie(): CookieInterface;
 
     /**
      * Élement de validation du cookie.
@@ -23,5 +23,5 @@ interface CookieNoticeDriverInterface extends PartialDriverInterface
      *
      * @return string
      */
-    public function trigger($args = []): string;
+    public function trigger(array $args = []): string;
 }
