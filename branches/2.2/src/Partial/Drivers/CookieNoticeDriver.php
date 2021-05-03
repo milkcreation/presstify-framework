@@ -6,7 +6,7 @@ namespace tiFy\Partial\Drivers;
 
 use Closure;
 use Exception;
-use tiFy\Contracts\Cookie\Cookie as CookieContract;
+use Pollen\Cookie\CookieInterface;
 use tiFy\Partial\PartialDriver;
 use tiFy\Support\Proxy\Cookie;
 use tiFy\Support\Proxy\Request;
@@ -15,14 +15,14 @@ class CookieNoticeDriver extends PartialDriver implements CookieNoticeDriverInte
 {
     /**
      * Instance du cookie associé.
-     * @var CookieContract|null
+     * @var CookieInterface|null
      */
     protected $cookie;
 
     /**
      * @inheritDoc
      */
-    public function cookie(): CookieContract
+    public function cookie(): CookieInterface
     {
         if (is_null($this->cookie)) {
             $this->cookie = Cookie::make($this->getId(), array_merge($this->get('cookie', [])));
@@ -43,7 +43,6 @@ class CookieNoticeDriver extends PartialDriver implements CookieNoticeDriverInte
             'content' => '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>',
             /**
              * @var array $cookie Liste des paramètre de cookie.
-             * @see \tiFy\Cookie\Cookie
              */
             'cookie'  => [],
             /**
@@ -94,7 +93,7 @@ class CookieNoticeDriver extends PartialDriver implements CookieNoticeDriverInte
     /**
      * @inheritDoc
      */
-    public function trigger($args = []): string
+    public function trigger(array $args = []): string
     {
         $args = array_merge([
             'tag'     => 'a',

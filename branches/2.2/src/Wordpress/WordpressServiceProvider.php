@@ -6,6 +6,7 @@ namespace tiFy\Wordpress;
 
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Debug\DebugManagerInterface;
+use Pollen\Cookie\CookieJarInterface;
 use Pollen\Http\RequestInterface;
 use Pollen\Mail\MailManagerInterface;
 use Pollen\Routing\RouterInterface;
@@ -18,7 +19,6 @@ use tiFy\Partial\Contracts\PartialContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
-use tiFy\Wordpress\Cookie\Cookie;
 use tiFy\Wordpress\Database\Database;
 use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Field\Field;
@@ -38,7 +38,10 @@ use tiFy\Wordpress\Template\Template;
 use tiFy\Wordpress\User\User;
 use tiFy\Wordpress\User\Role\RoleFactory;
 use tiFy\Wordpress\View\View;
-use WP_Post, WP_Screen, WP_Term, WP_User;
+use WP_Post;
+use WP_Screen;
+use WP_Term;
+use WP_User;
 
 class WordpressServiceProvider extends ServiceProvider
 {
@@ -89,113 +92,123 @@ class WordpressServiceProvider extends ServiceProvider
 
         $this->getContainer()->share('wp', $wp = new Wordpress());
 
-        add_action('plugins_loaded', function () {
-            load_muplugin_textdomain('tify', '/presstify/languages/');
-            do_action('tify_load_textdomain');
-        });
-
-        add_action('after_setup_theme', function () use ($wp) {
-            if ($wp->is()) {
-                require_once(ABSPATH . 'wp-admin/includes/translation-install.php');
-                Locale::set(get_locale());
-                Locale::setLanguages(wp_get_available_translations() ?: []);
-
-                if ($this->getContainer()->has(DebugManagerInterface::class)) {
-                    $this->getContainer()->get('wp.debug');
-                }
-
-                if ($this->getContainer()->has(RouterInterface::class)) {
-                    $this->getContainer()->get('wp.routing');
-                }
-
-                if ($this->getContainer()->has(AssetManagerInterface::class)) {
-                    $this->getContainer()->get('wp.asset');
-                }
-
-                $this->getContainer()->get('wp.auth');
-
-                if ($this->getContainer()->has('column')) {
-                    $this->getContainer()->get('wp.column');
-                }
-
-                if ($this->getContainer()->has('cookie')) {
-                    $this->getContainer()->get('wp.cookie');
-                }
-
-                if ($this->getContainer()->has('cron')) {
-                    $this->getContainer()->get('cron');
-                }
-
-                if ($this->getContainer()->has('database')) {
-                    $this->getContainer()->get('wp.database');
-                }
-
-                if ($this->getContainer()->has('db')) {
-                    $this->getContainer()->get('wp.db');
-                }
-
-                if ($this->getContainer()->has(FieldContract::class)) {
-                    $this->getContainer()->get('wp.field');
-                }
-
-                if ($this->getContainer()->has(FormManager::class)) {
-                    $this->getContainer()->get('wp.form');
-                }
-
-                $this->getContainer()->get('wp.http.request');
-
-                if ($this->getContainer()->has(MailManagerInterface::class)) {
-                    $this->getContainer()->get('wp.mail');
-                }
-
-                $this->getContainer()->get('wp.media');
-
-                if ($this->getContainer()->has(MetaboxContract::class)) {
-                    $this->getContainer()->get('wp.metabox');
-                }
-
-                $this->getContainer()->get('wp.page-hook');
-
-                $this->getContainer()->get('wp.option');
-
-                if ($this->getContainer()->has(PartialContract::class)) {
-                    $this->getContainer()->get('wp.partial');
-                }
-
-                if ($this->getContainer()->has('post-type')) {
-                    $this->getContainer()->get('wp.post-type');
-                }
-
-                if ($this->getContainer()->has(SessionManagerInterface::class)) {
-                    $this->getContainer()->get('wp.session');
-                }
-
-                if ($this->getContainer()->has('storage')) {
-                    $this->getContainer()->get('wp.filesystem');
-                }
-
-                if ($this->getContainer()->has('taxonomy')) {
-                    $this->getContainer()->get('wp.taxonomy');
-                }
-
-                if ($this->getContainer()->has('template')) {
-                    $this->getContainer()->get('wp.template');
-                }
-
-                if ($this->getContainer()->has('user')) {
-                    $this->getContainer()->get('wp.user');
-                    $this->getContainer()->add('user.role.factory', function () {
-                        return new RoleFactory();
-                    });
-                }
-
-                if ($this->getContainer()->has('view')) {
-                    $this->getContainer()->get('wp.view');
-                }
-
-                events()->trigger('wp.booted');
+        add_action(
+            'plugins_loaded',
+            function () {
+                load_muplugin_textdomain('tify', '/presstify/languages/');
+                do_action('tify_load_textdomain');
             }
-        }, 1);
+        );
+
+        add_action(
+            'after_setup_theme',
+            function () use ($wp) {
+                if ($wp->is()) {
+                    require_once(ABSPATH . 'wp-admin/includes/translation-install.php');
+                    Locale::set(get_locale());
+                    Locale::setLanguages(wp_get_available_translations() ?: []);
+
+                    if ($this->getContainer()->has(DebugManagerInterface::class)) {
+                        $this->getContainer()->get('wp.debug');
+                    }
+
+                    if ($this->getContainer()->has(RouterInterface::class)) {
+                        $this->getContainer()->get('wp.routing');
+                    }
+
+                    if ($this->getContainer()->has(AssetManagerInterface::class)) {
+                        $this->getContainer()->get('wp.asset');
+                    }
+
+                    $this->getContainer()->get('wp.auth');
+
+                    if ($this->getContainer()->has('column')) {
+                        $this->getContainer()->get('wp.column');
+                    }
+
+                    if ($this->getContainer()->has(CookieJarInterface::class)) {
+                        $this->getContainer()->get('wp.cookie');
+                    }
+
+                    if ($this->getContainer()->has('cron')) {
+                        $this->getContainer()->get('cron');
+                    }
+
+                    if ($this->getContainer()->has('database')) {
+                        $this->getContainer()->get('wp.database');
+                    }
+
+                    if ($this->getContainer()->has('db')) {
+                        $this->getContainer()->get('wp.db');
+                    }
+
+                    if ($this->getContainer()->has(FieldContract::class)) {
+                        $this->getContainer()->get('wp.field');
+                    }
+
+                    if ($this->getContainer()->has(FormManager::class)) {
+                        $this->getContainer()->get('wp.form');
+                    }
+
+                    $this->getContainer()->get('wp.http.request');
+
+                    if ($this->getContainer()->has(MailManagerInterface::class)) {
+                        $this->getContainer()->get('wp.mail');
+                    }
+
+                    $this->getContainer()->get('wp.media');
+
+                    if ($this->getContainer()->has(MetaboxContract::class)) {
+                        $this->getContainer()->get('wp.metabox');
+                    }
+
+                    $this->getContainer()->get('wp.page-hook');
+
+                    $this->getContainer()->get('wp.option');
+
+                    if ($this->getContainer()->has(PartialContract::class)) {
+                        $this->getContainer()->get('wp.partial');
+                    }
+
+                    if ($this->getContainer()->has('post-type')) {
+                        $this->getContainer()->get('wp.post-type');
+                    }
+
+                    if ($this->getContainer()->has(SessionManagerInterface::class)) {
+                        $this->getContainer()->get('wp.session');
+                    }
+
+                    if ($this->getContainer()->has('storage')) {
+                        $this->getContainer()->get('wp.filesystem');
+                    }
+
+                    if ($this->getContainer()->has('taxonomy')) {
+                        $this->getContainer()->get('wp.taxonomy');
+                    }
+
+                    if ($this->getContainer()->has('template')) {
+                        $this->getContainer()->get('wp.template');
+                    }
+
+                    if ($this->getContainer()->has('user')) {
+                        $this->getContainer()->get('wp.user');
+                        $this->getContainer()->add(
+                            'user.role.factory',
+                            function () {
+                                return new RoleFactory();
+                            }
+                        );
+                    }
+
+                    if ($this->getContainer()->has('view')) {
+                        $this->getContainer()->get('wp.view');
+                    }
+
+                    events()->trigger('wp.booted');
+                }
+            },
+            1
+        );
     }
 
     /**
@@ -236,10 +249,14 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerAsset(): void
     {
-        $this->getContainer()->share('wp.asset', function () {
-            return new WpAsset($this->getContainer()->get(AssetManagerInterface::class));
-        });
+        $this->getContainer()->share(
+            'wp.asset',
+            function () {
+                return new WpAsset($this->getContainer()->get(AssetManagerInterface::class));
+            }
+        );
     }
+
     /**
      * Déclaration du gestionnaire d'authentification.
      *
@@ -247,9 +264,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerAuth(): void
     {
-        $this->getContainer()->share('wp.auth', function () {
-            return new Auth();
-        });
+        $this->getContainer()->share(
+            'wp.auth',
+            function () {
+                return new Auth();
+            }
+        );
     }
 
 
@@ -260,9 +280,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerColumn(): void
     {
-        $this->getContainer()->share('wp.column', function () {
-            return new Column($this->getContainer()->get('column'));
-        });
+        $this->getContainer()->share(
+            'wp.column',
+            function () {
+                return new Column($this->getContainer()->get('column'));
+            }
+        );
     }
 
     /**
@@ -272,9 +295,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerCookie(): void
     {
-        $this->getContainer()->share('wp.cookie', function () {
-            return new Cookie($this->getContainer()->get('cookie'));
-        });
+        $this->getContainer()->share(
+            'wp.cookie',
+            function () {
+                return new WpCookie($this->getContainer()->get(CookieJarInterface::class));
+            }
+        );
     }
 
     /**
@@ -284,9 +310,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerDatabase(): void
     {
-        $this->getContainer()->share('wp.database', function () {
-            return new Database($this->getContainer()->get('database'));
-        });
+        $this->getContainer()->share(
+            'wp.database',
+            function () {
+                return new Database($this->getContainer()->get('database'));
+            }
+        );
     }
 
     /**
@@ -296,9 +325,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerDebug(): void
     {
-        $this->getContainer()->share('wp.debug', function () {
-            return new WpDebug($this->getContainer()->get(DebugManagerInterface::class));
-        });
+        $this->getContainer()->share(
+            'wp.debug',
+            function () {
+                return new WpDebug($this->getContainer()->get(DebugManagerInterface::class));
+            }
+        );
     }
 
     /**
@@ -308,9 +340,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerFilesystem(): void
     {
-        $this->getContainer()->share('wp.filesystem', function () {
-            return new Filesystem($this->getContainer()->get('storage'));
-        });
+        $this->getContainer()->share(
+            'wp.filesystem',
+            function () {
+                return new Filesystem($this->getContainer()->get('storage'));
+            }
+        );
     }
 
     /**
@@ -320,9 +355,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerField(): void
     {
-        $this->getContainer()->share('wp.field', function () {
-            return new Field($this->getContainer()->get(FieldContract::class), $this->getContainer());
-        });
+        $this->getContainer()->share(
+            'wp.field',
+            function () {
+                return new Field($this->getContainer()->get(FieldContract::class), $this->getContainer());
+            }
+        );
     }
 
     /**
@@ -332,9 +370,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerForm(): void
     {
-        $this->getContainer()->share('wp.form', function () {
-            return new Form($this->getContainer()->get(FormManager::class), $this->getContainer());
-        });
+        $this->getContainer()->share(
+            'wp.form',
+            function () {
+                return new Form($this->getContainer()->get(FormManager::class), $this->getContainer());
+            }
+        );
     }
 
     /**
@@ -344,9 +385,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerHttp(): void
     {
-        $this->getContainer()->share('wp.http.request', function () {
-            return new WpHttpRequest($this->getContainer()->get(RequestInterface::class));
-        });
+        $this->getContainer()->share(
+            'wp.http.request',
+            function () {
+                return new WpHttpRequest($this->getContainer()->get(RequestInterface::class));
+            }
+        );
     }
 
     /**
@@ -356,9 +400,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerMailer(): void
     {
-        $this->getContainer()->share('wp.mail', function () {
-            return new WpMail($this->getContainer()->get(MailManagerInterface::class));
-        });
+        $this->getContainer()->share(
+            'wp.mail',
+            function () {
+                return new WpMail($this->getContainer()->get(MailManagerInterface::class));
+            }
+        );
     }
 
     /**
@@ -368,9 +415,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerMedia(): void
     {
-        $this->getContainer()->share('wp.media', function () {
-            return new Media();
-        });
+        $this->getContainer()->share(
+            'wp.media',
+            function () {
+                return new Media();
+            }
+        );
     }
 
     /**
@@ -380,9 +430,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerMetabox(): void
     {
-        $this->getContainer()->share('wp.metabox', function () {
-            return new Metabox($this->getContainer()->get(MetaboxContract::class), $this->getContainer());
-        });
+        $this->getContainer()->share(
+            'wp.metabox',
+            function () {
+                return new Metabox($this->getContainer()->get(MetaboxContract::class), $this->getContainer());
+            }
+        );
     }
 
     /**
@@ -392,9 +445,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerOptions(): void
     {
-        $this->getContainer()->share('wp.option', function () {
-            return new Option();
-        });
+        $this->getContainer()->share(
+            'wp.option',
+            function () {
+                return new Option();
+            }
+        );
     }
 
     /**
@@ -404,15 +460,21 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerPageHook(): void
     {
-        $this->getContainer()->share('wp.page-hook', function () {
-            return new PageHook();
-        });
-        $this->getContainer()->add(PageHookMetabox::class, function () {
-            return new PageHookMetabox(
-                $this->getContainer()->get('wp.page-hook'),
-                $this->getContainer()->get(MetaboxContract::class)
-            );
-        });
+        $this->getContainer()->share(
+            'wp.page-hook',
+            function () {
+                return new PageHook();
+            }
+        );
+        $this->getContainer()->add(
+            PageHookMetabox::class,
+            function () {
+                return new PageHookMetabox(
+                    $this->getContainer()->get('wp.page-hook'),
+                    $this->getContainer()->get(MetaboxContract::class)
+                );
+            }
+        );
     }
 
     /**
@@ -422,9 +484,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerPartial(): void
     {
-        $this->getContainer()->share('wp.partial', function () {
-            return new Partial($this->getContainer()->get(PartialContract::class), $this->getContainer());
-        });
+        $this->getContainer()->share(
+            'wp.partial',
+            function () {
+                return new Partial($this->getContainer()->get(PartialContract::class), $this->getContainer());
+            }
+        );
     }
 
     /**
@@ -434,9 +499,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerPostType(): void
     {
-        $this->getContainer()->share('wp.post-type', function () {
-            return new PostType($this->getContainer()->get('post-type'));
-        });
+        $this->getContainer()->share(
+            'wp.post-type',
+            function () {
+                return new PostType($this->getContainer()->get('post-type'));
+            }
+        );
     }
 
     /**
@@ -446,17 +514,26 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerQuery(): void
     {
-        $this->getContainer()->add('wp.query.post', function (?WP_Post $wp_post = null) {
-            return !is_null($wp_post) ? QueryPost::create($wp_post) : QueryPost::createFromGlobal();
-        });
+        $this->getContainer()->add(
+            'wp.query.post',
+            function (?WP_Post $wp_post = null) {
+                return !is_null($wp_post) ? QueryPost::create($wp_post) : QueryPost::createFromGlobal();
+            }
+        );
 
-        $this->getContainer()->add('wp.query.term', function (?WP_Term $wp_term) {
-            return !is_null($wp_term) ? QueryTerm::create($wp_term) : QueryTerm::createFromGlobal();
-        });
+        $this->getContainer()->add(
+            'wp.query.term',
+            function (?WP_Term $wp_term) {
+                return !is_null($wp_term) ? QueryTerm::create($wp_term) : QueryTerm::createFromGlobal();
+            }
+        );
 
-        $this->getContainer()->add('wp.query.user', function (?WP_User $wp_user = null) {
-            return !is_null($wp_user) ? QueryUser::create($wp_user) : QueryUser::createFromGlobal();
-        });
+        $this->getContainer()->add(
+            'wp.query.user',
+            function (?WP_User $wp_user = null) {
+                return !is_null($wp_user) ? QueryUser::create($wp_user) : QueryUser::createFromGlobal();
+            }
+        );
     }
 
     /**
@@ -466,17 +543,26 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerRouting(): void
     {
-        $this->getContainer()->share('wp.routing', function () {
-            return new WpRouting($this->getContainer()->get(RouterInterface::class));
-        });
+        $this->getContainer()->share(
+            'wp.routing',
+            function () {
+                return new WpRouting($this->getContainer()->get(RouterInterface::class));
+            }
+        );
 
-        $this->getContainer()->share('wp.wp_query', function () {
-            return new WpQuery();
-        });
+        $this->getContainer()->share(
+            'wp.wp_query',
+            function () {
+                return new WpQuery();
+            }
+        );
 
-        $this->getContainer()->add('wp.wp_screen', function (?WP_Screen $wp_screen = null) {
-            return new WpScreen($wp_screen);
-        });
+        $this->getContainer()->add(
+            'wp.wp_screen',
+            function (?WP_Screen $wp_screen = null) {
+                return new WpScreen($wp_screen);
+            }
+        );
     }
 
     /**
@@ -486,9 +572,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerSession(): void
     {
-        $this->getContainer()->share('wp.session', function () {
-            return new WpSession($this->getContainer()->get(SessionManagerInterface::class));
-        });
+        $this->getContainer()->share(
+            'wp.session',
+            function () {
+                return new WpSession($this->getContainer()->get(SessionManagerInterface::class));
+            }
+        );
     }
 
     /**
@@ -498,9 +587,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerTaxonomy(): void
     {
-        $this->getContainer()->share('wp.taxonomy', function () {
-            return new Taxonomy($this->getContainer()->get('taxonomy'));
-        });
+        $this->getContainer()->share(
+            'wp.taxonomy',
+            function () {
+                return new Taxonomy($this->getContainer()->get('taxonomy'));
+            }
+        );
     }
 
     /**
@@ -510,9 +602,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerTemplate(): void
     {
-        $this->getContainer()->share('wp.template', function () {
-            return new Template($this->getContainer()->get('template'));
-        });
+        $this->getContainer()->share(
+            'wp.template',
+            function () {
+                return new Template($this->getContainer()->get('template'));
+            }
+        );
     }
 
     /**
@@ -522,9 +617,12 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerUser(): void
     {
-        $this->getContainer()->share('wp.user', function () {
-            return new User($this->getContainer()->get('user'));
-        });
+        $this->getContainer()->share(
+            'wp.user',
+            function () {
+                return new User($this->getContainer()->get('user'));
+            }
+        );
     }
 
     /**
@@ -534,8 +632,11 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function registerView(): void
     {
-        $this->getContainer()->share('wp.view', function () {
-            return new View($this->getContainer()->get('view'));
-        });
+        $this->getContainer()->share(
+            'wp.view',
+            function () {
+                return new View($this->getContainer()->get('view'));
+            }
+        );
     }
 }
