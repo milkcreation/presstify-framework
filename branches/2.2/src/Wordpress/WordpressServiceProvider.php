@@ -7,28 +7,26 @@ namespace tiFy\Wordpress;
 use Pollen\Asset\AssetManagerInterface;
 use Pollen\Debug\DebugManagerInterface;
 use Pollen\Cookie\CookieJarInterface;
+use Pollen\Field\FieldManagerInterface;
 use Pollen\Http\RequestInterface;
 use Pollen\Mail\MailManagerInterface;
+use Pollen\Partial\PartialManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Session\SessionManagerInterface;
 use tiFy\Container\ServiceProvider;
 use tiFy\Contracts\Form\FormManager;
-use tiFy\Field\Contracts\FieldContract;
 use tiFy\Metabox\Contracts\MetaboxContract;
-use tiFy\Partial\Contracts\PartialContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Database\Database;
 use tiFy\Wordpress\Filesystem\Filesystem;
-use tiFy\Wordpress\Field\Field;
 use tiFy\Wordpress\Form\Form;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Metabox\Metabox;
 use tiFy\Wordpress\Option\Option;
 use tiFy\Wordpress\PageHook\PageHook;
 use tiFy\Wordpress\PageHook\PageHookMetabox;
-use tiFy\Wordpress\Partial\Partial;
 use tiFy\Wordpress\PostType\PostType;
 use tiFy\Wordpress\Query\QueryPost;
 use tiFy\Wordpress\Query\QueryTerm;
@@ -142,7 +140,7 @@ class WordpressServiceProvider extends ServiceProvider
                         $this->getContainer()->get('wp.db');
                     }
 
-                    if ($this->getContainer()->has(FieldContract::class)) {
+                    if ($this->getContainer()->has(FieldManagerInterface::class)) {
                         $this->getContainer()->get('wp.field');
                     }
 
@@ -166,7 +164,7 @@ class WordpressServiceProvider extends ServiceProvider
 
                     $this->getContainer()->get('wp.option');
 
-                    if ($this->getContainer()->has(PartialContract::class)) {
+                    if ($this->getContainer()->has(PartialManagerInterface::class)) {
                         $this->getContainer()->get('wp.partial');
                     }
 
@@ -349,7 +347,7 @@ class WordpressServiceProvider extends ServiceProvider
     }
 
     /**
-     * Déclaration du controleur des champs.
+     * Déclaration du gestionnaire de champs.
      *
      * @return void
      */
@@ -358,7 +356,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.field',
             function () {
-                return new Field($this->getContainer()->get(FieldContract::class), $this->getContainer());
+                return new WpField($this->getContainer()->get(FieldManagerInterface::class), $this->getContainer());
             }
         );
     }
@@ -487,7 +485,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.partial',
             function () {
-                return new Partial($this->getContainer()->get(PartialContract::class), $this->getContainer());
+                return new WpPartial($this->getContainer()->get(PartialManagerInterface::class), $this->getContainer());
             }
         );
     }

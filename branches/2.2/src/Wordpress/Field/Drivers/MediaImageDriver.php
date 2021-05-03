@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Field\Drivers;
 
-use tiFy\Field\Contracts\FieldContract;
 use tiFy\Wordpress\Field\WordpressFieldDriver;
 
 class MediaImageDriver extends WordpressFieldDriver implements MediaImageDriverInterface
 {
     /**
-     * @param FieldContract $fieldManager
+     * @inheritDoc
      */
-    public function __construct(FieldContract $fieldManager)
+    public function boot(): void
     {
-        parent::__construct($fieldManager);
-
-        add_action(
-            'admin_enqueue_scripts',
-            function () {
-                @wp_enqueue_media();
-            }
-        );
+        if (!$this->isBooted()) {
+            add_action(
+                'admin_enqueue_scripts',
+                function () {
+                    @wp_enqueue_media();
+                }
+            );
+        }
+        parent::boot();
     }
 
     /**

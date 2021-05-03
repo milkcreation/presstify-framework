@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Partial\PartialView $this
+ * @var Pollen\Field\FieldViewLoaderInterface $this
  * @var tiFy\Wordpress\Contracts\Query\QueryPost $post
  */
 ?>

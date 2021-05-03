@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers\Pagination;
 
-use tiFy\Partial\Drivers\Pagination\PaginationQueryInterface as BasePaginationQueryInterface;
+use Pollen\Partial\Drivers\Pagination\PaginationQueryInterface as BasePaginationQueryInterface;
 use WP_Query;
 
 interface PaginationQueryInterface extends BasePaginationQueryInterface

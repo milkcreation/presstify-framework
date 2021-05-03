@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tiFy\Contracts\Form;
 
-use Pollen\Encryption\EncrypterProxyInterface;
 use Pollen\Session\AttributeKeyBagInterface;
+use Pollen\Support\Proxy\EncrypterProxyInterface;
 use Pollen\Support\Proxy\SessionProxyInterface;
 
 /**

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Field\Drivers;
 
 use Illuminate\Support\Collection;
-use tiFy\Field\Drivers\SuggestDriver as BaseSuggestDriver;
-use tiFy\Field\FieldDriverInterface;
-use tiFy\Support\Proxy\Request;
+use Pollen\Http\JsonResponse;
+use Pollen\Http\ResponseInterface;
+use Pollen\Field\Drivers\SuggestDriver as BaseSuggestDriver;
 use tiFy\Wordpress\Query\QueryPost;
 use tiFy\Wordpress\Query\QueryTerm;
 use tiFy\Wordpress\Query\QueryUser;
@@ -23,23 +23,26 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
     /**
      * @inheritDoc
      */
-    public function parseParams(): FieldDriverInterface
+    public function parseParams(): void
     {
-        if ($this->get('wp_query', 'post') || $this->get('ajax')) {
-            if (!$this->get('ajax')) {
+        $ajax = $this->get('ajax');
+        $wp_query = $this->get('wp_query', 'post');
+
+        if ($ajax || $wp_query) {
+            if (!$ajax) {
                 $this->set('ajax', []);
             }
             $this->set('ajax.data.wp_query', $this->get('wp_query', 'post'));
         }
-        return parent::parseParams();
+        parent::parseParams();
     }
 
     /**
      * @inheritDoc
      */
-    public function xhrResponse(...$args): array
+    public function xhrResponse(...$args): ResponseInterface
     {
-        switch (Request::input('wp_query')) {
+        switch ($this->httpRequest()->input('wp_query')) {
             case 'post' :
             default :
                 $response = $this->xhrResponsePostQuery(...$args);
@@ -61,10 +64,10 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
     /**
      * @inheritDoc
      */
-    public function xhrResponsePostQuery(...$args): array
+    public function xhrResponsePostQuery(...$args): ResponseInterface
     {
-        $term = Request::input('_term', '');
-        $paged = Request::input('_paged', 1);
+        $term = $this->httpRequest()->input('_term', '');
+        $paged = $this->httpRequest()->input('_paged', 1);
         $per_page = get_option('posts_per_page');
 
         $wpQuery = new WP_Query();
@@ -74,7 +77,7 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
                 'post_type'      => 'any',
                 'posts_per_page' => $per_page,
             ],
-            Request::input('query_args', []),
+            $this->httpRequest()->input('query_args', []),
             [
                 's'     => $term,
                 'paged' => $paged,
@@ -111,22 +114,24 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
                 'html'   => '+',
             ] : null;
 
-            return [
-                'success' => true,
-                'data'    => compact('items', 'more'),
-            ];
-        } else {
-            return ['success' => false];
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'data'    => compact('items', 'more'),
+                ]
+            );
         }
+
+        return new JsonResponse(['success' => false]);
     }
 
     /**
      * @inheritDoc
      */
-    public function xhrResponseTermQuery(...$args): array
+    public function xhrResponseTermQuery(...$args): ResponseInterface
     {
-        $term = Request::input('_term', '');
-        $paged = Request::input('_paged', 1);
+        $term = $this->httpRequest()->input('_term', '');
+        $paged = $this->httpRequest()->input('_paged', 1);
         $per_page = 20;
 
         $wpTermQuery = new WP_Term_Query();
@@ -135,7 +140,7 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
             [
                 'number' => $per_page,
             ],
-            Request::input('query_args', []),
+            $this->httpRequest()->input('query_args', []),
             [
                 'search' => '*' . $term . '*',
                 'offset' => ($paged - 1) * $per_page,
@@ -178,29 +183,30 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
                 'html'   => '+',
             ] : null;
 
-            return [
-                'success' => true,
-                'data'    => compact('items', 'more'),
-            ];
-        } else {
-            return ['success' => false];
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'data'    => compact('items', 'more'),
+                ]
+            );
         }
+        return new JsonResponse(['success' => false]);
     }
 
     /**
      * @inheritDoc
      */
-    public function xhrResponseUserQuery(...$args): array
+    public function xhrResponseUserQuery(...$args): ResponseInterface
     {
-        $term = Request::input('_term', '');
-        $paged = Request::input('_paged', 1);
+        $term = $this->httpRequest()->input('_term', '');
+        $paged = $this->httpRequest()->input('_paged', 1);
         $per_page = 20;
 
         $query_args = array_merge(
             [
                 'number' => $per_page,
             ],
-            Request::input('query_args', []),
+            $this->httpRequest()->input('query_args', []),
             [
                 'search' => '*' . $term . '*',
                 'offset' => ($paged - 1) * $per_page,
@@ -235,12 +241,13 @@ class SuggestDriver extends BaseSuggestDriver implements SuggestDriverInterface
                 'html'   => '+',
             ] : null;
 
-            return [
-                'success' => true,
-                'data'    => compact('items', 'more'),
-            ];
-        } else {
-            return ['success' => false];
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'data'    => compact('items', 'more'),
+                ]
+            );
         }
+        return new JsonResponse(['success' => false]);
     }
 }

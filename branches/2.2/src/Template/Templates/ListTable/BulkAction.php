@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Template\Templates\ListTable;
 
-use tiFy\Field\Driver\Select\SelectChoice;
+use Pollen\Field\Drivers\Select\SelectChoice;
 use tiFy\Template\Factory\FactoryAwareTrait;
 use tiFy\Template\Templates\ListTable\Contracts\BulkAction as BulkActionContract;
 

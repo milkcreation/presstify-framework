@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace tiFy\Form\Factory;
 
 use LogicException;
-use Pollen\Encryption\EncrypterProxy;
 use Pollen\Session\AttributeKeyBag;
+use Pollen\Support\Proxy\EncrypterProxy;
 use Pollen\Support\Proxy\SessionProxy;
 use tiFy\Contracts\Form\SessionFactory as SessionFactoryContract;
 use tiFy\Contracts\Form\FormFactory as FormFactoryContract;

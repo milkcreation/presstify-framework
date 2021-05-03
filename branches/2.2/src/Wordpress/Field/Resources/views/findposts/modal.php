@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Field\FieldView $this
+ * @var Pollen\Field\FieldViewLoaderInterface $this
  * @var array $post_types
  * @var array $query_args
  */

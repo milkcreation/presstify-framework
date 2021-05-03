@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers\Accordion;
 
-use tiFy\Partial\Drivers\Accordion\AccordionItemInterface;
+use Pollen\Partial\Drivers\Accordion\AccordionItemInterface;
 use WP_Term;
 
 interface AccordionWpTermItemInterface extends AccordionItemInterface

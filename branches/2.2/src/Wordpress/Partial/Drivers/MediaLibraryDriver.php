@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Partial\Drivers;
 
-use tiFy\Partial\PartialDriver;
-use tiFy\Partial\PartialDriverInterface;
+use Pollen\Partial\PartialDriver;
 
 class MediaLibraryDriver extends PartialDriver implements MediaLibraryDriverInterface
 {
@@ -14,9 +13,15 @@ class MediaLibraryDriver extends PartialDriver implements MediaLibraryDriverInte
      */
     public function boot(): void
     {
-        add_action('admin_enqueue_scripts', function () {
-            @wp_enqueue_media();
-        });
+        if (!$this->isBooted()) {
+            add_action(
+                'admin_enqueue_scripts',
+                function () {
+                    @wp_enqueue_media();
+                }
+            );
+        }
+        parent::boot();
     }
 
     /**
@@ -41,7 +46,7 @@ class MediaLibraryDriver extends PartialDriver implements MediaLibraryDriverInte
     /**
      * @inheritDoc
      */
-    public function parseParams(): PartialDriverInterface
+    public function parseParams(): void
     {
         parent::parseParams();
 
@@ -50,8 +55,6 @@ class MediaLibraryDriver extends PartialDriver implements MediaLibraryDriverInte
             'attrs.data-options'        => $this->pull('options', []),
             'button.attrs.data-control' => 'media-library.open',
         ]);
-
-        return $this;
     }
 
     /**
@@ -59,6 +62,6 @@ class MediaLibraryDriver extends PartialDriver implements MediaLibraryDriverInte
      */
     public function viewDirectory(): string
     {
-        return dirname(__DIR__) . '/Resources/views/media-library';
+        return __DIR__ . '/Resources/views/media-library';
     }
 }

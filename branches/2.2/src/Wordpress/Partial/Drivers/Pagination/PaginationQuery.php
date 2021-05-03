@@ -2,7 +2,7 @@
 
 namespace tiFy\Wordpress\Partial\Drivers\Pagination;
 
-use tiFy\Partial\Drivers\Pagination\PaginationQuery as BasePaginationQuery;
+use Pollen\Partial\Drivers\Pagination\PaginationQuery as BasePaginationQuery;
 use WP_Query;
 
 class PaginationQuery extends BasePaginationQuery implements PaginationQueryInterface

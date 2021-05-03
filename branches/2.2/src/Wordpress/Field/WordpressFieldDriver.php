@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Field;
 
-use tiFy\Field\FieldDriver;
+use Pollen\Field\FieldDriver;
 
 abstract class WordpressFieldDriver extends FieldDriver implements WordpressFieldDriverInterface
 {

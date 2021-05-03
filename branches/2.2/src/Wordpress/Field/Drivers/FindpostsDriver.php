@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Field\Drivers;
 
+use Pollen\Http\JsonResponse;
+use Pollen\Http\ResponseInterface;
+use Pollen\Support\Arr;
+use Pollen\Support\Proxy\AssetProxy;
 use tiFy\Wordpress\Field\WordpressFieldDriver;
-use tiFy\Support\Arr;
-use tiFy\Support\Proxy\Asset;
-use tiFy\Support\Proxy\Request;
 use WP_Post;
 use WP_Query;
 
 class FindpostsDriver extends WordpressFieldDriver implements FindpostsDriverInterface
 {
+    use AssetProxy;
+
     /**
      * @inheritDoc
      */
@@ -34,7 +37,7 @@ class FindpostsDriver extends WordpressFieldDriver implements FindpostsDriverInt
      */
     public function render(): string
     {
-        $uniqid = md5(uniqid() . $this->getIndex());
+        $uniqid = md5(uniqid('', true) . $this->getIndex());
 
         if (!$post_types = $this->pull('query_args.post_type')) {
             $post_types = get_post_types(['public' => true]);
@@ -81,7 +84,7 @@ class FindpostsDriver extends WordpressFieldDriver implements FindpostsDriverInt
             ]
         );
 
-        Asset::setDataJs(
+        $this->asset()->addGlobalJsVar(
             $this->getAlias() . 'l10n',
             [
                 'error' => __('Une erreur s\'est produite. Veuillez recharger la page et essayer à nouveau.', 'tify'),
@@ -95,25 +98,27 @@ class FindpostsDriver extends WordpressFieldDriver implements FindpostsDriverInt
     /**
      * @inheritDoc
      */
-    public function xhrResponse(...$args): array
+    public function xhrResponse(...$args): ResponseInterface
     {
-        if (!wp_verify_nonce(Request::post('_ajax_nonce'), 'Findposts')) {
-            return [
-                'success' => false,
-                'data'    => __('Invalid nonce'),
-            ];
+        if (!wp_verify_nonce($this->httpRequest()->request->get('_ajax_nonce'), 'Findposts')) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'data'    => __('Invalid nonce'),
+                ]
+            );
         }
 
         $query_args = wp_parse_args(
             [
-                'post_type'      => explode(',', Request::post('post_type', 'any')),
+                'post_type'      => explode(',', $this->httpRequest()->request->get('post_type', 'any')),
                 'post_status'    => 'any',
                 'posts_per_page' => 50,
             ],
-            Request::input('query_args', [])
+            $this->httpRequest()->input('query_args', [])
         );
 
-        $s = Arr::stripslashes(Request::input('ps', ''));
+        $s = Arr::stripslashes($this->httpRequest()->input('ps', ''));
         if ('' !== $s) {
             $query_args['s'] = $s;
         }
@@ -122,31 +127,32 @@ class FindpostsDriver extends WordpressFieldDriver implements FindpostsDriverInt
         $results = (new WP_Query())->query($query_args);
 
         if (empty($results)) {
-            return [
-                'success' => false,
-                'data'    => __('No items found.'),
-            ];
-        } else {
-            $posts = [];
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'data'    => __('No items found.'),
+                ]
+            );
+        }
+        $posts = [];
 
-            foreach ($results as $i => $r) {
-                $posts[] = [
-                    'ID'          => $r->ID,
-                    'post_title'  => trim($r->post_title) ?: __('(no title)'),
-                    'post_type'   => ($type = get_post_type_object($r->post_type))
-                        ? $type->labels->singular_name : '--',
-                    'post_status' => ($st = get_post_status_object($r->post_status)) ? $st->label : '--',
-                    'post_date'   => ('0000-00-00 00:00:00' !== $r->post_date)
-                        ? mysql2date(__('Y/m/d'), $r->post_date) : '--',
-                    'alt'         => ($i % 2 !== 0) ? 'alternate' : '',
-                    'value'       => get_permalink($r->ID),
-                ];
-            }
-
-            return [
-                'success' => true,
-                'data'    => $posts,
+        foreach ($results as $i => $r) {
+            $posts[] = [
+                'ID'          => $r->ID,
+                'post_title'  => trim($r->post_title) ?: __('(no title)'),
+                'post_type'   => ($type = get_post_type_object($r->post_type))
+                    ? $type->labels->singular_name : '--',
+                'post_status' => ($st = get_post_status_object($r->post_status)) ? $st->label : '--',
+                'post_date'   => ('0000-00-00 00:00:00' !== $r->post_date)
+                    ? mysql2date(__('Y/m/d'), $r->post_date) : '--',
+                'alt'         => ($i % 2 !== 0) ? 'alternate' : '',
+                'value'       => get_permalink($r->ID),
             ];
         }
+
+        return new JsonResponse([
+            'success' => true,
+            'data'    => $posts,
+        ]);
     }
 }
