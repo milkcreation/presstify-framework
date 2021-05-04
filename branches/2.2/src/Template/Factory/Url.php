@@ -1,11 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Template\Factory;
 
 use tiFy\Contracts\Template\FactoryUrl as FactoryUrlContract;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Routing\Url as BaseUrl;
-use tiFy\Support\Proxy\{Router, Request};
+use tiFy\Support\Proxy\Router;
+use tiFy\Support\Proxy\Request;
 
 class Url extends BaseUrl implements FactoryUrlContract
 {

@@ -60,6 +60,7 @@
     "pollen-solutions/support": "1.0.x-dev",
     "pollen-solutions/validation": "1.0.x-dev",
     "pollen-solutions/view": "1.0.x-dev",
+    "pollen-solutions/wp-db": "1.0.x-dev",
     "ralouphie/mimey": "^2.1",
     "spatie/menu": "^2.9",
     "symfony/console": "^5.0",
