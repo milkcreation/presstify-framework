@@ -3,6 +3,7 @@
 namespace tiFy\Template\Templates\FileManager\Contracts;
 
 use Exception;
+use Pollen\Http\JsonResponseInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use tiFy\Contracts\Template\FactoryActions;
 
@@ -11,11 +12,11 @@ interface Actions extends FactoryActions
     /**
      * Parcours d'un dossier.
      *
-     * @return array
+     * @return JsonResponseInterface
      *
      * @throws Exception
      */
-    public function doBrowse(): array;
+    public function doBrowse(): JsonResponseInterface;
 
     /**
      * Création de dossier.
@@ -24,7 +25,7 @@ interface Actions extends FactoryActions
      *
      * @throws Exception
      */
-    public function doCreate(): array;
+    public function doCreate(): JsonResponseInterface;
 
     /**
      * Suppression d'un élément (fichier ou dossier).
@@ -33,7 +34,7 @@ interface Actions extends FactoryActions
      *
      * @throws Exception
      */
-    public function doDelete(): array;
+    public function doDelete(): JsonResponseInterface;
 
     /**
      * Téléchargement de fichier.
@@ -45,29 +46,29 @@ interface Actions extends FactoryActions
     /**
      * Récupération d'un élément (fichier ou dossier).
      *
-     * @return array
+     * @return JsonResponseInterface
      *
      * @throws Exception
      */
-    public function doFetch(): array;
+    public function doFetch(): JsonResponseInterface;
 
     /**
      * Renommage d'un élément (fichier ou dossier).
      *
-     * @return array
+     * @return JsonResponseInterface
      *
      * @throws Exception
      */
-    public function doRename(): array;
+    public function doRename(): JsonResponseInterface;
 
     /**
      * Téléversement de fichiers.
      *
-     * @return array
+     * @return JsonResponseInterface
      *
      * @throws Exception
      */
-    public function doUpload(): array;
+    public function doUpload(): JsonResponseInterface;
 
     /**
      * Message de notification.

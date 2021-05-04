@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Template\Templates\FileManager;
 
 use League\Route\Http\Exception\MethodNotAllowedException;
 use tiFy\Template\Factory\HttpXhrController as BaseHttpXhrController;
-use tiFy\Template\Templates\FileManager\Contracts\{Factory, HttpXhrController as HttpXhrControllerContract};
+use tiFy\Template\Templates\FileManager\Contracts\Factory;
+use tiFy\Template\Templates\FileManager\Contracts\HttpXhrController as HttpXhrControllerContract;
 
 class HttpXhrController extends BaseHttpXhrController implements HttpXhrControllerContract
 {

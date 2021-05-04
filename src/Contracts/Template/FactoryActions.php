@@ -3,7 +3,7 @@
 namespace tiFy\Contracts\Template;
 
 use Exception;
-use tiFy\Routing\BaseController;
+use Pollen\Routing\BaseController;
 
 interface FactoryActions extends FactoryAwareTrait
 {

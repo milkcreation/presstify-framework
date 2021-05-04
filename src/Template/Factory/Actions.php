@@ -1,15 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Template\Factory;
 
 use Exception;
-use tiFy\Contracts\Template\{
-    FactoryActions as FactoryActionsContract,
-    FactoryHttpController as FactoryHttpControllerContract,
-    FactoryHttpXhrController as FactoryHttpXhrControllerContract
-};
+use Pollen\Routing\BaseController;
+use tiFy\Contracts\Template\FactoryActions as FactoryActionsContract;
+use tiFy\Contracts\Template\FactoryHttpController as FactoryHttpControllerContract;
+use tiFy\Contracts\Template\FactoryHttpXhrController as FactoryHttpXhrControllerContract;
 use tiFy\Support\Str;
-use tiFy\Routing\BaseController;
 
 class Actions implements FactoryActionsContract
 {
@@ -42,9 +42,8 @@ class Actions implements FactoryActionsContract
 
         if (method_exists($this, $method)) {
             return $this->$method(...$parameters);
-        } else {
-            throw new Exception(__('Impossible d\'exécuter l\'action.', 'tify'));
         }
+        throw new Exception(__('Impossible d\'exécuter l\'action.', 'tify'));
     }
 
     /**

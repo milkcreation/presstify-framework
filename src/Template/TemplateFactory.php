@@ -1,23 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Template;
 
 use Psr\Http\Message\ServerRequestInterface;
-use tiFy\Contracts\Template\{
-    FactoryActions,
-    FactoryAjax,
-    FactoryAssets,
-    FactoryBuilder,
-    FactoryCache,
-    FactoryDb,
-    FactoryForm,
-    FactoryNotices,
-    FactoryRequest,
-    FactoryServiceProvider,
-    FactoryUrl,
-    TemplateFactory as TemplateFactoryContract,
-    TemplateManager as TemplateManagerContract};
-use tiFy\Support\{ParamsBag, Str};
+use tiFy\Contracts\Template\FactoryActions;
+use tiFy\Contracts\Template\FactoryAjax;
+use tiFy\Contracts\Template\FactoryAssets;
+use tiFy\Contracts\Template\FactoryBuilder;
+use tiFy\Contracts\Template\FactoryCache;
+use tiFy\Contracts\Template\FactoryDb;
+use tiFy\Contracts\Template\FactoryForm;
+use tiFy\Contracts\Template\FactoryNotices;
+use tiFy\Contracts\Template\FactoryRequest;
+use tiFy\Contracts\Template\FactoryServiceProvider;
+use tiFy\Contracts\Template\FactoryUrl;
+use tiFy\Contracts\Template\TemplateFactory as TemplateFactoryContract;
+use tiFy\Contracts\Template\TemplateManager as TemplateManagerContract;
+use tiFy\Support\ParamsBag;
+use tiFy\Support\Str;
 
 class TemplateFactory extends ParamsBag implements TemplateFactoryContract
 {
@@ -56,7 +58,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
      * @var string[]
      */
     protected $serviceProviders = [
-        Factory\ServiceProvider::class
+        Factory\ServiceProvider::class,
     ];
 
     /**
@@ -96,7 +98,7 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     /**
      * @inheritDoc
      */
-    public function boot(): void {}
+    public function boot(): void { }
 
     /**
      * @inheritDoc
@@ -187,13 +189,14 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
     {
         $labels = $this->resolve('labels');
 
-        if(is_string($key)) {
+        if (is_string($key)) {
             return $labels->get($key, $default);
-        }  elseif (is_array($key)) {
-            return $labels->set($key);
-        } else {
-            return $labels;
         }
+        if (is_array($key)) {
+            return $labels->set($key);
+        }
+
+        return $labels;
     }
 
     /**
@@ -229,11 +232,13 @@ class TemplateFactory extends ParamsBag implements TemplateFactoryContract
 
         if (is_null($key)) {
             return $params;
-        } elseif (is_array($key)) {
-            return $params->set($key);
-        } else {
-            return $params->get($key, $default);
         }
+
+        if (is_array($key)) {
+            return $params->set($key);
+        }
+
+        return $params->get($key, $default);
     }
 
     /**

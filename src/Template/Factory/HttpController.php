@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Template\Factory;
 
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Template\FactoryHttpController as FactoryHttpControllerContract;
-use tiFy\Routing\BaseController;
+use Pollen\Routing\BaseController;
 
 class HttpController extends BaseController implements FactoryHttpControllerContract
 {

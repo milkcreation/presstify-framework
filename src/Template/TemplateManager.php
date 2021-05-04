@@ -2,15 +2,19 @@
 
 namespace tiFy\Template;
 
+use Pollen\Http\JsonResponse;
+use Pollen\Http\Response;
+use Pollen\Support\Proxy\RouterProxy;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Template\{TemplateFactory as TemplateFactoryContract, TemplateManager as TemplateManagerContract};
 use tiFy\Support\Manager;
-use tiFy\Support\Proxy\Router;
 
 class TemplateManager extends Manager implements TemplateManagerContract
 {
+    use RouterProxy;
+
     /**
      * Chemin des requêtes HTTP et XHR.
      * @var string
@@ -62,7 +66,7 @@ class TemplateManager extends Manager implements TemplateManagerContract
     /**
      * @inheritDoc
      */
-    public function httpXhrcontroller(string $name, ServerRequestInterface $psrRequest)
+    public function httpXhrController(string $name, ServerRequestInterface $psrRequest)
     {
         return $this->get($name)->httpXhrController($psrRequest);
     }
@@ -75,10 +79,10 @@ class TemplateManager extends Manager implements TemplateManagerContract
         $this->basePath = md5('tify:template');
 
         foreach(['head', 'delete', 'get', 'options', 'post', 'put', 'patch'] as $method) {
-            Router::$method($this->basePath . '/{name}', [$this, 'httpController']);
-            Router::xhr($this->basePath . '/{name}/xhr', [$this, 'httpXhrController'], $method);
+            $this->router()->$method($this->basePath . '/{name}', [$this, 'httpController']);
+            $this->router()->xhr($this->basePath . '/{name}/xhr', [$this, 'httpXhrController'], strtoupper($method));
         }
-        Router::get($this->basePath . '/{name}/cache/{path:.*}', [$this, 'httpCacheController']);
+        $this->router()->get($this->basePath . '/{name}/cache/{path:.*}', [$this, 'httpCacheController']);
 
         return $this;
     }

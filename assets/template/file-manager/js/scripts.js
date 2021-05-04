@@ -5,7 +5,7 @@ import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widget';
 import Dropzone from 'dropzone/dist/min/dropzone.min';
 import 'pollen-solutions/partial/resources/assets/src/js/notice'
-import 'pollen-solutions/pdf/resources/assets/src/js/partial/pdf-viewer';
+import PdfViewer from 'pollen-solutions/pdf/resources/assets/src/js/partial/pdf-viewer';
 
 jQuery(function ($) {
     $.widget('tify.tifyFileManager', {
@@ -20,7 +20,7 @@ jQuery(function ($) {
 
             this._initOptions();
             this._initUploader();
-            this._initPdfPreview();
+            //this._initPdfPreview();
             this._initEvents();
         },
 
@@ -92,7 +92,7 @@ jQuery(function ($) {
             });
         },
         _initPdfPreview: function () {
-            $('.FileManager-preview--pdf').tifyPdfviewer();
+            new PdfViewer('.FileManager-preview--pdf');
         },
 
         // ACTIONS
@@ -187,7 +187,7 @@ jQuery(function ($) {
                 .done(function (resp) {
                     self._doUpdateViews(resp.views || {});
                     self._trigger('refresh');
-                });
+                })
         },
         // À la soumission de formulaire de suppression.
         _onDelete: function (e) {
