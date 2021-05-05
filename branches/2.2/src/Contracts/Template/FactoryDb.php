@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Contracts\Template;
 
-use tiFy\Database\Model;
+use Pollen\Database\Drivers\Laravel\Eloquent\AbstractModel;
 
 /**
- * @mixin Model
+ * @mixin AbstractModel
  */
 interface FactoryDb extends FactoryAwareTrait
 {
