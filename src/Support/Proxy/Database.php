@@ -1,9 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
-use Illuminate\Database\{Connection, Schema\Builder as Schema, Query\Builder as Query};
-use tiFy\Contracts\Database\Database as DatabaseContract;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Schema\Builder as Schema;
+use Illuminate\Database\Query\Builder as Query;
+use Pollen\Database\DatabaseManagerInterface;
+
 
 /**
  * @method static void addConnection(array $config, string $name = 'default')
@@ -16,9 +21,9 @@ class Database extends AbstractProxy
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|DatabaseContract
+     * @return DatabaseManagerInterface
      */
-    public static function getInstance()
+    public static function getInstance(): DatabaseManagerInterface
     {
         return parent::getInstance();
     }
@@ -28,6 +33,6 @@ class Database extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'database';
+        return DatabaseManagerInterface::class;
     }
 }

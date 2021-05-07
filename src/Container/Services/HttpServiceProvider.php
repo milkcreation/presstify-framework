@@ -7,9 +7,9 @@ namespace tiFy\Container\Services;
 use Pollen\Http\Request;
 use Pollen\Http\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrRequestInterface;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class HttpServiceProvider extends ServiceProvider
+class HttpServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

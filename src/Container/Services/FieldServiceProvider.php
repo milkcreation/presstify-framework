@@ -34,9 +34,9 @@ use Pollen\Field\Drivers\TextareaDriver;
 use Pollen\Field\Drivers\TextRemainingDriver;
 use Pollen\Field\Drivers\TinymceDriver;
 use Pollen\Field\Drivers\ToggleSwitchDriver;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class FieldServiceProvider extends ServiceProvider
+class FieldServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

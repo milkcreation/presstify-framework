@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Cookie\CookieJarInterface;
+use Pollen\Support\Proxy\ContainerProxy;
+use Psr\Container\ContainerInterface as Container;
 use WP_Site;
 
 class WpCookie
 {
+    use ContainerProxy;
+
     /**
      * @var CookieJarInterface
      */
@@ -16,12 +20,12 @@ class WpCookie
 
     /**
      * @param CookieJarInterface $cookieJar
-     *
-     * @return void
+     * @param Container $container
      */
-    public function __construct(CookieJarInterface $cookieJar)
+    public function __construct(CookieJarInterface $cookieJar, Container $container)
     {
         $this->cookieJar = $cookieJar;
+        $this->setContainer($container);
 
         if (is_multisite() && $site = WP_Site::get_instance(get_current_blog_id())) {
             $domain = config()->get('cookie.domain') ?? $site->domain;

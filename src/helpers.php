@@ -6,6 +6,7 @@ use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use League\Uri\Contracts\UriInterface as LeagueUri;
 use Pollen\Asset\AssetManagerInterface;
+use Pollen\Database\DatabaseManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
 use Pollen\Field\FieldDriverInterface;
 use Pollen\Field\FieldManagerInterface;
@@ -22,7 +23,6 @@ use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
-use tiFy\Contracts\Database\Database;
 use tiFy\Contracts\Filesystem\Filesystem;
 use tiFy\Contracts\Filesystem\StorageManager;
 use tiFy\Contracts\Kernel\ClassLoader;
@@ -176,16 +176,16 @@ if (!function_exists('database')) {
     /**
      * Database - Gestionnaire de base de données.
      *
-     * @param string|null $table Nom de qualification de la table de base de données spécifique.
+     * @param string|null $table
      *
-     * @return Database|LaraDatabaseQueryBuilder|null
+     * @return DatabaseManagerInterface|LaraDatabaseQueryBuilder|null
      */
     function database(?string $table = null)
     {
-        /* @var Database $manager */
-        $manager = app('database');
+        /* @var DatabaseManagerInterface $manager */
+        $manager = app(DatabaseManagerInterface::class);
 
-        if (is_null($table)) {
+        if ($table === null) {
             return $manager;
         }
         return $manager::table($table);

@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Debug\DebugManagerInterface;
+use Pollen\Support\Proxy\ContainerProxy;
+use Psr\Container\ContainerInterface as Container;
 
 class WpDebug
 {
+    use ContainerProxy;
+
     /**
      * @var DebugManagerInterface
      */
@@ -15,10 +19,12 @@ class WpDebug
 
     /**
      * @param DebugManagerInterface $debug
+     * @param Container $container
      */
-    public function __construct(DebugManagerInterface $debug)
+    public function __construct(DebugManagerInterface $debug, Container $container)
     {
         $this->debug = $debug;
+        $this->setContainer($container);
 
         add_action(
             'wp_head',

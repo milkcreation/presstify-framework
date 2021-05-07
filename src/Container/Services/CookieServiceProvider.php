@@ -7,9 +7,9 @@ namespace tiFy\Container\Services;
 use Pollen\Cookie\CookieJar;
 use Pollen\Cookie\CookieJarInterface;
 use Pollen\Cookie\Middleware\QueuedCookiesMiddleware;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class CookieServiceProvider extends ServiceProvider
+class CookieServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

@@ -6,9 +6,9 @@ namespace tiFy\Container\Services;
 
 use Pollen\Asset\AssetManager;
 use Pollen\Asset\AssetManagerInterface;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class AssetServiceProvider extends ServiceProvider
+class AssetServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

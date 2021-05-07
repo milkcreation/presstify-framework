@@ -26,9 +26,9 @@ use Pollen\Partial\Drivers\SliderDriver;
 use Pollen\Partial\Drivers\SpinnerDriver;
 use Pollen\Partial\Drivers\TabDriver;
 use Pollen\Partial\Drivers\TagDriver;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class PartialServiceProvider extends ServiceProvider
+class PartialServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

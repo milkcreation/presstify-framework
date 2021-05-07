@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Asset\AssetManagerInterface;
+use Pollen\Support\Proxy\ContainerProxy;
 use Pollen\Support\Proxy\HttpRequestProxy;
+use Psr\Container\ContainerInterface as Container;
 
 class WpAsset
 {
+    use ContainerProxy;
     use HttpRequestProxy;
 
     /**
@@ -18,10 +21,12 @@ class WpAsset
 
     /**
      * @param AssetManagerInterface $asset
+     * @param Container $container
      */
-    public function __construct(AssetManagerInterface $asset)
+    public function __construct(AssetManagerInterface $asset, Container $container)
     {
         $this->asset = $asset;
+        $this->setContainer($container);
 
         $this->asset
             ->setBaseDir(ABSPATH)

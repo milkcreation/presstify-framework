@@ -7,9 +7,9 @@ namespace tiFy\Container\Services;
 use Pollen\Session\SessionManager;
 use Pollen\Session\SessionManagerInterface;
 use Pollen\Support\Env;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class SessionServiceProvider extends ServiceProvider
+class SessionServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

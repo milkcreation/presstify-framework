@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Mail\MailManagerInterface;
+use Pollen\Support\Proxy\ContainerProxy;
+use Psr\Container\ContainerInterface as Container;
 
 class WpMail
 {
+    use ContainerProxy;
+
     /**
      * @var MailManagerInterface
      */
@@ -15,10 +19,12 @@ class WpMail
 
     /**
      * @param MailManagerInterface $mail
+     * @param Container $container
      */
-    public function __construct(MailManagerInterface $mail)
+    public function __construct(MailManagerInterface $mail, Container $container)
     {
         $this->mail = $mail;
+        $this->setContainer($container);
 
         if (!$this->mail->defaults('from')) {
             $this->mail->defaults(['from' => $this->getAdminAddress()]);
