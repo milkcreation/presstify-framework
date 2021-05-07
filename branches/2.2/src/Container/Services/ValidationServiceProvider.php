@@ -6,9 +6,9 @@ namespace tiFy\Container\Services;
 
 use Pollen\Validation\Validator;
 use Pollen\Validation\ValidatorInterface;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class ValidationServiceProvider extends ServiceProvider
+class ValidationServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

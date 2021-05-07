@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
+use Pollen\Support\Proxy\ContainerProxy;
 use Pollen\Support\Proxy\HttpRequestProxy;
 use Pollen\Routing\RouterInterface;
 use Pollen\Routing\UrlMatcher;
+use Psr\Container\ContainerInterface as Container;
 use WP_Query;
 
 class WpRouting
 {
+    use ContainerProxy;
     use HttpRequestProxy;
 
     /**
@@ -54,10 +57,12 @@ class WpRouting
 
     /**
      * @param RouterInterface $router
+     * @param Container $container
      */
-    public function __construct(RouterInterface $router)
+    public function __construct(RouterInterface $router, Container $container)
     {
         $this->router = $router;
+        $this->setContainer($container);
 
         if (!$this->router->hasFallback()) {
             $this->router->setFallback(WpFallbackController::class);

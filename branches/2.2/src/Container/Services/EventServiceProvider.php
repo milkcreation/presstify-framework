@@ -6,9 +6,9 @@ namespace tiFy\Container\Services;
 
 use Pollen\Event\EventDispatcher;
 use Pollen\Event\EventDispatcherInterface;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class EventServiceProvider extends ServiceProvider
+class EventServiceProvider extends BaseServiceProvider
 {
     protected $provides = [
         EventDispatcherInterface::class

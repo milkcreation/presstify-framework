@@ -6,9 +6,9 @@ namespace tiFy\Container\Services;
 
 use Pollen\Log\LogManager;
 use Pollen\Log\LogManagerInterface;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class LogServiceProvider extends ServiceProvider
+class LogServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

@@ -14,9 +14,9 @@ use Pollen\Mail\MailQueueFactory;
 use Pollen\Mail\MailQueueFactoryInterface;
 use PHPMailer\PHPMailer\PHPMailer;
 use Pollen\Support\Env;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class MailServiceProvider extends ServiceProvider
+class MailServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

@@ -10,9 +10,9 @@ use Pollen\Debug\DebugManagerInterface;
 use Pollen\Debug\ErrorHandlerInterface;
 use Pollen\Debug\PhpDebugBarDriver;
 use Pollen\Debug\WhoopsErrorHandler;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class DebugServiceProvider extends ServiceProvider
+class DebugServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

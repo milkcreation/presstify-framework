@@ -5,23 +5,27 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Asset\AssetManagerInterface;
+use Pollen\Database\DatabaseManagerInterface;
 use Pollen\Debug\DebugManagerInterface;
 use Pollen\Cookie\CookieJarInterface;
 use Pollen\Field\FieldManagerInterface;
+use Pollen\Form\FormManagerInterface;
 use Pollen\Http\RequestInterface;
 use Pollen\Mail\MailManagerInterface;
 use Pollen\Partial\PartialManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Session\SessionManagerInterface;
+use Pollen\Support\Concerns\BootableTrait;
+use Pollen\Support\DateTime;
+use Pollen\Support\Env;
+use Pollen\Support\Proxy\HttpRequestProxy;
+use RuntimeException;
 use tiFy\Container\ServiceProvider;
-use tiFy\Contracts\Form\FormManager;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
-use tiFy\Wordpress\Database\Database;
 use tiFy\Wordpress\Filesystem\Filesystem;
-use tiFy\Wordpress\Form\Form;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Metabox\Metabox;
 use tiFy\Wordpress\Option\Option;
@@ -43,6 +47,9 @@ use WP_User;
 
 class WordpressServiceProvider extends ServiceProvider
 {
+    use BootableTrait;
+    use HttpRequestProxy;
+
     /**
      * Liste des services fournis.
      * @var array
@@ -86,25 +93,39 @@ class WordpressServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        require_once __DIR__ . '/helpers.php';
-
-        $this->getContainer()->share('wp', $wp = new Wordpress());
-
-        add_action(
-            'plugins_loaded',
-            function () {
-                load_muplugin_textdomain('tify', '/presstify/languages/');
-                do_action('tify_load_textdomain');
+        if (!$this->isBooted()) {
+            if (!defined('WPINC')) {
+                throw new RuntimeException('Wordpress must be installed to work');
             }
-        );
 
-        add_action(
-            'after_setup_theme',
-            function () use ($wp) {
-                if ($wp->is()) {
+            require_once __DIR__ . '/helpers.php';
+
+            $this->getContainer()->share('wp', new Wordpress());
+
+            add_action(
+                'plugins_loaded',
+                function () {
+                    load_muplugin_textdomain('tify', '/presstify/languages/');
+                    do_action('tify_load_textdomain');
+                }
+            );
+
+            add_action(
+                'after_setup_theme',
+                function () {
                     require_once(ABSPATH . 'wp-admin/includes/translation-install.php');
+
                     Locale::set(get_locale());
                     Locale::setLanguages(wp_get_available_translations() ?: []);
+
+                    $tz = Env::get('APP_TIMEZONE') ?: $this->httpRequest()->server->get(
+                        'TZ',
+                        ini_get('date.timezone') ?: 'UTC'
+                    );
+                    date_default_timezone_set($tz);
+
+                    global $locale;
+                    DateTime::setLocale($locale);
 
                     if ($this->getContainer()->has(DebugManagerInterface::class)) {
                         $this->getContainer()->get('wp.debug');
@@ -132,19 +153,15 @@ class WordpressServiceProvider extends ServiceProvider
                         $this->getContainer()->get('cron');
                     }
 
-                    if ($this->getContainer()->has('database')) {
+                    if ($this->getContainer()->has(DatabaseManagerInterface::class)) {
                         $this->getContainer()->get('wp.database');
-                    }
-
-                    if ($this->getContainer()->has('db')) {
-                        $this->getContainer()->get('wp.db');
                     }
 
                     if ($this->getContainer()->has(FieldManagerInterface::class)) {
                         $this->getContainer()->get('wp.field');
                     }
 
-                    if ($this->getContainer()->has(FormManager::class)) {
+                    if ($this->getContainer()->has(FormManagerInterface::class)) {
                         $this->getContainer()->get('wp.form');
                     }
 
@@ -203,10 +220,12 @@ class WordpressServiceProvider extends ServiceProvider
                     }
 
                     events()->trigger('wp.booted');
-                }
-            },
-            1
-        );
+                },
+                1
+            );
+
+            $this->setBooted();
+        }
     }
 
     /**
@@ -250,7 +269,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.asset',
             function () {
-                return new WpAsset($this->getContainer()->get(AssetManagerInterface::class));
+                return new WpAsset($this->getContainer()->get(AssetManagerInterface::class), $this->getContainer());
             }
         );
     }
@@ -296,7 +315,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.cookie',
             function () {
-                return new WpCookie($this->getContainer()->get(CookieJarInterface::class));
+                return new WpCookie($this->getContainer()->get(CookieJarInterface::class), $this->getContainer());
             }
         );
     }
@@ -311,7 +330,9 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.database',
             function () {
-                return new Database($this->getContainer()->get('database'));
+                return new WpDatabase(
+                    $this->getContainer()->get(DatabaseManagerInterface::class), $this->getContainer()
+                );
             }
         );
     }
@@ -326,7 +347,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.debug',
             function () {
-                return new WpDebug($this->getContainer()->get(DebugManagerInterface::class));
+                return new WpDebug($this->getContainer()->get(DebugManagerInterface::class), $this->getContainer());
             }
         );
     }
@@ -371,7 +392,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.form',
             function () {
-                return new Form($this->getContainer()->get(FormManager::class), $this->getContainer());
+                return new WpForm($this->getContainer()->get(FormManagerInterface::class), $this->getContainer());
             }
         );
     }
@@ -386,7 +407,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.http.request',
             function () {
-                return new WpHttpRequest($this->getContainer()->get(RequestInterface::class));
+                return new WpHttpRequest($this->getContainer()->get(RequestInterface::class), $this->getContainer());
             }
         );
     }
@@ -401,7 +422,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.mail',
             function () {
-                return new WpMail($this->getContainer()->get(MailManagerInterface::class));
+                return new WpMail($this->getContainer()->get(MailManagerInterface::class), $this->getContainer());
             }
         );
     }
@@ -544,7 +565,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.routing',
             function () {
-                return new WpRouting($this->getContainer()->get(RouterInterface::class));
+                return new WpRouting($this->getContainer()->get(RouterInterface::class), $this->getContainer());
             }
         );
 
@@ -573,7 +594,7 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.session',
             function () {
-                return new WpSession($this->getContainer()->get(SessionManagerInterface::class));
+                return new WpSession($this->getContainer()->get(SessionManagerInterface::class), $this->getContainer());
             }
         );
     }

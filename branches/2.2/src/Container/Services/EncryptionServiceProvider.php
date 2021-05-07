@@ -7,9 +7,9 @@ namespace tiFy\Container\Services;
 use Pollen\Encryption\Encrypter;
 use Pollen\Encryption\EncrypterInterface;
 use Pollen\Support\Env;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class EncryptionServiceProvider extends ServiceProvider
+class EncryptionServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

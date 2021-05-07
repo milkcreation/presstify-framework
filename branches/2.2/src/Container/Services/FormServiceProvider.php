@@ -6,9 +6,9 @@ namespace tiFy\Container\Services;
 
 use Pollen\Form\FormManager;
 use Pollen\Form\FormManagerInterface;
-use tiFy\Container\ServiceProvider;
+use tiFy\Container\ServiceProvider as BaseServiceProvider;
 
-class FormServiceProvider extends ServiceProvider
+class FormServiceProvider extends BaseServiceProvider
 {
     /**
      * @var string[]

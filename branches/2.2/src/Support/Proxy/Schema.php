@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
@@ -29,21 +31,21 @@ use Illuminate\Database\Schema\Builder as SchemaBuilder;
 class Schema extends AbstractProxy
 {
     /**
-     * {@inheritDoc}
+     * @param string $name
      *
      * @return SchemaBuilder
      */
-    public static function connexion(string $name = 'default')
+    public static function connexion(string $name = 'default'): SchemaBuilder
     {
-        return static::$container->get('database')->connection($name)->getSchemaBuilder();
+        return Database::getConnection($name)->getSchemaBuilder();
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|SchemaBuilder
+     * @return SchemaBuilder
      */
-    public static function getInstance()
+    public static function getInstance(): SchemaBuilder
     {
         return static::connexion();
     }
