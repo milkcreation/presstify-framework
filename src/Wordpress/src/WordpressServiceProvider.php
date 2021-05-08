@@ -24,7 +24,6 @@ use RuntimeException;
 use tiFy\Container\ServiceProvider;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Locale;
-use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Metabox\Metabox;
@@ -36,7 +35,6 @@ use tiFy\Wordpress\Query\QueryPost;
 use tiFy\Wordpress\Query\QueryTerm;
 use tiFy\Wordpress\Query\QueryUser;
 use tiFy\Wordpress\Taxonomy\Taxonomy;
-use tiFy\Wordpress\Template\Template;
 use tiFy\Wordpress\User\User;
 use tiFy\Wordpress\User\Role\RoleFactory;
 use tiFy\Wordpress\View\View;
@@ -56,7 +54,6 @@ class WordpressServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'wp.asset',
-        'wp.auth',
         'wp.column',
         'wp.cookie',
         'wp.database',
@@ -139,8 +136,6 @@ class WordpressServiceProvider extends ServiceProvider
                         $this->getContainer()->get('wp.asset');
                     }
 
-                    $this->getContainer()->get('wp.auth');
-
                     if ($this->getContainer()->has('column')) {
                         $this->getContainer()->get('wp.column');
                     }
@@ -165,7 +160,9 @@ class WordpressServiceProvider extends ServiceProvider
                         $this->getContainer()->get('wp.form');
                     }
 
-                    $this->getContainer()->get('wp.http.request');
+                    if ($this->getContainer()->has(RequestInterface::class)) {
+                        $this->getContainer()->get('wp.http.request');
+                    }
 
                     if ($this->getContainer()->has(MailManagerInterface::class)) {
                         $this->getContainer()->get('wp.mail');
@@ -201,10 +198,6 @@ class WordpressServiceProvider extends ServiceProvider
                         $this->getContainer()->get('wp.taxonomy');
                     }
 
-                    if ($this->getContainer()->has('template')) {
-                        $this->getContainer()->get('wp.template');
-                    }
-
                     if ($this->getContainer()->has('user')) {
                         $this->getContainer()->get('wp.user');
                         $this->getContainer()->add(
@@ -234,7 +227,6 @@ class WordpressServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerAsset();
-        $this->registerAuth();
         $this->registerColumn();
         $this->registerCookie();
         $this->registerDatabase();
@@ -254,7 +246,6 @@ class WordpressServiceProvider extends ServiceProvider
         $this->registerRouting();
         $this->registerSession();
         $this->registerTaxonomy();
-        $this->registerTemplate();
         $this->registerUser();
         $this->registerView();
     }
@@ -273,22 +264,6 @@ class WordpressServiceProvider extends ServiceProvider
             }
         );
     }
-
-    /**
-     * Déclaration du gestionnaire d'authentification.
-     *
-     * @return void
-     */
-    public function registerAuth(): void
-    {
-        $this->getContainer()->share(
-            'wp.auth',
-            function () {
-                return new Auth();
-            }
-        );
-    }
-
 
     /**
      * Déclaration du controleur des colonnes.
@@ -612,21 +587,6 @@ class WordpressServiceProvider extends ServiceProvider
             'wp.taxonomy',
             function () {
                 return new Taxonomy($this->getContainer()->get('taxonomy'));
-            }
-        );
-    }
-
-    /**
-     * Déclaration du controleur de gabarit.
-     *
-     * @return void
-     */
-    public function registerTemplate(): void
-    {
-        $this->getContainer()->share(
-            'wp.template',
-            function () {
-                return new Template($this->getContainer()->get('template'));
             }
         );
     }

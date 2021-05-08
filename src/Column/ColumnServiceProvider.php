@@ -12,8 +12,7 @@ class ColumnServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'column',
-        'column.item'
+        'column'
     ];
 
     /**
@@ -23,10 +22,6 @@ class ColumnServiceProvider extends ServiceProvider
     {
         $this->getContainer()->share('column', function () {
             return new Column();
-        });
-
-        $this->getContainer()->add('column.item', function ($name, $attrs = [], $screen = null) {
-            return new ColumnItemController($name, $attrs, $screen);
         });
     }
 }

@@ -8,7 +8,6 @@ use League\Uri\Http as HttpUri;
 use Pollen\Http\Request;
 use Pollen\Http\RequestInterface;
 use tiFy\Container\ServiceProvider;
-use tiFy\Support\ClassInfo;
 
 class KernelServiceProvider extends ServiceProvider
 {
@@ -18,7 +17,6 @@ class KernelServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $provides = [
-        'class-info',
         'uri',
     ];
 
@@ -39,10 +37,6 @@ class KernelServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->getContainer()->add('class-info', function ($class) {
-            return new ClassInfo($class);
-        });
-
         $this->getContainer()->share('uri', function () {
             /** @var Request $request */
             $request = $this->getContainer()->get(RequestInterface::class);
