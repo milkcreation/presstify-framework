@@ -1,40 +1,24 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Kernel;
 
-use League\Flysystem\{
-    Cached\CachedAdapter,
-    Cached\CacheInterface,
-    Cached\Storage\Memory as MemoryStore,
-    FilesystemNotFoundException};
-use tiFy\Contracts\Filesystem\{Filesystem as FileSystemContract, LocalFilesystem as LocalFilesystemContract};
+use Pollen\Filesystem\LocalFilesystem;
+use Pollen\Filesystem\LocalFilesystemAdapter;
+use Pollen\Filesystem\LocalFilesystemInterface;
+use Pollen\Filesystem\StorageManager;
+use Pollen\Support\Filesystem as fs;
 use tiFy\Contracts\Kernel\Path as PathContract;
-use tiFy\Filesystem\{LocalAdapter, LocalFilesystem,  StorageManager};
 
 class Path extends StorageManager implements PathContract
 {
     /**
-     * Séparateur de dossier.
-     * @var string
-     */
-    const DS = DIRECTORY_SEPARATOR;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LocalFilesystem|null
-     */
-    public function disk(?string $name = null): ?FileSystemContract
-    {
-        return parent::disk($name);
-    }
-
-    /**
      * @inheritDoc
      */
-    public function diskBase(): LocalFilesystemContract
+    public function diskBase(): LocalFilesystemInterface
     {
-        if (!$disk = $this->getFilesystem('base')) {
+        if (!$disk = $this->disk('base')) {
             $disk = $this->mount('base', ROOT_PATH);
         }
 
@@ -44,9 +28,9 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskCache(): LocalFilesystemContract
+    public function diskCache(): LocalFilesystemInterface
     {
-        if (!$disk = $this->getFilesystem('cache')) {
+        if (!$disk = $this->disk('cache')) {
             $disk = $this->mount('cache', $this->getStoragePath('/cache'));
         }
 
@@ -56,9 +40,9 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskConfig(): LocalFilesystemContract
+    public function diskConfig(): LocalFilesystemInterface
     {
-        if (!$disk = $this->getFilesystem('config')) {
+        if (!$disk = $this->disk('config')) {
             $disk = $this->mount('config', !$this->isWp()
                 ? $this->getBasePath('config') : get_template_directory() . '/config'
             );
@@ -70,9 +54,9 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskLog(): LocalFilesystemContract
+    public function diskLog(): LocalFilesystemInterface
     {
-        if (!$disk = $this->getFilesystem('log')) {
+        if (!$disk = $this->disk('log')) {
             $disk = $this->mount('log', $this->getStoragePath('/log'));
         }
 
@@ -82,9 +66,9 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskPathFromBase(LocalFilesystemContract $disk, string $path = '', bool $absolute = true): ?string
+    public function diskPathFromBase(LocalFilesystemInterface $disk, string $path = '', bool $absolute = true): ?string
     {
-        $path = preg_replace('/^' . preg_quote($this->getBasePath(), self::DS) . '/', '', $disk->path($path), 1, $n);
+        $path = preg_replace('/^' . preg_quote($this->getBasePath(), fs::DS) . '/', '', $disk->getAbsolutePath($path), 1, $n);
 
         return $n === 1 ? $this->getBasePath($path, $absolute) : null;
     }
@@ -92,9 +76,9 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskPublic(): LocalFilesystemContract
+    public function diskPublic(): LocalFilesystemInterface
     {
-        if (!$disk = $this->getFilesystem('public')) {
+        if (!$disk = $this->disk('public')) {
             $disk = $this->mount('public', !$this->isWp() ? $this->getBasePath('/public') : ABSPATH);
         }
 
@@ -104,9 +88,9 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskStorage(): LocalFilesystemContract
+    public function diskStorage(): LocalFilesystemInterface
     {
-        if (!$disk = $this->getFilesystem('storage')) {
+        if (!$disk = $this->disk('storage')) {
             $disk = $this->mount(
                 'storage', !$this->isWp() ? $this->getBasePath('storage') : WP_CONTENT_DIR . '/uploads'
             );
@@ -118,9 +102,9 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskTheme(): LocalFilesystemContract
+    public function diskTheme(): LocalFilesystemInterface
     {
-        if (!$disk = $this->getFilesystem('theme')) {
+        if (!$disk = $this->disk('theme')) {
             $disk = $this->mount('theme', get_template_directory());
         }
 
@@ -130,9 +114,9 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function diskTiFy(): LocalFilesystemContract
+    public function diskTiFy(): LocalFilesystemInterface
     {
-        if (!$disk = $this->getFilesystem('tify')) {
+        if (!$disk = $this->disk('tify')) {
             $disk = $this->mount('tify', $this->getBasePath('/vendor/presstify/framework/src'));
         }
 
@@ -144,7 +128,8 @@ class Path extends StorageManager implements PathContract
      */
     public function getBasePath(string $path = '', bool $absolute = true): string
     {
-        return $this->normalize($absolute ? $this->diskBase()->path($path) : $path);
+
+        return $this->normalize($absolute ? $this->diskBase()->getAbsolutePath($path) : $path);
     }
 
     /**
@@ -161,32 +146,6 @@ class Path extends StorageManager implements PathContract
     public function getConfigPath(string $path = '', bool $absolute = true): string
     {
         return $this->diskPathFromBase($this->diskConfig(), $path, $absolute);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LocalFilesystemContract|null
-     */
-    public function getDefault(): ?FilesystemContract
-    {
-        return $this->diskStorage();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LocalFilesystem
-     */
-    public function getFilesystem($prefix): ?LocalFilesystemContract
-    {
-        try {
-            /** @var LocalFilesystem $filesystem */
-            $filesystem = parent::getFilesystem($prefix);
-            return $filesystem;
-        } catch (FilesystemNotFoundException $e) {
-            return null;
-        }
     }
 
     /**
@@ -240,27 +199,28 @@ class Path extends StorageManager implements PathContract
     /**
      * @inheritDoc
      */
-    public function mount(string $name, string $root, array $config = []): LocalFilesystemContract
+    public function mount(string $name, string $root, array $config = []): LocalFilesystemInterface
     {
-        // @todo Utiliser le conteneur d'injection de dépendance.
-        $permissions = $config['permissions'] ?? [];
         $links = ($config['links'] ?? null) === 'skip'
-            ? LocalAdapter::SKIP_LINKS
-            : LocalAdapter::DISALLOW_LINKS;
+            ? LocalFilesystemAdapter::SKIP_LINKS
+            : LocalFilesystemAdapter::DISALLOW_LINKS;
 
-        $adapter = new LocalAdapter($root, LOCK_EX, $links, $permissions);
+        $adapter = new LocalFilesystemAdapter($root, null, LOCK_EX, $links);
 
+        /*
         if ($cache = $config['cache'] ?? true) {
             $adapter = $cache instanceof CacheInterface
                 ? new CachedAdapter($adapter, $cache)
                 : new CachedAdapter($adapter, new MemoryStore());
         }
+        */
 
         $filesystem = new LocalFilesystem($adapter, [
             'disable_asserts' => true,
             'case_sensitive' => true
         ]);
-        $this->set($name, $filesystem);
+
+        $this->addDisk($name, $filesystem);
 
         return $filesystem;
     }
@@ -270,7 +230,7 @@ class Path extends StorageManager implements PathContract
      */
     public function normalize(string $path): string
     {
-        return self::DS . ltrim(rtrim($path, self::DS), self::DS);
+        return fs::DS . ltrim(rtrim($path, fs::DS), fs::DS);
     }
 
     /**
@@ -278,7 +238,7 @@ class Path extends StorageManager implements PathContract
      */
     public function relPathFromBase(string $pathname): ?string
     {
-        $path = preg_replace('/^' . preg_quote($this->getBasePath(), self::DS) . '/', '', $pathname, 1, $n);
+        $path = preg_replace('/^' . preg_quote($this->getBasePath(), fs::DS) . '/', '', $pathname, 1, $n);
 
         return $n === 1 ? $this->getBasePath($path, false): null;
     }

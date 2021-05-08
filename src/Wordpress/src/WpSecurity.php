@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tiFy\Wordpress\Auth;
+declare(strict_types=1);
 
-class Auth
+namespace tiFy\Wordpress;
+
+class WpSecurity
 {
     /**
      * CONSTRUCTEUR.

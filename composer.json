@@ -8,7 +8,7 @@
     "wordpress"
   ],
   "license": "MIT",
-  "time": "2021-05-07",
+  "time": "2021-05-08",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -33,7 +33,6 @@
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-openssl": "*",
-    "composer/composer": "^2.0",
     "composer/installers": "~1.0",
     "guzzlehttp/guzzle": "^5.3.1|^6.2.1|^7.0",
     "guzzlehttp/psr7": "^1.2",
@@ -66,21 +65,20 @@
     "ralouphie/mimey": "^2.1",
     "spatie/menu": "^2.9",
     "symfony/console": "^5.0",
-    "symfony/filesystem": "^5.0",
-    "symfony/finder": "^5.0",
     "symfony/framework-bundle": "^5.0",
-    "symfony/lock": "^5.0",
-    "symfony/serializer": "^5.0"
+    "symfony/lock": "^5.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0"
   },
   "autoload": {
     "files": [
-      "src/helpers.php"
+      "src/helpers.php",
+      "src/Wordpress/src/helpers.php"
     ],
     "psr-4": {
-      "tiFy\\": "src"
+      "tiFy\\": "src",
+      "tiFy\\Wordpress\\": "src/Wordpress/src"
     }
   },
   "autoload-dev": {

@@ -10,6 +10,8 @@ use Pollen\Database\DatabaseManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
 use Pollen\Field\FieldDriverInterface;
 use Pollen\Field\FieldManagerInterface;
+use Pollen\Filesystem\FilesystemInterface;
+use Pollen\Filesystem\StorageManagerInterface;
 use Pollen\Partial\PartialDriverInterface;
 use Pollen\Partial\PartialManagerInterface;
 use Pollen\Http\RedirectResponseInterface;
@@ -23,8 +25,6 @@ use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
-use tiFy\Contracts\Filesystem\Filesystem;
-use tiFy\Contracts\Filesystem\StorageManager;
 use tiFy\Contracts\Kernel\ClassLoader;
 use tiFy\Contracts\Kernel\Config;
 use tiFy\Contracts\Kernel\Path;
@@ -174,7 +174,7 @@ if (!function_exists('cron')) {
 
 if (!function_exists('database')) {
     /**
-     * Database - Gestionnaire de base de données.
+     * Instance du gestionnaire de base de données|Constructeur de requêtes d'une table de la base de données.
      *
      * @param string|null $table
      *
@@ -194,10 +194,10 @@ if (!function_exists('database')) {
 
 if (!function_exists('env')) {
     /**
-     * Events - Gestionnaire de variables d'environnement.
+     * Récupération d'une variables d'environnement.
      *
-     * @param string $key Clé d'indice d'une variable
-     * @param mixed $default Valeur de retour par défaut
+     * @param string $key
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -210,7 +210,7 @@ if (!function_exists('env')) {
 
 if (!function_exists('events')) {
     /**
-     * Répartiteur d'événements.
+     * Instance du répartiteur d'événements.
      *
      * @return EventDispatcherInterface
      */
@@ -222,11 +222,11 @@ if (!function_exists('events')) {
 
 if (!function_exists('field')) {
     /**
-     * Field - Gestionnaire de champs.
+     * Instance du gestionnaire de champs|Instance d'un champ déclaré.
      *
-     * @param string|null $alias Alias de qualification.
-     * @param mixed $idOrParams Identifiant de qualification|Liste des attributs de configuration.
-     * @param array $params Liste des attributs de configuration.
+     * @param string|null $alias
+     * @param mixed $idOrParams
+     * @param array $params
      *
      * @return FieldManagerInterface|FieldDriverInterface|null
      */
@@ -244,7 +244,7 @@ if (!function_exists('field')) {
 
 if (!function_exists('form')) {
     /**
-     * Gestionnaire de formulaire|Instance d'un formulaire selon son nom de qualification.
+     * Instance du gestionnaire de formulaires|Instance d'un formulaire.
      *
      * @param string|null $name
      *
@@ -264,7 +264,7 @@ if (!function_exists('form')) {
 
 if (!function_exists('logger')) {
     /**
-     * Gestionnaire de journalisation|Déclaration d'un message de journalisation.
+     * Instance du gestionnaire de journalisation|Déclaration d'un message de journalisation.
      *
      * @param string|null $message
      * @param array $context
@@ -285,11 +285,11 @@ if (!function_exists('logger')) {
 
 if (!function_exists('partial')) {
     /**
-     * Partial - Gestionnaire de portions d'affichage.
+     * Instance du gestionnaire de portions d'affichage|Instance d'une portion d'affichage déclarée.
      *
-     * @param string|null $alias Alias de qualification.
-     * @param mixed $idOrParams Identifiant de qualification|Liste des attributs de configuration.
-     * @param array $params Liste des attributs de configuration.
+     * @param string|null $alias
+     * @param mixed $idOrParams
+     * @param array $params
      *
      * @return PartialManagerInterface|PartialDriverInterface|null
      */
@@ -359,7 +359,7 @@ if (!function_exists('redirect')) {
 
 if (!function_exists('request')) {
     /**
-     * HTTP - Gestionnaire de traitement de la requête HTTP principale.
+     * Instance de la requête HTTP principale.
      *
      * @return RequestInterface
      */
@@ -371,11 +371,11 @@ if (!function_exists('request')) {
 
 if (!function_exists('route')) {
     /**
-     * Routing - Récupération de l'url vers une route.
+     * Récupération de l'url d'une route déclarée.
      *
-     * @param string $name Nom de qualification de la route.
-     * @param array $parameters Liste des variables passées en argument dans l'url.
-     * @param boolean $absolute Activation de sortie de l'url absolue.
+     * @param string $name
+     * @param array $parameters
+     * @param boolean $absolute
      *
      * @return string|null
      */
@@ -390,18 +390,18 @@ if (!function_exists('route')) {
 
 if (!function_exists('storage')) {
     /**
-     * Storage - Gestionnaire de point de montage.
+     * Gestionnaire de système de fichier|Instance d'un point de montage.
      *
-     * @param string|null Nom de qualification du point de montage à récupéré.
+     * @param string|null $name
      *
-     * @return StorageManager|Filesystem
+     * @return StorageManagerInterface|FilesystemInterface
      */
     function storage(?string $name = null)
     {
-        /* @var StorageManager $manager */
-        $manager = app('storage');
+        /* @var StorageManagerInterface $manager */
+        $manager = app(StorageManagerInterface::class);
 
-        if (is_null($name)) {
+        if ($name === null) {
             return $manager;
         }
         return $manager->disk($name);

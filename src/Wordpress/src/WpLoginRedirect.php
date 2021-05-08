@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Wordpress\Auth;
+namespace tiFy\Wordpress;
 
 use Pollen\Http\RedirectResponse;
 use tiFy\Support\Proxy\Request as req;
