@@ -56,7 +56,7 @@ final class Column implements ColumnContract
                     $_screen = (preg_match('/(.*)@(post_type|taxonomy|user)/', $screen))
                         ? "list::{$screen}" : $screen;
 
-                    $this->items[] = app()->get('column.item', [$name, $attrs, $_screen]);
+                    $this->items[] = new ColumnItemController($name, $attrs, $_screen);
                 }
             }
         }, 0);
@@ -144,16 +144,13 @@ final class Column implements ColumnContract
         $i = 0;
         foreach ($headers as $name => $title) :
             /** @var ColumnItemController $column */
-            $column = app(
-                'column.item',
-                [
+            $column = new ColumnItemController(
                     $name,
                     [
                         'title'    => $title,
                         'position' => 0.99+$i++,
                     ],
                     $this->screen
-                ]
             );
             $column->load($this->screen);
             $this->currents[] = $column;

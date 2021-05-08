@@ -20,6 +20,8 @@ use Pollen\Form\FormManagerInterface;
 use Pollen\Form\FormInterface;
 use Pollen\Log\LogManagerInterface;
 use Pollen\Routing\RouterInterface;
+use Pollen\Support\ClassInfo;
+use Pollen\Support\Env;
 use Pollen\Validation\ValidatorInterface;
 use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Container\Container;
@@ -31,14 +33,12 @@ use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\Routing\Url;
-use tiFy\Contracts\Support\ClassInfo;
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;
 use tiFy\Contracts\Taxonomy\Taxonomy;
 use tiFy\Contracts\Template\TemplateFactory;
 use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\User;
 use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\Support\Env;
 use tiFy\tiFy;
 
 if (!function_exists('app')) {
@@ -86,7 +86,7 @@ if (!function_exists('class_info')) {
      */
     function class_info($class): ClassInfo
     {
-        return app('class-info', [$class]);
+        return new ClassInfo($class);
     }
 }
 
@@ -425,32 +425,6 @@ if (!function_exists('taxonomy')) {
             return $manager;
         }
         return $manager->get($name);
-    }
-}
-
-if (!function_exists('template')) {
-    /**
-     * Instance de controleur de gabarits d'affichage ou Instance d'un gabarit.
-     *
-     * @param string|null Nom de qualification du gabarit.
-     * @param array $params Liste des paramètres appliqués au gabarit.
-     *
-     * @return TemplateFactory|TemplateManager|null
-     */
-    function template(?string $name = null, array $params = [])
-    {
-        /* @var TemplateManager $manager */
-        $manager = app('template');
-
-        if (is_null($name)) {
-            return $manager;
-        }
-
-        if ($template = $manager->get($name)) {
-            $template->param($params);
-            return $template;
-        }
-        return null;
     }
 }
 
