@@ -1,28 +1,33 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Proxy;
 
-use tiFy\Contracts\Filesystem\{StorageManager, Filesystem, ImgAdapter, ImgFilesystem, LocalAdapter, LocalFilesystem};
+use Pollen\Filesystem\FilesystemInterface;
+use Pollen\Filesystem\LocalFilesystemAdapterInterface;
+use Pollen\Filesystem\LocalFilesystemInterface;
+use Pollen\Filesystem\LocalImageFilesystemInterface;
+use Pollen\Filesystem\StorageManagerInterface;
 
 /**
- * @method static Filesystem|null disk(string|null $name = null)
- * @method static ImgFilesystem img(string|ImgAdapter $root, array $config = [])
- * @method static ImgAdapter imgAdapter(string $root, array $config = [])
- * @method static LocalFilesystem local(string|LocalAdapter $root, array $config = [])
- * @method static LocalAdapter localAdapter(string $root, array $config = [])
- * @method static Filesystem|null register(string $name, string|array|Filesystem $attrs)
- * @method static ImgFilesystem|null registerImg(string $name, string|array|ImgFilesystem $attrs)
- * @method static LocalFilesystem|null registerLocal(string $name, string|array|LocalFilesystem $attrs)
- * @method static Filesystem|null system(string|null $name = null)
+ * @method static StorageManagerInterface addDisk(string $name, FilesystemInterface $disk)
+ * @method static StorageManagerInterface addLocalDisk(string $name, LocalFilesystemInterface $disk)
+ * @method static LocalFilesystemAdapterInterface createLocalAdapter(string $root, array $config = [])
+ * @method static FilesystemInterface|null disk(?string $name = null)
+ * @method static FilesystemInterface|null getDefaultDisk()
+ * @method static LocalFilesystemInterface registerLocalDisk(string $name, string $root, array $config = [])
+ * @method static LocalImageFilesystemInterface  registerLocalImageDisk(string $name, string $root, array $config = [])
+ * @method static StorageManagerInterface setDefaultDisk(FilesystemInterface $defaultDisk)
  */
 class Storage extends AbstractProxy
 {
     /**
      * {@inheritDoc}
      *
-     * @return mixed|object|StorageManager
+     * @return StorageManagerInterface
      */
-    public static function getInstance()
+    public static function getInstance(): StorageManagerInterface
     {
         return parent::getInstance();
     }
@@ -32,6 +37,6 @@ class Storage extends AbstractProxy
      */
     public static function getInstanceIdentifier(): string
     {
-        return 'storage';
+        return StorageManagerInterface::class;
     }
 }

@@ -4,179 +4,165 @@ declare(strict_types=1);
 
 namespace tiFy\Contracts\Kernel;
 
-use tiFy\Contracts\Filesystem\Filesystem;
-use tiFy\Contracts\Filesystem\LocalFilesystem;
-use tiFy\Contracts\Filesystem\StorageManager;
+use Pollen\Filesystem\FilesystemInterface;
+use Pollen\Filesystem\LocalFilesystemInterface;
+use Pollen\Filesystem\StorageManagerInterface;
 
-interface Path extends StorageManager
+interface Path extends StorageManagerInterface
 {
     /**
      * {@inheritDoc}
      *
-     * @return LocalFilesystem|null
+     * @return LocalFilesystemInterface|null
      */
-    public function disk(?string $name = null): ?Filesystem;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LocalFilesystem|null
-     */
-    public function getDefault(): ?Filesystem;
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LocalFilesystem|null
-     */
-    public function getFilesystem($name): ?LocalFilesystem;
+    public function disk(?string $name = null): ?FilesystemInterface;
 
     /**
      * Récupération de l'instance du gestionnaire de dossier racine.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function diskBase(): LocalFilesystem;
+    public function diskBase(): LocalFilesystemInterface;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier de stockage des fichiers de cache.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function diskCache(): LocalFilesystem;
+    public function diskCache(): LocalFilesystemInterface;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier de stockage des fichiers de configuration.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function diskConfig(): LocalFilesystem;
+    public function diskConfig(): LocalFilesystemInterface;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier de stockage des fichiers de journalisation.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function diskLog(): LocalFilesystem;
+    public function diskLog(): LocalFilesystemInterface;
 
     /**
      * Récupération du chemin de gestionnaire de fichiers par rapport à la racine.
      *
-     * @param LocalFilesystem $disk
+     * @param LocalFilesystemInterface $disk
      * @param string $path Chemin absolue vers un dossier ou un fichier du gestionnaire.
      * @param boolean $absolute Activation de la récupération du chemin en absolu.
      *
      * @return string
      */
-    public function diskPathFromBase(LocalFilesystem $disk, string $path = '', bool $absolute = true): ?string;
+    public function diskPathFromBase(LocalFilesystemInterface $disk, string $path = '', bool $absolute = true): ?string;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier publique.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function diskPublic(): LocalFilesystem;
+    public function diskPublic(): LocalFilesystemInterface;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier de stockage.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function diskStorage(): LocalFilesystem;
+    public function diskStorage(): LocalFilesystemInterface;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier du theme.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function diskTheme(): LocalFilesystem;
+    public function diskTheme(): LocalFilesystemInterface;
 
     /**
      * Récupération de l'instance du gestionnaire du dossier du framework PresstiFy.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function diskTiFy(): LocalFilesystem;
+    public function diskTiFy(): LocalFilesystemInterface;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire de base (racine).
      *
      * @param string $path Chemin relatif vers un fichier ou un dossier du repertoire.
-     * @param bool $rel Activation de la sortie du chemin au format relatif.
+     * @param bool $absolute Activation de la sortie du chemin au format relatif.
      *
      * @return string
      */
-    public function getBasePath(string $path = '', bool $rel = false): string;
+    public function getBasePath(string $path = '', bool $absolute = true): string;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire de cache.
      *
      * @param string $path Chemin relatif vers un fichier ou un dossier du répertoire.
-     * @param bool $rel Activation de la sortie du chemin au format relatif.
+     * @param bool $absolute Activation de la sortie du chemin au format relatif.
      *
      * @return string
      */
-    public function getCachePath(string $path = '', bool $rel = false): string;
+    public function getCachePath(string $path = '', bool $absolute = true): string;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire de configuration.
      *
      * @param string $path Chemin relatif vers un fichier ou un dossier du répertoire.
-     * @param bool $rel Activation de la sortie du chemin au format relatif.
+     * @param bool $absolute Activation de la sortie du chemin au format relatif.
      *
      * @return string
      */
-    public function getConfigPath(string $path = '', bool $rel = false): string;
+    public function getConfigPath(string $path = '', bool $absolute = true): string;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire de journalisation.
      *
      * @param string $path Chemin relatif vers un fichier ou un dossier du répertoire.
-     * @param bool $rel Activation de la sortie du chemin au format relatif.
+     * @param bool $absolute Activation de la sortie du chemin au format relatif.
      *
      * @return string
      */
-    public function getLogPath(string $path = '', bool $rel = false): string;
+    public function getLogPath(string $path = '', bool $absolute = true): string;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire publique.
      *
      * @param string $path Chemin relatif vers un fichier ou un dossier du répertoire.
-     * @param bool $rel Activation de la sortie du chemin en relatif.
+     * @param bool $absolute Activation de la sortie du chemin en relatif.
      *
      * @return string
      */
-    public function getPublicPath(string $path = '', bool $rel = false): string;
+    public function getPublicPath(string $path = '', bool $absolute = true): string;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire de stockage.
      *
      * @param string $path Chemin relatif vers un fichier ou un dossier du répertoire.
-     * @param bool $rel Activation de la sortie du chemin en relatif.
+     * @param bool $absolute Activation de la sortie du chemin en relatif.
      *
      * @return string
      */
-    public function getStoragePath(string $path = '', bool $rel = false): string;
+    public function getStoragePath(string $path = '', bool $absolute = true): string;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire du thème.
      *
      * @param string $path Chemin relatif vers un fichier ou un dossier du répertoire.
-     * @param bool $rel Activation de la sortie du chemin en relatif.
+     * @param bool $absolute Activation de la sortie du chemin en relatif.
      *
      * @return string
      */
-    public function getThemePath(string $path = '', bool $rel = false): string;
+    public function getThemePath(string $path = '', bool $absolute = true): string;
 
     /**
      * Récupération du chemin vers un dossier ou un fichier du répertoire du framework presstiFy.
      *
      * @param string $path Chemin relatif vers un fichier ou un dossier du repertoire.
-     * @param bool $rel Activation de la sortie du chemin en relatif.
+     * @param bool $absolute Activation de la sortie du chemin en relatif.
      *
      * @return string
      */
-    public function getTiFyPath(string $path = '', bool $rel = false): string;
+    public function getTiFyPath(string $path = '', bool $absolute = true): string;
 
     /**
      * Vérification du type d'arborescence du projet.
@@ -193,9 +179,9 @@ interface Path extends StorageManager
      * @param string $root Chemin absolu vers la racine du disque.
      * @param array $config Configuration.
      *
-     * @return LocalFilesystem
+     * @return LocalFilesystemInterface
      */
-    public function mount(string $name, string $root, array $config = []): LocalFilesystem;
+    public function mount(string $name, string $root, array $config = []): LocalFilesystemInterface;
 
     /**
      * Normalisation d'un chemin.

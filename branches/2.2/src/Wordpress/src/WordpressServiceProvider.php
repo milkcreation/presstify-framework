@@ -9,6 +9,7 @@ use Pollen\Database\DatabaseManagerInterface;
 use Pollen\Debug\DebugManagerInterface;
 use Pollen\Cookie\CookieJarInterface;
 use Pollen\Field\FieldManagerInterface;
+use Pollen\Filesystem\StorageManagerInterface;
 use Pollen\Form\FormManagerInterface;
 use Pollen\Http\RequestInterface;
 use Pollen\Mail\MailManagerInterface;
@@ -25,7 +26,6 @@ use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Auth\Auth;
 use tiFy\Wordpress\Column\Column;
-use tiFy\Wordpress\Filesystem\Filesystem;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Metabox\Metabox;
 use tiFy\Wordpress\Option\Option;
@@ -62,8 +62,8 @@ class WordpressServiceProvider extends ServiceProvider
         'wp.database',
         'wp.db',
         'wp.debug',
-        'wp.filesystem',
         'wp.field',
+        'wp.filesystem',
         'wp.form',
         'wp.http.request',
         'wp.login-redirect',
@@ -193,7 +193,7 @@ class WordpressServiceProvider extends ServiceProvider
                         $this->getContainer()->get('wp.session');
                     }
 
-                    if ($this->getContainer()->has('storage')) {
+                    if ($this->getContainer()->has(StorageManagerInterface::class)) {
                         $this->getContainer()->get('wp.filesystem');
                     }
 
@@ -362,7 +362,9 @@ class WordpressServiceProvider extends ServiceProvider
         $this->getContainer()->share(
             'wp.filesystem',
             function () {
-                return new Filesystem($this->getContainer()->get('storage'));
+                return new WpFilesystem(
+                    $this->getContainer()->get(StorageManagerInterface::class), $this->getContainer()
+                );
             }
         );
     }
