@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Taxonomy;
 
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 
-class TaxonomyServiceProvider extends ServiceProvider
+class TaxonomyServiceProvider extends BaseServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

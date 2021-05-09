@@ -21,7 +21,7 @@ use Pollen\Support\DateTime;
 use Pollen\Support\Env;
 use Pollen\Support\Proxy\HttpRequestProxy;
 use RuntimeException;
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Column\Column;
@@ -43,7 +43,7 @@ use WP_Screen;
 use WP_Term;
 use WP_User;
 
-class WordpressServiceProvider extends ServiceProvider
+class WordpressServiceProvider extends BaseServiceProvider
 {
     use BootableTrait;
     use HttpRequestProxy;

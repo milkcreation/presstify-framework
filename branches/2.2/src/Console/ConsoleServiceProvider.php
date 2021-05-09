@@ -1,13 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Console;
 
 use Symfony\Component\Console\Input\InputOption;
 use tiFy\Console\Commands\UpdateCore20345;
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 use tiFy\Kernel\Application as App;
 
-class ConsoleServiceProvider extends ServiceProvider
+class ConsoleServiceProvider extends BaseServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

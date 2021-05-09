@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace tiFy\PostType;
 
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 
-class PostTypeServiceProvider extends ServiceProvider
+class PostTypeServiceProvider extends BaseServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

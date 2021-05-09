@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Cron;
 
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 
-class CronServiceProvider extends ServiceProvider
+class CronServiceProvider extends BaseServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

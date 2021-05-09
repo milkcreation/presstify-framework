@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\View;
 
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 use tiFy\View\Engine\PlatesEngine;
 
-class ViewServiceProvider extends ServiceProvider
+class ViewServiceProvider extends BaseServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.
