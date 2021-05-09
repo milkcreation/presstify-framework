@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Cache;
 
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 
-class CacheServiceProvider extends ServiceProvider
+class CacheServiceProvider extends BaseServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

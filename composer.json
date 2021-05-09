@@ -8,7 +8,7 @@
     "wordpress"
   ],
   "license": "MIT",
-  "time": "2021-05-08",
+  "time": "2021-05-09",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -39,6 +39,7 @@
     "lhsazevedo/restatic": "^2.0",
     "mobiledetect/mobiledetectlib": "^2.8",
     "pollen-solutions/asset": "1.0.x-dev",
+    "pollen-solutions/config": "1.0.x-dev",
     "pollen-solutions/container": "1.0.x-dev",
     "pollen-solutions/cookie": "1.0.x-dev",
     "pollen-solutions/database": "1.0.x-dev",
@@ -49,6 +50,7 @@
     "pollen-solutions/filesystem": "1.0.x-dev",
     "pollen-solutions/form": "1.0.x-dev",
     "pollen-solutions/http": "1.0.x-dev",
+    "pollen-solutions/kernel": "1.0.x-dev",
     "pollen-solutions/log": "1.0.x-dev",
     "pollen-solutions/mail": "1.0.x-dev",
     "pollen-solutions/partial": "1.0.x-dev",

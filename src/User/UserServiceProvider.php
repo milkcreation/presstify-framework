@@ -1,14 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\User;
 
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 use tiFy\User\Metadata\Metadata;
 use tiFy\User\Metadata\Option as MetaOption;
 use tiFy\User\Role\RoleFactory;
 use tiFy\User\Role\RoleManager;
 
-class UserServiceProvider extends ServiceProvider
+class UserServiceProvider extends BaseServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

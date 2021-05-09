@@ -6,6 +6,7 @@ use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use League\Uri\Contracts\UriInterface as LeagueUri;
 use Pollen\Asset\AssetManagerInterface;
+use Pollen\Container\Container;
 use Pollen\Database\DatabaseManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
 use Pollen\Field\FieldDriverInterface;
@@ -24,7 +25,6 @@ use Pollen\Support\ClassInfo;
 use Pollen\Support\Env;
 use Pollen\Validation\ValidatorInterface;
 use Psr\Http\Message\UriInterface;
-use tiFy\Contracts\Container\Container;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Kernel\ClassLoader;
@@ -35,8 +35,6 @@ use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\Routing\Url;
 use tiFy\Contracts\Taxonomy\TaxonomyFactory;
 use tiFy\Contracts\Taxonomy\Taxonomy;
-use tiFy\Contracts\Template\TemplateFactory;
-use tiFy\Contracts\Template\TemplateManager;
 use tiFy\Contracts\User\User;
 use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\tiFy;
@@ -48,11 +46,10 @@ if (!function_exists('app')) {
      * {@internal Si $abstract est qualifié > Retourne la résolution du service qualifié.}
      *
      * @param string|null $abstract Nom de qualification du service.
-     * @param array $args Liste des variables passé en arguments lors de la résolution du service.
      *
      * @return App|mixed
      */
-    function app(?string $abstract = null, array $args = [])
+    function app(?string $abstract = null)
     {
         /* @var App $factory */
         $factory = container('app');
@@ -60,7 +57,7 @@ if (!function_exists('app')) {
         if (is_null($abstract)) {
             return $factory;
         }
-        return $factory->get($abstract, $args);
+        return $factory->get($abstract);
     }
 }
 
@@ -98,7 +95,7 @@ if (!function_exists('class_loader')) {
      */
     function class_loader(): ClassLoader
     {
-        return container('class-loader');
+        return app('class-loader');
     }
 }
 
@@ -119,7 +116,7 @@ if (!function_exists('config')) {
     function config($key = null, $default = null)
     {
         /* @var Config $factory */
-        $factory = container('config');
+        $factory = app('config');
 
         if (is_null($key)) {
             return $factory;
@@ -313,7 +310,7 @@ if (!function_exists('paths')) {
      */
     function paths(): Path
     {
-        return container('path');
+        return app('path');
     }
 }
 

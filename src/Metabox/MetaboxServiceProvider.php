@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
-use tiFy\Container\ServiceProvider;
+use Pollen\Container\BaseServiceProvider;
 use tiFy\Metabox\Contexts\TabContext;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Metabox\Drivers\ColorDriver;
@@ -21,7 +21,7 @@ use tiFy\Metabox\Drivers\SubtitleDriver;
 use tiFy\Metabox\Drivers\VideofeedDriver;
 use tiFy\Support\Proxy\View;
 
-class MetaboxServiceProvider extends ServiceProvider
+class MetaboxServiceProvider extends BaseServiceProvider
 {
     /**
      * @inheritDoc
