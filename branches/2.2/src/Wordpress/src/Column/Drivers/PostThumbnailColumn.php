@@ -1,12 +1,14 @@
 <?php
 
-namespace tiFy\PostType\Column\PostThumbnail;
+declare(strict_types=1);
 
-use tiFy\Column\AbstractColumnDisplayPostTypeController;
+namespace tiFy\Wordpress\Column\Drivers;
+
+use tiFy\Wordpress\Column\AbstractColumnDisplayPostTypeController;
 use tiFy\Wordpress\Query\QueryPost;
 use tiFy\Wordpress\Proxy\Partial;
 
-class PostThumbnail extends AbstractColumnDisplayPostTypeController
+class PostThumbnailColumn extends AbstractColumnDisplayPostTypeController
 {
     /**
      * {@inheritdoc}

@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tiFy\Column;
+declare(strict_types=1);
+
+namespace tiFy\Wordpress\Column;
 
 use BadMethodCallException;
 use Exception;

@@ -1,10 +1,12 @@
 <?php
 
-namespace tiFy\PostType\Column\MenuOrder;
+declare(strict_types=1);
 
-use tiFy\Column\AbstractColumnDisplayPostTypeController;
+namespace tiFy\Wordpress\Column\Drivers;
 
-class MenuOrder extends AbstractColumnDisplayPostTypeController
+use tiFy\Wordpress\Column\AbstractColumnDisplayPostTypeController;
+
+class PostMenuOrderColumn extends AbstractColumnDisplayPostTypeController
 {
     /**
      * {@inheritdoc}

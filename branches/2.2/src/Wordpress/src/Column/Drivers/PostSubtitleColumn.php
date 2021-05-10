@@ -1,10 +1,12 @@
 <?php
 
-namespace tiFy\PostType\Column\Subtitle;
+declare(strict_types=1);
 
-use tiFy\Column\AbstractColumnDisplayPostTypeController;
+namespace tiFy\Wordpress\Column\Drivers;
 
-class Subtitle extends AbstractColumnDisplayPostTypeController
+use tiFy\Wordpress\Column\AbstractColumnDisplayPostTypeController;
+
+class PostSubtitleColumn extends AbstractColumnDisplayPostTypeController
 {
     /**
      * {@inheritdoc}

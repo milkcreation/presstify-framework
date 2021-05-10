@@ -1,8 +1,8 @@
 <?php
 
-namespace tiFy\Column;
+declare(strict_types=1);
 
-use tiFy\Contracts\Column\ColumnDisplayUserInterface;
+namespace tiFy\Wordpress\Column;
 
 class AbstractColumnDisplayUserController extends AbstractColumnDisplayController
     implements ColumnDisplayUserInterface

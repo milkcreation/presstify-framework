@@ -52,6 +52,7 @@
     "pollen-solutions/kernel": "1.0.x-dev",
     "pollen-solutions/log": "1.0.x-dev",
     "pollen-solutions/mail": "1.0.x-dev",
+    "pollen-solutions/metabox": "1.0.x-dev",
     "pollen-solutions/partial": "1.0.x-dev",
     "pollen-solutions/proxy": "1.0.x-dev",
     "pollen-solutions/routing": "1.0.x-dev",

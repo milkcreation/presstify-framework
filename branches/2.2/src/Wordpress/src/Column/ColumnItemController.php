@@ -1,15 +1,15 @@
 <?php
 
-namespace tiFy\Column;
+declare(strict_types=1);
 
-use tiFy\Contracts\Column\ColumnDisplayInterface;
-use tiFy\Contracts\Column\ColumnItem as ColumnItemContract;
+namespace tiFy\Wordpress\Column;
+
 use tiFy\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
 use tiFy\Wordpress\WpScreen;
 use WP_Screen;
 
-class ColumnItemController extends ParamsBag implements ColumnItemContract
+class ColumnItemController extends ParamsBag implements ColumnItemInterface
 {
     /**
      * Compteur d'indices de qualification.
