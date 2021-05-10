@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use App\App;
 use Illuminate\Database\Query\Builder as LaraDatabaseQueryBuilder;
 use League\Uri\Contracts\UriInterface as LeagueUri;
 use Pollen\Asset\AssetManagerInterface;
-use Pollen\Container\Container;
+use Pollen\Config\ConfigInterface;
 use Pollen\Database\DatabaseManagerInterface;
 use Pollen\Event\EventDispatcherInterface;
 use Pollen\Field\FieldDriverInterface;
 use Pollen\Field\FieldManagerInterface;
 use Pollen\Filesystem\FilesystemInterface;
 use Pollen\Filesystem\StorageManagerInterface;
+use Pollen\Kernel\ApplicationInterface;
 use Pollen\Partial\PartialDriverInterface;
 use Pollen\Partial\PartialManagerInterface;
 use Pollen\Http\RedirectResponseInterface;
@@ -22,14 +22,12 @@ use Pollen\Form\FormInterface;
 use Pollen\Log\LogManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Support\ClassInfo;
+use Pollen\Support\ClassLoader;
 use Pollen\Support\Env;
 use Pollen\Validation\ValidatorInterface;
 use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
-use tiFy\Contracts\Kernel\ClassLoader;
-use tiFy\Contracts\Kernel\Config;
-use tiFy\Contracts\Kernel\Path;
 use tiFy\Contracts\PostType\PostTypeFactory;
 use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\Routing\Url;
@@ -41,23 +39,21 @@ use tiFy\tiFy;
 
 if (!function_exists('app')) {
     /**
-     * App - Gestionnaire de l'application.
-     * {@internal Si $abstract est null > Retourne l'instance de l'appication.}
-     * {@internal Si $abstract est qualifié > Retourne la résolution du service qualifié.}
+     * Instance de l'application
      *
      * @param string|null $abstract Nom de qualification du service.
      *
-     * @return App|mixed
+     * @return ApplicationInterface|mixed
      */
     function app(?string $abstract = null)
     {
-        /* @var App $factory */
-        $factory = container('app');
+        $app = tiFy::getInstance()->getApp();
 
-        if (is_null($abstract)) {
-            return $factory;
+        if ($abstract === null) {
+            return $app;
         }
-        return $factory->get($abstract);
+
+        return $app[$abstract] ?? null;
     }
 }
 
@@ -111,41 +107,22 @@ if (!function_exists('config')) {
      * @param null|array|string Clé d'indice (Syntaxe à point permise)|Liste des attributs de configuration à définir.
      * @param mixed $default Valeur de retour par défaut lors de la récupération d'un attribut.
      *
-     * @return Config|mixed
+     * @return ConfigInterface|mixed
      */
     function config($key = null, $default = null)
     {
-        /* @var Config $factory */
-        $factory = app('config');
+        /* @var ConfigInterface $config */
+        $config = app(ConfigInterface::class);
 
         if (is_null($key)) {
-            return $factory;
+            return $config;
         }
         if (is_array($key)) {
-            return $factory->set($key);
-        }
-        return $factory->get($key, $default);
-    }
-}
+            $config->set($key);
 
-if (!function_exists('container')) {
-    /**
-     * Container - Gestionnaire de fournisseur de services.
-     * {@internal Si $alias est null > Retourne la classe de rappel du controleur.}
-     *
-     * @param string|null $abstract Nom de qualification du service à récupérer.
-     *
-     * @return Container|mixed
-     */
-    function container(?string $abstract = null)
-    {
-        /** @var tiFy $factory */
-        $factory = tiFy::instance();
-
-        if (is_null($abstract)) {
-            return $factory;
+            return $config;
         }
-        return $factory->get($abstract);
+        return $config->get($key, $default);
     }
 }
 
