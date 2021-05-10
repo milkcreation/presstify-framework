@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Media;
 
 use Exception;
+use Pollen\Proxy\Proxies\Storage;
 use tiFy\Contracts\Filesystem\LocalFilesystem;
 use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\Storage;
 use tiFy\Wordpress\Contracts\Media\Upload as UploadContract;
 use WP_Error, WP_Query;
 

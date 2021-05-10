@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tiFy\Metabox\Drivers;
 
+use Pollen\Proxy\Proxies\Field;
 use tiFy\Metabox\MetaboxDriver;
-use tiFy\Support\Proxy\Field;
 
 class SubtitleDriver extends MetaboxDriver implements SubtitleDriverInterface
 {

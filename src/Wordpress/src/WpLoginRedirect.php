@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
+use Pollen\Proxy\Proxies\Request as req;
 use Pollen\Http\RedirectResponse;
-use tiFy\Support\Proxy\Request as req;
 
 /**
  * @see https://fr.wordpress.org/plugins/sf-move-login/

@@ -8,7 +8,7 @@ use Pollen\Partial\Drivers\CurtainMenuDriver as BaseCurtainMenuDriver;
 use Pollen\Partial\Drivers\CurtainMenuDriverInterface as BaseCurtainMenuDriverInterface;
 use Pollen\Partial\Drivers\CurtainMenu\CurtainMenuCollection;
 use Pollen\Partial\Drivers\CurtainMenu\CurtainMenuCollectionInterface;
-use tiFy\Support\Proxy\Partial as ptl;
+use Pollen\Proxy\Proxies\Partial as ptl;
 use WP_Query;
 use WP_Term;
 use WP_Term_Query;

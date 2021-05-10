@@ -8,9 +8,9 @@ use Exception;
 use Pollen\Partial\Drivers\DownloaderDriver as BaseDownloaderDriver;
 use Pollen\Support\ParamsBag;
 use Pollen\Support\Proxy\EncrypterProxy;
+use Pollen\Proxy\Proxies\Url;
 use Pollen\Validation\Validator as v;
 use tiFy\Support\MimeTypes;
-use tiFy\Support\Proxy\Url;
 
 class DownloaderDriver extends BaseDownloaderDriver
 {

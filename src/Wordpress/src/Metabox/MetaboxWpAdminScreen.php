@@ -6,7 +6,7 @@ namespace tiFy\Wordpress\Metabox;
 
 use BadMethodCallException;
 use Error;
-use tiFy\Support\Proxy\Request;
+use Pollen\Proxy\Proxies\Request;
 use tiFy\Wordpress\Proxy\Option;
 use tiFy\Wordpress\Query\QueryUser;
 use WP_Screen;

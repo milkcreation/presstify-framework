@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Proxy;
 
-use tiFy\Support\Proxy\AbstractProxy;
+use Pollen\Proxy\AbstractProxy;
 
 /**
  * @method static string|null getBase64Src(int $id)

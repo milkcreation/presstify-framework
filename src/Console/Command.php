@@ -3,6 +3,7 @@
 namespace tiFy\Console;
 
 use Exception;
+use Pollen\Proxy\Proxies\Log;
 use Symfony\Component\Console\{
     Command\Command as BaseCommand,
     Input\InputInterface,
@@ -11,7 +12,6 @@ use Symfony\Component\Console\{
 use tiFy\Contracts\Console\Command as CommandContract;
 use tiFy\Contracts\Log\Logger as LoggerContract;
 use tiFy\Support\MessagesBag;
-use tiFy\Support\Proxy\Log;
 
 /**
  * USAGE :

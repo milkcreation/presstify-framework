@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tiFy\Metabox\Drivers;
 
+use Pollen\Proxy\Proxies\Request;
 use tiFy\Metabox\MetaboxDriver;
-use tiFy\Support\Proxy\Request;
 
 class SlidefeedDriver extends MetaboxDriver implements SlidefeedDriverInterface
 {

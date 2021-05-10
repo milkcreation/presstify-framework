@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support\Concerns;
 
+use Pollen\Proxy\Proxies\Url;
 use Psr\Http\Message\UriInterface;
 use League\Uri\Contracts\UriInterface as LeagueUri;
 use tiFy\Contracts\Routing\UrlFactory;
-use tiFy\Support\Proxy\Url;
 
 trait PaginationAwareTrait
 {
