@@ -18,10 +18,9 @@ use Pollen\Routing\RouterInterface;
 use Pollen\Session\SessionManagerInterface;
 use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\DateTime;
-use Pollen\Support\Env;
 use Pollen\Support\Proxy\HttpRequestProxy;
 use RuntimeException;
-use Pollen\Container\BaseServiceProvider;
+use Pollen\Container\BootableServiceProvider;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Column\Column;
@@ -43,7 +42,7 @@ use WP_Screen;
 use WP_Term;
 use WP_User;
 
-class WordpressServiceProvider extends BaseServiceProvider
+class WordpressServiceProvider extends BootableServiceProvider
 {
     use BootableTrait;
     use HttpRequestProxy;

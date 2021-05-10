@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Column;
 
+use Pollen\Proxy\Proxies\View;
 use tiFy\Contracts\Column\ColumnDisplayInterface;
 use tiFy\Contracts\View\PlatesEngine;
-use tiFy\Support\Proxy\View;
+
 
 abstract class AbstractColumnDisplayController implements ColumnDisplayInterface
 {

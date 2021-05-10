@@ -11,9 +11,9 @@ use Illuminate\Database\{
     Query\Builder as QueryBuilder,
     Schema\Blueprint,
 };
+use Pollen\Support\Str;
+use Pollen\Proxy\Proxies\Schema;
 use tiFy\Contracts\Cache\DatabaseStore as DatabaseStoreContract;
-use tiFy\Support\Str;
-use tiFy\Support\Proxy\Schema;
 
 class DatabaseStore extends AbstractStore implements DatabaseStoreContract
 {

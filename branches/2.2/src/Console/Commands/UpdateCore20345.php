@@ -3,10 +3,11 @@
 namespace tiFy\Console\Commands;
 
 use Illuminate\Database\Schema\Blueprint;
-use tiFy\Console\Command;
+use Pollen\Proxy\Proxies\Database;
+use Pollen\Proxy\Proxies\Schema;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use tiFy\Support\Proxy\{Database, Schema};
+use tiFy\Console\Command;
 
 /**
  * @see https://symfony.com/doc/current/console.html

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 use tiFy\Contracts\User\RoleFactory;
 use tiFy\Support\Arr;
 use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\Role;
+use Pollen\Proxy\Proxies\Role;
 use tiFy\Wordpress\Contracts\Database\UserBuilder;
 use tiFy\Wordpress\Contracts\Query\PaginationQuery as PaginationQueryContract;
 use tiFy\Wordpress\Contracts\Query\QueryUser as QueryUserContract;

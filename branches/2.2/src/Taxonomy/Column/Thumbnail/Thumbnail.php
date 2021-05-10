@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Taxonomy\Column\Thumbnail;
 
+use Pollen\Proxy\Proxies\Partial;
 use tiFy\Column\AbstractColumnDisplayTaxonomyController;
-use tiFy\Support\Proxy\Partial;
 use tiFy\Wordpress\Query\QueryTerm;
 
 class Thumbnail extends AbstractColumnDisplayTaxonomyController

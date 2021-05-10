@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Partial\Drivers\Accordion;
 
 use Pollen\Partial\Drivers\Accordion\AccordionItem;
-use tiFy\Support\Proxy\Partial;
+use Pollen\Proxy\Proxies\Partial;
 use WP_Term;
 
 class AccordionWpTermItem extends AccordionItem implements AccordionWpTermItemInterface

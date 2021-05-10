@@ -7,6 +7,8 @@ namespace tiFy\Metabox;
 use Exception;
 use Illuminate\Support\Collection;
 use League\Route\Http\Exception\NotFoundException;
+use Pollen\Proxy\Proxies\Router;
+use Pollen\Proxy\Proxies\Storage;
 use Psr\Container\ContainerInterface as Container;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
@@ -29,8 +31,6 @@ use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Concerns\BootableTrait;
 use tiFy\Support\Concerns\ContainerAwareTrait;
 use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\Router;
-use tiFy\Support\Proxy\Storage;
 
 class Metabox implements MetaboxContract
 {

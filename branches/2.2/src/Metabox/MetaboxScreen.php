@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
+use Pollen\Proxy\Proxies\Request;
+use Pollen\Proxy\Proxies\Router;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Concerns\BootableTrait;
 use tiFy\Support\Concerns\ParamsBagTrait;
-use tiFy\Support\Proxy\Request;
-use tiFy\Support\Proxy\Router;
 
 class MetaboxScreen implements MetaboxScreenInterface
 {

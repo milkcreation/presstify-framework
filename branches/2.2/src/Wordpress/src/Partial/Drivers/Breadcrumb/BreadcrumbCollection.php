@@ -7,7 +7,7 @@ namespace tiFy\Wordpress\Partial\Drivers\Breadcrumb;
 use Pollen\Event\TriggeredEventInterface;
 use Pollen\Partial\Drivers\BreadcrumbDriverInterface;
 use Pollen\Partial\Drivers\Breadcrumb\BreadcrumbCollection as BaseBreadcrumbCollection;
-use tiFy\Support\Proxy\Url;
+use Pollen\Proxy\Proxies\Url;
 use WP_Term;
 
 class BreadcrumbCollection extends BaseBreadcrumbCollection implements BreadcrumbCollectionInterface

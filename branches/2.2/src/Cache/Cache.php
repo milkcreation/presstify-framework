@@ -1,12 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Cache;
 
 use InvalidArgumentException;
+use Pollen\Proxy\Proxies\Database;
 use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\Cache\Cache as CacheContract;
 use tiFy\Contracts\Cache\Store;
-use tiFy\Support\Proxy\Database;
 
 class Cache implements CacheContract
 {

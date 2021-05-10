@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
+use Pollen\Proxy\Proxies\View;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Support\Concerns\BootableTrait;
 use tiFy\Support\Concerns\ParamsBagTrait;
-use tiFy\Support\Proxy\View;
 
 class MetaboxContext implements MetaboxContextInterface
 {

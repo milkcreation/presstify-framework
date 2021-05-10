@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Support;
 
@@ -6,8 +8,8 @@ use Carbon\Carbon;
 use DateTime as BaseDateTime;
 use DateTimeZone;
 use Exception;
+use Pollen\Proxy\Proxies\Request;
 use tiFy\Contracts\Support\DateTime as DateTimeContract;
-use tiFy\Support\Proxy\Request;
 
 class DateTime extends Carbon implements DateTimeContract
 {

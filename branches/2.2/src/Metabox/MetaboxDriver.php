@@ -7,13 +7,13 @@ namespace tiFy\Metabox;
 use BadMethodCallException;
 use Closure;
 use Error;
+use Pollen\Proxy\Proxies\View;
 use tiFy\Contracts\View\Engine as ViewEngine;
 use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Arr;
 use tiFy\Support\Concerns\BootableTrait;
 use tiFy\Support\Concerns\ParamsBagTrait;
 use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\View;
 
 /**
  * @mixin \tiFy\Support\ParamsBag

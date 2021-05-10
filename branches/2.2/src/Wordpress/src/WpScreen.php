@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
-use tiFy\Support\Proxy\Request;
+use Pollen\Proxy\Proxies\Request;
 use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
 use tiFy\Wordpress\Proxy\Option;
 use tiFy\Wordpress\Query\QueryUser;

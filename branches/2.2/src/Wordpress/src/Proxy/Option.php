@@ -2,7 +2,7 @@
 
 namespace tiFy\Wordpress\Proxy;
 
-use tiFy\Support\Proxy\AbstractProxy;
+use Pollen\Proxy\AbstractProxy;
 use tiFy\Wordpress\Contracts\Option\{Option as OptionContract, OptionPage};
 
 /**

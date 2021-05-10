@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Metabox;
 
+use Pollen\Proxy\Proxies\View;
 use Pollen\Container\BaseServiceProvider;
 use tiFy\Metabox\Contexts\TabContext;
 use tiFy\Metabox\Contracts\MetaboxContract;
@@ -19,7 +20,6 @@ use tiFy\Metabox\Drivers\RelatedTermDriver;
 use tiFy\Metabox\Drivers\SlidefeedDriver;
 use tiFy\Metabox\Drivers\SubtitleDriver;
 use tiFy\Metabox\Drivers\VideofeedDriver;
-use tiFy\Support\Proxy\View;
 
 class MetaboxServiceProvider extends BaseServiceProvider
 {

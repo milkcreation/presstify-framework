@@ -6,7 +6,7 @@ use Closure;
 use Pollen\Event\TriggeredEventInterface;
 use Pollen\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface as BaseBreadcrumbCollectionInterface;
 use tiFy\Support\ParamsBag;
-use tiFy\Support\Proxy\Router;
+use Pollen\Proxy\Proxies\Router;
 use tiFy\Wordpress\Contracts\PageHookItem as PageHookItemContract;
 use tiFy\Wordpress\Partial\Drivers\Breadcrumb\BreadcrumbCollectionInterface;
 use tiFy\Wordpress\Contracts\Query\QueryPost as QueryPostContract;
