@@ -115,12 +115,6 @@ class WordpressServiceProvider extends BaseServiceProvider
                     Locale::set(get_locale());
                     Locale::setLanguages(wp_get_available_translations() ?: []);
 
-                    $tz = Env::get('APP_TIMEZONE') ?: $this->httpRequest()->server->get(
-                        'TZ',
-                        ini_get('date.timezone') ?: 'UTC'
-                    );
-                    date_default_timezone_set($tz);
-
                     global $locale;
                     DateTime::setLocale($locale);
 
