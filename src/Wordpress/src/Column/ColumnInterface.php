@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tiFy\Contracts\Column;
+declare(strict_types=1);
 
-interface Column
+namespace tiFy\Wordpress\Column;
+
+interface ColumnInterface
 {
     /**
      * Ajout d'un élément.
@@ -39,5 +41,5 @@ interface Column
      *
      * @return static
      */
-    public function stack(string $screen, array $columns): Column;
+    public function stack(string $screen, array $columns): ColumnInterface;
 }

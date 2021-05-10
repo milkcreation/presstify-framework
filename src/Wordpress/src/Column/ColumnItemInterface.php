@@ -1,11 +1,13 @@
 <?php
 
-namespace tiFy\Contracts\Column;
+declare(strict_types=1);
+
+namespace tiFy\Wordpress\Column;
 
 use tiFy\Contracts\Support\ParamsBag;
 use tiFy\Wordpress\Contracts\WpScreen;
 
-interface ColumnItem extends ParamsBag
+interface ColumnItemInterface extends ParamsBag
 {
     /**
      * Récupération du contenu de l'affichage.

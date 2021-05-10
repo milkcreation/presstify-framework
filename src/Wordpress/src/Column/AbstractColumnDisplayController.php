@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Column;
+namespace tiFy\Wordpress\Column;
 
 use Pollen\Proxy\Proxies\View;
-use tiFy\Contracts\Column\ColumnDisplayInterface;
 use tiFy\Contracts\View\PlatesEngine;
-
 
 abstract class AbstractColumnDisplayController implements ColumnDisplayInterface
 {

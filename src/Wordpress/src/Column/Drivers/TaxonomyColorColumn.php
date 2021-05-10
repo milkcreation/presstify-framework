@@ -1,10 +1,12 @@
 <?php
 
-namespace tiFy\Taxonomy\Column\Color;
+declare(strict_types=1);
 
-use tiFy\Column\AbstractColumnDisplayTaxonomyController;
+namespace tiFy\Wordpress\Column\Drivers;
 
-class Color extends AbstractColumnDisplayTaxonomyController
+use tiFy\Wordpress\Column\AbstractColumnDisplayTaxonomyController;
+
+class TaxonomyColorColumn extends AbstractColumnDisplayTaxonomyController
 {
     /**
      * {@inheritdoc}

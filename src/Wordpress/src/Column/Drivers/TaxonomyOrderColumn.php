@@ -1,10 +1,12 @@
 <?php
 
-namespace tiFy\Taxonomy\Column\Order;
+declare(strict_types=1);
 
-use tiFy\Column\AbstractColumnDisplayTaxonomyController;
+namespace tiFy\Wordpress\Column\Drivers;
 
-class Order extends AbstractColumnDisplayTaxonomyController
+use tiFy\Wordpress\Column\AbstractColumnDisplayTaxonomyController;
+
+class TaxonomyOrderColumn extends AbstractColumnDisplayTaxonomyController
 {
     /**
      * {@inheritdoc}

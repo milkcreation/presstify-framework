@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tiFy\Contracts\Column;
+declare(strict_types=1);
+
+namespace tiFy\Wordpress\Column;
 
 use tiFy\Contracts\View\PlatesEngine;
 

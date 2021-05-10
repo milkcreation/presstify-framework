@@ -1,6 +1,8 @@
 <?php
 
-namespace tiFy\Contracts\Column;
+declare(strict_types=1);
+
+namespace tiFy\Wordpress\Column;
 
 interface ColumnDisplayTaxonomyInterface extends ColumnDisplayInterface
 {

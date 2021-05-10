@@ -1,8 +1,8 @@
 <?php
 
-namespace tiFy\Column;
+declare(strict_types=1);
 
-use tiFy\Contracts\Column\ColumnDisplayPostTypeInterface;
+namespace tiFy\Wordpress\Column;
 
 class AbstractColumnDisplayPostTypeController
     extends AbstractColumnDisplayController

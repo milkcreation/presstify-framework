@@ -30,17 +30,10 @@ use tiFy\Wordpress\Option\Option;
 use tiFy\Wordpress\PageHook\PageHook;
 use tiFy\Wordpress\PageHook\PageHookMetabox;
 use tiFy\Wordpress\PostType\PostType;
-use tiFy\Wordpress\Query\QueryPost;
-use tiFy\Wordpress\Query\QueryTerm;
-use tiFy\Wordpress\Query\QueryUser;
 use tiFy\Wordpress\Taxonomy\Taxonomy;
 use tiFy\Wordpress\User\User;
 use tiFy\Wordpress\User\Role\RoleFactory;
 use tiFy\Wordpress\View\View;
-use WP_Post;
-use WP_Screen;
-use WP_Term;
-use WP_User;
 
 class WordpressServiceProvider extends BootableServiceProvider
 {
@@ -71,16 +64,12 @@ class WordpressServiceProvider extends BootableServiceProvider
         'wp.partial',
         'wp.option',
         'wp.post-type',
-        'wp.query.post',
-        'wp.query.term',
-        'wp.query.user',
         'wp.routing',
         'wp.session',
         'wp.taxonomy',
         'wp.template',
         'wp.user',
         'wp.wp_query',
-        'wp.wp_screen',
         'wp.view',
     ];
 
@@ -129,9 +118,7 @@ class WordpressServiceProvider extends BootableServiceProvider
                         $this->getContainer()->get('wp.asset');
                     }
 
-                    if ($this->getContainer()->has('column')) {
-                        $this->getContainer()->get('wp.column');
-                    }
+                    $this->getContainer()->get('wp.column');
 
                     if ($this->getContainer()->has(CookieJarInterface::class)) {
                         $this->getContainer()->get('wp.cookie');
@@ -235,7 +222,6 @@ class WordpressServiceProvider extends BootableServiceProvider
         $this->registerPageHook();
         $this->registerPartial();
         $this->registerPostType();
-        $this->registerQuery();
         $this->registerRouting();
         $this->registerSession();
         $this->registerTaxonomy();
@@ -268,7 +254,7 @@ class WordpressServiceProvider extends BootableServiceProvider
         $this->getContainer()->share(
             'wp.column',
             function () {
-                return new Column($this->getContainer()->get('column'));
+                return new Column();
             }
         );
     }
@@ -497,35 +483,6 @@ class WordpressServiceProvider extends BootableServiceProvider
     }
 
     /**
-     * Déclaration des controleurs de requête de récupération des éléments Wordpress.
-     *
-     * @return void
-     */
-    public function registerQuery(): void
-    {
-        $this->getContainer()->add(
-            'wp.query.post',
-            function (?WP_Post $wp_post = null) {
-                return !is_null($wp_post) ? QueryPost::create($wp_post) : QueryPost::createFromGlobal();
-            }
-        );
-
-        $this->getContainer()->add(
-            'wp.query.term',
-            function (?WP_Term $wp_term) {
-                return !is_null($wp_term) ? QueryTerm::create($wp_term) : QueryTerm::createFromGlobal();
-            }
-        );
-
-        $this->getContainer()->add(
-            'wp.query.user',
-            function (?WP_User $wp_user = null) {
-                return !is_null($wp_user) ? QueryUser::create($wp_user) : QueryUser::createFromGlobal();
-            }
-        );
-    }
-
-    /**
      * Déclaration des controleurs de routage.
      *
      * @return void
@@ -543,13 +500,6 @@ class WordpressServiceProvider extends BootableServiceProvider
             'wp.wp_query',
             function () {
                 return new WpQuery();
-            }
-        );
-
-        $this->getContainer()->add(
-            'wp.wp_screen',
-            function (?WP_Screen $wp_screen = null) {
-                return new WpScreen($wp_screen);
             }
         );
     }

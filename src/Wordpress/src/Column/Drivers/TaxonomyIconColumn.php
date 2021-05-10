@@ -1,10 +1,12 @@
 <?php
 
-namespace tiFy\Taxonomy\Column\Icon;
+declare(strict_types=1);
 
-use tiFy\Column\AbstractColumnDisplayTaxonomyController;
+namespace tiFy\Wordpress\Column\Drivers;
 
-class Icon extends AbstractColumnDisplayTaxonomyController
+use tiFy\Wordpress\Column\AbstractColumnDisplayTaxonomyController;
+
+class TaxonomyIconColumn extends AbstractColumnDisplayTaxonomyController
 {
     /**
      * {@inheritdoc}
