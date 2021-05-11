@@ -8,7 +8,7 @@
     "wordpress"
   ],
   "license": "MIT",
-  "time": "2021-05-10",
+  "time": "2021-05-11",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -63,7 +63,7 @@
     "pollen-solutions/wp-db": "1.0.x-dev",
     "pollen-solutions/wp-hook": "1.0.x-dev",
     "pollen-solutions/wp-post": "1.0.x-dev",
-    "pollen-solutions/wp-taxonomy": "1.0.x-dev",
+    "pollen-solutions/wp-term": "1.0.x-dev",
     "pollen-solutions/wp-user": "1.0.x-dev",
     "ralouphie/mimey": "^2.1",
     "spatie/menu": "^2.9",

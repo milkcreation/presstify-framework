@@ -12,6 +12,7 @@
     "@pollen-solutions/field": "file:../../pollen-solutions/field/",
     "@pollen-solutions/form": "file:../../pollen-solutions/form/",
     "@pollen-solutions/mail": "file:../../pollen-solutions/mail/",
+    "@pollen-solutions/metabox": "file:../../pollen-solutions/metabox/",
     "@pollen-solutions/partial": "file:../../pollen-solutions/partial/",
     "@pollen-solutions/support": "file:../../pollen-solutions/support/"
   }
