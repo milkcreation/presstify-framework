@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Proxy;
 
 use Pollen\Proxy\AbstractProxy;
-use Pollen\WpTaxonomy\WpTaxonomyManagerInterface;
-use Pollen\WpTaxonomy\WpTermQueryInterface;
-use WP_Term;
-use WP_Term_Query;
+use Pollen\WpTerm\WpTaxonomyManagerInterface;
 
 /**
- * @method static WpTermQueryInterface|null term(string|int|WP_Term|null $term = null)
- * @method static WpTermQueryInterface[]|array terms(WP_Term_Query|array|null $query = null)
+ * @method static
  */
 class WpTaxonomy extends AbstractProxy
 {
