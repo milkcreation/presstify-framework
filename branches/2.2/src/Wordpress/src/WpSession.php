@@ -29,14 +29,6 @@ class WpSession
         $this->session = $session;
         $this->setContainer($container);
 
-        try {
-            $session->start();
-
-            $this->httpRequest()->setSession($session->processor());
-        } catch (RuntimeException $e) {
-            unset($e);
-        }
-
         /*
         events()->on('session.read', function (TriggeredEventInterface $event, &$value) {
             $value = Arr::stripslashes($value);

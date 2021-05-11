@@ -13,6 +13,7 @@ use Pollen\Filesystem\StorageManagerInterface;
 use Pollen\Form\FormManagerInterface;
 use Pollen\Http\RequestInterface;
 use Pollen\Mail\MailManagerInterface;
+use Pollen\Metabox\MetaboxManagerInterface;
 use Pollen\Partial\PartialManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Session\SessionManagerInterface;
@@ -21,18 +22,10 @@ use Pollen\Support\DateTime;
 use Pollen\Support\Proxy\HttpRequestProxy;
 use RuntimeException;
 use Pollen\Container\BootableServiceProvider;
-use tiFy\Metabox\Contracts\MetaboxContract;
 use tiFy\Support\Locale;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Media\Media;
-use tiFy\Wordpress\Metabox\Metabox;
 use tiFy\Wordpress\Option\Option;
-use tiFy\Wordpress\PageHook\PageHook;
-use tiFy\Wordpress\PageHook\PageHookMetabox;
-use tiFy\Wordpress\PostType\PostType;
-use tiFy\Wordpress\Taxonomy\Taxonomy;
-use tiFy\Wordpress\User\User;
-use tiFy\Wordpress\User\Role\RoleFactory;
 use tiFy\Wordpress\View\View;
 
 class WordpressServiceProvider extends BootableServiceProvider
@@ -59,16 +52,10 @@ class WordpressServiceProvider extends BootableServiceProvider
         'wp.mail',
         'wp.media',
         'wp.metabox',
-        'wp.page-hook',
-        PageHookMetabox::class,
         'wp.partial',
         'wp.option',
-        'wp.post-type',
         'wp.routing',
         'wp.session',
-        'wp.taxonomy',
-        'wp.template',
-        'wp.user',
         'wp.wp_query',
         'wp.view',
     ];
@@ -150,20 +137,14 @@ class WordpressServiceProvider extends BootableServiceProvider
 
                     $this->getContainer()->get('wp.media');
 
-                    if ($this->getContainer()->has(MetaboxContract::class)) {
+                    if ($this->getContainer()->has(MetaboxManagerInterface::class)) {
                         $this->getContainer()->get('wp.metabox');
                     }
-
-                    $this->getContainer()->get('wp.page-hook');
 
                     $this->getContainer()->get('wp.option');
 
                     if ($this->getContainer()->has(PartialManagerInterface::class)) {
                         $this->getContainer()->get('wp.partial');
-                    }
-
-                    if ($this->getContainer()->has('post-type')) {
-                        $this->getContainer()->get('wp.post-type');
                     }
 
                     if ($this->getContainer()->has(SessionManagerInterface::class)) {
@@ -172,20 +153,6 @@ class WordpressServiceProvider extends BootableServiceProvider
 
                     if ($this->getContainer()->has(StorageManagerInterface::class)) {
                         $this->getContainer()->get('wp.filesystem');
-                    }
-
-                    if ($this->getContainer()->has('taxonomy')) {
-                        $this->getContainer()->get('wp.taxonomy');
-                    }
-
-                    if ($this->getContainer()->has('user')) {
-                        $this->getContainer()->get('wp.user');
-                        $this->getContainer()->add(
-                            'user.role.factory',
-                            function () {
-                                return new RoleFactory();
-                            }
-                        );
                     }
 
                     if ($this->getContainer()->has('view')) {
@@ -219,13 +186,9 @@ class WordpressServiceProvider extends BootableServiceProvider
         $this->registerMedia();
         $this->registerMetabox();
         $this->registerOptions();
-        $this->registerPageHook();
         $this->registerPartial();
-        $this->registerPostType();
         $this->registerRouting();
         $this->registerSession();
-        $this->registerTaxonomy();
-        $this->registerUser();
         $this->registerView();
     }
 
@@ -408,7 +371,7 @@ class WordpressServiceProvider extends BootableServiceProvider
         $this->getContainer()->share(
             'wp.metabox',
             function () {
-                return new Metabox($this->getContainer()->get(MetaboxContract::class), $this->getContainer());
+                return new WpMetabox($this->getContainer()->get(MetaboxManagerInterface::class), $this->getContainer());
             }
         );
     }
@@ -429,30 +392,6 @@ class WordpressServiceProvider extends BootableServiceProvider
     }
 
     /**
-     * Déclaration du controleur des pages d'accroche.
-     *
-     * @return void
-     */
-    public function registerPageHook(): void
-    {
-        $this->getContainer()->share(
-            'wp.page-hook',
-            function () {
-                return new PageHook();
-            }
-        );
-        $this->getContainer()->add(
-            PageHookMetabox::class,
-            function () {
-                return new PageHookMetabox(
-                    $this->getContainer()->get('wp.page-hook'),
-                    $this->getContainer()->get(MetaboxContract::class)
-                );
-            }
-        );
-    }
-
-    /**
      * Déclaration du controleur des gabarits d'affichage.
      *
      * @return void
@@ -463,21 +402,6 @@ class WordpressServiceProvider extends BootableServiceProvider
             'wp.partial',
             function () {
                 return new WpPartial($this->getContainer()->get(PartialManagerInterface::class), $this->getContainer());
-            }
-        );
-    }
-
-    /**
-     * Déclaration du controleur des types de contenu.
-     *
-     * @return void
-     */
-    public function registerPostType(): void
-    {
-        $this->getContainer()->share(
-            'wp.post-type',
-            function () {
-                return new PostType($this->getContainer()->get('post-type'));
             }
         );
     }
@@ -515,36 +439,6 @@ class WordpressServiceProvider extends BootableServiceProvider
             'wp.session',
             function () {
                 return new WpSession($this->getContainer()->get(SessionManagerInterface::class), $this->getContainer());
-            }
-        );
-    }
-
-    /**
-     * Déclaration du controleur de taxonomie.
-     *
-     * @return void
-     */
-    public function registerTaxonomy(): void
-    {
-        $this->getContainer()->share(
-            'wp.taxonomy',
-            function () {
-                return new Taxonomy($this->getContainer()->get('taxonomy'));
-            }
-        );
-    }
-
-    /**
-     * Déclaration du controleur utilisateur.
-     *
-     * @return void
-     */
-    public function registerUser(): void
-    {
-        $this->getContainer()->share(
-            'wp.user',
-            function () {
-                return new User($this->getContainer()->get('user'));
             }
         );
     }

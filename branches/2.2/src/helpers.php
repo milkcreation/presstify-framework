@@ -13,6 +13,7 @@ use Pollen\Field\FieldManagerInterface;
 use Pollen\Filesystem\FilesystemInterface;
 use Pollen\Filesystem\StorageManagerInterface;
 use Pollen\Kernel\ApplicationInterface;
+use Pollen\Kernel\Kernel;
 use Pollen\Partial\PartialDriverInterface;
 use Pollen\Partial\PartialManagerInterface;
 use Pollen\Http\RedirectResponseInterface;
@@ -28,14 +29,8 @@ use Pollen\Validation\ValidatorInterface;
 use Psr\Http\Message\UriInterface;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
-use tiFy\Contracts\PostType\PostTypeFactory;
-use tiFy\Contracts\PostType\PostType;
 use tiFy\Contracts\Routing\Url;
-use tiFy\Contracts\Taxonomy\TaxonomyFactory;
-use tiFy\Contracts\Taxonomy\Taxonomy;
-use tiFy\Contracts\User\User;
 use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\tiFy;
 
 if (!function_exists('app')) {
     /**
@@ -47,7 +42,7 @@ if (!function_exists('app')) {
      */
     function app(?string $abstract = null)
     {
-        $app = tiFy::getInstance()->getApp();
+        $app = Kernel::getInstance()->getApp();
 
         if ($abstract === null) {
             return $app;
@@ -279,38 +274,6 @@ if (!function_exists('partial')) {
     }
 }
 
-if (!function_exists('paths')) {
-    /**
-     * Path - Gestionnaire des chemins vers les répertoires de l'application.
-     *
-     * @return Path
-     */
-    function paths(): Path
-    {
-        return app('path');
-    }
-}
-
-if (!function_exists('post_type')) {
-    /**
-     * PostType - Gestionnaire des types de contenu ou instance d'un type de contenu déclaré.
-     *
-     * @param string|null $name Nom de qualification du type de contenu.
-     *
-     * @return PostType|PostTypeFactory
-     */
-    function post_type(?string $name = null)
-    {
-        /* @var PostType $manager */
-        $manager = app('post-type');
-
-        if (is_null($name)) {
-            return $manager;
-        }
-        return $manager->get($name);
-    }
-}
-
 if (!function_exists('redirect')) {
     /**
      * HTTP - Gestionnaire de redirection HTTP.
@@ -382,26 +345,6 @@ if (!function_exists('storage')) {
     }
 }
 
-if (!function_exists('taxonomy')) {
-    /**
-     * Taxonomy - Gestionnaire de taxonomies.
-     *
-     * @param string|null $name Nom de qualification de la taxonomie déclarée.
-     *
-     * @return Taxonomy|TaxonomyFactory
-     */
-    function taxonomy(?string $name = null)
-    {
-        /* @var Taxonomy $manager */
-        $manager = app('taxonomy');
-
-        if (is_null($name)) {
-            return $manager;
-        }
-        return $manager->get($name);
-    }
-}
-
 if (!function_exists('url')) {
     /**
      * Récupération de l'instance du contrôleur d'url.
@@ -416,18 +359,6 @@ if (!function_exists('url')) {
         $url = app('url');
 
         return is_null($uri) ? $url : $url->set($uri);
-    }
-}
-
-if (!function_exists('user')) {
-    /**
-     * User - Gestionnaire d'utilisateurs.
-     *
-     * @return User
-     */
-    function user(): User
-    {
-        return app('user');
     }
 }
 
