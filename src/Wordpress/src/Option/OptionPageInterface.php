@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tiFy\Wordpress\Contracts\Option;
+declare(strict_types=1);
 
-use tiFy\Contracts\{Support\ParamsBag, View\Engine as ViewEngine};
+namespace tiFy\Wordpress\Option;
 
-interface OptionPage extends ParamsBag
+use Pollen\Support\ParamsBagInterface;
+use tiFy\Contracts\View\Engine as ViewEngine;
+
+interface OptionPageInterface extends ParamsBagInterface
 {
     /**
      * Résolution de sortie de la classe en tant que chaîne de caractère.
@@ -42,20 +45,13 @@ interface OptionPage extends ParamsBag
     public function isSettingsPage(): bool;
 
     /**
-     * Traitement de la liste des arguments.
-     *
-     * @return static
-     */
-    public function parse(): OptionPage;
-
-    /**
      * Déclaration des options associées à la page.
      *
      * @param array|string[] $settings
      *
      * @return static
      */
-    public function registerSettings(array $settings): OptionPage;
+    public function registerSettings(array $settings): OptionPageInterface;
 
     /**
      * Affichage.
@@ -67,11 +63,11 @@ interface OptionPage extends ParamsBag
     /**
      * Définition du gestionnaire d'options.
      *
-     * @param Option $manager Instance du gestionnaire d'options.
+     * @param OptionInterface $manager Instance du gestionnaire d'options.
      *
      * @return static
      */
-    public function setManager(Option $manager): OptionPage;
+    public function setManager(OptionInterface $manager): OptionPageInterface;
 
     /**
      * Définition du nom de qualification.
@@ -80,17 +76,17 @@ interface OptionPage extends ParamsBag
      *
      * @return static
      */
-    public function setName(string $name): OptionPage;
+    public function setName(string $name): OptionPageInterface;
 
     /**
      * Récupération de la vue.
      * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
      * {@internal Sinon récupére le gabarit d'affichage et passe les variables en argument.}
      *
-     * @param null|string view Nom de qualification du gabarit.
-     * @param array $data Liste des variables passées en argument.
+     * @param null|string $name
+     * @param array $datas
      *
      * @return ViewEngine|string
      */
-    public function view(?string $view = null, array $data = []);
+    public function view(?string $name= null, array $datas = []);
 }

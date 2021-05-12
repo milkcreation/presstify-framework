@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
-use tiFy\Wordpress\Contracts\WpQuery as WpQueryContract;
+use Pollen\Support\Proxy\EventProxy;
 use WP_Query;
 
-class WpQuery implements WpQueryContract
+class WpQuery implements WpQueryInterface
 {
+    use EventProxy;
+
     /**
      * Liste des indicateurs de condition permis.
      * @see https://codex.wordpress.org/Conditional_Tags
@@ -58,7 +60,8 @@ class WpQuery implements WpQueryContract
                         }
                     }
                 }
-                events()->trigger('wp.query', [&$wp_query]);
+
+                $this->event()->trigger('wp.query', [&$wp_query]);
             }
         );
     }

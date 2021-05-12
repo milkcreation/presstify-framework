@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Metabox\MetaboxManagerInterface;
+use Pollen\Support\Proxy\ContainerProxy;
 use Psr\Container\ContainerInterface as Container;
-use tiFy\Support\Concerns\ContainerAwareTrait;
+
 use tiFy\Wordpress\Metabox\Contexts\SideContext;
 use tiFy\Wordpress\Metabox\Contexts\SideContextInterface;
 use tiFy\Wordpress\Metabox\Drivers\FilefeedDriver;
 use tiFy\Wordpress\Metabox\Drivers\ImagefeedDriver;
 use tiFy\Wordpress\Metabox\Drivers\VideofeedDriver;
-use Pollen\Proxy\Proxies\PostType;
 use Pollen\Proxy\Proxies\Request;
-use Pollen\Proxy\Proxies\Taxonomy;
-use Pollen\Proxy\Proxies\User;
 use WP_Post;
 use WP_Screen;
 use WP_Term;
@@ -23,7 +21,7 @@ use WP_User;
 
 class WpMetabox
 {
-    use ContainerAwareTrait;
+    use ContainerProxy;
 
     /**
      * @var MetaboxManagerInterface

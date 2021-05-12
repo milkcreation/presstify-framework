@@ -11,7 +11,7 @@ use Pollen\WpPost\WpPostTypeManagerInterface;
 /**
  * @method static WpPostTypeInterface[]|array all()
  * @method static WpPostTypeInterface|null get(string $name)
- * @method static register(string $name, WpPostTypeInterface|array $args)
+ * @method static WpPostTypeInterface register(string $name, WpPostTypeInterface|array $postTypeDef)
  */
 class WpPostType extends AbstractProxy
 {

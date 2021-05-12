@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Wordpress\Contracts;
+namespace tiFy\Wordpress;
 
-interface WpQuery
+interface WpQueryInterface
 {
     /**
      * Vérifie si la page d'affichage courante correspond au contexte indiqué.

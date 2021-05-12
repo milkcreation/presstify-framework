@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Proxy;
 
 use Pollen\Proxy\AbstractProxy;
+use Pollen\WpTerm\WpTaxonomyInterface;
+use Pollen\WpTerm\WpTaxonomyManagerInterface;
 use Pollen\WpTerm\WpTermManagerInterface;
 use Pollen\WpTerm\WpTermQueryInterface;
 use WP_Term;
@@ -13,9 +15,9 @@ use WP_Term_Query;
 /**
  * @method static WpTermQueryInterface[]|array fetch(WP_Term_Query|array|null $query = null)
  * @method static WpTermQueryInterface|null get(string|int|WP_Term|null $term = null)
- * @method static
- * @method static
- * @method static
+ * @method static WpTaxonomyInterface|null getTaxonomy(string $name)
+ * @method static WpTaxonomyInterface registerTaxonomy(string $name, $taxonomyDef = [])
+ * @method static WpTaxonomyManagerInterface taxonomyManager()
  */
 class WpTerm extends AbstractProxy
 {

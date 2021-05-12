@@ -6,7 +6,7 @@ use tiFy\Contracts\{
     Log\Logger,
     Support\ParamsBag
 };
-use tiFy\Support\DateTime;
+use Pollen\Support\DateTime;
 
 interface CronJob extends ParamsBag
 {

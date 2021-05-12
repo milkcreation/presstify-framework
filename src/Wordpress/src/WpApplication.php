@@ -5,13 +5,44 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Kernel\Application;
-use Pollen\WpPost\WpPostProxy;
-use Pollen\WpTerm\WpTermProxy;
-use Pollen\WpUser\WpUserProxy;
+use Pollen\WpHook\WpHookerInterface;
+use Pollen\WpPost\WpPostManagerInterface;
+use Pollen\WpTerm\WpTermManagerInterface;
+use Pollen\WpUser\WpUserManagerInterface;
 
+/**
+ * @property-read WpHookerInterface wp_hook
+ * @property-read WpPostManagerInterface wp_post
+ * @property-read WpTermManagerInterface wp_term
+ * @property-read WpUserManagerInterface wp_user
+ */
 class WpApplication extends Application implements WpApplicationInterface
 {
-    use WpPostProxy;
-    use WpTermProxy;
-    use WpUserProxy;
+    /**
+     * @inheritDoc
+     */
+    public function registerAliases(): void
+    {
+        parent::registerAliases();
+        foreach (
+            [
+                WpHookerInterface::class => [
+                    'wp_hook',
+                ],
+                WpPostManagerInterface::class => [
+                    'wp_post',
+                ],
+                WpTermManagerInterface::class => [
+                    'wp_term',
+                ],
+                WpUserManagerInterface::class => [
+                    'wp_user',
+                ],
+            ] as $key => $aliases
+        ) {
+            foreach ($aliases as $alias) {
+                $this->aliases[$alias] = $key;
+            }
+        }
+    }
 }

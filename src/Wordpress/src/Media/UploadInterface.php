@@ -1,12 +1,14 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace tiFy\Wordpress\Contracts\Media;
+declare(strict_types=1);
+
+namespace tiFy\Wordpress\Media;
 
 use Exception;
-use tiFy\Contracts\Filesystem\LocalFilesystem;
-use tiFy\Contracts\Support\ParamsBag;
+use Pollen\Filesystem\LocalFilesystemInterface;
+use Pollen\Support\ParamsBag;
 
-interface Upload
+interface UploadInterface
 {
     /**
      * Ajout d'un média.
@@ -26,6 +28,13 @@ interface Upload
      * @return array
      */
     public function defaultParams(): array;
+
+    /**
+     * Instance de traitement du répertoire de destination.
+     *
+     * @return LocalFilesystemInterface
+     */
+    public function disk(): LocalFilesystemInterface;
 
     /**
      * Récupération de la taille maximum permise par fichier.
@@ -51,8 +60,8 @@ interface Upload
     /**
      * Définition|Récupération|Instance des paramètres de configuration.
      *
-     * @param string|null $key Clé d'indice du paramètre|Liste des définition. Retourne l'instance si null.
-     * @param string|null $default Valeur de retour par défaut de récupération d'un paramètre unique.
+     * @param string|array|null $key Clé d'indice du paramètre|Liste des définition. Retourne l'instance si null.
+     * @param mixed $default Valeur de retour par défaut de récupération d'un paramètre unique.
      *
      * @return string|array|ParamsBag
      */
@@ -65,7 +74,7 @@ interface Upload
      *
      * @return static
      */
-    public function setMaxSize(int $size): Upload;
+    public function setMaxSize(int $size): UploadInterface;
 
     /**
      * Définition des paramètres de configuration.
@@ -74,7 +83,7 @@ interface Upload
      *
      * @return static
      */
-    public function setParams(array $params): Upload;
+    public function setParams(array $params): UploadInterface;
 
     /**
      * Définition du chemin absolu vers le répertoire de destination.
@@ -83,7 +92,7 @@ interface Upload
      *
      * @return static
      */
-    public function setStorageDir(string $dir): Upload;
+    public function setStorageDir(string $dir): UploadInterface;
 
     /**
      * Définition d'activation de forçage du renouvellement d'un fichier déjà existant.
@@ -92,12 +101,5 @@ interface Upload
      *
      * @return static
      */
-    public function setRenewable(bool $renew): Upload;
-
-    /**
-     * Instance de traitement du répertoire de destination.
-     *
-     * @return LocalFilesystem|null
-     */
-    public function storage(): ?LocalFilesystem;
+    public function setRenewable(bool $renew): UploadInterface;
 }

@@ -11,7 +11,7 @@ use Pollen\WpUser\WpUserRoleManagerInterface;
 /**
  * @method static WpUserRoleInterface[]|array all()
  * @method static WpUserRoleInterface|null get(string $name)
- * @method static register(string $name, WpUserRoleInterface|array $args)
+ * @method static WpUserRoleInterface register(string $name, WpUserRoleInterface|array $roleDef)
  */
 class WpUserRole extends AbstractProxy
 {

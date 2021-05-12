@@ -1,6 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\NavMenu;
+
+use Pollen\Support\Html;
 
 class CategoryFallback
 {
@@ -9,7 +13,7 @@ class CategoryFallback
      * {@internal A utiliser comme menu de remplacement (fallback_cb) pour un emplacement de menu non affecté}
      * @see wp_list_categories
      */
-    public function __invoke(array $args = [])
+    public function __invoke(array $args = []): string
     {
         $args = array_merge($defaults = [
             'child_of'            => 0,
@@ -49,10 +53,8 @@ class CategoryFallback
         }
 
         if ('preserve' === $args['item_spacing']) {
-            $t = "\t";
             $n = "\n";
         } else {
-            $t = '';
             $n = '';
         }
         $menu = '';
@@ -86,14 +88,14 @@ class CategoryFallback
             ) {
                 $args['before'] = "<ul";
                 if (!empty($args['menu_id'])) {
-                    $args['before'] .= ' id="' . esc_attr($args['menu_id']) . '"';
+                    $args['before'] .= ' id="' . Html::e($args['menu_id']) . '"';
                 }
 
                 if (!empty($args['menu_class'])) {
-                    $args['before'] .= ' class="' . esc_attr($args['menu_class']) . '"';
+                    $args['before'] .= ' class="' . Html::e($args['menu_class']) . '"';
                 }
 
-                $args['before'] .= ">{$n}";
+                $args['before'] .= ">$n";
                 $args['after'] = '</ul>';
             }
 
@@ -102,14 +104,14 @@ class CategoryFallback
 
         $attrs = '';
         if (!empty($args['container_id'])) {
-            $attrs .= ' id="' . esc_attr($args['container_id']) . '"';
+            $attrs .= ' id="' . Html::e($args['container_id']) . '"';
         }
 
         if (!empty($args['container_class'])) {
-            $attrs .= ' class="' . esc_attr($args['container_class']) . '"';
+            $attrs .= ' class="' . Html::e($args['container_class']) . '"';
         }
 
-        $menu = "<{$container}{$attrs}>" . $menu . "</{$container}>{$n}";
+        $menu = "<$container$attrs>" . $menu . "</$container>$n";
 
         if ($args['echo']) {
             echo $menu;

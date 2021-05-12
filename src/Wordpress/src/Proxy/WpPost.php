@@ -19,7 +19,7 @@ use WP_Query;
  * @method static WpPostTypeInterface|null getType(string $name)
  * @method static WpQueryPaginatorInterface|null paginator()
  * @method static WpPostTypeManagerInterface|null postTypeManager()
- * @method static WpPostTypeInterface|null registerType(string $name, array|WpPostTypeInterface $args = [])
+ * @method static WpPostTypeInterface|null registerType(string $name, array|WpPostTypeInterface $postTypeDef = [])
  */
 class WpPost extends AbstractProxy
 {

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace tiFy\Wordpress\Contracts;
+namespace tiFy\Wordpress;
 
 use WP_Screen;
 
-interface WpScreen
+interface WpScreenInterface
 {
     /**
      * Récupération de l'instance WP_Screen associée.
      *
      * @param WP_Screen|string $screen
      *
-     * @return WPScreen|null
+     * @return WpScreenInterface|null
      */
-    public static function get($screen = ''): ?WPScreen;
+    public static function get($screen = ''): ?WpScreenInterface;
 
     /**
      * Récupération de l'alias de qualification.
@@ -62,7 +62,7 @@ interface WpScreen
     /**
      * Traitement des attributs de configuration.
      *
-     * @return WpScreen
+     * @return WpScreenInterface
      */
-    public function parse(): WpScreen;
+    public function parse(): WpScreenInterface;
 }

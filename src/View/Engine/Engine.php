@@ -44,7 +44,9 @@ abstract class Engine implements EngineContract
 
         if (is_string($key)) {
             return $this->params->get($key, $default);
-        } elseif (is_array($key)) {
+        }
+
+        if (is_array($key)) {
             return $this->params->set($key);
         }
 

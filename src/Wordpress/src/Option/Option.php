@@ -1,15 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Option;
 
-use tiFy\Wordpress\Contracts\Option\{Option as OptionContract, OptionPage as OptionPageContract};
-use tiFy\Support\ParamsBag;
+use Pollen\Support\ParamsBag;
 
-class Option implements OptionContract
+class Option implements OptionInterface
 {
     /**
      * Liste des pages de réglages des options déclarées.
-     * @var OptionPageContract[]|array
+     * @var OptionPageInterface[]|array
      */
     protected $pages = [];
 
@@ -20,32 +21,37 @@ class Option implements OptionContract
      */
     public function __construct()
     {
-        add_action('init', function () {
-            foreach (config('options', []) as $name => $attrs) {
-                if ($attrs !== false) {
-                    $this->registerPage($name, $attrs);
+        add_action(
+            'init',
+            function () {
+                foreach (config('options', []) as $name => $attrs) {
+                    if ($attrs !== false) {
+                        $this->registerPage($name, $attrs);
+                    }
+                }
+
+                if (!$this->getPage('tify_options')) {
+                    $params = new ParamsBag();
+                    $params->set(config('options.tify_options', []));
+
+                    if (!$params->get('title')) {
+                        $params->set('title', 'Options du site');
+                    }
+
+                    if (!$params->has('admin_bar')) {
+                        $params->set('admin_bar', true);
+                    }
+
+                    $this->registerPage('tify_options', $params->all());
                 }
             }
-
-            if (!$this->getPage('tify_options')) {
-                $params = (new ParamsBag())->set(config('options.tify_options', []));
-                if (!$params->get('title')) {
-                    $params->set('title', __('Options du site', 'theme'));
-                }
-
-                if (!$params->has('admin_bar')) {
-                    $params->set('admin_bar', true);
-                }
-
-                $this->registerPage('tify_options', $params->all());
-            }
-        });
+        );
     }
 
     /**
      * @inheritDoc
      */
-    public function getPage(string $name): ?OptionPageContract
+    public function getPage(string $name): ?OptionPageInterface
     {
         return $this->pages[$name] ?? null;
     }
@@ -53,17 +59,22 @@ class Option implements OptionContract
     /**
      * @inheritDoc
      */
-    public function registerPage(string $name, $attrs = []): ?OptionPageContract
+    public function registerPage(string $name, $attrs = []): ?OptionPageInterface
     {
-        $page = $attrs instanceof OptionPageContract
-            ? $attrs : (is_array($attrs) ? (new OptionPage())->set($attrs) : null);
+        if ($attrs instanceof OptionPageInterface) {
+            $page = $attrs;
+        } elseif (is_array($attrs)) {
+            $page = (new OptionPage())->set($attrs);
+        } else {
+            $page = null;
+        }
 
-        if ($page instanceof OptionPageContract) {
+        if ($page instanceof OptionPageInterface) {
             $page->setManager($this)->setName($name)->boot();
 
             return $this->pages[$name] = $page->parse();
-        } else {
-            return null;
         }
+
+        return null;
     }
 }
