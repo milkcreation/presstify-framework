@@ -1,13 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Wordpress\Option;
 
-use tiFy\Wordpress\Contracts\Option\{Option as OptionContract, OptionPage as OptionPageContract};
-use tiFy\Contracts\View\Engine as ViewEngine;
-use tiFy\Support\{ParamsBag, Proxy\View};
+use Pollen\Support\ParamsBag;
+use Pollen\View\ViewEngine;
+use Pollen\View\ViewEngineInterface;
 use WP_Admin_Bar;
 
-class OptionPage extends ParamsBag implements OptionPageContract
+class OptionPage extends ParamsBag implements OptionPageInterface
 {
     /**
      * Nom de qualification.
@@ -17,15 +19,15 @@ class OptionPage extends ParamsBag implements OptionPageContract
 
     /**
      * Instance du gestionnaire d'options.
-     * @var OptionContract
+     * @var OptionInterface
      */
     protected $manager;
 
     /**
      * Instance du moteur de gabarits d'affichage.
-     * @return ViewEngine
+     * @return ViewEngineInterface
      */
-    protected $view;
+    protected $viewEngine;
 
     /**
      * CONSTRUCTEUR.
@@ -34,40 +36,52 @@ class OptionPage extends ParamsBag implements OptionPageContract
      */
     public function __construct()
     {
-        add_action('admin_menu', function () {
-            if ($attrs = $this->get('admin_menu', [])) {
-                if ($attrs['parent_slug']) {
-                    $hookname = add_submenu_page(
-                        $attrs['parent_slug'],
-                        $attrs['page_title'],
-                        $attrs['menu_title'],
-                        $attrs['capability'],
-                        $attrs['menu_slug'],
-                        $attrs['function']
-                    );
-                } else {
-                    $hookname = add_menu_page(
-                        $attrs['page_title'],
-                        $attrs['page_title'],
-                        $attrs['capability'],
-                        $attrs['menu_slug'],
-                        $attrs['function'],
-                        $attrs['icon_url'],
-                        $attrs['position']
-                    );
+        add_action(
+            'admin_menu',
+            function () {
+                if ($attrs = $this->get('admin_menu', [])) {
+                    if ($attrs['parent_slug']) {
+                        $hookname = add_submenu_page(
+                            $attrs['parent_slug'],
+                            $attrs['page_title'],
+                            $attrs['menu_title'],
+                            $attrs['capability'],
+                            $attrs['menu_slug'],
+                            $attrs['function']
+                        );
+                    } else {
+                        $hookname = add_menu_page(
+                            $attrs['page_title'],
+                            $attrs['page_title'],
+                            $attrs['capability'],
+                            $attrs['menu_slug'],
+                            $attrs['function'],
+                            $attrs['icon_url'],
+                            $attrs['position']
+                        );
+                    }
+                    $this->set(compact('hookname'));
                 }
-                $this->set(compact('hookname'));
             }
-        });
+        );
 
-        add_action('admin_bar_menu', function (WP_Admin_Bar &$wp_admin_bar) {
-            if (!is_admin() && ($attrs = $this->get('admin_bar', []))) {
-                $attrs['href'] = $attrs['href'] ??
-                    admin_url('/options-general.php?page=' . $this->get('admin_menu.menu_slug', $this->getName()));
+        add_action(
+            'admin_bar_menu',
+            function (WP_Admin_Bar $wp_admin_bar) {
+                if (!is_admin() && ($params = $this->get('admin_bar', []))) {
+                    $params = is_array($params) ? $params : [];
 
-                $wp_admin_bar->add_node($attrs);
-            }
-        }, 50);
+                    $params['href'] = $params['href'] ??
+                        admin_url('/options-general.php?page=' . $this->get('admin_menu.menu_slug', $this->getName()));
+
+                    $wp_admin_bar->add_node($params);
+                }
+            },
+            50
+        );
+
+        parent::__construct();
+        $this->parse();
     }
 
     /**
@@ -75,7 +89,7 @@ class OptionPage extends ParamsBag implements OptionPageContract
      */
     public function __toString(): string
     {
-        return (string)$this->render();
+        return $this->render();
     }
 
     /**
@@ -93,7 +107,7 @@ class OptionPage extends ParamsBag implements OptionPageContract
             'admin_menu' => true,
             'cap'        => 'manage_options',
             'hookname'   => null,
-            'title'      => __('Réglage des options', 'tify'),
+            'title'      => 'Réglage des options',
             'page_title' => null,
             'view'       => [],
         ];
@@ -120,13 +134,13 @@ class OptionPage extends ParamsBag implements OptionPageContract
      */
     public function isSettingsPage(): bool
     {
-        return !!preg_match('/^settings_page_/', $this->getHookname());
+        return !0 !== strpos($this->getHookname(), "settings_page_");
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(): OptionPageContract
+    public function parse(): void
     {
         parent::parse();
 
@@ -137,45 +151,53 @@ class OptionPage extends ParamsBag implements OptionPageContract
         }
 
         if ($admin_menu = $this->get('admin_menu')) {
-            $this->set([
-                'admin_menu' => array_merge([
-                    'parent_slug' => 'options-general.php',
-                    'page_title'  => $this->get('title'),
-                    'menu_title'  => $this->get('title'),
-                    'capability'  => $this->get('cap'),
-                    'menu_slug'   => $this->getName(),
-                    'function'    => function () {
-                        echo $this->render();
-                    },
-                    'icon_url'    => '',
-                    'position'    => null,
-                ], is_array($admin_menu) ? $admin_menu : []),
-            ]);
+            $this->set(
+                [
+                    'admin_menu' => array_merge(
+                        [
+                            'parent_slug' => 'options-general.php',
+                            'page_title'  => $this->get('title'),
+                            'menu_title'  => $this->get('title'),
+                            'capability'  => $this->get('cap'),
+                            'menu_slug'   => $this->getName(),
+                            'function'    => function () {
+                                echo $this->render();
+                            },
+                            'icon_url'    => '',
+                            'position'    => null,
+                        ],
+                        is_array($admin_menu) ? $admin_menu : []
+                    ),
+                ]
+            );
         }
 
         if ($admin_bar = $this->get('admin_bar')) {
-            $this->set([
-                'admin_bar' => array_merge([
-                    'id'     => $this->getName(),
-                    'title'  => $this->get('title'),
-                    'parent' => 'site-name',
-                    'group'  => false,
-                    'meta'   => [],
-                ], is_array($admin_bar) ? $admin_bar : []),
-            ]);
+            $this->set(
+                [
+                    'admin_bar' => array_merge(
+                        [
+                            'id'     => $this->getName(),
+                            'title'  => $this->get('title'),
+                            'parent' => 'site-name',
+                            'group'  => false,
+                            'meta'   => [],
+                        ],
+                        is_array($admin_bar) ? $admin_bar : []
+                    ),
+                ]
+            );
         }
-
-        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function registerSettings(array $settings): OptionPageContract
+    public function registerSettings(array $settings): OptionPageInterface
     {
-        foreach($settings as $k => $setting) {
+        foreach ($settings as $k => $setting) {
             if (is_numeric($k)) {
-                $name = (string) $setting;
+                $name = (string)$setting;
                 $args = [];
             } else {
                 $name = $k;
@@ -199,7 +221,7 @@ class OptionPage extends ParamsBag implements OptionPageContract
     /**
      * @inheritDoc
      */
-    public function setManager(OptionContract $manager): OptionPageContract
+    public function setManager(OptionInterface $manager): OptionPageInterface
     {
         $this->manager = $manager;
 
@@ -209,7 +231,7 @@ class OptionPage extends ParamsBag implements OptionPageContract
     /**
      * @inheritDoc
      */
-    public function setName(string $name): OptionPageContract
+    public function setName(string $name): OptionPageInterface
     {
         $this->name = $name;
 
@@ -219,20 +241,35 @@ class OptionPage extends ParamsBag implements OptionPageContract
     /**
      * @inheritDoc
      */
-    public function view(?string $name = null, array $data = [])
+    public function view(?string $name = null, array $datas = [])
     {
-        if (!$this->view) {
-            $this->view = View::getPlatesEngine(array_merge([
-                'directory'   => class_info($this->manager)->getDirname() . '/Resources/views/',
-                'factory'     => OptionPageView::class,
-                'option_page' => $this,
-            ], config('options.view', []), $this->get('view', [])));
+        if ($this->viewEngine === null) {
+            $this->viewEngine = new ViewEngine();
+
+            $params = array_merge(
+                [
+                    'directory' => class_info($this->manager)->getDirname() . '/Resources/views/',
+                ],
+                config('options.view', []),
+                $this->get('view', [])
+            );
+
+            $this->viewEngine
+                ->setDirectory($params['directory'])
+                ->setLoader(OptionPageViewLoader::class)
+                ->setDelegate($this);
+
+            if (isset($params['override_dir'])) {
+                $this->viewEngine->addFolder('_override_dir', $params['override_dir'], true);
+            }
+
+            $this->viewEngine->setDelegateMixin('isSettingPage');
         }
 
         if (func_num_args() === 0) {
-            return $this->view;
+            return $this->viewEngine;
         }
 
-        return $this->view->render($name, $data);
+        return $this->viewEngine->render($name, $datas);
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Column;
 
 use tiFy\Contracts\Support\ParamsBag;
-use tiFy\Wordpress\Contracts\WpScreen;
+use tiFy\Wordpress\WpScreenInterface;
 
 interface ColumnItemInterface extends ParamsBag
 {
@@ -45,7 +45,7 @@ interface ColumnItemInterface extends ParamsBag
     /**
      * Récupération de l'instance de l'écran d'affichage.
      *
-     * @return WpScreen
+     * @return WpScreenInterface
      */
     public function getScreen();
 
@@ -66,9 +66,9 @@ interface ColumnItemInterface extends ParamsBag
     /**
      * Chargement de l'écran courant Wordpress.
      *
-     * @param WpScreen $screen Instance de l'écran courant.
+     * @param WpScreenInterface $screen Instance de l'écran courant.
      *
      * @return void
      */
-    public function load(WpScreen $screen);
+    public function load(WpScreenInterface $screen);
 }

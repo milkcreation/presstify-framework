@@ -6,7 +6,7 @@ namespace tiFy\Cron;
 
 use Exception;
 use tiFy\Contracts\Cron\CronJob as CronJobContract;
-use tiFy\Support\DateTime;
+use Pollen\Support\DateTime;
 use tiFy\Support\ParamsBag;
 
 class CronJob extends ParamsBag implements CronJobContract

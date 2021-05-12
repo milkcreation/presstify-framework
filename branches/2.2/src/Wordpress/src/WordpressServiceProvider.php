@@ -72,8 +72,6 @@ class WordpressServiceProvider extends BootableServiceProvider
 
             require_once __DIR__ . '/helpers.php';
 
-            $this->getContainer()->share('wp', new Wordpress());
-
             add_action(
                 'plugins_loaded',
                 function () {

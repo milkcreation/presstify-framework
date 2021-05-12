@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
-use Pollen\Proxy\Proxies\Request;
-use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
+use Pollen\Support\Proxy\HttpRequestProxy;
+use Pollen\WpUser\WpUserProxy;
 use tiFy\Wordpress\Proxy\Option;
-use tiFy\Wordpress\Query\QueryUser;
 use WP_Screen;
 
-class WpScreen implements WpScreenContract
+class WpScreen implements WpScreenInterface
 {
+    use HttpRequestProxy;
+    use WpUserProxy;
+
     /**
      * Instance de l'écran en relation.
      * @var WP_Screen|null
@@ -53,9 +55,9 @@ class WpScreen implements WpScreenContract
     /**
      * @inheritDoc
      */
-    public static function get($screen = ''): ?WpScreenContract
+    public static function get($screen = ''): ?WpScreenInterface
     {
-        if ($screen instanceof WpScreenContract) {
+        if ($screen instanceof WpScreenInterface) {
             return $screen;
         }
         if ($screen instanceof WP_Screen) {
@@ -209,7 +211,7 @@ class WpScreen implements WpScreenContract
     /**
      * @inheritDoc
      */
-    public function parse(): WpScreenContract
+    public function parse(): WpScreenInterface
     {
         if (preg_match('/^settings_page_(.*)/', $this->screen->id, $matches)) {
             $this->objectName = $matches[1];
@@ -244,12 +246,15 @@ class WpScreen implements WpScreenContract
         } elseif (
         ((
                 ($this->screen->base === 'user-edit') &&
-                ($user_id = (int)Request::input('user_id', 0)) &&
-                ($user = QueryUser::createFromId($user_id))) ||
-            (($this->screen->base === 'profile') && ($user = QueryUser::createFromId(get_current_user_id()))
+                ($user_id = (int)$this->httpRequest()->input('user_id', 0)) &&
+                ($user = $this->wpUser($user_id))) ||
+                (
+                    ($this->screen->base === 'profile') &&
+                    ($user = $this->wpUser(get_current_user_id())
+                )
             ))
         ) {
-            $this->objectName = join('|', array_keys($user->getRoles()));
+            $this->objectName = implode('|', array_keys($user->getRoles()));
             $this->objectType = 'user';
         } elseif (preg_match('/^(.*)_page_(.*)$/', $this->screen->id, $matches) && Option::getPage($matches[2])) {
             $this->objectName = $matches[2];

@@ -6,8 +6,8 @@ namespace tiFy\Wordpress\Column;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
 use tiFy\Wordpress\WpScreen;
+use tiFy\Wordpress\WpScreenInterface;
 use WP_Screen;
 
 final class Column implements ColumnInterface
@@ -38,7 +38,7 @@ final class Column implements ColumnInterface
 
     /**
      * Instance de l'écran d'affichage courant.
-     * @var WpScreenContract
+     * @var WpScreenInterface
      */
     protected $screen;
 

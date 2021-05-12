@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Column;
 
 use tiFy\Support\ParamsBag;
-use tiFy\Wordpress\Contracts\WpScreen as WpScreenContract;
 use tiFy\Wordpress\WpScreen;
+use tiFy\Wordpress\WpScreenInterface;
 use WP_Screen;
 
 class ColumnItemController extends ParamsBag implements ColumnItemInterface
@@ -57,7 +57,7 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
 
     /**
      * Instance de l'écran d'affichage associé.
-     * @var WpScreenContract
+     * @var WpScreenInterface
      */
     protected $screen;
 
@@ -66,7 +66,7 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
      *
      * @param string $name Nom de qualification.
      * @param array $attrs Liste des attributs de configuration.
-     * @param null|string|WP_Screen|WpScreenContract $screen Qualification de la page d'affichage.
+     * @param null|string|WP_Screen|WpScreenInterface $screen Qualification de la page d'affichage.
      *
      * @return void
      */
@@ -75,7 +75,7 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
         $this->name = $name;
         $this->index = self::$_index++;
 
-        if ($screen instanceof WpScreenContract) :
+        if ($screen instanceof WpScreenInterface) :
             $this->screen = $screen;
         else :
             add_action('admin_init', function () use ($screen, $attrs) {
@@ -166,7 +166,7 @@ class ColumnItemController extends ParamsBag implements ColumnItemInterface
     /**
      * {@inheritdoc}
      */
-    public function load(WpScreenContract $current_screen)
+    public function load(WpScreenInterface $current_screen)
     {
         if ($this->getScreen() && ($current_screen->getHookname() === $this->getScreen()->getHookname())) :
             $this->active = true;

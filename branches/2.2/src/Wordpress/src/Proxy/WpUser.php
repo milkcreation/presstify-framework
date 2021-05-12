@@ -16,7 +16,7 @@ use WP_User_Query;
  * @method static WpUserQueryInterface[]|array fetch(WP_User_Query|array|null $query = null)
  * @method static WpUserQueryInterface|null get(string|int|WP_User|null $user = null)
  * @method static WpUserRoleInterface|null getRole(string $name)
- * @method static WpUserRoleInterface registerRole(string $name, WpUserRoleInterface|array $args = [])
+ * @method static WpUserRoleInterface registerRole(string $name, WpUserRoleInterface|array $roleDef = [])
  * @method static WpUserRoleManagerInterface roleManager()
  */
 class WpUser extends AbstractProxy

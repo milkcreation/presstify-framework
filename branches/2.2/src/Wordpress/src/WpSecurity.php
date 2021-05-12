@@ -6,11 +6,6 @@ namespace tiFy\Wordpress;
 
 class WpSecurity
 {
-    /**
-     * CONSTRUCTEUR.
-     *
-     * @return void
-     */
     public function __construct()
     {
         if(config('wp-login-redirect.enabled', false)) {

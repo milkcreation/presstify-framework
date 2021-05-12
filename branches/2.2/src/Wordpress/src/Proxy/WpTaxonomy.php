@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Proxy;
 
 use Pollen\Proxy\AbstractProxy;
+use Pollen\WpTerm\WpTaxonomyInterface;
 use Pollen\WpTerm\WpTaxonomyManagerInterface;
 
 /**
- * @method static
+ * @method static WpTaxonomyInterface[]|array all()
+ * @method static WpTaxonomyInterface|null get(string $name)
+ * @method static WpTaxonomyInterface register(string $name,  WpTaxonomyInterface|array $taxonomyDef)
  */
 class WpTaxonomy extends AbstractProxy
 {

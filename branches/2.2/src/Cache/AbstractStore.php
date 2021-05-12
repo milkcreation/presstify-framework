@@ -3,7 +3,7 @@
 namespace tiFy\Cache;
 
 use tiFy\Contracts\Cache\Store;
-use tiFy\Support\DateTime;
+use Pollen\Support\DateTime;
 
 abstract class AbstractStore implements Store
 {

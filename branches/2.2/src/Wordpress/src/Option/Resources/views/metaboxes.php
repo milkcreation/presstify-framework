@@ -1,6 +1,6 @@
 <?php
 /**
- * @var tiFy\Wordpress\Option\OptionPageView $this
+ * @var tiFy\Wordpress\Option\OptionPageViewLoader $this
  */
 ?>
 <div style="margin-right:300px; margin-top:20px;">

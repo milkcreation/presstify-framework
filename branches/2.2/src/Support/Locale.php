@@ -57,7 +57,7 @@ class Locale
      *
      * @return void
      */
-    public static function setLanguages($languages): void
+    public static function setLanguages(array $languages): void
     {
         self::$languages = $languages;
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @var Pollen\Field\FieldViewLoaderInterface $this
- * @var tiFy\Wordpress\Contracts\Query\QueryPost $post
+ * @var Pollen\WpPost\WpPostQueryInterface $post
  */
 ?>
 <div class="FieldSuggest-pickerItemWrapper FieldSuggest-pickerItemWrapper--post">
