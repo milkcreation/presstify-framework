@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Metabox;
 
 use BadMethodCallException;
-use Error;
-use Pollen\Proxy\Proxies\Request;
+use Throwable;
+use Pollen\Support\Proxy\HttpRequestProxy;
+use Pollen\WpUser\WpUserProxy;
 use tiFy\Wordpress\Proxy\Option;
-use tiFy\Wordpress\Query\QueryUser;
 use WP_Screen;
 
 /**
@@ -16,6 +16,8 @@ use WP_Screen;
  */
 class MetaboxWpAdminScreen implements MetaboxWpAdminScreenInterface
 {
+    use HttpRequestProxy;
+    use WpUserProxy;
     /**
      * Instance de l'écran en relation.
      * @var WP_Screen|null
@@ -65,7 +67,7 @@ class MetaboxWpAdminScreen implements MetaboxWpAdminScreenInterface
     {
         try {
             return $this->getWpScreen()->{$method}(...$arguments);
-        } catch (Error $e) {
+        } catch (Throwable $e) {
             throw new BadMethodCallException(
                 sprintf(
                     'MetaboxDriver [%s] method call [%s] throws an exception: %s',
@@ -84,9 +86,13 @@ class MetaboxWpAdminScreen implements MetaboxWpAdminScreenInterface
     {
         if ($screen instanceof MetaboxWpAdminScreenInterface) {
             return $screen;
-        } elseif ($screen instanceof WP_Screen) {
+        }
+
+        if ($screen instanceof WP_Screen) {
             return new static($screen);
-        } elseif (is_string($screen)) {
+        }
+
+        if (is_string($screen)) {
             if (preg_match('/(.*)@(post_type|post_types|taxonomy|taxonomies|user|users)/', $screen, $matches)) {
                 $attrs = [];
                 switch ($matches[3]) {
@@ -267,12 +273,12 @@ class MetaboxWpAdminScreen implements MetaboxWpAdminScreenInterface
         } elseif (
         ((
                 ($this->base === 'user-edit') &&
-                ($user_id = (int)Request::input('user_id', 0)) &&
-                ($user = QueryUser::createFromId($user_id))) ||
-            (($this->base === 'profile') && ($user = QueryUser::createFromId(get_current_user_id()))
+                ($user_id = (int)$this->httpRequest()->input('user_id', 0)) &&
+                ($user = $this->wpUser($user_id))) ||
+            (($this->base === 'profile') && ($user = $this->wpUser(get_current_user_id()))
             ))
         ) {
-            $this->objectName = join('|', array_keys($user->getRoles()));
+            $this->objectName = implode('|', array_keys($user->getRoles()));
             $this->objectType = 'user';
         } elseif (preg_match('/^(.*)_page_(.*)$/', $this->id, $matches) && Option::getPage($matches[2])) {
             $this->objectName = $matches[2];

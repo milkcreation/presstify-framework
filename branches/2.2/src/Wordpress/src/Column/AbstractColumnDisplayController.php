@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Column;
 
-use Pollen\Proxy\Proxies\View;
+use tiFy\Proxy\View;
 use tiFy\Contracts\View\PlatesEngine;
 
 abstract class AbstractColumnDisplayController implements ColumnDisplayInterface

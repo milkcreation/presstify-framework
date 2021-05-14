@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress\Column\Drivers;
 
-use Pollen\Proxy\Proxies\Partial;
+use Pollen\Support\Proxy\PartialProxy;
 use tiFy\Wordpress\Column\AbstractColumnDisplayTaxonomyController;
 use tiFy\Wordpress\Query\QueryTerm;
 
 class TaxonomyThumbnailColumn extends AbstractColumnDisplayTaxonomyController
 {
+    use PartialProxy;
     /**
      * {@inheritdoc}
      */

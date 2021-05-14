@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace tiFy\Wordpress\Partial\Drivers\Accordion;
 
 use Pollen\Partial\Drivers\Accordion\AccordionItem;
-use Pollen\Proxy\Proxies\Partial;
+use Pollen\Support\Proxy\PartialProxy;
 use WP_Term;
 
 class AccordionWpTermItem extends AccordionItem implements AccordionWpTermItemInterface
 {
+    use PartialProxy;
+
     /**
      * Terme de taxonomie associé
      * @var WP_Term
@@ -49,7 +51,7 @@ class AccordionWpTermItem extends AccordionItem implements AccordionWpTermItemIn
      */
     public function render(): string
     {
-        return Partial::get('tag', [
+        return $this->partial('tag', [
             'tag'     => 'a',
             'attrs'   => [
                 'class' => 'Accordion-itemLink',

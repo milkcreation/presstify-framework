@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace tiFy\Wordpress;
 
-use Pollen\Proxy\Proxies\Request as req;
 use Pollen\Http\RedirectResponse;
+use Pollen\Support\Proxy\HttpRequestProxy;
 
 /**
  * @see https://fr.wordpress.org/plugins/sf-move-login/
  */
 class WpLoginRedirect
 {
+    use HttpRequestProxy;
+
     /**
      * Indicateur d'activation.
      * @var boolean
@@ -192,7 +194,9 @@ class WpLoginRedirect
     {
         if (!$endpoint = $this->_getEndpoint($action)) {
             return $url;
-        } elseif ($url && (false === strpos($url, '/' . $endpoint))) {
+        }
+
+        if ($url && (false === strpos($url, '/' . $endpoint))) {
             $path = $this->_getEndpoint('login') ?: 'wp-login.php';
 
             $url = str_replace(
@@ -236,7 +240,7 @@ class WpLoginRedirect
      */
     private function _isCheatin(): bool
     {
-        $rel = rtrim(req::getBaseUrl() . req::getPathInfo(), '/');
+        $rel = rtrim($this->httpRequest()->getBaseUrl() . $this->httpRequest()->getPathInfo(), '/');
 
         foreach ($this->map as $action => $endpoint) {
             $root = parse_url(home_url('/'));
