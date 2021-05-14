@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace tiFy\Cache;
 
 use InvalidArgumentException;
-use Pollen\Proxy\Proxies\Database;
+use Pollen\Support\Proxy\DbProxy;
 use Psr\Container\ContainerInterface as Container;
 use tiFy\Contracts\Cache\Cache as CacheContract;
 use tiFy\Contracts\Cache\Store;
 
 class Cache implements CacheContract
 {
+    use DbProxy;
+
     /**
      * Instance du conteneur d'injection de dépendances.
      * @var Container
@@ -58,7 +60,7 @@ class Cache implements CacheContract
      */
     protected function createDatabaseStore(array $config): Store
     {
-        $connection = Database::getInstance()->getConnection();
+        $connection = $this->db()->getConnection();
 
         return (new DatabaseStore($connection))
             ->setTable($config['table'] ?? null)
@@ -102,7 +104,7 @@ class Cache implements CacheContract
     /**
      * Récupération de l'instance d'un gestionnaire de cache.
      *
-     * @param  string  $name
+     * @param string $name
      *
      * @return Store
      *
@@ -120,13 +122,12 @@ class Cache implements CacheContract
 
         $store = $config['store'] ?? $name;
 
-        $createMethod = 'create'.ucfirst($config['store'] ?? $name).'Store';
+        $createMethod = 'create' . ucfirst($config['store'] ?? $name) . 'Store';
         if (method_exists($this, $createMethod)) {
             return $this->{$createMethod}($config);
-        } else {
-            throw new InvalidArgumentException(
-                "Le gestionnaire de cache [{$store}] n\'est pas supporté."
-            );
         }
+        throw new InvalidArgumentException(
+            "Le gestionnaire de cache [{$store}] n\'est pas supporté."
+        );
     }
 }

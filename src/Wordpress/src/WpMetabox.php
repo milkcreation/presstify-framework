@@ -6,14 +6,13 @@ namespace tiFy\Wordpress;
 
 use Pollen\Metabox\MetaboxManagerInterface;
 use Pollen\Support\Proxy\ContainerProxy;
+use Pollen\Support\Proxy\HttpRequestProxy;
 use Psr\Container\ContainerInterface as Container;
-
 use tiFy\Wordpress\Metabox\Contexts\SideContext;
 use tiFy\Wordpress\Metabox\Contexts\SideContextInterface;
 use tiFy\Wordpress\Metabox\Drivers\FilefeedDriver;
 use tiFy\Wordpress\Metabox\Drivers\ImagefeedDriver;
 use tiFy\Wordpress\Metabox\Drivers\VideofeedDriver;
-use Pollen\Proxy\Proxies\Request;
 use WP_Post;
 use WP_Screen;
 use WP_Term;
@@ -22,6 +21,7 @@ use WP_User;
 class WpMetabox
 {
     use ContainerProxy;
+    use HttpRequestProxy;
 
     /**
      * @var MetaboxManagerInterface
@@ -286,7 +286,7 @@ class WpMetabox
                          break;
                     }
                 } elseif ($wpAdminScreen->getAlias() === '@options') {
-                    $objectName = Request::input('option_page', '');
+                    $objectName = $this->httpRequest()->input('option_page', '');
                     $screen = "{$objectName}@options";
 
                     if ($this->metaboxManager->hasScreen("{$objectName}@options")) {

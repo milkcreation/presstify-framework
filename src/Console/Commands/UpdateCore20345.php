@@ -3,8 +3,7 @@
 namespace tiFy\Console\Commands;
 
 use Illuminate\Database\Schema\Blueprint;
-use Pollen\Proxy\Proxies\Database;
-use Pollen\Proxy\Proxies\Schema;
+use Pollen\Support\Proxy\DbProxy;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use tiFy\Console\Command;
@@ -14,20 +13,22 @@ use tiFy\Console\Command;
  */
 class UpdateCore20345 extends Command
 {
+    use DbProxy;
+
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        Database::addConnection(
-            array_merge(Database::getConnection()->getConfig(), ['strict' => false]),
+        $this->db()->addConnection(
+            array_merge($this->db()->getConnection()->getConfig(), ['strict' => false]),
             'update.v20345.form.addon.record'
         );
 
         if (is_multisite()) {
             global $wpdb;
 
-            Database::getConnection('update.v20345.form.addon.record')->setTablePrefix($wpdb->prefix);
+            $this->db()->getConnection('update.v20345.form.addon.record')->setTablePrefix($wpdb->prefix);
         }
 
-        $schema = Schema::connexion('update.v20345.form.addon.record');
+        $schema = $this->schema('update.v20345.form.addon.record');
 
         if ($schema->hasTable('tify_forms_record')) {
             $schema->table('tify_forms_record', function (Blueprint $table) {

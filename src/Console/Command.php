@@ -1,17 +1,19 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Console;
 
 use Exception;
-use Pollen\Proxy\Proxies\Log;
-use Symfony\Component\Console\{
-    Command\Command as BaseCommand,
-    Input\InputInterface,
-    Output\OutputInterface
-};
+use Pollen\Log\LogManager;
+use Pollen\Log\LogManagerInterface;
+use Pollen\Log\LoggerInterface;
+use Symfony\Component\Console\Command\Command as BaseCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use tiFy\Contracts\Console\Command as CommandContract;
-use tiFy\Contracts\Log\Logger as LoggerContract;
 use tiFy\Support\MessagesBag;
+use RuntimeException;
 
 /**
  * USAGE :
@@ -27,8 +29,13 @@ use tiFy\Support\MessagesBag;
 class Command extends BaseCommand implements CommandContract
 {
     /**
+     * @var LogManagerInterface
+     */
+    protected $logManager;
+
+    /**
      * Initialisation de la journalisation.
-     * @var bool
+     * @var LoggerInterface|bool
      */
     protected $logger = true;
 
@@ -59,7 +66,7 @@ class Command extends BaseCommand implements CommandContract
     public function handleNotices(OutputInterface $output, bool $forget = true): void
     {
         foreach ($this->message()->all() as $level => $messages) {
-            foreach($messages as $message) {
+            foreach ($messages as $message) {
                 $this->log($level, $message);
             }
 
@@ -78,8 +85,10 @@ class Command extends BaseCommand implements CommandContract
     {
         if ($this->logger === false) {
             return null;
-        } elseif (!$this->logger instanceof LoggerContract) {
-            $this->logger = Log::registerChannel(
+        }
+
+        if (!$this->logger instanceof LoggerInterface) {
+            $this->logger = $this->logManager()->registerChannel(
                 '[command]' . preg_replace('/\:/', '@', $this->getName()),
                 is_array($this->logger) ? $this->logger : []
             );
@@ -87,11 +96,23 @@ class Command extends BaseCommand implements CommandContract
 
         if (is_null($level)) {
             return $this->logger ?: null;
-        } else {
-            $this->logger->log($level, $message, $context);
         }
+        $this->logger->log($level, $message, $context);
 
         return null;
+    }
+
+    protected function logManager(): LogManagerInterface
+    {
+        if ($this->logManager === null) {
+            try {
+                $this->logManager = LogManager::getInstance();
+            } catch (RuntimeException $e) {
+                $this->logManager = new LogManager();
+            }
+        }
+
+        return $this->logManager;
     }
 
     /**
@@ -105,9 +126,8 @@ class Command extends BaseCommand implements CommandContract
 
         if (is_null($level)) {
             return $this->message;
-        } else {
-            return $this->message->add($level, $message, $data, $code);
         }
+        return $this->message->add($level, $message, $data, $code);
     }
 
     /**
@@ -115,7 +135,7 @@ class Command extends BaseCommand implements CommandContract
      */
     public function setLogger($logger = true): CommandContract
     {
-        $this->logger = ($logger instanceof LoggerContract) ? $logger : !!$logger;
+        $this->logger = ($logger instanceof LoggerInterface) ? $logger : (bool)$logger;
 
         return $this;
     }

@@ -8,7 +8,6 @@ use Pollen\Partial\Drivers\CurtainMenuDriver as BaseCurtainMenuDriver;
 use Pollen\Partial\Drivers\CurtainMenuDriverInterface as BaseCurtainMenuDriverInterface;
 use Pollen\Partial\Drivers\CurtainMenu\CurtainMenuCollection;
 use Pollen\Partial\Drivers\CurtainMenu\CurtainMenuCollectionInterface;
-use Pollen\Proxy\Proxies\Partial as ptl;
 use WP_Query;
 use WP_Term;
 use WP_Term_Query;
@@ -42,7 +41,7 @@ class CurtainMenuDriver extends BaseCurtainMenuDriver
                     $_items[(string)$t->term_id] = [
                         'nav'    => $t->name,
                         'parent' => !empty($_parent) && ($_parent !== $parent) ? (string)$t->parent : null,
-                        'title'  => (string)ptl::get(
+                        'title'  => $this->partial(
                             'tag',
                             [
                                 'attrs'   => [
@@ -51,7 +50,7 @@ class CurtainMenuDriver extends BaseCurtainMenuDriver
                                 'content' => $t->name,
                                 'tag'     => 'a',
                             ]
-                        ),
+                        )->render(),
                         'url'    => $url,
                     ];
                 }

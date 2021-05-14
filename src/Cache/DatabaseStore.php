@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace tiFy\Cache;
 
 use Exception;
-use Illuminate\Database\{
-    ConnectionInterface as DbConnection,
-    PostgresConnection,
-    Query\Builder as QueryBuilder,
-    Schema\Blueprint,
-};
+use Illuminate\Database\ConnectionInterface as DbConnection;
+use Illuminate\Database\PostgresConnection;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Schema\Blueprint;
+use Pollen\Support\Proxy\DbProxy;
 use Pollen\Support\Str;
-use Pollen\Proxy\Proxies\Schema;
 use tiFy\Contracts\Cache\DatabaseStore as DatabaseStoreContract;
 
 class DatabaseStore extends AbstractStore implements DatabaseStoreContract
 {
+    use DbProxy;
+
     /**
      * Nom de qualification de la table par défaut.
      * @var string
@@ -81,7 +81,7 @@ class DatabaseStore extends AbstractStore implements DatabaseStoreContract
      */
     public function flush(): bool
     {
-        return !!$this->table()->delete();
+        return (bool)$this->table()->delete();
     }
 
     /**
@@ -97,7 +97,7 @@ class DatabaseStore extends AbstractStore implements DatabaseStoreContract
      */
     public function forget(string $key): bool
     {
-        return !!$this->table()->where('key', '=', $this->prefix.$key)->delete();
+        return (bool)$this->table()->where('key', '=', $this->prefix . $key)->delete();
     }
 
     /**
@@ -171,8 +171,8 @@ class DatabaseStore extends AbstractStore implements DatabaseStoreContract
     {
         $table = !is_null($table) ? $table : self::$defaultTable;
 
-        if (!Schema::hasTable($table)) {
-            Schema::create($table, function (Blueprint $table) {
+        if (!$this->schema()->hasTable($table)) {
+            $this->schema()->create($table, function (Blueprint $table) {
                 $table->string('key')->unique();
                 $table->longText('value');
                 $table->integer('expiration');

@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Contracts\Console;
 
+use Pollen\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Symfony\Component\Console\Output\OutputInterface;
-use tiFy\Contracts\Log\Logger as LoggerContract;
+
 use tiFy\Support\MessagesBag;
 
 /**
@@ -41,7 +44,7 @@ interface Command
      * @param string $message
      * @param array $context
      *
-     * @return string|LoggerContract|null
+     * @return string|LoggerInterface|null
      */
     public function log($level = null, string $message = '', array $context = []);
 
@@ -49,9 +52,9 @@ interface Command
      * Ajout d'un message ou récupération de l'instance du gestionnaire de message.
      *
      * @param string|int|null $level
-     * @param string $message
+     * @param string|null $message
      * @param array|null $data
-     * @param string $code
+     * @param string|null $code
      *
      * @return MessagesBag|string|null
      */
@@ -60,7 +63,7 @@ interface Command
     /**
      * Définition de la journalisation.
      *
-     * @param LoggerContract|bool $offset
+     * @param LoggerInterface|bool $logger
      *
      * @return static
      */
