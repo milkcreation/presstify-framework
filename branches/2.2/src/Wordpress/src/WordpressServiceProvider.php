@@ -18,11 +18,8 @@ use Pollen\Partial\PartialManagerInterface;
 use Pollen\Routing\RouterInterface;
 use Pollen\Session\SessionManagerInterface;
 use Pollen\Support\Concerns\BootableTrait;
-use Pollen\Support\DateTime;
 use Pollen\Support\Proxy\HttpRequestProxy;
-use RuntimeException;
 use Pollen\Container\BootableServiceProvider;
-use tiFy\Support\Locale;
 use tiFy\Wordpress\Column\Column;
 use tiFy\Wordpress\Media\Media;
 use tiFy\Wordpress\Option\Option;
@@ -59,112 +56,6 @@ class WordpressServiceProvider extends BootableServiceProvider
         'wp.wp_query',
         'wp.view',
     ];
-
-    /**
-     * @inheritDoc
-     */
-    public function boot(): void
-    {
-        if (!$this->isBooted()) {
-            if (!defined('WPINC')) {
-                throw new RuntimeException('Wordpress must be installed to work');
-            }
-
-            require_once __DIR__ . '/helpers.php';
-
-            add_action(
-                'plugins_loaded',
-                function () {
-                    load_muplugin_textdomain('tify', '/presstify/languages/');
-                    do_action('tify_load_textdomain');
-                }
-            );
-
-            add_action(
-                'after_setup_theme',
-                function () {
-                    require_once(ABSPATH . 'wp-admin/includes/translation-install.php');
-
-                    Locale::set(get_locale());
-                    Locale::setLanguages(wp_get_available_translations() ?: []);
-
-                    global $locale;
-                    DateTime::setLocale($locale);
-
-                    if ($this->getContainer()->has(DebugManagerInterface::class)) {
-                        $this->getContainer()->get('wp.debug');
-                    }
-
-                    if ($this->getContainer()->has(RouterInterface::class)) {
-                        $this->getContainer()->get('wp.routing');
-                    }
-
-                    if ($this->getContainer()->has(AssetManagerInterface::class)) {
-                        $this->getContainer()->get('wp.asset');
-                    }
-
-                    $this->getContainer()->get('wp.column');
-
-                    if ($this->getContainer()->has(CookieJarInterface::class)) {
-                        $this->getContainer()->get('wp.cookie');
-                    }
-
-                    if ($this->getContainer()->has('cron')) {
-                        $this->getContainer()->get('cron');
-                    }
-
-                    if ($this->getContainer()->has(DatabaseManagerInterface::class)) {
-                        $this->getContainer()->get('wp.database');
-                    }
-
-                    if ($this->getContainer()->has(FieldManagerInterface::class)) {
-                        $this->getContainer()->get('wp.field');
-                    }
-
-                    if ($this->getContainer()->has(FormManagerInterface::class)) {
-                        $this->getContainer()->get('wp.form');
-                    }
-
-                    if ($this->getContainer()->has(RequestInterface::class)) {
-                        $this->getContainer()->get('wp.http.request');
-                    }
-
-                    if ($this->getContainer()->has(MailManagerInterface::class)) {
-                        $this->getContainer()->get('wp.mail');
-                    }
-
-                    $this->getContainer()->get('wp.media');
-
-                    if ($this->getContainer()->has(MetaboxManagerInterface::class)) {
-                        $this->getContainer()->get('wp.metabox');
-                    }
-
-                    $this->getContainer()->get('wp.option');
-
-                    if ($this->getContainer()->has(PartialManagerInterface::class)) {
-                        $this->getContainer()->get('wp.partial');
-                    }
-
-                    if ($this->getContainer()->has(SessionManagerInterface::class)) {
-                        $this->getContainer()->get('wp.session');
-                    }
-
-                    if ($this->getContainer()->has(StorageManagerInterface::class)) {
-                        $this->getContainer()->get('wp.filesystem');
-                    }
-
-                    if ($this->getContainer()->has('view')) {
-                        $this->getContainer()->get('wp.view');
-                    }
-
-                    events()->trigger('wp.booted');
-                },
-                1
-            );
-
-            $this->setBooted();
-        }
-    }
 
     /**
      * @inheritDoc

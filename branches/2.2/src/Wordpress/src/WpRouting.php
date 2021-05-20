@@ -64,6 +64,10 @@ class WpRouting
         $this->router = $router;
         $this->setContainer($container);
 
+        if (is_multisite()) {
+            $this->router->setBasePrefix(get_blog_details()->path);
+        }
+
         if (!$this->router->hasFallback()) {
             $this->router->setFallback(WpFallbackController::class);
         }
