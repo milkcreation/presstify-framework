@@ -36,9 +36,7 @@ class WpKernel extends Kernel
                 return;
             }
 
-            add_action('after_setup_theme',  function () {
-                parent::boot();
-            }, -1);
+            parent::boot();
         }
     }
 
