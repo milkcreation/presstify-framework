@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace tiFy\Wordpress;
 
 use Pollen\Kernel\Application;
+use Pollen\Kernel\ApplicationInterface;
 use Pollen\WpHook\WpHookerInterface;
 use Pollen\WpPost\WpPostManagerInterface;
 use Pollen\WpTerm\WpTermManagerInterface;
@@ -24,6 +25,11 @@ class WpApplication extends Application implements WpApplicationInterface
     public function registerAliases(): void
     {
         parent::registerAliases();
+
+        if (isset($this->aliases[ApplicationInterface::class])) {
+            $this->aliases[ApplicationInterface::class][] = WpApplicationInterface::class;
+        }
+
         foreach (
             [
                 WpHookerInterface::class => [

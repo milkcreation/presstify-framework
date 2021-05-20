@@ -15,8 +15,6 @@ class View
     protected $manager;
 
     /**
-     * CONSTRUCTEUR.
-     *
      * @param BaseViewContract $manager Instance du gestionnaire de gabarits d'affichage.
      *
      * @return void
