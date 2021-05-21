@@ -113,7 +113,7 @@ class Control extends Core
 
         // Auto-chargement de l'initialisation globale des champs
         foreach (self::$Factory as $id => $instance) :
-            if (!$classname = get_class($instance)) :
+            if (!is_object($instance) || !($classname = get_class($instance))) :
                 continue;
             endif;
 
