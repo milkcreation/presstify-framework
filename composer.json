@@ -8,7 +8,7 @@
     "wordpress"
   ],
   "license": "MIT",
-  "time": "2021-05-20",
+  "time": "2021-05-21",
   "authors": [
     {
       "name": "Jordy Manner",
@@ -37,7 +37,6 @@
     "guzzlehttp/guzzle": "^5.3.1|^6.2.1|^7.0",
     "guzzlehttp/psr7": "^1.2",
     "pollen-solutions/wp-kernel": "^1.0",
-    "ralouphie/mimey": "^2.1",
     "symfony/console": "^5.0",
     "symfony/lock": "^5.0"
   },
@@ -47,8 +46,7 @@
   },
   "autoload": {
     "files": [
-      "src/helpers.php",
-      "src/Wordpress/src/helpers.php"
+      "src/helpers.php"
     ],
     "psr-4": {
       "tiFy\\": "src",

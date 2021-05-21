@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace tiFy\Cron;
 
@@ -76,7 +78,9 @@ class CronManager extends Manager implements CronManagerContract
             if (($job = request()->get('job', '')) && ($item = $this->getJob($job))) {
                 do_action($item->getHook());
                 exit;
-            } elseif (!defined('DOING_CRON') ||  (DOING_CRON!==true)) {
+            }
+
+            if (!defined('DOING_CRON') ||  (DOING_CRON!==true)) {
                 foreach ($this->items as $job) {
                     $this->_schedule($job);
                 }
@@ -132,7 +136,7 @@ class CronManager extends Manager implements CronManagerContract
     /**
      * @inheritDoc
      */
-    public function getJob($name): CronJobContract
+    public function getJob($name): ?CronJobContract
     {
         return $this->items[$name] ?? null;
     }
