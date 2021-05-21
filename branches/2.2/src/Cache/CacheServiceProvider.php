@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace tiFy\Cache;
 
-use Pollen\Container\BaseServiceProvider;
+use Pollen\Container\ServiceProvider;
 
-class CacheServiceProvider extends BaseServiceProvider
+class CacheServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

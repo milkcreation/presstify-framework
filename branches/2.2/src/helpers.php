@@ -11,7 +11,6 @@ use Pollen\Support\ClassLoader;
 use tiFy\Contracts\Cron\CronJob;
 use tiFy\Contracts\Cron\CronManager;
 use tiFy\Contracts\Routing\Url;
-use tiFy\Contracts\View\Engine as ViewEngine;
 
 if (!function_exists('class_info')) {
     /**
@@ -107,28 +106,5 @@ if (!function_exists('url')) {
         $url = app('url');
 
         return is_null($uri) ? $url : $url->set($uri);
-    }
-}
-
-if (!function_exists('view')) {
-    /**
-     * View - Récupération d'une instance du controleur des vues ou l'affichage d'un gabarit.
-     * {@internal Si aucun argument n'est passé à la méthode, retourne l'intance du controleur principal.}
-     * {@internal Sinon récupére le gabarit d'affichage et passe les variables en argument.}
-     *
-     * @param null|string view Nom de qualification du gabarit.
-     * @param array $data Liste des variables passées en argument.
-     *
-     * @return ViewEngine|string
-     */
-    function view($view = null, array $data = [])
-    {
-        /* @var ViewEngine $factory */
-        $factory = app('view');
-
-        if (func_num_args() === 0) {
-            return $factory;
-        }
-        return $factory->render($view, $data);
     }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace tiFy\Cron;
 
-use Pollen\Container\BaseServiceProvider;
+use Pollen\Container\ServiceProvider;
 
-class CronServiceProvider extends BaseServiceProvider
+class CronServiceProvider extends ServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.

@@ -49,8 +49,7 @@
       "src/helpers.php"
     ],
     "psr-4": {
-      "tiFy\\": "src",
-      "tiFy\\Wordpress\\": "src/Wordpress/src"
+      "tiFy\\": "src"
     }
   },
   "autoload-dev": {
