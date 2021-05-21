@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import "variables";
 
 // Personnalisation
@@ -39,8 +41,8 @@
 
 @for $i from 1 through $grid-columns {
   .#{$grid-col-prefix}-#{$i} {
-    flex: 0 0 percentage($i / $grid-columns);
-    max-width: percentage($i / $grid-columns);
+    flex: 0 0 percentage(math.div($i, $grid-columns));
+    max-width: percentage(math.div($i, $grid-columns));
   }
 }
 
