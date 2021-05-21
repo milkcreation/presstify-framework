@@ -10,7 +10,7 @@ use tiFy\Contracts\Cron\{
     CronManager as CronManagerContract,
     CronJob as CronJobContract
 };
-use tiFy\Support\{Manager, Proxy\View};
+use tiFy\Support\Manager;
 
 /**
  * USAGE

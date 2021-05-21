@@ -1,7 +1,12 @@
 {
-  "private": true,
   "name": "presstify-framework",
   "version": "2.2.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jordy Manner",
+  "license": "ISC",
   "devDependencies": {
     "font-awesome": "^4.7.0",
     "highlight.js": "^9.17.1",
@@ -9,11 +14,5 @@
     "tinymce-i18n": "^19.5.15"
   },
   "dependencies": {
-    "@pollen-solutions/field": "file:../../pollen-solutions/field/",
-    "@pollen-solutions/form": "file:../../pollen-solutions/form/",
-    "@pollen-solutions/mail": "file:../../pollen-solutions/mail/",
-    "@pollen-solutions/metabox": "file:../../pollen-solutions/metabox/",
-    "@pollen-solutions/partial": "file:../../pollen-solutions/partial/",
-    "@pollen-solutions/support": "file:../../pollen-solutions/support/"
   }
 }

@@ -6,10 +6,10 @@ namespace tiFy\Console;
 
 use Symfony\Component\Console\Input\InputOption;
 use tiFy\Console\Commands\UpdateCore20345;
-use Pollen\Container\BaseServiceProvider;
-use tiFy\Kernel\Application as App;
+use Pollen\Container\BootableServiceProvider;
+use Pollen\Kernel\ApplicationInterface;
 
-class ConsoleServiceProvider extends BaseServiceProvider
+class ConsoleServiceProvider extends BootableServiceProvider
 {
     /**
      * Liste des noms de qualification des services fournis.
@@ -24,7 +24,7 @@ class ConsoleServiceProvider extends BaseServiceProvider
     public function boot(): void
     {
         register_shutdown_function(function () {
-            /** @var App $app */
+            /** @var ApplicationInterface $app */
             $app = $this->getContainer()->get('app');
 
             if($app->runningInConsole()) {
