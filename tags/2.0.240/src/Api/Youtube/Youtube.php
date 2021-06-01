@@ -118,7 +118,7 @@ class Youtube extends MadcodaYoutube
             endif;
 
             $height = $info->getHeight();
-            $ratio = $info->getAspectRatio();
+            $ratio = $info->getAspectRatio() ?: 56.25;
             $src = esc_url("//www.youtube.com/embed/{$video_id}" . ($params ? '?' . http_build_query($params) : ''));
             $width = $info->getWidth();
 
