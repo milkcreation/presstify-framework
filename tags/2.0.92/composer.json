@@ -66,7 +66,7 @@
     "mobiledetect/mobiledetectlib": "^2.8",
     "monolog/monolog": "^1.22",
     "mrclay/minify": "^3.0",
-    "pelago/emogrifier": "^2.0",
+    "pelago/emogrifier": "^2.0 || ^3.1 || ^4.0 || ^5.0",
     "phpdocumentor/reflection-docblock": "^3.2.2",
     "phpmailer/phpmailer": "^5.2",
     "redeyeventures/geopattern": "^1.1",
