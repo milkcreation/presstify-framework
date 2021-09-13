@@ -25,7 +25,7 @@ jQuery(document).ready(function ($) {
         });
 
         tify_control_media_image_frame.on('select', function () {
-            attachment = tify_control_media_image_frame.state().get('selection').first().toJSON();
+            let attachment = tify_control_media_image_frame.state().get('selection').first().toJSON();
 
             $this.css('background-image', 'url(' + attachment.url + '');
             $('.tiFyField-MediaImageInput', $closest).val(attachment.id);
