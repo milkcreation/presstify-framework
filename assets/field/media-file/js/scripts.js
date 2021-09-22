@@ -12,7 +12,7 @@ jQuery(document).ready(function ($) {
         tiFyFieldMediaFileFrame = wp.media.frames.file_frame = wp.media(o);
 
         tiFyFieldMediaFileFrame.on('select', function () {
-            attachment = tiFyFieldMediaFileFrame.state().get('selection').first().toJSON();
+            var attachment = tiFyFieldMediaFileFrame.state().get('selection').first().toJSON();
             $closest.attr('aria-active', 'true');
             $('[aria-control="infos"]', $closest).val(attachment.title + ' → ' + attachment.filename);
             $('[aria-control="input"]', $closest).val(attachment.id);
@@ -25,7 +25,7 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
         e.stopPropagation();
 
-        $closest = $(this).parent();
+        var $closest = $(this).parent();
 
         $closest.attr('aria-active', 'false');
         $('[aria-control="infos"]', $closest).val('');
